@@ -28,5 +28,6 @@ pytest-xdist
 pytz
 redis
 sentry_sdk
+sorl-thumbnail
 unidecode
 werkzeug

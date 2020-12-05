@@ -84,6 +84,7 @@ requests==2.25.0          # via django-allauth, django-anymail, django-silk, req
 s3transfer==0.3.3         # via boto3
 sentry-sdk==0.19.4        # via -r requirements.in
 six==1.15.0               # via click-repl, cryptography, packaging, pyopenssl, python-dateutil
+sorl-thumbnail==12.7.0    # via -r requirements.in
 sqlparse==0.4.1           # via django, django-silk
 text-unidecode==1.3       # via faker
 toml==0.10.2              # via autopep8, pytest

@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "djcelery_email",
     "widget_tweaks",
+    "sorl.thumbnail",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -133,9 +134,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SOCIALACCOUNT_ADAPTER = (
-    "radiofeed.users.adapters.SocialAccountAdapter"
-)
+SOCIALACCOUNT_ADAPTER = "radiofeed.users.adapters.SocialAccountAdapter"
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -202,9 +201,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {
-                "pagination": "radiofeed.common.pagination.templatetags"
-            },
+            "libraries": {"pagination": "radiofeed.common.pagination.templatetags"},
         },
     }
 ]
