@@ -23,4 +23,14 @@
   @apply bg-red-600;
 }
 
+/* hack to handle mobile scrolling issues
+  with URL bar causing resize */
+
+html {
+  overflow: hidden;
+}
+body {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
 @tailwind utilities;
