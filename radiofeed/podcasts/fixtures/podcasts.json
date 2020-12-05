@@ -1,0 +1,1939 @@
+[
+  {
+    "model": "podcasts.podcast",
+    "pk": 25,
+    "fields": {
+      "rss": "http://joeroganexp.joerogan.libsynpro.com/rss",
+      "title": "The Joe Rogan Experience",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272?uo=4",
+      "cover_image": null,
+      "description": "The podcast of Comedian Joe Rogan..",
+      "link": "https://www.joerogan.com",
+      "keywords": "comedian joe monkey redban rogan talking ufc Comedy Society & Culture Technology Podcasting",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 2, 3, 4]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 26,
+    "fields": {
+      "rss": "https://mysteriousuniverse.org/feed/podcast/",
+      "title": "Mysterious Universe",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/mysterious-universe/id329937558?uo=4",
+      "cover_image": null,
+      "description": "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.",
+      "link": "https://mysteriousuniverse.org",
+      "keywords": "Science Social Sciences Religion & Spirituality Spirituality Society & Culture Philosophy",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 16, 17, 77, 86, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 27,
+    "fields": {
+      "rss": "https://rabbits.libsyn.com/rss",
+      "title": "RABBITS",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/rabbits/id1209601557?uo=4",
+      "cover_image": null,
+      "description": "When Carly Parker\u2019s friend Yumiko goes missing under very mysterious circumstances, Carly\u2019s search for her friend leads her headfirst into a ancient mysterious game known only as Rabbits. Soon Carly begins to suspect that Rabbits is much more than just a game, and that the key to understanding Rabbits, might be the key to the survival of our species, and the Universe, as we know it.",
+      "link": "http://rabbitspodcast.com",
+      "keywords": "alexreagan creepy drama eldfen gimlet horror itunes kcrw mysterious mystery narrative nicsilver npr paulbae pnws podcast podcasts scary science sciencefiction serial suspense terrymiles theblacktapes thisamericanlife truecrime wnyc Fiction Drama Society & Culture Documentary",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 8, 41, 87]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 28,
+    "fields": {
+      "rss": "http://thegrognardfiles.com/category/podcast/feed/",
+      "title": "The GROGNARD Files",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-grognard-files/id1028591522?uo=4",
+      "cover_image": null,
+      "description": "The GROGNARD RPG files is a podcast that looks at RPGs from 'back in the day and today'.\n\nEach episode concentrates on the original rules of a featured game, our experiences of playing the game, PLUS excellent contributions from @dailydwarf selecting highlights from the halcyon days of White Dwarf magazine.",
+      "link": "https://thegrognardfiles.com",
+      "keywords": "RPG Tabletop Hobby Games Games Workshop Choasium Runequest Bolton Memories 1980s RPG Role Playing Games Games & Hobbies Other Games",
+      "last_updated": null,
+      "explicit": false,
+      "categories": []
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 29,
+    "fields": {
+      "rss": "https://changelog.com/podcast/feed",
+      "title": "The Changelog: Software Dev & Open Source",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-changelog-software-dev-open-source/id341623264?uo=4",
+      "cover_image": null,
+      "description": "Conversations with the hackers, leaders, and innovators of software development.  Hosts Adam Stacoviak and Jerod Santo face their imposter syndrome so you don\u2019t have to. Expect in-depth interviews with the best and brightest in software engineering, open source, and leadership. This is a polyglot podcast. All programming languages, platforms, and communities are welcome. Open source moves fast. Keep up.",
+      "link": "https://changelog.com/podcast",
+      "keywords": "changelog open source software development code programming hacker change log software engineering Technology Software How-To Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 30,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/SModcasts",
+      "title": "SModcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/smodcast/id215010467?uo=4",
+      "cover_image": null,
+      "description": "Kevin Smith and Scott Mosier are SModcast.",
+      "link": "http://soundcloud.com/smodcast",
+      "keywords": "Kevin Smith Scott Mosier Yoga Hosers Tusk Clerks Mallrats Chasing Amy Dogma Jay Silent Bob Strike Back View Askew Comedy TV & Film News & Politics Religion & Spirituality Arts/Performing Arts Kevin Smith Scott Mosier Yoga Hosers Tusk Clerks Mallrats Chasing Amy Dogma Jay Silent Bob Strike Back View Askew Comedy TV & Film News & Politics Religion & Spirituality Arts Performing Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 5, 16, 20, 25]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 31,
+    "fields": {
+      "rss": "https://feeds.npr.org/381444908/podcast.xml",
+      "title": "Fresh Air",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/fresh-air/id214089682?uo=4",
+      "cover_image": null,
+      "description": "Fresh Air from WHYY, the Peabody Award-winning weekday magazine of contemporary arts and issues, is one of public radio's most popular programs. Hosted by Terry Gross, the show features intimate conversations with today's biggest luminaries.",
+      "link": "http://www.npr.org/programs/fresh-air/",
+      "keywords": "Arts Books TV & Film Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 5, 20, 21]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 32,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/stuffyoushouldknow",
+      "title": "Stuff You Should Know",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/stuff-you-should-know/id278981407?uo=4",
+      "cover_image": null,
+      "description": "If you've ever wanted to know about champagne, satanism, the Stonewall Uprising, chaos theory, LSD, El Nino, true crime and Rosa Parks, then look no further. Josh and Chuck have you covered.",
+      "link": "https://www.howstuffworks.com",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 33,
+    "fields": {
+      "rss": "https://rss.art19.com/1619",
+      "title": "1619",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/1619/id1476928106?uo=4",
+      "cover_image": null,
+      "description": "<p>In August of 1619, a ship carrying more than 20 enslaved Africans arrived in the English colony of Virginia. America was not yet America, but this was the moment it began. No aspect of the country that would be formed here has been untouched by the 250 years of slavery that followed. On the 400th anniversary of this fateful moment, it is time to tell the story.</p><p>\u201c1619\u201d is a New York Times audio series hosted by Nikole Hannah-Jones. You can find more information about it at nytimes.com/1619podcast.</p>",
+      "link": "https://art19.com/shows/1619",
+      "keywords": "News History Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 34,
+    "fields": {
+      "rss": "https://rss.art19.com/tides-of-history",
+      "title": "Tides of History",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/tides-of-history/id1257202425?uo=4",
+      "cover_image": null,
+      "description": "<p>Everywhere around us are echoes of the past. Those echoes define the boundaries of states and countries, how we pray and how we fight. They determine what money we spend and how we earn it at work, what language we speak and how we raise our children. From Wondery, host Patrick Wyman, PhD (\u201cFall Of Rome\u201d) helps us understand our world and how it got to be the way it is. </p>",
+      "link": "https://wondery.com/shows/tides-of-history/?utm_source=rss",
+      "keywords": "History Society & Culture Documentary",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 87]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 35,
+    "fields": {
+      "rss": "https://talkpython.fm/episodes/rss",
+      "title": "Talk Python To Me",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/talk-python-to-me/id979020229?uo=4",
+      "cover_image": null,
+      "description": "Talk Python to Me is a weekly podcast hosted by Michael Kennedy.\n            The show covers a wide array of Python topics as well as many related\n            topics. Our goal is to bring you the human story behind the Python packages\n            and frameworks you know and love.",
+      "link": "https://talkpython.fm/",
+      "keywords": "Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 36,
+    "fields": {
+      "rss": "https://www.theparacast.com/paracast.xml",
+      "title": "The Paracast -- The Gold Standard of Paranormal Radio",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-paracast-the-gold-standard-of-paranormal-radio/id129174507?uo=4",
+      "cover_image": null,
+      "description": "The Paracast explores a world beyond science, where UFOs, UFO, poltergeists and strange phenomena of all kinds have been reported by millions across the planet. The Paracast presents longtime researchers in the field, to shed light on the mysteries and complexities of our Universe and the secrets that surround us in our everyday lives. Join long-time paranormal researcher Gene Steinberg, co-host Christopher O\u2019Brien, and their roster of special guest experts and experiencers, as they explore the realms of the known and unknown. Listen each week to the great stories of the history of the paranormal field in the 20th and 21st centuries. NOTE: These episodes are the network versions with ads. If you want a commercial-free version of The Paracast, please subscribe to The Paracast+. Check http://www.theparacast.com/plus for details.",
+      "link": "https://www.theparacast.com",
+      "keywords": "News & Politics Philosophy Social Sciences paranormal bigfoot cryptozoology alien roswell ufo secrecy ufo report ufo photo ufo ufo sighting area 51 flying saucer medium poltergeist psychic psychic phenomena ghosts men in black MIB conspiracies conspiracy theory remote viewing News Society & Culture Philosophy",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 15, 86, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 37,
+    "fields": {
+      "rss": "https://revolutionspodcast.libsyn.com/rss",
+      "title": "Revolutions",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/revolutions/id703889772?uo=4",
+      "cover_image": null,
+      "description": "A weekly podcasting exploring great political revolutions. Now:   The Russian Revolution Next: ???",
+      "link": "http://www.revolutionspodcast.com",
+      "keywords": "revolution revolutions History Education News Politics",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [7, 11, 15, 68]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 38,
+    "fields": {
+      "rss": "https://feeds.fireside.fm/techsnap/rss",
+      "title": "TechSNAP",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/techsnap/id433059024?uo=4",
+      "cover_image": null,
+      "description": "Systems, Network, and Administration Podcast. Every two weeks TechSNAP covers the stories that impact those of us in the tech industry, and all of us that follow it. Every episode we dedicate a portion of the show to answer audience questions, discuss best practices, and solving your problems.",
+      "link": "https://techsnap.systems",
+      "keywords": "News Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 39,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/HSW4904982879",
+      "title": "Missing in Alaska",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/missing-in-alaska/id1506816225?uo=4",
+      "cover_image": null,
+      "description": "Alaska, 1972. Two congressmen vanish on a small plane. They\u2019re never found. In 1995, a mobster tells the F.B.I. the plane was bombed. What happened?",
+      "link": null,
+      "keywords": "True Crime Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 40,
+    "fields": {
+      "rss": "http://feeds.wnyc.org/radiolab",
+      "title": "Radiolab",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/radiolab/id152249110?uo=4",
+      "cover_image": null,
+      "description": "A two-time Peabody Award-winner, Radiolab is an investigation told through sounds and stories, and centered around one big idea. In the Radiolab world, information sounds like music and science and culture collide. Hosted by Jad Abumrad and Robert Krulwich, the show is designed for listeners who demand skepticism, but appreciate wonder. \r\n\r\nWNYC Studios is a listener-supported producer of other leading podcasts including On the Media, Snap Judgment, Death, Sex & Money, Nancy and Here\u2019s the Thing with Alec Baldwin.  \r\n\r\n\u00a9 WNYC Studios",
+      "link": "https://www.wnycstudios.org/podcasts/radiolab/projects/podcasts",
+      "keywords": "Society & Culture Documentary Science Nature History Science Technology Philosophy Education radiolab jad abumrad krulwich Radio Lab wnyc studios Society & Culture/Documentary Science/Nature History Technology Philosophy Education radiolab jad abumrad krulwich Radio Lab wnyc studios",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 3, 7, 11, 17, 84, 87, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 41,
+    "fields": {
+      "rss": "http://feeds.soundcloud.com/users/soundcloud:users:108251496/sounds.rss",
+      "title": "Absolute Geek Podcast: a Nerd Podcast | Sci-Fi | Comics | Movies | Comedy | Geek | Music | TV Shows | Entertainment |Dungeons and Dragons",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/absolute-geek-podcast-nerd-podcast-sci-fi-comics-movies/id911472822?uo=4",
+      "cover_image": null,
+      "description": "In a world where geek culture is now trendy,lifel\u2026",
+      "link": "http://www.absolutegeekpodcast.com/",
+      "keywords": "TV & Film",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [20]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 42,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/DougLovesMovies",
+      "title": "Doug Loves Movies",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/doug-loves-movies/id281816774?uo=4",
+      "cover_image": null,
+      "description": "Comedian Doug Benson (Super High Me, Last Comic Standing) invites his friends to sit down and discuss his first love: movies!",
+      "link": "https://art19.com/shows/dlm",
+      "keywords": "Comedy TV & Film DLM",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 20]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 43,
+    "fields": {
+      "rss": "https://feeds.fireside.fm/linuxunplugged/rss",
+      "title": "LINUX Unplugged",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/linux-unplugged/id687598126?uo=4",
+      "cover_image": null,
+      "description": "An open show powered by community LINUX Unplugged takes the best attributes of open collaboration and turns it into a weekly show about Linux.",
+      "link": "https://linuxunplugged.com",
+      "keywords": "Technology News Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 44,
+    "fields": {
+      "rss": "http://feeds.thememorypalace.us/thememorypalace",
+      "title": "the memory palace",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-memory-palace/id299436963?uo=4",
+      "cover_image": null,
+      "description": "From public radio producer, Nate DiMeo, comes The Memory Palace, a finalist for the 2016 Peabody Award and one of iTunes Best Podcast of 2015. Short, surprising stories of the past, sometimes heartbreaking, sometimes hysterical, often a little bit of both.\n\n\"The most potent pieces of audio being produced today.\" - The AvClub\n\n <a href=\"http://thememorypalace.us\">thememorypalace.us</a>\n\nThe Memory Palace is a proud member of Radiotopia, from PRX, a curated network of extraordinary, story-driven shows. Learn more at <a href=\"http://radiotopia.fm\">radiotopia.fm</a>",
+      "link": "http://thememorypalace.us",
+      "keywords": "History history natedimeo publicradio radiotopia history natedimeo publicradio radiotopia History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 45,
+    "fields": {
+      "rss": "http://rss.acast.com/smershpod",
+      "title": "Smersh Pod",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/smersh-pod/id1203036677?uo=4",
+      "cover_image": null,
+      "description": "SMERSH POD Royale. A new series of the hit podcast looking at every James Bond film with people who love, hate, or aren't really arsed about them, hosted by John Rain. This podcast is a member of the Great Big Owl family.",
+      "link": "http://smershpod.com",
+      "keywords": "Comedy TV & Film",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 20]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 46,
+    "fields": {
+      "rss": "https://rss.art19.com/murder-in-hollywoodland",
+      "title": "Murder in Hollywoodland",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/murder-in-hollywoodland/id1515351898?uo=4",
+      "cover_image": null,
+      "description": "<p>It's February 2nd 1922, and all of Hollywood is about to wake up and learn that William Desmond Taylor, the most famous film director in town, was murdered in his home last night. The investigation will shine a light on some of Hollywood's most scandalous affairs, backroom deals, and underground drug dens. This real life Murder Mystery is one of the most iconic \"whodunnit\" cases of the 20th century that will leave you guessing and second guessing who killed William Desmond Taylor for weeks to come. </p><p>Co-hosted by Tracy Pattin &amp; James Remar</p>",
+      "link": "https://art19.com/shows/murder-in-hollywoodland",
+      "keywords": "True Crime History noir mystery investigation Celebrity",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11, 19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 47,
+    "fields": {
+      "rss": "https://rss.art19.com/guru",
+      "title": "Guru: The Dark Side of Enlightenment",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/guru-the-dark-side-of-enlightenment/id1518839824?uo=4",
+      "cover_image": null,
+      "description": "<p>When we face challenges in life, we seek answers from people we believe can help us. When tragedy strikes an exclusive retreat with a self-help superstar, many people are left to wonder: how far is too far? James Arthur Ray was an Oprah-endorsed self-help teacher who achieved fame, fortune, and influence. But friends and family members of his followers questioned his unorthodox methods, and tried to stop him. From Wondery, the makers of \u201cDirty John,\u201d \u201cDr. Death,\u201d and \u201cThe Shrink Next Door,\u201d comes a story about the dark side of enlightenment. Hosted by journalist Matt Stroud.</p>",
+      "link": "https://art19.com/shows/guru",
+      "keywords": "True Crime Society & Culture Documentary",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 19, 87]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 48,
+    "fields": {
+      "rss": "https://feeds.npr.org/510312/podcast.xml",
+      "title": "Code Switch",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/code-switch/id1112190608?uo=4",
+      "cover_image": null,
+      "description": "What's CODE SWITCH? It's the fearless conversations about race that you've been waiting for! Hosted by journalists of color, our podcast tackles the subject of race head-on. We explore how it impacts every part of society \u2014 from politics and pop culture to history, sports and everything in between. This podcast makes ALL OF US part of the conversation \u2014 because we're all part of the story.",
+      "link": "http://www.npr.org/sections/codeswitch/",
+      "keywords": "News Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 49,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/happinesslab",
+      "title": "The Happiness Lab with Dr. Laurie Santos",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-happiness-lab-with-dr-laurie-santos/id1474245040?uo=4",
+      "cover_image": null,
+      "description": "You might think you know what it takes to lead a happier life\u2026 more money, a better job, or Instagram-worthy vacations. You\u2019re dead wrong. Yale professor Dr. Laurie Santos has studied the science of happiness and found that many of us do the exact opposite of what will truly make our lives better. Based on the psychology course she teaches at Yale--the most popular class in the university\u2019s 300-year history--Laurie will take you through the latest scientific research and share some surprising and inspiring stories that will change the way you think about happiness. For an even deeper dive into the research we talk about in the show and to sign up to our newsletter visit: happinesslab.fm",
+      "link": "https://www.pushkin.fm",
+      "keywords": "Society & Culture Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 7]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 50,
+    "fields": {
+      "rss": "http://feeds.megaphone.fm/watergate",
+      "title": "Slow Burn",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/slow-burn/id1315040130?uo=4",
+      "cover_image": null,
+      "description": "In the late 1980s and early 1990s, a white supremacist became an American political phenomenon. David Duke\u2019s rise to power and prominence\u2014his election to the Louisiana legislature, and then his campaigns for the U.S. Senate and the governorship\u2014was an existential crisis for the state and the nation. The fourth season of Slate\u2019s Slow Burn will explore how a Nazi sympathizer and former Klansman fashioned himself into a mainstream figure, and why some voters came to embrace his message. It will also examine how activists, journalists, and ordinary citizens confronted Duke\u2019s candidacy, and what it took to stop him.",
+      "link": "http://slate.com/slowburn",
+      "keywords": "History Society & Culture Documentary News Politics",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 15, 68, 87]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 51,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/wind-of-change-wide",
+      "title": "Wind of Change",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/wind-of-change/id1509307460?uo=4",
+      "cover_image": null,
+      "description": "It\u2019s 1990. The Berlin Wall just fell. The Soviet Union is on the verge of collapse. And the soundtrack to the revolution is one of the best selling songs of all time, the metal ballad \u201cWind of Change,\u201d by the Scorpions.\nDecades later, journalist Patrick Radden Keefe heard a rumor: the song wasn\u2019t written by the Scorpions. It was written by the CIA. This is his journey to find the truth.\nWind of Change is an Original Series from Pineapple Street Studios, Crooked Media and Spotify.",
+      "link": "https://crooked.com/podcast-series/wind-of-change/",
+      "keywords": "Society & Culture Music",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 14]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 52,
+    "fields": {
+      "rss": "https://feeds.npr.org/510289/podcast.xml",
+      "title": "Planet Money",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/planet-money/id290783428?uo=4",
+      "cover_image": null,
+      "description": "The economy explained. Imagine you could call up a friend and say, \"Meet me at the bar and tell me what's going on with the economy.\" Now imagine that's actually a fun evening.",
+      "link": "https://www.npr.org/planetmoney",
+      "keywords": "Business News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [6, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 53,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/the-bill-simmons-podcast",
+      "title": "The Bill Simmons Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-bill-simmons-podcast/id1043699613?uo=4",
+      "cover_image": null,
+      "description": "HBO and The Ringer's Bill Simmons hosts the most downloaded sports podcast of all time, with a rotating crew of celebrities, athletes, and media staples, as well as mainstays like Cousin Sal, Joe House, and a slew of other friends and family members who always happen to be suspiciously available.",
+      "link": "https://art19.com/shows/the-bill-simmons-podcast",
+      "keywords": "Sports",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [18]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 54,
+    "fields": {
+      "rss": "http://www.podcastone.com/podcast?categoryID2=2061",
+      "title": "I Survived",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/i-survived/id1500927263?uo=4",
+      "cover_image": null,
+      "description": "What is it like to face death and make it out alive? Based on the groundbreaking A&E television series, I Survived documents harrowing stories of human endurance. In their own words, survivors recall how they overcame unbelievable circumstances that changed their lives forever.",
+      "link": "https://www.podcastone.com/pd/I-Survived",
+      "keywords": "Talk Radio True Crime",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 55,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/pod-save-america",
+      "title": "Pod Save America",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/pod-save-america/id1192761536?uo=4",
+      "cover_image": null,
+      "description": "Four former aides to President Obama\u2014Jon Favreau, Jon Lovett, Dan Pfeiffer and Tommy Vietor\u2014are joined by journalists, politicians, activists, and more for a no-b******t conversation about politics. They cut through the noise to break down the week\u2019s news, and help people figure out what matters and how they can help. Text us questions and comments: (323) 405-9944.\u00a0New episodes Mondays and Thursdays.\nNew series on the VP selection process: That's The Ticket!\u2014hosted by Dan Pfeiffer and Alyssa Mastromonaco\u2014coming Friday 6/26 to the Pod Save America feed.",
+      "link": "https://crooked.com/",
+      "keywords": "News Politics",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 68]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 56,
+    "fields": {
+      "rss": "http://feed.thisamericanlife.org/talpodcast",
+      "title": "This American Life",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/this-american-life/id201671138?uo=4",
+      "cover_image": null,
+      "description": "This American Life is a weekly public radio show, heard by 2.2 million people on more than 500 stations. Another 2.5 million people download the weekly podcast.",
+      "link": "https://www.thisamericanlife.org",
+      "keywords": "Society & Culture Arts News Politics",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 5, 15, 68]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 57,
+    "fields": {
+      "rss": "http://feeds.serialpodcast.org/serialpodcast",
+      "title": "Serial",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/serial/id917918570?uo=4",
+      "cover_image": null,
+      "description": "A podcast from the creators of This American Life",
+      "link": "https://serialpodcast.org",
+      "keywords": "News True Crime",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 58,
+    "fields": {
+      "rss": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/cddd051e-ed29-4e8a-afab-ab7b013ad247/e687c7be-25f6-49f8-8508-ab7b013aec83/podcast.rss",
+      "title": "Literally! With Rob Lowe",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/literally-with-rob-lowe/id1510058141?uo=4",
+      "cover_image": null,
+      "description": "This is\u00a0literally a podcast where people I love, admire, and know well will be in a safe space to really let their hair down (assuming they have any). I will cover the thoughtful to the extremely random. So join me and my guests from the world of movies, TV, sports, music, and culture for fun, wide-ranging, free-wheeling conversations.",
+      "link": "https://omny.fm/shows/literally-with-rob-lowe",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 59,
+    "fields": {
+      "rss": "https://omny.fm/shows/silence-is-not-an-option/playlists/podcast.rss",
+      "title": "Silence is Not an Option",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/silence-is-not-an-option/id1518666724?uo=4",
+      "cover_image": null,
+      "description": "America is in crisis right now. A lot of people want to help, but have no idea where to start. In our new podcast, we\u2019re going to dig deep into the reality of being Black and brown in America, and explore what you can do to help find a path forward. We\u2019ll have tough conversations with activists, artists, and thinkers about our nation\u2019s deep racial divide. As we look for meaningful and lasting solutions, there is a lot to learn and unlearn.\u00a0\n\nThese conversations are going to be challenging\u2014even uncomfortable\u2014but they\u2019re important. Because this time, we get to rebuild America\u00a0together.\u00a0\n\nHosted by Don Lemon.",
+      "link": "https://www.cnn.com/audio/podcasts/don-lemon-silence-is-not-an-option",
+      "keywords": "Society & Culture News News Commentary Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 7, 15, 67]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 60,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/supernatural",
+      "title": "Supernatural with Ashley Flowers",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/supernatural-with-ashley-flowers/id1500667648?uo=4",
+      "cover_image": null,
+      "description": "Most mysteries can be solved by looking at the facts. But sometimes, the facts don\u2019t lead to a logical explanation, and the truth lies somewhere in the unknown\u2026Join Parcast and Crime Junkie\u2019s Ashley Flowers as they dive deep into the strange and surreal to explain some of the world\u2019s most bizarre true crime occurrences in the new series, Supernatural with Ashley Flowers. Every Wednesday, Ashley digs into a different mystifying crime\u2014where the most fitting theory isn\u2019t always the most conventional.",
+      "link": "https://www.parcast.com",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 61,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/revisionisthistory",
+      "title": "Revisionist History",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/revisionist-history/id1119389968?uo=4",
+      "cover_image": null,
+      "description": "Revisionist History is Malcolm Gladwell's journey through the overlooked and the misunderstood. Every episode re-examines something from the past\u2014an event, a person, an idea, even a song\u2014and asks whether we got it right the first time. From Pushkin Industries. Because sometimes the past deserves a second chance.",
+      "link": "http://revisionisthistory.com/",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 62,
+    "fields": {
+      "rss": "https://feeds.99percentinvisible.org/99percentinvisible",
+      "title": "99% Invisible",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/99-invisible/id394775318?uo=4",
+      "cover_image": null,
+      "description": "Design is everywhere in our lives, perhaps most importantly in the places where we've just stopped noticing. 99% Invisible is a weekly exploration of the process and power of design and architecture. From award winning producer Roman Mars. Learn more at <a href=\"http://99percentinvisible.org\">99percentinvisible.org</a>.\nA proud member of Radiotopia, from PRX. Learn more at <a href=\"http://radiotopia.fm/\">radiotopia.fm</a>.",
+      "link": "http://99percentinvisible.org",
+      "keywords": "Arts Arts Design Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 22]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 63,
+    "fields": {
+      "rss": "https://feeds.yle.fi/areena/v1/series/1-4355773.rss?lang=fi&downloadable=true",
+      "title": "All Points North",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/all-points-north/id1347167993?uo=4",
+      "cover_image": null,
+      "description": "The All Points North podcast has everything you need to know about the news in Finland this week. All Points North is produced by Yle News, a unit of the Finnish Broadcasting Company.",
+      "link": "https://areena.yle.fi/1-4355773",
+      "keywords": "News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 64,
+    "fields": {
+      "rss": "https://rss.art19.com/american-history-tellers",
+      "title": "American History Tellers",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/american-history-tellers/id1313596069?uo=4",
+      "cover_image": null,
+      "description": "<p>The Cold War, Prohibition, the Gold Rush, the Space Race. Every part of your life -the words you speak, the ideas you share- can be traced to our history, but how well do you really know the stories that made America? We\u2019ll take you to the events, the times and the people that shaped our nation. And we\u2019ll show you how our history affected them, their families and affects you today. Hosted by Lindsay Graham (not the Senator). From Wondery, the network behind Tides Of History, Fall Of Rome and Dirty John. </p>",
+      "link": "https://wondery.com/shows/american-history-tellers/?utm_source=rss",
+      "keywords": "History Kids & Family Education for Kids Society & Culture history Prohibition Cold War america Declaration of Independence",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 12, 49]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 65,
+    "fields": {
+      "rss": "https://rss.art19.com/american-scandal",
+      "title": "American Scandal",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/american-scandal/id1435516849?uo=4",
+      "cover_image": null,
+      "description": "<p>Every scandal begins with a lie. But the truth will come out. And then comes the fallout and the outrage.</p><p>Scandals have shaped America since its founding. From business and politics to sports and society, we look on aghast as corruption, deceit and ambition bring down heroes and celebrities, politicians and moguls.&nbsp;And when the dust finally settles, we\u2019re left to wonder: how did this happen? Where did they trip up, and who is to blame? From the creators of American History Tellers, Business Wars and Tides of History comes American Scandal, where we take you deep into the heart of America\u2019s dark side to look at what drives someone to break the rules and what happens when they\u2019re caught.&nbsp;Hosted by Lindsay Graham. </p><p><br /></p>",
+      "link": "https://www.wondery.com/shows/american-scandal/?utm_source=rss",
+      "keywords": "History Society & Culture Documentary America Scandal American",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 87]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 66,
+    "fields": {
+      "rss": "https://audioboom.com/channels/4322549.rss",
+      "title": "Astonishing Legends",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/astonishing-legends/id923527373?uo=4",
+      "cover_image": null,
+      "description": "Scott and Forrest have been called the 'Click and Clack of esoterica' by their listeners. Their mission is to take a look at legendary strange and unusual events from throughout history and interview people who've had close encounters with the unexplained. They strive to bring you everything that's entertaining about those stories and remind you that it's ok to laugh at scary stories sometimes. Put your headphones on, settle in for your commute and get ready to experience a show like nothing you've ever heard before. Show schedule is generally 3 weeks on and 1 week off.",
+      "link": "https://audioboom.com/channel/astonishing-legends",
+      "keywords": "Society & Culture History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 67,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/behindthebastards",
+      "title": "Behind the Bastards",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/behind-the-bastards/id1373812661?uo=4",
+      "cover_image": null,
+      "description": "There\u2019s a reason the History Channel has produced hundreds of documentaries about Hitler but only a few about Dwight D. Eisenhower. Bad guys (and gals) are eternally fascinating. Behind the Bastards dives in past the Cliffs Notes of the worst humans in history and exposes the bizarre realities of their lives. Listeners will learn about the young adult novels that helped Hitler form his monstrous ideology, the founder of Blackwater\u2019s insane quest to build his own Air Force, the bizarre lives of the sons and daughters of dictators and Saddam Hussein\u2019s side career as a trashy romance novelist.",
+      "link": "https://www.behindthebastards.com/",
+      "keywords": "Society & Culture History News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 68,
+    "fields": {
+      "rss": "https://feeds.fireside.fm/bikeshed/rss",
+      "title": "The Bike Shed",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-bike-shed/id935763119?uo=4",
+      "cover_image": null,
+      "description": "On The Bike Shed, hosts Chris Toomey & Steph Viccari discuss their development experience and challenges at thoughtbot with Ruby, Rails, JavaScript, and whatever else is drawing their attention, admiration, or ire this week.",
+      "link": "https://www.bikeshed.fm",
+      "keywords": "web development ruby javascript rails back-end front-end app development graphql developer Technology News Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 69,
+    "fields": {
+      "rss": "https://feeds.acast.com/public/shows/5e7b777ba085cbe7192b0607",
+      "title": "The Bugle",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-bugle/id265799883?uo=4",
+      "cover_image": null,
+      "description": "<p>It's the trans-global satiricast that leaves no hot potato unbuttered. Andy Zaltzman breaks down the news with comedians from across the world including Alice Fraser, Hari Kondabolu, John Oliver, Nish Kumar, and his sister Helen. Hear our new show, The Last Post: <a href=\"http://pod.link/TheLastPost\" rel=\"noopener noreferrer\" target=\"_blank\">http://pod.link/TheLastPost</a></p><br /><p>Follow us on <a href=\"https://www.youtube.com/channel/UCY9DZKa4SilQC4k9rhS3-5g\" rel=\"noopener noreferrer\" target=\"_blank\">YouTube</a>.</p><br /><hr /><p style=\"color: grey; font-size: 0.75em;\"> See <a href=\"https://acast.com/privacy\" rel=\"noopener noreferrer\" style=\"color: grey;\" target=\"_blank\">acast.com/privacy</a> for privacy and opt-out information.</p>",
+      "link": "http://thebuglepodcast.com/",
+      "keywords": "satire news john oliver nish kumar andy zaltzman the last post Comedy",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 70,
+    "fields": {
+      "rss": "https://podcasts.files.bbci.co.uk/p06spb8w.rss",
+      "title": "The Whisperer in Darkness",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-whisperer-in-darkness/id1444464816?uo=4",
+      "cover_image": null,
+      "description": "An investigation into witchcraft, the occult and secret government operations. From H.P. Lovecraft.",
+      "link": "http://www.bbc.co.uk/programmes/p06spb8w",
+      "keywords": "Fiction Drama",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [8, 41]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 71,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/dancarlin/commonsense?format=xml",
+      "title": "Common Sense with Dan Carlin",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/common-sense-with-dan-carlin/id155974141?uo=4",
+      "cover_image": null,
+      "description": "Common Sense with Dan Carlin is an independent look at politics and current events from popular New Media personality Dan Carlin.\n\nCarlin's self-described \"Martian\" viewpoints infuse each episode with a political alien's take on the world around us and the problems it faces. It's a smart, unique (and admittedly U.S.-centric) program that doesn't dumb down the information or analysis for the slowest person in the room.\n\nCarlin's rapid-fire staccato voice has been compared to William Shatner after too many espressos. That, plus his penchant for making everyone in the audience mad at him eventually, makes for a witch's brew of a podcast that is not for everyone. But for those craving a deeper intellectual analysis, a less partisan approach and unpredictable outside-the-box revelations, Common Sense with Dan Carlin is a feast for the mind.",
+      "link": "http://www.dancarlin.com",
+      "keywords": "libertarian independent constitution freedom nonpartisan rights dan carlin politics News & Politics Politics News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 68]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 72,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/END5064265457",
+      "title": "Conspiracy Theories",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/conspiracy-theories/id1337195586?uo=4",
+      "cover_image": null,
+      "description": "The truth is rarely the best story. And when it\u2019s not the only story, the truth deserves another look. Every Wednesday, we tell the complicated stories behind the world\u2019s most controversial events and possible cover-ups. Conspiracy? Maybe. Coincidence? Maybe. Complicated? Absolutely. Conspiracy Theories is part of the Parcast Network and is a Cutler Media Production.",
+      "link": "https://www.parcast.com/conspiracy/",
+      "keywords": "History True Crime Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 73,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/HSW6742711956",
+      "title": "The Control Group",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-control-group/id1391782679?uo=4",
+      "cover_image": null,
+      "description": "In the early 1960s, a doctor at a mental ward sheds his ethical restraints in an effort to pioneer a new form of \"mental cleansing\" at the behest of a private research group. The Control Group is a chilling, 10-part historical fiction for mature audiences. Listener discretion is advised due to realistic depictions of violence and graphic sexuality. Binge the entire season now with headphones for a fully immersive experience.",
+      "link": "https://www.controlgroup.show/",
+      "keywords": "Fiction Drama Arts Performing Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 8, 25, 41]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 74,
+    "fields": {
+      "rss": "https://rss.art19.com/the-cracked-podcast",
+      "title": "The Cracked Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-cracked-podcast/id689900475?uo=4",
+      "cover_image": null,
+      "description": "<p>Facts, jokes, and more from the Internet\u2019s leading comedy website, Cracked.com. Every week, host Alex Schmidt brings together comedians, authors, scientists, and Cracked staffers, to celebrate the awesome truth that being alive is more interesting than people think it is. Fill your week and your brain with hilarious, mind-blowing revelations that\u2019ll make you the most interesting person in every room you\u2019re in.</p>",
+      "link": "https://www.cracked.com/podcast/show-the-cracked-podcast/",
+      "keywords": "Comedy Comedy Interviews",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 33]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 75,
+    "fields": {
+      "rss": "http://rss.art19.com/the-daily",
+      "title": "The Daily",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-daily/id1200361736?uo=4",
+      "cover_image": null,
+      "description": "<p>This is what the news should sound like. The biggest stories of our time, told by the best journalists in the world. Hosted by Michael Barbaro. Twenty minutes a day, five days a week, ready by 6 a.m.</p>",
+      "link": "https://www.nytimes.com/the-daily",
+      "keywords": "News Daily News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 65]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 76,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/dailyzeitgeist",
+      "title": "The Daily Zeitgeist",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-daily-zeitgeist/id1289384685?uo=4",
+      "cover_image": null,
+      "description": "There\u2019s more news and less comprehension today than any historical period that didn\u2019t involve literal witch trials, and trying to stay on top of it all can feel like playing a game of telephone with 30 people, except everyone\u2019s speaking at the same time and like a third of them are openly racist for some reason. From Cracked co-founder Jack O\u2019Brien, THE DAILY ZEITGEIST is stepping into that fray with some of the funniest and smartest comedic and journalistic minds around. Jack and co-host Miles Gray spend up to an hour every weekday sorting through the events and stories driving the headlines, to help you find the signal in the noise, with a few laughs thrown in for free.",
+      "link": "https://www.dailyzeitgeist.com/",
+      "keywords": "News Comedy Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 2, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 77,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/dancarlin/history?format=xml",
+      "title": "Dan Carlin's Hardcore History",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/dan-carlins-hardcore-history/id173001861?uo=4",
+      "cover_image": null,
+      "description": "In \"Hardcore History\" journalist and broadcaster Dan Carlin takes his \"Martian\", unorthodox way of thinking and applies it to the past. Was Alexander the Great as bad a person as Adolf Hitler? What would Apaches with modern weapons be like? Will our modern civilization ever fall like civilizations from past eras? This isn't academic history (and Carlin isn't a historian) but the podcast's unique blend of high drama, masterful narration and Twilight Zone-style twists has entertained millions of listeners.",
+      "link": "http://www.dancarlin.com",
+      "keywords": "History Military War Ancient Archaeology Classics Carlin",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 78,
+    "fields": {
+      "rss": "https://dchhaddendum.libsyn.com/rss",
+      "title": "Dan Carlin's Hardcore History: Addendum",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/dan-carlins-hardcore-history-addendum/id1326393257?uo=4",
+      "cover_image": null,
+      "description": "Interviews, musings and extra material from the makers of Dan Carlin's Hardcore History.  If it did not fit in the HH feed it's probably here",
+      "link": "http://dchhaddendum.libsyn.com/website",
+      "keywords": "ancient archival classical discussion history military modern rome war History Society & Culture Philosophy",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 79,
+    "fields": {
+      "rss": "http://rss.acast.com/dansnowshistoryhit",
+      "title": "Dan Snow's History Hit",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/dan-snows-history-hit/id1042631089?uo=4",
+      "cover_image": null,
+      "description": "History! The most exciting and important things that have ever happened on the planet! Featuring reports from the weird and wonderful places around the world where history has been made and interviews with some of the best historians writing today. Dan also covers some of the major anniversaries as they pass by and explores the deep history behind today's headlines - giving you the context to understand what is going on today.",
+      "link": "https://www.historyhit.com/podcasts/dan-snows-history-hit/",
+      "keywords": "History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 80,
+    "fields": {
+      "rss": "https://dataskeptic.libsyn.com/rss",
+      "title": "Data Skeptic",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/data-skeptic/id890348705?uo=4",
+      "cover_image": null,
+      "description": "The Data Skeptic Podcast features interviews and discussion of topics related to data science, statistics, machine learning, artificial intelligence and the like, all from the perspective of applying critical thinking and the scientific method to evaluate the veracity of claims and efficacy of approaches.",
+      "link": "https://dataskeptic.com",
+      "keywords": "datamining datascience machinelearning science skepticism statistics Science Technology Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 7, 17]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 81,
+    "fields": {
+      "rss": "https://anchor.fm/s/cc6cbd4/podcast/rss",
+      "title": "Cryptids Decrypted",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/cryptids-decrypted/id1473505510?uo=4",
+      "cover_image": null,
+      "description": "Cryptids Decrypted is a podcast about diving into the research surrounding creatures from the fringe of reality and the people dedicated to studying them. The host, Ashton Macaulay is an expert in fictional accounts of mythical creatures and aims to examine all sides of cryptozoology from skepticism to full on believers. \n\nIf you want to support Cryptids Decrypted, share the episode with your friends and rate us wherever you listen! Thanks! Support this podcast: <a href=\"https://anchor.fm/cryptids-decrypted/support\" rel=\"payment\">https://anchor.fm/cryptids-decrypted/support</a>",
+      "link": "macashton.com",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 82,
+    "fields": {
+      "rss": "https://feeds.simplecast.com/dLRotFGk",
+      "title": "Developer Tea",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/developer-tea/id955596067?uo=4",
+      "cover_image": null,
+      "description": "Developer Tea exists to help driven developers connect to their ultimate purpose and excel at their work so that they can positively impact the people they influence.\n\nWith over 13 million downloads to date, Developer Tea  is a short podcast hosted by Jonathan Cutrell (@jcutrell), co-founder of Spec and developer at @Clearbit. We hope you'll take the topics from this podcast and continue the conversation, either online or in person with your peers. Twitter: @developertea :: Email: developertea@gmail.com",
+      "link": "http://www.developertea.com",
+      "keywords": "short podcasts for developers development programming web development Technology Business Careers Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 3, 6, 27]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 83,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/HSW2452741958",
+      "title": "DISGRACELAND",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/disgraceland/id1275172907?uo=4",
+      "cover_image": null,
+      "description": "Murder, infidelity, suicide, arson, addiction, religious cults, drug trafficking; this podcast explores the alleged true crime antics and criminal connections of musicians we love like Jerry Lee Lewis, the Rolling Stones, XXXTentacion, Cardi B, the Grateful Dead, Tupac, Biggie, Amy Winehouse, Bob Marley and more. Why? Because real rock stars are more like feral, narcissistic animals than functioning members of society and that is precisely what makes them so damn entertaining. If you love true crime and you love music, you will love this award winning podcast. Disgraceland is a scripted, single voice narrative storytelling podcast that melds music, true crime, history and transgressive fiction. Disgraceland is not a journalistic podcast. It is an entertainment podcast inspired by true events. Certain dialogue and scenes are sometimes fictionalized for dramatic purposes as they are in most scripted entertainment mediums based on true events. Sources for each episode are available at disgracelandpod.com.",
+      "link": "https://www.disgracelandpod.com/",
+      "keywords": "Music",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [14]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 84,
+    "fields": {
+      "rss": "https://feeds.simplecast.com/WpQaX_cs",
+      "title": "Django Chat",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/django-chat/id1451536459?uo=4",
+      "cover_image": null,
+      "description": "A weekly podcast on the Django Web Framework by William Vincent and Carlton Gibson.",
+      "link": "https://djangochat.com",
+      "keywords": "django django web framework web python programming software developer Technology Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 7]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 85,
+    "fields": {
+      "rss": "https://podcasts.files.bbci.co.uk/p02nq0lx.rss",
+      "title": "The Documentary Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-documentary-podcast/id73802620?uo=4",
+      "cover_image": null,
+      "description": "Download the latest documentaries investigating global developments, issues and affairs.",
+      "link": "http://www.bbc.co.uk/programmes/p02nq0lx",
+      "keywords": "",
+      "last_updated": null,
+      "explicit": false,
+      "categories": []
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 86,
+    "fields": {
+      "rss": "https://feeds.simplecast.com/ETk2QA__",
+      "title": "Does Not Compute",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/does-not-compute/id1048731980?uo=4",
+      "cover_image": null,
+      "description": "A weekly chat about the lives and workflows of modern web developers, hosted by Sean Washington & Friends.",
+      "link": "http://spec.fm/podcasts/does-not-compute",
+      "keywords": "dev development coding programming web technology sean washington spec developer tea design details Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 87,
+    "fields": {
+      "rss": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/5090fbc5-4e0d-4b52-9f28-aa3200e14bba/f75dd646-aa8d-4472-9b9a-aa3200e14bbf/podcast.rss",
+      "title": "The Dream",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-dream/id1435743296?uo=4",
+      "cover_image": null,
+      "description": "In Season 2 we look at a world just as shady and mysterious as MLMs, but one whose promises are at times even more bombastic and unfathomable: WELLNESS. What is it? Who sells it? And will it bring you eternal happiness\u2026and, perhaps, eternal life? Hear more great stories about complicated people from Witness Docs at witnesspodcasts.com.",
+      "link": "https://www.stitcher.com/podcast/stitcher/the-dream",
+      "keywords": "Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 88,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/TheDrunkenTaoistPodcast",
+      "title": "The Drunken Taoist Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-drunken-taoist-podcast/id567232410?uo=4",
+      "cover_image": null,
+      "description": "\"It's about anything that has a heartbeat, that's what it's about\" - Daniele Bolelli.",
+      "link": "http://thedrunkentaoist.com",
+      "keywords": "thedrunkentaoist tdt drunkent drunkentaoist bolelli daniele Society & Culture thedrunkentaoist tdt drunkent drunkentaoist bolelli daniele Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 89,
+    "fields": {
+      "rss": "https://audioboom.com/channels/4954758.rss",
+      "title": "Duncan Trussell Family Hour",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/duncan-trussell-family-hour/id350580455?uo=4",
+      "cover_image": null,
+      "description": "A weekly salon-style supershow, where comedian Duncan Trussell and guests explore the outer reaches of the multiverse. And on April 20th 2020, the Duncan Trussell Family Hour podcast will be coming to Netflix in the form of \"The Midnight Gospel\", created by Duncan Trussell and Pendleton Ward. The adult animated Netflix series is set in a fantastical universe and will use interview clips from the podcast.",
+      "link": "http://www.duncantrussell.com/",
+      "keywords": "Comedy Comedy Interviews Society & Culture Philosophy Religion & Spirituality",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 2, 16, 33, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 90,
+    "fields": {
+      "rss": "http://rss.acast.com/theeasternborder",
+      "title": "The Eastern Border",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-eastern-border/id1070996136?uo=4",
+      "cover_image": null,
+      "description": "A podcast about the politics and the history of the eastern Europe - including, but not limited to the current state of Russia, politics of the EU, history of the USSR and the region in general",
+      "link": "http://theeasternborder.lv/",
+      "keywords": "Society & Culture News History News & Politics",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 91,
+    "fields": {
+      "rss": "https://feeds.simplecast.com/Gd37VcDw",
+      "title": "Full Stack Radio",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/full-stack-radio/id931714873?uo=4",
+      "cover_image": null,
+      "description": "A podcast for developers interested in building great software products. Every episode, Adam Wathan is joined by a guest to talk about everything from product design and user experience to unit testing and system administration.",
+      "link": "http://fullstackradio.com",
+      "keywords": "technology software web development product startup Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 92,
+    "fields": {
+      "rss": "http://functionalnerds.com/feed/podcast/",
+      "title": "The Functional Nerds Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-functional-nerds-podcast/id363420493?uo=4",
+      "cover_image": null,
+      "description": "Functional Nerds is the weekly podcast from author/blogger Patrick Hester and Author/Teacher Tracy Townsend focusing on science fiction and fantasy media: television, film, comics, and new media such as fan films, audio dramas, online animated comics and more, technology, gadgets and all things Apple as well as music and the occasional video game.",
+      "link": "http://functionalnerds.com",
+      "keywords": "Arts Books News Tech News TV & Film",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 15, 20, 21, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 93,
+    "fields": {
+      "rss": "https://feeds.simplecast.com/gvtxUiIf",
+      "title": "Hanselminutes with Scott Hanselman",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/hanselminutes-with-scott-hanselman/id117488860?uo=4",
+      "cover_image": null,
+      "description": "Hanselminutes is Fresh Air for Developers. A weekly commute-time podcast that promotes fresh technology and fresh voices. Talk and Tech for Developers, Life-long Learners, and Technologists.",
+      "link": "https://www.hanselminutes.com",
+      "keywords": "technology talk inclusion web open source diversity discussion space html javascript .net science ai learning education Technology Science Education How To",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 7, 17]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 94,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/harmontown",
+      "title": "Harmontown",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/harmontown/id542228532?uo=4",
+      "cover_image": null,
+      "description": "Self destructive writer Dan Harmon claims he will one day found a colony of like-minded misfits. He\u2019s appointed suit-clad gadabout Jeff Davis as his Comptroller and bearded dreamboat Spencer Crittenden as his Dungeon Master. It\u2019s like a neurotic town hall meeting, often with alcohol and famous people.",
+      "link": "www.starburnsaudio.com",
+      "keywords": "Comedy",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 95,
+    "fields": {
+      "rss": "http://rss.acast.com/historyextra",
+      "title": "History Extra podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/history-extra-podcast/id256580326?uo=4",
+      "cover_image": null,
+      "description": "The latest news from the team behind BBC History Magazine - a popular History magazine. To find out more, visit www.historyextra.com",
+      "link": "http://www.historyextra.com/",
+      "keywords": "History Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 96,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/historyonfire",
+      "title": "History on Fire",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/history-on-fire/id1038514498?uo=4",
+      "cover_image": null,
+      "description": "Where history and epic collide--\"History on Fire\" is a podcast by author and university professor Daniele Bolelli. For more, go to LuminaryPodcasts.com",
+      "link": "http://historyonfirepodcast.com/episodes/",
+      "keywords": "History Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 97,
+    "fields": {
+      "rss": "https://podcasts.files.bbci.co.uk/b006qykl.rss",
+      "title": "In Our Time",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/in-our-time/id73330895?uo=4",
+      "cover_image": null,
+      "description": "Melvyn Bragg and guests discuss the history of ideas",
+      "link": "http://www.bbc.co.uk/programmes/b006qykl",
+      "keywords": "History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 98,
+    "fields": {
+      "rss": "https://podcasts.files.bbci.co.uk/b00snr0w.rss",
+      "title": "The Infinite Monkey Cage",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-infinite-monkey-cage/id343580439?uo=4",
+      "cover_image": null,
+      "description": "Witty, irreverent look at the world through scientists' eyes. With Brian Cox and Robin Ince.",
+      "link": "http://www.bbc.co.uk/programmes/b00snr0w",
+      "keywords": "Science Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 17]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 99,
+    "fields": {
+      "rss": "https://jockopodcast.libsyn.com/rss",
+      "title": "Jocko Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/jocko-podcast/id1070322219?uo=4",
+      "cover_image": null,
+      "description": "Retired Navy SEAL, Jocko Willink and Director, Echo Charles discuss discipline and leadership in business, war, relationships and everyday life.",
+      "link": "http://jockopodcast.com",
+      "keywords": "Business Management & Marketing History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [6, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 100,
+    "fields": {
+      "rss": "https://lpotl.libsyn.com/rss",
+      "title": "Last Podcast On The Left",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/last-podcast-on-the-left/id437299706?uo=4",
+      "cover_image": null,
+      "description": "The Last Podcast On The Left covers all the horrors our world has to offer both imagined and real, from demons and slashers to cults and serial killers, The Last Podcast is guaranteed to satisfy your blood lust.",
+      "link": "https://lpotl.libsyn.com/website",
+      "keywords": "Comedy Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 2]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 101,
+    "fields": {
+      "rss": "https://www.jupiterbroadcasting.com/feeds/lashd.xml",
+      "title": "The Linux Action Show! HD",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-linux-action-show-hd/id505494738?uo=4",
+      "cover_image": null,
+      "description": "Video versions of The Linux Action Show! A show that covers everything geeks care about in the computer industry. Get a solid dose of Linux, gadgets, news events and much more!",
+      "link": "http://www.jupiterbroadcasting.com",
+      "keywords": "Linux Tips tricks howto Mac Windows Tech Geek Technology Software How-To Gadgets Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 102,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/lore",
+      "title": "Lore",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/lore/id978052928?uo=4",
+      "cover_image": null,
+      "description": "Lore is a bi-weekly podcast (as well as a TV show and book series) about dark historical tales. Each episode explores the mysterious creatures, tragic events, and unusual places that fill the pages of history. Because sometimes the truth is more frightening than fiction.",
+      "link": "http://www.lorepodcast.com",
+      "keywords": "History Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 103,
+    "fields": {
+      "rss": "https://mixergy.com/?feed=mixergy_feed&rss_source=itunes&",
+      "title": "Recession-Proof Startups - Mixergy",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/recession-proof-startups-mixergy/id348690336?uo=4",
+      "cover_image": null,
+      "description": "Andrew asks challenging questions, which leads to real stories behind how startups made it.",
+      "link": "https://mixergy.com",
+      "keywords": "startups ambition improvement mix energy synergy money growth entrepreneur business tips motivation 581719 Business Management & Marketing Education Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 6, 7]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 104,
+    "fields": {
+      "rss": "https://feeds.lawson.media/moonshot/",
+      "title": "Moonshot",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/moonshot/id1142157485?uo=4",
+      "cover_image": null,
+      "description": "<p>Explore the world's biggest ideas and the people making them happen. Are you ready for self-driving cars, jetpacks, 3D printed food, or a trip to Mars? Moonshot talks to the people who are at the forefront of all this rapid change to find out what the future of humanity might actually look like. Hosted by Kristofor Lawson and Andrew Moon.</p>",
+      "link": "http://moonshot.audio/",
+      "keywords": "Technology Business News Tech News innovation startups",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 6, 15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 105,
+    "fields": {
+      "rss": "http://feeds.feedburner.com/themothpodcast",
+      "title": "The Moth",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-moth/id275699983?uo=4",
+      "cover_image": null,
+      "description": "Since its launch in 1997, The Moth has presented thousands of true stories, told live and without notes, to standing-room-only crowds worldwide. Moth storytellers stand alone, under a spotlight, with only a microphone and a roomful of strangers. The storyteller and the audience embark on a high-wire act of shared experience which is both terrifying and exhilarating. Since 2008, The Moth podcast has featured many of our favorite stories told live on Moth stages around the country. For information on all of our programs and live events, visit themoth.org.",
+      "link": "http://themoth.org/",
+      "keywords": "Arts Performing Arts Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 25]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 106,
+    "fields": {
+      "rss": "https://mythpodcast.libsyn.com/rss",
+      "title": "Myths and Legends",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/myths-and-legends/id990897842?uo=4",
+      "cover_image": null,
+      "description": "Jason Weiser tells stories from myths, legends, and folklore that have shaped cultures throughout history. Some, like the stories of Aladdin, King Arthur, and Hercules are stories you think you know, but with surprising origins. Others are stories you might not have heard, but really should. All the stories are sourced from world folklore, but retold for modern ears.\n\nThese are stories of wizards, knights, Vikings, dragons, princesses, and kings from the time when the world beyond the map was a dangerous and wonderful place.",
+      "link": "http://www.mythpodcast.com",
+      "keywords": "folklore legends mythology storytelling Arts Books History Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 7, 11, 21]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 107,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/thepitch",
+      "title": "The Pitch",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-pitch/id1008577710?uo=4",
+      "cover_image": null,
+      "description": "Where real entrepreneurs pitch to real investors\u2014for real money. The Pitch takes you behind closed doors to the critical moment when aspiring entrepreneurs put it all on the line. While it offers a glimpse into the high-stakes world of venture capital, it\u2019s really a show about human relationships: how people sell their ideas, what makes investors tick, and how these initial conversations can bloom into business deals\u2014or die on the vine. Hosted by Josh Muccio.",
+      "link": "https://gimletmedia.com/shows/the-pitch",
+      "keywords": "Business Entrepreneurship Education How To Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 6, 7, 28]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 109,
+    "fields": {
+      "rss": "https://www.podcastinit.com/feed/mp3/",
+      "title": "The Python Podcast.__init__",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-python-podcast-init/id981834425?uo=4",
+      "cover_image": null,
+      "description": "The weekly podcast about the Python programming language, its ecosystem, and its community. Tune in for engaging, educational, and technical discussions about the broad range of industries, individuals, and applications that rely on Python.",
+      "link": "https://www.pythonpodcast.com",
+      "keywords": "Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 110,
+    "fields": {
+      "rss": "https://pythonbytes.fm/episodes/rss",
+      "title": "Python Bytes",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/python-bytes/id1173690032?uo=4",
+      "cover_image": null,
+      "description": "Python Bytes is a weekly podcast hosted by Michael Kennedy and\n            Brian Okken. The show is a short discussion on the headlines and noteworthy news\n            in the Python, developer, and data science space.",
+      "link": "https://pythonbytes.fm/",
+      "keywords": "Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 111,
+    "fields": {
+      "rss": "https://www.spreaker.com/ihr/show/2492258/episodes/feed-passthrough",
+      "title": "Query & Schultz Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/query-schultz-podcast/id1253577906?uo=4",
+      "cover_image": null,
+      "description": "A show about sports... mostly.",
+      "link": "https://www.iheart.com/podcast/139-Query-and-Schultz-27089669",
+      "keywords": "Sports Sports",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [18]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 112,
+    "fields": {
+      "rss": "https://feeds.theincomparable.com/randomtrek",
+      "title": "Random Trek",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/random-trek/id883813961?uo=4",
+      "cover_image": null,
+      "description": "Scott McNulty discusses a randomly selected episode of \u201cStar Trek\u201d \u2014 all series, all seasons \u2014 with a non-random guest.",
+      "link": "https://www.theincomparable.com/randomtrek/",
+      "keywords": "TV & Film TV Reviews",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [20, 111]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 113,
+    "fields": {
+      "rss": "https://podcast.posttv.com/itunes/retropod.xml",
+      "title": "Retropod",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/retropod/id1342503128?uo=4",
+      "cover_image": null,
+      "description": "Retropod is a show for history lovers, featuring stories about the past, rediscovered. Host Mike Rosenwald introduces you to history\u2019s most colorful characters - forgotten heroes, overlooked villains, dreamers, explorers, world changers. Available every weekday morning.",
+      "link": "https://www.washingtonpost.com/podcasts/retropod",
+      "keywords": "History Kids & Family Education for Kids",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [11, 12, 49]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 114,
+    "fields": {
+      "rss": "https://feeds.transistor.fm/rework",
+      "title": "Rework",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/rework/id1264193508?uo=4",
+      "cover_image": null,
+      "description": "A podcast by Basecamp about the better way to work and run your business. We bring you stories and unconventional wisdom from Basecamp\u2019s co-founders and other business owners.",
+      "link": "https://rework.fm",
+      "keywords": "Business Management entrepreneur technology business design small business",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [6]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 115,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/TPG7026166836",
+      "title": "Rocketship.fm",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/rocketship-fm/id808014240?uo=4",
+      "cover_image": null,
+      "description": "Essential listening for entrepreneurs, product managers and anyone working in tech today. We break down the concepts you need to know, from Product Management to Growth, Sales to Funding, we'll bring you stories that will inspire and insights that will change the way you think about product and business. Rocketship.fm, produced in partnership with Product Collective, inspires hundreds of thousands of entrepreneurs, developers, marketers, product people, and designers each month. Join us as we dive into everything from product management to growth, culture to sales and everything in between. Rocketship.fm has been featured in Forbes, Huffington Post, Inc, Entrepreneur and many more business publications as a top business podcast year after year.",
+      "link": "http://rocketship.fm/",
+      "keywords": "Business Management Entrepreneurship",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [6, 28]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 116,
+    "fields": {
+      "rss": "https://feeds.npr.org/510324/podcast.xml",
+      "title": "Rough Translation",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/rough-translation/id1268047665?uo=4",
+      "cover_image": null,
+      "description": "How are the things we're talking about being talked about somewhere else in the world? Gregory Warner tells stories that follow familiar conversations into unfamiliar territory. At a time when the world seems small but it's as hard as ever to escape our echo chambers, Rough Translation takes you places.",
+      "link": "",
+      "keywords": "News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 117,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/HSW5433847780",
+      "title": "The Second Oil Age",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-second-oil-age/id1482302167?uo=4",
+      "cover_image": null,
+      "description": "When an oil executive goes missing aboard the deep-sea Atlas Station, the company sends agent Syn\u00f8ve Pan down for answers \u2014 and she\u2019s just the woman to get them. Welcome to the Second Oil Age: a sci-fi podcast that transports listeners to a post\u2013energy-crisis world in which humanity\u2019s thirst for oil is satisfied through a bargain with a mysterious deep-sea species. Binge the entire season now!",
+      "link": null,
+      "keywords": "Fiction Science Fiction Arts Performing Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 8, 25, 42]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 119,
+    "fields": {
+      "rss": "http://feed.songexploder.net/SongExploder",
+      "title": "Song Exploder",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/song-exploder/id788236947?uo=4",
+      "cover_image": null,
+      "description": "Song Exploder is a podcast where musicians take apart their songs, and piece by piece, tell the story of how they were made. Each episode features an artist discussing a song of theirs, breaking down the sounds and ideas that went into the writing and recording. Hosted and produced by Hrishikesh Hirway.",
+      "link": "http://www.songexploder.net",
+      "keywords": "Music Music",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [14]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 120,
+    "fields": {
+      "rss": "https://audioboom.com/channels/4634320.rss",
+      "title": "SpyCast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/spycast/id201680433?uo=4",
+      "cover_image": null,
+      "description": "Each week, the International Spy Museum will offer a new SpyCast featuring interviews and programs with ex-spies, intelligence experts, and espionage scholars. The SpyCast is hosted by Dr. Vince Houghton, historian and curator at the International Spy Museum. Dr. Houghton specializes in intelligence, diplomatic, and military history, with expertise in the late-WWII and early-Cold War eras. The International Spy Museum in Washington, DC is the only public museum in the U.S. solely dedicated to espionage.",
+      "link": "https://audioboom.com/channel/spycast",
+      "keywords": "History News Education",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [7, 11, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 121,
+    "fields": {
+      "rss": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/43816ad6-9ef9-4bd5-9694-aadc001411b2/808b901f-5d31-4eb8-91a6-aadc001411c0/podcast.rss",
+      "title": "StarTalk Radio",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/startalk-radio/id325404506?uo=4",
+      "cover_image": null,
+      "description": "Science, pop culture and comedy collide on StarTalk Radio! Astrophysicist and Hayden Planetarium director Neil deGrasse Tyson, his comic co-hosts, guest celebrities and scientists discuss astronomy, physics, and everything else about life in the universe. Keep Looking Up! New episodes premiere Friday nights at 7pm ET.",
+      "link": "https://www.startalkradio.net/?sfid=22493&_sft_category=startalk-radio",
+      "keywords": "Science",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [17]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 122,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/startup",
+      "title": "StartUp Podcast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/startup-podcast/id913805339?uo=4",
+      "cover_image": null,
+      "description": "A series about what it's really like to start a business.",
+      "link": "https://www.gimletmedia.com/startup",
+      "keywords": "Business Entrepreneurship Society & Culture Education How To",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 6, 7, 28]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 123,
+    "fields": {
+      "rss": "http://www.tested.com/podcast-xml/still-untitled-the-adam-savage-project/",
+      "title": "Still Untitled: The Adam Savage Project",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/still-untitled-the-adam-savage-project/id586730504?uo=4",
+      "cover_image": null,
+      "description": "Posted on Tuesdays, Norm and Will discuss topics of interest with Adam--nothing is off-limits! Still Untitled covers everything from hot-button issues within the maker community to experiences from Adam's life to questions from the audience. Enjoy!",
+      "link": "http://www.tested.com/still-untitled-the-adam-savage-project/",
+      "keywords": "Technology Technology Games & Hobbies Games & Hobbies TV & Film TV & Film Still Untitled Adam Savage The Adam Savage Project Mythbusters props therpf movies star wars indiana jones will smith norman chan tested.com tested this is only a test Still Untitled Adam Savage The Adam Savage Project Mythbusters props therpf movies star wars indiana jones will smith norman chan tested.com tested this is only a test",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 20]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 124,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/stufftoblowyourmind",
+      "title": "Stuff To Blow Your Mind",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/stuff-to-blow-your-mind/id350359306?uo=4",
+      "cover_image": null,
+      "description": "Deep in the back of your mind, you\u2019ve always had the feeling that there\u2019s something strange about reality. There is. Join Robert Lamb and Joe McCormick as they examine neurological quandaries, cosmic mysteries, evolutionary marvels and our transhuman future.",
+      "link": "https://www.howstuffworks.com",
+      "keywords": "Science Life Sciences Natural Sciences Social Sciences",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [17, 81, 83, 86]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 125,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/stuffyoumissedinhistoryclass",
+      "title": "Stuff You Missed in History Class",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/stuff-you-missed-in-history-class/id283605519?uo=4",
+      "cover_image": null,
+      "description": "Join Holly and Tracy as they bring you the greatest and strangest Stuff You Missed In History Class in this podcast by iHeartRadio.",
+      "link": "https://www.missedinhistory.com/",
+      "keywords": "History Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 11]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 127,
+    "fields": {
+      "rss": "https://feed.syntax.fm/rss",
+      "title": "Syntax - Tasty Web Development Treats",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/syntax-tasty-web-development-treats/id1253186678?uo=4",
+      "cover_image": null,
+      "description": "Full Stack Developers Wes Bos and Scott Tolinski dive deep into web development topics, explaining how they work and talking about their own experiences. They cover from JavaScript frameworks like React, to the latest advancements in CSS to simplifying web tooling.",
+      "link": "https://syntax.fm",
+      "keywords": "css html html5 javascript js webdevelopment Technology News Tech News Business Careers",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 6, 15, 27, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 128,
+    "fields": {
+      "rss": "https://tangent.libsyn.com/rss",
+      "title": "Tangentially Speaking with Christopher Ryan",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/tangentially-speaking-with-christopher-ryan/id566908883?uo=4",
+      "cover_image": null,
+      "description": "Ever wanted to hang with a comedian, dominatrix, health guru, bank robber, author, or Italian prince? Well, here's your chance. Tangentially Speaking is dedicated to the idea that good conversation is organic, uncensored, revelatory, and free to go down unexpected paths.",
+      "link": "http://chrisryanphd.com/tangentially-speaking/",
+      "keywords": "christopherryan sexatdawn tangentiallyspeaking Arts Society & Culture",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 5]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 129,
+    "fields": {
+      "rss": "https://anchor.fm/s/b78633c/podcast/rss",
+      "title": "Relax Music",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/relax-music/id1499230632?uo=4",
+      "cover_image": null,
+      "description": "Relax music is one of the important factors in our life that can relax and calm",
+      "link": "https://anchor.fm/relax-music",
+      "keywords": "Music",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [14]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 131,
+    "fields": {
+      "rss": "http://www.spreaker.com/show/2176105/episodes/feed",
+      "title": "Those Conspiracy Guys",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/those-conspiracy-guys/id917288490?uo=4",
+      "cover_image": null,
+      "description": "Those Conspiracy Guys is an Irish comedy podcast where we discuss all types and genres of conspiracy theories, paranormal happenings and true crime from Atlantean myths to Zapruder films; from ghosts and demons to alien abductions; from werewolves and vampires to CIA assassins and Russian spies. We have a big episode every two weeks, a True Crime show every other week and loads of other stuff every so often and you can head over to the website for details.<br /><br />Our aim is to cast a light into the dark corners of corruption, conspiracy and suppression. We want to scour a web laden with tales of political intrigue, extra-terrestrials, rogue governments, secret societies, the paranormal, murder, mayhem, deceit, destruction, the cryptozoological and the psycho-pharmacological and present the fable of the 21st century: The Conspiracy Theory.<br /><br />It's a Podcast that asks the unanswered questions of the wildest mysteries and weirdest truths from throughout our history. Taking universally available information from all around the internet and beyond, we'll provide a funny and friendly resource for all your conspiracy needs.<br /><br />With weekly Podcast episodes and our constantly updated website Those Conspiracy Guys want to bring some truth to your inquisitive ears.<br /><br />No topic is too delicate or outlandish and we want to make it palatable for everyone from beginners to experts. From the average guy on the street to a die hard conspiracy nut, we want to bring you the great conspiracies of time immemorial to the ones unfolding around us everyday. We avoid the tinfoil hats and poorly crafted sci-fi stories that litter the internet, to bring you conspiracies that you have heard about and more that you haven\u2019t. <br /><br />We are gleaning information from a seemingly insurmountable wall of waffle and running our common sense detector over some of the misinformation that lies in the stagnant swamp of the web.<br /><br />We are but 'humble' Irish people, with a propensity for critical thinking and common sense, and a host of friends with the same mindset, but we all have a third eye squinted open for the strangeness of truth and are all tireless in the never ending quest for the opportunity to have the craic.<br /><br />Have you ever watched the news and thought \u2018that doesn\u2019t look right?\u2019.<br /><br />Have you ever questioned main stream media or questioned what \u2018main stream\u2019 even means?<br /><br />Have you ever agonised over the official version of events that seemed like they were the script of a bad movie?<br /><br />Then this is the podcast for you. We analyse easily available material and cast a critical eye over it; discussing the validity of its sources and its credibility as fact. Sometimes we believe it, sometimes we don\u2019t, but you can make your own mind up because we are just a bunch of people with some free time and questionable search histories. <br /><br />You can support our show by visiting <a href=\"http://www.patreon.com/thoseconspiracyguys\" rel=\"noopener\">www.patreon.com/thoseconspiracyguys</a> and donating. You will get access to awesome exclusive content and be able to interact with us like you're the favourite in the family!",
+      "keywords": "Society & Culture Comedy True Crime History",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [1, 2, 11, 19]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 132,
+    "fields": {
+      "rss": "https://feeds.yle.fi/areena/v1/series/1-1403833.rss",
+      "title": "Tiedeykk\u00f6nen",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/tiedeykk%C3%B6nen/id564706788?uo=4",
+      "cover_image": null,
+      "description": "Kuuntele, ymm\u00e4rr\u00e4 - oivalla. Mit\u00e4 tieteess\u00e4 tapahtuu nyt ja mihin olemme menossa? Kertomuksia maailmankaikkeuden \u00e4\u00e4rist\u00e4 ihmiskehon sy\u00f6vereihin.\n\nToimittajina Pirjo Koskinen, Leena Mattila, Teija Peltoniemi ja Riikka Warras. \n\nOhjelmaa avustavat tiedetoimittajat Mari Heikkil\u00e4, Sisko Loikkanen, Jari M\u00e4kinen ja Ville Talola. \n\nTuottajana Maija Kaipainen.",
+      "link": "https://areena.yle.fi/1-1403833",
+      "keywords": "Science",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [17]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 133,
+    "fields": {
+      "rss": "https://rss.art19.com/tim-ferriss-show",
+      "title": "The Tim Ferriss Show",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-tim-ferriss-show/id863897795?uo=4",
+      "cover_image": null,
+      "description": "Tim Ferriss is a self-experimenter and bestselling author, best known for The 4-Hour Workweek, which has been translated into 40+ languages.  Newsweek calls him \"the world's best human guinea pig,\" and The New York Times calls him \"a cross between Jack Welch and a Buddhist monk.\"  In this show, he deconstructs world-class performers from eclectic areas (investing, chess, pro sports, etc.), digging deep to find the tools, tactics, and tricks that listeners can use.",
+      "link": "https://tim.blog/podcast",
+      "keywords": "Business Entrepreneurship Education startups Longform Interviews Productivity Timothy Ferriss Show Timothy Ferriss Lifestyle Design Tim Ferris Tim Ferriss The 4-Hour Workweek Tools of Titans The Tim Ferriss Show",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [6, 7, 28]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 134,
+    "fields": {
+      "rss": "https://feeds.fireside.fm/usererror/rss",
+      "title": "User Error",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/user-error/id1145648639?uo=4",
+      "cover_image": null,
+      "description": "A show about life, Linux, the universe, and everything in between.",
+      "link": "https://error.show",
+      "keywords": "Technology",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 135,
+    "fields": {
+      "rss": "https://latenightlinux.com/feed/mp3",
+      "title": "Late Night Linux",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/late-night-linux/id1189978971?uo=4",
+      "cover_image": null,
+      "description": "Late Night Linux is a podcast that takes a look at what's happening with Linux and the wider tech industry. Every two weeks, Joe, F\u00e9lim, Graham and Will discuss the latest news and releases, and the broader issues and trends in the world of free and open source software. Expect drinking, swearing, strong opinions and Will being told to shut up about Ubuntu.",
+      "link": "https://latenightlinux.com",
+      "keywords": "News Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 136,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/vergecast",
+      "title": "The Vergecast",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-vergecast/id430333725?uo=4",
+      "cover_image": null,
+      "description": "Hello! This is The Vergecast, the flagship podcast of The Verge... and your life. Every Friday, Nilay Patel and Dieter Bohn make sense of the week's tech news with help from our wide-ranging staff. And on Tuesdays, Nilay hosts in-depth, one-on-one interviews with major technology leaders. Join us every week for a fun, deeply nerdy, often off-the-rails conversation about what's happening now (and next) in technology and gadgets.",
+      "link": "https://www.theverge.com/the-vergecast",
+      "keywords": "Technology News Tech News",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [3, 15, 70]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 137,
+    "fields": {
+      "rss": "https://feeds.fireside.fm/verybadwizards/rss",
+      "title": "Very Bad Wizards",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/very-bad-wizards/id557975157?uo=4",
+      "cover_image": null,
+      "description": "Very Bad Wizards is a podcast featuring a philosopher (Tamler Sommers) and a psychologist (David Pizarro), who share a love for ethics, pop culture, and cognitive science, and who have a marked inability to distinguish sacred from profane. Each podcast includes discussions of moral philosophy, recent work on moral psychology and neuroscience, and the overlap between the two.",
+      "link": "https://verybadwizards.fireside.fm",
+      "keywords": "Ethics psychology philosophy pop-culture Society & Culture Philosophy Science Social Sciences",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 17, 86, 89]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 138,
+    "fields": {
+      "rss": "https://feeds.megaphone.fm/theweeds",
+      "title": "The Weeds",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/the-weeds/id1042433083?uo=4",
+      "cover_image": null,
+      "description": "In politics, you\u2019re often told not to get lost in the weeds. But we love the weeds! That\u2019s where politics becomes policy \u2013 the stuff that shapes our lives. Every Tuesday and Friday, Matthew Yglesias is joined by Ezra Klein, Dara Lind, Jane Coaston and other Vox voices to dig into the weeds on important national issues, including healthcare, immigration, housing, and everything else that matters. Produced by Vox and the Vox Media Podcast Network.",
+      "link": "https://www.vox.com/the-weeds",
+      "keywords": "News Politics News Commentary Science Social Sciences",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [15, 17, 67, 68, 86]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 139,
+    "fields": {
+      "rss": "https://rss.art19.com/wecrashed",
+      "title": "WeCrashed: The Rise and Fall of WeWork",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/wecrashed-the-rise-and-fall-of-wework/id1494781373?uo=4",
+      "cover_image": null,
+      "description": "<p>The founders of WeWork thought they were on the brink of making history. The company was valued at $47 billion dollars, it was ready for a huge IPO, and its charismatic CEO Adam Neumann thought they were going to change the world. Adam had a prophet-like vision for WeWork that he sold to some of the world\u2019s savviest investors -- but did his vision ever match the company's reality? </p><p>Hosted by David Brown of the hit podcast Business Wars (and former host of NPR's Marketplace), WeCrashed is a six-part series about the rise and fall of WeWork. It\u2019s a story of hope and hubris, big money and bigger screwups, and the lengths people will go to chase \u201cunicorns.\u201d</p><p><br /></p><p><br /></p>",
+      "link": "https://wondery.com/shows/we-crashed/?utm_source=rss",
+      "keywords": "Business Society & Culture News theranos silicon valley we crashed wecrashed stock market ipo we work new york startup real estate tech adam neumann wework",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [2, 6, 15]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 140,
+    "fields": {
+      "rss": "https://whiterocket.podbean.com/feed.xml",
+      "title": "White Rocket Entertainment",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/white-rocket-entertainment/id575464177?uo=4",
+      "cover_image": null,
+      "description": "This channel is the network home to the White Rocket Podcast (creator interviews & movie/TV/comics/book discussion) as well as the Avengers Assemble podcast, the Comics with Normies podcast,, and the Open Wheel racing show.",
+      "link": "https://whiterocket.podbean.com",
+      "keywords": "TV & Film TV & Film Fiction Science Fiction Arts Visual Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 8, 20, 26, 42]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 141,
+    "fields": {
+      "rss": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/aa111a39-d482-40a9-a0eb-aadc0007d4a4/b854fe90-7996-42f5-bbc9-aadc0007d4ae/podcast.rss",
+      "title": "Marvel's Wolverine",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/marvels-wolverine/id1343499710?uo=4",
+      "cover_image": null,
+      "description": "Marvel\u2019s \u201cWolverine: The Lost Trail\u201d is an epic quest that takes place in the Louisiana bayou. Following the events of Marvel\u2019s \u201cWolverine: The Long Night,\u201d Logan (Richard Armitage) returns to New Orleans in search of redemption, only to discover that his ex-lover, Maureen is nowhere to be found. And she's not the only one. Dozens of humans and mutants have gone missing, including the mother of a teenage boy, Marcus Baptiste. With Weapon X in close pursuit, Logan and Marcus must team up and follow a trail of clues that leads them deep into the gothic heart of the bayou, where they encounter biker gangs, Cajun thieves and a world of wonders that defies explanation. It is here that they find Greenhaven -- a refuge run by a powerful mutant named Jason Wyngarde. \n\n\n\nAward-winning comic book author Ben Percy (\u201cThe Dark Net,\u201d \u201cRed Moon\u201d), director/sound designer Brendan Baker (\u201cWolverine: The Long Night\u201d) and associate director/sound designer Chloe Prasinos (\u201cWolverine: The Long Night\u201d) will return for the series, produced by Daniel Fink and Chloe Wilson of Marvel and Jenny Radelet Mast of Stitcher. Learn more at wolverinepodcast.com. Season 1 now available wherever you get your podcasts.",
+      "link": "https://www.wolverinepodcast.com/",
+      "keywords": "Arts Performing Arts",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [5, 25]
+    }
+  },
+  {
+    "model": "podcasts.podcast",
+    "pk": 142,
+    "fields": {
+      "rss": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/da047861-7121-4447-8ccb-ab1a00165c0e/337ad035-d2e9-4942-9e4d-ab1a00165c1c/podcast.rss",
+      "title": "You Are Not So Smart",
+      "pub_date": null,
+      "itunes": "https://podcasts.apple.com/us/podcast/you-are-not-so-smart/id521594713?uo=4",
+      "cover_image": null,
+      "description": "You Are Not So Smart is a show about psychology t\u2026",
+      "link": "http://www.youarenotsosmart.com/",
+      "keywords": "Science",
+      "last_updated": null,
+      "explicit": false,
+      "categories": [17]
+    }
+  }
+]

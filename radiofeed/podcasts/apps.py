@@ -1,5 +1,6 @@
+# Django
 from django.apps import AppConfig
 
 
 class PodcastsConfig(AppConfig):
-    name = 'podcasts'
+    name = "radiofeed.podcasts"

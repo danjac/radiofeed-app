@@ -17,6 +17,7 @@ factory-boy
 future
 gunicorn
 ipython
+Pillow
 psycopg2-binary
 pyopenssl
 pytest
