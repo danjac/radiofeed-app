@@ -1,3 +1,4 @@
+beautifulsoup4
 boto3
 celery
 cryptography>=3.2
@@ -14,6 +15,7 @@ django-silk
 django-storages
 django-widget-tweaks
 factory-boy
+feedparser==6.0.0b3
 future
 gunicorn
 ipython
@@ -26,6 +28,7 @@ pytest-django
 pytest-mock
 pytest-randomly
 pytest-xdist
+python-dateutil
 pytz
 redis
 sentry_sdk
