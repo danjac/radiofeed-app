@@ -1,0 +1,34 @@
+
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>{% translate "Error" %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="turbolinks-cache-control"
+        content="no-cache">
+  {% include "_static.html" %}
+  {% include "_fontawesome.html" %}
+</head>
+
+<body class="h-screen container-lg mx-auto antialiased">
+
+  <header class="bg-gradient-to-b from-indigo-900 to-indigo-700 text-white p-2 md:px-5 mb-6">
+    <a href="/"
+       class="text-xl tracking-tight text-white hover:text-gray-100">{% translate "Home" %}</a>
+  </header>
+  <div class="h-full">
+    <div class="border border-gray-500 mx-auto p-1 md:p-5 w-5/6 md:w-3/4 align-middle text-center">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  {% include "_footer.html" %}
+</body>
+
+</html>
+

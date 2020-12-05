@@ -1,0 +1,26 @@
+@tailwind base;
+
+@tailwind components;
+
+.message {
+  @apply text-white;
+}
+
+.message-debug {
+  @apply bg-gray-600;
+}
+
+.message-info {
+  @apply bg-blue-600;
+}
+.message-success {
+  @apply bg-green-600;
+}
+.message-warning {
+  @apply bg-red-600;
+}
+.message-error {
+  @apply bg-red-600;
+}
+
+@tailwind utilities;

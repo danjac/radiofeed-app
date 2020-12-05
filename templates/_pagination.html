@@ -1,0 +1,26 @@
+
+{% load i18n %}
+{% load pagination %}
+{% if page_obj.has_other_pages %}
+<div class="text-sm flex justify-between {{ css_class|default:"mt-2" }}">
+  <a {% if page_obj.has_previous %}
+     class="block text-indigo-900 hover:text-indigo-700"
+     href="{% pagination_url page_obj.previous_page_number %}"
+     {% else %}
+     class="text-gray-500 pointer-events-none"
+     href="javascript:void(0);"
+     {% endif %}>
+    {% translate "Previous" %}
+  </a>
+  <a {% if page_obj.has_next %}
+     href="{% pagination_url page_obj.next_page_number %}"
+     class="block text-indigo-900 hover:text-indigo-700"
+     {% else %}
+     href="javascript:void(0);"
+     class="text-gray-500 pointer-events-none"
+     {% endif %}>
+    {% translate "Next" %}
+  </a>
+</div>
+{% endif %}
+

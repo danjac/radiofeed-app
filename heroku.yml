@@ -1,0 +1,17 @@
+build:
+  config:
+    DJANGO_SETTINGS_MODULE: radiofeed.config.settings.heroku
+  docker:
+    web: heroku.dockerfile
+    worker: heroku.dockerfile
+
+release:
+  command:
+    - python manage.py migrate
+    # run this after reset migrations
+    # - python manage.py migrate --fake-initial
+  image: web
+
+run:
+  web: gunicorn -b 0.0.0.0:$PORT --workers=1 --max-requests=1000 --max-requests-jitter=50 radiofeed.config.wsgi
+  worker: celery -A radiofeed.config.celery_app worker -l INFO
