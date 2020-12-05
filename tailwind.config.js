@@ -13,6 +13,5 @@ module.exports = {
   variants: {
     textColor: ['responsive', 'hover', 'focus', 'visited'],
   },
-
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };
