@@ -49,6 +49,7 @@ ROOT_URLCONF = "radiofeed.config.urls"
 WSGI_APPLICATION = "radiofeed.config.wsgi.application"
 
 LOCAL_APPS = [
+    "radiofeed.episodes.apps.EpisodesConfig",
     "radiofeed.podcasts.apps.PodcastsConfig",
     "radiofeed.users.apps.UsersConfig",
 ]
