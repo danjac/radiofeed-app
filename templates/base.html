@@ -87,7 +87,7 @@
             </a>
           </li>
           <li class="pb-3">
-            <a href=""
+            <a href="{% url 'episodes:episode_list' %}"
                class="flex items-center">
               <i class="fa fa-satellite mr-3"></i>
               New Releases
@@ -109,8 +109,11 @@
     </div>
   </div>
 
-  <div class="fixed bottom-0 z-10 bg-black text-white w-full p-3">
-    Player goes here...
+  <div id="player"
+       data-turbolinks-permanent>
+    <div class="fixed bottom-0 z-10 bg-black text-white w-full p-3">
+      Player goes here...
+    </div>
   </div>
 
   {% include "_footer.html" %}

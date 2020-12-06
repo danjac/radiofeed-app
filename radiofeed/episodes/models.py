@@ -45,7 +45,7 @@ class Episode(models.Model):
         return self.title or self.guid
 
     def get_absolute_url(self):
-        return reverse("episode", args=[self.id, self.slug])
+        return reverse("episodes:episode_detail", args=[self.id, self.slug])
 
     @property
     def slug(self):

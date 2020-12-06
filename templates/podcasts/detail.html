@@ -10,7 +10,7 @@
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
     <img src="{{ img.url }}"
-         alt="Laurent Gerra"
+         alt="{{ podcast.title }}"
          class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32"
          width="32"
          height="32">
@@ -22,8 +22,8 @@
         <h3 class="font-semibold text-gray-700 mb-1 mr-2">{{ podcast.authors }}</h3>
       </div>
 
-      <div class="font-semibold text-gray-700 text-sm flex flex-wrap items-center mb-3">
-        <div class="inline-block mr-2">{{ podcast.pubdate|date }}</div>
+      <div class="font-semibold text-gray-700 flex flex-wrap items-center mb-3">
+        <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
       </div>
 
       <div class="flex items-center">
@@ -31,10 +31,20 @@
       </div>
 
     </div>
+
   </div>
 
   <div class="markdown my-3">
     {{ podcast.description|linebreaksbr }}
+  </div>
+  <div>
+    {% for category in podcast.categories.all %}
+    <a class="inline-block bg-indigo-800 hover:bg-indigo-600 text-white px-2 py-1 rounded mr-3 text-sm"
+       href="">
+      <i class="fa fa-tag mr-2"></i>
+      {{ category.name }}
+    </a>
+    {% endfor %}
   </div>
 
 </div>

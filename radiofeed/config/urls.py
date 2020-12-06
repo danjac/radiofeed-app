@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
+    path("episodes/", include("radiofeed.episodes.urls")),
     path("account/", include("allauth.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
