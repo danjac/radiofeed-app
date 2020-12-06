@@ -19,10 +19,8 @@ export default class extends Controller {
     this.playingValue = true;
     this.dispatch('play', {
       episode: this.idValue,
-      urls: {
-        play: this.playUrlValue,
-        stop: this.stopUrlValue,
-      },
+      playUrl: this.playUrlValue,
+      stopUrl: this.stopUrlValue,
     });
   }
 

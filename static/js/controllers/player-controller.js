@@ -14,12 +14,12 @@ export default class extends Controller {
   }
 
   async open(event) {
-    const { urls, episode } = event.detail;
+    const { stopUrl, playUrl, episode } = event.detail;
 
     this.episodeValue = episode;
-    this.stopUrlValue = urls.stop;
+    this.stopUrlValue = stopUrl;
 
-    const response = await axios.post(urls.play);
+    const response = await axios.post(playUrl);
     this.element.innerHTML = response.data;
   }
 

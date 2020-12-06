@@ -2,17 +2,19 @@ import axios from 'axios';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  // handles playback stuff
+  // audio playback controls
   static targets = [
     'audio',
+    'buffer',
     'counter',
-    'playButton',
+    'indicator',
     'pauseButton',
+    'playButton',
     'progress',
     'progressBar',
-    'buffer',
-    'indicator',
   ];
+
+  static classes = ['progress', 'buffer', 'progressPaused', 'bufferPaused'];
 
   static values = {
     episode: String,
@@ -23,7 +25,6 @@ export default class extends Controller {
   };
 
   initialize() {
-    // TBD : value to determine whether to play immediately or not
     this.audioTarget.currentTime = this.currentTimeValue;
     try {
       this.audioTarget.play();
@@ -147,9 +148,27 @@ export default class extends Controller {
       if (this.pausedValue) {
         this.pauseButtonTarget.classList.add('hidden');
         this.playButtonTarget.classList.remove('hidden');
+
+        this.indicatorTarget.classList.remove(this.progressClass);
+        this.indicatorTarget.classList.add(this.progressPausedClass);
+
+        this.progressTarget.classList.remove(this.progressClass);
+        this.progressTarget.classList.add(this.progressPausedClass);
+
+        this.bufferTarget.classList.remove(this.bufferClass);
+        this.bufferTarget.classList.add(this.bufferPausedClass);
       } else {
         this.pauseButtonTarget.classList.remove('hidden');
         this.playButtonTarget.classList.add('hidden');
+
+        this.indicatorTarget.classList.add(this.progressClass);
+        this.indicatorTarget.classList.remove(this.progressPausedClass);
+
+        this.progressTarget.classList.add(this.progressClass);
+        this.progressTarget.classList.remove(this.progressPausedClass);
+
+        this.bufferTarget.classList.add(this.bufferClass);
+        this.bufferTarget.classList.remove(this.bufferPausedClass);
       }
     }
   }
