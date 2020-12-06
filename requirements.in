@@ -1,4 +1,5 @@
 beautifulsoup4
+bleach
 boto3
 celery
 cryptography>=3.2

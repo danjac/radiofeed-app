@@ -34,7 +34,7 @@
           <div title="Date Published"
                class="mr-2"> {{ episode.pub_date|date }} </div>
           <div title="Duration"
-               class="mr-2"><span> {{ episode.duration }} </span></div>
+               class="mr-2"><span> {{ episode.duration|format_duration }} </span></div>
         </div>
       </div>
     </div>

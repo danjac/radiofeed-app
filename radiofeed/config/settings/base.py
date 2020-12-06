@@ -198,7 +198,10 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {"pagination": "radiofeed.common.pagination.templatetags"},
+            "libraries": {
+                "pagination": "radiofeed.common.pagination.templatetags",
+                "html": "radiofeed.common.html.templatetags",
+            },
         },
     }
 ]

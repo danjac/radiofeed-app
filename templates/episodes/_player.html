@@ -1,9 +1,9 @@
-{% load thumbnail %}
+{% load thumbnail episodes %}
 {% if episode %}
 {% with podcast=episode.podcast %}
-<div class="fixed bottom-0 z-10 bg-black text-white w-full p-3"
+<div class="fixed bottom-0 z-10 bg-black text-white w-full p-1 font-semibold"
      data-controller="audio"
-     data-audio-duration-value="{{ episode.get_duration_in_seconds }}"
+     data-audio-duration-value="{{ episode.duration|duration_in_seconds }}"
      data-audio-current-time-value="{{ current_time|default:0 }}"
      data-audio-progress-url-value="{% url 'episodes:episode_progress' episode.id %}">
 
@@ -13,19 +13,20 @@
          data-action="progress->audio#progress timeupdate->audio#timeUpdate end->player#stop"></audio>
   <div class="mb-2 md:hidden pr-1">
     <a href="{{ episode.get_absolute_url }}"
-       class=""
        title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
 
   <div class="flex items-stretch">
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-    <img class="object-cover block mr-4 cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center"
-         title="{{ podcast.title }}"
-         src="{{ img.url }}"
-         role="link"
-         tag="img"
-         width="30"
-         height="30">
+    <a href="{{ podcast.get_absolute_url }}" class="mr-4 self-center">
+      <img class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center"
+           title="{{ podcast.title }}"
+           src="{{ img.url }}"
+           role="link"
+           tag="img"
+           width="30"
+           height="30">
+    </a>
     {% endthumbnail %}
 
     <div class="w-full self-start">
@@ -85,8 +86,6 @@
 
             </button>
 
-
-
           </div>
 
         </div>
@@ -94,6 +93,7 @@
 
       <div class="flex items-center w-full justify-between">
         <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center cursor-pointer"
+             data-audio-target="progressBar"
              title="0">
           <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
                data-audio-target="indicator"

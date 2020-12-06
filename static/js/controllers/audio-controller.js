@@ -9,6 +9,7 @@ export default class extends Controller {
     'playButton',
     'pauseButton',
     'progress',
+    'progressBar',
     'buffer',
     'indicator',
   ];
@@ -22,10 +23,13 @@ export default class extends Controller {
   };
 
   initialize() {
-    console.log('current time at initialization', this.currentTimeValue);
-    this.audioTarget.currentTime = this.currentTimeValue;
     // TBD : value to determine whether to play immediately or not
-    this.audioTarget.play();
+    this.audioTarget.currentTime = this.currentTimeValue;
+    try {
+      this.audioTarget.play();
+    } catch (e) {
+      this.pausedValue = true;
+    }
   }
 
   pause() {
@@ -94,7 +98,7 @@ export default class extends Controller {
   }
 
   getProgressWidth(pcComplete) {
-    const clientWidth = this.element.clientWidth;
+    const clientWidth = this.progressBarTarget.clientWidth;
     let completeWidth = 0;
     if (clientWidth === 0) {
       return 0;
@@ -106,31 +110,12 @@ export default class extends Controller {
   }
 
   getCurrentPostion(pcComplete) {
-    let currentPosition = this.progressTarget.getBoundingClientRect().left - 16;
+    let currentPosition = this.progressBarTarget.getBoundingClientRect().left - 16;
     const width = this.getProgressWidth(pcComplete);
     if (width) {
-      currentPosition += this.element.clientWidth * (width / 100);
+      currentPosition += this.progressBarTarget.clientWidth * (width / 100);
     }
     return currentPosition;
-  }
-
-  pausedValueChanged() {
-    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
-      if (this.pausedValue) {
-        this.pauseButtonTarget.classList.add('hidden');
-        this.playButtonTarget.classList.remove('hidden');
-      } else {
-        this.pauseButtonTarget.classList.remove('hidden');
-        this.playButtonTarget.classList.add('hidden');
-      }
-    }
-  }
-
-  currentTimeValueChanged() {
-    if (this.hasCounterTarget) {
-      this.counterTarget.textContent =
-        '-' + this.formatTime(this.durationValue - this.currentTimeValue);
-    }
   }
 
   sendTimeUpdate() {
@@ -153,5 +138,26 @@ export default class extends Controller {
     return [hours, minutes, seconds]
       .map((t) => t.toString().padStart(2, '0'))
       .join(':');
+  }
+
+  // observers
+
+  pausedValueChanged() {
+    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
+      if (this.pausedValue) {
+        this.pauseButtonTarget.classList.add('hidden');
+        this.playButtonTarget.classList.remove('hidden');
+      } else {
+        this.pauseButtonTarget.classList.remove('hidden');
+        this.playButtonTarget.classList.add('hidden');
+      }
+    }
+  }
+
+  currentTimeValueChanged() {
+    if (this.hasCounterTarget) {
+      this.counterTarget.textContent =
+        '-' + this.formatTime(this.durationValue - this.currentTimeValue);
+    }
   }
 }

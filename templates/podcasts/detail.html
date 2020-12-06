@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load thumbnail pagination %}
+{% load thumbnail pagination html %}
 
 {% block content %}
 <div class="p-2 border border-gray-400 mb-3">
@@ -27,7 +27,20 @@
       </div>
 
       <div class="flex items-center">
-        links go here...
+        {% if podcast.link %}
+        <a href="{{ podcast.link }}"
+           class="text-blue-800 hover:text-blue-600 mr-2"
+           target="_blank"
+           rel="noopener">Website</a>
+        {% endif %}
+        <a href="{{ podcast.rss }}"
+           class="text-blue-800 hover:text-blue-600 mr-2"
+           target="_blank"
+           rel="noopener">RSS</a>
+        <a href="{{ podcast.itunes }}"
+           class="text-blue-800 hover:text-blue-600 mr-2"
+           target="_blank"
+           rel="noopener">iTunes</a>
       </div>
 
     </div>
@@ -35,7 +48,7 @@
   </div>
 
   <div class="markdown my-3">
-    {{ podcast.description|linebreaksbr }}
+    {{ podcast.description|clean_html }}
   </div>
   <div>
     {% for category in podcast.categories.all %}

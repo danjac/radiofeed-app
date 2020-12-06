@@ -12,6 +12,7 @@ autopep8==1.5.4           # via django-silk
 backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
+bleach==3.2.1             # via -r requirements.in
 boto3==1.16.18            # via -r requirements.in
 botocore==1.19.18         # via boto3, s3transfer
 celery==5.0.2             # via -r requirements.in, django-celery-email
@@ -56,7 +57,7 @@ kombu==5.0.2              # via celery
 lxml==4.6.2               # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
 oauthlib==3.1.0           # via requests-oauthlib
-packaging==20.4           # via pytest
+packaging==20.4           # via bleach, pytest
 parso==0.7.1              # via jedi
 pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
@@ -88,7 +89,7 @@ requests==2.25.0          # via django-allauth, django-anymail, django-silk, req
 s3transfer==0.3.3         # via boto3
 sentry-sdk==0.19.4        # via -r requirements.in
 sgmllib3k==1.0.0          # via feedparser
-six==1.15.0               # via click-repl, cryptography, packaging, pyopenssl, python-dateutil
+six==1.15.0               # via bleach, click-repl, cryptography, packaging, pyopenssl, python-dateutil
 sorl-thumbnail==12.7.0    # via -r requirements.in
 soupsieve==2.0.1          # via beautifulsoup4
 sqlparse==0.4.1           # via django, django-silk
@@ -99,6 +100,7 @@ unidecode==1.1.1          # via -r requirements.in
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
 vine==5.0.0               # via amqp, celery
 wcwidth==0.2.5            # via prompt-toolkit
+webencodings==0.5.1       # via bleach
 werkzeug==1.0.1           # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
