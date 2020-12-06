@@ -15,10 +15,11 @@ django-silk
 django-storages
 django-widget-tweaks
 factory-boy
-feedparser==6.0.0b3
+feedparser==6.0.2
 future
 gunicorn
 ipython
+lxml
 Pillow
 psycopg2-binary
 pyopenssl

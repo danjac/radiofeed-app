@@ -22,7 +22,7 @@ from dateutil import parser as date_parser
 from radiofeed.episodes.models import Episode
 
 # Local
-from ..models import Category
+from .models import Category
 
 MAX_IMAGE_SIZE = 2514114  # approx 2.5 MB
 
@@ -356,7 +356,6 @@ class RssParser:
             self.podcast.explicit = bool(feed.get("itunes_explicit", False))
 
             image_url = None
-            has_new_image = False
 
             # try itunes image first
             soup = BeautifulSoup(response.content, "lxml")
@@ -370,12 +369,9 @@ class RssParser:
                 except KeyError:
                     pass
 
-            if image_url and image_url != self.podcast.image_url:
-                self.podcast.image_url = image_url
-
-                if img := fetch_image_from_url(image_url):
-                    self.podcast.image = img
-                    has_new_image = True
+            if image_url and (img := fetch_image_from_url(image_url)):
+                print(image_url)
+                self.podcast.cover_image = img
 
             self.podcast.link = feed.get("link")
 
@@ -401,9 +397,6 @@ class RssParser:
             self.podcast.authors = ", ".join(authors)
 
             self.podcast.save()
-
-            if has_new_image:
-                self.podcast.pregenerate_thumbnail()
 
             self.podcast.categories.set(categories)
 
@@ -519,7 +512,8 @@ def fetch_image_from_url(image_url):
             )
 
         return ImageFile(io.BytesIO(resp.content), name=filename)
-    except (requests.RequestException, KeyError, ValueError):
+    except (requests.RequestException, KeyError, ValueError) as e:
+        print(e)
         return None
 
 
