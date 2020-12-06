@@ -1,7 +1,5 @@
-from django.db import models
-
-
 # Django
+from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -71,7 +69,7 @@ class Podcast(models.Model):
         return self.title or self.rss
 
     def get_absolute_url(self):
-        return reverse("podcast", args=[self.id, self.slug])
+        return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
 
     @property
     def slug(self):

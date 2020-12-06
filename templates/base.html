@@ -35,7 +35,7 @@
   <header class="bg-gradient-to-b from-indigo-900 to-indigo-700 text-white">
     <div class="flex items-center justify-between p-3">
       <div class="flex items-center flex-shrink-0 mr-6 text-xl">
-        <a href="/">RadioFeed</a>
+        <a href="{% url 'podcasts:podcast_list' %}">RadioFeed</a>
       </div>
 
       {% if user.is_authenticated %}
@@ -73,7 +73,7 @@
       <nav class="">
         <ul class="">
           <li class="pb-3">
-            <a href=""
+            <a href="{% url 'podcasts:podcast_list' %}"
                class="flex items-center">
               <i class="fa fa-podcast mr-3"></i>
               Podcasts
@@ -104,7 +104,7 @@
         </ul>
       </nav>
     </div>
-    <div class="w-5/6 p-3 bg-white">
+    <div class="w-5/6 p-2 bg-white">
       {% block content %}{% endblock %}
     </div>
   </div>

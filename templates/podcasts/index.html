@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load thumbnail pagination %}
+
+{% block content %}
+<h2 class="text-lg font-bold mb-3">Podcasts</h2>
+
+{% paginate podcasts as page_obj %}
+
+{% if page_obj.number > 1 %}
+{% include "_pagination.html" with css_class="mb-3"  %}
+{% endif %}
+
+{% for podcast in page_obj %}
+{% include "podcasts/_podcast.html" %}
+{% endfor %}
+{% include "_pagination.html" %}
+{% endblock content %}

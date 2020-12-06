@@ -1,0 +1,41 @@
+{% load thumbnail %}
+{% with podcast=episode.podcast %}
+<div class="p-2 border border-gray-400 hover:border-blue-400 mb-3">
+  <div class="flex items-center justify-between">
+
+    <div class="flex items-center">
+      {% if show_thumbnail %}
+      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+      <a href="{{ podcast.get_absolute_url }}">
+        <img class="object-cover block mr-2 lg:mr-4 cursor-pointer h-16 w-16"
+             title="{{ podcast.title }}"
+             role="link"
+             src="{{ img.url }}"
+             tag="img"
+             width="16"
+             height="16">
+      </a>
+      {% endthumbnail %}
+      {% endif %}
+      <div>
+        <a href=""
+           class="block text-blue-800 hover:text-blue-600 font-semibold mb-1"
+           title="05:30 GMT">{{ episode.title }}</a>
+        <div class="flex flex-wrap items-center font-semibold text-gray-700 text-sm">
+          <div title="Date Published"
+               class="mr-2"> {{ episode.pub_date|date }} </div>
+          <div title="Duration"
+               class="mr-2"><span> {{ episode.duration }} </span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button title="Open in Player"
+              class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125">
+        <i class="fa fa-play text-kl"></i>
+      </button>
+    </div>
+  </div>
+</div>
+{% endwith %}

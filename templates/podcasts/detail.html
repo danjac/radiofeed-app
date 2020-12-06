@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load thumbnail pagination %}
+
+{% block content %}
+<div class="p-2 border border-gray-400 mb-3">
+
+  <h2 class="font-bold mb-3 text-lg">{{ podcast.title }}</h2>
+
+  <div class="flex items-center w-full mb-3">
+
+    {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+    <img src="{{ img.url }}"
+         alt="Laurent Gerra"
+         class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32"
+         width="32"
+         height="32">
+    {% endthumbnail %}
+
+    <div>
+
+      <div class="flex flex-wrap items-center">
+        <h3 class="font-semibold text-gray-700 mb-1 mr-2">{{ podcast.authors }}</h3>
+      </div>
+
+      <div class="font-semibold text-gray-700 text-sm flex flex-wrap items-center mb-3">
+        <div class="inline-block mr-2">{{ podcast.pubdate|date }}</div>
+      </div>
+
+      <div class="flex items-center">
+        links go here...
+      </div>
+
+    </div>
+  </div>
+
+  <div class="markdown my-3">
+    {{ podcast.description|linebreaksbr }}
+  </div>
+
+</div>
+{% paginate episodes as page_obj %}
+
+{% if page_obj.number > 1 %}
+{% include "_pagination.html" with css_class="mb-3"  %}
+{% endif %}
+
+{% for episode in page_obj %}
+{% include "episodes/_episode.html" with show_thumbnail=False %}
+{% endfor %}
+
+{% include "_pagination.html" %}
+{% endblock %}
