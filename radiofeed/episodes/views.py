@@ -1,3 +1,6 @@
+# Standard Library
+import json
+
 # Django
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -49,6 +52,12 @@ def episode_progress(request, episode_id):
         "player" in request.session
         and request.session["player"]["episode"] == episode.id
     ):
+        player = request.session["player"]
         # if user logged in, update history in DB
-        request.session["player"]["current_time"] = int(request.POST["current_time"])
+        try:
+            current_time = int(json.loads(request.body)["current_time"])
+        except (json.JSONDecodeError, KeyError):
+            current_time = 0
+        request.session["player"] = {**player, "current_time": current_time}
+
     return HttpResponse(status=204)

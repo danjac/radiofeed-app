@@ -1,9 +1,19 @@
 {% extends "base.html" %}
-{% load thumbnail %}
+{% load thumbnail episodes %}
 
 {% block content %}
 {% with podcast=episode.podcast %}
-<div class="p-2 border border-gray-400 mb-3">
+{% is_playing episode as is_episode_playing %}
+<div class="p-2 border border-gray-400 mb-3"
+     data-controller="episode"
+     data-action="episode:open@window->episode#open player:close@window->episode#close"
+     {% if is_episode_playing %}
+     data-episode-playing-value
+     {% endif %}
+     data-episode-id-value="{{ episode.id }}"
+     data-episode-play-url-value="{% url 'episodes:play_episode' episode.id %}"
+     data-episode-stop-url-value="{% url 'episodes:stop_episode' episode.id %}"
+     data-episode-progress-url-value="{% url 'episodes:episode_progress' episode.id %}">
 
   <h2 class="font-bold mb-3 text-lg">{{ episode.title }}</h2>
   <h3 class="font-semibold mb-3">
@@ -30,9 +40,18 @@
 
       <div class="flex items-center">
         <button title="Open in Player"
-                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125">
+                data-episode-target="playButton"
+                data-action="episode#play"
+                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
           <i class="fa fa-play text-kl"></i>
         </button>
+        <button title="Close Player"
+                data-episode-target="stopButton"
+                data-action="episode#stop"
+                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
+          <i class="fa fa-stop text-kl"></i>
+        </button>
+
       </div>
 
     </div>

@@ -54,3 +54,17 @@ class Episode(models.Model):
     @property
     def file_size(self):
         return filesizeformat(self.length) if self.length else None
+
+    def get_duration_in_seconds(self):
+        if not self.duration:
+            return 0
+        hours, minutes, seconds = 0, 0, 0
+        parts = self.duration.split(":")
+        num_parts = len(parts)
+        if num_parts == 1:
+            seconds = parts[0]
+        elif num_parts == 2:
+            [hours, minutes] = parts
+        elif num_parts == 3:
+            [hours, minutes, seconds] = parts
+        return (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)

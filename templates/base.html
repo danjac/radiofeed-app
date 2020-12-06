@@ -1,7 +1,6 @@
 {% spaceless %}
 
-{% load static %}
-{% load i18n %}
+{% load static i18n episodes %}
 
 {% endspaceless %}
 
@@ -110,10 +109,10 @@
   </div>
 
   <div id="player"
-       data-turbolinks-permanent>
-    <div class="fixed bottom-0 z-10 bg-black text-white w-full p-3">
-      Player goes here...
-    </div>
+       data-turbolinks-permanent
+       data-controller="player"
+       data-action="episode:play@window->player#open episode:stop@window->player#close">
+    {% player %}
   </div>
 
   {% include "_footer.html" %}

@@ -1,0 +1,30 @@
+# Django
+from django import template
+
+# Local
+from ..models import Episode
+
+register = template.Library()
+
+
+@register.simple_tag(takes_context=True)
+def is_playing(context, episode):
+    player = context["request"].session.get("player")
+    if player is None:
+        return False
+    return player["episode"] == episode.id
+
+
+@register.inclusion_tag("episodes/_player.html", takes_context=True)
+def player(context):
+    request = context["request"]
+    player = request.session.get("player")
+    if player is None:
+        return None
+
+    try:
+        episode = Episode.objects.select_related("podcast").get(pk=player["episode"])
+    except Episode.DoesNotExist:
+        return None
+
+    return {"episode": episode, "current_time": player["current_time"]}
