@@ -11,6 +11,7 @@
      data-episode-playing-value
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
+     data-episode-duration-value="{{ episode.duration|duration_in_seconds }}"
      data-episode-play-url-value="{% url 'episodes:play_episode' episode.id %}"
      data-episode-stop-url-value="{% url 'episodes:stop_episode' episode.id %}"
      data-episode-progress-url-value="{% url 'episodes:episode_progress' episode.id %}">

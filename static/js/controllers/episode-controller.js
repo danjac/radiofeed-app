@@ -19,8 +19,10 @@ export default class extends Controller {
     this.playingValue = true;
     this.dispatch('play', {
       episode: this.idValue,
+      duration: this.durationValue,
       playUrl: this.playUrlValue,
       stopUrl: this.stopUrlValue,
+      progressUrl: this.progressUrlValue,
     });
   }
 

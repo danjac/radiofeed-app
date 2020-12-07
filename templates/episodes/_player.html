@@ -1,20 +1,12 @@
 {% load thumbnail episodes %}
 {% if episode %}
 {% with podcast=episode.podcast %}
-<div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
-     data-controller="audio"
-     data-audio-duration-value="{{ episode.duration|duration_in_seconds }}"
-     data-audio-current-time-value="{{ current_time|default:0 }}"
-     data-audio-progress-url-value="{% url 'episodes:episode_progress' episode.id %}"
-     data-audio-progress-class="bg-blue-800"
-     data-audio-buffer-class="bg-blue-500"
-     data-audio-progress-paused-class="bg-gray-800"
-     data-audio-buffer-paused-class="bg-gray-500">
+<div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold">
 
   <audio preload="metadata"
          src="{{ episode.media_url }}"
-         data-audio-target="audio"
-         data-action="progress->audio#progress timeupdate->audio#timeUpdate ended->player#stop"></audio>
+         data-player-target="audio"
+         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop"></audio>
   <div class="mb-2 md:hidden pr-1">
     <a href="{{ episode.get_absolute_url }}ed"
        title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
@@ -43,15 +35,15 @@
         <div class="flex items-center">
 
           <button title="Pause"
-                  data-action="audio#pause"
-                  data-audio-target="pauseButton"
+                  data-action="player#pause"
+                  data-player-target="pauseButton"
                   class="focus:outline-none mr-6">
             <i class="fa fa-pause text-xl"></i>
           </button>
 
           <button title="Play"
-                  data-action="audio#play"
-                  data-audio-target="playButton"
+                  data-action="player#play"
+                  data-player-target="playButton"
                   class="focus:outline-none mr-6 hidden">
             <i class="fa fa-play text-xl"></i>
           </button>
@@ -66,14 +58,14 @@
 
         <div class="flex items-center">
           <button title="Skip back 15 seconds"
-                  data-action="audio#skipBack"
+                  data-action="player#skipBack"
                   class="focus:outline-none mr-6">
 
             <i class="fa fa-undo text-lg"></i>
 
           </button>
           <button title="Skip forward 15 seconds"
-                  data-action="audio#skipForward"
+                  data-action="player#skipForward"
                   class="focus:outline-none">
 
             <i class="fa fa-redo text-lg"></i>
@@ -86,20 +78,20 @@
 
       <div class="flex items-center w-full justify-between">
         <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center cursor-pointer"
-             data-audio-target="progressBar"
+             data-player-target="progressBar"
              title="0">
           <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
-               data-audio-target="indicator"
+               data-player-target="indicator"
                style="z-index: 12;"></div>
           <div class="h-2 relative rounded-l flex items-center justify-end bg-blue-800"
                style="width: 0%;"
-               data-audio-target="progress"></div>
+               data-player-target="progress"></div>
           <div class="h-2 rounded-r relative bg-blue-500"
-               data-audio-target="buffer"
+               data-player-target="buffer"
                style="width: 0%;"></div>
         </div>
         <div class="w-24 text-right tracking-tighter"
-             data-audio-target="counter"></div>
+             data-player-target="counter"></div>
       </div>
     </div>
   </div>
