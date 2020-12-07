@@ -2,6 +2,8 @@
 {% load thumbnail pagination html %}
 
 {% block content %}
+{% paginate episodes as page_obj %}
+{% if page_obj.number == 1 and not search %}
 <div class="p-2 border border-gray-400 mb-3">
 
   <h2 class="font-bold mb-3 text-lg">{{ podcast.title }}</h2>
@@ -59,14 +61,14 @@
     </a>
     {% endfor %}
   </div>
-
 </div>
+{% endif %}
+
 <div class="flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold">Episodes</h2>
   {% include "_search_form.html" with placeholder="Search episodes" %}
 </div>
 
-{% paginate episodes as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}
