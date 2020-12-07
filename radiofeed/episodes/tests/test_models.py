@@ -2,8 +2,8 @@
 import pytest
 
 # Local
-from ..factories import EpisodeFactory
-from ..models import Episode
+from ..factories import BookmarkFactory, EpisodeFactory
+from ..models import Bookmark, Episode
 
 pytestmark = pytest.mark.django_db
 
@@ -21,3 +21,10 @@ class TestEpisodeModel:
 
     def test_slug_if_title_empty(self):
         assert Episode().slug == "episode"
+
+
+class TestBookmarkManager:
+    def test_search(self):
+        episode = EpisodeFactory(title="testing")
+        BookmarkFactory(episode=episode)
+        assert Bookmark.objects.search("testing").count() == 1
