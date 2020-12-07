@@ -10,6 +10,7 @@ from radiofeed.episodes.factories import EpisodeFactory
 # Local
 from .. import views
 from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
+from ..models import Subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -139,3 +140,34 @@ class TestCategoryDetail:
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["search"] == "testing"
+
+
+class TestSubscribe:
+    def test_subscribe(self, rf, podcast, user, mocker):
+        req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
+        req.user = user
+        req._messages = mocker.Mock()
+        resp = views.subscribe(req, podcast.id)
+        assert resp.url == podcast.get_absolute_url()
+        req._messages.add.assert_called()
+
+    def test_already_subscribed(self, rf, podcast, user, mocker):
+        SubscriptionFactory(user=user, podcast=podcast)
+        req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
+        req.user = user
+        req._messages = mocker.Mock()
+        resp = views.subscribe(req, podcast.id)
+        assert resp.url == podcast.get_absolute_url()
+        req._messages.add.assert_not_called()
+
+
+class TestUnsubscribe:
+    def test_unsubscribe(self, rf, podcast, user, mocker):
+        SubscriptionFactory(user=user, podcast=podcast)
+        req = rf.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
+        req.user = user
+        req._messages = mocker.Mock()
+        resp = views.unsubscribe(req, podcast.id)
+        assert resp.url == podcast.get_absolute_url()
+        req._messages.add.assert_called()
+        assert not Subscription.objects.filter(podcast=podcast, user=user).exists()
