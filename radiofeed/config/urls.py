@@ -9,6 +9,7 @@ urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
     path("episodes/", include("radiofeed.episodes.urls")),
     path("account/", include("allauth.urls")),
+    path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
