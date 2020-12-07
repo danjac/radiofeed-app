@@ -9,7 +9,7 @@ from radiofeed.episodes.factories import EpisodeFactory
 
 # Local
 from .. import views
-from ..factories import CategoryFactory, PodcastFactory
+from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -23,14 +23,47 @@ class TestPodcastList:
         assert resp.status_code == 200
         assert len(resp.context_data["podcasts"]) == 3
 
+    def test_user_no_subscriptions(self, rf, user):
+        """If user has no subscriptions, just show general feed"""
+        PodcastFactory.create_batch(3)
+        req = rf.get(reverse("podcasts:podcast_list"))
+        req.user = user
+        resp = views.podcast_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["podcasts"]) == 3
+
+    def test_user_has_subscriptions(self, rf, user):
+        """If user has subscriptions, show only own feed"""
+        PodcastFactory.create_batch(3)
+        sub = SubscriptionFactory(user=user)
+        req = rf.get(reverse("podcasts:podcast_list"))
+        req.user = user
+        resp = views.podcast_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["podcasts"]) == 1
+        assert resp.context_data["podcasts"][0] == sub.podcast
+
     def test_search_anonymous(self, rf, anonymous_user):
         PodcastFactory.create_batch(3)
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = anonymous_user
-        PodcastFactory(title="testing")
+        podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["podcasts"]) == 1
+        assert resp.context_data["podcasts"][0] == podcast
+
+    def test_search_has_subcription(self, rf, user):
+        """Ignore subscribed feeds in search"""
+        PodcastFactory.create_batch(3)
+        SubscriptionFactory(user=user)
+        req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        req.user = user
+        podcast = PodcastFactory(title="testing")
+        resp = views.podcast_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["podcasts"]) == 1
+        assert resp.context_data["podcasts"][0] == podcast
 
 
 class TestPodcastDetail:

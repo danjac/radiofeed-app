@@ -5,8 +5,11 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
+# RadioFeed
+from radiofeed.users.factories import UserFactory
+
 # Local
-from .models import Category, Podcast
+from .models import Category, Podcast, Subscription
 
 
 class CategoryFactory(DjangoModelFactory):
@@ -33,3 +36,11 @@ class PodcastFactory(DjangoModelFactory):
         if extracted:
             for category in extracted:
                 self.categories.add(category)
+
+
+class SubscriptionFactory(DjangoModelFactory):
+    user = factory.SubFactory(UserFactory)
+    podcast = factory.SubFactory(PodcastFactory)
+
+    class Meta:
+        model = Subscription
