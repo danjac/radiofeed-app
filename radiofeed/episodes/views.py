@@ -12,8 +12,15 @@ from .models import Episode
 
 
 def episode_list(request):
-    episodes = Episode.objects.order_by("-pub_date").select_related("podcast")
-    return TemplateResponse(request, "episodes/index.html", {"episodes": episodes})
+    episodes = Episode.objects.select_related("podcast")
+    search = request.GET.get("q", None)
+    if search:
+        episodes = episodes.search(search).order_by("-similarity", "-pub_date")
+    else:
+        episodes = episodes.order_by("-pub_date")
+    return TemplateResponse(
+        request, "episodes/index.html", {"episodes": episodes, "search": search}
+    )
 
 
 def episode_detail(request, episode_id, slug=None):
