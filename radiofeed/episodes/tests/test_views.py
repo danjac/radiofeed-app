@@ -127,3 +127,23 @@ class TestUpdatePlayerTime:
         resp = views.update_player_time(req)
         assert resp.status_code == 204
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+
+
+class TestBookmarkList:
+    def test_get(self, rf, user):
+        BookmarkFactory.create_batch(3, user=user)
+        req = rf.get(reverse("episodes:bookmark_list"))
+        req.user = user
+        resp = views.bookmark_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["bookmarks"]) == 3
+
+    def test_search(self, rf, user):
+        BookmarkFactory.create_batch(3, user=user)
+        BookmarkFactory(user=user, episode=EpisodeFactory(title="testing"))
+        req = rf.get(reverse("episodes:bookmark_list"), {"q": "testing"})
+        req.user = user
+        resp = views.bookmark_list(req)
+        assert resp.status_code == 200
+        assert resp.context_data["search"] == "testing"
+        assert len(resp.context_data["bookmarks"]) == 1
