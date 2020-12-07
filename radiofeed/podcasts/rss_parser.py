@@ -24,8 +24,6 @@ from radiofeed.episodes.models import Episode
 # Local
 from .models import Category
 
-MAX_IMAGE_SIZE = 2514114  # approx 2.5 MB
-
 TZ_INFOS = {
     k: v * 3600
     for k, v in (
@@ -503,14 +501,6 @@ def fetch_image_from_url(image_url):
 
         content_type = resp.headers["Content-Type"].split(";")[0]
         filename = get_image_filename(image_url, content_type)
-
-        content_length = len(resp.content)
-
-        if content_length > MAX_IMAGE_SIZE:
-            raise ValueError(
-                f"Content length {content_length} bytes exceeds max limit {MAX_IMAGE_SIZE} bytes"
-            )
-
         return ImageFile(io.BytesIO(resp.content), name=filename)
     except (requests.RequestException, KeyError, ValueError) as e:
         print(e)
