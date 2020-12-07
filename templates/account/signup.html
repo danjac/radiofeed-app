@@ -1,0 +1,59 @@
+{% extends "account/base.html" %}
+
+{% load i18n widget_tweaks %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<h1 class="mb-3 text-xl font-bold">{% trans "Sign Up" %}</h1>
+
+<p class="mb-3">{% blocktranslate %}Already have an account? Then please
+  <a class="text-blue-800 hover:text-blue-600"
+     href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
+
+<form class="p-3 bg-white border rounded w-full lg:w-1/3{% if form.errors %} border-red-800{% endif %}"
+      method="post"
+      action="{% url 'account_signup' %}"
+      novalidate>
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden"
+         name="{{ redirect_field_name }}"
+         value="{{ redirect_field_value }}" />
+  {% endif %}
+  {% include "_form_errors.html" with errors=form.non_field_errors %}
+  {% with WIDGET_ERROR_CLASS="border-red-800 text-red-800" %}
+  <div class="mb-3">
+    {% render_field form.username placeholder=form.username.label class="p-1 w-full" %}
+    {% include "_form_errors.html" with errors=form.username.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.email placeholder=form.email.label class="p-1 w-full" %}
+    {% include "_form_errors.html" with errors=form.email.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.password1 placeholder=form.password1.label class="p-1 w-full" %}
+    {% include "_form_errors.html" with errors=form.password1.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.password2 placeholder=form.password2.label class="p-1 w-full" %}
+    {% include "_form_errors.html" with errors=form.password2.errors %}
+  </div>
+
+  <div class="mb-3">
+    <label class="flex items-center mb-1 w-full">
+      {% render_field form.remember class="mr-3" %}
+      {{ form.remember.label }}
+    </label>
+    {% include "_form_errors.html" with errors=form.remember.errors %}
+  </div>
+  {% endwith %}
+
+  <div class="">
+    <button class="px-3 py-1 rounded bg-blue-800 hover:bg-blue-600 text-white"
+            type="submit">{% translate "Sign Up" %}</button>
+  </div>
+</form>
+
+
+{% endblock %}
