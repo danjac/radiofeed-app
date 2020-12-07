@@ -21,6 +21,15 @@ class TestPodcastList:
         assert resp.status_code == 200
         assert len(resp.context_data["podcasts"]) == 3
 
+    def test_search(self, rf):
+        PodcastFactory.create_batch(3)
+        PodcastFactory(title="testing")
+        resp = views.podcast_list(
+            rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        )
+        assert resp.status_code == 200
+        assert len(resp.context_data["podcasts"]) == 1
+
 
 class TestPodcastDetail:
     def test_get(self, rf, podcast):
@@ -43,6 +52,20 @@ class TestCategoryList:
         assert resp.status_code == 200
         assert len(resp.context_data["categories"]) == 3
 
+    def test_search(self, rf):
+        parents = CategoryFactory.create_batch(3, parent=None)
+        CategoryFactory(parent=parents[0])
+        CategoryFactory(parent=parents[1])
+        CategoryFactory(parent=parents[2], name="testing child")
+
+        CategoryFactory(name="testing parent")
+        resp = views.category_list(
+            rf.get(reverse("podcasts:category_list"), {"q": "testing"})
+        )
+        assert resp.status_code == 200
+        assert len(resp.context_data["categories"]) == 2
+        assert resp.context_data["search"] == "testing"
+
 
 class TestCategoryDetail:
     def test_get(self, rf, category):
@@ -56,3 +79,17 @@ class TestCategoryDetail:
         assert resp.status_code == 200
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 12
+
+    def test_search(self, rf, category):
+
+        CategoryFactory.create_batch(3, parent=category)
+        PodcastFactory.create_batch(12, categories=[category])
+        PodcastFactory(title="testing", categories=[category])
+
+        req = rf.get(category.get_absolute_url(), {"q": "testing"})
+        resp = views.category_detail(req, category.id, category.slug)
+
+        assert resp.status_code == 200
+        assert resp.context_data["category"] == category
+        assert len(resp.context_data["podcasts"]) == 1
+        assert resp.context_data["search"] == "testing"
