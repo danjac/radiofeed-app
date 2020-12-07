@@ -30,7 +30,7 @@ class Category(models.Model):
         return slugify(self.name, allow_unicode=False)
 
     def get_absolute_url(self):
-        return reverse("category", args=[self.id, self.slug])
+        return reverse("podcasts:category_detail", args=[self.id, self.slug])
 
 
 class Podcast(models.Model):

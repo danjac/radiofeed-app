@@ -2,9 +2,15 @@
 import pytest
 
 # Local
-from ..models import Podcast
+from ..models import Category, Podcast
 
 pytestmark = pytest.mark.django_db
+
+
+class TestCategoryModel:
+    def test_slug(self):
+        category = Category(name="Testing")
+        assert category.slug == "testing"
 
 
 class TestPodcastModel:

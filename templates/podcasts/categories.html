@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-lg font-bold mb-3">Discover New Podcasts</h2>
+
+{% for category in categories %}
+<div class="mb-3 pb-3 border-b">
+  <a href="{{ category.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+  {% with children=category.children.all %}
+  {% if children %}
+  <div class="flex flex-wrap items-center">
+    {% for child in category.children.all %}
+    <a class="text-blue-800 hover:text-blue-600 mb-1 mr-3 text-sm"
+       href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+</div>
+{% endfor %}
+{% endblock %}

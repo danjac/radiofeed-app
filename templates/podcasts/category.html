@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load thumbnail pagination %}
+
+{% block content %}
+
+<div class="mb-3 text-sm pb-3 border-b">
+  <a href="{% url 'podcasts:category_list' %}"
+     class="text-blue-800 hover:text-blue-600 mr-1">Discover</a>
+  {% if category.parent %}
+  <span class="text-gray-500 mr-1">&gt;</span>
+  <a href="{{ category.parent.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-1">{{ category.parent.name }}</a>
+  {% endif %}
+  <span class="text-gray-500 mr-1">&gt;</span>
+  <span class="text-gray-500">{{ category.name }}</span>
+</div>
+
+<h2 class="text-lg font-bold mb-3">
+  {{ category.name }}
+</h2>
+
+{% with children=category.children.all %}
+{% if children %}
+<div class="mb-3 text-sm flex flex-wrap">
+  {% for child in children %}
+  <a href="{{ child.get_absolute_url }}"
+     class="text-blue-800 hover:text-blue-600 mr-3">{{ child.name }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% paginate podcasts as page_obj %}
+
+{% if page_obj.number > 1 %}
+{% include "_pagination.html" with css_class="mb-3"  %}
+{% endif %}
+
+{% for podcast in page_obj %}
+{% include "podcasts/_podcast.html" %}
+{% endfor %}
+{% include "_pagination.html" %}
+{% endblock content %}

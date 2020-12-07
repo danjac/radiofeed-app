@@ -59,7 +59,7 @@ export default class extends Controller {
     }
     this.element.innerHTML = '';
     this.episodeValue = '';
-    this.durationValue = '';
+    this.durationValue = 0;
   }
 
   stop() {

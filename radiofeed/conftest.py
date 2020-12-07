@@ -8,7 +8,7 @@ import pytest
 
 # RadioFeed
 from radiofeed.episodes.factories import EpisodeFactory
-from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 
@@ -40,6 +40,11 @@ def login_user(client):
     user.save()
     client.login(username=user.username, password=password)
     return user
+
+
+@pytest.fixture
+def category():
+    return CategoryFactory()
 
 
 @pytest.fixture
