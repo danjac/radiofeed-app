@@ -59,11 +59,13 @@ def podcast_detail(request, podcast_id, slug=None):
 
 def category_list(request):
     search = request.GET.get("q", None)
+    categories = Category.objects.all()
+
     if search:
-        categories = Category.objects.search(search).order_by("-similarity", "name")
+        categories = categories.search(search).order_by("-similarity", "name")
     else:
         categories = (
-            Category.objects.filter(parent__isnull=True)
+            categories.filter(parent__isnull=True)
             .prefetch_related("children")
             .order_by("name")
         )
@@ -89,7 +91,7 @@ def category_detail(request, category_id, slug=None):
     return TemplateResponse(
         request,
         "podcasts/category.html",
-        {"category": category, "podcasts": podcasts, "search": search},
+        {"category": category, "podcasts": podcasts, "search": search,},
     )
 
 

@@ -10,9 +10,10 @@ from factory.django import DjangoModelFactory
 
 # RadioFeed
 from radiofeed.podcasts.factories import PodcastFactory
+from radiofeed.users.factories import UserFactory
 
 # Local
-from .models import Episode
+from .models import Bookmark, Episode
 
 
 class EpisodeFactory(DjangoModelFactory):
@@ -27,3 +28,11 @@ class EpisodeFactory(DjangoModelFactory):
 
     class Meta:
         model = Episode
+
+
+class BookmarkFactory(DjangoModelFactory):
+    episode = SubFactory(EpisodeFactory)
+    user = SubFactory(UserFactory)
+
+    class Meta:
+        model = Bookmark

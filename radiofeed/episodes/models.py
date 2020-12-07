@@ -1,16 +1,20 @@
 # Django
+from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils.text import slugify
 
+# Third Party Libraries
+from model_utils.models import TimeStampedModel
+
 # RadioFeed
 from radiofeed.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.2):
+    def search(self, search_term, base_similarity=0.1):
         return self.annotate(similarity=TrigramSimilarity("title", search_term)).filter(
             similarity__gte=base_similarity
         )
@@ -68,3 +72,27 @@ class Episode(models.Model):
     @property
     def file_size(self):
         return filesizeformat(self.length) if self.length else None
+
+
+class BookmarkQuerySet(models.QuerySet):
+    def search(self, search_term, base_similarity=0.1):
+        return self.annotate(
+            similarity=TrigramSimilarity("episode__title", search_term)
+        ).filter(similarity__gte=base_similarity)
+
+
+class BookmarkManager(models.Manager.from_queryset(BookmarkQuerySet)):
+    ...
+
+
+class Bookmark(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+
+    objects = BookmarkManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name="uniq_bookmark", fields=["user", "episode"])
+        ]
+        indexes = [models.Index(fields=["-created"])]

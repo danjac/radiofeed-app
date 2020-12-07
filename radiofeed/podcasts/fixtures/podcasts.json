@@ -86,23 +86,6 @@
   },
   {
     "model": "podcasts.podcast",
-    "pk": 30,
-    "fields": {
-      "rss": "http://feeds.feedburner.com/SModcasts",
-      "title": "SModcast",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/smodcast/id215010467?uo=4",
-      "cover_image": null,
-      "description": "Kevin Smith and Scott Mosier are SModcast.",
-      "link": "http://soundcloud.com/smodcast",
-      "keywords": "Kevin Smith Scott Mosier Yoga Hosers Tusk Clerks Mallrats Chasing Amy Dogma Jay Silent Bob Strike Back View Askew Comedy TV & Film News & Politics Religion & Spirituality Arts/Performing Arts Kevin Smith Scott Mosier Yoga Hosers Tusk Clerks Mallrats Chasing Amy Dogma Jay Silent Bob Strike Back View Askew Comedy TV & Film News & Politics Religion & Spirituality Arts Performing Arts",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [1, 5, 16, 20, 25]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
     "pk": 31,
     "fields": {
       "rss": "https://feeds.npr.org/381444908/podcast.xml",
@@ -133,23 +116,6 @@
       "last_updated": null,
       "explicit": false,
       "categories": [2]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
-    "pk": 33,
-    "fields": {
-      "rss": "https://rss.art19.com/1619",
-      "title": "1619",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/1619/id1476928106?uo=4",
-      "cover_image": null,
-      "description": "<p>In August of 1619, a ship carrying more than 20 enslaved Africans arrived in the English colony of Virginia. America was not yet America, but this was the moment it began. No aspect of the country that would be formed here has been untouched by the 250 years of slavery that followed. On the 400th anniversary of this fateful moment, it is time to tell the story.</p><p>\u201c1619\u201d is a New York Times audio series hosted by Nikole Hannah-Jones. You can find more information about it at nytimes.com/1619podcast.</p>",
-      "link": "https://art19.com/shows/1619",
-      "keywords": "News History Society & Culture",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [2, 11, 15]
     }
   },
   {
@@ -1272,23 +1238,6 @@
       "last_updated": null,
       "explicit": false,
       "categories": [6, 11]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
-    "pk": 100,
-    "fields": {
-      "rss": "https://lpotl.libsyn.com/rss",
-      "title": "Last Podcast On The Left",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/last-podcast-on-the-left/id437299706?uo=4",
-      "cover_image": null,
-      "description": "The Last Podcast On The Left covers all the horrors our world has to offer both imagined and real, from demons and slashers to cults and serial killers, The Last Podcast is guaranteed to satisfy your blood lust.",
-      "link": "https://lpotl.libsyn.com/website",
-      "keywords": "Comedy Society & Culture",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [1, 2]
     }
   },
   {

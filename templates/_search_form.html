@@ -1,4 +1,5 @@
 <form data-controller="form"
+      data-action="form#submit:once"
       method="get"
       action="{{ request.path }}"
       class="flex items-center{% if css_class %} {{ css_class }}{% endif %}">

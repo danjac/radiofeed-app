@@ -13,6 +13,7 @@ Some ideas for additional features you might want to add in a fork:
 2. Store the play history in the database for logged in users
 3. Recommend new podcasts using machine learning based on subscriptions and play history
 4. Allow users to compile and share their own lists or collections of podcasts
+5. Automatically add new podcasts using the GPodder or iTunes API
 
 To get started, first import the categories:
 

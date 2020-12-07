@@ -47,7 +47,7 @@
       {% if user.is_authenticated %}
       {% if is_subscribed %}
       <button data-controller="ajax"
-              data-ajax-url="{% url 'podcasts:unsubscribe' podcast.id %}"
+              data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
               data-action="click->ajax#post:once"
               class="px-2 py-1 border rounded hover:bg-gray-100">
         <i class="fa fa-eye-slash mr-2"></i>
@@ -55,7 +55,7 @@
       </button>
       {% else %}
       <button data-controller="ajax"
-              data-ajax-url="{% url 'podcasts:subscribe' podcast.id %}"
+              data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
               data-action="click->ajax#post:once"
               class="px-2 py-1 border rounded hover:bg-gray-100">
         <i class="fa fa-eye mr-2"></i>
