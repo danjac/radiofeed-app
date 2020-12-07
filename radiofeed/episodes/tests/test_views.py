@@ -12,7 +12,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 
 # Local
 from .. import views
-from ..factories import EpisodeFactory
+from ..factories import BookmarkFactory, EpisodeFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -72,12 +72,30 @@ class TestEpisodeList:
 
 
 class TestEpisodeDetail:
-    def test_get(self, rf, episode):
-        resp = views.episode_detail(
-            rf.get(episode.get_absolute_url()), episode.id, episode.slug
-        )
+    def test_anonymous(self, rf, episode, anonymous_user):
+        req = rf.get(episode.get_absolute_url())
+        req.user = anonymous_user
+        resp = views.episode_detail(req, episode.id, episode.slug)
         assert resp.status_code == 200
         assert resp.context_data["episode"] == episode
+        assert not resp.context_data["is_bookmarked"]
+
+    def test_user_not_bookmarked(self, rf, episode, user):
+        req = rf.get(episode.get_absolute_url())
+        req.user = user
+        resp = views.episode_detail(req, episode.id, episode.slug)
+        assert resp.status_code == 200
+        assert resp.context_data["episode"] == episode
+        assert not resp.context_data["is_bookmarked"]
+
+    def test_user_bookmarked(self, rf, episode, user):
+        BookmarkFactory(episode=episode, user=user)
+        req = rf.get(episode.get_absolute_url())
+        req.user = user
+        resp = views.episode_detail(req, episode.id, episode.slug)
+        assert resp.status_code == 200
+        assert resp.context_data["episode"] == episode
+        assert resp.context_data["is_bookmarked"]
 
 
 class TestStartPlayer:

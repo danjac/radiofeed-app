@@ -2,13 +2,16 @@
 import json
 
 # Django
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
-from .models import Episode
+from .models import Bookmark, Episode
 
 
 def episode_list(request):
@@ -33,7 +36,15 @@ def episode_detail(request, episode_id, slug=None):
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
-    return TemplateResponse(request, "episodes/detail.html", {"episode": episode})
+    is_bookmarked = (
+        request.user.is_authenticated
+        and Bookmark.objects.filter(episode=episode, user=request.user).exists()
+    )
+    return TemplateResponse(
+        request,
+        "episodes/detail.html",
+        {"episode": episode, "is_bookmarked": is_bookmarked},
+    )
 
 
 @require_POST
@@ -67,3 +78,37 @@ def update_player_time(request):
         request.session["player"] = {**player, "current_time": current_time}
 
     return HttpResponse(status=204)
+
+
+@login_required
+def bookmark_list(request):
+    bookmarks = request.user.bookmark_set.select_related("episode", "episode__podcast")
+    search = request.GET.get("q", None)
+    if search:
+        bookmarks = bookmarks.search(search).order_by("-similarity", "-created")
+    else:
+        bookmarks = bookmarks.order_by("-created")
+    return TemplateResponse(
+        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search}
+    )
+
+
+@login_required
+@require_POST
+def add_bookmark(request, episode_id):
+    episode = get_object_or_404(Episode, pk=episode_id)
+    try:
+        Bookmark.objects.create(episode=episode, user=request.user)
+        messages.success(request, "You have bookmarked this episode")
+    except IntegrityError:
+        pass
+    return redirect(episode.get_absolute_url())
+
+
+@login_required
+@require_POST
+def remove_bookmark(request, episode_id):
+    episode = get_object_or_404(Episode, pk=episode_id)
+    Bookmark.objects.filter(episode=episode, user=request.user).delete()
+    messages.info(request, "Bookmark has been removed")
+    return redirect(episode.get_absolute_url())

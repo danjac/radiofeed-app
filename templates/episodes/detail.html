@@ -42,15 +42,34 @@
         <button title="Open in Player"
                 data-episode-target="playButton"
                 data-action="episode#play"
-                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
+                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-4 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
           <i class="fa fa-play text-kl"></i>
         </button>
         <button title="Close Player"
                 data-episode-target="stopButton"
                 data-action="episode#stop"
-                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-2 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
+                class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none mr-4 btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
           <i class="fa fa-stop text-kl"></i>
         </button>
+        {% if user.is_authenticated %}
+        {% if is_bookmarked %}
+        <button data-controller="ajax"
+                data-ajax-url-value="{% url 'episodes:remove_bookmark' episode.id %}"
+                data-action="click->ajax#post:once"
+                class="px-2 py-1 border rounded hover:bg-gray-100">
+          <i class="fa fa-bookmark mr-2"></i>
+          Remove Bookmark
+        </button>
+        {% else %}
+        <button data-controller="ajax"
+                data-ajax-url-value="{% url 'episodes:add_bookmark' episode.id %}"
+                data-action="click->ajax#post:once"
+                class="px-2 py-1 border rounded hover:bg-gray-100">
+          <i class="far fa-bookmark mr-2"></i>
+          Add Bookmark
+        </button>
+        {% endif %}
+        {% endif %}
 
       </div>
     </div>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load thumbnail pagination %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold">Bookmarks</h2>
+  {% include "_search_form.html" with placeholder="Search bookmarks..." %}
+</div>
+
+{% paginate bookmarks as page_obj %}
+
+{% if page_obj.number > 1 %}
+{% include "_pagination.html" with css_class="mb-3"  %}
+{% endif %}
+
+{% for bookmark in page_obj %}
+{% include "episodes/_episode.html" with episode=bookmark.episode show_thumbnail=True %}
+{% empty %}
+{% if search %}
+<p>Sorry, no results found for your search.</p>
+{% else %}
+<p>You haven't added any bookmarks yet.</p>
+{% endif %}
+{% endfor %}
+{% include "_pagination.html" %}
+{% endblock content %}
