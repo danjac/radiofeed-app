@@ -8,10 +8,8 @@ app_name = "episodes"
 
 urlpatterns = [
     path("", views.episode_list, name="episode_list"),
-    path("<int:episode_id>/~play/", views.play_episode, name="play_episode"),
-    path("<int:episode_id>/~stop/", views.stop_episode, name="stop_episode"),
-    path(
-        "<int:episode_id>/~progress/", views.episode_progress, name="episode_progress"
-    ),
+    path("player/~start/<int:episode_id>/", views.start_player, name="start_player"),
+    path("player/~stop/", views.stop_player, name="stop_player"),
+    path("player/~update/", views.update_player_time, name="update_player_time"),
     path("<int:episode_id>/<slug:slug>/", views.episode_detail, name="episode_detail"),
 ]

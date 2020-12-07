@@ -12,9 +12,7 @@
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
      data-episode-duration-value="{{ episode.duration|duration_in_seconds }}"
-     data-episode-play-url-value="{% url 'episodes:play_episode' episode.id %}"
-     data-episode-stop-url-value="{% url 'episodes:stop_episode' episode.id %}"
-     data-episode-progress-url-value="{% url 'episodes:episode_progress' episode.id %}">
+     data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
   <h2 class="font-bold mb-3 text-lg">{{ episode.title }}</h2>
   <h3 class="font-semibold mb-3">

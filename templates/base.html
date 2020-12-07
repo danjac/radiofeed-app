@@ -117,11 +117,11 @@
        data-player-buffer-class="bg-blue-500"
        data-player-progress-paused-class="bg-gray-800"
        data-player-buffer-paused-class="bg-gray-500"
+       data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
+       data-player-stop-url-value="{% url 'episodes:stop_player' %}"
        {% if player and player.episode %}
        data-player-duration-value="{{ player.episode.duration|duration_in_seconds }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"
-       data-player-progress-url-value="{% url 'episodes:episode_progress' player.episode.id %}"
-       data-player-stop-url-value="{% url 'episodes:stop_episode' player.episode.id %}"
        {% endif %}>
     {% include "episodes/_player.html" with episode=player.episode %}
   </div>

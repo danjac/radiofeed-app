@@ -8,7 +8,6 @@ export default class extends Controller {
     id: String,
     duration: Number,
     playUrl: String,
-    stopUrl: String,
     playing: Boolean,
   };
 
@@ -22,8 +21,6 @@ export default class extends Controller {
       episode: this.idValue,
       duration: this.durationValue,
       playUrl: this.playUrlValue,
-      stopUrl: this.stopUrlValue,
-      progressUrl: this.progressUrlValue,
     });
   }
 

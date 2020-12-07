@@ -24,7 +24,7 @@ def episode_detail(request, episode_id, slug=None):
 
 
 @require_POST
-def play_episode(request, episode_id):
+def start_player(request, episode_id):
     """Add episode to session"""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
@@ -34,25 +34,18 @@ def play_episode(request, episode_id):
 
 
 @require_POST
-def stop_episode(request, episode_id):
-    """Remove episode from session"""
-    episode = get_object_or_404(Episode, pk=episode_id)
-    if (
-        "player" in request.session
-        and request.session["player"]["episode"] == episode.id
-    ):
+def stop_player(request):
+    """Remove player from session"""
+    if "player" in request.session:
         del request.session["player"]
     return HttpResponse(status=204)
 
 
 @require_POST
-def episode_progress(request, episode_id):
+def update_player_time(request):
     """Update current play time of episode"""
-    episode = get_object_or_404(Episode, pk=episode_id)
-    if (
-        "player" in request.session
-        and request.session["player"]["episode"] == episode.id
-    ):
+
+    if "player" in request.session:
         player = request.session["player"]
         try:
             current_time = int(json.loads(request.body)["current_time"])

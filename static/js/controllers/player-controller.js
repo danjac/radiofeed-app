@@ -41,11 +41,9 @@ export default class extends Controller {
   }
 
   async open(event) {
-    const { stopUrl, playUrl, progressUrl, episode, duration } = event.detail;
+    const { playUrl, episode, duration } = event.detail;
 
     this.episodeValue = episode;
-    this.stopUrlValue = stopUrl;
-    this.progressUrlValue = progressUrl;
     this.durationValue = duration;
 
     const response = await axios.post(playUrl);
@@ -61,8 +59,6 @@ export default class extends Controller {
     }
     this.element.innerHTML = '';
     this.episodeValue = '';
-    this.stopUrlValue = '';
-    this.progressUrlValue = '';
     this.durationValue = '';
   }
 
