@@ -18,6 +18,12 @@ def episode_list(request):
         episodes = episodes.search(search).order_by("-similarity", "-pub_date")
     else:
         episodes = episodes.order_by("-pub_date")
+
+        if request.user.is_authenticated and request.user.subscription_set.exists():
+            episodes = episodes.filter(
+                podcast__subscription__user=request.user
+            ).distinct()
+
     return TemplateResponse(
         request, "episodes/index.html", {"episodes": episodes, "search": search}
     )
@@ -56,7 +62,7 @@ def update_player_time(request):
         player = request.session["player"]
         try:
             current_time = int(json.loads(request.body)["current_time"])
-        except (json.JSONDecodeError, KeyError):
+        except (json.JSONDecodeError, KeyError, ValueError):
             current_time = 0
         request.session["player"] = {**player, "current_time": current_time}
 

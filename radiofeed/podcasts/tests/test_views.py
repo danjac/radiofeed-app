@@ -15,40 +15,41 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPodcastList:
-    def test_get(self, rf):
+    def test_anonymous(self, rf, anonymous_user):
         PodcastFactory.create_batch(3)
-        resp = views.podcast_list(rf.get(reverse("podcasts:podcast_list")))
+        req = rf.get(reverse("podcasts:podcast_list"))
+        req.user = anonymous_user
+        resp = views.podcast_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["podcasts"]) == 3
 
-    def test_search(self, rf):
+    def test_search_anonymous(self, rf, anonymous_user):
         PodcastFactory.create_batch(3)
+        req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        req.user = anonymous_user
         PodcastFactory(title="testing")
-        resp = views.podcast_list(
-            rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
-        )
+        resp = views.podcast_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["podcasts"]) == 1
 
 
 class TestPodcastDetail:
-    def test_get(self, rf, podcast):
+    def test_anonymous(self, rf, anonymous_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
-        resp = views.podcast_detail(
-            rf.get(podcast.get_absolute_url()), podcast.id, podcast.slug
-        )
+        req = rf.get(podcast.get_absolute_url())
+        req.user = anonymous_user
+        resp = views.podcast_detail(req, podcast.id, podcast.slug)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
+        assert not resp.context_data["is_subscribed"]
 
-    def test_search(self, rf, podcast):
+    def test_search(self, rf, anonymous_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         EpisodeFactory(title="testing", podcast=podcast)
-        resp = views.podcast_detail(
-            rf.get(podcast.get_absolute_url(), {"q": "testing"}),
-            podcast.id,
-            podcast.slug,
-        )
+        req = rf.get(podcast.get_absolute_url(), {"q": "testing"})
+        req.user = anonymous_user
+        resp = views.podcast_detail(req, podcast.id, podcast.slug,)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 1

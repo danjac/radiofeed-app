@@ -1,10 +1,12 @@
 # Django
+from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
 # Third Party Libraries
+from model_utils.models import TimeStampedModel
 from sorl.thumbnail import ImageField
 
 
@@ -101,3 +103,16 @@ class Podcast(models.Model):
     @property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "podcast"
+
+
+class Subscription(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name="uniq_subscription", fields=["user", "podcast"]
+            )
+        ]
+        indexes = [models.Index(fields=["-created"])]

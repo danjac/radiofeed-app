@@ -15,18 +15,20 @@ pytestmark = pytest.mark.django_db
 
 
 class TestEpisodeList:
-    def test_get(self, rf):
+    def test_get(self, rf, anonymous_user):
         EpisodeFactory.create_batch(3)
-        resp = views.episode_list(rf.get(reverse("episodes:episode_list")))
+        req = rf.get(reverse("episodes:episode_list"))
+        req.user = anonymous_user
+        resp = views.episode_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["episodes"]) == 3
 
-    def test_search(self, rf):
+    def test_search(self, rf, anonymous_user):
         EpisodeFactory.create_batch(3)
         EpisodeFactory(title="testing")
-        resp = views.episode_list(
-            rf.get(reverse("episodes:episode_list"), {"q": "testing"})
-        )
+        req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
+        req.user = anonymous_user
+        resp = views.episode_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["episodes"]) == 1
 

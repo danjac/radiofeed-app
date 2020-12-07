@@ -28,7 +28,7 @@
         <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
       </div>
 
-      <div class="flex items-center">
+      <div class="flex items-center mb-3">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
            class="text-blue-800 hover:text-blue-600 mr-2"
@@ -44,7 +44,25 @@
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
-
+      {% if user.is_authenticated %}
+      {% if is_subscribed %}
+      <button data-controller="ajax"
+              data-ajax-url="{% url 'podcasts:unsubscribe' podcast.id %}"
+              data-action="click->ajax#post:once"
+              class="px-2 py-1 border rounded hover:bg-gray-100">
+        <i class="fa fa-eye-slash mr-2"></i>
+        Unsubscribe
+      </button>
+      {% else %}
+      <button data-controller="ajax"
+              data-ajax-url="{% url 'podcasts:subscribe' podcast.id %}"
+              data-action="click->ajax#post:once"
+              class="px-2 py-1 border rounded hover:bg-gray-100">
+        <i class="fa fa-eye mr-2"></i>
+        Subscribe
+      </button>
+      {% endif %}
+      {% endif %}
     </div>
 
   </div>
@@ -54,9 +72,9 @@
   </div>
   <div>
     {% for category in podcast.categories.all %}
-    <a class="inline-block bg-indigo-800 hover:bg-indigo-600 text-white px-2 py-1 rounded mr-3 mb-1 text-sm"
+    <a class="inline-block bg-indigo-800 hover:bg-indigo-600 text-white px-2 py-1 rounded mr-3 mb-1 text-sm font-semibold"
        href="{{ category.get_absolute_url }}">
-      <i class="fa fa-tag mr-2"></i>
+      <i class="fa fa-tag mr-1"></i>
       {{ category.name }}
     </a>
     {% endfor %}
