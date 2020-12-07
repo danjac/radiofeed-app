@@ -21,9 +21,19 @@ def podcast_list(request):
 
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.order_by("-pub_date")
+    episodes = podcast.episode_set.all()
+
+    search = request.GET.get("q", None)
+
+    if search:
+        episodes = episodes.search(search).order_by("-similarity", "-pub_date")
+    else:
+        episodes = episodes.order_by("-pub_date")
+
     return TemplateResponse(
-        request, "podcasts/detail.html", {"podcast": podcast, "episodes": episodes}
+        request,
+        "podcasts/detail.html",
+        {"podcast": podcast, "episodes": episodes, "search": search},
     )
 
 

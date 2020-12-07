@@ -41,6 +41,18 @@ class TestPodcastDetail:
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
 
+    def test_search(self, rf, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        EpisodeFactory(title="testing", podcast=podcast)
+        resp = views.podcast_detail(
+            rf.get(podcast.get_absolute_url(), {"q": "testing"}),
+            podcast.id,
+            podcast.slug,
+        )
+        assert resp.status_code == 200
+        assert resp.context_data["podcast"] == podcast
+        assert len(resp.context_data["episodes"]) == 1
+
 
 class TestCategoryList:
     def test_get(self, rf):

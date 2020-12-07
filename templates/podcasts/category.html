@@ -15,11 +15,10 @@
   <span class="text-gray-500">{{ category.name }}</span>
 </div>
 
-<h2 class="text-lg font-bold mb-3">
-  {{ category.name }}
-</h2>
-
-{% include "_search_form.html" with placeholder="Search "|add:category.name|add:" podcasts" css_class="mb-3 pb-3 border-b" %}
+<div class="flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold">{{ category.name }}</h2>
+  {% include "_search_form.html" with placeholder="Search "|add:category.name|add:" podcasts"  %}
+</div>
 
 {% with children=category.children.all %}
 {% if children %}

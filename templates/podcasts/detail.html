@@ -61,6 +61,11 @@
   </div>
 
 </div>
+<div class="flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold">Episodes</h2>
+  {% include "_search_form.html" with placeholder="Search episodes" %}
+</div>
+
 {% paginate episodes as page_obj %}
 
 {% if page_obj.number > 1 %}

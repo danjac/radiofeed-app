@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="text-lg font-bold mb-3">Discover New Podcasts</h2>
-
-{% include "_search_form.html" with placeholder="Filter categories..." css_class="mb-3 pb-3 border-b" %}
+<div class="flex justify-between items-center mb-3 pb-3 border-b">
+  <h2 class="text-lg font-bold">Discover New Podcasts</h2>
+  {% include "_search_form.html" with placeholder="Filter categories..." %}
+</div>
 
 {% for category in categories %}
 <div class="mb-3 pb-3 border-b">
