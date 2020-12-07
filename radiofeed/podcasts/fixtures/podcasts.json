@@ -1735,22 +1735,6 @@
   },
   {
     "model": "podcasts.podcast",
-    "pk": 131,
-    "fields": {
-      "rss": "http://www.spreaker.com/show/2176105/episodes/feed",
-      "title": "Those Conspiracy Guys",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/those-conspiracy-guys/id917288490?uo=4",
-      "cover_image": null,
-      "description": "Those Conspiracy Guys is an Irish comedy podcast where we discuss all types and genres of conspiracy theories, paranormal happenings and true crime from Atlantean myths to Zapruder films; from ghosts and demons to alien abductions; from werewolves and vampires to CIA assassins and Russian spies. We have a big episode every two weeks, a True Crime show every other week and loads of other stuff every so often and you can head over to the website for details.<br /><br />Our aim is to cast a light into the dark corners of corruption, conspiracy and suppression. We want to scour a web laden with tales of political intrigue, extra-terrestrials, rogue governments, secret societies, the paranormal, murder, mayhem, deceit, destruction, the cryptozoological and the psycho-pharmacological and present the fable of the 21st century: The Conspiracy Theory.<br /><br />It's a Podcast that asks the unanswered questions of the wildest mysteries and weirdest truths from throughout our history. Taking universally available information from all around the internet and beyond, we'll provide a funny and friendly resource for all your conspiracy needs.<br /><br />With weekly Podcast episodes and our constantly updated website Those Conspiracy Guys want to bring some truth to your inquisitive ears.<br /><br />No topic is too delicate or outlandish and we want to make it palatable for everyone from beginners to experts. From the average guy on the street to a die hard conspiracy nut, we want to bring you the great conspiracies of time immemorial to the ones unfolding around us everyday. We avoid the tinfoil hats and poorly crafted sci-fi stories that litter the internet, to bring you conspiracies that you have heard about and more that you haven\u2019t. <br /><br />We are gleaning information from a seemingly insurmountable wall of waffle and running our common sense detector over some of the misinformation that lies in the stagnant swamp of the web.<br /><br />We are but 'humble' Irish people, with a propensity for critical thinking and common sense, and a host of friends with the same mindset, but we all have a third eye squinted open for the strangeness of truth and are all tireless in the never ending quest for the opportunity to have the craic.<br /><br />Have you ever watched the news and thought \u2018that doesn\u2019t look right?\u2019.<br /><br />Have you ever questioned main stream media or questioned what \u2018main stream\u2019 even means?<br /><br />Have you ever agonised over the official version of events that seemed like they were the script of a bad movie?<br /><br />Then this is the podcast for you. We analyse easily available material and cast a critical eye over it; discussing the validity of its sources and its credibility as fact. Sometimes we believe it, sometimes we don\u2019t, but you can make your own mind up because we are just a bunch of people with some free time and questionable search histories. <br /><br />You can support our show by visiting <a href=\"http://www.patreon.com/thoseconspiracyguys\" rel=\"noopener\">www.patreon.com/thoseconspiracyguys</a> and donating. You will get access to awesome exclusive content and be able to interact with us like you're the favourite in the family!",
-      "keywords": "Society & Culture Comedy True Crime History",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [1, 2, 11, 19]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
     "pk": 132,
     "fields": {
       "rss": "https://feeds.yle.fi/areena/v1/series/1-1403833.rss",

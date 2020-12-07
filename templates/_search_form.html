@@ -1,0 +1,19 @@
+<form data-controller="form"
+      method="get"
+      action="{{ request.path }}"
+      class="flex items-center{% if css_class %} {{ css_class }}{% endif %}">
+  <input type="search"
+         name="q"
+         value="{{ search|default:'' }}"
+         {% if placeholder %}placeholder="{{ placeholder }}"
+         {% endif %}
+         class="p-1 focus:outline-none">
+  <button class="border-r border-t border-b border-gray-500 px-2 py-1 hover:bg-gray-100 focus:outline-none mr-3"
+          type="submit"
+          title="Search">
+    <i class="fa fa-search"></i>
+  </button>
+  {% if search %}
+  <a href="{{ request.path }}">Clear</a>
+  {% endif %}
+</form>

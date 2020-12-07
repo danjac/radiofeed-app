@@ -1,10 +1,22 @@
 # Django
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 
 # Third Party Libraries
 from sorl.thumbnail import ImageField
+
+
+class CategoryQuerySet(models.QuerySet):
+    def search(self, search_term, base_similarity=0.2):
+        return self.annotate(similarity=TrigramSimilarity("name", search_term)).filter(
+            similarity__gte=base_similarity
+        )
+
+
+class CategoryManager(models.Manager.from_queryset(CategoryQuerySet)):
+    ...
 
 
 class Category(models.Model):
@@ -17,6 +29,8 @@ class Category(models.Model):
         on_delete=models.SET_NULL,
         related_name="children",
     )
+
+    objects = CategoryManager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -31,6 +45,17 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse("podcasts:category_detail", args=[self.id, self.slug])
+
+
+class PodcastQuerySet(models.QuerySet):
+    def search(self, search_term, base_similarity=0.2):
+        return self.annotate(similarity=TrigramSimilarity("title", search_term)).filter(
+            similarity__gte=base_similarity
+        )
+
+
+class PodcastManager(models.Manager.from_queryset(PodcastQuerySet)):
+    ...
 
 
 class Podcast(models.Model):
@@ -56,6 +81,8 @@ class Podcast(models.Model):
     explicit = models.BooleanField(default=False)
 
     categories = models.ManyToManyField(Category, blank=True)
+
+    objects = PodcastManager()
 
     class Meta:
         indexes = [

@@ -3,10 +3,13 @@
 {% block content %}
 <h2 class="text-lg font-bold mb-3">Discover New Podcasts</h2>
 
+{% include "_search_form.html" with placeholder="Filter categories..." css_class="mb-3 pb-3 border-b" %}
+
 {% for category in categories %}
 <div class="mb-3 pb-3 border-b">
   <a href="{{ category.get_absolute_url }}"
      class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+  {% if not search %}
   {% with children=category.children.all %}
   {% if children %}
   <div class="flex flex-wrap items-center">
@@ -17,6 +20,7 @@
   </div>
   {% endif %}
   {% endwith %}
+  {% endif %}
 </div>
 {% endfor %}
 {% endblock %}

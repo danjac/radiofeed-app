@@ -19,6 +19,8 @@
   {{ category.name }}
 </h2>
 
+{% include "_search_form.html" with placeholder="Search "|add:category.name|add:" podcasts" css_class="mb-3 pb-3 border-b" %}
+
 {% with children=category.children.all %}
 {% if children %}
 <div class="mb-3 text-sm flex flex-wrap">
