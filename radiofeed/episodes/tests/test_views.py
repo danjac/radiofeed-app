@@ -13,6 +13,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 # Local
 from .. import views
 from ..factories import BookmarkFactory, EpisodeFactory
+from ..models import Bookmark
 
 pytestmark = pytest.mark.django_db
 
@@ -147,3 +148,26 @@ class TestBookmarkList:
         assert resp.status_code == 200
         assert resp.context_data["search"] == "testing"
         assert len(resp.context_data["bookmarks"]) == 1
+
+
+class TestAddBookmark:
+    def test_post(self, rf, user, episode, mocker):
+        req = rf.post(reverse("episodes:add_bookmark", args=[episode.id]))
+        req.user = user
+        req._messages = mocker.Mock()
+        resp = views.add_bookmark(req, episode.id)
+        assert resp.url == episode.get_absolute_url()
+        assert Bookmark.objects.filter(user=user, episode=episode).exists()
+        req._messages.add.assert_called()
+
+
+class TestRemoveBookmark:
+    def test_post(self, rf, user, episode, mocker):
+        BookmarkFactory(user=user, episode=episode)
+        req = rf.post(reverse("episodes:remove_bookmark", args=[episode.id]))
+        req.user = user
+        req._messages = mocker.Mock()
+        resp = views.remove_bookmark(req, episode.id)
+        assert resp.url == episode.get_absolute_url()
+        assert not Bookmark.objects.filter(user=user, episode=episode).exists()
+        req._messages.add.assert_called()
