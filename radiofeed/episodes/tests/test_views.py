@@ -7,6 +7,9 @@ from django.urls import reverse
 # Third Party Libraries
 import pytest
 
+# RadioFeed
+from radiofeed.podcasts.factories import SubscriptionFactory
+
 # Local
 from .. import views
 from ..factories import EpisodeFactory
@@ -15,7 +18,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestEpisodeList:
-    def test_get(self, rf, anonymous_user):
+    def test_anonymous(self, rf, anonymous_user):
         EpisodeFactory.create_batch(3)
         req = rf.get(reverse("episodes:episode_list"))
         req.user = anonymous_user
@@ -23,14 +26,49 @@ class TestEpisodeList:
         assert resp.status_code == 200
         assert len(resp.context_data["episodes"]) == 3
 
-    def test_search(self, rf, anonymous_user):
+    def test_user_no_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)
-        EpisodeFactory(title="testing")
+        req = rf.get(reverse("episodes:episode_list"))
+        req.user = user
+        resp = views.episode_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["episodes"]) == 3
+
+    def test_user_has_subscriptions(self, rf, user):
+        EpisodeFactory.create_batch(3)
+
+        episode = EpisodeFactory()
+        SubscriptionFactory(user=user, podcast=episode.podcast)
+
+        req = rf.get(reverse("episodes:episode_list"))
+        req.user = user
+        resp = views.episode_list(req)
+
+        assert resp.status_code == 200
+        assert len(resp.context_data["episodes"]) == 1
+        assert resp.context_data["episodes"][0] == episode
+
+    def test_anonymous_search(self, rf, anonymous_user):
+        EpisodeFactory.create_batch(3)
+        episode = EpisodeFactory(title="testing")
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
         req.user = anonymous_user
         resp = views.episode_list(req)
         assert resp.status_code == 200
         assert len(resp.context_data["episodes"]) == 1
+        assert resp.context_data["episodes"][0] == episode
+
+    def test_user_has_subscriptions_search(self, rf, user):
+        "Ignore subs in search"
+        EpisodeFactory.create_batch(3)
+        SubscriptionFactory(user=user, podcast=EpisodeFactory().podcast)
+        episode = EpisodeFactory(title="testing")
+        req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
+        req.user = user
+        resp = views.episode_list(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["episodes"]) == 1
+        assert resp.context_data["episodes"][0] == episode
 
 
 class TestEpisodeDetail:
