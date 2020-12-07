@@ -11,7 +11,7 @@ Some ideas for additional features you might want to add in a fork:
 
 1. An episode queue that automatically plays the next episode in the queue when one is finished
 2. Store the play history in the database for logged in users
-3. Recommend new podcasts using machine learning based on subscriptions
+3. Recommend new podcasts using machine learning based on subscriptions and play history
 4. Allow users to compile and share their own lists or collections of podcasts
 
 To get started, first import the categories:
