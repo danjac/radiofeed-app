@@ -6,6 +6,7 @@ export default class extends Controller {
 
   static values = {
     id: String,
+    duration: Number,
     playUrl: String,
     stopUrl: String,
     playing: Boolean,

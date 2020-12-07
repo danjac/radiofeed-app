@@ -50,6 +50,9 @@ export default class extends Controller {
 
     const response = await axios.post(playUrl);
     this.element.innerHTML = response.data;
+    this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
+
+    this.audioTarget.play();
   }
 
   close(event) {
