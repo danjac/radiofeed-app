@@ -3,6 +3,7 @@ import math
 
 # Django
 from django import template
+from django.template.defaultfilters import stringfilter
 
 # Local
 from ..models import Episode
@@ -34,6 +35,7 @@ def get_player(context):
 
 
 @register.filter
+@stringfilter
 def duration_in_seconds(duration):
     """Returns duration string in h:m:s or h:m to seconds"""
     if not duration:
@@ -58,11 +60,17 @@ def duration_in_seconds(duration):
 
 
 @register.filter
+@stringfilter
 def format_duration(duration):
+    """Formats duration as human readable value e.g. 1h 30min"""
     if not duration:
         return ""
 
     total_seconds = duration_in_seconds(duration)
+
+    if not total_seconds:
+        return ""
+
     total_hours = math.floor(total_seconds / 3600)
     total_minutes = round((total_seconds % 3600) / 60)
 
