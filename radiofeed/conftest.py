@@ -6,6 +6,9 @@ from django.http import HttpResponse
 # Third Party Libraries
 import pytest
 
+# RadioFeed
+from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 
@@ -38,3 +41,12 @@ def login_user(client):
     client.login(username=user.username, password=password)
     return user
 
+
+@pytest.fixture
+def podcast():
+    return PodcastFactory()
+
+
+@pytest.fixture
+def episode(podcast):
+    return EpisodeFactory(podcast=podcast)
