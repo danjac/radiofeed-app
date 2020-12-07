@@ -3,19 +3,20 @@ from django.utils import timezone
 
 # Third Party Libraries
 import factory
+from factory.django import DjangoModelFactory
 
 # Local
 from .models import Category, Podcast
 
 
-class CategoryFactory(factory.DjangoModelFactory):
+class CategoryFactory(DjangoModelFactory):
     name = factory.Sequence(lambda i: f"category-{i}")
 
     class Meta:
         model = Category
 
 
-class PodcastFactory(factory.DjangoModelFactory):
+class PodcastFactory(DjangoModelFactory):
     rss = factory.Sequence(lambda i: f"https://example.com/{i}.xml")
     title = factory.Faker("text")
     description = factory.Faker("text")

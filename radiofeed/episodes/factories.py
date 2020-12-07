@@ -5,7 +5,8 @@ import uuid
 from django.utils import timezone
 
 # Third Party Libraries
-from factory import DjangoModelFactory, Faker, LazyFunction, SubFactory
+from factory import Faker, LazyFunction, SubFactory
+from factory.django import DjangoModelFactory
 
 # RadioFeed
 from radiofeed.podcasts.factories import PodcastFactory
