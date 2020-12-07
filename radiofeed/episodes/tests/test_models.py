@@ -2,12 +2,19 @@
 import pytest
 
 # Local
+from ..factories import EpisodeFactory
 from ..models import Episode
 
 pytestmark = pytest.mark.django_db
 
 
-class TestPodcastModel:
+class TestEpisodeManager:
+    def test_search(self):
+        EpisodeFactory(title="testing")
+        assert Episode.objects.search("testing").count() == 1
+
+
+class TestEpisodeModel:
     def test_slug(self):
         episode = Episode(title="Testing")
         assert episode.slug == "testing"

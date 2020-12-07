@@ -1,4 +1,5 @@
 # Django
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
@@ -6,6 +7,17 @@ from django.utils.text import slugify
 
 # RadioFeed
 from radiofeed.podcasts.models import Podcast
+
+
+class EpisodeQuerySet(models.QuerySet):
+    def search(self, search_term, base_similarity=0.2):
+        return self.annotate(similarity=TrigramSimilarity("title", search_term)).filter(
+            similarity__gte=base_similarity
+        )
+
+
+class EpisodeManager(models.Manager.from_queryset(EpisodeQuerySet)):
+    ...
 
 
 class Episode(models.Model):
@@ -27,6 +39,8 @@ class Episode(models.Model):
 
     duration = models.CharField(max_length=12, blank=True)
     explicit = models.BooleanField(default=False)
+
+    objects = EpisodeManager()
 
     class Meta:
         constraints = [
