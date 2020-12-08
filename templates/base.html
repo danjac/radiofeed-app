@@ -36,12 +36,12 @@
     <div class="flex items-center justify-between p-3">
 
       <div class="flex items-center flex-shrink-0 mr-6 text-xl">
-        <button class="md:hidden mr-3"
+        <button class="lg:hidden mr-3"
                 data-action="toggle#toggle"
                 data-toggle-target="item">
           <i class="fa fa-bars"></i>
         </button>
-        <button class="hidden md:hidden mr-3"
+        <button class="hidden lg:hidden mr-3"
                 data-action="toggle#toggle"
                 data-toggle-target="item">
           <i class="fa fa-chevron-up"></i>
@@ -79,10 +79,10 @@
   {% include "_messages.html" %}
   {% include "_cookie_notice.html" %}
 
-  <div class="min-h-full mx-auto flex">
-    <div class="hidden md:block w-full md:w-1/6 mr-4 p-3 border-r md:mt-3 absolute md:static z-50 bg-white min-h-full"
+  <div class="min-h-full mx-auto flex relative">
+    <div class="hidden lg:block w-full lg:w-1/6 mr-4 p-3 border-r absolute left-0 top-0 sm:static z-50 bg-white min-h-full"
          data-toggle-target="item">
-      <nav class="">
+      <nav class="pt-3">
         <ul class="">
           <li class="pb-3">
             <a href="{% url 'podcasts:podcast_list' %}"
@@ -126,7 +126,8 @@
         </ul>
       </nav>
     </div>
-    <div class="md:w-5/6 p-2 bg-white">
+    <div class="w-full lg:w-5/6 p-2 bg-white"
+         data-toggle-target="item">
       {% block content %}{% endblock %}
     </div>
   </div>
