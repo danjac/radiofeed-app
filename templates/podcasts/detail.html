@@ -7,6 +7,9 @@
 <div class="p-2 border border-gray-400 mb-3">
 
   <h2 class="font-bold mb-3 text-lg">{{ podcast.title }}</h2>
+  {% if podcast.authors %}
+  <h3 class="font-semibold text-gray-700 mb-3">{{ podcast.authors }}</h3>
+  {% endif %}
 
   <div class="flex items-center w-full mb-3">
 
@@ -19,10 +22,6 @@
     {% endthumbnail %}
 
     <div>
-
-      <div class="flex flex-wrap items-center">
-        <h3 class="font-semibold text-gray-700 mb-1 mr-2">{{ podcast.authors }}</h3>
-      </div>
 
       <div class="font-semibold text-gray-700 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
@@ -44,30 +43,33 @@
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
-      {% if user.is_authenticated %}
-      {% if is_subscribed %}
-      <button data-controller="ajax"
-              data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
-              data-action="click->ajax#post:once"
-              class="px-2 py-1 border rounded hover:bg-gray-100">
-        <i class="fa fa-eye-slash mr-2"></i>
-        Unsubscribe
-      </button>
-      {% else %}
-      <button data-controller="ajax"
-              data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
-              data-action="click->ajax#post:once"
-              class="px-2 py-1 border rounded hover:bg-gray-100">
-        <i class="fa fa-eye mr-2"></i>
-        Subscribe
-      </button>
-      {% endif %}
-      {% endif %}
     </div>
 
   </div>
 
-  <div class="markdown my-3">
+  <div class="mb-3">
+    {% if user.is_authenticated %}
+    {% if is_subscribed %}
+    <button data-controller="ajax"
+            data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
+            data-action="click->ajax#post:once"
+            class="px-2 py-1 border rounded hover:bg-gray-100">
+      <i class="fa fa-eye-slash mr-2"></i>
+      Unsubscribe
+    </button>
+    {% else %}
+    <button data-controller="ajax"
+            data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
+            data-action="click->ajax#post:once"
+            class="px-2 py-1 border rounded hover:bg-gray-100">
+      <i class="fa fa-eye mr-2"></i>
+      Subscribe
+    </button>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="markdown mb-3">
     {{ podcast.description|clean_html }}
   </div>
   <div>
