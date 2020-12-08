@@ -1242,23 +1242,6 @@
   },
   {
     "model": "podcasts.podcast",
-    "pk": 101,
-    "fields": {
-      "rss": "https://www.jupiterbroadcasting.com/feeds/lashd.xml",
-      "title": "The Linux Action Show! HD",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/the-linux-action-show-hd/id505494738?uo=4",
-      "cover_image": null,
-      "description": "Video versions of The Linux Action Show! A show that covers everything geeks care about in the computer industry. Get a solid dose of Linux, gadgets, news events and much more!",
-      "link": "http://www.jupiterbroadcasting.com",
-      "keywords": "Linux Tips tricks howto Mac Windows Tech Geek Technology Software How-To Gadgets Tech News",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [3, 70]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
     "pk": 102,
     "fields": {
       "rss": "https://feeds.megaphone.fm/lore",
@@ -1816,23 +1799,6 @@
       "last_updated": null,
       "explicit": false,
       "categories": [2, 6, 15]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
-    "pk": 140,
-    "fields": {
-      "rss": "https://whiterocket.podbean.com/feed.xml",
-      "title": "White Rocket Entertainment",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/white-rocket-entertainment/id575464177?uo=4",
-      "cover_image": null,
-      "description": "This channel is the network home to the White Rocket Podcast (creator interviews & movie/TV/comics/book discussion) as well as the Avengers Assemble podcast, the Comics with Normies podcast,, and the Open Wheel racing show.",
-      "link": "https://whiterocket.podbean.com",
-      "keywords": "TV & Film TV & Film Fiction Science Fiction Arts Visual Arts",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [5, 8, 20, 26, 42]
     }
   },
   {
