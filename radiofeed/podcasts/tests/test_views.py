@@ -92,20 +92,31 @@ class TestPodcastDetail:
 class TestCategoryList:
     def test_get(self, rf):
         parents = CategoryFactory.create_batch(3, parent=None)
-        CategoryFactory(parent=parents[0])
-        CategoryFactory(parent=parents[1])
-        CategoryFactory(parent=parents[2])
+        c1 = CategoryFactory(parent=parents[0])
+        c2 = CategoryFactory(parent=parents[1])
+        c3 = CategoryFactory(parent=parents[2])
+
+        PodcastFactory(categories=[c1])
+        PodcastFactory(categories=[c2])
+        PodcastFactory(categories=[c3])
+
         resp = views.category_list(rf.get(reverse("podcasts:category_list")))
         assert resp.status_code == 200
         assert len(resp.context_data["categories"]) == 3
 
     def test_search(self, rf):
         parents = CategoryFactory.create_batch(3, parent=None)
-        CategoryFactory(parent=parents[0])
-        CategoryFactory(parent=parents[1])
-        CategoryFactory(parent=parents[2], name="testing child")
+        c1 = CategoryFactory(parent=parents[0])
+        c2 = CategoryFactory(parent=parents[1])
+        c3 = CategoryFactory(parent=parents[2], name="testing child")
 
-        CategoryFactory(name="testing parent")
+        c4 = CategoryFactory(name="testing parent")
+
+        PodcastFactory(categories=[c1])
+        PodcastFactory(categories=[c2])
+        PodcastFactory(categories=[c3])
+        PodcastFactory(categories=[c4])
+
         resp = views.category_list(
             rf.get(reverse("podcasts:category_list"), {"q": "testing"})
         )

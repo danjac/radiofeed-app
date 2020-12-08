@@ -59,16 +59,16 @@ def podcast_detail(request, podcast_id, slug=None):
 
 def category_list(request):
     search = request.GET.get("q", None)
-    categories = Category.objects.all()
+    categories = (
+        Category.objects.with_podcasts()
+        .select_related("parent")
+        .prefetch_related("children")
+    )
 
     if search:
         categories = categories.search(search).order_by("-similarity", "name")
     else:
-        categories = (
-            categories.filter(parent__isnull=True)
-            .prefetch_related("children")
-            .order_by("name")
-        )
+        categories = categories.order_by("name")
     return TemplateResponse(
         request,
         "podcasts/categories.html",
@@ -80,6 +80,8 @@ def category_detail(request, category_id, slug=None):
     category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
     )
+    children = category.children.with_podcasts().order_by("name")
+
     podcasts = category.podcast_set.filter(pub_date__isnull=False)
     search = request.GET.get("q", None)
 
@@ -91,7 +93,12 @@ def category_detail(request, category_id, slug=None):
     return TemplateResponse(
         request,
         "podcasts/category.html",
-        {"category": category, "podcasts": podcasts, "search": search,},
+        {
+            "category": category,
+            "children": children,
+            "podcasts": podcasts,
+            "search": search,
+        },
     )
 
 

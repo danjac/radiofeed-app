@@ -20,7 +20,6 @@
   {% include "_search_form.html" with placeholder="Search "|add:category.name|add:" podcasts"  %}
 </div>
 
-{% with children=category.children.all %}
 {% if children %}
 <div class="mb-3 text-sm flex flex-wrap">
   {% for child in children %}
@@ -29,7 +28,7 @@
   {% endfor %}
 </div>
 {% endif %}
-{% endwith %}
+
 {% paginate podcasts as page_obj %}
 
 {% if page_obj.number > 1 %}
