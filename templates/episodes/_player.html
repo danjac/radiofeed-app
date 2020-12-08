@@ -1,99 +1,133 @@
 {% load thumbnail episodes %}
 {% if episode %}
 {% with podcast=episode.podcast %}
-<div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold">
+<div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
+     data-controller="toggle">
+
   <audio preload="metadata"
          src="{{ episode.media_url }}"
          data-player-target="audio"
          data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop"></audio>
-  <div class="mb-2 md:hidden pr-1">
-    <a href="{{ episode.get_absolute_url }}"
-       title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
 
-  <div class="flex items-stretch">
-
-    {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-    <img data-controller="link"
-         data-link-url-value="{{ podcast.get_absolute_url }}"
-         data-action="click->link#visit"
-         class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-4"
-         title="{{ podcast.title }}"
-         src="{{ img.url }}"
-         role="link"
-         width="30"
-         height="30">
-    {% endthumbnail %}
-
-    <div class="w-full self-start">
-
-      <div class="mb-3 hidden md:flex">
-
+  <div data-toggle-target="item"
+       class="hidden">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+        <img data-controller="link"
+             data-link-url-value="{{ podcast.get_absolute_url }}"
+             data-action="click->link#visit"
+             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4"
+             title="{{ podcast.title }}"
+             src="{{ img.url }}"
+             role="link"
+             width="30"
+             height="30">
+        {% endthumbnail %}
         <a href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
       </div>
+      <button data-action="toggle#toggle">
+        <i class="fa fa-expand-alt"></i>
+      </button>
+    </div>
+  </div>
 
-      <div class="flex justify-between items-center w-full mb-3">
+  <div data-toggle-target="item">
+    <button data-action="toggle#toggle"
+            class="float-right">
+      <i class="fa fa-compress-alt"></i>
+    </button>
 
-        <div class="flex items-center">
+    <div class="mb-2 md:hidden pr-1">
+      <a href="{{ episode.get_absolute_url }}"
+         title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
 
-          <button title="Pause"
-                  data-action="player#pause"
-                  data-player-target="pauseButton"
-                  class="focus:outline-none mr-6">
-            <i class="fa fa-pause text-xl"></i>
-          </button>
+    <div class="flex items-stretch">
 
-          <button title="Play"
-                  data-action="player#play"
-                  data-player-target="playButton"
-                  class="focus:outline-none mr-6 hidden">
-            <i class="fa fa-play text-xl"></i>
-          </button>
+      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+      <img data-controller="link"
+           data-link-url-value="{{ podcast.get_absolute_url }}"
+           data-action="click->link#visit"
+           class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-4"
+           title="{{ podcast.title }}"
+           src="{{ img.url }}"
+           role="link"
+           width="30"
+           height="30">
+      {% endthumbnail %}
 
-          <button title="Stop"
-                  data-action="player#stop"
-                  class="focus:outline-none">
-            <i class="fa fa-stop text-lg"></i>
-          </button>
+      <div class="w-full self-start">
+
+        <div class="mb-3 hidden md:flex">
+
+          <a href="{{ episode.get_absolute_url }}"
+             title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
+        </div>
+
+        <div class="flex justify-between items-center w-full mb-3">
+
+          <div class="flex items-center">
+
+            <button title="Pause"
+                    data-action="player#pause"
+                    data-player-target="pauseButton"
+                    class="focus:outline-none mr-6">
+              <i class="fa fa-pause text-xl"></i>
+            </button>
+
+            <button title="Play"
+                    data-action="player#play"
+                    data-player-target="playButton"
+                    class="focus:outline-none mr-6 hidden">
+              <i class="fa fa-play text-xl"></i>
+            </button>
+
+            <button title="Stop"
+                    data-action="player#stop"
+                    class="focus:outline-none">
+              <i class="fa fa-stop text-lg"></i>
+            </button>
+
+          </div>
+
+          <div class="flex items-center">
+            <button title="Skip back 15 seconds"
+                    data-action="player#skipBack"
+                    class="focus:outline-none mr-6">
+
+              <i class="fa fa-undo text-lg"></i>
+
+            </button>
+            <button title="Skip forward 15 seconds"
+                    data-action="player#skipForward"
+                    class="focus:outline-none">
+
+              <i class="fa fa-redo text-lg"></i>
+
+            </button>
+
+          </div>
 
         </div>
 
-        <div class="flex items-center">
-          <button title="Skip back 15 seconds"
-                  data-action="player#skipBack"
-                  class="focus:outline-none mr-6">
-
-            <i class="fa fa-undo text-lg"></i>
-
-          </button>
-          <button title="Skip forward 15 seconds"
-                  data-action="player#skipForward"
-                  class="focus:outline-none">
-
-            <i class="fa fa-redo text-lg"></i>
-
-          </button>
-
+        <div class="flex items-center w-full justify-between">
+          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center"
+               data-player-target="progressBar"
+               title="0">
+            <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
+                 data-player-target="indicator"
+                 style="z-index: 12;"></div>
+            <div class="h-2 relative rounded-l flex items-center justify-end bg-blue-800"
+                 style="width: 0%;"
+                 data-player-target="progress"></div>
+            <div class="h-2 rounded-r relative bg-blue-500"
+                 data-player-target="buffer"
+                 style="width: 0%;"></div>
+          </div>
+          <div class="w-24 text-right tracking-tighter"
+               data-player-target="counter"></div>
         </div>
-
-      </div>
-
-      <div class="flex items-center w-full justify-between">
-        <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center"
-             data-player-target="progressBar"
-             title="0">
-          <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
-               data-player-target="indicator"
-               style="z-index: 12;"></div>
-          <div class="h-2 relative rounded-l flex items-center justify-end bg-blue-800"
-               style="width: 0%;"
-               data-player-target="progress"></div>
-          <div class="h-2 rounded-r relative bg-blue-500"
-               data-player-target="buffer"
-               style="width: 0%;"></div>
-        </div>
-        <div class="w-24 text-right tracking-tighter"
-             data-player-target="counter"></div>
       </div>
     </div>
   </div>
