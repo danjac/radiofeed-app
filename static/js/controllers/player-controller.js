@@ -172,24 +172,25 @@ export default class extends Controller {
     return (this.currentTimeValue / this.durationValue) * 100;
   }
 
-  getWidthComplete(pcComplete) {
+  getCurrentPostion(pcComplete) {
     const clientWidth = this.progressBarTarget.clientWidth;
-    let completeWidth = 0;
+
+    let currentPosition, width;
+
+    currentPosition = this.progressBarTarget.getBoundingClientRect().left - 16;
+
     if (clientWidth === 0) {
-      return 0;
+      width = 0;
     } else {
       // min 1rem to accomodate indicator
       const minWidth = (16 / clientWidth) * 100;
-      return pcComplete > minWidth ? pcComplete : minWidth;
+      width = pcComplete > minWidth ? pcComplete : minWidth;
     }
-  }
 
-  getCurrentPostion(pcComplete) {
-    let currentPosition = this.progressBarTarget.getBoundingClientRect().left - 16;
-    const width = this.getWidthComplete(pcComplete);
     if (width) {
-      currentPosition += this.progressBarTarget.clientWidth * (width / 100);
+      currentPosition += clientWidth * (width / 100);
     }
+
     return currentPosition;
   }
 
