@@ -13,7 +13,10 @@
   <div class="flex items-stretch">
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-    <img class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-4"
+    <img data-controller="link"
+         data-link-url-value="{{ podcast.get_absolute_url }}"
+         data-action="click->link#visit"
+         class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-4"
          title="{{ podcast.title }}"
          src="{{ img.url }}"
          role="link"

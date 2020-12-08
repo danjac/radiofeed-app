@@ -10,13 +10,15 @@
     <div class="font-bold flex items-center sm:mb-0">
 
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-      <img class="object-cover mr-4 h-16 w-16 cursor-pointer"
-           title="{{ podcast.title }}"
-           src="{{ img.url }}"
-           alt="{{ podcast.title }}"
-           role="link"
-           width="16"
-           height="16">
+      <a href="{{ podcast.get_absolute_url }}">
+        <img class="object-cover mr-4 h-16 w-16 cursor-pointer"
+             title="{{ podcast.title }}"
+             src="{{ img.url }}"
+             alt="{{ podcast.title }}"
+             role="link"
+             width="16"
+             height="16">
+      </a>
       {% endthumbnail %}
       <div>
         <div class="hidden md:block mb-1">
