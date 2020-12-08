@@ -60,6 +60,8 @@ export default class extends Controller {
     this.element.innerHTML = '';
     this.episodeValue = '';
     this.durationValue = 0;
+
+    this.lastUpdated = 0;
   }
 
   stop() {
