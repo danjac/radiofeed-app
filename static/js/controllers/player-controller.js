@@ -29,11 +29,11 @@ export default class extends Controller {
     useDispatch(this);
   }
 
-  initialize() {
+  async initialize() {
     if (this.hasAudioTarget) {
       this.audioTarget.currentTime = this.currentTimeValue;
       try {
-        this.audioTarget.play();
+        await this.audioTarget.play();
       } catch (e) {
         this.pausedValue = true;
       }
