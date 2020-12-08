@@ -33,13 +33,11 @@
       </a>
       {% endthumbnail %}
       {% endif %}
-      <div>
-        <div class="font-semibold text-gray-700 text-sm">
-          <div title="Date Published"
-               class="mb-2"> {{ episode.pub_date|date }} </div>
-          <div title="Duration"
-               class=""><span> {{ episode.duration|format_duration }} </span></div>
-        </div>
+      <div class="font-semibold text-gray-700 text-sm flex items-center">
+        <div title="Date Published"
+             class="mr-2"> {{ episode.pub_date|date }} </div>
+        <div title="Duration"
+             class=""><span> {{ episode.duration|format_duration }} </span></div>
       </div>
     </div>
 
