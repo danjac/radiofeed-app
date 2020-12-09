@@ -18,6 +18,10 @@ Some ideas for additional features you might want to add in a fork:
 4. Allow users to compile and share their own lists or collections of podcasts
 5. Automatically add new podcasts using the GPodder or iTunes API
 
+For local development, first copy the .env.example file:
+
+> cp .env.example .env
+
 To get started, first import the categories:
 
 > ./scripts/manage loaddata radiofeed/podcasts/fixtures/categories.json
