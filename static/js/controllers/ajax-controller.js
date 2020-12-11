@@ -14,25 +14,25 @@ export default class extends Controller {
 
   get(event) {
     event.preventDefault();
-    this.dispatch('GET');
+    this.sendAjax('GET');
   }
 
   post(event) {
     event.preventDefault();
-    this.dispatch('POST');
+    this.sendAjax('POST');
   }
 
   put(event) {
     event.preventDefault();
-    this.dispatch('POST');
+    this.sendAjax('POST');
   }
 
   delete(event) {
     event.preventDefault();
-    this.dispatch('DELETE');
+    this.sendAjax('DELETE');
   }
 
-  async dispatch(method) {
+  async sendAjax(method) {
     if (this.hasConfirmValue && !window.confirm(this.confirmValue)) {
       return;
     }
