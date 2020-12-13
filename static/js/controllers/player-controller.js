@@ -41,6 +41,7 @@ export default class extends Controller {
   }
 
   async open(event) {
+    // TBD: include currentTime i.e. for episodes in progress
     const { playUrl, episode, duration } = event.detail;
 
     this.episodeValue = episode;

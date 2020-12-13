@@ -443,7 +443,7 @@ class RssParser:
                 [
                     c["value"]
                     for c in entry.get("content", [])
-                    if c["type"] == "text/html"
+                    if c.get("type") == "text/html"
                 ]
                 + [
                     entry[field]
