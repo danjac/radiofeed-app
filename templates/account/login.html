@@ -9,7 +9,7 @@
   <a class="text-blue-800 hover:text-blue-600"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-<form class="p-3 bg-white border rounded w-full lg:w-1/3{% if form.errors %} border-red-800{% endif %}"
+<form class="p-3 bg-white border rounded w-full sm:w-1/2 lg:w-1/3{% if form.errors %} border-red-800{% endif %}"
       method="post"
       action="{% url 'account_login' %}"
       novalidate>

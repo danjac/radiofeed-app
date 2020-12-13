@@ -65,43 +65,39 @@
         <div class="inline-block">{{ episode.duration|format_duration }}</div>
       </div>
 
-      <button title="Open in Player"
-              data-episode-target="playButton"
-              data-action="episode#play"
-              class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
-        <i class="fa fa-play text-kl"></i>
-      </button>
-      <button title="Close Player"
-              data-episode-target="stopButton"
-              data-action="episode#stop"
-              class="h-9 w-9 rounded-full border border-gray-400 focus:outline-none btn-default rounded transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
-        <i class="fa fa-stop text-kl"></i>
-      </button>
+      <div class="flex items-center">
+        {% include "episodes/_play_buttons.html" with css_class=user.is_authenticated|yesno:"mr-3," %}
+        {% if user.is_authenticated %}
+        <div class="">
+          {% if is_bookmarked %}
+          <button data-controller="ajax"
+                  data-ajax-url-value="{% url 'episodes:remove_bookmark' episode.id %}"
+                  data-ajax-debounce-value="500"
+                  data-action="click->ajax#post:once"
+                  title="Remove Bookmark"
+                  class="focus:outline-none rounded border px-2 py-1">
+            <i class="fa fa-star mr-2"></i>
+            Unbookmark
+          </button>
+          {% else %}
+          <button data-controller="ajax"
+                  data-ajax-url-value="{% url 'episodes:add_bookmark' episode.id %}"
+                  data-ajax-debounce-value="500"
+                  data-action="click->ajax#post:once"
+                  title="Add Bookmark"
+                  class="focus:outline-none rounded border px-2 py-1">
+            <i class="far fa-star mr-2"></i>
+            Bookmark
+          </button>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+
+
     </div>
   </div>
-  {% if user.is_authenticated %}
-  <div class="mb-3">
-    {% if is_bookmarked %}
-    <button data-controller="ajax"
-            data-ajax-url-value="{% url 'episodes:remove_bookmark' episode.id %}"
-            data-action="click->ajax#post:once"
-            class="px-2 py-1 border rounded hover:bg-gray-100">
-      <i class="fa fa-bookmark mr-2"></i>
-      Remove Bookmark
-    </button>
-    {% else %}
-    <button data-controller="ajax"
-            data-ajax-url-value="{% url 'episodes:add_bookmark' episode.id %}"
-            data-action="click->ajax#post:once"
-            class="px-2 py-1 border rounded hover:bg-gray-100">
-      <i class="far fa-bookmark mr-2"></i>
-      Add Bookmark
-    </button>
-    {% endif %}
-  </div>
-  {% endif %}
-
-
 
   <div class="markdown my-3">
     {{ episode.description|clean_html }}

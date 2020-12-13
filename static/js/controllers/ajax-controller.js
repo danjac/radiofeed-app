@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Turbolinks from 'turbolinks';
 import { Controller } from 'stimulus';
+import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 
 export default class extends Controller {
   static targets = ['fragment'];
@@ -10,7 +12,18 @@ export default class extends Controller {
     remove: Boolean,
     replace: Boolean,
     url: String,
+    throttle: Number,
+    debounce: Number,
   };
+
+  initialize() {
+    if (this.hasDebounceValue) {
+      this.sendAjax = debounce(this.sendAjax, this.debounceValue).bind(this);
+    }
+    if (this.hasThrottleValue) {
+      this.sendAjax = throttle(this.sendAjax, this.throttleValue).bind(this);
+    }
+  }
 
   get(event) {
     event.preventDefault();

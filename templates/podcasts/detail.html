@@ -43,30 +43,33 @@
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
+      {% if user.is_authenticated %}
+      <div>
+        {% if is_subscribed %}
+        <button data-controller="ajax"
+                data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
+                data-ajax-debounce-value="500"
+                data-action="click->ajax#post:once"
+                class="px-2 py-1 border rounded hover:bg-gray-100">
+          <i class="fa fa-eye-slash mr-2"></i>
+          Unsubscribe
+        </button>
+        {% else %}
+        <button data-controller="ajax"
+                data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
+                data-ajax-debounce-value="500"
+                data-action="click->ajax#post:once"
+                class="px-2 py-1 border rounded hover:bg-gray-100">
+          <i class="fa fa-eye mr-2"></i>
+          Subscribe
+        </button>
+        {% endif %}
+      </div>
+      {% endif %}
+
+
     </div>
 
-  </div>
-
-  <div class="mb-3">
-    {% if user.is_authenticated %}
-    {% if is_subscribed %}
-    <button data-controller="ajax"
-            data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
-            data-action="click->ajax#post:once"
-            class="px-2 py-1 border rounded hover:bg-gray-100">
-      <i class="fa fa-eye-slash mr-2"></i>
-      Unsubscribe
-    </button>
-    {% else %}
-    <button data-controller="ajax"
-            data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
-            data-action="click->ajax#post:once"
-            class="px-2 py-1 border rounded hover:bg-gray-100">
-      <i class="fa fa-eye mr-2"></i>
-      Subscribe
-    </button>
-    {% endif %}
-    {% endif %}
   </div>
 
   <div class="markdown mb-3">
