@@ -126,3 +126,26 @@ class Subscription(TimeStampedModel):
             )
         ]
         indexes = [models.Index(fields=["-created"])]
+
+
+class Recommendation(models.Model):
+    podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+    recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+
+    frequency = models.PositiveIntegerField(default=0)
+
+    similarity = models.DecimalField(
+        decimal_places=10, max_digits=100, null=True, blank=True
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["podcast"]),
+            models.Index(fields=["recommended"]),
+            models.Index(fields=["-similarity", "-frequency"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["podcast", "recommended"], name="unique_recommendation"
+            ),
+        ]

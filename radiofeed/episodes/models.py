@@ -41,7 +41,7 @@ class Episode(models.Model):
     media_type = models.CharField(max_length=20)
     length = models.IntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=12, blank=True)
+    duration = models.CharField(max_length=30, blank=True)
     explicit = models.BooleanField(default=False)
 
     objects = EpisodeManager()

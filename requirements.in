@@ -21,6 +21,8 @@ future
 gunicorn
 ipython
 lxml
+nltk
+pandas
 Pillow
 psycopg2-binary
 pyopenssl
@@ -34,6 +36,7 @@ python-dateutil
 pytz
 redis
 sentry_sdk
+sklearn
 sorl-thumbnail
 unidecode
 werkzeug

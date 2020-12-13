@@ -311,7 +311,9 @@ class RssParser:
     def parse(self, force_update=False):
 
         # fetch etag and last modified
-        head_response = requests.head(self.podcast.rss, headers=get_headers())
+        head_response = requests.head(
+            self.podcast.rss, headers=get_headers(), timeout=5
+        )
         head_response.raise_for_status()
         headers = head_response.headers
 
@@ -320,7 +322,9 @@ class RssParser:
         if etag and etag == self.podcast.etag and not force_update:
             return []
 
-        response = requests.get(self.podcast.rss, headers=get_headers(), stream=True)
+        response = requests.get(
+            self.podcast.rss, headers=get_headers(), stream=True, timeout=5
+        )
         response.raise_for_status()
 
         data = feedparser.parse(response.content)
@@ -353,23 +357,24 @@ class RssParser:
             self.podcast.language = feed.get("language", "en")[:2].strip().lower()
             self.podcast.explicit = bool(feed.get("itunes_explicit", False))
 
-            image_url = None
+            if not self.podcast.cover_image:
+                image_url = None
 
-            # try itunes image first
-            soup = BeautifulSoup(response.content, "lxml")
-            itunes_img_tag = soup.find("itunes:image")
-            if itunes_img_tag and "href" in itunes_img_tag.attrs:
-                image_url = itunes_img_tag.attrs["href"]
+                # try itunes image first
+                soup = BeautifulSoup(response.content, "lxml")
+                itunes_img_tag = soup.find("itunes:image")
+                if itunes_img_tag and "href" in itunes_img_tag.attrs:
+                    image_url = itunes_img_tag.attrs["href"]
 
-            if not image_url:
-                try:
-                    image_url = feed["image"]["href"]
-                except KeyError:
-                    pass
+                if not image_url:
+                    try:
+                        image_url = feed["image"]["href"]
+                    except KeyError:
+                        pass
 
-            if image_url and (img := fetch_image_from_url(image_url)):
-                print(image_url)
-                self.podcast.cover_image = img
+                if image_url and (img := fetch_image_from_url(image_url)):
+                    print(image_url)
+                    self.podcast.cover_image = img
 
             self.podcast.link = feed.get("link")
 

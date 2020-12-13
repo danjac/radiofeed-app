@@ -13,6 +13,9 @@ RUN apt-get update \
 COPY ./requirements.txt /requirements.txt
 RUN pip install -r requirements.txt
 
+RUN python -m nltk.downloader stopwords
+RUN python -m nltk.downloader wordnet
+
 WORKDIR /app
 
 COPY ./scripts/docker/entrypoint /entrypoint
