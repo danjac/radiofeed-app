@@ -8,7 +8,7 @@
 
   <h2 class="font-bold mb-3 text-lg">{{ podcast.title }}</h2>
   {% if podcast.authors %}
-  <h3 class="font-semibold text-gray-700 mb-3">{{ podcast.authors }}</h3>
+  <h3 class="font-semibold text-gray-300 mb-3">{{ podcast.authors }}</h3>
   {% endif %}
 
   <div class="flex items-center w-full mb-3">
@@ -23,23 +23,23 @@
 
     <div>
 
-      <div class="font-semibold text-gray-700 flex flex-wrap items-center mb-3">
+      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
       </div>
 
       <div class="flex items-center mb-3">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
-           class="text-blue-800 hover:text-blue-600 mr-2"
+           class="font-semibold hover:text-gray-100 mr-2"
            target="_blank"
            rel="noopener">Website</a>
         {% endif %}
         <a href="{{ podcast.rss }}"
-           class="text-blue-800 hover:text-blue-600 mr-2"
+           class="font-semibold hover:text-gray-100 mr-2"
            target="_blank"
            rel="noopener">RSS</a>
         <a href="{{ podcast.itunes }}"
-           class="text-blue-800 hover:text-blue-600 mr-2"
+           class="font-semibold hover:text-gray-100 mr-2"
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
@@ -50,7 +50,7 @@
                 data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
                 data-ajax-debounce-value="500"
                 data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded hover:bg-gray-100">
+                class="px-2 py-1 border rounded hover:bg-gray-800">
           <i class="fa fa-eye-slash mr-2"></i>
           Unsubscribe
         </button>
@@ -59,7 +59,7 @@
                 data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
                 data-ajax-debounce-value="500"
                 data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded hover:bg-gray-100">
+                class="px-2 py-1 border rounded bg-indigo-800 hover:bg-indigo-600">
           <i class="fa fa-eye mr-2"></i>
           Subscribe
         </button>

@@ -5,14 +5,14 @@
 
 <div class="mb-3 text-sm pb-3 border-b">
   <a href="{% url 'podcasts:category_list' %}"
-     class="text-blue-800 hover:text-blue-600 mr-1">Discover</a>
+     class="font-semibold hover:text-white-300 mr-1">Discover</a>
   {% if category.parent %}
-  <span class="text-gray-500 mr-1">&gt;</span>
+  <span class="text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-1">{{ category.parent.name }}</a>
+     class="font-semibold hover:text-white-300 mr-1">{{ category.parent.name }}</a>
   {% endif %}
-  <span class="text-gray-500 mr-1">&gt;</span>
-  <span class="text-gray-500">{{ category.name }}</span>
+  <span class="text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-300">{{ category.name }}</span>
 </div>
 
 <div class="md:flex justify-between items-center mb-3">
@@ -24,7 +24,7 @@
 <div class="mb-3 text-sm flex flex-wrap">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 mr-3">{{ child.name }}</a>
+     class="font-semibold hover:text-white-300 mr-3">{{ child.name }}</a>
   {% endfor %}
 </div>
 {% endif %}

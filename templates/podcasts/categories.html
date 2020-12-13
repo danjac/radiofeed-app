@@ -11,7 +11,7 @@
   {% for category in categories %}
   <div class=jpy-3">
     <a href="{{ category.get_absolute_url }}"
-       class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+       class="font-semibold hover:text-white-100 font-semibold mb-3">{{ category.name }}</a>
   </div>
   {% endfor %}
   {% else %}
@@ -19,11 +19,11 @@
   {% if not category.parent %}
   <div class="py-3">
     <a href="{{ category.get_absolute_url }}"
-       class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+       class="font-semibold hover:text-white-100 font-semibold mb-3">{{ category.name }}</a>
     <div class="flex flex-wrap items-center">
       {% for child in categories %}
       {% if child.parent == category %}
-      <a class="text-blue-800 hover:text-blue-600 mb-1 mr-3 text-sm"
+      <a class="font-semibold hover:text-white-100 mb-1 mr-3 text-sm"
          href="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endif %}
       {% endfor %}

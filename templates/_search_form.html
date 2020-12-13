@@ -8,13 +8,13 @@
          value="{{ search|default:'' }}"
          {% if placeholder %}placeholder="{{ placeholder }}"
          {% endif %}
-         class="p-1 focus:outline-none">
-  <button class="border-r border-t border-b border-gray-500 px-2 py-1 hover:bg-gray-100 focus:outline-none"
+         class="p-1 bg-gray-900 text-white focus:outline-none">
+  <button class="bg-indigo-800 hover:bg-indigo-600 border-r border-t border-b border-gray-500 px-2 py-1 focus:outline-none"
           type="submit"
           title="Search">
     <i class="fa fa-search"></i>
   </button>
   {% if search %}
-  <a href="{{ request.path }}" class="text-blue-800 hover:text-blue-600 ml-3">Clear</a>
+  <a href="{{ request.path }}" class="font-semibold hover:text-gray-300 ml-3">Clear</a>
   {% endif %}
 </form>

@@ -15,7 +15,7 @@
 
     <div class="mb-3 flex flex-wrap">
       <a href="{{ episode.get_absolute_url }}"
-         class="block text-blue-800 hover:text-blue-600 font-semibold mb-1"
+         class="block font-semibold hover:text-gray-300 font-semibold mb-1"
          title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
     </div>
 
@@ -38,9 +38,9 @@
       <div class="flex items-center mb-2 lg:mb-0">
         {% include "episodes/_play_buttons.html" with css_class="mr-2" %}
         <div title="Date Published"
-             class="font-semibold text-gray-700 text-sm mr-2"> {{ episode.pub_date|date }} </div>
+             class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
         <div title="Duration"
-             class="font-semibold text-gray-700 text-sm"><span> {{ episode.duration|format_duration }} </span></div>
+             class="font-semibold text-gray-100 text-sm"><span> {{ episode.duration|format_duration }} </span></div>
 
 
       </div>

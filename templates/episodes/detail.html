@@ -7,22 +7,22 @@
 <div class="text-sm flex justify-between mb-3">
 
   <a {% if prev_episode %}
-     class="block text-indigo-900 hover:text-indigo-700"
+     class="block hover:text-white-100"
      href="{{ prev_episode.get_absolute_url }}"
      title="{{ prev_episode.title }}"
      {% else %}
-     class="text-gray-300 pointer-events-none"
+     class="text-gray-500 pointer-events-none"
      href="javascript:void(0);"
      {% endif %}>
     Previous
   </a>
 
   <a {% if next_episode %}
-     class="block text-indigo-900 hover:text-indigo-700"
+     class="block hover:text-white-100"
      href="{{ next_episode.get_absolute_url }}"
      title="{{ next_episode.title }}"
      {% else %}
-     class="text-gray-300 pointer-events-none"
+     class="text-gray-500 pointer-events-none"
      href="javascript:void(0);"
      {% endif %}>
     Next
@@ -45,7 +45,7 @@
   <h2 class="font-bold mb-3 text-lg">{{ episode.title }}</h2>
   <h3 class="font-semibold mb-3">
     <a href="{{ podcast.get_absolute_url }}"
-       class="text-blue-800 hover:text-blue-600">
+       class="font-semibold hover:text-gray-300">
       {{ podcast.title }}
     </a>
   </h3>
@@ -60,7 +60,7 @@
          height="32">
     {% endthumbnail %}
     <div>
-      <div class="font-semibold text-gray-700 flex flex-wrap items-center mb-3">
+      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
         <div class="inline-block">{{ episode.duration|format_duration }}</div>
       </div>
@@ -75,7 +75,7 @@
                   data-ajax-debounce-value="500"
                   data-action="click->ajax#post:once"
                   title="Remove Bookmark"
-                  class="focus:outline-none rounded border px-2 py-1">
+                  class="focus:outline-none rounded border hover:bg-gray-800 px-2 py-1">
             <i class="fa fa-star mr-2"></i>
             Unbookmark
           </button>
@@ -85,7 +85,7 @@
                   data-ajax-debounce-value="500"
                   data-action="click->ajax#post:once"
                   title="Add Bookmark"
-                  class="focus:outline-none rounded border px-2 py-1">
+                  class="focus:outline-none rounded border bg-indigo-800 hover:bg-indigo-600 px-2 py-1">
             <i class="far fa-star mr-2"></i>
             Bookmark
           </button>

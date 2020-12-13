@@ -1,9 +1,9 @@
 {% load thumbnail %}
-<div class="p-2 border border-gray-400 hover:border-blue-400 mb-3">
+<div class="p-2 border border-gray-400 mb-3">
   <div class="md:hidden mb-3">
     <a href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title }}"
-       class="font-semibold text-blue-800 hover:text-blue-600 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
+       class="font-semibold font-semibold hover:text-white-100 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
   </div>
 
   <div class="sm:flex items-center justify-between">
@@ -24,9 +24,9 @@
         <div class="hidden md:block mb-1">
           <a href="{{ podcast.get_absolute_url }}"
              title="{{ podcast.title }}"
-             class="text-blue-800 hover:text-blue-600 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
+             class="font-semibold hover:text-white-100 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
         </div>
-        <div class="font-semibold text-gray-700 text-sm flex flex-wrap items-center">
+        <div class="font-semibold text-gray-300 text-sm flex flex-wrap items-center">
           <div class="inline-block">{{ podcast.pub_date|date }}</div>
         </div>
       </div>

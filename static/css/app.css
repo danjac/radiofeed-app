@@ -28,7 +28,7 @@
 }
 
 .markdown a {
-  @apply text-blue-800 break-words;
+  @apply font-semibold underline break-words;
 }
 
 .markdown p {
@@ -45,7 +45,7 @@
 
 .markdown a:hover,
 .markdown a:visited {
-  @apply text-blue-600;
+  @apply text-gray-300;
 }
 
 /* hack to handle mobile scrolling issues
