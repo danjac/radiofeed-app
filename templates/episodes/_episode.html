@@ -1,7 +1,7 @@
 {% load thumbnail episodes %}
 {% with podcast=episode.podcast %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-400 hover:border-blue-400 mb-3 flex justify-between items-center"
+<div class="p-2 border border-gray-300 hover:border-indigo-600 mb-3 flex justify-between items-center"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close"
      {% if is_episode_playing %}
