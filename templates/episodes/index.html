@@ -15,6 +15,10 @@
 
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with show_thumbnail=True %}
+{% empty %}
+{% if search %}
+<p>No results found for <span class="font-bold">{{ search }}</span>.</p>
+{% endif %}
 {% endfor %}
 {% include "_pagination.html" %}
 {% endblock content %}

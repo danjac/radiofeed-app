@@ -40,10 +40,22 @@ def episode_detail(request, episode_id, slug=None):
         request.user.is_authenticated
         and Bookmark.objects.filter(episode=episode, user=request.user).exists()
     )
+    qs = Episode.objects.filter(podcast=episode.podcast)
+
+    next_episode = qs.filter(pub_date__gt=episode.pub_date).order_by("pub_date").first()
+    prev_episode = (
+        qs.filter(pub_date__lt=episode.pub_date).order_by("-pub_date").first()
+    )
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
-        {"episode": episode, "is_bookmarked": is_bookmarked},
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+            "next_episode": next_episode,
+            "prev_episode": prev_episode,
+        },
     )
 
 
@@ -97,6 +109,7 @@ def bookmark_list(request):
 @require_POST
 def add_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
+
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
         messages.success(request, "You have bookmarked this episode")

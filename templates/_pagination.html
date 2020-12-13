@@ -7,7 +7,7 @@
      class="block text-indigo-900 hover:text-indigo-700"
      href="{% pagination_url page_obj.previous_page_number %}"
      {% else %}
-     class="text-gray-500 pointer-events-none"
+     class="text-gray-300 pointer-events-none"
      href="javascript:void(0);"
      {% endif %}>
     {% translate "Previous" %}
@@ -17,7 +17,7 @@
      class="block text-indigo-900 hover:text-indigo-700"
      {% else %}
      href="javascript:void(0);"
-     class="text-gray-500 pointer-events-none"
+     class="text-gray-300 pointer-events-none"
      {% endif %}>
     {% translate "Next" %}
   </a>

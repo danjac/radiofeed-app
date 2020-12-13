@@ -2,6 +2,34 @@
 {% load thumbnail episodes html %}
 
 {% block content %}
+
+{% if prev_episode or next_episode %}
+<div class="text-sm flex justify-between mb-3">
+
+  <a {% if prev_episode %}
+     class="block text-indigo-900 hover:text-indigo-700"
+     href="{{ prev_episode.get_absolute_url }}"
+     title="{{ prev_episode.title }}"
+     {% else %}
+     class="text-gray-300 pointer-events-none"
+     href="javascript:void(0);"
+     {% endif %}>
+    Previous
+  </a>
+
+  <a {% if next_episode %}
+     class="block text-indigo-900 hover:text-indigo-700"
+     href="{{ next_episode.get_absolute_url }}"
+     title="{{ next_episode.title }}"
+     {% else %}
+     class="text-gray-300 pointer-events-none"
+     href="javascript:void(0);"
+     {% endif %}>
+    Next
+  </a>
+</div>
+{% endif %}
+
 {% with podcast=episode.podcast %}
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-400 mb-3"

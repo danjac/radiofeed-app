@@ -15,6 +15,10 @@
 
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
+{% empty %}
+{% if search %}
+<p>No results found for <span class="font-bold">{{ search }}</span>.</p>
+{% endif %}
 {% endfor %}
 {% include "_pagination.html" %}
 {% endblock content %}

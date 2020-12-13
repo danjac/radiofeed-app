@@ -96,6 +96,14 @@
 
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with show_thumbnail=False %}
+{% empty %}
+<p>
+  {% if search %}
+  No results found for <span class="font-bold">{{ search }}</span>.
+  {% else %}
+  This podcast does not appear to have any episodes.
+  {% endif %}
+</p>
 {% endfor %}
 
 {% include "_pagination.html" %}

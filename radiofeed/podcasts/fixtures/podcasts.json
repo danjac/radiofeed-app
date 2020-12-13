@@ -1,23 +1,6 @@
 [
   {
     "model": "podcasts.podcast",
-    "pk": 25,
-    "fields": {
-      "rss": "http://joeroganexp.joerogan.libsynpro.com/rss",
-      "title": "The Joe Rogan Experience",
-      "pub_date": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/the-joe-rogan-experience/id360084272?uo=4",
-      "cover_image": null,
-      "description": "The podcast of Comedian Joe Rogan..",
-      "link": "https://www.joerogan.com",
-      "keywords": "comedian joe monkey redban rogan talking ufc Comedy Society & Culture Technology Podcasting",
-      "last_updated": null,
-      "explicit": false,
-      "categories": [1, 2, 3, 4]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
     "pk": 26,
     "fields": {
       "rss": "https://mysteriousuniverse.org/feed/podcast/",
