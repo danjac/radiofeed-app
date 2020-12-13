@@ -17,5 +17,5 @@ class Command(BaseCommand):
             self.stdout.write(f"Syncing podcast {podcast}")
             try:
                 RssParser.parse_from_podcast(podcast)
-            except requests.HTTPError as e:
+            except requests.RequestException as e:
                 self.stderr.write(str(e))
