@@ -9,7 +9,7 @@
 <div class="divide-y divide-gray-300">
   {% if search %}
   {% for category in categories %}
-  <div class=jpy-3">
+  <div class="py-3">
     <a href="{{ category.get_absolute_url }}"
        class="font-semibold hover:text-white-100 font-semibold mb-3">{{ category.name }}</a>
   </div>
@@ -18,8 +18,10 @@
   {% for category in categories %}
   {% if not category.parent %}
   <div class="py-3">
+    <div class="mb-3">
     <a href="{{ category.get_absolute_url }}"
-       class="font-semibold hover:text-white-100 font-semibold mb-3">{{ category.name }}</a>
+       class="font-semibold hover:text-white-100 font-semibold">{{ category.name }}</a>
+    </div>
     <div class="flex flex-wrap items-center">
       {% for child in categories %}
       {% if child.parent == category %}
