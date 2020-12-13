@@ -17,7 +17,7 @@ def podcast_list(request):
     search = request.GET.get("q", None)
 
     if search:
-        podcasts = podcasts.search(search).order_by("-similarity", "-pub_date")
+        podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -36,7 +36,7 @@ def podcast_detail(request, podcast_id, slug=None):
     search = request.GET.get("q", None)
 
     if search:
-        episodes = episodes.search(search).order_by("-similarity", "-pub_date")
+        episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.order_by("-pub_date")
 
@@ -93,7 +93,7 @@ def category_detail(request, category_id, slug=None):
     search = request.GET.get("q", None)
 
     if search:
-        podcasts = podcasts.search(search).order_by("-similarity", "-pub_date")
+        podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

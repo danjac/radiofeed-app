@@ -18,7 +18,7 @@ def episode_list(request):
     episodes = Episode.objects.select_related("podcast")
     search = request.GET.get("q", None)
     if search:
-        episodes = episodes.search(search).order_by("-similarity", "-pub_date")
+        episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.order_by("-pub_date")
 

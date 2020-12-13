@@ -1,6 +1,12 @@
 # Django
 from django.conf import settings
-from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVectorField,
+    TrigramSimilarity,
+)
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -63,10 +69,14 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.2):
-        return self.annotate(similarity=TrigramSimilarity("title", search_term)).filter(
-            similarity__gte=base_similarity
-        )
+    def search(self, search_term):
+        if not search_term:
+            return self.none()
+
+        query = SearchQuery(search_term)
+        return self.annotate(
+            rank=SearchRank(models.F("search_vector"), query=query)
+        ).filter(search_vector=query)
 
 
 class PodcastManager(models.Manager.from_queryset(PodcastQuerySet)):
@@ -97,14 +107,15 @@ class Podcast(models.Model):
 
     categories = models.ManyToManyField(Category, blank=True)
 
+    search_vector = SearchVectorField(null=True, editable=False)
+
     objects = PodcastManager()
 
     class Meta:
         indexes = [
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["title"]),
-            models.Index(fields=["-title"]),
+            GinIndex(fields=["search_vector"]),
         ]
 
     def __str__(self):
