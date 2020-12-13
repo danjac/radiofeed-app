@@ -6,32 +6,34 @@
   {% include "_search_form.html" with placeholder="Filter categories..." %}
 </div>
 
-{% if search %}
-{% for category in categories %}
-<div class="mb-3 pb-3 border-b">
-  <a href="{{ category.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
-</div>
-{% endfor %}
-{% else %}
-
-{% for category in categories %}
-{% if not category.parent %}
-<div class="mb-3 pb-3 border-b">
-  <a href="{{ category.get_absolute_url }}"
-     class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
-  <div class="flex flex-wrap items-center">
-    {% for child in categories %}
-    {% if child.parent == category %}
-    <a class="text-blue-800 hover:text-blue-600 mb-1 mr-3 text-sm"
-       href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+<div class="divide-y divide-gray-300">
+  {% if search %}
+  {% for category in categories %}
+  <div>
+    <div class="mb-3 pb-3">
+      <a href="{{ category.get_absolute_url }}"
+         class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+    </div>
+    {% endfor %}
+    {% else %}
+    {% for category in categories %}
+    {% if not category.parent %}
+    <div class="py-3">
+      <a href="{{ category.get_absolute_url }}"
+         class="text-blue-800 hover:text-blue-600 font-semibold mb-3">{{ category.name }}</a>
+      <div class="flex flex-wrap items-center">
+        {% for child in categories %}
+        {% if child.parent == category %}
+        <a class="text-blue-800 hover:text-blue-600 mb-1 mr-3 text-sm"
+           href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
     {% endif %}
     {% endfor %}
+
+    {% endif %}
   </div>
-</div>
-{% endif %}
-{% endfor %}
 
-{% endif %}
-
-{% endblock %}
+  {% endblock %}

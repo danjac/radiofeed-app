@@ -79,8 +79,8 @@
   {% include "_messages.html" %}
   {% include "_cookie_notice.html" %}
 
-  <div class="min-h-full mx-auto flex relative">
-    <div class="hidden lg:block w-full lg:w-1/6 mr-4 p-3 border-r absolute left-0 top-0 sm:static z-10 bg-white min-h-full"
+  <div class="min-h-full mx-auto flex relative lg:divide-x divide-gray-300 mt-4">
+    <div class="hidden lg:block w-full lg:w-1/6 mr-4 p-3 absolute left-0 top-0 sm:static z-10 bg-white min-h-full"
          data-toggle-target="item">
       <nav class="pt-3">
         <ul class="">
@@ -138,7 +138,7 @@
         </ul>
       </nav>
     </div>
-    <div class="w-full lg:w-5/6 p-2 bg-white"
+    <div class="w-full lg:w-5/6 p-2 lg:pl-6 bg-white"
          data-toggle-target="item">
       {% block content %}{% endblock %}
     </div>

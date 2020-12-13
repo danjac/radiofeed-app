@@ -17,7 +17,7 @@ export default class extends Controller {
 
   play() {
     this.playingValue = true;
-    this.dispatch('play', {
+    this.sendAjax('play', {
       episode: this.idValue,
       duration: this.durationValue,
       playUrl: this.playUrlValue,
@@ -26,7 +26,7 @@ export default class extends Controller {
 
   stop() {
     this.playingValue = false;
-    this.dispatch('stop');
+    this.sendAjax('stop');
   }
 
   open(event) {
