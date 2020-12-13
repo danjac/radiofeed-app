@@ -7,7 +7,10 @@ from django.utils.text import slugify
 
 # Third Party Libraries
 from model_utils.models import TimeStampedModel
+from PIL import ImageFile
 from sorl.thumbnail import ImageField
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class CategoryQuerySet(models.QuerySet):

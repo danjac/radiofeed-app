@@ -84,6 +84,31 @@
 </div>
 {% endif %}
 
+{% if recommendations %}
+<div class="mb-3">
+  <h3 class="text-lg font-semibold mb-3"> Also recommended... </h3>
+  <div class="overflow-x-auto lg:overflow-none flex whitespace-no-wrap lg:whitespace-none pb-1">
+
+    {% for recommendation in recommendations %}
+    {% with recommended=recommendation.recommended %}
+    {% thumbnail recommended.cover_image "200" format="PNG" crop="center" as img %}
+    <img data-controller="link"
+         data-link-url-value="{{ recommended.get_absolute_url }}"
+         data-action="click->link#visit"
+         class="h-24 w-24 md:h-32 md:w-32 object-cover mr-2 cursor-pointer"
+         title="{{ recommended.title }}"
+         src="{{ img.url }}"
+         alt="{{ recommended.title }}"
+         role="link"
+         width="32"
+         height="32">
+    {% endthumbnail %}
+    {% endwith %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <div class="md:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-3 md:mb-0">Episodes</h2>
   {% include "_search_form.html" with placeholder="Search episodes" %}

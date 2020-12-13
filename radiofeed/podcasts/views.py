@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
-from .models import Category, Podcast, Subscription
+from .models import Category, Podcast, Recommendation, Subscription
 
 
 def podcast_list(request):
@@ -45,12 +45,19 @@ def podcast_detail(request, podcast_id, slug=None):
         and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
     )
 
+    recommendations = (
+        Recommendation.objects.filter(podcast=podcast)
+        .select_related("recommended")
+        .order_by("-similarity", "-frequency")
+    )[:9]
+
     return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
             "episodes": episodes,
+            "recommendations": recommendations,
             "search": search,
             "is_subscribed": is_subscribed,
         },
