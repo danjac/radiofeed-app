@@ -65,7 +65,7 @@ export default class extends Controller {
   }
 
   stop() {
-    this.sendAjax('close', { episode: this.episode });
+    this.dispatch('close', { episode: this.episode });
     this.close();
   }
 
