@@ -305,10 +305,10 @@ class RssParser:
         self.podcast = podcast
 
     @classmethod
-    def parse_from_podcast(cls, podcast, force_update=False):
-        return cls(podcast).parse(force_update)
+    def parse_from_podcast(cls, podcast):
+        return cls(podcast).parse()
 
-    def parse(self, force_update=False):
+    def parse(self):
 
         # fetch etag and last modified
         head_response = requests.head(
@@ -319,7 +319,7 @@ class RssParser:
 
         # if etag hasn't changed then we can skip
         etag = headers.get("ETag")
-        if etag and etag == self.podcast.etag and not force_update:
+        if etag and etag == self.podcast.etag:
             return []
 
         response = requests.get(
@@ -341,74 +341,74 @@ class RssParser:
         if dates:
             pub_date = max([date for date in dates if date and date < now])
 
-        if force_update or (
+        do_update = (
             pub_date
-            and (
-                self.podcast.last_updated is None
-                or self.podcast.last_updated < pub_date
-            )
-        ):
+            and self.podcast.last_updated is None
+            or self.podcast.last_updated < pub_date
+        )
 
-            if etag:
-                self.podcast.etag = etag
+        if not do_update:
+            return []
 
-            self.podcast.title = feed["title"]
-            self.podcast.description = feed["description"]
-            self.podcast.language = feed.get("language", "en")[:2].strip().lower()
-            self.podcast.explicit = bool(feed.get("itunes_explicit", False))
+        if etag:
+            self.podcast.etag = etag
 
-            if not self.podcast.cover_image:
-                image_url = None
+        self.podcast.title = feed["title"]
+        self.podcast.description = feed["description"]
+        self.podcast.language = feed.get("language", "en")[:2].strip().lower()
+        self.podcast.explicit = bool(feed.get("itunes_explicit", False))
 
-                # try itunes image first
-                soup = BeautifulSoup(response.content, "lxml")
-                itunes_img_tag = soup.find("itunes:image")
-                if itunes_img_tag and "href" in itunes_img_tag.attrs:
-                    image_url = itunes_img_tag.attrs["href"]
+        if not self.podcast.cover_image:
+            image_url = None
 
-                if not image_url:
-                    try:
-                        image_url = feed["image"]["href"]
-                    except KeyError:
-                        pass
+            # try itunes image first
+            soup = BeautifulSoup(response.content, "lxml")
+            itunes_img_tag = soup.find("itunes:image")
+            if itunes_img_tag and "href" in itunes_img_tag.attrs:
+                image_url = itunes_img_tag.attrs["href"]
 
-                if image_url and (img := fetch_image_from_url(image_url)):
-                    print(image_url)
-                    self.podcast.cover_image = img
+            if not image_url:
+                try:
+                    image_url = feed["image"]["href"]
+                except KeyError:
+                    pass
 
-            self.podcast.link = feed.get("link")
+            if image_url and (img := fetch_image_from_url(image_url)):
+                self.podcast.cover_image = img
 
-            categories_dct = get_categories_dict()
+        self.podcast.link = feed.get("link")
 
-            keywords = [t["term"] for t in feed.get("tags", [])]
-            categories = [categories_dct[kw] for kw in keywords if kw in categories_dct]
+        categories_dct = get_categories_dict()
 
-            self.podcast.last_updated = now
-            self.podcast.pub_date = pub_date
+        keywords = [t["term"] for t in feed.get("tags", [])]
+        categories = [categories_dct[kw] for kw in keywords if kw in categories_dct]
 
-            keywords = [kw for kw in keywords if kw not in categories_dct]
-            self.podcast.keywords = " ".join(keywords)
+        self.podcast.last_updated = now
+        self.podcast.pub_date = pub_date
 
-            authors = set(
-                [
-                    author["name"]
-                    for author in feed.get("authors", [])
-                    if "name" in author and author["name"]
-                ]
-            )
+        keywords = [kw for kw in keywords if kw not in categories_dct]
+        self.podcast.keywords = " ".join(keywords)
 
-            self.podcast.authors = ", ".join(authors)
+        authors = set(
+            [
+                author["name"]
+                for author in feed.get("authors", [])
+                if "name" in author and author["name"]
+            ]
+        )
 
-            self.podcast.save()
+        self.podcast.authors = ", ".join(authors)
 
-            self.podcast.categories.set(categories)
+        self.podcast.save()
 
-            new_episodes = self.create_episodes_from_feed(entries)
-            if new_episodes:
-                self.podcast.pub_date = max(e.pub_date for e in new_episodes)
-                self.podcast.save(update_fields=["pub_date"])
+        self.podcast.categories.set(categories)
 
-            return new_episodes
+        new_episodes = self.create_episodes_from_feed(entries)
+        if new_episodes:
+            self.podcast.pub_date = max(e.pub_date for e in new_episodes)
+            self.podcast.save(update_fields=["pub_date"])
+
+        return new_episodes
 
     def create_episodes_from_feed(self, entries):
         """Parses new episodes from podcast feed."""
