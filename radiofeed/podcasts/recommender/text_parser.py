@@ -6,11 +6,12 @@ from functools import lru_cache
 from django.template.defaultfilters import striptags
 
 # Third Party Libraries
-# Audiotrails
-from audiotrails.utils.html import stripentities
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
+
+# RadioFeed
+from radiofeed.common.html import stripentities
 
 # Local
 from .stopwords import STOPWORDS

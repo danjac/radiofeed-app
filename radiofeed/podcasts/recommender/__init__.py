@@ -157,7 +157,7 @@ class PodcastRecommender:
         if not queryset.exists():
             return
 
-        df = pandas.DataFrame(queryset.values(), fieldnames=["id"] + list(fieldnames))
+        df = pandas.DataFrame(queryset.values(*["id"] + list(fieldnames)))
 
         def combine(row):
             text = " ".join(row[col] for col in fieldnames if row[col])
