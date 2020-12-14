@@ -33,13 +33,16 @@ def podcast_list(request):
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     episodes = podcast.episode_set.all()
+    total_episodes = episodes.count()
 
     search = request.GET.get("q", None)
+    ordering = request.GET.get("ordering")
 
     if search:
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
-        episodes = episodes.order_by("-pub_date")
+        order_by = "pub_date" if ordering == "asc" else "-pub_date"
+        episodes = episodes.order_by(order_by)
 
     is_subscribed = (
         request.user.is_authenticated
@@ -58,8 +61,10 @@ def podcast_detail(request, podcast_id, slug=None):
         {
             "podcast": podcast,
             "episodes": episodes,
+            "total_episodes": total_episodes,
             "recommendations": recommendations,
             "search": search,
+            "ordering": ordering,
             "is_subscribed": is_subscribed,
         },
     )
