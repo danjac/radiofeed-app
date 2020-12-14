@@ -15,7 +15,7 @@ from .models import Bookmark, Episode
 
 
 def episode_list(request):
-    episodes = Episode.objects.select_related("podcast")
+    episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
     search = request.GET.get("q", None)
     if search:
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
@@ -34,7 +34,8 @@ def episode_list(request):
 
 def episode_detail(request, episode_id, slug=None):
     episode = get_object_or_404(
-        Episode.objects.select_related("podcast"), pk=episode_id
+        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        pk=episode_id,
     )
     is_bookmarked = (
         request.user.is_authenticated
@@ -65,14 +66,29 @@ def start_player(request, episode_id):
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
+    try:
+        current_time = int(json.loads(request.body)["current_time"])
+    except (json.JSONDecodeError, KeyError, ValueError):
+        current_time = 0
+
     request.session["player"] = {"episode": episode.id, "current_time": 0}
+    episode.log_activity(request.user, current_time=current_time)
     return TemplateResponse(request, "episodes/_player.html", {"episode": episode})
 
 
 @require_POST
 def stop_player(request):
     """Remove player from session"""
-    request.session.pop("player", None)
+    player = request.session.pop("player", None)
+    try:
+        mark_complete = "mark_complete" in json.loads(request.body)
+    except (json.JSONDecodeError):
+        mark_complete = False
+    if player:
+        episode = get_object_or_404(Episode, pk=player["episode"])
+        episode.log_activity(
+            request.user, player["current_time"], mark_complete=mark_complete
+        )
     return HttpResponse(status=204)
 
 
@@ -80,13 +96,15 @@ def stop_player(request):
 def update_player_time(request):
     """Update current play time of episode"""
 
-    if "player" in request.session:
-        player = request.session["player"]
+    player = request.session.get("player", None)
+    if player:
+        episode = get_object_or_404(Episode, pk=player["episode"])
         try:
             current_time = int(json.loads(request.body)["current_time"])
         except (json.JSONDecodeError, KeyError, ValueError):
             current_time = 0
         request.session["player"] = {**player, "current_time": current_time}
+        episode.log_activity(request.user, current_time)
 
     return HttpResponse(status=204)
 

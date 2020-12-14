@@ -7,6 +7,7 @@ export default class extends Controller {
   static values = {
     id: String,
     duration: Number,
+    currentTime: Number,
     playUrl: String,
     playing: Boolean,
   };
@@ -19,6 +20,7 @@ export default class extends Controller {
     this.playingValue = true;
     this.dispatch('play', {
       episode: this.idValue,
+      currentTime: this.currentTimeValue,
       duration: this.durationValue,
       playUrl: this.playUrlValue,
     });
@@ -38,8 +40,12 @@ export default class extends Controller {
   }
 
   close(event) {
+    const { currentTime, episode } = event.detail;
     // player is closed
     this.playingValue = false;
+    if (episode === this.idValue) {
+      this.currentTimeValue = currentTime;
+    }
   }
 
   playingValueChanged() {

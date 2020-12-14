@@ -7,6 +7,9 @@
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
+     {% if episode.current_time %}
+     data-episode-current-time-value="{{ episode.current_time }}"
+     {% endif %}
      data-episode-id-value="{{ episode.id }}"
      data-episode-duration-value="{{ episode.duration|duration_in_seconds }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">

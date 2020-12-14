@@ -32,7 +32,7 @@ def podcast_list(request):
 
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.all()
+    episodes = podcast.episode_set.with_current_time(request.user)
     total_episodes = episodes.count()
 
     search = request.GET.get("q", None)

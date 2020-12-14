@@ -42,7 +42,7 @@ export default class extends Controller {
 
   async open(event) {
     // TBD: include currentTime i.e. for episodes in progress
-    const { playUrl, episode, duration } = event.detail;
+    const { playUrl, episode, currentTime, duration } = event.detail;
 
     this.episodeValue = episode;
     this.durationValue = duration;
@@ -51,23 +51,42 @@ export default class extends Controller {
     this.element.innerHTML = response.data;
     this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
 
+    if (currentTime) {
+      this.audioTarget.currentTime = currentTime;
+    }
+
     this.audioTarget.play();
   }
 
-  close(event) {
+  close() {
+    this.closePlayer();
+  }
+
+  stop() {
+    this.dispatch('close', {
+      episode: this.episodeValue,
+      currentTime: this.currentTimeValue,
+    });
+    this.closePlayer();
+  }
+
+  markComplete() {
+    this.dispatch('close', { episode: this.episodeValue });
+    this.closePlayer();
+  }
+
+  closePlayer(markComplete) {
     if (this.stopUrlValue) {
-      axios.post(this.stopUrlValue);
+      const data = {};
+      if (markComplete) {
+        data.mark_complete = true;
+      }
+      axios.post(this.stopUrlValue, { data });
     }
     this.element.innerHTML = '';
     this.episodeValue = '';
     this.durationValue = 0;
-
     this.lastUpdated = 0;
-  }
-
-  stop() {
-    this.dispatch('close', { episode: this.episode });
-    this.close();
   }
 
   pause() {

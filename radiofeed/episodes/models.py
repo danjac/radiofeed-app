@@ -5,6 +5,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 
 # Third Party Libraries
@@ -15,6 +16,19 @@ from radiofeed.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(models.QuerySet):
+    def with_current_time(self, user):
+        if user.is_anonymous:
+            return self.annotate(
+                current_time=models.Value(0, output_field=models.IntegerField())
+            )
+        return self.annotate(
+            current_time=models.Subquery(
+                History.objects.filter(user=user, episode=models.OuterRef("pk")).values(
+                    "current_time"
+                )
+            )
+        )
+
     def search(self, search_term):
         if not search_term:
             return self.none()
@@ -79,6 +93,21 @@ class Episode(models.Model):
     def file_size(self):
         return filesizeformat(self.length) if self.length else None
 
+    def log_activity(self, user, current_time=0, mark_complete=False):
+        # Updates history log with current time
+        if user.is_anonymous:
+            return (None, False)
+        now = timezone.now()
+        return History.objects.update_or_create(
+            episode=self,
+            user=user,
+            defaults={
+                "current_time": current_time,
+                "updated": now,
+                "completed": now if mark_complete else None,
+            },
+        )
+
 
 class BookmarkQuerySet(models.QuerySet):
     def search(self, search_term):
@@ -107,4 +136,21 @@ class Bookmark(TimeStampedModel):
         ]
         indexes = [
             models.Index(fields=["-created"]),
+        ]
+
+
+class History(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated = models.DateTimeField()
+    completed = models.DateTimeField(null=True, blank=True)
+    current_time = models.IntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name="uniq_history", fields=["user", "episode"])
+        ]
+        indexes = [
+            models.Index(fields=["-updated"]),
+            models.Index(fields=["-completed"]),
         ]
