@@ -61,8 +61,8 @@ class TestDurationInSeconds:
     def test_duration_in_seconds_if_seconds_only(self):
         assert duration_in_seconds("60") == 60
 
-    def test_duration_in_seconds_if_hours_and_minutes(self):
-        assert duration_in_seconds("2:30") == 9000
+    def test_duration_in_seconds_if_minutes_and_seconds(self):
+        assert duration_in_seconds("2:30") == 150
 
     def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
         assert duration_in_seconds("2:30:30") == 9030

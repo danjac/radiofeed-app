@@ -50,7 +50,7 @@ class TestEpisodeList:
         assert resp.context_data["episodes"][0] == episode
 
     def test_anonymous_search(self, rf, anonymous_user):
-        EpisodeFactory.create_batch(3)
+        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
         req.user = anonymous_user
