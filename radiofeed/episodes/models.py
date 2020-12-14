@@ -108,22 +108,3 @@ class Bookmark(TimeStampedModel):
         indexes = [
             models.Index(fields=["-created"]),
         ]
-
-
-class PlayHistory(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    current_time = models.PositiveIntegerField(default=0)
-    completed = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                name="uniq_play_history", fields=["user", "episode"]
-            )
-        ]
-        indexes = [
-            models.Index(fields=["-created"]),
-            models.Index(fields=["-modified"]),
-            models.Index(fields=["-completed"]),
-        ]

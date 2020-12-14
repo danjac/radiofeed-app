@@ -141,7 +141,9 @@ class TestCategoryDetail:
     def test_search(self, rf, category):
 
         CategoryFactory.create_batch(3, parent=category)
-        PodcastFactory.create_batch(12, categories=[category])
+        PodcastFactory.create_batch(
+            12, title="zzzz", keywords="zzzz", categories=[category]
+        )
         PodcastFactory(title="testing", categories=[category])
 
         req = rf.get(category.get_absolute_url(), {"q": "testing"})

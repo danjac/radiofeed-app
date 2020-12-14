@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 # Local
 from .. import views
 from ..factories import BookmarkFactory, EpisodeFactory
-from ..models import Bookmark, PlayHistory
+from ..models import Bookmark
 
 pytestmark = pytest.mark.django_db
 
@@ -61,7 +61,7 @@ class TestEpisodeList:
 
     def test_user_has_subscriptions_search(self, rf, user):
         "Ignore subs in search"
-        EpisodeFactory.create_batch(3)
+        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user, podcast=EpisodeFactory().podcast)
         episode = EpisodeFactory(title="testing")
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
@@ -130,10 +130,6 @@ class TestStopPlayer:
         assert resp.status_code == 204
         assert req.session == {}
 
-        history = PlayHistory.objects.get(user=user, episode=episode)
-        assert history.current_time == 1000
-        assert history.modified
-
 
 class TestUpdatePlayerTime:
     def test_anonymous(self, rf, anonymous_user, episode):
@@ -159,10 +155,6 @@ class TestUpdatePlayerTime:
         resp = views.update_player_time(req)
         assert resp.status_code == 204
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
-
-        history = PlayHistory.objects.get(user=user, episode=episode)
-        assert history.current_time == 1030
-        assert history.modified
 
 
 class TestBookmarkList:

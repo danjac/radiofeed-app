@@ -8,11 +8,10 @@ from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Local
-from .models import Bookmark, Episode, PlayHistory
+from .models import Bookmark, Episode
 
 
 def episode_list(request):
@@ -73,17 +72,7 @@ def start_player(request, episode_id):
 @require_POST
 def stop_player(request):
     """Remove player from session"""
-    player = request.session.pop("player", None)
-    if player and request.user.is_authenticated:
-        PlayHistory.objects.update_or_create(
-            user=request.user,
-            episode_id=player["episode"],
-            defaults={
-                "current_time": player["current_time"],
-                "modified": timezone.now(),
-            },
-        )
-
+    request.session.pop("player", None)
     return HttpResponse(status=204)
 
 
@@ -98,13 +87,6 @@ def update_player_time(request):
         except (json.JSONDecodeError, KeyError, ValueError):
             current_time = 0
         request.session["player"] = {**player, "current_time": current_time}
-
-        if request.user.is_authenticated:
-            PlayHistory.objects.update_or_create(
-                user=request.user,
-                episode_id=player["episode"],
-                defaults={"current_time": current_time, "modified": timezone.now(),},
-            )
 
     return HttpResponse(status=204)
 
