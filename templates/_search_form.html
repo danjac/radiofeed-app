@@ -3,6 +3,11 @@
       method="get"
       action="{{ request.path }}"
       class="relative {% if css_class %} {{ css_class }}{% endif %}">
+  {% if search %}
+  <a href="{{ request.path }}"
+     class="font-semibold hover:text-gray-300 mr-3">Clear</a>
+  {% endif %}
+
   <input type="search"
          name="q"
          value="{{ search|default:'' }}"
@@ -12,8 +17,4 @@
   <div class="absolute top-0 right-0 text-gray-100">
     <i class="fa fa-search p-0 mt-2 ml-4 mr-4"></i>
  </div>
-  {% if search %}
-  <a href="{{ request.path }}"
-     class="font-semibold hover:text-gray-300 ml-3">Clear</a>
-  {% endif %}
 </form>

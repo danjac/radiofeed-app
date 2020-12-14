@@ -97,7 +97,7 @@ def bookmark_list(request):
     bookmarks = request.user.bookmark_set.select_related("episode", "episode__podcast")
     search = request.GET.get("q", None)
     if search:
-        bookmarks = bookmarks.search(search).order_by("-similarity", "-created")
+        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
     else:
         bookmarks = bookmarks.order_by("-created")
     return TemplateResponse(

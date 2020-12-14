@@ -1,12 +1,7 @@
 # Django
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import (
-    SearchQuery,
-    SearchRank,
-    SearchVectorField,
-    TrigramSimilarity,
-)
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
@@ -86,10 +81,14 @@ class Episode(models.Model):
 
 
 class BookmarkQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.1):
+    def search(self, search_term):
+        if not search_term:
+            return self.none()
+
+        query = SearchQuery(search_term)
         return self.annotate(
-            similarity=TrigramSimilarity("episode__title", search_term)
-        ).filter(similarity__gte=base_similarity)
+            rank=SearchRank(models.F("episode__search_vector"), query=query)
+        ).filter(episode__search_vector=query)
 
 
 class BookmarkManager(models.Manager.from_queryset(BookmarkQuerySet)):
