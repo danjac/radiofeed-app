@@ -43,7 +43,7 @@ class Episode(models.Model):
     keywords = models.TextField(blank=True)
 
     media_url = models.URLField(max_length=500)
-    media_type = models.CharField(max_length=20)
+    media_type = models.CharField(max_length=60)
     length = models.IntegerField(null=True, blank=True)
 
     duration = models.CharField(max_length=30, blank=True)
