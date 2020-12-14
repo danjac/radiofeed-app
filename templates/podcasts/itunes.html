@@ -15,11 +15,23 @@
        width="60"
        class="object-cover mr-2" />
   {% endif %}
-  <a href="{{ result.itunes }}"
-     rel="noopener"
-     target="_blank"
-     title="{{ result.title }}"
-     class="font-semibold font-semibold hover:text-white-100 block mb-1">{{ result.title|truncatechars:80 }}</a>
+  <div>
+    <a href="{{ result.itunes }}"
+       rel="noopener"
+       target="_blank"
+       title="{{ result.title }}"
+       class="font-semibold font-semibold hover:text-white-100 block mb-1">{{ result.title|truncatechars:80 }}</a>
+    <div class="text-sm">
+      <a href="{{ result.rss }}"
+         class="font-semibold hover:text-gray-100 mr-2"
+         target="_blank"
+         rel="noopener">RSS</a>
+      <a href="{{ result.itunes }}"
+         class="font-semibold hover:text-gray-100 mr-2"
+         target="_blank"
+         rel="noopener">iTunes</a>
+    </div>
+  </div>
 </div>
 {% empty %}
 {% if search %}
