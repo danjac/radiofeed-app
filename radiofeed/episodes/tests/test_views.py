@@ -167,7 +167,12 @@ class TestBookmarkList:
         assert len(resp.context_data["bookmarks"]) == 3
 
     def test_search(self, rf, user):
-        BookmarkFactory.create_batch(3, user=user)
+
+        for _ in range(3):
+            BookmarkFactory(
+                user=user, episode=EpisodeFactory(title="zzzz", keywords="zzzzz")
+            )
+
         BookmarkFactory(user=user, episode=EpisodeFactory(title="testing"))
         req = rf.get(reverse("episodes:bookmark_list"), {"q": "testing"})
         req.user = user

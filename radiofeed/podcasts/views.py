@@ -7,6 +7,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
+from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
 
 
@@ -107,6 +108,15 @@ def category_detail(request, category_id, slug=None):
             "search": search,
         },
     )
+
+
+def search_itunes(request):
+    search = request.GET.get("q", None)
+    if search:
+        results = itunes.search_itunes(search)
+    else:
+        results = []
+    return TemplateResponse(request, "podcasts/itunes.html", {"results": results})
 
 
 @login_required

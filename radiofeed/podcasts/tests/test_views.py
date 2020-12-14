@@ -10,6 +10,7 @@ from radiofeed.episodes.factories import EpisodeFactory
 # Local
 from .. import views
 from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
+from ..itunes import SearchResult
 from ..models import Subscription
 
 pytestmark = pytest.mark.django_db
@@ -45,7 +46,7 @@ class TestPodcastList:
         assert resp.context_data["podcasts"][0] == sub.podcast
 
     def test_search_anonymous(self, rf, anonymous_user):
-        PodcastFactory.create_batch(3)
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = anonymous_user
         podcast = PodcastFactory(title="testing")
@@ -184,3 +185,24 @@ class TestUnsubscribe:
         assert resp.url == podcast.get_absolute_url()
         req._messages.add.assert_called()
         assert not Subscription.objects.filter(podcast=podcast, user=user).exists()
+
+
+class TestSearchITunes:
+    def test_search(self, rf, mocker):
+        def mock_search_itunes(search_term, num_results=12):
+            return [
+                SearchResult(
+                    rss="http://example.com/test.xml",
+                    itunes="https://apple.com/some-link",
+                    image="test.jpg",
+                    title="test title",
+                )
+            ]
+
+        mocker.patch.object(views.itunes, "search_itunes", mock_search_itunes)
+        req = rf.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        resp = views.search_itunes(req)
+
+        assert resp.status_code == 200
+        assert len(resp.context_data["results"]) == 1
+        assert resp.context_data["results"][0].title == "test title"
