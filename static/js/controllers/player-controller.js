@@ -98,6 +98,17 @@ export default class extends Controller {
     this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
   }
 
+  togglePause(event) {
+    if (event.keyCode === 32) {
+      // spacebar
+      if (this.pausedValue) {
+        this.play();
+      } else {
+        this.pause();
+      }
+    }
+  }
+
   // observers
 
   pausedValueChanged() {

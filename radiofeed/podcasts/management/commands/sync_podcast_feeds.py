@@ -39,5 +39,5 @@ class Command(BaseCommand):
             except Exception as e:
                 self.stderr.write(str(e))
         self.stdout.write(
-            self.style.SUCCESS(f"{len(total_num_episodes)} total new episode(s) added")
+            self.style.SUCCESS(f"{total_num_episodes} total new episode(s) added")
         )

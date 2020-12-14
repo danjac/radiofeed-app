@@ -22,7 +22,9 @@ For local development, first copy the .env.example file:
 
 > cp .env.example .env
 
-To get started, first import the categories:
+To get started, first run migrate and load the categories:
+
+> ./scripts/manage migrate
 
 > ./scripts/manage loaddata radiofeed/podcasts/fixtures/categories.json
 
