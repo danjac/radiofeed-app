@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 # Local
 from .. import views
 from ..factories import BookmarkFactory, EpisodeFactory
-from ..models import Bookmark
+from ..models import Bookmark, PlayHistory
 
 pytestmark = pytest.mark.django_db
 
@@ -109,25 +109,60 @@ class TestStartPlayer:
 
 
 class TestStopPlayer:
-    def test_post(self, rf, episode):
+    def test_anonymous(self, rf, anonymous_user, episode):
         req = rf.post(reverse("episodes:stop_player"))
+        req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.stop_player(req)
         assert resp.status_code == 204
         assert req.session == {}
 
-
-class TestUpdatePlayerTime:
-    def test_post(self, rf, episode):
+    def test_authenticated(self, rf, user, episode):
         req = rf.post(
             reverse("episodes:update_player_time"),
             data=json.dumps({"current_time": 1030}),
             content_type="application/json",
         )
+        req.user = user
+        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+
+        resp = views.stop_player(req)
+        assert resp.status_code == 204
+        assert req.session == {}
+
+        history = PlayHistory.objects.get(user=user, episode=episode)
+        assert history.current_time == 1000
+        assert history.modified
+
+
+class TestUpdatePlayerTime:
+    def test_anonymous(self, rf, anonymous_user, episode):
+        req = rf.post(
+            reverse("episodes:update_player_time"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.update_player_time(req)
         assert resp.status_code == 204
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+
+    def test_authenticated(self, rf, user, episode):
+        req = rf.post(
+            reverse("episodes:update_player_time"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+        resp = views.update_player_time(req)
+        assert resp.status_code == 204
+        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+
+        history = PlayHistory.objects.get(user=user, episode=episode)
+        assert history.current_time == 1030
+        assert history.modified
 
 
 class TestBookmarkList:
