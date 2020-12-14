@@ -1,9 +1,6 @@
 # Django
 from django.core.management.base import BaseCommand
 
-# Third Party Libraries
-import requests
-
 # RadioFeed
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.rss_parser import RssParser
@@ -39,7 +36,7 @@ class Command(BaseCommand):
                         )
                     )
                     total_num_episodes += num_episodes
-            except requests.RequestException as e:
+            except Exception as e:
                 self.stderr.write(str(e))
         self.stdout.write(
             self.style.SUCCESS(f"{len(total_num_episodes)} total new episode(s) added")

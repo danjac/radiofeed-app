@@ -1,5 +1,5 @@
 
-![](/screenshots/screenshot-1.png)
+![](/screenshots/podcasts.png)
 
 This is a very simple MVP podcast app. It has the following features:
 
