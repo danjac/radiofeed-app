@@ -47,7 +47,7 @@ def duration_in_seconds(duration):
     if num_parts == 1:
         seconds = parts[0]
     elif num_parts == 2:
-        [hours, minutes] = parts
+        [minutes, seconds] = parts
     elif num_parts == 3:
         [hours, minutes, seconds] = parts
     else:
