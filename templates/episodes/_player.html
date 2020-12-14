@@ -2,8 +2,7 @@
 {% if episode %}
 {% with podcast=episode.podcast %}
 <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
-     data-controller="toggle"
-     data-action="keydown@window->player#togglePause">
+     data-controller="toggle">
 
   <audio preload="metadata"
          src="{{ episode.media_url }}"
