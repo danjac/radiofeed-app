@@ -2,19 +2,21 @@
       data-action="form#submit:once"
       method="get"
       action="{{ request.path }}"
-      class="relative {% if css_class %} {{ css_class }}{% endif %}">
+      class="flex items-center{% if css_class %} {{ css_class }}{% endif %}">
   {% if search %}
   <a href="{{ request.path }}"
      class="font-semibold hover:text-gray-300 mr-3">Clear</a>
   {% endif %}
 
-  <input type="search"
-         name="q"
-         value="{{ search|default:'' }}"
-         {% if placeholder %}placeholder="{{ placeholder }}"
-         {% endif %}
-         class="px-4 py-1 pl-4 bg-gray-900 text-white focus:outline-none focus:ring rounded-full border-gray-100">
-  <div class="absolute top-0 right-0 text-gray-100">
-    <i class="fa fa-search p-0 mt-2 ml-4 mr-4"></i>
- </div>
+  <div class="w-64 relative ">
+    <input type="search"
+           name="q"
+           value="{{ search|default:'' }}"
+           {% if placeholder %}placeholder="{{ placeholder }}"
+           {% endif %}
+           class="px-4 py-1 pl-4 bg-gray-900 text-white focus:outline-none focus:ring rounded-full">
+    <div class="absolute top-0 right-0 text-gray-500">
+      <i class="fa fa-search p-0 mt-2 mr-6"></i>
+    </div>
+  </div>
 </form>
