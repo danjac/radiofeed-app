@@ -11,7 +11,7 @@
   <h3 class="font-semibold text-gray-300 mb-2">{{ podcast.authors }}</h3>
   {% endif %}
 
-  <div class="text-gray-300 mb-3">{{ total_episodes }} episode{{ total_episodes|pluralize }}</div>
+  <div class="text-gray-300 mb-3 sm:hidden">{{ total_episodes }} episode{{ total_episodes|pluralize }}</div>
 
   <div class="flex items-center w-full mb-3">
 
@@ -26,9 +26,10 @@
     <div>
 
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
-        <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
+        <span class="inline-block mr-2">{{ podcast.pub_date|date }}</span>
+        <span class="text-gray-300 hidden sm:inline-block">{{ total_episodes }} episode{{ total_episodes|pluralize }}</span>
         {% if podcast.explicit %}
-        <span class="text-red-300">Explicit</span>
+        <span class="text-red-300 inline-block">Explicit</span>
         {% endif %}
       </div>
 
