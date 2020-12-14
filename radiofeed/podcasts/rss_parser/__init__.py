@@ -1,14 +1,7 @@
 # Standard Library
-import io
-import mimetypes
-import os
-import random
-import uuid
 from functools import lru_cache
-from urllib.parse import urlparse
 
 # Django
-from django.core.files.images import ImageFile
 from django.utils import timezone
 
 # Third Party Libraries
@@ -22,47 +15,8 @@ from radiofeed.episodes.models import Episode
 # Local
 from ..models import Category
 from .date_parser import parse_date
-
-USER_AGENTS = [
-    (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/57.0.2987.110 "
-        "Safari/537.36"
-    ),
-    (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/61.0.3163.79 "
-        "Safari/537.36"
-    ),
-    (
-        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) "
-        "Gecko/20100101 "
-        "Firefox/55.0"
-    ),
-    (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/61.0.3163.91 "
-        "Safari/537.36"
-    ),
-    (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/62.0.3202.89 "
-        "Safari/537.36"
-    ),
-    (
-        "Mozilla/5.0 (X11; Linux x86_64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/63.0.3239.108 "
-        "Safari/537.36"
-    ),
-]
-
-
-IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
+from .headers import get_headers
+from .images import InvalidImageURL, fetch_image_from_url
 
 
 class RssParser:
@@ -138,8 +92,11 @@ class RssParser:
                 except KeyError:
                     pass
 
-            if image_url and (img := fetch_image_from_url(image_url)):
-                self.podcast.cover_image = img
+            try:
+                if image_url and (img := fetch_image_from_url(image_url)):
+                    self.podcast.cover_image = img
+            except InvalidImageURL:
+                pass
 
         self.podcast.link = feed.get("link")
 
@@ -251,44 +208,3 @@ class RssParser:
 @lru_cache
 def get_categories_dict():
     return {c.name: c for c in Category.objects.all()}
-
-
-def get_headers():
-    """Return randomized user agent in case only browser clients allowed."""
-    return {
-        "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}",
-    }
-
-
-def fetch_image_from_url(image_url):
-    """Get an ImageFile object from a URL. Returns None if invalid/unavailable."""
-    if not image_url:
-        return None
-    try:
-        resp = requests.get(image_url, headers=get_headers())
-        resp.raise_for_status()
-
-        content_type = resp.headers["Content-Type"].split(";")[0]
-        filename = get_image_filename(image_url, content_type)
-        return ImageFile(io.BytesIO(resp.content), name=filename)
-    except (requests.RequestException, KeyError, ValueError) as e:
-        print(e)
-        return None
-
-
-def get_image_filename(image_url, content_type):
-    """Generate a random filename with correct extension. Raises ValueError
-    if invalid"""
-
-    if not image_url:
-        raise ValueError("No image_url provided")
-
-    # check path first
-    _, ext = os.path.splitext(urlparse(image_url).path)
-    ext = ext.lower()
-    if ext not in IMAGE_EXTENSIONS:
-        ext = mimetypes.guess_extension(content_type)
-    if ext not in IMAGE_EXTENSIONS:
-        raise ValueError("Invalid file extension:" + image_url)
-    return uuid.uuid4().hex + ext
