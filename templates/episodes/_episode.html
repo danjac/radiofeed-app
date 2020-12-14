@@ -41,7 +41,9 @@
              class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
         <div title="Duration"
              class="font-semibold text-gray-100 text-sm"><span> {{ episode.duration|format_duration }} </span></div>
-
+        {% if episode.explicit %}
+        <span class="text-red-300 ml-2">Explicit</span>
+        {% endif %}
 
       </div>
     </div>

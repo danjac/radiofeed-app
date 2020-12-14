@@ -25,6 +25,9 @@
 
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ podcast.pub_date|date }}</div>
+        {% if podcast.explicit %}
+        <span class="text-red-300">Explicit</span>
+        {% endif %}
       </div>
 
       <div class="flex items-center mb-3">

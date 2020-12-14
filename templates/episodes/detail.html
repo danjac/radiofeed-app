@@ -48,6 +48,7 @@
        class="font-semibold hover:text-gray-300">
       {{ podcast.title }}
     </a>
+
   </h3>
 
   <div class="flex items-center w-full mb-3">
@@ -63,6 +64,9 @@
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
         <div class="inline-block">{{ episode.duration|format_duration }}</div>
+        {% if episode.explicit %}
+        <div class="inline-block text-red-300 ml-2">Explicit</div>
+        {% endif %}
       </div>
 
       <div class="flex items-center">
