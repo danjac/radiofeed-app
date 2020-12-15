@@ -3,8 +3,35 @@ import html
 
 # Third Party Libraries
 import bleach
+from html5lib.filters import optionaltags, whitespace
 
-cleaner = bleach.Cleaner(tags=bleach.ALLOWED_TAGS + ["p", "div", "br"], strip=True)
+
+class RemoveEmptyFilter(optionaltags.Filter):
+    elements = frozenset(["p"])
+
+    def __iter__(self):
+        remove = False
+        for _, token, next in self.slider():
+            if token["type"] == "StartTag" and token["name"] in self.elements:
+                if (
+                    next["type"] == "Character"
+                    and next["data"] == ""
+                    or next["type"] == "EmptyTag"
+                ):
+                    remove = True
+                else:
+                    remove = False
+                    yield token
+            elif not remove:
+                remove = False
+                yield token
+
+
+cleaner = bleach.Cleaner(
+    tags=bleach.ALLOWED_TAGS + ["p", "div", "br"],
+    strip=True,
+    filters=[whitespace.Filter, RemoveEmptyFilter],
+)
 
 
 def linkify_callback(attrs, new=False):

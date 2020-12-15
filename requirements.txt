@@ -46,6 +46,7 @@ feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2019.11.30     # via django-silk
 gunicorn==20.0.4          # via -r requirements.in
+html5lib==1.1             # via -r requirements.in
 idna==2.10                # via requests
 iniconfig==1.1.1          # via pytest
 ipython-genutils==0.2.0   # via traitlets
@@ -96,7 +97,7 @@ scikit-learn==0.23.2      # via sklearn
 scipy==1.5.4              # via scikit-learn
 sentry-sdk==0.19.4        # via -r requirements.in
 sgmllib3k==1.0.0          # via feedparser
-six==1.15.0               # via bleach, click-repl, cryptography, packaging, pyopenssl, python-dateutil
+six==1.15.0               # via bleach, click-repl, cryptography, html5lib, packaging, pyopenssl, python-dateutil
 sklearn==0.0              # via -r requirements.in
 sorl-thumbnail==12.7.0    # via -r requirements.in
 soupsieve==2.0.1          # via beautifulsoup4
@@ -110,7 +111,7 @@ unidecode==1.1.1          # via -r requirements.in
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
 vine==5.0.0               # via amqp, celery
 wcwidth==0.2.5            # via prompt-toolkit
-webencodings==0.5.1       # via bleach
+webencodings==0.5.1       # via bleach, html5lib
 werkzeug==1.0.1           # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
