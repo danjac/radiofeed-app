@@ -16,25 +16,26 @@
   {% endfor %}
   {% else %}
   {% for category in categories %}
-  {% if not category.parent %}
+  {% with children=category.children.all %}
   <div class="py-3">
-    <div class="mb-3">
-    <a href="{{ category.get_absolute_url }}"
-       class="font-semibold hover:text-white-100 font-semibold">{{ category.name }}</a>
-    </div>
-    <div class="flex flex-wrap items-center">
-      {% for child in categories %}
-      {% if child.parent == category %}
-      <a class="font-semibold hover:text-white-100 mb-1 mr-3 text-sm"
-         href="{{ child.get_absolute_url }}">{{ child.name }}</a>
-      {% endif %}
-      {% endfor %}
-    </div>
+    <div{% if children %} class="mb-3"
+                                   {% endif %}>
+      <a href="{{ category.get_absolute_url }}"
+         class="font-semibold hover:text-white-100 font-semibold">{{ category.name }}</a>
+  </div>
+  {% if children %}
+  <div class="flex flex-wrap items-center">
+    {% for child in children %}
+    <a class="font-semibold hover:text-white-100 mb-1 mr-3 text-sm"
+       href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+    {% endfor %}
   </div>
   {% endif %}
-  {% endfor %}
+</div>
+{% endwith %}
+{% endfor %}
 
-  {% endif %}
+{% endif %}
 </div>
 
 {% endblock %}
