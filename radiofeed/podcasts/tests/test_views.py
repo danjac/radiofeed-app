@@ -97,9 +97,9 @@ class TestCategoryList:
         c2 = CategoryFactory(parent=parents[1])
         c3 = CategoryFactory(parent=parents[2])
 
-        PodcastFactory(categories=[c1])
-        PodcastFactory(categories=[c2])
-        PodcastFactory(categories=[c3])
+        PodcastFactory(categories=[c1, parents[0]])
+        PodcastFactory(categories=[c2, parents[1]])
+        PodcastFactory(categories=[c3, parents[2]])
 
         resp = views.category_list(rf.get(reverse("podcasts:category_list")))
         assert resp.status_code == 200
