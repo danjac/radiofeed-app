@@ -1,5 +1,5 @@
 # Local
-from .. import clean_html_content, stripentities
+from ..html import clean_html_content, stripentities
 
 
 class TestCleanHtmlContent:

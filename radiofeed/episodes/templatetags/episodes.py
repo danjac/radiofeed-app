@@ -8,12 +8,6 @@ from ..models import Episode
 register = template.Library()
 
 
-@register.filter
-def subtract(value_a, value_b):
-    # should be in common template tags: keeping here for now
-    return value_a - value_b
-
-
 @register.simple_tag(takes_context=True)
 def is_playing(context, episode):
     player = context["request"].session.get("player")

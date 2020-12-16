@@ -187,7 +187,6 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": False,
-            "builtins": [],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -198,10 +197,8 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {
-                "pagination": "radiofeed.common.pagination.templatetags",
-                "html": "radiofeed.common.html.templatetags",
-            },
+            "builtins": ["radiofeed.common.defaulttags",],
+            "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},
         },
     }
 ]

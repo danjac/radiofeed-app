@@ -159,7 +159,6 @@ def stop_player(request):
         episode.log_activity(
             request.user, player["current_time"],
         )
-        print("player:", request.session.get("player"))
         return player_status_response(episode, player["current_time"])
     return player_status_error_response()
 
