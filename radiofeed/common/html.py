@@ -7,6 +7,8 @@ from html5lib.filters import optionaltags, whitespace
 
 
 class RemoveEmptyFilter(optionaltags.Filter):
+    """Remove stray paragraphs with no content"""
+
     elements = frozenset(["p"])
 
     def __iter__(self):

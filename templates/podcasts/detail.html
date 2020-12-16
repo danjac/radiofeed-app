@@ -84,7 +84,7 @@
   </div>
   <div>
     {% for category in podcast.categories.all %}
-    <a class="inline-block bg-indigo-800 hover:bg-indigo-600 text-white px-2 py-1 rounded mr-3 mb-1 text-sm font-semibold"
+    <a class="inline-block bg-indigo-800 hover:bg-indigo-600 text-white px-2 py-1 rounded mr-3 mb-2 text-sm font-semibold"
        href="{{ category.get_absolute_url }}">
       <i class="fa fa-tag mr-1"></i>
       {{ category.name }}
