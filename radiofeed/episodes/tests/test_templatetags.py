@@ -42,6 +42,7 @@ class TestGetPlayer:
         assert get_player({"request": req}) == {
             "episode": episode,
             "current_time": 1000,
+            "paused": False,
         }
 
 

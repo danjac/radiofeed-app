@@ -100,12 +100,17 @@ class TestEpisodeDetail:
 
 
 class TestStartPlayer:
-    def test_post(self, rf, episode):
+    def test_anonymous(self, rf, anonymous_user, episode):
         req = rf.post(reverse("episodes:start_player", args=[episode.id]))
+        req.user = anonymous_user
         req.session = {}
         resp = views.start_player(req, episode.id)
         assert resp.status_code == 200
-        assert req.session["player"] == {"episode": episode.id, "current_time": 0}
+        assert req.session["player"] == {
+            "episode": episode.id,
+            "current_time": 0,
+            "paused": False,
+        }
 
 
 class TestStopPlayer:
@@ -142,7 +147,9 @@ class TestUpdatePlayerTime:
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.update_player_time(req)
         assert resp.status_code == 204
-        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+        assert req.session == {
+            "player": {"episode": episode.id, "current_time": 1030, "paused": False}
+        }
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
@@ -154,7 +161,9 @@ class TestUpdatePlayerTime:
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.update_player_time(req)
         assert resp.status_code == 204
-        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+        assert req.session == {
+            "player": {"episode": episode.id, "current_time": 1030, "paused": False}
+        }
 
 
 class TestBookmarkList:
