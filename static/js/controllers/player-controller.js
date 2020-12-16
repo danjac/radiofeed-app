@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Controller } from 'stimulus';
-import { useDispatch } from 'stimulus-use';
+import { useDispatch, useDebounce } from 'stimulus-use';
 
 export default class extends Controller {
   static targets = [
@@ -13,6 +13,8 @@ export default class extends Controller {
     'progress',
     'progressBar',
   ];
+
+  static debounces = ['skipBack', 'skipForward'];
 
   static classes = ['progress', 'buffer', 'progressPaused', 'bufferPaused'];
 
@@ -28,6 +30,7 @@ export default class extends Controller {
   };
 
   connect() {
+    useDebounce(this, { wait: 500 });
     useDispatch(this);
   }
 
