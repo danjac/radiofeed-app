@@ -9,6 +9,7 @@ from django.db.models import Prefetch
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 # RadioFeed
@@ -146,8 +147,18 @@ def search_itunes(request):
     )
     for result in results:
         result.podcast = podcasts.get(result.rss, None)
+
+    clear_search_url = f"{reverse('podcasts:podcast_list')}?q={search}"
+
     return TemplateResponse(
-        request, "podcasts/itunes.html", {"results": results, "error": error}
+        request,
+        "podcasts/itunes.html",
+        {
+            "results": results,
+            "error": error,
+            "search": search,
+            "clear_search_url": clear_search_url,
+        },
     )
 
 

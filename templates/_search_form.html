@@ -4,8 +4,8 @@
       action="{{ request.path }}"
       class="flex items-center{% if css_class %} {{ css_class }}{% endif %}">
   {% if search %}
-  <a href="{{ request.path }}"
-     class="font-semibold hover:text-gray-300 mr-3">Clear</a>
+  <a href="{{ clear_search_url|default:request.path }}"
+     class="font-semibold hover:text-gray-300 mr-3">{{ clear_search_text|default:'Clear' }}</a>
   {% endif %}
 
   <div class="w-64 relative ">

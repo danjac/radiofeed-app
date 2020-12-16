@@ -4,7 +4,7 @@
 {% block content %}
 <div class="md:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-3 md:mb-0">Search iTunes</h2>
-  {% include "_search_form.html" with placeholder="Search iTunes..." %}
+  {% include "_search_form.html" with placeholder="Search iTunes..." clear_search_text="Podcasts" %}
 </div>
 
 {% for result in results %}
