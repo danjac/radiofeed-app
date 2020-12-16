@@ -2,7 +2,7 @@ import { Controller } from 'stimulus';
 import { useDispatch } from 'stimulus-use';
 
 export default class extends Controller {
-  static targets = ['playButton', 'stopButton'];
+  static targets = ['playButton', 'stopButton', 'currentTime'];
 
   static values = {
     id: String,
@@ -45,6 +45,14 @@ export default class extends Controller {
     this.playingValue = false;
     if (episode === this.idValue) {
       this.currentTimeValue = currentTime;
+    }
+  }
+
+  update({ detail: { time_remaining, completed, duration } }) {
+    if (time_remaining && !completed) {
+      this.currentTimeTarget.textContent = '~' + time_remaining;
+    } else {
+      this.currentTimeTarget.textContent = duration;
     }
   }
 

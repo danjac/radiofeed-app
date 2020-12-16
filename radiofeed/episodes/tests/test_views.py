@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 # Local
 from .. import views
 from ..factories import BookmarkFactory, EpisodeFactory
-from ..models import Bookmark
+from ..models import Bookmark, History
 
 pytestmark = pytest.mark.django_db
 
@@ -131,8 +131,12 @@ class TestStopPlayer:
         req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.stop_player(req)
-        assert resp.status_code == 204
+
         assert req.session == {}
+
+        assert resp.status_code == 200
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1000
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
@@ -144,8 +148,12 @@ class TestStopPlayer:
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
         resp = views.stop_player(req)
-        assert resp.status_code == 204
+
         assert req.session == {}
+
+        assert resp.status_code == 200
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1000
 
 
 class TestUpdatePlayerTime:
@@ -158,10 +166,11 @@ class TestUpdatePlayerTime:
         req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
         resp = views.update_player_time(req)
-        assert resp.status_code == 204
-        assert req.session == {
-            "player": {"episode": episode.id, "current_time": 1030, "paused": False}
-        }
+        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+
+        assert resp.status_code == 200
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1030
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
@@ -171,11 +180,32 @@ class TestUpdatePlayerTime:
         )
         req.user = user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+
         resp = views.update_player_time(req)
-        assert resp.status_code == 204
-        assert req.session == {
-            "player": {"episode": episode.id, "current_time": 1030, "paused": False}
-        }
+
+        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
+
+        assert resp.status_code == 200
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1030
+
+        log = History.objects.get(user=user, episode=episode)
+        assert log.current_time == 1030
+
+    def test_player_not_running(self, rf, user, episode):
+        req = rf.post(
+            reverse("episodes:update_player_time"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = {}
+
+        resp = views.update_player_time(req)
+
+        assert req.session == {}
+
+        assert resp.status_code == 400
 
 
 class TestBookmarkList:

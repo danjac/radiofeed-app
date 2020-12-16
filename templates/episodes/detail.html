@@ -34,7 +34,7 @@
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-400 mb-3"
      data-controller="episode"
-     data-action="episode:open@window->episode#open player:close@window->episode#close"
+     data-action="episode:open@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
@@ -63,7 +63,8 @@
     <div>
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
-        <div class="inline-block">
+        <div class="inline-block"
+          data-episode-target="currentTime">
           {% if episode.current_time and episode.current_time < duration %}
             ~{{ duration|subtract:episode.current_time|format_duration }}
             {% else %}

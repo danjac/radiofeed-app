@@ -80,7 +80,7 @@ class TestPodcastDetail:
         assert not resp.context_data["is_subscribed"]
 
     def test_search(self, rf, anonymous_user, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
+        EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
         req = rf.get(podcast.get_absolute_url(), {"q": "testing"})
         req.user = anonymous_user

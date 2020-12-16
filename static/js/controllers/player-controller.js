@@ -79,14 +79,15 @@ export default class extends Controller {
     this.closePlayer();
   }
 
-  closePlayer() {
-    if (this.stopUrlValue) {
-      axios.post(this.stopUrlValue);
-    }
+  async closePlayer() {
     this.element.innerHTML = '';
-    this.episodeValue = '';
     this.durationValue = 0;
     this.lastUpdated = 0;
+    if (this.stopUrlValue) {
+      const response = await this.stopUrlValue;
+      this.dispatch('update', response.data);
+    }
+    this.episodeValue = '';
   }
 
   pause() {
@@ -107,12 +108,12 @@ export default class extends Controller {
 
   skipBack() {
     this.audioTarget.currentTime -= 15;
-    axios.post(this.progressUrlValue, { current_time: this.audioTarget.currentTime });
+    this.sendTimeUpdate(true);
   }
 
   skipForward() {
     this.audioTarget.currentTime += 15;
-    axios.post(this.progressUrlValue, { current_time: this.audioTarget.currentTime });
+    this.sendTimeUpdate(true);
   }
 
   timeUpdate() {
@@ -170,7 +171,7 @@ export default class extends Controller {
         '-' + this.formatTime(this.durationValue - this.currentTimeValue);
     }
 
-    this.sendTimeUpdate();
+    this.sendTimeUpdate(false);
   }
 
   getPercentBuffered(buffered) {
@@ -222,12 +223,19 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  sendTimeUpdate() {
+  async sendTimeUpdate(immediate) {
     // update every 15s or so
-    const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-    if (diff % 15 === 0) {
-      axios.post(this.progressUrlValue, { current_time: this.currentTimeValue });
+    let sendUpdate = immediate;
+    if (!sendUpdate) {
+      const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
+      sendUpdate = diff % 15 === 0;
+    }
+    if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
+      const response = await axios.post(this.progressUrlValue, {
+        current_time: this.currentTimeValue,
+      });
+      this.dispatch('update', response.data);
     }
   }
 

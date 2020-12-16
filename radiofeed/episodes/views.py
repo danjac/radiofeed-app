@@ -5,13 +5,14 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
 from .models import Bookmark, Episode, History
+from .utils import format_duration
 
 
 def episode_list(request):
@@ -121,14 +122,12 @@ def remove_bookmark(request, episode_id):
 
 @require_POST
 def start_player(request, episode_id):
-    """Add episode to session"""
+    """Add episode to session and returns HTML component"""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
-    try:
-        current_time = int(json.loads(request.body)["current_time"])
-    except (json.JSONDecodeError, KeyError, ValueError):
-        current_time = 0
+
+    current_time = get_current_time_from_request(request)
 
     request.session["player"] = {
         "episode": episode.id,
@@ -144,7 +143,7 @@ def toggle_player_pause(request, paused):
     player = request.session.get("player", None)
     if player:
         request.session["player"] = {**player, "paused": paused}
-    return HttpResponse(status=204)
+    return JsonResponse({"paused": paused})
 
 
 @require_POST
@@ -156,7 +155,8 @@ def stop_player(request):
         episode.log_activity(
             request.user, player["current_time"],
         )
-    return HttpResponse(status=204)
+        return player_status_response(episode, player["current_time"])
+    return JsonResponse({"error": "player not running"}, status=400)
 
 
 @require_POST
@@ -166,15 +166,31 @@ def update_player_time(request):
     player = request.session.get("player", None)
     if player:
         episode = get_object_or_404(Episode, pk=player["episode"])
-        try:
-            current_time = int(json.loads(request.body)["current_time"])
-        except (json.JSONDecodeError, KeyError, ValueError):
-            current_time = 0
+        current_time = get_current_time_from_request(request)
         request.session["player"] = {
             **player,
             "current_time": current_time,
-            "paused": False,
         }
         episode.log_activity(request.user, current_time)
-    # TBD: return JSON with new player state?
-    return HttpResponse(status=204)
+        return player_status_response(episode, current_time)
+    return JsonResponse({"error": "player not running"}, status=400)
+
+
+def get_current_time_from_request(request):
+    try:
+        return int(json.loads(request.body)["current_time"])
+    except (json.JSONDecodeError, KeyError, ValueError):
+        return 0
+
+
+def player_status_response(episode, current_time):
+    duration = episode.get_duration_in_seconds()
+    return JsonResponse(
+        {
+            "episode": episode.id,
+            "current_time": current_time,
+            "duration": format_duration(duration),
+            "time_remaining": format_duration(duration - current_time),
+            "completed": current_time < duration,
+        }
+    )
