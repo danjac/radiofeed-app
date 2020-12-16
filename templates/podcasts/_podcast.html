@@ -1,9 +1,9 @@
 {% load thumbnail %}
-<div class="p-2 border border-gray-500 mb-3">
+<div class="p-2 bg-gray-800 border border-gray-500 mb-3">
   <div class="md:hidden mb-3">
     <a href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title }}"
-       class="font-semibold font-semibold hover:text-white-100 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
+       class="font-semibold hover:text-gray-300 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
   </div>
 
   <div class="sm:flex items-center justify-between">
@@ -11,7 +11,7 @@
 
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <a href="{{ podcast.get_absolute_url }}">
-        <img class="object-cover mr-4 h-16 w-16 cursor-pointer"
+        <img class="object-cover mr-4 h-16 w-16 cursor-pointer border border-white"
              title="{{ podcast.title }}"
              src="{{ img.url }}"
              alt="{{ podcast.title }}"
@@ -24,7 +24,7 @@
         <div class="hidden md:block mb-1">
           <a href="{{ podcast.get_absolute_url }}"
              title="{{ podcast.title }}"
-             class="font-semibold hover:text-white-100 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
+             class="font-semibold hover:text-gray-300 block mb-1">{{ podcast.title|truncatechars:80 }}</a>
         </div>
         <div class="font-semibold text-gray-300 text-sm flex flex-wrap items-center">
           <div class="inline-block">{{ podcast.pub_date|date }}</div>

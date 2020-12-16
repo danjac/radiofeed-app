@@ -12,6 +12,7 @@ from .models import Category, Podcast
 class CategoryAdmin(AdminImageMixin, admin.ModelAdmin):
     ordering = ("name",)
     list_display = ("name", "parent", "itunes_genre_id")
+    search_fields = ("name",)
 
 
 class PubDateFilter(admin.SimpleListFilter):

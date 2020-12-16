@@ -32,7 +32,7 @@
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-400 mb-3"
+<div class="p-2 bg-gray-800 border border-gray-500 mb-3"
      data-controller="episode"
      data-action="episode:open@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}
@@ -59,7 +59,7 @@
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
     <img src="{{ img.url }}"
          alt="{{ podcast.title }}"
-         class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32"
+         class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32 border border-white"
          width="32"
          height="32">
     {% endthumbnail %}
@@ -88,10 +88,10 @@
                   data-ajax-url-value="{% url 'episodes:remove_bookmark' episode.id %}"
                   data-ajax-debounce-value="500"
                   data-action="click->ajax#post:once"
-                  title="Remove Bookmark"
+                  title="Remove episode from bookmarks"
                   class="focus:outline-none rounded border hover:bg-gray-800 px-2 py-1">
-            <i class="fa fa-star mr-2"></i>
-            Unbookmark
+            <i class="fa fa-trash mr-2"></i>
+            Remove
           </button>
           {% else %}
           <button data-controller="ajax"
@@ -101,7 +101,7 @@
                   title="Add Bookmark"
                   class="focus:outline-none rounded border bg-indigo-800 hover:bg-indigo-600 px-2 py-1">
             <i class="far fa-star mr-2"></i>
-            Bookmark
+            Save
           </button>
           {% endif %}
         </div>

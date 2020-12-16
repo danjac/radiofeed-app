@@ -4,7 +4,7 @@
 {% if page_obj.has_other_pages %}
 <div class="text-sm flex justify-between {{ css_class|default:"mt-2" }}">
   <a {% if page_obj.has_previous %}
-     class="block font-semibold hover:text-gray-100"
+     class="block font-semibold hover:text-gray-300"
      href="{% pagination_url page_obj.previous_page_number %}"
      {% else %}
      class="text-gray-500 pointer-events-none"
@@ -14,7 +14,7 @@
   </a>
   <a {% if page_obj.has_next %}
      href="{% pagination_url page_obj.next_page_number %}"
-     class="block font-semibold hover:text-gray-100"
+     class="block font-semibold hover:text-gray-300"
      {% else %}
      href="javascript:void(0);"
      class="text-gray-500 pointer-events-none"

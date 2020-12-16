@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center pb-3 border-b">
+<div class="sm:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-3 sm:mb-0">Discover New Podcasts</h2>
   {% include "_search_form.html" with placeholder="Filter categories..." %}
 </div>
 
-<div class="divide-y divide-gray-300">
+<div class="divide-y divide-gray-500">
   {% if search %}
   {% for category in categories %}
-  <div class="py-3">
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
     <a href="{{ category.get_absolute_url }}"
        class="font-semibold hover:text-white-100 font-semibold mb-3">{{ category.name }}</a>
   </div>
@@ -17,7 +17,7 @@
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
-  <div class="py-3">
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
     <div{% if children %} class="mb-3"
                                    {% endif %}>
       <a href="{{ category.get_absolute_url }}"

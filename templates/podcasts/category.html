@@ -43,6 +43,14 @@
 
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
+{% empty %}
+<p>
+  {% if search %}
+  No results found for this search.
+  {% else %}
+  No podcasts have been added to this category yet.
+  {% endif %}
+</p>
 {% endfor %}
 {% include "_pagination.html" %}
 {% endblock content %}

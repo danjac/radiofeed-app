@@ -1,7 +1,7 @@
 {% load thumbnail episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-300 hover:border-gray-100 mb-3 flex justify-between items-center"
+<div class="p-2 bg-gray-800 border border-gray-500 mb-3 flex justify-between items-center"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}
@@ -16,7 +16,7 @@
   <div>
     <div class="mb-1 flex flex-wrap sm:hidden">
       <a href="{{ episode.get_absolute_url }}"
-         class="block font-semibold hover:text-gray-300 font-semibold mb-1"
+         class="block font-semibold hover:text-gray-300 mb-1"
          title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
     </div>
 
@@ -24,7 +24,7 @@
       {% if show_thumbnail %}
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <a href="{{ podcast.get_absolute_url }}">
-        <img class="object-cover block mr-2 lg:mr-4 cursor-pointer h-16 w-16"
+        <img class="object-cover block mr-2 lg:mr-4 cursor-pointer h-16 w-16 border border-white"
              title="{{ podcast.title }}"
              role="link"
              src="{{ img.url }}"
@@ -38,7 +38,7 @@
       <div>
         <div class="mb-1 flex flex-wrap hidden sm:block">
           <a href="{{ episode.get_absolute_url }}"
-             class="block font-semibold hover:text-gray-300 font-semibold mb-1"
+             class="block font-semibold hover:text-gray-300 mb-1"
              title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
         </div>
 
