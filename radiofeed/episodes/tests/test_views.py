@@ -125,6 +125,37 @@ class TestStartPlayer:
         }
 
 
+class TestTogglePlayerPause:
+    def test_pause(self, rf, episode):
+        req = rf.post(reverse("episodes:stop_player"))
+        req.session = {
+            "player": {"episode": episode.id, "current_time": 1000, "paused": False}
+        }
+        resp = views.toggle_player_pause(req, pause=True)
+
+        body = json.loads(resp.content)
+        assert body["paused"]
+
+    def test_resume(self, rf, episode):
+        req = rf.post(reverse("episodes:stop_player"))
+        req.session = {
+            "player": {"episode": episode.id, "current_time": 1000, "paused": True}
+        }
+        resp = views.toggle_player_pause(req, pause=False)
+
+        body = json.loads(resp.content)
+        assert not body["paused"]
+
+    def test_player_not_running(self, rf, episode):
+        req = rf.post(reverse("episodes:stop_player"))
+        req.session = {}
+        resp = views.toggle_player_pause(req, pause=True)
+
+        assert resp.status_code == 400
+        body = json.loads(resp.content)
+        assert body["error"]
+
+
 class TestStopPlayer:
     def test_anonymous(self, rf, anonymous_user, episode):
         req = rf.post(reverse("episodes:stop_player"))

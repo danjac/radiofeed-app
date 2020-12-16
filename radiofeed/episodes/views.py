@@ -142,11 +142,12 @@ def start_player(request, episode_id):
 
 
 @require_POST
-def toggle_player_pause(request, paused):
+def toggle_player_pause(request, pause):
     player = request.session.get("player", None)
     if player:
-        request.session["player"] = {**player, "paused": paused}
-    return JsonResponse({"paused": paused})
+        request.session["player"] = {**player, "paused": pause}
+        return JsonResponse({"paused": pause})
+    return player_status_error_response()
 
 
 @require_POST
