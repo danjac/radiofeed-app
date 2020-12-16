@@ -57,7 +57,7 @@ class TestPodcastList:
 
     def test_search_has_subcription(self, rf, user):
         """Ignore subscribed feeds in search"""
-        PodcastFactory.create_batch(3)
+        PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user)
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = user

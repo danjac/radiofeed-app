@@ -112,6 +112,18 @@ class TestStartPlayer:
             "paused": False,
         }
 
+    def test_authenticated(self, rf, user, episode):
+        req = rf.post(reverse("episodes:start_player", args=[episode.id]))
+        req.user = user
+        req.session = {}
+        resp = views.start_player(req, episode.id)
+        assert resp.status_code == 200
+        assert req.session["player"] == {
+            "episode": episode.id,
+            "current_time": 0,
+            "paused": False,
+        }
+
 
 class TestStopPlayer:
     def test_anonymous(self, rf, anonymous_user, episode):
