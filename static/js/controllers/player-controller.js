@@ -56,7 +56,7 @@ export default class extends Controller {
     this.episodeValue = episode;
     this.durationValue = duration;
 
-    const response = await axios.post(playUrl);
+    const response = await axios.post(playUrl, { current_time: currentTime });
     this.element.innerHTML = response.data;
     this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
 
