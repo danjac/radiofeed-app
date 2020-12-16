@@ -23,9 +23,9 @@ class EpisodeQuerySet(models.QuerySet):
             )
         return self.annotate(
             current_time=models.Subquery(
-                History.objects.filter(user=user, episode=models.OuterRef("pk")).values(
-                    "current_time"
-                )
+                AudioLog.objects.filter(
+                    user=user, episode=models.OuterRef("pk")
+                ).values("current_time")
             )
         )
 
@@ -119,14 +119,13 @@ class Episode(models.Model):
         return self.get_duration_in_seconds() - getattr(self, "current_time", 0)
 
     def log_activity(self, user, current_time=0):
-        # Updates history log with current time
+        # Updates audio log with current time
         if user.is_anonymous:
             return (None, False)
-        now = timezone.now()
-        return History.objects.update_or_create(
+        return AudioLog.objects.update_or_create(
             episode=self,
             user=user,
-            defaults={"current_time": current_time, "updated": now,},
+            defaults={"current_time": current_time, "updated": timezone.now(),},
         )
 
 
@@ -134,7 +133,7 @@ class BookmarkQuerySet(models.QuerySet):
     def with_current_time(self, user):
         return self.annotate(
             current_time=models.Subquery(
-                History.objects.filter(
+                AudioLog.objects.filter(
                     user=user, episode=models.OuterRef("episode")
                 ).values("current_time")
             )
@@ -176,7 +175,7 @@ class Bookmark(TimeStampedModel):
         ]
 
 
-class HistoryQuerySet(models.QuerySet):
+class AudioLogQuerySet(models.QuerySet):
     def search(self, search_term):
         if not search_term:
             return self.none()
@@ -194,21 +193,21 @@ class HistoryQuerySet(models.QuerySet):
         )
 
 
-class HistoryManager(models.Manager.from_queryset(HistoryQuerySet)):
+class AudioLogManager(models.Manager.from_queryset(AudioLogQuerySet)):
     ...
 
 
-class History(TimeStampedModel):
+class AudioLog(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     updated = models.DateTimeField()
     current_time = models.IntegerField(default=0)
 
-    objects = HistoryManager()
+    objects = AudioLogManager()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(name="uniq_history", fields=["user", "episode"])
+            models.UniqueConstraint(name="uniq_audio_log", fields=["user", "episode"])
         ]
         indexes = [
             models.Index(fields=["-updated"]),

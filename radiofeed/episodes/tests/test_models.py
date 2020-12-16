@@ -22,6 +22,10 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "episode"
 
+    def test_log_activity_anonymous(self, anonymous_user, episode):
+        assert episode.log_activity(anonymous_user) == (None, False)
+        # assert AudioLog.objects.count() == 0
+
     def test_get_duration_in_seconds_if_empty(self):
         assert Episode().get_duration_in_seconds() == 0
         assert Episode(duration="").get_duration_in_seconds() == 0

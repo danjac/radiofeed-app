@@ -11,7 +11,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
-from .models import Bookmark, Episode, History
+from .models import AudioLog, Bookmark, Episode
 from .utils import format_duration
 
 
@@ -64,7 +64,7 @@ def episode_detail(request, episode_id, slug=None):
 @login_required
 def history(request):
     logs = (
-        History.objects.filter(user=request.user)
+        AudioLog.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )
@@ -124,7 +124,8 @@ def remove_bookmark(request, episode_id):
 
 @require_POST
 def start_player(request, episode_id):
-    """Add episode to session and returns HTML component"""
+    """Add episode to session and returns HTML component. The player info
+    is then added to the session."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"), pk=episode_id
     )
