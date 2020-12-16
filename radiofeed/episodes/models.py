@@ -118,7 +118,7 @@ class Episode(models.Model):
         """Use with the with_current_time QuerySet method."""
         return self.get_duration_in_seconds() - getattr(self, "current_time", 0)
 
-    def log_activity(self, user, current_time=0, mark_complete=False):
+    def log_activity(self, user, current_time=0):
         # Updates history log with current time
         if user.is_anonymous:
             return (None, False)
@@ -126,11 +126,7 @@ class Episode(models.Model):
         return History.objects.update_or_create(
             episode=self,
             user=user,
-            defaults={
-                "current_time": current_time,
-                "updated": now,
-                "completed": now if mark_complete else None,
-            },
+            defaults={"current_time": current_time, "updated": now,},
         )
 
 

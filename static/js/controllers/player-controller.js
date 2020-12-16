@@ -20,6 +20,8 @@ export default class extends Controller {
     episode: String,
     progressUrl: String,
     stopUrl: String,
+    pauseUrl: String,
+    resumeUrl: String,
     currentTime: Number,
     duration: Number,
     paused: Boolean,
@@ -33,7 +35,11 @@ export default class extends Controller {
     if (this.hasAudioTarget) {
       this.audioTarget.currentTime = this.currentTimeValue;
       try {
-        await this.audioTarget.play();
+        if (this.pausedValue) {
+          await this.audioTarget.pause();
+        } else {
+          await this.audioTarget.play();
+        }
       } catch (e) {
         this.pausedValue = true;
       }
@@ -83,19 +89,27 @@ export default class extends Controller {
   pause() {
     this.pausedValue = true;
     this.audioTarget.pause();
+    if (this.pauseUrlValue) {
+      axios.post(this.pauseUrlValue);
+    }
   }
 
   play() {
     this.pausedValue = false;
     this.audioTarget.play();
+    if (this.resumeUrlValue) {
+      axios.post(this.resumeUrlValue);
+    }
   }
 
   skipBack() {
     this.audioTarget.currentTime -= 15;
+    axios.post(this.progressUrlValue, { current_time: this.audioTarget.currentTime });
   }
 
   skipForward() {
     this.audioTarget.currentTime += 15;
+    axios.post(this.progressUrlValue, { current_time: this.audioTarget.currentTime });
   }
 
   timeUpdate() {

@@ -153,7 +153,6 @@
       {% block content %}{% endblock %}
     </div>
   </div>
-
   {% get_player as player %}
   <div id="player"
        data-turbolinks-permanent
@@ -165,6 +164,11 @@
        data-player-buffer-paused-class="bg-gray-500"
        data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
        data-player-stop-url-value="{% url 'episodes:stop_player' %}"
+       data-player-pause-url-value="{% url 'episodes:pause_player' %}"
+       data-player-resume-url-value="{% url 'episodes:resume_player' %}"
+       {% if player and player.paused %}
+       data-player-paused-value
+       {% endif %}
        {% if player and player.episode %}
        data-player-duration-value="{{ player.episode.get_duration_in_seconds }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"

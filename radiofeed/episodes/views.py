@@ -71,9 +71,29 @@ def start_player(request, episode_id):
     except (json.JSONDecodeError, KeyError, ValueError):
         current_time = 0
 
-    request.session["player"] = {"episode": episode.id, "current_time": 0}
+    request.session["player"] = {
+        "episode": episode.id,
+        "current_time": 0,
+        "paused": False,
+    }
     episode.log_activity(request.user, current_time=current_time)
     return TemplateResponse(request, "episodes/_player.html", {"episode": episode})
+
+
+@require_POST
+def pause_player(request):
+    player = request.session.get("player", None)
+    if player:
+        request.session["player"] = {**player, "paused": True}
+    return HttpResponse(status=204)
+
+
+@require_POST
+def resume_player(request):
+    player = request.session.get("player", None)
+    if player:
+        request.session["player"] = {**player, "paused": False}
+    return HttpResponse(status=204)
 
 
 @require_POST
@@ -99,7 +119,11 @@ def update_player_time(request):
             current_time = int(json.loads(request.body)["current_time"])
         except (json.JSONDecodeError, KeyError, ValueError):
             current_time = 0
-        request.session["player"] = {**player, "current_time": current_time}
+        request.session["player"] = {
+            **player,
+            "current_time": current_time,
+            "paused": False,
+        }
         episode.log_activity(request.user, current_time)
 
     return HttpResponse(status=204)

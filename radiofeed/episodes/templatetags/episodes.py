@@ -10,6 +10,11 @@ from ..models import Episode
 register = template.Library()
 
 
+@register.filter
+def subtract(value_a, value_b):
+    return value_a - value_b
+
+
 @register.simple_tag(takes_context=True)
 def is_playing(context, episode):
     player = context["request"].session.get("player")
@@ -30,7 +35,11 @@ def get_player(context):
     except Episode.DoesNotExist:
         return None
 
-    return {"episode": episode, "current_time": player["current_time"]}
+    return {
+        "episode": episode,
+        "current_time": player["current_time"],
+        "paused": player.get("paused", False),
+    }
 
 
 @register.filter
