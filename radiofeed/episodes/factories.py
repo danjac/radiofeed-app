@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 # Local
-from .models import Bookmark, Episode
+from .models import Bookmark, Episode, History
 
 
 class EpisodeFactory(DjangoModelFactory):
@@ -36,3 +36,13 @@ class BookmarkFactory(DjangoModelFactory):
 
     class Meta:
         model = Bookmark
+
+
+class HistoryFactory(DjangoModelFactory):
+    episode = SubFactory(EpisodeFactory)
+    user = SubFactory(UserFactory)
+    updated = LazyFunction(timezone.now)
+    current_time = 1000
+
+    class Meta:
+        model = History

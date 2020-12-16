@@ -75,7 +75,9 @@ def history(request):
     else:
         logs = logs.order_by("-updated")
 
-    return TemplateResponse(request, "episodes/history.html", {"logs": logs})
+    return TemplateResponse(
+        request, "episodes/history.html", {"logs": logs, "search": search}
+    )
 
 
 @login_required

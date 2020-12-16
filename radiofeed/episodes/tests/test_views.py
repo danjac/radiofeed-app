@@ -12,7 +12,7 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 
 # Local
 from .. import views
-from ..factories import BookmarkFactory, EpisodeFactory
+from ..factories import BookmarkFactory, EpisodeFactory, HistoryFactory
 from ..models import Bookmark, History
 
 pytestmark = pytest.mark.django_db
@@ -211,6 +211,31 @@ class TestUpdatePlayerTime:
         assert resp.status_code == 400
 
         assert History.objects.count() == 0
+
+
+class TestHistory:
+    def test_get(self, rf, user):
+        HistoryFactory.create_batch(3, user=user)
+        req = rf.get(reverse("episodes:history"))
+        req.user = user
+        resp = views.history(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["logs"]) == 3
+
+    def test_search(self, rf, user):
+
+        for _ in range(3):
+            HistoryFactory(
+                user=user, episode=EpisodeFactory(title="zzzz", keywords="zzzzz"),
+            )
+
+        HistoryFactory(user=user, episode=EpisodeFactory(title="testing"))
+        req = rf.get(reverse("episodes:history"), {"q": "testing"})
+        req.user = user
+        resp = views.history(req)
+        assert resp.status_code == 200
+        assert resp.context_data["search"] == "testing"
+        assert len(resp.context_data["logs"]) == 1
 
 
 class TestBookmarkList:
