@@ -69,3 +69,10 @@ class TestBookmarkManager:
         episode = EpisodeFactory(title="testing")
         BookmarkFactory(episode=episode)
         assert Bookmark.objects.search("testing").count() == 1
+
+
+class TestAudioLogManager:
+    def test_search(self):
+        episode = EpisodeFactory(title="testing")
+        AudioLogFactory(episode=episode)
+        assert AudioLog.objects.search("testing").count() == 1
