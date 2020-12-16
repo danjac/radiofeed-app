@@ -20,12 +20,18 @@
   {% include "_search_form.html" with placeholder="Search category"  %}
 </div>
 
-{% if children %}
+{% if children or category.itunes_genre_id %}
 <div class="mb-3 text-sm flex flex-wrap">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="font-semibold hover:text-white-300 mr-3">{{ child.name }}</a>
   {% endfor %}
+
+  {% if category.itunes_genre_id %}
+  <a href="{% url 'podcasts:itunes_category' category.id %}"
+     class="font-bold hover:text-white-300 mr-3">iTunes</a>
+  </a>
+  {% endif %}
 </div>
 {% endif %}
 

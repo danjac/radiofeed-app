@@ -131,22 +131,39 @@ def category_detail(request, category_id, slug=None):
     )
 
 
+def itunes_category(request, category_id):
+    category = get_object_or_404(
+        Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
+        pk=category_id,
+    )
+    error = False
+    results = []
+    try:
+        results = itunes.fetch_itunes_genre(category.itunes_genre_id)
+    except (itunes.Timeout, itunes.Invalid):
+        error = True
+
+    results = itunes_results_with_podcast(results)
+
+    return TemplateResponse(
+        request,
+        "podcasts/itunes_category.html",
+        {"category": category, "results": results, "error": error,},
+    )
+
+
 def search_itunes(request):
     search = request.GET.get("q", None)
     error = False
+    results = []
+
     if search:
         try:
             results = itunes.search_itunes(search)
         except (itunes.Timeout, itunes.Invalid):
             error = True
-            results = []
-    else:
-        results = []
-    podcasts = Podcast.objects.filter(rss__in=[r.rss for r in results]).in_bulk(
-        field_name="rss"
-    )
-    for result in results:
-        result.podcast = podcasts.get(result.rss, None)
+
+    results = itunes_results_with_podcast(results)
 
     clear_search_url = f"{reverse('podcasts:podcast_list')}?q={search}"
 
@@ -193,3 +210,12 @@ def add_podcast(request):
         return JsonResponse({"id": podcast.id, "title": podcast.title})
 
     return HttpResponseBadRequest()
+
+
+def itunes_results_with_podcast(results):
+    podcasts = Podcast.objects.filter(rss__in=[r.rss for r in results]).in_bulk(
+        field_name="rss"
+    )
+    for result in results:
+        result.podcast = podcasts.get(result.rss, None)
+    return results

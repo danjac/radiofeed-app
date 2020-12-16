@@ -12,6 +12,11 @@ urlpatterns = [
     path("itunes/~add/", views.add_podcast, name="add_podcast"),
     path("categories/", views.category_list, name="category_list"),
     path(
+        "categories/<int:category_id>/itunes/",
+        views.itunes_category,
+        name="itunes_category",
+    ),
+    path(
         "categories/<int:category_id>/<slug:slug>/",
         views.category_detail,
         name="category_detail",

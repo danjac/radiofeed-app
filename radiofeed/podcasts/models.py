@@ -51,7 +51,10 @@ class Category(models.Model):
         related_name="children",
     )
 
-    itunes_genre_id = models.IntegerField(null=True, blank=True, unique=True)
+    # https://itunes.apple.com/search?term=podcast&genreId=1402&limit=20
+    itunes_genre_id = models.IntegerField(
+        verbose_name="iTunes Genre ID", null=True, blank=True, unique=True
+    )
 
     objects = CategoryManager()
 
