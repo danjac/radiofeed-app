@@ -62,7 +62,9 @@ class TestEpisodeList:
     def test_user_has_subscriptions_search(self, rf, user):
         "Ignore subs in search"
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        SubscriptionFactory(user=user, podcast=EpisodeFactory().podcast)
+        SubscriptionFactory(
+            user=user, podcast=EpisodeFactory(title="zzzz", keywords="zzzz").podcast
+        )
         episode = EpisodeFactory(title="testing")
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
         req.user = user
