@@ -12,8 +12,8 @@ from radiofeed.podcasts.factories import SubscriptionFactory
 
 # Local
 from .. import views
-from ..factories import BookmarkFactory, EpisodeFactory, HistoryFactory
-from ..models import Bookmark, History
+from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from ..models import AudioLog, Bookmark
 
 pytestmark = pytest.mark.django_db
 
@@ -155,7 +155,7 @@ class TestStopPlayer:
         body = json.loads(resp.content)
         assert body["current_time"] == 1000
 
-        log = History.objects.get(user=user, episode=episode)
+        log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
 
 
@@ -192,7 +192,7 @@ class TestUpdatePlayerTime:
         body = json.loads(resp.content)
         assert body["current_time"] == 1030
 
-        log = History.objects.get(user=user, episode=episode)
+        log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1030
 
     def test_player_not_running(self, rf, user, episode):
@@ -207,15 +207,13 @@ class TestUpdatePlayerTime:
         resp = views.update_player_time(req)
 
         assert req.session == {}
-
         assert resp.status_code == 400
-
-        assert History.objects.count() == 0
+        assert AudioLog.objects.count() == 0
 
 
 class TestHistory:
     def test_get(self, rf, user):
-        HistoryFactory.create_batch(3, user=user)
+        AudioLogFactory.create_batch(3, user=user)
         req = rf.get(reverse("episodes:history"))
         req.user = user
         resp = views.history(req)
@@ -225,11 +223,11 @@ class TestHistory:
     def test_search(self, rf, user):
 
         for _ in range(3):
-            HistoryFactory(
+            AudioLogFactory(
                 user=user, episode=EpisodeFactory(title="zzzz", keywords="zzzzz"),
             )
 
-        HistoryFactory(user=user, episode=EpisodeFactory(title="testing"))
+        AudioLogFactory(user=user, episode=EpisodeFactory(title="testing"))
         req = rf.get(reverse("episodes:history"), {"q": "testing"})
         req.user = user
         resp = views.history(req)
