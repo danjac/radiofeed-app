@@ -8,7 +8,7 @@ from django.urls import reverse
 import pytest
 
 # RadioFeed
-from radiofeed.podcasts.factories import SubscriptionFactory
+from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 
 # Local
 from .. import views
@@ -222,9 +222,12 @@ class TestHistory:
 
     def test_search(self, rf, user):
 
+        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+
         for _ in range(3):
             AudioLogFactory(
-                user=user, episode=EpisodeFactory(title="zzzz", keywords="zzzzz"),
+                user=user,
+                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
         AudioLogFactory(user=user, episode=EpisodeFactory(title="testing"))
@@ -247,9 +250,12 @@ class TestBookmarkList:
 
     def test_search(self, rf, user):
 
+        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+
         for _ in range(3):
             BookmarkFactory(
-                user=user, episode=EpisodeFactory(title="zzzz", keywords="zzzzz")
+                user=user,
+                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
         BookmarkFactory(user=user, episode=EpisodeFactory(title="testing"))

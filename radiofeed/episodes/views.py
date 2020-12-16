@@ -159,7 +159,7 @@ def stop_player(request):
             request.user, player["current_time"],
         )
         return player_status_response(episode, player["current_time"])
-    return JsonResponse({"error": "player not running"}, status=400)
+    return player_status_error_response()
 
 
 @require_POST
@@ -176,7 +176,7 @@ def update_player_time(request):
         }
         episode.log_activity(request.user, current_time)
         return player_status_response(episode, current_time)
-    return JsonResponse({"error": "player not running"}, status=400)
+    return player_status_error_response()
 
 
 def get_current_time_from_request(request):
@@ -197,3 +197,7 @@ def player_status_response(episode, current_time):
             "completed": current_time < duration,
         }
     )
+
+
+def player_status_error_response():
+    return JsonResponse({"error": "player not running"}, status=400)
