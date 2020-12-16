@@ -87,8 +87,15 @@ class BookmarkQuerySet(models.QuerySet):
 
         query = SearchQuery(search_term)
         return self.annotate(
-            rank=SearchRank(models.F("episode__search_vector"), query=query)
-        ).filter(episode__search_vector=query)
+            episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
+            podcast_rank=SearchRank(
+                models.F("episode__podcast__search_vector"), query=query
+            ),
+            rank=models.F("episode_rank") + models.F("podcast_rank"),
+        ).filter(
+            models.Q(episode__search_vector=query)
+            | models.Q(episode__podcast__search_vector=query)
+        )
 
 
 class BookmarkManager(models.Manager.from_queryset(BookmarkQuerySet)):
