@@ -224,7 +224,7 @@ export default class extends Controller {
     if (!this.hasEpisodeValue) {
       return;
     }
-    // update every 15s or so
+    // update every 10s or so
     let sendUpdate = immediate;
     if (!sendUpdate) {
       const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
