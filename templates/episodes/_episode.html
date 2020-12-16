@@ -1,5 +1,5 @@
 {% load thumbnail episodes %}
-{% with podcast=episode.podcast %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-300 hover:border-indigo-600 mb-3 flex justify-between items-center"
      data-controller="episode"
@@ -7,13 +7,12 @@
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
-     {% if episode.current_time %}
-     data-episode-current-time-value="{{ episode.current_time }}"
+     {% if current_time %}
+     data-episode-current-time-value="{{ current_time }}"
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
-     data-episode-duration-value="{{ episode.duration|duration_in_seconds }}"
+     data-episode-duration-value="{{ duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
-
   <div>
 
     <div class="mb-1 flex flex-wrap">
@@ -43,7 +42,13 @@
         <div title="Date Published"
              class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
         <div title="Duration"
-             class="font-semibold text-gray-100 text-sm"><span> {{ episode.duration|format_duration }} </span></div>
+             class="font-semibold text-gray-100 text-sm"><span>
+            {% if current_time and current_time < duration %}
+            ~{{ episode.get_time_remaining|format_duration }}
+            {% else %}
+            {{ duration|format_duration }}
+            {% endif %}
+          </span></div>
         {% if episode.explicit %}
         <span class="text-red-300 text-sm ml-2">Explicit</span>
         {% endif %}

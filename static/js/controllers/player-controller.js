@@ -70,18 +70,9 @@ export default class extends Controller {
     this.closePlayer();
   }
 
-  markComplete() {
-    this.dispatch('close', { episode: this.episodeValue });
-    this.closePlayer();
-  }
-
-  closePlayer(markComplete) {
+  closePlayer() {
     if (this.stopUrlValue) {
-      const data = {};
-      if (markComplete) {
-        data.mark_complete = true;
-      }
-      axios.post(this.stopUrlValue, { data });
+      axios.post(this.stopUrlValue);
     }
     this.element.innerHTML = '';
     this.episodeValue = '';

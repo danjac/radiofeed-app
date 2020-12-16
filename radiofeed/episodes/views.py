@@ -11,7 +11,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Local
-from .models import Bookmark, Episode
+from .models import Bookmark, Episode, History
 
 
 def episode_list(request):
@@ -80,14 +80,10 @@ def start_player(request, episode_id):
 def stop_player(request):
     """Remove player from session"""
     player = request.session.pop("player", None)
-    try:
-        mark_complete = "mark_complete" in json.loads(request.body)
-    except (json.JSONDecodeError):
-        mark_complete = False
     if player:
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(
-            request.user, player["current_time"], mark_complete=mark_complete
+            request.user, player["current_time"],
         )
     return HttpResponse(status=204)
 
@@ -110,8 +106,29 @@ def update_player_time(request):
 
 
 @login_required
+def history(request):
+    logs = (
+        History.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("-updated")
+    )
+
+    search = request.GET.get("q", None)
+    if search:
+        logs = logs.search(search).order_by("-rank", "-updated")
+    else:
+        logs = logs.order_by("-updated")
+
+    return TemplateResponse(request, "episodes/history.html", {"logs": logs})
+
+
+@login_required
 def bookmark_list(request):
-    bookmarks = request.user.bookmark_set.select_related("episode", "episode__podcast")
+    bookmarks = (
+        Bookmark.objects.filter(user=request.user)
+        .with_current_time(request.user)
+        .select_related("episode", "episode__podcast")
+    )
     search = request.GET.get("q", None)
     if search:
         bookmarks = bookmarks.search(search).order_by("-rank", "-created")

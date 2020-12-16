@@ -3,12 +3,7 @@ import pytest
 
 # Local
 from ..factories import EpisodeFactory
-from ..templatetags.episodes import (
-    duration_in_seconds,
-    format_duration,
-    get_player,
-    is_playing,
-)
+from ..templatetags.episodes import format_duration, get_player, is_playing
 
 pytestmark = pytest.mark.django_db
 
@@ -48,24 +43,6 @@ class TestGetPlayer:
             "episode": episode,
             "current_time": 1000,
         }
-
-
-class TestDurationInSeconds:
-    def test_duration_in_seconds_if_empty(self):
-        assert duration_in_seconds(None) == 0
-        assert duration_in_seconds("") == 0
-
-    def test_duration_in_seconds_if_non_numeric(self):
-        assert duration_in_seconds("NaN") == 0
-
-    def test_duration_in_seconds_if_seconds_only(self):
-        assert duration_in_seconds("60") == 60
-
-    def test_duration_in_seconds_if_minutes_and_seconds(self):
-        assert duration_in_seconds("2:30") == 150
-
-    def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
-        assert duration_in_seconds("2:30:30") == 9030
 
 
 class TestFormatDuration:

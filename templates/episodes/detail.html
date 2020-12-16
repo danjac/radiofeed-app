@@ -30,7 +30,7 @@
 </div>
 {% endif %}
 
-{% with podcast=episode.podcast %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-400 mb-3"
      data-controller="episode"
@@ -39,7 +39,7 @@
      data-episode-playing-value
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
-     data-episode-duration-value="{{ episode.duration|duration_in_seconds }}"
+     data-episode-duration-value="{{ duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
   <h2 class="font-bold mb-3 text-lg">{{ episode.title }}</h2>
@@ -63,7 +63,13 @@
     <div>
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
-        <div class="inline-block">{{ episode.duration|format_duration }}</div>
+        <div class="inline-block">
+          {% if episode.current_time and episode.current_time < duration %}
+            ~{{ episode.get_time_remaining|format_duration }}
+            {% else %}
+            {{ episode.get_duration_in_seconds|format_duration }}
+            {% endif %}
+        </div>
         {% if episode.explicit %}
         <div class="inline-block text-red-300 ml-2">Explicit</div>
         {% endif %}

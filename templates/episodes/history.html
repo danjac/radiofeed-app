@@ -3,23 +3,23 @@
 
 {% block content %}
 <div class="md:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 md:mb-0">Bookmarks</h2>
-  {% include "_search_form.html" with placeholder="Search bookmarks..." %}
+  <h2 class="text-lg font-bold mb-3 md:mb-0">History</h2>
+  {% include "_search_form.html" with placeholder="Search history..." %}
 </div>
 
-{% paginate bookmarks as page_obj %}
+{% paginate logs as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}
 {% endif %}
 
-{% for bookmark in page_obj %}
-{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time show_thumbnail=True %}
+{% for log in page_obj %}
+{% include "episodes/_episode.html" with episode=log.episode current_time=log.current_time show_thumbnail=True %}
 {% empty %}
 {% if search %}
 <p>Sorry, no results found for your search.</p>
 {% else %}
-<p>You haven't added any bookmarks yet.</p>
+<p>You haven't listened to any episodes yet.</p>
 {% endif %}
 {% endfor %}
 {% include "_pagination.html" %}

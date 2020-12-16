@@ -124,6 +124,16 @@
               Bookmarks
             </a>
           </li>
+          <li class="pb-3">
+            <a href="{% url 'episodes:history' %}"
+               data-controller="active-link"
+               data-active-link-active-class="font-bold"
+               class="flex items-center">
+              <i class="fa fa-history mr-3"></i>
+              History
+            </a>
+          </li>
+
           {% endif %}
 
           <li class="pb-3">
@@ -156,7 +166,7 @@
        data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
        data-player-stop-url-value="{% url 'episodes:stop_player' %}"
        {% if player and player.episode %}
-       data-player-duration-value="{{ player.episode.duration|duration_in_seconds }}"
+       data-player-duration-value="{{ player.episode.get_duration_in_seconds }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"
        {% endif %}>
     {% include "episodes/_player.html" with episode=player.episode %}

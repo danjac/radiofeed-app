@@ -89,9 +89,34 @@ class Episode(models.Model):
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "episode"
 
-    @property
-    def file_size(self):
+    def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
+
+    def get_duration_in_seconds(self):
+        """Returns duration string in h:m:s or h:m to seconds"""
+        if not self.duration:
+            return 0
+        hours, minutes, seconds = 0, 0, 0
+        parts = self.duration.split(":")
+        num_parts = len(parts)
+
+        if num_parts == 1:
+            seconds = parts[0]
+        elif num_parts == 2:
+            [minutes, seconds] = parts
+        elif num_parts == 3:
+            [hours, minutes, seconds] = parts
+        else:
+            return 0
+
+        try:
+            return (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
+        except ValueError:
+            return 0
+
+    def get_time_remaining(self):
+        """Use with the with_current_time QuerySet method."""
+        return self.get_duration_in_seconds() - getattr(self, "current_time", 0)
 
     def log_activity(self, user, current_time=0, mark_complete=False):
         # Updates history log with current time
@@ -110,6 +135,15 @@ class Episode(models.Model):
 
 
 class BookmarkQuerySet(models.QuerySet):
+    def with_current_time(self, user):
+        return self.annotate(
+            current_time=models.Subquery(
+                History.objects.filter(
+                    user=user, episode=models.OuterRef("episode")
+                ).values("current_time")
+            )
+        )
+
     def search(self, search_term):
         if not search_term:
             return self.none()
@@ -146,12 +180,35 @@ class Bookmark(TimeStampedModel):
         ]
 
 
+class HistoryQuerySet(models.QuerySet):
+    def search(self, search_term):
+        if not search_term:
+            return self.none()
+
+        query = SearchQuery(search_term)
+        return self.annotate(
+            episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
+            podcast_rank=SearchRank(
+                models.F("episode__podcast__search_vector"), query=query
+            ),
+            rank=models.F("episode_rank") + models.F("podcast_rank"),
+        ).filter(
+            models.Q(episode__search_vector=query)
+            | models.Q(episode__podcast__search_vector=query)
+        )
+
+
+class HistoryManager(models.Manager.from_queryset(HistoryQuerySet)):
+    ...
+
+
 class History(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     updated = models.DateTimeField()
-    completed = models.DateTimeField(null=True, blank=True)
     current_time = models.IntegerField(default=0)
+
+    objects = HistoryManager()
 
     class Meta:
         constraints = [
@@ -159,5 +216,4 @@ class History(TimeStampedModel):
         ]
         indexes = [
             models.Index(fields=["-updated"]),
-            models.Index(fields=["-completed"]),
         ]
