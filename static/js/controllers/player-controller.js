@@ -228,7 +228,7 @@ export default class extends Controller {
     let sendUpdate = immediate;
     if (!sendUpdate) {
       const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-      sendUpdate = diff % 10 === 0;
+      sendUpdate = this.currentTimeValue && diff % 10 === 0;
     }
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
