@@ -38,6 +38,9 @@
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
+     {% if episode.current_time %}
+     data-episode-current-time-value="{{ episode.current_time }}"
+     {% endif %}
      data-episode-id-value="{{ episode.id }}"
      data-episode-duration-value="{{ duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
@@ -64,12 +67,12 @@
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
         <div class="inline-block"
-          data-episode-target="currentTime">
+             data-episode-target="currentTime">
           {% if episode.current_time and episode.current_time < duration %}
-            ~{{ duration|subtract:episode.current_time|format_duration }}
-            {% else %}
-            {{ episode.get_duration_in_seconds|format_duration }}
-            {% endif %}
+          ~{{ duration|subtract:episode.current_time|format_duration }}
+          {% else %}
+          {{ episode.get_duration_in_seconds|format_duration }}
+          {% endif %}
         </div>
         {% if episode.explicit %}
         <div class="inline-block text-red-300 ml-2">Explicit</div>
