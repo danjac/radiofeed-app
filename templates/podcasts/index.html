@@ -2,9 +2,15 @@
 {% load thumbnail pagination %}
 
 {% block content %}
-<div class="md:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 md:mb-0">Podcasts</h2>
-  {% include "_search_form.html" with placeholder="Search podcasts..." %}
+<div class="sm:flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold mb-3 sm:mb-0">Podcasts</h2>
+  <div class="sm:flex items-center">
+    {% if search %}
+    <a class="font-semibold mr-4 mb-3 sm:mb-0"
+       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+    {% endif %}
+    {% include "_search_form.html" with placeholder="Search podcasts..." %}
+  </div>
 </div>
 
 {% paginate podcasts as page_obj %}
@@ -17,7 +23,8 @@
 {% include "podcasts/_podcast.html" %}
 {% empty %}
 {% if search %}
-<p>No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}" class="font-bold">iTunes</a>.</p>
+<p>No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}"
+     class="font-bold">iTunes</a>.</p>
 {% endif %}
 {% endfor %}
 {% include "_pagination.html" %}
