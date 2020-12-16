@@ -51,7 +51,7 @@ export default class extends Controller {
   }
 
   update({ detail: { episode, time_remaining, completed, duration } }) {
-    if (episode === this.idValue) {
+    if (episode && episode.toString() === this.idValue) {
       if (time_remaining && !completed) {
         this.currentTimeTarget.textContent = '~' + time_remaining;
       } else {

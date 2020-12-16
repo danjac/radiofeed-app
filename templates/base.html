@@ -170,6 +170,7 @@
        data-player-paused-value
        {% endif %}
        {% if player and player.episode %}
+       data-player-episode-value="{{ player.episode.id }}"
        data-player-duration-value="{{ player.episode.get_duration_in_seconds }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"
        {% endif %}>

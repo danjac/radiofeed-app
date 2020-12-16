@@ -84,7 +84,7 @@ export default class extends Controller {
     this.durationValue = 0;
     this.lastUpdated = 0;
     if (this.stopUrlValue) {
-      const response = await this.stopUrlValue;
+      const response = await axios.post(this.stopUrlValue);
       this.dispatch('update', response.data);
     }
     this.episodeValue = '';
@@ -224,11 +224,14 @@ export default class extends Controller {
   }
 
   async sendTimeUpdate(immediate) {
+    if (!this.hasEpisodeValue) {
+      return;
+    }
     // update every 15s or so
     let sendUpdate = immediate;
     if (!sendUpdate) {
       const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-      sendUpdate = diff % 15 === 0;
+      sendUpdate = diff % 10 === 0;
     }
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
