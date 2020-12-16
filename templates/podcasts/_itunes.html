@@ -1,42 +1,4 @@
 {% for result in results %}
-{% with can_add_podcast=request.user.is_staff %}
-<div class="p-2 border border-gray-300 hover:border-indigo-600 mb-3 flex items-center justify-between">
-  <div class="flex items-center">
-    {% if result.image %}
-    <img src="{{ result.image }}"
-         height="60"
-         width="60"
-         class="object-cover mr-2" />
-    {% endif %}
-    <div>
-      <a href="{{ result.itunes }}"
-         rel="noopener"
-         target="_blank"
-         title="{{ result.title }}"
-         class="font-semibold font-semibold hover:text-white-100 block mb-1">{{ result.title|truncatechars:60 }}</a>
-      <div class="text-sm{% if can_add_podcast %} mb-3 sm:mb-0{% endif %}">
-        <a href="{{ result.rss }}"
-           class="font-semibold hover:text-gray-100 mr-2"
-           target="_blank"
-           rel="noopener">RSS</a>
-        <a href="{{ result.itunes }}"
-           class="font-semibold hover:text-gray-100 mr-2"
-           target="_blank"
-           rel="noopener">iTunes</a>
-        {% if result.podcast and result.podcast.pub_date %}
-        <a href="{{ result.podcast.get_absolute_url }}"
-           class="font-semibold hover-text-gray-100">Podcast</a>
-        {% elif can_add_podcast and not result.podcast %}
-        {% include "podcasts/_add_new_button.html" with css_class="sm:hidden" %}
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  {% if can_add_podcast and not result.podcast %}
-  {% include "podcasts/_add_new_button.html" with css_class="hidden sm:inline-block" %}
-  {% endif %}
-</div>
-{% endwith %}
 {% empty %}
 {% if error %}
 <p>Unable to connect to the ITunes API at the moment.</p>

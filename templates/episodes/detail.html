@@ -38,7 +38,7 @@
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
-     {% if episode.current_time %}
+     {% if episode.current_time and episode.current_time < duration %}
      data-episode-current-time-value="{{ episode.current_time }}"
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
@@ -75,7 +75,7 @@
           {% endif %}
         </div>
         {% if episode.explicit %}
-        <div class="inline-block text-red-300 ml-2">Explicit</div>
+        <div class="inline-block font-semibold text-red-300 ml-2">Explicit</div>
         {% endif %}
       </div>
 

@@ -9,15 +9,6 @@ pytestmark = pytest.mark.django_db
 
 
 class TestCategoryManager:
-    def test_with_podcasts_if_none(self):
-        CategoryFactory()
-        assert Category.objects.with_podcasts().count() == 0
-
-    def test_with_podcasts_if_podcasts(self):
-        category = CategoryFactory()
-        PodcastFactory(categories=[category])
-        assert Category.objects.with_podcasts().count() == 1
-
     def test_search(self):
         CategoryFactory(name="testing")
         assert Category.objects.search("testing").count() == 1

@@ -117,6 +117,9 @@
   </div>
 </div>
 {% endif %}
+{% else %}
+<a class="font-bold mb-3 text-lg"
+   href="{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
 {% endif %}
 
 <div class="sm:flex justify-between items-center mb-3">

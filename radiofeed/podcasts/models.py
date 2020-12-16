@@ -20,16 +20,6 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class CategoryQuerySet(models.QuerySet):
-    def with_podcasts(self):
-        """Returns only categories having at least one podcast."""
-        return self.annotate(
-            has_podcasts=models.Exists(
-                Podcast.objects.filter(
-                    pub_date__isnull=False, categories=models.OuterRef("pk")
-                )
-            )
-        ).filter(has_podcasts=True)
-
     def search(self, search_term, base_similarity=0.2):
         return self.annotate(similarity=TrigramSimilarity("name", search_term)).filter(
             similarity__gte=base_similarity

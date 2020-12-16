@@ -11,7 +11,7 @@ from .models import Category, Podcast
 @admin.register(Category)
 class CategoryAdmin(AdminImageMixin, admin.ModelAdmin):
     ordering = ("name",)
-    list_display = ("name", "parent")
+    list_display = ("name", "parent", "itunes_genre_id")
 
 
 class PubDateFilter(admin.SimpleListFilter):
