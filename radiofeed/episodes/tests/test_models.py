@@ -1,9 +1,15 @@
+# Standard Library
+import datetime
+
+# Django
+from django.utils import timezone
+
 # Third Party Libraries
 import pytest
 
 # Local
-from ..factories import BookmarkFactory, EpisodeFactory
-from ..models import Bookmark, Episode
+from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from ..models import AudioLog, Bookmark, Episode
 
 pytestmark = pytest.mark.django_db
 
@@ -23,8 +29,23 @@ class TestEpisodeModel:
         assert Episode().slug == "episode"
 
     def test_log_activity_anonymous(self, anonymous_user, episode):
-        assert episode.log_activity(anonymous_user) == (None, False)
-        # assert AudioLog.objects.count() == 0
+        assert episode.log_activity(anonymous_user, current_time=1000) == (None, False)
+        assert AudioLog.objects.count() == 0
+
+    def test_log_activity_new(self, user, episode):
+        log, created = episode.log_activity(user, current_time=1000)
+        assert created
+        assert log.current_time == 1000
+
+    def test_log_activity_existing(self, user, episode):
+        last_logged_at = timezone.now() - datetime.timedelta(days=2)
+        AudioLogFactory(
+            user=user, episode=episode, current_time=1000, updated=last_logged_at
+        )
+        log, created = episode.log_activity(user, current_time=1030)
+        assert not created
+        assert log.current_time == 1030
+        assert log.updated > last_logged_at
 
     def test_get_duration_in_seconds_if_empty(self):
         assert Episode().get_duration_in_seconds() == 0
