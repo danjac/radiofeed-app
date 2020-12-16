@@ -1,0 +1,18 @@
+<div class="{{ css_class }}"
+     data-controller="toggle">
+  <button class="rounded bg-indigo-800 hover:bg-indigo-500 border border-white text-white text-sm px-2 py-1"
+          data-controller="ajax"
+          data-action="toggle#toggle ajax#post"
+          data-toggle-target="item"
+          data-ajax-url-value="{% url 'podcasts:add_podcast' %}"
+          data-ajax-params-value="{{ result.as_json }}">
+    <i class="fa fa-plus mr-2"></i>
+    Add Podcast
+  </button>
+
+  <button class="rounded border border-white text-white text-sm px-2 py-1 hidden"
+          data-toggle-target="item">
+    <i class="fa fa-check text-green-500 mr-2"></i>
+    Added!
+  </button>
+</div>

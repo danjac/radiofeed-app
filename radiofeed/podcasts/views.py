@@ -1,15 +1,24 @@
+# Standard Library
+import json
+
 # Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
+# RadioFeed
+from radiofeed.users.decorators import staff_member_required
+
 # Local
 from . import itunes
+from .forms import PodcastForm
 from .models import Category, Podcast, Recommendation, Subscription
+from .tasks import sync_podcast_feed
 
 
 def podcast_list(request):
@@ -123,11 +132,23 @@ def category_detail(request, category_id, slug=None):
 
 def search_itunes(request):
     search = request.GET.get("q", None)
+    error = False
     if search:
-        results = itunes.search_itunes(search)
+        try:
+            results = itunes.search_itunes(search)
+        except (itunes.Timeout, itunes.Invalid):
+            error = True
+            results = []
     else:
         results = []
-    return TemplateResponse(request, "podcasts/itunes.html", {"results": results})
+    podcasts = Podcast.objects.filter(rss__in=[r.rss for r in results]).in_bulk(
+        field_name="rss"
+    )
+    for result in results:
+        result.podcast = podcasts.get(result.rss, None)
+    return TemplateResponse(
+        request, "podcasts/itunes.html", {"results": results, "error": error}
+    )
 
 
 @login_required
@@ -149,3 +170,15 @@ def unsubscribe(request, podcast_id):
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     messages.info(request, "You are no longer subscribed to this podcast")
     return redirect(podcast.get_absolute_url())
+
+
+@staff_member_required
+@require_POST
+def add_podcast(request):
+    form = PodcastForm(json.loads(request.body))
+    if form.is_valid():
+        podcast = form.save()
+        sync_podcast_feed.delay(podcast_id=podcast.id)
+        return JsonResponse({"id": podcast.id, "title": podcast.title})
+
+    return HttpResponseBadRequest()

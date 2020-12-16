@@ -13,6 +13,7 @@ export default class extends Controller {
     remove: Boolean,
     replace: Boolean,
     url: String,
+    params: Object,
   };
 
   connect() {
@@ -62,6 +63,7 @@ export default class extends Controller {
       headers,
       method,
       url,
+      data: this.paramsValue,
     });
 
     if (this.hasRedirectValue) {

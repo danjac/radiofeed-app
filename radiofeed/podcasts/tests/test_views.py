@@ -1,7 +1,10 @@
-# Third Party Libraries
+# Standard Library
+import json
+
 # Django
 from django.urls import reverse
 
+# Third Party Libraries
 import pytest
 
 # RadioFeed
@@ -11,7 +14,7 @@ from radiofeed.episodes.factories import EpisodeFactory
 from .. import views
 from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
 from ..itunes import SearchResult
-from ..models import Subscription
+from ..models import Podcast, Subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -88,6 +91,36 @@ class TestPodcastDetail:
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 1
+
+
+class TestAddPodcast:
+    def test_add_podcast(self, rf, admin_user, mocker):
+        data = {
+            "itunes": "http://itunes.apple.com",
+            "rss": "https://example.com/rss.xml",
+            "title": "Example",
+        }
+
+        mock = mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
+
+        req = rf.post(
+            reverse("podcasts:add_podcast"),
+            json.dumps(data),
+            content_type="application/json",
+        )
+        req.user = admin_user
+        resp = views.add_podcast(req)
+
+        podcast = Podcast.objects.get()
+        assert podcast.title == data["title"]
+        assert podcast.rss == data["rss"]
+        assert podcast.itunes == data["itunes"]
+
+        data = json.loads(resp.content)
+
+        assert data["id"] == podcast.id
+
+        mock.asset_called()
 
 
 class TestCategoryList:

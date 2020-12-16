@@ -1,5 +1,6 @@
 # Standard Library
 import dataclasses
+import json
 
 # Third Party Libraries
 import requests
@@ -7,11 +8,11 @@ import requests
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search/"
 
 
-class ITunesTimeout(requests.exceptions.Timeout):
+class Timeout(requests.exceptions.Timeout):
     pass
 
 
-class InvalidItunesResult(requests.RequestException):
+class Invalid(requests.RequestException):
     pass
 
 
@@ -30,6 +31,9 @@ class SearchResult:
             "image": self.image,
         }
 
+    def as_json(self):
+        return json.dumps(self.as_dict())
+
 
 def search_itunes(search_term, num_results=12):
     """Does a search query on the iTunes API."""
@@ -42,9 +46,9 @@ def search_itunes(search_term, num_results=12):
         response = requests.get(ITUNES_SEARCH_URL, params, verify=False, timeout=3)
         response.raise_for_status()
     except requests.exceptions.Timeout as e:
-        raise ITunesTimeout from e
+        raise Timeout from e
     except requests.RequestException as e:
-        raise InvalidItunesResult from e
+        raise Invalid from e
 
     return [
         SearchResult(
