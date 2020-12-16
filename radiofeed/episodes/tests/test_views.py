@@ -140,7 +140,7 @@ class TestStopPlayer:
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
-            reverse("episodes:update_player_time"),
+            reverse("episodes:stop_player"),
             data=json.dumps({"current_time": 1030}),
             content_type="application/json",
         )
@@ -154,6 +154,9 @@ class TestStopPlayer:
         assert resp.status_code == 200
         body = json.loads(resp.content)
         assert body["current_time"] == 1000
+
+        log = History.objects.get(user=user, episode=episode)
+        assert log.current_time == 1000
 
 
 class TestUpdatePlayerTime:
@@ -206,6 +209,8 @@ class TestUpdatePlayerTime:
         assert req.session == {}
 
         assert resp.status_code == 400
+
+        assert History.objects.count() == 0
 
 
 class TestBookmarkList:
