@@ -51,6 +51,8 @@ class Category(models.Model):
         related_name="children",
     )
 
+    itunes_genre_id = models.IntegerField(null=True, blank=True, unique=True)
+
     objects = CategoryManager()
 
     class Meta:
