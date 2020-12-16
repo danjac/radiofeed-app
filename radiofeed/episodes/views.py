@@ -60,6 +60,65 @@ def episode_detail(request, episode_id, slug=None):
     )
 
 
+@login_required
+def history(request):
+    logs = (
+        History.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("-updated")
+    )
+
+    search = request.GET.get("q", None)
+    if search:
+        logs = logs.search(search).order_by("-rank", "-updated")
+    else:
+        logs = logs.order_by("-updated")
+
+    return TemplateResponse(request, "episodes/history.html", {"logs": logs})
+
+
+@login_required
+def bookmark_list(request):
+    bookmarks = (
+        Bookmark.objects.filter(user=request.user)
+        .with_current_time(request.user)
+        .select_related("episode", "episode__podcast")
+    )
+    search = request.GET.get("q", None)
+    if search:
+        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by("-created")
+    return TemplateResponse(
+        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search}
+    )
+
+
+@login_required
+@require_POST
+def add_bookmark(request, episode_id):
+    episode = get_object_or_404(Episode, pk=episode_id)
+
+    try:
+        Bookmark.objects.create(episode=episode, user=request.user)
+        messages.success(request, "You have bookmarked this episode")
+    except IntegrityError:
+        pass
+    return redirect(episode.get_absolute_url())
+
+
+@login_required
+@require_POST
+def remove_bookmark(request, episode_id):
+    episode = get_object_or_404(Episode, pk=episode_id)
+    Bookmark.objects.filter(episode=episode, user=request.user).delete()
+    messages.info(request, "Bookmark has been removed")
+    return redirect(episode.get_absolute_url())
+
+
+# Player control views
+
+
 @require_POST
 def start_player(request, episode_id):
     """Add episode to session"""
@@ -117,61 +176,5 @@ def update_player_time(request):
             "paused": False,
         }
         episode.log_activity(request.user, current_time)
-
+    # TBD: return JSON with new player state?
     return HttpResponse(status=204)
-
-
-@login_required
-def history(request):
-    logs = (
-        History.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("-updated")
-    )
-
-    search = request.GET.get("q", None)
-    if search:
-        logs = logs.search(search).order_by("-rank", "-updated")
-    else:
-        logs = logs.order_by("-updated")
-
-    return TemplateResponse(request, "episodes/history.html", {"logs": logs})
-
-
-@login_required
-def bookmark_list(request):
-    bookmarks = (
-        Bookmark.objects.filter(user=request.user)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
-    )
-    search = request.GET.get("q", None)
-    if search:
-        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
-    else:
-        bookmarks = bookmarks.order_by("-created")
-    return TemplateResponse(
-        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search}
-    )
-
-
-@login_required
-@require_POST
-def add_bookmark(request, episode_id):
-    episode = get_object_or_404(Episode, pk=episode_id)
-
-    try:
-        Bookmark.objects.create(episode=episode, user=request.user)
-        messages.success(request, "You have bookmarked this episode")
-    except IntegrityError:
-        pass
-    return redirect(episode.get_absolute_url())
-
-
-@login_required
-@require_POST
-def remove_bookmark(request, episode_id):
-    episode = get_object_or_404(Episode, pk=episode_id)
-    Bookmark.objects.filter(episode=episode, user=request.user).delete()
-    messages.info(request, "Bookmark has been removed")
-    return redirect(episode.get_absolute_url())
