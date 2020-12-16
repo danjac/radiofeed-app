@@ -2,6 +2,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
@@ -72,16 +73,21 @@ def podcast_detail(request, podcast_id, slug=None):
 
 def category_list(request):
     search = request.GET.get("q", None)
-    categories = (
-        Category.objects.with_podcasts()
-        .select_related("parent")
-        .prefetch_related("children")
-    )
+    categories = Category.objects.with_podcasts()
 
     if search:
         categories = categories.search(search).order_by("-similarity", "name")
     else:
-        categories = categories.order_by("name")
+        categories = (
+            categories.filter(parent__isnull=True)
+            .prefetch_related(
+                Prefetch(
+                    "children",
+                    queryset=Category.objects.with_podcasts().order_by("name"),
+                )
+            )
+            .order_by("name")
+        )
     return TemplateResponse(
         request,
         "podcasts/categories.html",

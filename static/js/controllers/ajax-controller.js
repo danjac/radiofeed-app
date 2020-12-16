@@ -1,27 +1,23 @@
 import axios from 'axios';
 import Turbolinks from 'turbolinks';
 import { Controller } from 'stimulus';
-import debounce from 'lodash.debounce';
-import throttle from 'lodash.throttle';
+import { useDebounce } from 'stimulus-use';
 
 export default class extends Controller {
   static targets = ['fragment'];
+  static debounces = ['sendAjax'];
   static values = {
     confirm: String,
+    debounce: Number,
     redirect: String,
     remove: Boolean,
     replace: Boolean,
     url: String,
-    throttle: Number,
-    debounce: Number,
   };
 
-  initialize() {
+  connect() {
     if (this.hasDebounceValue) {
-      this.sendAjax = debounce(this.sendAjax, this.debounceValue).bind(this);
-    }
-    if (this.hasThrottleValue) {
-      this.sendAjax = throttle(this.sendAjax, this.throttleValue).bind(this);
+      useDebounce(this, { wait: this.debounceValue });
     }
   }
 

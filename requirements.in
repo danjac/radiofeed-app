@@ -19,6 +19,7 @@ factory-boy
 feedparser==6.0.2
 future
 gunicorn
+html5lib
 ipython
 lxml
 nltk
