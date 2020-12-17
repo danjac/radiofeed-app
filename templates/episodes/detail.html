@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load thumbnail episodes %}
 
+{% block subtitle %} | {{ episode.podcast.title }} | {{ episode.title }}{% endblock %}
+
 {% block content %}
 
 {% if prev_episode or next_episode %}

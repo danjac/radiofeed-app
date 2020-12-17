@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load thumbnail pagination %}
 
+{% block subtitle %} | {{ podcast.title }}{% endblock %}
+
 {% block content %}
 {% paginate episodes as page_obj %}
 {% if page_obj.number == 1 and not search %}

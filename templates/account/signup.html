@@ -11,7 +11,7 @@
   <a class="underline hover:text-gray-300"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
-<form class="p-3 border w-full sm:w-1/2 {% if form.errors %} border-red-600{% endif %}"
+<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
       method="post"
       action="{% url 'account_signup' %}"
       novalidate>

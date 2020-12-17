@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load thumbnail pagination %}
 
+{% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} | {{ category.name }}{% endblock %}
+
 {% block content %}
 
 <div class="mb-3 text-sm flex justify-center sm:block">
