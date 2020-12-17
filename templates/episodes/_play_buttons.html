@@ -2,13 +2,13 @@
   <button title="Open in Player"
           data-episode-target="playButton"
           data-action="episode#play"
-          class="h-9 w-9 rounded-full border border-gray-300 bg-indigo-800 hover:bg-indigo-600 align-middle focus:outline-none transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
+          class="h-8 w-8 rounded-full border border-gray-300 bg-indigo-800 hover:bg-indigo-600 align-middle focus:outline-none transition duration-500 ease-out transition hover:scale-125{% if is_episode_playing %} hidden{% endif %}">
     <i class="fa fa-play text-kl"></i>
   </button>
   <button title="Close Player"
           data-episode-target="stopButton"
           data-action="episode#stop"
-          class="h-9 w-9 rounded-full border border-gray-300 hover:bg-gray-800 align-middle focus:outline-none transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
+          class="h-8 w-8 rounded-full border border-gray-300 hover:bg-gray-800 align-middle focus:outline-none transition duration-500 ease-out transition hover:scale-125{% if not is_episode_playing %} hidden{% endif %}">
     <i class="fa fa-stop text-kl"></i>
   </button>
 </div>

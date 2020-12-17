@@ -2,7 +2,7 @@
 
 {% load i18n widget_tweaks %}
 
-{% block head_title %}{% translate "E-mail Addresses" %}{% endblock %}
+{% block subtitle %} | {% translate "E-mail Addresses" %}{% endblock %}
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}
