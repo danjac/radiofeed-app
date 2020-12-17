@@ -30,11 +30,16 @@ def podcast_list(request):
 
     if search:
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
+    elif request.user.is_authenticated and request.user.subscription_set.exists():
+        podcasts = (
+            podcasts.filter(subscription__user=request.user)
+            .order_by("-pub_date")
+            .distinct()
+        )
     else:
-        podcasts = podcasts.order_by("-pub_date")
-
-        if request.user.is_authenticated and request.user.subscription_set.exists():
-            podcasts = podcasts.filter(subscription__user=request.user).distinct()
+        podcasts = podcasts.with_subscription_count().order_by(
+            "-subscription_count", "-pub_date"
+        )
 
     return TemplateResponse(
         request, "podcasts/index.html", {"podcasts": podcasts, "search": search}

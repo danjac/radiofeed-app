@@ -73,6 +73,9 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
+    def with_subscription_count(self):
+        return self.annotate(subscription_count=models.Count("subscription"))
+
 
 class PodcastManager(models.Manager.from_queryset(PodcastQuerySet)):
     ...
