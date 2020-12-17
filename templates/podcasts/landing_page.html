@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static thumbnail %}
+{% block header %}{% endblock %}
+{% block player %}{% endblock %}
+{% block bodyattrs %}class="h-screen container-lg mx-auto antialiased bg-fixed bg-center bg-no-repeat bg-cover bg-transparent" style="background-image: url('{% static 'landing-cover.jpg' %}');"{% endblock %}
+{% block layout %}
+<div class="min-h-full mx-auto bg-gradient-to-b flex justify-center items-center">
+  <div class="bg-gray-900 text-white p-12 w-5/6 opacity-90 font-sans">
+
+    <h1 class="text-2xl text-center font-bold mb-3">
+      Welcome to {{ request.site.name }}
+    </h1>
+
+    <p class="text-lg text-center mb-3">
+      {{ request.site.name }} is an app for collecting and sharing your favorite podcasts!
+    </p>
+    <h2 class="text-lg mb-3 text-center font-semibold">Now Trending...</h2>
+    <div class="overflow-x-auto lg:overflow-none flex whitespace-nowrap lg:whitespace-none pb-1 mb-3">
+      {% for podcast in podcasts %}
+      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+      <img data-controller="link"
+           data-link-url-value="{{ podcast.get_absolute_url }}"
+           data-action="click->link#visit"
+           class="h-24 w-24 md:h-32 md:w-32 object-cover mr-2 cursor-pointer border border-white hover:opacity-75"
+           title="{{ podcast.title }}"
+           src="{{ img.url }}"
+           alt="{{ podcast.title }}"
+           role="link"
+           width="32"
+           height="32">
+      {% endthumbnail %}
+      {% endfor %}
+    </div>
+    <div class="text-lg text-center mb-3">
+      <a href="{% url 'account_signup' %}"
+         class="font-semibold underline hover:text-gray-300">Sign up</a> and get started today!
+    </div>
+
+    <div class="text-center">
+      <div>
+        Already have an account? <a href="{% url 'account_login' %}"
+           class="font-semibold underline hover:text-gray-300">log in here</a>.
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+{% endblock layout %}

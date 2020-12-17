@@ -5,6 +5,7 @@ from email.utils import getaddresses
 
 # Django
 from django.contrib import messages
+from django.urls import reverse_lazy
 
 # Third Party Libraries
 import environ
@@ -117,7 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-HOME_URL = LOGIN_REDIRECT_URL = "/"
+HOME_URL = reverse_lazy("podcasts:landing_page")
+LOGIN_REDIRECT_URL = reverse_lazy("podcasts:podcast_list")
 
 LOGIN_URL = "account_login"
 

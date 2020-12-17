@@ -19,6 +19,22 @@ from ..models import Podcast, Subscription
 pytestmark = pytest.mark.django_db
 
 
+class TestLandingPage:
+    def test_anonymous(self, rf, anonymous_user):
+        PodcastFactory.create_batch(3)
+        req = rf.get(reverse("podcasts:landing_page"))
+        req.user = anonymous_user
+        resp = views.landing_page(req)
+        assert resp.status_code == 200
+        assert len(resp.context_data["podcasts"]) == 3
+
+    def test_authenticated(self, rf, user):
+        req = rf.get(reverse("podcasts:landing_page"))
+        req.user = user
+        resp = views.landing_page(req)
+        assert resp.url == reverse("podcasts:podcast_list")
+
+
 class TestPodcastList:
     def test_anonymous(self, rf, anonymous_user):
         PodcastFactory.create_batch(3)

@@ -22,6 +22,21 @@ from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
 
+def landing_page(request):
+    if request.user.is_authenticated:
+        return redirect("podcasts:podcast_list")
+
+    podcasts = (
+        Podcast.objects.with_subscription_count()
+        .order_by("-subscription_count", "-pub_date")
+        .distinct()[:12]
+    )
+
+    return TemplateResponse(
+        request, "podcasts/landing_page.html", {"podcasts": podcasts}
+    )
+
+
 def podcast_list(request):
     """Shows list of podcasts"""
     podcasts = Podcast.objects.filter(pub_date__isnull=False)
