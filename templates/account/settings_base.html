@@ -18,8 +18,12 @@
          class="hover:text-gray-300"
          href="{% url 'account_change_password' %}">Change Password</a>
     </li>
-    <li class="pb-2">
-      <a href="/delete-account">Delete Account</a>
+    <li class="pb-2"
+        data-controller="active-link"
+        data-active-link-active-class="active-tab">
+      <a data-active-link-target="match"
+         class="hover:text-gray-300"
+         href="{% url 'delete_account' %}">Delete Account</a>
     </li>
   </ul>
 </nav>

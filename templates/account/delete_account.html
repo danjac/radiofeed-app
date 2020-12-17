@@ -1,0 +1,17 @@
+{% extends "account/settings_base.html" %}
+{% block settings_content %}
+<p class="mb-3">
+  Please confirm that you want to delete your account. You will not be able to undo this action!
+</p>
+<form action="{% url 'delete_account' %}"
+      method="post"
+      novalidate>
+  {% csrf_token %}
+  <button class="rounded bg-red-800 hover:bg-red-600 border border-white px-2 py-1"
+          name="confirm-delete"
+          type="submit">
+    <i class="fa fa-trash mr-2"></i>
+    Yes, delete my account
+  </button>
+</form>
+{% endblock settings_content %}
