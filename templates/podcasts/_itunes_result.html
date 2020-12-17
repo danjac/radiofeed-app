@@ -8,9 +8,13 @@
          class="object-cover border border-white mr-2" />
     {% endif %}
     <div>
-      <a href="{{ result.itunes }}"
+      <a {% if result.podcast %}
+         href="{{ result.podcast.get_absolute_url }}"
+         {% else %}
+         href="{{ result.itunes }}"
          rel="noopener"
          target="_blank"
+         {% endif %}
          title="{{ result.title }}"
          class="font-semibold font-semibold hover:text-gray-300 block mb-1">{{ result.title|truncatechars:60 }}</a>
       <div class="text-sm{% if can_add_podcast %} mb-3 sm:mb-0{% endif %}">
@@ -36,4 +40,3 @@
   {% endif %}
 </div>
 {% endwith %}
-
