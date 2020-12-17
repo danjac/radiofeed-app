@@ -220,6 +220,29 @@ class TestUnsubscribe:
         assert not Subscription.objects.filter(podcast=podcast, user=user).exists()
 
 
+class TestITunesCategory:
+    def test_get(self, rf, mocker):
+        category = CategoryFactory(itunes_genre_id=1200)
+
+        def mock_fetch_itunes_genre(genre_id, num_results=20):
+            return [
+                SearchResult(
+                    rss="http://example.com/test.xml",
+                    itunes="https://apple.com/some-link",
+                    image="test.jpg",
+                    title="test title",
+                )
+            ]
+
+        mocker.patch.object(views.itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
+        req = rf.get(reverse("podcasts:itunes_category", args=[category.id]))
+        resp = views.itunes_category(req, category.id)
+
+        assert resp.status_code == 200
+        assert len(resp.context_data["results"]) == 1
+        assert resp.context_data["results"][0].title == "test title"
+
+
 class TestSearchITunes:
     def test_search(self, rf, mocker):
         def mock_search_itunes(search_term, num_results=12):
