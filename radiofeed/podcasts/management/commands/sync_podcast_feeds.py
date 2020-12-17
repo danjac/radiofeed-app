@@ -35,9 +35,10 @@ class Command(BaseCommand):
             if options["use_celery"]:
                 sync_podcast_feed.delay(podcast_id=podcast.id)
             else:
-                for podcast in podcasts:
-                    new_episodes = RssParser.parse_from_podcast(podcast)
-                    if new_episodes:
-                        self.stdout.write(
-                            self.style.SUCCESS(f"{podcast.title}: {len(new_episodes)}")
+                new_episodes = RssParser.parse_from_podcast(podcast)
+                if new_episodes:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"{podcast.title}: {len(new_episodes)} new episode(s)"
                         )
+                    )
