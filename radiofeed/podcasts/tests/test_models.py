@@ -25,6 +25,33 @@ class TestPodcastManager:
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
+    def test_with_has_subscribed_anonymous(self, anonymous_user):
+        subbed_1 = PodcastFactory()
+        subbed_2 = PodcastFactory()
+        PodcastFactory()
+
+        SubscriptionFactory(podcast=subbed_1)
+        SubscriptionFactory(podcast=subbed_1)
+        SubscriptionFactory(podcast=subbed_2)
+
+        podcasts = Podcast.objects.with_has_subscribed(anonymous_user).filter(
+            has_subscribed=True
+        )
+        assert podcasts.count() == 0
+
+    def test_with_has_subscribed_authenticated(self, user):
+        subbed_1 = PodcastFactory()
+        subbed_2 = PodcastFactory()
+        PodcastFactory()
+
+        SubscriptionFactory(podcast=subbed_1, user=user)
+        SubscriptionFactory(podcast=subbed_1)
+        SubscriptionFactory(podcast=subbed_2)
+
+        podcasts = Podcast.objects.with_has_subscribed(user).filter(has_subscribed=True)
+        assert podcasts.count() == 1
+        assert podcasts.first() == subbed_1
+
     def test_with_subscription_count(self):
         subbed_1 = PodcastFactory()
         subbed_2 = PodcastFactory()

@@ -30,10 +30,11 @@ def podcast_list(request):
 
     if search:
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
-    elif request.user.is_authenticated and request.user.subscription_set.exists():
+    elif request.user.is_authenticated:
         podcasts = (
-            podcasts.filter(subscription__user=request.user)
-            .order_by("-pub_date")
+            podcasts.with_subscription_count()
+            .with_has_subscribed(request.user)
+            .order_by("-has_subscribed", "-subscription_count", "-pub_date")
             .distinct()
         )
     else:
