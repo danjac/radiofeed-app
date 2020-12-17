@@ -29,12 +29,14 @@
 
 </head>
 
-<body {% block bodyattrs %} class="h-screen container-lg mx-auto antialiased bg-gray-900 text-white font-sans"
-      data-controller="toggle"{% endblock %}>
+<body {% block bodyattrs %}
+      class="h-screen container-lg mx-auto antialiased bg-gray-900 text-white font-sans"
+      data-controller="toggle"
+      {% endblock %}>
 
   {% block header %}
 
-  <header class="bg-gradient-to-b from-indigo-900 to-indigo-700 text-white">
+  <header class="bg-gradient-to-b from-black to-indigo-900 text-white">
     <div class="flex items-center justify-between p-3">
 
       <div class="flex items-center flex-shrink-0 mr-6 text-xl">
@@ -48,6 +50,12 @@
                 data-toggle-target="item">
           <i class="fa fa-chevron-up"></i>
         </button>
+        <img src="{% static 'img/wave.png' %}"
+             height="32"
+             width="32"
+             alt="{{ request.site.name }}"
+             class="mr-4 cursor-pointer hidden lg:inline-block">
+
         <a href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
       </div>
 
