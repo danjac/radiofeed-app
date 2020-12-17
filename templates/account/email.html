@@ -1,74 +1,107 @@
-{% extends "account/base.html" %}
+{% extends "account/settings_base.html" %}
 
-{% load i18n %}
+{% load i18n widget_tweaks %}
 
-{% block head_title %}{% trans "E-mail Addresses" %}{% endblock %}
+{% block head_title %}{% translate "E-mail Addresses" %}{% endblock %}
 
-{% block content %}
-    <h1>{% trans "E-mail Addresses" %}</h1>
+{% block settings_content %}
 {% if user.emailaddress_set.all %}
-<p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
+<p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form action="{% url 'account_email' %}" class="email_list" method="post">
-{% csrf_token %}
-<fieldset class="blockLabels">
+<form class="mb-3 w-full sm:w-1/2"
+      method="post">
+  {% csrf_token %}
+  <fieldset class="">
+    {% with num_addresses=user.emailaddress_set.count %}
+    {% for emailaddress in user.emailaddress_set.all %}
+    <div class="border border-gray-500 p-2 mb-3">
+      <div class="mb-3">
+        <label for="email_radio_{{forloop.counter}}"
+               class="flex items-center">
 
-  {% for emailaddress in user.emailaddress_set.all %}
-<div class="ctrlHolder">
-      <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+          <input id="email_radio_{{forloop.counter}}"
+                 type="radio"
+                 name="email"
+                 class="mr-3"
+                 {% if emailaddress.primary or num_addresses == 1 %}checked="checked"
+                 {% endif %}
+                 value="{{emailaddress.email}}" />
 
-      <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+          <span class="{% if emailaddress.primary or num_addresses == 1 %}font-bold{% endif %}">
+            {{ emailaddress.email }}
+            {% if emailaddress.verified %}
+            <i class="fa fa-check text-green-300 ml-2"></i>
+            {% endif %}
 
-{{ emailaddress.email }}
-    {% if emailaddress.verified %}
-    <span class="verified">{% trans "Verified" %}</span>
-    {% else %}
-    <span class="unverified">{% trans "Unverified" %}</span>
-    {% endif %}
-      {% if emailaddress.primary %}<span class="primary">{% trans "Primary" %}</span>{% endif %}
-</label>
-</div>
-  {% endfor %}
+          </span>
 
-<div class="buttonHolder">
-      <button class="secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
-      <button class="secondaryAction" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
-      <button class="primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
-</div>
+        </label>
 
-</fieldset>
+      </div>
+
+      <div class="flex items-center">
+        <button class="text-sm rounded border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2"
+                type="submit"
+                name="action_send">{% translate 'Re-send Verification' %}</button>
+        {% if emailaddress.primary or num_addresses == 1 %}
+        <button class="text-sm rounded border-white bg-indigo-800 opacity-75 hover:bg-indigo-600 px-2 py-1 mr-2 cursor-not-allowed"
+                name="action_primary">{% translate 'Make Primary' %}</button>
+        {% else %}
+        <button class="text-sm rounded border-white bg-indigo-600 px-2 py-1 mr-2"
+                disabled
+                name="action_primary">{% translate 'Make Primary' %}</button>
+        {% endif %}
+        {% if emailaddress.primary or num_addresses == 1 %}
+        <button class="text-sm rounded border-white bg-red-800 opacity-75 px-2 py-1 cursor-not-allowed"
+                disabled
+                name="action_remove">
+          <i class="fa fa-trash mr-2"></i>
+          {% translate 'Remove' %}
+        </button>
+        {% else %}
+        <button class="text-sm rounded border-white bg-red-800 hover:bg-red-600 px-2 py-1"
+                type="submit"
+                data-controller="confirm"
+                data-confirm-text-value="Are you sure you want to remove this email address?"
+                data-action="confirm#confirm"
+                name="action_remove">
+          <i class="fa fa-trash mr-2"></i>
+          {% translate 'Remove' %}
+        </button>
+
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {% endwith %}
+
+  </fieldset>
 </form>
 
 {% else %}
-<p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
+
+<p><strong>{% translate 'Warning:'%}</strong> {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
 
 {% endif %}
 
-  {% if can_add_email %}
-    <h2>{% trans "Add E-mail Address" %}</h2>
-
-    <form method="post" action="{% url 'account_email' %}" class="add_email">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button name="action_add" type="submit">{% trans "Add E-mail" %}</button>
-    </form>
-  {% endif %}
-
-{% endblock %}
-
-
-{% block extra_body %}
-<script type="text/javascript">
-(function() {
-  var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
-  var actions = document.getElementsByName('action_remove');
-  if (actions.length) {
-    actions[0].addEventListener("click", function(e) {
-      if (! confirm(message)) {
-        e.preventDefault();
-      }
-    });
-  }
-})();
-</script>
+{% if can_add_email %}
+<h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
+<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+      method="post"
+      action="{% url 'account_email' %}"
+      novalidate>
+  {% csrf_token %}
+  {% include "_form_errors.html" with errors=form.non_field_errors %}
+  {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
+  <div class="mb-3">
+    {% render_field form.email placeholder=form.email.label class="p-1 w-full bg-gray-800" %}
+    {% include "_form_errors.html" with errors=form.email.errors %}
+  </div>
+  {% endwith %}
+  <div class="">
+    <button class="px-3 py-1 rounded border border-white bg-indigo-800 hover:bg-indigo-600 text-white"
+            type="submit">{% translate "Add E-Mail" %}</button>
+  </div>
+</form>
+{% endif %}
 {% endblock %}

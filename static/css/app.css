@@ -48,6 +48,9 @@
   @apply text-gray-300;
 }
 
+.active-tab {
+  @apply border-indigo-800 border-b-2 font-bold;
+}
 /* hack to handle mobile scrolling issues
   with URL bar causing resize */
 
