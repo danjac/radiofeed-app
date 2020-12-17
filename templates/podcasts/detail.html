@@ -120,12 +120,14 @@
 </div>
 {% endif %}
 {% else %}
-<a class="font-bold mb-3 text-lg"
-   href="{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
+<div class="flex justify-center sm:block">
+  <a class="font-bold mb-3 text-lg"
+     href="{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
+</div>
 {% endif %}
 
 <div class="sm:flex justify-between items-center mb-3">
-  <div class="flex justify-center sm:justify-start mb-2 md:mr-3 md:mb-0">
+  <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="font-semibold">Newest First</a>
@@ -134,7 +136,9 @@
        class="font-semibold">Oldest First</a>
     {% endif %}
   </div>
-  {% include "_search_form.html" with placeholder="Search episodes" css_class="justify-center sm:justify-start" %}
+  <div class="flex justify-center sm:block">
+    {% include "_search_form.html" with placeholder="Search episodes" %}
+  </div>
 </div>
 
 

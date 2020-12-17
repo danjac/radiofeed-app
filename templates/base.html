@@ -124,6 +124,7 @@
               Bookmarks
             </a>
           </li>
+
           <li class="pb-3">
             <a href="{% url 'episodes:history' %}"
                data-controller="active-link"
@@ -134,8 +135,18 @@
             </a>
           </li>
 
-          {% endif %}
+          <li class="pb-3">
+            <a href="/"
+               data-controller="active-link"
+               data-active-link-active-class="font-bold"
+               class="flex items-center hover:text-gray-300">
+              <i class="fa fa-wrench mr-3"></i>
+              Settings
+            </a>
+          </li>
 
+
+          {% else %}
           <li class="pb-3">
             <a href="{% url 'about' %}"
                data-controller="active-link"
@@ -145,6 +156,7 @@
               About
             </a>
           </li>
+          {% endif %}
         </ul>
       </nav>
     </div>
