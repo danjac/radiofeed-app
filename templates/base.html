@@ -52,11 +52,11 @@
       {% if user.is_authenticated %}
       <div>
         <a href="/"
-           class="inline-block text-white hover:text-gray-100 mr-2">
+           class="inline-block text-white hover:text-gray-300 mr-2">
           {{ user.username }}
         </a>
         <a href="{% url 'account_logout' %}"
-           class="inline-block text-white hover:text-gray-100"
+           class="inline-block text-white hover:text-gray-300"
            role="button"
            data-turbolinks="false"
            data-controller="ajax"
@@ -66,9 +66,9 @@
       {% else %}
       <div>
         <a href="{% url 'account_login' %}"
-           class="inline-block text-white hover:text-gray-100 mr-2">{% translate "Login" %}</a>
+           class="inline-block text-white hover:text-gray-300 mr-2">{% translate "Login" %}</a>
         <a href="{% url 'account_signup' %}"
-           class="inline-block text-white hover:text-gray-100">{% translate "Signup" %}</a>
+           class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
       </div>
       {% endif %}
     </div>
