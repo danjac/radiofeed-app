@@ -6,7 +6,7 @@
 {% block content %}
 {% paginate episodes as page_obj %}
 {% if page_obj.number == 1 and not search %}
-<div class="p-2 bg-gray-800 border border-gray-500 mb-3">
+<div class="p-2 border border-gray-500 mb-3">
 
   <h2 class="font-bold mb-2 text-lg">{{ podcast.title }}</h2>
   {% if podcast.authors %}

@@ -1,5 +1,5 @@
 {% with can_add_podcast=request.user.is_staff %}
-<div class="p-2 bg-gray-800 border border-gray-500 mb-3 flex items-center justify-between">
+<div class="p-2 border border-gray-500 mb-3 flex items-center justify-between">
   <div class="flex items-center">
     {% if result.image %}
     <img src="{{ result.image }}"

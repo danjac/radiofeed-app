@@ -1,7 +1,7 @@
 {% load thumbnail episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 bg-gray-800 border border-gray-500 mb-3 flex justify-between items-center"
+<div class="p-2 border border-gray-500 mb-3 flex justify-between items-center"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}
