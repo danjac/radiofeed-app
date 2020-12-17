@@ -3,8 +3,10 @@
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 sm:mb-0">New Releases</h2>
-  {% include "_search_form.html" with placeholder="Search episodes..." %}
+  <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">New Releases</h2>
+  <div class="flex items-center justify-center sm:justify-end">
+    {% include "_search_form.html" with placeholder="Search episodes..." %}
+  </div>
 </div>
 
 {% paginate episodes as page_obj %}

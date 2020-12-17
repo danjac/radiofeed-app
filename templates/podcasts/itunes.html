@@ -2,10 +2,21 @@
 {% load thumbnail pagination %}
 
 {% block content %}
-<div class="md:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 md:mb-0">Search iTunes</h2>
-  {% include "_search_form.html" with placeholder="Search iTunes..." clear_search_text="Podcasts" %}
+<div class="sm:flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">Podcasts</h2>
+
+  <div class="flex items-center justify-center sm:justify-end">
+    <a class="font-semibold hover:text-gray-300 hidden sm:inline-block mr-3"
+       href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
+    {% include "_search_form.html" with placeholder="Search iTunes..." no_clear_url=True %}
+  </div>
 </div>
+
+<div class="mb-3 flex justify-center sm:hidden">
+  <a class="font-semibold hover:text-gray-300"
+     href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
+</div>
+
 
 {% for result in results %}
 {% include "podcasts/_itunes_result.html" %}

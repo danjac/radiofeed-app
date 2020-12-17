@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm">
+<div class="mb-3 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:category_list' %}"
      class="font-semibold hover:text-white-300 mr-1">Discover</a>
   {% if category.parent %}
@@ -15,13 +15,17 @@
   <span class="text-gray-300">{{ category.name }}</span>
 </div>
 
-<div class="sm:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 sm:mb-0">{{ category.name }}</h2>
-  {% include "_search_form.html" with placeholder="Search category"  %}
+<div class="sm:flex justify-between items-center mb-3 pb-3 border-b border-gray-500">
+  <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
+  <div class="flex items-center justify-center sm:justify-end">
+    {% include "_search_form.html" with placeholder="Search category..." %}
+  </div>
 </div>
 
+
+{% if not search %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-3 text-sm flex flex-wrap">
+<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="font-semibold hover:text-white-300 mr-3">{{ child.name }}</a>
@@ -33,6 +37,7 @@
   </a>
   {% endif %}
 </div>
+{% endif %}
 {% endif %}
 
 {% paginate podcasts as page_obj %}

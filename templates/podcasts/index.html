@@ -3,15 +3,22 @@
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-3 sm:mb-0">Podcasts</h2>
-  <div class="sm:flex items-center">
+  <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">Podcasts</h2>
+
+  <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
-    <a class="font-semibold mr-4 mb-3 sm:mb-0"
-       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+    <a class="font-semibold hover:text-gray-300 hidden sm:inline-block mr-3"
+       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
     {% endif %}
     {% include "_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
+{% if search %}
+<div class="mb-3 flex justify-center sm:hidden">
+  <a class="font-semibold hover:text-gray-300"
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
+</div>
+{% endif %}
 
 {% paginate podcasts as page_obj %}
 
