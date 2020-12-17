@@ -12,6 +12,7 @@
   <title>
     {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
   </title>
+  {% block meta %}
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,6 +22,7 @@
         content="Dan Jacob {% now "Y" %}">
   <meta name="robots"
         content="index,follow">
+  {% endblock meta %}
 
   {% include "_static.html" %}
   {% include "_fontawesome.html" %}

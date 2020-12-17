@@ -59,7 +59,7 @@
                 data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
                 data-ajax-debounce-value="500"
                 data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded hover:bg-gray-800">
+                class="px-2 py-1 border rounded hover:bg-gray-600">
           <i class="fa fa-eye-slash mr-2"></i>
           Unsubscribe
         </button>
@@ -120,8 +120,8 @@
 </div>
 {% endif %}
 {% else %}
-<div class="flex justify-center sm:block">
-  <a class="font-bold mb-3 text-lg"
+<div class="flex justify-center sm:block mb-3">
+  <a class="font-bold text-lg"
      href="{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
 </div>
 {% endif %}
