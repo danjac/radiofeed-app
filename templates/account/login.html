@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load i18n account socialaccount widget_tweaks %}
+{% load i18n account widget_tweaks %}
 
 {% block content %}
 
@@ -45,17 +45,5 @@
             type="submit">{% translate "Sign In" %}</button>
   </div>
 </form>
-
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-<div class="mt-3">
-  <p class="mb-3">
-    You can also sign up or login through one of the following third-party services:
-  </p>
-  <ul class="flex items-center">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
-</div>
-{% include "socialaccount/snippets/login_extra.html" %}
-{% endif %}
+{% include "account/_social_logins.html" %}
 {% endblock %}

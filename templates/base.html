@@ -56,7 +56,7 @@
              alt="{{ request.site.name }}"
              class="mr-4 cursor-pointer hidden lg:inline-block">
 
-        <a href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
+        <a class="text-xl font-bold" href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
       </div>
 
       {% if user.is_authenticated %}
