@@ -36,14 +36,14 @@
     </label>
   </div>
   {% endfor %}
-  <div class="sm:flex items-center">
+  <div class="flex items-center flex-wrap">
 
-    <button class="text-sm rounded border border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2"
+    <button class="text-sm rounded border border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2 mb-2"
             type="submit"
             name="action_send">{% translate 'Re-send Verification' %}</button>
-    <button class="text-sm rounded border border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2"
+    <button class="text-sm rounded border border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2 mb-2"
             name="action_primary">{% translate 'Make Primary' %}</button>
-    <button class="text-sm rounded border border-white bg-red-800 hover:bg-red-600 px-2 py-1"
+    <button class="text-sm rounded border border-white bg-red-800 hover:bg-red-600 px-2 py-1 mb-2"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
