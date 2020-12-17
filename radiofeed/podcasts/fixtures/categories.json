@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "name": "Comedy",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1303
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": 2,
     "fields": {
       "name": "Society & Culture",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1324
     }
   },
   {
@@ -20,15 +22,8 @@
     "pk": 3,
     "fields": {
       "name": "Technology",
-      "parent": null
-    }
-  },
-  {
-    "model": "podcasts.category",
-    "pk": 4,
-    "fields": {
-      "name": "Podcasting",
-      "parent": 3
+      "parent": null,
+      "itunes_genre_id": 1318
     }
   },
   {
@@ -36,7 +31,8 @@
     "pk": 5,
     "fields": {
       "name": "Arts",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1301
     }
   },
   {
@@ -44,7 +40,8 @@
     "pk": 6,
     "fields": {
       "name": "Business",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1321
     }
   },
   {
@@ -52,7 +49,8 @@
     "pk": 7,
     "fields": {
       "name": "Education",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1304
     }
   },
   {
@@ -60,7 +58,8 @@
     "pk": 8,
     "fields": {
       "name": "Fiction",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1483
     }
   },
   {
@@ -68,7 +67,8 @@
     "pk": 9,
     "fields": {
       "name": "Government",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1511
     }
   },
   {
@@ -76,7 +76,8 @@
     "pk": 10,
     "fields": {
       "name": "Health & Fitness",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1512
     }
   },
   {
@@ -84,7 +85,8 @@
     "pk": 11,
     "fields": {
       "name": "History",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1487
     }
   },
   {
@@ -92,7 +94,8 @@
     "pk": 12,
     "fields": {
       "name": "Kids & Family",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1305
     }
   },
   {
@@ -100,7 +103,8 @@
     "pk": 13,
     "fields": {
       "name": "Leisure",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1502
     }
   },
   {
@@ -108,7 +112,8 @@
     "pk": 14,
     "fields": {
       "name": "Music",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1310
     }
   },
   {
@@ -116,7 +121,8 @@
     "pk": 15,
     "fields": {
       "name": "News",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1489
     }
   },
   {
@@ -124,7 +130,8 @@
     "pk": 16,
     "fields": {
       "name": "Religion & Spirituality",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1314
     }
   },
   {
@@ -132,7 +139,8 @@
     "pk": 17,
     "fields": {
       "name": "Science",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1533
     }
   },
   {
@@ -140,7 +148,8 @@
     "pk": 18,
     "fields": {
       "name": "Sports",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1545
     }
   },
   {
@@ -148,7 +157,8 @@
     "pk": 19,
     "fields": {
       "name": "True Crime",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1488
     }
   },
   {
@@ -156,7 +166,8 @@
     "pk": 20,
     "fields": {
       "name": "TV & Film",
-      "parent": null
+      "parent": null,
+      "itunes_genre_id": 1309
     }
   },
   {
@@ -164,7 +175,8 @@
     "pk": 21,
     "fields": {
       "name": "Books",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1482
     }
   },
   {
@@ -172,7 +184,8 @@
     "pk": 22,
     "fields": {
       "name": "Design",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1402
     }
   },
   {
@@ -180,7 +193,8 @@
     "pk": 23,
     "fields": {
       "name": "Fashion & Beauty",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1459
     }
   },
   {
@@ -188,7 +202,8 @@
     "pk": 24,
     "fields": {
       "name": "Food",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1306
     }
   },
   {
@@ -196,7 +211,8 @@
     "pk": 25,
     "fields": {
       "name": "Performing Arts",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1405
     }
   },
   {
@@ -204,7 +220,8 @@
     "pk": 26,
     "fields": {
       "name": "Visual Arts",
-      "parent": 5
+      "parent": 5,
+      "itunes_genre_id": 1406
     }
   },
   {
@@ -212,7 +229,8 @@
     "pk": 27,
     "fields": {
       "name": "Careers",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1410
     }
   },
   {
@@ -220,7 +238,8 @@
     "pk": 28,
     "fields": {
       "name": "Entrepreneurship",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1493
     }
   },
   {
@@ -228,7 +247,8 @@
     "pk": 29,
     "fields": {
       "name": "Investing",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1412
     }
   },
   {
@@ -236,7 +256,8 @@
     "pk": 30,
     "fields": {
       "name": "Management",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1491
     }
   },
   {
@@ -244,7 +265,8 @@
     "pk": 31,
     "fields": {
       "name": "Marketing",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1492
     }
   },
   {
@@ -252,7 +274,8 @@
     "pk": 32,
     "fields": {
       "name": "Non-Profit",
-      "parent": 6
+      "parent": 6,
+      "itunes_genre_id": 1494
     }
   },
   {
@@ -260,7 +283,8 @@
     "pk": 33,
     "fields": {
       "name": "Comedy Interviews",
-      "parent": 1
+      "parent": 1,
+      "itunes_genre_id": 1496
     }
   },
   {
@@ -268,7 +292,8 @@
     "pk": 34,
     "fields": {
       "name": "Improv",
-      "parent": 1
+      "parent": 1,
+      "itunes_genre_id": 1495
     }
   },
   {
@@ -276,7 +301,8 @@
     "pk": 35,
     "fields": {
       "name": "Stand Up",
-      "parent": 1
+      "parent": 1,
+      "itunes_genre_id": 1497
     }
   },
   {
@@ -284,7 +310,8 @@
     "pk": 36,
     "fields": {
       "name": "Courses",
-      "parent": 7
+      "parent": 7,
+      "itunes_genre_id": 1501
     }
   },
   {
@@ -292,7 +319,8 @@
     "pk": 37,
     "fields": {
       "name": "How-To",
-      "parent": 7
+      "parent": 7,
+      "itunes_genre_id": 1499
     }
   },
   {
@@ -300,7 +328,8 @@
     "pk": 38,
     "fields": {
       "name": "Language Learning",
-      "parent": 7
+      "parent": 7,
+      "itunes_genre_id": 1498
     }
   },
   {
@@ -308,7 +337,8 @@
     "pk": 39,
     "fields": {
       "name": "Self-Improvement",
-      "parent": 7
+      "parent": 7,
+      "itunes_genre_id": 1500
     }
   },
   {
@@ -316,7 +346,8 @@
     "pk": 40,
     "fields": {
       "name": "Comedy Fiction",
-      "parent": 8
+      "parent": 8,
+      "itunes_genre_id": 1486
     }
   },
   {
@@ -324,7 +355,8 @@
     "pk": 41,
     "fields": {
       "name": "Drama",
-      "parent": 8
+      "parent": 8,
+      "itunes_genre_id": 1484
     }
   },
   {
@@ -332,7 +364,8 @@
     "pk": 42,
     "fields": {
       "name": "Science Fiction",
-      "parent": 8
+      "parent": 8,
+      "itunes_genre_id": 1485
     }
   },
   {
@@ -340,7 +373,8 @@
     "pk": 43,
     "fields": {
       "name": "Alternative Health",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1513
     }
   },
   {
@@ -348,7 +382,8 @@
     "pk": 44,
     "fields": {
       "name": "Fitness",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1514
     }
   },
   {
@@ -356,7 +391,8 @@
     "pk": 45,
     "fields": {
       "name": "Medicine",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1518
     }
   },
   {
@@ -364,7 +400,8 @@
     "pk": 46,
     "fields": {
       "name": "Mental Health",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1517
     }
   },
   {
@@ -372,7 +409,8 @@
     "pk": 47,
     "fields": {
       "name": "Nutrition",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1515
     }
   },
   {
@@ -380,7 +418,8 @@
     "pk": 48,
     "fields": {
       "name": "Sexuality",
-      "parent": 10
+      "parent": 10,
+      "itunes_genre_id": 1516
     }
   },
   {
@@ -388,7 +427,8 @@
     "pk": 49,
     "fields": {
       "name": "Education for Kids",
-      "parent": 12
+      "parent": 12,
+      "itunes_genre_id": 1519
     }
   },
   {
@@ -396,7 +436,8 @@
     "pk": 50,
     "fields": {
       "name": "Parenting",
-      "parent": 12
+      "parent": 12,
+      "itunes_genre_id": 1521
     }
   },
   {
@@ -404,7 +445,8 @@
     "pk": 51,
     "fields": {
       "name": "Pets & Animals",
-      "parent": 12
+      "parent": 12,
+      "itunes_genre_id": 1522
     }
   },
   {
@@ -412,7 +454,8 @@
     "pk": 52,
     "fields": {
       "name": "Stories for Kids",
-      "parent": 12
+      "parent": 12,
+      "itunes_genre_id": 1520
     }
   },
   {
@@ -420,7 +463,8 @@
     "pk": 53,
     "fields": {
       "name": "Animation & Manga",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1510
     }
   },
   {
@@ -428,7 +472,8 @@
     "pk": 54,
     "fields": {
       "name": "Automotive",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1503
     }
   },
   {
@@ -436,7 +481,8 @@
     "pk": 55,
     "fields": {
       "name": "Aviation",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1504
     }
   },
   {
@@ -444,7 +490,8 @@
     "pk": 56,
     "fields": {
       "name": "Crafts",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1506
     }
   },
   {
@@ -452,7 +499,8 @@
     "pk": 57,
     "fields": {
       "name": "Games",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1507
     }
   },
   {
@@ -460,7 +508,8 @@
     "pk": 58,
     "fields": {
       "name": "Hobbies",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1505
     }
   },
   {
@@ -468,7 +517,8 @@
     "pk": 59,
     "fields": {
       "name": "Home & Garden",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1508
     }
   },
   {
@@ -476,7 +526,8 @@
     "pk": 60,
     "fields": {
       "name": "Video Games",
-      "parent": 13
+      "parent": 13,
+      "itunes_genre_id": 1509
     }
   },
   {
@@ -484,7 +535,8 @@
     "pk": 61,
     "fields": {
       "name": "Music Commentary",
-      "parent": 14
+      "parent": 14,
+      "itunes_genre_id": 1523
     }
   },
   {
@@ -492,7 +544,8 @@
     "pk": 62,
     "fields": {
       "name": "Music History",
-      "parent": 14
+      "parent": 14,
+      "itunes_genre_id": 1524
     }
   },
   {
@@ -500,7 +553,8 @@
     "pk": 63,
     "fields": {
       "name": "Music Interviews",
-      "parent": 14
+      "parent": 14,
+      "itunes_genre_id": 1525
     }
   },
   {
@@ -508,7 +562,8 @@
     "pk": 64,
     "fields": {
       "name": "Business News",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1490
     }
   },
   {
@@ -516,7 +571,8 @@
     "pk": 65,
     "fields": {
       "name": "Daily News",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1526
     }
   },
   {
@@ -524,7 +580,8 @@
     "pk": 66,
     "fields": {
       "name": "Entertainment News",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1531
     }
   },
   {
@@ -532,7 +589,8 @@
     "pk": 67,
     "fields": {
       "name": "News Commentary",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1530
     }
   },
   {
@@ -540,7 +598,8 @@
     "pk": 68,
     "fields": {
       "name": "Politics",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1527
     }
   },
   {
@@ -548,7 +607,8 @@
     "pk": 69,
     "fields": {
       "name": "Sports News",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1529
     }
   },
   {
@@ -556,7 +616,8 @@
     "pk": 70,
     "fields": {
       "name": "Tech News",
-      "parent": 15
+      "parent": 15,
+      "itunes_genre_id": 1528
     }
   },
   {
@@ -564,7 +625,8 @@
     "pk": 71,
     "fields": {
       "name": "Buddhism",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1438
     }
   },
   {
@@ -572,7 +634,8 @@
     "pk": 72,
     "fields": {
       "name": "Christianity",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1439
     }
   },
   {
@@ -580,7 +643,8 @@
     "pk": 73,
     "fields": {
       "name": "Hinduism",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1463
     }
   },
   {
@@ -588,7 +652,8 @@
     "pk": 74,
     "fields": {
       "name": "Islam",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1440
     }
   },
   {
@@ -596,7 +661,8 @@
     "pk": 75,
     "fields": {
       "name": "Judaism",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1441
     }
   },
   {
@@ -604,7 +670,8 @@
     "pk": 76,
     "fields": {
       "name": "Religion",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1532
     }
   },
   {
@@ -612,7 +679,8 @@
     "pk": 77,
     "fields": {
       "name": "Spirituality",
-      "parent": 16
+      "parent": 16,
+      "itunes_genre_id": 1444
     }
   },
   {
@@ -620,7 +688,8 @@
     "pk": 78,
     "fields": {
       "name": "Astronomy",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1538
     }
   },
   {
@@ -628,7 +697,8 @@
     "pk": 79,
     "fields": {
       "name": "Chemistry",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1539
     }
   },
   {
@@ -636,7 +706,8 @@
     "pk": 80,
     "fields": {
       "name": "Earth Sciences",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1540
     }
   },
   {
@@ -644,7 +715,8 @@
     "pk": 81,
     "fields": {
       "name": "Life Sciences",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1541
     }
   },
   {
@@ -652,7 +724,8 @@
     "pk": 82,
     "fields": {
       "name": "Mathematics",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1536
     }
   },
   {
@@ -660,7 +733,8 @@
     "pk": 83,
     "fields": {
       "name": "Natural Sciences",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1534
     }
   },
   {
@@ -668,7 +742,8 @@
     "pk": 84,
     "fields": {
       "name": "Nature",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1537
     }
   },
   {
@@ -676,7 +751,8 @@
     "pk": 85,
     "fields": {
       "name": "Physics",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1542
     }
   },
   {
@@ -684,7 +760,8 @@
     "pk": 86,
     "fields": {
       "name": "Social Sciences",
-      "parent": 17
+      "parent": 17,
+      "itunes_genre_id": 1535
     }
   },
   {
@@ -692,7 +769,8 @@
     "pk": 87,
     "fields": {
       "name": "Documentary",
-      "parent": 2
+      "parent": 2,
+      "itunes_genre_id": 1543
     }
   },
   {
@@ -700,7 +778,8 @@
     "pk": 88,
     "fields": {
       "name": "Personal Journals",
-      "parent": 2
+      "parent": 2,
+      "itunes_genre_id": 1302
     }
   },
   {
@@ -708,7 +787,8 @@
     "pk": 89,
     "fields": {
       "name": "Philosophy",
-      "parent": 2
+      "parent": 2,
+      "itunes_genre_id": 1443
     }
   },
   {
@@ -716,7 +796,8 @@
     "pk": 90,
     "fields": {
       "name": "Places & Travel",
-      "parent": 2
+      "parent": 2,
+      "itunes_genre_id": 1320
     }
   },
   {
@@ -724,7 +805,8 @@
     "pk": 91,
     "fields": {
       "name": "Relationships",
-      "parent": 2
+      "parent": 2,
+      "itunes_genre_id": 1544
     }
   },
   {
@@ -732,7 +814,8 @@
     "pk": 92,
     "fields": {
       "name": "Baseball",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1549
     }
   },
   {
@@ -740,7 +823,8 @@
     "pk": 93,
     "fields": {
       "name": "Basketball",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1548
     }
   },
   {
@@ -748,7 +832,8 @@
     "pk": 94,
     "fields": {
       "name": "Cricket",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1554
     }
   },
   {
@@ -756,7 +841,8 @@
     "pk": 95,
     "fields": {
       "name": "Fantasy Sports",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1560
     }
   },
   {
@@ -764,7 +850,8 @@
     "pk": 96,
     "fields": {
       "name": "Football",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1547
     }
   },
   {
@@ -772,7 +859,8 @@
     "pk": 97,
     "fields": {
       "name": "Golf",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1553
     }
   },
   {
@@ -780,7 +868,8 @@
     "pk": 98,
     "fields": {
       "name": "Hockey",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1550
     }
   },
   {
@@ -788,7 +877,8 @@
     "pk": 99,
     "fields": {
       "name": "Rugby",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1552
     }
   },
   {
@@ -796,7 +886,8 @@
     "pk": 100,
     "fields": {
       "name": "Running",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1551
     }
   },
   {
@@ -804,7 +895,8 @@
     "pk": 101,
     "fields": {
       "name": "Soccer",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1546
     }
   },
   {
@@ -812,7 +904,8 @@
     "pk": 102,
     "fields": {
       "name": "Swimming",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1558
     }
   },
   {
@@ -820,7 +913,8 @@
     "pk": 103,
     "fields": {
       "name": "Tennis",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1556
     }
   },
   {
@@ -828,7 +922,8 @@
     "pk": 104,
     "fields": {
       "name": "Volleyball",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1557
     }
   },
   {
@@ -836,7 +931,8 @@
     "pk": 105,
     "fields": {
       "name": "Wilderness",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1559
     }
   },
   {
@@ -844,7 +940,8 @@
     "pk": 106,
     "fields": {
       "name": "Wrestling",
-      "parent": 18
+      "parent": 18,
+      "itunes_genre_id": 1555
     }
   },
   {
@@ -852,7 +949,8 @@
     "pk": 107,
     "fields": {
       "name": "After Shows",
-      "parent": 20
+      "parent": 20,
+      "itunes_genre_id": 1562
     }
   },
   {
@@ -860,7 +958,8 @@
     "pk": 108,
     "fields": {
       "name": "Film History",
-      "parent": 20
+      "parent": 20,
+      "itunes_genre_id": 1564
     }
   },
   {
@@ -868,7 +967,8 @@
     "pk": 109,
     "fields": {
       "name": "Film Interviews",
-      "parent": 20
+      "parent": 20,
+      "itunes_genre_id": 1565
     }
   },
   {
@@ -876,7 +976,8 @@
     "pk": 110,
     "fields": {
       "name": "Film Reviews",
-      "parent": 20
+      "parent": 20,
+      "itunes_genre_id": 1563
     }
   },
   {
@@ -884,7 +985,8 @@
     "pk": 111,
     "fields": {
       "name": "TV Reviews",
-      "parent": 20
+      "parent": 20,
+      "itunes_genre_id": 1561
     }
   }
 ]
