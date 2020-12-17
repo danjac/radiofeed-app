@@ -9,6 +9,11 @@ module.exports = {
   },
   purge: {
     content: ['./templates/**/*.html'],
+    options: {
+      safelist: [
+        'type', // [type='checkbox']
+      ],
+    },
   },
   theme: {
     extend: {
