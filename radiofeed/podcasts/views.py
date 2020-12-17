@@ -28,6 +28,7 @@ def landing_page(request):
 
     podcasts = (
         Podcast.objects.with_subscription_count()
+        .filter(pub_date__isnull=False, cover_image__isnull=False, explicit=False)
         .order_by("-subscription_count", "-pub_date")
         .distinct()[:12]
     )
