@@ -7,7 +7,7 @@
 <div class="text-sm flex justify-between mb-3">
 
   <a {% if prev_episode %}
-     class="block hover:text-gray-100"
+     class="block hover:text-gray-300"
      href="{{ prev_episode.get_absolute_url }}"
      title="{{ prev_episode.title }}"
      {% else %}
@@ -18,7 +18,7 @@
   </a>
 
   <a {% if next_episode %}
-     class="block hover:text-white-100"
+     class="block hover:text-gray-300"
      href="{{ next_episode.get_absolute_url }}"
      title="{{ next_episode.title }}"
      {% else %}
@@ -57,11 +57,13 @@
   <div class="flex items-center w-full mb-3">
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-    <img src="{{ img.url }}"
-         alt="{{ podcast.title }}"
-         class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32 border border-white"
-         width="32"
-         height="32">
+    <a href="{{ podcast.get_absolute_url }}">
+      <img src="{{ img.url }}"
+           alt="{{ podcast.title }}"
+           class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32 border border-white hover:opacity-75"
+           width="32"
+           height="32">
+    </a>
     {% endthumbnail %}
     <div>
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">

@@ -5,15 +5,15 @@
 
 <div class="mb-3 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:category_list' %}"
-     class="font-semibold hover:text-white-300 mr-1">Discover</a>
+     class="font-semibold hover:text-gray-300 mr-1">Discover</a>
   {% if category.parent %}
   <span class="text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
-     class="font-semibold hover:text-white-300 mr-1">{{ category.parent.name }}</a>
+     class="font-semibold hover:text-gray-300 mr-1">{{ category.parent.name }}</a>
   {% endif %}
   <span class="text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.get_absolute_url }}"
-     class="font-semibold hover:text-white-300 mr-1">{{ category.name }}</a>
+     class="font-semibold hover:text-gray-300 mr-1">{{ category.name }}</a>
   <span class="text-gray-300 mr-1">&gt;</span>
   <span class="text-gray-300 mr-1">iTunes</span>
 </div>
