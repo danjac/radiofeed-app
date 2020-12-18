@@ -10,5 +10,5 @@ docker-compose run --rm \
     -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
     django ./manage.py collectstatic --noinput -v 3 -i local
 
-echo "Deploying to Dokku..."
-git push heroku deploy
+echo "Deploying to Heroku..."
+git push heroku master
