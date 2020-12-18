@@ -57,7 +57,7 @@
         {% if is_subscribed %}
         <button data-controller="ajax"
                 data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
-                data-ajax-debounce-value="500"
+                data-ajax-throttle-value="500"
                 data-action="click->ajax#post:once"
                 class="px-2 py-1 border rounded hover:bg-gray-600 text-sm">
           <i class="fa fa-eye-slash mr-2"></i>
@@ -66,7 +66,7 @@
         {% else %}
         <button data-controller="ajax"
                 data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
-                data-ajax-debounce-value="500"
+                data-ajax-throttle-value="500"
                 data-action="click->ajax#post:once"
                 class="px-2 py-1 border rounded bg-indigo-800 hover:bg-indigo-600 text-sm">
           <i class="fa fa-eye mr-2"></i>

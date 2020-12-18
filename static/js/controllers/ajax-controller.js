@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Turbolinks from 'turbolinks';
 import { Controller } from 'stimulus';
-import { useDebounce } from 'stimulus-use';
+import { useDebounce, useThrottle } from 'stimulus-use';
 
 export default class extends Controller {
   static targets = ['fragment'];
@@ -9,6 +9,7 @@ export default class extends Controller {
   static values = {
     confirm: String,
     debounce: Number,
+    throttle: Number,
     redirect: String,
     remove: Boolean,
     replace: Boolean,
@@ -19,6 +20,9 @@ export default class extends Controller {
   connect() {
     if (this.hasDebounceValue) {
       useDebounce(this, { wait: this.debounceValue });
+    }
+    if (this.hasThrottleValue) {
+      useThrottle(this, { wait: this.throttleValue });
     }
   }
 

@@ -90,7 +90,7 @@
           {% if is_bookmarked %}
           <button data-controller="ajax"
                   data-ajax-url-value="{% url 'episodes:remove_bookmark' episode.id %}"
-                  data-ajax-debounce-value="500"
+                  data-ajax-throttle-value="500"
                   data-action="click->ajax#post:once"
                   title="Remove episode from bookmarks"
                   class="focus:outline-none rounded border hover:bg-gray-600 px-2 py-1 text-sm">
@@ -100,7 +100,7 @@
           {% else %}
           <button data-controller="ajax"
                   data-ajax-url-value="{% url 'episodes:add_bookmark' episode.id %}"
-                  data-ajax-debounce-value="500"
+                  data-ajax-throttle-value="500"
                   data-action="click->ajax#post:once"
                   title="Add Bookmark"
                   class="focus:outline-none rounded border bg-indigo-800 hover:bg-indigo-600 px-2 py-1 text-sm">
