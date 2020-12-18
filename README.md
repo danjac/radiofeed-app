@@ -68,7 +68,7 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 - **BUILDPACK_URL**: should be *https://github.com/heroku/heroku-buildpack-python*
 - **ADMINS**: comma separated in form _my full name <name@mysite.com>,other name <othername@mysite.com>_
 - **ADMIN_URL**: should be something other than "admin/". Must end in forward slash.
-- **ALLOWED_HOSTS**: enter your domains, separated by comma e.g. *mysite.com, myothersite.com*. If you are using wildcard domain with subdomains for each community you just need the wildcard domain without the "*".
+- **ALLOWED_HOSTS**: your domain e.g. myapp.com
 - **AWS_STORAGE_BUCKET_NAME**: see your S3 settings
 - **AWS_ACCESS_KEY_ID**: see your S3 settings
 - **AWS_S3_CUSTOM_DOMAIN**: your cloudfront domain e.g. *xyz123abcdefg.cloudfront.net*
