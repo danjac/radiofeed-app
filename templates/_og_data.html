@@ -3,7 +3,7 @@
   <meta property="og:description"
         content="{{ og_data.description|striptags|stripentities|default:"Find your favorite podcasts" }}" />
   <meta property="og:url"
-        content="{{ og_data.url|default:"http://"|add:request.site.domain }}" />
+        content="{% if og_data.url %}{{ og_data.url }}{% else %}http://{{ request.site.domain }}{% endif %}" />
   {% if og_data.image %}
   <meta property="og:image"
         content="{{ og_data.image }}" />
