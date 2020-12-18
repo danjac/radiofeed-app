@@ -8,7 +8,6 @@ export default class extends Controller {
     'buffer',
     'counter',
     'indicator',
-    'interactive',
     'pauseButton',
     'playButton',
     'progress',
