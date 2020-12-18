@@ -1,0 +1,10 @@
+  <meta property="og:title"
+        content="{{ og_data.title|default:request.site.name }}" />
+  <meta property="og:description"
+        content="{{ og_data.description|striptags|stripentities|default:"Find your favorite podcasts" }}" />
+  <meta property="og:url"
+        content="{{ og_data.url|default:"http://"|add:request.site.domain }}" />
+  {% if og_data.image %}
+  <meta property="og:image"
+        content="{{ og_data.image }}" />
+  {% endif %}

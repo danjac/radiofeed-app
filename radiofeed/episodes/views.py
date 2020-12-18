@@ -49,6 +49,15 @@ def episode_detail(request, episode_id, slug=None):
         qs.filter(pub_date__lt=episode.pub_date).order_by("-pub_date").first()
     )
 
+    og_data = {
+        "url": request.build_absolute_uri(episode.get_absolute_url()),
+        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
+        "description": episode.description,
+        "image": episode.podcast.cover_image.url
+        if episode.podcast.cover_image
+        else None,
+    }
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
@@ -57,6 +66,7 @@ def episode_detail(request, episode_id, slug=None):
             "is_bookmarked": is_bookmarked,
             "next_episode": next_episode,
             "prev_episode": prev_episode,
+            "og_data": og_data,
         },
     )
 

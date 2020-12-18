@@ -199,6 +199,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "radiofeed.common.context_processors.google_tracking_id",
             ],
             "builtins": ["radiofeed.common.defaulttags",],
             "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},
@@ -220,3 +221,5 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
+
+GOOGLE_TRACKING_ID = env("GOOGLE_TRACKING_ID", default=None)

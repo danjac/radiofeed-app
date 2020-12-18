@@ -88,6 +88,13 @@ def podcast_detail(request, podcast_id, slug=None):
         .order_by("-similarity", "-frequency")
     )[:9]
 
+    og_data = {
+        "url": request.build_absolute_uri(podcast.get_absolute_url()),
+        "title": f"{request.site.name} | {podcast.title}",
+        "description": podcast.description,
+        "image": podcast.cover_image.url if podcast.cover_image else None,
+    }
+
     return TemplateResponse(
         request,
         "podcasts/detail.html",
@@ -99,6 +106,7 @@ def podcast_detail(request, podcast_id, slug=None):
             "search": search,
             "ordering": ordering,
             "is_subscribed": is_subscribed,
+            "og_data": og_data,
         },
     )
 
