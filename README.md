@@ -38,4 +38,3 @@ To sync podcasts and download episodes to the database:
 > ./scripts/manage sync_podcast_feeds
 
 In production this command could be run a few times a day in a cron, or adapted as a celery task to use with celerybeat.
-
