@@ -11,4 +11,4 @@ echo "Deploying assets to S3..."
  #   django ./manage.py collectstatic --noinput -v 3 -i local
 
 echo "Deploying to Dokku..."
-git push dokku deploy
+git push dokku master
