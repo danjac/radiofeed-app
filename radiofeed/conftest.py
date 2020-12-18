@@ -1,6 +1,7 @@
 # Django
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.sites.models import Site
 from django.http import HttpResponse
 
 # Third Party Libraries
@@ -10,6 +11,11 @@ import pytest
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.users.factories import UserFactory
+
+
+@pytest.fixture
+def site():
+    return Site.objects.get_current()
 
 
 @pytest.fixture

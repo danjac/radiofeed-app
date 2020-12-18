@@ -88,22 +88,24 @@ class TestPodcastList:
 
 
 class TestPodcastDetail:
-    def test_anonymous(self, rf, anonymous_user, podcast):
+    def test_anonymous(self, rf, anonymous_user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast)
         req = rf.get(podcast.get_absolute_url())
         req.user = anonymous_user
+        req.site = site
         resp = views.podcast_detail(req, podcast.id, podcast.slug)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
         assert not resp.context_data["is_subscribed"]
 
-    def test_search(self, rf, anonymous_user, podcast):
+    def test_search(self, rf, anonymous_user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
         req = rf.get(podcast.get_absolute_url(), {"q": "testing"})
         req.user = anonymous_user
-        resp = views.podcast_detail(req, podcast.id, podcast.slug,)
+        req.site = site
+        resp = views.podcast_detail(req, podcast.id, podcast.slug)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 1

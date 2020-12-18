@@ -75,26 +75,29 @@ class TestEpisodeList:
 
 
 class TestEpisodeDetail:
-    def test_anonymous(self, rf, episode, anonymous_user):
+    def test_anonymous(self, rf, episode, anonymous_user, site):
         req = rf.get(episode.get_absolute_url())
         req.user = anonymous_user
+        req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
         assert resp.status_code == 200
         assert resp.context_data["episode"] == episode
         assert not resp.context_data["is_bookmarked"]
 
-    def test_user_not_bookmarked(self, rf, episode, user):
+    def test_user_not_bookmarked(self, rf, episode, user, site):
         req = rf.get(episode.get_absolute_url())
         req.user = user
+        req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
         assert resp.status_code == 200
         assert resp.context_data["episode"] == episode
         assert not resp.context_data["is_bookmarked"]
 
-    def test_user_bookmarked(self, rf, episode, user):
+    def test_user_bookmarked(self, rf, episode, user, site):
         BookmarkFactory(episode=episode, user=user)
         req = rf.get(episode.get_absolute_url())
         req.user = user
+        req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
         assert resp.status_code == 200
         assert resp.context_data["episode"] == episode
