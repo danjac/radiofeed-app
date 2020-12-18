@@ -81,12 +81,14 @@
            data-ajax-redirect-value="/">{% translate "Logout" %}</a>
       </div>
       {% else %}
+      {% block navbar_auth %}
       <div>
-        <a href="{% url 'account_login' %}"
+        <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
            class="inline-block text-white hover:text-gray-300 mr-2">{% translate "Login" %}</a>
         <a href="{% url 'account_signup' %}"
            class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
       </div>
+      {% endblock navbar_auth %}
       {% endif %}
     </div>
 
