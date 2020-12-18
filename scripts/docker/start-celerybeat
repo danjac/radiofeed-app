@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+rm -rf /tmp/celerybeat.pid
+
+celery -A radiofeed.celery_app beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile=/tmp/celerybeat.pid

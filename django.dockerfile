@@ -27,4 +27,7 @@ RUN chmod +x /start-django
 COPY ./scripts/docker/start-celeryworker /start-celeryworker
 RUN chmod +x /start-celeryworker
 
+COPY ./scripts/docker/start-celerybeat /start-celerybeat
+RUN chmod +x /start-celerybeat
+
 ENTRYPOINT ["/entrypoint"]
