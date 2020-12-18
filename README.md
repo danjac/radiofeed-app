@@ -41,7 +41,7 @@ To sync podcasts and download episodes to the database:
 
 This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean. You should also set up an S3 bucket with folders "static" and "media", and create a Cloudfront CDN distribution pointing to this bucket.
 
-Create the app and add the domain:
+SSH into your Dokku server and create the app and add the domain:
 
 > dokku apps:create myapp
 
