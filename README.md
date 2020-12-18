@@ -44,16 +44,21 @@ This app has been configured to run on ![Dokku](https://github.com/dokku/dokku).
 Create the app and add the domain:
 
 > dokku apps:create myapp
+
 > dokku domains:add myapp myapp.com
 
 Make sure you add buildpacks for PostgreSQL and Redis:
 
 > dokku plugin:install https://github.com/dokku/dokku-postgres.git
+
 > dokku postgres:create myapp_db
+
 > dokku postgres:link myapp_db myapp
 
 > dokku plugin:install https://github.com/dokku/dokku-redis.git
+
 > dokku redis:create myapp_redis
+
 > dokku redis:link myapp_redis myapp
 
 These instructions will automatically set up the environment variables **DATABASE_URL** and **REDIS_URL**.
@@ -76,18 +81,23 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 Next add to Git and deploy:
 
 > git remote add dokku dokku@<my-domain-or-ip>:myapp
+
 > ./scripts/deploy
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+
 > dokku config:set --no-restart --global DOKKU_LETSENCRYPT_EMAIL=myname@myemail.com
+
 > dokku letsencrypt myapp
+
 > dokku letsencrypt:cron-job --add
 
 Next set up celery and celerybeat workers:
 
 > dokku ps:scale audiotrails worker=1
+
 > dokku ps:scale audiotrails beat=1
 
 You should now be able to access the Django management commands:
