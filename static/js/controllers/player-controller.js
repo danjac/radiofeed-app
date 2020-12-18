@@ -25,6 +25,7 @@ export default class extends Controller {
     currentTime: Number,
     duration: Number,
     paused: Boolean,
+    waiting: Boolean,
   };
 
   connect() {
@@ -103,6 +104,14 @@ export default class extends Controller {
     }
   }
 
+  canPlay() {
+    this.waitingValue = false;
+  }
+
+  wait() {
+    this.waitingValue = true;
+  }
+
   skipBack() {
     this.audioTarget.currentTime -= 15;
     this.sendTimeUpdate(true);
@@ -123,36 +132,22 @@ export default class extends Controller {
     this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
   }
 
+  touchmove(event) {
+    this.skipTo(event.touches[0].clientX);
+  }
+
+  move(event) {
+    this.skipTo(event.clientX);
+  }
+
   // observers
 
   pausedValueChanged() {
-    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
-      if (this.pausedValue) {
-        this.pauseButtonTarget.classList.add('hidden');
-        this.playButtonTarget.classList.remove('hidden');
+    this.toggleActiveMode();
+  }
 
-        this.indicatorTarget.classList.remove(this.progressClass);
-        this.indicatorTarget.classList.add(this.progressPausedClass);
-
-        this.progressTarget.classList.remove(this.progressClass);
-        this.progressTarget.classList.add(this.progressPausedClass);
-
-        this.bufferTarget.classList.remove(this.bufferClass);
-        this.bufferTarget.classList.add(this.bufferPausedClass);
-      } else {
-        this.pauseButtonTarget.classList.remove('hidden');
-        this.playButtonTarget.classList.add('hidden');
-
-        this.indicatorTarget.classList.add(this.progressClass);
-        this.indicatorTarget.classList.remove(this.progressPausedClass);
-
-        this.progressTarget.classList.add(this.progressClass);
-        this.progressTarget.classList.remove(this.progressPausedClass);
-
-        this.bufferTarget.classList.add(this.bufferClass);
-        this.bufferTarget.classList.remove(this.bufferPausedClass);
-      }
-    }
+  waitingValueChanged() {
+    this.toggleActiveMode();
   }
 
   currentTimeValueChanged() {
@@ -250,5 +245,52 @@ export default class extends Controller {
     return [hours, minutes, seconds]
       .map((t) => t.toString().padStart(2, '0'))
       .join(':');
+  }
+
+  skipTo(position) {
+    if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
+      const { left } = this.progressBarTarget.getBoundingClientRect();
+      const width = this.progressBarTarget.clientWidth;
+      position = position - left;
+      position = Math.ceil(this.durationValue * (position / width));
+      this.audioTarget.currentTime = this.currentTimeValue = position;
+    }
+  }
+
+  toggleActiveMode() {
+    const inactive = this.pausedValue || this.waitingValue;
+    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
+      if (inactive) {
+        this.pauseButtonTarget.classList.add('hidden');
+        this.playButtonTarget.classList.remove('hidden');
+
+        this.indicatorTarget.classList.remove(this.progressClass);
+        this.indicatorTarget.classList.add(this.progressPausedClass);
+
+        this.progressTarget.classList.remove(this.progressClass);
+        this.progressTarget.classList.add(this.progressPausedClass);
+
+        this.progressBarTarget.classList.add('cursor-not-allowed');
+        this.progressBarTarget.classList.remove('cursor-pointer');
+
+        this.bufferTarget.classList.remove(this.bufferClass);
+        this.bufferTarget.classList.add(this.bufferPausedClass);
+      } else {
+        this.pauseButtonTarget.classList.remove('hidden');
+        this.playButtonTarget.classList.add('hidden');
+
+        this.indicatorTarget.classList.add(this.progressClass);
+        this.indicatorTarget.classList.remove(this.progressPausedClass);
+
+        this.progressTarget.classList.add(this.progressClass);
+        this.progressTarget.classList.remove(this.progressPausedClass);
+
+        this.progressBarTarget.classList.remove('cursor-not-allowed');
+        this.progressBarTarget.classList.add('cursor-pointer');
+
+        this.bufferTarget.classList.add(this.bufferClass);
+        this.bufferTarget.classList.remove(this.bufferPausedClass);
+      }
+    }
   }
 }

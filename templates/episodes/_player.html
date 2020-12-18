@@ -7,7 +7,8 @@
   <audio preload="metadata"
          src="{{ episode.media_url }}"
          data-player-target="audio"
-         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop"></audio>
+
+         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop canplaythrough->player#canPlay playing->player#canPlay stalled->player#wait waiting->player#wait"></audio>
 
   <div data-toggle-target="item"
        class="hidden">
@@ -60,7 +61,6 @@
       <div class="w-full self-start">
 
         <div class="mb-3 hidden md:flex">
-
           <a href="{{ episode.get_absolute_url }}"
              title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
         </div>
@@ -112,8 +112,9 @@
         </div>
 
         <div class="flex items-center w-full justify-between">
-          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center"
-               data-player-target="progressBar">
+          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center {{ player.paused|yesno:"cursor-not-allowed,cursor-pointer" }}"
+               data-player-target="progressBar"
+               data-action="click->player#move">
             <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
                  data-player-target="indicator"
                  style="z-index: 12;"></div>
