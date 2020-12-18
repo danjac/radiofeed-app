@@ -25,7 +25,8 @@
              height="30">
         {% endthumbnail %}
         <a href="{{ episode.get_absolute_url }}"
-           title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
+           title="{{ episode.title }}"
+           class="w-64 sm:w-full truncate">{{ episode.title|truncatechars:80 }}</a>
       </div>
       <button data-action="toggle#toggle">
         <i class="fa fa-expand-alt"></i>
