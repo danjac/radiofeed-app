@@ -39,4 +39,3 @@ To sync podcasts and download episodes to the database:
 
 In production this command could be run a few times a day in a cron, or adapted as a celery task to use with celerybeat.
 
-
