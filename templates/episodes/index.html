@@ -21,7 +21,7 @@
 {% include "episodes/_episode.html" with current_time=episode.current_time show_thumbnail=True %}
 {% empty %}
 {% if search %}
-<p>No results found for <span class="font-bold">{{ search }}</span>.</p>
+<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
 {% endfor %}
 {% include "_pagination.html" %}

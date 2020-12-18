@@ -149,7 +149,7 @@
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with current_time=episode.current_time show_thumbnail=False %}
 {% empty %}
-<p>
+<p class="text-center sm:text-left">
   {% if search %}
   No results found for <span class="font-bold">{{ search }}</span>.
   {% else %}

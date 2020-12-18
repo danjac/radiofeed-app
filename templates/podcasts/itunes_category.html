@@ -26,7 +26,7 @@
 {% include "podcasts/_itunes_result.html" %}
 {% empty %}
 {% if error %}
-<p>Unable to connect to the ITunes API at the moment.</p>
+<p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
 {% endif %}
 {% endfor %}
 
