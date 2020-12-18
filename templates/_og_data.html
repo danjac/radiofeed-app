@@ -1,7 +1,7 @@
   <meta property="og:title"
         content="{{ og_data.title|default:request.site.name }}" />
   <meta property="og:description"
-        content="{{ og_data.description|striptags|stripentities|truncatechars:100|default:"Find your favorite podcasts" }}" />
+        content="{{ og_data.description|striptags|stripentities|truncatewords:60|default:"Find your favorite podcasts" }}" />
   <meta property="og:url"
         content="{% if og_data.url %}{{ og_data.url }}{% else %}http://{{ request.site.domain }}{% endif %}" />
   {% if og_data.image %}
