@@ -51,6 +51,34 @@
 .active-tab {
   @apply border-indigo-800 border-b-2 font-bold;
 }
+
+.player--active .player--interactive {
+  @apply cursor-pointer;
+}
+
+.player--active .player--progress,
+.player--active .player--indicator {
+  @apply bg-blue-800;
+}
+
+.player--active .player--buffer {
+  @apply bg-blue-500;
+}
+
+.player--inactive .player--interactive {
+  @apply opacity-75 cursor-not-allowed;
+}
+
+.player--inactive .player--counter {
+  @apply opacity-75;
+}
+
+.player--inactive .player--progress,
+.player--inactive .player--buffer,
+.player--inactive .player--indicator {
+  @apply bg-gray-800;
+}
+
 /* hack to handle mobile scrolling issues
   with URL bar causing resize */
 

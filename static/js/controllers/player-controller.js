@@ -8,13 +8,14 @@ export default class extends Controller {
     'buffer',
     'counter',
     'indicator',
+    'interactive',
     'pauseButton',
     'playButton',
     'progress',
     'progressBar',
   ];
 
-  static classes = ['progress', 'buffer', 'progressPaused', 'bufferPaused'];
+  static classes = ['active', 'inactive'];
 
   static values = {
     episode: String,
@@ -113,13 +114,11 @@ export default class extends Controller {
   }
 
   skipBack() {
-    this.audioTarget.currentTime -= 15;
-    this.sendTimeUpdate(true);
+    this.skipTo(this.audioTarget.currentTime - 15);
   }
 
   skipForward() {
-    this.audioTarget.currentTime += 15;
-    this.sendTimeUpdate(true);
+    this.skipTo(this.audioTarget.currentTime + 15);
   }
 
   timeUpdate() {
@@ -132,12 +131,11 @@ export default class extends Controller {
     this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
   }
 
-  touchmove(event) {
-    this.skipTo(event.touches[0].clientX);
-  }
-
   move(event) {
-    this.skipTo(event.clientX);
+    const position = this.getPosition(event.clientX);
+    if (!isNaN(position) && position > -1) {
+      this.skipTo(position);
+    }
   }
 
   // observers
@@ -247,13 +245,21 @@ export default class extends Controller {
       .join(':');
   }
 
-  skipTo(position) {
-    if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
+  getPosition(clientX) {
+    if (!isNaN(clientX)) {
       const { left } = this.progressBarTarget.getBoundingClientRect();
       const width = this.progressBarTarget.clientWidth;
-      position = position - left;
-      position = Math.ceil(this.durationValue * (position / width));
+      let position = clientX - left;
+      return Math.ceil(this.durationValue * (position / width));
+    } else {
+      return -1;
+    }
+  }
+
+  skipTo(position) {
+    if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
       this.audioTarget.currentTime = this.currentTimeValue = position;
+      this.sendTimeUpdate(true);
     }
   }
 
@@ -264,32 +270,14 @@ export default class extends Controller {
         this.pauseButtonTarget.classList.add('hidden');
         this.playButtonTarget.classList.remove('hidden');
 
-        this.indicatorTarget.classList.remove(this.progressClass);
-        this.indicatorTarget.classList.add(this.progressPausedClass);
-
-        this.progressTarget.classList.remove(this.progressClass);
-        this.progressTarget.classList.add(this.progressPausedClass);
-
-        this.progressBarTarget.classList.add('cursor-not-allowed');
-        this.progressBarTarget.classList.remove('cursor-pointer');
-
-        this.bufferTarget.classList.remove(this.bufferClass);
-        this.bufferTarget.classList.add(this.bufferPausedClass);
+        this.element.classList.remove(this.activeClass);
+        this.element.classList.add(this.inactiveClass);
       } else {
         this.pauseButtonTarget.classList.remove('hidden');
         this.playButtonTarget.classList.add('hidden');
 
-        this.indicatorTarget.classList.add(this.progressClass);
-        this.indicatorTarget.classList.remove(this.progressPausedClass);
-
-        this.progressTarget.classList.add(this.progressClass);
-        this.progressTarget.classList.remove(this.progressPausedClass);
-
-        this.progressBarTarget.classList.remove('cursor-not-allowed');
-        this.progressBarTarget.classList.add('cursor-pointer');
-
-        this.bufferTarget.classList.add(this.bufferClass);
-        this.bufferTarget.classList.remove(this.bufferPausedClass);
+        this.element.classList.add(this.activeClass);
+        this.element.classList.remove(this.inactiveClass);
       }
     }
   }

@@ -192,10 +192,8 @@
        data-turbolinks-permanent
        data-controller="player"
        data-action="episode:play@window->player#open episode:stop@window->player#close"
-       data-player-progress-class="bg-blue-800"
-       data-player-buffer-class="bg-blue-500"
-       data-player-progress-paused-class="bg-gray-800"
-       data-player-buffer-paused-class="bg-gray-800"
+       data-player-active-class="player--active"
+       data-player-inactive-class="player--inactive"
        data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
        data-player-stop-url-value="{% url 'episodes:stop_player' %}"
        data-player-pause-url-value="{% url 'episodes:pause_player' %}"

@@ -7,7 +7,6 @@
   <audio preload="metadata"
          src="{{ episode.media_url }}"
          data-player-target="audio"
-
          data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop canplaythrough->player#canPlay playing->player#canPlay stalled->player#wait waiting->player#wait"></audio>
 
   <div data-toggle-target="item"
@@ -18,7 +17,7 @@
         <img data-controller="link"
              data-link-url-value="{{ podcast.get_absolute_url }}"
              data-action="click->link#visit"
-             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4"
+             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4 hover:opacity-75"
              title="{{ podcast.title }}"
              src="{{ img.url }}"
              role="link"
@@ -94,14 +93,14 @@
           <div class="flex items-center">
             <button title="Skip back 15 seconds"
                     data-action="player#skipBack"
-                    class="focus:outline-none mr-6">
+                    class="focus:outline-none player--interactive mr-6">
 
               <i class="fa fa-undo text-lg"></i>
 
             </button>
             <button title="Skip forward 15 seconds"
                     data-action="player#skipForward"
-                    class="focus:outline-none">
+                    class="focus:outline-none player--interactive">
 
               <i class="fa fa-redo text-lg"></i>
 
@@ -112,20 +111,20 @@
         </div>
 
         <div class="flex items-center w-full justify-between">
-          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center {{ player.paused|yesno:"cursor-not-allowed,cursor-pointer" }}"
+          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center player--interactive"
                data-player-target="progressBar"
                data-action="click->player#move">
-            <div class="w-4 h-4 rounded-full absolute border shadow-xl bg-blue-800"
+            <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
                  data-player-target="indicator"
                  style="z-index: 12;"></div>
-            <div class="h-2 relative rounded-l flex items-center justify-end bg-blue-800"
+            <div class="h-2 relative rounded-l flex items-center justify-end player--progress"
                  style="width: 0%;"
                  data-player-target="progress"></div>
-            <div class="h-2 rounded-r relative bg-blue-500"
+            <div class="h-2 rounded-r relative player--buffer"
                  data-player-target="buffer"
                  style="width: 0%;"></div>
           </div>
-          <div class="w-24 text-right tracking-tighter"
+          <div class="w-24 text-right tracking-tighter player--counter"
                data-player-target="counter"></div>
         </div>
       </div>
