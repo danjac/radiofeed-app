@@ -48,7 +48,11 @@
   @apply text-gray-300;
 }
 
-.active-tab {
+.sidebar--active {
+  @apply border-l-2 border-indigo-800 pl-3 font-bold;
+}
+
+.tab--active {
   @apply border-indigo-800 border-b-2 font-bold;
 }
 

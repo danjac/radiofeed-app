@@ -6,7 +6,7 @@
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none">
     <li class="mr-6 pb-2"
         data-controller="active-link"
-        data-active-link-active-class="active-tab">
+        data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
          href="{% url 'account_email' %}">Email Addresses</a>
@@ -14,21 +14,21 @@
     <li class="mr-6 pb-2"
         data-controller="active-link"
         data-active-link-regex-value="/account/password/*"
-        data-active-link-active-class="active-tab">
+        data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
          href="{% url 'account_change_password' %}">Change Password</a>
     </li>
     <li class="mr-6 pb-2"
         data-controller="active-link"
-        data-active-link-active-class="active-tab">
+        data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
          href="{% url 'socialaccount_connections' %}">Social Logins</a>
     </li>
     <li class="pb-2"
         data-controller="active-link"
-        data-active-link-active-class="active-tab">
+        data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
          href="{% url 'delete_account' %}">Delete Account</a>

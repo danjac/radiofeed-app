@@ -102,33 +102,33 @@
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2">
-    <div class="hidden lg:block w-full lg:w-1/6 mr-4 p-3 absolute left-0 top-0 sm:static z-10"
+    <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static z-10"
          data-toggle-target="item">
       <nav class="pt-3">
         <ul class="">
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'podcasts:podcast_list' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                data-active-link-exact-value
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-podcast mr-3"></i>
               Podcasts
             </a>
           </li>
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'podcasts:category_list' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-search mr-3"></i>
               Discover
             </a>
           </li>
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'episodes:episode_list' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                data-active-link-exact-value
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-satellite-dish mr-3"></i>
@@ -137,30 +137,30 @@
           </li>
 
           {% if user.is_authenticated %}
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'episodes:bookmark_list' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-star mr-3"></i>
               Bookmarks
             </a>
           </li>
 
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'episodes:history' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-history mr-3"></i>
               History
             </a>
           </li>
 
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'account_email' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                data-active-link-regex-value="/account/*"
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-wrench mr-3"></i>
@@ -169,10 +169,10 @@
           </li>
 
           {% else %}
-          <li class="pb-3">
+          <li class="py-2">
             <a href="{% url 'about' %}"
                data-controller="active-link"
-               data-active-link-active-class="font-bold"
+               data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
               <i class="fa fa-info-circle mr-3"></i>
               About
@@ -182,7 +182,7 @@
         </ul>
       </nav>
     </div>
-    <div class="w-full lg:w-5/6 p-2 lg:pl-6"
+    <div class="w-full p-2"
          data-toggle-target="item">
       {% block content %}{% endblock %}
     </div>
