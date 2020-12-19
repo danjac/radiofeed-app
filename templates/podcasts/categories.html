@@ -18,13 +18,17 @@
     <a href="{{ category.get_absolute_url }}"
        class="font-semibold hover:text-gray-300 font-semibold mb-3">{{ category.name }}</a>
   </div>
+  {% empty %}
+  <p class="text-center sm:text-left">
+    No categories have been found matching <b>{{ search }}.</b>
+  </p>
   {% endfor %}
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
   <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
     <div{% if children %} class="mb-3"
-                                   {% endif %}>
+                          {% endif %}>
       <a href="{{ category.get_absolute_url }}"
          class="font-semibold hover:text-gray-300 font-semibold">{{ category.name }}</a>
   </div>
@@ -38,6 +42,7 @@
   {% endif %}
 </div>
 {% endwith %}
+{% empty %}
 {% endfor %}
 
 {% endif %}

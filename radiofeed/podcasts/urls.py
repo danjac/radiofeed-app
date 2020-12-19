@@ -14,6 +14,11 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/unsubscribe/", views.unsubscribe, name="unsubscribe"
     ),
     path(
+        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        views.podcast_episode_list,
+        name="podcast_episode_list",
+    ),
+    path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
         views.podcast_detail,
         name="podcast_detail",

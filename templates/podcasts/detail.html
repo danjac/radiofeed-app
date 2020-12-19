@@ -1,14 +1,9 @@
-{% extends "base.html" %}
-{% load thumbnail pagination %}
+{% extends "podcasts/podcast_base.html" %}
+{% load thumbnail %}
 
-{% block subtitle %} | {{ podcast.title }}{% endblock %}
-
-{% block content %}
-{% paginate episodes as page_obj %}
-{% if page_obj.number == 1 and not search %}
+{% block podcast_content %}
 <div class="p-2 border border-gray-500 mb-3">
 
-  <h2 class="font-bold mb-2 text-lg">{{ podcast.title }}</h2>
   {% if podcast.authors %}
   <h3 class="font-semibold text-gray-300 mb-2">{{ podcast.authors }}</h3>
   {% endif %}
@@ -119,44 +114,4 @@
   </div>
 </div>
 {% endif %}
-{% else %}
-<div class="flex justify-center sm:block mb-3">
-  <a class="font-bold text-lg"
-     href="{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
-</div>
-{% endif %}
-
-<div class="sm:flex justify-between items-center mb-3">
-  <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center">
-    {% if ordering == 'asc' %}
-    <a href="{{ request.path }}"
-       class="font-semibold">Newest First</a>
-    {% else %}
-    <a href="{{ request.path }}?ordering=asc"
-       class="font-semibold">Oldest First</a>
-    {% endif %}
-  </div>
-  <div class="flex justify-center sm:block">
-    {% include "_search_form.html" with placeholder="Search episodes" %}
-  </div>
-</div>
-
-
-{% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
-{% endif %}
-
-{% for episode in page_obj %}
-{% include "episodes/_episode.html" with current_time=episode.current_time show_thumbnail=False %}
-{% empty %}
-<p class="text-center sm:text-left">
-  {% if search %}
-  No results found for <span class="font-bold">{{ search }}</span>.
-  {% else %}
-  This podcast does not appear to have any episodes.
-  {% endif %}
-</p>
-{% endfor %}
-
-{% include "_pagination.html" %}
 {% endblock %}

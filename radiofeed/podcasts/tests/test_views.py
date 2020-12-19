@@ -96,16 +96,56 @@ class TestPodcastDetail:
         resp = views.podcast_detail(req, podcast.id, podcast.slug)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
-        assert len(resp.context_data["episodes"]) == 3
+        assert resp.context_data["total_episodes"] == 3
         assert not resp.context_data["is_subscribed"]
+
+    def test_authenticated(self, rf, user, podcast, site):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        req = rf.get(podcast.get_absolute_url())
+        req.user = user
+        req.site = site
+        resp = views.podcast_detail(req, podcast.id, podcast.slug)
+        assert resp.status_code == 200
+        assert resp.context_data["podcast"] == podcast
+        assert resp.context_data["total_episodes"] == 3
+        assert not resp.context_data["is_subscribed"]
+
+    def test_subscribed(self, rf, user, podcast, site):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        SubscriptionFactory(podcast=podcast, user=user)
+        req = rf.get(podcast.get_absolute_url())
+        req.user = user
+        req.site = site
+        resp = views.podcast_detail(req, podcast.id, podcast.slug)
+        assert resp.status_code == 200
+        assert resp.context_data["podcast"] == podcast
+        assert resp.context_data["total_episodes"] == 3
+        assert resp.context_data["is_subscribed"]
+
+
+class TestPodcastEpisodeList:
+    def test_get(self, rf, anonymous_user, podcast, site):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        req = rf.get(
+            reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug])
+        )
+        req.user = anonymous_user
+        req.site = site
+        resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
+        assert resp.status_code == 200
+        assert resp.context_data["podcast"] == podcast
+        assert len(resp.context_data["episodes"]) == 3
 
     def test_search(self, rf, anonymous_user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
-        req = rf.get(podcast.get_absolute_url(), {"q": "testing"})
+        req = rf.get(
+            reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug]),
+            {"q": "testing"},
+        )
         req.user = anonymous_user
         req.site = site
-        resp = views.podcast_detail(req, podcast.id, podcast.slug)
+        resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == 200
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 1

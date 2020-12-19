@@ -65,17 +65,6 @@ def podcast_list(request):
 
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.with_current_time(request.user)
-    total_episodes = episodes.count()
-
-    search = request.GET.get("q", None)
-    ordering = request.GET.get("ordering")
-
-    if search:
-        episodes = episodes.search(search).order_by("-rank", "-pub_date")
-    else:
-        order_by = "pub_date" if ordering == "asc" else "-pub_date"
-        episodes = episodes.order_by(order_by)
 
     is_subscribed = (
         request.user.is_authenticated
@@ -88,26 +77,39 @@ def podcast_detail(request, podcast_id, slug=None):
         .order_by("-similarity", "-frequency")
     )[:9]
 
-    og_data = {
-        "url": request.build_absolute_uri(podcast.get_absolute_url()),
-        "title": f"{request.site.name} | {podcast.title}",
-        "description": podcast.description,
-        "image": podcast.cover_image.url if podcast.cover_image else None,
-    }
+    total_episodes = podcast.episode_set.count()
 
-    return TemplateResponse(
+    return podcast_detail_response(
         request,
         "podcasts/detail.html",
+        podcast,
         {
-            "podcast": podcast,
-            "episodes": episodes,
             "total_episodes": total_episodes,
             "recommendations": recommendations,
-            "search": search,
-            "ordering": ordering,
             "is_subscribed": is_subscribed,
-            "og_data": og_data,
         },
+    )
+
+
+def podcast_episode_list(request, podcast_id, slug=None):
+
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    episodes = podcast.episode_set.with_current_time(request.user)
+
+    search = request.GET.get("q", None)
+    ordering = request.GET.get("ordering")
+
+    if search:
+        episodes = episodes.search(search).order_by("-rank", "-pub_date")
+    else:
+        order_by = "pub_date" if ordering == "asc" else "-pub_date"
+        episodes = episodes.order_by(order_by)
+
+    return podcast_detail_response(
+        request,
+        "podcasts/episodes.html",
+        podcast,
+        {"episodes": episodes, "search": search, "ordering": ordering,},
     )
 
 
@@ -246,3 +248,17 @@ def itunes_results_with_podcast(results):
     for result in results:
         result.podcast = podcasts.get(result.rss, None)
     return results
+
+
+def podcast_detail_response(request, template_name, podcast, context):
+
+    context = {
+        "podcast": podcast,
+        "og_data": {
+            "url": request.build_absolute_uri(podcast.get_absolute_url()),
+            "title": f"{request.site.name} | {podcast.title}",
+            "description": podcast.description,
+            "image": podcast.cover_image.url if podcast.cover_image else None,
+        },
+    } | context
+    return TemplateResponse(request, template_name, context)
