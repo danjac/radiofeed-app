@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+echo "Running tests..."
+docker-compose run --rm django pytest
+
 echo "Building assets..."
 docker-compose run --rm assets yarn build
 
