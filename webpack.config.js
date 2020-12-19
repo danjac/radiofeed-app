@@ -5,7 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV,
   entry: path.resolve(__dirname, 'static', 'js', 'app.js'),
   output: {
-    path: path.resolve(__dirname, 'static', 'dist'),
+    path: path.resolve(__dirname, 'static', isProduction ? 'dist' : 'dev'),
     filename: 'app.js',
   },
   resolve: {

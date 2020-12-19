@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "concurrently \"yarn:watch-css\" \"yarn:watch-js\"",
     "build": "concurrently \"yarn:build-css\" \"yarn:build-js\"",
-    "watch-css": "postcss ./static/css/app.css -o ./static/dist/app.css -w --verbose",
+    "watch-css": "postcss ./static/css/app.css -o ./static/dev/app.css -w --verbose",
     "watch-js": "webpack-cli --watch --mode=development",
     "build-css": "NODE_ENV=production postcss ./static/css/app.css -o ./static/dist/app.css",
     "build-js": "NODE_ENV=production webpack-cli"
