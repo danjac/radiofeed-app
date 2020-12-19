@@ -7,8 +7,8 @@
 {% block content %}
 <h1 class="mb-3 text-xl font-bold">{% trans "Sign Up" %}</h1>
 
-<p class="mb-3">{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
-  {{site_name}}. As a final step, please complete the following form:{% endblocktrans %}</p>
+<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
+  {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
 <form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
       method="post"
