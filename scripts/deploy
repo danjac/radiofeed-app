@@ -11,7 +11,7 @@ docker-compose run --rm assets yarn build
 echo "Deploying assets to S3..."
 docker-compose run --rm \
     -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
-    django ./manage.py collectstatic --noinput -v 3 -i local
+    django ./manage.py collectstatic --noinput -v 3 -i dev
 
 echo "Deploying to Dokku..."
 git push dokku master
