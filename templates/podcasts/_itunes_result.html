@@ -35,6 +35,8 @@
       </div>
     </div>
   </div>
+  {% if can_add_podcast and not result.podcast %}
   {% include "podcasts/_add_new_button.html" with css_class="hidden md:inline-block" %}
+  {% endif %}
 </div>
 {% endwith %}
