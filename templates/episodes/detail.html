@@ -47,14 +47,13 @@
      data-episode-duration-value="{{ duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
-  <h2 class="font-bold mb-3 text-lg">{{ episode.title }}</h2>
-  <h3 class="font-semibold mb-3">
+  <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
+  <h2 class="font-semibold mb-3">
     <a href="{{ podcast.get_absolute_url }}"
        class="font-semibold hover:text-gray-300">
       {{ podcast.title }}
     </a>
-
-  </h3>
+  </h2>
 
   <div class="flex items-center w-full mb-3">
 
