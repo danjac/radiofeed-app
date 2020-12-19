@@ -101,7 +101,7 @@ class Podcast(models.Model):
 
     cover_image = ImageField(null=True, blank=True)
 
-    itunes = models.URLField(max_length=500, null=True, blank=True)
+    itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
     language = models.CharField(max_length=2, default="en")
     description = models.TextField(blank=True)
