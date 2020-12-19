@@ -51,7 +51,7 @@
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
-<p>
+<p class="text-center sm:text-left">
   {% if search %}
   No results found for this search.
   {% else %}

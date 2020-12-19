@@ -112,14 +112,6 @@ export default class extends Controller {
     this.waitingValue = true;
   }
 
-  skipBack() {
-    this.skipTo(this.audioTarget.currentTime - 15);
-  }
-
-  skipForward() {
-    this.skipTo(this.audioTarget.currentTime + 15);
-  }
-
   timeUpdate() {
     const { currentTime } = this.audioTarget;
     this.currentTimeValue = currentTime;
@@ -130,11 +122,19 @@ export default class extends Controller {
     this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
   }
 
-  move(event) {
+  skip(event) {
     const position = this.getPosition(event.clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
     }
+  }
+
+  skipBack() {
+    this.skipTo(this.audioTarget.currentTime - 15);
+  }
+
+  skipForward() {
+    this.skipTo(this.audioTarget.currentTime + 15);
   }
 
   // observers
