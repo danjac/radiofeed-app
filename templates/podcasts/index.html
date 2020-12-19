@@ -10,10 +10,7 @@
       <span class="mr-1">Search</span>
       <a class="font-semibold hover:text-gray-300 mr-1"
          href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-gray-300 mr-1"
-         href="{% url 'episodes:episode_list' %}?q={{ search }}">Episodes</a>
-      <span class="mr-1">|</span>
+        <span class="mr-1">|</span>
       <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
     </div>
@@ -26,9 +23,6 @@
   <span class="mr-2">Search</span>
   <a class="font-semibold hover:text-gray-300 mr-2"
      href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-  <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-gray-300 mr-2"
-     href="{% url 'episodes:episode_list' %}?q={{ search }}">Episodes</a>
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-gray-300"
      href="{{ request.path }}">Clear</a>
