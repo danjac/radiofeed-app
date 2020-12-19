@@ -11,7 +11,7 @@
 
   <div data-toggle-target="item"
        class="hidden">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between relative">
       <div class="flex items-center">
         {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
         <img data-controller="link"
@@ -28,22 +28,43 @@
            title="{{ episode.title }}"
            class="w-64 sm:w-full truncate">{{ episode.title|truncatechars:80 }}</a>
       </div>
-      <button data-action="toggle#toggle">
-        <i class="fa fa-expand-alt"></i>
+      <button data-action="toggle#toggle"
+              class="focus:outline-none float-right hover:text-indigo-500"
+              title="Maximize Player">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             class="h-6 w-6">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 15l7-7 7 7" />
+        </svg>
       </button>
     </div>
   </div>
 
-  <div data-toggle-target="item">
+  <div data-toggle-target="item"
+       class="relative">
     <button data-action="toggle#toggle"
-            class="float-right">
-      <i class="fa fa-compress-alt"></i>
+            class="absolute right-0 top-0 focus-outline-none hover:text-indigo-500"
+            title="Mimimize Player">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke="currentColor"
+           class="h-6 w-6">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7" />
+      </svg>
     </button>
 
     <div class="mb-2 md:hidden pr-1">
       <a href="{{ episode.get_absolute_url }}"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
-
     <div class="flex items-stretch">
 
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
@@ -65,48 +86,98 @@
              title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
         </div>
 
-        <div class="flex justify-between items-center w-full mb-3">
+        <div class="flex justify-between items-center w-full mb-1">
 
           <div class="flex items-center">
 
             <button title="Pause"
                     data-action="player#pause"
                     data-player-target="pauseButton"
-                    class="focus:outline-none mr-6">
-              <i class="fa fa-pause text-xl"></i>
+                    class="focus:outline-none hover:text-indigo-500 mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-9 w-9">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </button>
 
             <button title="Play"
                     data-action="player#play"
                     data-player-target="playButton"
-                    class="focus:outline-none mr-6 hidden">
-              <i class="fa fa-play text-xl"></i>
+                    class="focus:outline-none hover:text-indigo-500 mr-3 hidden">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-9 w-9">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+
             </button>
 
             <button title="Stop"
                     data-action="player#stop"
-                    class="focus:outline-none">
-              <i class="fa fa-stop text-lg"></i>
+                    class="focus:outline-none hover:text-indigo-500">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-9 w-9">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+              </svg>
             </button>
-
           </div>
 
           <div class="flex items-center">
             <button title="Skip back 15 seconds"
                     data-action="player#skipBack"
-                    class="focus:outline-none player--interactive mr-6">
-
-              <i class="fa fa-undo text-lg"></i>
+                    class="focus:outline-none hover:text-indigo-500 player--interactive mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-6 w-6">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+              </svg>
 
             </button>
             <button title="Skip forward 15 seconds"
                     data-action="player#skipForward"
-                    class="focus:outline-none player--interactive">
-
-              <i class="fa fa-redo text-lg"></i>
+                    class="focus:outline-none hover:text-indigo-500 player--interactive">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-6 w-6">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
+              </svg>
 
             </button>
-
           </div>
 
         </div>

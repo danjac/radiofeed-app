@@ -31,9 +31,7 @@
   {% include "_og_data.html" %}
   {% include "_google_tracking.html" %}
   {% endblock meta %}
-
   {% include "_static.html" %}
-  {% include "_icons.html" %}
 </head>
 
 <body {% block bodyattrs %}
@@ -50,12 +48,30 @@
         <button class="lg:hidden mr-3"
                 data-action="toggle#toggle"
                 data-toggle-target="item">
-          <i class="fa fa-bars"></i>
+          <svg xmlns="http://www.w3.org/2000/svg"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor"
+               class="h-6 w-6">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
         </button>
         <button class="hidden lg:hidden mr-3"
                 data-action="toggle#toggle"
                 data-toggle-target="item">
-          <i class="fa fa-chevron-up"></i>
+          <svg xmlns="http://www.w3.org/2000/svg"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor"
+               class="h-6 w-6">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7" />
+          </svg>
         </button>
         <img src="{% static 'img/wave.png' %}"
              height="32"
@@ -111,7 +127,16 @@
                data-active-link-active-class="sidebar--active"
                data-active-link-exact-value
                class="flex items-center hover:text-gray-300">
-              <i class="material-icons mr-3">podcast</i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
               Podcasts
             </a>
           </li>
@@ -120,7 +145,16 @@
                data-controller="active-link"
                data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
-              <i class="fa fa-search mr-3"></i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
               Discover
             </a>
           </li>
@@ -130,7 +164,16 @@
                data-active-link-active-class="sidebar--active"
                data-active-link-exact-value
                class="flex items-center hover:text-gray-300">
-              <i class="fa fa-satellite-dish mr-3"></i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
               New Releases
             </a>
           </li>
@@ -141,7 +184,16 @@
                data-controller="active-link"
                data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
-              <i class="fa fa-star mr-3"></i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
               Bookmarks
             </a>
           </li>
@@ -151,7 +203,16 @@
                data-controller="active-link"
                data-active-link-active-class="sidebar--active"
                class="flex items-center hover:text-gray-300">
-              <i class="fa fa-history mr-3"></i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
               History
             </a>
           </li>
@@ -162,7 +223,20 @@
                data-active-link-active-class="sidebar--active"
                data-active-link-regex-value="/account/*"
                class="flex items-center hover:text-gray-300">
-              <i class="fa fa-wrench mr-3"></i>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
               Settings
             </a>
           </li>

@@ -24,7 +24,7 @@
       {% if show_thumbnail %}
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <a href="{{ podcast.get_absolute_url }}">
-        <img class="object-cover block mr-2 lg:mr-4 h-16 w-16 border border-white hover:opacity-75 bg-transparent"
+        <img class="object-cover block mr-2 h-16 w-16 border border-white hover:opacity-75 bg-transparent"
              title="{{ podcast.title }}"
              src="{{ img.url }}"
              width="16"

@@ -62,11 +62,11 @@
 
 .player--active .player--progress,
 .player--active .player--indicator {
-  @apply bg-blue-800;
+  @apply bg-indigo-900;
 }
 
 .player--active .player--buffer {
-  @apply bg-blue-500;
+  @apply bg-indigo-600;
 }
 
 .player--inactive .player--interactive {
