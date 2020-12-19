@@ -242,7 +242,7 @@ def add_podcast(request):
 
 
 def itunes_results_with_podcast(results):
-    podcasts = Podcast.objects.filter(itunes__in=[r.rss for r in results]).in_bulk(
+    podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
     )
     for result in results:
