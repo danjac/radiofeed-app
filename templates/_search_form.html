@@ -2,7 +2,7 @@
       data-action="form#submit:once"
       method="get"
       action="{{ request.path }}"
-      class="relative mb-1 sm:mb-0 bg-gray-900 focus-within:text-gray-300">
+      class="relative bg-gray-900 focus-within:text-gray-300">
   <input type="search"
          name="{{ search_param|default:'q' }}"
          autocomplete="off"
@@ -10,10 +10,10 @@
          {% if placeholder %}placeholder="{{ placeholder }}"
          {% endif %}
          class="px-4 py-1 text-white focus:outline-none focus:ring rounded-full bg-gray-900 w-64">
-  <span class="absolute inset-y-0 right-0 text-gray-500 flex items-center pr-2">
+  <span class="absolute inset-y-0 right-0 text-gray-500 flex items-center pr-3">
     <button type="submit"
             class="focus:outline-none focus:shadow-outline">
-      <i class="fa fa-search h-6 w-6"></i>
+      <i class="fa fa-search h-4 w-4"></i>
     </button>
   </span>
 </form>
