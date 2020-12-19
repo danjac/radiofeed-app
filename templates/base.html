@@ -69,9 +69,9 @@
       </div>
 
       {% if user.is_authenticated %}
-      <div>
+      <div class="text-sm flex items-center">
         <a href="{% url 'account_email' %}"
-           class="inline-block text-white hover:text-gray-300 mr-2">
+           class="inline-block text-white hover:text-gray-300 mr-3">
           {{ user.username }}
         </a>
         <a href="{% url 'account_logout' %}"
@@ -84,9 +84,9 @@
       </div>
       {% else %}
       {% block navbar_auth %}
-      <div>
+      <div class="text-sm flex items-center">
         <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
-           class="inline-block text-white hover:text-gray-300 mr-2">{% translate "Login" %}</a>
+           class="inline-block text-white hover:text-gray-300 mr-3">{% translate "Login" %}</a>
         <a href="{% url 'account_signup' %}"
            class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
       </div>

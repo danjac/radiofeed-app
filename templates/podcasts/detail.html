@@ -8,8 +8,6 @@
   <h3 class="font-semibold text-gray-300 mb-2">{{ podcast.authors }}</h3>
   {% endif %}
 
-  <div class="text-gray-300 mb-3 sm:hidden">{{ total_episodes }} episode{{ total_episodes|pluralize }}</div>
-
   <div class="flex items-center w-full mb-3">
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
@@ -23,8 +21,7 @@
     <div>
 
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
-        <span class="inline-block sm:mr-2">{{ podcast.pub_date|date }}</span>
-        <span class="text-gray-300 hidden sm:inline-block">{{ total_episodes }} episode{{ total_episodes|pluralize }}</span>
+        <span class="text-gray-300">{{ total_episodes }} episode{{ total_episodes|pluralize }}</span>
         {% if podcast.explicit %}
         <span class="text-red-300 inline-block ml-2">Explicit</span>
         {% endif %}
@@ -88,6 +85,7 @@
     </a>
     {% endfor %}
   </div>
+
 </div>
 
 {% if recommendations %}

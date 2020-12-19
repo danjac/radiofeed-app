@@ -1,7 +1,7 @@
 {% load thumbnail episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-500 mb-3 flex justify-between items-center"
+<div class="flex justify-between items-center p-2 border border-gray-500 mb-3"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}
@@ -39,7 +39,6 @@
              class="block font-semibold hover:text-gray-300 mb-1"
              title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
         </div>
-
 
         <div class="flex items-center">
 
