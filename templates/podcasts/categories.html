@@ -4,12 +4,21 @@
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3 pb-3 border-b border-gray-500">
-  <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
-  <div class="flex items-center justify-center sm:justify-end">
+  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
+  <div class="flex items-center justify-center sm:justify-end mb-1 sm:mb-0">
+    {% if search %}
+    <a class="font-semibold hover:text-gray-300 mr-2 hidden sm:inline-block text-sm"
+       href="{{ request.path }}">Clear</a>
+    {% endif %}
     {% include "_search_form.html" with placeholder="Filter categories..." %}
   </div>
+  {% if search %}
+  <div class="sm:hidden mb-3 flex justify-center">
+    <a class="font-semibold hover:text-gray-300 text-sm"
+       href="{{ request.path }}">Clear</a>
+  </div>
+  {% endif %}
 </div>
-
 
 <div class="divide-y divide-gray-500">
   {% if search %}

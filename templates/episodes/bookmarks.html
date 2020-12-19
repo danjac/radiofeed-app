@@ -7,9 +7,19 @@
 <div class="sm:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">Bookmarks</h2>
   <div class="flex items-center justify-center sm:justify-end">
+    {% if search %}
+    <a class="font-semibold hover:text-gray-300 mr-2 text-sm hidden sm:inline-block"
+       href="{{ request.path }}">Clear</a>
+    {% endif %}
     {% include "_search_form.html" with placeholder="Search bookmarks..." %}
   </div>
 </div>
+{% if search %}
+<div class="flex justify-center sm:hidden text-sm mb-3">
+  <a class="font-semibold hover:text-gray-300"
+     href="{{ request.path }}">Clear</a>
+</div>
+{% endif %}
 
 {% paginate bookmarks as page_obj %}
 

@@ -17,13 +17,37 @@
   <span class="text-gray-300">{{ category.name }}</span>
 </div>
 
-<div class="sm:flex justify-between items-center mb-3 pb-3 border-b border-gray-500">
+<div class="sm:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
   <div class="flex items-center justify-center sm:justify-end">
+    {% if search %}
+    <div class="mr-2 flex items-center hidden md:inline-block text-sm">
+      <span class="mr-1">Search</span>
+      <a class="font-semibold hover:text-gray-300 mr-1"
+         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+      <span class="mr-1">|</span>
+      <a class="font-semibold hover:text-gray-300 mr-1"
+         href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Podcasts</a>
+      <span class="mr-1">|</span>
+      <a class="font-semibold hover:text-gray-300"
+         href="{{ request.path }}">Clear</a>
+    </div>
+    {% endif %}
+
     {% include "_search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
 
+{% if search %}
+<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+  <span class="mr-2">Search</span>
+  <a class="font-semibold hover:text-gray-300 mr-2"
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+  <span class="mr-2">|</span>
+  <a class="font-semibold hover:text-gray-300"
+     href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Podcasts</a>
+</div>
+{% endif %}
 
 {% if not search %}
 {% if children or category.itunes_genre_id %}
@@ -51,7 +75,7 @@
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
-<p class="text-center sm:text-left">
+<p class="text-center sm:text-left mb-3">
   {% if search %}
   No results found for this search.
   {% else %}

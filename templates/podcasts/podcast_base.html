@@ -7,7 +7,7 @@
 <h1 class="font-bold mb-3 text-xl">{{ podcast.title }}</h1>
 
 <nav class="mb-3">
-  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none">
+  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight">
     <li class="mr-6 pb-2"
         data-controller="active-link"
         data-active-link-exact-value
@@ -16,7 +16,7 @@
          class="hover:text-gray-300"
          href="{{ podcast.get_absolute_url }}">Details</a>
     </li>
-    <li class="mr-6 pb-2"
+    <li class="pb-2"
         data-controller="active-link"
         data-active-link-exact-value
         data-active-link-active-class="tab--active">

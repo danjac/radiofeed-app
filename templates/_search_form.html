@@ -1,35 +1,19 @@
-<div class="sm:flex items-center {% if css_class %} {{ css_class }}{% endif %}">
-  {% if search and not no_clear_url %}
-  <div class="hidden sm:block mr-3">
-    <a href="{{ clear_search_url|default:request.path }}"
-       class="font-semibold hover:text-gray-300">{{ clear_search_text|default:'Clear' }}</a>
-  </div>
-  {% endif %}
-  <form data-controller="form"
-        data-action="form#submit:once"
-        method="get"
-        action="{{ request.path }}"
-        class="relative mb-1 sm:mb-0 bg-gray-900 focus-within:text-gray-300">
-    <input type="search"
-           name="{{ search_param|default:'q' }}"
-           autocomplete="off"
-           value="{{ search|default:'' }}"
-           {% if placeholder %}placeholder="{{ placeholder }}"
-           {% endif %}
-           class="px-4 py-1 text-white focus:outline-none focus:ring rounded-full bg-gray-900 w-64">
-    <span class="absolute inset-y-0 right-0 text-gray-500 flex items-center pr-2">
-      <button type="submit"
-              class="focus:outline-none focus:shadow-outline">
-        <i class="fa fa-search h-6 w-6"></i>
-      </button>
-    </span>
-  </form>
-
-  {% if search %}
-  <div class="flex justify-center sm:hidden">
-    <a href="{{ clear_search_url|default:request.path }}"
-       class="font-semibold hover:text-gray-300">{{ clear_search_text|default:'Clear' }}</a>
-  </div>
-  {% endif %}
-
-</div>
+<form data-controller="form {% if css_class %} {{ css_class }}{% endif %}"
+      data-action="form#submit:once"
+      method="get"
+      action="{{ request.path }}"
+      class="relative mb-1 sm:mb-0 bg-gray-900 focus-within:text-gray-300">
+  <input type="search"
+         name="{{ search_param|default:'q' }}"
+         autocomplete="off"
+         value="{{ search|default:'' }}"
+         {% if placeholder %}placeholder="{{ placeholder }}"
+         {% endif %}
+         class="px-4 py-1 text-white focus:outline-none focus:ring rounded-full bg-gray-900 w-64">
+  <span class="absolute inset-y-0 right-0 text-gray-500 flex items-center pr-2">
+    <button type="submit"
+            class="focus:outline-none focus:shadow-outline">
+      <i class="fa fa-search h-6 w-6"></i>
+    </button>
+  </span>
+</form>

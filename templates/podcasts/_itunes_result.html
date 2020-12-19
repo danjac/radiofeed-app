@@ -3,9 +3,9 @@
   <div class="flex items-center">
     {% if result.image %}
     <img src="{{ result.image }}"
-         height="60"
-         width="60"
-         class="object-cover border border-white mr-2" />
+         height="16"
+         width="16"
+         class="object-cover border border-white mr-2 h-16 w-16 bg-transparent" />
     {% endif %}
     <div>
       <a {% if result.podcast %}
@@ -16,8 +16,8 @@
          target="_blank"
          {% endif %}
          title="{{ result.title }}"
-         class="font-semibold font-semibold hover:text-gray-300 block mb-1 w-64 sm:w-full truncate">{{ result.title|truncatechars:60 }}</a>
-      <div class="text-sm{% if can_add_podcast %} mb-3 sm:mb-0{% endif %}">
+         class="font-semibold font-semibold hover:text-gray-300 block mb-1 w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
+      <div class="text-sm{% if can_add_podcast %} mb-3 md:mb-0{% endif %} flex items-center">
         <a href="{{ result.rss }}"
            class="font-semibold hover:text-gray-300 mr-2"
            target="_blank"
@@ -30,13 +30,11 @@
         <a href="{{ result.podcast.get_absolute_url }}"
            class="font-semibold hover-text-gray-100">Podcast</a>
         {% elif can_add_podcast and not result.podcast %}
-        {% include "podcasts/_add_new_button.html" with css_class="sm:hidden" %}
+        {% include "podcasts/_add_new_button.html" with css_class="md:hidden" %}
         {% endif %}
       </div>
     </div>
   </div>
-  {% if can_add_podcast and not result.podcast %}
-  {% include "podcasts/_add_new_button.html" with css_class="hidden sm:inline-block" %}
-  {% endif %}
+  {% include "podcasts/_add_new_button.html" with css_class="hidden md:inline-block" %}
 </div>
 {% endwith %}
