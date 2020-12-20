@@ -40,7 +40,9 @@ def landing_page(request):
 
 def podcast_list(request):
     """Shows list of podcasts"""
-    podcasts = Podcast.objects.filter(pub_date__isnull=False)
+    podcasts = Podcast.objects.filter(pub_date__isnull=False).with_has_subscribed(
+        request.user
+    )
 
     search = request.GET.get("q", None)
 
@@ -49,7 +51,6 @@ def podcast_list(request):
     elif request.user.is_authenticated:
         podcasts = (
             podcasts.with_subscription_count()
-            .with_has_subscribed(request.user)
             .order_by("-has_subscribed", "-subscription_count", "-pub_date")
             .distinct()
         )
