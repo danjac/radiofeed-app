@@ -25,7 +25,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"))
         req.user = anonymous_user
         resp = views.episode_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["episodes"]) == 3
 
     def test_user_no_subscriptions(self, rf, user):
@@ -33,7 +33,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"))
         req.user = user
         resp = views.episode_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["episodes"]) == 3
 
     def test_user_has_subscriptions(self, rf, user):
@@ -46,7 +46,7 @@ class TestEpisodeList:
         req.user = user
         resp = views.episode_list(req)
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["episodes"]) == 1
         assert resp.context_data["episodes"][0] == episode
 
@@ -56,7 +56,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
         req.user = anonymous_user
         resp = views.episode_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["episodes"]) == 1
         assert resp.context_data["episodes"][0] == episode
 
@@ -70,7 +70,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
         req.user = user
         resp = views.episode_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["episodes"]) == 1
         assert resp.context_data["episodes"][0] == episode
 
@@ -81,7 +81,7 @@ class TestEpisodeDetail:
         req.user = anonymous_user
         req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
         assert not resp.context_data["is_bookmarked"]
 
@@ -90,7 +90,7 @@ class TestEpisodeDetail:
         req.user = user
         req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
         assert not resp.context_data["is_bookmarked"]
 
@@ -100,7 +100,7 @@ class TestEpisodeDetail:
         req.user = user
         req.site = site
         resp = views.episode_detail(req, episode.id, episode.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
         assert resp.context_data["is_bookmarked"]
 
@@ -111,7 +111,7 @@ class TestStartPlayer:
         req.user = anonymous_user
         req.session = {}
         resp = views.start_player(req, episode.id)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
@@ -123,7 +123,7 @@ class TestStartPlayer:
         req.user = user
         req.session = {}
         resp = views.start_player(req, episode.id)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
@@ -157,7 +157,7 @@ class TestTogglePlayerPause:
         req.session = {}
         resp = views.toggle_player_pause(req, pause=True)
 
-        assert resp.status_code == 400
+        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         body = json.loads(resp.content)
         assert body["error"]
 
@@ -171,7 +171,7 @@ class TestStopPlayer:
 
         assert req.session == {}
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["current_time"] == 1000
 
@@ -188,7 +188,7 @@ class TestStopPlayer:
 
         assert req.session == {}
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["current_time"] == 1000
 
@@ -208,7 +208,7 @@ class TestUpdatePlayerTime:
         resp = views.update_player_time(req)
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["current_time"] == 1030
 
@@ -225,7 +225,7 @@ class TestUpdatePlayerTime:
 
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["current_time"] == 1030
 
@@ -244,7 +244,7 @@ class TestUpdatePlayerTime:
         resp = views.update_player_time(req)
 
         assert req.session == {}
-        assert resp.status_code == 400
+        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0
 
 
@@ -254,7 +254,7 @@ class TestHistory:
         req = rf.get(reverse("episodes:history"))
         req.user = user
         resp = views.history(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["logs"]) == 3
 
     def test_search(self, rf, user):
@@ -271,7 +271,7 @@ class TestHistory:
         req = rf.get(reverse("episodes:history"), {"q": "testing"})
         req.user = user
         resp = views.history(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["search"] == "testing"
         assert len(resp.context_data["logs"]) == 1
 
@@ -282,7 +282,7 @@ class TestBookmarkList:
         req = rf.get(reverse("episodes:bookmark_list"))
         req.user = user
         resp = views.bookmark_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["bookmarks"]) == 3
 
     def test_search(self, rf, user):
@@ -299,7 +299,7 @@ class TestBookmarkList:
         req = rf.get(reverse("episodes:bookmark_list"), {"q": "testing"})
         req.user = user
         resp = views.bookmark_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["search"] == "testing"
         assert len(resp.context_data["bookmarks"]) == 1
 
