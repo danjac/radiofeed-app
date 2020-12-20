@@ -25,13 +25,24 @@
              {% endif %}
              value="{{emailaddress.email}}" />
 
-      <span class="{% if emailaddress.primary or num_addresses == 1 %}font-bold{% endif %}">
-        {{ emailaddress.email }}
-        {% if emailaddress.verified %}
-        <i class="fa fa-check text-green-300 ml-2"></i>
-        {% endif %}
-
-      </span>
+      <div class="{% if emailaddress.primary or num_addresses == 1 %}font-bold{% endif %}">
+        <div class="flex items-center">
+          {{ emailaddress.email }}
+          {% if emailaddress.verified %}
+          <svg xmlns="http://www.w3.org/2000/svg"
+               fill="none"
+               viewBox="0 0 24 24"
+               stroke="currentColor"
+               title="Verified"
+               class="h-5 w-5 ml-2 text-green-300">
+            <path stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7" />
+          </svg>
+          {% endif %}
+        </div>
+      </div>
 
     </label>
   </div>
@@ -43,13 +54,23 @@
             name="action_send">{% translate 'Re-send Verification' %}</button>
     <button class="text-sm rounded border border-white bg-indigo-800 hover:bg-indigo-600 px-2 py-1 mr-2 mb-2"
             name="action_primary">{% translate 'Make Primary' %}</button>
-    <button class="text-sm rounded border border-white bg-red-800 hover:bg-red-600 px-2 py-1 mb-2"
+    <button class="text-sm rounded border border-white bg-red-800 hover:bg-red-600 px-2 py-1 mb-2 flex items-center"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
             data-action="confirm#confirm"
             name="action_remove">
-      <i class="fa fa-trash mr-2"></i>
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke="currentColor"
+           class="h-5 w-5 mr-2">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+
       {% translate 'Remove' %}
     </button>
     {% endwith %}

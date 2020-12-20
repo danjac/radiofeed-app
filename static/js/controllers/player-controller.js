@@ -194,7 +194,7 @@ export default class extends Controller {
 
     let currentPosition, width;
 
-    currentPosition = this.progressBarTarget.getBoundingClientRect().left - 16;
+    currentPosition = this.progressBarTarget.getBoundingClientRect().left - 24;
 
     if (clientWidth === 0) {
       width = 0;

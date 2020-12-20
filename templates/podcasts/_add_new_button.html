@@ -1,18 +1,39 @@
 <div class="{{ css_class }}"
      data-controller="toggle">
-  <button class="rounded bg-indigo-800 hover:bg-indigo-500 border border-white text-white text-sm px-2 py-1"
+  <button class="rounded bg-indigo-800 hover:bg-indigo-500 border border-white text-white text-sm px-2 py-1 flex items-center"
           data-controller="ajax"
           data-action="toggle#toggle ajax#post"
           data-toggle-target="item"
           data-ajax-url-value="{% url 'podcasts:add_podcast' %}"
           data-ajax-params-value="{{ result.as_json }}">
-    <i class="fa fa-plus mr-2"></i>
+    <svg xmlns="http://www.w3.org/2000/svg"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         class="h-5 w-5 mr-3">
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
     Add Podcast
   </button>
 
-  <button class="rounded cursor-default border border-white text-white text-sm px-2 py-1 hidden"
-          data-toggle-target="item">
-    <i class="fa fa-check text-green-500 mr-2"></i>
-    Added!
-  </button>
+  <div class="hidden"
+       data-toggle-target="item">
+    <button class="rounded cursor-default border border-white text-white text-sm px-2 py-1 flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke="currentColor"
+           title="Verified"
+           class="h-5 w-5 mr-2 text-green-300">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7" />
+      </svg>
+      Added!
+    </button>
+  </div>
 </div>

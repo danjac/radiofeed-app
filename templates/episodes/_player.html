@@ -17,7 +17,7 @@
         <img data-controller="link"
              data-link-url-value="{{ podcast.get_absolute_url }}"
              data-action="click->link#visit"
-             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4 hover:opacity-75 bg-transparent"
+             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4 hover:opacity-75 bg-transparent border border-white"
              title="{{ podcast.title }}"
              src="{{ img.url }}"
              role="link"
@@ -29,7 +29,7 @@
            class="w-64 sm:w-full truncate">{{ episode.title|truncatechars:80 }}</a>
       </div>
       <button data-action="toggle#toggle"
-              class="focus:outline-none float-right hover:text-indigo-500"
+              class="focus:outline-none float-right hover:text-blue-500"
               title="Maximize Player">
         <svg xmlns="http://www.w3.org/2000/svg"
              fill="none"
@@ -48,7 +48,7 @@
   <div data-toggle-target="item"
        class="relative">
     <button data-action="toggle#toggle"
-            class="absolute right-0 top-0 focus-outline-none hover:text-indigo-500"
+            class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
             title="Mimimize Player">
       <svg xmlns="http://www.w3.org/2000/svg"
            fill="none"
@@ -93,7 +93,7 @@
             <button title="Pause"
                     data-action="player#pause"
                     data-player-target="pauseButton"
-                    class="focus:outline-none hover:text-indigo-500 mr-3">
+                    class="focus:outline-none hover:text-blue-500 mr-3">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -109,7 +109,7 @@
             <button title="Play"
                     data-action="player#play"
                     data-player-target="playButton"
-                    class="focus:outline-none hover:text-indigo-500 mr-3 hidden">
+                    class="focus:outline-none hover:text-blue-500 mr-3 hidden">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -129,7 +129,7 @@
 
             <button title="Stop"
                     data-action="player#stop"
-                    class="focus:outline-none hover:text-indigo-500">
+                    class="focus:outline-none hover:text-blue-500">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -150,7 +150,7 @@
           <div class="flex items-center">
             <button title="Skip back 15 seconds"
                     data-action="player#skipBack"
-                    class="focus:outline-none hover:text-indigo-500 player--interactive mr-3">
+                    class="focus:outline-none hover:text-blue-500 player--interactive mr-3">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -165,7 +165,7 @@
             </button>
             <button title="Skip forward 15 seconds"
                     data-action="player#skipForward"
-                    class="focus:outline-none hover:text-indigo-500 player--interactive">
+                    class="focus:outline-none hover:text-blue-500 player--interactive">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"

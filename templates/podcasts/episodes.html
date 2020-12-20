@@ -6,7 +6,7 @@
 {% paginate episodes as page_obj %}
 
 <div class="sm:flex justify-between items-center mb-3">
-  <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center">
+  <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="font-semibold">Newest First</a>
@@ -20,8 +20,8 @@
     <div class="hidden md:inline-block mr-2 text-sm">
       <a class="font-semibold hover:text-gray-300 mr-1"
          href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-gray-300"
+      <span class="mr-1 text-sm">|</span>
+      <a class="font-semibold hover:text-gray-300 text-sm"
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
