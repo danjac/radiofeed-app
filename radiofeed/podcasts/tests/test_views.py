@@ -1,4 +1,5 @@
 # Standard Library
+import http
 import json
 
 # Django
@@ -25,7 +26,7 @@ class TestLandingPage:
         req = rf.get(reverse("podcasts:landing_page"))
         req.user = anonymous_user
         resp = views.landing_page(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 3
 
     def test_authenticated(self, rf, user):
@@ -41,7 +42,7 @@ class TestPodcastList:
         req = rf.get(reverse("podcasts:podcast_list"))
         req.user = anonymous_user
         resp = views.podcast_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 3
 
     def test_user_no_subscriptions(self, rf, user):
@@ -50,7 +51,7 @@ class TestPodcastList:
         req = rf.get(reverse("podcasts:podcast_list"))
         req.user = user
         resp = views.podcast_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 3
 
     def test_user_has_subscriptions(self, rf, user):
@@ -60,7 +61,7 @@ class TestPodcastList:
         req = rf.get(reverse("podcasts:podcast_list"))
         req.user = user
         resp = views.podcast_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 4
         assert resp.context_data["podcasts"][0] == sub.podcast
 
@@ -70,7 +71,7 @@ class TestPodcastList:
         req.user = anonymous_user
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == podcast
 
@@ -82,7 +83,7 @@ class TestPodcastList:
         req.user = user
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == podcast
 
@@ -94,7 +95,7 @@ class TestPodcastDetail:
         req.user = anonymous_user
         req.site = site
         resp = views.podcast_detail(req, podcast.id, podcast.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
         assert not resp.context_data["is_subscribed"]
@@ -105,7 +106,7 @@ class TestPodcastDetail:
         req.user = user
         req.site = site
         resp = views.podcast_detail(req, podcast.id, podcast.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
         assert not resp.context_data["is_subscribed"]
@@ -117,7 +118,7 @@ class TestPodcastDetail:
         req.user = user
         req.site = site
         resp = views.podcast_detail(req, podcast.id, podcast.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
         assert resp.context_data["is_subscribed"]
@@ -132,7 +133,7 @@ class TestPodcastEpisodeList:
         req.user = anonymous_user
         req.site = site
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
 
@@ -146,7 +147,7 @@ class TestPodcastEpisodeList:
         req.user = anonymous_user
         req.site = site
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 1
 
@@ -193,7 +194,7 @@ class TestCategoryList:
         PodcastFactory(categories=[c3, parents[2]])
 
         resp = views.category_list(rf.get(reverse("podcasts:category_list")))
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 3
 
     def test_search(self, rf):
@@ -212,7 +213,7 @@ class TestCategoryList:
         resp = views.category_list(
             rf.get(reverse("podcasts:category_list"), {"q": "testing"})
         )
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 2
         assert resp.context_data["search"] == "testing"
 
@@ -225,7 +226,7 @@ class TestCategoryDetail:
         req = rf.get(category.get_absolute_url())
         req.user = anonymous_user
         resp = views.category_detail(req, category.id, category.slug)
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 12
 
@@ -241,7 +242,7 @@ class TestCategoryDetail:
         req.user = anonymous_user
         resp = views.category_detail(req, category.id, category.slug)
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["search"] == "testing"
@@ -252,14 +253,14 @@ class TestSubscribe:
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
         resp = views.subscribe(req, podcast.id)
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.CREATED
 
     def test_already_subscribed(self, rf, podcast, user):
         SubscriptionFactory(user=user, podcast=podcast)
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
         resp = views.subscribe(req, podcast.id)
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.CREATED
 
 
 class TestUnsubscribe:
@@ -268,7 +269,7 @@ class TestUnsubscribe:
         req = rf.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
         req.user = user
         resp = views.unsubscribe(req, podcast.id)
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert not Subscription.objects.filter(podcast=podcast, user=user).exists()
 
 
@@ -290,7 +291,7 @@ class TestITunesCategory:
         req = rf.get(reverse("podcasts:itunes_category", args=[category.id]))
         resp = views.itunes_category(req, category.id)
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["results"]) == 1
         assert resp.context_data["results"][0].title == "test title"
 
@@ -311,6 +312,6 @@ class TestSearchITunes:
         req = rf.get(reverse("podcasts:search_itunes"), {"q": "test"})
         resp = views.search_itunes(req)
 
-        assert resp.status_code == 200
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["results"]) == 1
         assert resp.context_data["results"][0].title == "test title"
