@@ -4,11 +4,17 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 
 # Local
+from . import itunes
 from .models import Podcast
 from .recommender import PodcastRecommender
 from .rss_parser import RssParser
 
 logger = get_task_logger(__name__)
+
+
+@shared_task(name="radiofeed.podcasts.crawl_itunes")
+def crawl_itunes(limit=100):
+    itunes.crawl_itunes(limit)
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
