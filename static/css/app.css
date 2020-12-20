@@ -49,11 +49,11 @@
 }
 
 .sidebar--active {
-  @apply border-l-2 border-indigo-800 pl-3 font-bold;
+  @apply border-l-2 border-blue-500 pl-3 font-bold;
 }
 
 .tab--active {
-  @apply border-indigo-800 border-b-2 font-bold;
+  @apply border-blue-500 border-b-2 font-bold;
 }
 
 .player--active .player--interactive {
