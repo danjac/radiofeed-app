@@ -34,7 +34,7 @@
 {% endif %}
 
 {% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" with is_subscribed=podcast.has_subscribed %}
+{% include "podcasts/_podcast.html" %}
 {% empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}"

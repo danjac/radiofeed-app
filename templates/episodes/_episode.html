@@ -1,7 +1,7 @@
 {% load thumbnail episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="flex justify-between items-center p-2 border {% if current_time %}border-purple-500{% elif is_bookmarked %}border-blue-500{% else %}border-gray-500{% endif %} mb-3"
+<div class="flex justify-between items-center p-2 border border-gray-500 mb-3"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      {% if is_episode_playing %}

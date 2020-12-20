@@ -28,7 +28,7 @@
 {% endif %}
 
 {% for bookmark in page_obj %}
-{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time is_bookmarked=True %}
+{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time %}
 {% empty %}
 {% if search %}
 <p>Sorry, no results found for your search.</p>
