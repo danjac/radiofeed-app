@@ -40,7 +40,7 @@ class Command(BaseCommand):
                     category.itunes_genre_id, num_results=options["limit"]
                 )
             except (itunes.Invalid, itunes.Timeout) as e:
-                self.stderr.write(self.style.ERROR(e))
+                self.stderr.write(self.style.ERROR(str(e)))
                 continue
 
             podcasts = [
