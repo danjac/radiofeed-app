@@ -2,7 +2,6 @@
 import json
 
 # Django
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -66,31 +65,19 @@ def podcast_list(request):
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    is_subscribed = (
-        request.user.is_authenticated
-        and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
-    )
-
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
     )[:9]
 
-    episodes = podcast.episode_set.all()
-    total_episodes = episodes.count()
-    latest_episode = episodes.order_by("-pub_date").first()
+    total_episodes = podcast.episode_set.count()
 
     return podcast_detail_response(
         request,
         "podcasts/detail.html",
         podcast,
-        {
-            "total_episodes": total_episodes,
-            "latest_episode": latest_episode,
-            "recommendations": recommendations,
-            "is_subscribed": is_subscribed,
-        },
+        {"total_episodes": total_episodes, "recommendations": recommendations,},
     )
 
 
@@ -217,7 +204,6 @@ def subscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
-        messages.success(request, "You are now subscribed to this podcast")
     except IntegrityError:
         pass
     return redirect(podcast.get_absolute_url())
@@ -228,7 +214,6 @@ def subscribe(request, podcast_id):
 def unsubscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    messages.info(request, "You are no longer subscribed to this podcast")
     return redirect(podcast.get_absolute_url())
 
 
@@ -254,9 +239,14 @@ def itunes_results_with_podcast(results):
 
 
 def podcast_detail_response(request, template_name, podcast, context):
+    is_subscribed = (
+        request.user.is_authenticated
+        and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
+    )
 
     context = {
         "podcast": podcast,
+        "is_subscribed": is_subscribed,
         "og_data": {
             "url": request.build_absolute_uri(podcast.get_absolute_url()),
             "title": f"{request.site.name} | {podcast.title}",

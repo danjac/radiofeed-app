@@ -4,10 +4,6 @@
 {% block podcast_content %}
 <div class="p-2 border border-gray-500 mb-3">
 
-  {% if podcast.authors %}
-  <h3 class="font-semibold text-gray-300 mb-2">{{ podcast.authors }}</h3>
-  {% endif %}
-
   <div class="flex items-center w-full mb-3">
 
     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
@@ -18,19 +14,22 @@
          height="32">
     {% endthumbnail %}
 
-    <div>
 
-      <div class="font-semibold flex flex-wrap items-center mb-3">
+    <div>
+      {% if podcast.authors %}
+      <div class="text-gray-300 mb-2">{{ podcast.authors }}</div>
+      {% endif %}
+
+      <div class="mb-2">
         <a class="hover:text-gray-300"
            href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
-        {% if podcast.explicit %}
-        <span class="text-red-300 inline-block ml-2">Explicit</span>
-        {% endif %}
       </div>
+      {% if podcast.explicit %}
+      <div class="text-red-300 font-semibold">Explicit</div>
+      {% endif %}
 
-
-      <div class="flex items-center mb-3">
+      <div class="flex items-center text-sm">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
            class="font-semibold hover:text-gray-300 mr-2"
@@ -46,51 +45,7 @@
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
-      {% if user.is_authenticated %}
-      <div>
-        {% if is_subscribed %}
-        <button data-controller="ajax"
-                data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
-                data-ajax-throttle-value="500"
-                data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded hover:bg-gray-600 font-semibold text-sm flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               class="h-5 w-5 mr-2">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-          </svg>
-          Unsubscribe
-        </button>
-        {% else %}
-        <button data-controller="ajax"
-                data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
-                data-ajax-throttle-value="500"
-                data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded bg-blue-800 hover:bg-blue-600 font-semibold text-sm flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               class="h-5 w-5 mr-2">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          Subscribe
-        </button>
-        {% endif %}
-      </div>
-      {% endif %}
+
     </div>
   </div>
 
@@ -119,10 +74,6 @@
   </div>
 
 </div>
-
-{% if latest_episode %}
-{% include "episodes/_episode.html" with episode=latest_episode remove_thumbnail=True %}
-{% endif %}
 
 {% if recommendations %}
 <div class="mb-3">

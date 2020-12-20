@@ -6,7 +6,7 @@
 
 <h1 class="font-bold mb-3 text-lg">{{ podcast.title }}</h1>
 
-<nav class="mb-3">
+<nav class="mb-3 flex justify-between">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
     <li class="mr-6 pb-2"
         data-controller="active-link"
@@ -14,7 +14,7 @@
         data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
-         href="{{ podcast.get_absolute_url }}">Details</a>
+         href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">Episodes</a>
     </li>
     <li class="pb-2"
         data-controller="active-link"
@@ -22,9 +22,13 @@
         data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
-         href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">Episodes</a>
+         href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}">Details</a>
     </li>
   </ul>
+  {% if user.is_authenticated %}
+  {% include "podcasts/_subscribe_buttons.html" %}
+  {% endif %}
+
 </nav>
 
 {% block podcast_content %}{% endblock %}

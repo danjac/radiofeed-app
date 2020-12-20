@@ -304,23 +304,19 @@ class TestBookmarkList:
 
 
 class TestAddBookmark:
-    def test_post(self, rf, user, episode, mocker):
+    def test_post(self, rf, user, episode):
         req = rf.post(reverse("episodes:add_bookmark", args=[episode.id]))
         req.user = user
-        req._messages = mocker.Mock()
         resp = views.add_bookmark(req, episode.id)
         assert resp.url == episode.get_absolute_url()
         assert Bookmark.objects.filter(user=user, episode=episode).exists()
-        req._messages.add.assert_called()
 
 
 class TestRemoveBookmark:
-    def test_post(self, rf, user, episode, mocker):
+    def test_post(self, rf, user, episode):
         BookmarkFactory(user=user, episode=episode)
         req = rf.post(reverse("episodes:remove_bookmark", args=[episode.id]))
         req.user = user
-        req._messages = mocker.Mock()
         resp = views.remove_bookmark(req, episode.id)
         assert resp.url == episode.get_absolute_url()
         assert not Bookmark.objects.filter(user=user, episode=episode).exists()
-        req._messages.add.assert_called()
