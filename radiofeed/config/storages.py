@@ -20,3 +20,4 @@ class MediaStorage(S3Boto3Storage):
 
 class StaticStorage(ManifestFilesMixin, S3Boto3Storage):
     location = settings.AWS_STATIC_LOCATION
+    manifest_strict = False
