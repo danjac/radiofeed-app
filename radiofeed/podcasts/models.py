@@ -151,35 +151,6 @@ class Subscription(TimeStampedModel):
         indexes = [models.Index(fields=["-created"])]
 
 
-class RecommendationQuerySet(models.QuerySet):
-    def for_user(self, user):
-        """Find recommendations based on podcasts user has
-        bookmarked, listened or subscribed to."""
-
-        podcast_ids = (
-            set(
-                user.audiolog_set.select_related("episode").values_list(
-                    "episode__podcast", flat=True
-                )
-            )
-            | set(
-                user.bookmark_set.select_related("episode").values_list(
-                    "episode__podcast", flat=True
-                )
-            )
-            | set(user.subscription_set.values_list("podcast", flat=True))
-        )
-
-        if not podcast_ids:
-            return self.none()
-
-        return self.filter(podcast__in=podcast_ids).exclude(recommended__in=podcast_ids)
-
-
-class RecommendationManager(models.Manager.from_queryset(RecommendationQuerySet)):
-    ...
-
-
 class Recommendation(models.Model):
     podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
     recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
@@ -189,8 +160,6 @@ class Recommendation(models.Model):
     similarity = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
-
-    objects = RecommendationManager()
 
     class Meta:
         indexes = [
