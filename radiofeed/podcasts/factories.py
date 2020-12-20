@@ -9,7 +9,7 @@ from factory.django import DjangoModelFactory
 from radiofeed.users.factories import UserFactory
 
 # Local
-from .models import Category, Podcast, Subscription
+from .models import Category, Podcast, Recommendation, Subscription
 
 
 class CategoryFactory(DjangoModelFactory):
@@ -36,6 +36,17 @@ class PodcastFactory(DjangoModelFactory):
         if extracted:
             for category in extracted:
                 self.categories.add(category)
+
+
+class RecommendationFactory(DjangoModelFactory):
+    podcast = factory.SubFactory(PodcastFactory)
+    recommended = factory.SubFactory(PodcastFactory)
+
+    frequency = 3
+    similarity = 5.0
+
+    class Meta:
+        model = Recommendation
 
 
 class SubscriptionFactory(DjangoModelFactory):

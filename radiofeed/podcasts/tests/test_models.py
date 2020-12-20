@@ -1,11 +1,52 @@
 # Third Party Libraries
 import pytest
 
+# RadioFeed
+from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
+
 # Local
-from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
-from ..models import Category, Podcast
+from ..factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
+from ..models import Category, Podcast, Recommendation
 
 pytestmark = pytest.mark.django_db
+
+
+class TestRecommendationManager:
+    def test_for_user(self, user):
+
+        # not recommended
+        PodcastFactory()
+
+        # subscribed
+        subscribed = SubscriptionFactory(user=user).podcast
+
+        # bookmarked
+        bookmarked = BookmarkFactory(user=user).episode.podcast
+
+        # listened
+        listened = AudioLogFactory(user=user).episode.podcast
+
+        RecommendationFactory(podcast=subscribed)
+        RecommendationFactory(podcast=listened)
+        RecommendationFactory(podcast=bookmarked)
+
+        # ensure we exclude recommended
+        RecommendationFactory(recommended=subscribed)
+        RecommendationFactory(recommended=listened)
+        RecommendationFactory(recommended=bookmarked)
+
+        recommendations = Recommendation.objects.for_user(user)
+        assert recommendations.count() == 3
+        recommended = [r.recommended for r in recommendations]
+
+        assert subscribed not in recommended
+        assert listened not in recommended
+        assert bookmarked not in recommended
 
 
 class TestCategoryManager:
