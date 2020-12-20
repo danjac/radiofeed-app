@@ -20,8 +20,10 @@
 
     <div>
 
-      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3">
-        <span class="text-gray-300">{{ total_episodes }} episode{{ total_episodes|pluralize }}</span>
+      <div class="font-semibold flex flex-wrap items-center mb-3">
+        <a class="hover:text-gray-300"
+           href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
+          {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
         {% if podcast.explicit %}
         <span class="text-red-300 inline-block ml-2">Explicit</span>
         {% endif %}
@@ -117,6 +119,10 @@
   </div>
 
 </div>
+
+{% if latest_episode %}
+{% include "episodes/_episode.html" with episode=latest_episode remove_thumbnail=True %}
+{% endif %}
 
 {% if recommendations %}
 <div class="mb-3">

@@ -77,7 +77,9 @@ def podcast_detail(request, podcast_id, slug=None):
         .order_by("-similarity", "-frequency")
     )[:9]
 
-    total_episodes = podcast.episode_set.count()
+    episodes = podcast.episode_set.all()
+    total_episodes = episodes.count()
+    latest_episode = episodes.order_by("-pub_date").first()
 
     return podcast_detail_response(
         request,
@@ -85,6 +87,7 @@ def podcast_detail(request, podcast_id, slug=None):
         podcast,
         {
             "total_episodes": total_episodes,
+            "latest_episode": latest_episode,
             "recommendations": recommendations,
             "is_subscribed": is_subscribed,
         },

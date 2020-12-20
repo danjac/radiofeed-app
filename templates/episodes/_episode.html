@@ -21,6 +21,7 @@
     </div>
 
     <div class="flex items-center">
+      {% if not remove_thumbnail %}
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <a href="{{ podcast.get_absolute_url }}">
         <img class="object-cover block mr-2 h-16 w-16 border border-white hover:opacity-75 bg-transparent"
@@ -30,6 +31,7 @@
              height="16">
       </a>
       {% endthumbnail %}
+      {% endif %}
 
       <div class="leading-tight">
         <div class="mb-2 flex flex-wrap hidden md:block tracking-tight">
