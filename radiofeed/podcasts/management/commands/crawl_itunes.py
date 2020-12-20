@@ -4,21 +4,12 @@ from django.core.management.base import BaseCommand
 # RadioFeed
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.tasks import sync_podcast_feed
 
 
 class Command(BaseCommand):
     help = "Fetches top iTunes results from API for each category and adds new podcasts to database"
 
     def add_arguments(self, parser):
-
-        parser.add_argument(
-            "--sync-podcast-feeds",
-            action="store_true",
-            default=True,
-            help="Automatically syncs podcast feed",
-        )
-
         parser.add_argument(
             "--limit", type=int, default=100, help="Max results from iTunes API",
         )
@@ -48,7 +39,7 @@ class Command(BaseCommand):
                 for result in [r for r in results if r.itunes not in current]
             ]
 
-            podcasts = Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+            Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
 
             if podcasts:
                 self.stdout.write(
@@ -56,6 +47,3 @@ class Command(BaseCommand):
                         f"{category.name}: {len(podcasts)} new podcast(s)"
                     )
                 )
-                if options["sync_podcast_feeds"]:
-                    for podcast in podcasts:
-                        sync_podcast_feed.delay(podcast.id)
