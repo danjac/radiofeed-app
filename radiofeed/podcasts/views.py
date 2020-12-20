@@ -86,8 +86,10 @@ def podcast_detail(request, podcast_id, slug=None):
 def podcast_episode_list(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.with_current_time(request.user).with_has_bookmarked(
-        request.user
+    episodes = (
+        podcast.episode_set.with_current_time(request.user)
+        .with_has_bookmarked(request.user)
+        .select_related("podcast")
     )
 
     search = request.GET.get("q", None)
