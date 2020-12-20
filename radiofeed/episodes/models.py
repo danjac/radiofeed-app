@@ -16,6 +16,17 @@ from radiofeed.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(models.QuerySet):
+    def with_has_bookmarked(self, user):
+        if user.is_anonymous:
+            return self.annotate(
+                has_bookmarked=models.Value(False, output_field=models.BooleanField())
+            )
+        return self.annotate(
+            has_bookmarked=models.Exists(
+                Bookmark.objects.filter(user=user, episode=models.OuterRef("pk"))
+            )
+        )
+
     def with_current_time(self, user):
         if user.is_anonymous:
             return self.annotate(
@@ -176,6 +187,17 @@ class Bookmark(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
+    def with_has_bookmarked(self, user):
+        if user.is_anonymous:
+            return self.annotate(
+                has_bookmarked=models.Value(False, output_field=models.BooleanField())
+            )
+        return self.annotate(
+            has_bookmarked=models.Exists(
+                Bookmark.objects.filter(user=user, episode=models.OuterRef("episode"))
+            )
+        )
+
     def search(self, search_term):
         if not search_term:
             return self.none()

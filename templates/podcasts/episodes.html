@@ -43,7 +43,7 @@
 {% endif %}
 
 {% for episode in page_obj %}
-{% include "episodes/_episode.html" with current_time=episode.current_time %}
+{% include "episodes/_episode.html" with current_time=episode.current_time is_bookmarked=episode.has_bookmarked %}
 {% empty %}
 <p class="text-center sm:text-left">
   {% if search %}

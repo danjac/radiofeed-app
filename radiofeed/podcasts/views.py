@@ -84,7 +84,9 @@ def podcast_detail(request, podcast_id, slug=None):
 def podcast_episode_list(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.with_current_time(request.user)
+    episodes = podcast.episode_set.with_current_time(request.user).with_has_bookmarked(
+        request.user
+    )
 
     search = request.GET.get("q", None)
     ordering = request.GET.get("ordering")
@@ -130,13 +132,15 @@ def category_detail(request, category_id, slug=None):
     )
     children = category.children.order_by("name")
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_has_subscribed(
+        request.user
+    )
     search = request.GET.get("q", None)
 
     if search:
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
-        podcasts = podcasts.order_by("-pub_date")
+        podcasts = podcasts.order_by("-has_subscribed", "-pub_date")
 
     return TemplateResponse(
         request,

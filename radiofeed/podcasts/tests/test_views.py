@@ -218,19 +218,18 @@ class TestCategoryList:
 
 
 class TestCategoryDetail:
-    def test_get(self, rf, category):
+    def test_get(self, rf, category, anonymous_user):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
-
-        resp = views.category_detail(
-            rf.get(category.get_absolute_url()), category.id, category.slug
-        )
+        req = rf.get(category.get_absolute_url())
+        req.user = anonymous_user
+        resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == 200
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 12
 
-    def test_search(self, rf, category):
+    def test_search(self, rf, category, anonymous_user):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
@@ -239,6 +238,7 @@ class TestCategoryDetail:
         PodcastFactory(title="testing", categories=[category])
 
         req = rf.get(category.get_absolute_url(), {"q": "testing"})
+        req.user = anonymous_user
         resp = views.category_detail(req, category.id, category.slug)
 
         assert resp.status_code == 200

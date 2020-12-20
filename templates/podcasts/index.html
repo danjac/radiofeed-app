@@ -10,7 +10,7 @@
       <span class="mr-1">Search</span>
       <a class="font-semibold hover:text-gray-300 mr-1"
          href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-        <span class="mr-1">|</span>
+      <span class="mr-1">|</span>
       <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
     </div>
@@ -36,7 +36,7 @@
 {% endif %}
 
 {% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" %}
+{% include "podcasts/_podcast.html" with is_subscribed=podcast.has_subscribed %}
 {% empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}"
