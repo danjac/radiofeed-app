@@ -61,7 +61,7 @@ def _get_search_results(params, cache_key, cache_timeout=86400, requests_timeout
     if results is None:
         try:
             response = requests.get(
-                ITUNES_SEARCH_URL, params, verify=False, timeout=requests_timeout
+                ITUNES_SEARCH_URL, params, timeout=requests_timeout, verify=True,
             )
             response.raise_for_status()
             results = response.json()["results"]
