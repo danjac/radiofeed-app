@@ -1,4 +1,5 @@
 # Standard Library
+import http
 import json
 
 # Django
@@ -308,7 +309,7 @@ class TestAddBookmark:
         req = rf.post(reverse("episodes:add_bookmark", args=[episode.id]))
         req.user = user
         resp = views.add_bookmark(req, episode.id)
-        assert resp.url == episode.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.CREATED
         assert Bookmark.objects.filter(user=user, episode=episode).exists()
 
 
@@ -318,5 +319,5 @@ class TestRemoveBookmark:
         req = rf.post(reverse("episodes:remove_bookmark", args=[episode.id]))
         req.user = user
         resp = views.remove_bookmark(req, episode.id)
-        assert resp.url == episode.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert not Bookmark.objects.filter(user=user, episode=episode).exists()

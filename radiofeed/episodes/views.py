@@ -1,11 +1,12 @@
 # Standard Library
+import http
 import json
 
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
@@ -120,7 +121,7 @@ def add_bookmark(request, episode_id):
         Bookmark.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return redirect(episode.get_absolute_url())
+    return HttpResponse(status=http.HTTPStatus.CREATED)
 
 
 @login_required
@@ -128,7 +129,7 @@ def add_bookmark(request, episode_id):
 def remove_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(episode=episode, user=request.user).delete()
-    return redirect(episode.get_absolute_url())
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 # Player control views
