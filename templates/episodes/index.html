@@ -30,7 +30,7 @@
 {% endif %}
 
 {% for episode in page_obj %}
-{% include "episodes/_episode.html" with current_time=episode.current_time show_thumbnail=True %}
+{% include "episodes/_episode.html" with current_time=episode.current_time %}
 {% empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
