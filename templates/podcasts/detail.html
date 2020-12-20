@@ -51,7 +51,7 @@
                 data-ajax-url-value="{% url 'podcasts:unsubscribe' podcast.id %}"
                 data-ajax-throttle-value="500"
                 data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded hover:bg-gray-600 text-sm flex items-center">
+                class="px-2 py-1 border rounded hover:bg-gray-600 font-semibold text-sm flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg"
                fill="none"
                viewBox="0 0 24 24"
@@ -69,7 +69,7 @@
                 data-ajax-url-value="{% url 'podcasts:subscribe' podcast.id %}"
                 data-ajax-throttle-value="500"
                 data-action="click->ajax#post:once"
-                class="px-2 py-1 border rounded bg-indigo-800 hover:bg-indigo-600 text-sm flex items-center">
+                class="px-2 py-1 border rounded bg-blue-800 hover:bg-blue-600 font-semibold text-sm flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg"
                fill="none"
                viewBox="0 0 24 24"
@@ -120,7 +120,7 @@
 
 {% if recommendations %}
 <div class="mb-3">
-  <h3 class="text-lg font-semibold mb-3 text-center"> Also recommended... </h3>
+  <h3 class="font-semibold mb-3 text-center"> Also recommended... </h3>
   <div class="overflow-x-auto lg:overflow-none flex whitespace-nowrap lg:whitespace-none pb-1">
 
     {% for recommendation in recommendations %}

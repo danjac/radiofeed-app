@@ -17,7 +17,7 @@
         <img data-controller="link"
              data-link-url-value="{{ podcast.get_absolute_url }}"
              data-action="click->link#visit"
-             class="object-cover block cursor-pointer h-8 w-8 self-center mr-4 hover:opacity-75 bg-transparent border border-white"
+             class="object-cover block cursor-pointer h-8 w-8 self-center mr-2 hover:opacity-75 bg-transparent border border-white"
              title="{{ podcast.title }}"
              src="{{ img.url }}"
              role="link"
@@ -26,7 +26,7 @@
         {% endthumbnail %}
         <a href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}"
-           class="w-64 sm:w-full truncate">{{ episode.title|truncatechars:80 }}</a>
+           class="w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
       </div>
       <button data-action="toggle#toggle"
               class="focus:outline-none float-right hover:text-blue-500"
@@ -62,7 +62,7 @@
       </svg>
     </button>
 
-    <div class="mb-2 md:hidden pr-1">
+    <div class="mb-2 md:hidden pr-1 text-sm">
       <a href="{{ episode.get_absolute_url }}"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
     <div class="flex items-stretch">
@@ -71,7 +71,7 @@
       <img data-controller="link"
            data-link-url-value="{{ podcast.get_absolute_url }}"
            data-action="click->link#visit"
-           class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-4"
+           class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-2 border border-white"
            title="{{ podcast.title }}"
            src="{{ img.url }}"
            role="link"
@@ -98,7 +98,7 @@
                    fill="none"
                    viewBox="0 0 24 24"
                    stroke="currentColor"
-                   class="h-9 w-9">
+                   class="h-10 w-10">
                 <path stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
@@ -114,7 +114,7 @@
                    fill="none"
                    viewBox="0 0 24 24"
                    stroke="currentColor"
-                   class="h-9 w-9">
+                   class="h-10 w-10">
                 <path stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
