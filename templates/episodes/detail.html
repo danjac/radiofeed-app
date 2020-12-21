@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load thumbnail episodes %}
+{% load episodes %}
 
 {% block subtitle %} | {{ episode.podcast.title }} | {{ episode.title }}{% endblock %}
 
@@ -56,15 +56,9 @@
   </h2>
 
   <div class="flex items-center w-full mb-3">
-    {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
     <a href="{{ podcast.get_absolute_url }}">
-      <img src="{{ img.url }}"
-           alt="{{ podcast.title }}"
-           class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32 border border-white hover:opacity-75 bg-transparent"
-           width="32"
-           height="32">
+      {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 hover:opacity-75 mr-2" %}
     </a>
-    {% endthumbnail %}
     <div>
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>

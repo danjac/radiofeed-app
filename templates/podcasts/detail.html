@@ -1,19 +1,11 @@
 {% extends "podcasts/podcast_base.html" %}
-{% load thumbnail %}
 
 {% block podcast_content %}
 <div class="p-2 border border-gray-500 mb-3">
 
   <div class="flex items-center w-full mb-3">
 
-    {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-    <img src="{{ img.url }}"
-         alt="{{ podcast.title }}"
-         class="object-cover mr-4 h-24 w-24 sm:h-32 sm:w-32 border border-white bg-transparent"
-         width="32"
-         height="32">
-    {% endthumbnail %}
-
+    {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 mr-2" %}
 
     <div>
       {% if podcast.authors %}

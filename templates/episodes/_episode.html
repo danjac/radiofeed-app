@@ -1,4 +1,4 @@
-{% load thumbnail episodes %}
+{% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
 <div class="flex justify-between items-center p-2 border border-gray-500 mb-3"
@@ -21,15 +21,9 @@
     </div>
 
     <div class="flex items-center">
-      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <a href="{{ podcast_url|default:podcast.get_absolute_url }}">
-        <img class="object-cover block mr-2 h-16 w-16 border border-white hover:opacity-75 bg-transparent"
-             title="{{ podcast.title }}"
-             src="{{ img.url }}"
-             width="16"
-             height="16">
+        {% include "podcasts/_podcast_cover_image.html" %}
       </a>
-      {% endthumbnail %}
 
       <div class="leading-tight">
         <div class="mb-2 flex flex-wrap hidden md:block tracking-tight">
