@@ -1,4 +1,5 @@
 # Standard Library
+import datetime
 import http
 import json
 
@@ -158,8 +159,6 @@ class TestTogglePlayerPause:
         resp = views.toggle_player_pause(req, pause=True)
 
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        body = json.loads(resp.content)
-        assert body["error"]
 
 
 class TestStopPlayer:
@@ -194,6 +193,55 @@ class TestStopPlayer:
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
+
+    def test_completed(self, rf, user, episode):
+        req = rf.post(
+            reverse("episodes:mark_complete"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+
+        resp = views.stop_player(req, completed=True)
+
+        assert req.session == {}
+
+        assert resp.status_code == http.HTTPStatus.OK
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1000
+        assert body["completed"] is True
+
+        log = AudioLog.objects.get(user=user, episode=episode)
+        assert log.current_time == 1000
+        assert log.completed
+
+    def test_completed_has_next(self, rf, user, episode):
+        next_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+        req = rf.post(
+            reverse("episodes:mark_complete"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+
+        resp = views.stop_player(req, completed=True)
+
+        assert req.session == {}
+
+        assert resp.status_code == http.HTTPStatus.OK
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1000
+        assert body["completed"] is True
+        assert body["next_episode"]["episode"] == next_episode.id
+
+        log = AudioLog.objects.get(user=user, episode=episode)
+        assert log.current_time == 1000
+        assert log.completed
 
 
 class TestUpdatePlayerTime:

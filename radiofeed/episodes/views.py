@@ -5,9 +5,10 @@ import json
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 # Local
@@ -142,7 +143,7 @@ def toggle_player_pause(request, pause):
     if player:
         request.session["player"] = {**player, "paused": pause}
         return JsonResponse({"paused": pause})
-    return player_status_error_response()
+    return HttpResponseBadRequest()
 
 
 @require_POST
@@ -154,10 +155,22 @@ def stop_player(request, completed=False):
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
 
-        return player_status_response(
-            episode, player["current_time"], extra_context={"completed": completed}
-        )
-    return player_status_error_response()
+        extra_context = {"completed": completed}
+
+        next_episode = episode.get_next_episode()
+        if next_episode:
+            extra_context |= {
+                "next_episode": {
+                    "episode": next_episode.id,
+                    "play_url": reverse(
+                        "episodes:start_player", args=[next_episode.id]
+                    ),
+                    "duration": next_episode.get_duration_in_seconds(),
+                }
+            }
+
+        return player_status_response(episode, player["current_time"], extra_context)
+    return HttpResponseBadRequest()
 
 
 @require_POST
@@ -174,7 +187,7 @@ def update_player_time(request):
         }
         episode.log_activity(request.user, current_time)
         return player_status_response(episode, current_time)
-    return player_status_error_response()
+    return HttpResponseBadRequest()
 
 
 def get_current_time_from_request(request):
@@ -196,7 +209,3 @@ def player_status_response(episode, current_time, extra_context=None):
         }
         | (extra_context or {})
     )
-
-
-def player_status_error_response():
-    return JsonResponse({"error": "player not running"}, status=400)

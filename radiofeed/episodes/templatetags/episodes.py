@@ -13,7 +13,9 @@ def is_playing(context, episode):
     player = context["request"].session.get("player")
     if player is None:
         return False
-    return player["episode"] == episode.id
+    if episode:
+        return player["episode"] == episode.id
+    return True
 
 
 @register.simple_tag(takes_context=True)

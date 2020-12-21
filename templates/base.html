@@ -122,13 +122,6 @@
       <nav class="pt-3">
         <ul class="">
           <li class="py-2">
-            <label class="flex items-center">
-              <input type="checkbox"
-                     class="mr-3 h-5 w-5">
-              Autoplay
-            </label>
-          </li>
-          <li class="py-2">
             <a href="{% url 'podcasts:podcast_list' %}"
                data-controller="active-link"
                data-active-link-active-class="sidebar--active"
@@ -289,13 +282,15 @@
        data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        data-player-pause-url-value="{% url 'episodes:pause_player' %}"
        data-player-resume-url-value="{% url 'episodes:resume_player' %}"
-       {% if player and player.paused %}
+       {% if player %}
+       {% if player.paused %}
        data-player-paused-value
        {% endif %}
-       {% if player and player.episode %}
+       {% if player.episode %}
        data-player-episode-value="{{ player.episode.id }}"
        data-player-duration-value="{{ player.episode.get_duration_in_seconds }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"
+       {% endif %}
        {% endif %}>
     {% include "episodes/_player.html" with episode=player.episode %}
   </div>

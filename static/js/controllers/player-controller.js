@@ -100,6 +100,16 @@ export default class extends Controller {
     if (stopUrl) {
       const response = await axios.post(stopUrl);
       this.dispatch('update', response.data);
+      if (response.data.next_episode) {
+        const { next_episode } = response.data;
+        this.open({
+          detail: {
+            ...next_episode,
+            episode: next_episode.episode.toString(),
+            playUrl: next_episode.play_url,
+          },
+        });
+      }
     }
     this.episodeValue = '';
   }
