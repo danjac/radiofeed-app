@@ -44,4 +44,4 @@ class Command(BaseCommand):
                             )
                         )
                 except Exception as e:
-                    self.stdout.write(self.style.ERROR(e))
+                    self.stdout.write(self.style.ERROR(str(e)))
