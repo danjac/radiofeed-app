@@ -14,6 +14,7 @@ from radiofeed.episodes.models import Episode
 
 # Local
 from ..models import Category
+from ..recommender.text_parser import extract_keywords
 from .date_parser import parse_date
 from .headers import get_headers
 from .images import InvalidImageURL, fetch_image_from_url
@@ -130,7 +131,25 @@ class RssParser:
             self.podcast.pub_date = max(e.pub_date for e in new_episodes)
             self.podcast.save(update_fields=["pub_date"])
 
+        # extract text: title, description, keywords, authors, cat names
+        # last 6 episode titles; run extract_keywords through combined result
+
+        self.podcast.extracted_text = self.extract_text(categories, new_episodes)
+
         return new_episodes
+
+    def extract_text(self, categories, episodes):
+        text = " ".join(
+            [
+                self.podcast.title,
+                self.podcast.description,
+                self.podcast.keywords,
+                self.podcast.authors,
+            ]
+            + [c.name for c in categories]
+            + [e.title for e in episodes][:6]
+        )
+        return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
 
     def create_episodes_from_feed(self, entries):
         """Parses new episodes from podcast feed."""

@@ -6,9 +6,7 @@ import operator
 import statistics
 
 # Django
-from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
-from django.db.models import OuterRef, Q, Subquery
 from django.db.models.functions import Lower
 from django.utils import timezone
 
@@ -17,12 +15,9 @@ import pandas
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# RadioFeed
-from radiofeed.episodes.models import Episode
-
 # Local
 from ..models import Category, Podcast, Recommendation
-from .text_parser import extract_keywords, get_stopwords
+from .text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 
@@ -58,29 +53,7 @@ class PodcastRecommender:
     def get_podcast_queryset(self):
         min_pub_date = timezone.now() - datetime.timedelta(days=self.max_pub_days)
 
-        return Podcast.objects.filter(pub_date__gt=min_pub_date).annotate(
-            category_names=StringAgg(
-                "categories__name",
-                delimiter=" | ",
-                ordering="categories__name",
-                distinct=True,
-            ),
-            episode_titles=StringAgg(
-                "episode__title",
-                delimiter=" ",
-                distinct=True,
-                filter=Q(
-                    episode__pk__in=Subquery(
-                        Episode.objects.filter(
-                            podcast=OuterRef("pk"), pub_date__gt=min_pub_date
-                        )
-                        .order_by("-pub_date")
-                        .distinct()
-                        .values("pk")[: self.num_recent_episodes]
-                    )
-                ),
-            ),
-        )
+        return Podcast.objects.filter(pub_date__gt=min_pub_date)
 
     def create_recommendations_for_language(self, language):
         logger.info("Recommendations for %s", language)
@@ -133,40 +106,21 @@ class PodcastRecommender:
 
     def find_similarities_for_podcasts(self, language, queryset):
 
-        for podcast_id, recommended in self.find_similarities(
-            language,
-            queryset,
-            fieldnames=[
-                "title",
-                "description",
-                "keywords",
-                "authors",
-                "category_names",
-                "episode_titles",
-            ],
-        ):
+        for podcast_id, recommended in self.find_similarities(language, queryset,):
             for recommended_id, similarity in recommended:
                 similarity = round(similarity, 2)
                 if similarity > 0:
                     yield podcast_id, recommended_id, similarity
 
-    def find_similarities(self, language, queryset, fieldnames):
+    def find_similarities(self, language, queryset):
         """Given a queryset, will yield tuples of
         (id, (similar_1, similar_2, ...)) based on text content.
         """
         if not queryset.exists():
             return
 
-        df = pandas.DataFrame(queryset.values(*["id"] + list(fieldnames)))
+        df = pandas.DataFrame(queryset.values("id", "extracted_text"))
 
-        def combine(row):
-            text = " ".join(row[col] for col in fieldnames if row[col])
-            return " ".join([kw for kw in extract_keywords(language, text)])
-
-        df["combined"] = df.apply(combine, axis=1)
-
-        # remove any unused cols
-        df.drop(fieldnames, axis=1)
         df.drop_duplicates(inplace=True)
 
         vec = TfidfVectorizer(
@@ -174,7 +128,7 @@ class PodcastRecommender:
         )
 
         try:
-            count_matrix = vec.fit_transform(df["combined"])
+            count_matrix = vec.fit_transform(df["extracted_text"])
         except ValueError:
             # empty set
             return
