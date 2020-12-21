@@ -145,6 +145,20 @@ class Episode(models.Model):
             },
         )
 
+    def get_next_episode(self):
+        return (
+            self.podcast.episode_set.filter(pub_date__gt=self.pub_date)
+            .order_by("pub_date")
+            .first()
+        )
+
+    def get_previous_episode(self):
+        return (
+            self.podcast.episode_set.filter(pub_date__lt=self.pub_date)
+            .order_by("-pub_date")
+            .first()
+        )
+
 
 class BookmarkQuerySet(models.QuerySet):
     def with_current_time(self, user):
