@@ -114,6 +114,28 @@ class TestEpisodeModel:
     def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
         assert Episode(duration="2:30:30").get_duration_in_seconds() == 9030
 
+    def test_has_next_previous_episode(self, episode):
+        assert episode.get_next_episode() is None
+        assert episode.get_previous_episode() is None
+
+        next_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        previous_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
+        )
+
+        EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=3),
+        )
+
+        assert episode.get_next_episode() == next_episode
+        assert episode.get_previous_episode() == previous_episode
+
 
 class TestBookmarkManager:
     def test_search(self):
