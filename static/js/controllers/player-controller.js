@@ -167,11 +167,11 @@ export default class extends Controller {
     this.toggleActiveMode();
     if (this.hasTitleTarget && this.hasLoadingTarget) {
       if (this.loadingValue) {
-        this.titleTarget.classList.add('hidden');
-        this.loadingTarget.classList.remove('hidden');
+        this.titleTargets.forEach((target) => target.classList.add('hidden'));
+        this.loadingTargets.forEach((target) => target.classList.remove('hidden'));
       } else {
-        this.titleTarget.classList.remove('hidden');
-        this.loadingTarget.classList.add('hidden');
+        this.titleTargets.forEach((target) => target.classList.remove('hidden'));
+        this.loadingTargets.forEach((target) => target.classList.add('hidden'));
       }
     }
   }
