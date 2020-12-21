@@ -132,15 +132,13 @@ def category_detail(request, category_id, slug=None):
     )
     children = category.children.order_by("name")
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_has_subscribed(
-        request.user
-    )
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
     search = request.GET.get("q", None)
 
     if search:
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
-        podcasts = podcasts.order_by("-has_subscribed", "-pub_date")
+        podcasts = podcasts.order_by("-pub_date")
 
     return TemplateResponse(
         request,

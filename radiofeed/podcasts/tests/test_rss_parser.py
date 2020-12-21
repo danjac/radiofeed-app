@@ -106,6 +106,7 @@ class TestRssParser:
         assert podcast.title == "Mysterious Universe"
         assert podcast.etag
         assert podcast.authors
+        assert podcast.extracted_text
         assert podcast.categories.count() == 6
         assert podcast.episode_set.count() == 20
 
