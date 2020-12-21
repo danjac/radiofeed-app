@@ -15,6 +15,30 @@ pytestmark = pytest.mark.django_db
 
 
 class TestEpisodeManager:
+    def test_with_current_time_if_anonymous(self, anonymous_user):
+        EpisodeFactory()
+        episode = Episode.objects.with_current_time(anonymous_user).first()
+        assert episode.current_time == 0
+        assert episode.completed is False
+
+    def test_with_current_time_if_not_played(self, user):
+        EpisodeFactory()
+        episode = Episode.objects.with_current_time(user).first()
+        assert episode.current_time is None
+        assert episode.completed is None
+
+    def test_with_current_time_if_played(self, user):
+        AudioLogFactory(user=user, current_time=20)
+        episode = Episode.objects.with_current_time(user).first()
+        assert episode.current_time == 20
+        assert episode.completed is None
+
+    def test_with_current_time_if_completed(self, user):
+        AudioLogFactory(user=user, current_time=20, completed=timezone.now())
+        episode = Episode.objects.with_current_time(user).first()
+        assert episode.current_time == 20
+        assert episode.completed is not None
+
     def test_has_bookmarked_anonymous(self, anonymous_user):
         bookmarked_1 = EpisodeFactory()
         bookmarked_2 = EpisodeFactory()

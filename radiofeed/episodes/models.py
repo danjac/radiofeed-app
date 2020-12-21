@@ -28,16 +28,18 @@ class EpisodeQuerySet(models.QuerySet):
         )
 
     def with_current_time(self, user):
+
         if user.is_anonymous:
             return self.annotate(
-                current_time=models.Value(0, output_field=models.IntegerField())
+                completed=models.Value(False, output_field=models.BooleanField()),
+                current_time=models.Value(0, output_field=models.IntegerField()),
             )
+
+        logs = AudioLog.objects.filter(user=user, episode=models.OuterRef("pk"))
+
         return self.annotate(
-            current_time=models.Subquery(
-                AudioLog.objects.filter(
-                    user=user, episode=models.OuterRef("pk")
-                ).values("current_time")
-            )
+            completed=models.Subquery(logs.values("completed")),
+            current_time=models.Subquery(logs.values("current_time")),
         )
 
     def search(self, search_term):
@@ -129,14 +131,18 @@ class Episode(models.Model):
         """Use with the with_current_time QuerySet method."""
         return self.get_duration_in_seconds() - getattr(self, "current_time", 0)
 
-    def log_activity(self, user, current_time=0):
+    def log_activity(self, user, current_time=0, completed=False):
         # Updates audio log with current time
         if user.is_anonymous:
             return (None, False)
         return AudioLog.objects.update_or_create(
             episode=self,
             user=user,
-            defaults={"current_time": current_time, "updated": timezone.now(),},
+            defaults={
+                "current_time": current_time,
+                "updated": timezone.now(),
+                "completed": timezone.now() if completed else None,
+            },
         )
 
 
@@ -223,6 +229,7 @@ class AudioLog(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     updated = models.DateTimeField()
+    completed = models.DateTimeField(null=True, blank=True)
     current_time = models.IntegerField(default=0)
 
     objects = AudioLogManager()

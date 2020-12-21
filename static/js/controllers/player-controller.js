@@ -21,6 +21,7 @@ export default class extends Controller {
     progressUrl: String,
     stopUrl: String,
     pauseUrl: String,
+    markCompleteUrl: String,
     resumeUrl: String,
     currentTime: Number,
     duration: Number,
@@ -65,7 +66,7 @@ export default class extends Controller {
   }
 
   close() {
-    this.closePlayer();
+    this.closePlayer(this.stopUrlValue);
   }
 
   stop() {
@@ -73,15 +74,24 @@ export default class extends Controller {
       episode: this.episodeValue,
       currentTime: this.currentTimeValue,
     });
-    this.closePlayer();
+    this.closePlayer(this.stopUrlValue);
   }
 
-  async closePlayer() {
+  ended() {
+    this.dispatch('close', {
+      episode: this.episodeValue,
+      currentTime: this.currentTimeValue,
+      completed: true,
+    });
+    this.closePlayer(this.markCompleteUrlValue);
+  }
+
+  async closePlayer(stopUrl) {
     this.element.innerHTML = '';
     this.durationValue = 0;
     this.lastUpdated = 0;
-    if (this.stopUrlValue) {
-      const response = await axios.post(this.stopUrlValue);
+    if (stopUrl) {
+      const response = await axios.post(stopUrl);
       this.dispatch('update', response.data);
     }
     this.episodeValue = '';

@@ -7,7 +7,7 @@
   <audio preload="metadata"
          src="{{ episode.media_url }}"
          data-player-target="audio"
-         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#stop canplaythrough->player#canPlay playing->player#canPlay stalled->player#wait waiting->player#wait"></audio>
+         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#ended canplaythrough->player#canPlay playing->player#canPlay stalled->player#wait waiting->player#wait"></audio>
 
   <div data-toggle-target="item"
        class="hidden">

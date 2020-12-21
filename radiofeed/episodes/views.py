@@ -159,14 +159,12 @@ def toggle_player_pause(request, pause):
 
 
 @require_POST
-def stop_player(request):
+def stop_player(request, completed=False):
     """Remove player from session"""
     player = request.session.pop("player", None)
     if player:
         episode = get_object_or_404(Episode, pk=player["episode"])
-        episode.log_activity(
-            request.user, player["current_time"],
-        )
+        episode.log_activity(request.user, player["current_time"], completed)
         return player_status_response(episode, player["current_time"])
     return player_status_error_response()
 

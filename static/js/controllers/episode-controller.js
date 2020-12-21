@@ -3,11 +3,13 @@ import { useDispatch, useDebounce } from 'stimulus-use';
 
 export default class extends Controller {
   static targets = ['playButton', 'stopButton', 'currentTime'];
+  static classes = ['completed'];
   static debounces = ['play', 'stop'];
 
   static values = {
     id: String,
     duration: Number,
+    durationStr: String,
     currentTime: Number,
     playUrl: String,
     playing: Boolean,
@@ -42,17 +44,24 @@ export default class extends Controller {
   }
 
   close(event) {
-    const { currentTime, episode } = event.detail;
+    const { currentTime, episode, completed } = event.detail;
     // player is closed
     this.playingValue = false;
     if (episode === this.idValue) {
       this.currentTimeValue = currentTime;
     }
+    if (completed) {
+      this.currentTimeTarget.classList.add(this.completedClass);
+      this.currentTimeTarget.textContent = this.durationStrValue;
+    }
   }
 
   update({ detail: { episode, time_remaining, completed, duration } }) {
     if (episode && episode.toString() === this.idValue) {
-      if (time_remaining && !completed) {
+      if (completed) {
+        this.currentTimeTarget.textContent = duration;
+        this.currentTimeTarget.classList.add(this.completedClass);
+      } else if (time_remaining) {
         this.currentTimeTarget.textContent = '~' + time_remaining;
       } else {
         this.currentTimeTarget.textContent = duration;

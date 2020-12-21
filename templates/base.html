@@ -279,6 +279,7 @@
        data-player-inactive-class="player--inactive"
        data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
        data-player-stop-url-value="{% url 'episodes:stop_player' %}"
+       data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        data-player-pause-url-value="{% url 'episodes:pause_player' %}"
        data-player-resume-url-value="{% url 'episodes:resume_player' %}"
        {% if player and player.paused %}

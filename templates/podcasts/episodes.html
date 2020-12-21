@@ -44,7 +44,7 @@
 
 {% for episode in page_obj %}
 {% url 'podcasts:podcast_detail' podcast.id podcast.slug as podcast_url %}
-{% include "episodes/_episode.html" with current_time=episode.current_time %}
+{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
 {% empty %}
 <p class="text-center sm:text-left">
   {% if search %}

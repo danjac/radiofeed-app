@@ -22,6 +22,12 @@ urlpatterns = [
         kwargs={"pause": False},
     ),
     path("player/~stop/", views.stop_player, name="stop_player"),
+    path(
+        "player/~mark-complete/",
+        views.stop_player,
+        name="mark_complete",
+        kwargs={"completed": True},
+    ),
     path("player/~update/", views.update_player_time, name="update_player_time"),
     path("history/", views.history, name="history"),
     path("bookmarks/", views.bookmark_list, name="bookmark_list"),
