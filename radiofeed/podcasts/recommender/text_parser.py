@@ -73,14 +73,3 @@ def extract_keywords(language, text):
     stopwords = get_stopwords(language)
 
     return [token for token in tokens if token and token not in stopwords]
-
-
-def extract_text(podcast, categories, episodes):
-    """Extracts keywords from podcast description fields, categories
-    and recent episodes."""
-    text = " ".join(
-        [podcast.title, podcast.description, podcast.keywords, podcast.authors,]
-        + [c.name for c in categories]
-        + [e.title for e in episodes][:6]
-    )
-    return " ".join([kw for kw in extract_keywords(podcast.language, text)])
