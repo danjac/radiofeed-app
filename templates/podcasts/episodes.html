@@ -5,7 +5,7 @@
 
 {% paginate episodes as page_obj %}
 
-<div class="sm:flex justify-between items-center mb-3">
+<div class="sm:flex justify-between items-center mb-3 pt-3 border-t border-gray-500">
   <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
