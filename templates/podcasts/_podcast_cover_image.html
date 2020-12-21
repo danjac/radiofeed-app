@@ -1,4 +1,4 @@
-{% load thumbnail %}
+{% load thumbnail static %}
 {% spaceless %}
 {% with size=image_size|default:"16" %}
 <img class="object-cover border border-white bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
@@ -7,6 +7,7 @@
      width="{{ size }}"
      height="{{ size }}"
      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}src="{{ img.url }}"
-     {% empty %}src="https://via.placeholder.com/200"{% endthumbnail %}>
+     {% empty %}src="{% static 'img/podcast-icon.png' %}"
+     {% endthumbnail %}>
 {% endwith %}
 {% endspaceless %}

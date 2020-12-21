@@ -240,8 +240,8 @@
               Settings
             </a>
           </li>
+          {% endif %}
 
-          {% else %}
           <li class="py-2">
             <a href="{% url 'about' %}"
                data-controller="active-link"
@@ -260,7 +260,6 @@
               About
             </a>
           </li>
-          {% endif %}
         </ul>
       </nav>
     </div>

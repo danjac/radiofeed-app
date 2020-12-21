@@ -1,4 +1,4 @@
-{% load thumbnail episodes %}
+{% load static thumbnail episodes %}
 {% if episode %}
 {% with podcast=episode.podcast %}
 <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
@@ -13,17 +13,18 @@
        class="hidden">
     <div class="flex items-center justify-between relative">
       <div class="flex items-center">
-        {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
         <img data-controller="link"
              data-link-url-value="{{ podcast.get_absolute_url }}"
              data-action="click->link#visit"
              class="object-cover block cursor-pointer h-8 w-8 self-center mr-2 hover:opacity-75 bg-transparent border border-white"
              title="{{ podcast.title }}"
+             {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
              src="{{ img.url }}"
+             {% empty %}src="{% static 'img/podcast-icon.png' %}"
+             {% endthumbnail %}
              role="link"
              width="30"
              height="30">
-        {% endthumbnail %}
         <a href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}"
            class="w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
@@ -67,17 +68,18 @@
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a></div>
     <div class="flex items-stretch">
 
-      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <img data-controller="link"
            data-link-url-value="{{ podcast.get_absolute_url }}"
            data-action="click->link#visit"
            class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-2 border border-white"
            title="{{ podcast.title }}"
+           {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
            src="{{ img.url }}"
+           {% empty %}src="{% static 'img/podcast-icon.png' %}"
+           {% endthumbnail %}
            role="link"
            width="30"
            height="30">
-      {% endthumbnail %}
 
       <div class="w-full self-start">
 
