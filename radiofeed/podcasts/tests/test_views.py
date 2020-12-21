@@ -80,7 +80,7 @@ class TestPodcastList:
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == podcast
 
-    def test_search_has_subcription(self, rf, user):
+    def test_search_has_subscription(self, rf, user):
         """Ignore subscribed feeds in search"""
         PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user)
