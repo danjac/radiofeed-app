@@ -129,7 +129,7 @@ def start_player(request, episode_id):
 
     request.session["player"] = {
         "episode": episode.id,
-        "current_time": 0,
+        "current_time": current_time,
         "paused": False,
     }
     episode.log_activity(request.user, current_time=current_time)

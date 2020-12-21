@@ -12,6 +12,8 @@ export default class extends Controller {
     'playButton',
     'progress',
     'progressBar',
+    'loading',
+    'title',
   ];
 
   static classes = ['active', 'inactive'];
@@ -27,6 +29,7 @@ export default class extends Controller {
     duration: Number,
     paused: Boolean,
     waiting: Boolean,
+    loading: Boolean,
   };
 
   connect() {
@@ -51,10 +54,13 @@ export default class extends Controller {
   async open(event) {
     const { playUrl, episode, currentTime, duration } = event.detail;
 
+    this.loadingValue = true;
+
     this.episodeValue = episode;
     this.durationValue = duration;
 
     const response = await axios.post(playUrl, { current_time: currentTime });
+
     this.element.innerHTML = response.data;
     this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
 
@@ -62,7 +68,8 @@ export default class extends Controller {
       this.audioTarget.currentTime = currentTime;
     }
 
-    this.audioTarget.play();
+    await this.audioTarget.play();
+    this.loadingValue = false;
   }
 
   close() {
@@ -154,6 +161,19 @@ export default class extends Controller {
 
   waitingValueChanged() {
     this.toggleActiveMode();
+  }
+
+  loadingValueChanged() {
+    this.toggleActiveMode();
+    if (this.hasTitleTarget && this.hasLoadingTarget) {
+      if (this.loadingValue) {
+        this.titleTarget.classList.add('hidden');
+        this.loadingTarget.classList.remove('hidden');
+      } else {
+        this.titleTarget.classList.remove('hidden');
+        this.loadingTarget.classList.add('hidden');
+      }
+    }
   }
 
   currentTimeValueChanged() {
@@ -272,7 +292,7 @@ export default class extends Controller {
   }
 
   toggleActiveMode() {
-    const inactive = this.pausedValue || this.waitingValue;
+    const inactive = this.pausedValue || this.waitingValue || this.loadingValue;
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (inactive) {
         this.pauseButtonTarget.classList.add('hidden');

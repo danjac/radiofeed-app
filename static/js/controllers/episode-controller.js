@@ -70,12 +70,14 @@ export default class extends Controller {
   }
 
   playingValueChanged() {
-    if (this.playingValue) {
-      this.playButtonTarget.classList.add('hidden');
-      this.stopButtonTarget.classList.remove('hidden');
-    } else {
-      this.playButtonTarget.classList.remove('hidden');
-      this.stopButtonTarget.classList.add('hidden');
+    if (this.hasPlayButtonTarget && this.hasStopButtonTarget) {
+      if (this.playingValue) {
+        this.playButtonTarget.classList.add('hidden');
+        this.stopButtonTarget.classList.remove('hidden');
+      } else {
+        this.playButtonTarget.classList.remove('hidden');
+        this.stopButtonTarget.classList.add('hidden');
+      }
     }
   }
 }
