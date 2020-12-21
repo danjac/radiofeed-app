@@ -150,9 +150,13 @@ def stop_player(request, completed=False):
     """Remove player from session"""
     player = request.session.pop("player", None)
     if player:
+
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
-        return player_status_response(episode, player["current_time"])
+
+        return player_status_response(
+            episode, player["current_time"], extra_context={"completed": completed}
+        )
     return player_status_error_response()
 
 
@@ -180,7 +184,7 @@ def get_current_time_from_request(request):
         return 0
 
 
-def player_status_response(episode, current_time):
+def player_status_response(episode, current_time, extra_context=None):
     duration = episode.get_duration_in_seconds()
     return JsonResponse(
         {
@@ -190,6 +194,7 @@ def player_status_response(episode, current_time):
             "time_remaining": format_duration(duration - current_time),
             "completed": current_time >= duration,
         }
+        | (extra_context or {})
     )
 
 

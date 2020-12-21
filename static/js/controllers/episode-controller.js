@@ -38,9 +38,7 @@ export default class extends Controller {
   open(event) {
     // another episode is started
     const { episode } = event.detail;
-    if (episode !== this.idValue) {
-      this.playingValue = false;
-    }
+    this.playingValue = episode === this.idValue;
   }
 
   close(event) {
@@ -59,6 +57,7 @@ export default class extends Controller {
   update({ detail: { episode, time_remaining, completed, duration } }) {
     if (episode && episode.toString() === this.idValue) {
       if (completed) {
+        this.currentTimeValue = 0;
         this.currentTimeTarget.textContent = duration;
         this.currentTimeTarget.classList.add(this.completedClass);
       } else if (time_remaining) {
