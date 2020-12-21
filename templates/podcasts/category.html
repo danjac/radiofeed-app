@@ -28,6 +28,12 @@
       <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
     </div>
+    {% elif category.itunes_genre_id %}
+    <div class="mr-2 flex items-center hidden md:inline-block text-sm">
+      <a href="{% url 'podcasts:itunes_category' category.id %}"
+         class="font-bold hover:text-gray-300">iTunes</a>
+      </a>
+    </div>
     {% endif %}
 
     {% include "_search_form.html" with placeholder="Search category..." %}
@@ -42,15 +48,17 @@
   <a class="font-semibold hover:text-gray-300"
      href="{{ request.path }}">Clear</a>
 </div>
+{% elif category.itunes_genre_id %}
+<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+  <a href="{% url 'podcasts:itunes_category' category.id %}"
+     class="font-bold hover:text-gray-300">iTunes</a>
+  </a>
+</div>
 {% endif %}
 
 {% if not search %}
 {% if children or category.itunes_genre_id %}
 <div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start leading-tight">
-  {% if category.itunes_genre_id %}
-  <a href="{% url 'podcasts:itunes_category' category.id %}"
-     class="font-bold hover:text-gray-300 mr-3{% if children %} border-r pr-3{% endif %}">iTunes</a>
-  </a>
   {% endif %}
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
@@ -58,7 +66,6 @@
   {% endfor %}
 
 </div>
-{% endif %}
 {% endif %}
 
 {% paginate podcasts as page_obj %}
