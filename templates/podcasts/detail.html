@@ -75,28 +75,4 @@
 
 </div>
 
-{% if recommendations %}
-<div class="mb-3">
-  <h3 class="font-semibold mb-3 text-center"> Also recommended... </h3>
-  <div class="overflow-x-auto lg:overflow-none flex whitespace-nowrap lg:whitespace-none pb-1">
-
-    {% for recommendation in recommendations %}
-    {% with recommended=recommendation.recommended %}
-    {% thumbnail recommended.cover_image "200" format="PNG" crop="center" as img %}
-    <img data-controller="link"
-         data-link-url-value="{{ recommended.get_absolute_url }}"
-         data-action="click->link#visit"
-         class="h-24 w-24 md:h-32 md:w-32 object-cover mr-2 cursor-pointer border border-white hover:opacity-75 bg-transparent"
-         title="{{ recommended.title }}"
-         src="{{ img.url }}"
-         alt="{{ recommended.title }}"
-         role="link"
-         width="32"
-         height="32">
-    {% endthumbnail %}
-    {% endwith %}
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
 {% endblock %}

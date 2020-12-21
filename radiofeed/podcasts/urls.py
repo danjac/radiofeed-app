@@ -14,12 +14,17 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/unsubscribe/", views.unsubscribe, name="unsubscribe"
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        "podcasts/<int:podcast_id>/<slug:slug>/",
         views.podcast_episode_list,
         name="podcast_episode_list",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/",
+        "podcasts/<int:podcast_id>/<slug:slug>/similar/",
+        views.podcast_recommendations,
+        name="podcast_recommendations",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/<slug:slug>/about/",
         views.podcast_detail,
         name="podcast_detail",
     ),

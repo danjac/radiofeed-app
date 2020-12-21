@@ -65,19 +65,28 @@ def podcast_list(request):
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
+    total_episodes = podcast.episode_set.count()
+
+    return podcast_detail_response(
+        request, "podcasts/detail.html", podcast, {"total_episodes": total_episodes},
+    )
+
+
+def podcast_recommendations(request, podcast_id, slug=None):
+
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
-    )[:9]
-
-    total_episodes = podcast.episode_set.count()
+    )[:12]
 
     return podcast_detail_response(
         request,
-        "podcasts/detail.html",
+        "podcasts/recommendations.html",
         podcast,
-        {"total_episodes": total_episodes, "recommendations": recommendations,},
+        {"recommendations": recommendations,},
     )
 
 
@@ -246,9 +255,12 @@ def podcast_detail_response(request, template_name, podcast, context):
         and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
     )
 
+    has_recommendations = Recommendation.objects.filter(podcast=podcast).exists()
+
     context = {
         "podcast": podcast,
         "is_subscribed": is_subscribed,
+        "has_recommendations": has_recommendations,
         "og_data": {
             "url": request.build_absolute_uri(podcast.get_absolute_url()),
             "title": f"{request.site.name} | {podcast.title}",

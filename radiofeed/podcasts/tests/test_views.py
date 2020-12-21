@@ -13,7 +13,12 @@ from radiofeed.episodes.factories import EpisodeFactory
 
 # Local
 from .. import views
-from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
+from ..factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
 from ..itunes import SearchResult
 from ..models import Podcast, Subscription
 
@@ -86,6 +91,19 @@ class TestPodcastList:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == podcast
+
+
+class TestPodcastRecommendations:
+    def test_get(self, rf, user, podcast, site):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        RecommendationFactory.create_batch(3, podcast=podcast)
+        req = rf.get(podcast.get_absolute_url())
+        req.user = user
+        req.site = site
+        resp = views.podcast_recommendations(req, podcast.id, podcast.slug)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["podcast"] == podcast
+        assert len(resp.context_data["recommendations"]) == 3
 
 
 class TestPodcastDetail:

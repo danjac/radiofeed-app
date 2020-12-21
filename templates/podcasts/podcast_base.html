@@ -16,14 +16,24 @@
          class="hover:text-gray-300"
          href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">Episodes</a>
     </li>
+    <li class="{% if has_recommendations %}mr-6 {% endif %}pb-2"
+        data-controller="active-link"
+        data-active-link-exact-value
+        data-active-link-active-class="tab--active">
+      <a data-active-link-target="match"
+         class="hover:text-gray-300"
+         href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}">About</a>
+    </li>
+    {% if has_recommendations %}
     <li class="pb-2"
         data-controller="active-link"
         data-active-link-exact-value
         data-active-link-active-class="tab--active">
       <a data-active-link-target="match"
          class="hover:text-gray-300"
-         href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}">Details</a>
+         href="{% url 'podcasts:podcast_recommendations' podcast.id podcast.slug %}">Similar</a>
     </li>
+    {% endif %}
   </ul>
   {% if user.is_authenticated %}
   {% include "podcasts/_subscribe_buttons.html" %}
