@@ -3,9 +3,9 @@ import pytest
 
 # Local
 from ..factories import CategoryFactory, PodcastFactory
-from ..models import Recommendation
+from ..models import Podcast, Recommendation
 from ..recommender import PodcastRecommender
-from ..recommender.text_parser import clean_text, extract_keywords
+from ..recommender.text_parser import clean_text, extract_keywords, extract_text
 
 pytestmark = pytest.mark.django_db
 
@@ -59,6 +59,11 @@ class TestPodcastRecommender:
         PodcastFactory(
             title="Philosophy things", keywords="thinking", categories=[cat_2, cat_3],
         )
+
+        for podcast in Podcast.objects.prefetch_related("categories"):
+            podcast.extracted_text = extract_text(podcast, podcast.categories.all(), [])
+            podcast.save()
+
         PodcastRecommender.recommend()
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)
