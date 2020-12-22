@@ -38,7 +38,6 @@ def landing_page(request):
     )
 
 
-@login_required
 def podcast_list(request):
     """Shows list of podcasts"""
     podcasts = Podcast.objects.filter(pub_date__isnull=False)
@@ -46,12 +45,16 @@ def podcast_list(request):
 
     if search:
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
-    else:
+    elif request.user.is_authenticated:
         podcasts = (
             podcasts.with_subscription_count()
             .with_has_subscribed(request.user)
             .order_by("-has_subscribed", "-subscription_count", "-pub_date")
             .distinct()
+        )
+    else:
+        podcasts = podcasts.with_subscription_count().order_by(
+            "-subscription_count", "-pub_date"
         )
 
     return TemplateResponse(
@@ -59,7 +62,6 @@ def podcast_list(request):
     )
 
 
-@login_required
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
@@ -70,7 +72,6 @@ def podcast_detail(request, podcast_id, slug=None):
     )
 
 
-@login_required
 def podcast_recommendations(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
@@ -89,7 +90,6 @@ def podcast_recommendations(request, podcast_id, slug=None):
     )
 
 
-@login_required
 def podcast_episode_list(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
@@ -114,7 +114,6 @@ def podcast_episode_list(request, podcast_id, slug=None):
     )
 
 
-@login_required
 def category_list(request):
     search = request.GET.get("q", None)
     categories = Category.objects.all()
@@ -136,7 +135,6 @@ def category_list(request):
     )
 
 
-@login_required
 def category_detail(request, category_id, slug=None):
     category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
@@ -163,7 +161,6 @@ def category_detail(request, category_id, slug=None):
     )
 
 
-@login_required
 def itunes_category(request, category_id):
     category = get_object_or_404(
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
@@ -212,8 +209,8 @@ def search_itunes(request):
     )
 
 
-@require_POST
 @login_required
+@require_POST
 def subscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
@@ -223,16 +220,16 @@ def subscribe(request, podcast_id):
     return HttpResponse(status=http.HTTPStatus.CREATED)
 
 
-@require_POST
 @login_required
+@require_POST
 def unsubscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-@require_POST
 @staff_member_required
+@require_POST
 def add_podcast(request):
     form = PodcastForm(json.loads(request.body))
     if form.is_valid():
@@ -253,9 +250,10 @@ def itunes_results_with_podcast(results):
 
 
 def podcast_detail_response(request, template_name, podcast, context):
-    is_subscribed = Subscription.objects.filter(
-        podcast=podcast, user=request.user
-    ).exists()
+    is_subscribed = (
+        request.user.is_authenticated
+        and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
+    )
 
     has_recommendations = Recommendation.objects.filter(podcast=podcast).exists()
 
