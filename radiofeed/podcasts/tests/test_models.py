@@ -1,11 +1,54 @@
 # Third Party Libraries
 import pytest
 
+# RadioFeed
+from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
+
 # Local
-from ..factories import CategoryFactory, PodcastFactory, SubscriptionFactory
-from ..models import Category, Podcast
+from ..factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
+from ..models import Category, Podcast, Recommendation
 
 pytestmark = pytest.mark.django_db
+
+
+class TestRecommendationManager:
+    def test_for_user(self, user):
+
+        subscribed = SubscriptionFactory(user=user).podcast
+        bookmarked = BookmarkFactory(user=user).episode.podcast
+        listened = AudioLogFactory(user=user).episode.podcast
+
+        received = RecommendationFactory(
+            podcast=SubscriptionFactory(user=user).podcast
+        ).recommended
+        user.recommended_podcasts.add(received)
+
+        first = RecommendationFactory(podcast=subscribed).recommended
+        second = RecommendationFactory(podcast=bookmarked).recommended
+        third = RecommendationFactory(podcast=listened).recommended
+
+        # already received
+
+        # not connected
+        RecommendationFactory()
+
+        # already subscribed, listened to or bookmarked
+        RecommendationFactory(recommended=subscribed)
+        RecommendationFactory(recommended=bookmarked)
+        RecommendationFactory(recommended=listened)
+
+        recommended = [r.recommended for r in Recommendation.objects.for_user(user)]
+
+        assert len(recommended) == 3
+
+        assert first in recommended
+        assert second in recommended
+        assert third in recommended
 
 
 class TestCategoryManager:
@@ -26,13 +69,13 @@ class TestPodcastManager:
         assert Podcast.objects.search("testing").count() == 1
 
     def test_with_has_subscribed_anonymous(self, anonymous_user):
-        subbed_1 = PodcastFactory()
-        subbed_2 = PodcastFactory()
+        subscribed_1 = PodcastFactory()
+        subscribed_2 = PodcastFactory()
         PodcastFactory()
 
-        SubscriptionFactory(podcast=subbed_1)
-        SubscriptionFactory(podcast=subbed_1)
-        SubscriptionFactory(podcast=subbed_2)
+        SubscriptionFactory(podcast=subscribed_1)
+        SubscriptionFactory(podcast=subscribed_1)
+        SubscriptionFactory(podcast=subscribed_2)
 
         podcasts = Podcast.objects.with_has_subscribed(anonymous_user).filter(
             has_subscribed=True
@@ -40,34 +83,34 @@ class TestPodcastManager:
         assert podcasts.count() == 0
 
     def test_with_has_subscribed_authenticated(self, user):
-        subbed_1 = PodcastFactory()
-        subbed_2 = PodcastFactory()
+        subscribed_1 = PodcastFactory()
+        subscribed_2 = PodcastFactory()
         PodcastFactory()
 
-        SubscriptionFactory(podcast=subbed_1, user=user)
-        SubscriptionFactory(podcast=subbed_1)
-        SubscriptionFactory(podcast=subbed_2)
+        SubscriptionFactory(podcast=subscribed_1, user=user)
+        SubscriptionFactory(podcast=subscribed_1)
+        SubscriptionFactory(podcast=subscribed_2)
 
         podcasts = Podcast.objects.with_has_subscribed(user).filter(has_subscribed=True)
         assert podcasts.count() == 1
-        assert podcasts.first() == subbed_1
+        assert podcasts.first() == subscribed_1
 
     def test_with_subscription_count(self):
-        subbed_1 = PodcastFactory()
-        subbed_2 = PodcastFactory()
-        unsubbed = PodcastFactory()
+        subscribed_1 = PodcastFactory()
+        subscribed_2 = PodcastFactory()
+        unsubscribed = PodcastFactory()
 
-        SubscriptionFactory(podcast=subbed_1)
-        SubscriptionFactory(podcast=subbed_1)
-        SubscriptionFactory(podcast=subbed_2)
+        SubscriptionFactory(podcast=subscribed_1)
+        SubscriptionFactory(podcast=subscribed_1)
+        SubscriptionFactory(podcast=subscribed_2)
 
         podcasts = Podcast.objects.with_subscription_count().order_by(
             "-subscription_count"
         )
 
-        assert podcasts[0].id == subbed_1.id
-        assert podcasts[1].id == subbed_2.id
-        assert podcasts[2].id == unsubbed.id
+        assert podcasts[0].id == subscribed_1.id
+        assert podcasts[1].id == subscribed_2.id
+        assert podcasts[2].id == unsubscribed.id
 
         assert podcasts[0].subscription_count == 2
         assert podcasts[1].subscription_count == 1
