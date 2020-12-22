@@ -25,10 +25,11 @@ def send_recommendations_email(user):
     )
 
     podcasts = Podcast.objects.filter(pk__in=recommendations)
-    user.recommended_podcasts.add(*podcasts)
 
     if len(podcasts) != 3:
         return
+
+    user.recommended_podcasts.add(*podcasts)
 
     context = {
         "recipient": user,
