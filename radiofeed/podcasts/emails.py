@@ -20,16 +20,15 @@ def send_recommendations_email(user):
         Recommendation.objects.for_user(user)
         .select_related("recommended")
         .order_by("-frequency", "-similarity")
-        .values("recommended_id")
+        .values("recommended")
         .distinct()[:3]
     )
 
     podcasts = Podcast.objects.filter(pk__in=recommendations)
+    user.recommended_podcasts.add(*podcasts)
 
     if len(podcasts) != 3:
         return
-
-    user.recommended_podcasts.add(*podcasts)
 
     context = {
         "recipient": user,
