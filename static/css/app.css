@@ -28,7 +28,7 @@
 }
 
 .markdown a {
-  @apply font-semibold underline break-words;
+  @apply underline break-words;
 }
 
 .markdown p {
