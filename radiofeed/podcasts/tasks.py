@@ -8,7 +8,7 @@ from celery.utils.log import get_task_logger
 
 # Local
 from . import itunes
-from .emails import send_recommendation_email
+from .emails import send_recommendations_email
 from .models import Podcast
 from .recommender import PodcastRecommender
 from .rss_parser import RssParser
@@ -24,10 +24,10 @@ def crawl_itunes(limit=100):
 @shared_task(name="radiofeed.podcasts.send_recommendation_emails")
 def send_recommendation_emails():
     users = get_user_model().objects.filter(
-        send_recommendation_email=True, is_active=True
+        send_recommendations_email=True, is_active=True
     )
     for user in users:
-        send_recommendation_email(user)
+        send_recommendations_email(user)
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")

@@ -8,7 +8,7 @@ from django.template import loader
 from .models import Podcast, Recommendation
 
 
-def send_recommendation_email(user):
+def send_recommendations_email(user):
     """Sends email with 3 recommended podcasts, based on:
     - bookmarks
     - subscriptions

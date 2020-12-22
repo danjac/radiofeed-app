@@ -2,7 +2,7 @@
 import pytest
 
 # Local
-from ..emails import send_recommendation_email
+from ..emails import send_recommendations_email
 from ..factories import RecommendationFactory, SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
@@ -12,7 +12,7 @@ class TestSendRecommendationEmail:
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
 
-        send_recommendation_email(user)
+        send_recommendations_email(user)
         assert len(mailoutbox) == 0
 
     def test_send_if_sufficient_recommendations(self, user, mailoutbox):
@@ -26,7 +26,7 @@ class TestSendRecommendationEmail:
         RecommendationFactory(podcast=second)
         RecommendationFactory(podcast=third)
 
-        send_recommendation_email(user)
+        send_recommendations_email(user)
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [user.email]
 
