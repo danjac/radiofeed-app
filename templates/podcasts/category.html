@@ -28,12 +28,6 @@
       <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
     </div>
-    {% elif category.itunes_genre_id %}
-    <div class="mr-2 flex items-center hidden md:inline-block text-sm">
-      <a href="{% url 'podcasts:itunes_category' category.id %}"
-         class="font-bold hover:text-gray-300">iTunes</a>
-      </a>
-    </div>
     {% endif %}
     {% include "_search_form.html" with placeholder="Search category..." %}
   </div>
@@ -47,22 +41,21 @@
   <a class="font-semibold hover:text-gray-300"
      href="{{ request.path }}">Clear</a>
 </div>
-{% elif category.itunes_genre_id %}
-<div class="mb-2 flex items-center justify-center md:hidden text-sm">
-  <a href="{% url 'podcasts:itunes_category' category.id %}"
-     class="font-bold hover:text-gray-300">iTunes</a>
-  </a>
-</div>
 {% endif %}
 
-{% if not search %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-2 text-sm flex flex-wrap justify-center sm:justify-start leading-tight">
-  {% endif %}
+<div class="mb-2 text-sm flex flex-wrap justify-center sm:justify-start leading-tight tracking-tight">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
-     class="font-semibold hover:text-gray-300 mr-3">{{ child.name }}</a>
+     class="font-semibold hover:text-gray-300 mr-2">{{ child.name }}</a>
   {% endfor %}
+  {% if category.itunes_genre_id %}
+  {% if children %}
+  <span class="mr-2">|</span>
+  {% endif %}
+  <a href="{% url 'podcasts:itunes_category' category.id %}"
+     class="font-bold hover:text-gray-300">iTunes</a>
+  {% endif %}
 </div>
 {% endif %}
 
