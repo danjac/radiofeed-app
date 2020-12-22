@@ -24,7 +24,7 @@ def crawl_itunes(limit=100):
 @shared_task(name="radiofeed.podcasts.send_recommendation_emails")
 def send_recommendation_emails():
     users = get_user_model().objects.filter(
-        send_recommendation_emails=True, is_active=True
+        send_recommendation_email=True, is_active=True
     )
     for user in users:
         send_recommendation_email(user)
