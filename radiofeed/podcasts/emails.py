@@ -26,7 +26,7 @@ def send_recommendations_email(user):
 
     podcasts = Podcast.objects.filter(pk__in=recommendations)
 
-    if len(podcasts) != 3:
+    if len(podcasts) not in (2, 3):
         return
 
     user.recommended_podcasts.add(*podcasts)
