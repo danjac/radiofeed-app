@@ -94,7 +94,7 @@
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
   <div class="mb-3">
-    {% render_field form.email placeholder=form.email.label class="p-1 w-full bg-gray-800" %}
+    {% render_field form.email placeholder=form.email.label class="p-1 w-full bg-gray-900" %}
     {% include "_form_errors.html" with errors=form.email.errors %}
   </div>
   {% endwith %}
