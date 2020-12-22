@@ -42,14 +42,6 @@ class TestLandingPage:
 
 
 class TestPodcastList:
-    def test_anonymous(self, rf, anonymous_user):
-        PodcastFactory.create_batch(3)
-        req = rf.get(reverse("podcasts:podcast_list"))
-        req.user = anonymous_user
-        resp = views.podcast_list(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 3
-
     def test_user_no_subscriptions(self, rf, user):
         """If user has no subscriptions, just show general feed"""
         PodcastFactory.create_batch(3)
@@ -69,16 +61,6 @@ class TestPodcastList:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 4
         assert resp.context_data["podcasts"][0] == sub.podcast
-
-    def test_search_anonymous(self, rf, anonymous_user, transactional_db):
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
-        req.user = anonymous_user
-        podcast = PodcastFactory(title="testing")
-        resp = views.podcast_list(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 1
-        assert resp.context_data["podcasts"][0] == podcast
 
     def test_search_has_subscription(self, rf, user, transactional_db):
         """Ignore subscribed feeds in search"""
@@ -107,18 +89,7 @@ class TestPodcastRecommendations:
 
 
 class TestPodcastDetail:
-    def test_anonymous(self, rf, anonymous_user, podcast, site):
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        req = rf.get(podcast.get_absolute_url())
-        req.user = anonymous_user
-        req.site = site
-        resp = views.podcast_detail(req, podcast.id, podcast.slug)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["total_episodes"] == 3
-        assert not resp.context_data["is_subscribed"]
-
-    def test_authenticated(self, rf, user, podcast, site):
+    def test_unsubscribed(self, rf, user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast)
         req = rf.get(podcast.get_absolute_url())
         req.user = user
@@ -143,26 +114,26 @@ class TestPodcastDetail:
 
 
 class TestPodcastEpisodeList:
-    def test_get(self, rf, anonymous_user, podcast, site):
+    def test_get(self, rf, user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast)
         req = rf.get(
             reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug])
         )
-        req.user = anonymous_user
+        req.user = user
         req.site = site
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
 
-    def test_search(self, rf, anonymous_user, podcast, site, transactional_db):
+    def test_search(self, rf, user, podcast, site, transactional_db):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
         req = rf.get(
             reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug]),
             {"q": "testing"},
         )
-        req.user = anonymous_user
+        req.user = user
         req.site = site
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
@@ -201,7 +172,7 @@ class TestAddPodcast:
 
 
 class TestCategoryList:
-    def test_get(self, rf):
+    def test_get(self, rf, user):
         parents = CategoryFactory.create_batch(3, parent=None)
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
@@ -210,12 +181,13 @@ class TestCategoryList:
         PodcastFactory(categories=[c1, parents[0]])
         PodcastFactory(categories=[c2, parents[1]])
         PodcastFactory(categories=[c3, parents[2]])
-
-        resp = views.category_list(rf.get(reverse("podcasts:category_list")))
+        req = rf.get(reverse("podcasts:category_list"))
+        req.user = user
+        resp = views.category_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 3
 
-    def test_search(self, rf, transactional_db):
+    def test_search(self, rf, user, transactional_db):
         parents = CategoryFactory.create_batch(3, parent=None)
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
@@ -228,27 +200,28 @@ class TestCategoryList:
         PodcastFactory(categories=[c3])
         PodcastFactory(categories=[c4])
 
-        resp = views.category_list(
-            rf.get(reverse("podcasts:category_list"), {"q": "testing"})
-        )
+        req = rf.get(reverse("podcasts:category_list"), {"q": "testing"})
+        req.user = user
+
+        resp = views.category_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 2
         assert resp.context_data["search"] == "testing"
 
 
 class TestCategoryDetail:
-    def test_get(self, rf, category, anonymous_user):
+    def test_get(self, rf, category, user):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
         req = rf.get(category.get_absolute_url())
-        req.user = anonymous_user
+        req.user = user
         resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 12
 
-    def test_search(self, rf, category, anonymous_user, transactional_db):
+    def test_search(self, rf, category, user, transactional_db):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
@@ -257,7 +230,7 @@ class TestCategoryDetail:
         PodcastFactory(title="testing", categories=[category])
 
         req = rf.get(category.get_absolute_url(), {"q": "testing"})
-        req.user = anonymous_user
+        req.user = user
         resp = views.category_detail(req, category.id, category.slug)
 
         assert resp.status_code == http.HTTPStatus.OK
@@ -292,7 +265,7 @@ class TestUnsubscribe:
 
 
 class TestITunesCategory:
-    def test_get(self, rf, mocker):
+    def test_get(self, rf, mocker, user):
         category = CategoryFactory(itunes_genre_id=1200)
 
         def mock_fetch_itunes_genre(genre_id, num_results=20):
@@ -307,6 +280,7 @@ class TestITunesCategory:
 
         mocker.patch.object(views.itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
         req = rf.get(reverse("podcasts:itunes_category", args=[category.id]))
+        req.user = user
         resp = views.itunes_category(req, category.id)
 
         assert resp.status_code == http.HTTPStatus.OK

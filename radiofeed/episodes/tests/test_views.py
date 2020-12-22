@@ -21,14 +21,6 @@ pytestmark = pytest.mark.django_db
 
 
 class TestEpisodeList:
-    def test_anonymous(self, rf, anonymous_user):
-        EpisodeFactory.create_batch(3)
-        req = rf.get(reverse("episodes:episode_list"))
-        req.user = anonymous_user
-        resp = views.episode_list(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 3
-
     def test_user_no_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)
         req = rf.get(reverse("episodes:episode_list"))
@@ -51,16 +43,6 @@ class TestEpisodeList:
         assert len(resp.context_data["episodes"]) == 1
         assert resp.context_data["episodes"][0] == episode
 
-    def test_anonymous_search(self, rf, anonymous_user):
-        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        episode = EpisodeFactory(title="testing")
-        req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
-        req.user = anonymous_user
-        resp = views.episode_list(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 1
-        assert resp.context_data["episodes"][0] == episode
-
     def test_user_has_subscriptions_search(self, rf, user):
         "Ignore subs in search"
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
@@ -77,15 +59,6 @@ class TestEpisodeList:
 
 
 class TestEpisodeDetail:
-    def test_anonymous(self, rf, episode, anonymous_user, site):
-        req = rf.get(episode.get_absolute_url())
-        req.user = anonymous_user
-        req.site = site
-        resp = views.episode_detail(req, episode.id, episode.slug)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_bookmarked"]
-
     def test_user_not_bookmarked(self, rf, episode, user, site):
         req = rf.get(episode.get_absolute_url())
         req.user = user
@@ -107,18 +80,6 @@ class TestEpisodeDetail:
 
 
 class TestStartPlayer:
-    def test_anonymous(self, rf, anonymous_user, episode):
-        req = rf.post(reverse("episodes:start_player", args=[episode.id]))
-        req.user = anonymous_user
-        req.session = {}
-        resp = views.start_player(req, episode.id)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert req.session["player"] == {
-            "episode": episode.id,
-            "current_time": 0,
-            "paused": False,
-        }
-
     def test_authenticated(self, rf, user, episode):
         req = rf.post(reverse("episodes:start_player", args=[episode.id]))
         req.user = user
@@ -133,8 +94,9 @@ class TestStartPlayer:
 
 
 class TestTogglePlayerPause:
-    def test_pause(self, rf, episode):
+    def test_pause(self, rf, episode, user):
         req = rf.post(reverse("episodes:stop_player"))
+        req.user = user
         req.session = {
             "player": {"episode": episode.id, "current_time": 1000, "paused": False}
         }
@@ -143,8 +105,9 @@ class TestTogglePlayerPause:
         body = json.loads(resp.content)
         assert body["paused"]
 
-    def test_resume(self, rf, episode):
+    def test_resume(self, rf, episode, user):
         req = rf.post(reverse("episodes:stop_player"))
+        req.user = user
         req.session = {
             "player": {"episode": episode.id, "current_time": 1000, "paused": True}
         }
@@ -153,8 +116,10 @@ class TestTogglePlayerPause:
         body = json.loads(resp.content)
         assert not body["paused"]
 
-    def test_player_not_running(self, rf, episode):
+    def test_player_not_running(self, rf, episode, user):
         req = rf.post(reverse("episodes:stop_player"))
+        req.user = user
+        req.user = user
         req.session = {}
         resp = views.toggle_player_pause(req, pause=True)
 
@@ -162,18 +127,6 @@ class TestTogglePlayerPause:
 
 
 class TestStopPlayer:
-    def test_anonymous(self, rf, anonymous_user, episode):
-        req = rf.post(reverse("episodes:stop_player"))
-        req.user = anonymous_user
-        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
-        resp = views.stop_player(req)
-
-        assert req.session == {}
-
-        assert resp.status_code == http.HTTPStatus.OK
-        body = json.loads(resp.content)
-        assert body["current_time"] == 1000
-
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
             reverse("episodes:stop_player"),
@@ -279,21 +232,6 @@ class TestStopPlayer:
 
 
 class TestUpdatePlayerTime:
-    def test_anonymous(self, rf, anonymous_user, episode):
-        req = rf.post(
-            reverse("episodes:update_player_time"),
-            data=json.dumps({"current_time": 1030}),
-            content_type="application/json",
-        )
-        req.user = anonymous_user
-        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
-        resp = views.update_player_time(req)
-        assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
-
-        assert resp.status_code == http.HTTPStatus.OK
-        body = json.loads(resp.content)
-        assert body["current_time"] == 1030
-
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
             reverse("episodes:update_player_time"),

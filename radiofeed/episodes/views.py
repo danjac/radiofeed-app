@@ -16,6 +16,7 @@ from .models import AudioLog, Bookmark, Episode
 from .utils import format_duration
 
 
+@login_required
 def episode_list(request):
     episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
     search = request.GET.get("q", None)
@@ -24,7 +25,7 @@ def episode_list(request):
     else:
         episodes = episodes.order_by("-pub_date")
 
-        if request.user.is_authenticated and request.user.subscription_set.exists():
+        if request.user.subscription_set.exists():
             episodes = episodes.filter(
                 podcast__subscription__user=request.user
             ).distinct()
@@ -34,15 +35,14 @@ def episode_list(request):
     )
 
 
+@login_required
 def episode_detail(request, episode_id, slug=None):
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
-    is_bookmarked = (
-        request.user.is_authenticated
-        and Bookmark.objects.filter(episode=episode, user=request.user).exists()
-    )
+    is_bookmarked = Bookmark.objects.filter(episode=episode, user=request.user).exists()
+
     og_data = {
         "url": request.build_absolute_uri(episode.get_absolute_url()),
         "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
@@ -119,6 +119,7 @@ def remove_bookmark(request, episode_id):
 
 
 @require_POST
+@login_required
 def start_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
@@ -138,6 +139,7 @@ def start_player(request, episode_id):
 
 
 @require_POST
+@login_required
 def toggle_player_pause(request, pause):
     player = request.session.get("player", None)
     if player:
@@ -147,6 +149,7 @@ def toggle_player_pause(request, pause):
 
 
 @require_POST
+@login_required
 def stop_player(request, completed=False):
     """Remove player from session"""
     player = request.session.pop("player", None)
@@ -159,7 +162,6 @@ def stop_player(request, completed=False):
 
         if (
             completed
-            and request.user.is_authenticated
             and request.user.autoplay
             and (next_episode := episode.get_next_episode())
         ):
@@ -177,6 +179,7 @@ def stop_player(request, completed=False):
 
 
 @require_POST
+@login_required
 def update_player_time(request):
     """Update current play time of episode"""
 
