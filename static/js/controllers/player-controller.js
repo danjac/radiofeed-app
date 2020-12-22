@@ -230,6 +230,10 @@ export default class extends Controller {
   }
 
   getCurrentPostion(pcComplete) {
+    if (pcComplete > 100) {
+      pcComplete = 100;
+    }
+
     const clientWidth = this.progressBarTarget.clientWidth;
 
     let currentPosition, width;

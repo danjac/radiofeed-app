@@ -166,7 +166,7 @@ def stop_player(request, completed=False):
 
         extra_context = {"completed": completed}
 
-        if request.session.get("autoplay", False):
+        if completed and request.session.get("autoplay", False):
             next_episode = episode.get_next_episode()
             if next_episode:
                 extra_context |= {
