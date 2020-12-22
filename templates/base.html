@@ -261,19 +261,20 @@
             </a>
           </li>
 
+          {% if user.is_authenticated %}
           <li class="py-2">
-            {% is_autoplay as autoplay %}
             <label title="Play next episode in podcast automatically">
               <input type="checkbox"
                      class="mr-3"
                      data-controller="ajax"
                      data-action="ajax#post"
                      data-ajax-url-value="{% url 'episodes:toggle_autoplay' %}"
-                     {% if autoplay %}
+                     {% if user.autoplay %}
                      checked{% endif %}>
               Autoplay
             </label>
           </li>
+          {% endif %}
         </ul>
       </nav>
     </div>

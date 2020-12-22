@@ -44,17 +44,14 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
     def create_superuser(self, username, email, password, **kwargs):
         return self.create_user(
-            username,
-            email,
-            password,
-            is_staff=True,
-            is_superuser=True,
-            **kwargs,
+            username, email, password, is_staff=True, is_superuser=True, **kwargs,
         )
 
 
 class User(AbstractUser):
     name = models.CharField(_("Full name"), blank=True, max_length=255)
+
+    autoplay = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -67,3 +64,8 @@ class User(AbstractUser):
         return set([self.email]) | set(
             self.emailaddress_set.values_list("email", flat=True)
         )
+
+    def toggle_autoplay(self, commit=True):
+        self.autoplay = not (self.autoplay)
+        if commit:
+            self.save()

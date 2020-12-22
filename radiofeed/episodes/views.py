@@ -147,11 +147,9 @@ def toggle_player_pause(request, pause):
 
 
 @require_POST
+@login_required
 def toggle_autoplay(request):
-    if "autoplay" in request.session:
-        del request.session["autoplay"]
-    else:
-        request.session["autoplay"] = True
+    request.user.toggle_autoplay()
     return HttpResponse(status=http.HTTPStatus.OK)
 
 
@@ -166,8 +164,12 @@ def stop_player(request, completed=False):
 
         extra_context = {"completed": completed}
 
-        if completed and request.session.get("autoplay", False):
-            next_episode = episode.get_next_episode()
+        if (
+            completed
+            and request.user.is_authenticated
+            and request.user.autoplay
+            and (next_episode := episode.get_next_episode())
+        ):
             if next_episode:
                 extra_context |= {
                     "next_episode": {
