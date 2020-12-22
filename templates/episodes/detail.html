@@ -7,7 +7,7 @@
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
-<div class="text-sm flex justify-between mb-3">
+<div class="text-sm flex justify-between mb-2">
 
   <a {% if prev_episode %}
      class="block hover:text-gray-300"
@@ -36,7 +36,7 @@
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-500 mb-3"
+<div class="p-2 border border-gray-500 mb-2"
      data-controller="episode"
      data-action="episode:open@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      data-episode-completed-class="line-through"
@@ -50,20 +50,20 @@
      data-episode-duration-value="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
-  <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
-  <h2 class="font-semibold mb-3">
+  <h1 class="font-bold mb-2 text-lg">{{ episode.title }}</h1>
+  <h2 class="font-semibold mb-2">
     <a href="{{ podcast.get_absolute_url }}"
        class="font-semibold hover:text-gray-300">
       {{ podcast.title }}
     </a>
   </h2>
 
-  <div class="flex items-center w-full mb-3">
+  <div class="flex items-center w-full mb-2">
     <a href="{{ podcast.get_absolute_url }}">
       {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 hover:opacity-75 mr-2" %}
     </a>
     <div>
-      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-2 text-sm">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
         <div class="inline-block{% if episode.completed %} line-through{% endif %}"
              data-episode-target="currentTime">
@@ -78,7 +78,7 @@
         {% endif %}
       </div>
 
-      <div class="flex items-center sm:mb-3">
+      <div class="flex items-center sm:mb-2">
         {% include "episodes/_play_buttons.html" with css_class="mr-3" %}
         {% if user.is_authenticated %}
         {% include "episodes/_bookmark_buttons.html" %}
@@ -90,11 +90,11 @@
 
     </div>
   </div>
-  <div class="mb-3 sm:hidden">
+  <div class="mb-2 sm:hidden">
     {% include "episodes/_download_button.html" %}
   </div>
 
-  <div class="markdown mb-3">
+  <div class="markdown mb-2">
     {{ episode.description|clean_html }}
   </div>
 </div>

@@ -32,7 +32,7 @@
 }
 
 .markdown p {
-  @apply py-3;
+  @apply py-1;
 }
 
 .markdown ol {

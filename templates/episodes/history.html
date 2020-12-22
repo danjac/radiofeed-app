@@ -4,7 +4,7 @@
 {% block subtitle %} | History{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3">
+<div class="sm:flex justify-between items-center mb-2">
   <h1 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">History</h1>
   <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
@@ -15,7 +15,7 @@
   </div>
 </div>
 {% if search %}
-<div class="flex justify-center sm:hidden text-sm mb-3">
+<div class="flex justify-center sm:hidden text-sm mb-2">
   <a class="font-semibold hover:text-gray-300"
      href="{{ request.path }}">Clear</a>
 </div>
@@ -25,7 +25,7 @@
 {% paginate logs as page_obj %}
 
 {% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
+{% include "_pagination.html" with css_class="mb-2"  %}
 {% endif %}
 
 {% for log in page_obj %}

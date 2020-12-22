@@ -1,5 +1,5 @@
 {% with can_add_podcast=request.user.is_staff %}
-<div class="p-2 border border-gray-500 mb-3 flex items-center justify-between">
+<div class="p-2 border border-gray-500 mb-2 flex items-center justify-between">
   <div class="flex items-center">
     {% if result.image %}
     <img src="{{ result.image }}"
@@ -17,7 +17,7 @@
          {% endif %}
          title="{{ result.title }}"
          class="font-semibold font-semibold hover:text-gray-300 block mb-1 w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
-      <div class="text-sm{% if can_add_podcast %} mb-3 md:mb-0{% endif %} flex items-center">
+      <div class="text-sm{% if can_add_podcast %} mb-2 md:mb-0{% endif %} flex items-center">
         <a href="{{ result.rss }}"
            class="font-semibold hover:text-gray-300 mr-2"
            target="_blank"

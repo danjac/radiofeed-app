@@ -2,7 +2,7 @@
 {% load thumbnail pagination %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3">
+<div class="sm:flex justify-between items-center mb-2">
   <h1 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">iTunes Search</h1>
   <div class="flex items-center justify-center sm:justify-end">
     <a class="font-semibold hover:text-gray-300 hidden sm:inline-block mr-3 text-sm"
@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<div class="mb-3 flex justify-center sm:hidden text-sm">
+<div class="mb-2 flex justify-center sm:hidden text-sm">
   <a class="font-semibold hover:text-gray-300"
      href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
 </div>

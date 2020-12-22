@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm flex justify-center sm:block">
+<div class="mb-2 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:category_list' %}"
      class="font-semibold hover:text-gray-300 mr-1">Discover</a>
   {% if category.parent %}
@@ -17,7 +17,7 @@
   <span class="text-gray-300">{{ category.name }}</span>
 </div>
 
-<div class="sm:flex justify-between items-center mb-3">
+<div class="sm:flex justify-between items-center mb-2">
   <h2 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
   <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
@@ -35,13 +35,12 @@
       </a>
     </div>
     {% endif %}
-
     {% include "_search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
 
 {% if search %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+<div class="mb-2 flex items-center justify-center md:hidden text-sm">
   <a class="font-semibold hover:text-gray-300 mr-2"
      href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
   <span class="mr-2">|</span>
@@ -49,7 +48,7 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% elif category.itunes_genre_id %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+<div class="mb-2 flex items-center justify-center md:hidden text-sm">
   <a href="{% url 'podcasts:itunes_category' category.id %}"
      class="font-bold hover:text-gray-300">iTunes</a>
   </a>
@@ -58,26 +57,25 @@
 
 {% if not search %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start leading-tight">
+<div class="mb-2 text-sm flex flex-wrap justify-center sm:justify-start leading-tight">
   {% endif %}
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="font-semibold hover:text-gray-300 mr-3">{{ child.name }}</a>
   {% endfor %}
-
 </div>
 {% endif %}
 
 {% paginate podcasts as page_obj %}
 
 {% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
+{% include "_pagination.html" with css_class="mb-2"  %}
 {% endif %}
 
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
-<p class="text-center sm:text-left mb-3">
+<p class="text-center sm:text-left mb-2">
   {% if search %}
   No results found for this search.
   {% else %}
