@@ -163,15 +163,14 @@ def stop_player(request, completed=False):
             and request.user.autoplay
             and (next_episode := episode.get_next_episode())
         ):
-            if next_episode:
-                extra_context |= {
-                    "next_episode": {
-                        "episode": next_episode.id,
-                        "play_url": reverse(
-                            "episodes:start_player", args=[next_episode.id]
-                        ),
-                    }
+            extra_context |= {
+                "next_episode": {
+                    "episode": next_episode.id,
+                    "play_url": reverse(
+                        "episodes:start_player", args=[next_episode.id]
+                    ),
                 }
+            }
 
         return player_status_response(episode, player["current_time"], extra_context)
     return HttpResponseBadRequest()
