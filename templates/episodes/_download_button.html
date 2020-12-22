@@ -1,14 +1,4 @@
-<a class="focus-outline:none border border-white p-1 rounded text-sm hover:bg-gray-600 flex items-center {{ css_class|default:'' }}" download href="{{ episode.media_url }}">
-  <svg xmlns="http://www.w3.org/2000/svg"
-       fill="none"
-       viewBox="0 0 24 24"
-       stroke="currentColor"
-       class="h-4 w-4 mr-2">
-    <path stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-  </svg>
+<a class="font-semibold hover:text-gray-300 {{ css_class|default:'' }}" download href="{{ episode.media_url }}">
   {% with file_size=episode.get_file_size %}
   Download {% if file_size %}({{ file_size }}){% endif %}
   {% endwith %}
