@@ -17,9 +17,9 @@
      data-episode-duration-value="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>
-    <div class="mb-2 flex flex-wrap md:hidden tracking-tight leading-tight">
+    <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode.get_absolute_url }}"
-         class="block font-semibold hover:text-gray-300 mb-2"
+         class="block font-semibold hover:text-gray-300"
          title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
     </div>
 
@@ -29,7 +29,7 @@
       </a>
 
       <div class="leading-tight">
-        <div class="mb-3 flex flex-wrap hidden md:block tracking-tight">
+        <div class="mb-1 flex flex-wrap hidden md:block tracking-tight">
           <a href="{{ episode.get_absolute_url }}"
              class="block font-semibold hover:text-gray-300 mb-2"
              title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
