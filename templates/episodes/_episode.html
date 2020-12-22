@@ -12,8 +12,7 @@
      data-episode-current-time-value="{{ current_time }}"
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
-     data-episode-duration-value="{{ duration }}"
-     data-episode-duration-str-value="{{ duration|format_duration }}"
+     data-episode-duration="{{ episode.duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
@@ -39,14 +38,18 @@
           <div title="Date Published"
                class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
           <div title="Duration"
-               class="font-semibold text-gray-100 text-sm{% if completed %} line-through{% endif %}"
-               data-episode-target="currentTime"><span>
+               class="font-semibold text-gray-100 text-sm">
+
+            <span data-episode-target="currentTime"
+                  class="{% if completed %} line-through{% endif %}">
               {% if current_time and not completed %}
               ~{{ duration|subtract:current_time|format_duration }}
               {% else %}
-              {{ duration|format_duration }}
+              {{ episode.duration }}
               {% endif %}
-            </span></div>
+            </span>
+
+          </div>
           {% if episode.explicit %}
           <span class="text-red-300 font-semibold text-sm ml-2">Explicit</span>
           {% endif %}

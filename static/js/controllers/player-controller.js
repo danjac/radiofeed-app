@@ -52,17 +52,15 @@ export default class extends Controller {
   }
 
   async open(event) {
-    const { playUrl, episode, currentTime, duration } = event.detail;
+    const { playUrl, episode, currentTime } = event.detail;
 
     this.loadingValue = true;
 
     this.episodeValue = episode;
-    this.durationValue = duration;
 
     const response = await axios.post(playUrl, { current_time: currentTime });
 
     this.element.innerHTML = response.data;
-    this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
 
     if (currentTime) {
       this.audioTarget.currentTime = currentTime;
@@ -82,6 +80,10 @@ export default class extends Controller {
       currentTime: this.currentTimeValue,
     });
     this.closePlayer(this.stopUrlValue);
+  }
+
+  loadedMetaData() {
+    this.durationValue = this.audioTarget.duration;
   }
 
   ended() {
@@ -172,6 +174,10 @@ export default class extends Controller {
 
   waitingValueChanged() {
     this.toggleActiveMode();
+  }
+
+  durationValueChanged() {
+    this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
   }
 
   loadingValueChanged() {

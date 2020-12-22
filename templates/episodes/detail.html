@@ -43,11 +43,11 @@
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
-     {% if episode.current_time and episode.current_time < duration %}
+     {% if episode.current_time and not episode.completed %}
      data-episode-current-time-value="{{ episode.current_time }}"
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
-     data-episode-duration-value="{{ duration }}"
+     data-episode-duration-value="{{ episode.duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
   <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
@@ -70,7 +70,7 @@
           {% if episode.current_time and not episode.completed %}
           ~{{ duration|subtract:episode.current_time|format_duration }}
           {% else %}
-          {{ episode.get_duration_in_seconds|format_duration }}
+          {{ episode.duration }}
           {% endif %}
         </div>
         {% if episode.explicit %}

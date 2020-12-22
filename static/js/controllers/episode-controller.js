@@ -9,7 +9,7 @@ export default class extends Controller {
   static values = {
     id: String,
     duration: Number,
-    durationStr: String,
+    duration: String,
     currentTime: Number,
     playUrl: String,
     playing: Boolean,
@@ -25,7 +25,6 @@ export default class extends Controller {
     this.dispatch('play', {
       episode: this.idValue,
       currentTime: this.currentTimeValue,
-      duration: this.durationValue,
       playUrl: this.playUrlValue,
     });
   }
@@ -50,7 +49,7 @@ export default class extends Controller {
     }
     if (completed) {
       this.currentTimeTarget.classList.add(this.completedClass);
-      this.currentTimeTarget.textContent = this.durationStrValue;
+      this.currentTimeTarget.textContent = this.durationValue;
     }
   }
 
