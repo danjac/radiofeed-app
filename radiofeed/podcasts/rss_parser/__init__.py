@@ -55,7 +55,8 @@ class RssParser:
         if not entries:
             return []
 
-        dates = [parse_date(e["published"]) for e in entries]
+        dates = [d for d in [parse_date(e.get("published")) for e in entries] if d]
+
         now = timezone.now()
 
         if dates:
