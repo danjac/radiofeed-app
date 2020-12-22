@@ -70,7 +70,7 @@ class TestPodcastList:
         assert len(resp.context_data["podcasts"]) == 4
         assert resp.context_data["podcasts"][0] == sub.podcast
 
-    def test_search_anonymous(self, rf, anonymous_user):
+    def test_search_anonymous(self, rf, anonymous_user, transactional_db):
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = anonymous_user
@@ -80,7 +80,7 @@ class TestPodcastList:
         assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == podcast
 
-    def test_search_has_subscription(self, rf, user):
+    def test_search_has_subscription(self, rf, user, transactional_db):
         """Ignore subscribed feeds in search"""
         PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user)
@@ -155,7 +155,7 @@ class TestPodcastEpisodeList:
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["episodes"]) == 3
 
-    def test_search(self, rf, anonymous_user, podcast, site):
+    def test_search(self, rf, anonymous_user, podcast, site, transactional_db):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
         req = rf.get(
@@ -215,7 +215,7 @@ class TestCategoryList:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 3
 
-    def test_search(self, rf):
+    def test_search(self, rf, transactional_db):
         parents = CategoryFactory.create_batch(3, parent=None)
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
@@ -248,7 +248,7 @@ class TestCategoryDetail:
         assert resp.context_data["category"] == category
         assert len(resp.context_data["podcasts"]) == 12
 
-    def test_search(self, rf, category, anonymous_user):
+    def test_search(self, rf, category, anonymous_user, transactional_db):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
