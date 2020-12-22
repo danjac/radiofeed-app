@@ -175,7 +175,6 @@ def stop_player(request, completed=False):
                         "play_url": reverse(
                             "episodes:start_player", args=[next_episode.id]
                         ),
-                        "duration": next_episode.get_duration_in_seconds(),
                     }
                 }
 
@@ -208,14 +207,13 @@ def get_current_time_from_request(request):
 
 
 def player_status_response(episode, current_time, extra_context=None):
-    duration = episode.get_duration_in_seconds()
     return JsonResponse(
         {
             "episode": episode.id,
             "current_time": current_time,
-            "duration": format_duration(duration),
-            "time_remaining": format_duration(duration - current_time),
-            "completed": current_time >= duration,
+            "time_remaining": format_duration(
+                episode.get_duration_in_seconds() - current_time
+            ),
         }
         | (extra_context or {})
     )

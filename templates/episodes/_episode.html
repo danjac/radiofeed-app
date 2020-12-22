@@ -11,7 +11,7 @@
      {% if current_time and not completed %}
      data-episode-current-time-value="{{ current_time }}"
      {% endif %}
-     data-episode-id-value="{{ episode.id }}"
+     data-episode-episode-value="{{ episode.id }}"
      data-episode-duration="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>

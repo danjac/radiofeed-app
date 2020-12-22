@@ -19,7 +19,7 @@ export default class extends Controller {
   static classes = ['active', 'inactive'];
 
   static values = {
-    episode: String,
+    episode: Number,
     progressUrl: String,
     stopUrl: String,
     pauseUrl: String,
@@ -113,7 +113,6 @@ export default class extends Controller {
         this.open({
           detail: {
             ...next_episode,
-            episode: next_episode.episode.toString(),
             playUrl: next_episode.play_url,
           },
         });
