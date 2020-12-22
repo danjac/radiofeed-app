@@ -9,5 +9,7 @@
           stroke-width="2"
           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
   </svg>
-  Download ({{ episode.get_file_size }})
+  {% with file_size=episode.get_file_size %}
+  Download {% if file_size %}({{ file_size }}){% endif %}
+  {% endwith %}
 </a>
