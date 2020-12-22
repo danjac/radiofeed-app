@@ -12,7 +12,7 @@
      data-episode-current-time-value="{{ current_time }}"
      {% endif %}
      data-episode-id-value="{{ episode.id }}"
-     data-episode-duration="{{ episode.duration }}"
+     data-episode-duration="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
@@ -45,7 +45,7 @@
               {% if current_time and not completed %}
               ~{{ duration|subtract:current_time|format_duration }}
               {% else %}
-              {{ episode.duration }}
+              {{ duration|format_duration }}
               {% endif %}
             </span>
 

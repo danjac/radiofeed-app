@@ -27,6 +27,7 @@ export default class extends Controller {
     resumeUrl: String,
     currentTime: Number,
     duration: Number,
+    error: Boolean,
     paused: Boolean,
     waiting: Boolean,
     loading: Boolean,
@@ -46,7 +47,8 @@ export default class extends Controller {
           await this.audioTarget.play();
         }
       } catch (e) {
-        this.pausedValue = true;
+        console.error(e);
+        this.errorValue = true;
       }
     }
   }
@@ -55,6 +57,7 @@ export default class extends Controller {
     const { playUrl, episode, currentTime } = event.detail;
 
     this.loadingValue = true;
+    this.errorValue = false;
 
     this.episodeValue = episode;
 
@@ -66,8 +69,14 @@ export default class extends Controller {
       this.audioTarget.currentTime = currentTime;
     }
 
-    await this.audioTarget.play();
-    this.loadingValue = false;
+    try {
+      await this.audioTarget.play();
+    } catch (e) {
+      console.error(e);
+      this.errorValue = true;
+    } finally {
+      this.loadingValue = false;
+    }
   }
 
   close() {
@@ -125,9 +134,15 @@ export default class extends Controller {
     }
   }
 
-  play() {
+  async play() {
+    this.errorValue = false;
     this.pausedValue = false;
-    this.audioTarget.play();
+    try {
+      await this.audioTarget.play();
+    } catch (e) {
+      console.error(e);
+      this.errorValue = true;
+    }
     if (this.resumeUrlValue) {
       axios.post(this.resumeUrlValue);
     }
@@ -167,6 +182,9 @@ export default class extends Controller {
   }
 
   // observers
+  errorValueChanged() {
+    this.toggleActiveMode();
+  }
 
   pausedValueChanged() {
     this.toggleActiveMode();
@@ -177,7 +195,9 @@ export default class extends Controller {
   }
 
   durationValueChanged() {
-    this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
+    if (this.hasCounterTarget) {
+      this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
+    }
   }
 
   loadingValueChanged() {
@@ -196,9 +216,9 @@ export default class extends Controller {
   currentTimeValueChanged() {
     if (this.hasProgressTarget && this.hasIndicatorTarget) {
       const pcComplete = this.getPercentComplete();
-
       this.progressTarget.style.width = pcComplete + '%';
-      this.indicatorTarget.style.left = this.getCurrentPostion(pcComplete) + 'px';
+      this.indicatorTarget.style.left =
+        this.getCurrentIndicatorPosition(pcComplete) + 'px';
     }
 
     if (this.hasCounterTarget) {
@@ -233,14 +253,14 @@ export default class extends Controller {
       return 0;
     }
 
+    if (this.currentTimeValue > this.durationValue) {
+      return 100;
+    }
+
     return (this.currentTimeValue / this.durationValue) * 100;
   }
 
-  getCurrentPostion(pcComplete) {
-    if (pcComplete > 100) {
-      pcComplete = 100;
-    }
-
+  getCurrentIndicatorPosition(pcComplete) {
     const clientWidth = this.progressBarTarget.clientWidth;
 
     let currentPosition, width;
@@ -313,7 +333,8 @@ export default class extends Controller {
   }
 
   toggleActiveMode() {
-    const inactive = this.pausedValue || this.waitingValue || this.loadingValue;
+    const inactive =
+      this.pausedValue || this.waitingValue || this.loadingValue || this.errorValue;
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (inactive) {
         this.pauseButtonTarget.classList.add('hidden');
