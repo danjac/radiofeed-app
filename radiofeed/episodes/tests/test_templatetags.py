@@ -43,6 +43,7 @@ class TestGetPlayer:
             "episode": episode,
             "current_time": 1000,
             "paused": False,
+            "autoplay": False,
         }
 
 

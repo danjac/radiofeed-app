@@ -9,13 +9,16 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
+def is_autoplay(context):
+    return context["request"].session.get("autoplay", False)
+
+
+@register.simple_tag(takes_context=True)
 def is_playing(context, episode):
     player = context["request"].session.get("player")
     if player is None:
         return False
-    if episode:
-        return player["episode"] == episode.id
-    return True
+    return player["episode"] == episode.id
 
 
 @register.simple_tag(takes_context=True)
@@ -33,6 +36,7 @@ def get_player(context):
     return {
         "episode": episode,
         "current_time": player["current_time"],
+        "autoplay": request.session.get("autoplay", False),
         "paused": player.get("paused", False),
     }
 

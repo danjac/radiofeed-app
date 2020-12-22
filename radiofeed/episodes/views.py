@@ -147,6 +147,15 @@ def toggle_player_pause(request, pause):
 
 
 @require_POST
+def toggle_autoplay(request):
+    if "autoplay" in request.session:
+        del request.session["autoplay"]
+    else:
+        request.session["autoplay"] = True
+    return HttpResponse(status=http.HTTPStatus.OK)
+
+
+@require_POST
 def stop_player(request, completed=False):
     """Remove player from session"""
     player = request.session.pop("player", None)
@@ -157,17 +166,18 @@ def stop_player(request, completed=False):
 
         extra_context = {"completed": completed}
 
-        next_episode = episode.get_next_episode()
-        if next_episode:
-            extra_context |= {
-                "next_episode": {
-                    "episode": next_episode.id,
-                    "play_url": reverse(
-                        "episodes:start_player", args=[next_episode.id]
-                    ),
-                    "duration": next_episode.get_duration_in_seconds(),
+        if request.session.get("autoplay", False):
+            next_episode = episode.get_next_episode()
+            if next_episode:
+                extra_context |= {
+                    "next_episode": {
+                        "episode": next_episode.id,
+                        "play_url": reverse(
+                            "episodes:start_player", args=[next_episode.id]
+                        ),
+                        "duration": next_episode.get_duration_in_seconds(),
+                    }
                 }
-            }
 
         return player_status_response(episode, player["current_time"], extra_context)
     return HttpResponseBadRequest()

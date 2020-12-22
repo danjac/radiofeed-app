@@ -132,6 +132,22 @@ class TestStartPlayer:
         }
 
 
+class TestToggleAutoplay:
+    def test_toggle_on(self, rf):
+        req = rf.post(reverse("episodes:toggle_autoplay"))
+        req.session = {}
+        resp = views.toggle_autoplay(req)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert req.session["autoplay"]
+
+    def test_toggle_off(self, rf):
+        req = rf.post(reverse("episodes:toggle_autoplay"))
+        req.session = {"autoplay": False}
+        resp = views.toggle_autoplay(req)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert "autoplay" not in req.session
+
+
 class TestTogglePlayerPause:
     def test_pause(self, rf, episode):
         req = rf.post(reverse("episodes:stop_player"))
@@ -227,7 +243,39 @@ class TestStopPlayer:
             content_type="application/json",
         )
         req.user = user
-        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
+        req.session = {
+            "player": {"episode": episode.id, "current_time": 1000},
+            "autoplay": True,
+        }
+
+        resp = views.stop_player(req, completed=True)
+
+        assert req.session == {"autoplay": True}
+
+        assert resp.status_code == http.HTTPStatus.OK
+        body = json.loads(resp.content)
+        assert body["current_time"] == 1000
+        assert body["completed"] is True
+        assert body["next_episode"]["episode"] == next_episode.id
+
+        log = AudioLog.objects.get(user=user, episode=episode)
+        assert log.current_time == 1000
+        assert log.completed
+
+    def test_completed_autoplay_off(self, rf, user, episode):
+        EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+        req = rf.post(
+            reverse("episodes:mark_complete"),
+            data=json.dumps({"current_time": 1030}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = {
+            "player": {"episode": episode.id, "current_time": 1000},
+        }
 
         resp = views.stop_player(req, completed=True)
 
@@ -237,7 +285,7 @@ class TestStopPlayer:
         body = json.loads(resp.content)
         assert body["current_time"] == 1000
         assert body["completed"] is True
-        assert body["next_episode"]["episode"] == next_episode.id
+        assert "next_episode" not in body
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
