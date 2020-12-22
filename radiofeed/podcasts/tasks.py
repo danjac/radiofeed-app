@@ -1,10 +1,14 @@
 # Third Party Libraries
+# Django
+from django.contrib.auth import get_user_model
+
 import requests
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
 # Local
 from . import itunes
+from .emails import send_recommendation_email
 from .models import Podcast
 from .recommender import PodcastRecommender
 from .rss_parser import RssParser
@@ -15,6 +19,15 @@ logger = get_task_logger(__name__)
 @shared_task(name="radiofeed.podcasts.crawl_itunes")
 def crawl_itunes(limit=100):
     itunes.crawl_itunes(limit)
+
+
+@shared_task(name="radiofeed.podcasts.send_recommendation_emails")
+def send_recommendation_emails():
+    users = get_user_model().objects.filter(
+        send_recommendation_emails=True, is_active=True
+    )
+    for user in users:
+        send_recommendation_email(user)
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")

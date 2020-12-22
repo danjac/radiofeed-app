@@ -1,4 +1,3 @@
-{% load podcasts %}
 {% autoescape off %}
 Hi {{ recipient.username }}
 
@@ -16,7 +15,7 @@ Here are some podcasts you might find interesting:
 
 {% endfor %}
 
-If you do not want to receive any more recommendations, you can just uncheck the "Email me podcast recommendations" option
+If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations" option
 on your settings page:
 
 {{ protocol }}://{{ site.domain }}{% url 'user_preferences' %}

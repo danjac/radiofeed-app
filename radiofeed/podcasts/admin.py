@@ -41,3 +41,4 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     ordering = ("-pub_date",)
     list_display = ("__str__", "pub_date")
     search_fields = ("title", "authors")
+    raw_id_fields = ("recipients",)

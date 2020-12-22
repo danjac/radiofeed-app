@@ -118,6 +118,11 @@ class Podcast(models.Model):
 
     categories = models.ManyToManyField(Category, blank=True)
 
+    # received recommendation email
+    recipients = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
+    )
+
     search_vector = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
@@ -153,6 +158,32 @@ class Subscription(TimeStampedModel):
         indexes = [models.Index(fields=["-created"])]
 
 
+class RecommendationQuerySet(models.QuerySet):
+    def for_user(self, user):
+        podcast_ids = (
+            set(
+                user.bookmark_set.select_related("episode__podcast").values_list(
+                    "episode__podcast", flat=True
+                )
+            )
+            | set(
+                user.audiolog_set.select_related("episode__podcast").values_list(
+                    "episode__podcast", flat=True
+                )
+            )
+            | set(user.subscription_set.values_list("podcast", flat=True))
+        )
+
+        return self.filter(podcast__pk__in=podcast_ids).exclude(
+            recommended__pk__in=podcast_ids
+            | set(user.recommended_podcasts.values_list("pk", flat=True))
+        )
+
+
+class RecommendationManager(models.Manager.from_queryset(RecommendationQuerySet)):
+    ...
+
+
 class Recommendation(models.Model):
     podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
     recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
@@ -162,6 +193,8 @@ class Recommendation(models.Model):
     similarity = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
+
+    objects = RecommendationManager()
 
     class Meta:
         indexes = [

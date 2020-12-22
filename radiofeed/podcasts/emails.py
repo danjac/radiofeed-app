@@ -13,6 +13,8 @@ def send_recommendation_email(user):
     - bookmarks
     - subscriptions
     - play history
+
+    Podcasts should be just recommended once to each user.
     """
     recommendations = (
         Recommendation.objects.for_user(user)
@@ -27,7 +29,7 @@ def send_recommendation_email(user):
     if len(podcasts) != 3:
         return
 
-    user.recommended.add(*podcasts)
+    user.recommended_podcasts.add(*podcasts)
 
     context = {
         "recipient": user,
