@@ -2,8 +2,8 @@
 {% load pagination %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-2">
-  <h1 class="text-lg font-bold mb-1 sm:mb-0 flex justify-center sm:justify-start">Podcasts</h1>
+<div class="sm:flex justify-between items-center mb-3">
+  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">Podcasts</h1>
   <div class="flex items-center justify-center sm:justify-end text-sm">
     {% if search %}
     <div class="mr-2 flex items-center hidden md:inline-block">
@@ -18,7 +18,7 @@
   </div>
 </div>
 {% if search %}
-<div class="mb-2 flex items-center justify-center md:hidden text-sm leading-tight tracking-tight">
+<div class="mb-3 flex items-center justify-center md:hidden text-sm leading-tight tracking-tight">
   <a class="font-semibold hover:text-gray-300 mr-2"
      href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
   <span class="mr-2">|</span>
@@ -30,7 +30,7 @@
 {% paginate podcasts as page_obj %}
 
 {% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-2"  %}
+{% include "_pagination.html" with css_class="mb-3"  %}
 {% endif %}
 
 {% for podcast in page_obj %}

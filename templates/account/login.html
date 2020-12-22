@@ -3,9 +3,9 @@
 
 {% block content %}
 
-<h1 class="text-lg mb-2 font-bold">{% translate "Sign In" %}</h1>
+<h1 class="text-lg mb-3 font-bold">{% translate "Sign In" %}</h1>
 
-<p class="mb-2">{% blocktranslate %}If you have not created an account yet, then please
+<p class="mb-3">{% blocktranslate %}If you have not created an account yet, then please
   <a class="underline hover:text-gray-300"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
@@ -21,16 +21,16 @@
   {% endif %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
-  <div class="mb-2">
+  <div class="mb-3">
     {% render_field form.login placeholder=form.login.label class="p-1 w-full bg-gray-900" %}
     {% include "_form_errors.html" with errors=form.login.errors %}
   </div>
-  <div class="mb-2">
+  <div class="mb-3">
     {% render_field form.password placeholder=form.password.label class="p-1 w-full bg-gray-900" %}
     {% include "_form_errors.html" with errors=form.password.errors %}
   </div>
-  <div class="mb-2">
-    <label class="flex items-center mb-1 w-full">
+  <div class="mb-3">
+    <label class="flex items-center mb-2 w-full">
       {% render_field form.remember class="mr-3 bg-gray-900" %}
       {{ form.remember.label }}
     </label>

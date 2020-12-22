@@ -5,8 +5,8 @@
 
 {% paginate episodes as page_obj %}
 
-<div class="sm:flex justify-between items-center mb-2">
-  <div class="flex justify-center sm:justify-start mb-1 sm:mr-3 sm:mb-0 items-center text-sm">
+<div class="sm:flex justify-between items-center mb-3">
+  <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="font-semibold">Newest First</a>
@@ -29,7 +29,7 @@
   </div>
 </div>
 {% if search %}
-<div class="mb-2 flex items-center justify-center md:hidden text-sm">
+<div class="mb-3 flex items-center justify-center md:hidden text-sm">
   <a class="font-semibold hover:text-gray-300 mr-2"
      href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
   <span class="mr-1">|</span>
@@ -39,7 +39,7 @@
 {% endif %}
 
 {% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-2"  %}
+{% include "_pagination.html" with css_class="mb-3"  %}
 {% endif %}
 
 {% for episode in page_obj %}

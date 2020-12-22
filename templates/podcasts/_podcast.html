@@ -1,4 +1,4 @@
-<div class="p-2 border border-gray-500 mb-2">
+<div class="p-2 border border-gray-500 mb-3">
   <div class="flex items-center justify-between">
     <div class="font-bold flex items-center sm:mb-0">
 
@@ -6,7 +6,7 @@
         {% include "podcasts/_podcast_cover_image.html" %}
       </a>
       <div>
-        <div class="mb-1 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight">
+        <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight">
           <a href="{{ podcast.get_absolute_url }}"
              title="{{ podcast.title }}"
              class="font-semibold hover:text-gray-300">{{ podcast.title|truncatechars:80 }}</a>

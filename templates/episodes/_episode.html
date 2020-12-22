@@ -1,7 +1,7 @@
 {% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="flex justify-between items-center p-2 border border-gray-500 mb-2"
+<div class="flex justify-between items-center p-2 border border-gray-500 mb-3"
      data-controller="episode"
      data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
      data-episode-completed-class="line-through"
@@ -15,9 +15,9 @@
      data-episode-duration="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>
-    <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
+    <div class="mb-2 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode.get_absolute_url }}"
-         class="block font-semibold hover:text-gray-300 mb-1"
+         class="block font-semibold hover:text-gray-300 mb-2"
          title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
     </div>
 
@@ -27,9 +27,9 @@
       </a>
 
       <div class="leading-tight">
-        <div class="mb-2 flex flex-wrap hidden md:block tracking-tight">
+        <div class="mb-3 flex flex-wrap hidden md:block tracking-tight">
           <a href="{{ episode.get_absolute_url }}"
-             class="block font-semibold hover:text-gray-300 mb-1"
+             class="block font-semibold hover:text-gray-300 mb-2"
              title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
         </div>
 

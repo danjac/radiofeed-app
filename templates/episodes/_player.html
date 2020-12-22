@@ -63,7 +63,7 @@
       </svg>
     </button>
 
-    <div class="mb-2 md:hidden pr-1 text-sm w-64 truncate">
+    <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
       <a href="{{ episode.get_absolute_url }}"
          data-player-target="title"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
@@ -89,7 +89,7 @@
 
       <div class="w-full self-start">
 
-        <div class="mb-2 hidden md:flex">
+        <div class="mb-3 hidden md:flex">
           <a href="{{ episode.get_absolute_url }}"
              data-player-target="title"
              title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
@@ -98,7 +98,7 @@
 
         </div>
 
-        <div class="flex justify-between items-center w-full mb-1">
+        <div class="flex justify-between items-center w-full mb-2">
 
           <div class="flex items-center">
 

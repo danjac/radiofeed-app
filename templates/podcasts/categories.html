@@ -3,9 +3,9 @@
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-2 pb-2 border-b border-gray-500">
-  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
-  <div class="flex items-center justify-center sm:justify-end mb-1 sm:mb-0">
+<div class="sm:flex justify-between items-center mb-3 pb-2 border-b border-gray-500">
+  <h2 class="text-lg font-bold mb-3 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
+  <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
     {% if search %}
     <a class="font-semibold hover:text-gray-300 mr-2 hidden sm:inline-block text-sm"
        href="{{ request.path }}">Clear</a>
@@ -13,7 +13,7 @@
     {% include "_search_form.html" with placeholder="Filter categories..." %}
   </div>
   {% if search %}
-  <div class="sm:hidden mb-2 flex justify-center">
+  <div class="sm:hidden mb-3 flex justify-center">
     <a class="font-semibold hover:text-gray-300 text-sm"
        href="{{ request.path }}">Clear</a>
   </div>
@@ -23,9 +23,9 @@
 <div class="divide-y divide-gray-500">
   {% if search %}
   {% for category in categories %}
-  <div class="mb-2{% if not forloop.first %} pt-3{% endif %}">
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
     <a href="{{ category.get_absolute_url }}"
-       class="font-semibold hover:text-gray-300 font-semibold mb-2">{{ category.name }}</a>
+       class="font-semibold hover:text-gray-300 font-semibold mb-3">{{ category.name }}</a>
   </div>
   {% empty %}
   <p class="text-center sm:text-left">
@@ -35,8 +35,8 @@
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
-  <div class="mb-2{% if not forloop.first %} pt-3{% endif %}">
-    <div{% if children %} class="mb-2"
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
+    <div{% if children %} class="mb-3"
                           {% endif %}>
       <a href="{{ category.get_absolute_url }}"
          class="font-semibold hover:text-gray-300 font-semibold">{{ category.name }}</a>
@@ -44,7 +44,7 @@
   {% if children %}
   <div class="flex flex-wrap items-center">
     {% for child in children %}
-    <a class="font-semibold hover:text-gray-300 mb-1 mr-3 text-sm"
+    <a class="font-semibold hover:text-gray-300 mb-2 mr-3 text-sm"
        href="{{ child.get_absolute_url }}">{{ child.name }}</a>
     {% endfor %}
   </div>

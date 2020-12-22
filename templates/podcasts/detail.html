@@ -1,24 +1,24 @@
 {% extends "podcasts/podcast_base.html" %}
 
 {% block podcast_content %}
-<div class="p-2 border border-gray-500 mb-2">
+<div class="p-2 border border-gray-500 mb-3">
 
-  <div class="flex items-center w-full mb-2">
+  <div class="flex items-center w-full mb-3">
 
     {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 mr-2" %}
 
     <div>
       {% if podcast.authors %}
-      <div class="text-gray-300 mb-2">{{ podcast.authors }}</div>
+      <div class="text-gray-300 mb-3">{{ podcast.authors }}</div>
       {% endif %}
 
-      <div class="mb-2">
+      <div class="mb-3">
         <a class="hover:text-gray-300"
            href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
       </div>
       {% if podcast.explicit %}
-      <div class="text-red-300 text-sm font-semibold mb-2">Explicit</div>
+      <div class="text-red-300 text-sm font-semibold mb-3">Explicit</div>
       {% endif %}
 
       <div class="flex items-center text-sm">
@@ -41,12 +41,12 @@
     </div>
   </div>
 
-  <div class="markdown mb-2">
+  <div class="markdown mb-3">
     {{ podcast.description|clean_html }}
   </div>
   <div>
     {% for category in podcast.categories.all %}
-    <a class="inline-block border border-white bg-blue-800 hover:bg-blue-600 text-white p-1 rounded mr-3 mb-2 text-sm font-semibold"
+    <a class="inline-block border border-white bg-blue-800 hover:bg-blue-600 text-white p-1 rounded mr-3 mb-3 text-sm font-semibold"
        href="{{ category.get_absolute_url }}">
       <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg"
