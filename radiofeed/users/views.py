@@ -6,6 +6,22 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 
+# Local
+from .forms import UserPreferencesForm
+
+
+@login_required
+def user_preferences(request):
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return redirect(request.path)
+    else:
+        form = UserPreferencesForm(instance=request.user)
+    return TemplateResponse(request, "account/preferences.html", {"form": form})
+
 
 @login_required
 def delete_account(request):

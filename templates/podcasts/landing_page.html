@@ -33,19 +33,20 @@
       {% endfor %}
     </div>
     {% endif %}
-    <div class="text-lg text-center mb-3">
+    <div class="text-lg text-center mb-1">
       <a href="{% url 'account_signup' %}"
          class="font-semibold underline hover:text-gray-300">Sign up</a> and get started today!
     </div>
 
-    <div class="text-center">
-      <div>
-        Already have an account? <a href="{% url 'account_login' %}"
-           class="font-semibold underline hover:text-gray-300">Log in here</a>.
-      </div>
+    <div class="text-center mb-1">
+      Already have an account? <a href="{% url 'account_login' %}"
+         class="font-semibold underline hover:text-gray-300">Log in here</a>.
     </div>
 
 
+    <div class="text-center flex justify-center">
+      {% include "account/_social_logins.html" %}
+    </div>
 
   </div>
 </div>

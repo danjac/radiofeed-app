@@ -132,22 +132,6 @@ class TestStartPlayer:
         }
 
 
-class TestToggleAutoplay:
-    def test_toggle_on(self, rf):
-        req = rf.post(reverse("episodes:toggle_autoplay"))
-        req.session = {}
-        resp = views.toggle_autoplay(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert req.session["autoplay"]
-
-    def test_toggle_off(self, rf):
-        req = rf.post(reverse("episodes:toggle_autoplay"))
-        req.session = {"autoplay": False}
-        resp = views.toggle_autoplay(req)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert "autoplay" not in req.session
-
-
 class TestTogglePlayerPause:
     def test_pause(self, rf, episode):
         req = rf.post(reverse("episodes:stop_player"))
@@ -217,6 +201,7 @@ class TestStopPlayer:
             content_type="application/json",
         )
         req.user = user
+        req.user.autoplay = False
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
         resp = views.stop_player(req, completed=True)
@@ -243,6 +228,7 @@ class TestStopPlayer:
             content_type="application/json",
         )
         req.user = user
+        req.user.autoplay = True
         req.session = {
             "player": {"episode": episode.id, "current_time": 1000},
             "autoplay": True,

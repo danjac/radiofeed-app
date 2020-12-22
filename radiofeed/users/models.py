@@ -1,7 +1,6 @@
 # Django
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 
 class UserQuerySet(models.QuerySet):
@@ -49,9 +48,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
-    name = models.CharField(_("Full name"), blank=True, max_length=255)
-
     autoplay = models.BooleanField(default=False)
+    send_recommendations_email = models.BooleanField(default=True)
 
     objects = UserManager()
 
@@ -64,8 +62,3 @@ class User(AbstractUser):
         return set([self.email]) | set(
             self.emailaddress_set.values_list("email", flat=True)
         )
-
-    def toggle_autoplay(self, commit=True):
-        self.autoplay = not (self.autoplay)
-        if commit:
-            self.save()

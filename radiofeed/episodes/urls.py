@@ -9,7 +9,6 @@ app_name = "episodes"
 urlpatterns = [
     path("", views.episode_list, name="episode_list"),
     path("player/<int:episode_id>/~start/", views.start_player, name="start_player"),
-    path("player/~autoplay/", views.toggle_autoplay, name="toggle_autoplay"),
     path(
         "player/~pause/",
         views.toggle_player_pause,

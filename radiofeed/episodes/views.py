@@ -147,13 +147,6 @@ def toggle_player_pause(request, pause):
 
 
 @require_POST
-@login_required
-def toggle_autoplay(request):
-    request.user.toggle_autoplay()
-    return HttpResponse(status=http.HTTPStatus.OK)
-
-
-@require_POST
 def stop_player(request, completed=False):
     """Remove player from session"""
     player = request.session.pop("player", None)

@@ -17,7 +17,8 @@ class UserCreationForm(BaseUserCreationForm):
         model = User
 
 
-class UserForm(forms.ModelForm):
+class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("name",)
+        fields = ("autoplay", "send_recommendations_email")
+        help_texts = {"autoplay": "Automatically play next episode in podcast"}
