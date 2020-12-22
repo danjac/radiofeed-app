@@ -45,12 +45,12 @@ export default class extends Controller {
     const { currentTime, episode, completed } = event.detail;
     if (episode === this.episodeValue) {
       this.playingValue = false;
-      if (episode === this.episodeValue) {
-        this.currentTimeValue = currentTime;
-      }
       if (completed) {
+        this.currentTimeValue = 0;
         this.currentTimeTarget.classList.add(this.completedClass);
         this.currentTimeTarget.textContent = this.durationValue;
+      } else {
+        this.currentTimeValue = currentTime;
       }
     }
   }
