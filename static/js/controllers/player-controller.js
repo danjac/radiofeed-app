@@ -94,10 +94,6 @@ export default class extends Controller {
   }
 
   async closePlayer(stopUrl) {
-    this.element.innerHTML = '';
-    this.durationValue = 0;
-    this.lastUpdated = 0;
-    this.episodeValue = '';
     if (stopUrl) {
       const response = await axios.post(stopUrl);
       this.dispatch('update', response.data);
@@ -110,8 +106,13 @@ export default class extends Controller {
             playUrl: next_episode.play_url,
           },
         });
+        return;
       }
     }
+    this.element.innerHTML = '';
+    this.durationValue = 0;
+    this.lastUpdated = 0;
+    this.episodeValue = '';
   }
 
   pause() {
