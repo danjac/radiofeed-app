@@ -78,22 +78,25 @@
         {% endif %}
       </div>
 
-      <div class="flex items-center">
-        {% if user.is_authenticated %}
-        {% include "episodes/_play_buttons.html" with css_class="sm:mr-3" %}
-        {% include "episodes/_bookmark_buttons.html" with css_class="sm:mr-3" %}
-        {% else %}
-        {% include "episodes/_play_buttons.html" with css_class="sm:mr-3" %}
-        {% endif %}
-        {% include "episodes/_download_button.html" with css_class="hidden sm:flex" %}
+      <div class="flex items-center md:mb-3">
+        {% include "episodes/_play_buttons.html" with css_class="mr-3" %}
+        {% include "episodes/_download_button.html" %}
       </div>
+      {% if user.is_authenticated %}
+      <div class="hidden md:block">
+        {% include "episodes/_bookmark_buttons.html" %}
+      </div>
+      {% endif %}
+
     </div>
   </div>
+  {% if user.is_authenticated %}
   <div class="mb-3 sm:hidden">
-        {% include "episodes/_download_button.html" %}
+    {% include "episodes/_bookmark_buttons.html" %}
   </div>
+  {% endif %}
 
-  <div class="markdown my-3">
+  <div class="markdown mb-3">
     {{ episode.description|clean_html }}
   </div>
 </div>
