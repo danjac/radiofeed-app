@@ -226,7 +226,7 @@ export default class extends Controller {
         '-' + this.formatTime(this.durationValue - this.currentTimeValue);
     }
 
-    this.sendTimeUpdate(false);
+    this.sendTimeUpdate();
   }
 
   getPercentBuffered(buffered) {
@@ -282,16 +282,15 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  async sendTimeUpdate(immediate) {
+  async sendTimeUpdate() {
     if (!this.hasEpisodeValue) {
       return;
     }
+
     // update every 10s or so
-    let sendUpdate = immediate;
-    if (!sendUpdate) {
-      const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-      sendUpdate = this.currentTimeValue && diff % 10 === 0;
-    }
+    const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
+    const sendUpdate = this.currentTimeValue && diff % 10 === 0;
+
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
       const response = await axios.post(this.progressUrlValue, {
