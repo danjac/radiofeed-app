@@ -3,7 +3,7 @@
 {% is_playing episode as is_episode_playing %}
 <div class="flex justify-between items-center p-2 border border-gray-500 mb-3"
      data-controller="episode"
-     data-action="episode:play@window->episode#open player:close@window->episode#close player:update@window->episode#update"
+     data-action="player:start@window->episode#start player:close@window->episode#close player:update@window->episode#update"
      data-episode-completed-class="line-through"
      {% if is_episode_playing %}
      data-episode-playing-value
@@ -12,7 +12,7 @@
      data-episode-current-time-value="{{ current_time }}"
      {% endif %}
      data-episode-episode-value="{{ episode.id }}"
-     data-episode-duration="{{ duration|format_duration }}"
+     data-episode-duration-value="{{ duration|format_duration }}"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
   <div>
     <div class="mb-2 flex flex-wrap md:hidden tracking-tight leading-tight">

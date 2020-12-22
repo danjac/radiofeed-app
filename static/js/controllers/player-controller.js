@@ -62,6 +62,8 @@ export default class extends Controller {
 
     this.episodeValue = episode;
 
+    this.dispatch('start', { episode });
+
     const response = await axios.post(playUrl, { current_time: currentTime });
 
     this.element.innerHTML = response.data;

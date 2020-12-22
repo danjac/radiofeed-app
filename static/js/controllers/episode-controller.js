@@ -34,22 +34,24 @@ export default class extends Controller {
     this.dispatch('stop');
   }
 
-  open(event) {
-    // another episode is started
+  start(event) {
+    // episode is started from player
     const { episode } = event.detail;
     this.playingValue = episode === this.episodeValue;
   }
 
   close(event) {
+    // episode is closed from player
     const { currentTime, episode, completed } = event.detail;
-    // player is closed
-    this.playingValue = false;
     if (episode === this.episodeValue) {
-      this.currentTimeValue = currentTime;
-    }
-    if (completed) {
-      this.currentTimeTarget.classList.add(this.completedClass);
-      this.currentTimeTarget.textContent = this.durationValue;
+      this.playingValue = false;
+      if (episode === this.episodeValue) {
+        this.currentTimeValue = currentTime;
+      }
+      if (completed) {
+        this.currentTimeTarget.classList.add(this.completedClass);
+        this.currentTimeTarget.textContent = this.durationValue;
+      }
     }
   }
 

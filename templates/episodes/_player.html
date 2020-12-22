@@ -163,7 +163,7 @@
             <button {% if prev_episode %}
                     title="{{ prev_episode.title }}"
                     data-controller="episode"
-                    data-episode-id-value="{{ prev_episode.id }}"
+                    data-episode-episode-value="{{ prev_episode.id }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' prev_episode.id %}"
                     data-episode-duration-value="{{ prev_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
@@ -187,7 +187,7 @@
             <button {% if next_episode %}
                     title="{{ next_episode.title }}"
                     data-controller="episode"
-                    data-episode-id-value="{{ next_episode.id }}"
+                    data-episode-episode-value="{{ next_episode.id }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' next_episode.id %}"
                     data-episode-duration-value="{{ next_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
