@@ -27,6 +27,7 @@ export default class extends Controller {
     resumeUrl: String,
     currentTime: Number,
     duration: Number,
+    skipInterval: Number,
     error: Boolean,
     paused: Boolean,
     waiting: Boolean,
@@ -173,11 +174,11 @@ export default class extends Controller {
   }
 
   skipBack() {
-    this.skipTo(this.audioTarget.currentTime - 15);
+    this.skipTo(this.audioTarget.currentTime - this.skipIntervalValue);
   }
 
   skipForward() {
-    this.skipTo(this.audioTarget.currentTime + 15);
+    this.skipTo(this.audioTarget.currentTime + this.skipIntervalValue);
   }
 
   // observers
@@ -327,7 +328,6 @@ export default class extends Controller {
   skipTo(position) {
     if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
       this.audioTarget.currentTime = this.currentTimeValue = position;
-      this.sendTimeUpdate(true);
     }
   }
 
