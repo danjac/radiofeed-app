@@ -82,8 +82,6 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    # "radiofeed.common.middleware.turbolinks.TurbolinksMiddleware",
-    # "radiofeed.common.middleware.ajax.AjaxRequestFragmentMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -135,6 +133,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_ADAPTER = "radiofeed.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "radiofeed.users.adapters.SocialAccountAdapter"
 
 # Internationalization
@@ -203,7 +202,10 @@ TEMPLATES = [
                 "radiofeed.common.context_processors.google_tracking_id",
             ],
             "builtins": ["radiofeed.common.defaulttags",],
-            "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},
+            "libraries": {
+                "pagination": "radiofeed.common.pagination.templatetags",
+                "turbo": "radiofeed.common.turbo.templatetags",
+            },
         },
     }
 ]

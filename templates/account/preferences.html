@@ -6,31 +6,8 @@
 
 {% block settings_content %}
 
-<form class="p-3 border w-full sm:w-1/2 border-gray-500"
-      method="post"
-      action="{% url 'user_preferences' %}"
-      novalidate>
-  {% csrf_token %}
-
-  <div class="mb-3">
-    <label class="flex items-center mb-2 w-full">
-      {% render_field form.autoplay class="mr-3 bg-gray-900" %}
-      {{ form.autoplay.label }}
-    </label>
-    {% include "_form_help_text.html" with help_text=form.autoplay.help_text %}
-  </div>
-  <div class="mb-3">
-    <label class="flex items-center mb-2 w-full">
-      {% render_field form.send_recommendations_email class="mr-3 bg-gray-900" %}
-      {{ form.send_recommendations_email.label }}
-    </label>
-    {% include "_form_help_text.html" with help_text=form.send_recommendations_email.help_text %}
-  </div>
-
-  <div class="">
-    <button class="p-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
-            type="submit">{% translate "Save Changes" %}</button>
-  </div>
-</form>
+<div id="prefs-form">
+  {% include "account/_preferences.html" %}
+</div>
 
 {% endblock %}

@@ -6,21 +6,33 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 
+# RadioFeed
+from radiofeed.common.turbo.response import TurboStreamResponse
+
 # Local
 from .forms import UserPreferencesForm
 
 
 @login_required
 def user_preferences(request):
+
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
             return redirect(request.path)
-    else:
-        form = UserPreferencesForm(instance=request.user)
-    return TemplateResponse(request, "account/preferences.html", {"form": form})
+
+        return TurboStreamResponse(
+            request,
+            "account/_preferences.html",
+            {"form": form},
+            action="replace",
+            target="prefs-form",
+        )
+
+    form = UserPreferencesForm(instance=request.user)
+    return TemplateResponse(request, "account/preferences.html", {"form": form},)
 
 
 @login_required

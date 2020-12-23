@@ -40,6 +40,7 @@ export default class extends Controller {
   }
 
   async initialize() {
+    // do we need to close this with disconnect()???
     this.audio = new Audio();
     this.audio.preload = 'metadata';
 
