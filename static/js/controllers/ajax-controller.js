@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Turbo from '@hotwired/turbo';
+import { visit } from '@hotwired/turbo';
 import { Controller } from 'stimulus';
 import { useDebounce, useThrottle } from 'stimulus-use';
 
@@ -71,7 +71,7 @@ export default class extends Controller {
     });
 
     if (this.hasRedirectValue) {
-      if (this.redirectValue !== 'none') Turbo.visit(this.redirectValue);
+      if (this.redirectValue !== 'none') visit(this.redirectValue);
       return;
     }
 
