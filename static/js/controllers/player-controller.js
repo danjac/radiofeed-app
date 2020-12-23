@@ -221,7 +221,7 @@ export default class extends Controller {
       if (this.hasCounterTarget) {
         this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
       }
-    } else {
+    } else if (this.hasCounterTarget) {
       this.counterTarget.textContent = '00:00:00';
     }
   }
