@@ -18,7 +18,7 @@
         content="IE=edge" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="turbolinks-cache-control"
+  <meta name="turbo-cache-control"
         content="no-cache">
   <meta name="copyright"
         content="Dan Jacob {% now "Y" %}">
@@ -92,7 +92,7 @@
         <a href="{% url 'account_logout' %}"
            class="inline-block text-white hover:text-gray-300"
            role="button"
-           data-turbolinks="false"
+           data-turbo="false"
            data-controller="ajax"
            data-action="ajax#post"
            data-ajax-redirect-value="/">{% translate "Logout" %}</a>
@@ -269,7 +269,7 @@
   {% block player %}
   {% get_player as player %}
   <div id="player"
-       data-turbolinks-permanent
+       data-turbo-frame
        data-controller="player"
        data-action="episode:play@window->player#open episode:stop@window->player#close"
        data-player-active-class="player--active"
