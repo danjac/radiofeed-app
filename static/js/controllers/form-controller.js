@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Turbolinks from 'turbolinks';
+import Turbo from '@hotwired/turbo';
 
 import { Controller } from 'stimulus';
 
@@ -14,7 +14,7 @@ export default class extends Controller {
     const data = new FormData(this.element);
 
     if (method.toLowerCase() === 'get') {
-      Turbolinks.visit(url + '?' + new URLSearchParams(data).toString());
+      Turbo.visit(url + '?' + new URLSearchParams(data).toString());
       return;
     }
 
@@ -23,7 +23,7 @@ export default class extends Controller {
       method,
       url,
       headers: {
-        'Turbolinks-Referrer': referrer,
+        'Turbo-Referrer': referrer,
       },
     });
 
@@ -31,11 +31,8 @@ export default class extends Controller {
 
     if (contentType.match(/html/)) {
       // errors in form, re-render
-      Turbolinks.controller.cache.put(
-        referrer,
-        Turbolinks.Snapshot.wrap(response.data)
-      );
-      Turbolinks.visit(referrer, {
+      Turbo.controller.cache.put(referrer, Turbo.Snapshot.wrap(response.data));
+      Turbo.visit(referrer, {
         action: 'restore',
       });
     } else if (contentType.match(/javascript/)) {
