@@ -9,7 +9,8 @@
 <p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
 <form class="mb-3 w-full md:w-1/2"
-      method="post">
+      method="post"
+      action="{% url 'account_email' %}">
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
