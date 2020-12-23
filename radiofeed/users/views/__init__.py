@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 from radiofeed.common.turbo.response import TurboStreamResponse
 
 # Local
-from .forms import UserPreferencesForm
+from ..forms import UserPreferencesForm
 
 
 @login_required
@@ -27,7 +27,7 @@ def user_preferences(request):
             request,
             "account/_preferences.html",
             {"form": form},
-            action="replace",
+            action="update",
             target="prefs-form",
         )
 

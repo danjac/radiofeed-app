@@ -1,5 +1,4 @@
-{% load i18n widget_tweaks turbo %}
-{% turbostream turbo_stream_action turbo_stream_target %}
+{% load i18n widget_tweaks %}
 <form class="p-3 border w-full sm:w-1/2 border-gray-500"
       method="post"
       action="{% url 'user_preferences' %}"
@@ -26,4 +25,3 @@
             type="submit">{% translate "Save Changes" %}</button>
   </div>
 </form>
-{% endturbostream %}

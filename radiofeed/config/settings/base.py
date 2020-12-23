@@ -202,10 +202,7 @@ TEMPLATES = [
                 "radiofeed.common.context_processors.google_tracking_id",
             ],
             "builtins": ["radiofeed.common.defaulttags",],
-            "libraries": {
-                "pagination": "radiofeed.common.pagination.templatetags",
-                "turbo": "radiofeed.common.turbo.templatetags",
-            },
+            "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},
         },
     }
 ]

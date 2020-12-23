@@ -1,0 +1,37 @@
+{% load i18n widget_tweaks %}
+<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+      method="post"
+      action="{% url 'account_signup' %}"
+      novalidate>
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden"
+         name="{{ redirect_field_name }}"
+         value="{{ redirect_field_value }}" />
+  {% endif %}
+  {% include "_form_errors.html" with errors=form.non_field_errors %}
+  {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
+  <div class="mb-3">
+    {% render_field form.username placeholder=form.username.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.username.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.email placeholder=form.email.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.email.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.password1 placeholder=form.password1.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.password1.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.password2 placeholder=form.password2.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.password2.errors %}
+  </div>
+
+  {% endwith %}
+
+  <div class="">
+    <button class="p-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
+            type="submit">{% translate "Sign Up" %}</button>
+  </div>
+</form>
