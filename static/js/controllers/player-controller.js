@@ -126,18 +126,22 @@ export default class extends Controller {
 
   async closePlayer(stopUrl) {
     if (stopUrl) {
-      const response = await axios.post(stopUrl);
-      this.dispatch('update', response.data);
-      if (response.data.next_episode) {
-        const { next_episode } = response.data;
-        this.open({
-          detail: {
-            ...next_episode,
-            mediaUrl: next_episode.media_url,
-            playUrl: next_episode.play_url,
-          },
-        });
-        return;
+      try {
+        const response = await axios.post(stopUrl);
+        this.dispatch('update', response.data);
+        if (response.data.next_episode) {
+          const { next_episode } = response.data;
+          this.open({
+            detail: {
+              ...next_episode,
+              mediaUrl: next_episode.media_url,
+              playUrl: next_episode.play_url,
+            },
+          });
+          return;
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
     this.element.innerHTML = '';
