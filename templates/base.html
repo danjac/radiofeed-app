@@ -282,7 +282,8 @@
        data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        data-player-pause-url-value="{% url 'episodes:pause_player' %}"
        data-player-resume-url-value="{% url 'episodes:resume_player' %}"
-       {% if player %}
+       {% if player.episode %}
+       data-player-media-url-value="{{ player.episode.media_url }}"
        {% if player.paused %}
        data-player-paused-value
        {% endif %}

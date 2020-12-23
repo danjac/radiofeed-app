@@ -4,12 +4,6 @@
 <div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
      data-controller="toggle">
 
-  <audio preload="metadata"
-         id="audio"
-         src="{{ episode.media_url }}"
-         data-player-target="audio"
-         data-action="progress->player#progress timeupdate->player#timeUpdate ended->player#ended canplaythrough->player#canPlay playing->player#canPlay stalled->player#wait waiting->player#wait loadedmetadata->player#loadedMetaData"></audio>
-
   <div data-toggle-target="item"
        class="hidden">
     <div class="flex items-center justify-between relative">
@@ -165,6 +159,7 @@
                     title="{{ prev_episode.title }}"
                     data-controller="episode"
                     data-episode-episode-value="{{ prev_episode.id }}"
+                    data-episode-media-url-value="{{ next_episode.media_url }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' prev_episode.id %}"
                     data-episode-duration-value="{{ prev_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
@@ -189,6 +184,7 @@
                     title="{{ next_episode.title }}"
                     data-controller="episode"
                     data-episode-episode-value="{{ next_episode.id }}"
+                    data-episode-media-url-value="{{ next_episode.media_url }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' next_episode.id %}"
                     data-episode-duration-value="{{ next_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
