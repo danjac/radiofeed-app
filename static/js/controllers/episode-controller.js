@@ -9,8 +9,8 @@ export default class extends Controller {
   static values = {
     episode: Number,
     duration: Number,
-    duration: String,
     currentTime: Number,
+    mediaUrl: String,
     playUrl: String,
     playing: Boolean,
     completed: Boolean,
@@ -27,6 +27,7 @@ export default class extends Controller {
       episode: this.episodeValue,
       currentTime: this.currentTimeValue,
       playUrl: this.playUrlValue,
+      mediaUrl: this.mediaUrlValue,
     });
   }
 

@@ -5,6 +5,7 @@
      data-controller="episode"
      data-action="player:start@window->episode#start player:close@window->episode#close player:update@window->episode#update"
      data-episode-completed-class="line-through"
+     data-episode-media-url-value="{{ episode.media_url }}"
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}

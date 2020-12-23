@@ -21,6 +21,7 @@ export default class extends Controller {
   static values = {
     episode: Number,
     progressUrl: String,
+    mediaUrl: String,
     stopUrl: String,
     pauseUrl: String,
     markCompleteUrl: String,
@@ -39,13 +40,26 @@ export default class extends Controller {
   }
 
   async initialize() {
-    if (this.hasAudioTarget) {
-      this.audioTarget.currentTime = this.currentTimeValue;
+    this.audio = new Audio();
+    this.audio.preload = 'metadata';
+
+    this.audio.addEventListener('progress', this.progress.bind(this));
+    this.audio.addEventListener('timeupdate', this.timeUpdate.bind(this));
+    this.audio.addEventListener('ended', this.ended.bind(this));
+    this.audio.addEventListener('canplaythrough', this.canPlay.bind(this));
+    this.audio.addEventListener('playing', this.canPlay.bind(this));
+    this.audio.addEventListener('stalled', this.wait.bind(this));
+    this.audio.addEventListener('loadedmetadata', this.loadedMetaData.bind(this));
+
+    this.audio.currentTime = this.currentTimeValue;
+
+    if (this.mediaUrlValue) {
+      this.audio.src = this.mediaUrlValue;
       try {
         if (this.pausedValue) {
-          await this.audioTarget.pause();
+          await this.audio.pause();
         } else {
-          await this.audioTarget.play();
+          await this.audio.play();
         }
       } catch (e) {
         console.error(e);
@@ -55,7 +69,9 @@ export default class extends Controller {
   }
 
   async open(event) {
-    const { playUrl, episode, currentTime } = event.detail;
+    const { playUrl, mediaUrl, episode, currentTime } = event.detail;
+
+    this.audio.src = this.mediaUrlValue = mediaUrl;
 
     this.loadingValue = true;
     this.errorValue = false;
@@ -69,11 +85,11 @@ export default class extends Controller {
     this.element.innerHTML = response.data;
 
     if (currentTime) {
-      this.audioTarget.currentTime = currentTime;
+      this.audio.currentTime = currentTime;
     }
 
     try {
-      await this.audioTarget.play();
+      await this.audio.play();
     } catch (e) {
       console.error(e);
       this.errorValue = true;
@@ -87,6 +103,7 @@ export default class extends Controller {
   }
 
   stop() {
+    this.audio.pause();
     this.dispatch('close', {
       episode: this.episodeValue,
       currentTime: this.currentTimeValue,
@@ -95,7 +112,7 @@ export default class extends Controller {
   }
 
   loadedMetaData() {
-    this.durationValue = this.audioTarget.duration;
+    this.durationValue = this.audio.duration;
   }
 
   ended() {
@@ -116,6 +133,7 @@ export default class extends Controller {
         this.open({
           detail: {
             ...next_episode,
+            mediaUrl: next_episode.media_url,
             playUrl: next_episode.play_url,
           },
         });
@@ -130,7 +148,7 @@ export default class extends Controller {
 
   pause() {
     this.pausedValue = true;
-    this.audioTarget.pause();
+    this.audio.pause();
     if (this.pauseUrlValue) {
       axios.post(this.pauseUrlValue);
     }
@@ -140,7 +158,7 @@ export default class extends Controller {
     this.errorValue = false;
     this.pausedValue = false;
     try {
-      await this.audioTarget.play();
+      await this.audio.play();
     } catch (e) {
       console.error(e);
       this.errorValue = true;
@@ -159,13 +177,15 @@ export default class extends Controller {
   }
 
   timeUpdate() {
-    const { currentTime } = this.audioTarget;
+    const { currentTime } = this.audio;
     this.currentTimeValue = currentTime;
   }
 
   progress() {
-    const { buffered } = this.audioTarget;
-    this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
+    const { buffered } = this.audio;
+    if (this.hasBufferTarget) {
+      this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
+    }
   }
 
   skip(event) {
@@ -176,11 +196,11 @@ export default class extends Controller {
   }
 
   skipBack() {
-    this.skipTo(this.audioTarget.currentTime - this.skipIntervalValue);
+    this.skipTo(this.audio.currentTime - this.skipIntervalValue);
   }
 
   skipForward() {
-    this.skipTo(this.audioTarget.currentTime + this.skipIntervalValue);
+    this.skipTo(this.audio.currentTime + this.skipIntervalValue);
   }
 
   // observers
@@ -197,8 +217,12 @@ export default class extends Controller {
   }
 
   durationValueChanged() {
-    if (this.hasCounterTarget) {
-      this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
+    if (this.durationValue) {
+      if (this.hasCounterTarget) {
+        this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
+      }
+    } else {
+      this.counterTarget.textContent = '00:00:00';
     }
   }
 
@@ -328,7 +352,7 @@ export default class extends Controller {
 
   skipTo(position) {
     if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
-      this.audioTarget.currentTime = this.currentTimeValue = position;
+      this.audio.currentTime = this.currentTimeValue = position;
     }
   }
 

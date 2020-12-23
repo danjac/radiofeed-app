@@ -30,7 +30,7 @@ def episode_list(request):
             ).distinct()
 
     return TemplateResponse(
-        request, "episodes/index.html", {"episodes": episodes, "search": search}
+        request, "episodes/index.html", {"episodes": episodes, "search": search},
     )
 
 
@@ -91,7 +91,7 @@ def bookmark_list(request):
     else:
         bookmarks = bookmarks.order_by("-created")
     return TemplateResponse(
-        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search}
+        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search},
     )
 
 
@@ -166,6 +166,7 @@ def stop_player(request, completed=False):
             extra_context |= {
                 "next_episode": {
                     "episode": next_episode.id,
+                    "media_url": next_episode.media_url,
                     "play_url": reverse(
                         "episodes:start_player", args=[next_episode.id]
                     ),

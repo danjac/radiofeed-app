@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Turbolinks from 'turbolinks';
+import '@hotwired/turbo';
 
 import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
@@ -13,6 +13,3 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 const application = Application.start();
 const context = require.context('./controllers', true, /\.js$/);
 application.load(definitionsFromContext(context));
-
-// Turbolinks setup
-Turbolinks.start();

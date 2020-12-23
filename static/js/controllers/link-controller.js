@@ -1,5 +1,5 @@
 import { Controller } from 'stimulus';
-import Turbolinks from 'turbolinks';
+import { visit } from '@hotwired/turbo';
 
 export default class extends Controller {
   // Turns any element into a link
@@ -9,6 +9,6 @@ export default class extends Controller {
   };
 
   visit() {
-    Turbolinks.visit(this.urlValue);
+    visit(this.urlValue);
   }
 }

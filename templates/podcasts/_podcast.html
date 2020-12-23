@@ -8,6 +8,7 @@
       <div>
         <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight">
           <a href="{{ podcast.get_absolute_url }}"
+             data-turbo-frame="default"
              title="{{ podcast.title }}"
              class="font-semibold hover:text-gray-300">{{ podcast.title|truncatechars:80 }}</a>
         </div>

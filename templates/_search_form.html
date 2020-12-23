@@ -1,6 +1,4 @@
-<form data-controller="form {% if css_class %} {{ css_class }}{% endif %}"
-      data-action="form#submit:once"
-      method="get"
+<form method="get"
       action="{{ request.path }}"
       class="relative bg-gray-900 focus-within:text-gray-300">
   <input type="search"

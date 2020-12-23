@@ -32,9 +32,9 @@
     "webpack-cli": "^4.1.0"
   },
   "dependencies": {
+    "@hotwired/turbo": "^7.0.0-beta.1",
     "axios": "^0.21.0",
     "stimulus": "^2.0.0",
-    "stimulus-use": "^0.18.1",
-    "turbolinks": "^5.2.0"
+    "stimulus-use": "^0.18.1"
   }
 }
