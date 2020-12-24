@@ -1,6 +1,5 @@
 # Standard Library
 import http
-import json
 
 # Django
 from django.urls import reverse
@@ -180,22 +179,17 @@ class TestAddPodcast:
 
         mock = mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
 
-        req = rf.post(
-            reverse("podcasts:add_podcast"),
-            json.dumps(data),
-            content_type="application/json",
-        )
+        req = rf.post(reverse("podcasts:add_podcast"), data)
         req.user = admin_user
+        req.accept_turbo_stream = True
+
         resp = views.add_podcast(req)
+        assert resp.status_code == http.HTTPStatus.OK
 
         podcast = Podcast.objects.get()
         assert podcast.title == data["title"]
         assert podcast.rss == data["rss"]
         assert podcast.itunes == data["itunes"]
-
-        data = json.loads(resp.content)
-
-        assert data["id"] == podcast.id
 
         mock.asset_called()
 

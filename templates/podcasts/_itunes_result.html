@@ -1,6 +1,6 @@
 {% with can_add_podcast=request.user.is_staff %}
-<div class="p-2 border border-gray-500 mb-3 flex items-center justify-between">
-  <div class="flex items-center">
+<div class="p-2 border border-gray-500 mb-3 md:flex items-center justify-between">
+  <div class="flex items-center mb-2 md:mb-0">
     {% if result.image %}
     <img src="{{ result.image }}"
          height="16"
@@ -29,14 +29,14 @@
         {% if result.podcast and result.podcast.pub_date %}
         <a href="{{ result.podcast.get_absolute_url }}"
            class="font-semibold hover-text-gray-100">Podcast</a>
-        {% elif can_add_podcast and not result.podcast %}
-        {% include "podcasts/_add_new_button.html" with css_class="md:hidden" %}
         {% endif %}
       </div>
     </div>
   </div>
   {% if can_add_podcast and not result.podcast %}
-  {% include "podcasts/_add_new_button.html" with css_class="hidden md:inline-block" %}
+  <turbo-frame id="add-podcast">
+    {% include "podcasts/_add_new_button.html" %}
+  </turbo-frame>
   {% endif %}
 </div>
 {% endwith %}

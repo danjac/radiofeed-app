@@ -1,39 +1,45 @@
-<div class="{{ css_class }}"
-     data-controller="toggle">
-  <button class="rounded bg-blue-800 hover:bg-blue-600 border border-white text-white text-sm p-1 flex items-center"
-          data-controller="ajax"
-          data-action="toggle#toggle ajax#post"
-          data-toggle-target="item"
-          data-ajax-url-value="{% url 'podcasts:add_podcast' %}"
-          data-ajax-params-value="{{ result.as_json }}">
+<div>
+  {% if is_added %}
+  <button class="rounded cursor-default border border-white text-white text-sm p-1 flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-4 w-4 mr-2">
+         title="Verified"
+         class="h-4 w-4 mr-2 text-green-300">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            d="M5 13l4 4L19 7" />
     </svg>
-    Add Podcast
+    Added!
   </button>
-
-  <div class="hidden"
-       data-toggle-target="item">
-    <button class="rounded cursor-default border border-white text-white text-sm p-1 flex items-center">
+  {% else %}
+  <form method="post"
+        action="{% url 'podcasts:add_podcast' %}">
+    {% csrf_token %}
+    <input type="hidden"
+           name="rss"
+           value="{{ result.rss }}">
+    <input type="hidden"
+           name="title"
+           value="{{ result.title }}">
+    <input type="hidden"
+           name="itunes"
+           value="{{ result.itunes }}">
+    <button class="rounded bg-blue-800 hover:bg-blue-600 border border-white text-white text-sm p-1 flex items-center">
       <svg xmlns="http://www.w3.org/2000/svg"
            fill="none"
            viewBox="0 0 24 24"
            stroke="currentColor"
-           title="Verified"
-           class="h-4 w-4 mr-2 text-green-300">
+           class="h-4 w-4 mr-2">
         <path stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M5 13l4 4L19 7" />
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      Added!
+      Add Podcast
     </button>
-  </div>
+  </form>
+  {% endif %}
 </div>

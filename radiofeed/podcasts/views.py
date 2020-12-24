@@ -1,11 +1,8 @@
-# Standard Library
-import json
-
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -231,11 +228,18 @@ def unsubscribe(request, podcast_id):
 @staff_member_required
 @require_POST
 def add_podcast(request):
-    form = PodcastForm(json.loads(request.body))
+    form = PodcastForm(request.POST)
     if form.is_valid():
         podcast = form.save()
         sync_podcast_feed.delay(podcast_id=podcast.id)
-        return JsonResponse({"id": podcast.id, "title": podcast.title})
+        if request.accept_turbo_stream:
+            return TurboFrameTemplateResponse(
+                request,
+                "podcasts/_add_new_button.html",
+                {"is_added": True},
+                dom_id="add-podcast",
+            )
+        return HttpResponse()
 
     return HttpResponseBadRequest()
 
