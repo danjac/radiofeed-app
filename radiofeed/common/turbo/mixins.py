@@ -1,5 +1,5 @@
 # Local
-from .response import TurboStreamResponse
+from .response import TurboStreamTemplateResponse
 
 
 class TurboStreamFormMixin:
@@ -17,7 +17,7 @@ class TurboStreamFormMixin:
         return self.turbo_stream_template
 
     def form_invalid(self, form):
-        return TurboStreamResponse(
+        return TurboStreamTemplateResponse(
             request=self.request,
             template=self.get_turbo_stream_template(),
             context=self.get_context_data(form=form),

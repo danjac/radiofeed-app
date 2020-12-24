@@ -3,7 +3,7 @@ from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 
 
-class TurboStreamResponse(TemplateResponse):
+class TurboStreamTemplateResponse(TemplateResponse):
     def __init__(self, request, template, context, action, target, **kwargs):
 
         super().__init__(

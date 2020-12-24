@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 
 # RadioFeed
-from radiofeed.common.turbo.response import TurboStreamResponse
+from radiofeed.common.turbo.response import TurboStreamTemplateResponse
 
 # Local
 from ..forms import UserPreferencesForm
@@ -23,7 +23,7 @@ def user_preferences(request):
             messages.success(request, "Your preferences have been saved")
             return redirect(request.path)
 
-        return TurboStreamResponse(
+        return TurboStreamTemplateResponse(
             request,
             "account/_preferences.html",
             {"form": form},
