@@ -32,7 +32,7 @@ urlpatterns = [
         name="account_reset_password",
     ),
     re_path(
-        r"^password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
+        r"^account/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$",
         account_views.password_reset_from_key,
         name="account_reset_password_from_key",
     ),
