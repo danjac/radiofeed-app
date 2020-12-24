@@ -39,18 +39,11 @@ class TurboFrameTemplateResponse(TemplateResponse):
     def __init__(self, request, template, context, dom_id, **kwargs):
 
         super().__init__(
-            request,
-            template,
-            context,
-            content_type="text/html; turbo-stream;",
-            **kwargs,
+            request, template, context, **kwargs,
         )
 
         self._dom_id = dom_id
-
-        self.context_data.update(
-            {"turbo_frame_dom_id": dom_id, "is_turbo_frame": True,}
-        )
+        self.context_data.update({"turbo_frame_dom_id": dom_id, "is_turbo_frame": True})
 
     @property
     def rendered_content(self):

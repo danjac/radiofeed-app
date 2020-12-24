@@ -36,7 +36,9 @@
     {% endif %}
   </ul>
   {% if user.is_authenticated %}
-  {% include "podcasts/_subscribe_buttons.html" %}
+  <turbo-frame id="subscribe-{{ podcast.id }}">
+    {% include "podcasts/_subscribe_buttons.html" %}
+  </turbo-frame>
   {% endif %}
 
 </nav>

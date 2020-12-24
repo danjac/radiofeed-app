@@ -270,15 +270,17 @@ class TestSubscribe:
     def test_subscribe(self, rf, podcast, user):
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
+        req.accept_turbo_stream = True
         resp = views.subscribe(req, podcast.id)
-        assert resp.status_code == http.HTTPStatus.CREATED
+        assert resp.status_code == http.HTTPStatus.OK
 
     def test_already_subscribed(self, rf, podcast, user):
         SubscriptionFactory(user=user, podcast=podcast)
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
+        req.accept_turbo_stream = True
         resp = views.subscribe(req, podcast.id)
-        assert resp.status_code == http.HTTPStatus.CREATED
+        assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestUnsubscribe:
@@ -286,8 +288,9 @@ class TestUnsubscribe:
         SubscriptionFactory(user=user, podcast=podcast)
         req = rf.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
         req.user = user
+        req.accept_turbo_stream = True
         resp = views.unsubscribe(req, podcast.id)
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        assert resp.status_code == http.HTTPStatus.OK
         assert not Subscription.objects.filter(podcast=podcast, user=user).exists()
 
 

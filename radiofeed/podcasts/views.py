@@ -1,18 +1,18 @@
 # Standard Library
-import http
 import json
 
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 # RadioFeed
+from radiofeed.common.turbo.response import TurboFrameTemplateResponse
 from radiofeed.users.decorators import staff_member_required
 
 # Local
@@ -217,7 +217,7 @@ def subscribe(request, podcast_id):
         Subscription.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
         pass
-    return HttpResponse(status=http.HTTPStatus.CREATED)
+    return podcast_subscribe_response(request, podcast, True)
 
 
 @login_required
@@ -225,7 +225,7 @@ def subscribe(request, podcast_id):
 def unsubscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    return podcast_subscribe_response(request, podcast, False)
 
 
 @staff_member_required
@@ -269,3 +269,14 @@ def podcast_detail_response(request, template_name, podcast, context):
         },
     } | context
     return TemplateResponse(request, template_name, context)
+
+
+def podcast_subscribe_response(request, podcast, is_subscribed):
+    if request.accept_turbo_stream:
+        return TurboFrameTemplateResponse(
+            request,
+            "podcasts/_subscribe_buttons.html",
+            {"podcast": podcast, "is_subscribed": is_subscribed},
+            dom_id=f"subscribe-{podcast.id}",
+        )
+    return redirect(podcast.get_absolute_url())
