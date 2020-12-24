@@ -89,13 +89,12 @@
            class="inline-block text-white hover:text-gray-300 mr-3">
           {{ user.username }}
         </a>
-        <a href="{% url 'account_logout' %}"
-           class="inline-block text-white hover:text-gray-300"
-           role="button"
-           data-turbo="false"
-           data-controller="ajax"
-           data-action="ajax#post"
-           data-ajax-redirect-value="/">{% translate "Logout" %}</a>
+        <form method="post"
+              action="{% url 'account_logout' %}"
+              class="inline-block">
+          {% csrf_token %}
+          <button class="text-white hover:text-gray-300">{% translate "Logout" %}</button>
+        </form>
       </div>
       {% else %}
       {% block navbar_auth %}
