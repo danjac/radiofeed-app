@@ -84,7 +84,9 @@
       <div class="flex items-center sm:mb-3">
         {% include "episodes/_play_buttons.html" with css_class="mr-3" %}
         {% if user.is_authenticated %}
-        {% include "episodes/_bookmark_buttons.html" %}
+        <turbo-frame id="bookmark-{{ episode.id }}">
+          {% include "episodes/_bookmark_buttons.html" %}
+        </turbo-frame>
         {% endif %}
       </div>
       <div class="hidden sm:block">

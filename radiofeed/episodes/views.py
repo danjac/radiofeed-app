@@ -1,15 +1,17 @@
 # Standard Library
-import http
 import json
 
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+
+# RadioFeed
+from radiofeed.common.turbo.response import TurboFrameTemplateResponse
 
 # Local
 from .models import AudioLog, Bookmark, Episode
@@ -104,7 +106,7 @@ def add_bookmark(request, episode_id):
         Bookmark.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return HttpResponse(status=http.HTTPStatus.CREATED)
+    return episode_bookmark_response(request, episode, True)
 
 
 @login_required
@@ -112,7 +114,7 @@ def add_bookmark(request, episode_id):
 def remove_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(episode=episode, user=request.user).delete()
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    return episode_bookmark_response(request, episode, False)
 
 
 # Player control views
@@ -212,3 +214,14 @@ def player_status_response(episode, current_time, extra_context=None):
         }
         | (extra_context or {})
     )
+
+
+def episode_bookmark_response(request, episode, is_bookmarked):
+    if request.accept_turbo_stream:
+        return TurboFrameTemplateResponse(
+            request,
+            "episodes/_bookmark_buttons.html",
+            {"episode": episode, "is_bookmarked": is_bookmarked},
+            dom_id=f"bookmark-{episode.id}",
+        )
+    return redirect(episode.get_absolute_url())

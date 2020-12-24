@@ -390,8 +390,9 @@ class TestAddBookmark:
     def test_post(self, rf, user, episode):
         req = rf.post(reverse("episodes:add_bookmark", args=[episode.id]))
         req.user = user
+        req.accept_turbo_stream = True
         resp = views.add_bookmark(req, episode.id)
-        assert resp.status_code == http.HTTPStatus.CREATED
+        assert resp.status_code == http.HTTPStatus.OK
         assert Bookmark.objects.filter(user=user, episode=episode).exists()
 
 
@@ -400,6 +401,7 @@ class TestRemoveBookmark:
         BookmarkFactory(user=user, episode=episode)
         req = rf.post(reverse("episodes:remove_bookmark", args=[episode.id]))
         req.user = user
+        req.accept_turbo_stream = True
         resp = views.remove_bookmark(req, episode.id)
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        assert resp.status_code == http.HTTPStatus.OK
         assert not Bookmark.objects.filter(user=user, episode=episode).exists()
