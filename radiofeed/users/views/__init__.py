@@ -1,13 +1,21 @@
 # Django
+# Standard Library
+import datetime
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 # RadioFeed
-from radiofeed.common.turbo.response import TurboStreamTemplateResponse
+from radiofeed.common.turbo.response import (
+    TurboStreamRemoveResponse,
+    TurboStreamTemplateResponse,
+)
 
 # Local
 from ..forms import UserPreferencesForm
@@ -45,3 +53,16 @@ def delete_account(request):
         messages.info(request, "Your account has been deleted")
         return redirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
+
+
+@require_POST
+def accept_cookies(request):
+    response = TurboStreamRemoveResponse("accept-cookies")
+    response.set_cookie(
+        "accept-cookies",
+        value="true",
+        expires=timezone.now() + datetime.timedelta(days=30),
+        secure=True,
+        httponly=True,
+    )
+    return response

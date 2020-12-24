@@ -6,6 +6,7 @@ from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
 # RadioFeed
+from radiofeed.users.views import accept_cookies
 from radiofeed.users.views import account as account_views
 from radiofeed.users.views import delete_account
 from radiofeed.users.views import socialaccount as socialaccount_views
@@ -45,6 +46,7 @@ urlpatterns = [
     path("account/preferences/", user_preferences, name="user_preferences"),
     path("account/~delete/", delete_account, name="delete_account"),
     path("account/", include("allauth.urls")),
+    path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
 ]

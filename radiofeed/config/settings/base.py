@@ -201,6 +201,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "radiofeed.common.context_processors.google_tracking_id",
+                "radiofeed.common.context_processors.is_cookies_accepted",
             ],
             "builtins": ["radiofeed.common.defaulttags",],
             "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},

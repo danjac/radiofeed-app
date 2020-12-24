@@ -1,6 +1,17 @@
 # Django
+from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
+
+
+class TurboStreamRemoveResponse(HttpResponse):
+    """Sends an empty 'remove' stream"""
+
+    def __init__(self, target, **kwargs):
+        super().__init__(
+            f'<turbo-stream target="{target}" action="remove"></turbo-stream>',
+            content_type="text/html; turbo-stream;",
+        )
 
 
 class TurboStreamTemplateResponse(TemplateResponse):
