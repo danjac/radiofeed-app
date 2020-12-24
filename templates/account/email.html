@@ -10,6 +10,7 @@
 
 <form class="mb-3 w-full md:w-1/2"
       method="post"
+      id="email-addresses"
       action="{% url 'account_email' %}">
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
