@@ -23,14 +23,6 @@ class SignupView(TurboStreamFormMixin, account_views.SignupView):
 signup = SignupView.as_view()
 
 
-class EmailConfirmView(TurboStreamFormMixin, account_views.ConfirmEmailView):
-    turbo_stream_target = "email-confirm-form"
-    turbo_stream_template = "account/_email_confirm.html"
-
-
-confirm_email = EmailConfirmView.as_view()
-
-
 class EmailView(TurboStreamFormMixin, account_views.EmailView):
     turbo_stream_target = "add-email-form"
     turbo_stream_template = "account/_add_email.html"

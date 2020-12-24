@@ -10,7 +10,7 @@
 <p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
-<div id="signup-form">
+<div id="{{ view.turbo_stream_target }}">
   {% include "socialaccount/_signup.html" %}
 </div>
 {% endblock %}

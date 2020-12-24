@@ -53,14 +53,17 @@
 
     <button class="text-sm rounded border border-white bg-blue-800 hover:bg-blue-600 p-1 mr-2 mb-3"
             type="submit"
+            value="1"
             name="action_send">{% translate 'Re-send Verification' %}</button>
     <button class="text-sm rounded border border-white bg-blue-800 hover:bg-blue-600 p-1 mr-2 mb-3"
+            value="1"
             name="action_primary">{% translate 'Make Primary' %}</button>
     <button class="text-sm rounded border border-white bg-red-800 hover:bg-red-600 p-1 mb-3 flex items-center"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
             data-action="confirm#confirm"
+            value="1"
             name="action_remove">
       <svg xmlns="http://www.w3.org/2000/svg"
            fill="none"
@@ -88,7 +91,7 @@
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-<div id="add-email-form">
+<div id="{{ view.turbo_stream_target }}">
   {% include "account/_add_email.html" %}
 </div>
 {% endif %}

@@ -32,7 +32,7 @@ def user_preferences(request):
         )
 
     form = UserPreferencesForm(instance=request.user)
-    return TemplateResponse(request, "account/preferences.html", {"form": form},)
+    return TemplateResponse(request, "account/preferences.html", {"form": form})
 
 
 @login_required

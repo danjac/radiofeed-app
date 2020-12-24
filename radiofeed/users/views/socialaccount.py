@@ -13,11 +13,3 @@ class SignupView(TurboStreamFormMixin, socialaccount_views.SignupView):
 
 
 signup = SignupView.as_view()
-
-
-class ConnectionsView(TurboStreamFormMixin, socialaccount_views.ConnectionsView):
-    turbo_stream_target = "connections-form"
-    turbo_stream_template = "socialaccount/_connections.html"
-
-
-connections = ConnectionsView.as_view()

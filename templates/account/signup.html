@@ -11,7 +11,7 @@
   <a class="underline hover:text-gray-300"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
-<div id="signup-form">
+<div id="{{ view.turbo_stream_target }}">
   {% include "account/_signup.html" %}
 </div>
 

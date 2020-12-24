@@ -38,19 +38,9 @@ urlpatterns = [
     ),
     path("account/email/", account_views.email, name="account_email",),
     path(
-        "account/confirm-email/",
-        account_views.confirm_email,
-        name="account_confirm_email",
-    ),
-    path(
         "account/social/signup/",
         socialaccount_views.signup,
         name="socialaccount_signup",
-    ),
-    path(
-        "account/social/connections/",
-        socialaccount_views.connections,
-        name="socialaccount_connections",
     ),
     path("account/preferences/", user_preferences, name="user_preferences"),
     path("account/~delete/", delete_account, name="delete_account"),
