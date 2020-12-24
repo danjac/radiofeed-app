@@ -56,6 +56,10 @@
   @apply border-blue-500 border-b-2 font-bold;
 }
 
+.player--indicator {
+  @apply bg-gray-800;
+}
+
 .player--active .player--interactive {
   @apply cursor-pointer;
 }
@@ -67,6 +71,10 @@
 
 .player--active .player--buffer {
   @apply bg-blue-600;
+}
+
+.player--indicator {
+  @apply bg-gray-800;
 }
 
 .player--inactive .player--interactive {
