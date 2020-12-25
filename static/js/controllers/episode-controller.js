@@ -55,9 +55,10 @@ export default class extends Controller {
   update({ detail: { episode, timeRemaining, completed } }) {
     // server status update
     if (episode && episode === this.episodeValue) {
-      if (timeRemaining) {
+      if (timeRemaining && !completed) {
         this.currentTimeTarget.textContent = '~' + timeRemaining;
       } else {
+        this.currentTimeValue = 0;
         this.currentTimeTarget.textContent = this.durationValue;
       }
       this.completedValue = completed;
@@ -65,14 +66,12 @@ export default class extends Controller {
   }
 
   completedValueChanged() {
-    if (this.completedValue) {
-      this.currentTimeValue = 0;
-      if (this.hasCurrentTimeTarget) {
-        this.currentTimeTarget.textContent = this.durationValue;
+    if (this.hasCurrentTimeTarget) {
+      if (this.completedValue) {
         this.currentTimeTarget.classList.add(this.completedClass);
+      } else {
+        this.currentTimeTarget.classList.remove(this.completedClass);
       }
-    } else if (this.hasCurrentTimeTarget) {
-      this.currentTimeTarget.classList.remove(this.completedClass);
     }
   }
 
