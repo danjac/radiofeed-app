@@ -58,11 +58,10 @@ export default class extends Controller {
     if (this.mediaUrlValue) {
       this.audio.src = this.mediaUrlValue;
 
-      // sessionStorage url is set to prevent automatically starting
+      // sessionStorage toggle is set to prevent automatically starting
       // player if opening in another tab.
 
-      if (sessionStorage.getItem('mediaUrl') !== this.mediaUrlValue) {
-        sessionStorage.setItem('mediaUrl', this.mediaUrlValue);
+      if (!sessionStorage.getItem('player-enabled')) {
         this.pausedValue = true;
       }
 
@@ -98,7 +97,7 @@ export default class extends Controller {
 
     this.element.innerHTML = await response.text();
 
-    sessionStorage.setItem('mediaUrl', this.mediaUrlValue);
+    sessionStorage.setItem('player-enabled', true);
 
     if (currentTime) {
       this.audio.currentTime = currentTime;
@@ -162,7 +161,7 @@ export default class extends Controller {
     this.lastUpdated = 0;
     this.episodeValue = '';
 
-    sessionStorage.removeItem('mediaUrl');
+    sessionStorage.removeItem('player-enabled');
   }
 
   loadedMetaData() {
@@ -180,6 +179,9 @@ export default class extends Controller {
   async play() {
     this.errorValue = false;
     this.pausedValue = false;
+
+    sessionStorage.setItem('player-enabled', true);
+
     try {
       await this.audio.play();
     } catch (e) {
