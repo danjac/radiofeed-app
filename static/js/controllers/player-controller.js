@@ -58,7 +58,11 @@ export default class extends Controller {
     if (this.mediaUrlValue) {
       this.audio.src = this.mediaUrlValue;
 
+      // sessionStorage url is set to prevent automatically starting
+      // player if opening in another tab.
+
       if (sessionStorage.getItem('mediaUrl') !== this.mediaUrlValue) {
+        sessionStorage.setItem('mediaUrl', this.mediaUrlValue);
         this.pausedValue = true;
       }
 
