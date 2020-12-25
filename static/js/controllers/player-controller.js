@@ -40,7 +40,8 @@ export default class extends Controller {
   }
 
   async initialize() {
-    // do we need to close this with disconnect()???
+    // Audio object is used instead of <audio> element to prevent resets
+    // and skips with page transitions
     this.audio = new Audio();
     this.audio.preload = 'metadata';
 
@@ -70,6 +71,7 @@ export default class extends Controller {
   }
 
   async open(event) {
+    // new episode is loaded into player
     const { playUrl, mediaUrl, episode, currentTime } = event.detail;
 
     this.audio.src = this.mediaUrlValue = mediaUrl;
@@ -100,10 +102,12 @@ export default class extends Controller {
   }
 
   close() {
+    // player closed from episode
     this.closePlayer(this.stopUrlValue);
   }
 
   stop() {
+    // stop button clicked in player
     this.audio.pause();
     this.dispatch('close', {
       episode: this.episodeValue,
@@ -112,11 +116,8 @@ export default class extends Controller {
     this.closePlayer(this.stopUrlValue);
   }
 
-  loadedMetaData() {
-    this.durationValue = this.audio.duration;
-  }
-
   ended() {
+    // episode is completed
     this.dispatch('close', {
       episode: this.episodeValue,
       currentTime: this.currentTimeValue,
@@ -130,6 +131,7 @@ export default class extends Controller {
       try {
         const response = await axios.post(stopUrl);
         this.dispatch('update', response.data);
+        // if autoplay is on, next episode in podcast can be loaded
         if (response.data.next_episode) {
           const { next_episode } = response.data;
           this.open({
@@ -149,6 +151,10 @@ export default class extends Controller {
     this.durationValue = 0;
     this.lastUpdated = 0;
     this.episodeValue = '';
+  }
+
+  loadedMetaData() {
+    this.durationValue = this.audio.duration;
   }
 
   pause() {
@@ -182,11 +188,13 @@ export default class extends Controller {
   }
 
   timeUpdate() {
+    // playing time update
     const { currentTime } = this.audio;
     this.currentTimeValue = currentTime;
   }
 
   progress() {
+    // buffer update
     const { buffered } = this.audio;
     if (this.hasBufferTarget) {
       this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
@@ -194,6 +202,7 @@ export default class extends Controller {
   }
 
   skip(event) {
+    // user clicks on progress bar
     const position = this.getPosition(event.clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
