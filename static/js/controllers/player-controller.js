@@ -57,6 +57,11 @@ export default class extends Controller {
 
     if (this.mediaUrlValue) {
       this.audio.src = this.mediaUrlValue;
+
+      if (sessionStorage.getItem('mediaUrl') !== this.mediaUrlValue) {
+        this.pausedValue = true;
+      }
+
       try {
         if (this.pausedValue) {
           await this.audio.pause();
@@ -86,7 +91,10 @@ export default class extends Controller {
     const response = await this.fetch(playUrl, {
       currentTime,
     });
+
     this.element.innerHTML = await response.text();
+
+    sessionStorage.setItem('mediaUrl', this.mediaUrlValue);
 
     if (currentTime) {
       this.audio.currentTime = currentTime;
@@ -149,6 +157,8 @@ export default class extends Controller {
     this.durationValue = 0;
     this.lastUpdated = 0;
     this.episodeValue = '';
+
+    sessionStorage.removeItem('mediaUrl');
   }
 
   loadedMetaData() {
