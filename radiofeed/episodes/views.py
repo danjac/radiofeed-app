@@ -196,7 +196,7 @@ def update_player_time(request):
 
 def get_current_time_from_request(request):
     try:
-        return int(json.loads(request.body)["current_time"])
+        return int(json.loads(request.body)["currentTime"])
     except (json.JSONDecodeError, KeyError, ValueError):
         return 0
 

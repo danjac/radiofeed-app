@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Controller } from 'stimulus';
 import { useDispatch } from 'stimulus-use';
 
@@ -26,6 +25,7 @@ export default class extends Controller {
     pauseUrl: String,
     markCompleteUrl: String,
     resumeUrl: String,
+    csrfToken: String,
     currentTime: Number,
     duration: Number,
     skipInterval: Number,
@@ -83,9 +83,10 @@ export default class extends Controller {
 
     this.dispatch('start', { episode });
 
-    const response = await axios.post(playUrl, { currentTime });
-
-    this.element.innerHTML = response.data;
+    const response = await this.fetch(playUrl, {
+      currentTime,
+    });
+    this.element.innerHTML = await response.text();
 
     if (currentTime) {
       this.audio.currentTime = currentTime;
@@ -129,10 +130,11 @@ export default class extends Controller {
   async closePlayer(stopUrl) {
     if (stopUrl) {
       try {
-        const response = await axios.post(stopUrl);
-        this.dispatch('update', response.data);
+        const response = await this.fetch(stopUrl);
+        const data = await response.json();
+        this.dispatch('update', data);
         // if autoplay is on, next episode in podcast can be loaded
-        const { nextEpisode } = response.data;
+        const { nextEpisode } = data;
         if (nextEpisode) {
           this.open({
             detail: nextEpisode,
@@ -157,7 +159,7 @@ export default class extends Controller {
     this.pausedValue = true;
     this.audio.pause();
     if (this.pauseUrlValue) {
-      axios.post(this.pauseUrlValue);
+      this.fetch(this.pauseUrlValue);
     }
   }
 
@@ -171,7 +173,7 @@ export default class extends Controller {
       this.errorValue = true;
     }
     if (this.resumeUrlValue) {
-      axios.post(this.resumeUrlValue);
+      this.fetch(this.resumeUrlValue);
     }
   }
 
@@ -329,10 +331,11 @@ export default class extends Controller {
 
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
-      const response = await axios.post(this.progressUrlValue, {
-        current_time: this.currentTimeValue,
+      const response = await this.fetch(this.progressUrlValue, {
+        currentTime: this.currentTimeValue,
       });
-      this.dispatch('update', response.data);
+      const data = await response.json();
+      this.dispatch('update', data);
     }
   }
 
@@ -384,5 +387,17 @@ export default class extends Controller {
         this.element.classList.remove(this.inactiveClass);
       }
     }
+  }
+
+  fetch(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': this.csrfTokenValue,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(body || {}),
+    });
   }
 }

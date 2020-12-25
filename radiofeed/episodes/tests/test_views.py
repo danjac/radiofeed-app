@@ -282,7 +282,7 @@ class TestUpdatePlayerTime:
     def test_anonymous(self, rf, anonymous_user, episode):
         req = rf.post(
             reverse("episodes:update_player_time"),
-            data=json.dumps({"current_time": 1030}),
+            data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = anonymous_user
@@ -297,7 +297,7 @@ class TestUpdatePlayerTime:
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
             reverse("episodes:update_player_time"),
-            data=json.dumps({"current_time": 1030}),
+            data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
