@@ -46,7 +46,7 @@
      {% endif %}
      {% if episode.current_time and not episode.completed %}
      data-episode-current-time-value="{{ episode.current_time }}"
-     {% elif completed %}
+     {% elif episode.completed %}
      data-episode-completed-value
      {% endif %}
      data-episode-episode-value="{{ episode.id }}"

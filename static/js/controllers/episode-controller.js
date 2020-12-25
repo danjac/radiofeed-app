@@ -8,7 +8,7 @@ export default class extends Controller {
 
   static values = {
     episode: Number,
-    duration: Number,
+    duration: String,
     currentTime: Number,
     mediaUrl: String,
     playUrl: String,
