@@ -52,11 +52,11 @@ export default class extends Controller {
     }
   }
 
-  update({ detail: { episode, time_remaining, completed } }) {
+  update({ detail: { episode, timeRemaining, completed } }) {
     // server status update
     if (episode && episode === this.episodeValue) {
-      if (time_remaining) {
-        this.currentTimeTarget.textContent = '~' + time_remaining;
+      if (timeRemaining) {
+        this.currentTimeTarget.textContent = '~' + timeRemaining;
       } else {
         this.currentTimeTarget.textContent = this.durationValue;
       }

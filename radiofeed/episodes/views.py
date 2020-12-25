@@ -166,12 +166,10 @@ def stop_player(request, completed=False):
             and (next_episode := episode.get_next_episode())
         ):
             extra_context |= {
-                "next_episode": {
+                "nextEpisode": {
                     "episode": next_episode.id,
-                    "media_url": next_episode.media_url,
-                    "play_url": reverse(
-                        "episodes:start_player", args=[next_episode.id]
-                    ),
+                    "mediaUrl": next_episode.media_url,
+                    "playUrl": reverse("episodes:start_player", args=[next_episode.id]),
                 }
             }
 
@@ -207,8 +205,8 @@ def player_status_response(episode, current_time, extra_context=None):
     return JsonResponse(
         {
             "episode": episode.id,
-            "current_time": current_time,
-            "time_remaining": format_duration(
+            "currentTime": current_time,
+            "timeRemaining": format_duration(
                 episode.get_duration_in_seconds() - current_time
             ),
         }

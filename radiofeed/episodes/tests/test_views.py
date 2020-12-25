@@ -172,12 +172,12 @@ class TestStopPlayer:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1000
+        assert body["currentTime"] == 1000
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
             reverse("episodes:stop_player"),
-            data=json.dumps({"current_time": 1030}),
+            data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
@@ -189,7 +189,7 @@ class TestStopPlayer:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1000
+        assert body["currentTime"] == 1000
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
@@ -210,7 +210,7 @@ class TestStopPlayer:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1000
+        assert body["currentTime"] == 1000
         assert body["completed"] is True
 
         log = AudioLog.objects.get(user=user, episode=episode)
@@ -240,9 +240,9 @@ class TestStopPlayer:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1000
+        assert body["currentTime"] == 1000
         assert body["completed"] is True
-        assert body["next_episode"]["episode"] == next_episode.id
+        assert body["nextEpisode"]["episode"] == next_episode.id
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
@@ -269,7 +269,7 @@ class TestStopPlayer:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1000
+        assert body["currentTime"] == 1000
         assert body["completed"] is True
         assert "next_episode" not in body
 
@@ -292,7 +292,7 @@ class TestUpdatePlayerTime:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1030
+        assert body["currentTime"] == 1030
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
@@ -309,7 +309,7 @@ class TestUpdatePlayerTime:
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["current_time"] == 1030
+        assert body["currentTime"] == 1030
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1030

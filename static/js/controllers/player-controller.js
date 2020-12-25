@@ -83,7 +83,7 @@ export default class extends Controller {
 
     this.dispatch('start', { episode });
 
-    const response = await axios.post(playUrl, { current_time: currentTime });
+    const response = await axios.post(playUrl, { currentTime });
 
     this.element.innerHTML = response.data;
 
@@ -132,14 +132,10 @@ export default class extends Controller {
         const response = await axios.post(stopUrl);
         this.dispatch('update', response.data);
         // if autoplay is on, next episode in podcast can be loaded
-        if (response.data.next_episode) {
-          const { next_episode } = response.data;
+        const { nextEpisode } = response.data;
+        if (nextEpisode) {
           this.open({
-            detail: {
-              ...next_episode,
-              mediaUrl: next_episode.media_url,
-              playUrl: next_episode.play_url,
-            },
+            detail: nextEpisode,
           });
           return;
         }
