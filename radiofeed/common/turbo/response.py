@@ -1,5 +1,5 @@
 # Django
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 
@@ -7,26 +7,29 @@ from django.utils.safestring import mark_safe
 from . import render_turbo_stream
 
 
-class TurboStreamRemoveResponse(HttpResponse):
+class TurboStreamResponseMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(content_type="text/html; turbo-stream;", *args, **kwargs)
+
+
+class TurboStreamStreamingResponse(TurboStreamResponseMixin, StreamingHttpResponse):
+    ...
+
+
+class TurboStreamRemoveResponse(TurboStreamResponseMixin, HttpResponse):
     """Sends an empty 'remove' stream"""
 
     def __init__(self, target, **kwargs):
         super().__init__(
-            render_turbo_stream(target, action="remove"),
-            content_type="text/html; turbo-stream;",
-            **kwargs,
+            render_turbo_stream(target, action="remove"), **kwargs,
         )
 
 
-class TurboStreamTemplateResponse(TemplateResponse):
+class TurboStreamTemplateResponse(TurboStreamResponseMixin, TemplateResponse):
     def __init__(self, request, template, context, action, target, **kwargs):
 
         super().__init__(
-            request,
-            template,
-            context,
-            content_type="text/html; turbo-stream;",
-            **kwargs,
+            request, template, context, **kwargs,
         )
 
         self._target = target
