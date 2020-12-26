@@ -252,6 +252,7 @@ export default class extends Controller {
     } else if (this.hasCounterTarget) {
       this.counterTarget.textContent = '00:00:00';
     }
+    this.updateProgressBar();
   }
 
   loadingValueChanged() {
@@ -268,6 +269,11 @@ export default class extends Controller {
   }
 
   currentTimeValueChanged() {
+    this.updateProgressBar();
+    this.sendTimeUpdate();
+  }
+
+  updateProgressBar() {
     if (this.hasProgressTarget && this.hasIndicatorTarget) {
       const pcComplete = this.getPercentComplete();
       this.progressTarget.style.width = pcComplete + '%';
@@ -279,8 +285,6 @@ export default class extends Controller {
       this.counterTarget.textContent =
         '-' + this.formatTime(this.durationValue - this.currentTimeValue);
     }
-
-    this.sendTimeUpdate();
   }
 
   getPercentBuffered(buffered) {
