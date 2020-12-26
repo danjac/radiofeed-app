@@ -4,7 +4,7 @@ import json
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -144,7 +144,7 @@ def toggle_player_pause(request, pause):
     player = request.session.get("player", None)
     if player:
         request.session["player"] = {**player, "paused": pause}
-        return JsonResponse({"paused": pause})
+        return HttpResponse()
     return HttpResponseBadRequest()
 
 

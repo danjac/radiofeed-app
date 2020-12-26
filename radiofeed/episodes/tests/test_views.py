@@ -139,9 +139,7 @@ class TestTogglePlayerPause:
             "player": {"episode": episode.id, "current_time": 1000, "paused": False}
         }
         resp = views.toggle_player_pause(req, pause=True)
-
-        body = json.loads(resp.content)
-        assert body["paused"]
+        assert resp.status_code == http.HTTPStatus.OK
 
     def test_resume(self, rf, episode):
         req = rf.post(reverse("episodes:stop_player"))
@@ -149,9 +147,7 @@ class TestTogglePlayerPause:
             "player": {"episode": episode.id, "current_time": 1000, "paused": True}
         }
         resp = views.toggle_player_pause(req, pause=False)
-
-        body = json.loads(resp.content)
-        assert not body["paused"]
+        assert resp.status_code == http.HTTPStatus.OK
 
     def test_player_not_running(self, rf, episode):
         req = rf.post(reverse("episodes:stop_player"))
