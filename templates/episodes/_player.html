@@ -1,7 +1,7 @@
 {% load static thumbnail episodes %}
 {% if episode %}
 {% with podcast=episode.podcast prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
-<div class="fixed bottom-0 z-10 bg-black text-white w-full p-2 font-semibold"
+<div class="fixed bottom-0 z-10  bg-gradient-to-t from-gray-900 to-gray-700 text-white w-full p-2 font-semibold"
      data-controller="toggle">
 
   <div data-toggle-target="item"
