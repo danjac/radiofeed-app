@@ -11,6 +11,7 @@ class TurboStreamRemoveResponse(HttpResponse):
         super().__init__(
             f'<turbo-stream target="{target}" action="remove"></turbo-stream>',
             content_type="text/html; turbo-stream;",
+            **kwargs,
         )
 
 
