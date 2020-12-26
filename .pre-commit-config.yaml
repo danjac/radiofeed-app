@@ -17,4 +17,4 @@ repos:
     rev: ''
     hooks:
       - id: prettier
-        exclude: 'templates/|mockups/|README.md'
+        exclude: 'static/dev|static/dist|templates/|mockups/|README.md'

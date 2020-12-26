@@ -3,13 +3,16 @@ from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.safestring import mark_safe
 
+# Local
+from . import render_turbo_stream
+
 
 class TurboStreamRemoveResponse(HttpResponse):
     """Sends an empty 'remove' stream"""
 
     def __init__(self, target, **kwargs):
         super().__init__(
-            f'<turbo-stream target="{target}" action="remove"></turbo-stream>',
+            render_turbo_stream(target, action="remove"),
             content_type="text/html; turbo-stream;",
             **kwargs,
         )
@@ -39,12 +42,9 @@ class TurboStreamTemplateResponse(TemplateResponse):
 
     @property
     def rendered_content(self):
-        content = super().rendered_content
-        start_tag = mark_safe(
-            f'<turbo-stream action="{self._action}" target="{self._target}"><template>'
+        return render_turbo_stream(
+            action=self._action, target=self._target, content=super().rendered_content
         )
-        end_tag = mark_safe("</template></turbo-stream>")
-        return start_tag + content + end_tag
 
 
 class TurboFrameTemplateResponse(TemplateResponse):
