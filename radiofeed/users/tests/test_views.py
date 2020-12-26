@@ -56,3 +56,11 @@ class TestDeleteAccount:
         resp = views.delete_account(req)
         assert resp.url == settings.HOME_URL
         assert not user_model.objects.exists()
+
+
+class TestAcceptCookies:
+    def test_post(self, rf):
+        req = rf.post(reverse("accept_cookies"))
+        resp = views.accept_cookies(req)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert "accept-cookies" in resp.cookies

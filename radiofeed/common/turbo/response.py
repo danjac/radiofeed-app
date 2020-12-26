@@ -16,12 +16,10 @@ class TurboStreamStreamingResponse(TurboStreamResponseMixin, StreamingHttpRespon
     ...
 
 
-class TurboStreamRemoveResponse(TurboStreamResponseMixin, HttpResponse):
-    """Sends an empty 'remove' stream"""
-
-    def __init__(self, target, **kwargs):
+class TurboStreamResponse(TurboStreamResponseMixin, HttpResponse):
+    def __init__(self, action, target, *args, **kwargs):
         super().__init__(
-            render_turbo_stream(target, action="remove"), **kwargs,
+            render_turbo_stream(action, target), *args, **kwargs,
         )
 
 

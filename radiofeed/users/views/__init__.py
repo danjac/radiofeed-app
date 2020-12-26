@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 
 # RadioFeed
 from radiofeed.common.turbo.response import (
-    TurboStreamRemoveResponse,
+    TurboStreamResponse,
     TurboStreamTemplateResponse,
 )
 
@@ -57,7 +57,7 @@ def delete_account(request):
 
 @require_POST
 def accept_cookies(request):
-    response = TurboStreamRemoveResponse("accept-cookies")
+    response = TurboStreamResponse(action="remove", target="accept-cookies")
     response.set_cookie(
         "accept-cookies",
         value="true",
