@@ -1,7 +1,6 @@
 # Django
 from django.http import HttpResponse, StreamingHttpResponse
 from django.template.response import TemplateResponse
-from django.utils.safestring import mark_safe
 
 # Local
 from . import render_turbo_stream
@@ -60,7 +59,6 @@ class TurboFrameTemplateResponse(TemplateResponse):
 
     @property
     def rendered_content(self):
-        content = super().rendered_content
-        start_tag = mark_safe(f'<turbo-frame id="{self._dom_id}">')
-        end_tag = mark_safe("</turbo-frame>")
-        return start_tag + content + end_tag
+        return (
+            f'<turbo-frame id="{self._dom_id}">{super().rendered_content}</turbo-frame>'
+        )
