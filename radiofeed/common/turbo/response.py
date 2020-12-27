@@ -3,7 +3,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.template.response import TemplateResponse
 
 # Local
-from . import render_turbo_stream
+from . import render_turbo_frame, render_turbo_stream
 
 
 class TurboStreamResponseMixin:
@@ -32,14 +32,6 @@ class TurboStreamTemplateResponse(TurboStreamResponseMixin, TemplateResponse):
         self._target = target
         self._action = action
 
-        self.context_data.update(
-            {
-                "turbo_stream_target": target,
-                "turbo_stream_action": action,
-                "is_turbo_stream": True,
-            }
-        )
-
     @property
     def rendered_content(self):
         return render_turbo_stream(
@@ -55,10 +47,7 @@ class TurboFrameTemplateResponse(TemplateResponse):
         )
 
         self._dom_id = dom_id
-        self.context_data.update({"turbo_frame_dom_id": dom_id, "is_turbo_frame": True})
 
     @property
     def rendered_content(self):
-        return (
-            f'<turbo-frame id="{self._dom_id}">{super().rendered_content}</turbo-frame>'
-        )
+        return render_turbo_frame(self._dom_id, super().rendered_content)
