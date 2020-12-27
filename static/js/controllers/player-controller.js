@@ -48,6 +48,8 @@ export default class extends Controller {
     this.audio.addEventListener('progress', this.progress.bind(this));
     this.audio.addEventListener('timeupdate', this.timeUpdate.bind(this));
     this.audio.addEventListener('ended', this.ended.bind(this));
+    this.audio.addEventListener('pause', this.paused.bind(this));
+    this.audio.addEventListener('play', this.resumed.bind(this));
     this.audio.addEventListener('canplaythrough', this.canPlay.bind(this));
     this.audio.addEventListener('playing', this.canPlay.bind(this));
     this.audio.addEventListener('stalled', this.wait.bind(this));
@@ -169,27 +171,29 @@ export default class extends Controller {
   }
 
   pause() {
-    this.pausedValue = true;
     this.audio.pause();
-    if (this.pauseUrlValue) {
-      this.fetch(this.pauseUrlValue);
-    }
+  }
+
+  resumed() {
+    sessionStorage.setItem('player-enabled', true);
+    this.pausedValue = false;
+    this.fetch(this.resumeUrlValue);
+  }
+
+  paused() {
+    sessionStorage.removeItem('player-enabled');
+    this.pausedValue = true;
+    this.fetch(this.pauseUrlValue);
   }
 
   async play() {
     this.errorValue = false;
-    this.pausedValue = false;
-
-    sessionStorage.setItem('player-enabled', true);
 
     try {
       await this.audio.play();
     } catch (e) {
       console.error(e);
       this.errorValue = true;
-    }
-    if (this.resumeUrlValue) {
-      this.fetch(this.resumeUrlValue);
     }
   }
 
