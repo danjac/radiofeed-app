@@ -91,8 +91,6 @@
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-<div id="{{ view.turbo_stream_target }}">
-  {% include "account/_add_email.html" %}
-</div>
+{% include "account/_add_email.html" %}
 {% endif %}
 {% endblock %}

@@ -3,7 +3,7 @@ from .response import TurboStreamTemplateResponse
 
 
 class TurboStreamFormMixin:
-    turbo_stream_action = "update"
+    turbo_stream_action = "replace"
     turbo_stream_target = None
     turbo_stream_template = None
 

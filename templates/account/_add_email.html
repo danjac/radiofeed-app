@@ -1,6 +1,7 @@
 {% load i18n widget_tweaks %}
 <form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
       method="post"
+      id="{{ view.turbo_stream_target }}"
       action="{% url 'account_email' %}"
       novalidate>
   {% csrf_token %}

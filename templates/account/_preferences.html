@@ -1,6 +1,7 @@
 {% load i18n widget_tweaks %}
 <form class="p-3 border w-full sm:w-1/2 border-gray-500"
       method="post"
+      id="{{ target }}"
       action="{% url 'user_preferences' %}"
       novalidate>
   {% csrf_token %}

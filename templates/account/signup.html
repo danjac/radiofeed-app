@@ -11,10 +11,7 @@
   <a class="underline hover:text-gray-300"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
-<div id="{{ view.turbo_stream_target }}">
-  {% include "account/_signup.html" %}
-</div>
-
+{% include "account/_signup.html" %}
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 
 {% endblock %}
