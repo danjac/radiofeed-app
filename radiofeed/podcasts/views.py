@@ -58,8 +58,8 @@ def podcast_list(request):
     elif request.user.is_authenticated:
         podcasts = (
             podcasts.with_subscription_count()
-            .with_has_subscribed(request.user)
-            .order_by("-has_subscribed", "-subscription_count", "-pub_date")
+            .with_is_subscribed(request.user)
+            .order_by("-is_subscribed", "-subscription_count", "-pub_date")
             .distinct()
         )
     else:
@@ -103,8 +103,10 @@ def podcast_recommendations(request, podcast_id, slug=None):
 def podcast_episode_list(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = podcast.episode_set.with_current_time(request.user).select_related(
-        "podcast"
+    episodes = (
+        podcast.episode_set.with_current_time(request.user)
+        .with_is_bookmarked(request.user)
+        .select_related("podcast")
     )
 
     search = request.GET.get("q", None)
