@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 # RadioFeed
@@ -35,6 +36,7 @@ def landing_page(request):
     )
 
 
+@cache_page(60 * 60 * 24)
 def podcast_cover_image(request, podcast_id):
     """Lazy-loaded podcast image"""
     podcast = get_object_or_404(Podcast, pk=podcast_id)
