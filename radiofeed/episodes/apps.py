@@ -6,4 +6,5 @@ class EpisodesConfig(AppConfig):
     name = "radiofeed.episodes"
 
     def ready(self):
-        from . import signals  # noqa
+        ...
+        # from . import signals  # noqa
