@@ -116,7 +116,6 @@ class TestStartPlayer:
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
-            "paused": False,
         }
 
     def test_authenticated(self, rf, user, episode):
@@ -128,33 +127,7 @@ class TestStartPlayer:
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
-            "paused": False,
         }
-
-
-class TestTogglePlayerPause:
-    def test_pause(self, rf, episode):
-        req = rf.post(reverse("episodes:stop_player"))
-        req.session = {
-            "player": {"episode": episode.id, "current_time": 1000, "paused": False}
-        }
-        resp = views.toggle_player_pause(req, pause=True)
-        assert resp.status_code == http.HTTPStatus.OK
-
-    def test_resume(self, rf, episode):
-        req = rf.post(reverse("episodes:stop_player"))
-        req.session = {
-            "player": {"episode": episode.id, "current_time": 1000, "paused": True}
-        }
-        resp = views.toggle_player_pause(req, pause=False)
-        assert resp.status_code == http.HTTPStatus.OK
-
-    def test_player_not_running(self, rf, episode):
-        req = rf.post(reverse("episodes:stop_player"))
-        req.session = {}
-        resp = views.toggle_player_pause(req, pause=True)
-
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
 
 
 class TestStopPlayer:

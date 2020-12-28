@@ -22,9 +22,7 @@ export default class extends Controller {
     progressUrl: String,
     mediaUrl: String,
     stopUrl: String,
-    pauseUrl: String,
     markCompleteUrl: String,
-    resumeUrl: String,
     csrfToken: String,
     currentTime: Number,
     duration: Number,
@@ -177,13 +175,11 @@ export default class extends Controller {
   resumed() {
     sessionStorage.setItem('player-enabled', true);
     this.pausedValue = false;
-    this.fetch(this.resumeUrlValue);
   }
 
   paused() {
     sessionStorage.removeItem('player-enabled');
     this.pausedValue = true;
-    this.fetch(this.pauseUrlValue);
   }
 
   async play() {
