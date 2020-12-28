@@ -106,3 +106,7 @@ You should now be able to access the Django management commands:
 > dokku run python manage.py [command] [...options]
 
 Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run *loaddata* and *sync_podcast_feeds* commands to add the categories and podcasts and sync the RSS feeds.
+
+## LICENSE
+
+This project is covered by GNU Affero General Public License (AGPL).
