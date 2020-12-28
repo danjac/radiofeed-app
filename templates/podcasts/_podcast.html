@@ -3,7 +3,10 @@
     <div class="font-bold flex items-center sm:mb-0">
 
       <a href="{{ podcast.get_absolute_url }}">
-        {% include "podcasts/_podcast_cover_image.html" %}
+        <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
+                     src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
+          {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
+        </turbo-frame>
       </a>
       <div>
         <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight">

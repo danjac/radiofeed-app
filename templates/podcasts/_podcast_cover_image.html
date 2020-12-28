@@ -1,13 +1,18 @@
 {% load thumbnail static %}
 {% spaceless %}
-{% with size=image_size|default:"16" %}
 <img class="object-cover border border-white bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
      title="{{ podcast.title }}"
      alt="{{ podcast.title }}"
      width="{{ size }}"
      height="{{ size }}"
-     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}src="{{ img.url }}"
+     {% if is_turbo_frame or not lazy %}
+     {% with size=image_size|default:"16" %}
+     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+     src="{{ img.url }}"
      {% empty %}src="{% static 'img/podcast-icon.png' %}"
-     {% endthumbnail %}>
-{% endwith %}
+     {% endthumbnail %}
+     {% endwith %}
+     {% else %}
+     src="{% static 'img/podcast-icon.png' %}"
+     {% endif %} />
 {% endspaceless %}

@@ -9,9 +9,14 @@ app_name = "podcasts"
 urlpatterns = [
     path("", views.landing_page, name="landing_page"),
     path("podcasts/", views.podcast_list, name="podcast_list"),
-    path("podcasts/<int:podcast_id>/subscribe/", views.subscribe, name="subscribe"),
+    path("podcasts/<int:podcast_id>/~subscribe/", views.subscribe, name="subscribe"),
     path(
-        "podcasts/<int:podcast_id>/unsubscribe/", views.unsubscribe, name="unsubscribe"
+        "podcasts/<int:podcast_id>/~unsubscribe/", views.unsubscribe, name="unsubscribe"
+    ),
+    path(
+        "podcasts/<int:podcast_id>/cover-image/",
+        views.podcast_cover_image,
+        name="podcast_cover_image",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",

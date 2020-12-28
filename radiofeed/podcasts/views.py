@@ -35,6 +35,17 @@ def landing_page(request):
     )
 
 
+def podcast_cover_image(request, podcast_id):
+    """Lazy-loaded podcast image"""
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    return TurboFrameTemplateResponse(
+        request,
+        "podcasts/_podcast_cover_image.html",
+        {"podcast": podcast},
+        dom_id=f"podcast-cover-image-{podcast.id}",
+    )
+
+
 def podcast_list(request):
     """Shows list of podcasts"""
     podcasts = Podcast.objects.filter(pub_date__isnull=False)

@@ -26,7 +26,15 @@ class TurboStreamTemplateResponse(TurboStreamResponseMixin, TemplateResponse):
     def __init__(self, request, template, context, action, target, **kwargs):
 
         super().__init__(
-            request, template, context, **kwargs,
+            request,
+            template,
+            context
+            | {
+                "turbo_stream_target": target,
+                "turbo_stream_action": action,
+                "is_turbo_stream": True,
+            },
+            **kwargs,
         )
 
         self._target = target
@@ -43,7 +51,10 @@ class TurboFrameTemplateResponse(TemplateResponse):
     def __init__(self, request, template, context, dom_id, **kwargs):
 
         super().__init__(
-            request, template, context, **kwargs,
+            request,
+            template,
+            context | {"turbo_frame_dom_id": dom_id, "is_turbo_frame": True},
+            **kwargs,
         )
 
         self._dom_id = dom_id
