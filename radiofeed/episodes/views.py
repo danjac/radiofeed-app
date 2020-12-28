@@ -192,6 +192,10 @@ def get_current_time_from_request(request):
 
 
 def player_status_response(episode, current_time, extra_context=None):
+    # TBD: it would be nicer to just have this returned as a stream,
+    # but currently it's not possible to dispatch turbo stream requests
+    # from JS. We also need to update next episode if on autoplay, which
+    # requires somehow passing media url back to player to restart audio.
     return JsonResponse(
         {
             "episode": episode.id,
