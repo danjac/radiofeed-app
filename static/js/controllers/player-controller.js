@@ -349,9 +349,11 @@ export default class extends Controller {
       return;
     }
 
+    // should probably just use setInterval, but this is easier to stop/start
+
     // update every 10s or so
     const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-    const sendUpdate = this.currentTimeValue && diff % 10 === 0;
+    const sendUpdate = this.currentTimeValue && diff % 5 === 0;
 
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
