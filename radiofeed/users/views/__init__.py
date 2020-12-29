@@ -11,11 +11,8 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-# RadioFeed
-from radiofeed.common.turbo.response import (
-    TurboStreamResponse,
-    TurboStreamTemplateResponse,
-)
+# Third Party Libraries
+from turbo_response import TurboStreamResponse, TurboStreamTemplateResponse
 
 # Local
 from ..forms import UserPreferencesForm

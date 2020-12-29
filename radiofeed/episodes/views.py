@@ -10,8 +10,8 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-# RadioFeed
-from radiofeed.common.turbo.response import TurboFrameTemplateResponse
+# Third Party Libraries
+from turbo_response import TurboFrameTemplateResponse
 
 # Local
 from .models import AudioLog, Bookmark, Episode
