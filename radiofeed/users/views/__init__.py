@@ -32,7 +32,7 @@ def user_preferences(request):
             request,
             "account/_preferences.html",
             {"form": form},
-            action="update",
+            action=Action.UPDATE,
             target="prefs-form",
         )
 
