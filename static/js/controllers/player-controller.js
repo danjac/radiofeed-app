@@ -35,6 +35,8 @@ export default class extends Controller {
 
   connect() {
     useDispatch(this);
+    // check if player ID is present, close audio if not
+    // we could also check value...
   }
 
   async initialize() {
@@ -76,6 +78,12 @@ export default class extends Controller {
         this.errorValue = true;
       }
     }
+
+    document.documentElement.addEventListener('turbo:load', () => {
+      if (!document.getElementById('player-controls')) {
+        this.audio.src = '';
+      }
+    });
   }
 
   async open(event) {

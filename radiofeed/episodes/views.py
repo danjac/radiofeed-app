@@ -133,6 +133,8 @@ def start_player(request, episode_id):
         Episode.objects.select_related("podcast"), pk=episode_id
     )
 
+    # TBD: just get current time/completed from DB
+
     current_time = get_current_time_from_request(request)
 
     request.session["player"] = {
