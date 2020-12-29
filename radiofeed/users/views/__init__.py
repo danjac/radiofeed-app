@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboStreamResponse, TurboStreamTemplateResponse
+from turbo_response import Action, TurboStreamResponse, TurboStreamTemplateResponse
 
 # Local
 from ..forms import UserPreferencesForm
@@ -54,7 +54,7 @@ def delete_account(request):
 
 @require_POST
 def accept_cookies(request):
-    response = TurboStreamResponse(action="remove", target="accept-cookies")
+    response = TurboStreamResponse(action=Action.REMOVE, target="accept-cookies")
     response.set_cookie(
         "accept-cookies",
         value="true",
