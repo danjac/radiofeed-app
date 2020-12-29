@@ -15,6 +15,7 @@ django-model-utils
 django-redis
 django-silk
 django-storages
+django-turbo-response
 django-widget-tweaks
 factory-boy
 feedparser==6.0.2
