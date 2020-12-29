@@ -119,3 +119,5 @@ werkzeug==1.0.1           # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+git+https://github.com/danjac/django-turbo-response
