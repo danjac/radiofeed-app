@@ -33,13 +33,6 @@ export default class extends Controller {
   };
 
   async initialize() {
-    document.documentElement.addEventListener('turbo:load', this.turboLoad.bind(this));
-
-    document.documentElement.addEventListener(
-      'turbo:submit-end',
-      this.turboSubmitEnd.bind(this)
-    );
-
     // Audio object is used instead of <audio> element to prevent resets
     // and skips with page transitions
     this.audio = new Audio();
@@ -77,6 +70,26 @@ export default class extends Controller {
     // make sure audio is properly closed when controls are removed
     // from the DOM
     console.log('connect');
+
+    this.onTurboLoad = this.turboLoad.bind(this);
+
+    document.documentElement.addEventListener('turbo:load', this.onTurboLoad, true);
+    this.onTurboSubmitEnd = this.turboSubmitEnd.bind(this);
+
+    document.documentElement.addEventListener(
+      'turbo:submit-end',
+      this.onTurboSubmitEnd,
+      true
+    );
+  }
+
+  disconnect() {
+    document.documentElement.removeEventListener('turbo:load', this.onTurboLoad, true);
+    document.documentElement.removeEventListener(
+      'turbo:submit-end',
+      this.onTurboSubmitEnd,
+      true
+    );
   }
 
   async ended() {
@@ -179,7 +192,8 @@ export default class extends Controller {
     }
   }
 
-  turboSubmitEnd({ detail: { fetchResponse } }) {
+  turboSubmitEnd(event) {
+    const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
     if (!headers) {
       return;
@@ -201,7 +215,7 @@ export default class extends Controller {
     const mediaUrl = headers.get('X-Player-Media-Url');
     console.log('play:', episode, mediaUrl, currentTime);
 
-    if (mediaUrl) {
+    if (mediaUrl && mediaUrl != this.audio.src) {
       this.audio.src = this.mediaUrlValue = mediaUrl;
       if (currentTime) {
         this.audio.currentTime = parseFloat(currentTime);
