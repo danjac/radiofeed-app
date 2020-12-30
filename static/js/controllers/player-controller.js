@@ -83,6 +83,24 @@ export default class extends Controller {
         this.audio.src = '';
       }
     });
+
+    document.documentElement.addEventListener(
+      'turbo:submit-end',
+      ({ detail: { fetchResponse } }) => {
+        const currentTime = fetchResponse.response.headers.get('X-Player-Current-Time');
+        const mediaUrl = fetchResponse.response.headers.get('X-Player-Media-Url');
+        if (mediaUrl) {
+          this.audio.src = mediaUrl;
+          if (currentTime) {
+            this.audio.currentTime = parseFloat(currentTime);
+          }
+          this.audio.play();
+        } else {
+          this.audio.src = '';
+          this.audio.pause();
+        }
+      }
+    );
   }
 
   async open(event) {

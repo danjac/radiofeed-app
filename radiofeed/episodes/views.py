@@ -7,7 +7,6 @@ from django.db import IntegrityError
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
@@ -125,6 +124,41 @@ def remove_bookmark(request, episode_id):
 
 
 @require_POST
+def toggle_player(request, episode_id):
+    """Add episode to session and returns HTML component. The player info
+    is then added to the session."""
+
+    request.session.pop("player", None)
+
+    if request.POST.get("player_action") == "stop":
+        # maybe more things needed
+        # return an empty frame: simple stop
+        return TurboFrame("player-frame").response()
+
+    episode = get_object_or_404(
+        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        pk=episode_id,
+    )
+    current_time = 0 if episode.completed else episode.current_time or 0
+
+    request.session["player"] = {
+        "episode": episode.id,
+        "current_time": current_time,
+    }
+    episode.log_activity(request.user, current_time=current_time)
+
+    response = (
+        TurboFrame("player-frame")
+        .template("episodes/_player.html", {"episode": episode})
+        .response(request)
+    )
+
+    response["X-Player-Media-Url"] = episode.media_url
+    response["X-Player-Current-Time"] = current_time
+    return response
+
+
+@require_POST
 def start_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
@@ -161,6 +195,7 @@ def stop_player(request, completed=False):
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
 
+        """
         extra_context = {}
         if (
             completed
@@ -174,8 +209,9 @@ def stop_player(request, completed=False):
                     "playUrl": reverse("episodes:start_player", args=[next_episode.id]),
                 }
             }
-
-        return player_status_response(episode, player["current_time"], extra_context)
+                """
+        return TurboFrame("player-frame").response()
+        # return player_status_response(episode, player["current_time"], extra_context)
     return HttpResponseBadRequest()
 
 

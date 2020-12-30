@@ -1,7 +1,14 @@
-<div class="{{ css_class|default:'' }} flex items-center">
+<form class="{{ css_class|default:'' }} flex items-center"
+      data-turbo-frame="player-frame"
+      data-controller="toggle"
+      data-action="toggle#toggle"
+      method="POST"
+      action="{% url 'episodes:toggle_player' episode.id %}">
+  {% csrf_token %}
   <button title="Open in Player"
-          data-episode-target="playButton"
-          data-action="episode#play"
+          data-toggle-target="item"
+          name="player_action"
+          value="start"
           class="hover:text-blue-500 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
@@ -19,8 +26,9 @@
     </svg>
   </button>
   <button title="Close Player"
-          data-episode-target="stopButton"
-          data-action="episode#stop"
+          data-toggle-target="item"
+          name="player_action"
+          value="stop"
           class="hover:text-blue-500 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
@@ -37,4 +45,4 @@
             d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
     </svg>
   </button>
-</div>
+</form>

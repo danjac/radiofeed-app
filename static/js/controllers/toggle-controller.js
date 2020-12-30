@@ -5,8 +5,8 @@ export default class extends Controller {
   static classes = ['toggle'];
 
   toggle(event) {
-    event.preventDefault();
-    event.stopPropagation();
+    //event.preventDefault();
+    //event.stopPropagation();
 
     const toggleClass = this.hasToggleClass ? this.toggleClass : 'hidden';
     this.itemTargets.forEach((item) => {
