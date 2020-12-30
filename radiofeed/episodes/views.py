@@ -1,10 +1,11 @@
 # Standard Library
+import http
 import json
 
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
@@ -128,12 +129,8 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    request.session.pop("player", None)
-
     if request.POST.get("player_action") == "stop":
-        # maybe more things needed
-        # return an empty frame: simple stop
-        return TurboFrame("player-frame").response()
+        return stop_player(request)
 
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
@@ -148,7 +145,7 @@ def toggle_player(request, episode_id):
     episode.log_activity(request.user, current_time=current_time)
 
     response = (
-        TurboFrame("player-frame")
+        TurboFrame("player")
         .template("episodes/_player.html", {"episode": episode})
         .response(request)
     )
@@ -168,22 +165,7 @@ def stop_player(request, completed=False):
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
 
-        """
-        extra_context = {}
-        if (
-            completed
-            and request.user.is_authenticated
-            and request.user.autoplay
-            and (next_episode := episode.get_next_episode())
-        ):
-            extra_context = {
-                "nextEpisode": {
-                    "episode": next_episode.id,
-                    "playUrl": reverse("episodes:start_player", args=[next_episode.id]),
-                }
-            }
-                """
-        return TurboFrame("player-frame").response()
+        return TurboFrame("player").response()
         # return player_status_response(episode, player["current_time"], extra_context)
     return HttpResponseBadRequest()
 
@@ -201,7 +183,7 @@ def sync_player_current_time(request):
             "current_time": current_time,
         }
         episode.log_activity(request.user, current_time)
-        return player_status_response(episode, current_time)
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest()
 
 
@@ -210,12 +192,6 @@ def get_current_time_from_request(request):
         return int(json.loads(request.body)["currentTime"])
     except (json.JSONDecodeError, KeyError, ValueError):
         return 0
-
-
-def player_status_response(episode, current_time, extra_context=None):
-    return JsonResponse(
-        {"episode": episode.id, "currentTime": current_time,} | (extra_context or {})
-    )
 
 
 def episode_bookmark_response(request, episode, is_bookmarked):

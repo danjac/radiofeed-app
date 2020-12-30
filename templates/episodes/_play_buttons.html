@@ -1,5 +1,5 @@
 <form class="{{ css_class|default:'' }} flex items-center"
-      data-turbo-frame="player-frame"
+      data-turbo-frame="player"
       data-controller="episode"
       data-action="player:play@window->episode#play player:stop@window->episode#stop"
       data-episode-episode-value="{{ episode.id }}"
