@@ -113,6 +113,8 @@ class TestStartPlayer:
         req.session = {}
         resp = views.start_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
+        assert resp["X-Player-Current-Time"] == "0"
+        assert resp["X-Player-Media-Url"] == episode.media_url
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
@@ -124,9 +126,25 @@ class TestStartPlayer:
         req.session = {}
         resp = views.start_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
+        assert resp["X-Player-Current-Time"] == "0"
+        assert resp["X-Player-Media-Url"] == episode.media_url
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
+        }
+
+    def test_is_played(self, rf, user, episode):
+        AudioLogFactory(user=user, episode=episode, current_time=2000)
+        req = rf.post(reverse("episodes:start_player", args=[episode.id]))
+        req.user = user
+        req.session = {}
+        resp = views.start_player(req, episode.id)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["X-Player-Current-Time"] == "2000"
+        assert resp["X-Player-Media-Url"] == episode.media_url
+        assert req.session["player"] == {
+            "episode": episode.id,
+            "current_time": 2000,
         }
 
 
