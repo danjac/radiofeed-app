@@ -162,8 +162,12 @@ def stop_player(request, completed=False):
         episode.log_activity(request.user, player["current_time"], completed)
 
         extra_context = {}
-        autoplay = request.user.is_authenticated and request.user.autoplay
-        if autoplay and (next_episode := episode.get_next_episode()):
+        if (
+            completed
+            and request.user.is_authenticated
+            and request.user.autoplay
+            and (next_episode := episode.get_next_episode())
+        ):
             extra_context = {
                 "nextEpisode": {
                     "episode": next_episode.id,
