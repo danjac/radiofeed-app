@@ -11,8 +11,6 @@ export default class extends Controller {
     'playButton',
     'progress',
     'progressBar',
-    'loading',
-    'title',
   ];
 
   static classes = ['active', 'inactive'];
@@ -30,7 +28,6 @@ export default class extends Controller {
     error: Boolean,
     paused: Boolean,
     waiting: Boolean,
-    loading: Boolean,
   };
 
   connect() {
@@ -92,9 +89,6 @@ export default class extends Controller {
     // new episode is loaded into player
     const { playUrl, episode } = event.detail;
 
-    this.loadingValue = true;
-    this.errorValue = false;
-
     this.episodeValue = episode;
 
     this.dispatch('start', { episode });
@@ -119,14 +113,7 @@ export default class extends Controller {
       this.audio.currentTime = parseFloat(currentTime);
     }
 
-    try {
-      await this.audio.play();
-    } catch (e) {
-      console.error(e);
-      this.errorValue = true;
-    } finally {
-      this.loadingValue = false;
-    }
+    this.audio.play();
   }
 
   close() {
@@ -253,19 +240,6 @@ export default class extends Controller {
     this.updateProgressBar();
   }
 
-  loadingValueChanged() {
-    this.toggleActiveMode();
-    if (this.hasTitleTarget && this.hasLoadingTarget) {
-      if (this.loadingValue) {
-        this.titleTargets.forEach((target) => target.classList.add('hidden'));
-        this.loadingTargets.forEach((target) => target.classList.remove('hidden'));
-      } else {
-        this.titleTargets.forEach((target) => target.classList.remove('hidden'));
-        this.loadingTargets.forEach((target) => target.classList.add('hidden'));
-      }
-    }
-  }
-
   currentTimeValueChanged() {
     this.updateProgressBar();
     this.sendTimeUpdate();
@@ -388,8 +362,7 @@ export default class extends Controller {
   }
 
   toggleActiveMode() {
-    const inactive =
-      this.pausedValue || this.waitingValue || this.loadingValue || this.errorValue;
+    const inactive = this.pausedValue || this.waitingValue;
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (inactive) {
         this.pauseButtonTarget.classList.add('hidden');

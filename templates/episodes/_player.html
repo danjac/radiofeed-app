@@ -61,11 +61,7 @@
 
     <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
       <a href="{{ episode.get_absolute_url }}"
-         data-player-target="title"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
-
-      <span data-player-target="loading"
-            class="hidden">Loading...</span>
 
     </div>
     <div class="flex items-stretch">
@@ -87,11 +83,7 @@
 
         <div class="mb-3 hidden md:flex">
           <a href="{{ episode.get_absolute_url }}"
-             data-player-target="title"
              title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
-          <span data-player-target="loading"
-                class="hidden">Loading...</span>
-
         </div>
 
         <div class="flex justify-between items-center w-full mb-2">
