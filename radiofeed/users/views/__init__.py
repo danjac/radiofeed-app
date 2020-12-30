@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import Action, TurboStreamResponse, TurboStreamTemplateResponse
+from turbo_response import TurboStream
 
 # Local
 from ..forms import UserPreferencesForm
@@ -28,12 +28,10 @@ def user_preferences(request):
             messages.success(request, "Your preferences have been saved")
             return redirect(request.path)
 
-        return TurboStreamTemplateResponse(
-            request,
-            "account/_preferences.html",
-            {"form": form},
-            action=Action.REPLACE,
-            target="prefs-form",
+        return (
+            TurboStream("prefs-form")
+            .replace.template("account/_preferences.html", {"form": form},)
+            .response(request)
         )
 
     form = UserPreferencesForm(instance=request.user)
@@ -54,7 +52,7 @@ def delete_account(request):
 
 @require_POST
 def accept_cookies(request):
-    response = TurboStreamResponse(action=Action.REMOVE, target="accept-cookies")
+    response = TurboStream("accept-cookies").remove.response()
     response.set_cookie(
         "accept-cookies",
         value="true",

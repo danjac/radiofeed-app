@@ -2,7 +2,7 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrameTemplateResponse
+from turbo_response import TurboFrame
 
 # RadioFeed
 from radiofeed.users.decorators import staff_member_required
@@ -42,11 +42,10 @@ def landing_page(request):
 def podcast_cover_image(request, podcast_id):
     """Lazy-loaded podcast image"""
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    return TurboFrameTemplateResponse(
-        request,
-        "podcasts/_podcast_cover_image.html",
-        {"podcast": podcast},
-        dom_id=f"podcast-cover-image-{podcast.id}",
+    return (
+        TurboFrame(f"podcast-cover-image-{podcast.id}")
+        .template("podcasts/_podcast_cover_image.html", {"podcast": podcast},)
+        .response(request)
     )
 
 
@@ -250,13 +249,12 @@ def add_podcast(request):
         podcast = form.save()
         sync_podcast_feed.delay(podcast_id=podcast.id)
         if request.accept_turbo_stream:
-            return TurboFrameTemplateResponse(
-                request,
-                "podcasts/_add_new_button.html",
-                {"is_added": True},
-                dom_id="add-podcast",
+            return (
+                TurboFrame("add-podcast")
+                .template("podcasts/_add_new_button.html", {"is_added": True},)
+                .response(request)
             )
-        return HttpResponse()
+        return redirect(podcast)
 
     return HttpResponseBadRequest()
 
@@ -294,10 +292,12 @@ def podcast_detail_response(request, template_name, podcast, context):
 
 def podcast_subscribe_response(request, podcast, is_subscribed):
     if request.accept_turbo_stream:
-        return TurboFrameTemplateResponse(
-            request,
-            "podcasts/_subscribe_buttons.html",
-            {"podcast": podcast, "is_subscribed": is_subscribed},
-            dom_id=f"subscribe-{podcast.id}",
+        return (
+            TurboFrame(f"subscribe-{podcast.id}")
+            .template(
+                "podcasts/_subscribe_buttons.html",
+                {"podcast": podcast, "is_subscribed": is_subscribed},
+            )
+            .response(request)
         )
     return redirect(podcast.get_absolute_url())

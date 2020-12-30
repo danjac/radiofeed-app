@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrameTemplateResponse
+from turbo_response import TurboFrame
 
 # Local
 from .models import AudioLog, Bookmark, Episode
@@ -217,10 +217,12 @@ def player_status_response(episode, current_time, extra_context=None):
 
 def episode_bookmark_response(request, episode, is_bookmarked):
     if request.accept_turbo_stream:
-        return TurboFrameTemplateResponse(
-            request,
-            "episodes/_bookmark_buttons.html",
-            {"episode": episode, "is_bookmarked": is_bookmarked},
-            dom_id=f"bookmark-{episode.id}",
+        return (
+            TurboFrame(f"bookmark-{episode.id}")
+            .template(
+                "episodes/_bookmark_buttons.html",
+                {"episode": episode, "is_bookmarked": is_bookmarked},
+            )
+            .response(request)
         )
     return redirect(episode.get_absolute_url())

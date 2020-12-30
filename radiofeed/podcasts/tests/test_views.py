@@ -105,6 +105,13 @@ class TestPodcastRecommendations:
         assert len(resp.context_data["recommendations"]) == 3
 
 
+class TestPodcastCoverImage:
+    def test_get(self, rf, podcast):
+        req = rf.get("podcasts:podcast_cover_image", args=[podcast.id])
+        resp = views.podcast_cover_image(req, podcast.id)
+        assert resp.status_code == http.HTTPStatus.OK
+
+
 class TestPodcastDetail:
     def test_anonymous(self, rf, anonymous_user, podcast, site):
         EpisodeFactory.create_batch(3, podcast=podcast)
