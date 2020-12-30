@@ -4,6 +4,7 @@
   {% with podcast=episode.podcast prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
   <div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-2 font-semibold"
        data-controller="toggle"
+       data-player-target="controls"
        id="player-controls">
 
     <div data-toggle-target="item"
@@ -24,7 +25,7 @@
                height="30">
           <a href="{{ episode.get_absolute_url }}"
              title="{{ episode.title }}"
-             class="w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
+             class="player--title w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
         </div>
         <button data-action="toggle#toggle"
                 class="focus:outline-none float-right hover:text-blue-500"
@@ -62,6 +63,7 @@
 
       <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
         <a href="{{ episode.get_absolute_url }}"
+           class="player--title"
            title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
 
       </div>
@@ -84,6 +86,7 @@
 
           <div class="mb-3 hidden md:flex">
             <a href="{{ episode.get_absolute_url }}"
+               class="player--title"
                title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
           </div>
 
@@ -149,32 +152,38 @@
             </div>
 
             <div class="flex items-center">
-              <button {% if prev_episode %}
-                      title="{{ prev_episode.title }}"
-                      data-controller="episode"
-                      data-episode-episode-value="{{ prev_episode.id }}"
-                      data-episode-play-url-value="{% url 'episodes:start_player' prev_episode.id %}"
-                      data-action="click->episode#play:once"
-                      {% else %}
-                      title="First Episode"
-                      {% endif %}
-                      class="focus:outline-none mr-1 {% if prev_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     fill="none"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     class="h-9 w-9">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
-                </svg>
+              <form class="flex items-center"
+                    {% if prev_episode %}
+                    data-turbo-frame="player-frame"
+                    method="POST"
+                    action="{% url 'episodes:toggle_player' prev_episode.id %}"
+                    {% endif %}>
+                {% csrf_token %}
 
-              </button>
+                <button {% if prev_episode %}
+                        title="{{ prev_episode.title }}"
+                        {% else %}
+                        title="First Episode"
+                        {% endif %}
+                        class="focus:outline-none mr-1 {% if prev_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                       fill="none"
+                       viewBox="0 0 24 24"
+                       stroke="currentColor"
+                       class="h-9 w-9">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+                  </svg>
+
+                </button>
+              </form>
 
               <form class="flex items-center"
                     {% if next_episode %}
                     data-turbo-frame="player-frame"
+                    data-player-target="nextEpisode"
                     method="POST"
                     action="{% url 'episodes:toggle_player' next_episode.id %}"
                     {% endif %}>

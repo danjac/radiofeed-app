@@ -153,34 +153,7 @@ def toggle_player(request, episode_id):
         .response(request)
     )
 
-    response["X-Player-Media-Url"] = episode.media_url
-    response["X-Player-Current-Time"] = current_time
-    return response
-
-
-@require_POST
-def start_player(request, episode_id):
-    """Add episode to session and returns HTML component. The player info
-    is then added to the session."""
-
-    # try and get current time from JSON
-    current_time = get_current_time_from_request(request)
-
-    qs = Episode.objects.select_related("podcast")
-
-    if not current_time and request.user.is_authenticated:
-        episode = get_object_or_404(qs.with_current_time(request.user), pk=episode_id)
-        current_time = 0 if episode.completed else episode.current_time or 0
-    else:
-        episode = get_object_or_404(qs, pk=episode_id)
-
-    request.session["player"] = {
-        "episode": episode.id,
-        "current_time": current_time,
-    }
-    episode.log_activity(request.user, current_time=current_time)
-    # side load data in headers
-    response = TemplateResponse(request, "episodes/_player.html", {"episode": episode})
+    response["X-Player-Episode"] = episode.id
     response["X-Player-Media-Url"] = episode.media_url
     response["X-Player-Current-Time"] = current_time
     return response

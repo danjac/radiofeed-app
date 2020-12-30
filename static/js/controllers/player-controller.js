@@ -6,7 +6,9 @@ export default class extends Controller {
     'audio',
     'buffer',
     'counter',
+    'controls',
     'indicator',
+    'nextEpisode',
     'pauseButton',
     'playButton',
     'progress',
@@ -32,8 +34,6 @@ export default class extends Controller {
 
   connect() {
     useDispatch(this);
-    // check if player ID is present, close audio if not
-    // we could also check value...
   }
 
   async initialize() {
@@ -57,22 +57,14 @@ export default class extends Controller {
     if (this.mediaUrlValue) {
       this.audio.src = this.mediaUrlValue;
 
-      // sessionStorage toggle is set to prevent automatically starting
-      // player if opening in another tab.
-
-      if (!sessionStorage.getItem('player-enabled')) {
+      if (!this.enabled) {
         this.pausedValue = true;
       }
 
-      try {
-        if (this.pausedValue) {
-          await this.audio.pause();
-        } else {
-          await this.audio.play();
-        }
-      } catch (e) {
-        console.error(e);
-        this.errorValue = true;
+      if (this.pausedValue) {
+        await this.audio.pause();
+      } else {
+        await this.audio.play();
       }
     }
 
@@ -87,84 +79,54 @@ export default class extends Controller {
     document.documentElement.addEventListener(
       'turbo:submit-end',
       ({ detail: { fetchResponse } }) => {
+        const episode = fetchResponse.response.headers.get('X-Player-Episode');
         const currentTime = fetchResponse.response.headers.get('X-Player-Current-Time');
         const mediaUrl = fetchResponse.response.headers.get('X-Player-Media-Url');
+
         if (mediaUrl) {
-          this.audio.src = mediaUrl;
+          this.audio.src = this.mediaUrlValue;
           if (currentTime) {
             this.audio.currentTime = parseFloat(currentTime);
           }
-          this.audio.play();
+          this.play();
+          if (episode) {
+            this.dispatch('play', { episode });
+          }
         } else {
-          this.audio.src = '';
-          this.audio.pause();
+          this.closePlayer();
         }
       }
     );
   }
 
-  async open(event) {
-    // new episode is loaded into player
-    const { playUrl, episode } = event.detail;
-
-    this.episodeValue = episode;
-
-    this.dispatch('start', { episode });
-
-    const response = await this.fetchJSON(playUrl);
-    const currentTime = response.headers.get('X-Player-Current-Time');
-    const mediaUrl = response.headers.get('X-Player-Media-Url');
-
-    if (!mediaUrl) {
-      console.log('No URL found in X-Player-Media-Url-Header');
-      this.closePlayer();
-      return;
-    }
-
-    this.audio.src = this.mediaUrlValue = mediaUrl;
-
-    this.element.innerHTML = await response.text();
-
-    sessionStorage.setItem('player-enabled', true);
-
-    if (currentTime) {
-      this.audio.currentTime = parseFloat(currentTime);
-    }
-
-    this.audio.play();
-  }
-
   close() {
-    this.audio.pause();
-    this.dispatch('close', {
-      episode: this.episodeValue,
-    });
-    this.closePlayer(this.stopUrlValue);
+    this.closePlayer(this.stopUrlValue, false);
   }
 
   ended() {
-    // episode is completed
-    this.dispatch('close', {
-      episode: this.episodeValue,
-    });
-    this.closePlayer(this.markCompleteUrlValue);
+    this.closePlayer(this.markCompleteUrlValue, true);
   }
 
-  async closePlayer(stopUrl) {
+  async closePlayer(stopUrl, fetchNext) {
     if (stopUrl) {
-      const response = await this.fetchJSON(stopUrl);
-      const { nextEpisode } = await response.json();
-      if (nextEpisode) {
-        this.open({ detail: nextEpisode });
-        return;
+      this.fetchJSON(stopUrl);
+      if (fetchNext && this.hasNextEpisodeTarget) {
+        this.nextEpisodeTarget.requestSubmit();
       }
     }
-    this.element.innerHTML = '';
     this.durationValue = 0;
     this.lastUpdated = 0;
     this.episodeValue = '';
+    this.mediaUrlValue = '';
 
-    sessionStorage.removeItem('player-enabled');
+    this.controlsTarget.remove();
+
+    this.audio.src = '';
+    this.audio.pause();
+
+    this.enabled = false;
+
+    this.dispatch('stop');
   }
 
   loadedMetaData() {
@@ -176,24 +138,18 @@ export default class extends Controller {
   }
 
   resumed() {
-    sessionStorage.setItem('player-enabled', true);
+    this.enabled = true;
     this.pausedValue = false;
   }
 
   paused() {
-    sessionStorage.removeItem('player-enabled');
+    this.enabled = false;
     this.pausedValue = true;
   }
 
-  async play() {
-    this.errorValue = false;
-
-    try {
-      await this.audio.play();
-    } catch (e) {
-      console.error(e);
-      this.errorValue = true;
-    }
+  play() {
+    this.enabled = true;
+    this.audio.play();
   }
 
   canPlay() {
@@ -408,5 +364,17 @@ export default class extends Controller {
       credentials: 'same-origin',
       body: JSON.stringify(body || {}),
     });
+  }
+
+  set enabled(enabled) {
+    if (enabled) {
+      sessionStorage.setItem('player-enabled', true);
+    } else {
+      sessionStorage.removeItem('player-enabled');
+    }
+  }
+
+  get enabled() {
+    return !!sessionStorage.getItem('player-enabled');
   }
 }
