@@ -275,7 +275,7 @@
        data-player-inactive-class="player--inactive"
        data-player-csrf-token-value="{{ csrf_token }}"
        data-player-skip-interval-value="10"
-       data-player-progress-url-value="{% url 'episodes:update_player_time' %}"
+       data-player-progress-url-value="{% url 'episodes:sync_player_current_time' %}"
        data-player-stop-url-value="{% url 'episodes:stop_player' %}"
        data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        {% if player.episode %}

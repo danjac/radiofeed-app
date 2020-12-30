@@ -136,7 +136,7 @@
             </button>
 
             <button title="Stop"
-                    data-action="player#stop"
+                    data-action="player#close"
                     class="focus:outline-none hover:text-blue-500">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -160,9 +160,7 @@
                     title="{{ prev_episode.title }}"
                     data-controller="episode"
                     data-episode-episode-value="{{ prev_episode.id }}"
-                    data-episode-media-url-value="{{ next_episode.media_url }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' prev_episode.id %}"
-                    data-episode-duration-value="{{ prev_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
                     {% else %}
                     title="First Episode"
@@ -184,11 +182,8 @@
             <button {% if next_episode %}
                     title="{{ next_episode.title }}"
                     data-controller="episode"
-                    data-player-target="nextEpisode"
                     data-episode-episode-value="{{ next_episode.id }}"
-                    data-episode-media-url-value="{{ next_episode.media_url }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' next_episode.id %}"
-                    data-episode-duration-value="{{ next_episode.get_duration_in_seconds }}"
                     data-action="click->episode#play:once"
                     {% else %}
                     title="Last Episode"

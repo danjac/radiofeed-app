@@ -180,7 +180,6 @@ class TestStopPlayer:
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["currentTime"] == 1000
-        assert body["completed"] is True
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000
@@ -210,7 +209,6 @@ class TestStopPlayer:
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["currentTime"] == 1000
-        assert body["completed"] is True
         assert body["nextEpisode"]["episode"] == next_episode.id
 
         log = AudioLog.objects.get(user=user, episode=episode)
@@ -239,7 +237,6 @@ class TestStopPlayer:
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert body["currentTime"] == 1000
-        assert body["completed"] is True
         assert "next_episode" not in body
 
         log = AudioLog.objects.get(user=user, episode=episode)
@@ -250,13 +247,13 @@ class TestStopPlayer:
 class TestUpdatePlayerTime:
     def test_anonymous(self, rf, anonymous_user, episode):
         req = rf.post(
-            reverse("episodes:update_player_time"),
+            reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
-        resp = views.update_player_time(req)
+        resp = views.sync_player_current_time(req)
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
         assert resp.status_code == http.HTTPStatus.OK
@@ -265,14 +262,14 @@ class TestUpdatePlayerTime:
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
-            reverse("episodes:update_player_time"),
+            reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
-        resp = views.update_player_time(req)
+        resp = views.sync_player_current_time(req)
 
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
@@ -285,14 +282,14 @@ class TestUpdatePlayerTime:
 
     def test_player_not_running(self, rf, user, episode):
         req = rf.post(
-            reverse("episodes:update_player_time"),
+            reverse("episodes:sync_player_current_time"),
             data=json.dumps({"current_time": 1030}),
             content_type="application/json",
         )
         req.user = user
         req.session = {}
 
-        resp = views.update_player_time(req)
+        resp = views.sync_player_current_time(req)
 
         assert req.session == {}
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST

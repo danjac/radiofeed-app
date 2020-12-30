@@ -11,12 +11,14 @@ urlpatterns = [
     path("player/<int:episode_id>/~start/", views.start_player, name="start_player"),
     path("player/~stop/", views.stop_player, name="stop_player"),
     path(
-        "player/~mark-complete/",
+        "player/~done/",
         views.stop_player,
         name="mark_complete",
         kwargs={"completed": True},
     ),
-    path("player/~update/", views.update_player_time, name="update_player_time"),
+    path(
+        "player/~sync/", views.sync_player_current_time, name="sync_player_current_time"
+    ),
     path("history/", views.history, name="history"),
     path("bookmarks/", views.bookmark_list, name="bookmark_list"),
     path("bookmarks/<int:episode_id>/~add/", views.add_bookmark, name="add_bookmark"),

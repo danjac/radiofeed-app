@@ -7,7 +7,6 @@ export default class extends Controller {
     'buffer',
     'counter',
     'indicator',
-    'nextEpisode',
     'pauseButton',
     'playButton',
     'progress',
@@ -80,6 +79,8 @@ export default class extends Controller {
       }
     }
 
+    // make sure audio is properly closed when controls are removed
+    // from the DOM
     document.documentElement.addEventListener('turbo:load', () => {
       if (!document.getElementById('player-controls')) {
         this.audio.src = '';
@@ -98,7 +99,7 @@ export default class extends Controller {
 
     this.dispatch('start', { episode });
 
-    const response = await this.fetch(playUrl);
+    const response = await this.fetchJSON(playUrl);
     const currentTime = response.headers.get('X-Player-Current-Time');
     const mediaUrl = response.headers.get('X-Player-Media-Url');
 
@@ -129,12 +130,6 @@ export default class extends Controller {
   }
 
   close() {
-    // player closed from episode
-    this.closePlayer(this.stopUrlValue);
-  }
-
-  stop() {
-    // stop button clicked in player
     this.audio.pause();
     this.dispatch('close', {
       episode: this.episodeValue,
@@ -152,18 +147,19 @@ export default class extends Controller {
 
   async closePlayer(stopUrl) {
     if (stopUrl) {
-      this.fetch(stopUrl);
+      const response = await this.fetchJSON(stopUrl);
+      const { nextEpisode } = await response.json();
+      if (nextEpisode) {
+        this.open({ detail: nextEpisode });
+        return;
+      }
     }
-    if (this.hasNextEpisodeTarget) {
-      this.nextEpisodeTarget.click();
-    } else {
-      this.element.innerHTML = '';
-      this.durationValue = 0;
-      this.lastUpdated = 0;
-      this.episodeValue = '';
+    this.element.innerHTML = '';
+    this.durationValue = 0;
+    this.lastUpdated = 0;
+    this.episodeValue = '';
 
-      sessionStorage.removeItem('player-enabled');
-    }
+    sessionStorage.removeItem('player-enabled');
   }
 
   loadedMetaData() {
@@ -355,7 +351,7 @@ export default class extends Controller {
 
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
-      this.fetch(this.progressUrlValue, {
+      this.fetchJSON(this.progressUrlValue, {
         currentTime: this.currentTimeValue,
       });
     }
@@ -411,7 +407,7 @@ export default class extends Controller {
     }
   }
 
-  fetch(url, body) {
+  fetchJSON(url, body) {
     return fetch(url, {
       method: 'POST',
       headers: {

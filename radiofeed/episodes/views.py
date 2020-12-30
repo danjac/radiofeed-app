@@ -15,7 +15,6 @@ from turbo_response import TurboFrame
 
 # Local
 from .models import AudioLog, Bookmark, Episode
-from .utils import format_duration
 
 
 def episode_list(request):
@@ -162,18 +161,12 @@ def stop_player(request, completed=False):
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
 
-        extra_context = {"completed": completed}
-
-        if (
-            completed
-            and request.user.is_authenticated
-            and request.user.autoplay
-            and (next_episode := episode.get_next_episode())
-        ):
-            extra_context |= {
+        extra_context = {}
+        autoplay = request.user.is_authenticated and request.user.autoplay
+        if autoplay and (next_episode := episode.get_next_episode()):
+            extra_context = {
                 "nextEpisode": {
                     "episode": next_episode.id,
-                    "mediaUrl": next_episode.media_url,
                     "playUrl": reverse("episodes:start_player", args=[next_episode.id]),
                 }
             }
@@ -183,7 +176,7 @@ def stop_player(request, completed=False):
 
 
 @require_POST
-def update_player_time(request):
+def sync_player_current_time(request):
     """Update current play time of episode"""
 
     player = request.session.get("player", None)
@@ -207,19 +200,8 @@ def get_current_time_from_request(request):
 
 
 def player_status_response(episode, current_time, extra_context=None):
-    # TBD: it would be nicer to just have this returned as a stream,
-    # but currently it's not possible to dispatch turbo stream requests
-    # from JS. We also need to update next episode if on autoplay, which
-    # requires somehow passing media url back to player to restart audio.
     return JsonResponse(
-        {
-            "episode": episode.id,
-            "currentTime": current_time,
-            "timeRemaining": format_duration(
-                episode.get_duration_in_seconds() - current_time
-            ),
-        }
-        | (extra_context or {})
+        {"episode": episode.id, "currentTime": current_time,} | (extra_context or {})
     )
 
 

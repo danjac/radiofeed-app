@@ -38,8 +38,7 @@
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-500 mb-3"
      data-controller="episode"
-     data-action="episode:open@window->episode#open player:close@window->episode#close player:update@window->episode#update"
-     data-episode-media-url-value="{{ episode.media_url }}"
+     data-action="episode:open@window->episode#open player:close@window->episode#close"
      data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
      {% if is_episode_playing %}
      data-episode-playing-value

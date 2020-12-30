@@ -3,8 +3,7 @@
 {% is_playing episode as is_episode_playing %}
 <div class="flex justify-between items-center mb-3 p-2 border {% if current_time or completed %}border-purple-500{% elif is_bookmarked %}border-blue-500{% else %}border-gray-500{% endif %}"
      data-controller="episode"
-     data-action="player:start@window->episode#start player:close@window->episode#close player:update@window->episode#update"
-     data-episode-media-url-value="{{ episode.media_url }}"
+     data-action="player:start@window->episode#start player:close@window->episode#close"
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
