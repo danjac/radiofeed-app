@@ -48,10 +48,9 @@ export default class extends Controller {
     this.audio.addEventListener('stalled', this.wait.bind(this));
     this.audio.addEventListener('loadedmetadata', this.loadedMetaData.bind(this));
 
-    this.audio.currentTime = this.currentTimeValue;
-
     if (this.mediaUrlValue) {
       this.audio.src = this.mediaUrlValue;
+      this.audio.currentTime = this.currentTimeValue;
 
       if (!this.enabled) {
         this.pausedValue = true;
@@ -199,12 +198,12 @@ export default class extends Controller {
       return;
     }
     const action = headers && headers.get('X-Player-Action');
-    console.log('action', action);
     if (!action) {
       return;
     }
 
     if (action === 'stop') {
+      console.log('stop');
       this.closePlayer();
       return;
     }
@@ -213,6 +212,7 @@ export default class extends Controller {
     const episode = headers.get('X-Player-Episode');
     const currentTime = headers.get('X-Player-Current-Time');
     const mediaUrl = headers.get('X-Player-Media-Url');
+
     console.log('play:', episode, mediaUrl, currentTime);
 
     if (mediaUrl && mediaUrl != this.audio.src) {
