@@ -62,9 +62,9 @@ export default class extends Controller {
       }
 
       if (this.pausedValue) {
-        await this.audio.pause();
+        this.pause();
       } else {
-        await this.audio.play();
+        this.play();
       }
     }
 
@@ -79,21 +79,9 @@ export default class extends Controller {
     document.documentElement.addEventListener(
       'turbo:submit-end',
       ({ detail: { fetchResponse } }) => {
-        const episode = fetchResponse.response.headers.get('X-Player-Episode');
-        const currentTime = fetchResponse.response.headers.get('X-Player-Current-Time');
-        const mediaUrl = fetchResponse.response.headers.get('X-Player-Media-Url');
-
-        if (mediaUrl) {
-          this.audio.src = this.mediaUrlValue;
-          if (currentTime) {
-            this.audio.currentTime = parseFloat(currentTime);
-          }
-          this.play();
-          if (episode) {
-            this.dispatch('play', { episode });
-          }
-        } else {
-          this.closePlayer();
+        const headers = fetchResponse.response ? fetchResponse.response.headers : null;
+        if (headers) {
+          this.handleFormSubmission(headers);
         }
       }
     );
@@ -364,6 +352,37 @@ export default class extends Controller {
       credentials: 'same-origin',
       body: JSON.stringify(body || {}),
     });
+  }
+
+  handleFormSubmission(headers) {
+    console.log('handleFormSubmission');
+    const action = headers && headers.get('X-Player-Action');
+    console.log('action', action);
+    if (!action) {
+      return;
+    }
+
+    if (action === 'stop') {
+      this.closePlayer();
+      return;
+    }
+    // default : play
+
+    const episode = headers.get('X-Player-Episode');
+    const currentTime = headers.get('X-Player-Current-Time');
+    const mediaUrl = headers.get('X-Player-Media-Url');
+    console.log('play:', episode, mediaUrl, currentTime);
+
+    if (mediaUrl) {
+      this.audio.src = this.mediaUrlValue = mediaUrl;
+      if (currentTime) {
+        this.audio.currentTime = parseFloat(currentTime);
+      }
+      this.play();
+      if (episode) {
+        this.dispatch('play', { episode });
+      }
+    }
   }
 
   set enabled(enabled) {

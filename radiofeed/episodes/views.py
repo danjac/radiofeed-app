@@ -150,6 +150,7 @@ def toggle_player(request, episode_id):
         .response(request)
     )
 
+    response["X-Player-Action"] = "play"
     response["X-Player-Episode"] = episode.id
     response["X-Player-Media-Url"] = episode.media_url
     response["X-Player-Current-Time"] = current_time
@@ -165,8 +166,9 @@ def stop_player(request, completed=False):
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed)
 
-        return TurboFrame("player").response()
-        # return player_status_response(episode, player["current_time"], extra_context)
+        response = TurboFrame("player").response()
+        response["X-Player-Action"] = "stop"
+        return response
     return HttpResponseBadRequest()
 
 
