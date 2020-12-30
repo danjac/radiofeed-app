@@ -184,6 +184,7 @@
             <button {% if next_episode %}
                     title="{{ next_episode.title }}"
                     data-controller="episode"
+                    data-player-target="nextEpisode"
                     data-episode-episode-value="{{ next_episode.id }}"
                     data-episode-media-url-value="{{ next_episode.media_url }}"
                     data-episode-play-url-value="{% url 'episodes:start_player' next_episode.id %}"

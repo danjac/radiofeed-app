@@ -2,18 +2,14 @@ import { Controller } from 'stimulus';
 import { useDispatch, useDebounce } from 'stimulus-use';
 
 export default class extends Controller {
-  static targets = ['playButton', 'stopButton', 'currentTime'];
-  static classes = ['completed'];
+  static targets = ['playButton', 'stopButton'];
   static debounces = ['play', 'stop'];
 
   static values = {
     episode: Number,
-    duration: String,
-    currentTime: Number,
     mediaUrl: String,
     playUrl: String,
     playing: Boolean,
-    completed: Boolean,
   };
 
   connect() {
@@ -21,11 +17,14 @@ export default class extends Controller {
     useDebounce(this, { wait: 500 });
   }
 
+  close() {
+    this.playingValue = false;
+  }
+
   play() {
     this.playingValue = true;
     this.dispatch('play', {
       episode: this.episodeValue,
-      currentTime: this.currentTimeValue,
       playUrl: this.playUrlValue,
       mediaUrl: this.mediaUrlValue,
     });
@@ -40,39 +39,6 @@ export default class extends Controller {
     // episode is started from player
     const { episode } = event.detail;
     this.playingValue = episode === this.episodeValue;
-  }
-
-  close(event) {
-    // episode is closed from player
-    const { currentTime, episode, completed } = event.detail;
-    if (episode === this.episodeValue) {
-      this.playingValue = false;
-      this.currentTimeValue = currentTime;
-      this.completedValue = completed;
-    }
-  }
-
-  update({ detail: { episode, timeRemaining, completed } }) {
-    // server status update
-    if (episode && episode === this.episodeValue) {
-      if (timeRemaining && !completed) {
-        this.currentTimeTarget.textContent = '~' + timeRemaining;
-      } else {
-        this.currentTimeValue = 0;
-        this.currentTimeTarget.textContent = this.durationValue;
-      }
-      this.completedValue = completed;
-    }
-  }
-
-  completedValueChanged() {
-    if (this.hasCurrentTimeTarget) {
-      if (this.completedValue) {
-        this.currentTimeTarget.classList.add(this.completedClass);
-      } else {
-        this.currentTimeTarget.classList.remove(this.completedClass);
-      }
-    }
   }
 
   playingValueChanged() {

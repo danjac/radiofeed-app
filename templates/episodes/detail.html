@@ -39,19 +39,12 @@
 <div class="p-2 border border-gray-500 mb-3"
      data-controller="episode"
      data-action="episode:open@window->episode#open player:close@window->episode#close player:update@window->episode#update"
-     data-episode-completed-class="line-through"
      data-episode-media-url-value="{{ episode.media_url }}"
+     data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
      {% if is_episode_playing %}
      data-episode-playing-value
      {% endif %}
-     {% if episode.current_time and not episode.completed %}
-     data-episode-current-time-value="{{ episode.current_time }}"
-     {% elif episode.completed %}
-     data-episode-completed-value
-     {% endif %}
      data-episode-episode-value="{{ episode.id }}"
-     data-episode-duration-value="{{ duration|format_duration }}"
-     data-episode-play-url-value="{% url 'episodes:start_player' episode.id %}">
 
   <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
   <h2 class="font-semibold mb-3">

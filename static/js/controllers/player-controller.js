@@ -7,6 +7,7 @@ export default class extends Controller {
     'buffer',
     'counter',
     'indicator',
+    'nextEpisode',
     'pauseButton',
     'playButton',
     'progress',
@@ -88,9 +89,7 @@ export default class extends Controller {
 
   async open(event) {
     // new episode is loaded into player
-    const { playUrl, mediaUrl, episode, currentTime } = event.detail;
-
-    this.audio.src = this.mediaUrlValue = mediaUrl;
+    const { playUrl, episode } = event.detail;
 
     this.loadingValue = true;
     this.errorValue = false;
@@ -99,16 +98,24 @@ export default class extends Controller {
 
     this.dispatch('start', { episode });
 
-    const response = await this.fetch(playUrl, {
-      currentTime,
-    });
+    const response = await this.fetch(playUrl);
+    const currentTime = response.headers.get('X-Player-Current-Time');
+    const mediaUrl = response.headers.get('X-Player-Media-Url');
+
+    if (!mediaUrl) {
+      console.log('No URL found in X-Player-Media-Url-Header');
+      this.closePlayer();
+      return;
+    }
+
+    this.audio.src = this.mediaUrlValue = mediaUrl;
 
     this.element.innerHTML = await response.text();
 
     sessionStorage.setItem('player-enabled', true);
 
     if (currentTime) {
-      this.audio.currentTime = currentTime;
+      this.audio.currentTime = parseFloat(currentTime);
     }
 
     try {
@@ -131,7 +138,6 @@ export default class extends Controller {
     this.audio.pause();
     this.dispatch('close', {
       episode: this.episodeValue,
-      currentTime: this.currentTimeValue,
     });
     this.closePlayer(this.stopUrlValue);
   }
@@ -140,36 +146,24 @@ export default class extends Controller {
     // episode is completed
     this.dispatch('close', {
       episode: this.episodeValue,
-      currentTime: this.currentTimeValue,
-      completed: true,
     });
     this.closePlayer(this.markCompleteUrlValue);
   }
 
   async closePlayer(stopUrl) {
     if (stopUrl) {
-      try {
-        const response = await this.fetch(stopUrl);
-        const data = await response.json();
-        this.dispatch('update', data);
-        // if autoplay is on, next episode in podcast can be loaded
-        const { nextEpisode } = data;
-        if (nextEpisode) {
-          this.open({
-            detail: nextEpisode,
-          });
-          return;
-        }
-      } catch (e) {
-        console.error(e);
-      }
+      this.fetch(stopUrl);
     }
-    this.element.innerHTML = '';
-    this.durationValue = 0;
-    this.lastUpdated = 0;
-    this.episodeValue = '';
+    if (this.hasNextEpisodeTarget) {
+      this.nextEpisodeTarget.click();
+    } else {
+      this.element.innerHTML = '';
+      this.durationValue = 0;
+      this.lastUpdated = 0;
+      this.episodeValue = '';
 
-    sessionStorage.removeItem('player-enabled');
+      sessionStorage.removeItem('player-enabled');
+    }
   }
 
   loadedMetaData() {
@@ -361,11 +355,9 @@ export default class extends Controller {
 
     if (sendUpdate) {
       this.lastUpdated = this.currentTimeValue;
-      const response = await this.fetch(this.progressUrlValue, {
+      this.fetch(this.progressUrlValue, {
         currentTime: this.currentTimeValue,
       });
-      const data = await response.json();
-      this.dispatch('update', data);
     }
   }
 
