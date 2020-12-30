@@ -151,6 +151,7 @@ export default class extends Controller {
     // playing time update
     const { currentTime } = this.audio;
     this.currentTimeValue = currentTime;
+    this.waitingValue = false;
   }
 
   progress() {

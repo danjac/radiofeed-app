@@ -110,7 +110,7 @@ class TestTogglePlayer:
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = anonymous_user
         req.session = {}
-        resp = views.start_player(req, episode.id)
+        resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
         assert resp["X-Player-Episode"] == str(episode.id)
@@ -122,10 +122,10 @@ class TestTogglePlayer:
         }
 
     def test_authenticated(self, rf, user, episode):
-        req = rf.post(reverse("episodes:start_player", args=[episode.id]))
+        req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = {}
-        resp = views.start_player(req, episode.id)
+        resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
         assert resp["X-Player-Episode"] == str(episode.id)
@@ -138,10 +138,10 @@ class TestTogglePlayer:
 
     def test_is_played(self, rf, user, episode):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
-        req = rf.post(reverse("episodes:start_player", args=[episode.id]))
+        req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = {}
-        resp = views.start_player(req, episode.id)
+        resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
         assert resp["X-Player-Episode"] == str(episode.id)
@@ -152,57 +152,48 @@ class TestTogglePlayer:
             "current_time": 2000,
         }
 
+    def test_stop(self, rf, user, episode):
+        AudioLogFactory(user=user, episode=episode, current_time=2000)
+        req = rf.post(
+            reverse("episodes:toggle_player", args=[episode.id]),
+            {"player_action": "stop"},
+        )
+        req.user = user
+        req.session = {}
+        resp = views.toggle_player(req, episode.id)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["X-Player-Action"] == "stop"
 
-class TestStopPlayer:
+
+class TestMarkComplete:
     def test_anonymous(self, rf, anonymous_user, episode):
-        req = rf.post(reverse("episodes:stop_player"))
+        req = rf.post(reverse("episodes:mark_complete"))
         req.user = anonymous_user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
-        resp = views.stop_player(req)
+        resp = views.mark_complete(req)
 
         assert req.session == {}
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["currentTime"] == 1000
+        assert not body["autoplay"]
 
     def test_authenticated(self, rf, user, episode):
         req = rf.post(
-            reverse("episodes:stop_player"),
+            reverse("episodes:mark_complete"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
-        resp = views.stop_player(req)
+        resp = views.mark_complete(req)
 
         assert req.session == {}
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
-        assert body["currentTime"] == 1000
-
-        log = AudioLog.objects.get(user=user, episode=episode)
-        assert log.current_time == 1000
-
-    def test_completed(self, rf, user, episode):
-        req = rf.post(
-            reverse("episodes:mark_complete"),
-            data=json.dumps({"current_time": 1030}),
-            content_type="application/json",
-        )
-        req.user = user
-        req.user.autoplay = False
-        req.session = {"player": {"episode": episode.id, "current_time": 1000}}
-
-        resp = views.stop_player(req, completed=True)
-
-        assert req.session == {}
-
-        assert resp.status_code == http.HTTPStatus.OK
-        body = json.loads(resp.content)
-        assert body["currentTime"] == 1000
+        assert body["autoplay"] == user.autoplay
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1000

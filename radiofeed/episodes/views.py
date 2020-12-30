@@ -169,7 +169,7 @@ def mark_complete(request):
     if player:
 
         episode = get_object_or_404(Episode, pk=player["episode"])
-        episode.log_activity(request.user, player["current_time"])
+        episode.log_activity(request.user, player["current_time"], completed=True)
 
         return JsonResponse(
             {"autoplay": request.user.is_authenticated and request.user.autoplay}
