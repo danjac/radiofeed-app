@@ -159,6 +159,20 @@ class Subscription(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
+    def with_is_subscribed(self, user):
+        """Marks which recommendations are subscribed by this suer."""
+        if user.is_anonymous:
+            return self.annotate(
+                is_subscribed=models.Value(False, output_field=models.BooleanField())
+            )
+        return self.annotate(
+            is_subscribed=models.Exists(
+                Subscription.objects.filter(
+                    user=user, podcast=models.OuterRef("recommended")
+                )
+            )
+        )
+
     def for_user(self, user):
         podcast_ids = (
             set(

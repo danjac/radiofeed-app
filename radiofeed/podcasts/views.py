@@ -89,6 +89,7 @@ def podcast_recommendations(request, podcast_id, slug=None):
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
+        .with_is_subscribed(request.user)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
     )[:12]
@@ -154,7 +155,9 @@ def category_detail(request, category_id, slug=None):
     )
     children = category.children.order_by("name")
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_is_subscribed(
+        request.user
+    )
     search = request.GET.get("q", None)
 
     if search:
