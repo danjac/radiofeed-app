@@ -69,7 +69,6 @@ export default class extends Controller {
     useDispatch(this);
     // make sure audio is properly closed when controls are removed
     // from the DOM
-    console.log('connect');
 
     this.onTurboLoad = this.turboLoad.bind(this);
 
