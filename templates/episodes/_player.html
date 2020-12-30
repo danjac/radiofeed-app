@@ -1,78 +1,19 @@
 {% load static thumbnail episodes %}
-<turbo-frame id="player">
-  {% if episode %}
-  {% with podcast=episode.podcast prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
-  <div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-2 font-semibold"
-       data-controller="toggle"
-       data-player-target="controls"
-       id="player-controls">
+{% if episode %}
+{% with podcast=episode.podcast prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
+<div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-2 font-semibold"
+     data-controller="toggle"
+     data-player-target="controls"
+     id="player-controls">
 
-    <div data-toggle-target="item"
-         class="hidden">
-      <div class="flex items-center justify-between relative">
-        <div class="flex items-center">
-          <img data-controller="link"
-               data-link-url-value="{{ podcast.get_absolute_url }}"
-               data-action="click->link#visit"
-               class="object-cover block cursor-pointer h-8 w-8 self-center mr-2 hover:opacity-75 bg-transparent border border-white"
-               title="{{ podcast.title }}"
-               {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-               src="{{ img.url }}"
-               {% empty %}src="{% static 'img/podcast-icon.png' %}"
-               {% endthumbnail %}
-               role="link"
-               width="30"
-               height="30">
-          <a href="{{ episode.get_absolute_url }}"
-             title="{{ episode.title }}"
-             class="player--title w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
-        </div>
-        <button data-action="toggle#toggle"
-                class="focus:outline-none float-right hover:text-blue-500"
-                title="Maximize Player">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               class="h-6 w-6">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M5 15l7-7 7 7" />
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div data-toggle-target="item"
-         class="relative">
-      <button data-action="toggle#toggle"
-              class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
-              title="Mimimize Player">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             class="h-6 w-6">
-          <path stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
-        <a href="{{ episode.get_absolute_url }}"
-           class="player--title"
-           title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
-
-      </div>
-      <div class="flex items-stretch">
-
+  <div data-toggle-target="item"
+       class="hidden">
+    <div class="flex items-center justify-between relative">
+      <div class="flex items-center">
         <img data-controller="link"
              data-link-url-value="{{ podcast.get_absolute_url }}"
              data-action="click->link#visit"
-             class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-2 border border-white"
+             class="object-cover block cursor-pointer h-8 w-8 self-center mr-2 hover:opacity-75 bg-transparent border border-white"
              title="{{ podcast.title }}"
              {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
              src="{{ img.url }}"
@@ -81,58 +22,122 @@
              role="link"
              width="30"
              height="30">
+        <a href="{{ episode.get_absolute_url }}"
+           title="{{ episode.title }}"
+           class="player--title w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
+      </div>
+      <button data-action="toggle#toggle"
+              class="focus:outline-none float-right hover:text-blue-500"
+              title="Maximize Player">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             class="h-6 w-6">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
 
-        <div class="w-full self-start">
+  <div data-toggle-target="item"
+       class="relative">
+    <button data-action="toggle#toggle"
+            class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
+            title="Mimimize Player">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke="currentColor"
+           class="h-6 w-6">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
 
-          <div class="mb-3 hidden md:flex">
-            <a href="{{ episode.get_absolute_url }}"
-               class="player--title"
-               title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
-          </div>
+    <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
+      <a href="{{ episode.get_absolute_url }}"
+         class="player--title"
+         title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
 
-          <div class="flex justify-between items-center w-full mb-2">
+    </div>
+    <div class="flex items-stretch">
 
-            <div class="flex items-center">
+      <img data-controller="link"
+           data-link-url-value="{{ podcast.get_absolute_url }}"
+           data-action="click->link#visit"
+           class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-2 border border-white"
+           title="{{ podcast.title }}"
+           {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
+           src="{{ img.url }}"
+           {% empty %}src="{% static 'img/podcast-icon.png' %}"
+           {% endthumbnail %}
+           role="link"
+           width="30"
+           height="30">
 
-              <button title="Pause"
-                      data-action="player#pause"
-                      data-player-target="pauseButton"
-                      class="focus:outline-none hover:text-blue-500 mr-1">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     fill="none"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     class="h-10 w-10">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </button>
+      <div class="w-full self-start">
 
-              <button title="Play"
-                      data-action="player#play"
-                      data-player-target="playButton"
-                      class="focus:outline-none mr-1 hidden hover:text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     fill="none"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     class="h-10 w-10">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <div class="mb-3 hidden md:flex">
+          <a href="{{ episode.get_absolute_url }}"
+             class="player--title"
+             title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
+        </div>
 
-              </button>
+        <div class="flex justify-between items-center w-full mb-2">
 
+          <div class="flex items-center">
+
+            <button title="Pause"
+                    data-action="player#pause"
+                    data-player-target="pauseButton"
+                    class="focus:outline-none hover:text-blue-500 mr-1">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-10 w-10">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+
+            <button title="Play"
+                    data-action="player#play"
+                    data-player-target="playButton"
+                    class="focus:outline-none mr-1 hidden hover:text-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-10 w-10">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+
+            </button>
+
+            <form class="flex items-center"
+                  data-turbo-frame="player"
+                  method="POST"
+                  action="{% url 'episodes:toggle_player' episode.id %}">
+              {% csrf_token %}
               <button title="Stop"
-                      data-action="player#close"
+                      name="player_action"
+                      value="stop"
                       class="focus:outline-none hover:text-blue-500">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      fill="none"
@@ -149,135 +154,135 @@
                         d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
                 </svg>
               </button>
-            </div>
-
-            <div class="flex items-center">
-              <form class="flex items-center"
-                    {% if prev_episode %}
-                    data-turbo-frame="player-frame"
-                    method="POST"
-                    action="{% url 'episodes:toggle_player' prev_episode.id %}"
-                    {% endif %}>
-                {% csrf_token %}
-
-                <button {% if prev_episode %}
-                        title="{{ prev_episode.title }}"
-                        {% else %}
-                        title="First Episode"
-                        {% endif %}
-                        class="focus:outline-none mr-1 {% if prev_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                       fill="none"
-                       viewBox="0 0 24 24"
-                       stroke="currentColor"
-                       class="h-9 w-9">
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
-                  </svg>
-
-                </button>
-              </form>
-
-              <form class="flex items-center"
-                    {% if next_episode %}
-                    data-turbo-frame="player-frame"
-                    data-player-target="nextEpisode"
-                    method="POST"
-                    action="{% url 'episodes:toggle_player' next_episode.id %}"
-                    {% endif %}>
-                {% csrf_token %}
-                <button {% if next_episode %}
-                        title="{{ next_episode.title }}"
-                        {% else %}
-                        title="Last Episode"
-                        {% endif %}
-                        class="focus:outline-none {% if next_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                       fill="none"
-                       viewBox="0 0 24 24"
-                       stroke="currentColor"
-                       class="h-9 w-9">
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
-                  </svg>
-                </button>
-              </form>
-            </div>
-
-            <div class="flex items-center">
-              <button title="Skip back 10 seconds"
-                      data-action="player#skipBack"
-                      class="focus:outline-none hover:text-blue-500 player--interactive mr-1">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     aria-hidden="true"
-                     focusable="false"
-                     role="img"
-                     class="h-6 w-6 mr-2"
-                     width="1em"
-                     height="1em"
-                     preserveAspectRatio="xMidYMid meet"
-                     viewBox="0 0 32 32"
-                     style="transform: rotate(360deg);">
-                  <path d="M4 18A12 12 0 1 0 16 6h-4V1L6 7l6 6V8h4A10 10 0 1 1 6 18z"
-                        fill="currentColor"></path>
-                  <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
-                        fill="currentColor"></path>
-                  <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
-                        fill="currentColor"></path>
-                </svg>
-              </button>
-              <button title="Skip forward 10 seconds"
-                      data-action="player#skipForward"
-                      class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     aria-hidden="true"
-                     focusable="false"
-                     role="img"
-                     class="h-6 w-6"
-                     width="1em"
-                     height="1em"
-                     preserveAspectRatio="xMidYMid meet"
-                     viewBox="0 0 32 32"
-                     style="transform: rotate(360deg);">
-                  <path d="M26 18A10 10 0 1 1 16 8h4v5l6-6l-6-6v5h-4a12 12 0 1 0 12 12z"
-                        fill="currentColor"></path>
-                  <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
-                        fill="currentColor"></path>
-                  <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
-                        fill="currentColor"></path>
-                </svg>
-              </button>
-            </div>
-
+            </form>
           </div>
 
-          <div class="flex items-center justify-center w-full">
-            <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center player--interactive"
-                 data-player-target="progressBar"
-                 data-action="click->player#skip">
-              <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
-                   data-player-target="indicator"
-                   style="z-index: 12;"></div>
-              <div class="h-2 relative rounded-l flex items-center justify-end player--progress"
-                   style="width: 0%;"
-                   data-player-target="progress"></div>
-              <div class="h-2 rounded-r relative player--buffer"
-                   data-player-target="buffer"
-                   style="width: 0%;"></div>
-            </div>
-            <div class="w-20 text-right tracking-tighter text-sm md:text-base player--counter"
-                 data-player-target="counter">-00.00.00</div>
+          <div class="flex items-center">
+            <form class="flex items-center"
+                  {% if prev_episode %}
+                  data-turbo-frame="player"
+                  method="POST"
+                  action="{% url 'episodes:toggle_player' prev_episode.id %}"
+                  {% endif %}>
+              {% csrf_token %}
+
+              <button {% if prev_episode %}
+                      title="{{ prev_episode.title }}"
+                      {% else %}
+                      title="First Episode"
+                      {% endif %}
+                      class="focus:outline-none mr-1 {% if prev_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     class="h-9 w-9">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+                </svg>
+
+              </button>
+            </form>
+
+            <form class="flex items-center"
+                  {% if next_episode %}
+                  data-turbo-frame="player"
+                  data-player-target="nextEpisode"
+                  method="POST"
+                  action="{% url 'episodes:toggle_player' next_episode.id %}"
+                  {% endif %}>
+              {% csrf_token %}
+              <button {% if next_episode %}
+                      title="{{ next_episode.title }}"
+                      {% else %}
+                      title="Last Episode"
+                      {% endif %}
+                      class="focus:outline-none {% if next_episode%}player--interactive hover:text-blue-500{% else %}cursor-not-allowed opacity-75{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     class="h-9 w-9">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
+                </svg>
+              </button>
+            </form>
           </div>
+
+          <div class="flex items-center">
+            <button title="Skip back 10 seconds"
+                    data-action="player#skipBack"
+                    class="focus:outline-none hover:text-blue-500 player--interactive mr-1">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   xmlns:xlink="http://www.w3.org/1999/xlink"
+                   aria-hidden="true"
+                   focusable="false"
+                   role="img"
+                   class="h-6 w-6 mr-2"
+                   width="1em"
+                   height="1em"
+                   preserveAspectRatio="xMidYMid meet"
+                   viewBox="0 0 32 32"
+                   style="transform: rotate(360deg);">
+                <path d="M4 18A12 12 0 1 0 16 6h-4V1L6 7l6 6V8h4A10 10 0 1 1 6 18z"
+                      fill="currentColor"></path>
+                <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
+                      fill="currentColor"></path>
+                <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
+                      fill="currentColor"></path>
+              </svg>
+            </button>
+            <button title="Skip forward 10 seconds"
+                    data-action="player#skipForward"
+                    class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   xmlns:xlink="http://www.w3.org/1999/xlink"
+                   aria-hidden="true"
+                   focusable="false"
+                   role="img"
+                   class="h-6 w-6"
+                   width="1em"
+                   height="1em"
+                   preserveAspectRatio="xMidYMid meet"
+                   viewBox="0 0 32 32"
+                   style="transform: rotate(360deg);">
+                <path d="M26 18A10 10 0 1 1 16 8h4v5l6-6l-6-6v5h-4a12 12 0 1 0 12 12z"
+                      fill="currentColor"></path>
+                <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
+                      fill="currentColor"></path>
+                <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
+                      fill="currentColor"></path>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="flex items-center justify-center w-full">
+          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center player--interactive"
+               data-player-target="progressBar"
+               data-action="click->player#skip">
+            <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
+                 data-player-target="indicator"
+                 style="z-index: 12;"></div>
+            <div class="h-2 relative rounded-l flex items-center justify-end player--progress"
+                 style="width: 0%;"
+                 data-player-target="progress"></div>
+            <div class="h-2 rounded-r relative player--buffer"
+                 data-player-target="buffer"
+                 style="width: 0%;"></div>
+          </div>
+          <div class="w-20 text-right tracking-tighter text-sm md:text-base player--counter"
+               data-player-target="counter">-00.00.00</div>
         </div>
       </div>
     </div>
   </div>
-  {% endwith %}
-  {% endif %}
-</turbo-frame>
+</div>
+{% endwith %}
+{% endif %}

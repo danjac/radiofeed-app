@@ -5,7 +5,7 @@ import json
 # Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
@@ -130,7 +130,12 @@ def toggle_player(request, episode_id):
     is then added to the session."""
 
     if request.POST.get("player_action") == "stop":
-        return stop_player(request)
+        # delete player from session and remove player controls
+        # with empty frame
+        request.session.pop("player", None)
+        response = TurboFrame("player").response()
+        response["X-Player-Action"] = "stop"
+        return response
 
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
@@ -158,18 +163,19 @@ def toggle_player(request, episode_id):
 
 
 @require_POST
-def stop_player(request, completed=False):
-    """Remove player from session"""
+def mark_complete(request):
+    """Remove player from session when episode has ended."""
     player = request.session.pop("player", None)
     if player:
 
         episode = get_object_or_404(Episode, pk=player["episode"])
-        episode.log_activity(request.user, player["current_time"], completed)
+        episode.log_activity(request.user, player["current_time"])
 
-        response = TurboFrame("player").response()
-        response["X-Player-Action"] = "stop"
-        return response
-    return HttpResponseBadRequest()
+        return JsonResponse(
+            {"autoplay": request.user.is_authenticated and request.user.autoplay}
+        )
+
+    return HttpResponseBadRequest("No player loaded")
 
 
 @require_POST

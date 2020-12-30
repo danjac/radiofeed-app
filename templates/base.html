@@ -276,7 +276,6 @@
        data-player-csrf-token-value="{{ csrf_token }}"
        data-player-skip-interval-value="10"
        data-player-progress-url-value="{% url 'episodes:sync_player_current_time' %}"
-       data-player-stop-url-value="{% url 'episodes:stop_player' %}"
        data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        {% if player.episode %}
        data-player-media-url-value="{{ player.episode.media_url }}"
@@ -285,10 +284,11 @@
        data-player-current-time-value="{{ player.current_time|default:0 }}"
        {% endif %}
        {% endif %}>
-    {% include "episodes/_player.html" with episode=player.episode %}
+    <turbo-frame id="player">
+      {% include "episodes/_player.html" with episode=player.episode %}
+    </turbo-frame>
   </div>
   {% endblock player %}
-
   {% include "_footer.html" %}
 
 </body>

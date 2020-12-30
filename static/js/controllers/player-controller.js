@@ -32,11 +32,14 @@ export default class extends Controller {
     waiting: Boolean,
   };
 
-  connect() {
-    useDispatch(this);
-  }
-
   async initialize() {
+    document.documentElement.addEventListener('turbo:load', this.turboLoad.bind(this));
+
+    document.documentElement.addEventListener(
+      'turbo:submit-end',
+      this.turboSubmitEnd.bind(this)
+    );
+
     // Audio object is used instead of <audio> element to prevent resets
     // and skips with page transitions
     this.audio = new Audio();
@@ -67,53 +70,37 @@ export default class extends Controller {
         this.play();
       }
     }
+  }
 
+  connect() {
+    useDispatch(this);
     // make sure audio is properly closed when controls are removed
     // from the DOM
-    document.documentElement.addEventListener('turbo:load', () => {
-      if (!document.getElementById('player-controls')) {
-        this.audio.src = '';
-      }
-    });
-
-    document.documentElement.addEventListener(
-      'turbo:submit-end',
-      ({ detail: { fetchResponse } }) => {
-        const headers = fetchResponse.response ? fetchResponse.response.headers : null;
-        if (headers) {
-          this.handleFormSubmission(headers);
-        }
-      }
-    );
+    console.log('connect');
   }
 
-  close() {
-    this.closePlayer(this.stopUrlValue, false);
-  }
-
-  ended() {
-    this.closePlayer(this.markCompleteUrlValue, true);
-  }
-
-  async closePlayer(stopUrl, fetchNext) {
-    if (stopUrl) {
-      this.fetchJSON(stopUrl);
-      if (fetchNext && this.hasNextEpisodeTarget) {
-        this.nextEpisodeTarget.requestSubmit();
-      }
+  async ended() {
+    const response = await this.fetchJSON(this.markCompleteUrlValue);
+    const data = await response.json();
+    // how to check if autoplay is on???
+    if (data.autoplay && this.hasNextEpisodeTarget) {
+      this.nextEpisodeTarget.requestSubmit();
+    } else {
+      this.closePlayer();
     }
+  }
+
+  async closePlayer() {
     this.durationValue = 0;
     this.lastUpdated = 0;
     this.episodeValue = '';
     this.mediaUrlValue = '';
 
-    this.controlsTarget.remove();
+    if (this.hasControlsTarget) {
+      this.controlsTarget.remove();
+    }
 
-    this.audio.src = '';
-    this.audio.pause();
-
-    this.enabled = false;
-
+    this.stopAudio();
     this.dispatch('stop');
   }
 
@@ -176,6 +163,54 @@ export default class extends Controller {
 
   skipForward() {
     this.skipTo(this.audio.currentTime + this.skipIntervalValue);
+  }
+
+  stopAudio() {
+    this.audio.src = '';
+    this.audio.pause();
+    this.enabled = false;
+  }
+
+  turboLoad() {
+    // ensures audio is not "orphaned" if the controls are
+    // removed through a turbo refresh
+    if (!document.getElementById('player-controls')) {
+      this.stopAudio();
+    }
+  }
+
+  turboSubmitEnd({ detail: { fetchResponse } }) {
+    const headers = fetchResponse.response ? fetchResponse.response.headers : null;
+    if (!headers) {
+      return;
+    }
+    const action = headers && headers.get('X-Player-Action');
+    console.log('action', action);
+    if (!action) {
+      return;
+    }
+
+    if (action === 'stop') {
+      this.closePlayer();
+      return;
+    }
+    // default : play
+
+    const episode = headers.get('X-Player-Episode');
+    const currentTime = headers.get('X-Player-Current-Time');
+    const mediaUrl = headers.get('X-Player-Media-Url');
+    console.log('play:', episode, mediaUrl, currentTime);
+
+    if (mediaUrl) {
+      this.audio.src = this.mediaUrlValue = mediaUrl;
+      if (currentTime) {
+        this.audio.currentTime = parseFloat(currentTime);
+      }
+      this.play();
+      if (episode) {
+        this.dispatch('play', { episode });
+      }
+    }
   }
 
   // observers
@@ -352,37 +387,6 @@ export default class extends Controller {
       credentials: 'same-origin',
       body: JSON.stringify(body || {}),
     });
-  }
-
-  handleFormSubmission(headers) {
-    console.log('handleFormSubmission');
-    const action = headers && headers.get('X-Player-Action');
-    console.log('action', action);
-    if (!action) {
-      return;
-    }
-
-    if (action === 'stop') {
-      this.closePlayer();
-      return;
-    }
-    // default : play
-
-    const episode = headers.get('X-Player-Episode');
-    const currentTime = headers.get('X-Player-Current-Time');
-    const mediaUrl = headers.get('X-Player-Media-Url');
-    console.log('play:', episode, mediaUrl, currentTime);
-
-    if (mediaUrl) {
-      this.audio.src = this.mediaUrlValue = mediaUrl;
-      if (currentTime) {
-        this.audio.currentTime = parseFloat(currentTime);
-      }
-      this.play();
-      if (episode) {
-        this.dispatch('play', { episode });
-      }
-    }
   }
 
   set enabled(enabled) {
