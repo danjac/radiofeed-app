@@ -134,7 +134,6 @@
             </button>
 
             <form class="flex items-center"
-                  data-turbo-frame="player"
                   method="POST"
                   action="{% url 'episodes:toggle_player' episode.id %}">
               {% csrf_token %}
@@ -163,7 +162,6 @@
           <div class="flex items-center">
             <form class="flex items-center"
                   {% if prev_episode %}
-                  data-turbo-frame="player"
                   method="POST"
                   action="{% url 'episodes:toggle_player' prev_episode.id %}"
                   {% endif %}>
@@ -191,7 +189,6 @@
 
             <form class="flex items-center"
                   {% if next_episode %}
-                  data-turbo-frame="player"
                   data-player-target="nextEpisode"
                   method="POST"
                   action="{% url 'episodes:toggle_player' next_episode.id %}"
