@@ -78,6 +78,7 @@ export default class extends Controller {
       this.controlsTarget.remove();
     }
     this.closeAudio();
+    this.cancelCurrentTimeSync();
   }
 
   loadedMetaData() {
@@ -115,8 +116,8 @@ export default class extends Controller {
   timeUpdate() {
     // playing time update
     const { currentTime } = this.audio;
-    this.currentTimeValue = currentTime;
     this.waitingValue = false;
+    this.currentTimeValue = currentTime;
   }
 
   progress() {
@@ -148,6 +149,7 @@ export default class extends Controller {
     // removed through a turbo refresh - disconnect() isn't always called
     if (!document.getElementById('player-controls')) {
       this.closeAudio();
+      this.cancelCurrentTimeSync();
     }
   }
 
@@ -188,10 +190,12 @@ export default class extends Controller {
   // observers
   pausedValueChanged() {
     this.toggleActiveMode();
+    this.toggleCurrentTimeSync();
   }
 
   waitingValueChanged() {
     this.toggleActiveMode();
+    this.toggleCurrentTimeSync();
   }
 
   durationValueChanged() {
@@ -207,7 +211,6 @@ export default class extends Controller {
 
   currentTimeValueChanged() {
     this.updateProgressBar();
-    this.sendTimeUpdate();
   }
 
   updateProgressBar() {
@@ -275,25 +278,6 @@ export default class extends Controller {
     }
 
     return currentPosition;
-  }
-
-  async sendTimeUpdate() {
-    if (!this.hasEpisodeValue) {
-      return;
-    }
-
-    // should probably just use setInterval, but this is easier to stop/start
-
-    // update every 10s or so
-    const diff = Math.ceil(Math.abs(this.currentTimeValue - this.lastUpdated || 0));
-    const sendUpdate = this.currentTimeValue && diff % 5 === 0;
-
-    if (sendUpdate) {
-      this.lastUpdated = this.currentTimeValue;
-      this.fetchJSON(this.progressUrlValue, {
-        currentTime: this.currentTimeValue,
-      });
-    }
   }
 
   formatTime(value) {
@@ -393,6 +377,39 @@ export default class extends Controller {
       this.audio.pause();
       this.audio = null;
       this.enabled = false;
+    }
+  }
+
+  startCurrentTimeSync() {
+    if (!this.currentTimeSyncTimer) {
+      this.currentTimeSyncTimer = setInterval(
+        this.syncServerCurrentTime.bind(this),
+        5000
+      );
+    }
+  }
+
+  cancelCurrentTimeSync() {
+    if (this.currentTimeSyncTimer) {
+      clearInterval(this.currentTimeSyncTimer);
+      this.currentTimeSyncTimer = null;
+    }
+  }
+
+  toggleCurrentTimeSync() {
+    const inactive = this.pausedValue || this.waitingValue;
+    if (inactive) {
+      this.cancelCurrentTimeSync();
+    } else {
+      this.startCurrentTimeSync();
+    }
+  }
+
+  syncServerCurrentTime() {
+    if (this.currentTimeValue) {
+      this.fetchJSON(this.progressUrlValue, {
+        currentTime: this.currentTimeValue,
+      });
     }
   }
 
