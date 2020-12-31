@@ -1,14 +1,26 @@
+// Turbo event handlers.
+//
+// 1) in your controller connect() method:
+// connect() {
+//    useTurbo(this)
+// }
+//
+// 2) add specific handler:
+// turboOnLoad(event) {
+//  console.log(event)
+// }
+//
 const turboEventHandlers = {
-  'turbo:beforeCache': 'turboBeforeCache',
-  'turbo:beforeFetchRequest': 'turboBeforeVisit',
-  'turbo:beforeFetchResponse': 'turboBeforeFetchResponse',
-  'turbo:beforeRender': 'turboBeforeRender',
-  'turbo:beforeVisit': 'turboBeforeVisit',
+  'turbo:before-cache': 'turboBeforeCache',
+  'turbo:before-fetch-request': 'turboBeforeVisit',
+  'turbo:before-fetch-response': 'turboBeforeFetchResponse',
+  'turbo:before-render': 'turboBeforeRender',
+  'turbo:before-visit': 'turboBeforeVisit',
   'turbo:click': 'turboClick',
   'turbo:load': 'turboLoad',
   'turbo:render': 'turboRender',
-  'turbo:submitEnd': 'turboSubmitEnd',
-  'turbo:submitSubmitStart': 'turboSubmitStart',
+  'turbo:submit-end': 'turboSubmitEnd',
+  'turbo:submit-submit-start': 'turboSubmitStart',
 };
 
 const addListeners = (controller) => {
@@ -21,6 +33,7 @@ const addListeners = (controller) => {
       document.documentElement.addEventListener(eventName, listeners[eventName], true);
     }
   });
+  return listeners;
 };
 
 const removeListeners = (listeners) => {
@@ -29,7 +42,7 @@ const removeListeners = (listeners) => {
   });
 };
 
-export const useTurbo = (controller) => {
+export default (controller) => {
   const listeners = addListeners(controller);
 
   const controllerDisconnect = controller.disconnect.bind(controller);

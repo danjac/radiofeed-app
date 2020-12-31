@@ -1,4 +1,5 @@
 import { Controller } from 'stimulus';
+import useTurbo from '~/turbo';
 
 export default class extends Controller {
   static targets = ['playButton', 'stopButton'];
@@ -7,20 +8,39 @@ export default class extends Controller {
     episode: String,
   };
 
-  submitEnd(event) {
-    console.log('submit end in event', event);
+  connect() {
+    useTurbo(this);
   }
 
-  play({ detail: { episode } }) {
+  turboSubmitEnd(event) {
+    const { fetchResponse } = event.detail;
+    const headers = fetchResponse.response ? fetchResponse.response.headers : null;
+    if (!headers) {
+      return;
+    }
+    const action = headers.get('X-Player-Action');
+    // not a player action, ignore
+    if (!action) {
+      return;
+    }
+
+    if (action === 'stop') {
+      this.toggleOnStop();
+    } else {
+      this.toggleOnPlay(headers.get('X-Player-Episode'));
+    }
+  }
+
+  toggleOnPlay(episode) {
     if (episode === this.episodeValue) {
       this.playButtonTarget.classList.add('hidden');
       this.stopButtonTarget.classList.remove('hidden');
     } else {
-      this.stop();
+      this.toggleOnStop();
     }
   }
 
-  stop() {
+  toggleOnStop() {
     this.playButtonTarget.classList.remove('hidden');
     this.stopButtonTarget.classList.add('hidden');
   }

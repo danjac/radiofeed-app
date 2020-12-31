@@ -1,5 +1,5 @@
 import { Controller } from 'stimulus';
-import { useDispatch } from 'stimulus-use';
+import useTurbo from '~/turbo';
 
 export default class extends Controller {
   static targets = [
@@ -30,6 +30,8 @@ export default class extends Controller {
     paused: Boolean,
     waiting: Boolean,
   };
+
+  // events
 
   async initialize() {
     // Audio object is used instead of <audio> element to prevent resets
@@ -64,29 +66,7 @@ export default class extends Controller {
   }
 
   connect() {
-    useDispatch(this);
-    // make sure audio is properly closed when controls are removed
-    // from the DOM
-
-    this.onTurboLoad = this.turboLoad.bind(this);
-
-    document.documentElement.addEventListener('turbo:load', this.onTurboLoad, true);
-    this.onTurboSubmitEnd = this.turboSubmitEnd.bind(this);
-
-    document.documentElement.addEventListener(
-      'turbo:submit-end',
-      this.onTurboSubmitEnd,
-      true
-    );
-  }
-
-  disconnect() {
-    document.documentElement.removeEventListener('turbo:load', this.onTurboLoad, true);
-    document.documentElement.removeEventListener(
-      'turbo:submit-end',
-      this.onTurboSubmitEnd,
-      true
-    );
+    useTurbo(this);
   }
 
   async ended() {
@@ -109,9 +89,7 @@ export default class extends Controller {
     if (this.hasControlsTarget) {
       this.controlsTarget.remove();
     }
-
-    this.stopAudio();
-    this.dispatch('stop');
+    this.closeAudio();
   }
 
   loadedMetaData() {
@@ -176,17 +154,11 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + this.skipIntervalValue);
   }
 
-  stopAudio() {
-    this.audio.src = '';
-    this.audio.pause();
-    this.enabled = false;
-  }
-
   turboLoad() {
     // ensures audio is not "orphaned" if the controls are
     // removed through a turbo refresh
     if (!document.getElementById('player-controls')) {
-      this.stopAudio();
+      this.closeAudio();
     }
   }
 
@@ -202,7 +174,7 @@ export default class extends Controller {
     }
 
     if (action === 'stop') {
-      console.log('stop');
+      console.log('close player');
       this.closePlayer();
       return;
     }
@@ -220,9 +192,6 @@ export default class extends Controller {
         this.audio.currentTime = parseFloat(currentTime);
       }
       this.play();
-      if (episode) {
-        this.dispatch('play', { episode });
-      }
     }
   }
 
@@ -400,6 +369,12 @@ export default class extends Controller {
       credentials: 'same-origin',
       body: JSON.stringify(body || {}),
     });
+  }
+
+  closeAudio() {
+    this.audio.src = '';
+    this.audio.pause();
+    this.enabled = false;
   }
 
   set enabled(enabled) {
