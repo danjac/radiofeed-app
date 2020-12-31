@@ -7,6 +7,9 @@ from django.utils import timezone
 # Third Party Libraries
 import pytest
 
+# RadioFeed
+from radiofeed.podcasts.factories import SubscriptionFactory
+
 # Local
 from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from ..models import AudioLog, Bookmark, Episode
@@ -15,6 +18,25 @@ pytestmark = pytest.mark.django_db
 
 
 class TestEpisodeManager:
+    def test_subscribed_if_anonymous(self, anonymous_user):
+        EpisodeFactory.create_batch(3)
+        assert Episode.objects.subscribed(anonymous_user).count() == 3
+
+    def test_subscribed_if_subscriptions(self, user):
+
+        EpisodeFactory.create_batch(3)
+        subscribed = EpisodeFactory()
+        SubscriptionFactory(podcast=subscribed.podcast, user=user)
+        episodes = Episode.objects.subscribed(user)
+        assert episodes.count() == 1
+        assert episodes.first() == subscribed
+
+    def test_subscribed_if_no_subscriptions(self, user):
+
+        EpisodeFactory.create_batch(3)
+        episodes = Episode.objects.subscribed(user)
+        assert episodes.count() == 3
+
     def test_with_current_time_if_anonymous(self, anonymous_user):
         EpisodeFactory()
         episode = Episode.objects.with_current_time(anonymous_user).first()

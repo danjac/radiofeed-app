@@ -30,13 +30,9 @@ def episode_list(request):
     if search:
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
-        episodes = episodes.order_by("-pub_date")
-
-        if request.user.is_authenticated and request.user.subscription_set.exists():
-            episodes = episodes.filter(
-                podcast__subscription__user=request.user
-            ).distinct()
-        episodes = episodes[: settings.DEFAULT_PAGE_SIZE]
+        episodes = episodes.subscribed(request.user).order_by("-pub_date")[
+            : settings.DEFAULT_PAGE_SIZE
+        ]
 
     return TemplateResponse(
         request, "episodes/index.html", {"episodes": episodes, "search": search},
