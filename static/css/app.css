@@ -61,7 +61,7 @@
 }
 
 .player--active .player--interactive {
-  @apply cursor-pointer;
+  @apply cursor-pointer pointer-events-none;
 }
 
 .player--active .player--progress,

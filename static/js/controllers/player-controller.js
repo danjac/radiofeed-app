@@ -186,10 +186,6 @@ export default class extends Controller {
   }
 
   // observers
-  errorValueChanged() {
-    this.toggleActiveMode();
-  }
-
   pausedValueChanged() {
     this.toggleActiveMode();
   }
@@ -332,7 +328,6 @@ export default class extends Controller {
 
   toggleActiveMode() {
     const inactive = this.pausedValue || this.waitingValue;
-    console.log('toggleActiveMode:', !inactive);
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (inactive) {
         this.pauseButtonTarget.classList.add('hidden');
@@ -376,7 +371,10 @@ export default class extends Controller {
         playing: this.canPlay.bind(this),
         pause: this.paused.bind(this),
         progress: this.progress.bind(this),
+        seeking: this.wait.bind(this),
+        suspend: this.wait.bind(this),
         stalled: this.wait.bind(this),
+        waiting: this.wait.bind(this),
         timeupdate: this.timeUpdate.bind(this),
       };
       Object.keys(this.audioListeners).forEach((event) =>
