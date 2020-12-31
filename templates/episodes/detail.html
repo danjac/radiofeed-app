@@ -53,14 +53,7 @@
     <div>
       <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
         <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
-        <div class="inline-block{% if episode.completed %} line-through{% endif %}"
-             data-episode-target="currentTime">
-          {% if episode.current_time and not episode.completed %}
-          ~{{ duration|subtract:episode.current_time|format_duration }}
-          {% else %}
-          {{ duration|format_duration }}
-          {% endif %}
-        </div>
+        {% include "episodes/_current_time.html" %}
         {% if episode.explicit %}
         <div class="inline-block font-semibold text-red-300 ml-2">Explicit</div>
         {% endif %}

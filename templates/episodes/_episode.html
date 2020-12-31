@@ -32,16 +32,7 @@
                    class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
               <div title="Duration"
                    class="font-semibold text-gray-100 text-sm">
-
-                <span data-episode-target="currentTime"
-                      class="{% if completed %} line-through{% endif %}">
-                  {% if current_time and not completed %}
-                  ~{{ duration|subtract:current_time|format_duration }}
-                  {% else %}
-                  {{ duration|format_duration }}
-                  {% endif %}
-                </span>
-
+                {% include "episodes/_current_time.html" %}
               </div>
               {% if episode.explicit %}
               <div class="text-red-300 font-semibold text-sm ml-2 hidden sm:block">

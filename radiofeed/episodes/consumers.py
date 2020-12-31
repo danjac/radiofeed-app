@@ -1,0 +1,67 @@
+# Third Party Libraries
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from turbo_response import TurboStream
+
+# RadioFeed
+from radiofeed.episodes.models import Episode
+
+
+class PlayerConsumer(AsyncJsonWebsocketConsumer):
+    async def connect(self):
+        self.request_id = self.scope["session"].session_key
+        print("channel", self.channel_name, self.request_id)
+        await self.channel_layer.group_add("player", self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard("player", self.channel_name)
+
+    @database_sync_to_async
+    def get_episode(self, episode_id):
+        try:
+            return Episode.objects.get(pk=episode_id)
+        except Episode.DoesNotExist:
+            return None
+
+    async def send_episode_play_buttons(self, episode, is_playing):
+        await self.send(
+            TurboStream(f"episode-play-buttons-{episode.id}")
+            .replace.template(
+                "episodes/_play_buttons_inner.html",
+                {"episode": episode, "is_episode_playing": is_playing},
+            )
+            .render()
+        )
+
+    async def player_sync_current_time(self, event):
+        print("player_sync_current_time", event, self.request_id)
+        episode = await self.get_episode(event["episode"])
+        if self.request_id == event["request_id"]:
+            await self.send(
+                TurboStream(f"episode-current-time-{episode.id}")
+                .replace.template(
+                    "episodes/_current_time.html", {**event["info"], "episode": episode}
+                )
+                .render()
+            )
+
+    async def player_start(self, event):
+        print("player_start", event, self.request_id)
+        if self.request_id == event["request_id"]:
+            if "current_episode" in event:
+                current_episode = await self.get_episode(event["current_episode"])
+                if current_episode:
+                    await self.send_episode_play_buttons(
+                        current_episode, is_playing=False
+                    )
+
+            new_episode = await self.get_episode(event["new_episode"])
+            if new_episode:
+                await self.send_episode_play_buttons(new_episode, is_playing=True)
+
+    async def player_stop(self, event):
+        print("player_stop", event)
+        if self.request_id == event["request_id"]:
+            episode = await self.get_episode(event["episode"])
+            await self.send_episode_play_buttons(episode, is_playing=False)
