@@ -7,6 +7,10 @@ export default class extends Controller {
     episode: String,
   };
 
+  submitEnd(event) {
+    console.log('submit end in event', event);
+  }
+
   play({ detail: { episode } }) {
     if (episode === this.episodeValue) {
       this.playButtonTarget.classList.add('hidden');
