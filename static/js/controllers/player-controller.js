@@ -21,7 +21,6 @@ export default class extends Controller {
     episode: Number,
     progressUrl: String,
     mediaUrl: String,
-    stopUrl: String,
     markCompleteUrl: String,
     csrfToken: String,
     currentTime: Number,
