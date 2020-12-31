@@ -121,11 +121,9 @@
       <nav class="pt-3">
         <ul class="">
           <li class="py-2">
-            <a href="{% url 'podcasts:podcast_list' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               data-active-link-exact-value
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'podcasts:podcast_list' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -140,10 +138,9 @@
             </a>
           </li>
           <li class="py-2">
-            <a href="{% url 'podcasts:category_list' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'podcasts:category_list' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -158,11 +155,9 @@
             </a>
           </li>
           <li class="py-2">
-            <a href="{% url 'episodes:episode_list' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               data-active-link-exact-value
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'episodes:episode_list' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -179,10 +174,9 @@
 
           {% if user.is_authenticated %}
           <li class="py-2">
-            <a href="{% url 'episodes:bookmark_list' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'episodes:bookmark_list' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -198,10 +192,9 @@
           </li>
 
           <li class="py-2">
-            <a href="{% url 'episodes:history' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'episodes:history' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -217,11 +210,9 @@
           </li>
 
           <li class="py-2">
+            {% active_route '/account/' as route %}
             <a href="{% url 'user_preferences' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               data-active-link-regex-value="/account/*"
-               class="flex items-center hover:text-gray-300">
+               class="flex items-center hover:text-gray-300{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -238,10 +229,9 @@
           {% endif %}
 
           <li class="py-2">
-            <a href="{% url 'about' %}"
-               data-controller="active-link"
-               data-active-link-active-class="sidebar--active"
-               class="flex items-center hover:text-gray-300">
+            {% active_route 'about' as route %}
+            <a href="{{ route.url }}"
+               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"

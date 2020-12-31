@@ -1,5 +1,9 @@
+# Standard Library
+import collections
+
 # Django
 from django import template
+from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
@@ -8,6 +12,18 @@ from .html import clean_html_content
 from .html import stripentities as _stripentities
 
 register = template.Library()
+
+Route = collections.namedtuple("Route", "url match exact")
+
+
+@register.simple_tag(takes_context=True)
+def active_route(context, url_name, *args, **kwargs):
+    url = resolve_url(url_name, *args, **kwargs)
+    if context["request"].path == url:
+        return Route(url, True, True)
+    elif context["request"].path.startswith(url):
+        return Route(url, True, False)
+    return Route(url, False, False)
 
 
 @register.filter

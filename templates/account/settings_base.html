@@ -5,41 +5,30 @@
 <h1 class="text-lg font-bold mb-3">Settings</h1>
 <nav class="mb-3">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
-    <li class="mr-6 pb-1"
-        data-controller="active-link"
-        data-active-link-active-class="tab--active">
-      <a data-active-link-target="match"
-         class="hover:text-gray-300"
-         href="{% url 'user_preferences' %}">Preferences</a>
+    {% active_route 'user_preferences' as route %}
+    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+      <a class="hover:text-gray-300"
+         href="{{ route.url }}">Preferences</a>
     </li>
-    <li class="mr-6 pb-1"
-        data-controller="active-link"
-        data-active-link-active-class="tab--active">
-      <a data-active-link-target="match"
-         class="hover:text-gray-300"
-         href="{% url 'account_email' %}">Email Addresses</a>
+    {% active_route 'account_email' as route %}
+    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+      <a class="hover:text-gray-300"
+         href="{{ route.url }}">Email Addresses</a>
     </li>
-    <li class="mr-6 pb-1"
-        data-controller="active-link"
-        data-active-link-regex-value="/account/password/*"
-        data-active-link-active-class="tab--active">
-      <a data-active-link-target="match"
-         class="hover:text-gray-300"
-         href="{% url 'account_change_password' %}">Change Password</a>
+    {% active_route 'account_change_password' as route %}
+    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+      <a class="hover:text-gray-300"
+         href="{{ route.url }}">Change Password</a>
     </li>
-    <li class="mr-6 pb-1"
-        data-controller="active-link"
-        data-active-link-active-class="tab--active">
-      <a data-active-link-target="match"
-         class="hover:text-gray-300"
-         href="{% url 'socialaccount_connections' %}">Social Logins</a>
+    {% active_route 'socialaccount_connections' as route %}
+    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+      <a class="hover:text-gray-300"
+         href="{{ route.url }}">Social Logins</a>
     </li>
-    <li class="pb-1"
-        data-controller="active-link"
-        data-active-link-active-class="tab--active">
-      <a data-active-link-target="match"
-         class="hover:text-gray-300"
-         href="{% url 'delete_account' %}">Delete Account</a>
+    {% active_route 'delete_account' as route %}
+    <li class="pb-1{% if route.exact %} tab--active{% endif %}">
+      <a class="hover:text-gray-300"
+         href="{{ route.url }}">Delete Account</a>
     </li>
   </ul>
 </nav>
