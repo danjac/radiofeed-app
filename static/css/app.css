@@ -61,7 +61,7 @@
 }
 
 .player--active .player--interactive {
-  @apply cursor-pointer pointer-events-none;
+  @apply cursor-pointer;
 }
 
 .player--active .player--progress,
@@ -82,7 +82,7 @@
 }
 
 .player--inactive .player--interactive {
-  @apply opacity-75 cursor-not-allowed;
+  @apply opacity-75 cursor-not-allowed pointer-events-none;
 }
 
 .player--inactive .player--counter {
