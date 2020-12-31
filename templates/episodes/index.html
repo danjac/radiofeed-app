@@ -9,7 +9,7 @@
   <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
     <div class="hidden sm:inline-block mr-2 text-sm">
-        <a class="font-semibold hover:text-gray-300"
+      <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
@@ -23,6 +23,7 @@
 </div>
 {% endif %}
 
+{% if search %}
 {% paginate episodes as page_obj %}
 
 {% if page_obj.number > 1 %}
@@ -32,9 +33,18 @@
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed is_bookmarked=episode.is_bookmarked %}
 {% empty %}
-{% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
-{% endif %}
 {% endfor %}
 {% include "_pagination.html" %}
+{% else %}
+
+{% for episode in episodes %}
+{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed is_bookmarked=episode.is_bookmarked %}
+{% empty %}
+<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+{% endfor %}
+
+{% endif %}
+
+
 {% endblock content %}

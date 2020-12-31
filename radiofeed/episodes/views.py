@@ -3,6 +3,7 @@ import http
 import json
 
 # Django
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -18,6 +19,8 @@ from .models import AudioLog, Bookmark, Episode
 
 
 def episode_list(request):
+    """As we have a huge number of episodes, either just show first page
+    only unless filtered for search."""
     episodes = (
         Episode.objects.with_current_time(request.user)
         .with_is_bookmarked(request.user)
@@ -33,6 +36,7 @@ def episode_list(request):
             episodes = episodes.filter(
                 podcast__subscription__user=request.user
             ).distinct()
+        episodes = episodes[: settings.DEFAULT_PAGE_SIZE]
 
     return TemplateResponse(
         request, "episodes/index.html", {"episodes": episodes, "search": search},
