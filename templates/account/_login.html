@@ -1,5 +1,5 @@
 {% load i18n widget_tweaks %}
-<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
       method="post"
       action="{% url 'account_login' %}"
       id="{{ view.turbo_stream_target }}"

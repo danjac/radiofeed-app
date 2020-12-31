@@ -36,27 +36,15 @@ export default class extends Controller {
   async initialize() {
     // Audio object is used instead of <audio> element to prevent resets
     // and skips with page transitions
-    this.audio = new Audio();
-    this.audio.preload = 'metadata';
+    //
+    this.initAudio();
 
-    this.audio.addEventListener('progress', this.progress.bind(this));
-    this.audio.addEventListener('timeupdate', this.timeUpdate.bind(this));
-    this.audio.addEventListener('ended', this.ended.bind(this));
-    this.audio.addEventListener('pause', this.paused.bind(this));
-    this.audio.addEventListener('play', this.resumed.bind(this));
-    this.audio.addEventListener('canplaythrough', this.canPlay.bind(this));
-    this.audio.addEventListener('playing', this.canPlay.bind(this));
-    this.audio.addEventListener('stalled', this.wait.bind(this));
-    this.audio.addEventListener('loadedmetadata', this.loadedMetaData.bind(this));
+    this.audio.src = this.mediaUrlValue;
+    this.audio.currentTime = this.currentTimeValue;
 
-    if (this.mediaUrlValue) {
-      this.audio.src = this.mediaUrlValue;
-      this.audio.currentTime = this.currentTimeValue;
+    this.pausedValue = !this.enabled;
 
-      if (!this.enabled) {
-        this.pausedValue = true;
-      }
-
+    if (this.audio && this.mediaUrlValue) {
       if (this.pausedValue) {
         this.pause();
       } else {
@@ -112,6 +100,7 @@ export default class extends Controller {
 
   play() {
     this.enabled = true;
+    this.pausedValue = false;
     this.audio.play();
   }
 
@@ -156,7 +145,7 @@ export default class extends Controller {
 
   turboLoad() {
     // ensures audio is not "orphaned" if the controls are
-    // removed through a turbo refresh
+    // removed through a turbo refresh - disconnect() isn't always called
     if (!document.getElementById('player-controls')) {
       this.closeAudio();
     }
@@ -179,20 +168,21 @@ export default class extends Controller {
       return;
     }
     // default : play
-
-    const episode = headers.get('X-Player-Episode');
-    const currentTime = headers.get('X-Player-Current-Time');
+    //
+    const currentTime = headers.get('X-Player-Current-Time') || 0;
     const mediaUrl = headers.get('X-Player-Media-Url');
 
-    console.log('play:', episode, mediaUrl, currentTime);
+    this.mediaUrlValue = mediaUrl;
+    this.currentTimeValue = parseFloat(currentTime);
 
-    if (mediaUrl && mediaUrl != this.audio.src) {
-      this.audio.src = this.mediaUrlValue = mediaUrl;
-      if (currentTime) {
-        this.audio.currentTime = parseFloat(currentTime);
-      }
-      this.play();
-    }
+    this.initAudio();
+
+    this.audio.src = this.mediaUrlValue;
+    this.audio.currentTime = this.currentTimeValue;
+
+    this.play();
+
+    console.log('play:', mediaUrl, currentTime);
   }
 
   // observers
@@ -342,6 +332,7 @@ export default class extends Controller {
 
   toggleActiveMode() {
     const inactive = this.pausedValue || this.waitingValue;
+    console.log('toggleActiveMode:', !inactive);
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (inactive) {
         this.pauseButtonTarget.classList.add('hidden');
@@ -371,10 +362,40 @@ export default class extends Controller {
     });
   }
 
+  initAudio() {
+    console.log('initAudio');
+    if (!this.audio) {
+      this.audio = new Audio();
+      this.audio.preload = 'metadata';
+
+      this.audioListeners = {
+        canplaythrough: this.canPlay.bind(this),
+        ended: this.ended.bind(this),
+        loadedmetadata: this.loadedMetaData.bind(this),
+        play: this.resumed.bind(this),
+        playing: this.canPlay.bind(this),
+        pause: this.paused.bind(this),
+        progress: this.progress.bind(this),
+        stalled: this.wait.bind(this),
+        timeupdate: this.timeUpdate.bind(this),
+      };
+      Object.keys(this.audioListeners).forEach((event) =>
+        this.audio.addEventListener(event, this.audioListeners[event])
+      );
+    }
+  }
+
   closeAudio() {
-    this.audio.src = '';
-    this.audio.pause();
-    this.enabled = false;
+    if (this.audio) {
+      Object.keys(this.audioListeners || {}).forEach((event) =>
+        this.audio.removeEventListener(event, this.audioListeners[event])
+      );
+
+      this.audio.src = '';
+      this.audio.pause();
+      this.audio = null;
+      this.enabled = false;
+    }
   }
 
   set enabled(enabled) {
