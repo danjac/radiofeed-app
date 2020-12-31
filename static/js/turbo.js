@@ -20,7 +20,7 @@ const turboEventHandlers = {
   'turbo:load': 'turboLoad',
   'turbo:render': 'turboRender',
   'turbo:submit-end': 'turboSubmitEnd',
-  'turbo:submit-submit-start': 'turboSubmitStart',
+  'turbo:submit-start': 'turboSubmitStart',
 };
 
 const addListeners = (controller) => {
