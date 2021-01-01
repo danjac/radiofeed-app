@@ -13,7 +13,6 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
         self.episode = await self.get_episode(
             self.scope["url_route"]["kwargs"]["episode_id"]
         )
-        print("EPISODE", self.episode.id, self.request_id)
         await self.channel_layer.group_add("player", self.channel_name)
         await self.accept()
 

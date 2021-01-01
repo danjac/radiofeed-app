@@ -47,7 +47,7 @@ class TestPlayerConsumer:
             make_event("player.start", episode, session.session_key)
         )
         output = await communicator.receive_output()
-        assert f"episode-play-buttons-{episode.id}" in output["text"]
+        assert f'target="episode-play-buttons-{episode.id}"' in output["text"]
         await communicator.disconnect()
 
         await db_cleanup(episode)
@@ -65,7 +65,33 @@ class TestPlayerConsumer:
             make_event("player.stop", episode, session.session_key)
         )
         output = await communicator.receive_output()
-        assert f"episode-play-buttons-{episode.id}" in output["text"]
+        assert f'target="episode-play-buttons-{episode.id}"' in output["text"]
+        await communicator.disconnect()
+
+        await db_cleanup(episode)
+
+    @pytest.mark.asyncio
+    async def test_sync_current_time(self, mock_session):
+
+        session = mock_session()
+        episode = await create_episode()
+
+        communicator = make_communicator(episode, session)
+
+        info = {
+            "current_time": 1234,
+            "completed": False,
+            "duration": 10000,
+        }
+
+        await communicator.connect()
+        await communicator.send_input(
+            make_event(
+                "player.sync_current_time", episode, session.session_key, info=info
+            )
+        )
+        output = await communicator.receive_output()
+        assert f'target="episode-current-time-{episode.id}"' in output["text"]
         await communicator.disconnect()
 
         await db_cleanup(episode)
