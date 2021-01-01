@@ -21,11 +21,8 @@ def db_cleanup(episode):
 
 
 def make_communicator(episode, session):
-    communicator = WebsocketCommunicator(
-        PlayerConsumer.as_asgi(), f"/ws/player/{episode.id}/",
-    )
+    communicator = WebsocketCommunicator(PlayerConsumer.as_asgi(), "/ws/player/",)
     communicator.scope["session"] = session
-    communicator.scope["url_route"] = {"kwargs": {"episode_id": episode.id}}
     return communicator
 
 

@@ -22,9 +22,7 @@ application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
         "websocket": SessionMiddlewareStack(
-            URLRouter(
-                [re_path(r"ws/player/(?P<episode_id>\d+)/$", PlayerConsumer.as_asgi())]
-            )
+            URLRouter([re_path(r"ws/player/$", PlayerConsumer.as_asgi())])
         ),
     }
 )

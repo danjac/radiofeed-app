@@ -36,7 +36,8 @@
 
 <body {% block bodyattrs %}
       class="h-screen container-lg mx-auto antialiased bg-gray-900 text-white font-sans"
-      data-controller="toggle"
+      data-controller="toggle socket"
+      data-socket-url-value="/ws/player/"
       {% endblock %}>
 
   {% block header %}
