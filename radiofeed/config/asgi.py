@@ -3,17 +3,16 @@ import os
 
 # Django
 import django
-from django.core.asgi import get_asgi_application  # noqa
-from django.urls import re_path  # noqa
 
-# Third Party Libraries
-from channels.routing import ProtocolTypeRouter, URLRouter  # noqa
-from channels.sessions import SessionMiddlewareStack  # noqa
+django.setup()  # noqa isort:skip
 
-# RadioFeed
-from radiofeed.episodes.consumers import PlayerConsumer
+from django.core.asgi import get_asgi_application  # noqa isort:skip
+from django.urls import re_path  # noqa isort:skip
 
-django.setup()  # noqa
+from channels.routing import ProtocolTypeRouter, URLRouter  # noqa isort:skip
+from channels.sessions import SessionMiddlewareStack  # noqa isort:skip
+
+from radiofeed.episodes.consumers import PlayerConsumer  # noqa isort:skip
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings.local")
