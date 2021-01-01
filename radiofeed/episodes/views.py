@@ -11,6 +11,8 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from turbo_response import TurboFrame
 
 # Local
@@ -126,36 +128,43 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    if request.POST.get("player_action") == "stop":
-        # delete player from session and remove player controls
-        # with empty frame
-        request.session.pop("player", None)
-        response = TurboFrame("player").response()
-        response["X-Player-Action"] = "stop"
-        return response
-
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
+
+    player = request.session.pop("player", None)
+
+    if request.POST.get("player_action") == "stop":
+        send_stop_to_player_channel(request, episode.id)
+        response = TurboFrame("player").response()
+        response["X-Player-Action"] = "stop"
+        return response
+
     current_time = 0 if episode.completed else episode.current_time or 0
 
     request.session["player"] = {
         "episode": episode.id,
         "current_time": current_time,
     }
+
     episode.log_activity(request.user, current_time=current_time)
+
+    if player:
+        send_stop_to_player_channel(request, player["episode"])
+
+    send_start_to_player_channel(request, episode.id)
 
     response = (
         TurboFrame("player")
         .template("episodes/_player.html", {"episode": episode})
         .response(request)
     )
-
     response["X-Player-Action"] = "play"
     response["X-Player-Episode"] = episode.id
     response["X-Player-Media-Url"] = episode.media_url
     response["X-Player-Current-Time"] = current_time
+
     return response
 
 
@@ -167,6 +176,12 @@ def mark_complete(request):
 
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed=True)
+
+        send_stop_to_player_channel(request, episode.id)
+
+        send_sync_current_time_to_player_channel(
+            request, episode, current_time=0, completed=True
+        )
 
         return JsonResponse(
             {"autoplay": request.user.is_authenticated and request.user.autoplay}
@@ -188,6 +203,9 @@ def sync_player_current_time(request):
             "current_time": current_time,
         }
         episode.log_activity(request.user, current_time)
+        send_sync_current_time_to_player_channel(
+            request, episode, current_time, completed=False
+        )
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest()
 
@@ -210,3 +228,35 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             .response(request)
         )
     return redirect(episode.get_absolute_url())
+
+
+def send_to_player_channel(request, msg_type, data=None):
+    data = {
+        "type": msg_type,
+        "request_id": request.session.session_key,
+        **(data or {}),
+    }
+    async_to_sync(get_channel_layer().group_send)("player", data)
+
+
+def send_stop_to_player_channel(request, episode_id):
+    send_to_player_channel(request, "player.stop", {"episode": episode_id})
+
+
+def send_start_to_player_channel(request, episode_id):
+    send_to_player_channel(request, "player.start", {"episode": episode_id})
+
+
+def send_sync_current_time_to_player_channel(request, episode, current_time, completed):
+    send_to_player_channel(
+        request,
+        "player.sync_current_time",
+        {
+            "episode": episode.id,
+            "info": {
+                "duration": episode.get_duration_in_seconds(),
+                "current_time": current_time,
+                "completed": completed,
+            },
+        },
+    )

@@ -47,6 +47,8 @@ CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 ROOT_URLCONF = "radiofeed.config.urls"
+
+ASGI_APPLICATION = "radiofeed.config.asgi.application"
 WSGI_APPLICATION = "radiofeed.config.wsgi.application"
 
 LOCAL_APPS = [
@@ -75,6 +77,7 @@ INSTALLED_APPS = [
     "djcelery_email",
     "widget_tweaks",
     "sorl.thumbnail",
+    "channels",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -225,3 +228,10 @@ LOGGING = {
 }
 
 GOOGLE_TRACKING_ID = env("GOOGLE_TRACKING_ID", default=None)
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [("redis", 6379)],},
+    },
+}

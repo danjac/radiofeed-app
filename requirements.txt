@@ -4,10 +4,14 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
+aioredis==1.3.1           # via channels-redis
 amqp==5.0.2               # via kombu
 apipkg==1.5               # via execnet
-asgiref==3.3.1            # via django
-attrs==20.3.0             # via pytest
+asgiref==3.3.1            # via channels, channels-redis, daphne, django
+async-timeout==3.0.1      # via aioredis
+attrs==20.3.0             # via automat, pytest, service-identity, twisted
+autobahn==20.12.3         # via daphne
+automat==20.2.0           # via twisted
 autopep8==1.5.4           # via django-silk
 backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
@@ -18,13 +22,17 @@ botocore==1.19.45         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.4              # via cryptography
+channels-redis==3.2.0     # via -r requirements.in
+channels==3.0.3           # via -r requirements.in, channels-redis
 chardet==4.0.0            # via requests
 click-didyoumean==0.0.3   # via celery
 click-plugins==1.1.1      # via celery
 click-repl==0.1.6         # via celery
-click==7.1.2              # via celery, click-didyoumean, click-plugins, click-repl, nltk
+click==7.1.2              # via celery, click-didyoumean, click-plugins, click-repl, nltk, uvicorn
+constantly==15.1.0        # via twisted
 coverage==5.3.1           # via pytest-cov
-cryptography==3.3.1       # via -r requirements.in, pyjwt, pyopenssl
+cryptography==3.3.1       # via -r requirements.in, autobahn, pyjwt, pyopenssl, service-identity
+daphne==3.0.1             # via channels
 decorator==4.4.2          # via ipython
 defusedxml==0.6.0         # via python3-openid
 dj-database-url==0.5.0    # via -r requirements.in
@@ -42,7 +50,7 @@ django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
 django-turbo-response==0.0.10  # via -r requirements.in
 django-widget-tweaks==1.4.8  # via -r requirements.in
-django==3.1.4             # via -r requirements.in, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field
+django==3.1.4             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field
 execnet==1.7.1            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
 faker==5.1.0              # via factory-boy
@@ -50,8 +58,12 @@ feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2019.11.30     # via django-silk
 gunicorn==20.0.4          # via -r requirements.in
+h11==0.11.0               # via uvicorn
+hiredis==1.1.0            # via aioredis
 html5lib==1.1             # via -r requirements.in
-idna==2.10                # via requests
+hyperlink==20.0.1         # via autobahn, twisted
+idna==2.10                # via hyperlink, requests, twisted
+incremental==17.5.0       # via twisted
 iniconfig==1.1.1          # via pytest
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.19.0           # via -r requirements.in
@@ -62,6 +74,7 @@ joblib==1.0.0             # via nltk, scikit-learn
 kombu==5.0.2              # via celery
 lxml==4.6.2               # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
+msgpack==1.0.2            # via channels-redis
 nltk==3.5                 # via -r requirements.in
 numpy==1.19.4             # via pandas, scikit-learn, scipy
 oauthlib==3.1.0           # via requests-oauthlib
@@ -76,19 +89,23 @@ prompt-toolkit==3.0.8     # via click-repl, ipython
 psycopg2-binary==2.8.6    # via -r requirements.in
 ptyprocess==0.7.0         # via pexpect
 py==1.10.0                # via pytest, pytest-forked
+pyasn1-modules==0.2.8     # via service-identity
+pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycodestyle==2.6.0        # via autopep8
 pycparser==2.20           # via cffi
 pygments==2.7.3           # via django-silk, ipython
+pyhamcrest==2.0.2         # via twisted
 pyjwt[crypto]==2.0.0      # via django-allauth
-pyopenssl==20.0.1         # via -r requirements.in
+pyopenssl==20.0.1         # via -r requirements.in, twisted
 pyparsing==2.4.7          # via packaging
+pytest-asyncio==0.14.0    # via -r requirements.in
 pytest-cov==2.10.1        # via -r requirements.in
 pytest-django==4.1.0      # via -r requirements.in
 pytest-forked==1.3.0      # via pytest-xdist
 pytest-mock==3.4.0        # via -r requirements.in
 pytest-randomly==3.5.0    # via -r requirements.in
 pytest-xdist==2.2.0       # via -r requirements.in
-pytest==6.2.1             # via -r requirements.in, pytest-cov, pytest-django, pytest-forked, pytest-mock, pytest-randomly, pytest-xdist
+pytest==6.2.1             # via -r requirements.in, pytest-asyncio, pytest-cov, pytest-django, pytest-forked, pytest-mock, pytest-randomly, pytest-xdist
 python-crontab==2.5.1     # via django-celery-beat
 python-dateutil==2.8.1    # via -r requirements.in, botocore, django-silk, faker, pandas, python-crontab
 python3-openid==3.2.0     # via django-allauth
@@ -101,8 +118,9 @@ s3transfer==0.3.3         # via boto3
 scikit-learn==0.24.0      # via sklearn
 scipy==1.5.4              # via scikit-learn
 sentry-sdk==0.19.5        # via -r requirements.in
+service-identity==18.1.0  # via twisted
 sgmllib3k==1.0.0          # via feedparser
-six==1.15.0               # via bleach, click-repl, cryptography, html5lib, pyopenssl, python-dateutil
+six==1.15.0               # via automat, bleach, click-repl, cryptography, html5lib, pyopenssl, python-dateutil
 sklearn==0.0              # via -r requirements.in
 sorl-thumbnail==12.7.0    # via -r requirements.in
 soupsieve==2.1            # via beautifulsoup4
@@ -112,12 +130,16 @@ threadpoolctl==2.1.0      # via scikit-learn
 toml==0.10.2              # via autopep8, pytest
 tqdm==4.55.0              # via nltk
 traitlets==5.0.5          # via ipython
+twisted[tls]==20.3.0      # via daphne
+txaio==20.12.1            # via autobahn
 unidecode==1.1.2          # via -r requirements.in
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
+uvicorn==0.13.3           # via -r requirements.in
 vine==5.0.0               # via amqp, celery
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach, html5lib
 werkzeug==1.0.1           # via -r requirements.in
+zope.interface==5.2.0     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

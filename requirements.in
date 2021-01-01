@@ -2,6 +2,8 @@ beautifulsoup4
 bleach
 boto3
 celery
+channels
+channels-redis
 cryptography>=3.2
 dj-database-url
 django
@@ -30,6 +32,7 @@ Pillow
 psycopg2-binary
 pyopenssl
 pytest
+pytest-asyncio
 pytest-cov
 pytest-django
 pytest-mock
@@ -42,4 +45,5 @@ sentry_sdk
 sklearn
 sorl-thumbnail
 unidecode
+uvicorn
 werkzeug

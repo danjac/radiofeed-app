@@ -1,7 +1,9 @@
 {% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="flex justify-between items-center mb-3 p-2 border {% if current_time or completed %}border-purple-500{% elif is_bookmarked %}border-blue-500{% else %}border-gray-500{% endif %}">
+<div class="flex justify-between items-center mb-3 p-2 border {% if current_time or completed %}border-purple-500{% elif is_bookmarked %}border-blue-500{% else %}border-gray-500{% endif %}"
+     data-controller="socket"
+     data-socket-url-value="/ws/player/{{ episode.id }}/">
   <div>
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode.get_absolute_url }}"
@@ -32,15 +34,7 @@
                    class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
               <div title="Duration"
                    class="font-semibold text-gray-100 text-sm">
-
-                <span class="{% if completed %} line-through{% endif %}">
-                  {% if current_time and not completed %}
-                  ~{{ duration|subtract:current_time|format_duration }}
-                  {% else %}
-                  {{ duration|format_duration }}
-                  {% endif %}
-                </span>
-
+                {% include "episodes/_current_time.html" %}
               </div>
               {% if episode.explicit %}
               <div class="text-red-300 font-semibold text-sm ml-2 hidden sm:block">
