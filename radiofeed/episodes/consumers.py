@@ -13,6 +13,7 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
         self.episode = await self.get_episode(
             self.scope["url_route"]["kwargs"]["episode_id"]
         )
+        print("EPISODE", self.episode.id, self.request_id)
         await self.channel_layer.group_add("player", self.channel_name)
         await self.accept()
 
@@ -54,6 +55,7 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
             )
 
     async def player_start(self, event):
+        print(event, self.event_matches_request_and_episode(event))
         if self.event_matches_request_and_episode(event):
             await self.send_episode_play_buttons(is_playing=True)
 

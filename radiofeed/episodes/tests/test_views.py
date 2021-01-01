@@ -1,7 +1,6 @@
 # Standard Library
 import http
 import json
-import uuid
 
 # Django
 from django.urls import reverse
@@ -18,12 +17,6 @@ from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from ..models import AudioLog, Bookmark
 
 pytestmark = pytest.mark.django_db
-
-
-class MockSession(dict):
-    @property
-    def session_key(self):
-        return str(uuid.uuid4())
 
 
 @pytest.fixture
@@ -118,7 +111,7 @@ class TestEpisodeDetail:
 
 
 class TestTogglePlayer:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = anonymous_user
         req.session = {}
@@ -134,10 +127,10 @@ class TestTogglePlayer:
         }
         mock_send.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
-        req.session = MockSession()
+        req.session = mock_session()
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
@@ -150,11 +143,11 @@ class TestTogglePlayer:
         }
         mock_send.assert_called()
 
-    def test_is_played(self, rf, user, episode, mock_send):
+    def test_is_played(self, rf, user, episode, mock_session, mock_send):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
-        req.session = MockSession()
+        req.session = mock_session()
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
@@ -167,14 +160,14 @@ class TestTogglePlayer:
         }
         mock_send.assert_called()
 
-    def test_stop(self, rf, user, episode, mock_send):
+    def test_stop(self, rf, user, episode, mock_session, mock_send):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(
             reverse("episodes:toggle_player", args=[episode.id]),
             {"player_action": "stop"},
         )
         req.user = user
-        req.session = MockSession()
+        req.session = mock_session()
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "stop"
@@ -182,10 +175,10 @@ class TestTogglePlayer:
 
 
 class TestMarkComplete:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
         req = rf.post(reverse("episodes:mark_complete"))
         req.user = anonymous_user
-        req.session = MockSession(
+        req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
         resp = views.mark_complete(req)
@@ -197,14 +190,14 @@ class TestMarkComplete:
         assert not body["autoplay"]
         mock_send.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
         req = rf.post(
             reverse("episodes:mark_complete"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
-        req.session = MockSession(
+        req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
 
@@ -224,14 +217,14 @@ class TestMarkComplete:
 
 
 class TestUpdatePlayerTime:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
         req = rf.post(
             reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = anonymous_user
-        req.session = MockSession(
+        req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
         resp = views.sync_player_current_time(req)
@@ -240,14 +233,14 @@ class TestUpdatePlayerTime:
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
         mock_send.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
         req = rf.post(
             reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
         req.user = user
-        req.session = MockSession(
+        req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
 

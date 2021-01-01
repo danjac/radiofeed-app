@@ -1,8 +1,12 @@
+# Standard Library
+import uuid
+
 # Django
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.http import HttpResponse
+from django.utils.functional import cached_property
 
 # Third Party Libraries
 import pytest
@@ -11,6 +15,19 @@ import pytest
 from radiofeed.episodes.factories import EpisodeFactory
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.users.factories import UserFactory
+
+
+class MockSession(dict):
+    """Provides mock session dict with session key"""
+
+    @cached_property
+    def session_key(self):
+        return str(uuid.uuid4())
+
+
+@pytest.fixture
+def mock_session():
+    return MockSession
 
 
 @pytest.fixture

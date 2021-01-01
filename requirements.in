@@ -32,6 +32,7 @@ Pillow
 psycopg2-binary
 pyopenssl
 pytest
+pytest-asyncio
 pytest-cov
 pytest-django
 pytest-mock
