@@ -21,6 +21,7 @@ signup = SignupView.as_view()
 
 class EmailView(TurboStreamFormMixin, account_views.EmailView):
     turbo_stream_target = "add-email-form"
+    turbo_stream_template_name = "account/_add_email.html"
 
 
 email = EmailView.as_view()
