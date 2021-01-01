@@ -8,9 +8,9 @@ export default class extends Controller {
   };
 
   connect() {
-    console.log('socket url:', this.urlValue);
-    this.source = new WebSocket('ws://' + window.location.host + this.urlValue);
-    // this.source = new WebSocket(this.socketUrlValue);
+    const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
+    const url = protocol + '://' + window.location.host + this.urlValue;
+    this.source = new WebSocket(url);
     connectStreamSource(this.source);
   }
 
