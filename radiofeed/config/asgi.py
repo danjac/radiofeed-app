@@ -1,4 +1,8 @@
+# Standard Library
+import os
+
 # Django
+import django
 from django.core.asgi import get_asgi_application
 from django.urls import re_path
 
@@ -8,6 +12,10 @@ from channels.sessions import SessionMiddlewareStack
 
 # RadioFeed
 from radiofeed.episodes.consumers import PlayerConsumer
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings.local")
+
+django.setup()
 
 application = ProtocolTypeRouter(
     {
