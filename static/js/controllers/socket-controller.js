@@ -16,6 +16,9 @@ export default class extends Controller {
 
   disconnect() {
     disconnectStreamSource(this.source);
+    if (this.socket) {
+      this.socket.close();
+    }
     this.source = null;
   }
 }
