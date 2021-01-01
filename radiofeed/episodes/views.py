@@ -3,7 +3,6 @@ import http
 import json
 
 # Django
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
@@ -32,9 +31,7 @@ def episode_list(request):
     if search:
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
-        episodes = episodes.subscribed(request.user).order_by("-pub_date")[
-            : settings.DEFAULT_PAGE_SIZE
-        ]
+        episodes = episodes.subscribed(request.user).order_by("-pub_date")
 
     return TemplateResponse(
         request, "episodes/index.html", {"episodes": episodes, "search": search},
