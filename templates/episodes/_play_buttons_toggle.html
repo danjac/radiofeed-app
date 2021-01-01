@@ -1,7 +1,6 @@
   <div class="flex items-center"
        id="episode-play-buttons-{{ episode.id }}">
     <button title="Open in Player"
-            data-episode-target="playButton"
             name="player_action"
             value="start"
             class="hover:text-blue-500 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
@@ -21,7 +20,6 @@
       </svg>
     </button>
     <button title="Close Player"
-            data-episode-target="stopButton"
             name="player_action"
             value="stop"
             class="hover:text-blue-500 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">

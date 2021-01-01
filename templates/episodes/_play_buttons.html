@@ -3,5 +3,5 @@
       method="POST"
       action="{% url 'episodes:toggle_player' episode.id %}">
   {% csrf_token %}
-  {% include "episodes/_play_buttons_inner.html" %}
+  {% include "episodes/_play_buttons_toggle.html" %}
 </form>

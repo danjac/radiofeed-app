@@ -139,8 +139,7 @@ def toggle_player(request, episode_id):
     player = request.session.pop("player", None)
 
     if player and request.POST.get("player_action") == "stop":
-        data = {"episode": player["episode"]}
-        send_to_player_channel(request, "player.stop", data)
+        send_stop_to_player_channel(request, episode.id)
         response = TurboFrame("player").response()
         response["X-Player-Action"] = "stop"
 
@@ -160,14 +159,10 @@ def toggle_player(request, episode_id):
         .template("episodes/_player.html", {"episode": episode})
         .response(request)
     )
-    data = {
-        "new_episode": episode.id,
-    }
-
     if player:
-        data["current_episode"] = player["episode"]
+        send_stop_to_player_channel(request, episode.id)
 
-    send_to_player_channel(request, "player.start", data)
+    send_start_to_player_channel(request, episode.id)
 
     response["X-Player-Action"] = "play"
     response["X-Player-Episode"] = episode.id
@@ -185,16 +180,12 @@ def mark_complete(request):
 
         episode = get_object_or_404(Episode, pk=player["episode"])
         episode.log_activity(request.user, player["current_time"], completed=True)
-        data = {
-            "episode": episode.id,
-            "info": {
-                "duration": episode.get_duration_in_seconds(),
-                "current_time": 0,
-                "completed": True,
-            },
-        }
-        send_to_player_channel(request, "player.stop", data)
-        send_to_player_channel(request, "player.sync_current_time", data)
+
+        send_stop_to_player_channel(request, episode.id)
+
+        send_sync_current_time_to_player_channel(
+            request, episode, current_time=0, completed=True
+        )
 
         return JsonResponse(
             {"autoplay": request.user.is_authenticated and request.user.autoplay}
@@ -216,15 +207,9 @@ def sync_player_current_time(request):
             "current_time": current_time,
         }
         episode.log_activity(request.user, current_time)
-        data = {
-            "episode": episode.id,
-            "info": {
-                "duration": episode.get_duration_in_seconds(),
-                "current_time": current_time,
-                "completed": False,
-            },
-        }
-        send_to_player_channel(request, "player.sync_current_time", data)
+        send_sync_current_time_to_player_channel(
+            request, episode, current_time, completed=False
+        )
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest()
 
@@ -234,11 +219,6 @@ def get_current_time_from_request(request):
         return int(json.loads(request.body)["currentTime"])
     except (json.JSONDecodeError, KeyError, ValueError):
         return 0
-
-
-def send_to_player_channel(request, msg_type, data=None):
-    data = {"type": msg_type, "request_id": request.session.session_key, **(data or {})}
-    async_to_sync(get_channel_layer().group_send)("player", data)
 
 
 def episode_bookmark_response(request, episode, is_bookmarked):
@@ -252,3 +232,35 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             .response(request)
         )
     return redirect(episode.get_absolute_url())
+
+
+def send_to_player_channel(request, msg_type, data=None):
+    data = {
+        "type": msg_type,
+        "request_id": request.session.session_key,
+        **(data or {}),
+    }
+    async_to_sync(get_channel_layer().group_send)("player", data)
+
+
+def send_stop_to_player_channel(request, episode_id):
+    send_to_player_channel(request, "player.stop", {"episode": episode_id})
+
+
+def send_start_to_player_channel(request, episode_id):
+    send_to_player_channel(request, "player.start", {"episode": episode_id})
+
+
+def send_sync_current_time_to_player_channel(request, episode, current_time, completed):
+    send_to_player_channel(
+        request,
+        "player.sync_current_time",
+        {
+            "episode": episode.id,
+            "info": {
+                "duration": episode.get_duration_in_seconds(),
+                "current_time": current_time,
+                "completed": completed,
+            },
+        },
+    )
