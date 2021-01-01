@@ -33,8 +33,7 @@
               <div title="Duration"
                    class="font-semibold text-gray-100 text-sm">
 
-                <span data-episode-target="currentTime"
-                      class="{% if completed %} line-through{% endif %}">
+                <span class="{% if completed %} line-through{% endif %}">
                   {% if current_time and not completed %}
                   ~{{ duration|subtract:current_time|format_duration }}
                   {% else %}
