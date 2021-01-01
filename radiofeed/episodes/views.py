@@ -135,11 +135,10 @@ def toggle_player(request, episode_id):
 
     player = request.session.pop("player", None)
 
-    if player and request.POST.get("player_action") == "stop":
+    if request.POST.get("player_action") == "stop":
         send_stop_to_player_channel(request, episode.id)
         response = TurboFrame("player").response()
         response["X-Player-Action"] = "stop"
-
         return response
 
     current_time = 0 if episode.completed else episode.current_time or 0
