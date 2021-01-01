@@ -61,6 +61,7 @@ gunicorn==20.0.4          # via -r requirements.in
 h11==0.11.0               # via uvicorn
 hiredis==1.1.0            # via aioredis
 html5lib==1.1             # via -r requirements.in
+httptools==0.1.1          # via -r requirements.in
 hyperlink==20.0.1         # via autobahn, twisted
 idna==2.10                # via hyperlink, requests, twisted
 incremental==17.5.0       # via twisted
@@ -135,9 +136,11 @@ txaio==20.12.1            # via autobahn
 unidecode==1.1.2          # via -r requirements.in
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
 uvicorn==0.13.3           # via -r requirements.in
+uvloop==0.14.0            # via -r requirements.in
 vine==5.0.0               # via amqp, celery
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach, html5lib
+websockets==8.1           # via -r requirements.in
 werkzeug==1.0.1           # via -r requirements.in
 zope.interface==5.2.0     # via twisted
 

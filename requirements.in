@@ -1,3 +1,4 @@
+Pillow
 beautifulsoup4
 bleach
 boto3
@@ -24,11 +25,11 @@ feedparser==6.0.2
 future
 gunicorn
 html5lib
+httptools
 ipython
 lxml
 nltk
 pandas
-Pillow
 psycopg2-binary
 pyopenssl
 pytest
@@ -46,4 +47,6 @@ sklearn
 sorl-thumbnail
 unidecode
 uvicorn
+uvloop
+websockets
 werkzeug
