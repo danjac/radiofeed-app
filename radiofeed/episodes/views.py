@@ -154,16 +154,16 @@ def toggle_player(request, episode_id):
 
     episode.log_activity(request.user, current_time=current_time)
 
+    if player:
+        send_stop_to_player_channel(request, player["episode"])
+
+    send_start_to_player_channel(request, episode.id)
+
     response = (
         TurboFrame("player")
         .template("episodes/_player.html", {"episode": episode})
         .response(request)
     )
-    if player:
-        send_stop_to_player_channel(request, episode.id)
-
-    send_start_to_player_channel(request, episode.id)
-
     response["X-Player-Action"] = "play"
     response["X-Player-Episode"] = episode.id
     response["X-Player-Media-Url"] = episode.media_url
