@@ -44,4 +44,5 @@ sentry_sdk
 sklearn
 sorl-thumbnail
 unidecode
+uvicorn
 werkzeug
