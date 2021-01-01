@@ -54,7 +54,6 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
             )
 
     async def player_start(self, event):
-        print(event, self.event_matches_request_and_episode(event))
         if self.event_matches_request_and_episode(event):
             await self.send_episode_play_buttons(is_playing=True)
 
