@@ -3,19 +3,21 @@ import os
 
 # Django
 import django
-from django.core.asgi import get_asgi_application
-from django.urls import re_path
+from django.core.asgi import get_asgi_application  # noqa
+from django.urls import re_path  # noqa
 
 # Third Party Libraries
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.sessions import SessionMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter  # noqa
+from channels.sessions import SessionMiddlewareStack  # noqa
 
 # RadioFeed
 from radiofeed.episodes.consumers import PlayerConsumer
 
+django.setup()  # noqa
+
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings.local")
 
-django.setup()
 
 application = ProtocolTypeRouter(
     {
