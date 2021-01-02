@@ -136,27 +136,21 @@ def toggle_player(request, episode_id):
         pk=episode_id,
     )
 
-    player = request.session.pop("player", None)
+    current_episode, _ = request.player.clear()
+    if current_episode:
+        send_stop_to_player_channel(request, current_episode)
 
     if request.POST.get("player_action") == "stop":
-        send_stop_to_player_channel(request, episode.id)
         response = TurboFrame("player").response()
         response["X-Player-Action"] = "stop"
         return response
 
     current_time = 0 if episode.completed else episode.current_time or 0
 
-    request.session["player"] = {
-        "episode": episode.id,
-        "current_time": current_time,
-    }
-
     episode.log_activity(request.user, current_time=current_time)
 
-    if player:
-        send_stop_to_player_channel(request, player["episode"])
-
-    send_start_to_player_channel(request, episode.id)
+    request.player.start(episode, current_time)
+    send_start_to_player_channel(request, episode)
 
     response = (
         TurboFrame("player")
@@ -174,13 +168,12 @@ def toggle_player(request, episode_id):
 @require_POST
 def mark_complete(request):
     """Remove player from session when episode has ended."""
-    player = request.session.pop("player", None)
-    if player:
+    episode, current_time = request.player.clear()
 
-        episode = get_object_or_404(Episode, pk=player["episode"])
-        episode.log_activity(request.user, player["current_time"], completed=True)
+    if episode:
+        episode.log_activity(request.user, current_time, completed=True)
 
-        send_stop_to_player_channel(request, episode.id)
+        send_stop_to_player_channel(request, episode)
 
         send_sync_current_time_to_player_channel(
             request, episode, current_time=0, completed=True
@@ -197,14 +190,10 @@ def mark_complete(request):
 def sync_player_current_time(request):
     """Update current play time of episode"""
 
-    player = request.session.get("player", None)
-    if player:
-        episode = get_object_or_404(Episode, pk=player["episode"])
+    episode = request.player.get_episode()
+    if episode:
         current_time = get_current_time_from_request(request)
-        request.session["player"] = {
-            **player,
-            "current_time": current_time,
-        }
+        request.player.set_current_time(current_time)
         episode.log_activity(request.user, current_time)
         send_sync_current_time_to_player_channel(
             request, episode, current_time, completed=False
@@ -242,12 +231,12 @@ def send_to_player_channel(request, msg_type, data=None):
     async_to_sync(get_channel_layer().group_send)("player", data)
 
 
-def send_stop_to_player_channel(request, episode_id):
-    send_to_player_channel(request, "player.stop", {"episode": episode_id})
+def send_stop_to_player_channel(request, episode):
+    send_to_player_channel(request, "player.stop", {"episode": episode.id})
 
 
-def send_start_to_player_channel(request, episode_id):
-    send_to_player_channel(request, "player.start", {"episode": episode_id})
+def send_start_to_player_channel(request, episode):
+    send_to_player_channel(request, "player.start", {"episode": episode.id})
 
 
 def send_sync_current_time_to_player_channel(request, episode, current_time, completed):

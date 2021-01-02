@@ -14,6 +14,7 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 # Local
 from .. import views
 from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from ..middleware import Player
 from ..models import AudioLog, Bookmark
 
 pytestmark = pytest.mark.django_db
@@ -115,6 +116,7 @@ class TestTogglePlayer:
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = anonymous_user
         req.session = {}
+        req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
@@ -131,6 +133,7 @@ class TestTogglePlayer:
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = mock_session()
+        req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
@@ -148,6 +151,7 @@ class TestTogglePlayer:
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = mock_session()
+        req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
@@ -167,7 +171,10 @@ class TestTogglePlayer:
             {"player_action": "stop"},
         )
         req.user = user
-        req.session = mock_session()
+        req.session = mock_session(
+            {"player": {"episode": episode.id, "current_time": 0,}}
+        )
+        req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "stop"
@@ -181,9 +188,10 @@ class TestMarkComplete:
         req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
+        req.player = Player(req)
         resp = views.mark_complete(req)
 
-        assert req.session == {}
+        assert not req.player
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
@@ -200,10 +208,11 @@ class TestMarkComplete:
         req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
+        req.player = Player(req)
 
         resp = views.mark_complete(req)
 
-        assert req.session == {}
+        assert not req.player
 
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
@@ -227,6 +236,7 @@ class TestUpdatePlayerTime:
         req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
+        req.player = Player(req)
         resp = views.sync_player_current_time(req)
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
@@ -243,6 +253,7 @@ class TestUpdatePlayerTime:
         req.session = mock_session(
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
+        req.player = Player(req)
 
         resp = views.sync_player_current_time(req)
 
@@ -262,10 +273,11 @@ class TestUpdatePlayerTime:
         )
         req.user = user
         req.session = {}
+        req.player = Player(req)
 
         resp = views.sync_player_current_time(req)
 
-        assert req.session == {}
+        assert not req.player
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0
 

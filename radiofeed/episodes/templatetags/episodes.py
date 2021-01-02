@@ -3,37 +3,18 @@ from django import template
 
 # Local
 from .. import utils
-from ..models import Episode
 
 register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
 def is_playing(context, episode):
-    player = context["request"].session.get("player")
-    if player is None:
-        return False
-    return player["episode"] == episode.id
+    return context["request"].player.is_playing(episode)
 
 
 @register.simple_tag(takes_context=True)
 def get_player(context):
-    request = context["request"]
-    player = request.session.get("player")
-    if player is None:
-        return None
-
-    try:
-        episode = Episode.objects.select_related("podcast").get(pk=player["episode"])
-    except Episode.DoesNotExist:
-        return None
-
-    return {
-        "episode": episode,
-        "current_time": player["current_time"],
-        "autoplay": request.session.get("autoplay", False),
-        "paused": player.get("paused", False),
-    }
+    return context["request"].player.as_dict()
 
 
 @register.filter
