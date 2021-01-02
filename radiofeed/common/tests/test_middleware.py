@@ -6,7 +6,7 @@ from django.test import override_settings
 import pytest
 
 # Local
-from ..http import HttpResponseNotAllowedMiddleware
+from ..middleware import HttpResponseNotAllowedMiddleware
 
 pytestmark = pytest.mark.django_db
 

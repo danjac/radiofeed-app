@@ -94,7 +94,7 @@ MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "radiofeed.common.middleware.http.HttpResponseNotAllowedMiddleware",
+    "radiofeed.common.middleware.HttpResponseNotAllowedMiddleware",
 ]
 
 DEFAULT_PAGE_SIZE = 12
