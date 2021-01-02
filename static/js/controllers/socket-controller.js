@@ -8,6 +8,12 @@ export default class extends Controller {
     url: String,
   };
 
+  initialize() {
+    document.addEventListener('beforeunload', () => {
+      this.disconnect();
+    });
+  }
+
   connect() {
     const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
     const url = protocol + '://' + window.location.host + this.urlValue;
@@ -16,8 +22,8 @@ export default class extends Controller {
   }
 
   disconnect() {
-    disconnectStreamSource(this.source);
     if (this.socket) {
+      disconnectStreamSource(this.source);
       this.socket.close();
     }
     this.source = null;
