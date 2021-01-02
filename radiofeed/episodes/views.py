@@ -131,11 +131,6 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    episode = get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
-        pk=episode_id,
-    )
-
     current_episode, _ = request.player.clear()
     if current_episode:
         send_stop_to_player_channel(request, current_episode)
@@ -144,6 +139,11 @@ def toggle_player(request, episode_id):
         response = TurboFrame("player").response()
         response["X-Player-Action"] = "stop"
         return response
+
+    episode = get_object_or_404(
+        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        pk=episode_id,
+    )
 
     current_time = 0 if episode.completed else episode.current_time or 0
 
@@ -199,7 +199,7 @@ def sync_player_current_time(request):
             request, episode, current_time, completed=False
         )
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-    return HttpResponseBadRequest()
+    return HttpResponseBadRequest("No player loaded")
 
 
 def get_current_time_from_request(request):
