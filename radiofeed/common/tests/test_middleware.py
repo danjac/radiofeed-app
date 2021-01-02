@@ -8,8 +8,6 @@ import pytest
 # Local
 from ..middleware import HttpResponseNotAllowedMiddleware
 
-pytestmark = pytest.mark.django_db
-
 
 @pytest.fixture
 def get_response_not_allowed():

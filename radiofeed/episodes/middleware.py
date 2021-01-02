@@ -32,16 +32,12 @@ class Player:
     def set_current_time(self, current_time):
         self.session_data = {**self.session_data, "current_time": current_time}
 
-    def is_paused(self):
-        return self.session_data.get("paused", False)
-
     def clear(self):
         episode = self.get_episode()
         current_time = self.get_current_time()
         self.request.session["player"] = {
             "episode": None,
             "current_time": 0,
-            "paused": False,
         }
         return episode, current_time
 
@@ -49,13 +45,12 @@ class Player:
         return {
             "episode": self.get_episode(),
             "current_time": self.get_current_time(),
-            "paused": self.is_paused(),
         }
 
     @property
     def session_data(self):
         return self.request.session.setdefault(
-            "player", {"episode": None, "current_time": 0, "paused": False}
+            "player", {"episode": None, "current_time": 0}
         )
 
     @session_data.setter
