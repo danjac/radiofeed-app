@@ -15,7 +15,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream
 
 # Local
-from ..forms import UserPreferencesForm
+from .forms import UserPreferencesForm
 
 
 @login_required

@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "turbo_allauth",
     "django_extensions",
     "django_celery_beat",
     "djcelery_email",

@@ -146,3 +146,5 @@ zope.interface==5.2.0     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+
+git+https://github.com/danjac/django-turbo-allauth
