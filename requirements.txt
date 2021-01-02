@@ -36,7 +36,7 @@ daphne==3.0.1             # via channels
 decorator==4.4.2          # via ipython
 defusedxml==0.6.0         # via python3-openid
 dj-database-url==0.5.0    # via -r requirements.in
-django-allauth==0.44.0    # via -r requirements.in
+django-allauth==0.44.0    # via -r requirements.in, django-turbo-allauth
 django-anymail[mailgun]==8.1  # via -r requirements.in
 django-appconf==1.0.4     # via django-celery-email
 django-celery-beat==2.1.0  # via -r requirements.in
@@ -48,9 +48,10 @@ django-redis==4.12.1      # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
-django-turbo-response==0.0.10  # via -r requirements.in
+django-turbo-allauth==0.0.1  # via -r requirements.in
+django-turbo-response==0.0.10  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
-django==3.1.4             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field
+django==3.1.4             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.7.1            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
 faker==5.1.0              # via factory-boy
@@ -146,5 +147,3 @@ zope.interface==5.2.0     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
-
-git+https://github.com/danjac/django-turbo-allauth
