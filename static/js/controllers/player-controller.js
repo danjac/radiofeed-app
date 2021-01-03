@@ -26,7 +26,6 @@ export default class extends Controller {
     currentTime: Number,
     duration: Number,
     skipInterval: Number,
-    error: Boolean,
     paused: Boolean,
     waiting: Boolean,
   };
@@ -189,12 +188,10 @@ export default class extends Controller {
   // observers
   pausedValueChanged() {
     this.toggleActiveMode();
-    this.toggleCurrentTimeSync();
   }
 
   waitingValueChanged() {
     this.toggleActiveMode();
-    this.toggleCurrentTimeSync();
   }
 
   durationValueChanged() {
@@ -326,6 +323,12 @@ export default class extends Controller {
         this.element.classList.remove(this.inactiveClass);
       }
     }
+
+    if (inactive) {
+      this.cancelCurrentTimeSync();
+    } else {
+      this.startCurrentTimeSync();
+    }
   }
 
   fetchJSON(url, body) {
@@ -358,6 +361,7 @@ export default class extends Controller {
         suspend: this.wait.bind(this),
         stalled: this.wait.bind(this),
         waiting: this.wait.bind(this),
+        error: this.wait.bind(this),
         timeupdate: this.timeUpdate.bind(this),
       };
       Object.keys(this.audioListeners).forEach((event) =>
@@ -392,15 +396,6 @@ export default class extends Controller {
     if (this.currentTimeSyncTimer) {
       clearInterval(this.currentTimeSyncTimer);
       this.currentTimeSyncTimer = null;
-    }
-  }
-
-  toggleCurrentTimeSync() {
-    const inactive = this.pausedValue || this.waitingValue;
-    if (inactive) {
-      this.cancelCurrentTimeSync();
-    } else {
-      this.startCurrentTimeSync();
     }
   }
 
