@@ -167,14 +167,17 @@ def toggle_player(request, episode_id):
 
 @require_POST
 def mark_complete(request):
-    """Remove player from session when episode has ended."""
+    """Returns a JSON response to AJAX request sent by player client
+    when the episode ends. The response includes whether the user has
+    autoplay enabled, with which the player determines whether to
+    start the next episode in the podcast or close the player."""
+
     episode = request.player.eject()
 
     if episode:
         episode.log_activity(request.user, current_time=0, completed=True)
 
         broadcasters.player_stop(request, episode)
-
         broadcasters.player_timeupdate(request, episode, current_time=0, completed=True)
 
         return JsonResponse(
