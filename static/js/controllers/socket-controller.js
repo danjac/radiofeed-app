@@ -18,14 +18,13 @@ export default class extends Controller {
   connect() {
     const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
     const url = protocol + '://' + window.location.host + this.urlValue;
-    console.log('open socket:', this.urlValue);
+    console.log('open socket:', url);
     this.socket = new ReconnectingWebSocket(url);
     connectStreamSource(this.socket);
   }
 
   disconnect() {
     if (this.socket) {
-      console.log('close socket:', this.urlValue);
       disconnectStreamSource(this.socket);
       this.socket.close();
     }
