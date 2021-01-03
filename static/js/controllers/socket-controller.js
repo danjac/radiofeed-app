@@ -9,6 +9,7 @@ export default class extends Controller {
   };
 
   initialize() {
+    // ensure socket is closed properly on full page unload
     document.addEventListener('beforeunload', () => {
       this.disconnect();
     });
@@ -17,15 +18,17 @@ export default class extends Controller {
   connect() {
     const protocol = window.location.protocol == 'https:' ? 'wss' : 'ws';
     const url = protocol + '://' + window.location.host + this.urlValue;
-    this.source = new ReconnectingWebSocket(url);
-    connectStreamSource(this.source);
+    console.log('open socket:', this.urlValue);
+    this.socket = new ReconnectingWebSocket(url);
+    connectStreamSource(this.socket);
   }
 
   disconnect() {
     if (this.socket) {
-      disconnectStreamSource(this.source);
+      console.log('close socket:', this.urlValue);
+      disconnectStreamSource(this.socket);
       this.socket.close();
     }
-    this.source = null;
+    this.socket = null;
   }
 }
