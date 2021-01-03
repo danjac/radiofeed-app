@@ -130,7 +130,7 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    current_episode = request.player.clear()
+    current_episode = request.player.eject()
 
     if current_episode:
         broadcasters.player_stop(request, current_episode)
@@ -168,7 +168,7 @@ def toggle_player(request, episode_id):
 @require_POST
 def mark_complete(request):
     """Remove player from session when episode has ended."""
-    episode = request.player.clear()
+    episode = request.player.eject()
 
     if episode:
         episode.log_activity(request.user, current_time=0, completed=True)

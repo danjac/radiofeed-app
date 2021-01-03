@@ -24,13 +24,13 @@ class TestPlayer:
         assert player.get_episode() == episode
         assert player.get_current_time() == 1000
 
-    def test_clear(self, rf, episode):
+    def test_eject(self, rf, episode):
         req = rf.get("/")
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
         player = Player(req)
         assert player.get_current_time() == 1000
-        current_episode = player.clear()
+        current_episode = player.eject()
 
         assert current_episode == episode
 

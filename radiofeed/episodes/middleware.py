@@ -32,7 +32,7 @@ class Player:
     def set_current_time(self, current_time):
         self.session_data = {**self.session_data, "current_time": current_time}
 
-    def clear(self):
+    def eject(self):
         episode = self.get_episode()
         self.request.session["player"] = {
             "episode": None,
