@@ -5,8 +5,8 @@ export default class extends Controller {
   static targets = [
     'audio',
     'buffer',
-    'counter',
     'controls',
+    'counter',
     'indicator',
     'nextEpisode',
     'pauseButton',
@@ -18,15 +18,14 @@ export default class extends Controller {
   static classes = ['active', 'inactive'];
 
   static values = {
-    episode: Number,
-    timeupdateUrl: String,
-    mediaUrl: String,
-    markCompleteUrl: String,
     csrfToken: String,
     currentTime: Number,
     duration: Number,
-    skipInterval: Number,
+    markCompleteUrl: String,
+    mediaUrl: String,
     paused: Boolean,
+    skipInterval: Number,
+    timeupdateUrl: String,
     waiting: Boolean,
   };
 
@@ -68,8 +67,6 @@ export default class extends Controller {
 
   async closePlayer() {
     this.durationValue = 0;
-    this.lastUpdated = 0;
-    this.episodeValue = '';
     this.mediaUrlValue = '';
 
     if (this.hasControlsTarget) {
