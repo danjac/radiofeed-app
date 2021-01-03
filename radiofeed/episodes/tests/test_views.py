@@ -22,7 +22,7 @@ pytestmark = pytest.mark.django_db
 
 @pytest.fixture
 def mock_broadcast(mocker):
-    return mocker.patch("radiofeed.episodes.views.broadcast_player_message")
+    return mocker.patch("radiofeed.episodes.broadcasters.player_message")
 
 
 class TestEpisodeList:
@@ -228,7 +228,7 @@ class TestMarkComplete:
 class TestUpdatePlayerTime:
     def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
         req = rf.post(
-            reverse("episodes:sync_player_current_time"),
+            reverse("episodes:player_timeupdate"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
@@ -237,7 +237,7 @@ class TestUpdatePlayerTime:
             {"player": {"episode": episode.id, "current_time": 1000}}
         )
         req.player = Player(req)
-        resp = views.sync_player_current_time(req)
+        resp = views.player_timeupdate(req)
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
@@ -245,7 +245,7 @@ class TestUpdatePlayerTime:
 
     def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
         req = rf.post(
-            reverse("episodes:sync_player_current_time"),
+            reverse("episodes:player_timeupdate"),
             data=json.dumps({"currentTime": 1030}),
             content_type="application/json",
         )
@@ -255,7 +255,7 @@ class TestUpdatePlayerTime:
         )
         req.player = Player(req)
 
-        resp = views.sync_player_current_time(req)
+        resp = views.player_timeupdate(req)
 
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
@@ -267,7 +267,7 @@ class TestUpdatePlayerTime:
 
     def test_player_not_running(self, rf, user, episode):
         req = rf.post(
-            reverse("episodes:sync_player_current_time"),
+            reverse("episodes:player_timeupdate"),
             data=json.dumps({"current_time": 1030}),
             content_type="application/json",
         )
@@ -275,7 +275,7 @@ class TestUpdatePlayerTime:
         req.session = {}
         req.player = Player(req)
 
-        resp = views.sync_player_current_time(req)
+        resp = views.player_timeupdate(req)
 
         assert not req.player
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST

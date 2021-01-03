@@ -32,7 +32,7 @@ def make_event(msg_type, episode, request_id, **data):
 
 class TestPlayerConsumer:
     @pytest.mark.asyncio
-    async def test_start_player(self, mock_session):
+    async def test_player_start(self, mock_session):
 
         session = mock_session()
         episode = await create_episode()
@@ -50,7 +50,7 @@ class TestPlayerConsumer:
         await db_cleanup(episode)
 
     @pytest.mark.asyncio
-    async def test_stop_player(self, mock_session):
+    async def test_player_stop(self, mock_session):
 
         session = mock_session()
         episode = await create_episode()
@@ -68,7 +68,7 @@ class TestPlayerConsumer:
         await db_cleanup(episode)
 
     @pytest.mark.asyncio
-    async def test_sync_current_time(self, mock_session):
+    async def test_player_timeupdate(self, mock_session):
 
         session = mock_session()
         episode = await create_episode()
@@ -83,9 +83,7 @@ class TestPlayerConsumer:
 
         await communicator.connect()
         await communicator.send_input(
-            make_event(
-                "player.sync_current_time", episode, session.session_key, info=info
-            )
+            make_event("player.timeupdate", episode, session.session_key, info=info)
         )
         output = await communicator.receive_output()
         assert f'target="episode-current-time-{episode.id}"' in output["text"]

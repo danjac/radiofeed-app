@@ -266,14 +266,11 @@
        data-player-inactive-class="player--inactive"
        data-player-csrf-token-value="{{ csrf_token }}"
        data-player-skip-interval-value="10"
-       data-player-progress-url-value="{% url 'episodes:sync_player_current_time' %}"
+       data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
        data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        {% if player.episode %}
        data-player-media-url-value="{{ player.episode.media_url }}"
-       {% if player.episode %}
-       data-player-episode-value="{{ player.episode.id }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"
-       {% endif %}
        {% endif %}>
     <turbo-frame id="player">
       {% include "episodes/_player.html" with episode=player.episode %}

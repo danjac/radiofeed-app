@@ -19,7 +19,7 @@ export default class extends Controller {
 
   static values = {
     episode: Number,
-    progressUrl: String,
+    timeupdateUrl: String,
     mediaUrl: String,
     markCompleteUrl: String,
     csrfToken: String,
@@ -76,7 +76,7 @@ export default class extends Controller {
       this.controlsTarget.remove();
     }
     this.closeAudio();
-    this.cancelCurrentTimeSync();
+    this.cancelTimeUpdateTimer();
   }
 
   loadedMetaData() {
@@ -147,7 +147,7 @@ export default class extends Controller {
     // removed through a turbo refresh - disconnect() isn't always called
     if (!document.getElementById('player-controls')) {
       this.closeAudio();
-      this.cancelCurrentTimeSync();
+      this.cancelTimeUpdateTimer();
     }
   }
 
@@ -325,9 +325,9 @@ export default class extends Controller {
     }
 
     if (inactive) {
-      this.cancelCurrentTimeSync();
+      this.cancelTimeUpdateTimer();
     } else {
-      this.startCurrentTimeSync();
+      this.startTimeUpdateTimer();
     }
   }
 
@@ -383,25 +383,22 @@ export default class extends Controller {
     }
   }
 
-  startCurrentTimeSync() {
-    if (!this.currentTimeSyncTimer) {
-      this.currentTimeSyncTimer = setInterval(
-        this.syncServerCurrentTime.bind(this),
-        5000
-      );
+  startTimeUpdateTimer() {
+    if (!this.timeupdateTimer) {
+      this.timeupdateTimer = setInterval(this.sendTimeUpdate.bind(this), 5000);
     }
   }
 
-  cancelCurrentTimeSync() {
-    if (this.currentTimeSyncTimer) {
-      clearInterval(this.currentTimeSyncTimer);
-      this.currentTimeSyncTimer = null;
+  cancelTimeUpdateTimer() {
+    if (this.timeupdateTimer) {
+      clearInterval(this.timeupdateTimer);
+      this.timeupdateTimer = null;
     }
   }
 
-  syncServerCurrentTime() {
+  sendTimeUpdate() {
     if (this.currentTimeValue) {
-      this.fetchJSON(this.progressUrlValue, {
+      this.fetchJSON(this.timeupdateUrlValue, {
         currentTime: this.currentTimeValue,
       });
     }

@@ -36,7 +36,7 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
             .render()
         )
 
-    async def player_sync_current_time(self, event):
+    async def player_timeupdate(self, event):
         if self.event_matches_request(event):
             episode = await self.get_episode(event["episode"])
             await self.send(

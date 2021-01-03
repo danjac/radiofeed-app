@@ -12,11 +12,10 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 from turbo_response import TurboFrame
 
 # Local
+from . import broadcasters
 from .models import AudioLog, Bookmark, Episode
 
 
@@ -134,7 +133,7 @@ def toggle_player(request, episode_id):
     current_episode = request.player.clear()
 
     if current_episode:
-        broadcast_player_stop(request, current_episode)
+        broadcasters.player_stop(request, current_episode)
 
     if request.POST.get("player_action") == "stop":
         response = TurboFrame("player").response()
@@ -151,7 +150,7 @@ def toggle_player(request, episode_id):
     episode.log_activity(request.user, current_time=current_time)
 
     request.player.start(episode, current_time)
-    broadcast_player_start(request, episode)
+    broadcasters.player_start(request, episode)
 
     response = (
         TurboFrame("player")
@@ -174,9 +173,9 @@ def mark_complete(request):
     if episode:
         episode.log_activity(request.user, current_time=0, completed=True)
 
-        broadcast_player_stop(request, episode)
+        broadcasters.player_stop(request, episode)
 
-        broadcast_player_current_time(request, episode, current_time=0, completed=True)
+        broadcasters.player_timeupdate(request, episode, current_time=0, completed=True)
 
         return JsonResponse(
             {"autoplay": request.user.is_authenticated and request.user.autoplay}
@@ -186,7 +185,7 @@ def mark_complete(request):
 
 
 @require_POST
-def sync_player_current_time(request):
+def player_timeupdate(request):
     """Update current play time of episode"""
 
     episode = request.player.get_episode()
@@ -194,7 +193,9 @@ def sync_player_current_time(request):
         current_time = get_current_time_from_request(request)
         request.player.set_current_time(current_time)
         episode.log_activity(request.user, current_time)
-        broadcast_player_current_time(request, episode, current_time, completed=False)
+
+        broadcasters.player_timeupdate(request, episode, current_time, completed=False)
+
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
 
@@ -217,35 +218,3 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             .response(request)
         )
     return redirect(episode.get_absolute_url())
-
-
-def broadcast_player_message(request, msg_type, data=None):
-    data = {
-        "type": msg_type,
-        "request_id": request.session.session_key,
-        **(data or {}),
-    }
-    async_to_sync(get_channel_layer().group_send)("player", data)
-
-
-def broadcast_player_stop(request, episode):
-    broadcast_player_message(request, "player.stop", {"episode": episode.id})
-
-
-def broadcast_player_start(request, episode):
-    broadcast_player_message(request, "player.start", {"episode": episode.id})
-
-
-def broadcast_player_current_time(request, episode, current_time, completed):
-    broadcast_player_message(
-        request,
-        "player.sync_current_time",
-        {
-            "episode": episode.id,
-            "info": {
-                "duration": episode.get_duration_in_seconds(),
-                "current_time": current_time,
-                "completed": completed,
-            },
-        },
-    )
