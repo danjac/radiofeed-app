@@ -17,9 +17,9 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_discard("player", self.channel_name)
 
     @database_sync_to_async
-    def get_episode(self, episode_id):
+    def get_episode(self, event):
         try:
-            return Episode.objects.get(pk=episode_id)
+            return Episode.objects.get(pk=event["episode"])
         except Episode.DoesNotExist:
             return None
 
@@ -38,7 +38,7 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
 
     async def player_timeupdate(self, event):
         if self.event_matches_request_id(event):
-            episode = await self.get_episode(event["episode"])
+            episode = await self.get_episode(event)
             await self.send(
                 TurboStream(f"episode-current-time-{episode.id}")
                 .replace.template(
@@ -50,10 +50,10 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
 
     async def player_start(self, event):
         if self.event_matches_request_id(event):
-            episode = await self.get_episode(event["episode"])
+            episode = await self.get_episode(event)
             await self.send_episode_play_buttons(episode, is_playing=True)
 
     async def player_stop(self, event):
         if self.event_matches_request_id(event):
-            episode = await self.get_episode(event["episode"])
+            episode = await self.get_episode(event)
             await self.send_episode_play_buttons(episode, is_playing=False)
