@@ -30,10 +30,9 @@ class TestPlayer:
 
         player = Player(req)
         assert player.get_current_time() == 1000
-        current_episode, current_time = player.clear()
+        current_episode = player.clear()
 
         assert current_episode == episode
-        assert current_time == 1000
 
         assert not player
         assert player.get_current_time() == 0

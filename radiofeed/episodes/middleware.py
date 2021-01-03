@@ -34,12 +34,11 @@ class Player:
 
     def clear(self):
         episode = self.get_episode()
-        current_time = self.get_current_time()
         self.request.session["player"] = {
             "episode": None,
             "current_time": 0,
         }
-        return episode, current_time
+        return episode
 
     def as_dict(self):
         return {

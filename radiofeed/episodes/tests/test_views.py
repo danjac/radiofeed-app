@@ -219,7 +219,7 @@ class TestMarkComplete:
         assert body["autoplay"] == user.autoplay
 
         log = AudioLog.objects.get(user=user, episode=episode)
-        assert log.current_time == 1000
+        assert log.current_time == 0
         assert log.completed
 
         mock_send.assert_called()
