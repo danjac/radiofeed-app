@@ -134,7 +134,7 @@ def toggle_player(request, episode_id):
     current_episode = request.player.clear()
 
     if current_episode:
-        send_stop_to_player_channel(request, current_episode)
+        broadcast_player_stop(request, current_episode)
 
     if request.POST.get("player_action") == "stop":
         response = TurboFrame("player").response()
@@ -151,7 +151,7 @@ def toggle_player(request, episode_id):
     episode.log_activity(request.user, current_time=current_time)
 
     request.player.start(episode, current_time)
-    send_start_to_player_channel(request, episode)
+    broadcast_player_start(request, episode)
 
     response = (
         TurboFrame("player")
@@ -174,11 +174,9 @@ def mark_complete(request):
     if episode:
         episode.log_activity(request.user, current_time=0, completed=True)
 
-        send_stop_to_player_channel(request, episode)
+        broadcast_player_stop(request, episode)
 
-        send_sync_current_time_to_player_channel(
-            request, episode, current_time=0, completed=True
-        )
+        broadcast_player_current_time(request, episode, current_time=0, completed=True)
 
         return JsonResponse(
             {"autoplay": request.user.is_authenticated and request.user.autoplay}
@@ -196,9 +194,7 @@ def sync_player_current_time(request):
         current_time = get_current_time_from_request(request)
         request.player.set_current_time(current_time)
         episode.log_activity(request.user, current_time)
-        send_sync_current_time_to_player_channel(
-            request, episode, current_time, completed=False
-        )
+        broadcast_player_current_time(request, episode, current_time, completed=False)
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
 
@@ -223,7 +219,7 @@ def episode_bookmark_response(request, episode, is_bookmarked):
     return redirect(episode.get_absolute_url())
 
 
-def send_to_player_channel(request, msg_type, data=None):
+def broadcast_player_message(request, msg_type, data=None):
     data = {
         "type": msg_type,
         "request_id": request.session.session_key,
@@ -232,16 +228,16 @@ def send_to_player_channel(request, msg_type, data=None):
     async_to_sync(get_channel_layer().group_send)("player", data)
 
 
-def send_stop_to_player_channel(request, episode):
-    send_to_player_channel(request, "player.stop", {"episode": episode.id})
+def broadcast_player_stop(request, episode):
+    broadcast_player_message(request, "player.stop", {"episode": episode.id})
 
 
-def send_start_to_player_channel(request, episode):
-    send_to_player_channel(request, "player.start", {"episode": episode.id})
+def broadcast_player_start(request, episode):
+    broadcast_player_message(request, "player.start", {"episode": episode.id})
 
 
-def send_sync_current_time_to_player_channel(request, episode, current_time, completed):
-    send_to_player_channel(
+def broadcast_player_current_time(request, episode, current_time, completed):
+    broadcast_player_message(
         request,
         "player.sync_current_time",
         {

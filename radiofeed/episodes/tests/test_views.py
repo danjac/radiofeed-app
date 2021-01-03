@@ -21,8 +21,8 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def mock_send(mocker):
-    return mocker.patch("radiofeed.episodes.views.send_to_player_channel")
+def mock_broadcast(mocker):
+    return mocker.patch("radiofeed.episodes.views.broadcast_player_message")
 
 
 class TestEpisodeList:
@@ -112,7 +112,7 @@ class TestEpisodeDetail:
 
 
 class TestTogglePlayer:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = anonymous_user
         req.session = {}
@@ -127,9 +127,9 @@ class TestTogglePlayer:
             "episode": episode.id,
             "current_time": 0,
         }
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = mock_session()
@@ -144,9 +144,9 @@ class TestTogglePlayer:
             "episode": episode.id,
             "current_time": 0,
         }
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
-    def test_is_played(self, rf, user, episode, mock_session, mock_send):
+    def test_is_played(self, rf, user, episode, mock_session, mock_broadcast):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
@@ -162,9 +162,9 @@ class TestTogglePlayer:
             "episode": episode.id,
             "current_time": 2000,
         }
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
-    def test_stop(self, rf, user, episode, mock_session, mock_send):
+    def test_stop(self, rf, user, episode, mock_session, mock_broadcast):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(
             reverse("episodes:toggle_player", args=[episode.id]),
@@ -178,11 +178,11 @@ class TestTogglePlayer:
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "stop"
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
 
 class TestMarkComplete:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
         req = rf.post(reverse("episodes:mark_complete"))
         req.user = anonymous_user
         req.session = mock_session(
@@ -196,9 +196,9 @@ class TestMarkComplete:
         assert resp.status_code == http.HTTPStatus.OK
         body = json.loads(resp.content)
         assert not body["autoplay"]
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
         req = rf.post(
             reverse("episodes:mark_complete"),
             data=json.dumps({"currentTime": 1030}),
@@ -222,11 +222,11 @@ class TestMarkComplete:
         assert log.current_time == 0
         assert log.completed
 
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
 
 class TestUpdatePlayerTime:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_send):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
         req = rf.post(
             reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
@@ -241,9 +241,9 @@ class TestUpdatePlayerTime:
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_send):
+    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
         req = rf.post(
             reverse("episodes:sync_player_current_time"),
             data=json.dumps({"currentTime": 1030}),
@@ -263,7 +263,7 @@ class TestUpdatePlayerTime:
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1030
-        mock_send.assert_called()
+        mock_broadcast.assert_called()
 
     def test_player_not_running(self, rf, user, episode):
         req = rf.post(
