@@ -60,7 +60,6 @@ export default class extends Controller {
   async ended() {
     const response = await this.fetchJSON(this.markCompleteUrlValue);
     const data = await response.json();
-    // how to check if autoplay is on???
     if (data.autoplay && this.hasNextEpisodeTarget) {
       this.nextEpisodeTarget.requestSubmit();
     } else {
