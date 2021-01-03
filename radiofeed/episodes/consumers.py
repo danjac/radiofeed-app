@@ -36,9 +36,22 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
             .render()
         )
 
+    async def player_start(self, event):
+        if self.event_matches_request_id(event) and (
+            episode := await self.get_episode(event)
+        ):
+            await self.send_episode_play_buttons(episode, is_playing=True)
+
+    async def player_stop(self, event):
+        if self.event_matches_request_id(event) and (
+            episode := await self.get_episode(event)
+        ):
+            await self.send_episode_play_buttons(episode, is_playing=False)
+
     async def player_timeupdate(self, event):
-        if self.event_matches_request_id(event):
-            episode = await self.get_episode(event)
+        if self.event_matches_request_id(event) and (
+            episode := await self.get_episode(event)
+        ):
             await self.send(
                 TurboStream(f"episode-current-time-{episode.id}")
                 .replace.template(
@@ -47,13 +60,3 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
                 )
                 .render()
             )
-
-    async def player_start(self, event):
-        if self.event_matches_request_id(event):
-            episode = await self.get_episode(event)
-            await self.send_episode_play_buttons(episode, is_playing=True)
-
-    async def player_stop(self, event):
-        if self.event_matches_request_id(event):
-            episode = await self.get_episode(event)
-            await self.send_episode_play_buttons(episode, is_playing=False)
