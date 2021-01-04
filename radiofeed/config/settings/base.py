@@ -42,6 +42,8 @@ INTERNAL_IPS = [
 
 ADMINS = getaddresses(env.list("ADMINS", default=[]))
 
+SITE_ID = 1
+
 SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
