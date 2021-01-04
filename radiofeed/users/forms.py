@@ -21,4 +21,7 @@ class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("autoplay", "send_recommendations_email")
-        help_texts = {"autoplay": "Automatically play next episode in podcast"}
+        help_texts = {
+            "autoplay": "Automatically play next episode in podcast",
+            "send_recommendations_email": "We will send you recommendations for new podcasts every week",
+        }
