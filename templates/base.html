@@ -124,7 +124,7 @@
           <li class="py-2">
             {% active_route 'podcasts:podcast_list' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -141,7 +141,7 @@
           <li class="py-2">
             {% active_route 'podcasts:category_list' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.match %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -158,7 +158,7 @@
           <li class="py-2">
             {% active_route 'episodes:episode_list' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -177,7 +177,7 @@
           <li class="py-2">
             {% active_route 'episodes:bookmark_list' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -195,7 +195,7 @@
           <li class="py-2">
             {% active_route 'episodes:history' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -213,7 +213,7 @@
           <li class="py-2">
             {% active_route '/account/' as route %}
             <a href="{% url 'user_preferences' %}"
-               class="flex items-center hover:text-gray-300{% if route.match %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -232,7 +232,7 @@
           <li class="py-2">
             {% active_route 'about' as route %}
             <a href="{{ route.url }}"
-               class="flex items-center hover:text-gray-300{% if route.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-500{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"

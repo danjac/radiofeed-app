@@ -49,7 +49,7 @@
 }
 
 .sidebar--active {
-  @apply border-l-2 border-blue-500 pl-3 font-bold;
+  @apply text-blue-500 text-lg font-bold;
 }
 
 .tab--active {
