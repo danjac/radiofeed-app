@@ -29,13 +29,16 @@ def user_preferences(request):
             form.save()
             messages.success(request, "Your preferences have been saved")
             return redirect(request.path)
-        status = http.HTTPStatus.UNPROCESSABLE_ENTITY
     else:
         form = UserPreferencesForm(instance=request.user)
-        status = http.HTTPStatus.OK
 
     return TemplateResponse(
-        request, "account/preferences.html", {"form": form}, status=status
+        request,
+        "account/preferences.html",
+        {"form": form},
+        status=http.HTTPStatus.UNPROCESSABLE_ENTITY
+        if form.errors
+        else http.HTTPStatus.OK,
     )
 
 
