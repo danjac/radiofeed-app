@@ -18,3 +18,8 @@ repos:
     hooks:
       - id: prettier
         exclude: 'static/dev|static/dist|templates/|mockups/|README.md'
+  - repo: https://github.com/PyCQA/prospector
+    rev: 1.1.7 # The version of Prospector to use, at least 1.1.7
+    hooks:
+      - id: prospector
+        exclude: 'tests/'
