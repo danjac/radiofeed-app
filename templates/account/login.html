@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load i18n account %}
+{% load i18n account widget_tweaks %}
 
 {% block content %}
 
@@ -9,6 +9,42 @@
   <a class="underline hover:text-gray-300"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-{% include "account/_login.html" %}
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+      method="post"
+      action="{% url 'account_login' %}"
+      novalidate>
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden"
+         name="{{ redirect_field_name }}"
+         value="{{ redirect_field_value }}" />
+  {% endif %}
+  {% include "_form_errors.html" with errors=form.non_field_errors %}
+  {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
+  <div class="mb-3">
+    {% render_field form.login placeholder=form.login.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.login.errors %}
+  </div>
+  <div class="mb-3">
+    {% render_field form.password placeholder=form.password.label class="p-1 w-full bg-gray-900" %}
+    {% include "_form_errors.html" with errors=form.password.errors %}
+  </div>
+  <div class="mb-3">
+    <label class="flex items-center mb-2 w-full">
+      {% render_field form.remember class="mr-3 bg-gray-900" %}
+      {{ form.remember.label }}
+    </label>
+    {% include "_form_errors.html" with errors=form.remember.errors %}
+  </div>
+  {% endwith %}
+
+  <div class="">
+    <a class="font-semibold hover:text-gray-300 mr-3"
+       data-turbo-frame="_top"
+       href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+    <button class="p-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
+            type="submit">{% translate "Sign In" %}</button>
+  </div>
+</form>
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 {% endblock %}

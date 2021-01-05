@@ -1,5 +1,6 @@
 # Standard Library
 import datetime
+import http
 
 # Django
 from django.conf import settings
@@ -23,20 +24,18 @@ def user_preferences(request):
 
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
+
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
             return redirect(request.path)
+        status = http.HTTPStatus.UNPROCESSABLE_ENTITY
+    else:
+        form = UserPreferencesForm(instance=request.user)
+        status = http.HTTPStatus.OK
 
-        return (
-            TurboStream("prefs-form")
-            .replace.template("account/_preferences.html", {"form": form},)
-            .response(request)
-        )
-
-    form = UserPreferencesForm(instance=request.user)
     return TemplateResponse(
-        request, "account/preferences.html", {"form": form, "target": "prefs-form"},
+        request, "account/preferences.html", {"form": form}, status=status
     )
 
 
