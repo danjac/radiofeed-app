@@ -158,7 +158,6 @@ def toggle_player(request, episode_id):
         .response(request)
     )
     response["X-Player-Action"] = "play"
-    response["X-Player-Episode"] = episode.id
     response["X-Player-Media-Url"] = episode.media_url
     response["X-Player-Current-Time"] = current_time
 

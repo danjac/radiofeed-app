@@ -120,7 +120,6 @@ class TestTogglePlayer:
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Episode"] == str(episode.id)
         assert resp["X-Player-Current-Time"] == "0"
         assert resp["X-Player-Media-Url"] == episode.media_url
         assert req.session["player"] == {
@@ -137,7 +136,6 @@ class TestTogglePlayer:
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Episode"] == str(episode.id)
         assert resp["X-Player-Current-Time"] == "0"
         assert resp["X-Player-Media-Url"] == episode.media_url
         assert req.session["player"] == {
@@ -155,7 +153,6 @@ class TestTogglePlayer:
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Episode"] == str(episode.id)
         assert resp["X-Player-Current-Time"] == "2000"
         assert resp["X-Player-Media-Url"] == episode.media_url
         assert req.session["player"] == {
