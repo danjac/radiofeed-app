@@ -80,8 +80,13 @@ export default class extends Controller {
     this.durationValue = this.audio.duration;
   }
 
-  play() {
-    this.audio.play();
+  async play() {
+    try {
+      await this.audio.play();
+    } catch (e) {
+      console.error(e);
+      this.pausedValue = true;
+    }
   }
 
   pause() {
