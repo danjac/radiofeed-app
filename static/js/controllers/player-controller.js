@@ -56,9 +56,9 @@ export default class extends Controller {
   }
 
   async ended() {
-    const response = await this.fetchJSON(this.markCompleteUrlValue);
-    const data = await response.json();
-    if (data.autoplay && this.hasNextEpisodeTarget) {
+    this.cancelTimeUpdateTimer();
+    this.fetchJSON(this.markCompleteUrlValue);
+    if (this.hasNextEpisodeTarget) {
       this.nextEpisodeTarget.requestSubmit();
     } else {
       this.closePlayer();

@@ -23,13 +23,13 @@ class TestUserPreferences:
 
     def test_post(self, rf, user, mocker):
         url = reverse("user_preferences")
-        req = rf.post(url, {"autoplay": True, "send_recommendations_email": True})
+        req = rf.post(url, {"send_recommendations_email": False})
         req._messages = mocker.Mock()
         req.user = user
         resp = views.user_preferences(req)
         assert resp.url == url
         user.refresh_from_db()
-        assert user.autoplay
+        assert not user.send_recommendations_email
 
 
 class TestDeleteAccount:

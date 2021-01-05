@@ -193,9 +193,7 @@ class TestMarkComplete:
 
         assert not req.player
 
-        assert resp.status_code == http.HTTPStatus.OK
-        body = json.loads(resp.content)
-        assert not body["autoplay"]
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
         mock_broadcast.assert_called()
 
     def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
@@ -214,9 +212,7 @@ class TestMarkComplete:
 
         assert not req.player
 
-        assert resp.status_code == http.HTTPStatus.OK
-        body = json.loads(resp.content)
-        assert body["autoplay"] == user.autoplay
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 0
