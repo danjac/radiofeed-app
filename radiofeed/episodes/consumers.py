@@ -26,37 +26,37 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
     def event_matches_request_id(self, event):
         return self.request_id == event["request_id"]
 
-    async def send_episode_play_buttons(self, episode, is_playing):
+    async def send_turbo_stream(self, episode, target, template_name, context=None):
         await self.send(
-            TurboStream(f"episode-play-buttons-{episode.id}")
-            .replace.template(
-                "episodes/_play_buttons_toggle.html",
-                {"episode": episode, "is_episode_playing": is_playing},
-            )
+            TurboStream(target)
+            .replace.template(template_name, {"episode": episode, **(context or {})},)
             .render()
         )
 
-    async def player_start(self, event):
+    async def send_episode_play_buttons(self, event, is_playing):
         if self.event_matches_request_id(event) and (
             episode := await self.get_episode(event)
         ):
-            await self.send_episode_play_buttons(episode, is_playing=True)
+            await self.send_turbo_stream(
+                episode,
+                f"episode-play-buttons-{episode.id}",
+                "episodes/_play_buttons_toggle.html",
+                {"is_playing": is_playing},
+            )
+
+    async def player_start(self, event):
+        await self.send_episode_play_buttons(event, is_playing=True)
 
     async def player_stop(self, event):
-        if self.event_matches_request_id(event) and (
-            episode := await self.get_episode(event)
-        ):
-            await self.send_episode_play_buttons(episode, is_playing=False)
+        await self.send_episode_play_buttons(event, is_playing=False)
 
     async def player_timeupdate(self, event):
         if self.event_matches_request_id(event) and (
             episode := await self.get_episode(event)
         ):
-            await self.send(
-                TurboStream(f"episode-current-time-{episode.id}")
-                .replace.template(
-                    "episodes/_current_time.html",
-                    {**event["info"], "episode": episode},
-                )
-                .render()
+            await self.send_turbo_stream(
+                episode,
+                f"episode-current-time-{episode.id}",
+                "episodes/_current_time.html",
+                event["info"],
             )

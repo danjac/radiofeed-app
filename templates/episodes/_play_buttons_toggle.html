@@ -1,28 +1,10 @@
   <div class="flex items-center"
        id="episode-play-buttons-{{ episode.id }}">
-    <button title="Open in Player"
-            name="player_action"
-            value="start"
-            class="hover:text-blue-500 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           stroke="currentColor"
-           class="h-10 w-10">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </button>
+    {% if is_playing %}
     <button title="Close Player"
             name="player_action"
             value="stop"
-            class="hover:text-blue-500 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
+            class="hover:text-blue-500 focus:outline-none">
       <svg xmlns="http://www.w3.org/2000/svg"
            fill="none"
            viewBox="0 0 24 24"
@@ -38,4 +20,25 @@
               d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
       </svg>
     </button>
+    {% else %}
+    <button title="Open in Player"
+            name="player_action"
+            value="start"
+            class="hover:text-blue-500 focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           stroke="currentColor"
+           class="h-10 w-10">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </button>
+    {% endif %}
   </div>
