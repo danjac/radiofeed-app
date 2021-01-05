@@ -95,8 +95,6 @@ export default class extends Controller {
   }
 
   play() {
-    this.enabled = true;
-    this.pausedValue = false;
     this.audio.play();
   }
 
