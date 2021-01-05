@@ -80,6 +80,10 @@ export default class extends Controller {
     this.durationValue = this.audio.duration;
   }
 
+  play() {
+    this.audio.play();
+  }
+
   pause() {
     this.audio.pause();
   }
@@ -87,6 +91,7 @@ export default class extends Controller {
   resumed() {
     this.enabled = true;
     this.pausedValue = false;
+    this.waitingValue = false;
   }
 
   paused() {
@@ -94,23 +99,19 @@ export default class extends Controller {
     this.pausedValue = true;
   }
 
-  play() {
-    this.audio.play();
+  wait() {
+    this.waitingValue = true;
   }
 
   canPlay() {
     this.waitingValue = false;
   }
 
-  wait() {
-    this.waitingValue = true;
-  }
-
   timeUpdate() {
     // playing time update
     const { currentTime } = this.audio;
-    this.waitingValue = false;
     this.currentTimeValue = currentTime;
+    this.waitingValue = false;
   }
 
   progress() {
@@ -182,6 +183,15 @@ export default class extends Controller {
 
   // observers
   pausedValueChanged() {
+    if (this.hasPauseButtonTarget && this.playButtonTarget) {
+      if (this.pausedValue) {
+        this.pauseButtonTarget.classList.add('hidden');
+        this.playButtonTarget.classList.remove('hidden');
+      } else {
+        this.pauseButtonTarget.classList.remove('hidden');
+        this.playButtonTarget.classList.add('hidden');
+      }
+    }
     this.toggleActiveMode();
   }
 
@@ -303,25 +313,13 @@ export default class extends Controller {
 
   toggleActiveMode() {
     const inactive = this.pausedValue || this.waitingValue;
-    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
-      if (inactive) {
-        this.pauseButtonTarget.classList.add('hidden');
-        this.playButtonTarget.classList.remove('hidden');
-
-        this.element.classList.remove(this.activeClass);
-        this.element.classList.add(this.inactiveClass);
-      } else {
-        this.pauseButtonTarget.classList.remove('hidden');
-        this.playButtonTarget.classList.add('hidden');
-
-        this.element.classList.add(this.activeClass);
-        this.element.classList.remove(this.inactiveClass);
-      }
-    }
-
     if (inactive) {
+      this.element.classList.add(this.inactiveClass);
+      this.element.classList.remove(this.activeClass);
       this.cancelTimeUpdateTimer();
     } else {
+      this.element.classList.remove(this.inactiveClass);
+      this.element.classList.add(this.activeClass);
       this.startTimeUpdateTimer();
     }
   }
