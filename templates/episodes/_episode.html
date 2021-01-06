@@ -6,7 +6,7 @@
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode.get_absolute_url }}"
          class="block font-semibold hover:text-gray-300"
-         title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
+         title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:80 }}</a>
     </div>
 
     <div class="flex items-center">
