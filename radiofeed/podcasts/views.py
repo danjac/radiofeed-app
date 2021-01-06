@@ -52,9 +52,8 @@ def podcast_cover_image(request, podcast_id):
 def podcast_list(request):
     """Shows list of podcasts"""
     podcasts = Podcast.objects.filter(pub_date__isnull=False)
-    search = request.GET.get("q", None)
 
-    if search:
+    if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     elif request.user.is_authenticated:
         podcasts = (
@@ -129,10 +128,9 @@ def podcast_episode_list(request, podcast_id, slug=None):
 
 
 def category_list(request):
-    search = request.GET.get("q", None)
     categories = Category.objects.all()
 
-    if search:
+    if search := request.GET.get("q", None):
         categories = categories.search(search).order_by("-similarity", "name")
     else:
         categories = (
@@ -158,9 +156,8 @@ def category_detail(request, category_id, slug=None):
     podcasts = category.podcast_set.filter(pub_date__isnull=False).with_is_subscribed(
         request.user
     )
-    search = request.GET.get("q", None)
 
-    if search:
+    if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
@@ -183,13 +180,12 @@ def itunes_category(request, category_id):
         pk=category_id,
     )
     error = False
-    results = []
     try:
-        results = itunes.fetch_itunes_genre(category.itunes_genre_id)
+        results = itunes_results_with_podcast(
+            itunes.fetch_itunes_genre(category.itunes_genre_id)
+        )
     except (itunes.Timeout, itunes.Invalid):
         error = True
-
-    results = itunes_results_with_podcast(results)
 
     return TemplateResponse(
         request,
@@ -199,17 +195,13 @@ def itunes_category(request, category_id):
 
 
 def search_itunes(request):
-    search = request.GET.get("q", None)
     error = False
-    results = []
 
-    if search:
+    if search := request.GET.get("q", None):
         try:
-            results = itunes.search_itunes(search)
+            results = itunes_results_with_podcast(itunes.search_itunes(search))
         except (itunes.Timeout, itunes.Invalid):
             error = True
-
-    results = itunes_results_with_podcast(results)
 
     clear_search_url = f"{reverse('podcasts:podcast_list')}?q={search}"
 

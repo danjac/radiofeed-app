@@ -130,9 +130,7 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    current_episode = request.player.eject()
-
-    if current_episode:
+    if current_episode := request.player.eject():
         broadcasters.player_stop(request, current_episode)
 
     if request.POST.get("player_action") == "stop":
@@ -166,9 +164,8 @@ def toggle_player(request, episode_id):
 
 @require_POST
 def mark_complete(request):
-    episode = request.player.eject()
 
-    if episode:
+    if episode := request.player.eject():
         episode.log_activity(request.user, current_time=0, completed=True)
 
         broadcasters.player_stop(request, episode)
@@ -182,10 +179,7 @@ def mark_complete(request):
 @require_POST
 def player_timeupdate(request):
     """Update current play time of episode"""
-
-    episode = request.player.get_episode()
-    if episode:
-
+    if episode := request.player.get_episode():
         try:
             current_time = int(json.loads(request.body)["currentTime"])
         except (json.JSONDecodeError, KeyError, ValueError):
