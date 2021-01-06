@@ -166,11 +166,6 @@ def toggle_player(request, episode_id):
 
 @require_POST
 def mark_complete(request):
-    """Returns a JSON response to AJAX request sent by player client
-    when the episode ends. The response includes whether the user has
-    autoplay enabled, with which the player determines whether to
-    start the next episode in the podcast or close the player."""
-
     episode = request.player.eject()
 
     if episode:
@@ -190,21 +185,18 @@ def player_timeupdate(request):
 
     episode = request.player.get_episode()
     if episode:
-        current_time = get_current_time_from_request(request)
-        request.player.set_current_time(current_time)
-        episode.log_activity(request.user, current_time)
 
+        try:
+            current_time = int(json.loads(request.body)["currentTime"])
+        except (json.JSONDecodeError, KeyError, ValueError):
+            raise HttpResponseBadRequest("currentTime not provided")
+
+        episode.log_activity(request.user, current_time)
+        request.player.set_current_time(current_time)
         broadcasters.player_timeupdate(request, episode, current_time, completed=False)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
-
-
-def get_current_time_from_request(request):
-    try:
-        return int(json.loads(request.body)["currentTime"])
-    except (json.JSONDecodeError, KeyError, ValueError):
-        return 0
 
 
 def episode_bookmark_response(request, episode, is_bookmarked):
