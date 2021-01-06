@@ -27,8 +27,7 @@ def episode_list(request):
         .with_is_bookmarked(request.user)
         .select_related("podcast")
     )
-    search = request.GET.get("q", None)
-    if search:
+    if search := request.GET.get("q", None):
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.subscribed(request.user).order_by("-pub_date")[
@@ -74,8 +73,7 @@ def history(request):
         .order_by("-updated")
     )
 
-    search = request.GET.get("q", None)
-    if search:
+    if search := request.GET.get("q", None):
         logs = logs.search(search).order_by("-rank", "-updated")
     else:
         logs = logs.order_by("-updated")
@@ -92,8 +90,7 @@ def bookmark_list(request):
         .with_current_time(request.user)
         .select_related("episode", "episode__podcast")
     )
-    search = request.GET.get("q", None)
-    if search:
+    if search := request.GET.get("q", None):
         bookmarks = bookmarks.search(search).order_by("-rank", "-created")
     else:
         bookmarks = bookmarks.order_by("-created")
