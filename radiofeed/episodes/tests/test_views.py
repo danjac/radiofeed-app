@@ -218,7 +218,7 @@ class TestMarkComplete:
         mock_broadcast.assert_called()
 
 
-class TestUpdatePlayerTime:
+class TestPlayerTimeUpdate:
     def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
         req = rf.post(
             reverse("episodes:player_timeupdate"),
@@ -251,7 +251,6 @@ class TestUpdatePlayerTime:
         resp = views.player_timeupdate(req)
 
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
-
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
         log = AudioLog.objects.get(user=user, episode=episode)
@@ -271,6 +270,23 @@ class TestUpdatePlayerTime:
         resp = views.player_timeupdate(req)
 
         assert not req.player
+        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
+        assert AudioLog.objects.count() == 0
+
+    def test_invalid_data(self, rf, user, episode, mock_session):
+        req = rf.post(
+            reverse("episodes:player_timeupdate"),
+            data=json.dumps({}),
+            content_type="application/json",
+        )
+        req.user = user
+        req.session = mock_session(
+            {"player": {"episode": episode.id, "current_time": 1030}}
+        )
+        req.player = Player(req)
+
+        resp = views.player_timeupdate(req)
+
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0
 

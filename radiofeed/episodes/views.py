@@ -189,7 +189,7 @@ def player_timeupdate(request):
         try:
             current_time = int(json.loads(request.body)["currentTime"])
         except (json.JSONDecodeError, KeyError, ValueError):
-            raise HttpResponseBadRequest("currentTime not provided")
+            return HttpResponseBadRequest("currentTime not provided")
 
         episode.log_activity(request.user, current_time)
         request.player.set_current_time(current_time)
