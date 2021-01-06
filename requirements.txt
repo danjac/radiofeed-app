@@ -17,8 +17,8 @@ backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
 bleach==3.2.1             # via -r requirements.in
-boto3==1.16.48            # via -r requirements.in
-botocore==1.19.48         # via boto3, s3transfer
+boto3==1.16.49            # via -r requirements.in
+botocore==1.19.49         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.4              # via cryptography
@@ -49,7 +49,7 @@ django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
 django-turbo-allauth==0.0.2  # via -r requirements.in
-django-turbo-response==0.0.12  # via -r requirements.in, django-turbo-allauth
+django-turbo-response==0.0.14  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.5             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.7.1            # via pytest-xdist
@@ -78,7 +78,7 @@ lxml==4.6.2               # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
 msgpack==1.0.2            # via channels-redis
 nltk==3.5                 # via -r requirements.in
-numpy==1.19.4             # via pandas, scikit-learn, scipy
+numpy==1.19.5             # via pandas, scikit-learn, scipy
 oauthlib==3.1.0           # via requests-oauthlib
 packaging==20.8           # via bleach, pytest
 pandas==1.2.0             # via -r requirements.in
@@ -134,6 +134,7 @@ tqdm==4.55.1              # via nltk
 traitlets==5.0.5          # via ipython
 twisted[tls]==20.3.0      # via daphne
 txaio==20.12.1            # via autobahn
+typing-extensions==3.7.4.3  # via django-turbo-response
 unidecode==1.1.2          # via -r requirements.in
 urllib3==1.26.2           # via botocore, requests, sentry-sdk
 uvicorn==0.13.3           # via -r requirements.in
