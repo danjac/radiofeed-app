@@ -16,7 +16,7 @@ from radiofeed.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(models.QuerySet):
-    def with_is_bookmarked(self, user):
+    def with_bookmarked(self, user):
         if user.is_anonymous:
             return self.annotate(
                 is_bookmarked=models.Value(False, output_field=models.BooleanField())
@@ -223,7 +223,7 @@ class Bookmark(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def with_is_bookmarked(self, user):
+    def with_bookmarked(self, user):
         return self.annotate(
             is_bookmarked=models.Exists(
                 Bookmark.objects.filter(user=user, episode=models.OuterRef("episode"))

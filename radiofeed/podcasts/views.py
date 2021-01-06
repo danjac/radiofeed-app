@@ -58,7 +58,7 @@ def podcast_list(request):
     elif request.user.is_authenticated:
         podcasts = (
             podcasts.with_subscription_count()
-            .with_is_subscribed(request.user)
+            .with_subscribed(request.user)
             .order_by("-is_subscribed", "-subscription_count", "-pub_date")
             .distinct()
         )
@@ -88,7 +88,7 @@ def podcast_recommendations(request, podcast_id, slug=None):
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
-        .with_is_subscribed(request.user)
+        .with_subscribed(request.user)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
     )[:12]
@@ -106,7 +106,7 @@ def podcast_episode_list(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     episodes = (
         podcast.episode_set.with_current_time(request.user)
-        .with_is_bookmarked(request.user)
+        .with_bookmarked(request.user)
         .select_related("podcast")
     )
 
@@ -153,7 +153,7 @@ def category_detail(request, category_id, slug=None):
     )
     children = category.children.order_by("name")
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_is_subscribed(
+    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_subscribed(
         request.user
     )
 

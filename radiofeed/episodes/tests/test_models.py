@@ -70,7 +70,7 @@ class TestEpisodeManager:
         BookmarkFactory(episode=bookmarked_1)
         BookmarkFactory(episode=bookmarked_2)
 
-        episodes = Episode.objects.with_is_bookmarked(anonymous_user).filter(
+        episodes = Episode.objects.with_bookmarked(anonymous_user).filter(
             is_bookmarked=True
         )
         assert episodes.count() == 0
@@ -84,7 +84,7 @@ class TestEpisodeManager:
         BookmarkFactory(episode=bookmarked_1)
         BookmarkFactory(episode=bookmarked_2)
 
-        episodes = Episode.objects.with_is_bookmarked(user).filter(is_bookmarked=True)
+        episodes = Episode.objects.with_bookmarked(user).filter(is_bookmarked=True)
         assert episodes.count() == 1
         assert episodes.first() == bookmarked_1
 

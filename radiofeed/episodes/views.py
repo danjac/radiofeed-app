@@ -24,7 +24,7 @@ def episode_list(request):
     only unless filtered for search."""
     episodes = (
         Episode.objects.with_current_time(request.user)
-        .with_is_bookmarked(request.user)
+        .with_bookmarked(request.user)
         .select_related("podcast")
     )
     if search := request.GET.get("q", None):
@@ -68,7 +68,7 @@ def episode_detail(request, episode_id, slug=None):
 def history(request):
     logs = (
         AudioLog.objects.filter(user=request.user)
-        .with_is_bookmarked(request.user)
+        .with_bookmarked(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )

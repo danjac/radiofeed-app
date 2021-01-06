@@ -73,7 +73,7 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_is_subscribed(self, user):
+    def with_subscribed(self, user):
         if user.is_anonymous:
             return self.annotate(
                 is_subscribed=models.Value(False, output_field=models.BooleanField())
@@ -159,7 +159,7 @@ class Subscription(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def with_is_subscribed(self, user):
+    def with_subscribed(self, user):
         """Marks which recommendations are subscribed by this suer."""
         if user.is_anonymous:
             return self.annotate(

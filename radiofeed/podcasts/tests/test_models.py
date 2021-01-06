@@ -17,7 +17,7 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRecommendationManager:
-    def test_with_is_subscribed_anonymous(self, anonymous_user):
+    def test_with_subscribed_anonymous(self, anonymous_user):
         subscribed_1 = PodcastFactory()
         subscribed_2 = PodcastFactory()
         PodcastFactory()
@@ -28,12 +28,12 @@ class TestRecommendationManager:
 
         RecommendationFactory(recommended=subscribed_1)
 
-        recommendations = Podcast.objects.with_is_subscribed(anonymous_user).filter(
+        recommendations = Podcast.objects.with_subscribed(anonymous_user).filter(
             is_subscribed=True
         )
         assert recommendations.count() == 0
 
-    def test_with_is_subscribed_authenticated(self, user):
+    def test_with_subscribed_authenticated(self, user):
         subscribed_1 = PodcastFactory()
         subscribed_2 = PodcastFactory()
         PodcastFactory()
@@ -45,7 +45,7 @@ class TestRecommendationManager:
         RecommendationFactory(recommended=subscribed_1)
 
         recommendations = (
-            Recommendation.objects.with_is_subscribed(user)
+            Recommendation.objects.with_subscribed(user)
             .filter(is_subscribed=True)
             .select_related("recommended")
         )
@@ -103,7 +103,7 @@ class TestPodcastManager:
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
-    def test_with_is_subscribed_anonymous(self, anonymous_user):
+    def test_with_subscribed_anonymous(self, anonymous_user):
         subscribed_1 = PodcastFactory()
         subscribed_2 = PodcastFactory()
         PodcastFactory()
@@ -112,12 +112,12 @@ class TestPodcastManager:
         SubscriptionFactory(podcast=subscribed_1)
         SubscriptionFactory(podcast=subscribed_2)
 
-        podcasts = Podcast.objects.with_is_subscribed(anonymous_user).filter(
+        podcasts = Podcast.objects.with_subscribed(anonymous_user).filter(
             is_subscribed=True
         )
         assert podcasts.count() == 0
 
-    def test_with_is_subscribed_authenticated(self, user):
+    def test_with_subscribed_authenticated(self, user):
         subscribed_1 = PodcastFactory()
         subscribed_2 = PodcastFactory()
         PodcastFactory()
@@ -126,7 +126,7 @@ class TestPodcastManager:
         SubscriptionFactory(podcast=subscribed_1)
         SubscriptionFactory(podcast=subscribed_2)
 
-        podcasts = Podcast.objects.with_is_subscribed(user).filter(is_subscribed=True)
+        podcasts = Podcast.objects.with_subscribed(user).filter(is_subscribed=True)
         assert podcasts.count() == 1
         assert podcasts.first() == subscribed_1
 
