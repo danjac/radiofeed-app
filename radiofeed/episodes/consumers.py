@@ -39,14 +39,6 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
         except Episode.DoesNotExist:
             return None
 
-    def event_matches_request_id(self, event):
-        return self.request_id == event["request_id"]
-
-    async def send_turbo_stream(self, target, template_name, context=None):
-        await self.send(
-            TurboStream(target).replace.template(template_name, context or {}).render()
-        )
-
     async def send_episode_play_buttons(self, event, is_playing):
         if self.event_matches_request_id(event) and (
             episode := await self.get_episode(event)
@@ -56,3 +48,11 @@ class PlayerConsumer(AsyncJsonWebsocketConsumer):
                 "episodes/_play_buttons_toggle.html",
                 {"episode": episode, "is_playing": is_playing},
             )
+
+    def event_matches_request_id(self, event):
+        return self.request_id == event["request_id"]
+
+    async def send_turbo_stream(self, target, template_name, context=None):
+        await self.send(
+            TurboStream(target).replace.template(template_name, context or {}).render()
+        )
