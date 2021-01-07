@@ -55,17 +55,23 @@ def podcast_list(request):
 
     if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
-    elif request.user.is_authenticated:
-        podcasts = (
-            podcasts.with_subscription_count()
-            .with_subscribed(request.user)
-            .order_by("-is_subscribed", "-subscription_count", "-pub_date")
-            .distinct()
-        )
     else:
-        podcasts = podcasts.with_subscription_count().order_by(
-            "-subscription_count", "-pub_date"
+        has_subscriptions = (
+            request.user.subscription_set.exists()
+            if request.user.is_authenticated
+            else False
         )
+        if has_subscriptions:
+            podcasts = (
+                podcasts.with_subscription_count()
+                .with_subscribed(request.user)
+                .order_by("-is_subscribed", "-pub_date", "-subscription_count")
+                .distinct()
+            )
+        else:
+            podcasts = podcasts.with_subscription_count().order_by(
+                "-subscription_count", "-pub_date"
+            )
 
     return TemplateResponse(
         request, "podcasts/index.html", {"podcasts": podcasts, "search": search}
