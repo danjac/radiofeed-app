@@ -179,12 +179,13 @@ def itunes_category(request, category_id):
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
         pk=category_id,
     )
-    error = False
     try:
         results = itunes_results_with_podcast(
             itunes.fetch_itunes_genre(category.itunes_genre_id)
         )
+        error = False
     except (itunes.Timeout, itunes.Invalid):
+        results = []
         error = True
 
     return TemplateResponse(
@@ -195,7 +196,9 @@ def itunes_category(request, category_id):
 
 
 def search_itunes(request):
+
     error = False
+    results = []
 
     if search := request.GET.get("q", None):
         try:

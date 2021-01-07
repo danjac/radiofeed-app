@@ -11,7 +11,7 @@ import pytest
 from radiofeed.episodes.factories import EpisodeFactory
 
 # Local
-from .. import views
+from .. import itunes, views
 from ..factories import (
     CategoryFactory,
     PodcastFactory,
@@ -314,8 +314,23 @@ class TestITunesCategory:
         resp = views.itunes_category(req, category.id)
 
         assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["error"]
         assert len(resp.context_data["results"]) == 1
         assert resp.context_data["results"][0].title == "test title"
+
+    def test_invalid_results(self, rf, mocker):
+
+        category = CategoryFactory(itunes_genre_id=1200)
+
+        mock = mocker.patch.object(views.itunes, "fetch_itunes_genre")
+        mock.side_effect = itunes.Invalid
+
+        req = rf.get(reverse("podcasts:itunes_category", args=[category.id]))
+        resp = views.itunes_category(req, category.id)
+
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0
 
 
 class TestSearchITunes:
@@ -335,5 +350,24 @@ class TestSearchITunes:
         resp = views.search_itunes(req)
 
         assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["error"]
         assert len(resp.context_data["results"]) == 1
         assert resp.context_data["results"][0].title == "test title"
+
+    def test_search_is_empty(self, rf, mocker):
+        req = rf.get(reverse("podcasts:search_itunes"))
+        resp = views.search_itunes(req)
+
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0
+
+    def test_invalid_results(self, rf, mocker):
+        mock = mocker.patch.object(views.itunes, "search_itunes")
+        mock.side_effect = itunes.Invalid
+        req = rf.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        resp = views.search_itunes(req)
+
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0
