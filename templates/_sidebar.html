@@ -1,0 +1,140 @@
+      <nav class="pt-3">
+        <ul class="">
+          <li class="py-2">
+            {% active_route 'podcasts:podcast_list' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
+              Podcasts
+            </a>
+          </li>
+          <li class="py-2">
+            {% active_route 'podcasts:category_list' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.match %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Discover
+            </a>
+          </li>
+
+          {% if user.is_authenticated %}
+          {% if user.subscription_set.exists %}
+          <li class="py-2">
+            {% active_route 'episodes:episode_list' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              New Releases
+            </a>
+          </li>
+          {% endif %}
+
+          <li class="py-2">
+            {% active_route 'episodes:bookmark_list' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              Bookmarks
+            </a>
+          </li>
+
+          <li class="py-2">
+            {% active_route 'episodes:history' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+              </svg>
+              History
+            </a>
+          </li>
+
+          <li class="py-2">
+            {% active_route '/account/' as route %}
+            <a href="{% url 'user_preferences' %}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.match %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              Settings
+            </a>
+          </li>
+          {% endif %}
+
+          <li class="py-2">
+            {% active_route 'about' as route %}
+            <a href="{{ route.url }}"
+               data-turbo-frame="_top"
+               class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              About
+            </a>
+          </li>
+
+        </ul>
+      </nav>

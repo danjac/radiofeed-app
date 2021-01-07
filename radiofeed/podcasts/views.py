@@ -1,4 +1,5 @@
 # Django
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
@@ -52,6 +53,7 @@ def podcast_cover_image(request, podcast_id):
 def podcast_list(request):
     """Shows list of podcasts"""
     podcasts = Podcast.objects.filter(pub_date__isnull=False)
+    top_rated_podcasts = False
 
     if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
@@ -59,17 +61,28 @@ def podcast_list(request):
         subscriptions = (
             list(request.user.subscription_set.values_list("podcast", flat=True))
             if request.user.is_authenticated
-            else False
+            else []
         )
         if subscriptions:
             podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
         else:
-            podcasts = podcasts.with_subscription_count().order_by(
-                "-subscription_count", "-pub_date"
+            podcasts = (
+                Podcast.objects.filter(pub_date__isnull=False)
+                .with_subscription_count()
+                .order_by("-subscription_count", "-pub_date")[
+                    : settings.DEFAULT_PAGE_SIZE
+                ]
             )
+            top_rated_podcasts = True
 
     return TemplateResponse(
-        request, "podcasts/index.html", {"podcasts": podcasts, "search": search,},
+        request,
+        "podcasts/index.html",
+        {
+            "podcasts": podcasts,
+            "top_rated_podcasts": top_rated_podcasts,
+            "search": search,
+        },
     )
 
 

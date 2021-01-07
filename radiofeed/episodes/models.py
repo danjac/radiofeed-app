@@ -33,13 +33,9 @@ class EpisodeQuerySet(models.QuerySet):
 
     def subscribed(self, user):
         if user.is_anonymous:
-            return self
+            return self.none()
 
         subscriptions = list(user.subscription_set.values_list("podcast", flat=True))
-
-        if not subscriptions:
-            return self
-
         return self.filter(podcast__in=subscriptions)
 
     def search(self, search_term):

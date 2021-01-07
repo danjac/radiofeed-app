@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+# Third Party Libraries
+from turbo_response.views import TurboFrameTemplateView
+
 # RadioFeed
 from radiofeed.users.views import accept_cookies, delete_account, user_preferences
 
@@ -15,6 +18,13 @@ urlpatterns = [
     path("account/~delete/", delete_account, name="delete_account"),
     path("account/", include("turbo_allauth.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
+    path(
+        "nav/",
+        TurboFrameTemplateView.as_view(
+            turbo_frame_dom_id="sidebar", template_name="_sidebar.html"
+        ),
+        name="sidebar",
+    ),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
 ]

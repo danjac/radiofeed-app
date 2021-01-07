@@ -3,7 +3,13 @@
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
-  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">Podcasts</h1>
+  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">
+    {% if top_rated_podcasts %}
+    Top-Rated Podcasts
+    {% else %}
+    Podcasts
+    {% endif %}
+  </h1>
   <div class="flex items-center justify-center sm:justify-end text-sm">
     {% if search %}
     <div class="mr-2 flex items-center hidden md:inline-block">
@@ -33,8 +39,13 @@
 {% include "_pagination.html" with css_class="mb-3"  %}
 {% endif %}
 
+{% if top_rated_podcasts and user.is_authenticated %}
+<p class="text-center sm:text-left mb-3">Search for new podcasts here or on the <a class="font-semibold underline"
+     href="{% url 'podcasts:category_list' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>
+{% endif %}
+
 {% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" with is_subscribed=podcast.is_subscribed %}
+{% include "podcasts/_podcast.html" %}
 {% empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}"
@@ -42,4 +53,5 @@
 {% endif %}
 {% endfor %}
 {% include "_pagination.html" %}
+
 {% endblock content %}
