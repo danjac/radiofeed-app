@@ -3,14 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrame
+from turbo_response import TurboFrame, redirect_303
 
 # RadioFeed
 from radiofeed.users.decorators import staff_member_required
@@ -24,7 +24,7 @@ from .tasks import sync_podcast_feed
 
 def landing_page(request):
     if request.user.is_authenticated:
-        return redirect("podcasts:podcast_list")
+        return redirect_303("podcasts:podcast_list")
 
     podcasts = (
         Podcast.objects.with_subscription_count()
@@ -252,7 +252,7 @@ def add_podcast(request):
                 .template("podcasts/_add_new_button.html", {"is_added": True},)
                 .response(request)
             )
-        return redirect(podcast)
+        return redirect_303(podcast)
 
     return HttpResponseBadRequest()
 
@@ -298,4 +298,4 @@ def podcast_subscribe_response(request, podcast, is_subscribed):
             )
             .response(request)
         )
-    return redirect(podcast.get_absolute_url())
+    return redirect_303(podcast.get_absolute_url())

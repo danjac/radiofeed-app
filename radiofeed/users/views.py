@@ -7,13 +7,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboStream
+from turbo_response import TurboStream, redirect_303
 
 # Local
 from .forms import UserPreferencesForm
@@ -28,7 +27,7 @@ def user_preferences(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect(request.path)
+            return redirect_303(request.path)
     else:
         form = UserPreferencesForm(instance=request.user)
 
@@ -48,7 +47,7 @@ def delete_account(request):
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect(settings.HOME_URL)
+        return redirect_303(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
 
 

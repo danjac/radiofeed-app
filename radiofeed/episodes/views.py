@@ -7,12 +7,12 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrame
+from turbo_response import TurboFrame, redirect_303
 
 # Local
 from . import broadcasters
@@ -200,4 +200,4 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             )
             .response(request)
         )
-    return redirect(episode.get_absolute_url())
+    return redirect_303(episode.get_absolute_url())

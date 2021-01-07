@@ -48,13 +48,13 @@ django-redis==4.12.1      # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
-django-turbo-allauth==0.0.2  # via -r requirements.in
-django-turbo-response==0.0.16  # via -r requirements.in, django-turbo-allauth
+django-turbo-allauth==0.0.3  # via -r requirements.in
+django-turbo-response==0.0.17  # via -r requirements.in
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.5             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.7.1            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
-faker==5.3.0              # via factory-boy
+faker==5.4.0              # via factory-boy
 feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2019.11.30     # via django-silk
