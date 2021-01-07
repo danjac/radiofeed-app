@@ -31,13 +31,6 @@ class EpisodeQuerySet(models.QuerySet):
             current_time=models.Subquery(logs.values("current_time")),
         )
 
-    def subscribed(self, user):
-        if user.is_anonymous:
-            return self.none()
-
-        subscriptions = list(user.subscription_set.values_list("podcast", flat=True))
-        return self.filter(podcast__in=subscriptions)
-
     def search(self, search_term):
         if not search_term:
             return self.none()

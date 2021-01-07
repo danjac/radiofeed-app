@@ -32,7 +32,7 @@ class TestEpisodeList:
         req.user = anonymous_user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 3
+        assert len(resp.context_data["episodes"]) == 0
 
     def test_user_no_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)
@@ -40,7 +40,7 @@ class TestEpisodeList:
         req.user = user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 3
+        assert len(resp.context_data["episodes"]) == 0
 
     def test_user_has_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)

@@ -20,18 +20,31 @@ from .models import AudioLog, Bookmark, Episode
 
 
 def episode_list(request):
-    """As we have a huge number of episodes, either just show first page
-    only unless filtered for search."""
     episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
+    subscriptions = (
+        list(request.user.subscription_set.values_list("podcast", flat=True))
+        if request.user.is_authenticated
+        else []
+    )
+    has_subscriptions = bool(subscriptions)
+
     if search := request.GET.get("q", None):
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
-    else:
-        episodes = episodes.subscribed(request.user).order_by("-pub_date")[
+    elif subscriptions:
+        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
             : settings.DEFAULT_PAGE_SIZE
         ]
+    else:
+        episodes = episodes.none()
 
     return TemplateResponse(
-        request, "episodes/index.html", {"episodes": episodes, "search": search},
+        request,
+        "episodes/index.html",
+        {
+            "episodes": episodes,
+            "has_subscriptions": has_subscriptions,
+            "search": search,
+        },
     )
 
 

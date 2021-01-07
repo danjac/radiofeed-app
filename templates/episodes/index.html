@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% load pagination %}
 
-{% block subtitle %} | New Releases{% endblock %}
+{% block subtitle %} | {{ search|yesno:"Search Episodes,New Releases" }}{% endblock %}
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
-  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">New Releases</h1>
-  <div class="flex items-center justify-center sm:justify-end">
+  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">
     {% if search %}
+    Search Episodes
+    {% else %}
+    New Releases
+    {% endif %}
+  </h1>
+  <div class="flex items-center justify-center sm:justify-end">
+    {% if search and has_subscriptions %}
     <div class="hidden sm:inline-block mr-2 text-sm">
       <a class="font-semibold hover:text-gray-300"
          href="{{ request.path }}">Clear</a>
@@ -16,7 +22,7 @@
     {% include "_search_form.html" with placeholder="Search episodes..." %}
   </div>
 </div>
-{% if search %}
+{% if search and has_subscriptions %}
 <div class="mb-3 flex justify-center items-center sm:hidden text-sm">
   <a class="font-semibold hover:text-gray-300"
      href="{{ request.path }}">Clear</a>
@@ -41,6 +47,10 @@
 
 {% for episode in episodes %}
 {% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
+{% empty %}
+{% if user.is_authenticated %}
+<p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet.</p>
+{% endif %}
 {% endfor %}
 {% endif %}
 

@@ -38,7 +38,6 @@
           </li>
 
           {% if user.is_authenticated %}
-          {% if user.subscription_set.exists %}
           <li class="py-2">
             {% active_route 'episodes:episode_list' as route %}
             <a href="{{ route.url }}"
@@ -57,7 +56,7 @@
               New Releases
             </a>
           </li>
-          {% endif %}
+
 
           <li class="py-2">
             {% active_route 'episodes:bookmark_list' as route %}
