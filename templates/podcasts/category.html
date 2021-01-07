@@ -66,7 +66,7 @@
 {% endif %}
 
 {% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" with is_subscribed=podcast.is_subscribed %}
+{% include "podcasts/_podcast.html" %}
 {% empty %}
 <p class="text-center sm:text-left mb-3">
   {% if search %}

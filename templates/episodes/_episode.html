@@ -1,7 +1,7 @@
 {% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="flex justify-between items-center mb-3 p-2 border {% if current_time or completed %}border-purple-500{% elif is_bookmarked %}border-blue-500{% else %}border-gray-500{% endif %}">
+<div class="flex justify-between items-center mb-3 p-2 border {% if current_time or completed %}border-purple-500{% else is_bookmarked %}border-blue-500">
   <div>
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode.get_absolute_url }}"

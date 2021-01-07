@@ -22,11 +22,7 @@ from .models import AudioLog, Bookmark, Episode
 def episode_list(request):
     """As we have a huge number of episodes, either just show first page
     only unless filtered for search."""
-    episodes = (
-        Episode.objects.with_current_time(request.user)
-        .with_bookmarked(request.user)
-        .select_related("podcast")
-    )
+    episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
     if search := request.GET.get("q", None):
         episodes = episodes.search(search).order_by("-rank", "-pub_date")
     else:
@@ -68,7 +64,6 @@ def episode_detail(request, episode_id, slug=None):
 def history(request):
     logs = (
         AudioLog.objects.filter(user=request.user)
-        .with_bookmarked(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )

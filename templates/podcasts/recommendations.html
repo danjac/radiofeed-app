@@ -2,6 +2,6 @@
 
 {% block podcast_content %}
 {% for recommendation in recommendations %}
-{% include "podcasts/_podcast.html" with podcast=recommendation.recommended is_subscribed=recommendation.is_subscribed %}
+{% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
 {% endfor %}
 {% endblock podcast_content %}

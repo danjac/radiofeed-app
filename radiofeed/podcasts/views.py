@@ -56,25 +56,20 @@ def podcast_list(request):
     if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")
     else:
-        has_subscriptions = (
-            request.user.subscription_set.exists()
+        subscriptions = (
+            list(request.user.subscription_set.values_list("podcast", flat=True))
             if request.user.is_authenticated
             else False
         )
-        if has_subscriptions:
-            podcasts = (
-                podcasts.with_subscription_count()
-                .with_subscribed(request.user)
-                .order_by("-is_subscribed", "-pub_date", "-subscription_count")
-                .distinct()
-            )
+        if subscriptions:
+            podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
         else:
             podcasts = podcasts.with_subscription_count().order_by(
                 "-subscription_count", "-pub_date"
             )
 
     return TemplateResponse(
-        request, "podcasts/index.html", {"podcasts": podcasts, "search": search}
+        request, "podcasts/index.html", {"podcasts": podcasts, "search": search,},
     )
 
 
@@ -94,7 +89,6 @@ def podcast_recommendations(request, podcast_id, slug=None):
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
-        .with_subscribed(request.user)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
     )[:12]
@@ -110,10 +104,8 @@ def podcast_recommendations(request, podcast_id, slug=None):
 def podcast_episode_list(request, podcast_id, slug=None):
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
-    episodes = (
-        podcast.episode_set.with_current_time(request.user)
-        .with_bookmarked(request.user)
-        .select_related("podcast")
+    episodes = podcast.episode_set.with_current_time(request.user).select_related(
+        "podcast"
     )
 
     search = request.GET.get("q", None)
@@ -159,9 +151,7 @@ def category_detail(request, category_id, slug=None):
     )
     children = category.children.order_by("name")
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_subscribed(
-        request.user
-    )
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if search := request.GET.get("q", None):
         podcasts = podcasts.search(search).order_by("-rank", "-pub_date")

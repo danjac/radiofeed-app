@@ -31,7 +31,7 @@
 {% endif %}
 
 {% for episode in page_obj %}
-{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed is_bookmarked=episode.is_bookmarked %}
+{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
 {% empty %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endfor %}
@@ -40,7 +40,7 @@
 {% else %}
 
 {% for episode in episodes %}
-{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed is_bookmarked=episode.is_bookmarked %}
+{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
 {% endfor %}
 {% endif %}
 

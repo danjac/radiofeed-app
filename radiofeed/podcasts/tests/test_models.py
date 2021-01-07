@@ -17,41 +17,6 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRecommendationManager:
-    def test_with_subscribed_anonymous(self, anonymous_user):
-        subscribed_1 = PodcastFactory()
-        subscribed_2 = PodcastFactory()
-        PodcastFactory()
-
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_2)
-
-        RecommendationFactory(recommended=subscribed_1)
-
-        recommendations = Podcast.objects.with_subscribed(anonymous_user).filter(
-            is_subscribed=True
-        )
-        assert recommendations.count() == 0
-
-    def test_with_subscribed_authenticated(self, user):
-        subscribed_1 = PodcastFactory()
-        subscribed_2 = PodcastFactory()
-        PodcastFactory()
-
-        SubscriptionFactory(podcast=subscribed_1, user=user)
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_2)
-
-        RecommendationFactory(recommended=subscribed_1)
-
-        recommendations = (
-            Recommendation.objects.with_subscribed(user)
-            .filter(is_subscribed=True)
-            .select_related("recommended")
-        )
-        assert recommendations.count() == 1
-        assert recommendations.first().recommended == subscribed_1
-
     def test_for_user(self, user):
 
         subscribed = SubscriptionFactory(user=user).podcast
@@ -102,33 +67,6 @@ class TestPodcastManager:
     def test_search(self):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
-
-    def test_with_subscribed_anonymous(self, anonymous_user):
-        subscribed_1 = PodcastFactory()
-        subscribed_2 = PodcastFactory()
-        PodcastFactory()
-
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_2)
-
-        podcasts = Podcast.objects.with_subscribed(anonymous_user).filter(
-            is_subscribed=True
-        )
-        assert podcasts.count() == 0
-
-    def test_with_subscribed_authenticated(self, user):
-        subscribed_1 = PodcastFactory()
-        subscribed_2 = PodcastFactory()
-        PodcastFactory()
-
-        SubscriptionFactory(podcast=subscribed_1, user=user)
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_2)
-
-        podcasts = Podcast.objects.with_subscribed(user).filter(is_subscribed=True)
-        assert podcasts.count() == 1
-        assert podcasts.first() == subscribed_1
 
     def test_with_subscription_count(self):
         subscribed_1 = PodcastFactory()

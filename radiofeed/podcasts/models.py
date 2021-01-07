@@ -73,17 +73,6 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_subscribed(self, user):
-        if user.is_anonymous:
-            return self.annotate(
-                is_subscribed=models.Value(False, output_field=models.BooleanField())
-            )
-        return self.annotate(
-            is_subscribed=models.Exists(
-                Subscription.objects.filter(user=user, podcast=models.OuterRef("pk"))
-            )
-        )
-
     def with_subscription_count(self):
         return self.annotate(subscription_count=models.Count("subscription"))
 

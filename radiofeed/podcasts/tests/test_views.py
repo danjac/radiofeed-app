@@ -66,7 +66,7 @@ class TestPodcastList:
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 4
+        assert len(resp.context_data["podcasts"]) == 1
         assert resp.context_data["podcasts"][0] == sub.podcast
 
     def test_search_anonymous(self, rf, anonymous_user, transactional_db):

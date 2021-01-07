@@ -61,33 +61,6 @@ class TestEpisodeManager:
         assert episode.current_time == 20
         assert episode.completed is not None
 
-    def test_is_bookmarked_anonymous(self, anonymous_user):
-        bookmarked_1 = EpisodeFactory()
-        bookmarked_2 = EpisodeFactory()
-        EpisodeFactory()
-
-        BookmarkFactory(episode=bookmarked_1)
-        BookmarkFactory(episode=bookmarked_1)
-        BookmarkFactory(episode=bookmarked_2)
-
-        episodes = Episode.objects.with_bookmarked(anonymous_user).filter(
-            is_bookmarked=True
-        )
-        assert episodes.count() == 0
-
-    def test_is_bookmarked_authenticated(self, user):
-        bookmarked_1 = EpisodeFactory()
-        bookmarked_2 = EpisodeFactory()
-        EpisodeFactory()
-
-        BookmarkFactory(episode=bookmarked_1, user=user)
-        BookmarkFactory(episode=bookmarked_1)
-        BookmarkFactory(episode=bookmarked_2)
-
-        episodes = Episode.objects.with_bookmarked(user).filter(is_bookmarked=True)
-        assert episodes.count() == 1
-        assert episodes.first() == bookmarked_1
-
     def test_search(self):
         EpisodeFactory(title="testing")
         assert Episode.objects.search("testing").count() == 1
