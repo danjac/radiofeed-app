@@ -1,0 +1,70 @@
+{% load i18n static %}
+<header class="bg-gradient-to-b from-black to-indigo-900 text-white">
+  <div class="flex items-center justify-between p-3">
+
+    <div class="flex items-center flex-shrink-0 mr-6 text-lg">
+      <button class="lg:hidden mr-3"
+              data-action="toggle#toggle"
+              data-toggle-target="item">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             class="h-6 w-6">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <button class="hidden lg:hidden mr-3"
+              data-action="toggle#toggle"
+              data-toggle-target="item">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke="currentColor"
+             class="h-6 w-6">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <img src="{% static 'img/wave.png' %}"
+           height="32"
+           width="32"
+           alt="{{ request.site.name }}"
+           class="mr-4 cursor-pointer hidden lg:inline-block">
+
+      <a class="text-lg font-bold"
+         href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="text-sm flex items-center">
+      <a href="{% url 'user_preferences' %}"
+         class="inline-block text-white hover:text-gray-300 mr-3">
+        {{ user.username }}
+      </a>
+      <form method="post"
+            action="{% url 'account_logout' %}"
+            class="inline-block">
+        {% csrf_token %}
+        <button class="text-white hover:text-gray-300">{% translate "Logout" %}</button>
+      </form>
+    </div>
+    {% else %}
+    {% block navbar_auth %}
+    <div class="text-sm flex items-center">
+      <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
+         class="inline-block text-white hover:text-gray-300 mr-3">{% translate "Login" %}</a>
+      <a href="{% url 'account_signup' %}"
+         class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
+    </div>
+    {% endblock navbar_auth %}
+    {% endif %}
+  </div>
+
+</header>
+
