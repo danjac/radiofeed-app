@@ -5,30 +5,30 @@
 <h1 class="text-lg font-bold mb-3">Settings</h1>
 <nav class="mb-3">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
-    {% active_route 'user_preferences' as route %}
-    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+    {% active_link 'user_preferences' as link %}
+    <li class="mr-6 pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-gray-300"
-         href="{{ route.url }}">Preferences</a>
+         href="{{ link.url }}">Preferences</a>
     </li>
-    {% active_route 'account_email' as route %}
-    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+    {% active_link 'account_email' as link %}
+    <li class="mr-6 pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-gray-300"
-         href="{{ route.url }}">Email Addresses</a>
+         href="{{ link.url }}">Email Addresses</a>
     </li>
-    {% active_route 'account_change_password' as route %}
-    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+    {% active_link 'account_change_password' as link %}
+    <li class="mr-6 pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-gray-300"
-         href="{{ route.url }}">Change Password</a>
+         href="{{ link.url }}">Change Password</a>
     </li>
-    {% active_route 'socialaccount_connections' as route %}
-    <li class="mr-6 pb-1{% if route.exact %} tab--active{% endif %}">
+    {% active_link 'socialaccount_connections' as link %}
+    <li class="mr-6 pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-gray-300"
-         href="{{ route.url }}">Social Logins</a>
+         href="{{ link.url }}">Social Logins</a>
     </li>
-    {% active_route 'delete_account' as route %}
-    <li class="pb-1{% if route.exact %} tab--active{% endif %}">
+    {% active_link 'delete_account' as link %}
+    <li class="pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-gray-300"
-         href="{{ route.url }}">Delete Account</a>
+         href="{{ link.url }}">Delete Account</a>
     </li>
   </ul>
 </nav>

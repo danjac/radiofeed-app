@@ -13,17 +13,17 @@ from .html import stripentities as _stripentities
 
 register = template.Library()
 
-Route = collections.namedtuple("Route", "url match exact")
+ActiveLink = collections.namedtuple("Link", "url match exact")
 
 
 @register.simple_tag(takes_context=True)
-def active_route(context, url_name, *args, **kwargs):
+def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
-        return Route(url, True, True)
+        return ActiveLink(url, True, True)
     elif context["request"].path.startswith(url):
-        return Route(url, True, False)
-    return Route(url, False, False)
+        return ActiveLink(url, True, False)
+    return ActiveLink(url, False, False)
 
 
 @register.filter
