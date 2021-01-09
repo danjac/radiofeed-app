@@ -3,7 +3,6 @@
           <li class="py-2">
             {% active_route 'podcasts:podcast_list' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -21,7 +20,6 @@
           <li class="py-2">
             {% active_route 'podcasts:category_list' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -41,7 +39,6 @@
           <li class="py-2">
             {% active_route 'episodes:episode_list' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -61,7 +58,6 @@
           <li class="py-2">
             {% active_route 'episodes:bookmark_list' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -80,7 +76,6 @@
           <li class="py-2">
             {% active_route 'episodes:history' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -99,7 +94,6 @@
           <li class="py-2">
             {% active_route '/account/' as route %}
             <a href="{% url 'user_preferences' %}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
@@ -119,7 +113,6 @@
           <li class="py-2">
             {% active_route 'about' as route %}
             <a href="{{ route.url }}"
-               data-turbo-frame="_top"
                class="flex items-center hover:text-blue-400{% if route.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
