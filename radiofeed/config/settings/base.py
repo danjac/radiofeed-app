@@ -51,7 +51,6 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 ROOT_URLCONF = "radiofeed.config.urls"
 
 ASGI_APPLICATION = "radiofeed.config.asgi.application"
-WSGI_APPLICATION = "radiofeed.config.wsgi.application"
 
 LOCAL_APPS = [
     "radiofeed.episodes.apps.EpisodesConfig",
