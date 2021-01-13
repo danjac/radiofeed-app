@@ -4,6 +4,7 @@
 
       <a href="{{ podcast.get_absolute_url }}">
         <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
+                     loading="lazy"
                      src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
           {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
         </turbo-frame>

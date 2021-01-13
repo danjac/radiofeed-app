@@ -1492,27 +1492,6 @@
   },
   {
     "model": "podcasts.podcast",
-    "pk": 99,
-    "fields": {
-      "rss": "https://jockopodcast.libsyn.com/rss",
-      "etag": "",
-      "title": "Jocko Podcast",
-      "pub_date": null,
-      "cover_image": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/jocko-podcast/id1070322219?uo=4",
-      "language": "aa",
-      "description": "Retired Navy SEAL, Jocko Willink and Director, Echo Charles discuss discipline and leadership in business, war, relationships and everyday life.",
-      "link": "https://redcircle.com/shows/jocko-podcast",
-      "keywords": "",
-      "authors": "Jocko DEFCOR Network",
-      "last_updated": null,
-      "explicit": true,
-      "search_vector": "'jocko':1 'podcast':2",
-      "categories": [6, 11, 30]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
     "pk": 102,
     "fields": {
       "rss": "https://feeds.megaphone.fm/lore",
@@ -9762,27 +9741,6 @@
       "explicit": false,
       "search_vector": "'daili':16 'dc':10 'deadlin':1 'donald':11 'hous':3,6 'msnbc':15 'nbc':7 'news':8,17 'nicoll':13 'trump':12 'wallac':14 'washington':9 'white':2,5",
       "categories": [9, 15, 68]
-    }
-  },
-  {
-    "model": "podcasts.podcast",
-    "pk": 503,
-    "fields": {
-      "rss": "https://feeds.simplecast.com/xl36XBC2",
-      "etag": "",
-      "title": "Serial",
-      "pub_date": null,
-      "cover_image": null,
-      "itunes": "https://podcasts.apple.com/us/podcast/serial/id917918570?uo=4",
-      "language": "en",
-      "description": "Serial is a podcast from the creators of This American Life, hosted by Sarah Koenig. Serial unfolds one story - a true story - over the course of a whole season. The show follows the plot and characters wherever they lead, through many surprising twists and turns. Sarah won't know what happens at the end of the story until she gets there, not long before you get there with her. Each week she'll bring you the latest chapter, so it's important to listen in, starting with Episode 1. New episodes are released on Thursday mornings.",
-      "link": "https://serialpodcast.org",
-      "keywords": "",
-      "authors": "Serial",
-      "last_updated": null,
-      "explicit": false,
-      "search_vector": "'serial':1",
-      "categories": [15, 19]
     }
   },
   {
