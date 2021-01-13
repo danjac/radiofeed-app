@@ -8,7 +8,7 @@ from radiofeed.podcasts.models import Podcast
 from ..defaulttags import active_link
 
 
-class TestActiveRoute:
+class TestActiveLink:
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
