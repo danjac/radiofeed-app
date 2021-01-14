@@ -1,6 +1,5 @@
 # Standard Library
 import datetime
-import http
 
 # Django
 from django.conf import settings
@@ -12,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboStream, redirect_303
+from turbo_response import TemplateFormResponse, TurboStream, redirect_303
 
 # Local
 from .forms import UserPreferencesForm
@@ -31,14 +30,7 @@ def user_preferences(request):
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return TemplateResponse(
-        request,
-        "account/preferences.html",
-        {"form": form},
-        status=http.HTTPStatus.UNPROCESSABLE_ENTITY
-        if form.errors
-        else http.HTTPStatus.OK,
-    )
+    return TemplateFormResponse(request, form, "account/preferences.html")
 
 
 @login_required
