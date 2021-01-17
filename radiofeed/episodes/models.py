@@ -35,7 +35,7 @@ class EpisodeQuerySet(models.QuerySet):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term)
+        query = SearchQuery(search_term, search_type="websearch")
         return self.annotate(
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
@@ -168,7 +168,7 @@ class BookmarkQuerySet(models.QuerySet):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term)
+        query = SearchQuery(search_term, search_type="websearch")
         return self.annotate(
             episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
             podcast_rank=SearchRank(
@@ -205,7 +205,7 @@ class AudioLogQuerySet(models.QuerySet):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term)
+        query = SearchQuery(search_term, search_type="websearch")
         return self.annotate(
             episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
             podcast_rank=SearchRank(

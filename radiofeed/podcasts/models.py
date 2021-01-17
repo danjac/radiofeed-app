@@ -68,7 +68,7 @@ class PodcastQuerySet(models.QuerySet):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term)
+        query = SearchQuery(search_term, search_type="websearch")
         return self.annotate(
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
