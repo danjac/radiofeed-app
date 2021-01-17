@@ -38,13 +38,23 @@ class TestGetPlayer:
 
     def test_get_player_if_episode_does_not_exist(self, rf):
         req = rf.get("/")
-        req.session = {"player": {"episode": 12345, "current_time": 1000,}}
+        req.session = {
+            "player": {
+                "episode": 12345,
+                "current_time": 1000,
+            }
+        }
         req.player = Player(req)
         assert get_player({"request": req})["episode"] is None
 
     def test_get_player_if_episode_exists(self, rf, episode):
         req = rf.get("/")
-        req.session = {"player": {"episode": episode.id, "current_time": 1000,}}
+        req.session = {
+            "player": {
+                "episode": episode.id,
+                "current_time": 1000,
+            }
+        }
         req.player = Player(req)
         assert get_player({"request": req}) == {
             "episode": episode,

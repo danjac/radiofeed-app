@@ -56,7 +56,10 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"verbose_name_plural": "categories", "ordering": ("name",),},
+            options={
+                "verbose_name_plural": "categories",
+                "ordering": ("name",),
+            },
         ),
         migrations.CreateModel(
             name="Podcast",
@@ -234,10 +237,12 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RemoveIndex(
-            model_name="podcast", name="podcasts_po_title_b6422d_idx",
+            model_name="podcast",
+            name="podcasts_po_title_b6422d_idx",
         ),
         migrations.RemoveIndex(
-            model_name="podcast", name="podcasts_po_title_f62b0b_idx",
+            model_name="podcast",
+            name="podcasts_po_title_f62b0b_idx",
         ),
         migrations.AddField(
             model_name="podcast",

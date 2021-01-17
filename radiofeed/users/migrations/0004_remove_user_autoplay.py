@@ -11,5 +11,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="user", name="autoplay",),
+        migrations.RemoveField(
+            model_name="user",
+            name="autoplay",
+        ),
     ]

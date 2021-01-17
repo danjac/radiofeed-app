@@ -135,8 +135,13 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
-        "SCOPE": ["profile", "email",],
-        "AUTH_PARAMS": {"access_type": "online",},
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
     }
 }
 
@@ -209,8 +214,12 @@ TEMPLATES = [
                 "radiofeed.common.context_processors.google_tracking_id",
                 "radiofeed.common.context_processors.is_cookies_accepted",
             ],
-            "builtins": ["radiofeed.common.defaulttags",],
-            "libraries": {"pagination": "radiofeed.common.pagination.templatetags",},
+            "builtins": [
+                "radiofeed.common.defaulttags",
+            ],
+            "libraries": {
+                "pagination": "radiofeed.common.pagination.templatetags",
+            },
         },
     }
 ]
@@ -235,6 +244,8 @@ GOOGLE_TRACKING_ID = env("GOOGLE_TRACKING_ID", default=None)
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [REDIS_URL],},
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
     },
 }

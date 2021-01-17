@@ -43,7 +43,12 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
     def create_superuser(self, username, email, password, **kwargs):
         return self.create_user(
-            username, email, password, is_staff=True, is_superuser=True, **kwargs,
+            username,
+            email,
+            password,
+            is_staff=True,
+            is_superuser=True,
+            **kwargs,
         )
 
 

@@ -23,13 +23,16 @@ class TestPodcastRecommender:
 
     def test_create_podcast_recommendations_with_no_categories(self):
         podcast_1 = PodcastFactory(
-            title="Cool science podcast", keywords="science physics astronomy",
+            title="Cool science podcast",
+            keywords="science physics astronomy",
         )
         PodcastFactory(
-            title="Another cool science podcast", keywords="science physics astronomy",
+            title="Another cool science podcast",
+            keywords="science physics astronomy",
         )
         PodcastFactory(
-            title="Philosophy things", keywords="thinking",
+            title="Philosophy things",
+            keywords="thinking",
         )
         PodcastRecommender.recommend()
         recommendations = (
@@ -55,7 +58,8 @@ class TestPodcastRecommender:
         )
         # must have at least one category in common
         PodcastFactory(
-            extracted_text="Philosophy things thinking", categories=[cat_2, cat_3],
+            extracted_text="Philosophy things thinking",
+            categories=[cat_2, cat_3],
         )
 
         PodcastRecommender.recommend()

@@ -69,7 +69,11 @@ def episode_detail(request, episode_id, slug=None):
     return TemplateResponse(
         request,
         "episodes/detail.html",
-        {"episode": episode, "is_bookmarked": is_bookmarked, "og_data": og_data,},
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+            "og_data": og_data,
+        },
     )
 
 
@@ -103,7 +107,9 @@ def bookmark_list(request):
     else:
         bookmarks = bookmarks.order_by("-created")
     return TemplateResponse(
-        request, "episodes/bookmarks.html", {"bookmarks": bookmarks, "search": search},
+        request,
+        "episodes/bookmarks.html",
+        {"bookmarks": bookmarks, "search": search},
     )
 
 

@@ -21,7 +21,10 @@ def db_cleanup(episode):
 
 
 def make_communicator(episode, session):
-    communicator = WebsocketCommunicator(PlayerConsumer.as_asgi(), "/ws/player/",)
+    communicator = WebsocketCommunicator(
+        PlayerConsumer.as_asgi(),
+        "/ws/player/",
+    )
     communicator.scope["session"] = session
     return communicator
 

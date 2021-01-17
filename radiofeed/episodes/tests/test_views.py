@@ -169,7 +169,12 @@ class TestTogglePlayer:
         )
         req.user = user
         req.session = mock_session(
-            {"player": {"episode": episode.id, "current_time": 0,}}
+            {
+                "player": {
+                    "episode": episode.id,
+                    "current_time": 0,
+                }
+            }
         )
         req.player = Player(req)
         resp = views.toggle_player(req, episode.id)

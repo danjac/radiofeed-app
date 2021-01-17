@@ -45,7 +45,10 @@ def podcast_cover_image(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     return (
         TurboFrame(f"podcast-cover-image-{podcast.id}")
-        .template("podcasts/_podcast_cover_image.html", {"podcast": podcast},)
+        .template(
+            "podcasts/_podcast_cover_image.html",
+            {"podcast": podcast},
+        )
         .response(request)
     )
 
@@ -92,7 +95,10 @@ def podcast_detail(request, podcast_id, slug=None):
     total_episodes = podcast.episode_set.count()
 
     return podcast_detail_response(
-        request, "podcasts/detail.html", podcast, {"total_episodes": total_episodes},
+        request,
+        "podcasts/detail.html",
+        podcast,
+        {"total_episodes": total_episodes},
     )
 
 
@@ -110,7 +116,9 @@ def podcast_recommendations(request, podcast_id, slug=None):
         request,
         "podcasts/recommendations.html",
         podcast,
-        {"recommendations": recommendations,},
+        {
+            "recommendations": recommendations,
+        },
     )
 
 
@@ -134,7 +142,11 @@ def podcast_episode_list(request, podcast_id, slug=None):
         request,
         "podcasts/episodes.html",
         podcast,
-        {"episodes": episodes, "search": search, "ordering": ordering,},
+        {
+            "episodes": episodes,
+            "search": search,
+            "ordering": ordering,
+        },
     )
 
 
@@ -147,7 +159,10 @@ def category_list(request):
         categories = (
             categories.filter(parent__isnull=True)
             .prefetch_related(
-                Prefetch("children", queryset=Category.objects.order_by("name"),)
+                Prefetch(
+                    "children",
+                    queryset=Category.objects.order_by("name"),
+                )
             )
             .order_by("name")
         )
@@ -200,7 +215,11 @@ def itunes_category(request, category_id):
     return TemplateResponse(
         request,
         "podcasts/itunes_category.html",
-        {"category": category, "results": results, "error": error,},
+        {
+            "category": category,
+            "results": results,
+            "error": error,
+        },
     )
 
 
@@ -258,7 +277,10 @@ def add_podcast(request):
         if request.accept_turbo_stream:
             return (
                 TurboFrame("add-podcast")
-                .template("podcasts/_add_new_button.html", {"is_added": True},)
+                .template(
+                    "podcasts/_add_new_button.html",
+                    {"is_added": True},
+                )
                 .response(request)
             )
         return redirect_303(podcast)

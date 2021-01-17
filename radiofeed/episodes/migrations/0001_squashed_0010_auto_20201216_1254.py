@@ -165,10 +165,12 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=30),
         ),
         migrations.RemoveIndex(
-            model_name="episode", name="episodes_ep_title_4a6059_idx",
+            model_name="episode",
+            name="episodes_ep_title_4a6059_idx",
         ),
         migrations.RemoveIndex(
-            model_name="episode", name="episodes_ep_title_ce2893_idx",
+            model_name="episode",
+            name="episodes_ep_title_ce2893_idx",
         ),
         migrations.AddField(
             model_name="episode",
@@ -263,13 +265,24 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.RemoveIndex(
-            model_name="history", name="episodes_hi_complet_ebe4aa_idx",
+            model_name="history",
+            name="episodes_hi_complet_ebe4aa_idx",
         ),
-        migrations.RemoveField(model_name="history", name="completed",),
-        migrations.RenameModel(old_name="History", new_name="AudioLog",),
-        migrations.RemoveConstraint(model_name="audiolog", name="uniq_history",),
+        migrations.RemoveField(
+            model_name="history",
+            name="completed",
+        ),
+        migrations.RenameModel(
+            old_name="History",
+            new_name="AudioLog",
+        ),
+        migrations.RemoveConstraint(
+            model_name="audiolog",
+            name="uniq_history",
+        ),
         migrations.RemoveIndex(
-            model_name="audiolog", name="episodes_hi_updated_29f4e9_idx",
+            model_name="audiolog",
+            name="episodes_hi_updated_29f4e9_idx",
         ),
         migrations.AddIndex(
             model_name="audiolog",

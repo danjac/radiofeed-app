@@ -107,7 +107,10 @@ class PodcastRecommender:
 
     def find_similarities_for_podcasts(self, language, queryset):
 
-        for podcast_id, recommended in self.find_similarities(language, queryset,):
+        for podcast_id, recommended in self.find_similarities(
+            language,
+            queryset,
+        ):
             for recommended_id, similarity in recommended:
                 similarity = round(similarity, 2)
                 if similarity > 0:
@@ -125,7 +128,9 @@ class PodcastRecommender:
         df.drop_duplicates(inplace=True)
 
         vec = TfidfVectorizer(
-            stop_words=get_stopwords(language), max_features=3000, ngram_range=(1, 2),
+            stop_words=get_stopwords(language),
+            max_features=3000,
+            ngram_range=(1, 2),
         )
 
         try:

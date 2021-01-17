@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 def staff_member_required(
-    view=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url=settings.LOGIN_URL,
+    view=None,
+    redirect_field_name=REDIRECT_FIELD_NAME,
+    login_url=settings.LOGIN_URL,
 ):
     """
     Decorator for views that checks that the user is logged in and is a staff

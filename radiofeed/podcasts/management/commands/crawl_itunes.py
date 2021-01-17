@@ -10,7 +10,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--limit", type=int, default=100, help="Max results from iTunes API",
+            "--limit",
+            type=int,
+            default=100,
+            help="Max results from iTunes API",
         )
 
     def handle(self, *args, **options):
