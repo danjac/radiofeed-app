@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TemplateFormResponse, TurboStream, redirect_303
+from turbo_response import TurboStream, redirect_303, render_form_response
 
 # Local
 from .forms import UserPreferencesForm
@@ -30,7 +30,7 @@ def user_preferences(request):
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return TemplateFormResponse(request, form, "account/preferences.html")
+    return render_form_response(request, form, "account/preferences.html")
 
 
 @login_required

@@ -17,8 +17,8 @@ backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
 bleach==3.2.1             # via -r requirements.in
-boto3==1.16.54            # via -r requirements.in
-botocore==1.19.54         # via boto3, s3transfer
+boto3==1.16.56            # via -r requirements.in
+botocore==1.19.56         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.4              # via cryptography
@@ -49,12 +49,12 @@ django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
 django-turbo-allauth==0.0.3  # via -r requirements.in
-django-turbo-response==0.0.22  # via -r requirements.in
+django-turbo-response==0.0.25  # via -r requirements.in
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.5             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.7.1            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
-faker==5.6.0              # via factory-boy
+faker==5.6.1              # via factory-boy
 feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2019.11.30     # via django-silk
