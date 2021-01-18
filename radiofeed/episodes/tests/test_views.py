@@ -14,8 +14,7 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 # Local
 from .. import views
 from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
-from ..middleware import Player
-from ..models import AudioLog, Bookmark
+from ..models import AudioLog, Bookmark, Player
 
 pytestmark = pytest.mark.django_db
 

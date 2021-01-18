@@ -3,7 +3,7 @@ import pytest
 
 # Local
 from ..factories import EpisodeFactory
-from ..middleware import Player
+from ..models import Player
 from ..templatetags.episodes import format_duration, get_player, is_playing
 
 pytestmark = pytest.mark.django_db
