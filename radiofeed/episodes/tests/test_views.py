@@ -20,11 +20,6 @@ from ..player import Player
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture
-def mock_broadcast(mocker):
-    return mocker.patch("radiofeed.episodes.broadcasters.player_message")
-
-
 class TestEpisodeList:
     def test_anonymous(self, rf, anonymous_user):
         EpisodeFactory.create_batch(3)
@@ -112,56 +107,66 @@ class TestEpisodeDetail:
 
 
 class TestTogglePlayer:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = anonymous_user
         req.session = {}
         req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Current-Time"] == "0"
-        assert resp["X-Player-Media-Url"] == episode.media_url
+
+        header = json.loads(resp["X-Player"])
+        assert header["episode"] == episode.id
+        assert header["action"] == "start"
+        assert header["currentTime"] == 0
+        assert header["mediaUrl"] == episode.media_url
+
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
         }
-        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
+    def test_authenticated(self, rf, user, episode, mock_session):
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = mock_session()
         req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Current-Time"] == "0"
-        assert resp["X-Player-Media-Url"] == episode.media_url
+
+        header = json.loads(resp["X-Player"])
+        assert header["episode"] == episode.id
+        assert header["action"] == "start"
+        assert header["currentTime"] == 0
+        assert header["mediaUrl"] == episode.media_url
+
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
         }
-        mock_broadcast.assert_called()
 
-    def test_is_played(self, rf, user, episode, mock_session, mock_broadcast):
+    def test_is_played(self, rf, user, episode, mock_session):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(reverse("episodes:toggle_player", args=[episode.id]))
         req.user = user
         req.session = mock_session()
         req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
+
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp["X-Player-Action"] == "play"
-        assert resp["X-Player-Current-Time"] == "2000"
-        assert resp["X-Player-Media-Url"] == episode.media_url
+
+        header = json.loads(resp["X-Player"])
+        assert header["episode"] == episode.id
+        assert header["action"] == "start"
+        assert header["currentTime"] == 2000
+        assert header["mediaUrl"] == episode.media_url
+
         assert req.session["player"] == {
             "episode": episode.id,
             "current_time": 2000,
         }
-        mock_broadcast.assert_called()
 
-    def test_stop(self, rf, user, episode, mock_session, mock_broadcast):
+    def test_stop(self, rf, user, episode, mock_session):
         AudioLogFactory(user=user, episode=episode, current_time=2000)
         req = rf.post(
             reverse("episodes:toggle_player", args=[episode.id]),
@@ -179,12 +184,14 @@ class TestTogglePlayer:
         req.player = Player(req)
         resp = views.toggle_player(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp["X-Player-Action"] == "stop"
-        mock_broadcast.assert_called()
+
+        header = json.loads(resp["X-Player"])
+        assert header["episode"] == episode.id
+        assert header["action"] == "stop"
 
 
 class TestMarkComplete:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session):
         req = rf.post(reverse("episodes:mark_complete"))
         req.user = anonymous_user
         req.session = mock_session(
@@ -196,9 +203,8 @@ class TestMarkComplete:
         assert not req.player
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
+    def test_authenticated(self, rf, user, episode, mock_session):
         req = rf.post(
             reverse("episodes:mark_complete"),
             data=json.dumps({"currentTime": 1030}),
@@ -220,11 +226,9 @@ class TestMarkComplete:
         assert log.current_time == 0
         assert log.completed
 
-        mock_broadcast.assert_called()
-
 
 class TestPlayerTimeUpdate:
-    def test_anonymous(self, rf, anonymous_user, episode, mock_session, mock_broadcast):
+    def test_anonymous(self, rf, anonymous_user, episode, mock_session):
         req = rf.post(
             reverse("episodes:player_timeupdate"),
             data=json.dumps({"currentTime": 1030}),
@@ -239,9 +243,8 @@ class TestPlayerTimeUpdate:
         assert req.session == {"player": {"episode": episode.id, "current_time": 1030}}
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        mock_broadcast.assert_called()
 
-    def test_authenticated(self, rf, user, episode, mock_session, mock_broadcast):
+    def test_authenticated(self, rf, user, episode, mock_session):
         req = rf.post(
             reverse("episodes:player_timeupdate"),
             data=json.dumps({"currentTime": 1030}),
@@ -260,7 +263,6 @@ class TestPlayerTimeUpdate:
 
         log = AudioLog.objects.get(user=user, episode=episode)
         assert log.current_time == 1030
-        mock_broadcast.assert_called()
 
     def test_player_not_running(self, rf, user, episode):
         req = rf.post(

@@ -1,4 +1,5 @@
 import { Controller } from 'stimulus';
+import { useDispatch } from 'stimulus-use';
 import useTurbo from '../turbo';
 
 export default class extends Controller {
@@ -52,6 +53,7 @@ export default class extends Controller {
   }
 
   connect() {
+    useDispatch(this);
     useTurbo(this);
   }
 
@@ -74,6 +76,7 @@ export default class extends Controller {
     }
     this.closeAudio();
     this.cancelTimeUpdateTimer();
+    this.dispatch('closePlayer');
   }
 
   loadedMetaData() {
@@ -155,14 +158,12 @@ export default class extends Controller {
   turboSubmitEnd(event) {
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
-    if (!headers) {
+    if (!headers || !headers.has('X-Player')) {
       return;
     }
-    const action = headers && headers.get('X-Player-Action');
-    if (!action) {
-      return;
-    }
-
+    const { action, episode, mediaUrl, currentTime } = JSON.parse(
+      headers.get('X-Player')
+    );
     if (action === 'stop') {
       console.log('close player');
       this.closePlayer();
@@ -170,11 +171,8 @@ export default class extends Controller {
     }
     // default : play
     //
-    const currentTime = headers.get('X-Player-Current-Time') || 0;
-    const mediaUrl = headers.get('X-Player-Media-Url');
-
     this.mediaUrlValue = mediaUrl;
-    this.currentTimeValue = parseFloat(currentTime);
+    this.currentTimeValue = parseFloat(currentTime || 0);
 
     this.initAudio();
 
@@ -182,6 +180,7 @@ export default class extends Controller {
     this.audio.currentTime = this.currentTimeValue;
 
     this.play();
+    this.dispatch('openPlayer', { episode });
 
     console.log('play:', mediaUrl, currentTime);
   }

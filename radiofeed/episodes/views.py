@@ -15,7 +15,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, redirect_303
 
 # Local
-from . import broadcasters
 from .models import AudioLog, Bookmark, Episode
 
 
@@ -141,12 +140,12 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    if current_episode := request.player.eject():
-        broadcasters.player_stop(request, current_episode)
+    # clear session
+    request.player.eject()
 
     if request.POST.get("player_action") == "stop":
         response = TurboFrame("player").response()
-        response["X-Player-Action"] = "stop"
+        response["X-Player"] = json.dumps({"episode": episode_id, "action": "stop"})
         return response
 
     episode = get_object_or_404(
@@ -159,17 +158,20 @@ def toggle_player(request, episode_id):
     episode.log_activity(request.user, current_time=current_time)
 
     request.player.start(episode, current_time)
-    broadcasters.player_start(request, episode)
 
     response = (
         TurboFrame("player")
         .template("episodes/_player.html", {"episode": episode})
         .response(request)
     )
-    response["X-Player-Action"] = "play"
-    response["X-Player-Media-Url"] = episode.media_url
-    response["X-Player-Current-Time"] = current_time
-
+    response["X-Player"] = json.dumps(
+        {
+            "episode": episode.id,
+            "action": "start",
+            "mediaUrl": episode.media_url,
+            "currentTime": current_time,
+        }
+    )
     return response
 
 
@@ -178,10 +180,6 @@ def mark_complete(request):
 
     if episode := request.player.eject():
         episode.log_activity(request.user, current_time=0, completed=True)
-
-        broadcasters.player_stop(request, episode)
-        broadcasters.player_timeupdate(request, episode, current_time=0, completed=True)
-
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     return HttpResponseBadRequest("No player loaded")
@@ -198,7 +196,6 @@ def player_timeupdate(request):
 
         episode.log_activity(request.user, current_time)
         request.player.set_current_time(current_time)
-        broadcasters.player_timeupdate(request, episode, current_time, completed=False)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
