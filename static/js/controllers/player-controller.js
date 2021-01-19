@@ -1,5 +1,5 @@
 import { Controller } from 'stimulus';
-import useTurbo from '~/turbo';
+import useTurbo from '../turbo';
 
 export default class extends Controller {
   static targets = [

@@ -31,15 +31,22 @@ services:
       - '8025:8025'
       - '1025:1025'
 
-  assets:
+  assets: &assets
     build:
       context: .
       dockerfile: assets.dockerfile
     privileged: true
-    command: yarn dev
     volumes:
       - .:/app
       - /app/node_modules
+
+  watchjs:
+    <<: *assets
+    command: ['watchexec', '--exts', 'js', '--', 'yarn', 'watch-js']
+
+  watchcss:
+    <<: *assets
+    command: ['watchexec', '--exts', 'css', '--', 'yarn', 'watch-css']
 
   django: &django
     build:

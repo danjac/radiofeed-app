@@ -1,12 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn:watch-css\" \"yarn:watch-js\"",
-    "build": "concurrently \"yarn:build-css\" \"yarn:build-js\"",
-    "watch-css": "postcss ./static/css/app.css -o ./static/dev/app.css -w --verbose",
+    "watch-css": "postcss ./static/css/app.css -o ./static/dev/app.css",
     "watch-js": "esbuild ./static/js/app.js --bundle --outfile=./static/dev/app.js",
     "build-css": "NODE_ENV=production postcss ./static/css/app.css -o ./static/dist/app.css",
-    "build-js": "NODE_ENV=production webpack-cli"
+    "build-js": "NODE_ENV=production esbuild ./static/js/app.js --bundle --minify --outfile=./static/dist/app.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
