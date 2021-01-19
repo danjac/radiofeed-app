@@ -1,5 +1,8 @@
 # Local
-from .models import Player
+# Django
+from django.utils.functional import SimpleLazyObject
+
+from .player import Player
 
 
 class PlayerSessionMiddleware:
@@ -7,5 +10,5 @@ class PlayerSessionMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.player = Player(request)
+        request.player = SimpleLazyObject(lambda: Player(request))
         return self.get_response(request)
