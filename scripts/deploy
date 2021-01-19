@@ -16,3 +16,4 @@ docker-compose run --rm \
 
 echo "Deploying to Dokku..."
 git push dokku main
+
