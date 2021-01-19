@@ -6,8 +6,8 @@ echo "Running tests..."
 docker-compose run --rm django pytest
 
 echo "Building assets..."
-docker-compose run --rm assets yarn build-css
 docker-compose run --rm assets yarn build-js
+docker-compose run --rm assets yarn build-css
 
 echo "Deploying assets to S3..."
 docker-compose run --rm \
