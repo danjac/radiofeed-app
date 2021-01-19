@@ -15,4 +15,4 @@ docker-compose run --rm \
     django ./manage.py collectstatic --noinput -v 3 -i dev
 
 echo "Deploying to Dokku..."
-git push dokku master
+git push dokku main
