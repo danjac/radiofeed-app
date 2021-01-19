@@ -1,5 +1,5 @@
-import { Application } from 'stimulus';
 import '@hotwired/turbo';
+import { Application } from 'stimulus';
 
 import ConfirmController from './controllers/confirm-controller';
 import LinkController from './controllers/link-controller';
