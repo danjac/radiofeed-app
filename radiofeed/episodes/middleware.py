@@ -1,7 +1,7 @@
-# Local
 # Django
 from django.utils.functional import SimpleLazyObject
 
+# Local
 from .player import Player
 
 
