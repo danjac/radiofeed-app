@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
@@ -329,4 +329,4 @@ def podcast_subscribe_response(request, podcast, is_subscribed):
             )
             .response(request)
         )
-    return redirect_303(podcast.get_absolute_url())
+    return redirect(podcast.get_absolute_url())
