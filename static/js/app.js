@@ -17,5 +17,3 @@ application.register('notification', NotificationController);
 application.register('player', PlayerController);
 application.register('socket', SocketController);
 application.register('toggle', ToggleController);
-
-console.log('yay');
