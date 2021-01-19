@@ -11,7 +11,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
 # RadioFeed
-from radiofeed.common.html import stripentities
+from radiofeed.template.html import stripentities
 
 # Local
 from .stopwords import STOPWORDS

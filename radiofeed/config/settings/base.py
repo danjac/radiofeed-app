@@ -95,7 +95,6 @@ MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "radiofeed.common.middleware.HttpResponseNotAllowedMiddleware",
 ]
 
 DEFAULT_PAGE_SIZE = 12
@@ -211,14 +210,14 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "radiofeed.common.context_processors.google_tracking_id",
-                "radiofeed.common.context_processors.is_cookies_accepted",
+                "radiofeed.template.context_processors.google_tracking_id",
+                "radiofeed.template.context_processors.is_cookies_accepted",
             ],
             "builtins": [
-                "radiofeed.common.defaulttags",
+                "radiofeed.template.defaulttags",
             ],
             "libraries": {
-                "pagination": "radiofeed.common.pagination.templatetags",
+                "pagination": "radiofeed.pagination.templatetags",
             },
         },
     }
