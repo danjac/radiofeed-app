@@ -259,3 +259,24 @@ class AudioLog(TimeStampedModel):
         indexes = [
             models.Index(fields=["-updated"]),
         ]
+
+    def get_absolute_url(self):
+        return reverse(
+            "episodes:history_detail", args=[self.episode.id, self.episode.slug]
+        )
+
+    def get_next_log(self):
+        return (
+            self.user.audiolog_set.filter(updated__gt=self.updated)
+            .order_by("updated")
+            .select_related("episode")
+            .first()
+        )
+
+    def get_previous_log(self):
+        return (
+            self.user.audiolog_set.filter(updated__lt=self.updated)
+            .order_by("-updated")
+            .select_related("episode")
+            .first()
+        )

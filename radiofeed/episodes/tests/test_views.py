@@ -85,6 +85,15 @@ class TestBookmarkDetail:
         assert resp.status_code == http.HTTPStatus.OK
 
 
+class TestHistoryDetail:
+    def test_get(self, rf, log, site):
+        req = rf.get(log.get_absolute_url())
+        req.site = site
+        req.user = log.user
+        resp = views.history_detail(req, log.episode.id, log.episode.slug)
+        assert resp.status_code == http.HTTPStatus.OK
+
+
 class TestEpisodeDetail:
     def test_anonymous(self, rf, episode, anonymous_user, site):
         req = rf.get(episode.get_absolute_url())

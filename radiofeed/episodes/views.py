@@ -81,6 +81,84 @@ def episode_detail(request, episode_id, slug=None):
 
 
 @login_required
+def history(request):
+    logs = (
+        AudioLog.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("-updated")
+    )
+
+    if search := request.GET.get("q", None):
+        logs = logs.search(search).order_by("-rank", "-updated")
+    else:
+        logs = logs.order_by("-updated")
+
+    return TemplateResponse(
+        request, "episodes/history.html", {"logs": logs, "search": search}
+    )
+
+
+@login_required
+def history_detail(request, episode_id, slug=None):
+
+    log = get_object_or_404(
+        AudioLog.objects.filter(user=request.user).select_related(
+            "episode", "episode__podcast"
+        ),
+        user=request.user,
+        episode=episode_id,
+    )
+
+    is_bookmarked = Bookmark.objects.filter(
+        episode=log.episode, user=request.user
+    ).exists()
+
+    next_log = log.get_next_log()
+    prev_log = log.get_previous_log()
+
+    next_episode = next_episode_url = None
+    prev_episode = prev_episode_url = None
+
+    if next_log:
+        next_episode = next_log.episode
+        next_episode_url = next_log.get_absolute_url()
+
+    if prev_log:
+        prev_episode = prev_log.episode
+        prev_episode_url = prev_log.get_absolute_url()
+
+    return episode_detail_response(
+        request,
+        log.episode,
+        extra_context={
+            "next_episode": next_episode,
+            "prev_episode": prev_episode,
+            "next_episode_url": next_episode_url,
+            "prev_episode_url": prev_episode_url,
+            "is_bookmarked": is_bookmarked,
+        },
+    )
+
+
+@login_required
+def bookmark_list(request):
+    bookmarks = (
+        Bookmark.objects.filter(user=request.user)
+        .with_current_time(request.user)
+        .select_related("episode", "episode__podcast")
+    )
+    if search := request.GET.get("q", None):
+        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by("-created")
+    return TemplateResponse(
+        request,
+        "episodes/bookmarks.html",
+        {"bookmarks": bookmarks, "search": search},
+    )
+
+
+@login_required
 def bookmark_detail(request, episode_id, slug=None):
 
     bookmark = get_object_or_404(
@@ -115,42 +193,6 @@ def bookmark_detail(request, episode_id, slug=None):
             "prev_episode_url": prev_episode_url,
             "is_bookmarked": True,
         },
-    )
-
-
-@login_required
-def history(request):
-    logs = (
-        AudioLog.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("-updated")
-    )
-
-    if search := request.GET.get("q", None):
-        logs = logs.search(search).order_by("-rank", "-updated")
-    else:
-        logs = logs.order_by("-updated")
-
-    return TemplateResponse(
-        request, "episodes/history.html", {"logs": logs, "search": search}
-    )
-
-
-@login_required
-def bookmark_list(request):
-    bookmarks = (
-        Bookmark.objects.filter(user=request.user)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
-    )
-    if search := request.GET.get("q", None):
-        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
-    else:
-        bookmarks = bookmarks.order_by("-created")
-    return TemplateResponse(
-        request,
-        "episodes/bookmarks.html",
-        {"bookmarks": bookmarks, "search": search},
     )
 
 

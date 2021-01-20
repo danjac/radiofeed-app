@@ -16,6 +16,11 @@ urlpatterns = [
     ),
     path("player/~timeupdate/", views.player_timeupdate, name="player_timeupdate"),
     path("history/", views.history, name="history"),
+    path(
+        "history/<int:episode_id>/<slug:slug>/",
+        views.history_detail,
+        name="history_detail",
+    ),
     path("bookmarks/", views.bookmark_list, name="bookmark_list"),
     path("bookmarks/<int:episode_id>/~add/", views.add_bookmark, name="add_bookmark"),
     path(
