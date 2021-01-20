@@ -12,7 +12,7 @@ from django.utils.functional import cached_property
 import pytest
 
 # RadioFeed
-from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.episodes.factories import BookmarkFactory, EpisodeFactory
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.users.factories import UserFactory
 
@@ -78,3 +78,8 @@ def podcast():
 @pytest.fixture
 def episode(podcast):
     return EpisodeFactory(podcast=podcast)
+
+
+@pytest.fixture
+def bookmark(user, episode):
+    return BookmarkFactory(user=user, episode=episode)

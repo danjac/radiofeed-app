@@ -76,6 +76,15 @@ class TestEpisodeList:
         assert resp.context_data["episodes"][0] == episode
 
 
+class TestBookmarkDetail:
+    def test_get(self, rf, bookmark, site):
+        req = rf.get(bookmark.get_absolute_url())
+        req.site = site
+        req.user = bookmark.user
+        resp = views.bookmark_detail(req, bookmark.episode.id, bookmark.episode.slug)
+        assert resp.status_code == http.HTTPStatus.OK
+
+
 class TestEpisodeDetail:
     def test_anonymous(self, rf, episode, anonymous_user, site):
         req = rf.get(episode.get_absolute_url())
