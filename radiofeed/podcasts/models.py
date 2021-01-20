@@ -149,7 +149,7 @@ class Subscription(TimeStampedModel):
 
 class RecommendationQuerySet(models.QuerySet):
     def with_subscribed(self, user):
-        """Marks which recommendations are subscribed by this suer."""
+        """Marks which recommendations are subscribed by this user."""
         if user.is_anonymous:
             return self.annotate(
                 is_subscribed=models.Value(False, output_field=models.BooleanField())
