@@ -59,15 +59,12 @@ def episode_detail(request, episode_id, slug=None):
         request.user.is_authenticated
         and Bookmark.objects.filter(episode=episode, user=request.user).exists()
     )
-    next_episode = episode.get_next_episode()
-    prev_episode = episode.get_previous_episode()
-
     next_episode_url = prev_episode_url = None
 
-    if next_episode:
+    if next_episode := episode.get_next_episode():
         next_episode_url = next_episode.get_absolute_url()
 
-    if prev_episode:
+    if prev_episode := episode.get_previous_episode():
         prev_episode_url = prev_episode.get_absolute_url()
 
     return episode_detail_response(
@@ -118,19 +115,17 @@ def history_detail(request, episode_id, slug=None):
         episode=log.episode, user=request.user
     ).exists()
 
-    next_log = log.get_next_log()
-    prev_log = log.get_previous_log()
-
-    next_episode = next_episode_url = None
-    prev_episode = prev_episode_url = None
-
-    if next_log:
+    if next_log := log.get_next_log():
         next_episode = next_log.episode
         next_episode_url = next_log.get_absolute_url()
+    else:
+        next_episode = next_episode_url = None
 
-    if prev_log:
+    if prev_log := log.get_previous_log():
         prev_episode = prev_log.episode
         prev_episode_url = prev_log.get_absolute_url()
+    else:
+        prev_episode = prev_episode_url = None
 
     return episode_detail_response(
         request,
@@ -174,19 +169,17 @@ def bookmark_detail(request, episode_id, slug=None):
         episode=episode_id,
     )
 
-    next_bookmark = bookmark.get_next_bookmark()
-    prev_bookmark = bookmark.get_previous_bookmark()
-
-    next_episode = next_episode_url = None
-    prev_episode = prev_episode_url = None
-
-    if next_bookmark:
+    if next_bookmark := bookmark.get_next_bookmark():
         next_episode = next_bookmark.episode
         next_episode_url = next_bookmark.get_absolute_url()
+    else:
+        next_episode = next_episode_url = None
 
-    if prev_bookmark:
+    if prev_bookmark := bookmark.get_previous_bookmark():
         prev_episode = prev_bookmark.episode
         prev_episode_url = prev_bookmark.get_absolute_url()
+    else:
+        prev_episode = prev_episode_url = None
 
     return episode_detail_response(
         request,
