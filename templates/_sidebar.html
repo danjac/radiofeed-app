@@ -58,7 +58,7 @@
           <li class="py-2">
             {% active_link 'episodes:bookmark_list' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -76,7 +76,7 @@
           <li class="py-2">
             {% active_link 'episodes:history' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
