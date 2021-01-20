@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load pagination %}
 
 {% block subtitle %} | {{ search|yesno:"Search Episodes,New Releases" }}{% endblock %}
 
@@ -29,8 +28,6 @@
 </div>
 {% endif %}
 
-{% if search %}
-{% paginate episodes as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}
@@ -39,19 +36,14 @@
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
 {% empty %}
+
+{% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+{% elif user.is_authenticated %}
+<p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet.</p>
+{% endif %}
+
 {% endfor %}
 
 {% include "_pagination.html" %}
-{% else %}
-
-{% for episode in episodes %}
-{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
-{% empty %}
-{% if user.is_authenticated %}
-<p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet.</p>
-{% endif %}
-{% endfor %}
-{% endif %}
-
 {% endblock content %}

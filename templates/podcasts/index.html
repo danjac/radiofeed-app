@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load pagination %}
 
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
@@ -33,7 +32,6 @@
 </div>
 {% endif %}
 
-{% paginate podcasts as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}

@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, redirect_303
 
 # RadioFeed
+from radiofeed.pagination import paginate
 from radiofeed.users.decorators import staff_member_required
 
 # Local
@@ -82,9 +83,9 @@ def podcast_list(request):
         request,
         "podcasts/index.html",
         {
-            "podcasts": podcasts,
             "top_rated_podcasts": top_rated_podcasts,
             "search": search,
+            "page_obj": paginate(request, podcasts),
         },
     )
 
@@ -143,9 +144,9 @@ def podcast_episode_list(request, podcast_id, slug=None):
         "podcasts/episodes.html",
         podcast,
         {
-            "episodes": episodes,
             "search": search,
             "ordering": ordering,
+            "page_obj": paginate(request, episodes),
         },
     )
 
@@ -192,8 +193,8 @@ def category_detail(request, category_id, slug=None):
         {
             "category": category,
             "children": children,
-            "podcasts": podcasts,
             "search": search,
+            "page_obj": paginate(request, podcasts),
         },
     )
 

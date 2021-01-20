@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load thumbnail pagination %}
 
 {% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} | {{ category.name }}{% endblock %}
 
@@ -58,8 +57,6 @@
   {% endif %}
 </div>
 {% endif %}
-
-{% paginate podcasts as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}

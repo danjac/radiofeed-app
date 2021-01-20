@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load pagination %}
 
 {% block subtitle %} | Bookmarks{% endblock %}
 
@@ -20,8 +19,6 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-
-{% paginate bookmarks as page_obj %}
 
 {% if page_obj.number > 1 %}
 {% include "_pagination.html" with css_class="mb-3"  %}

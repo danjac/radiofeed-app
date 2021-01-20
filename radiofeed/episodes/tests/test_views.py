@@ -27,7 +27,7 @@ class TestEpisodeList:
         req.user = anonymous_user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 0
+        assert len(resp.context_data["page_obj"].object_list) == 0
 
     def test_user_no_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)
@@ -35,7 +35,7 @@ class TestEpisodeList:
         req.user = user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 0
+        assert len(resp.context_data["page_obj"].object_list) == 0
 
     def test_user_has_subscriptions(self, rf, user):
         EpisodeFactory.create_batch(3)
@@ -48,8 +48,8 @@ class TestEpisodeList:
         resp = views.episode_list(req)
 
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 1
-        assert resp.context_data["episodes"][0] == episode
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == episode
 
     def test_anonymous_search(self, rf, anonymous_user):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
@@ -58,8 +58,8 @@ class TestEpisodeList:
         req.user = anonymous_user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 1
-        assert resp.context_data["episodes"][0] == episode
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == episode
 
     def test_user_has_subscriptions_search(self, rf, user):
         "Ignore subs in search"
@@ -72,8 +72,8 @@ class TestEpisodeList:
         req.user = user
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["episodes"]) == 1
-        assert resp.context_data["episodes"][0] == episode
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == episode
 
 
 class TestBookmarkDetail:
@@ -323,7 +323,7 @@ class TestHistory:
         req.user = user
         resp = views.history(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["logs"]) == 3
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_search(self, rf, user):
 
@@ -341,7 +341,7 @@ class TestHistory:
         resp = views.history(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["search"] == "testing"
-        assert len(resp.context_data["logs"]) == 1
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestBookmarkList:
@@ -351,7 +351,7 @@ class TestBookmarkList:
         req.user = user
         resp = views.bookmark_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["bookmarks"]) == 3
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_search(self, rf, user):
 
@@ -369,7 +369,7 @@ class TestBookmarkList:
         resp = views.bookmark_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["search"] == "testing"
-        assert len(resp.context_data["bookmarks"]) == 1
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestAddBookmark:

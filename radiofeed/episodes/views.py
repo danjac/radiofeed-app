@@ -14,6 +14,9 @@ from django.views.decorators.http import require_POST
 # Third Party Libraries
 from turbo_response import TurboFrame
 
+# RadioFeed
+from radiofeed.pagination import paginate
+
 # Local
 from .models import AudioLog, Bookmark, Episode
 
@@ -40,7 +43,7 @@ def episode_list(request):
         request,
         "episodes/index.html",
         {
-            "episodes": episodes,
+            "page_obj": paginate(request, episodes),
             "has_subscriptions": has_subscriptions,
             "search": search,
         },
@@ -94,7 +97,9 @@ def history(request):
         logs = logs.order_by("-updated")
 
     return TemplateResponse(
-        request, "episodes/history.html", {"logs": logs, "search": search}
+        request,
+        "episodes/history.html",
+        {"page_obj": paginate(request, logs), "search": search},
     )
 
 
@@ -154,7 +159,7 @@ def bookmark_list(request):
     return TemplateResponse(
         request,
         "episodes/bookmarks.html",
-        {"bookmarks": bookmarks, "search": search},
+        {"page_obj": paginate(request, bookmarks), "search": search},
     )
 
 

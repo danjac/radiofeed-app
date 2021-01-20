@@ -47,7 +47,7 @@ class TestPodcastList:
         req.user = anonymous_user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 3
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_no_subscriptions(self, rf, user):
         """If user has no subscriptions, just show general feed"""
@@ -56,7 +56,7 @@ class TestPodcastList:
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 3
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_has_subscriptions(self, rf, user):
         """If user has subscriptions, show only own feed"""
@@ -66,8 +66,8 @@ class TestPodcastList:
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 1
-        assert resp.context_data["podcasts"][0] == sub.podcast
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == sub.podcast
 
     def test_search_anonymous(self, rf, anonymous_user, transactional_db):
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
@@ -76,8 +76,8 @@ class TestPodcastList:
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 1
-        assert resp.context_data["podcasts"][0] == podcast
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == podcast
 
     def test_search_has_subscription(self, rf, user, transactional_db):
         """Ignore subscribed feeds in search"""
@@ -88,8 +88,8 @@ class TestPodcastList:
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 1
-        assert resp.context_data["podcasts"][0] == podcast
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == podcast
 
 
 class TestPodcastRecommendations:
@@ -159,7 +159,7 @@ class TestPodcastEpisodeList:
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert len(resp.context_data["episodes"]) == 3
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_search(self, rf, anonymous_user, podcast, site, transactional_db):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
@@ -173,7 +173,7 @@ class TestPodcastEpisodeList:
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert len(resp.context_data["episodes"]) == 1
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestAddPodcast:
@@ -247,7 +247,7 @@ class TestCategoryDetail:
         resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
-        assert len(resp.context_data["podcasts"]) == 12
+        assert len(resp.context_data["page_obj"].object_list) == 12
 
     def test_search(self, rf, category, anonymous_user, transactional_db):
 
@@ -263,7 +263,7 @@ class TestCategoryDetail:
 
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
-        assert len(resp.context_data["podcasts"]) == 1
+        assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["search"] == "testing"
 
 
