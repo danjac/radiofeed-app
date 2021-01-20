@@ -1,4 +1,5 @@
 import '@hotwired/turbo';
+import 'form-request-submit-polyfill';
 import { Application } from 'stimulus';
 
 import ConfirmController from './controllers/confirm-controller';

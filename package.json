@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@hotwired/turbo": "^7.0.0-beta.3",
+    "form-request-submit-polyfill": "^2.0.0",
     "reconnecting-websocket": "^4.4.0",
     "stimulus": "^2.0.0",
     "stimulus-use": "^0.22.1"
