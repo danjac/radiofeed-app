@@ -44,6 +44,7 @@ This app has been configured to run on ![Dokku](https://github.com/dokku/dokku).
 
 SSH into your Dokku server and create the app and add the domain (assuming "myapp" is your app name, and "myapp.com" your domain):
 
+
 > dokku apps:create myapp
 
 > dokku domains:add myapp myapp.com
@@ -80,6 +81,8 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 - **SECRET_KEY**: Django secret key. Use e.g. https://miniwebtool.com/django-secret-key-generator/ to create new key.
 
 Next add to Git and deploy:
+
+> dokku git:set --global deploy-branch main
 
 > git remote add dokku dokku@<my-domain-or-ip>:myapp
 
