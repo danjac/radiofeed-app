@@ -56,22 +56,64 @@ def episode_detail(request, episode_id, slug=None):
         request.user.is_authenticated
         and Bookmark.objects.filter(episode=episode, user=request.user).exists()
     )
-    og_data = {
-        "url": request.build_absolute_uri(episode.get_absolute_url()),
-        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
-        "description": episode.description,
-        "image": episode.podcast.cover_image.url
-        if episode.podcast.cover_image
-        else None,
-    }
+    next_episode = episode.get_next_episode()
+    prev_episode = episode.get_previous_episode()
 
-    return TemplateResponse(
+    next_episode_url = prev_episode_url = None
+
+    if next_episode:
+        next_episode_url = next_episode.get_absolute_url()
+
+    if prev_episode:
+        prev_episode_url = prev_episode.get_absolute_url()
+
+    return episode_detail_response(
         request,
-        "episodes/detail.html",
+        episode,
         {
-            "episode": episode,
+            "next_episode": next_episode,
+            "next_episode_url": next_episode_url,
+            "prev_episode": prev_episode,
+            "prev_episode_url": prev_episode_url,
             "is_bookmarked": is_bookmarked,
-            "og_data": og_data,
+        },
+    )
+
+
+@login_required
+def bookmark_detail(request, episode_id, slug=None):
+
+    bookmark = get_object_or_404(
+        Bookmark.objects.filter(user=request.user).select_related(
+            "episode", "episode__podcast"
+        ),
+        user=request.user,
+        episode=episode_id,
+    )
+
+    next_bookmark = bookmark.get_next_bookmark()
+    prev_bookmark = bookmark.get_previous_bookmark()
+
+    next_episode = next_episode_url = None
+    prev_episode = prev_episode_url = None
+
+    if next_bookmark:
+        next_episode = next_bookmark.episode
+        next_episode_url = next_bookmark.get_absolute_url()
+
+    if prev_bookmark:
+        prev_episode = prev_bookmark.episode
+        prev_episode_url = prev_bookmark.get_absolute_url()
+
+    return episode_detail_response(
+        request,
+        bookmark.episode,
+        extra_context={
+            "next_episode": next_episode,
+            "prev_episode": prev_episode,
+            "next_episode_url": next_episode_url,
+            "prev_episode_url": prev_episode_url,
+            "is_bookmarked": True,
         },
     )
 
@@ -212,3 +254,24 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             .response(request)
         )
     return redirect(episode)
+
+
+def episode_detail_response(request, episode, extra_context=None):
+    og_data = {
+        "url": request.build_absolute_uri(episode.get_absolute_url()),
+        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
+        "description": episode.description,
+        "image": episode.podcast.cover_image.url
+        if episode.podcast.cover_image
+        else None,
+    }
+
+    return TemplateResponse(
+        request,
+        "episodes/detail.html",
+        {
+            "episode": episode,
+            "og_data": og_data,
+        }
+        | (extra_context or {}),
+    )

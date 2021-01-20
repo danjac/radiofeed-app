@@ -23,5 +23,10 @@ urlpatterns = [
         views.remove_bookmark,
         name="remove_bookmark",
     ),
+    path(
+        "bookmarks/<int:episode_id>/<slug:slug>/",
+        views.bookmark_detail,
+        name="bookmark_detail",
+    ),
     path("<int:episode_id>/<slug:slug>/", views.episode_detail, name="episode_detail"),
 ]

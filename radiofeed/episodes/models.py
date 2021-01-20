@@ -199,6 +199,27 @@ class Bookmark(TimeStampedModel):
             models.Index(fields=["-created"]),
         ]
 
+    def get_absolute_url(self):
+        return reverse(
+            "episodes:bookmark_detail", args=[self.episode.id, self.episode.slug]
+        )
+
+    def get_next_bookmark(self):
+        return (
+            self.user.bookmark_set.filter(created__gt=self.created)
+            .order_by("created")
+            .select_related("episode")
+            .first()
+        )
+
+    def get_previous_bookmark(self):
+        return (
+            self.user.bookmark_set.filter(created__lt=self.created)
+            .order_by("-created")
+            .select_related("episode")
+            .first()
+        )
+
 
 class AudioLogQuerySet(models.QuerySet):
     def search(self, search_term):
