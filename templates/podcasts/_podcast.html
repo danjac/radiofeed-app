@@ -2,17 +2,17 @@
   <div class="flex items-center justify-between">
     <div class="font-bold flex items-center sm:mb-0">
 
-      <a href="{{ podcast.get_absolute_url }}">
+      <a href="{{ podcast.get_absolute_url }}" class="block mr-1">
         <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                      loading="lazy"
                      src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
           {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
         </turbo-frame>
       </a>
+
       <div>
-        <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight flex items-center">
+        <div class="mb-2 text-sm md:text-base tracking-tight leading-tight flex items-center">
           <a href="{{ podcast.get_absolute_url }}"
-             data-turbo-frame="default"
              title="{{ podcast.title|stripentities }}"
              class="font-semibold hover:text-gray-300">{{ podcast.title|stripentities|truncatechars:80 }}</a>
 
