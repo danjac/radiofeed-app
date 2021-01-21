@@ -83,7 +83,7 @@ Next add to Git and deploy:
 
 > dokku git:set --global deploy-branch main
 
-> git remote add dokku dokku@<my-domain-or-ip>:myapp
+> git remote add dokku dokku@my-domain-or-ip-address:myapp
 
 > ./scripts/deploy
 
