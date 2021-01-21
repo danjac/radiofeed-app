@@ -2,7 +2,7 @@
 
 {% block episodes %}
 {% for log in page_obj %}
-{% include "episodes/_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed %}
+{% include "episodes/_history_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed %}
 
 {% empty %}
 

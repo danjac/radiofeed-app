@@ -2,7 +2,7 @@
 
 {% block episodes %}
 {% for bookmark in page_obj %}
-{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
+{% include "episodes/_bookmark_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
 
 {% empty %}
 
