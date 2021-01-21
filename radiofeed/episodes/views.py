@@ -145,7 +145,9 @@ def history_detail(request, episode_id, slug=None):
 def remove_history(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
     AudioLog.objects.filter(episode=episode, user=request.user).delete()
-    return TurboStream(f"episode-{episode.id}").remove.response()
+    if request.accept_turbo_stream:
+        return TurboStream(f"episode-{episode.id}").remove.response()
+    return redirect("episodes:history")
 
 
 @login_required

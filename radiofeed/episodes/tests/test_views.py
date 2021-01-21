@@ -397,6 +397,7 @@ class TestRemoveHistory:
     def test_post(self, rf, user, episode):
         AudioLogFactory(user=user, episode=episode)
         req = rf.post(reverse("episodes:remove_history", args=[episode.id]))
+        req.accept_turbo_stream = True
         req.user = user
         resp = views.remove_history(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
