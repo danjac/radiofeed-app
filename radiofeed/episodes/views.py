@@ -86,6 +86,8 @@ def episode_detail(request, episode_id, slug=None):
             "prev_episode": prev_episode,
             "prev_episode_url": prev_episode_url,
             "is_bookmarked": is_bookmarked,
+            "current_time": episode.current_time,
+            "completed": episode.completed,
             "og_data": og_data,
         },
     )
@@ -150,6 +152,8 @@ def history_detail(request, episode_id, slug=None):
             "next_episode_url": next_episode_url,
             "prev_episode_url": prev_episode_url,
             "is_bookmarked": is_bookmarked,
+            "current_time": log.current_time,
+            "completed": log.completed,
         },
     )
 
@@ -196,8 +200,10 @@ def bookmark_detail(request, episode_id, slug=None):
         return redirect(episode)
 
     try:
-        bookmark = Bookmark.objects.select_related("episode", "episode__podcast").get(
-            episode=episode, user=request.user
+        bookmark = (
+            Bookmark.objects.with_current_time(request.user)
+            .select_related("episode", "episode__podcast")
+            .get(episode=episode, user=request.user)
         )
     except Bookmark.DoesNotExist:
         return redirect(episode)
@@ -222,6 +228,8 @@ def bookmark_detail(request, episode_id, slug=None):
             "prev_episode": prev_episode,
             "next_episode_url": next_episode_url,
             "prev_episode_url": prev_episode_url,
+            "current_time": bookmark.current_time,
+            "completed": bookmark.completed,
             "is_bookmarked": True,
         },
     )

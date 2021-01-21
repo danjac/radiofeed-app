@@ -8,6 +8,13 @@
       <a href="{{ episode_url }}"
          class="block font-semibold hover:text-gray-300"
          title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:80 }}</a>
+      {% if episode.explicit %}
+      <span class="text-red-300 font-semibold text-sm ml-2">
+        Explicit
+      </span>
+      {% endif %}
+
+
     </div>
 
     <div class="flex items-center">
@@ -20,35 +27,35 @@
       <div class="leading-tight">
 
         <div class="mb-1 flex flex-wrap hidden md:block tracking-tight">
-          <a href="{{ episode_url }}"
-             class="block font-semibold hover:text-gray-300 mb-2"
-             title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
+          <div class="mb-2 flex items-center">
+            <a href="{{ episode_url }}"
+               class="font-semibold hover:text-gray-300"
+               title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
+
+            {% if episode.explicit %}
+            <span class="text-red-300 font-semibold text-sm ml-2">
+              Explicit
+            </span>
+            {% endif %}
+          </div>
+
+
         </div>
 
         <div class="flex items-center">
           {% include "episodes/_play_buttons.html" with css_class="mr-2" %}
           <div>
             <div class="flex items-center">
-              <div title="Date Published"
-                   class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
-              <div title="Duration"
-                   class="font-semibold text-gray-100 text-sm">
-                {% include "episodes/_current_time.html" %}
+              <div class="md:flex">
+                <div title="Date Published"
+                     class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
+                <div title="Duration"
+                     class="font-semibold text-gray-100 text-sm">
+                  {% include "episodes/_current_time.html" %}
+                </div>
               </div>
-              {% if episode.explicit %}
-              <div class="text-red-300 font-semibold text-sm ml-2 hidden sm:block">
-                Explicit
-              </div>
-              {% endif %}
-
 
             </div>
-            {% if episode.explicit %}
-            <div class="text-red-300 font-semibold text-sm mt-1 sm:hidden">
-              Explicit
-            </div>
-            {% endif %}
-
           </div>
         </div>
 

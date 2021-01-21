@@ -49,9 +49,9 @@
       {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 hover:opacity-75 mr-2" %}
     </a>
     <div>
-      <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
-        <div class="inline-block mr-2">{{ episode.pub_date|date }}</div>
-        {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+      <div class="font-semibold text-gray-300 md:flex md:flex-wrap items-center mb-3 text-sm">
+        <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
+        {% include "episodes/_current_time.html" %}
         {% if episode.explicit %}
         <div class="inline-block font-semibold text-red-300 ml-2">Explicit</div>
         {% endif %}

@@ -39,5 +39,8 @@ def stripentities(value):
 
 
 @register.filter
-def subtract(value_a, value_b):
-    return value_a - value_b
+def percent(value, total):
+    if not value or not total:
+        return 0
+
+    return (value / total) * 100

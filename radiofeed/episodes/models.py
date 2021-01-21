@@ -116,10 +116,6 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def get_time_remaining(self):
-        """Use with the with_current_time QuerySet method."""
-        return self.get_duration_in_seconds() - getattr(self, "current_time", 0)
-
     def log_activity(self, user, current_time=0, completed=False):
         # Updates audio log with current time
         if user.is_anonymous:
