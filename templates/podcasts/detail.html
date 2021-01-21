@@ -18,7 +18,11 @@
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
       </div>
       {% if podcast.explicit %}
-      <div class="text-red-300 text-sm font-semibold mb-3">Explicit</div>
+
+      <div class="text-red-300 text-sm font-semibold mb-3 flex items-center">
+        {% include "_explicit.html" with css_class="mr-2" %}
+        Explicit
+      </div>
       {% endif %}
 
       <div class="flex items-center text-sm">

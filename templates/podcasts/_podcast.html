@@ -10,11 +10,15 @@
         </turbo-frame>
       </a>
       <div>
-        <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight">
+        <div class="mb-2 w-64 sm:w-96 truncate md:w-full tracking-tight leading-tight flex items-center">
           <a href="{{ podcast.get_absolute_url }}"
              data-turbo-frame="default"
              title="{{ podcast.title|stripentities }}"
              class="font-semibold hover:text-gray-300">{{ podcast.title|stripentities|truncatechars:80 }}</a>
+
+          {% if podcast.explicit %}
+          {% include "_explicit.html" with css_class="ml-2" %}
+          {% endif %}
         </div>
         <div class="font-semibold text-gray-300 text-sm flex flex-wrap items-center">
           <div class="inline-block">{{ podcast.pub_date|date }}</div>

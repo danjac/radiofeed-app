@@ -8,6 +8,9 @@
       <a href="{{ episode_url }}"
          class="block font-semibold hover:text-gray-300"
          title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:120 }}</a>
+      {% if episode.explicit %}
+      {% include "_explicit.html" with css_class="ml-2" %}
+      {% endif %}
     </div>
 
     <div class="flex items-center">
