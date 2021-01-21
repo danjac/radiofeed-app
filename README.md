@@ -16,7 +16,6 @@ Some ideas for additional features you might want to add in a fork:
 
 1. An episode queue that automatically plays the next episode in the queue when one is finished
 2. Allow users to compile and share their own lists or collections of podcasts
-4. Automatically add new podcasts using the GPodder or iTunes API
 
 For local development, first copy the .env.example file:
 
