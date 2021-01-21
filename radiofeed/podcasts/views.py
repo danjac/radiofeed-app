@@ -156,7 +156,8 @@ def podcast_episode_list(request, podcast_id, slug=None):
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "episodes/_episodes.html", {"page_obj": paginate(request, episodes)}
+                "episodes/_episodes.html",
+                {"page_obj": paginate(request, episodes), "search": search},
             )
             .response(request)
         )
