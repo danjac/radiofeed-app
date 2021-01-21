@@ -5,7 +5,18 @@ from django.urls import reverse
 from radiofeed.podcasts.models import Podcast
 
 # Local
-from ..defaulttags import active_link
+from ..defaulttags import active_link, percent
+
+
+class TestPercent:
+    def test_if_either_none(self):
+        assert percent(10, 0) == 0
+        assert percent(0, 10) == 0
+        assert percent(0, 0) == 0
+        assert percent(None, None) == 0
+
+    def test_percent(self):
+        assert percent(30, 60) == 50
 
 
 class TestActiveLink:
