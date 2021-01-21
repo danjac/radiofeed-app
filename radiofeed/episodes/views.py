@@ -136,7 +136,7 @@ def remove_history(request, episode_id):
     logs = AudioLog.objects.filter(user=request.user)
     logs.filter(episode=episode).delete()
 
-    if logs.exists() and request.accept_turbo_stream:
+    if logs.exists() and request.turbo:
         return TurboStream(f"episode-{episode.id}").remove.response()
     messages.info(request, "All done!")
     return redirect("episodes:history")

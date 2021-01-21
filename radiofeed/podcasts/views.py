@@ -213,7 +213,8 @@ def category_detail(request, category_id, slug=None):
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "podcasts/_podcasts.html", {"page_obj": paginate(request, podcasts)}
+                "podcasts/_podcasts.html",
+                {"page_obj": paginate(request, podcasts), "search": search},
             )
             .response(request)
         )
@@ -307,9 +308,9 @@ def add_podcast(request):
     if form.is_valid():
         podcast = form.save()
         sync_podcast_feed.delay(podcast_id=podcast.id)
-        if request.accept_turbo_stream:
+        if request.turbo.frame:
             return (
-                TurboFrame("add-podcast")
+                TurboFrame(request.turbo.frame)
                 .template(
                     "podcasts/_add_new_button.html",
                     {"is_added": True},

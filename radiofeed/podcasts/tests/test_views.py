@@ -41,50 +41,55 @@ class TestLandingPage:
 
 
 class TestPodcastList:
-    def test_anonymous(self, rf, anonymous_user):
+    def test_anonymous(self, rf, anonymous_user, mock_turbo):
         PodcastFactory.create_batch(3)
         req = rf.get(reverse("podcasts:podcast_list"))
+        req.turbo = mock_turbo(True, "podcasts")
         req.user = anonymous_user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_no_subscriptions(self, rf, user):
+    def test_user_no_subscriptions(self, rf, user, mock_turbo):
         """If user has no subscriptions, just show general feed"""
         PodcastFactory.create_batch(3)
         req = rf.get(reverse("podcasts:podcast_list"))
+        req.turbo = mock_turbo(True, "podcasts")
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_has_subscriptions(self, rf, user):
+    def test_user_has_subscriptions(self, rf, user, mock_turbo):
         """If user has subscriptions, show only own feed"""
         PodcastFactory.create_batch(3)
         sub = SubscriptionFactory(user=user)
         req = rf.get(reverse("podcasts:podcast_list"))
+        req.turbo = mock_turbo(True, "podcasts")
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
 
-    def test_search_anonymous(self, rf, anonymous_user, transactional_db):
+    def test_search_anonymous(self, rf, anonymous_user, transactional_db, mock_turbo):
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = anonymous_user
+        req.turbo = mock_turbo(True, "podcasts")
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == podcast
 
-    def test_search_has_subscription(self, rf, user, transactional_db):
+    def test_search_has_subscription(self, rf, user, transactional_db, mock_turbo):
         """Ignore subscribed feeds in search"""
         PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user)
         req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
         req.user = user
+        req.turbo = mock_turbo(True, "podcasts")
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
@@ -106,8 +111,9 @@ class TestPodcastRecommendations:
 
 
 class TestPodcastCoverImage:
-    def test_get(self, rf, podcast):
+    def test_get(self, rf, podcast, mock_turbo):
         req = rf.get("podcasts:podcast_cover_image", args=[podcast.id])
+        req.turbo = mock_turbo(True, "cover-image")
         resp = views.podcast_cover_image(req, podcast.id)
         assert resp.status_code == http.HTTPStatus.OK
 
@@ -149,35 +155,58 @@ class TestPodcastDetail:
 
 
 class TestPodcastEpisodeList:
-    def test_get(self, rf, anonymous_user, podcast, site):
+    def test_get_podcast(self, rf, anonymous_user, podcast, site, mock_turbo):
         EpisodeFactory.create_batch(3, podcast=podcast)
         req = rf.get(
-            reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug])
+            reverse(
+                "podcasts:podcast_episode_list",
+                args=[podcast.id, podcast.slug],
+            )
         )
         req.user = anonymous_user
         req.site = site
+        req.turbo = mock_turbo(False)
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
+
+    def test_get_episodes(self, rf, anonymous_user, podcast, site, mock_turbo):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        req = rf.get(
+            reverse(
+                "podcasts:podcast_episode_list",
+                args=[podcast.id, podcast.slug],
+            )
+        )
+        req.user = anonymous_user
+        req.site = site
+        req.turbo = mock_turbo(True, "episodes")
+        resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_search(self, rf, anonymous_user, podcast, site, transactional_db):
+    def test_search(
+        self, rf, anonymous_user, podcast, site, transactional_db, mock_turbo
+    ):
         EpisodeFactory.create_batch(3, podcast=podcast, title="zzzz", keywords="zzzz")
         EpisodeFactory(title="testing", podcast=podcast)
         req = rf.get(
-            reverse("podcasts:podcast_episode_list", args=[podcast.id, podcast.slug]),
+            reverse(
+                "podcasts:podcast_episode_list",
+                args=[podcast.id, podcast.slug],
+            ),
             {"q": "testing"},
         )
+        req.turbo = mock_turbo(True, "episodes")
         req.user = anonymous_user
         req.site = site
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestAddPodcast:
-    def test_add_podcast(self, rf, admin_user, mocker):
+    def test_add_podcast(self, rf, admin_user, mocker, mock_turbo):
         data = {
             "itunes": "http://itunes.apple.com",
             "rss": "https://example.com/rss.xml",
@@ -188,7 +217,7 @@ class TestAddPodcast:
 
         req = rf.post(reverse("podcasts:add_podcast"), data)
         req.user = admin_user
-        req.accept_turbo_stream = True
+        req.turbo = mock_turbo(True, "add-btn")
 
         resp = views.add_podcast(req)
         assert resp.status_code == http.HTTPStatus.OK
@@ -238,18 +267,29 @@ class TestCategoryList:
 
 
 class TestCategoryDetail:
-    def test_get(self, rf, category, anonymous_user):
+    def test_get(self, rf, category, anonymous_user, mock_turbo):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
         req = rf.get(category.get_absolute_url())
         req.user = anonymous_user
+        req.turbo = mock_turbo(False)
         resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["category"] == category
+
+    def test_get_episodes(self, rf, category, anonymous_user, mock_turbo):
+
+        CategoryFactory.create_batch(3, parent=category)
+        PodcastFactory.create_batch(12, categories=[category])
+        req = rf.get(category.get_absolute_url())
+        req.user = anonymous_user
+        req.turbo = mock_turbo(True, "episodes")
+        resp = views.category_detail(req, category.id, category.slug)
+        assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 12
 
-    def test_search(self, rf, category, anonymous_user, transactional_db):
+    def test_search(self, rf, category, anonymous_user, transactional_db, mock_turbo):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
@@ -259,37 +299,37 @@ class TestCategoryDetail:
 
         req = rf.get(category.get_absolute_url(), {"q": "testing"})
         req.user = anonymous_user
+        req.turbo = mock_turbo(True, "podcasts")
         resp = views.category_detail(req, category.id, category.slug)
 
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["category"] == category
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["search"] == "testing"
 
 
 class TestSubscribe:
-    def test_subscribe(self, rf, podcast, user):
+    def test_subscribe(self, rf, podcast, user, mock_turbo):
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
-        req.accept_turbo_stream = True
+        req.turbo = mock_turbo(True, "subscribe")
         resp = views.subscribe(req, podcast.id)
         assert resp.status_code == http.HTTPStatus.OK
 
-    def test_already_subscribed(self, rf, podcast, user):
+    def test_already_subscribed(self, rf, podcast, user, mock_turbo):
         SubscriptionFactory(user=user, podcast=podcast)
         req = rf.post(reverse("podcasts:subscribe", args=[podcast.id]))
         req.user = user
-        req.accept_turbo_stream = True
+        req.turbo = mock_turbo(True, "subscribe")
         resp = views.subscribe(req, podcast.id)
         assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestUnsubscribe:
-    def test_unsubscribe(self, rf, podcast, user):
+    def test_unsubscribe(self, rf, podcast, user, mock_turbo):
         SubscriptionFactory(user=user, podcast=podcast)
         req = rf.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
         req.user = user
-        req.accept_turbo_stream = True
+        req.turbo = mock_turbo(True, "subscribe")
         resp = views.unsubscribe(req, podcast.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert not Subscription.objects.filter(podcast=podcast, user=user).exists()

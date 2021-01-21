@@ -21,6 +21,15 @@ from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 
+class MockTurbo:
+    def __init__(self, has_header=True, frame=None):
+        self.has_header = has_header
+        self.frame = frame
+
+    def __bool__(self):
+        return self.has_header
+
+
 class MockSession(dict):
     """Provides mock session dict with session key"""
 
@@ -92,3 +101,8 @@ def bookmark(user, episode):
 @pytest.fixture
 def log(user, episode):
     return AudioLogFactory(user=user, episode=episode)
+
+
+@pytest.fixture
+def mock_turbo():
+    return MockTurbo
