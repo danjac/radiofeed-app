@@ -68,6 +68,15 @@ def episode_detail(request, episode_id, slug=None):
     if prev_episode := episode.get_previous_episode():
         prev_episode_url = prev_episode.get_absolute_url()
 
+    og_data = {
+        "url": request.build_absolute_uri(episode.get_absolute_url()),
+        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
+        "description": episode.description,
+        "image": episode.podcast.cover_image.url
+        if episode.podcast.cover_image
+        else None,
+    }
+
     return episode_detail_response(
         request,
         episode,
@@ -77,6 +86,7 @@ def episode_detail(request, episode_id, slug=None):
             "prev_episode": prev_episode,
             "prev_episode_url": prev_episode_url,
             "is_bookmarked": is_bookmarked,
+            "og_data": og_data,
         },
     )
 
@@ -320,21 +330,11 @@ def episode_bookmark_response(request, episode, is_bookmarked):
 
 
 def episode_detail_response(request, episode, extra_context=None):
-    og_data = {
-        "url": request.build_absolute_uri(episode.get_absolute_url()),
-        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
-        "description": episode.description,
-        "image": episode.podcast.cover_image.url
-        if episode.podcast.cover_image
-        else None,
-    }
-
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
-            "og_data": og_data,
         }
         | (extra_context or {}),
     )
