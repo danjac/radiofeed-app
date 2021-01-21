@@ -101,16 +101,19 @@ def history(request):
     )
 
 
-@login_required
 def history_detail(request, episode_id, slug=None):
+    episode = get_object_or_404(Episode, pk=episode_id)
 
-    log = get_object_or_404(
-        AudioLog.objects.filter(user=request.user).select_related(
-            "episode", "episode__podcast"
-        ),
-        user=request.user,
-        episode=episode_id,
-    )
+    if not request.user.is_authenticated:
+        return redirect(episode)
+
+    try:
+        log = AudioLog.objects.select_related("episode", "episode__podcast").get(
+            user=request.user,
+            episode=episode,
+        )
+    except AudioLog.DoesNotExist:
+        return redirect(episode)
 
     is_bookmarked = Bookmark.objects.filter(
         episode=log.episode, user=request.user
@@ -174,16 +177,20 @@ def bookmark_list(request):
     )
 
 
-@login_required
 def bookmark_detail(request, episode_id, slug=None):
 
-    bookmark = get_object_or_404(
-        Bookmark.objects.filter(user=request.user).select_related(
-            "episode", "episode__podcast"
-        ),
-        user=request.user,
-        episode=episode_id,
-    )
+    episode = get_object_or_404(Episode, pk=episode_id)
+
+    # if user not logged in (e.g. linking to OG page) redirect back to episode
+    if not request.user.is_authenticated:
+        return redirect(episode)
+
+    try:
+        bookmark = Bookmark.objects.select_related("episode", "episode__podcast").get(
+            episode=episode, user=request.user
+        )
+    except Bookmark.DoesNotExist:
+        return redirect(episode)
 
     if next_bookmark := bookmark.get_next_bookmark():
         next_episode = next_bookmark.episode
