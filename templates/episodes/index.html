@@ -27,23 +27,8 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-
-
-{% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
-{% endif %}
-
-{% for episode in page_obj %}
-{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
-{% empty %}
-
-{% if search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
-{% elif user.is_authenticated %}
-<p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet.</p>
-{% endif %}
-
-{% endfor %}
-
-{% include "_pagination.html" %}
+<turbo-frame id="episodes"
+             src="{{ request.get_full_path }}">
+  Fetching episodes...
+</turbo-frame>
 {% endblock content %}

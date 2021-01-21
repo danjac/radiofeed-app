@@ -19,19 +19,10 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
+<turbo-frame id="bookmarked-episodes"
+             src="{{ request.get_full_path }}">
+  Fetching bookmarks...
+</turbo-frame>
 
-{% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
-{% endif %}
 
-{% for bookmark in page_obj %}
-{% include "episodes/_bookmark_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
-{% empty %}
-{% if search %}
-<p>Sorry, no results found for your search.</p>
-{% else %}
-<p>You haven't added any bookmarks yet.</p>
-{% endif %}
-{% endfor %}
-{% include "_pagination.html" %}
 {% endblock content %}

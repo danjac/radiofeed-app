@@ -35,22 +35,9 @@
 </div>
 {% endif %}
 
-{% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
-{% endif %}
+<turbo-frame id="podcast-episodes"
+             src="{{ request.get_full_path }}">
+  Fetching episodes...
+</turbo-frame>
 
-{% for episode in page_obj %}
-{% url 'podcasts:podcast_detail' podcast.id podcast.slug as podcast_url %}
-{% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
-{% empty %}
-<p class="text-center sm:text-left">
-  {% if search %}
-  No results found for <span class="font-bold">{{ search }}</span>.
-  {% else %}
-  This podcast does not appear to have any episodes.
-  {% endif %}
-</p>
-{% endfor %}
-
-{% include "_pagination.html" %}
 {% endblock %}

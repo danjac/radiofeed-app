@@ -23,7 +23,8 @@ from .models import AudioLog, Bookmark, Episode
 
 
 def episode_list(request):
-    episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
+
+    search = request.GET.get("q", None)
     subscriptions = (
         list(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
@@ -31,20 +32,32 @@ def episode_list(request):
     )
     has_subscriptions = bool(subscriptions)
 
-    if search := request.GET.get("q", None):
-        episodes = episodes.search(search).order_by("-rank", "-pub_date")
-    elif subscriptions:
-        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
-            : settings.DEFAULT_PAGE_SIZE
-        ]
-    else:
-        episodes = episodes.none()
+    if request.turbo.frame:
+
+        episodes = Episode.objects.with_current_time(request.user).select_related(
+            "podcast"
+        )
+        if search:
+            episodes = episodes.search(search).order_by("-rank", "-pub_date")
+        elif subscriptions:
+            episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
+                : settings.DEFAULT_PAGE_SIZE
+            ]
+        else:
+            episodes = episodes.none()
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/_index.html",
+                {"page_obj": paginate(request, episodes), "search": search},
+            )
+            .response(request)
+        )
 
     return TemplateResponse(
         request,
         "episodes/index.html",
         {
-            "page_obj": paginate(request, episodes),
             "has_subscriptions": has_subscriptions,
             "search": search,
         },
@@ -82,21 +95,35 @@ def episode_detail(request, episode_id, slug=None):
 
 @login_required
 def history(request):
-    logs = (
-        AudioLog.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("-updated")
-    )
+    search = request.GET.get("q", None)
 
-    if search := request.GET.get("q", None):
-        logs = logs.search(search).order_by("-rank", "-updated")
-    else:
-        logs = logs.order_by("-updated")
+    if request.turbo.frame:
+        logs = (
+            AudioLog.objects.filter(user=request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("-updated")
+        )
+
+        if search:
+            logs = logs.search(search).order_by("-rank", "-updated")
+        else:
+            logs = logs.order_by("-updated")
+
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/_history.html",
+                {"page_obj": paginate(request, logs), "search": search},
+            )
+            .response(request)
+        )
 
     return TemplateResponse(
         request,
         "episodes/history.html",
-        {"page_obj": paginate(request, logs), "search": search},
+        {
+            "search": search,
+        },
     )
 
 
@@ -117,19 +144,33 @@ def remove_history(request, episode_id):
 
 @login_required
 def bookmark_list(request):
-    bookmarks = (
-        Bookmark.objects.filter(user=request.user)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
-    )
-    if search := request.GET.get("q", None):
-        bookmarks = bookmarks.search(search).order_by("-rank", "-created")
-    else:
-        bookmarks = bookmarks.order_by("-created")
+    search = request.GET.get("q", None)
+
+    if request.turbo.frame:
+
+        bookmarks = (
+            Bookmark.objects.filter(user=request.user)
+            .with_current_time(request.user)
+            .select_related("episode", "episode__podcast")
+        )
+        if search:
+            bookmarks = bookmarks.search(search).order_by("-rank", "-created")
+        else:
+            bookmarks = bookmarks.order_by("-created")
+
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/_bookmarks.html",
+                {"page_obj": paginate(request, bookmarks), "search": search},
+            )
+            .response(request)
+        )
+
     return TemplateResponse(
         request,
         "episodes/bookmarks.html",
-        {"page_obj": paginate(request, bookmarks), "search": search},
+        {"search": search},
     )
 
 
@@ -232,9 +273,9 @@ def player_timeupdate(request):
 
 
 def episode_bookmark_response(request, episode, is_bookmarked):
-    if request.accept_turbo_stream:
+    if request.turbo.frame:
         return (
-            TurboFrame(f"bookmark-{episode.id}")
+            TurboFrame(request.turbo.frame)
             .template(
                 "episodes/_bookmark_buttons.html",
                 {"episode": episode, "is_bookmarked": is_bookmarked},

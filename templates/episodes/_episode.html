@@ -7,13 +7,15 @@
     <div class="mb-2 text-sm md:text-base">
       <a href="{{ episode_url }}"
          class="flex items-center flex-wrap font-semibold hover:text-gray-300"
+         data-turbo-frame="_top"
          title="{{ episode.title|stripentities }}">
         {{ episode.title|stripentities|truncatechars:120 }}
       </a>
     </div>
 
     <div class="flex items-center">
-      <a href="{{ podcast_url|default:podcast.get_absolute_url }}">
+      <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
+         data-turbo-frame="_top">
         <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                      src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
           {% include "podcasts/_podcast_cover_image.html" with lazy=True %}

@@ -1,0 +1,18 @@
+{% extends "episodes/_episodes.html" %}
+
+{% block episodes %}
+{% for log in page_obj %}
+{% include "episodes/_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed %}
+
+{% empty %}
+
+{% block empty %}
+{% if search %}
+<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+{% else %}
+Your history is currently empty.
+{% endif %}
+{% endblock empty %}
+
+{% endfor %}
+{% endblock %}

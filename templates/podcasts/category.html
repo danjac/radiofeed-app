@@ -57,21 +57,10 @@
   {% endif %}
 </div>
 {% endif %}
+<turbo-frame src="{{ request.get_full_path }}"
+             id="podcast-category-list">
+  Fetching podcasts...
+</turbo-frame>
 
-{% if page_obj.number > 1 %}
-{% include "_pagination.html" with css_class="mb-3"  %}
-{% endif %}
 
-{% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" %}
-{% empty %}
-<p class="text-center sm:text-left mb-3">
-  {% if search %}
-  No results found for this search.
-  {% else %}
-  No podcasts have been added to this category yet.
-  {% endif %}
-</p>
-{% endfor %}
-{% include "_pagination.html" %}
 {% endblock content %}
