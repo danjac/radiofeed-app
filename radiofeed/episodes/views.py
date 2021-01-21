@@ -233,14 +233,3 @@ def episode_bookmark_response(request, episode, is_bookmarked):
             .response(request)
         )
     return redirect(episode)
-
-
-def episode_detail_response(request, episode, extra_context=None):
-    return TemplateResponse(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": episode,
-        }
-        | (extra_context or {}),
-    )
