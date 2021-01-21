@@ -4,6 +4,7 @@ import json
 
 # Django
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -143,10 +144,15 @@ def history_detail(request, episode_id, slug=None):
 @require_POST
 @login_required
 def remove_history(request, episode_id):
+
     episode = get_object_or_404(Episode, pk=episode_id)
-    AudioLog.objects.filter(episode=episode, user=request.user).delete()
-    if request.accept_turbo_stream:
+
+    logs = AudioLog.objects.filter(user=request.user)
+    logs.filter(episode=episode).delete()
+
+    if logs.exists() and request.accept_turbo_stream:
         return TurboStream(f"episode-{episode.id}").remove.response()
+    messages.info(request, "All done!")
     return redirect("episodes:history")
 
 
