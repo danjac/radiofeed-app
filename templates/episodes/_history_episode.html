@@ -3,7 +3,9 @@
 <form method="post"
       action="{% url 'episodes:remove_history' episode.id %}">
   {% csrf_token %}
-  <button class="rounded border border-white p-1 flex items-center">
+  <button class="focus:outline-none rounded border hover:bg-gray-600 p-1 text-sm flex items-center"
+          title="Remove episode from history">
+
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
