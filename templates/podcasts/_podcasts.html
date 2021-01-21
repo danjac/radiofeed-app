@@ -1,4 +1,3 @@
-{% load pagination %}
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
@@ -7,13 +6,5 @@
      class="font-bold">iTunes</a>.</p>
 {% endif %}
 {% endfor %}
-{% if page_obj.has_next %}
-<turbo-frame id="podcasts-page-{{ page_obj.next_page_number }}">
-  <div class="flex justify-center">
-    <a href="{% pagination_url page_obj.next_page_number %}"
-       class="block text-center font-semibold hover:bg-gray-600 border border-white rounded p-1 w-full md:w-96">
-      More Results
-    </a>
-  </div>
-</turbo-frame>
-{% endif %}
+{% include "_pagination.html" %}
+

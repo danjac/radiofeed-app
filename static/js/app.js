@@ -3,6 +3,7 @@ import 'form-request-submit-polyfill';
 import { Application } from 'stimulus';
 
 import ConfirmController from './controllers/confirm-controller';
+import DebounceController from './controllers/debounce-controller';
 import EpisodeController from './controllers/episode-controller';
 import LinkController from './controllers/link-controller';
 import NotificationController from './controllers/notification-controller';
@@ -13,6 +14,7 @@ import ToggleController from './controllers/toggle-controller';
 const application = Application.start();
 
 application.register('confirm', ConfirmController);
+application.register('debounce', DebounceController);
 application.register('episode', EpisodeController);
 application.register('link', LinkController);
 application.register('notification', NotificationController);

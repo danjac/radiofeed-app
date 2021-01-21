@@ -1,4 +1,3 @@
-{% load pagination %}
 {% block episodes %}
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
@@ -13,13 +12,4 @@
 
 {% endfor %}
 {% endblock %}
-{% if page_obj.has_next %}
-<turbo-frame id="episodes-page-{{ page_obj.next_page_number }}">
-  <div class="flex justify-center">
-    <a href="{% pagination_url page_obj.next_page_number %}"
-       class="block text-center font-semibold hover:bg-gray-300 border border-white rounded p-1 w-full md:w-96">
-      More Results
-    </a>
-  </div>
-</turbo-frame>
-{% endif %}
+{% include "_pagination.html" %}
