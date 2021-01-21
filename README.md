@@ -44,7 +44,7 @@ This app has been configured to run on ![Dokku](https://github.com/dokku/dokku).
 
 SSH into your Dokku server and create the app and add the domain (assuming "myapp" is your app name, and "myapp.com" your domain):
 
-> dokku config:set --no-restart radiofeed BUILDPACK_URL=https://github.com/heroku/heroku-buildpack-python
+> dokku config:set --no-restart myapp BUILDPACK_URL=https://github.com/heroku/heroku-buildpack-python
 
 > dokku apps:create myapp
 
