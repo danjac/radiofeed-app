@@ -25,7 +25,7 @@
 {% endif %}
 
 {% for bookmark in page_obj %}
-{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed episode_url=bookmark.get_absolute_url %}
+{% include "episodes/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
 {% empty %}
 {% if search %}
 <p>Sorry, no results found for your search.</p>

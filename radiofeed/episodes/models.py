@@ -131,18 +131,16 @@ class Episode(models.Model):
         )
 
     def get_next_episode(self):
-        return (
-            self.podcast.episode_set.filter(pub_date__gt=self.pub_date)
-            .order_by("pub_date")
-            .first()
-        )
+        try:
+            return self.get_next_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
 
     def get_previous_episode(self):
-        return (
-            self.podcast.episode_set.filter(pub_date__lt=self.pub_date)
-            .order_by("-pub_date")
-            .first()
-        )
+        try:
+            return self.get_previous_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
 
 
 class BookmarkQuerySet(models.QuerySet):
@@ -195,27 +193,6 @@ class Bookmark(TimeStampedModel):
             models.Index(fields=["-created"]),
         ]
 
-    def get_absolute_url(self):
-        return reverse(
-            "episodes:bookmark_detail", args=[self.episode.id, self.episode.slug]
-        )
-
-    def get_next_bookmark(self):
-        return (
-            self.user.bookmark_set.filter(created__gt=self.created)
-            .order_by("created")
-            .select_related("episode")
-            .first()
-        )
-
-    def get_previous_bookmark(self):
-        return (
-            self.user.bookmark_set.filter(created__lt=self.created)
-            .order_by("-created")
-            .select_related("episode")
-            .first()
-        )
-
 
 class AudioLogQuerySet(models.QuerySet):
     def search(self, search_term):
@@ -255,24 +232,3 @@ class AudioLog(TimeStampedModel):
         indexes = [
             models.Index(fields=["-updated"]),
         ]
-
-    def get_absolute_url(self):
-        return reverse(
-            "episodes:history_detail", args=[self.episode.id, self.episode.slug]
-        )
-
-    def get_next_log(self):
-        return (
-            self.user.audiolog_set.filter(updated__gt=self.updated)
-            .order_by("updated")
-            .select_related("episode")
-            .first()
-        )
-
-    def get_previous_log(self):
-        return (
-            self.user.audiolog_set.filter(updated__lt=self.updated)
-            .order_by("-updated")
-            .select_related("episode")
-            .first()
-        )

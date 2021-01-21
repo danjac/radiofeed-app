@@ -1,5 +1,5 @@
 {% load episodes %}
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode_url|default:episode.get_absolute_url %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url %}
 {% is_playing episode as is_episode_playing %}
 <div class="flex justify-between items-center mb-3 p-2 border  border-gray-500 hover:border-blue-500"
      id="episode-{{ episode.id }}">
@@ -8,12 +8,6 @@
       <a href="{{ episode_url }}"
          class="block font-semibold hover:text-gray-300"
          title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:80 }}</a>
-      {% if episode.explicit %}
-      <span class="text-red-300 font-semibold text-sm ml-2">
-        Explicit
-      </span>
-      {% endif %}
-
 
     </div>
 
@@ -32,11 +26,6 @@
                class="font-semibold hover:text-gray-300"
                title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
 
-            {% if episode.explicit %}
-            <span class="text-red-300 font-semibold text-sm ml-2">
-              Explicit
-            </span>
-            {% endif %}
           </div>
 
 
@@ -54,6 +43,12 @@
                   {% include "episodes/_current_time.html" %}
                 </div>
               </div>
+              {% if episode.explicit %}
+              <div class="text-red-300 font-semibold text-sm ml-2">
+                Explicit
+              </div>
+              {% endif %}
+
 
             </div>
           </div>

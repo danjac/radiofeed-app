@@ -10,7 +10,6 @@ import pytest
 
 # RadioFeed
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.users.factories import UserFactory
 
 # Local
 from .. import views
@@ -75,50 +74,6 @@ class TestEpisodeList:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
-
-
-class TestBookmarkDetail:
-    def test_anonymous(self, rf, bookmark, anonymous_user):
-        req = rf.get(bookmark.get_absolute_url())
-        req.user = anonymous_user
-        resp = views.bookmark_detail(req, bookmark.episode.id, bookmark.episode.slug)
-        assert resp.url == bookmark.episode.get_absolute_url()
-
-    def test_authenticated(self, rf, bookmark, site):
-        req = rf.get(bookmark.get_absolute_url())
-        req.site = site
-        req.user = bookmark.user
-        resp = views.bookmark_detail(req, bookmark.episode.id, bookmark.episode.slug)
-        assert resp.status_code == http.HTTPStatus.OK
-
-    def test_not_user(self, rf, bookmark, site):
-        req = rf.get(bookmark.get_absolute_url())
-        req.site = site
-        req.user = UserFactory()
-        resp = views.bookmark_detail(req, bookmark.episode.id, bookmark.episode.slug)
-        assert resp.url == bookmark.episode.get_absolute_url()
-
-
-class TestHistoryDetail:
-    def test_anonymous(self, rf, log, anonymous_user):
-        req = rf.get(log.get_absolute_url())
-        req.user = anonymous_user
-        resp = views.history_detail(req, log.episode.id, log.episode.slug)
-        assert resp.url == log.episode.get_absolute_url()
-
-    def test_authenticated(self, rf, log, site):
-        req = rf.get(log.get_absolute_url())
-        req.site = site
-        req.user = log.user
-        resp = views.history_detail(req, log.episode.id, log.episode.slug)
-        assert resp.status_code == http.HTTPStatus.OK
-
-    def test_not_user(self, rf, log, site):
-        req = rf.get(log.get_absolute_url())
-        req.site = site
-        req.user = UserFactory()
-        resp = views.history_detail(req, log.episode.id, log.episode.slug)
-        assert resp.url == log.episode.get_absolute_url()
 
 
 class TestEpisodeDetail:

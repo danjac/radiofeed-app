@@ -25,7 +25,7 @@
 {% endif %}
 
 {% for log in page_obj %}
-{% include "episodes/_history_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed  episode_url=log.get_absolute_url %}
+{% include "episodes/_history_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed %}
 {% empty %}
 {% if search %}
 <p>Sorry, no results found for your search.</p>

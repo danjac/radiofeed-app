@@ -60,14 +60,6 @@ def episode_detail(request, episode_id, slug=None):
         request.user.is_authenticated
         and Bookmark.objects.filter(episode=episode, user=request.user).exists()
     )
-    next_episode_url = prev_episode_url = None
-
-    if next_episode := episode.get_next_episode():
-        next_episode_url = next_episode.get_absolute_url()
-
-    if prev_episode := episode.get_previous_episode():
-        prev_episode_url = prev_episode.get_absolute_url()
-
     og_data = {
         "url": request.build_absolute_uri(episode.get_absolute_url()),
         "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
@@ -77,17 +69,12 @@ def episode_detail(request, episode_id, slug=None):
         else None,
     }
 
-    return episode_detail_response(
+    return TemplateResponse(
         request,
-        episode,
+        "episodes/detail.html",
         {
-            "next_episode": next_episode,
-            "next_episode_url": next_episode_url,
-            "prev_episode": prev_episode,
-            "prev_episode_url": prev_episode_url,
+            "episode": episode,
             "is_bookmarked": is_bookmarked,
-            "current_time": episode.current_time,
-            "completed": episode.completed,
             "og_data": og_data,
         },
     )
@@ -110,51 +97,6 @@ def history(request):
         request,
         "episodes/history.html",
         {"page_obj": paginate(request, logs), "search": search},
-    )
-
-
-def history_detail(request, episode_id, slug=None):
-    episode = get_object_or_404(Episode, pk=episode_id)
-
-    if not request.user.is_authenticated:
-        return redirect(episode)
-
-    try:
-        log = AudioLog.objects.select_related("episode", "episode__podcast").get(
-            user=request.user,
-            episode=episode,
-        )
-    except AudioLog.DoesNotExist:
-        return redirect(episode)
-
-    is_bookmarked = Bookmark.objects.filter(
-        episode=log.episode, user=request.user
-    ).exists()
-
-    if next_log := log.get_next_log():
-        next_episode = next_log.episode
-        next_episode_url = next_log.get_absolute_url()
-    else:
-        next_episode = next_episode_url = None
-
-    if prev_log := log.get_previous_log():
-        prev_episode = prev_log.episode
-        prev_episode_url = prev_log.get_absolute_url()
-    else:
-        prev_episode = prev_episode_url = None
-
-    return episode_detail_response(
-        request,
-        log.episode,
-        extra_context={
-            "next_episode": next_episode,
-            "prev_episode": prev_episode,
-            "next_episode_url": next_episode_url,
-            "prev_episode_url": prev_episode_url,
-            "is_bookmarked": is_bookmarked,
-            "current_time": log.current_time,
-            "completed": log.completed,
-        },
     )
 
 
@@ -188,50 +130,6 @@ def bookmark_list(request):
         request,
         "episodes/bookmarks.html",
         {"page_obj": paginate(request, bookmarks), "search": search},
-    )
-
-
-def bookmark_detail(request, episode_id, slug=None):
-
-    episode = get_object_or_404(Episode, pk=episode_id)
-
-    # if user not logged in (e.g. linking to OG page) redirect back to episode
-    if not request.user.is_authenticated:
-        return redirect(episode)
-
-    try:
-        bookmark = (
-            Bookmark.objects.with_current_time(request.user)
-            .select_related("episode", "episode__podcast")
-            .get(episode=episode, user=request.user)
-        )
-    except Bookmark.DoesNotExist:
-        return redirect(episode)
-
-    if next_bookmark := bookmark.get_next_bookmark():
-        next_episode = next_bookmark.episode
-        next_episode_url = next_bookmark.get_absolute_url()
-    else:
-        next_episode = next_episode_url = None
-
-    if prev_bookmark := bookmark.get_previous_bookmark():
-        prev_episode = prev_bookmark.episode
-        prev_episode_url = prev_bookmark.get_absolute_url()
-    else:
-        prev_episode = prev_episode_url = None
-
-    return episode_detail_response(
-        request,
-        bookmark.episode,
-        extra_context={
-            "next_episode": next_episode,
-            "prev_episode": prev_episode,
-            "next_episode_url": next_episode_url,
-            "prev_episode_url": prev_episode_url,
-            "current_time": bookmark.current_time,
-            "completed": bookmark.completed,
-            "is_bookmarked": True,
-        },
     )
 
 

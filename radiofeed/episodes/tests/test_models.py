@@ -117,52 +117,8 @@ class TestBookmarkManager:
         assert Bookmark.objects.search("testing").count() == 1
 
 
-class TestBookmarkModel:
-    def test_has_next_previous_bookmark(self, user):
-
-        bookmark = BookmarkFactory(user=user)
-
-        assert bookmark.get_next_bookmark() is None
-        assert bookmark.get_previous_bookmark() is None
-
-        next_bookmark = BookmarkFactory(
-            user=user,
-            created=bookmark.created + datetime.timedelta(days=2),
-        )
-
-        previous_bookmark = BookmarkFactory(
-            user=user,
-            created=bookmark.created - datetime.timedelta(days=2),
-        )
-
-        assert bookmark.get_next_bookmark() == next_bookmark
-        assert bookmark.get_previous_bookmark() == previous_bookmark
-
-
 class TestAudioLogManager:
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
-
-
-class TestAudioLogModel:
-    def test_has_next_previous_log(self, user):
-
-        log = AudioLogFactory(user=user)
-
-        assert log.get_next_log() is None
-        assert log.get_previous_log() is None
-
-        next_log = AudioLogFactory(
-            user=user,
-            updated=log.updated + datetime.timedelta(days=2),
-        )
-
-        previous_log = AudioLogFactory(
-            user=user,
-            updated=log.updated - datetime.timedelta(days=2),
-        )
-
-        assert log.get_next_log() == next_log
-        assert log.get_previous_log() == previous_log
