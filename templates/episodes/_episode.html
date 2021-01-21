@@ -3,18 +3,11 @@
 {% is_playing episode as is_episode_playing %}
 <div class="flex justify-between items-center mb-3 p-2 border  border-gray-500 hover:border-blue-500"
      id="episode-{{ episode.id }}">
-  <div>
-    <div class="mb-1 flex items-center text-sm flex-wrap md:hidden tracking-tight leading-tight">
+  <div class="w-full">
+    <div class="mb-2 flex items-center text-sm md:text-base flex-wrap tracking-tight leading-tight">
       <a href="{{ episode_url }}"
          class="block font-semibold hover:text-gray-300"
-         title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:80 }}</a>
-      {% if episode.explicit %}
-      <span class="text-red-300 font-semibold ml-2">
-        Explicit
-      </span>
-      {% endif %}
-
-
+         title="{{ episode.title|stripentities }}">{{ episode.title|stripentities|truncatechars:120 }}</a>
     </div>
 
     <div class="flex items-center">
@@ -24,39 +17,24 @@
           {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
         </turbo-frame>
       </a>
-      <div class="leading-tight">
-
-        <div class="mb-1 flex flex-wrap hidden md:block tracking-tight">
-          <div class="mb-2 flex items-center">
-            <a href="{{ episode_url }}"
-               class="font-semibold hover:text-gray-300"
-               title="{{ episode.title }}">{{ episode.title|truncatechars:80 }}</a>
-
-          </div>
-
-
-        </div>
+      <div class="leading-tight w-full ml-2">
 
         <div class="flex items-center">
           {% include "episodes/_play_buttons.html" with css_class="mr-2" %}
-          <div>
-            <div class="flex items-center">
-              <div class="md:flex">
+          <div class="w-full">
+
+            <div class="flex items-center justify-between lg:justify-start text-sm">
+              <div class="md:flex items-center">
                 <div title="Date Published"
-                     class="font-semibold text-gray-100 text-sm mr-2"> {{ episode.pub_date|date }} </div>
+                     class="font-semibold text-gray-100 mr-2"> {{ episode.pub_date|date }} </div>
                 <div title="Duration"
-                     class="font-semibold text-gray-100 text-sm">
+                     class="font-semibold text-gray-100">
                   {% include "episodes/_current_time.html" %}
                 </div>
               </div>
-              {% if episode.explicit %}
-              <div class="text-red-300 font-semibold text-sm ml-2 hidden md:inline-block">
-                Explicit
-              </div>
-              {% endif %}
-
-
+              {% block extra_info %}{% endblock %}
             </div>
+
           </div>
         </div>
 
