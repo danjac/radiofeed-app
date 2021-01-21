@@ -45,6 +45,17 @@
       {{ podcast.title }}
     </a>
   </h2>
+  <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+    <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
+    {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    {% if episode.explicit %}
+    <div class="inline-block font-semibold text-red-300 ml-2 flex items-center">
+      {% include "_explicit.html" with css_class="mr-1" %}
+      Explicit
+    </div>
+    {% endif %}
+  </div>
+
 
   <div class="flex items-center w-full mb-3">
     <a href="{{ podcast.get_absolute_url }}">
@@ -65,17 +76,6 @@
 
     </div>
   </div>
-  <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
-    <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
-    {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-    {% if episode.explicit %}
-    <div class="inline-block font-semibold text-red-300 ml-2 flex items-center">
-      {% include "_explicit.html" with css_class="mr-1" %}
-      Explicit
-    </div>
-    {% endif %}
-  </div>
-
 
   <div class="mb-3 sm:hidden">
     {% include "episodes/_download_button.html" %}

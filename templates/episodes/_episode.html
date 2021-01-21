@@ -26,17 +26,11 @@
           <div class="w-full">
 
             <div class="flex items-center justify-between lg:justify-start text-sm">
-              <div class="md:flex items-center">
-                <div title="Date Published"
-                     class="font-semibold text-gray-100 mr-2">
-                  {{ episode.pub_date|date }}
-                </div>
-                <div class="font-semibold text-gray-100 flex items-center">
-                  {% include "episodes/_current_time.html" %}
-                  {% if episode.explicit %}
-                  {% include "_explicit.html" with css_class="ml-2" %}
-                  {% endif %}
-                </div>
+              <div class="font-semibold text-gray-100 mr-2 flex items-center">
+                {{ episode.pub_date|date }}
+                {% if episode.explicit %}
+                {% include "_explicit.html" with css_class="ml-2" %}
+                {% endif %}
               </div>
               {% block extra_info %}{% endblock %}
             </div>
