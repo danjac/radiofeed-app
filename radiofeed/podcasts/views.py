@@ -249,8 +249,8 @@ def search_itunes(request):
     )
 
 
-@login_required
 @require_POST
+@login_required
 def subscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
@@ -260,8 +260,8 @@ def subscribe(request, podcast_id):
     return podcast_subscribe_response(request, podcast, True)
 
 
-@login_required
 @require_POST
+@login_required
 def unsubscribe(request, podcast_id):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()

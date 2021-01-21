@@ -202,8 +202,8 @@ def bookmark_detail(request, episode_id, slug=None):
     )
 
 
-@login_required
 @require_POST
+@login_required
 def add_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
 
