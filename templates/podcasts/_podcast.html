@@ -16,12 +16,14 @@
              title="{{ podcast.title|stripentities }}"
              class="font-semibold hover:text-gray-300">{{ podcast.title|stripentities|truncatechars:80 }}</a>
 
+        </div>
+        <div class="font-semibold text-gray-300 text-sm flex flex-wrap items-center">
+
+          <div class="inline-block">{{ podcast.pub_date|date }}</div>
           {% if podcast.explicit %}
           {% include "_explicit.html" with css_class="ml-2" %}
           {% endif %}
-        </div>
-        <div class="font-semibold text-gray-300 text-sm flex flex-wrap items-center">
-          <div class="inline-block">{{ podcast.pub_date|date }}</div>
+
         </div>
       </div>
     </div>
