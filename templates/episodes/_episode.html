@@ -1,7 +1,8 @@
 {% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode_url|default:episode.get_absolute_url %}
 {% is_playing episode as is_episode_playing %}
-<div class="flex justify-between items-center mb-3 p-2 border  border-gray-500 hover:border-blue-500">
+<div class="flex justify-between items-center mb-3 p-2 border  border-gray-500 hover:border-blue-500"
+     id="episode-{{ episode.id }}">
   <div>
     <div class="mb-1 flex flex-wrap md:hidden tracking-tight leading-tight">
       <a href="{{ episode_url }}"
@@ -54,5 +55,6 @@
       </div>
     </div>
   </div>
+  {% block extra_buttons %}{% endblock %}
 </div>
 {% endwith %}

@@ -17,6 +17,11 @@ urlpatterns = [
     path("player/~timeupdate/", views.player_timeupdate, name="player_timeupdate"),
     path("history/", views.history, name="history"),
     path(
+        "history/<int:episode_id>/~remove/",
+        views.remove_history,
+        name="remove_history",
+    ),
+    path(
         "history/<int:episode_id>/<slug:slug>/",
         views.history_detail,
         name="history_detail",

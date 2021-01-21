@@ -12,7 +12,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrame
+from turbo_response import TurboFrame, TurboStream
 
 # RadioFeed
 from radiofeed.pagination import paginate
@@ -140,6 +140,14 @@ def history_detail(request, episode_id, slug=None):
     )
 
 
+@require_POST
+@login_required
+def remove_history(request, episode_id):
+    episode = get_object_or_404(Episode, pk=episode_id)
+    AudioLog.objects.filter(episode=episode, user=request.user).delete()
+    return TurboStream(f"episode-{episode.id}").remove.response()
+
+
 @login_required
 def bookmark_list(request):
     bookmarks = (
@@ -206,8 +214,8 @@ def add_bookmark(request, episode_id):
     return episode_bookmark_response(request, episode, True)
 
 
-@login_required
 @require_POST
+@login_required
 def remove_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(episode=episode, user=request.user).delete()

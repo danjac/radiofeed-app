@@ -391,3 +391,13 @@ class TestRemoveBookmark:
         resp = views.remove_bookmark(req, episode.id)
         assert resp.status_code == http.HTTPStatus.OK
         assert not Bookmark.objects.filter(user=user, episode=episode).exists()
+
+
+class TestRemoveHistory:
+    def test_post(self, rf, user, episode):
+        AudioLogFactory(user=user, episode=episode)
+        req = rf.post(reverse("episodes:remove_history", args=[episode.id]))
+        req.user = user
+        resp = views.remove_history(req, episode.id)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not AudioLog.objects.filter(user=user, episode=episode).exists()
