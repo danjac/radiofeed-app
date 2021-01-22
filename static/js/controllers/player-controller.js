@@ -194,34 +194,30 @@ export default class extends Controller {
   }
 
   durationValueChanged() {
-    if (this.durationValue) {
-      if (this.hasCounterTarget) {
-        this.counterTarget.textContent = '-' + this.formatTime(this.durationValue);
-      }
-    } else if (this.hasCounterTarget) {
-      this.counterTarget.textContent = '00:00:00';
-    }
+    this.updateCounter(this.durationValue);
     this.updateProgressBar();
   }
 
   currentTimeValueChanged() {
+    this.updateCounter(this.durationValue - this.currentTimeValue);
     this.updateProgressBar();
   }
 
   updateProgressBar() {
     if (this.hasIndicatorTarget) {
-      const pcComplete = this.getPercentComplete();
+      const pcComplete = this.calcPercentComplete();
       this.indicatorTarget.style.left =
         this.calcCurrentIndicatorPosition(pcComplete) + 'px';
     }
+  }
 
+  updateCounter(value) {
     if (this.hasCounterTarget) {
-      this.counterTarget.textContent =
-        '-' + this.formatTime(this.durationValue - this.currentTimeValue);
+      this.counterTarget.textContent = this.formatTimeRemaining(value);
     }
   }
 
-  getPercentComplete() {
+  calcPercentComplete() {
     if (!this.currentTimeValue || !this.durationValue) {
       return 0;
     }
@@ -266,7 +262,7 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  formatTime(value) {
+  formatTimeRemaining(value) {
     if (!value || value < 0) return '00:00:00';
     const duration = Math.floor(parseInt(value));
 
@@ -274,9 +270,10 @@ export default class extends Controller {
     const minutes = Math.floor((duration % 3600) / 60);
     const seconds = Math.floor(duration % 60);
 
-    return [hours, minutes, seconds]
-      .map((t) => t.toString().padStart(2, '0'))
-      .join(':');
+    return (
+      '-' +
+      [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':')
+    );
   }
 
   skipTo(position) {
@@ -296,18 +293,6 @@ export default class extends Controller {
       this.element.classList.add(this.activeClass);
       this.startTimeUpdateTimer();
     }
-  }
-
-  fetchJSON(url, body) {
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': this.csrfTokenValue,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify(body || {}),
-    });
   }
 
   initAudio() {
@@ -368,6 +353,18 @@ export default class extends Controller {
         currentTime: this.currentTimeValue,
       });
     }
+  }
+
+  fetchJSON(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': this.csrfTokenValue,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(body || {}),
+    });
   }
 
   set enabled(enabled) {
