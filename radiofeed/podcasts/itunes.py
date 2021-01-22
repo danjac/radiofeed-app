@@ -4,6 +4,7 @@ import json
 
 # Django
 from django.core.cache import cache
+from django.utils.encoding import force_str
 
 # Third Party Libraries
 import requests
@@ -60,7 +61,7 @@ def search_itunes(search_term, num_results=12):
         {
             "media": "podcast",
             "limit": num_results,
-            "term": search_term,
+            "term": force_str(search_term),
         },
         cache_key=f"itunes:search:{search_term}",
     )

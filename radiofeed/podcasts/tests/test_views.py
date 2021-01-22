@@ -46,6 +46,7 @@ class TestPodcastList:
         req = rf.get(reverse("podcasts:podcast_list"))
         req.turbo = mock_turbo(True, "podcasts")
         req.user = anonymous_user
+        req.search = ""
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -56,6 +57,7 @@ class TestPodcastList:
         req = rf.get(reverse("podcasts:podcast_list"))
         req.turbo = mock_turbo(True, "podcasts")
         req.user = user
+        req.search = ""
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -66,6 +68,7 @@ class TestPodcastList:
         sub = SubscriptionFactory(user=user)
         req = rf.get(reverse("podcasts:podcast_list"))
         req.turbo = mock_turbo(True, "podcasts")
+        req.search = ""
         req.user = user
         resp = views.podcast_list(req)
         assert resp.status_code == http.HTTPStatus.OK
@@ -74,8 +77,9 @@ class TestPodcastList:
 
     def test_search_anonymous(self, rf, anonymous_user, transactional_db, mock_turbo):
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        req = rf.get(reverse("podcasts:podcast_list"))
         req.user = anonymous_user
+        req.search = "testing"
         req.turbo = mock_turbo(True, "podcasts")
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
@@ -87,8 +91,9 @@ class TestPodcastList:
         """Ignore subscribed feeds in search"""
         PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         SubscriptionFactory(user=user)
-        req = rf.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        req = rf.get(reverse("podcasts:podcast_list"))
         req.user = user
+        req.search = "testing"
         req.turbo = mock_turbo(True, "podcasts")
         podcast = PodcastFactory(title="testing")
         resp = views.podcast_list(req)
@@ -180,6 +185,7 @@ class TestPodcastEpisodeList:
         )
         req.user = anonymous_user
         req.site = site
+        req.search = ""
         req.turbo = mock_turbo(True, "episodes")
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK
@@ -195,8 +201,8 @@ class TestPodcastEpisodeList:
                 "podcasts:podcast_episode_list",
                 args=[podcast.id, podcast.slug],
             ),
-            {"q": "testing"},
         )
+        req.search = "testing"
         req.turbo = mock_turbo(True, "episodes")
         req.user = anonymous_user
         req.site = site
@@ -241,7 +247,9 @@ class TestCategoryList:
         PodcastFactory(categories=[c2, parents[1]])
         PodcastFactory(categories=[c3, parents[2]])
 
-        resp = views.category_list(rf.get(reverse("podcasts:category_list")))
+        req = rf.get(reverse("podcasts:category_list"))
+        req.search = ""
+        resp = views.category_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 3
 
@@ -257,13 +265,11 @@ class TestCategoryList:
         PodcastFactory(categories=[c2])
         PodcastFactory(categories=[c3])
         PodcastFactory(categories=[c4])
-
-        resp = views.category_list(
-            rf.get(reverse("podcasts:category_list"), {"q": "testing"})
-        )
+        req = rf.get(reverse("podcasts:category_list"))
+        req.search = "testing"
+        resp = views.category_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 2
-        assert resp.context_data["search"] == "testing"
 
 
 class TestCategoryDetail:
@@ -273,6 +279,7 @@ class TestCategoryDetail:
         PodcastFactory.create_batch(12, categories=[category])
         req = rf.get(category.get_absolute_url())
         req.user = anonymous_user
+        req.search = ""
         req.turbo = mock_turbo(False)
         resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == http.HTTPStatus.OK
@@ -285,6 +292,7 @@ class TestCategoryDetail:
         req = rf.get(category.get_absolute_url())
         req.user = anonymous_user
         req.turbo = mock_turbo(True, "episodes")
+        req.search = ""
         resp = views.category_detail(req, category.id, category.slug)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 12
@@ -297,14 +305,14 @@ class TestCategoryDetail:
         )
         PodcastFactory(title="testing", categories=[category])
 
-        req = rf.get(category.get_absolute_url(), {"q": "testing"})
+        req = rf.get(category.get_absolute_url())
+        req.search = "testing"
         req.user = anonymous_user
         req.turbo = mock_turbo(True, "podcasts")
         resp = views.category_detail(req, category.id, category.slug)
 
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["search"] == "testing"
 
 
 class TestSubscribe:
@@ -386,7 +394,8 @@ class TestSearchITunes:
             ]
 
         mocker.patch.object(views.itunes, "search_itunes", mock_search_itunes)
-        req = rf.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        req = rf.get(reverse("podcasts:search_itunes"))
+        req.search = "test"
         resp = views.search_itunes(req)
 
         assert resp.status_code == http.HTTPStatus.OK
@@ -396,6 +405,7 @@ class TestSearchITunes:
 
     def test_search_is_empty(self, rf, mocker):
         req = rf.get(reverse("podcasts:search_itunes"))
+        req.search = ""
         resp = views.search_itunes(req)
 
         assert resp.status_code == http.HTTPStatus.OK
@@ -405,7 +415,8 @@ class TestSearchITunes:
     def test_invalid_results(self, rf, mocker):
         mock = mocker.patch.object(views.itunes, "search_itunes")
         mock.side_effect = itunes.Invalid
-        req = rf.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        req = rf.get(reverse("podcasts:search_itunes"))
+        req.search = "test"
         resp = views.search_itunes(req)
 
         assert resp.status_code == http.HTTPStatus.OK

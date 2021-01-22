@@ -1,8 +1,8 @@
 {% extends "episodes/_episode.html" %}
 {% block extra_info %}
-{% include "episodes/_bookmark_remove_button.html" %}
+{% include "episodes/_bookmark_remove_button.html" with css_class="md:hidden ml-2" %}
 {% endblock %}
 
 {% block extra_buttons %}
-{% include "episodes/_bookmark_remove_button.html" %}
+{% include "episodes/_bookmark_remove_button.html" with css_class="hidden md:inline-block" %}
 {% endblock %}

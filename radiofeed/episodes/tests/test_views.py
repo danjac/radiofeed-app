@@ -26,6 +26,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"))
         req.user = anonymous_user
         req.turbo = mock_turbo(True, "episodes")
+        req.search = ""
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 0
@@ -35,6 +36,7 @@ class TestEpisodeList:
         req = rf.get(reverse("episodes:episode_list"))
         req.user = user
         req.turbo = mock_turbo(True, "episodes")
+        req.search = ""
         resp = views.episode_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 0
@@ -46,6 +48,7 @@ class TestEpisodeList:
         SubscriptionFactory(user=user, podcast=episode.podcast)
 
         req = rf.get(reverse("episodes:episode_list"))
+        req.search = ""
         req.user = user
         req.turbo = mock_turbo(True, "episodes")
         resp = views.episode_list(req)
@@ -57,7 +60,8 @@ class TestEpisodeList:
     def test_anonymous_search(self, rf, anonymous_user, mock_turbo):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
-        req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
+        req = rf.get(reverse("episodes:episode_list"))
+        req.search = "testing"
         req.user = anonymous_user
         req.turbo = mock_turbo(True, "episodes")
         resp = views.episode_list(req)
@@ -72,7 +76,8 @@ class TestEpisodeList:
             user=user, podcast=EpisodeFactory(title="zzzz", keywords="zzzz").podcast
         )
         episode = EpisodeFactory(title="testing")
-        req = rf.get(reverse("episodes:episode_list"), {"q": "testing"})
+        req = rf.get(reverse("episodes:episode_list"))
+        req.search = "testing"
         req.user = user
         req.turbo = mock_turbo(True, "episodes")
         resp = views.episode_list(req)
@@ -309,6 +314,7 @@ class TestHistory:
         req = rf.get(reverse("episodes:history"))
         req.user = user
         req.turbo = mock_turbo(True, "episodes")
+        req.search = ""
         resp = views.history(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -324,12 +330,12 @@ class TestHistory:
             )
 
         AudioLogFactory(user=user, episode=EpisodeFactory(title="testing"))
-        req = rf.get(reverse("episodes:history"), {"q": "testing"})
+        req = rf.get(reverse("episodes:history"))
         req.user = user
+        req.search = "testing"
         req.turbo = mock_turbo(True, "episodes")
         resp = views.history(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["search"] == "testing"
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
@@ -339,6 +345,7 @@ class TestBookmarkList:
         req = rf.get(reverse("episodes:bookmark_list"))
         req.turbo = mock_turbo(True, "episodes")
         req.user = user
+        req.search = ""
         resp = views.bookmark_list(req)
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -354,12 +361,12 @@ class TestBookmarkList:
             )
 
         BookmarkFactory(user=user, episode=EpisodeFactory(title="testing"))
-        req = rf.get(reverse("episodes:bookmark_list"), {"q": "testing"})
+        req = rf.get(reverse("episodes:bookmark_list"))
+        req.search = "testing"
         req.user = user
         req.turbo = mock_turbo(True, "episodes")
         resp = views.bookmark_list(req)
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["search"] == "testing"
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 

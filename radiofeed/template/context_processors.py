@@ -2,6 +2,10 @@
 from django.conf import settings
 
 
+def search(request):
+    return {"search": request.search}
+
+
 def google_tracking_id(request):
     return {"google_tracking_id": getattr(settings, "GOOGLE_TRACKING_ID", None)}
 
