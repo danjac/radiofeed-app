@@ -170,6 +170,7 @@ class TestPodcastEpisodeList:
         )
         req.user = anonymous_user
         req.site = site
+        req.search = ""
         req.turbo = mock_turbo(False)
         resp = views.podcast_episode_list(req, podcast.id, podcast.slug)
         assert resp.status_code == http.HTTPStatus.OK

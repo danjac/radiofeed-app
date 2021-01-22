@@ -35,9 +35,5 @@
 </div>
 {% endif %}
 
-<turbo-frame id="podcast-episodes"
-             src="{{ request.get_full_path }}">
-  Fetching episodes...
-</turbo-frame>
-
+{% include "episodes/_episodes.html" %}
 {% endblock %}

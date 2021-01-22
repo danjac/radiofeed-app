@@ -37,9 +37,6 @@
      href="{% url 'podcasts:category_list' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>
 {% endif %}
 
-<turbo-frame src="{{ request.get_full_path }}"
-             id="podcast-list">
-  Fetching podcasts...
-</turbo-frame>
+{% include "podcasts/_podcasts.html" %}
 
 {% endblock content %}

@@ -57,10 +57,5 @@
   {% endif %}
 </div>
 {% endif %}
-<turbo-frame src="{{ request.get_full_path }}"
-             id="podcast-category-list">
-  Fetching podcasts...
-</turbo-frame>
-
-
+{% include "podcasts/_podcasts.html" %}
 {% endblock content %}

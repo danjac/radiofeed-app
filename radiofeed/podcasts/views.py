@@ -66,39 +66,34 @@ def podcast_list(request):
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    if request.turbo.frame:
-        podcasts = Podcast.objects.filter(pub_date__isnull=False)
-        if request.search:
-            podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-        elif subscriptions:
-            podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
-        else:
-            podcasts = (
-                Podcast.objects.filter(pub_date__isnull=False)
-                .with_subscription_count()
-                .order_by("-subscription_count", "-pub_date")[
-                    : settings.DEFAULT_PAGE_SIZE
-                ]
-            )
+    podcasts = Podcast.objects.filter(pub_date__isnull=False)
+    if request.search:
+        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+    elif subscriptions:
+        podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
+    else:
+        podcasts = (
+            Podcast.objects.filter(pub_date__isnull=False)
+            .with_subscription_count()
+            .order_by("-subscription_count", "-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        )
 
+    context = {
+        "page_obj": paginate(request, podcasts),
+        "top_rated_podcasts": top_rated_podcasts,
+    }
+
+    if request.turbo.frame:
         return (
             TurboFrame(request.turbo.frame)
             .template(
                 "podcasts/_podcasts.html",
-                {
-                    "page_obj": paginate(request, podcasts),
-                },
+                context,
             )
             .response(request)
         )
 
-    return TemplateResponse(
-        request,
-        "podcasts/index.html",
-        {
-            "top_rated_podcasts": top_rated_podcasts,
-        },
-    )
+    return TemplateResponse(request, "podcasts/index.html", context)
 
 
 def podcast_detail(request, podcast_id, slug=None):
@@ -139,34 +134,27 @@ def podcast_episode_list(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     ordering = request.GET.get("ordering")
 
-    if request.turbo.frame:
-        episodes = podcast.episode_set.with_current_time(request.user).select_related(
-            "podcast"
-        )
+    episodes = podcast.episode_set.with_current_time(request.user).select_related(
+        "podcast"
+    )
 
-        if request.search:
-            episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-        else:
-            order_by = "pub_date" if ordering == "asc" else "-pub_date"
-            episodes = episodes.order_by(order_by)
+    if request.search:
+        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+    else:
+        order_by = "pub_date" if ordering == "asc" else "-pub_date"
+        episodes = episodes.order_by(order_by)
+
+    context = {"page_obj": paginate(request, episodes), "ordering": ordering}
+
+    if request.turbo.frame:
 
         return (
             TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/_episodes.html",
-                {"page_obj": paginate(request, episodes)},
-            )
+            .template("episodes/_episodes.html", context)
             .response(request)
         )
 
-    return podcast_detail_response(
-        request,
-        "podcasts/episodes.html",
-        podcast,
-        {
-            "ordering": ordering,
-        },
-    )
+    return podcast_detail_response(request, "podcasts/episodes.html", podcast, context)
 
 
 def category_list(request):
@@ -197,20 +185,19 @@ def category_detail(request, category_id, slug=None):
         Category.objects.select_related("parent"), pk=category_id
     )
 
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+
+    if request.search:
+        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+    else:
+        podcasts = podcasts.order_by("-pub_date")
+
+    context = {"category": category, "page_obj": paginate(request, podcasts)}
+
     if request.turbo.frame:
-        podcasts = category.podcast_set.filter(pub_date__isnull=False)
-
-        if request.search:
-            podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-        else:
-            podcasts = podcasts.order_by("-pub_date")
-
         return (
             TurboFrame(request.turbo.frame)
-            .template(
-                "podcasts/_podcasts.html",
-                {"page_obj": paginate(request, podcasts)},
-            )
+            .template("podcasts/_podcasts.html", context)
             .response(request)
         )
     else:
@@ -220,9 +207,9 @@ def category_detail(request, category_id, slug=None):
             request,
             "podcasts/category.html",
             {
-                "category": category,
                 "children": children,
-            },
+            }
+            | context,
         )
 
 

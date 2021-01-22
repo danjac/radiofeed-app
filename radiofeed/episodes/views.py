@@ -30,36 +30,30 @@ def episode_list(request):
         else []
     )
     has_subscriptions = bool(subscriptions)
+    episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
+    if request.search:
+        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+    elif subscriptions:
+        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
+            : settings.DEFAULT_PAGE_SIZE
+        ]
+    else:
+        episodes = episodes.none()
+
+    context = {
+        "page_obj": paginate(request, episodes),
+        "has_subscriptions": has_subscriptions,
+    }
 
     if request.turbo.frame:
 
-        episodes = Episode.objects.with_current_time(request.user).select_related(
-            "podcast"
-        )
-        if request.search:
-            episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-        elif subscriptions:
-            episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
-                : settings.DEFAULT_PAGE_SIZE
-            ]
-        else:
-            episodes = episodes.none()
         return (
             TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/_index.html",
-                {"page_obj": paginate(request, episodes)},
-            )
+            .template("episodes/_index.html", context)
             .response(request)
         )
 
-    return TemplateResponse(
-        request,
-        "episodes/index.html",
-        {
-            "has_subscriptions": has_subscriptions,
-        },
-    )
+    return TemplateResponse(request, "episodes/index.html", context)
 
 
 def episode_detail(request, episode_id, slug=None):
@@ -94,33 +88,29 @@ def episode_detail(request, episode_id, slug=None):
 @login_required
 def history(request):
 
-    if request.turbo.frame:
-        logs = (
-            AudioLog.objects.filter(user=request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("-updated")
-        )
+    logs = (
+        AudioLog.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("-updated")
+    )
 
-        if request.search:
-            logs = logs.search(request.search).order_by("-rank", "-updated")
-        else:
-            logs = logs.order_by("-updated")
+    if request.search:
+        logs = logs.search(request.search).order_by("-rank", "-updated")
+    else:
+        logs = logs.order_by("-updated")
+
+    context = {
+        "page_obj": paginate(request, logs),
+    }
+    if request.turbo.frame:
 
         return (
             TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/_history.html",
-                {
-                    "page_obj": paginate(request, logs),
-                },
-            )
+            .template("episodes/_history.html", context)
             .response(request)
         )
 
-    return TemplateResponse(
-        request,
-        "episodes/history.html",
-    )
+    return TemplateResponse(request, "episodes/history.html", context)
 
 
 @require_POST
@@ -140,33 +130,29 @@ def remove_history(request, episode_id):
 
 @login_required
 def bookmark_list(request):
-    if request.turbo.frame:
+    bookmarks = (
+        Bookmark.objects.filter(user=request.user)
+        .with_current_time(request.user)
+        .select_related("episode", "episode__podcast")
+    )
+    if request.search:
+        bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by("-created")
 
-        bookmarks = (
-            Bookmark.objects.filter(user=request.user)
-            .with_current_time(request.user)
-            .select_related("episode", "episode__podcast")
-        )
-        if request.search:
-            bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
-        else:
-            bookmarks = bookmarks.order_by("-created")
+    context = {
+        "page_obj": paginate(request, bookmarks),
+    }
+
+    if request.turbo.frame:
 
         return (
             TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/_bookmarks.html",
-                {
-                    "page_obj": paginate(request, bookmarks),
-                },
-            )
+            .template("episodes/_bookmarks.html", context)
             .response(request)
         )
 
-    return TemplateResponse(
-        request,
-        "episodes/bookmarks.html",
-    )
+    return TemplateResponse(request, "episodes/bookmarks.html", context)
 
 
 @require_POST

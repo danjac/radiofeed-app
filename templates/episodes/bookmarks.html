@@ -19,10 +19,5 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-<turbo-frame id="bookmarked-episodes"
-             src="{{ request.get_full_path }}">
-  Fetching bookmarks...
-</turbo-frame>
-
-
+{% include "episodes/_bookmarks.html" %}
 {% endblock content %}

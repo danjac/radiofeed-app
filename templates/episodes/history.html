@@ -19,10 +19,5 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-<turbo-frame id="history-episodes"
-             src="{{ request.get_full_path }}">
-  Fetching history...
-</turbo-frame>
-
-
+{% include "episodes/_history.html" %}
 {% endblock content %}
