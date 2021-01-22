@@ -143,7 +143,13 @@ def podcast_episode_list(request, podcast_id, slug=None):
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
 
-    context = {"page_obj": paginate(request, episodes), "ordering": ordering}
+    context = {
+        "page_obj": paginate(request, episodes),
+        "ordering": ordering,
+        "podcast_url": reverse(
+            "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
+        ),
+    }
 
     if request.turbo.frame:
 
