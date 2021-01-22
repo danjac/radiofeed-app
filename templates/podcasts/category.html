@@ -6,11 +6,11 @@
 
 <div class="mb-3 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:category_list' %}"
-     class="font-semibold hover:text-gray-300 mr-1">Discover</a>
+     class="font-semibold hover:text-blue-500 mr-1">Discover</a>
   {% if category.parent %}
   <span class="text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
-     class="font-semibold hover:text-gray-300 mr-1">{{ category.parent.name }}</a>
+     class="font-semibold hover:text-blue-500 mr-1">{{ category.parent.name }}</a>
   {% endif %}
   <span class="text-gray-300 mr-1">&gt;</span>
   <span class="text-gray-300">{{ category.name }}</span>
@@ -21,10 +21,10 @@
   <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
     <div class="mr-2 flex items-center hidden md:inline-block text-sm">
-      <a class="font-semibold hover:text-gray-300 mr-1"
+      <a class="font-semibold hover:text-blue-500 mr-1"
          href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
       <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-gray-300"
+      <a class="font-semibold hover:text-blue-500"
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
@@ -34,10 +34,10 @@
 
 {% if search %}
 <div class="mb-3 flex items-center justify-center md:hidden text-sm">
-  <a class="font-semibold hover:text-gray-300 mr-2"
+  <a class="font-semibold hover:text-blue-500 mr-2"
      href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Search Podcasts</a>
   <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-gray-300"
+  <a class="font-semibold hover:text-blue-500"
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
@@ -46,14 +46,14 @@
 <div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start leading-tight tracking-tight">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
-     class="font-semibold hover:text-gray-300 mr-2">{{ child.name }}</a>
+     class="font-semibold hover:text-blue-500 mr-2">{{ child.name }}</a>
   {% endfor %}
   {% if category.itunes_genre_id %}
   {% if children %}
   <span class="mr-2">|</span>
   {% endif %}
   <a href="{% url 'podcasts:itunes_category' category.id %}"
-     class="font-bold hover:text-gray-300">iTunes</a>
+     class="font-bold hover:text-blue-500">iTunes</a>
   {% endif %}
 </div>
 {% endif %}

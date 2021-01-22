@@ -15,10 +15,10 @@
   <div class="flex items-center justify-center sm:justify-start">
     {% if search %}
     <div class="hidden md:inline-block mr-2 text-sm">
-      <a class="font-semibold hover:text-gray-300 mr-1"
+      <a class="font-semibold hover:text-blue-500 mr-1"
          href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
       <span class="mr-1 text-sm">|</span>
-      <a class="font-semibold hover:text-gray-300 text-sm"
+      <a class="font-semibold hover:text-blue-500 text-sm"
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
@@ -27,10 +27,10 @@
 </div>
 {% if search %}
 <div class="mb-3 flex items-center justify-center md:hidden text-sm">
-  <a class="font-semibold hover:text-gray-300 mr-2"
+  <a class="font-semibold hover:text-blue-500 mr-2"
      href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
   <span class="mr-1">|</span>
-  <a class="font-semibold hover:text-gray-300 mr-1 text-sm"
+  <a class="font-semibold hover:text-blue-500 mr-1 text-sm"
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}

@@ -1,4 +1,4 @@
-<a class="text-sm font-semibold hover:text-gray-300 {{ css_class|default:'' }}" download href="{{ episode.media_url }}">
+<a class="text-sm font-semibold hover:text-blue-500 {{ css_class|default:'' }}" download href="{{ episode.media_url }}">
   {% with file_size=episode.get_file_size %}
   Download {% if file_size %}({{ file_size }}){% endif %}
   {% endwith %}

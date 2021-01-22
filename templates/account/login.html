@@ -6,7 +6,7 @@
 <h1 class="text-lg mb-3 font-bold">{% translate "Sign In" %}</h1>
 
 <p class="mb-3">{% blocktranslate %}If you have not created an account yet, then please
-  <a class="underline hover:text-gray-300"
+  <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
 <form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
@@ -39,7 +39,7 @@
   {% endwith %}
 
   <div class="">
-    <a class="font-semibold hover:text-gray-300 mr-3"
+    <a class="font-semibold hover:text-blue-500 mr-3"
        data-turbo-frame="_top"
        href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
     <button class="p-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"

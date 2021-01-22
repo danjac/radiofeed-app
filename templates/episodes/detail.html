@@ -10,7 +10,7 @@
 <div class="text-sm flex justify-between mb-3">
 
   <a {% if prev_episode %}
-     class="block hover:text-gray-300"
+     class="block hover:text-blue-500"
      href="{{ prev_episode.get_absolute_url }}"
      title="{{ prev_episode.title }}"
      {% else %}
@@ -21,7 +21,7 @@
   </a>
 
   <a {% if next_episode %}
-     class="block hover:text-gray-300"
+     class="block hover:text-blue-500"
      href="{{ next_episode.get_absolute_url }}"
      title="{{ next_episode.title }}"
      {% else %}
@@ -41,7 +41,7 @@
   <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
   <h2 class="font-semibold mb-3">
     <a href="{{ podcast.get_absolute_url }}"
-       class="font-semibold hover:text-gray-300">
+       class="font-semibold hover:text-blue-500">
       {{ podcast.title }}
     </a>
   </h2>

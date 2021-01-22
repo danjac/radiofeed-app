@@ -44,22 +44,22 @@
     {% if user.is_authenticated %}
     <div class="text-sm flex items-center">
       <a href="{% url 'user_preferences' %}"
-         class="inline-block text-white hover:text-gray-300 mr-3">
+         class="inline-block text-white hover:text-blue-500 mr-3">
         {{ user.username }}
       </a>
       <form method="post"
             action="{% url 'account_logout' %}"
             class="inline-block">
         {% csrf_token %}
-        <button class="text-white hover:text-gray-300">{% translate "Logout" %}</button>
+        <button class="text-white hover:text-blue-500">{% translate "Logout" %}</button>
       </form>
     </div>
     {% else %}
     <div class="text-sm flex items-center">
       <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
-         class="inline-block text-white hover:text-gray-300 mr-3">{% translate "Login" %}</a>
+         class="inline-block text-white hover:text-blue-500 mr-3">{% translate "Login" %}</a>
       <a href="{% url 'account_signup' %}"
-         class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
+         class="inline-block text-white hover:text-blue-500">{% translate "Signup" %}</a>
     </div>
     {% endif %}
   </div>
