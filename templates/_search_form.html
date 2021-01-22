@@ -1,6 +1,6 @@
 <form method="get"
-      action="{{ request.path }}"
-      class="relative bg-gray-900 focus-within:text-gray-300">
+      action="{{ search_url|default:request.path }}"
+      class="relative bg-transparent focus-within:text-gray-300">
   <input type="search"
          name="{{ search_param|default:'q' }}"
          autocomplete="off"

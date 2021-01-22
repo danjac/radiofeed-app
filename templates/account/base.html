@@ -1,3 +1,5 @@
 {% extends "base.html" %}
-{% block navbar_auth %}{% endblock %}
+{% block navbar %}
+{% include "_navbar.html" with navbar_search=False navbar_auth=False %}
+{% endblock %}
 {% block player %}{% endblock %}

@@ -39,7 +39,9 @@
       data-controller="toggle"
       {% endblock %}>
 
-  {% block header %}{% include "_navbar.html" %}{% endblock %}
+  {% block navbar %}
+  {% include "_navbar.html" with navbar_search=True navbar_auth=True %}
+  {% endblock navbar %}
 
   {% include "_messages.html" %}
   {% include "_cookie_notice.html" %}
