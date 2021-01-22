@@ -32,11 +32,20 @@
   </a>
 </div>
 {% endif %}
-{% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border border-gray-500 mb-3">
+<div class="p-2 border border-gray-500 mb-3"
+     {% if next_episode or prev_episode %}
+     data-controller="swipe"
+     {% if next_episode %}
+     data-swipe-right-url-value="{{ next_episode.get_absolute_url }}"
+     {% endif %}
+     {% if prev_episode %}
+     data-swipe-left-url-value="{{ prev_episode.get_absolute_url }}"
+     {% endif %}
+     data-action="touchstart->swipe#start touchmove->swipe#move"
+     {% endif %}>
 
   <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
   <h2 class="font-semibold mb-3">
@@ -81,5 +90,6 @@
     {{ episode.description|clean_html }}
   </div>
 </div>
+{% endwith %}
 {% endwith %}
 {% endblock %}

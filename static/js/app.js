@@ -7,6 +7,7 @@ import EpisodeController from './controllers/episode-controller';
 import LinkController from './controllers/link-controller';
 import NotificationController from './controllers/notification-controller';
 import PlayerController from './controllers/player-controller';
+import SwipeController from './controllers/swipe-controller';
 import ToggleController from './controllers/toggle-controller';
 
 // Stimulus setup
@@ -17,4 +18,5 @@ application.register('episode', EpisodeController);
 application.register('link', LinkController);
 application.register('notification', NotificationController);
 application.register('player', PlayerController);
+application.register('swipe', SwipeController);
 application.register('toggle', ToggleController);
