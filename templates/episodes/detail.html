@@ -38,7 +38,7 @@
 {% is_playing episode as is_episode_playing %}
 <div class="p-2 border border-gray-500 mb-3">
 
-  <h1 class="font-bold mb-3 text-lg">{{ episode.title }}</h1>
+  <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
   <h2 class="font-semibold mb-3">
     <a href="{{ podcast.get_absolute_url }}"
        class="font-semibold hover:text-blue-500">
@@ -59,7 +59,7 @@
 
   <div class="flex items-center w-full mb-3">
     <a href="{{ podcast.get_absolute_url }}">
-      {% include "podcasts/_podcast_cover_image.html" with image_size="32" image_css_class="h-24 w-24 sm:h-32 sm:w-32 hover:opacity-75 mr-2" %}
+      {% include "podcasts/_podcast_cover_image.html" with image_css_class="h-24 w-24 hover:opacity-75 mr-2" %}
     </a>
     <div>
       <div class="flex items-center mb-1">
