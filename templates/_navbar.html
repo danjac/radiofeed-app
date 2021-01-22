@@ -41,14 +41,6 @@
          href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
     </div>
 
-    {% if navbar_search %}
-    <div class="hidden md:inline-block">
-      {% url 'podcasts:podcast_list' as search_url %}
-      {% include "_search_form.html" with placeholder="Find a podcast" %}
-    </div>
-    {% endif %}
-
-    {% if navbar_auth %}
     {% if user.is_authenticated %}
     <div class="text-sm flex items-center">
       <a href="{% url 'user_preferences' %}"
@@ -69,7 +61,6 @@
       <a href="{% url 'account_signup' %}"
          class="inline-block text-white hover:text-gray-300">{% translate "Signup" %}</a>
     </div>
-    {% endif %}
     {% endif %}
   </div>
 
