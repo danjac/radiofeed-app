@@ -38,8 +38,8 @@ export default class extends Controller {
     //
     this.initAudio();
 
-    this.audio.src = this.mediaUrlValue;
     this.audio.currentTime = this.currentTimeValue;
+    this.audio.src = this.mediaUrlValue;
 
     this.pausedValue = !this.enabled;
 
@@ -176,8 +176,8 @@ export default class extends Controller {
 
     this.initAudio();
 
-    this.audio.src = this.mediaUrlValue;
     this.audio.currentTime = this.currentTimeValue;
+    this.audio.src = this.mediaUrlValue;
 
     this.play();
     this.dispatch('openPlayer', { episode });
