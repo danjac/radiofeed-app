@@ -16,6 +16,22 @@
     </svg>
     Added!
   </button>
+  {% elif is_error %}
+  <button class="rounded cursor-default border border-red-300 text-red-300 text-sm p-1 flex items-center"
+          data-controller="notification"
+          data-notification-timeout-value="2000">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         class="h-4 w-4 mr-2 text-red-300">
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    Error
+  </button>
   {% else %}
   <form method="post"
         action="{% url 'podcasts:add_podcast' %}">

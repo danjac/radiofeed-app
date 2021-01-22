@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
-from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -288,19 +287,21 @@ def add_podcast(request):
     if form.is_valid():
         podcast = form.save()
         sync_podcast_feed.delay(podcast_id=podcast.id)
-        if request.turbo:
-            # https://github.com/hotwired/turbo/issues/86
-            return (
-                TurboFrame(f"add-podcast-{form.cleaned_data['itunes']}")
-                .template(
-                    "podcasts/_add_new_button.html",
-                    {"is_added": True},
-                )
-                .response(request)
-            )
-        return redirect_303(podcast)
+        is_added = True
+        is_error = False
+    else:
+        is_added = False
+        is_error = True
 
-    return HttpResponseBadRequest()
+    # https://github.com/hotwired/turbo/issues/86
+    return (
+        TurboFrame(f"add-podcast-{form.cleaned_data['itunes']}")
+        .template(
+            "podcasts/_add_new_button.html",
+            {"is_added": is_added, "is_error": is_error},
+        )
+        .response(request)
+    )
 
 
 def itunes_results_with_podcast(results):
