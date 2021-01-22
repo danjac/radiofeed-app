@@ -5,7 +5,7 @@
      id="episode-{{ episode.id }}">
   <div class="w-full">
     <div class="flex items-center w-full">
-      <div class="w-20">
+      <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
@@ -14,7 +14,7 @@
           </turbo-frame>
         </a>
       </div>
-      <div class="leading-tight w-full ml-2">
+      <div class="leading-tight w-full">
 
         <div class="mb-1 w-56 truncate sm:w-96 md:w-full text-sm">
           <a href="{{ episode_url }}"

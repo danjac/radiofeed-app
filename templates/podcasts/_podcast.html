@@ -2,15 +2,16 @@
   <div class="flex items-center justify-between">
     <div class="font-bold flex items-center sm:mb-0">
 
-      <a href="{{ podcast.get_absolute_url }}"
-         data-turbo-frame="_top"
-         class="mr-2 w-20">
-        <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
-                     loading="lazy"
-                     src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
-          {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
-        </turbo-frame>
-      </a>
+      <div class="mr-2">
+        <a href="{{ podcast.get_absolute_url }}"
+           data-turbo-frame="_top">
+          <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
+                       loading="lazy"
+                       src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
+            {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
+          </turbo-frame>
+        </a>
+      </div>
 
       <div>
         <div class="mb-2 text-sm md:text-base tracking-tight leading-tight w-56 sm:w-96 truncate md:w-full">
