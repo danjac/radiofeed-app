@@ -30,6 +30,7 @@ def episode_list(request):
         else []
     )
     has_subscriptions = bool(subscriptions)
+
     episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
