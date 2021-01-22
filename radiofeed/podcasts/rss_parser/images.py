@@ -32,8 +32,8 @@ def fetch_image_from_url(image_url):
         resp = requests.head(image_url, headers=get_headers())
         resp.raise_for_status()
 
-        # Max 1MB
-        if (content_length := int(resp.headers["Content-Length"]) / 1048576.0) > 1.0:
+        # Max 5MB
+        if (content_length := int(resp.headers["Content-Length"]) / 1048576.0) > 5.0:
             raise ValueError(f"{image_url} too large: {content_length}")
 
         content_type = resp.headers["Content-Type"].split(";")[0]
