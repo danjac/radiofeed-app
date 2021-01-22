@@ -255,9 +255,10 @@ def player_timeupdate(request):
 
 
 def episode_bookmark_response(request, episode, is_bookmarked):
-    if request.turbo.frame:
+    if request.turbo:
+        # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(request.turbo.frame)
+            TurboFrame(f"episode-bookmark-{episode.id}")
             .template(
                 "episodes/_bookmark_buttons.html",
                 {"episode": episode, "is_bookmarked": is_bookmarked},

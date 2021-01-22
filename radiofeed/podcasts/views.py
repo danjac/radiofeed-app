@@ -288,9 +288,10 @@ def add_podcast(request):
     if form.is_valid():
         podcast = form.save()
         sync_podcast_feed.delay(podcast_id=podcast.id)
-        if request.turbo.frame:
+        if request.turbo:
+            # https://github.com/hotwired/turbo/issues/86
             return (
-                TurboFrame(request.turbo.frame)
+                TurboFrame(f"add-podcast-{form.cleaned_data['itunes']}")
                 .template(
                     "podcasts/_add_new_button.html",
                     {"is_added": True},
@@ -334,9 +335,10 @@ def podcast_detail_response(request, template_name, podcast, context):
 
 
 def podcast_subscribe_response(request, podcast, is_subscribed):
-    if request.turbo.frame:
+    if request.turbo:
+        # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(request.turbo.frame)
+            TurboFrame(f"podcast-subscribe-{podcast.id}")
             .template(
                 "podcasts/_subscribe_buttons.html",
                 {"podcast": podcast, "is_subscribed": is_subscribed},
