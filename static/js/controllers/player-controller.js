@@ -122,7 +122,7 @@ export default class extends Controller {
 
   skip(event) {
     // user clicks on progress bar
-    const position = this.getPosition(event.clientX);
+    const position = this.calcEventPosition(event.clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
     }
@@ -212,7 +212,7 @@ export default class extends Controller {
     if (this.hasIndicatorTarget) {
       const pcComplete = this.getPercentComplete();
       this.indicatorTarget.style.left =
-        this.getCurrentIndicatorPosition(pcComplete) + 'px';
+        this.calcCurrentIndicatorPosition(pcComplete) + 'px';
     }
 
     if (this.hasCounterTarget) {
@@ -233,7 +233,18 @@ export default class extends Controller {
     return (this.currentTimeValue / this.durationValue) * 100;
   }
 
-  getCurrentIndicatorPosition(pcComplete) {
+  calcEventPosition(clientX) {
+    if (!isNaN(clientX)) {
+      const { left } = this.progressBarTarget.getBoundingClientRect();
+      const width = this.progressBarTarget.clientWidth;
+      let position = clientX - left;
+      return Math.ceil(this.durationValue * (position / width));
+    } else {
+      return -1;
+    }
+  }
+
+  calcCurrentIndicatorPosition(pcComplete) {
     const clientWidth = this.progressBarTarget.clientWidth;
 
     let currentPosition, width;
@@ -266,17 +277,6 @@ export default class extends Controller {
     return [hours, minutes, seconds]
       .map((t) => t.toString().padStart(2, '0'))
       .join(':');
-  }
-
-  getPosition(clientX) {
-    if (!isNaN(clientX)) {
-      const { left } = this.progressBarTarget.getBoundingClientRect();
-      const width = this.progressBarTarget.clientWidth;
-      let position = clientX - left;
-      return Math.ceil(this.durationValue * (position / width));
-    } else {
-      return -1;
-    }
   }
 
   skipTo(position) {
