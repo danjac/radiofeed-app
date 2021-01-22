@@ -1,5 +1,4 @@
 # Standard Library
-import io
 import mimetypes
 import os
 import uuid
@@ -40,10 +39,10 @@ def fetch_image_from_url(image_url):
 
         filename = get_image_filename(image_url, content_type)
 
-        resp = requests.get(image_url, headers=get_headers())
+        resp = requests.get(image_url, headers=get_headers(), stream=True)
         resp.raise_for_status()
 
-        return ImageFile(io.BytesIO(resp.content), name=filename)
+        return ImageFile(resp.raw, name=filename)
     except (requests.RequestException, KeyError, ValueError) as e:
         raise InvalidImageURL from e
 
