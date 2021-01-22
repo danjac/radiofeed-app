@@ -4,7 +4,7 @@
 
       <a href="{{ podcast.get_absolute_url }}"
          data-turbo-frame="_top"
-         class="block mr-1">
+         class="block mr-2">
         <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                      loading="lazy"
                      src="{% url 'podcasts:podcast_cover_image' podcast.id %}">

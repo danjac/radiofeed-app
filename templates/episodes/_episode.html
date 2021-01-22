@@ -13,9 +13,10 @@
       </a>
     </div>
 
-    <div class="flex items-center">
+    <div class="flex items-center w-full">
       <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
-         data-turbo-frame="_top">
+         data-turbo-frame="_top"
+         class="w-20">
         <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                      src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
           {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
