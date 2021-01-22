@@ -69,10 +69,6 @@
   @apply bg-blue-800;
 }
 
-.player--active .player--buffer {
-  @apply bg-blue-600;
-}
-
 .player--indicator {
   @apply bg-gray-800;
 }
@@ -90,7 +86,6 @@
 }
 
 .player--inactive .player--progress,
-.player--inactive .player--buffer,
 .player--inactive .player--indicator {
   @apply bg-gray-800;
 }

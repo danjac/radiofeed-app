@@ -5,14 +5,12 @@ import useTurbo from '../turbo';
 export default class extends Controller {
   static targets = [
     'audio',
-    'buffer',
     'controls',
     'counter',
     'indicator',
     'nextEpisode',
     'pauseButton',
     'playButton',
-    'progress',
     'progressBar',
   ];
 
@@ -122,14 +120,6 @@ export default class extends Controller {
     this.waitingValue = false;
   }
 
-  progress() {
-    // buffer update
-    const { buffered } = this.audio;
-    if (this.hasBufferTarget) {
-      this.bufferTarget.style.width = this.getPercentBuffered(buffered) + '%';
-    }
-  }
-
   skip(event) {
     // user clicks on progress bar
     const position = this.getPosition(event.clientX);
@@ -219,9 +209,8 @@ export default class extends Controller {
   }
 
   updateProgressBar() {
-    if (this.hasProgressTarget && this.hasIndicatorTarget) {
+    if (this.hasIndicatorTarget) {
       const pcComplete = this.getPercentComplete();
-      this.progressTarget.style.width = pcComplete + '%';
       this.indicatorTarget.style.left =
         this.getCurrentIndicatorPosition(pcComplete) + 'px';
     }
@@ -230,25 +219,6 @@ export default class extends Controller {
       this.counterTarget.textContent =
         '-' + this.formatTime(this.durationValue - this.currentTimeValue);
     }
-  }
-
-  getPercentBuffered(buffered) {
-    const arr = [];
-    for (let i = 0; i < buffered.length; ++i) {
-      const start = buffered.start(i);
-      const end = buffered.end(i);
-      arr.push([start, end]);
-    }
-
-    if (arr.length === 0) {
-      return 0;
-    }
-
-    const maxBuffered = arr.reduce(
-      (acc, timeRange) => (timeRange[1] > acc ? timeRange[1] : acc),
-      0
-    );
-    return (maxBuffered / this.durationValue) * 100 - this.getPercentComplete();
   }
 
   getPercentComplete() {
@@ -353,7 +323,6 @@ export default class extends Controller {
         play: this.resumed.bind(this),
         playing: this.canPlay.bind(this),
         pause: this.paused.bind(this),
-        progress: this.progress.bind(this),
         seeking: this.wait.bind(this),
         suspend: this.wait.bind(this),
         stalled: this.wait.bind(this),

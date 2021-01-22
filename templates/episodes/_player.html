@@ -264,18 +264,12 @@
         </div>
 
         <div class="flex items-center justify-center w-full">
-          <div class="h-2 mx-auto bg-gray-300 rounded-full w-full flex items-center player--interactive"
+          <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
                data-player-target="progressBar"
                data-action="click->player#skip">
             <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
                  data-player-target="indicator"
                  style="z-index: 12;"></div>
-            <div class="h-2 relative rounded-l flex items-center justify-end player--progress"
-                 style="width: 0%;"
-                 data-player-target="progress"></div>
-            <div class="h-2 rounded-r relative player--buffer"
-                 data-player-target="buffer"
-                 style="width: 0%;"></div>
           </div>
           <div class="w-20 text-right tracking-tighter text-sm md:text-base player--counter"
                data-player-target="counter">-00.00.00</div>
