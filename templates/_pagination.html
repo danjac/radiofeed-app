@@ -1,7 +1,11 @@
-{% load pagination %}
+{% load static pagination %}
 {% if page_obj.has_next %}
 <turbo-frame id="page-{{ page_obj.next_page_number }}"
              src="{% pagination_url page_obj.next_page_number %}"
              loading="lazy">
+  <div class="flex justify-center">
+    <img src="{% static 'img/loader.svg' %}"
+         class="h-16 w-16">
+  </div>
 </turbo-frame>
 {% endif %}
