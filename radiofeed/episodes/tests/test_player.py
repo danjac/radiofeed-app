@@ -14,7 +14,7 @@ class TestPlayer:
         player = Player(req)
         assert not player
         assert player.get_episode() is None
-        assert player.get_current_time() == 0
+        assert player.current_time == 0
 
     def test_not_empty(self, rf, episode):
         req = rf.get("/")
@@ -22,20 +22,20 @@ class TestPlayer:
         player = Player(req)
         assert player
         assert player.get_episode() == episode
-        assert player.get_current_time() == 1000
+        assert player.current_time == 1000
 
     def test_eject(self, rf, episode):
         req = rf.get("/")
         req.session = {"player": {"episode": episode.id, "current_time": 1000}}
 
         player = Player(req)
-        assert player.get_current_time() == 1000
+        assert player.current_time == 1000
         current_episode = player.eject()
 
         assert current_episode == episode
 
         assert not player
-        assert player.get_current_time() == 0
+        assert player.current_time == 0
 
     def test_is_playing_true(self, rf, episode):
         req = rf.get("/")

@@ -237,7 +237,7 @@ def player_timeupdate(request):
             return HttpResponseBadRequest("currentTime not provided")
 
         episode.log_activity(request.user, current_time)
-        request.player.set_current_time(current_time)
+        request.player.current_time = current_time
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
