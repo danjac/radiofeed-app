@@ -17,7 +17,7 @@ from ..models import Category
 from ..recommender.text_parser import extract_keywords
 from .date_parser import parse_date
 from .headers import get_headers
-from .images import InvalidImageURL, fetch_image_from_url
+from .image import InvalidImageURL, fetch_image_from_url
 
 
 class RssParser:
