@@ -113,6 +113,8 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
+    sync_error = models.TextField(blank=True)
+
     search_vector = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()

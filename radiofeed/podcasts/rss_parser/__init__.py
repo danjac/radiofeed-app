@@ -30,22 +30,27 @@ class RssParser:
 
     def parse(self):
 
-        # fetch etag and last modified
-        head_response = requests.head(
-            self.podcast.rss, headers=get_headers(), timeout=5
-        )
-        head_response.raise_for_status()
-        headers = head_response.headers
+        try:
+            # fetch etag and last modified
+            head_response = requests.head(
+                self.podcast.rss, headers=get_headers(), timeout=5
+            )
+            head_response.raise_for_status()
+            headers = head_response.headers
 
-        # if etag hasn't changed then we can skip
-        etag = headers.get("ETag")
-        if etag and etag == self.podcast.etag:
-            return []
+            # if etag hasn't changed then we can skip
+            etag = headers.get("ETag")
+            if etag and etag == self.podcast.etag:
+                return []
 
-        response = requests.get(
-            self.podcast.rss, headers=get_headers(), stream=True, timeout=5
-        )
-        response.raise_for_status()
+            response = requests.get(
+                self.podcast.rss, headers=get_headers(), stream=True, timeout=5
+            )
+            response.raise_for_status()
+        except requests.RequestException as e:
+            self.podcast.sync_error = str(e)
+            self.podcast.save()
+            raise
 
         data = feedparser.parse(response.content)
 
