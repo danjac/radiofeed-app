@@ -12,7 +12,7 @@
     {% include "podcasts/_podcast_cover_image.html" with image_css_class="h-24 w-24 mr-2" %}
 
     <div>
-      <div class="mb-3">
+      <div class="mb-2">
         <a class="hover:text-blue-500"
            href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
@@ -25,7 +25,7 @@
       </div>
       {% endif %}
 
-      <div class="flex items-center text-sm">
+      <div class="flex items-center text-sm mb-2">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
            class="font-semibold hover:text-blue-500 mr-2"
@@ -41,7 +41,7 @@
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
-
+      {% share_buttons podcast.get_absolute_url podcast.title %}
     </div>
   </div>
 

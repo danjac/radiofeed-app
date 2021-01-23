@@ -79,10 +79,10 @@
         </turbo-frame>
         {% endif %}
       </div>
-      <div class="mt-2">
+      <div class="my-2">
         {% include "episodes/_download_button.html" %}
       </div>
-
+      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
   </div>
 

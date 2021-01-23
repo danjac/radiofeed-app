@@ -1,5 +1,6 @@
 # Standard Library
 import collections
+import urllib
 
 # Django
 from django import template
@@ -24,6 +25,20 @@ def active_link(context, url_name, *args, **kwargs):
     elif context["request"].path.startswith(url):
         return ActiveLink(url, True, False)
     return ActiveLink(url, False, False)
+
+
+@register.inclusion_tag("_share.html", takes_context=True)
+def share_buttons(context, url, subject):
+    url = urllib.parse.quote(context["request"].build_absolute_uri(url))
+    subject = urllib.parse.quote(subject)
+
+    return {
+        "share_urls": {
+            "email": f"mailto:?subject={subject}&body={url}",
+            "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
+            "twitter": f"https://twitter.com/share?url={url}&text={subject}",
+        }
+    }
 
 
 @register.filter

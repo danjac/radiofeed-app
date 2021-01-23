@@ -5,7 +5,7 @@ from django.urls import reverse
 from radiofeed.podcasts.models import Podcast
 
 # Local
-from ..defaulttags import active_link, percent
+from ..defaulttags import active_link, percent, share_buttons
 
 
 class TestPercent:
@@ -17,6 +17,29 @@ class TestPercent:
 
     def test_percent(self):
         assert percent(30, 60) == 50
+
+
+class TestShareButtons:
+    def test_share(self, rf):
+        url = "/podcasts/1234/test/"
+        share_urls = share_buttons({"request": rf.get(url)}, url, "Test Podcast")[
+            "share_urls"
+        ]
+
+        assert (
+            share_urls["email"]
+            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/1234/test/"
+        )
+
+        assert (
+            share_urls["facebook"]
+            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/1234/test/"
+        )
+
+        assert (
+            share_urls["twitter"]
+            == "https://twitter.com/share?url=http%3A//testserver/podcasts/1234/test/&text=Test%20Podcast"
+        )
 
 
 class TestActiveLink:
