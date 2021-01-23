@@ -23,7 +23,6 @@ export default class extends Controller {
     markCompleteUrl: String,
     mediaUrl: String,
     paused: Boolean,
-    skipInterval: Number,
     timeupdateUrl: String,
     waiting: Boolean,
   };
@@ -129,11 +128,11 @@ export default class extends Controller {
   }
 
   skipBack() {
-    this.skipTo(this.audio.currentTime - this.skipIntervalValue);
+    this.skipTo(this.audio.currentTime - 10);
   }
 
   skipForward() {
-    this.skipTo(this.audio.currentTime + this.skipIntervalValue);
+    this.skipTo(this.audio.currentTime + 10);
   }
 
   turboLoad() {
