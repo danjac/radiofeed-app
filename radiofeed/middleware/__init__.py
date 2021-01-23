@@ -1,8 +1,5 @@
-# Standard Library
-import functools
-
 # Django
-from django.utils.functional import SimpleLazyObject
+from django.utils.functional import SimpleLazyObject, cached_property
 
 
 class Search:
@@ -11,12 +8,15 @@ class Search:
     def __init__(self, request):
         self.request = request
 
-    @functools.lru_cache
     def __str__(self):
-        return self.request.GET.get(self.search_param, "")
+        return self.value
 
     def __bool__(self):
-        return bool(str(self))
+        return bool(self.value)
+
+    @cached_property
+    def value(self):
+        return self.request.GET.get(self.search_param, "")
 
 
 class SearchMiddleware:
