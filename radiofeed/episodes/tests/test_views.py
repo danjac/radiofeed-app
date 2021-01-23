@@ -392,7 +392,7 @@ class TestRemoveBookmark:
 
 
 class TestRemoveHistory:
-    def test_post_one_remaining(self, rf, user, episode, mock_turbo):
+    def test_post(self, rf, user, episode, mock_turbo):
         AudioLogFactory(user=user, episode=episode)
         AudioLogFactory(user=user)
         req = rf.post(reverse("episodes:remove_history", args=[episode.id]))
@@ -402,13 +402,3 @@ class TestRemoveHistory:
         assert resp.status_code == http.HTTPStatus.OK
         assert not AudioLog.objects.filter(user=user, episode=episode).exists()
         assert AudioLog.objects.filter(user=user).count() == 1
-
-    def test_post_none_remaining(self, rf, user, episode, mocker, mock_turbo):
-        AudioLogFactory(user=user, episode=episode)
-        req = rf.post(reverse("episodes:remove_history", args=[episode.id]))
-        req.turbo = mock_turbo(True, "remove-btn")
-        req.user = user
-        req._messages = mocker.Mock()
-        resp = views.remove_history(req, episode.id)
-        assert resp.url == reverse("episodes:history")
-        assert not AudioLog.objects.filter(user=user, episode=episode).exists()

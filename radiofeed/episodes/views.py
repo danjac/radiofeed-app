@@ -4,7 +4,6 @@ import json
 
 # Django
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -119,13 +118,10 @@ def history(request):
 def remove_history(request, episode_id):
 
     episode = get_object_or_404(Episode, pk=episode_id)
+    AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
-    logs = AudioLog.objects.filter(user=request.user)
-    logs.filter(episode=episode).delete()
-
-    if logs.exists() and request.turbo:
+    if request.turbo:
         return TurboStream(f"episode-{episode.id}").remove.response()
-    messages.info(request, "All done!")
     return redirect("episodes:history")
 
 
@@ -172,16 +168,9 @@ def add_bookmark(request, episode_id):
 @login_required
 def remove_bookmark(request, episode_id):
     episode = get_object_or_404(Episode, pk=episode_id)
-    qs = Bookmark.objects.filter(user=request.user)
-    qs.filter(episode=episode).delete()
-
+    Bookmark.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        if qs.exists():
-            return TurboStream(f"episode-{episode.id}").remove.response()
-
-        messages.info(request, "All done!")
-        return redirect("episodes:bookmark_list")
-
+        return TurboStream(f"episode-{episode.id}").remove.response()
     return episode_bookmark_response(request, episode, False)
 
 
