@@ -8,7 +8,7 @@ module.exports = {
     purgeLayersByDefault: true,
   },
   purge: {
-    content: ['./templates/**/*.html', './static/js/**/*.js'],
+    content: ['./templates/**/*.html', './static/src/js/**/*.js'],
     options: {
       safelist: [
         'type', // [type='checkbox']

@@ -42,11 +42,11 @@ services:
 
   watchjs:
     <<: *assets
-    command: ['watchexec', '-w', 'static/js', '--', 'yarn', 'watch-js']
+    command: ['watchexec', '-w', 'static/src/js', '--', 'yarn', 'watch-js']
 
   watchcss:
     <<: *assets
-    command: ['watchexec', '-w', 'static/css', '--', 'yarn', 'watch-css']
+    command: ['watchexec', '-w', 'static/src/css', '--', 'yarn', 'watch-css']
 
   django: &django
     build:
