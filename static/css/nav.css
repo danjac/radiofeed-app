@@ -1,0 +1,7 @@
+.sidebar--active {
+  @apply text-blue-400 text-lg font-bold;
+}
+
+.tab--active {
+  @apply border-blue-500 border-b-2 font-bold;
+}

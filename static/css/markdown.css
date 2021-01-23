@@ -1,0 +1,24 @@
+.markdown {
+  @apply break-words;
+}
+
+.markdown a {
+  @apply underline break-words;
+}
+
+.markdown p {
+  @apply py-1;
+}
+
+.markdown ol {
+  @apply list-decimal list-inside;
+}
+
+.markdown ul {
+  @apply list-disc list-inside;
+}
+
+.markdown a:hover,
+.markdown a:visited {
+  @apply text-gray-300;
+}

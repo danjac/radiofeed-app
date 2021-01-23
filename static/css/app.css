@@ -1,94 +1,11 @@
+@import 'nav';
+@import 'markdown';
+@import 'messages';
+@import 'player';
+
 @tailwind base;
 
 @tailwind components;
-
-.message {
-  @apply text-white;
-}
-
-.message-debug {
-  @apply bg-gray-600;
-}
-
-.message-info {
-  @apply bg-blue-600;
-}
-.message-success {
-  @apply bg-green-600;
-}
-.message-warning {
-  @apply bg-orange-600;
-}
-.message-error {
-  @apply bg-red-600;
-}
-
-.markdown {
-  @apply break-words;
-}
-
-.markdown a {
-  @apply underline break-words;
-}
-
-.markdown p {
-  @apply py-1;
-}
-
-.markdown ol {
-  @apply list-decimal list-inside;
-}
-
-.markdown ul {
-  @apply list-disc list-inside;
-}
-
-.markdown a:hover,
-.markdown a:visited {
-  @apply text-gray-300;
-}
-
-.sidebar--active {
-  @apply text-blue-400 text-lg font-bold;
-}
-
-.tab--active {
-  @apply border-blue-500 border-b-2 font-bold;
-}
-
-.player--indicator {
-  @apply bg-gray-800;
-}
-
-.player--active .player--interactive {
-  @apply cursor-pointer;
-}
-
-.player--active .player--progress,
-.player--active .player--indicator {
-  @apply bg-blue-800;
-}
-
-.player--indicator {
-  @apply bg-gray-800;
-}
-
-.player--inactive .player--title {
-  @apply animate-pulse text-gray-300;
-}
-
-.player--inactive .player--interactive {
-  @apply opacity-75 cursor-not-allowed pointer-events-none;
-}
-
-.player--inactive .player--counter {
-  @apply opacity-75;
-}
-
-.player--inactive .player--progress,
-.player--inactive .player--indicator {
-  @apply bg-gray-800;
-}
 
 input[type='search']::-webkit-search-decoration,
 input[type='search']::-webkit-search-cancel-button,
