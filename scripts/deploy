@@ -12,7 +12,7 @@ docker-compose run --rm assets yarn build-css
 echo "Deploying assets to S3..."
 docker-compose run --rm \
     -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
-    django ./manage.py collectstatic --noinput -v 3 -i dev js css
+    django ./manage.py collectstatic --noinput -v 3 -i dev -i js -i css
 
 echo "Deploying to Dokku..."
 git push dokku main
