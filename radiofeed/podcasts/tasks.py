@@ -32,7 +32,7 @@ def send_recommendation_emails():
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds():
-    for podcast in Podcast.objects.exclude(sync_error=""):
+    for podcast in Podcast.objects.filter(num_retries__lt=3):
         sync_podcast_feed.delay(podcast.id)
 
 

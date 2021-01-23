@@ -49,6 +49,7 @@ class RssParser:
             response.raise_for_status()
         except requests.RequestException as e:
             self.podcast.sync_error = str(e)
+            self.podcast.num_retries += 1
             self.podcast.save()
             raise
 
@@ -128,6 +129,10 @@ class RssParser:
 
         self.podcast.authors = ", ".join(authors)
         self.podcast.extracted_text = self.extract_text(categories, entries)
+
+        self.podcast.sync_error = ""
+        self.podcast.num_retries = 0
+
         self.podcast.save()
 
         self.podcast.categories.set(categories)

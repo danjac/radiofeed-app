@@ -114,6 +114,7 @@ class Podcast(models.Model):
     )
 
     sync_error = models.TextField(blank=True)
+    num_retries = models.PositiveIntegerField(default=0)
 
     search_vector = SearchVectorField(null=True, editable=False)
 
