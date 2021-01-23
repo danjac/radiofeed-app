@@ -37,6 +37,7 @@ def share_buttons(context, url, subject):
             "email": f"mailto:?subject={subject}&body={url}",
             "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
             "twitter": f"https://twitter.com/share?url={url}&text={subject}",
+            "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
         }
     }
 

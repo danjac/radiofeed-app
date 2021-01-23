@@ -41,6 +41,11 @@ class TestShareButtons:
             == "https://twitter.com/share?url=http%3A//testserver/podcasts/1234/test/&text=Test%20Podcast"
         )
 
+        assert (
+            share_urls["linkedin"]
+            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/1234/test/"
+        )
+
 
 class TestActiveLink:
     def test_active_link_no_match(self, rf):
