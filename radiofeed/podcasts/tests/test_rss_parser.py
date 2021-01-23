@@ -78,6 +78,14 @@ class TestParseDate:
 
 
 class TestRssParser:
+    def test_parse_error(self, podcast, mocker, clear_categories_cache):
+        mocker.patch("requests.head", side_effect=requests.RequestException)
+        with pytest.raises(requests.RequestException):
+            RssParser.parse_from_podcast(podcast)
+            podcast.refresh_from_db()
+
+        assert podcast.num_retries == 1
+
     def test_parse(self, mocker, clear_categories_cache):
         mocker.patch("requests.head", return_value=MockHeaderResponse())
         mocker.patch("requests.get", return_value=MockResponse("rss_mock.txt"))
