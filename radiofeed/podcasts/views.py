@@ -134,6 +134,8 @@ def podcast_episode_list(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     ordering = request.GET.get("ordering")
 
+    # thumbnail will be same for all episodes, so just preload
+    # it once here
     if podcast.cover_image:
         podcast_image = get_thumbnail(
             podcast.cover_image, "200", format="PNG", crop="center"
