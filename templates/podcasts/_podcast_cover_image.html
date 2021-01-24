@@ -8,7 +8,9 @@
      {% if podcast_image %}
      src="{{ podcast_image.url }}"
      {% else %}
+
      {% if podcast.cover_image %}
+
      {% if is_turbo_frame or not lazy %}
      {% with size=image_size|default:"20" %}
      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
@@ -16,7 +18,11 @@
      {% empty %}src="{% static 'img/podcast-icon.png' %}"
      {% endthumbnail %}
      {% endwith %}
+
+     {% else %}
+     src="{% static 'img/podcast-icon.png' %}"
      {% endif %}
+
      {% else %}
      src="{% static 'img/podcast-icon.png' %}"
      {% endif %}
