@@ -123,13 +123,14 @@ class Episode(models.Model):
         # Updates audio log with current time
         if user.is_anonymous:
             return (None, False)
+        now = timezone.now()
         return AudioLog.objects.update_or_create(
             episode=self,
             user=user,
             defaults={
                 "current_time": current_time,
-                "updated": timezone.now(),
-                "completed": timezone.now() if completed else None,
+                "updated": now,
+                "completed": now if completed else None,
             },
         )
 
