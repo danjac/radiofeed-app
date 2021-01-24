@@ -55,7 +55,11 @@
     </div>
     {% endif %}
   </div>
-
+  {% if episode.listened %}
+  <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+    Listened {{ episode.listened|date }}
+  </div>
+  {% endif %}
 
   <div class="flex items-center w-full mb-3">
     <a href="{{ podcast.get_absolute_url }}">

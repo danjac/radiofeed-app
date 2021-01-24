@@ -23,6 +23,7 @@ class EpisodeQuerySet(models.QuerySet):
             return self.annotate(
                 completed=models.Value(False, output_field=models.BooleanField()),
                 current_time=models.Value(0, output_field=models.IntegerField()),
+                listened=models.Value(None, output_field=models.DateTimeField()),
             )
 
         logs = AudioLog.objects.filter(user=user, episode=models.OuterRef("pk"))
@@ -30,6 +31,7 @@ class EpisodeQuerySet(models.QuerySet):
         return self.annotate(
             completed=models.Subquery(logs.values("completed")),
             current_time=models.Subquery(logs.values("current_time")),
+            listened=models.Subquery(logs.values("updated")),
         )
 
     def search(self, search_term):
