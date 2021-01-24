@@ -5,7 +5,7 @@ from django.utils.functional import SimpleLazyObject
 from .player import Player
 
 
-class PlayerSessionMiddleware:
+class PlayerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 

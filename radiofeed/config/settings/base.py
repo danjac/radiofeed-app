@@ -87,7 +87,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.episodes.middleware.PlayerSessionMiddleware",
+    "radiofeed.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "turbo_response.middleware.TurboMiddleware",
     "django.middleware.common.CommonMiddleware",

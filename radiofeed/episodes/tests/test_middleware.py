@@ -2,14 +2,14 @@
 import pytest
 
 # Local
-from ..middleware import PlayerSessionMiddleware
+from ..middleware import PlayerMiddleware
 
 pytestmark = pytest.mark.django_db
 
 
-class TestPlayerSessionMiddleware:
+class TestPlayerMiddleware:
     def test_player_in_request(self, rf, get_response):
         req = rf.get("/")
         req.session = {}
-        PlayerSessionMiddleware(get_response)(req)
+        PlayerMiddleware(get_response)(req)
         assert hasattr(req, "player")
