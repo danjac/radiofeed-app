@@ -5,7 +5,7 @@
      alt="{{ podcast.title }}"
      width="{{ size }}"
      height="{{ size }}"
-     {% if is_turbo_frame or not lazy %}
+     {% if podcast.cover_image and is_turbo_frame and not lazy %}
      {% with size=image_size|default:"20" %}
      {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
      src="{{ img.url }}"
