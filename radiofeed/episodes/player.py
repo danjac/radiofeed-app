@@ -1,7 +1,7 @@
-# Local
 # Standard Library
 from typing import Optional, TypedDict
 
+# Local
 from .models import Episode
 
 
