@@ -10,6 +10,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
+from sorl.thumbnail import get_thumbnail
 from turbo_response import TurboFrame, redirect_303
 
 # RadioFeed
@@ -133,6 +134,13 @@ def podcast_episode_list(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     ordering = request.GET.get("ordering")
 
+    if podcast.cover_image:
+        podcast_image = get_thumbnail(
+            podcast.cover_image, "200", format="PNG", crop="center"
+        )
+    else:
+        podcast_image = None
+
     episodes = podcast.episode_set.with_current_time(request.user).select_related(
         "podcast"
     )
@@ -146,6 +154,7 @@ def podcast_episode_list(request, podcast_id, slug=None):
     context = {
         "page_obj": paginate(request, episodes),
         "ordering": ordering,
+        "podcast_image": podcast_image,
         "podcast_url": reverse(
             "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
         ),

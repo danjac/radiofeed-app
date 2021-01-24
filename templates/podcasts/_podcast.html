@@ -5,7 +5,7 @@
       <div class="mr-2">
         <a href="{{ podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% if podcast.cover_image %}
+          {% if podcast.cover_image and not podcast_image %}
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                        loading="lazy"
                        src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
