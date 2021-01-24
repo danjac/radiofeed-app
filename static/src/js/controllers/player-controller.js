@@ -56,7 +56,7 @@ export default class extends Controller {
 
   async ended() {
     this.cancelTimeUpdateTimer();
-    this.fetchJSON(this.markCompleteUrlValue);
+    this.postJSON(this.markCompleteUrlValue);
     if (this.hasNextEpisodeTarget) {
       this.nextEpisodeTarget.requestSubmit();
     } else {
@@ -348,13 +348,13 @@ export default class extends Controller {
 
   sendTimeUpdate() {
     if (this.currentTimeValue) {
-      this.fetchJSON(this.timeupdateUrlValue, {
+      this.postJSON(this.timeupdateUrlValue, {
         currentTime: this.currentTimeValue,
       });
     }
   }
 
-  fetchJSON(url, body) {
+  postJSON(url, body) {
     return fetch(url, {
       method: 'POST',
       headers: {
