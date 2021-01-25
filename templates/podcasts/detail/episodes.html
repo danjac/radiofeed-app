@@ -1,4 +1,4 @@
-{% extends "podcasts/podcast_base.html" %}
+{% extends "podcasts/detail/base.html" %}
 
 {% block podcast_content %}
 
@@ -34,5 +34,5 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-{% include "episodes/_episodes.html" %}
+{% include "episodes/_episode_list.html" %}
 {% endblock %}

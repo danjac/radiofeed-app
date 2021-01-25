@@ -72,7 +72,7 @@
        data-player-current-time-value="{{ player.current_time|default:0 }}"
        {% endif %}>
     <turbo-frame id="player">
-      {% include "episodes/_player.html" with episode=player.episode %}
+      {% include "episodes/player/_player.html" with episode=player.episode %}
     </turbo-frame>
   </div>
   {% endblock player %}

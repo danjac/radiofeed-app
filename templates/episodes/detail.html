@@ -63,19 +63,19 @@
 
   <div class="flex items-center w-full mb-3">
     <a href="{{ podcast.get_absolute_url }}">
-      {% include "podcasts/_podcast_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
+      {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
     </a>
     <div>
       <div class="flex items-center mb-1">
-        {% include "episodes/_play_buttons.html" with css_class="mr-3" %}
+        {% include "episodes/player/_toggle.html" with css_class="mr-3" %}
         {% if user.is_authenticated %}
         <turbo-frame id="episode-bookmark-{{ episode.id }}">
-          {% include "episodes/_bookmark_buttons.html" %}
+          {% include "episodes/bookmarks/_toggle.html" %}
         </turbo-frame>
         {% endif %}
       </div>
       <div class="my-2">
-        {% include "episodes/_download_button.html" %}
+        {% include "episodes/_download.html" %}
       </div>
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>

@@ -28,7 +28,7 @@
   </ul>
   {% if user.is_authenticated %}
   <turbo-frame id="podcast-subscribe-{{ podcast.id }}">
-    {% include "podcasts/_subscribe_buttons.html" %}
+    {% include "podcasts/_subscribe.html" %}
   </turbo-frame>
   {% endif %}
 

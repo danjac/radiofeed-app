@@ -49,7 +49,7 @@ def episode_list(request):
 
         return (
             TurboFrame(request.turbo.frame)
-            .template("episodes/_index.html", context)
+            .template("episodes/_episode_list.html", context)
             .response(request)
         )
 
@@ -106,11 +106,11 @@ def history(request):
 
         return (
             TurboFrame(request.turbo.frame)
-            .template("episodes/_history.html", context)
+            .template("episodes/history/_episode_list.html", context)
             .response(request)
         )
 
-    return TemplateResponse(request, "episodes/history.html", context)
+    return TemplateResponse(request, "episodes/history/index.html", context)
 
 
 @require_POST
@@ -145,11 +145,11 @@ def bookmark_list(request):
 
         return (
             TurboFrame(request.turbo.frame)
-            .template("episodes/_bookmarks.html", context)
+            .template("episodes/bookmarks/_episode_list.html", context)
             .response(request)
         )
 
-    return TemplateResponse(request, "episodes/bookmarks.html", context)
+    return TemplateResponse(request, "episodes/bookmarks/index.html", context)
 
 
 @require_POST
@@ -203,7 +203,7 @@ def toggle_player(request, episode_id):
 
     response = (
         TurboFrame("player")
-        .template("episodes/_player.html", {"episode": episode})
+        .template("episodes/player/_player.html", {"episode": episode})
         .response(request)
     )
     response["X-Player"] = json.dumps(
@@ -249,7 +249,7 @@ def episode_bookmark_response(request, episode, is_bookmarked):
         return (
             TurboFrame(f"episode-bookmark-{episode.id}")
             .template(
-                "episodes/_bookmark_buttons.html",
+                "episodes/bookmarks/_toggle.html",
                 {"episode": episode, "is_bookmarked": is_bookmarked},
             )
             .response(request)

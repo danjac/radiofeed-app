@@ -11,10 +11,10 @@
           {% if podcast.cover_image and not podcast_image %}
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                        src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
-            {% include "podcasts/_podcast_cover_image.html" with lazy=True %}
+            {% include "podcasts/_cover_image.html" with lazy=True %}
           </turbo-frame>
           {% else %}
-          {% include "podcasts/_podcast_cover_image.html" %}
+          {% include "podcasts/_cover_image.html" %}
           {% endif %}
         </a>
       </div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="flex items-center">
-          {% include "episodes/_play_buttons.html" with css_class="mr-2" %}
+          {% include "episodes/player/_toggle.html" with css_class="mr-2" %}
           <div class="w-full">
 
             <div class="flex items-center justify-between lg:justify-start text-sm">

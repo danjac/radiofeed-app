@@ -35,7 +35,7 @@
   </div>
   {% if can_add_podcast and not result.podcast %}
   <turbo-frame id="add-podcast-{{ result.itunes }}">
-    {% include "podcasts/_add_new_button.html" %}
+    {% include "podcasts/itunes/_add_new.html" %}
   </turbo-frame>
   {% endif %}
 </div>

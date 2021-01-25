@@ -47,7 +47,7 @@ def podcast_cover_image(request, podcast_id):
     return (
         TurboFrame(request.turbo.frame)
         .template(
-            "podcasts/_podcast_cover_image.html",
+            "podcasts/_cover_image.html",
             {"podcast": podcast},
         )
         .response(request)
@@ -87,7 +87,7 @@ def podcast_list(request):
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "podcasts/_podcasts.html",
+                "podcasts/_podcast_list.html",
                 context,
             )
             .response(request)
@@ -103,7 +103,7 @@ def podcast_detail(request, podcast_id, slug=None):
 
     return podcast_detail_response(
         request,
-        "podcasts/detail.html",
+        "podcasts/detail/detail.html",
         podcast,
         {"total_episodes": total_episodes},
     )
@@ -121,7 +121,7 @@ def podcast_recommendations(request, podcast_id, slug=None):
 
     return podcast_detail_response(
         request,
-        "podcasts/recommendations.html",
+        "podcasts/detail/recommendations.html",
         podcast,
         {
             "recommendations": recommendations,
@@ -166,11 +166,13 @@ def podcast_episode_list(request, podcast_id, slug=None):
 
         return (
             TurboFrame(request.turbo.frame)
-            .template("episodes/_episodes.html", context)
+            .template("episodes/_episode_list.html", context)
             .response(request)
         )
 
-    return podcast_detail_response(request, "podcasts/episodes.html", podcast, context)
+    return podcast_detail_response(
+        request, "podcasts/detail/episodes.html", podcast, context
+    )
 
 
 def category_list(request):
@@ -213,7 +215,7 @@ def category_detail(request, category_id, slug=None):
     if request.turbo.frame:
         return (
             TurboFrame(request.turbo.frame)
-            .template("podcasts/_podcasts.html", context)
+            .template("podcasts/_podcast_list.html", context)
             .response(request)
         )
     else:
@@ -245,7 +247,7 @@ def itunes_category(request, category_id):
 
     return TemplateResponse(
         request,
-        "podcasts/itunes_category.html",
+        "podcasts/itunes/category.html",
         {
             "category": category,
             "results": results,
@@ -269,7 +271,7 @@ def search_itunes(request):
 
     return TemplateResponse(
         request,
-        "podcasts/itunes.html",
+        "podcasts/itunes/search.html",
         {
             "results": results,
             "error": error,
@@ -314,7 +316,7 @@ def add_podcast(request):
     return (
         TurboFrame(f"add-podcast-{form.cleaned_data['itunes']}")
         .template(
-            "podcasts/_add_new_button.html",
+            "podcasts/itunes/_add_new.html",
             {"is_added": is_added, "is_error": is_error},
         )
         .response(request)
@@ -358,7 +360,7 @@ def podcast_subscribe_response(request, podcast, is_subscribed):
         return (
             TurboFrame(f"podcast-subscribe-{podcast.id}")
             .template(
-                "podcasts/_subscribe_buttons.html",
+                "podcasts/_subscribe.html",
                 {"podcast": podcast, "is_subscribed": is_subscribed},
             )
             .response(request)

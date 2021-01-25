@@ -1,8 +1,8 @@
-{% extends "episodes/_episodes.html" %}
+{% extends "episodes/_episode_list.html" %}
 
 {% block episodes %}
 {% for bookmark in page_obj %}
-{% include "episodes/_bookmark_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
+{% include "episodes/bookmarks/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
 
 {% empty %}
 
