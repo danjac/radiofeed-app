@@ -18,6 +18,10 @@
   @apply bg-gray-800;
 }
 
+.player--active .player--title:hover {
+  @apply text-blue-500;
+}
+
 .player--inactive .player--title {
   @apply animate-pulse text-gray-300;
 }

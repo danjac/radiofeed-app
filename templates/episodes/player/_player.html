@@ -25,7 +25,7 @@
         <a href="{{ episode.get_absolute_url }}"
            data-turbo-frame="_top"
            title="{{ episode.title }}"
-           class="player--title w-64 sm:w-full truncate text-sm md:text-base hover:text-blue-500">{{ episode.title|truncatechars:80 }}</a>
+           class="player--title w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
       </div>
       <button data-action="toggle#toggle"
               class="focus:outline-none float-right hover:text-blue-500"
