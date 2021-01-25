@@ -274,7 +274,7 @@ class TestBookmarkList:
 
 
 class TestAddBookmark:
-    def test_post(self, client, login_user, episode, mock_turbo):
+    def test_post(self, client, login_user, episode):
         resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
         assert resp.url == episode.get_absolute_url()
         assert Bookmark.objects.filter(user=login_user, episode=episode).exists()
@@ -289,7 +289,7 @@ class TestRemoveBookmark:
 
 
 class TestRemoveHistory:
-    def test_post(self, client, login_user, episode, mock_turbo):
+    def test_post(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode)
         AudioLogFactory(user=login_user)
         resp = client.post(reverse("episodes:remove_history", args=[episode.id]))
