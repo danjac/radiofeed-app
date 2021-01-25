@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 
 # Third Party Libraries
 from sorl.thumbnail import get_thumbnail
-from turbo_response import TurboFrame, redirect_303
+from turbo_response import TurboFrame
 
 # RadioFeed
 from radiofeed.pagination import paginate
@@ -26,7 +26,7 @@ from .tasks import sync_podcast_feed
 
 def landing_page(request):
     if request.user.is_authenticated:
-        return redirect_303("podcasts:podcast_list")
+        return redirect("podcasts:podcast_list")
 
     podcasts = (
         Podcast.objects.with_subscription_count()

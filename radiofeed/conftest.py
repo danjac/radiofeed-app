@@ -75,11 +75,12 @@ def password():
 
 @pytest.fixture
 def login_user(client, password):
-    user = UserFactory()
-    user.set_password(password)
-    user.save()
-    client.login(username=user.username, password=password)
-    return user
+    return _make_login_user(client, password)
+
+
+@pytest.fixture
+def login_admin_user(client, password):
+    return _make_login_user(client, password, is_staff=True)
 
 
 @pytest.fixture
@@ -110,3 +111,11 @@ def log(user, episode):
 @pytest.fixture
 def mock_turbo():
     return MockTurbo
+
+
+def _make_login_user(client, password, **defaults):
+    user = UserFactory(**defaults)
+    user.set_password(password)
+    user.save()
+    client.login(username=user.username, password=password)
+    return user
