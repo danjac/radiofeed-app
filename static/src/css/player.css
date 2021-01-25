@@ -6,9 +6,12 @@
   @apply cursor-pointer;
 }
 
-.player--active .player--progress,
 .player--active .player--indicator {
   @apply bg-blue-800;
+}
+
+.player--active .player--progress {
+  @apply bg-gradient-to-r from-blue-900 to-blue-600;
 }
 
 .player--indicator {
