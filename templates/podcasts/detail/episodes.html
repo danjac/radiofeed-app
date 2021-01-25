@@ -6,10 +6,10 @@
   <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
-       class="font-semibold">Newest First</a>
+       class="font-semibold hover:text-blue-500">Newest First</a>
     {% else %}
     <a href="{{ request.path }}?ordering=asc"
-       class="font-semibold">Oldest First</a>
+       class="font-semibold hover:text-blue-500">Oldest First</a>
     {% endif %}
   </div>
   <div class="flex items-center justify-center sm:justify-start">
