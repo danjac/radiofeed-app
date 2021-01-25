@@ -148,20 +148,6 @@ class Episode(models.Model):
 
 
 class BookmarkQuerySet(models.QuerySet):
-    def with_current_time(self, user):
-        if user.is_anonymous:
-            return self.annotate(
-                completed=models.Value(False, output_field=models.BooleanField()),
-                current_time=models.Value(0, output_field=models.IntegerField()),
-            )
-
-        logs = AudioLog.objects.filter(user=user, episode=models.OuterRef("episode"))
-
-        return self.annotate(
-            completed=models.Subquery(logs.values("completed")),
-            current_time=models.Subquery(logs.values("current_time")),
-        )
-
     def search(self, search_term):
         if not search_term:
             return self.none()

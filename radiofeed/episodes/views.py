@@ -30,7 +30,7 @@ def episode_list(request):
     )
     has_subscriptions = bool(subscriptions)
 
-    episodes = Episode.objects.with_current_time(request.user).select_related("podcast")
+    episodes = Episode.objects.select_related("podcast")
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
@@ -127,10 +127,8 @@ def remove_history(request, episode_id):
 
 @login_required
 def bookmark_list(request):
-    bookmarks = (
-        Bookmark.objects.filter(user=request.user)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
     )
     if request.search:
         bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
