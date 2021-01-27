@@ -195,7 +195,7 @@ def toggle_player(request, episode_id):
         streams.append(_render_toggle(current_episode, False))
 
     if request.POST.get("player_action") == "stop":
-        streams.append(TurboStream("player").update.render())
+        streams.append(TurboStream("player-controls").remove.render())
         response = TurboStreamResponse(streams)
         response["X-Player"] = json.dumps({"episode": episode_id, "action": "stop"})
         return response
@@ -213,7 +213,7 @@ def toggle_player(request, episode_id):
 
     streams += [
         _render_toggle(episode, True),
-        TurboStream("player")
+        TurboStream("player-container")
         .update.template(
             "episodes/player/_player.html", {"episode": episode}, request=request
         )
