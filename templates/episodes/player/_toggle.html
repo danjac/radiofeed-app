@@ -1,9 +1,6 @@
 <form class="{{ css_class|default:'' }}"
-      data-turbo-frame="player"
-      data-controller="episode"
-      data-episode-episode-value="{{ episode.id }}"
-      data-action="player:openPlayer@window->episode#start player:closePlayer@window->episode#stop"
       method="POST"
+      id="episode-play-toggle-{{ episode.id }}"
       action="{% url 'episodes:toggle_player' episode.id %}">
   {% csrf_token %}
 

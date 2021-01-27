@@ -11,7 +11,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 # Third Party Libraries
-from turbo_response import TurboFrame, TurboStream
+from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 # RadioFeed
 from radiofeed.pagination import paginate
@@ -177,11 +177,26 @@ def toggle_player(request, episode_id):
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
+    streams = []
+
+    def _render_toggle(episode, is_playing):
+        return (
+            TurboStream(f"episode-play-toggle-{episode.id}")
+            .replace.template(
+                "episodes/player/_toggle.html",
+                {"episode": episode, "is_episode_playing": is_playing},
+                request=request,
+            )
+            .render()
+        )
+
     # clear session
-    request.player.eject()
+    if current_episode := request.player.eject():
+        streams.append(_render_toggle(current_episode, False))
 
     if request.POST.get("player_action") == "stop":
-        response = TurboFrame("player").response()
+        streams.append(TurboStream("player").update.render())
+        response = TurboStreamResponse(streams)
         response["X-Player"] = json.dumps({"episode": episode_id, "action": "stop"})
         return response
 
@@ -196,11 +211,16 @@ def toggle_player(request, episode_id):
 
     request.player.start(episode, current_time)
 
-    response = (
-        TurboFrame("player")
-        .template("episodes/player/_player.html", {"episode": episode})
-        .response(request)
-    )
+    streams += [
+        _render_toggle(episode, True),
+        TurboStream("player")
+        .update.template(
+            "episodes/player/_player.html", {"episode": episode}, request=request
+        )
+        .render(),
+    ]
+
+    response = TurboStreamResponse(streams)
     response["X-Player"] = json.dumps(
         {
             "episode": episode.id,

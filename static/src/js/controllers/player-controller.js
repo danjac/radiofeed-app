@@ -1,5 +1,4 @@
 import { Controller } from 'stimulus';
-import { useDispatch } from 'stimulus-use';
 import useTurbo from '../turbo';
 
 export default class extends Controller {
@@ -50,7 +49,6 @@ export default class extends Controller {
   }
 
   connect() {
-    useDispatch(this);
     useTurbo(this);
   }
 
@@ -73,7 +71,6 @@ export default class extends Controller {
     }
     this.closeAudio();
     this.cancelTimeUpdateTimer();
-    this.dispatch('closePlayer');
   }
 
   loadedMetaData() {
@@ -169,7 +166,6 @@ export default class extends Controller {
     this.audio.src = this.mediaUrlValue;
 
     this.play();
-    this.dispatch('openPlayer', { episode });
 
     console.log('play:', mediaUrl, currentTime);
   }

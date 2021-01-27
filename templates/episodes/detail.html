@@ -67,7 +67,9 @@
     </a>
     <div>
       <div class="flex items-center mb-1">
-        {% include "episodes/player/_toggle.html" with css_class="mr-3" %}
+        <div class="mr-3">
+        {% include "episodes/player/_toggle.html" %}
+        </div>
         {% if user.is_authenticated %}
         <turbo-frame id="episode-bookmark-{{ episode.id }}">
           {% include "episodes/bookmarks/_toggle.html" %}
