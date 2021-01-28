@@ -24,16 +24,16 @@ from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
 
+# @cache_page(60 * 60 * 24)
 def landing_page(request):
     if request.user.is_authenticated:
         return redirect("podcasts:podcast_list")
 
-    podcasts = (
-        Podcast.objects.with_subscription_count()
-        .filter(pub_date__isnull=False, cover_image__isnull=False, explicit=False)
-        .order_by("-subscription_count", "-pub_date")
-        .distinct()[:12]
-    )
+    podcasts = Podcast.objects.filter(
+        pub_date__isnull=False,
+        cover_image__isnull=False,
+        promoted=True,
+    ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
 
     return TemplateResponse(
         request, "podcasts/landing_page.html", {"podcasts": podcasts}
@@ -57,11 +57,9 @@ def podcast_list(request):
     elif subscriptions:
         podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
     else:
-        podcasts = (
-            Podcast.objects.filter(pub_date__isnull=False)
-            .with_subscription_count()
-            .order_by("-subscription_count", "-pub_date")[: settings.DEFAULT_PAGE_SIZE]
-        )
+        podcasts = Podcast.objects.filter(
+            pub_date__isnull=False, promoted=True
+        ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
 
     context = {
         "page_obj": paginate(request, podcasts),

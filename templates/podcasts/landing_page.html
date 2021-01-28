@@ -15,7 +15,7 @@
       {% include "_search_form.html" with placeholder="Find a podcast..." %}
     </div>
 
-    {% if podcasts and podcasts|length > 9 %}
+    {% if podcasts and podcasts|length == 12 %}
     <div class="grid grid-flow-row grid-cols-3 md:grid-cols-4">
       {% for podcast in podcasts %}
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}

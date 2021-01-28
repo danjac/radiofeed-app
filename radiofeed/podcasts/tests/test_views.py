@@ -26,7 +26,8 @@ pytestmark = pytest.mark.django_db
 
 class TestLandingPage:
     def test_anonymous(self, client):
-        PodcastFactory.create_batch(3)
+        PodcastFactory.create_batch(3, promoted=True)
+        PodcastFactory()
         resp = client.get(reverse("podcasts:landing_page"))
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["podcasts"]) == 3
@@ -44,14 +45,14 @@ class TestPodcastCoverImage:
 
 class TestPodcastList:
     def test_anonymous(self, client):
-        PodcastFactory.create_batch(3)
+        PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(reverse("podcasts:podcast_list"))
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_no_subscriptions(self, login_user, client):
         """If user has no subscriptions, just show general feed"""
-        PodcastFactory.create_batch(3)
+        PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(reverse("podcasts:podcast_list"))
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3

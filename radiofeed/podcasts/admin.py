@@ -34,9 +34,23 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
+class PromotedFilter(admin.SimpleListFilter):
+    title = "Promoted"
+    parameter_name = "promoted"
+
+    def lookups(self, request, model_admin):
+        return (("yes", "Promoted"),)
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == "yes":
+            return queryset.filter(promoted=True)
+        return queryset
+
+
 @admin.register(Podcast)
 class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_filter = (PubDateFilter,)
+    list_filter = (PubDateFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
     list_display = ("__str__", "pub_date")

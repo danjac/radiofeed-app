@@ -106,6 +106,8 @@ class Podcast(models.Model):
 
     explicit = models.BooleanField(default=False)
 
+    promoted = models.BooleanField(default=False)
+
     categories = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
