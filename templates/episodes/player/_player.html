@@ -24,7 +24,7 @@
              height="30">
         <a href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}"
-           class="player--title w-64 sm:w-full truncate text-sm md:text-base">{{ episode.title|truncatechars:80 }}</a>
+           class="player--title w-64 sm:w-96 md:w-full truncate text-sm">{{ episode.title|truncatechars:80 }}</a>
       </div>
       <button data-action="toggle#toggle"
               class="focus:outline-none float-right hover:text-blue-500"
@@ -60,7 +60,7 @@
       </svg>
     </button>
 
-    <div class="mb-3 md:hidden pr-1 text-sm w-64 truncate">
+    <div class="mb-3 lg:hidden pr-1 text-sm w-64 sm:w-96 truncate">
       <a href="{{ episode.get_absolute_url }}"
          class="player--title"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
@@ -71,7 +71,7 @@
       <img data-controller="link"
            data-link-url-value="{{ podcast.get_absolute_url }}"
            data-action="click->link#visit"
-           class="object-cover block cursor-pointer h-16 w-16 md:h-24 md:w-24 self-center mr-2 border border-white"
+           class="object-cover block cursor-pointer h-16 w-16 lg:h-24 lg:w-24 self-center mr-2 border border-white"
            title="{{ podcast.title }}"
            {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
            src="{{ img.url }}"
@@ -83,7 +83,7 @@
 
       <div class="w-full self-start">
 
-        <div class="mb-3 hidden md:flex">
+        <div class="mb-3 hidden lg:flex text-sm">
           <a href="{{ episode.get_absolute_url }}"
              class="player--title"
              title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
