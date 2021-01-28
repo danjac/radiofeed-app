@@ -54,7 +54,7 @@ export default class extends Controller {
 
   async ended() {
     this.cancelTimeUpdateTimer();
-    this.postJSON(this.markCompleteUrlValue);
+    await this.postJSON(this.markCompleteUrlValue);
     if (this.hasNextEpisodeTarget) {
       this.nextEpisodeTarget.requestSubmit();
     } else {
