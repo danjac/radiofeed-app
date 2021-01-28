@@ -4,7 +4,7 @@
   {% csrf_token %}
   {% if is_bookmarked %}
   <button title="Remove episode from bookmarks"
-          class="focus:outline-none rounded border hover:bg-gray-600 p-1 text-sm flex items-center">
+          class="focus:outline-none rounded border hover:bg-gray-600 p-1 font-semibold text-sm flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
@@ -19,7 +19,7 @@
   </button>
   {% else %}
   <button title="Add Bookmark"
-          class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm flex items-center">
+          class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm font-semibold flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
@@ -38,7 +38,7 @@
 <a title="Add Bookmark"
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
-   class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm flex items-center">
+   class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm font-semibold text-sm flex items-center">
   <svg xmlns="http://www.w3.org/2000/svg"
        fill="none"
        viewBox="0 0 24 24"
