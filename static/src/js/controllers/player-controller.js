@@ -6,23 +6,23 @@ export default class extends Controller {
     'audio',
     'controls',
     'counter',
+    'currentTime',
     'indicator',
     'markComplete',
     'pauseButton',
     'playButton',
     'progressBar',
     'stop',
+    'timeUpdate',
   ];
 
   static classes = ['active', 'inactive'];
 
   static values = {
-    csrfToken: String,
     currentTime: Number,
     duration: Number,
     mediaUrl: String,
     paused: Boolean,
-    timeupdateUrl: String,
     waiting: Boolean,
   };
 
@@ -336,17 +336,8 @@ export default class extends Controller {
 
   sendTimeUpdate() {
     if (this.currentTimeValue) {
-      const body = new FormData();
-      body.append('current_time', this.currentTimeValue);
-
-      fetch(this.timeupdateUrlValue, {
-        body,
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': this.csrfTokenValue,
-        },
-        credentials: 'same-origin',
-      });
+      this.currentTimeTarget.value = this.currentTimeValue;
+      this.timeUpdateTarget.requestSubmit();
     }
   }
 
