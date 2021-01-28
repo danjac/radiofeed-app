@@ -24,7 +24,6 @@ from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
 
-# @cache_page(60 * 60 * 24)
 def landing_page(request):
     if request.user.is_authenticated:
         return redirect("podcasts:podcast_list")

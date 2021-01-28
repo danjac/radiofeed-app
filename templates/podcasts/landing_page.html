@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static thumbnail %}
+{% load cache static thumbnail %}
 {% block navbar %}{% endblock %}
 {% block player %}{% endblock %}
 {% block layout %}
@@ -15,6 +15,7 @@
       {% include "_search_form.html" with placeholder="Find a podcast..." %}
     </div>
 
+    {% cache 86400 promoted_podcasts %}
     {% if podcasts and podcasts|length == 12 %}
     <div class="grid grid-flow-row grid-cols-3 md:grid-cols-4">
       {% for podcast in podcasts %}
@@ -33,6 +34,7 @@
       {% endfor %}
     </div>
     {% endif %}
+    {% endcache %}
     <div class="text-lg text-center mb-2">
       <a href="{% url 'account_signup' %}"
          class="font-semibold underline hover:text-blue-500">Sign up</a> and get started today!
