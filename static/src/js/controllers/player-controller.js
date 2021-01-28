@@ -7,7 +7,6 @@ export default class extends Controller {
     'controls',
     'counter',
     'indicator',
-    'nextEpisode',
     'pauseButton',
     'playButton',
     'progressBar',
@@ -55,11 +54,7 @@ export default class extends Controller {
   async ended() {
     this.cancelTimeUpdateTimer();
     await this.postJSON(this.markCompleteUrlValue);
-    if (this.hasNextEpisodeTarget) {
-      this.nextEpisodeTarget.requestSubmit();
-    } else {
-      this.closePlayer();
-    }
+    this.closePlayer();
   }
 
   async closePlayer() {

@@ -186,7 +186,6 @@
 
             <form class="flex items-center"
                   {% if next_episode %}
-                  data-player-target="nextEpisode"
                   method="POST"
                   action="{% url 'episodes:toggle_player' next_episode.id %}"
                   {% endif %}>
