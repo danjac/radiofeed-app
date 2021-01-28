@@ -16,7 +16,7 @@
          target="_blank"
          {% endif %}
          title="{{ result.title }}"
-         class="font-semibold font-semibold hover:text-blue-500 block mb-2 w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
+         class="font-semibold font-semibold hover:text-blue-500 block mb-2 text-sm md:text-base w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
       <div class="text-sm{% if can_add_podcast %} mb-3 md:mb-0{% endif %} flex items-center">
         <a href="{{ result.rss }}"
            class="font-semibold hover:text-blue-500 mr-2"
