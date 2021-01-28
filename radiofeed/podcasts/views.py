@@ -40,20 +40,6 @@ def landing_page(request):
     )
 
 
-@cache_page(60 * 60 * 24)
-def podcast_cover_image(request, podcast_id):
-    """Lazy-loaded podcast image"""
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "podcasts/_cover_image.html",
-            {"podcast": podcast},
-        )
-        .response(request)
-    )
-
-
 def podcast_list(request):
     """Shows list of podcasts"""
 
@@ -64,9 +50,8 @@ def podcast_list(request):
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    top_rated_podcasts = not (subscriptions) and not (request.search)
-
     podcasts = Podcast.objects.filter(pub_date__isnull=False)
+
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
@@ -80,7 +65,6 @@ def podcast_list(request):
 
     context = {
         "page_obj": paginate(request, podcasts),
-        "top_rated_podcasts": top_rated_podcasts,
     }
 
     if request.turbo.frame:
@@ -93,7 +77,16 @@ def podcast_list(request):
             .response(request)
         )
 
-    return TemplateResponse(request, "podcasts/index.html", context)
+    top_rated_podcasts = not (subscriptions) and not (request.search)
+
+    return TemplateResponse(
+        request,
+        "podcasts/index.html",
+        {
+            **context,
+            "top_rated_podcasts": top_rated_podcasts,
+        },
+    )
 
 
 def podcast_detail(request, podcast_id, slug=None):
@@ -318,6 +311,20 @@ def add_podcast(request):
         .template(
             "podcasts/itunes/_add_new.html",
             {"is_added": is_added, "is_error": is_error},
+        )
+        .response(request)
+    )
+
+
+@cache_page(60 * 60 * 24)
+def podcast_cover_image(request, podcast_id):
+    """Lazy-loaded podcast image"""
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_cover_image.html",
+            {"podcast": podcast},
         )
         .response(request)
     )
