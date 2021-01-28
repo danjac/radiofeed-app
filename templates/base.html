@@ -66,7 +66,6 @@
        data-player-inactive-class="player--inactive"
        data-player-csrf-token-value="{{ csrf_token }}"
        data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
-       data-player-mark-complete-url-value="{% url 'episodes:mark_complete' %}"
        {% if player.episode %}
        data-player-media-url-value="{{ player.episode.media_url }}"
        data-player-current-time-value="{{ player.current_time|default:0 }}"

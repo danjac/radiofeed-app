@@ -132,11 +132,17 @@
 
             <form class="flex items-center"
                   method="POST"
+                  data-player-target="stop"
                   action="{% url 'episodes:toggle_player' episode.id %}">
               {% csrf_token %}
+              <input type="hidden"
+                     name="mark_complete"
+                     data-player-target="markComplete"
+                     value="false">
+              <input type="hidden"
+                     name="player_action"
+                     value="stop">
               <button title="Stop"
-                      name="player_action"
-                      value="stop"
                       class="focus:outline-none hover:text-blue-500">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      fill="none"

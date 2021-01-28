@@ -194,6 +194,9 @@ def toggle_player(request, episode_id):
     if current_episode := request.player.eject():
         streams.append(_render_toggle(current_episode, False))
 
+        if request.POST.get("mark_complete") == "true":
+            current_episode.log_activity(request.user, current_time=0, completed=True)
+
     if request.POST.get("player_action") == "stop":
         streams.append(TurboStream("player-controls").remove.render())
         response = TurboStreamResponse(streams)
@@ -230,16 +233,6 @@ def toggle_player(request, episode_id):
         }
     )
     return response
-
-
-@require_POST
-def mark_complete(request):
-
-    if episode := request.player.eject():
-        episode.log_activity(request.user, current_time=0, completed=True)
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-
-    return HttpResponseBadRequest("No player loaded")
 
 
 @require_POST

@@ -9,11 +9,6 @@ app_name = "episodes"
 urlpatterns = [
     path("", views.episode_list, name="episode_list"),
     path("player/<int:episode_id>/~toggle/", views.toggle_player, name="toggle_player"),
-    path(
-        "player/~done/",
-        views.mark_complete,
-        name="mark_complete",
-    ),
     path("player/~timeupdate/", views.player_timeupdate, name="player_timeupdate"),
     path("history/", views.history, name="history"),
     path(

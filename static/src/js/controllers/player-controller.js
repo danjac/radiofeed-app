@@ -7,9 +7,11 @@ export default class extends Controller {
     'controls',
     'counter',
     'indicator',
+    'markComplete',
     'pauseButton',
     'playButton',
     'progressBar',
+    'stop',
   ];
 
   static classes = ['active', 'inactive'];
@@ -53,17 +55,13 @@ export default class extends Controller {
 
   async ended() {
     this.cancelTimeUpdateTimer();
-    await this.postJSON(this.markCompleteUrlValue);
-    this.closePlayer();
+    this.markCompleteTarget.value = 'true';
+    this.stopTarget.requestSubmit();
   }
 
-  async closePlayer() {
+  closePlayer() {
     this.durationValue = 0;
     this.mediaUrlValue = '';
-
-    if (this.hasControlsTarget) {
-      this.controlsTarget.remove();
-    }
     this.closeAudio();
     this.cancelTimeUpdateTimer();
   }
@@ -339,22 +337,16 @@ export default class extends Controller {
 
   sendTimeUpdate() {
     if (this.currentTimeValue) {
-      this.postJSON(this.timeupdateUrlValue, {
-        currentTime: this.currentTimeValue,
+      fetch(this.timeupdateUrlValue, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': this.csrfTokenValue,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ currentTime: this.currentTimeValue }),
       });
     }
-  }
-
-  postJSON(url, body) {
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': this.csrfTokenValue,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify(body || {}),
-    });
   }
 
   set enabled(enabled) {
