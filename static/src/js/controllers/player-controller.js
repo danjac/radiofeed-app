@@ -20,7 +20,6 @@ export default class extends Controller {
     csrfToken: String,
     currentTime: Number,
     duration: Number,
-    markCompleteUrl: String,
     mediaUrl: String,
     paused: Boolean,
     timeupdateUrl: String,
