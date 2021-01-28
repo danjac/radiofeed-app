@@ -6,7 +6,7 @@
 
 {% block settings_content %}
 
-<form class="p-3 border w-full sm:w-1/2 border-gray-500"
+<form class="p-3 border w-full md:w-3/4 lg:w-1/2 border-gray-500"
       method="post"
       action="{% url 'user_preferences' %}"
       novalidate>
@@ -20,8 +20,8 @@
     {% include "_form_help_text.html" with help_text=form.send_recommendations_email.help_text %}
   </div>
 
-  <div class="">
-    <button class="p-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
+  <div class="flex items-center justify-end">
+    <button class="px-4 py-1 font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
             type="submit">{% translate "Save Changes" %}</button>
   </div>
 </form>
