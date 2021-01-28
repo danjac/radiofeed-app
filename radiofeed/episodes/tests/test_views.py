@@ -149,33 +149,6 @@ class TestTogglePlayer:
         assert header["action"] == "stop"
 
 
-class TestMarkComplete:
-    def test_anonymous(self, client, episode):
-        session = client.session
-        session.update({"player": {"episode": episode.id, "current_time": 1000}})
-        session.save()
-
-        resp = client.post(reverse("episodes:mark_complete"))
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
-
-    def test_authenticated(self, client, login_user, episode):
-        session = client.session
-        session.update({"player": {"episode": episode.id, "current_time": 1000}})
-        session.save()
-
-        resp = client.post(
-            reverse("episodes:mark_complete"),
-            data=json.dumps({"currentTime": 1030}),
-            content_type="application/json",
-        )
-
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
-
-        log = AudioLog.objects.get(user=login_user, episode=episode)
-        assert log.current_time == 0
-        assert log.completed
-
-
 class TestPlayerTimeUpdate:
     def test_anonymous(self, client, episode):
         session = client.session
