@@ -53,7 +53,7 @@ export default class extends Controller {
     useTurbo(this);
   }
 
-  async ended() {
+  ended() {
     this.cancelTimeUpdateTimer();
     this.markCompleteTarget.value = 'true';
     this.stopTarget.requestSubmit();
