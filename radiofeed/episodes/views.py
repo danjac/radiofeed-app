@@ -240,9 +240,11 @@ def player_timeupdate(request):
     """Update current play time of episode"""
     if episode := request.player.get_episode():
         try:
-            current_time = int(json.loads(request.body)["currentTime"])
-        except (json.JSONDecodeError, KeyError, ValueError):
-            return HttpResponseBadRequest("currentTime not provided")
+            current_time = round(float(request.POST["current_time"]))
+        except KeyError:
+            return HttpResponseBadRequest("current_time not provided")
+        except ValueError:
+            return HttpResponseBadRequest("current_time invalid")
 
         episode.log_activity(request.user, current_time)
         request.player.current_time = current_time

@@ -157,8 +157,7 @@ class TestPlayerTimeUpdate:
 
         resp = client.post(
             reverse("episodes:player_timeupdate"),
-            data=json.dumps({"currentTime": 1030}),
-            content_type="application/json",
+            data={"current_time": "1030.0001"},
         )
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
@@ -170,9 +169,7 @@ class TestPlayerTimeUpdate:
         session.save()
 
         resp = client.post(
-            reverse("episodes:player_timeupdate"),
-            data=json.dumps({"currentTime": 1030}),
-            content_type="application/json",
+            reverse("episodes:player_timeupdate"), data={"current_time": "1030.0001"}
         )
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert client.session["player"]["current_time"] == 1030
@@ -183,17 +180,23 @@ class TestPlayerTimeUpdate:
     def test_player_not_running(self, client, login_user, episode):
         resp = client.post(
             reverse("episodes:player_timeupdate"),
-            data=json.dumps({"current_time": 1030}),
-            content_type="application/json",
+            data={"current_time": "1030.0001"},
         )
+        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
+        assert AudioLog.objects.count() == 0
+
+    def test_missing_data(self, client, login_user, episode):
+        resp = client.post(
+            reverse("episodes:player_timeupdate"),
+        )
+
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0
 
     def test_invalid_data(self, client, login_user, episode):
         resp = client.post(
             reverse("episodes:player_timeupdate"),
-            data=json.dumps({}),
-            content_type="application/json",
+            data={"current_time": "xyz"},
         )
 
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST

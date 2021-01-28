@@ -336,14 +336,16 @@ export default class extends Controller {
 
   sendTimeUpdate() {
     if (this.currentTimeValue) {
+      const body = new FormData();
+      body.append('current_time', this.currentTimeValue);
+
       fetch(this.timeupdateUrlValue, {
+        body,
         method: 'POST',
         headers: {
           'X-CSRFToken': this.csrfTokenValue,
-          'Content-Type': 'application/json',
         },
         credentials: 'same-origin',
-        body: JSON.stringify({ currentTime: this.currentTimeValue }),
       });
     }
   }
