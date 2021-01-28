@@ -6,16 +6,6 @@
      data-player-target="controls"
      id="player-controls">
 
-  <form method="post"
-        action="{% url 'episodes:player_timeupdate' %}"
-        class="hidden"
-        data-player-target="timeUpdate">
-    {% csrf_token %}
-    <input type="hidden"
-           name="current_time"
-           data-player-target="currentTime">
-  </form>
-
   <div data-toggle-target="item"
        class="hidden">
     <div class="flex items-center justify-between relative">
