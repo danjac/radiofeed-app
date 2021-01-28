@@ -1,35 +1,54 @@
- <form method="post"
-       action="{% if is_bookmarked %}{% url 'episodes:remove_bookmark' episode.id %}{% else %}{% url 'episodes:add_bookmark' episode.id %}{% endif %}">
-   {% csrf_token %}
-   {% if is_bookmarked %}
-   <button title="Remove episode from bookmarks"
-           class="focus:outline-none rounded border hover:bg-gray-600 p-1 text-sm flex items-center">
-     <svg xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          class="h-5 w-5 mr-2">
-       <path stroke-linecap="round"
-             stroke-linejoin="round"
-             stroke-width="2"
-             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-     </svg>
-     Remove
-   </button>
-   {% else %}
-   <button title="Add Bookmark"
-           class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm flex items-center">
-     <svg xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          class="h-5 w-5 mr-2">
-       <path stroke-linecap="round"
-             stroke-linejoin="round"
-             stroke-width="2"
-             d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-     </svg>
-     Bookmark
-   </button>
-   {% endif %}
- </form>
+{% if user.is_authenticated %}
+<form method="post"
+      action="{% if is_bookmarked %}{% url 'episodes:remove_bookmark' episode.id %}{% else %}{% url 'episodes:add_bookmark' episode.id %}{% endif %}">
+  {% csrf_token %}
+  {% if is_bookmarked %}
+  <button title="Remove episode from bookmarks"
+          class="focus:outline-none rounded border hover:bg-gray-600 p-1 text-sm flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         class="h-5 w-5 mr-2">
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+    Remove
+  </button>
+  {% else %}
+  <button title="Add Bookmark"
+          class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor"
+         class="h-5 w-5 mr-2">
+      <path stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+    </svg>
+    Bookmark
+  </button>
+  {% endif %}
+</form>
+{% else %}
+<a title="Add Bookmark"
+   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
+   data-turbo-frame="_top"
+   class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm flex items-center">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       class="h-5 w-5 mr-2">
+    <path stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+  </svg>
+  Bookmark
+</a>
+{% endif %}

@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if not accept_cookies %}
-<form class="text-white bg-gray-800 w-full py-3 flex justify-center" id="accept-cookies"
+<form class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50" id="accept-cookies"
   method="post"
   action="{% url 'accept_cookies' %}">
   {% csrf_token %}

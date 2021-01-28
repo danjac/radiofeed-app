@@ -2,26 +2,27 @@
 {% load static thumbnail %}
 {% block navbar %}{% endblock %}
 {% block player %}{% endblock %}
-{% block bodyattrs %}class="h-screen container-lg mx-auto antialiased bg-gray-900 text-white bg-center bg-no-repeat bg-cover bg-transparent" style="background-image: url('{% static 'landing-cover.jpg' %}');"{% endblock %}
 {% block layout %}
-<div class="min-h-full mx-auto bg-gradient-to-b flex justify-center items-center">
-  <div class="bg-gray-900 text-white p-12 w-full md:w-5/6 opacity-90 font-sans ring">
+<div class="min-h-full mx-auto flex justify-center items-center">
+  <div class="bg-gray-900 text-white p-12">
 
-    <h1 class="text-2xl text-center font-bold mb-3">
-      Welcome to {{ request.site.name }}
+    <h1 class="text-xl md:text-2xl text-center mb-3">
+      Discover and listen to some great podcast content.
     </h1>
 
-    <p class="text-lg text-center mb-3">
-      {{ request.site.name }} is an app for collecting and sharing your favorite podcasts!
-    </p>
+    <div class="mb-3 flex justify-center">
+      {% url 'podcasts:podcast_list' as search_url %}
+      {% include "_search_form.html" with placeholder="Find a podcast..." %}
+    </div>
+
     {% if podcasts and podcasts|length > 9 %}
-    <div class="overflow-x-auto lg:overflow-none flex whitespace-nowrap lg:whitespace-none pb-1 mb-3 shadow-inner-xl">
+    <div class="grid grid-flow-row grid-cols-3 md:grid-cols-4">
       {% for podcast in podcasts %}
       {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
       <img data-controller="link"
            data-link-url-value="{{ podcast.get_absolute_url }}"
            data-action="click->link#visit"
-           class="h-24 w-24 md:h-32 md:w-32 object-cover mr-2 cursor-pointer border border-white hover:opacity-75"
+           class="h-20 w-20 md:h-32 md:w-32 mb-3 object-cover cursor-pointer border border-white hover:opacity-75"
            title="{{ podcast.title }}"
            src="{{ img.url }}"
            alt="{{ podcast.title }}"

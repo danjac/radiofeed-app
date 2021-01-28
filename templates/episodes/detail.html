@@ -70,11 +70,9 @@
         <div class="mr-3">
         {% include "episodes/player/_toggle.html" %}
         </div>
-        {% if user.is_authenticated %}
         <turbo-frame id="episode-bookmark-{{ episode.id }}">
           {% include "episodes/bookmarks/_toggle.html" %}
         </turbo-frame>
-        {% endif %}
       </div>
       <div class="my-2">
         {% include "episodes/_download.html" %}
