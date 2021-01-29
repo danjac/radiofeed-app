@@ -5,6 +5,9 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+# Third Party Libraries
+from turbo_response import TurboFrame
+
 # RadioFeed
 from radiofeed.users.views import accept_cookies, delete_account, user_preferences
 
@@ -16,6 +19,10 @@ urlpatterns = [
     path("account/", include("turbo_allauth.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
+    # ensure modal is properly reset when closed: just returns an empty frame
+    path(
+        "modal-unload/", lambda req: TurboFrame("modal").response(), name="modal_unload"
+    ),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

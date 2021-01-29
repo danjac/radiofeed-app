@@ -6,7 +6,7 @@
   <div class="modal-container bg-gray-900 w-full h-full md:h-auto md:max-w-xl mx-auto rounded shadow-lg z-50 md:overflow-y-auto">
 
     <a class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
-       href="#"
+       href="{% url 'modal_unload' %}"
        data-modal-target="close">
       <svg class="fill-current text-white"
            xmlns="http://www.w3.org/2000/svg"
@@ -24,8 +24,7 @@
       <div class="flex justify-between items-center pb-3">
         <p class="w-64 truncate md:text-lg md:w-full font-bold">{% block modal_header %}{% endblock %}</p>
         <div class="modal-close cursor-pointer z-50 hidden md:inline-block">
-          <a href="#"
-             role="button">
+          <button data-action="modal#close">
             <svg class="fill-current text-white"
                  xmlns="http://www.w3.org/2000/svg"
                  width="18"
@@ -33,7 +32,7 @@
                  viewBox="0 0 18 18">
               <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
             </svg>
-          </a>
+          </button>
         </div>
       </div>
 

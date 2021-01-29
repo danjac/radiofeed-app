@@ -45,6 +45,7 @@
   {% include "_cookie_notice.html" %}
 
   {% block layout %}
+
   <div class="min-h-full mx-auto flex relative mt-2">
     <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static"
          data-toggle-target="item">
@@ -56,6 +57,8 @@
       {% block content %}{% endblock %}
     </div>
   </div>
+
+  <turbo-frame id="modal"></turbo-frame>
   {% endblock layout %}
   {% block player %}
   {% get_player as player %}
@@ -74,7 +77,6 @@
     {% include "episodes/player/_player.html" with episode=player.episode %}
   </div>
   {% endblock player %}
-  <turbo-frame id="modal"></turbo-frame>
 
 </body>
 
