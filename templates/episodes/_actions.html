@@ -52,8 +52,11 @@
     {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
-<div class="markdown mb-3">
+<div class="markdown mb-3 text-sm">
   {{ episode.description|striptags|stripentities|truncatewords:30 }}
+  <a href="{{ episode.get_absolute_url }}"
+     data-turbo-frame="_top"
+     class="ml-2">More</a>
 </div>
 
 {% endwith %}
