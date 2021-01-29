@@ -86,6 +86,23 @@ def podcast_list(request):
     )
 
 
+@login_required
+def podcast_actions(request, podcast_id):
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    is_subscribed = Subscription.objects.filter(
+        podcast=podcast, user=request.user
+    ).exists()
+
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_actions.html",
+            {"podcast": podcast, "is_subscribed": is_subscribed},
+        )
+        .response(request)
+    )
+
+
 def podcast_detail(request, podcast_id, slug=None):
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 

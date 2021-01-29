@@ -1,5 +1,4 @@
 {% extends "modal_base.html" %}
-{% load episodes %}
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
    data-turbo-frame="_top">
@@ -8,7 +7,6 @@
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-{% is_playing episode as is_episode_playing %}
 <h2 class="font-semibold mb-3">
   <a href="{{ podcast.get_absolute_url }}"
      data-turbo-frame="_top"

@@ -9,6 +9,7 @@ app_name = "podcasts"
 urlpatterns = [
     path("", views.landing_page, name="landing_page"),
     path("podcasts/", views.podcast_list, name="podcast_list"),
+    path("podcasts/<int:podcast_id>/actions/", views.podcast_actions, name="actions"),
     path("podcasts/<int:podcast_id>/~subscribe/", views.subscribe, name="subscribe"),
     path(
         "podcasts/<int:podcast_id>/~unsubscribe/", views.unsubscribe, name="unsubscribe"

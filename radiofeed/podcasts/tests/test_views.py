@@ -97,6 +97,23 @@ class TestPodcastRecommendations:
         assert len(resp.context_data["recommendations"]) == 3
 
 
+class TestPodcastActions:
+    def test_authenticated(self, client, login_user, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["podcast"] == podcast
+        assert not resp.context_data["is_subscribed"]
+
+    def test_subscribed(self, client, login_user, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        SubscriptionFactory(podcast=podcast, user=login_user)
+        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["podcast"] == podcast
+        assert resp.context_data["is_subscribed"]
+
+
 class TestPodcastDetail:
     def test_anonymous(self, client, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
