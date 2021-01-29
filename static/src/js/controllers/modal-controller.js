@@ -1,10 +1,12 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['close'];
+  static targets = ['close', 'modal'];
 
   close() {
-    this.closeTarget.click();
+    // empty content of frame and reset src
+    this.modalTarget.textContent = '';
+    this.modalTarget.removeAttribute('src');
   }
 
   closeOnEsc(event) {

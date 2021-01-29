@@ -36,7 +36,7 @@
 
 <body {% block bodyattrs %}
       class="h-screen container-lg mx-auto antialiased bg-gray-900 text-white font-sans"
-      data-controller="toggle"
+      data-controller="toggle modal"
       {% endblock %}>
 
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
@@ -58,7 +58,6 @@
     </div>
   </div>
 
-  <turbo-frame id="modal"></turbo-frame>
   {% endblock layout %}
   {% block player %}
   {% get_player as player %}
@@ -77,6 +76,9 @@
     {% include "episodes/player/_player.html" with episode=player.episode %}
   </div>
   {% endblock player %}
+
+  <turbo-frame id="modal"
+               data-modal-target="modal"></turbo-frame>
 
 </body>
 

@@ -1,13 +1,11 @@
 <div class="modal fixed w-full h-full top-0 left-0 flex items-center justify-center"
-     data-controller="modal"
      data-action="keyup@window->modal#closeOnEsc">
   <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 
   <div class="modal-container bg-gray-900 w-full h-full md:h-auto md:max-w-xl mx-auto rounded shadow-lg z-50 md:overflow-y-auto">
 
-    <a class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
-       href="{% url 'modal_unload' %}"
-       data-modal-target="close">
+    <button class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
+       data-action="modal#close">
       <svg class="fill-current text-white"
            xmlns="http://www.w3.org/2000/svg"
            width="18"
@@ -16,7 +14,7 @@
         <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
       </svg>
       <span class="text-sm">(Esc)</span>
-    </a>
+    </button>
 
     <!-- Add margin if you want to see some of the overlay behind the modal-->
     <div class="modal-content py-4 text-left px-6">
