@@ -46,7 +46,7 @@
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2">
-    <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static z-10"
+    <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static"
          data-toggle-target="item">
       {% include "_sidebar.html" %}
     </div>
@@ -75,6 +75,7 @@
   </div>
   {% endblock player %}
   {% include "_footer.html" %}
+  <turbo-frame id="modal"></turbo-frame>
 
 </body>
 

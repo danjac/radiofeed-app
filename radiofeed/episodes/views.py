@@ -83,6 +83,27 @@ def episode_detail(request, episode_id, slug=None):
 
 
 @login_required
+def episode_actions(request, episode_id):
+    episode = get_object_or_404(
+        Episode.objects.select_related("podcast"), pk=episode_id
+    )
+    is_bookmarked = Bookmark.objects.filter(episode=episode, user=request.user).exists()
+
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "episodes/_actions.html",
+            {
+                "episode": episode,
+                "is_bookmarked": is_bookmarked,
+                "player_toggle_id": f"episode-play-modal-toggle-{episode.id}",
+            },
+        )
+        .response(request)
+    )
+
+
+@login_required
 def history(request):
 
     logs = (
@@ -179,20 +200,29 @@ def toggle_player(request, episode_id):
 
     streams = []
 
-    def _render_toggle(episode, is_playing):
-        return (
-            TurboStream(f"episode-play-toggle-{episode.id}")
+    def _render_toggles(episode, is_playing):
+
+        return [
+            TurboStream(target)
             .replace.template(
                 "episodes/player/_toggle.html",
-                {"episode": episode, "is_episode_playing": is_playing},
+                {
+                    "episode": episode,
+                    "is_episode_playing": is_playing,
+                    "player_toggle_id": target,
+                },
                 request=request,
             )
             .render()
-        )
+            for target in (
+                f"episode-play-toggle-{episode.id}",
+                f"episode-play-modal-toggle-{episode.id}",
+            )
+        ]
 
     # clear session
     if current_episode := request.player.eject():
-        streams.append(_render_toggle(current_episode, False))
+        streams += _render_toggles(current_episode, False)
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -200,7 +230,7 @@ def toggle_player(request, episode_id):
     if request.POST.get("player_action") == "stop":
         streams.append(TurboStream("player-controls").remove.render())
         response = TurboStreamResponse(streams)
-        response["X-Player"] = json.dumps({"episode": episode_id, "action": "stop"})
+        response["X-Player"] = json.dumps({"action": "stop"})
         return response
 
     episode = get_object_or_404(
@@ -215,18 +245,16 @@ def toggle_player(request, episode_id):
     request.player.start(episode, current_time)
 
     streams += [
-        _render_toggle(episode, True),
         TurboStream("player-container")
         .update.template(
             "episodes/player/_player.html", {"episode": episode}, request=request
         )
         .render(),
-    ]
+    ] + _render_toggles(episode, True)
 
     response = TurboStreamResponse(streams)
     response["X-Player"] = json.dumps(
         {
-            "episode": episode.id,
             "action": "start",
             "mediaUrl": episode.media_url,
             "currentTime": current_time,

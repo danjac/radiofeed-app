@@ -1,13 +1,13 @@
 <form class="{{ css_class|default:'' }}"
       method="POST"
-      id="episode-play-toggle-{{ episode.id }}"
+      id="{% if player_toggle_id %}{{ player_toggle_id }}{% else %}episode-play-toggle-{{ episode.id }}{% endif %}"
+      data-turbo-frame="_top"
       action="{% url 'episodes:toggle_player' episode.id %}">
   {% csrf_token %}
 
   <div class="flex items-center">
     <button title="Close Player"
             name="player_action"
-            data-episode-target="stopButton"
             value="stop"
             class="hover:text-blue-500 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
       <svg xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,6 @@
     </button>
     <button title="Open in Player"
             name="player_action"
-            data-episode-target="playButton"
             value="start"
             class="hover:text-blue-500 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
       <svg xmlns="http://www.w3.org/2000/svg"

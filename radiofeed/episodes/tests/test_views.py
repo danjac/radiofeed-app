@@ -85,13 +85,27 @@ class TestEpisodeDetail:
         assert resp.context_data["is_bookmarked"]
 
 
+class TestEpisodeActions:
+    def test_user_not_bookmarked(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:actions", args=[episode.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["episode"] == episode
+        assert not resp.context_data["is_bookmarked"]
+
+    def test_user_bookmarked(self, client, login_user, episode):
+        BookmarkFactory(episode=episode, user=login_user)
+        resp = client.get(reverse("episodes:actions", args=[episode.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["episode"] == episode
+        assert resp.context_data["is_bookmarked"]
+
+
 class TestTogglePlayer:
     def test_anonymous(self, client, episode):
         resp = client.post(reverse("episodes:toggle_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
-        assert header["episode"] == episode.id
         assert header["action"] == "start"
         assert header["currentTime"] == 0
         assert header["mediaUrl"] == episode.media_url
@@ -106,7 +120,6 @@ class TestTogglePlayer:
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
-        assert header["episode"] == episode.id
         assert header["action"] == "start"
         assert header["currentTime"] == 0
         assert header["mediaUrl"] == episode.media_url
@@ -122,7 +135,6 @@ class TestTogglePlayer:
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
-        assert header["episode"] == episode.id
         assert header["action"] == "start"
         assert header["currentTime"] == 2000
         assert header["mediaUrl"] == episode.media_url
@@ -145,7 +157,6 @@ class TestTogglePlayer:
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
-        assert header["episode"] == episode.id
         assert header["action"] == "stop"
 
 
