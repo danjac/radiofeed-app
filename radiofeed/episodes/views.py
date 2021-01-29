@@ -200,9 +200,11 @@ def toggle_player(request, episode_id):
 
     streams = []
 
-    def _render_toggles(episode, is_playing):
+    def _render_toggle(episode, is_playing):
 
-        return [
+        target = f"episode-play-toggle-{episode.id}"
+
+        return (
             TurboStream(target)
             .replace.template(
                 "episodes/player/_toggle.html",
@@ -214,15 +216,11 @@ def toggle_player(request, episode_id):
                 request=request,
             )
             .render()
-            for target in (
-                f"episode-play-toggle-{episode.id}",
-                f"episode-play-modal-toggle-{episode.id}",
-            )
-        ]
+        )
 
     # clear session
     if current_episode := request.player.eject():
-        streams += _render_toggles(current_episode, False)
+        streams += [_render_toggle(current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -250,7 +248,8 @@ def toggle_player(request, episode_id):
             "episodes/player/_player.html", {"episode": episode}, request=request
         )
         .render(),
-    ] + _render_toggles(episode, True)
+        _render_toggle(episode, True),
+    ]
 
     response = TurboStreamResponse(streams)
     response["X-Player"] = json.dumps(
