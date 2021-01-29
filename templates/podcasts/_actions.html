@@ -1,0 +1,43 @@
+{% extends "modal_base.html" %}
+{% block modal_header %}
+<a href="{{ podcast.get_absolute_url }}"
+   data-turbo-frame="_top">
+  {{ podcast.title|truncatechars:60 }}
+</a>
+{% endblock %}
+
+{% block modal_content %}
+
+<div class="flex items-center w-full mb-3">
+
+  <a href="{{ podcast.get_absolute_url }}"
+     data-turbo-frame="_top">
+    {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 mr-2" %}
+  </a>
+
+  <div class="text-sm">
+    {% if podcast.explicit %}
+    <div class="text-red-300 font-semibold mb-3 flex items-center">
+      {% include "_explicit.html" with css_class="mr-2" %}
+      Explicit
+    </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <turbo-frame id="podcast-subscribe-{{ podcast.id }}">
+        {% include "podcasts/_subscribe.html" %}
+      </turbo-frame>
+    </div>
+
+    {% share_buttons podcast.get_absolute_url podcast.title %}
+  </div>
+</div>
+
+<div class="markdown mb-3 text-sm">
+  {{ podcast.description|striptags|stripentities|truncatewords:30 }}
+  <a href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}"
+     data-turbo-frame="_top"
+     class="ml-2">More</a>
+</div>
+
+{% endblock %}
