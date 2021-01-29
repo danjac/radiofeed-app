@@ -204,9 +204,7 @@ export default class extends Controller {
     if (this.audio) {
       this.audio.playbackRate = this.playbackRateValue;
     }
-    this.playbackRateTargets.forEach(
-      (target) => (target.textContent = this.playbackRateValue.toFixed(1))
-    );
+    this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1);
   }
 
   changePlaybackRate(increment) {

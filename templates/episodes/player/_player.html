@@ -163,28 +163,6 @@
               </button>
             </form>
 
-            <div class="hidden md:inline-block ml-2 font-semibold player--interactive">
-              <button class="focus:outline-none mr-1"
-                      data-action="player#decrementPlaybackRate">-</button>
-              <span class="mr-1"
-                    data-player-target="playbackRate">
-                1.0
-              </span>
-              <button class="focus:outline-none"
-                      data-action="player#incrementPlaybackRate">+</button>
-            </div>
-
-          </div>
-
-          <div class="flex items-center md:hidden font-semibold player--interactive">
-            <button class="focus:outline-none mr-2"
-                    data-action="player#decrementPlaybackRate">-</button>
-            <span class="mr-2"
-                  data-player-target="playbackRate">
-              1.0
-            </span>
-            <button class="focus:outline-none"
-                    data-action="player#incrementPlaybackRate">+</button>
           </div>
 
           <div class="flex items-center">
@@ -240,8 +218,18 @@
               </button>
             </form>
           </div>
-
           <div class="flex items-center">
+            <div class="flex items-center font-semibold player--interactive mr-2 md:mr-3">
+              <button class="focus:outline-none mr-2"
+                      data-action="player#decrementPlaybackRate">-</button>
+              <span class="mr-2"
+                    data-player-target="playbackRate">
+                1.0
+              </span>
+              <button class="focus:outline-none"
+                      data-action="player#incrementPlaybackRate">+</button>
+            </div>
+
             <button title="Skip back 10 seconds"
                     data-action="player#skipBack"
                     class="focus:outline-none hover:text-blue-500 player--interactive mr-1">
