@@ -49,7 +49,7 @@ def podcast_list(request):
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False)
+    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
