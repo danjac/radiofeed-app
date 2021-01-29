@@ -3,7 +3,7 @@
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
    data-turbo-frame="_top">
-  {{ episode.title|truncatechars:100 }}
+  {{ episode.title|truncatechars:60 }}
 </a>
 {% endblock %}
 {% block modal_content %}
@@ -13,7 +13,7 @@
   <a href="{{ podcast.get_absolute_url }}"
      data-turbo-frame="_top"
      class="font-semibold hover:text-blue-500">
-    {{ podcast.title|truncatechars:100 }}
+    {{ podcast.title|truncatechars:60 }}
   </a>
 </h2>
 <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
