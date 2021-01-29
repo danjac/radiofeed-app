@@ -29,6 +29,7 @@
           {% if user.is_authenticated %}
           <a class="mr-2 focus:outline-none"
              href="{% url 'podcasts:actions' podcast.id %}"
+             title="Actions"
              data-turbo-frame="modal">
             <svg class="w-6 h-6"
                  fill="none"
