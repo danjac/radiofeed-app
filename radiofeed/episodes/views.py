@@ -85,7 +85,8 @@ def episode_detail(request, episode_id, slug=None):
 @login_required
 def episode_actions(request, episode_id):
     episode = get_object_or_404(
-        Episode.objects.select_related("podcast"), pk=episode_id
+        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        pk=episode_id,
     )
     is_bookmarked = Bookmark.objects.filter(episode=episode, user=request.user).exists()
 
