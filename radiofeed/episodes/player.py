@@ -8,10 +8,11 @@ from .models import Episode
 class PlayerInfo(TypedDict):
     episode: Optional[int]
     current_time: int
+    playback_rate: float
 
 
 def _empty_player_info():
-    return PlayerInfo(episode=None, current_time=0)
+    return PlayerInfo(episode=None, current_time=0, playback_rate=1.0)
 
 
 class Player:
@@ -44,15 +45,27 @@ class Player:
         return episode
 
     def as_dict(self):
-        return {"episode": self.get_episode(), "current_time": self.current_time}
+        return {
+            "episode": self.get_episode(),
+            "current_time": self.current_time,
+            "playback_rate": self.playback_rate,
+        }
 
     @property
     def current_time(self):
-        return self.session_data["current_time"] or 0
+        return self.session_data.get("current_time", 0)
 
     @current_time.setter
     def current_time(self, current_time):
         self.session_data = {**self.session_data, "current_time": current_time}
+
+    @property
+    def playback_rate(self):
+        return self.session_data.get("playback_rate", 1.0)
+
+    @playback_rate.setter
+    def playback_rate(self, playback_rate):
+        self.session_data = {**self.session_data, "playback_rate": playback_rate}
 
     @property
     def session_data(self):

@@ -152,27 +152,46 @@ class TestTogglePlayer:
 class TestPlayerTimeUpdate:
     def test_anonymous(self, client, episode):
         session = client.session
-        session.update({"player": {"episode": episode.id, "current_time": 1000}})
+        session.update(
+            {
+                "player": {
+                    "episode": episode.id,
+                    "current_time": 1000,
+                    "playback_rate": 1.0,
+                }
+            }
+        )
         session.save()
 
         resp = client.post(
             reverse("episodes:player_timeupdate"),
-            data={"current_time": "1030.0001"},
+            data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
 
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert client.session["player"]["current_time"] == 1030
+        assert client.session["player"]["playback_rate"] == 1.2
 
     def test_authenticated(self, client, login_user, episode):
         session = client.session
-        session.update({"player": {"episode": episode.id, "current_time": 1000}})
+        session.update(
+            {
+                "player": {
+                    "episode": episode.id,
+                    "current_time": 1000,
+                    "playback_rate": 1.0,
+                }
+            }
+        )
         session.save()
 
         resp = client.post(
-            reverse("episodes:player_timeupdate"), data={"current_time": "1030.0001"}
+            reverse("episodes:player_timeupdate"),
+            data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert client.session["player"]["current_time"] == 1030
+        assert client.session["player"]["playback_rate"] == 1.2
 
         log = AudioLog.objects.get(user=login_user, episode=episode)
         assert log.current_time == 1030
@@ -180,7 +199,7 @@ class TestPlayerTimeUpdate:
     def test_player_not_running(self, client, login_user, episode):
         resp = client.post(
             reverse("episodes:player_timeupdate"),
-            data={"current_time": "1030.0001"},
+            data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0

@@ -246,8 +246,14 @@ def player_timeupdate(request):
         except ValueError:
             return HttpResponseBadRequest("current_time invalid")
 
+        try:
+            playback_rate = float(request.POST["playback_rate"])
+        except (KeyError, ValueError):
+            playback_rate = 1.0
+
         episode.log_activity(request.user, current_time)
         request.player.current_time = current_time
+        request.player.playback_rate = playback_rate
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")

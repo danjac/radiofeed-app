@@ -42,6 +42,7 @@ class TestGetPlayer:
             "player": {
                 "episode": 12345,
                 "current_time": 1000,
+                "playback_rate": 1.0,
             }
         }
         req.player = Player(req)
@@ -53,12 +54,14 @@ class TestGetPlayer:
             "player": {
                 "episode": episode.id,
                 "current_time": 1000,
+                "playback_rate": 1.0,
             }
         }
         req.player = Player(req)
         assert get_player({"request": req}) == {
             "episode": episode,
             "current_time": 1000,
+            "playback_rate": 1.0,
         }
 
 

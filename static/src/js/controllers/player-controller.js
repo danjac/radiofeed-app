@@ -9,6 +9,7 @@ export default class extends Controller {
     'indicator',
     'markComplete',
     'pauseButton',
+    'playbackRate',
     'playButton',
     'progressBar',
     'stop',
@@ -22,6 +23,7 @@ export default class extends Controller {
     duration: Number,
     mediaUrl: String,
     paused: Boolean,
+    playbackRate: Number,
     timeupdateUrl: String,
     waiting: Boolean,
   };
@@ -33,6 +35,8 @@ export default class extends Controller {
     // and skips with page transitions
     //
     this.initAudio();
+
+    this.playbackRateValue = this.playbackRateValue || 1.0;
 
     this.audio.currentTime = this.currentTimeValue;
     this.audio.src = this.mediaUrlValue;
@@ -108,6 +112,14 @@ export default class extends Controller {
     this.waitingValue = false;
   }
 
+  incrementPlaybackRate() {
+    this.changePlaybackRate(0.1);
+  }
+
+  decrementPlaybackRate() {
+    this.changePlaybackRate(-0.1);
+  }
+
   skip(event) {
     // user clicks on progress bar
     const position = this.calcEventPosition(event.clientX);
@@ -139,9 +151,7 @@ export default class extends Controller {
     if (!headers || !headers.has('X-Player')) {
       return;
     }
-    const { action, episode, mediaUrl, currentTime } = JSON.parse(
-      headers.get('X-Player')
-    );
+    const { action, mediaUrl, currentTime } = JSON.parse(headers.get('X-Player'));
     if (action === 'stop') {
       console.log('close player');
       this.closePlayer();
@@ -188,6 +198,25 @@ export default class extends Controller {
   currentTimeValueChanged() {
     this.updateCounter(this.durationValue - this.currentTimeValue);
     this.updateProgressBar();
+  }
+
+  playbackRateValueChanged() {
+    if (this.audio) {
+      this.audio.playbackRate = this.playbackRateValue;
+    }
+    this.playbackRateTargets.forEach(
+      (target) => (target.textContent = this.playbackRateValue.toFixed(1))
+    );
+  }
+
+  changePlaybackRate(increment) {
+    let newValue = this.playbackRateValue + increment;
+    if (newValue > 2.0) {
+      newValue = 2.0;
+    } else if (newValue < 0.5) {
+      newValue = 0.5;
+    }
+    this.playbackRateValue = newValue;
   }
 
   updateProgressBar() {
@@ -337,8 +366,10 @@ export default class extends Controller {
   sendTimeUpdate() {
     if (this.currentTimeValue) {
       const body = new FormData();
+
       body.append('csrfmiddlewaretoken', this.csrfTokenValue);
       body.append('current_time', this.currentTimeValue);
+      body.append('playback_rate', this.playbackRateValue.toFixed(1));
 
       fetch(this.timeupdateUrlValue, {
         body,
