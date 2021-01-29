@@ -2,9 +2,7 @@
 {% include "podcasts/_podcast.html" %}
 {% empty %}
 {% if search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. You may find more results in <a href="{% url 'podcasts:search_itunes' %}?q={{ search }}"
-     class="font-bold">iTunes</a>.</p>
-{% endif %}
+<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. {% endif %}
+</p>
 {% endfor %}
 {% include "_pagination.html" %}
-
