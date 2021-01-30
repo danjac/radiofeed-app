@@ -32,8 +32,8 @@ def send_recommendation_emails():
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds():
-    for podcast in Podcast.objects.filter(num_retries__lt=3):
-        sync_podcast_feed.delay(podcast.id)
+    for rss in Podcast.objects.filter(num_retries__lt=3).values_list("rss", flat=True):
+        sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
@@ -42,12 +42,12 @@ def create_podcast_recommendations():
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
-def sync_podcast_feed(podcast_id):
+def sync_podcast_feed(rss):
     try:
-        podcast = Podcast.objects.get(pk=podcast_id)
+        podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
         RssParser.parse_from_podcast(podcast)
     except Podcast.DoesNotExist:
-        logger.error(f"No podcast found for id {podcast_id}")
+        logger.error(f"No podcast found for RSS {rss}")
     except requests.HTTPError as e:
         logger.exception(e)

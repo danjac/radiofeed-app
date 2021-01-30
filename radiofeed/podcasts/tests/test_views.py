@@ -19,7 +19,7 @@ from ..factories import (
     SubscriptionFactory,
 )
 from ..itunes import SearchResult
-from ..models import Podcast, Subscription
+from ..models import Subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -184,27 +184,6 @@ class TestPodcastEpisodeList:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestAddPodcast:
-    def test_add_podcast(self, client, login_admin_user, mocker):
-        data = {
-            "itunes": "http://itunes.apple.com",
-            "rss": "https://example.com/rss.xml",
-            "title": "Example",
-        }
-
-        mock = mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
-
-        resp = client.post(reverse("podcasts:add_podcast"), data)
-        assert resp.status_code == http.HTTPStatus.OK
-
-        podcast = Podcast.objects.get()
-        assert podcast.title == data["title"]
-        assert podcast.rss == data["rss"]
-        assert podcast.itunes == data["itunes"]
-
-        mock.asset_called()
-
-
 class TestCategoryList:
     def test_get(self, client):
         parents = CategoryFactory.create_batch(3, parent=None)
@@ -304,6 +283,7 @@ class TestITunesCategory:
                 )
             ]
 
+        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
         resp = client.get(reverse("podcasts:itunes_category", args=[category.id]))
 
@@ -337,6 +317,7 @@ class TestSearchITunes:
                 )
             ]
 
+        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
         resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
 

@@ -15,11 +15,9 @@ from turbo_response import TurboFrame
 
 # RadioFeed
 from radiofeed.pagination import paginate
-from radiofeed.users.decorators import staff_member_required
 
 # Local
 from . import itunes
-from .forms import PodcastForm
 from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
@@ -306,30 +304,6 @@ def unsubscribe(request, podcast_id):
     return podcast_subscribe_response(request, podcast, False)
 
 
-@staff_member_required
-@require_POST
-def add_podcast(request):
-    form = PodcastForm(request.POST)
-    if form.is_valid():
-        podcast = form.save()
-        sync_podcast_feed.delay(podcast_id=podcast.id)
-        is_added = True
-        is_error = False
-    else:
-        is_added = False
-        is_error = True
-
-    # https://github.com/hotwired/turbo/issues/86
-    return (
-        TurboFrame(f"add-podcast-{form.cleaned_data['itunes']}")
-        .template(
-            "podcasts/itunes/_add_new.html",
-            {"is_added": is_added, "is_error": is_error},
-        )
-        .response(request)
-    )
-
-
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request, podcast_id):
     """Lazy-loaded podcast image"""
@@ -348,8 +322,19 @@ def itunes_results_with_podcast(results):
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
     )
+    new_podcasts = []
     for result in results:
         result.podcast = podcasts.get(result.itunes, None)
+        # automatically add podcast to DB
+        if result.podcast is None:
+            new_podcasts.append(
+                Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
+            )
+
+    if new_podcasts:
+        for podcast in Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True):
+            sync_podcast_feed.delay(rss=podcast.rss)
+
     return results
 
 

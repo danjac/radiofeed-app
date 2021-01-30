@@ -45,8 +45,8 @@ class TestSyncPodcastFeed:
 
     def test_sync_podcast_feed_if_http_error(self, mock_rss_parser, podcast):
         mock_rss_parser.parse_from_podcast.side_effect = requests.HTTPError("Boom")
-        tasks.sync_podcast_feed(podcast.id)
+        tasks.sync_podcast_feed(podcast.rss)
 
     def test_sync_podcast_feed_no_errors(self, mock_rss_parser, podcast):
-        tasks.sync_podcast_feed(podcast.id)
+        tasks.sync_podcast_feed(podcast.rss)
         mock_rss_parser.parse_from_podcast.assert_called()
