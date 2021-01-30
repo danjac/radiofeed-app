@@ -139,6 +139,10 @@ class Podcast(models.Model):
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
+    def get_subscribe_toggle_id(self):
+        # https://github.com/hotwired/turbo/issues/86
+        return f"podcast-subscribe-{self.id}"
+
 
 class Subscription(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

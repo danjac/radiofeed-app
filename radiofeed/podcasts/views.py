@@ -379,7 +379,7 @@ def podcast_subscribe_response(request, podcast, is_subscribed):
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(f"podcast-subscribe-{podcast.id}")
+            TurboFrame(podcast.get_subscribe_toggle_id())
             .template(
                 "podcasts/_subscribe.html",
                 {"podcast": podcast, "is_subscribed": is_subscribed},

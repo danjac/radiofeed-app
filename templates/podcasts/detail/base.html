@@ -26,7 +26,7 @@
     </li>
     {% endif %}
   </ul>
-  <turbo-frame id="podcast-subscribe-{{ podcast.id }}">
+  <turbo-frame id="{{ podcast.get_subscribe_toggle_id }}">
     {% include "podcasts/_subscribe.html" %}
   </turbo-frame>
 

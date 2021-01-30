@@ -291,7 +291,7 @@ def episode_bookmark_response(request, episode, is_bookmarked):
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(f"episode-bookmark-{episode.id}")
+            TurboFrame(episode.get_bookmark_toggle_id())
             .template(
                 "episodes/bookmarks/_toggle.html",
                 {"episode": episode, "is_bookmarked": is_bookmarked},

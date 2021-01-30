@@ -97,6 +97,10 @@ class Episode(models.Model):
     def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
 
+    def get_bookmark_toggle_id(self):
+        # https://github.com/hotwired/turbo/issues/86
+        return f"episode-bookmark-{self.id}"
+
     def get_duration_in_seconds(self):
         """Returns duration string in h:m:s or h:m to seconds"""
         if not self.duration:
