@@ -17,7 +17,7 @@
     "tailwindcss": "^2.0.1"
   },
   "dependencies": {
-    "@hotwired/turbo": "^7.0.0-beta.3",
+    "@hotwired/turbo": "^7.0.0-beta.4",
     "form-request-submit-polyfill": "^2.0.0",
     "stimulus": "^2.0.0"
   }
