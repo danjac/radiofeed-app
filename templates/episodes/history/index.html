@@ -7,14 +7,23 @@
   <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">History</h1>
   <div class="flex items-center justify-center sm:justify-end">
     {% if search %}
-    <a class="font-semibold hover:text-blue-500 mr-2 text-sm hidden sm:inline-block"
-       href="{{ request.path }}">Clear</a>
+    <div class="hidden sm:flex items-center mr-2 text-sm">
+      <a class="font-semibold hover:text-blue-500 mr-2"
+         href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
+      <span class="mr-2">|</span>
+
+      <a class="font-semibold hover:text-blue-500 mr-2 text-sm hidden sm:inline-block"
+         href="{{ request.path }}">Clear</a>
+    </div>
     {% endif %}
     {% include "_search_form.html" with placeholder="Search history..." %}
   </div>
 </div>
 {% if search %}
 <div class="flex justify-center sm:hidden text-sm mb-3">
+  <a class="font-semibold hover:text-blue-500 mr-2"
+     href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
+  <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
      href="{{ request.path }}">Clear</a>
 </div>
