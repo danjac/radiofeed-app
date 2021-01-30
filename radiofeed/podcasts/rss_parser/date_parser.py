@@ -239,6 +239,8 @@ TZ_INFOS = {
 
 
 def parse_date(value):
+    if not value:
+        return None
     try:
         dt = date_parser.parse(value, tzinfos=TZ_INFOS)
         if not is_aware(dt):
