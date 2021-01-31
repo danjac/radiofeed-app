@@ -1,6 +1,5 @@
 from typing import Any, Dict, Optional
 
-# Django
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -12,14 +11,11 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
-# Third Party Libraries
 from sorl.thumbnail import get_thumbnail
 from turbo_response import TurboFrame
 
-# RadioFeed
 from radiofeed.pagination import paginate
 
-# Local
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
