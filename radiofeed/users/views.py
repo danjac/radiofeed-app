@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -18,7 +19,7 @@ from .forms import UserPreferencesForm
 
 
 @login_required
-def user_preferences(request):
+def user_preferences(request: HttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
