@@ -1,5 +1,7 @@
-# Django
+from typing import Optional, Tuple, Union
+
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
@@ -9,15 +11,15 @@ from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 
-# Third Party Libraries
 from model_utils.models import TimeStampedModel
 
-# RadioFeed
 from radiofeed.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(models.QuerySet):
-    def with_current_time(self, user):
+    def with_current_time(
+        self, user: Union[AnonymousUser, settings.AUTH_USER_MODEL]
+    ) -> models.QuerySet:
 
         if user.is_anonymous:
             return self.annotate(
@@ -34,7 +36,7 @@ class EpisodeQuerySet(models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -84,24 +86,24 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.guid
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("episodes:episode_detail", args=[self.id, self.slug])
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "episode"
 
-    def get_file_size(self):
+    def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
-    def get_bookmark_toggle_id(self):
+    def get_bookmark_toggle_id(self) -> str:
         # https://github.com/hotwired/turbo/issues/86
         return f"episode-bookmark-{self.id}"
 
-    def get_duration_in_seconds(self):
+    def get_duration_in_seconds(self) -> int:
         """Returns duration string in h:m:s or h:m to seconds"""
         if not self.duration:
             return 0
@@ -123,7 +125,12 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def log_activity(self, user, current_time=0, completed=False):
+    def log_activity(
+        self,
+        user: Union[AnonymousUser, settings.AUTH_USER_MODEL],
+        current_time: int = 0,
+        completed: bool = False,
+    ) -> Tuple[Optional["AudioLog"], bool]:
         # Updates audio log with current time
         if user.is_anonymous:
             return (None, False)
@@ -138,13 +145,13 @@ class Episode(models.Model):
             },
         )
 
-    def get_next_episode(self):
+    def get_next_episode(self) -> Optional["Episode"]:
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self):
+    def get_previous_episode(self) -> Optional["Episode"]:
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
@@ -152,7 +159,7 @@ class Episode(models.Model):
 
 
 class BookmarkQuerySet(models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -189,7 +196,7 @@ class Bookmark(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
