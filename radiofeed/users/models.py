@@ -1,10 +1,12 @@
-# Django
+from typing import Iterable, Optional, Set
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
-    def for_email(self, email):
+    def for_email(self, email: str) -> models.QuerySet:
         """Returns users matching this email address, including both
         primary and secondary email addresses
 
@@ -18,7 +20,7 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names):
+    def matches_usernames(self, names: Iterable[str]) -> models.QuerySet:
         """Returns users matching the (case insensitive) username.
 
         Args:
@@ -33,7 +35,9 @@ class UserQuerySet(models.QuerySet):
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
-    def create_user(self, username, email, password=None, **kwargs):
+    def create_user(
+        self, username: str, email: str, password: Optional[str] = None, **kwargs
+    ) -> settings.AUTH_USER_MODEL:
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
         )
@@ -41,7 +45,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password, **kwargs):
+    def create_superuser(
+        self, username: str, email: str, password: str, **kwargs
+    ) -> settings.AUTH_USER_MODEL:
         return self.create_user(
             username,
             email,
@@ -57,7 +63,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_email_addresses(self):
+    def get_email_addresses(self) -> Set[str]:
         """Get set of emails belonging to user.
 
         Returns:

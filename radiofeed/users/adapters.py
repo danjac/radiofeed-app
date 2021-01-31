@@ -1,17 +1,9 @@
-# Django
 from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 
-# Third Party Libraries
-from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 
-class AccountAdapter(DefaultAccountAdapter):
-    def ajax_response(self, request, response, *args, **kwargs):
-        print("AJAX RESPONSE MOFO")
-        return response
-
-
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
-    def get_login_redirect_url(self, request):
+    def get_login_redirect_url(self, request: HttpRequest) -> HttpResponse:
         return settings.HOME_URL

@@ -145,8 +145,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-ACCOUNT_ADAPTER = "radiofeed.users.adapters.AccountAdapter"
-SOCIALACCOUNT_ADAPTER = "radiofeed.users.adapters.SocialAccountAdapter"
+# SOCIALACCOUNT_ADAPTER = "radiofeed.users.adapters.SocialAccountAdapter"
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
