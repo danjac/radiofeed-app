@@ -17,6 +17,28 @@
               Podcasts
             </a>
           </li>
+          {% if user.is_authenticated %}
+          <li class="py-2">
+            {% active_link 'episodes:episode_list' as link %}
+            <a href="{{ link.url }}"
+               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg"
+                   fill="none"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   class="h-5 w-5 mr-3">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              New Releases
+            </a>
+          </li>
+          {% endif %}
+
+
+
           <li class="py-2">
             {% active_link 'podcasts:category_list' as link %}
             <a href="{{ link.url }}"
@@ -36,25 +58,6 @@
           </li>
 
           {% if user.is_authenticated %}
-          <li class="py-2">
-            {% active_link 'episodes:episode_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   fill="none"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor"
-                   class="h-5 w-5 mr-3">
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              New Releases
-            </a>
-          </li>
-
-
           <li class="py-2">
             {% active_link 'episodes:bookmark_list' as link %}
             <a href="{{ link.url }}"
