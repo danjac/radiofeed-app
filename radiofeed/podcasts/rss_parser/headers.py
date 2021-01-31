@@ -1,5 +1,6 @@
 # Standard Library
 import random
+from typing import Dict
 
 USER_AGENTS = [
     (
@@ -40,7 +41,7 @@ USER_AGENTS = [
 ]
 
 
-def get_headers():
+def get_headers() -> Dict[str, str]:
     """Return randomized user agent in case only browser clients allowed."""
     return {
         "User-Agent": random.choice(USER_AGENTS),

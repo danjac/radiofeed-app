@@ -238,7 +238,7 @@ TZ_INFOS = {
 }
 
 
-def parse_date(value):
+def parse_date(value: str) -> str:
     if not value:
         return None
     try:

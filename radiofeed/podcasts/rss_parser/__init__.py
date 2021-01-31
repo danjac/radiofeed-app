@@ -1,19 +1,15 @@
-# Standard Library
 from functools import lru_cache
+from typing import Any, Dict, List, Optional
 
-# Django
 from django.utils import timezone
 
-# Third Party Libraries
 import feedparser
 import requests
 from bs4 import BeautifulSoup
 
-# RadioFeed
 from radiofeed.episodes.models import Episode
 
-# Local
-from ..models import Category
+from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
 from .date_parser import parse_date
 from .headers import get_headers
@@ -21,14 +17,14 @@ from .image import InvalidImageURL, fetch_image_from_url
 
 
 class RssParser:
-    def __init__(self, podcast):
+    def __init__(self, podcast: Podcast):
         self.podcast = podcast
 
     @classmethod
-    def parse_from_podcast(cls, podcast):
+    def parse_from_podcast(cls, podcast) -> List[Episode]:
         return cls(podcast).parse()
 
-    def parse(self):
+    def parse(self) -> List[Episode]:
 
         try:
             # fetch etag and last modified
@@ -144,7 +140,9 @@ class RssParser:
 
         return new_episodes
 
-    def extract_text(self, categories, entries):
+    def extract_text(
+        self, categories: List[Category], entries: List[Dict[str, Any]]
+    ) -> str:
         """Extract keywords from text content for recommender"""
         text = " ".join(
             [
@@ -158,7 +156,7 @@ class RssParser:
         )
         return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
 
-    def create_episodes_from_feed(self, entries):
+    def create_episodes_from_feed(self, entries: List[Dict[str, Any]]) -> List[Episode]:
         """Parses new episodes from podcast feed."""
         guids = self.podcast.episode_set.values_list("guid", flat=True)
         entries = [entry for entry in entries if entry["id"] not in guids]
@@ -170,7 +168,7 @@ class RssParser:
         ]
         return Episode.objects.bulk_create(episodes, ignore_conflicts=True)
 
-    def create_episode_from_feed(self, entry):
+    def create_episode_from_feed(self, entry: Dict[str, Any]) -> Optional[Episode]:
         keywords = " ".join([t["term"] for t in entry.get("tags", [])])
 
         try:

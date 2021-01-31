@@ -21,7 +21,7 @@ class InvalidImageURL(Exception):
     ...
 
 
-def fetch_image_from_url(image_url):
+def fetch_image_from_url(image_url: str) -> ImageFile:
     """Get an ImageFile object from a URL. """
     try:
         if not image_url:
@@ -48,7 +48,7 @@ def fetch_image_from_url(image_url):
         raise InvalidImageURL from e
 
 
-def get_image_filename(image_url, content_type):
+def get_image_filename(image_url: str, content_type: str) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
