@@ -86,15 +86,25 @@ class TestEpisodeDetail:
 
 
 class TestEpisodeActions:
+    def test_not_turbo_frame(self, client, login_user, episode):
+        resp = client.get(
+            reverse("episodes:actions", args=[episode.id]),
+        )
+        assert resp.url == episode.get_absolute_url()
+
     def test_user_not_bookmarked(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:actions", args=[episode.id]))
+        resp = client.get(
+            reverse("episodes:actions", args=[episode.id]), HTTP_TURBO_FRAME="modal"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
         assert not resp.context_data["is_bookmarked"]
 
     def test_user_bookmarked(self, client, login_user, episode):
         BookmarkFactory(episode=episode, user=login_user)
-        resp = client.get(reverse("episodes:actions", args=[episode.id]))
+        resp = client.get(
+            reverse("episodes:actions", args=[episode.id]), HTTP_TURBO_FRAME="modal"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
         assert resp.context_data["is_bookmarked"]

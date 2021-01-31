@@ -88,20 +88,26 @@ def episode_actions(request, episode_id):
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
-    is_bookmarked = Bookmark.objects.filter(episode=episode, user=request.user).exists()
 
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "episodes/_actions.html",
-            {
-                "episode": episode,
-                "is_bookmarked": is_bookmarked,
-                "player_toggle_id": f"episode-play-modal-toggle-{episode.id}",
-            },
+    if request.turbo.frame:
+        is_bookmarked = Bookmark.objects.filter(
+            episode=episode, user=request.user
+        ).exists()
+
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/_actions.html",
+                {
+                    "episode": episode,
+                    "is_bookmarked": is_bookmarked,
+                    "player_toggle_id": f"episode-play-modal-toggle-{episode.id}",
+                },
+            )
+            .response(request)
         )
-        .response(request)
-    )
+
+    return redirect(episode.get_absolute_url())
 
 
 @login_required

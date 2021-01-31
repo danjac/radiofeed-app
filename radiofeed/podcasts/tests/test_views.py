@@ -98,9 +98,15 @@ class TestPodcastRecommendations:
 
 
 class TestPodcastActions:
+    def test_not_turbo_frame(self, client, login_user, podcast):
+        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
+        assert resp.url == podcast.get_absolute_url()
+
     def test_authenticated(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
-        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
+        resp = client.get(
+            reverse("podcasts:actions", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert not resp.context_data["is_subscribed"]
@@ -108,7 +114,9 @@ class TestPodcastActions:
     def test_subscribed(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         SubscriptionFactory(podcast=podcast, user=login_user)
-        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
+        resp = client.get(
+            reverse("podcasts:actions", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["is_subscribed"]
