@@ -49,7 +49,9 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "episodes/index.html", context)
 
 
-def episode_detail(request: HttpRequest, episode_id: int, slug: Optional[str] = None):
+def episode_detail(
+    request: HttpRequest, episode_id: int, slug: Optional[str] = None
+) -> HttpResponse:
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
