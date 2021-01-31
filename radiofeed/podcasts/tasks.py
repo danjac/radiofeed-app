@@ -17,12 +17,12 @@ logger = get_task_logger(__name__)
 
 
 @shared_task(name="radiofeed.podcasts.crawl_itunes")
-def crawl_itunes(limit=100):
+def crawl_itunes(limit: int = 100) -> None:
     itunes.crawl_itunes(limit)
 
 
 @shared_task(name="radiofeed.podcasts.send_recommendation_emails")
-def send_recommendation_emails():
+def send_recommendation_emails() -> None:
     users = get_user_model().objects.filter(
         send_recommendations_email=True, is_active=True
     )
@@ -31,18 +31,18 @@ def send_recommendation_emails():
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds():
+def sync_podcast_feeds() -> None:
     for rss in Podcast.objects.filter(num_retries__lt=3).values_list("rss", flat=True):
         sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
-def create_podcast_recommendations():
+def create_podcast_recommendations() -> None:
     PodcastRecommender.recommend()
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss):
+def sync_podcast_feed(rss: str) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
