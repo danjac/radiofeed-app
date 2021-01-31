@@ -30,8 +30,7 @@ class CategoryQuerySet(models.QuerySet):
         ).filter(similarity__gte=base_similarity)
 
 
-class CategoryManager(models.Manager.from_queryset(CategoryQuerySet)):
-    ...
+CategoryManager: models.Manager = models.Manager.from_queryset(CategoryQuerySet)
 
 
 class Category(models.Model):
@@ -81,8 +80,7 @@ class PodcastQuerySet(models.QuerySet):
         return self.annotate(subscription_count=models.Count("subscription"))
 
 
-class PodcastManager(models.Manager.from_queryset(PodcastQuerySet)):
-    ...
+PodcastManager: models.Manager = models.Manager.from_queryset(PodcastQuerySet)
 
 
 class Podcast(models.Model):
@@ -198,8 +196,9 @@ class RecommendationQuerySet(models.QuerySet):
         )
 
 
-class RecommendationManager(models.Manager.from_queryset(RecommendationQuerySet)):
-    ...
+RecommendationManager: models.Manager = models.Manager.from_queryset(
+    RecommendationQuerySet
+)
 
 
 class Recommendation(models.Model):

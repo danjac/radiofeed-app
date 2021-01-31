@@ -46,8 +46,7 @@ class EpisodeQuerySet(models.QuerySet):
         ).filter(search_vector=query)
 
 
-class EpisodeManager(models.Manager.from_queryset(EpisodeQuerySet)):
-    ...
+EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
 
 
 class Episode(models.Model):
@@ -176,8 +175,7 @@ class BookmarkQuerySet(models.QuerySet):
         )
 
 
-class BookmarkManager(models.Manager.from_queryset(BookmarkQuerySet)):
-    ...
+BookmarkManager: models.Manager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
 class Bookmark(TimeStampedModel):
@@ -213,8 +211,7 @@ class AudioLogQuerySet(models.QuerySet):
         )
 
 
-class AudioLogManager(models.Manager.from_queryset(AudioLogQuerySet)):
-    ...
+AudioLogManager: models.Manager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
