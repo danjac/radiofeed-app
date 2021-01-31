@@ -49,16 +49,41 @@
     </label>
   </div>
   {% endfor %}
-  <div class="flex items-center justify-end">
+  <div class="flex items-center justify-end mb-3">
 
-    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1 mr-2 mb-3"
+    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1 mr-2 flex items-center"
             type="submit"
             value="1"
-            name="action_send">{% translate 'Re-Verify' %}</button>
-    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1  mr-2 mb-3"
+            name="action_send">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           class="h-4 w-4 mr-2"
+           stroke="currentColor">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+      {% translate 'Re-Verify' %}
+    </button>
+    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1  mr-2 flex items-center"
             value="1"
-            name="action_primary">{% translate 'Make Primary' %}</button>
-    <button class="text-sm font-semibold rounded border border-white bg-red-800 hover:bg-red-600 lg:px-4 p-1  mb-3 flex items-center"
+            name="action_primary">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           class="h-4 w-4 mr-2"
+           stroke="currentColor">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+      {% translate 'Make Primary' %}
+
+    </button>
+    <button class="text-sm font-semibold rounded border border-white bg-red-800 hover:bg-red-600 lg:px-4 p-1 flex items-center"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
@@ -105,10 +130,22 @@
   </div>
   {% endwith %}
   <div class="flex items-center justify-end">
-    <button class="px-4 py-1 font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm"
+    <button class="px-4 py-1 font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm flex items-center"
             name="action_add"
             value="1"
-            type="submit">{% translate "Add E-Mail" %}</button>
+            type="submit">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           class="h-4 w-4 mr-2"
+           stroke="currentColor">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      {% translate "Add E-Mail" %}
+    </button>
   </div>
 </form>
 {% endif %}

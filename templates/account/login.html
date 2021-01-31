@@ -41,8 +41,19 @@
   <div class="flex items-center justify-end">
     <a class="font-semibold hover:text-blue-500 mr-3"
        href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-    <button class="px-4 py-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm font-semibold"
-            type="submit">{% translate "Sign In" %}</button>
+    <button class="px-4 py-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm font-semibold flex items-center"
+            type="submit">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           fill="none"
+           viewBox="0 0 24 24"
+           class="h-4 w-4 mr-2"
+           stroke="currentColor">
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+      </svg>
+      {% translate "Sign In" %}</button>
   </div>
 </form>
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
