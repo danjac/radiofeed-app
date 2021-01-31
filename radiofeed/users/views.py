@@ -31,7 +31,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def delete_account(request):
+def delete_account(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
@@ -41,7 +41,7 @@ def delete_account(request):
 
 
 @require_POST
-def accept_cookies(request):
+def accept_cookies(request: HttpRequest) -> HttpResponse:
     response = TurboStream("accept-cookies").remove.response()
     response.set_cookie(
         "accept-cookies",

@@ -1,17 +1,17 @@
-# Django
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404
+from django.db.models import QuerySet
+from django.http import Http404, HttpRequest
 from django.utils.translation import gettext as _
 
 
 def paginate(
-    request,
-    queryset,
-    page_size=settings.DEFAULT_PAGE_SIZE,
-    param="page",
-    allow_empty=True,
-    orphans=0,
+    request: HttpRequest,
+    queryset: QuerySet,
+    page_size: int = settings.DEFAULT_PAGE_SIZE,
+    param: str = "page",
+    allow_empty: bool = True,
+    orphans: int = 0,
 ):
 
     paginator = Paginator(

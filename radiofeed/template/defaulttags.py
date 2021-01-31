@@ -1,14 +1,12 @@
-# Standard Library
 import collections
 import urllib
+from typing import Any, Dict
 
-# Django
 from django import template
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
-# Local
 from .html import clean_html_content
 from .html import stripentities as _stripentities
 
@@ -18,7 +16,7 @@ ActiveLink = collections.namedtuple("Link", "url match exact")
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context, url_name, *args, **kwargs):
+def active_link(context: Dict[str, Any], url_name: str, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
