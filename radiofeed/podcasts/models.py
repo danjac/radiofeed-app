@@ -1,5 +1,8 @@
+from typing import Union
+
 # Django
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -21,7 +24,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.2):
+    def search(self, search_term: str, base_similarity=0.2) -> models.QuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -65,7 +68,7 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -74,7 +77,7 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_subscription_count(self):
+    def with_subscription_count(self) -> models.QuerySet:
         return self.annotate(subscription_count=models.Count("subscription"))
 
 
@@ -129,17 +132,17 @@ class Podcast(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.rss
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("podcasts:podcast_episode_list", args=[self.id, self.slug])
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "podcast"
 
-    def get_subscribe_toggle_id(self):
+    def get_subscribe_toggle_id(self) -> str:
         # https://github.com/hotwired/turbo/issues/86
         return f"podcast-subscribe-{self.id}"
 
@@ -158,7 +161,9 @@ class Subscription(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def with_subscribed(self, user):
+    def with_subscribed(
+        self, user: Union[AnonymousUser, settings.AUTH_USER_MODEL]
+    ) -> models.QuerySet:
         """Marks which recommendations are subscribed by this user."""
         if user.is_anonymous:
             return self.annotate(
@@ -172,7 +177,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user):
+    def for_user(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
         podcast_ids = (
             set(
                 user.bookmark_set.select_related("episode__podcast").values_list(

@@ -1,8 +1,11 @@
+from typing import Any, Dict, Optional
+
 # Django
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -22,7 +25,7 @@ from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
 
-def landing_page(request):
+def landing_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:podcast_list")
 
@@ -37,7 +40,7 @@ def landing_page(request):
     )
 
 
-def podcast_list(request):
+def podcast_list(request: HttpRequest) -> HttpResponse:
     """Shows list of podcasts"""
 
     if request.user.is_anonymous or request.search:
@@ -85,7 +88,7 @@ def podcast_list(request):
 
 
 @login_required
-def podcast_actions(request, podcast_id):
+def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     if request.turbo.frame:
@@ -104,7 +107,9 @@ def podcast_actions(request, podcast_id):
     return redirect(podcast.get_absolute_url())
 
 
-def podcast_detail(request, podcast_id, slug=None):
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: Optional[str] = None
+) -> HttpResponse:
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     total_episodes = podcast.episode_set.count()
@@ -117,7 +122,9 @@ def podcast_detail(request, podcast_id, slug=None):
     )
 
 
-def podcast_recommendations(request, podcast_id, slug=None):
+def podcast_recommendations(
+    request: HttpRequest, podcast_id: int, slug: Optional[str] = None
+) -> HttpResponse:
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
 
@@ -137,7 +144,9 @@ def podcast_recommendations(request, podcast_id, slug=None):
     )
 
 
-def podcast_episode_list(request, podcast_id, slug=None):
+def podcast_episode_list(
+    request: HttpRequest, podcast_id: int, slug: Optional[str] = None
+) -> HttpResponse:
 
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     ordering = request.GET.get("ordering")
@@ -183,7 +192,7 @@ def podcast_episode_list(request, podcast_id, slug=None):
     )
 
 
-def category_list(request):
+def category_list(request: HttpRequest) -> HttpResponse:
     categories = Category.objects.all()
 
     if request.search:
@@ -206,7 +215,7 @@ def category_list(request):
     )
 
 
-def category_detail(request, category_id, slug=None):
+def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] = None):
     category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
     )
@@ -239,13 +248,13 @@ def category_detail(request, category_id, slug=None):
         )
 
 
-def itunes_category(request, category_id):
+def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     category = get_object_or_404(
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
         pk=category_id,
     )
     try:
-        results = itunes_results_with_podcast(
+        results = results_with_podcast(
             itunes.fetch_itunes_genre(category.itunes_genre_id)
         )
         error = False
@@ -264,14 +273,14 @@ def itunes_category(request, category_id):
     )
 
 
-def search_itunes(request):
+def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error = False
     results = []
 
     if request.search:
         try:
-            results = itunes_results_with_podcast(itunes.search_itunes(request.search))
+            results = results_with_podcast(itunes.search_itunes(request.search))
         except (itunes.Timeout, itunes.Invalid):
             error = True
 
@@ -290,7 +299,7 @@ def search_itunes(request):
 
 @require_POST
 @login_required
-def subscribe(request, podcast_id):
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
@@ -301,14 +310,14 @@ def subscribe(request, podcast_id):
 
 @require_POST
 @login_required
-def unsubscribe(request, podcast_id):
+def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return podcast_subscribe_response(request, podcast, False)
 
 
 @cache_page(60 * 60 * 24)
-def podcast_cover_image(request, podcast_id):
+def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     return (
@@ -321,14 +330,16 @@ def podcast_cover_image(request, podcast_id):
     )
 
 
-def itunes_results_with_podcast(results):
+def results_with_podcast(
+    results: itunes.ITunesSearchResults,
+) -> itunes.ITunesSearchResults:
+    """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
     )
     new_podcasts = []
     for result in results:
         result.podcast = podcasts.get(result.itunes, None)
-        # automatically add podcast to DB
         if result.podcast is None:
             new_podcasts.append(
                 Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
@@ -341,7 +352,9 @@ def itunes_results_with_podcast(results):
     return results
 
 
-def podcast_detail_response(request, template_name, podcast, context):
+def podcast_detail_response(
+    request: HttpRequest, template_name: str, podcast: Podcast, context: Dict[str, Any]
+) -> HttpResponse:
     is_subscribed = (
         request.user.is_authenticated
         and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
@@ -363,7 +376,9 @@ def podcast_detail_response(request, template_name, podcast, context):
     return TemplateResponse(request, template_name, context)
 
 
-def podcast_subscribe_response(request, podcast, is_subscribed):
+def podcast_subscribe_response(
+    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+) -> HttpResponse:
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (

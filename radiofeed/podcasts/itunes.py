@@ -1,6 +1,7 @@
 # Standard Library
 import dataclasses
 import json
+from typing import Any, Dict, List, Union
 
 # Django
 from django.core.cache import cache
@@ -29,20 +30,28 @@ class SearchResult:
     itunes: str
     title: str
     image: str
+    podcast: Podcast = None
 
-    def as_dict(self):
+    def as_dict(self) -> Dict[str, Any]:
         return {
             "rss": self.rss,
             "title": self.title,
             "itunes": self.itunes,
             "image": self.image,
+            "podcast": self.podcast,
         }
 
-    def as_json(self):
+    def as_json(self) -> str:
         return json.dumps(self.as_dict())
 
 
-def fetch_itunes_genre(genre_id, num_results=20):
+ITunesSearchResults = List[SearchResult]
+
+
+def fetch_itunes_genre(
+    genre_id: Union[str, int],
+    num_results: int = 20,
+) -> ITunesSearchResults:
     """Fetch top rated results for genre"""
     return _get_search_results(
         {
@@ -54,7 +63,7 @@ def fetch_itunes_genre(genre_id, num_results=20):
     )
 
 
-def search_itunes(search_term, num_results=12):
+def search_itunes(search_term: str, num_results: int = 12) -> ITunesSearchResults:
     """Does a search query on the iTunes API."""
 
     return _get_search_results(
@@ -67,7 +76,12 @@ def search_itunes(search_term, num_results=12):
     )
 
 
-def _get_search_results(params, cache_key, cache_timeout=86400, requests_timeout=3):
+def _get_search_results(
+    params: Dict[str, Any],
+    cache_key: str,
+    cache_timeout: int = 86400,
+    requests_timeout: int = 3,
+) -> ITunesSearchResults:
 
     results = cache.get(cache_key)
     if results is None:
