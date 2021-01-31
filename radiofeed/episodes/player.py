@@ -27,7 +27,9 @@ class Player:
         return bool(self.session_data["episode"])
 
     def start(self, episode: Episode, current_time: IntOrFloat) -> None:
-        self.session_data = PlayerInfo(episode=episode.id, current_time=current_time)
+        self.session_data = PlayerInfo(
+            episode=episode.id, current_time=current_time, playback_rate=1.0
+        )
 
     def is_playing(self, episode: Episode):
         return self.session_data["episode"] == episode.id
