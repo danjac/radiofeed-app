@@ -8,5 +8,5 @@ from radiofeed.podcasts.recommender import PodcastRecommender
 class Command(BaseCommand):
     help = "Creates new podcast recommendations."
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> None:
         PodcastRecommender.recommend()
