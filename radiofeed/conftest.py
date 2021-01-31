@@ -1,88 +1,93 @@
-# Django
+from typing import Type
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.http import HttpResponse
+from django.test import Client
 
-# Third Party Libraries
 import pytest
 
-# RadioFeed
 from radiofeed.episodes.factories import (
     AudioLogFactory,
     BookmarkFactory,
     EpisodeFactory,
 )
+from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
+from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.factories import UserFactory
 
 
 @pytest.fixture
-def site():
+def site() -> Site:
     return Site.objects.get_current()
 
 
 @pytest.fixture
-def get_response():
+def get_response() -> HttpResponse:
     return lambda req: HttpResponse()
 
 
 @pytest.fixture
-def user_model():
+def user_model() -> Type[settings.AUTH_USER_MODEL]:
     return get_user_model()
 
 
 @pytest.fixture
-def user():
+def user() -> settings.AUTH_USER_MODEL:
     return UserFactory()
 
 
 @pytest.fixture
-def anonymous_user():
+def anonymous_user() -> AnonymousUser:
     return AnonymousUser()
 
 
 @pytest.fixture
-def password():
+def password() -> str:
     return "t3SzTP4sZ"
 
 
 @pytest.fixture
-def login_user(client, password):
+def login_user(client: Client, password: str) -> settings.AUTH_USER_MODEL:
     return _make_login_user(client, password)
 
 
 @pytest.fixture
-def login_admin_user(client, password):
+def login_admin_user(client: Client, password: str) -> settings.AUTH_USER_MODEL:
     return _make_login_user(client, password, is_staff=True)
 
 
 @pytest.fixture
-def category():
+def category() -> Category:
     return CategoryFactory()
 
 
 @pytest.fixture
-def podcast():
+def podcast() -> Podcast:
     return PodcastFactory()
 
 
 @pytest.fixture
-def episode(podcast):
+def episode(podcast: Podcast) -> Episode:
     return EpisodeFactory(podcast=podcast)
 
 
 @pytest.fixture
-def bookmark(user, episode):
+def bookmark(user: settings.AUTH_USER_MODEL, episode: Episode) -> Bookmark:
     return BookmarkFactory(user=user, episode=episode)
 
 
 @pytest.fixture
-def audio_log(user, episode):
+def audio_log(user: settings.AUTH_USER_MODEL, episode: Episode) -> AudioLog:
     return AudioLogFactory(user=user, episode=episode)
 
 
-def _make_login_user(client, password, **defaults):
+def _make_login_user(
+    client: Client, password: str, **defaults
+) -> settings.AUTH_USER_MODEL:
     user = UserFactory(**defaults)
     user.set_password(password)
     user.save()

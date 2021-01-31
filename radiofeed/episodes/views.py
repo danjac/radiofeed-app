@@ -1,26 +1,22 @@
-# Standard Library
 import http
 import json
+from typing import Optional
 
-# Django
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-# Third Party Libraries
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
-# RadioFeed
 from radiofeed.pagination import paginate
 
-# Local
 from .models import AudioLog, Bookmark, Episode
 
 
-def episode_list(request):
+def episode_list(request: HttpRequest) -> HttpResponse:
 
     subscriptions = (
         list(request.user.subscription_set.values_list("podcast", flat=True))
@@ -53,7 +49,7 @@ def episode_list(request):
     return TemplateResponse(request, "episodes/index.html", context)
 
 
-def episode_detail(request, episode_id, slug=None):
+def episode_detail(request: HttpRequest, episode_id: int, slug: Optional[str] = None):
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
@@ -83,7 +79,7 @@ def episode_detail(request, episode_id, slug=None):
 
 
 @login_required
-def episode_actions(request, episode_id):
+def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
@@ -111,7 +107,7 @@ def episode_actions(request, episode_id):
 
 
 @login_required
-def history(request):
+def history(request: HttpRequest) -> HttpResponse:
 
     logs = (
         AudioLog.objects.filter(user=request.user)
@@ -140,7 +136,7 @@ def history(request):
 
 @require_POST
 @login_required
-def remove_history(request, episode_id):
+def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_object_or_404(Episode, pk=episode_id)
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
@@ -151,7 +147,7 @@ def remove_history(request, episode_id):
 
 
 @login_required
-def bookmark_list(request):
+def bookmark_list(request: HttpRequest) -> HttpResponse:
     bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
@@ -177,7 +173,7 @@ def bookmark_list(request):
 
 @require_POST
 @login_required
-def add_bookmark(request, episode_id):
+def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
 
     try:
@@ -189,7 +185,7 @@ def add_bookmark(request, episode_id):
 
 @require_POST
 @login_required
-def remove_bookmark(request, episode_id):
+def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
@@ -201,7 +197,7 @@ def remove_bookmark(request, episode_id):
 
 
 @require_POST
-def toggle_player(request, episode_id):
+def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
@@ -270,7 +266,7 @@ def toggle_player(request, episode_id):
 
 
 @require_POST
-def player_timeupdate(request):
+def player_timeupdate(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     if episode := request.player.get_episode():
         try:
@@ -293,7 +289,9 @@ def player_timeupdate(request):
     return HttpResponseBadRequest("No player loaded")
 
 
-def episode_bookmark_response(request, episode, is_bookmarked):
+def episode_bookmark_response(
+    request: HttpRequest, episode: Episode, is_bookmarked: bool
+) -> HttpResponse:
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (
