@@ -1,16 +1,14 @@
-# Standard Library
 import dataclasses
 import json
-from typing import Any, Dict, List, Union
+from typing import List, Union
 
-# Django
 from django.core.cache import cache
 from django.utils.encoding import force_str
 
-# Third Party Libraries
 import requests
 
-# Local
+from radiofeed.typing import ContextDict
+
 from .models import Category, Podcast
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
@@ -32,7 +30,7 @@ class SearchResult:
     image: str
     podcast: Podcast = None
 
-    def as_dict(self) -> Dict[str, Any]:
+    def as_dict(self) -> ContextDict:
         return {
             "rss": self.rss,
             "title": self.title,
@@ -77,7 +75,7 @@ def search_itunes(search_term: str, num_results: int = 12) -> ITunesSearchResult
 
 
 def _get_search_results(
-    params: Dict[str, Any],
+    params: ContextDict,
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,

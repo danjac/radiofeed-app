@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -15,6 +15,7 @@ from sorl.thumbnail import get_thumbnail
 from turbo_response import TurboFrame
 
 from radiofeed.pagination import paginate
+from radiofeed.typing import ContextDict
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
@@ -349,7 +350,7 @@ def results_with_podcast(
 
 
 def podcast_detail_response(
-    request: HttpRequest, template_name: str, podcast: Podcast, context: Dict[str, Any]
+    request: HttpRequest, template_name: str, podcast: Podcast, context: ContextDict
 ) -> HttpResponse:
     is_subscribed = (
         request.user.is_authenticated

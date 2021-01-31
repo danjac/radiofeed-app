@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from django.utils import timezone
 
@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from radiofeed.episodes.models import Episode
+from radiofeed.typing import ContextDict
 
 from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
@@ -141,7 +142,7 @@ class RssParser:
         return new_episodes
 
     def extract_text(
-        self, categories: List[Category], entries: List[Dict[str, Any]]
+        self, categories: List[Category], entries: List[ContextDict]
     ) -> str:
         """Extract keywords from text content for recommender"""
         text = " ".join(
@@ -156,7 +157,7 @@ class RssParser:
         )
         return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
 
-    def create_episodes_from_feed(self, entries: List[Dict[str, Any]]) -> List[Episode]:
+    def create_episodes_from_feed(self, entries: List[ContextDict]) -> List[Episode]:
         """Parses new episodes from podcast feed."""
         guids = self.podcast.episode_set.values_list("guid", flat=True)
         entries = [entry for entry in entries if entry["id"] not in guids]
@@ -168,7 +169,7 @@ class RssParser:
         ]
         return Episode.objects.bulk_create(episodes, ignore_conflicts=True)
 
-    def create_episode_from_feed(self, entry: Dict[str, Any]) -> Optional[Episode]:
+    def create_episode_from_feed(self, entry: ContextDict) -> Optional[Episode]:
         keywords = " ".join([t["term"] for t in entry.get("tags", [])])
 
         try:
