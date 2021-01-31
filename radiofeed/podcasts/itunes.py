@@ -43,13 +43,13 @@ class SearchResult:
         return json.dumps(self.as_dict())
 
 
-ITunesSearchResults = List[SearchResult]
+SearchResultList = List[SearchResult]
 
 
 def fetch_itunes_genre(
     genre_id: Union[str, int],
     num_results: int = 20,
-) -> ITunesSearchResults:
+) -> SearchResultList:
     """Fetch top rated results for genre"""
     return _get_search_results(
         {
@@ -61,7 +61,7 @@ def fetch_itunes_genre(
     )
 
 
-def search_itunes(search_term: str, num_results: int = 12) -> ITunesSearchResults:
+def search_itunes(search_term: str, num_results: int = 12) -> SearchResultList:
     """Does a search query on the iTunes API."""
 
     return _get_search_results(
@@ -79,7 +79,7 @@ def _get_search_results(
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,
-) -> ITunesSearchResults:
+) -> SearchResultList:
 
     results = cache.get(cache_key)
     if results is None:

@@ -328,8 +328,8 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 def results_with_podcast(
-    results: itunes.ITunesSearchResults,
-) -> itunes.ITunesSearchResults:
+    results: itunes.SearchResultList,
+) -> itunes.SearchResultList:
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
