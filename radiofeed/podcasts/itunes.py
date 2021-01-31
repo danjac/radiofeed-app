@@ -74,7 +74,7 @@ def search_itunes(search_term: str, num_results: int = 12) -> SearchResultList:
     )
 
 
-def crawl_itunes(limit=100):
+def crawl_itunes(limit: int = 100) -> List[Podcast]:
     categories = (
         Category.objects.filter(itunes_genre_id__isnull=False)
         .prefetch_related("podcast_set")
