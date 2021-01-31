@@ -1,5 +1,5 @@
 # Django
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 
 # RadioFeed
 from radiofeed.podcasts.models import Podcast
@@ -10,7 +10,7 @@ from radiofeed.podcasts.tasks import sync_podcast_feed
 class Command(BaseCommand):
     help = "Updates all podcasts from their RSS feeds."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
 
         parser.add_argument(
             "--no-pub-date",
@@ -24,7 +24,7 @@ class Command(BaseCommand):
             help="Sync each podcast using celery task",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         podcasts = Podcast.objects.all()
 
         if options["no_pub_date"]:
