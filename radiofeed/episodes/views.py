@@ -2,6 +2,7 @@ import http
 import json
 from typing import Optional
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -29,7 +30,9 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
-        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")
+        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")[
+            : settings.DEFAULT_PAGE_SIZE
+        ]
     else:
         episodes = episodes.none()
 
