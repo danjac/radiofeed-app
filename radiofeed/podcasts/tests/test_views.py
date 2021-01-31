@@ -289,7 +289,7 @@ class TestITunesCategory:
                     image="test.jpg",
                     title="test title",
                 )
-            ]
+            ], []
 
         mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
@@ -323,7 +323,7 @@ class TestSearchITunes:
                     image="test.jpg",
                     title="test title",
                 )
-            ]
+            ], []
 
         mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "search_itunes", mock_search_itunes)

@@ -1,6 +1,6 @@
 import dataclasses
 import json
-from typing import List, Union
+from typing import List, Tuple, Union
 
 from django.core.cache import cache
 from django.utils.encoding import force_str
@@ -49,28 +49,34 @@ SearchResultList = List[SearchResult]
 def fetch_itunes_genre(
     genre_id: Union[str, int],
     num_results: int = 20,
-) -> SearchResultList:
+) -> Tuple[SearchResultList, List[Podcast]]:
     """Fetch top rated results for genre"""
-    return _get_search_results(
-        {
-            "term": "podcast",
-            "limit": num_results,
-            "genreId": genre_id,
-        },
-        cache_key=f"itunes:genre:{genre_id}",
+    return _get_or_create_podcasts(
+        _get_search_results(
+            {
+                "term": "podcast",
+                "limit": num_results,
+                "genreId": genre_id,
+            },
+            cache_key=f"itunes:genre:{genre_id}",
+        )
     )
 
 
-def search_itunes(search_term: str, num_results: int = 12) -> SearchResultList:
+def search_itunes(
+    search_term: str, num_results: int = 12
+) -> Tuple[SearchResultList, List[Podcast]]:
     """Does a search query on the iTunes API."""
 
-    return _get_search_results(
-        {
-            "media": "podcast",
-            "limit": num_results,
-            "term": force_str(search_term),
-        },
-        cache_key=f"itunes:search:{search_term}",
+    return _get_or_create_podcasts(
+        _get_search_results(
+            {
+                "media": "podcast",
+                "limit": num_results,
+                "term": force_str(search_term),
+            },
+            cache_key=f"itunes:search:{search_term}",
+        )
     )
 
 
@@ -98,6 +104,27 @@ def crawl_itunes(limit: int = 100) -> List[Podcast]:
         Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
         new_podcasts += len(podcasts)
     return new_podcasts
+
+
+def _get_or_create_podcasts(
+    results: SearchResultList,
+) -> Tuple[SearchResultList, List[Podcast]]:
+    """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
+    podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
+        field_name="itunes"
+    )
+    new_podcasts = []
+    for result in results:
+        result.podcast = podcasts.get(result.itunes, None)
+        if result.podcast is None:
+            new_podcasts.append(
+                Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
+            )
+
+    if new_podcasts:
+        Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
+
+    return results, new_podcasts
 
 
 def _get_search_results(

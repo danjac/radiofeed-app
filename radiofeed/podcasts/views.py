@@ -251,13 +251,14 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
         pk=category_id,
     )
     try:
-        results = results_with_podcast(
-            itunes.fetch_itunes_genre(category.itunes_genre_id)
-        )
+        results, new_podcasts = itunes.fetch_itunes_genre(category.itunes_genre_id)
         error = False
     except (itunes.Timeout, itunes.Invalid):
-        results = []
+        results = new_podcasts = []
         error = True
+
+    for podcast in new_podcasts:
+        sync_podcast_feed.delay(rss=podcast.rss)
 
     return TemplateResponse(
         request,
@@ -274,12 +275,16 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error = False
     results = []
+    new_podcasts = []
 
     if request.search:
         try:
-            results = results_with_podcast(itunes.search_itunes(request.search))
+            results, new_podcasts = itunes.search_itunes(request.search)
         except (itunes.Timeout, itunes.Invalid):
             error = True
+
+    for podcast in new_podcasts:
+        sync_podcast_feed.delay(rss=podcast.rss)
 
     clear_search_url = f"{reverse('podcasts:podcast_list')}?q={request.search}"
 
@@ -325,28 +330,6 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
         )
         .response(request)
     )
-
-
-def results_with_podcast(
-    results: itunes.SearchResultList,
-) -> itunes.SearchResultList:
-    """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
-    podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
-        field_name="itunes"
-    )
-    new_podcasts = []
-    for result in results:
-        result.podcast = podcasts.get(result.itunes, None)
-        if result.podcast is None:
-            new_podcasts.append(
-                Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
-            )
-
-    if new_podcasts:
-        for podcast in Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True):
-            sync_podcast_feed.delay(rss=podcast.rss)
-
-    return results
 
 
 def podcast_detail_response(
