@@ -1,6 +1,6 @@
 import collections
 import urllib
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 
 from django import template
 from django.shortcuts import resolve_url
@@ -16,7 +16,7 @@ ActiveLink = collections.namedtuple("Link", "url match exact")
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: Dict[str, Any], url_name: str, *args, **kwargs):
+def active_link(context: Dict[str, Any], url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -26,7 +26,7 @@ def active_link(context: Dict[str, Any], url_name: str, *args, **kwargs):
 
 
 @register.inclusion_tag("_share.html", takes_context=True)
-def share_buttons(context, url, subject):
+def share_buttons(context: Dict[str, Any], url: str, subject: str):
     url = urllib.parse.quote(context["request"].build_absolute_uri(url))
     subject = urllib.parse.quote(subject)
 
@@ -42,18 +42,20 @@ def share_buttons(context, url, subject):
 
 @register.filter
 @stringfilter
-def clean_html(value):
+def clean_html(value: str) -> str:
     return mark_safe(_stripentities(clean_html_content(value or "")))
 
 
 @register.filter
 @stringfilter
-def stripentities(value):
+def stripentities(value: str) -> str:
     return _stripentities(value or "")
 
 
 @register.filter
-def percent(value, total):
+def percent(
+    value: Optional[Union[int, float]], total: Optional[Union[int, float]]
+) -> float:
     if not value or not total:
         return 0
 

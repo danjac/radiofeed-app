@@ -1,9 +1,11 @@
-# Standard Library
 import html
+from typing import Generator, List, Optional, Tuple
 
-# Third Party Libraries
 import bleach
 from html5lib.filters import optionaltags, whitespace
+
+Attribute = Tuple[Optional[str][str]]
+AttributeList = List[Attribute]
 
 
 class RemoveEmptyFilter(optionaltags.Filter):
@@ -11,7 +13,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
 
     elements = frozenset(["p"])
 
-    def __iter__(self):
+    def __iter__(self) -> Generator:
         remove = False
         for _, token, next in self.slider():
             if token["type"] == "StartTag" and token["name"] in self.elements:
@@ -36,20 +38,20 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs, new=False):
+def linkify_callback(attrs: AttributeList, new: bool = False) -> AttributeList:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
 
 
-def clean_html_content(value):
+def clean_html_content(value: Optional[str]) -> str:
     try:
         return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""
     except (ValueError, TypeError):
         return ""
 
 
-def stripentities(value):
+def stripentities(value: Optional[str]) -> str:
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
-    return html.unescape(value)
+    return html.unescape(value) if value else ""
