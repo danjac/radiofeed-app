@@ -123,6 +123,7 @@ class TestTogglePlayer:
         assert client.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
+            "playback_rate": 1.0,
         }
 
     def test_authenticated(self, client, login_user, episode):
@@ -137,6 +138,7 @@ class TestTogglePlayer:
         assert client.session["player"] == {
             "episode": episode.id,
             "current_time": 0,
+            "playback_rate": 1.0,
         }
 
     def test_is_played(self, client, login_user, episode):
@@ -152,6 +154,7 @@ class TestTogglePlayer:
         assert client.session["player"] == {
             "episode": episode.id,
             "current_time": 2000,
+            "playback_rate": 1.0,
         }
 
     def test_stop(self, client, login_user, episode):
