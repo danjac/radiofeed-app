@@ -13,13 +13,20 @@
 
 {% user_display confirmation.email_address.user as user_display %}
 
-<p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}.{% endblocktranslate %}</p>
 
-<form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
-{% csrf_token %}
-    <button type="submit" class="rounded p-1 border border-white bg-blue-800 hover:bg-blue-600">{% translate 'Confirm' %}</button>
-</form>
+<div class="mb-3 w-full md:w-3/4 lg:w-1/2 border border-gray-500 p-3">
+  <p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}.{% endblocktranslate %}</p>
 
+  <form method="post"
+        action="{% url 'account_confirm_email' confirmation.key %}">
+    {% csrf_token %}
+    <div class="flex items-center justify-end">
+      <button type="submit"
+              class="rounded px-4 py-1 border border-white bg-blue-800 hover:bg-blue-600">{% translate 'Confirm' %}</button>
+    </div>
+  </form>
+
+</div>
 {% else %}
 
 {% url 'account_email' as email_url %}
