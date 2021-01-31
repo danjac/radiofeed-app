@@ -7,7 +7,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
-from radiofeed.typing import ContextDict, IntOrFloat
+from radiofeed.typing import ContextDict
 
 from .html import clean_html_content
 from .html import stripentities as _stripentities
@@ -56,7 +56,7 @@ def stripentities(value: str) -> str:
 
 
 @register.filter
-def percent(value: Optional[IntOrFloat], total: Optional[IntOrFloat]) -> float:
+def percent(value: Optional[float], total: Optional[float]) -> float:
     if not value or not total:
         return 0
 

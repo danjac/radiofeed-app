@@ -2,7 +2,7 @@ from typing import Optional, TypedDict
 
 from django.http import HttpRequest
 
-from radiofeed.typing import ContextDict, IntOrFloat
+from radiofeed.typing import ContextDict
 
 from .models import Episode
 
@@ -26,7 +26,7 @@ class Player:
     def __bool__(self) -> bool:
         return bool(self.session_data["episode"])
 
-    def start(self, episode: Episode, current_time: IntOrFloat) -> None:
+    def start(self, episode: Episode, current_time: float) -> None:
         self.session_data = PlayerInfo(
             episode=episode.id, current_time=current_time, playback_rate=1.0
         )
@@ -56,11 +56,11 @@ class Player:
         }
 
     @property
-    def current_time(self) -> IntOrFloat:
+    def current_time(self) -> float:
         return self.session_data.get("current_time", 0)
 
     @current_time.setter
-    def current_time(self, current_time: IntOrFloat) -> None:
+    def current_time(self, current_time: float) -> None:
         self.session_data = {**self.session_data, "current_time": current_time}
 
     @property
