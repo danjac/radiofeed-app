@@ -1,7 +1,5 @@
-# Standard Library
 import datetime
 
-# Django
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -11,10 +9,8 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-# Third Party Libraries
 from turbo_response import TurboStream, redirect_303, render_form_response
 
-# Local
 from .forms import UserPreferencesForm
 
 
