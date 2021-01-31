@@ -74,6 +74,32 @@ def search_itunes(search_term: str, num_results: int = 12) -> SearchResultList:
     )
 
 
+def crawl_itunes(limit=100):
+    categories = (
+        Category.objects.filter(itunes_genre_id__isnull=False)
+        .prefetch_related("podcast_set")
+        .order_by("name")
+    )
+    new_podcasts = 0
+
+    for category in categories:
+        current = category.podcast_set.values_list("itunes", flat=True)
+        podcasts = []
+
+        try:
+            results = fetch_itunes_genre(category.itunes_genre_id, num_results=limit)
+        except (Invalid, Timeout):
+            continue
+
+        podcasts = [
+            Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
+            for result in [r for r in results if r.itunes not in current]
+        ]
+        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+        new_podcasts += len(podcasts)
+    return new_podcasts
+
+
 def _get_search_results(
     params: ContextDict,
     cache_key: str,
@@ -110,29 +136,3 @@ def _get_search_results(
         for item in results
         if "feedUrl" in item
     ]
-
-
-def crawl_itunes(limit=100):
-    categories = (
-        Category.objects.filter(itunes_genre_id__isnull=False)
-        .prefetch_related("podcast_set")
-        .order_by("name")
-    )
-    new_podcasts = 0
-
-    for category in categories:
-        current = category.podcast_set.values_list("itunes", flat=True)
-        podcasts = []
-
-        try:
-            results = fetch_itunes_genre(category.itunes_genre_id, num_results=limit)
-        except (Invalid, Timeout):
-            continue
-
-        podcasts = [
-            Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
-            for result in [r for r in results if r.itunes not in current]
-        ]
-        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
-        new_podcasts += len(podcasts)
-    return new_podcasts
