@@ -21,6 +21,8 @@ class EpisodeQuerySet(models.QuerySet):
         self, user: Union[AnonymousUser, settings.AUTH_USER_MODEL]
     ) -> models.QuerySet:
 
+        """Adds `completed`, `current_time` and `listened` annotations."""
+
         if user.is_anonymous:
             return self.annotate(
                 completed=models.Value(False, output_field=models.BooleanField()),
