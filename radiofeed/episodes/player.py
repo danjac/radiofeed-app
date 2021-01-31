@@ -2,8 +2,6 @@ from typing import Optional, TypedDict
 
 from django.http import HttpRequest
 
-from radiofeed.typing import ContextDict
-
 from .models import Episode
 
 
@@ -27,8 +25,8 @@ class Player:
         return bool(self.session_data["episode"])
 
     def start(self, episode: Episode, current_time: float) -> None:
-        self.session_data = dict(
-            PlayerInfo(episode=episode.id, current_time=current_time, playback_rate=1.0)
+        self.session_data = PlayerInfo(
+            episode=episode.id, current_time=current_time, playback_rate=1.0
         )
 
     def is_playing(self, episode: Episode):
@@ -61,7 +59,7 @@ class Player:
 
     @current_time.setter
     def current_time(self, current_time: float) -> None:
-        self.session_data = {**self.session_data, "current_time": current_time}
+        self.session_data = {**self.session_data, "current_time": current_time}  # type: ignore
 
     @property
     def playback_rate(self) -> float:
@@ -69,12 +67,12 @@ class Player:
 
     @playback_rate.setter
     def playback_rate(self, playback_rate: float) -> None:
-        self.session_data = {**self.session_data, "playback_rate": playback_rate}
+        self.session_data = {**self.session_data, "playback_rate": playback_rate}  # type: ignore
 
     @property
-    def session_data(self) -> ContextDict:
+    def session_data(self) -> PlayerInfo:
         return self.request.session.setdefault("player", _empty_player_info())
 
     @session_data.setter
-    def session_data(self, data: ContextDict) -> None:
-        self.request.session["player"] = data
+    def session_data(self, player_info: PlayerInfo) -> None:
+        self.request.session["player"] = player_info
