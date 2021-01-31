@@ -1,19 +1,15 @@
-# Standard Library
 import re
 from functools import lru_cache
+from typing import List
 
-# Django
 from django.template.defaultfilters import striptags
 
-# Third Party Libraries
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-# RadioFeed
 from radiofeed.template.html import stripentities
 
-# Local
 from .stopwords import STOPWORDS
 
 NLTK_LANGUAGES = {
@@ -47,14 +43,14 @@ lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
-def get_stopwords(language):
+def get_stopwords(language: str) -> List:
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except KeyError:
         return []
 
 
-def clean_text(text):
+def clean_text(text: str) -> str:
     """Remove HTML tags and entities, punctuation and numbers."""
     text = stripentities(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
@@ -62,7 +58,7 @@ def clean_text(text):
     return text
 
 
-def extract_keywords(language, text):
+def extract_keywords(language: str, text: str) -> List:
     text = clean_text(text).lower()
 
     if not text:

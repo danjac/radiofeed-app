@@ -4,9 +4,11 @@ import datetime
 import logging
 import operator
 import statistics
+from typing import Dict, Generator, List, Tuple
 
 # Django
 from django.db import transaction
+from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 
@@ -22,17 +24,25 @@ from .text_parser import get_stopwords
 logger = logging.getLogger(__name__)
 
 
+MatchesDict = Dict[Tuple[int, int], List[float]]
+
+
 class PodcastRecommender:
-    def __init__(self, num_matches=12, num_recent_episodes=6, max_pub_days=90):
+    def __init__(
+        self,
+        num_matches: int = 12,
+        num_recent_episodes: int = 6,
+        max_pub_days: int = 90,
+    ):
         self.num_matches = num_matches
         self.num_recent_episodes = num_recent_episodes
         self.max_pub_days = max_pub_days
 
     @classmethod
-    def recommend(cls, *args, **kwargs):
+    def recommend(cls, *args, **kwargs) -> None:
         return cls(*args, **kwargs).do_recommend()
 
-    def do_recommend(self):
+    def do_recommend(self) -> None:
 
         self.queryset = self.get_podcast_queryset()
 
@@ -50,13 +60,13 @@ class PodcastRecommender:
         for language in languages:
             self.create_recommendations_for_language(language)
 
-    def get_podcast_queryset(self):
+    def get_podcast_queryset(self) -> QuerySet:
         min_pub_date = timezone.now() - datetime.timedelta(days=self.max_pub_days)
         return Podcast.objects.filter(pub_date__gt=min_pub_date).exclude(
             extracted_text=""
         )
 
-    def create_recommendations_for_language(self, language):
+    def create_recommendations_for_language(self, language: str) -> None:
         logger.info("Recommendations for %s", language)
 
         matches = self.build_matches_dict(language)
@@ -73,7 +83,7 @@ class PodcastRecommender:
                     ignore_conflicts=True,
                 )
 
-    def recommendations_from_matches(self, matches):
+    def recommendations_from_matches(self, matches: MatchesDict) -> Generator:
         for (podcast_id, recommended_id), values in matches:
             frequency = len(values)
             similarity = statistics.median(values)
@@ -85,9 +95,8 @@ class PodcastRecommender:
                 frequency=frequency,
             )
 
-    def build_matches_dict(self, language):
+    def build_matches_dict(self, language: str) -> MatchesDict:
 
-        # dict of (podcast_id, recommended_id): similarity
         matches = collections.defaultdict(list)
         queryset = self.queryset.filter(language__iexact=language)
 
@@ -105,7 +114,9 @@ class PodcastRecommender:
 
         return matches
 
-    def find_similarities_for_podcasts(self, language, queryset):
+    def find_similarities_for_podcasts(
+        self, language: str, queryset: QuerySet
+    ) -> Generator:
 
         for podcast_id, recommended in self.find_similarities(
             language,
@@ -116,7 +127,7 @@ class PodcastRecommender:
                 if similarity > 0:
                     yield podcast_id, recommended_id, similarity
 
-    def find_similarities(self, language, queryset):
+    def find_similarities(self, language: str, queryset: QuerySet) -> Generator:
         """Given a queryset, will yield tuples of
         (id, (similar_1, similar_2, ...)) based on text content.
         """
