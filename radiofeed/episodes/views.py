@@ -205,27 +205,9 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     streams = []
 
-    def _render_toggle(episode, is_playing):
-
-        target = f"episode-play-toggle-{episode.id}"
-
-        return (
-            TurboStream(target)
-            .replace.template(
-                "episodes/player/_toggle.html",
-                {
-                    "episode": episode,
-                    "is_episode_playing": is_playing,
-                    "player_toggle_id": target,
-                },
-                request=request,
-            )
-            .render()
-        )
-
     # clear session
     if current_episode := request.player.eject():
-        streams += [_render_toggle(current_episode, False)]
+        streams += [render_player_toggle(request, current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -253,7 +235,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episodes/player/_player.html", {"episode": episode}, request=request
         )
         .render(),
-        _render_toggle(episode, True),
+        render_player_toggle(request, episode, True),
     ]
 
     response = TurboStreamResponse(streams)
@@ -289,6 +271,27 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
+
+
+def render_player_toggle(
+    request: HttpRequest, episode: Episode, is_playing: bool
+) -> str:
+
+    target = f"episode-play-toggle-{episode.id}"
+
+    return (
+        TurboStream(target)
+        .replace.template(
+            "episodes/player/_toggle.html",
+            {
+                "episode": episode,
+                "is_episode_playing": is_playing,
+                "player_toggle_id": target,
+            },
+            request=request,
+        )
+        .render()
+    )
 
 
 def episode_bookmark_response(
