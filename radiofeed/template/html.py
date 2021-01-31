@@ -4,7 +4,7 @@ from typing import Generator, List, Optional, Tuple
 import bleach
 from html5lib.filters import optionaltags, whitespace
 
-Attribute = Tuple[Optional[str][str]]
+Attribute = Tuple[Optional[str], str]
 AttributeList = List[Attribute]
 
 
