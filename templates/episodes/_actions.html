@@ -2,7 +2,7 @@
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
    data-turbo-frame="_top">
-  {{ episode.title|truncatechars:60 }}
+  {{ episode.title|truncatechars:120 }}
 </a>
 {% endblock %}
 {% block modal_content %}
@@ -11,13 +11,21 @@
   <a href="{{ podcast.get_absolute_url }}"
      data-turbo-frame="_top"
      class="font-semibold hover:text-blue-500">
-    {{ podcast.title|truncatechars:60 }}
+    {{ podcast.title|truncatechars:120 }}
   </a>
 </h2>
 <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
+
   {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+  {% if episode.listened %}
+  <div class="ml-2 hidden sm:inline-block">
+    Listened {{ episode.listened|date }}
+  </div>
+  {% endif %}
+
   {% if episode.explicit %}
+
   <div class="inline-block font-semibold text-red-300 ml-2 flex items-center">
     {% include "_explicit.html" with css_class="mr-1" %}
     Explicit
@@ -25,10 +33,11 @@
   {% endif %}
 </div>
 {% if episode.listened %}
-<div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+<div class="mb-3 sm:hidden text-gray-300 text-sm font-semibold">
   Listened {{ episode.listened|date }}
 </div>
 {% endif %}
+
 
 <div class="flex items-center w-full mb-3">
   <a href="{{ podcast.get_absolute_url }}"
@@ -47,11 +56,8 @@
     {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
-<div class="markdown mb-3 text-sm">
-  {{ episode.description|striptags|stripentities|truncatewords:30 }}
-  <a href="{{ episode.get_absolute_url }}"
-     data-turbo-frame="_top"
-     class="ml-2">More</a>
+<div class="text-sm h-full sm:h-20 sm:overflow-ellipsis sm:overflow-hidden italic">
+  {{ episode.description|striptags|stripentities }}
 </div>
 
 {% endwith %}
