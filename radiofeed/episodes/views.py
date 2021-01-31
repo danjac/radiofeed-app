@@ -213,8 +213,9 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             current_episode.log_activity(request.user, current_time=0, completed=True)
 
     if request.POST.get("player_action") == "stop":
-        streams.append(TurboStream("player-controls").remove.render())
-        response = TurboStreamResponse(streams)
+        response = TurboStreamResponse(
+            streams + [TurboStream("player-controls").remove.render()]
+        )
         response["X-Player"] = json.dumps({"action": "stop"})
         return response
 
