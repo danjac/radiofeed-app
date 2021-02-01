@@ -2,11 +2,11 @@
      data-action="keyup@window->modal#closeOnEsc">
   <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 
-  <div class="modal-container bg-gray-900 w-full h-full md:h-auto md:max-w-xl mx-auto rounded shadow-lg z-50 md:overflow-y-auto">
+  <div class="modal-container w-full bg-white h-full md:h-auto md:max-w-xl mx-auto rounded shadow-lg z-50 md:overflow-y-auto">
 
-    <button class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
+    <button class="modal-close absolute top-0 text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
        data-action="modal#close">
-      <svg class="fill-current text-white"
+      <svg class="fill-current"
            xmlns="http://www.w3.org/2000/svg"
            width="18"
            height="18"
@@ -23,7 +23,7 @@
         <p class="w-64 sm:w-full flex flex-wrap font-bold">{% block modal_header %}{% endblock %}</p>
         <div class="modal-close cursor-pointer z-50 hidden md:inline-block">
           <button data-action="modal#close">
-            <svg class="fill-current text-white"
+            <svg class="fill-current"
                  xmlns="http://www.w3.org/2000/svg"
                  width="18"
                  height="18"

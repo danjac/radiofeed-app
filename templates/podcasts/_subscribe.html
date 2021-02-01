@@ -3,7 +3,7 @@
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_subscribed %}
-  <button class="p-1 border rounded hover:bg-gray-600 font-semibold text-sm flex items-center">
+  <button class="p-1 border rounded border-blue-800 hover:border-blue-600 hover:bg-gray-100 font-semibold text-sm flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"

@@ -10,22 +10,22 @@
 <div class="text-sm flex justify-between mb-3">
 
   <a {% if prev_episode %}
-     class="block hover:text-blue-500"
+     class="link"
      href="{{ prev_episode.get_absolute_url }}"
      title="{{ prev_episode.title }}"
      {% else %}
-     class="text-gray-500 pointer-events-none"
+     class="inactive-link"
      href="javascript:void(0);"
      {% endif %}>
     Previous
   </a>
 
   <a {% if next_episode %}
-     class="block hover:text-blue-500"
+     class="link"
      href="{{ next_episode.get_absolute_url }}"
      title="{{ next_episode.title }}"
      {% else %}
-     class="text-gray-500 pointer-events-none"
+     class="inactive-link"
      href="javascript:void(0);"
      {% endif %}>
     Next
@@ -39,24 +39,24 @@
 <div class="p-2 border border-gray-500 mb-3">
 
   <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
-  <h2 class="font-semibold mb-3">
+  <h2 class="mb-3">
     <a href="{{ podcast.get_absolute_url }}"
-       class="font-semibold hover:text-blue-500">
+       class="link">
       {{ podcast.title }}
     </a>
   </h2>
-  <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+  <div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
     <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
     {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     {% if episode.explicit %}
-    <div class="inline-block font-semibold text-red-300 ml-2 flex items-center">
+    <div class="inline-block font-semibold text-red-500 ml-2 flex items-center">
       {% include "_explicit.html" with css_class="mr-1" %}
       Explicit
     </div>
     {% endif %}
   </div>
   {% if episode.listened %}
-  <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+  <div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
     Listened {{ episode.listened|date }}
   </div>
   {% endif %}
