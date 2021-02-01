@@ -3,7 +3,7 @@
 {% block podcast_content %}
 <div class="p-2 mb-3 border border-gray-500">
   {% if podcast.authors %}
-  <div class="text-gray-300 mb-3">{{ podcast.authors }}</div>
+  <div class="text-gray-500 font-semibold mb-3">{{ podcast.authors }}</div>
   {% endif %}
 
 
@@ -13,13 +13,13 @@
 
     <div class="text-sm">
       <div class="mb-2">
-        <a class="hover:text-blue-500"
+        <a class="link"
            href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
       </div>
       {% if podcast.explicit %}
 
-      <div class="text-red-300 font-semibold mb-3 flex items-center">
+      <div class="text-red-500 font-semibold mb-3 flex items-center">
         {% include "_explicit.html" with css_class="mr-2" %}
         Explicit
       </div>
@@ -28,16 +28,16 @@
       <div class="flex items-center mb-2">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
-           class="font-semibold hover:text-blue-500 mr-2"
+           class="link mr-2"
            target="_blank"
            rel="noopener">Website</a>
         {% endif %}
         <a href="{{ podcast.rss }}"
-           class="font-semibold hover:text-blue-500 mr-2"
+           class="link mr-2"
            target="_blank"
            rel="noopener">RSS</a>
         <a href="{{ podcast.itunes }}"
-           class="font-semibold hover:text-blue-500 mr-2"
+           class="link mr-2"
            target="_blank"
            rel="noopener">iTunes</a>
       </div>
@@ -50,14 +50,14 @@
   </div>
   <div>
     {% for category in podcast.categories.all %}
-    <a class="inline-block border border-white bg-blue-800 hover:bg-blue-600 text-white p-1 rounded mr-3 mb-3 text-sm font-semibold"
+    <a class="inline-block mr-3 mb-3 btn btn-default"
        href="{{ category.get_absolute_url }}">
       <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg"
              fill="none"
              viewBox="0 0 24 24"
              stroke="currentColor"
-             class="h-4 w-4 mr-2">
+             class="btn-icon mr-2">
           <path stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"

@@ -1,3 +1,11 @@
-.sidebar--active {
+.sidebar a {
+  @apply text-gray-500;
+}
+
+.sidebar a:hover {
+  @apply text-blue-600;
+}
+
+.sidebar .sidebar--active {
   @apply text-blue-600 text-lg font-bold;
 }

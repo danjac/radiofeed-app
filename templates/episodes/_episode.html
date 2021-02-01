@@ -34,7 +34,7 @@
             {% include "episodes/player/_toggle.html" %}
           </div>
           {% if user.is_authenticated %}
-          <a class="mr-2 focus:outline-none"
+          <a class="mr-2 link"
              href="{% url 'episodes:actions' episode.id %}"
              title="Actions"
              data-turbo-frame="modal">

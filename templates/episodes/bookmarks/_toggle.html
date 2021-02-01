@@ -4,12 +4,12 @@
   {% csrf_token %}
   {% if is_bookmarked %}
   <button title="Remove episode from bookmarks"
-          class="focus:outline-none rounded border border-blue-800 hover:border-blue-600 text-blue-800 hover:text-blue-600 p-1 font-semibold text-sm flex items-center">
+          class="btn btn-secondary flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-5 w-5 mr-2">
+         class="btn-icon mr-2">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
@@ -19,12 +19,12 @@
   </button>
   {% else %}
   <button title="Add Bookmark"
-          class="focus:outline-none rounded text-white bg-blue-800 hover:bg-blue-600 p-1 text-sm font-semibold flex items-center">
+          class="btn btn-default flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-5 w-5 mr-2">
+         class="btn-icon mr-2">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
@@ -38,12 +38,12 @@
 <a title="Add Bookmark"
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
-   class="focus:outline-none rounded border bg-blue-800 hover:bg-blue-600 p-1 text-sm font-semibold text-sm flex items-center">
+   class="btn btn-default flex items-center">
   <svg xmlns="http://www.w3.org/2000/svg"
        fill="none"
        viewBox="0 0 24 24"
        stroke="currentColor"
-       class="h-5 w-5 mr-2">
+       class="btn-icon mr-2">
     <path stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"

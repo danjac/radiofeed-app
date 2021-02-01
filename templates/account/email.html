@@ -49,9 +49,9 @@
     </label>
   </div>
   {% endfor %}
-  <div class="flex items-center justify-end mb-3">
+  <div class="sm:flex items-center justify-end mb-3">
 
-    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1 mr-2 flex items-center"
+    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
             type="submit"
             value="1"
             name="action_send">
@@ -67,7 +67,7 @@
       </svg>
       {% translate 'Re-Verify' %}
     </button>
-    <button class="text-sm font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 lg:px-4 p-1  mr-2 flex items-center"
+    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
             value="1"
             name="action_primary">
       <svg xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@
       {% translate 'Make Primary' %}
 
     </button>
-    <button class="text-sm font-semibold rounded border border-white bg-red-800 hover:bg-red-600 lg:px-4 p-1 flex items-center"
+    <button class="btn btn-danger flex items-center justify-center w-full sm:w-auto"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
@@ -125,12 +125,12 @@
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
   <div class="mb-3">
-    {% render_field form.email placeholder=form.email.label class="p-1 w-full bg-gray-900" %}
+    {% render_field form.email placeholder=form.email.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.email.errors %}
   </div>
   {% endwith %}
   <div class="flex items-center justify-end">
-    <button class="px-4 py-1 font-semibold rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm flex items-center"
+    <button class="btn btn-default flex items-center"
             name="action_add"
             value="1"
             type="submit">

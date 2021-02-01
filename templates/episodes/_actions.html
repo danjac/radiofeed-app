@@ -1,14 +1,14 @@
 {% extends "modal_base.html" %}
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
-   class="font-semibold hover:text-blue-500"
+   class="link"
    data-turbo-frame="_top">
   {{ episode.title|truncatechars:120 }}
 </a>
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+<div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
   {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
@@ -20,14 +20,14 @@
 
   {% if episode.explicit %}
 
-  <div class="inline-block font-semibold text-red-300 ml-2 flex items-center">
+  <div class="inline-block font-semibold text-red-500 ml-2 flex items-center">
     {% include "_explicit.html" with css_class="mr-1" %}
     Explicit
   </div>
   {% endif %}
 </div>
 {% if episode.listened %}
-<div class="mb-3 sm:hidden text-gray-300 text-sm font-semibold">
+<div class="mb-3 sm:hidden text-gray-500 text-sm font-semibold">
   Listened {{ episode.listened|date }}
 </div>
 {% endif %}

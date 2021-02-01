@@ -4,7 +4,7 @@
     <img src="{{ result.image }}"
          height="16"
          width="16"
-         class="object-cover border border-white mr-2 h-16 w-16 bg-transparent" />
+         class="object-cover border mr-2 h-16 w-16 bg-transparent" />
     {% endif %}
     <div>
       <a {% if result.podcast %}
@@ -15,19 +15,19 @@
          target="_blank"
          {% endif %}
          title="{{ result.title }}"
-         class="font-semibold font-semibold hover:text-blue-500 block mb-2 text-sm md:text-base w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
+         class="link block mb-2 text-sm md:text-base w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
       <div class="text-sm flex items-center">
         <a href="{{ result.rss }}"
-           class="font-semibold hover:text-blue-500 mr-2"
+           class="link mr-2"
            target="_blank"
            rel="noopener">RSS</a>
         <a href="{{ result.itunes }}"
-           class="font-semibold hover:text-blue-500 mr-2"
+           class="link mr-2"
            target="_blank"
            rel="noopener">iTunes</a>
         {% if result.podcast and result.podcast.pub_date %}
         <a href="{{ result.podcast.get_absolute_url }}"
-           class="font-semibold hover-text-gray-100">Podcast</a>
+           class="link">Podcast</a>
         {% endif %}
       </div>
     </div>

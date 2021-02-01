@@ -3,12 +3,12 @@
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_subscribed %}
-  <button class="p-1 border rounded border-blue-800 hover:border-blue-600 hover:bg-gray-100 font-semibold text-sm flex items-center">
+  <button class="btn btn-secondary flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-4 w-4 mr-2">
+         class="btn-icon mr-2">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
@@ -17,12 +17,12 @@
     Unsubscribe
   </button>
   {% else %}
-  <button class="p-1 border rounded bg-blue-800 hover:bg-blue-600 font-semibold text-sm flex items-center">
+  <button class="btn btn-default flex items-center">
     <svg xmlns="http://www.w3.org/2000/svg"
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-4 w-4 mr-2">
+         class="btn-icon mr-2">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
@@ -37,14 +37,14 @@
   {% endif %}
 </form>
 {% else %}
-<a class="p-1 border rounded bg-blue-800 hover:bg-blue-600 font-semibold text-sm flex items-center"
+<a class="btn btn-default flex items-center"
   data-turbo-frame="_top"
   href="{% url 'account_login' %}?next={{ request.path|urlencode }}">
   <svg xmlns="http://www.w3.org/2000/svg"
        fill="none"
        viewBox="0 0 24 24"
        stroke="currentColor"
-       class="h-4 w-4 mr-2">
+       class="btn-icon mr-2">
     <path stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"

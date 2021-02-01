@@ -2,7 +2,7 @@
       action="{{ action_url }}"
       class="{{ css_class|default:'' }}">
   {% csrf_token %}
-  <button class="focus:outline-none rounded border hover:bg-gray-100 p-1 text-sm flex items-center"
+  <button class="btn btn-secondary flex items-center"
           name="remove"
           value="true"
           title="{{ btn_title }}">
@@ -11,7 +11,7 @@
          fill="none"
          viewBox="0 0 24 24"
          stroke="currentColor"
-         class="h-5 w-5 md:mr-2">
+         class="btn-icon md:mr-2">
       <path stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"

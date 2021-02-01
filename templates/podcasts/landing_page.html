@@ -4,7 +4,7 @@
 {% block player %}{% endblock %}
 {% block layout %}
 <div class="min-h-full mx-auto flex justify-center items-center">
-  <div class="bg-gray-900 text-white p-12">
+  <div class="p-12">
 
     <h1 class="text-xl md:text-2xl text-center mb-3">
       Discover and listen to some great podcast content.
@@ -23,7 +23,7 @@
       <img data-controller="link"
            data-link-url-value="{{ podcast.get_absolute_url }}"
            data-action="click->link#visit"
-           class="h-20 w-20 md:h-32 md:w-32 mb-3 object-cover cursor-pointer border border-white hover:opacity-75"
+           class="h-20 w-20 md:h-32 md:w-32 mb-3 object-cover cursor-pointer border hover:opacity-75"
            title="{{ podcast.title }}"
            src="{{ img.url }}"
            alt="{{ podcast.title }}"

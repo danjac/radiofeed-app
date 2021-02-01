@@ -1,9 +1,9 @@
       <nav class="pt-3">
-        <ul class="">
+        <ul class="sidebar">
           <li class="py-2">
             {% active_link 'podcasts:podcast_list' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -21,7 +21,7 @@
           <li class="py-2">
             {% active_link 'episodes:episode_list' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -42,7 +42,7 @@
           <li class="py-2">
             {% active_link 'podcasts:category_list' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -61,7 +61,7 @@
           <li class="py-2">
             {% active_link 'episodes:bookmark_list' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -79,7 +79,7 @@
           <li class="py-2">
             {% active_link 'episodes:history' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -97,7 +97,7 @@
           <li class="py-2">
             {% active_link '/account/' as link %}
             <a href="{% url 'user_preferences' %}"
-               class="flex items-center hover:text-blue-400{% if link.match %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
@@ -116,7 +116,7 @@
           <li class="py-2">
             {% active_link 'about' as link %}
             <a href="{{ link.url }}"
-               class="flex items-center hover:text-blue-400{% if link.exact %} sidebar--active{% endif %}">
+               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
               <svg xmlns="http://www.w3.org/2000/svg"
                    fill="none"
                    viewBox="0 0 24 24"
