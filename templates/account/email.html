@@ -117,13 +117,13 @@
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
 
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% else %}border-gray-500{% endif %}"
       method="post"
       action="{% url 'account_email' %}"
       novalidate>
   {% csrf_token %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
+  {% with WIDGET_ERROR_CLASS="border-red-800 text-red-600" %}
   <div class="mb-3">
     {% render_field form.email placeholder=form.email.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.email.errors %}

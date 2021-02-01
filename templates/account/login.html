@@ -9,7 +9,7 @@
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-600{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% else %}border-gray-500{% endif %}"
       method="post"
       action="{% url 'account_login' %}"
       novalidate>
@@ -19,19 +19,19 @@
          name="{{ redirect_field_name }}"
          value="{{ redirect_field_value }}" />
   {% endif %}
+  {% with WIDGET_ERROR_CLASS="border-red-800" %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-600 text-red-600" %}
   <div class="mb-3">
-    {% render_field form.login placeholder=form.login.label class="p-1 w-full bg-gray-900" %}
+    {% render_field form.login aria-label=form.login.label placeholder=form.login.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.login.errors %}
   </div>
   <div class="mb-3">
-    {% render_field form.password placeholder=form.password.label class="p-1 w-full bg-gray-900" %}
+    {% render_field form.password aria-label=form.password.label placeholder=form.password.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.password.errors %}
   </div>
   <div class="mb-3">
     <label class="flex items-center mb-2 w-full">
-      {% render_field form.remember class="mr-3 bg-gray-900" %}
+      {% render_field form.remember class="mr-3" %}
       {{ form.remember.label }}
     </label>
     {% include "_form_errors.html" with errors=form.remember.errors %}
@@ -39,9 +39,9 @@
   {% endwith %}
 
   <div class="flex items-center justify-end">
-    <a class="font-semibold hover:text-blue-500 mr-3"
+    <a class="link mr-3"
        href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-    <button class="px-4 py-1 rounded border border-white bg-blue-800 hover:bg-blue-600 text-white text-sm font-semibold flex items-center"
+    <button class="btn btn-default flex items-center"
             type="submit">
       <svg xmlns="http://www.w3.org/2000/svg"
            fill="none"
