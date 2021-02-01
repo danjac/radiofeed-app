@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from django.utils import timezone
 
@@ -118,10 +118,12 @@ class RssParser:
 
         self.podcast.link = feed.get("link")
 
-        categories_dct = get_categories_dict()
+        categories_dct: Dict[str, Category] = get_categories_dict()
 
-        keywords = [t["term"] for t in feed.get("tags", [])]
-        categories = [categories_dct[kw] for kw in keywords if kw in categories_dct]
+        keywords: List[str] = [t["term"] for t in feed.get("tags", [])]
+        categories: List[Category] = [
+            categories_dct[kw] for kw in keywords if kw in categories_dct
+        ]
 
         self.podcast.last_updated = now
         self.podcast.pub_date = pub_date
@@ -246,5 +248,5 @@ class RssParser:
 
 
 @lru_cache
-def get_categories_dict():
+def get_categories_dict() -> Dict[str, Category]:
     return {c.name: c for c in Category.objects.all()}
