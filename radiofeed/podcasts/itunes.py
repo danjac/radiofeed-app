@@ -1,6 +1,6 @@
 import dataclasses
 import json
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from django.core.cache import cache
 from django.utils.encoding import force_str
@@ -28,7 +28,7 @@ class SearchResult:
     itunes: str
     title: str
     image: str
-    podcast: Podcast = None
+    podcast: Optional[Podcast] = None
 
     def as_dict(self) -> ContextDict:
         return {
@@ -80,7 +80,7 @@ def search_itunes(
     )
 
 
-def crawl_itunes(limit: int = 100) -> List[Podcast]:
+def crawl_itunes(limit: int = 100) -> int:
     categories = (
         Category.objects.filter(itunes_genre_id__isnull=False)
         .prefetch_related("podcast_set")
@@ -89,19 +89,15 @@ def crawl_itunes(limit: int = 100) -> List[Podcast]:
     new_podcasts = 0
 
     for category in categories:
-        current = category.podcast_set.values_list("itunes", flat=True)
-        podcasts = []
+        podcasts: List[Podcast] = []
 
         try:
-            results = fetch_itunes_genre(category.itunes_genre_id, num_results=limit)
+            results, podcasts = fetch_itunes_genre(
+                category.itunes_genre_id, num_results=limit
+            )
         except (Invalid, Timeout):
             continue
 
-        podcasts = [
-            Podcast(title=result.title, rss=result.rss, itunes=result.itunes)
-            for result in [r for r in results if r.itunes not in current]
-        ]
-        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
         new_podcasts += len(podcasts)
     return new_podcasts
 

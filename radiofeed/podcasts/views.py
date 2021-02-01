@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -246,6 +246,10 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
 
 
 def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
+    error: bool = False
+    results: itunes.SearchResultList = []
+    new_podcasts: List[Podcast] = []
+
     category = get_object_or_404(
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
         pk=category_id,
@@ -254,7 +258,6 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
         results, new_podcasts = itunes.fetch_itunes_genre(category.itunes_genre_id)
         error = False
     except (itunes.Timeout, itunes.Invalid):
-        results = new_podcasts = []
         error = True
 
     for podcast in new_podcasts:
@@ -273,9 +276,9 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
 
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
-    error = False
-    results = []
-    new_podcasts = []
+    error: bool = False
+    results: itunes.SearchResultList = []
+    new_podcasts: List[Podcast] = []
 
     if request.search:
         try:
@@ -335,23 +338,15 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def podcast_detail_response(
     request: HttpRequest, template_name: str, podcast: Podcast, context: ContextDict
 ) -> HttpResponse:
-    is_subscribed = (
-        request.user.is_authenticated
-        and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
-    )
-
-    has_recommendations = Recommendation.objects.filter(podcast=podcast).exists()
 
     context = {
         "podcast": podcast,
-        "is_subscribed": is_subscribed,
-        "has_recommendations": has_recommendations,
-        "og_data": {
-            "url": request.build_absolute_uri(podcast.get_absolute_url()),
-            "title": f"{request.site.name} | {podcast.title}",
-            "description": podcast.description,
-            "image": podcast.cover_image.url if podcast.cover_image else None,
-        },
+        "is_subscribed": (
+            request.user.is_authenticated
+            and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
+        ),
+        "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
+        "og_data": get_podcast_opengraph_data(request, podcast),
     } | context
     return TemplateResponse(request, template_name, context)
 
@@ -370,3 +365,22 @@ def podcast_subscribe_response(
             .response(request)
         )
     return redirect(podcast.get_absolute_url())
+
+
+def get_podcast_opengraph_data(
+    request: HttpRequest, podcast: Podcast
+) -> Dict[str, str]:
+
+    og_data = {
+        "url": request.build_absolute_uri(podcast.get_absolute_url()),
+        "title": f"{request.site.name} | {podcast.title}",
+        "description": podcast.description,
+    }
+
+    if podcast.cover_image:
+        og_data |= {
+            "image": podcast.cover_image.url,
+            "image_height": podcast.cover_image.height,
+            "image_width": podcast.cover_image.width,
+        }
+    return og_data

@@ -1,6 +1,6 @@
 import http
 import json
-from typing import Optional
+from typing import Dict, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -59,26 +59,16 @@ def episode_detail(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
-    is_bookmarked = (
-        request.user.is_authenticated
-        and Bookmark.objects.filter(episode=episode, user=request.user).exists()
-    )
-    og_data = {
-        "url": request.build_absolute_uri(episode.get_absolute_url()),
-        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
-        "description": episode.description,
-        "image": episode.podcast.cover_image.url
-        if episode.podcast.cover_image
-        else None,
-    }
-
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_bookmarked": is_bookmarked,
-            "og_data": og_data,
+            "is_bookmarked": (
+                request.user.is_authenticated
+                and Bookmark.objects.filter(episode=episode, user=request.user).exists()
+            ),
+            "og_data": get_episode_opengraph_data(request, episode),
         },
     )
 
@@ -312,3 +302,22 @@ def episode_bookmark_response(
             .response(request)
         )
     return redirect(episode)
+
+
+def get_episode_opengraph_data(
+    request: HttpRequest, episode: Episode
+) -> Dict[str, str]:
+    og_data = {
+        "url": request.build_absolute_uri(episode.get_absolute_url()),
+        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
+        "description": episode.description,
+    }
+
+    if episode.podcast.cover_image:
+        og_data |= {
+            "image": episode.podcast.cover_image.url,
+            "image_height": episode.podcast.cover_image.height,
+            "image_width": episode.podcast.cover_image.width,
+        }
+
+    return og_data

@@ -1,11 +1,11 @@
 import html
-from typing import Generator, List, Optional, Tuple
+from typing import Dict, Generator, Optional, Tuple
 
 import bleach
 from html5lib.filters import optionaltags, whitespace
 
 Attribute = Tuple[Optional[str], str]
-AttributeList = List[Attribute]
+AttributeDict = Dict[Attribute, str]
 
 
 class RemoveEmptyFilter(optionaltags.Filter):
@@ -38,7 +38,7 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs: AttributeList, new: bool = False) -> AttributeList:
+def linkify_callback(attrs: AttributeDict, new: bool = False) -> AttributeDict:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
@@ -46,7 +46,7 @@ def linkify_callback(attrs: AttributeList, new: bool = False) -> AttributeList:
 
 def clean_html_content(value: Optional[str]) -> str:
     try:
-        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""
+        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
     except (ValueError, TypeError):
         return ""
 

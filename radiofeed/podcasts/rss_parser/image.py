@@ -3,6 +3,7 @@ import io
 import mimetypes
 import os
 import uuid
+from typing import Optional
 from urllib.parse import urlparse
 
 # Django
@@ -56,6 +57,7 @@ def get_image_filename(image_url: str, content_type: str) -> str:
         raise ValueError("No image_url provided")
 
     # check path first
+    ext: Optional[str] = None
     _, ext = os.path.splitext(urlparse(image_url).path)
     ext = ext.lower()
     if ext not in IMAGE_EXTENSIONS:

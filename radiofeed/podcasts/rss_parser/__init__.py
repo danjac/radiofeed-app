@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from django.utils import timezone
 
@@ -50,15 +50,28 @@ class RssParser:
             self.podcast.save()
             raise
 
-        data = feedparser.parse(response.content)
+        data: ContextDict = feedparser.parse(response.content)
+        feed: ContextDict = data["feed"]
 
-        feed = data["feed"]
+        entries: List[ContextDict] = list(
+            {
+                e["id"]: cast(ContextDict, e)
+                for e in data.get("entries", [])
+                if "id" in e
+            }.values()
+        )
 
-        entries = {e["id"]: e for e in data.get("entries", []) if "id" in e}.values()
         if not entries:
             return []
 
-        dates = [d for d in [parse_date(e.get("published")) for e in entries] if d]
+        dates = [
+            d
+            for d in [
+                parse_date(str(e["published"]) if "published" in e else None)
+                for e in entries
+            ]
+            if d
+        ]
 
         now = timezone.now()
 
@@ -135,6 +148,7 @@ class RssParser:
         self.podcast.categories.set(categories)
 
         new_episodes = self.create_episodes_from_feed(entries)
+
         if new_episodes:
             self.podcast.pub_date = max(e.pub_date for e in new_episodes)
             self.podcast.save(update_fields=["pub_date"])
@@ -201,14 +215,15 @@ class RssParser:
         except IndexError:
             description = ""
 
+        length: Optional[int] = None
         try:
             length = int(enclosure["length"])
         except (KeyError, ValueError):
-            length = None
+            pass
 
         pub_date = parse_date(entry["published"])
         if pub_date is None or pub_date > timezone.now():
-            return
+            return None
 
         link = entry.get("link", "")
         if len(link) > 500:

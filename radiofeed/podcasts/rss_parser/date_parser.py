@@ -239,7 +239,7 @@ TZ_INFOS = {
 }
 
 
-def parse_date(value: str) -> Optional[datetime.datetime]:
+def parse_date(value: Optional[str]) -> Optional[datetime.datetime]:
     if not value:
         return None
     try:

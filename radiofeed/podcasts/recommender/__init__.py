@@ -78,13 +78,13 @@ class PodcastRecommender:
             if matches:
                 logger.info("Inserting %d recommendations:%s", len(matches), language)
                 Recommendation.objects.bulk_create(
-                    self.recommendations_from_matches(matches.items()),
+                    self.recommendations_from_matches(matches),
                     batch_size=100,
                     ignore_conflicts=True,
                 )
 
     def recommendations_from_matches(self, matches: MatchesDict) -> Generator:
-        for (podcast_id, recommended_id), values in matches:
+        for (podcast_id, recommended_id), values in matches.items():
             frequency = len(values)
             similarity = statistics.median(values)
 
