@@ -1,0 +1,11 @@
+.link {
+  @apply text-blue-800 font-semibold;
+}
+
+.link:hover {
+  @apply text-blue-600;
+}
+
+.inactive-link {
+  @apply text-gray-300 pointer-events-none;
+}
