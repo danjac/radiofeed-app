@@ -1,0 +1,35 @@
+.btn {
+  @apply text-sm px-4 py-1 rounded font-semibold;
+}
+
+.btn:focus {
+  @apply outline-none;
+}
+
+.btn-default {
+  @apply text-white bg-blue-800;
+}
+
+.btn-default:hover {
+  @apply hover:bg-blue-600;
+}
+
+.btn-secondary {
+  @apply border border-blue-800 text-blue-800;
+}
+
+.btn-secondary:hover {
+  @apply border-blue-600 text-blue-600 bg-gray-100;
+}
+
+.btn-danger {
+  @apply text-white bg-red-800;
+}
+
+.btn-danger:hover {
+  @apply bg-red-600;
+}
+
+.btn-icon {
+  @apply h-4 w-4;
+}
