@@ -1,6 +1,7 @@
 {% extends "modal_base.html" %}
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
+   class="font-semibold hover:text-blue-500"
    data-turbo-frame="_top">
   {{ episode.title|truncatechars:120 }}
 </a>
