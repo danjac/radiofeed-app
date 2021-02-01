@@ -8,13 +8,6 @@
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<h2 class="font-semibold mb-3">
-  <a href="{{ podcast.get_absolute_url }}"
-     data-turbo-frame="_top"
-     class="font-semibold hover:text-blue-500">
-    {{ podcast.title|truncatechars:120 }}
-  </a>
-</h2>
 <div class="font-semibold text-gray-300 flex flex-wrap items-center mb-3 text-sm">
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
