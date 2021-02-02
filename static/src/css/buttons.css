@@ -1,5 +1,5 @@
 .btn {
-  @apply text-sm px-4 py-1 rounded font-semibold;
+  @apply text-sm px-2 py-1 rounded font-semibold;
 }
 
 .btn:focus {
