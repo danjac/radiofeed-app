@@ -1,6 +1,6 @@
 import http
 import json
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -196,7 +196,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    streams = []
+    streams: List[str] = []
 
     # clear session
     if current_episode := request.player.eject():
