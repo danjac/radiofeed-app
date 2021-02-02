@@ -5,7 +5,6 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -28,7 +27,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     )
     has_subscriptions: bool = bool(subscriptions)
 
-    episodes: QuerySet = Episode.objects.select_related("podcast")
+    episodes = Episode.objects.select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
@@ -58,7 +57,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    episode: Episode = get_object_or_404(
+    episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
@@ -75,7 +74,7 @@ def episode_detail(
 
 @login_required
 def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
-    episode: Episode = get_object_or_404(
+    episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
@@ -101,7 +100,7 @@ def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
 
-    logs: QuerySet = (
+    logs = (
         AudioLog.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
@@ -130,7 +129,7 @@ def history(request: HttpRequest) -> HttpResponse:
 @login_required
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    episode: Episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_object_or_404(Episode, pk=episode_id)
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
     if request.turbo:
@@ -140,7 +139,7 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @login_required
 def bookmark_list(request: HttpRequest) -> HttpResponse:
-    bookmarks: QuerySet = Bookmark.objects.filter(user=request.user).select_related(
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
     if request.search:
@@ -166,7 +165,7 @@ def bookmark_list(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode: Episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_object_or_404(Episode, pk=episode_id)
 
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
@@ -178,7 +177,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode: Episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
@@ -209,7 +208,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         response["X-Player"] = json.dumps({"action": "stop"})
         return response
 
-    episode: Episode = get_object_or_404(
+    episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
