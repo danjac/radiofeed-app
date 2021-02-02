@@ -1,8 +1,6 @@
-from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Union
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
@@ -16,12 +14,11 @@ from model_utils.models import TimeStampedModel
 from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.typing import AnyUser
 
 
 class EpisodeQuerySet(models.QuerySet):
-    def with_current_time(
-        self, user: Union[AnonymousUser, settings.AUTH_USER_MODEL]
-    ) -> models.QuerySet:
+    def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -55,25 +52,25 @@ EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid: str = models.TextField()
+    guid = models.TextField()
 
-    pub_date: datetime = models.DateTimeField()
-    link: str = models.URLField(null=True, blank=True, max_length=500)
+    pub_date = models.DateTimeField()
+    link = models.URLField(null=True, blank=True, max_length=500)
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    keywords = models.TextField(blank=True)
 
-    media_url: str = models.URLField(max_length=500)
-    media_type: str = models.CharField(max_length=60)
-    length: int = models.IntegerField(null=True, blank=True)
+    media_url = models.URLField(max_length=500)
+    media_type = models.CharField(max_length=60)
+    length = models.IntegerField(null=True, blank=True)
 
-    duration: str = models.CharField(max_length=30, blank=True)
-    explicit: bool = models.BooleanField(default=False)
+    duration = models.CharField(max_length=30, blank=True)
+    explicit = models.BooleanField(default=False)
 
-    search_vector: Optional[str] = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -133,8 +130,8 @@ class Episode(models.Model):
 
     def log_activity(
         self,
-        user: Union[AnonymousUser, settings.AUTH_USER_MODEL],
-        current_time: int = 0,
+        user: AnyUser,
+        current_time=0,
         completed: bool = False,
     ) -> Tuple[Optional["AudioLog"], bool]:
         # Updates audio log with current time
@@ -215,12 +212,10 @@ BookmarkManager: models.Manager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
 class Bookmark(TimeStampedModel):
-    user: settings.AUTH_USER_MODEL = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    objects: models.Manager = BookmarkManager()
+    objects = BookmarkManager()
 
     class Meta:
         constraints = [
@@ -253,15 +248,13 @@ AudioLogManager: models.Manager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
-    user: settings.AUTH_USER_MODEL = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    updated: datetime = models.DateTimeField()
-    completed: Optional[datetime] = models.DateTimeField(null=True, blank=True)
-    current_time: int = models.IntegerField(default=0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated = models.DateTimeField()
+    completed = models.DateTimeField(null=True, blank=True)
+    current_time = models.IntegerField(default=0)
 
-    objects: models.Manager = AudioLogManager()
+    objects = AudioLogManager()
 
     class Meta:
         constraints = [

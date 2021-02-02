@@ -1,9 +1,5 @@
-from datetime import datetime
-from typing import Optional, Union
-
 # Django
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
     SearchQuery,
@@ -20,6 +16,8 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField
+
+from radiofeed.typing import AnyUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -102,7 +100,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     authors = models.TextField(blank=True)
 
-    last_updated: Optional[datetime] = models.DateTimeField(null=True, blank=True)
+    last_updated = models.DateTimeField(null=True, blank=True)
 
     explicit: bool = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
@@ -157,9 +155,7 @@ class Subscription(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def with_subscribed(
-        self, user: Union[AnonymousUser, settings.AUTH_USER_MODEL]
-    ) -> models.QuerySet:
+    def with_subscribed(self, user: AnyUser) -> models.QuerySet:
         """Marks which recommendations are subscribed by this user."""
         if user.is_anonymous:
             return self.annotate(
