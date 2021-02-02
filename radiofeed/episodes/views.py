@@ -224,15 +224,17 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.start(episode, current_time)
 
-    streams += [
-        TurboStream("player-container")
-        .update.template(
-            "episodes/player/_player.html", {"episode": episode}, request=request
-        )
-        .render(),
-    ] + render_player_toggles(request, episode, True)
-
-    response = TurboStreamResponse(streams)
+    response = TurboStreamResponse(
+        streams
+        + render_player_toggles(request, episode, True)
+        + [
+            TurboStream("player-container")
+            .update.template(
+                "episodes/player/_player.html", {"episode": episode}, request=request
+            )
+            .render(),
+        ]
+    )
     response["X-Player"] = json.dumps(
         {
             "action": "start",
