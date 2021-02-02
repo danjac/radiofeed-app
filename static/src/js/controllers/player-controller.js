@@ -174,8 +174,8 @@ export default class extends Controller {
 
     this.initAudio();
 
-    this.audio.currentTime = this.currentTimeValue;
     this.audio.src = this.mediaUrlValue;
+    this.audio.currentTime = this.currentTimeValue;
 
     this.play();
 

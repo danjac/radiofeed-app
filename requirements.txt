@@ -16,7 +16,7 @@ autopep8==1.5.4           # via django-silk
 backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
-bleach==3.2.3             # via -r requirements.in
+bleach==3.3.0             # via -r requirements.in
 boto3==1.16.63            # via -r requirements.in
 botocore==1.19.63         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
@@ -49,7 +49,7 @@ django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
 django-turbo-allauth==0.0.3  # via -r requirements.in
-django-turbo-response==0.0.30  # via -r requirements.in
+django-turbo-response==0.0.31  # via -r requirements.in
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.6             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.8.0            # via pytest-xdist
@@ -68,7 +68,7 @@ idna==2.10                # via hyperlink, requests, twisted
 incremental==17.5.0       # via twisted
 iniconfig==1.1.1          # via pytest
 ipython-genutils==0.2.0   # via traitlets
-ipython==7.19.0           # via -r requirements.in
+ipython==7.20.0           # via -r requirements.in
 jedi==0.17.2              # via -r requirements.in, ipython
 jinja2==2.11.3            # via django-silk
 jmespath==0.10.0          # via boto3, botocore
