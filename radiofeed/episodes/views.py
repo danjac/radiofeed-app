@@ -13,7 +13,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import paginate
-from radiofeed.typing import ContextDict
 
 from .models import AudioLog, Bookmark, Episode
 
@@ -147,7 +146,7 @@ def bookmark_list(request: HttpRequest) -> HttpResponse:
     else:
         bookmarks = bookmarks.order_by("-created")
 
-    context: ContextDict = {
+    context: Dict = {
         "page_obj": paginate(request, bookmarks),
     }
 

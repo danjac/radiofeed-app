@@ -1,8 +1,6 @@
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from django import template
-
-from radiofeed.typing import ContextDict
 
 from .. import utils
 from ..models import Episode
@@ -12,12 +10,12 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def is_playing(context: ContextDict, episode: Episode) -> bool:
+def is_playing(context: Dict, episode: Episode) -> bool:
     return context["request"].player.is_playing(episode)
 
 
 @register.simple_tag(takes_context=True)
-def get_player(context: ContextDict) -> PlayerInfo:
+def get_player(context: Dict) -> PlayerInfo:
     return context["request"].player.as_dict()
 
 

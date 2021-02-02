@@ -1,13 +1,11 @@
 import dataclasses
 import json
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from django.core.cache import cache
 from django.utils.encoding import force_str
 
 import requests
-
-from radiofeed.typing import ContextDict
 
 from .models import Category, Podcast
 
@@ -30,7 +28,7 @@ class SearchResult:
     image: str
     podcast: Optional[Podcast] = None
 
-    def as_dict(self) -> ContextDict:
+    def as_dict(self) -> Dict:
         return {
             "rss": self.rss,
             "title": self.title,
@@ -124,7 +122,7 @@ def _get_or_create_podcasts(
 
 
 def _get_search_results(
-    params: ContextDict,
+    params: Dict,
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,

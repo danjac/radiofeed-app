@@ -1,6 +1,6 @@
 import collections
 import json
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 from urllib import parse
 
 from django import template
@@ -8,8 +8,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
-
-from radiofeed.typing import ContextDict
 
 from .html import clean_html_content
 from .html import stripentities as _stripentities
@@ -29,7 +27,7 @@ json_escapes = {
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context: Dict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -39,7 +37,7 @@ def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveL
 
 
 @register.inclusion_tag("_share.html", takes_context=True)
-def share_buttons(context: ContextDict, url: str, subject: str):
+def share_buttons(context: Dict, url: str, subject: str):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 

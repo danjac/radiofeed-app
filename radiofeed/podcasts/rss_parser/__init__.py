@@ -8,7 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 
 from radiofeed.episodes.models import Episode
-from radiofeed.typing import ContextDict
 
 from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
@@ -50,14 +49,12 @@ class RssParser:
             self.podcast.save()
             raise
 
-        data: ContextDict = feedparser.parse(response.content)
-        feed: ContextDict = data["feed"]
+        data: Dict = feedparser.parse(response.content)
+        feed: Dict = data["feed"]
 
-        entries: List[ContextDict] = list(
+        entries: List[Dict] = list(
             {
-                e["id"]: cast(ContextDict, e)
-                for e in data.get("entries", [])
-                if "id" in e
+                e["id"]: cast(Dict, e) for e in data.get("entries", []) if "id" in e
             }.values()
         )
 
@@ -157,9 +154,7 @@ class RssParser:
 
         return new_episodes
 
-    def extract_text(
-        self, categories: List[Category], entries: List[ContextDict]
-    ) -> str:
+    def extract_text(self, categories: List[Category], entries: List[Dict]) -> str:
         """Extract keywords from text content for recommender"""
         text = " ".join(
             [
@@ -173,7 +168,7 @@ class RssParser:
         )
         return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
 
-    def create_episodes_from_feed(self, entries: List[ContextDict]) -> List[Episode]:
+    def create_episodes_from_feed(self, entries: List[Dict]) -> List[Episode]:
         """Parses new episodes from podcast feed."""
         guids = self.podcast.episode_set.values_list("guid", flat=True)
         entries = [entry for entry in entries if entry["id"] not in guids]
@@ -185,7 +180,7 @@ class RssParser:
         ]
         return Episode.objects.bulk_create(episodes, ignore_conflicts=True)
 
-    def create_episode_from_feed(self, entry: ContextDict) -> Optional[Episode]:
+    def create_episode_from_feed(self, entry: Dict) -> Optional[Episode]:
         keywords = " ".join([t["term"] for t in entry.get("tags", [])])
 
         try:

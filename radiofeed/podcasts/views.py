@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Prefetch, QuerySet
+from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -16,7 +16,6 @@ from sorl.thumbnail.images import ImageFile
 from turbo_response import TurboFrame
 
 from radiofeed.pagination import paginate
-from radiofeed.typing import ContextDict
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
@@ -27,7 +26,7 @@ def landing_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:podcast_list")
 
-    podcasts: QuerySet = Podcast.objects.filter(
+    podcasts = Podcast.objects.filter(
         pub_date__isnull=False,
         cover_image__isnull=False,
         promoted=True,
@@ -50,7 +49,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    podcasts: QuerySet = Podcast.objects.filter(pub_date__isnull=False).distinct()
+    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
@@ -61,7 +60,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
             pub_date__isnull=False, promoted=True
         ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
 
-    context: Dict = {
+    context = {
         "page_obj": paginate(request, podcasts),
     }
 
@@ -89,7 +88,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     if request.turbo.frame:
         return (
@@ -109,7 +108,7 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     total_episodes: int = podcast.episode_set.count()
 
@@ -125,9 +124,9 @@ def podcast_recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    recommendations: QuerySet = (
+    recommendations = (
         Recommendation.objects.filter(podcast=podcast)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
@@ -147,7 +146,7 @@ def podcast_episode_list(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
     ordering: Optional[str] = request.GET.get("ordering")
 
     # thumbnail will be same for all episodes, so just preload
@@ -162,9 +161,9 @@ def podcast_episode_list(
     else:
         podcast_image = None
 
-    episodes: QuerySet = podcast.episode_set.with_current_time(
-        request.user
-    ).select_related("podcast")
+    episodes = podcast.episode_set.with_current_time(request.user).select_related(
+        "podcast"
+    )
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
@@ -172,7 +171,7 @@ def podcast_episode_list(
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
 
-    context: ContextDict = {
+    context: Dict = {
         "page_obj": paginate(request, episodes),
         "ordering": ordering,
         "podcast_image": podcast_image,
@@ -195,7 +194,7 @@ def podcast_episode_list(
 
 
 def category_list(request: HttpRequest) -> HttpResponse:
-    categories: QuerySet = Category.objects.all()
+    categories = Category.objects.all()
 
     if request.search:
         categories = categories.search(request.search).order_by("-similarity", "name")
@@ -222,7 +221,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
         Category.objects.select_related("parent"), pk=category_id
     )
 
-    podcasts: QuerySet = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
@@ -310,7 +309,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
@@ -321,7 +320,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return podcast_subscribe_response(request, podcast, False)
 
@@ -329,7 +328,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
-    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_object_or_404(Podcast, pk=podcast_id)
     return (
         TurboFrame(request.turbo.frame)
         .template(
@@ -341,7 +340,7 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 def podcast_detail_response(
-    request: HttpRequest, template_name: str, podcast: Podcast, context: ContextDict
+    request: HttpRequest, template_name: str, podcast: Podcast, context: Dict
 ) -> HttpResponse:
 
     context = {
