@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -13,20 +14,22 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import paginate
+from radiofeed.typing import ContextDict
 
 from .models import AudioLog, Bookmark, Episode
 
 
 def episode_list(request: HttpRequest) -> HttpResponse:
 
-    subscriptions = (
+    subscriptions: List[int] = (
         list(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else []
     )
-    has_subscriptions = bool(subscriptions)
+    has_subscriptions: bool = bool(subscriptions)
 
-    episodes = Episode.objects.select_related("podcast")
+    episodes: QuerySet = Episode.objects.select_related("podcast")
+
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
@@ -55,7 +58,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    episode = get_object_or_404(
+    episode: Episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
@@ -64,10 +67,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_bookmarked": (
-                request.user.is_authenticated
-                and Bookmark.objects.filter(episode=episode, user=request.user).exists()
-            ),
+            "is_bookmarked": is_episode_bookmarked(request, episode),
             "og_data": get_episode_opengraph_data(request, episode),
         },
     )
@@ -75,25 +75,21 @@ def episode_detail(
 
 @login_required
 def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
-    episode = get_object_or_404(
+    episode: Episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
     if request.turbo.frame:
-        is_bookmarked = Bookmark.objects.filter(
-            episode=episode, user=request.user
-        ).exists()
-
         return (
             TurboFrame(request.turbo.frame)
             .template(
                 "episodes/_actions.html",
                 {
                     "episode": episode,
-                    "is_bookmarked": is_bookmarked,
                     "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
                     "is_episode_playing": request.player.is_playing(episode),
+                    "is_bookmarked": is_episode_bookmarked(request, episode),
                 },
             )
             .response(request)
@@ -105,7 +101,7 @@ def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
 
-    logs = (
+    logs: QuerySet = (
         AudioLog.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
@@ -134,7 +130,7 @@ def history(request: HttpRequest) -> HttpResponse:
 @login_required
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode: Episode = get_object_or_404(Episode, pk=episode_id)
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
     if request.turbo:
@@ -144,7 +140,7 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @login_required
 def bookmark_list(request: HttpRequest) -> HttpResponse:
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
+    bookmarks: QuerySet = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
     if request.search:
@@ -152,7 +148,7 @@ def bookmark_list(request: HttpRequest) -> HttpResponse:
     else:
         bookmarks = bookmarks.order_by("-created")
 
-    context = {
+    context: ContextDict = {
         "page_obj": paginate(request, bookmarks),
     }
 
@@ -170,7 +166,7 @@ def bookmark_list(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode: Episode = get_object_or_404(Episode, pk=episode_id)
 
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
@@ -182,7 +178,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode: Episode = get_object_or_404(Episode, pk=episode_id)
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
@@ -312,7 +308,7 @@ def episode_bookmark_response(
 def get_episode_opengraph_data(
     request: HttpRequest, episode: Episode
 ) -> Dict[str, str]:
-    og_data = {
+    og_data: Dict = {
         "url": request.build_absolute_uri(episode.get_absolute_url()),
         "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
         "description": episode.description,
@@ -326,3 +322,9 @@ def get_episode_opengraph_data(
         }
 
     return og_data
+
+
+def is_episode_bookmarked(request: HttpRequest, episode: Episode) -> bool:
+    if request.user.is_anonymous:
+        return False
+    return Bookmark.objects.filter(episode=episode, user=request.user).exists()
