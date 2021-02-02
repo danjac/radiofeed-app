@@ -73,7 +73,7 @@ class Episode(models.Model):
     duration: str = models.CharField(max_length=30, blank=True)
     explicit: bool = models.BooleanField(default=False)
 
-    search_vector: str = SearchVectorField(null=True, editable=False)
+    search_vector: Optional[str] = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -165,9 +165,9 @@ class Episode(models.Model):
 
     def get_media_metadata(
         self,
-    ) -> Dict[str, Union[str, List[Dict[str, str]]]]:
+    ) -> Dict[str, Union[str, List]]:
         # https://developers.google.com/web/updates/2017/02/media-session
-        data = {
+        data: Dict = {
             "title": self.title,
             "album": self.podcast.title,
             "artist": self.podcast.authors,
