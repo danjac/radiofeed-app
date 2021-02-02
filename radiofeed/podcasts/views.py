@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -12,6 +12,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 from sorl.thumbnail import get_thumbnail
+from sorl.thumbnail.images import ImageFile
 from turbo_response import TurboFrame
 
 from radiofeed.pagination import paginate
@@ -26,7 +27,7 @@ def landing_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("podcasts:podcast_list")
 
-    podcasts = Podcast.objects.filter(
+    podcasts: QuerySet = Podcast.objects.filter(
         pub_date__isnull=False,
         cover_image__isnull=False,
         promoted=True,
@@ -40,6 +41,8 @@ def landing_page(request: HttpRequest) -> HttpResponse:
 def podcast_list(request: HttpRequest) -> HttpResponse:
     """Shows list of podcasts"""
 
+    subscriptions: List[int]
+
     if request.user.is_anonymous or request.search:
         subscriptions = []
     else:
@@ -47,7 +50,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
+    podcasts: QuerySet = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
@@ -58,7 +61,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
             pub_date__isnull=False, promoted=True
         ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
 
-    context = {
+    context: Dict = {
         "page_obj": paginate(request, podcasts),
     }
 
@@ -86,18 +89,17 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
 
     if request.turbo.frame:
-        is_subscribed = Subscription.objects.filter(
-            podcast=podcast, user=request.user
-        ).exists()
-
         return (
             TurboFrame(request.turbo.frame)
             .template(
                 "podcasts/_actions.html",
-                {"podcast": podcast, "is_subscribed": is_subscribed},
+                {
+                    "podcast": podcast,
+                    "is_subscribed": is_podcast_subscribed(request, podcast),
+                },
             )
             .response(request)
         )
@@ -107,9 +109,9 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    total_episodes = podcast.episode_set.count()
+    total_episodes: int = podcast.episode_set.count()
 
     return podcast_detail_response(
         request,
@@ -123,9 +125,9 @@ def podcast_recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
 
-    recommendations = (
+    recommendations: QuerySet = (
         Recommendation.objects.filter(podcast=podcast)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
@@ -145,11 +147,14 @@ def podcast_episode_list(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
-    ordering = request.GET.get("ordering")
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
+    ordering: Optional[str] = request.GET.get("ordering")
 
     # thumbnail will be same for all episodes, so just preload
     # it once here
+
+    podcast_image: Optional[ImageFile]
+
     if podcast.cover_image:
         podcast_image = get_thumbnail(
             podcast.cover_image, "200", format="PNG", crop="center"
@@ -157,9 +162,9 @@ def podcast_episode_list(
     else:
         podcast_image = None
 
-    episodes = podcast.episode_set.with_current_time(request.user).select_related(
-        "podcast"
-    )
+    episodes: QuerySet = podcast.episode_set.with_current_time(
+        request.user
+    ).select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
@@ -167,7 +172,7 @@ def podcast_episode_list(
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
 
-    context = {
+    context: ContextDict = {
         "page_obj": paginate(request, episodes),
         "ordering": ordering,
         "podcast_image": podcast_image,
@@ -190,7 +195,7 @@ def podcast_episode_list(
 
 
 def category_list(request: HttpRequest) -> HttpResponse:
-    categories = Category.objects.all()
+    categories: QuerySet = Category.objects.all()
 
     if request.search:
         categories = categories.search(request.search).order_by("-similarity", "name")
@@ -213,11 +218,11 @@ def category_list(request: HttpRequest) -> HttpResponse:
 
 
 def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] = None):
-    category = get_object_or_404(
+    category: Category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
     )
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts: QuerySet = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
@@ -305,7 +310,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
@@ -316,7 +321,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return podcast_subscribe_response(request, podcast, False)
 
@@ -324,7 +329,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast: Podcast = get_object_or_404(Podcast, pk=podcast_id)
     return (
         TurboFrame(request.turbo.frame)
         .template(
@@ -341,11 +346,8 @@ def podcast_detail_response(
 
     context = {
         "podcast": podcast,
-        "is_subscribed": (
-            request.user.is_authenticated
-            and Subscription.objects.filter(podcast=podcast, user=request.user).exists()
-        ),
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
+        "is_subscribed": is_podcast_subscribed(request, podcast),
         "og_data": get_podcast_opengraph_data(request, podcast),
     } | context
     return TemplateResponse(request, template_name, context)
@@ -371,7 +373,7 @@ def get_podcast_opengraph_data(
     request: HttpRequest, podcast: Podcast
 ) -> Dict[str, str]:
 
-    og_data = {
+    og_data: Dict = {
         "url": request.build_absolute_uri(podcast.get_absolute_url()),
         "title": f"{request.site.name} | {podcast.title}",
         "description": podcast.description,
@@ -384,3 +386,9 @@ def get_podcast_opengraph_data(
             "image_width": podcast.cover_image.width,
         }
     return og_data
+
+
+def is_podcast_subscribed(request: HttpRequest, podcast: Podcast) -> bool:
+    if request.user.is_anonymous:
+        return False
+    return Subscription.objects.filter(podcast=podcast, user=request.user).exists()
