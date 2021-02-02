@@ -219,6 +219,12 @@ export default class extends Controller {
     }
   }
 
+  metadataValueChanged() {
+    if ('mediaSession' in navigator && this.metadataValue) {
+      navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
+    }
+  }
+
   changePlaybackRate(increment) {
     let newValue = this.playbackRateValue + increment;
     if (newValue > 2.0) {
@@ -344,9 +350,6 @@ export default class extends Controller {
       Object.keys(this.audioListeners).forEach((event) =>
         this.audio.addEventListener(event, this.audioListeners[event])
       );
-    }
-    if ('mediaSession' in navigator && this.metadataValue) {
-      navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
     }
   }
 
