@@ -212,12 +212,12 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         response["X-Player"] = json.dumps({"action": "stop"})
         return response
 
-    episode = get_object_or_404(
+    episode: Episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
 
-    current_time = 0 if episode.completed else episode.current_time or 0
+    current_time: int = 0 if episode.completed else episode.current_time or 0
 
     episode.log_activity(request.user, current_time=current_time)
 
