@@ -120,7 +120,7 @@ class Podcast(models.Model):
     sync_error: str = models.TextField(blank=True)
     num_retries: int = models.PositiveIntegerField(default=0)
 
-    search_vector: Optional[str] = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = PodcastManager()
 
