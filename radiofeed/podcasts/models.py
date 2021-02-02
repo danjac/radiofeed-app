@@ -1,4 +1,5 @@
-from typing import Union
+from datetime import datetime
+from typing import Optional, Union
 
 # Django
 from django.conf import settings
@@ -19,6 +20,7 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField
+from sorl.thumbnail.images import ImageFile as SorlImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -35,8 +37,8 @@ CategoryManager: models.Manager = models.Manager.from_queryset(CategoryQuerySet)
 
 class Category(models.Model):
 
-    name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
+    name: str = models.CharField(max_length=100, unique=True)
+    parent: Optional["Category"] = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -45,11 +47,11 @@ class Category(models.Model):
     )
 
     # https://itunes.apple.com/search?term=podcast&genreId=1402&limit=20
-    itunes_genre_id = models.IntegerField(
+    itunes_genre_id: int = models.IntegerField(
         verbose_name="iTunes Genre ID", null=True, blank=True, unique=True
     )
 
-    objects = CategoryManager()
+    objects: models.Manager = CategoryManager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -59,10 +61,10 @@ class Category(models.Model):
         return self.name
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("podcasts:category_detail", args=[self.id, self.slug])
 
 
@@ -85,43 +87,42 @@ PodcastManager: models.Manager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    rss = models.URLField(unique=True, max_length=500)
-    etag = models.TextField(blank=True)
-    title = models.TextField()
-    pub_date = models.DateTimeField(null=True, blank=True)
+    rss: str = models.URLField(unique=True, max_length=500)
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
+    pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
-    cover_image = ImageField(null=True, blank=True)
+    cover_image: Optional[SorlImageFile] = ImageField(null=True, blank=True)
 
-    itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
+    itunes: Optional[str] = models.URLField(
+        max_length=500, null=True, blank=True, unique=True
+    )
 
-    language = models.CharField(max_length=2, default="en")
-    description = models.TextField(blank=True)
-    link = models.URLField(null=True, blank=True, max_length=500)
-    keywords = models.TextField(blank=True)
+    language: str = models.CharField(max_length=2, default="en")
+    description: str = models.TextField(blank=True)
+    link: str = models.URLField(null=True, blank=True, max_length=500)
+    keywords: str = models.TextField(blank=True)
+    extracted_text: str = models.TextField(blank=True)
+    authors: str = models.TextField(blank=True)
 
-    extracted_text = models.TextField(blank=True)
+    last_updated: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
-    authors = models.TextField(blank=True)
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
-    last_updated = models.DateTimeField(null=True, blank=True)
-
-    explicit = models.BooleanField(default=False)
-
-    promoted = models.BooleanField(default=False)
-
-    categories = models.ManyToManyField(Category, blank=True)
+    categories: models.QuerySet = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
-    recipients = models.ManyToManyField(
+    recipients: models.QuerySet = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    sync_error = models.TextField(blank=True)
-    num_retries = models.PositiveIntegerField(default=0)
+    sync_error: str = models.TextField(blank=True)
+    num_retries: int = models.PositiveIntegerField(default=0)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
-    objects = PodcastManager()
+    objects: models.Manager = PodcastManager()
 
     class Meta:
         indexes = [
@@ -146,8 +147,10 @@ class Podcast(models.Model):
 
 
 class Subscription(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -202,16 +205,20 @@ RecommendationManager: models.Manager = models.Manager.from_queryset(
 
 
 class Recommendation(models.Model):
-    podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
-    recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
+    recommended: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
 
-    frequency = models.PositiveIntegerField(default=0)
+    frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
+    similarity: float = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
-    objects = RecommendationManager()
+    objects: models.Manager = RecommendationManager()
 
     class Meta:
         indexes = [
