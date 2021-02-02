@@ -123,9 +123,9 @@
       novalidate>
   {% csrf_token %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-800 text-red-600" %}
+  {% with WIDGET_ERROR_CLASS="border-red-800" %}
   <div class="mb-3">
-    {% render_field form.email placeholder=form.email.label class="p-1 w-full" %}
+    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.email.errors %}
   </div>
   {% endwith %}

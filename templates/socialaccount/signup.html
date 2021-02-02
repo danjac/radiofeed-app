@@ -26,11 +26,11 @@
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   {% with WIDGET_ERROR_CLASS="border-red-800" %}
   <div class="mb-3">
-    {% render_field form.username placeholder=form.username.label class="p-1 w-full" %}
+    {% render_field form.username aria-label=form.username.label placeholder=form.username.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.username.errors %}
   </div>
   <div class="mb-3">
-    {% render_field form.email placeholder=form.email.label class="p-1 w-full" %}
+    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.email.errors %}
   </div>
   {% endwith %}

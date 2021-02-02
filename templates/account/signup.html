@@ -23,7 +23,7 @@
          value="{{ redirect_field_value }}" />
   {% endif %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="has-errors" %}
+  {% with WIDGET_ERROR_CLASS="border-red-800" %}
   <div class="mb-3">
     {% render_field form.username aria-label=form.username.label placeholder=form.username.label class="p-1 w-full" %}
     {% include "_form_errors.html" with errors=form.username.errors %}
