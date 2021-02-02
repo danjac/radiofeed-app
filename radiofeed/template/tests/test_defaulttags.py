@@ -1,11 +1,13 @@
-# Django
 from django.urls import reverse
 
-# RadioFeed
 from radiofeed.podcasts.models import Podcast
 
-# Local
-from ..defaulttags import active_link, percent, share_buttons
+from ..defaulttags import active_link, jsonify, percent, share_buttons
+
+
+class TestJsonify:
+    def test_jsonify(self):
+        assert jsonify({"title": "test"}) == '{"title": "test"}'
 
 
 class TestPercent:

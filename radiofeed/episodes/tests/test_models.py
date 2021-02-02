@@ -51,6 +51,12 @@ class TestEpisodeManager:
 
 
 class TestEpisodeModel:
+    def test_get_media_metadata(self, episode):
+        data = episode.get_media_metadata()
+        assert data["title"] == episode.title
+        assert data["album"] == episode.podcast.title
+        assert data["artist"] == episode.podcast.authors
+
     def test_slug(self):
         episode = Episode(title="Testing")
         assert episode.slug == "testing"
