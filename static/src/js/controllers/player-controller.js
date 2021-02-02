@@ -167,6 +167,7 @@ export default class extends Controller {
     this.mediaUrlValue = mediaUrl;
     this.currentTimeValue = parseFloat(currentTime || 0);
 
+    console.log('metadata', metadata);
     if (metadata) {
       this.metadataValue = metadata;
     }
@@ -343,17 +344,15 @@ export default class extends Controller {
       Object.keys(this.audioListeners).forEach((event) =>
         this.audio.addEventListener(event, this.audioListeners[event])
       );
-
-      if ('mediaSession' in navigator && this.metadataValue) {
-        const { title, artist, album, artwork } = this.metadataValue;
-        // { src: 'https://dummyimage.com/96x96', sizes: '96x96', type: 'image/png' },
-        navigator.mediaSession.metadata = new window.MediaMetadata({
-          title,
-          artist,
-          album,
-          artwork,
-        });
-      }
+    }
+    if ('mediaSession' in navigator && this.metadataValue) {
+      const { title, artist, album, artwork } = this.metadataValue;
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title,
+        artist,
+        album,
+        artwork,
+      });
     }
   }
 

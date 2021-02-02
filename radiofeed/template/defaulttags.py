@@ -7,7 +7,6 @@ from django import template
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
-from django.utils.html import _json_script_escapes
 from django.utils.safestring import mark_safe
 
 from radiofeed.typing import ContextDict
@@ -19,6 +18,14 @@ register = template.Library()
 
 
 ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
+
+
+json_escapes = {
+    ord(">"): "\\u003E",
+    ord("<"): "\\u003C",
+    ord("&"): "\\u0026",
+    ord("'"): "\\u0027",
+}
 
 
 @register.simple_tag(takes_context=True)
@@ -68,6 +75,4 @@ def percent(value: Optional[float], total: Optional[float]) -> float:
 
 @register.filter
 def jsonify(value: Any) -> str:
-    return mark_safe(
-        json.dumps(value, cls=DjangoJSONEncoder).translate(_json_script_escapes)
-    )
+    return mark_safe(json.dumps(value, cls=DjangoJSONEncoder).translate(json_escapes))
