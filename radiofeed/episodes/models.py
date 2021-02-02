@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -12,6 +12,7 @@ from django.utils.encoding import force_str
 from django.utils.text import slugify
 
 from model_utils.models import TimeStampedModel
+from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
 
@@ -157,6 +158,35 @@ class Episode(models.Model):
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
+
+    def get_media_metadata(
+        self,
+    ) -> Dict[str, Union[str, List[Dict[str, str]]]]:
+        # https://developers.google.com/web/updates/2017/02/media-session
+        data = {
+            "title": self.title,
+            "album": self.podcast.title,
+            "artist": self.podcast.authors,
+        }
+
+        if self.podcast.cover_image:
+            thumbnail = get_thumbnail(
+                self.podcast.cover_image, "200", format="PNG", crop="center"
+            )
+
+            if thumbnail:
+                data |= {
+                    "artwork": [
+                        {
+                            "src": thumbnail.url,
+                            "sizes": f"{size}x{size}",
+                            "type": "image/png",
+                        }
+                        for size in [96, 128, 192, 256, 384, 512]
+                    ]
+                }
+
+        return data
 
 
 class BookmarkQuerySet(models.QuerySet):

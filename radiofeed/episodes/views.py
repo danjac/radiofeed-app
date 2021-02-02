@@ -238,6 +238,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "action": "start",
             "mediaUrl": episode.media_url,
             "currentTime": current_time,
+            "metadata": episode.get_media_metadata(),
         }
     )
     return response

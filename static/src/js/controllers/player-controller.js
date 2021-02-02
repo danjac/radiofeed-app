@@ -22,6 +22,7 @@ export default class extends Controller {
     currentTime: Number,
     duration: Number,
     mediaUrl: String,
+    metadata: Object,
     paused: Boolean,
     playbackRate: Number,
     timeupdateUrl: String,
@@ -152,7 +153,9 @@ export default class extends Controller {
       this.checkControlsAvailable();
       return;
     }
-    const { action, mediaUrl, currentTime } = JSON.parse(headers.get('X-Player'));
+    const { action, mediaUrl, currentTime, metadata } = JSON.parse(
+      headers.get('X-Player')
+    );
     console.log('ACTION', action);
     if (action === 'stop') {
       console.log('close player');
@@ -163,6 +166,10 @@ export default class extends Controller {
     //
     this.mediaUrlValue = mediaUrl;
     this.currentTimeValue = parseFloat(currentTime || 0);
+
+    if (metadata) {
+      this.metadataValue = metadata;
+    }
 
     this.initAudio();
 
@@ -336,6 +343,17 @@ export default class extends Controller {
       Object.keys(this.audioListeners).forEach((event) =>
         this.audio.addEventListener(event, this.audioListeners[event])
       );
+
+      if ('mediaSession' in navigator && this.metadataValue) {
+        const { title, artist, album, artwork } = this.metadataValue;
+        // { src: 'https://dummyimage.com/96x96', sizes: '96x96', type: 'image/png' },
+        navigator.mediaSession.metadata = new window.MediaMetadata({
+          title,
+          artist,
+          album,
+          artwork,
+        });
+      }
     }
   }
 
