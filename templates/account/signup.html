@@ -12,7 +12,7 @@
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
 
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% endif %}"
       method="post"
       action="{% url 'account_signup' %}"
       novalidate>

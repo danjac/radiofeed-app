@@ -117,7 +117,7 @@
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
 
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% endif %}"
       method="post"
       action="{% url 'account_email' %}"
       novalidate>

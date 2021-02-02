@@ -3,7 +3,7 @@
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3 pb-2 border-b border-gray-500">
+<div class="sm:flex justify-between items-center mb-3 pb-2 border-b">
   <h2 class="text-lg font-bold mb-3 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
   <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
     {% if search %}
@@ -20,7 +20,7 @@
   {% endif %}
 </div>
 
-<div class="divide-y divide-gray-500">
+<div class="divide-y divide-gray-300">
   {% if search %}
   {% for category in categories %}
   <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">

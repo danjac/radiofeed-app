@@ -14,7 +14,7 @@
 {% user_display confirmation.email_address.user as user_display %}
 
 
-<div class="mb-3 w-full md:w-3/4 lg:w-1/2 border border-gray-500 p-3">
+<div class="mb-3 w-full md:w-3/4 lg:w-1/2 border p-3{% if form.errors %} border-red-500{% endif %}">
   <p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user {{ user_display }}.{% endblocktranslate %}</p>
 
   <form method="post"

@@ -11,7 +11,7 @@
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
 
-<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-800{% else %}border-gray-500{% endif %}"
+<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-800{% endif %}"
       method="post"
       id="{{ view.turbo_stream_target }}"
       action="{% url 'socialaccount_signup' %}"
