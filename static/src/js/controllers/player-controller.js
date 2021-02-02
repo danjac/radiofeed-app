@@ -346,13 +346,7 @@ export default class extends Controller {
       );
     }
     if ('mediaSession' in navigator && this.metadataValue) {
-      const { title, artist, album, artwork } = this.metadataValue;
-      navigator.mediaSession.metadata = new window.MediaMetadata({
-        title,
-        artist,
-        album,
-        artwork,
-      });
+      navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
     }
   }
 
