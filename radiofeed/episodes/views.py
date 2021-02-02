@@ -194,7 +194,6 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     is then added to the session."""
 
     streams: List[str] = []
-    response: HttpResponse
 
     # clear session
     if current_episode := request.player.eject():
