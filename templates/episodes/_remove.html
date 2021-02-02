@@ -2,7 +2,7 @@
       action="{{ action_url }}"
       class="{{ css_class|default:'' }}">
   {% csrf_token %}
-  <button class="btn btn-secondary flex items-center"
+  <button class="btn btn-secondary flex items-center px-1"
           name="remove"
           value="true"
           title="{{ btn_title }}">
