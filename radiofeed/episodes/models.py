@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -160,9 +160,7 @@ class Episode(models.Model):
         except self.DoesNotExist:
             return None
 
-    def get_media_metadata(
-        self,
-    ) -> Dict[str, Union[str, List]]:
+    def get_media_metadata(self) -> Dict:
         # https://developers.google.com/web/updates/2017/02/media-session
         data: Dict = {
             "title": self.title,
