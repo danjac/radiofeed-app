@@ -19,9 +19,10 @@
       </div>
       {% if podcast.explicit %}
 
-      <div class="text-red-500 font-semibold mb-3 flex items-center">
-        {% include "_explicit.html" with css_class="mr-2" %}
-      </div>
+      <button class="mb-3 flex items-center text-red-500 font-semibold">
+      {% include "_explicit.html" with css_class="mr-1" %}
+       Explicit
+      </button>
       {% endif %}
 
       <div class="flex items-center mb-2">
@@ -49,7 +50,7 @@
   </div>
   <div>
     {% for category in podcast.categories.all %}
-    <a class="inline-block mr-3 mb-3 btn btn-default"
+    <a class="inline-block mr-3 mb-3 btn btn-default px-2"
        href="{{ category.get_absolute_url }}">
       <div class="flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg"
