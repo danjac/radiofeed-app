@@ -215,10 +215,12 @@ BookmarkManager: models.Manager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
 class Bookmark(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    objects = BookmarkManager()
+    objects: models.Manager = BookmarkManager()
 
     class Meta:
         constraints = [
@@ -251,13 +253,15 @@ AudioLogManager: models.Manager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    updated = models.DateTimeField()
-    completed = models.DateTimeField(null=True, blank=True)
-    current_time = models.IntegerField(default=0)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated: datetime = models.DateTimeField()
+    completed: Optional[datetime] = models.DateTimeField(null=True, blank=True)
+    current_time: int = models.IntegerField(default=0)
 
-    objects = AudioLogManager()
+    objects: models.Manager = AudioLogManager()
 
     class Meta:
         constraints = [
