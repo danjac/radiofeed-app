@@ -1,7 +1,6 @@
 <form class="{{ css_class|default:'' }}"
       method="POST"
       id="{% if player_toggle_id %}{{ player_toggle_id }}{% else %}episode-play-toggle-{{ episode.id }}{% endif %}"
-      data-turbo-frame="_top"
       action="{% url 'episodes:toggle_player' episode.id %}">
   {% csrf_token %}
 

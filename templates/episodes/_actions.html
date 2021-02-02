@@ -40,6 +40,9 @@
   </a>
   <div>
     <div class="flex items-center mb-1">
+      <div class="mr-2">
+        {% include "episodes/player/_toggle.html" %}
+      </div>
       <turbo-frame id="{{ episode.get_bookmark_toggle_id }}">
         {% include "episodes/bookmarks/_toggle.html" %}
       </turbo-frame>

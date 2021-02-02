@@ -92,7 +92,8 @@ def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
                 {
                     "episode": episode,
                     "is_bookmarked": is_bookmarked,
-                    "player_toggle_id": f"episode-play-modal-toggle-{episode.id}",
+                    "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
+                    "is_episode_playing": request.player.is_playing(episode),
                 },
             )
             .response(request)
@@ -200,7 +201,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     # clear session
     if current_episode := request.player.eject():
-        streams += [render_player_toggle(request, current_episode, False)]
+        streams += render_player_toggles(request, current_episode, False)
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -229,8 +230,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episodes/player/_player.html", {"episode": episode}, request=request
         )
         .render(),
-        render_player_toggle(request, episode, True),
-    ]
+    ] + render_player_toggles(request, episode, True)
 
     response = TurboStreamResponse(streams)
     response["X-Player"] = json.dumps(
@@ -268,13 +268,11 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
-def render_player_toggle(
+def render_player_toggles(
     request: HttpRequest, episode: Episode, is_playing: bool
-) -> str:
+) -> List[str]:
 
-    target = f"episode-play-toggle-{episode.id}"
-
-    return (
+    return [
         TurboStream(target)
         .replace.template(
             "episodes/player/_toggle.html",
@@ -286,7 +284,11 @@ def render_player_toggle(
             request=request,
         )
         .render()
-    )
+        for target in [
+            f"episode-play-toggle-{episode.id}",
+            f"episode-play-actions-toggle-{episode.id}",
+        ]
+    ]
 
 
 def episode_bookmark_response(
