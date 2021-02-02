@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Union
 
 from django.conf import settings
@@ -54,27 +55,27 @@ EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid = models.TextField()
+    guid: str = models.TextField()
 
-    pub_date = models.DateTimeField()
-    link = models.URLField(null=True, blank=True, max_length=500)
+    pub_date: datetime = models.DateTimeField()
+    link: str = models.URLField(null=True, blank=True, max_length=500)
 
-    title = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    media_url = models.URLField(max_length=500)
-    media_type = models.CharField(max_length=60)
-    length = models.IntegerField(null=True, blank=True)
+    media_url: str = models.URLField(max_length=500)
+    media_type: str = models.CharField(max_length=60)
+    length: int = models.IntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=30, blank=True)
-    explicit = models.BooleanField(default=False)
+    duration: str = models.CharField(max_length=30, blank=True)
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
-    objects = EpisodeManager()
+    objects: models.Manager = EpisodeManager()
 
     class Meta:
         constraints = [
@@ -113,13 +114,16 @@ class Episode(models.Model):
         parts = self.duration.split(":")
         num_parts = len(parts)
 
-        if num_parts == 1:
-            seconds = parts[0]
-        elif num_parts == 2:
-            [minutes, seconds] = parts
-        elif num_parts == 3:
-            [hours, minutes, seconds] = parts
-        else:
+        try:
+            if num_parts == 1:
+                seconds = int(parts[0])
+            elif num_parts == 2:
+                [minutes, seconds] = [int(p) for p in parts]
+            elif num_parts == 3:
+                [hours, minutes, seconds] = [int(p) for p in parts]
+            else:
+                return 0
+        except ValueError:
             return 0
 
         try:
