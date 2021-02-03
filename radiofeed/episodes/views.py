@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import OuterRef, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -13,7 +12,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import paginate
-from radiofeed.podcasts.models import Podcast
 
 from .models import AudioLog, Bookmark, Episode
 
@@ -32,19 +30,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
-        # we want a list of the *latest* episode for each podcast
-        latest_episodes = (
-            Episode.objects.filter(podcast=OuterRef("pk"))
-            .order_by("-pub_date")
-            .distinct()
-        )
-        episode_pks = (
-            Podcast.objects.filter(pk__in=subscriptions)
-            .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-            .values_list("latest_episode", flat=True)
-        ).distinct()
-
-        episodes = episodes.filter(pk__in=set(episode_pks)).order_by("-pub_date")
+        episodes = episodes.filter(podcast__in=subscriptions).order_by("-pub_date")
     else:
         episodes = episodes.none()
 
