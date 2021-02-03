@@ -31,17 +31,7 @@
         <div class="flex items-center">
           {{ emailaddress.email }}
           {% if emailaddress.verified %}
-          <svg xmlns="http://www.w3.org/2000/svg"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               title="Verified"
-               class="h-5 w-5 ml-2 text-green-300">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M5 13l4 4L19 7" />
-          </svg>
+          {% svg "check" css_class="h-5 w-5 ml-2 text-green-300" %}
           {% endif %}
         </div>
       </div>
@@ -55,31 +45,13 @@
             type="submit"
             value="1"
             name="action_send">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           class="h-4 w-4 mr-2"
-           stroke="currentColor">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
+      {% svg "mail" css_class="btn-icon mr-2" %}
       {% translate 'Re-Verify' %}
     </button>
     <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
             value="1"
             name="action_primary">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           class="h-4 w-4 mr-2"
-           stroke="currentColor">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-      </svg>
+      {% svg "sparkles" css_class="btn-icon mr-2" %}
       {% translate 'Make Primary' %}
 
     </button>
@@ -90,17 +62,7 @@
             data-action="confirm#confirm"
             value="1"
             name="action_remove">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           stroke="currentColor"
-           class="h-4 w-4 mr-2">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-      </svg>
-
+      {% svg "trash" css_class="btn-icon mr-2" %}
       {% translate 'Remove' %}
     </button>
     {% endwith %}
@@ -134,16 +96,7 @@
             name="action_add"
             value="1"
             type="submit">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           class="h-4 w-4 mr-2"
-           stroke="currentColor">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
+      {% svg "plus" css_class="btn-icon mr-2" %}
       {% translate "Add E-Mail" %}
     </button>
   </div>
