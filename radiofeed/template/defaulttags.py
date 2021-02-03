@@ -93,10 +93,11 @@ def keepspaces(text: Optional[str]) -> str:
     )
 
 
-@register.simple_tag(takes_context=True)
-def svg(context: RequestContext, name: str, css_class: str = "", **attrs) -> Dict:
+@register.simple_tag
+def svg(name: str, css_class: str = "", **attrs) -> Dict:
     return render_to_string(
-        f"svg/_{name}.svg", {"css_class": css_class}, request=context["request"]
+        f"svg/_{name}.svg",
+        {"css_class": css_class},
     )
 
 

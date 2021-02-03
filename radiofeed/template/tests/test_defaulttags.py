@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Podcast
 
-from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons
+from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons, svg
 
 
 class TestJsonify:
@@ -82,3 +82,9 @@ class TestKeepspaces:
 
     def test_value_has_html(self):
         return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
+
+
+class TestSvg:
+    def test_render_svg(self):
+        result = svg("ellipsis", css_class="h-4 w-4")
+        assert 'class="h-4 w-4"' in result
