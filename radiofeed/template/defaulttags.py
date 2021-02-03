@@ -6,7 +6,9 @@ from urllib import parse
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
+from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 import bs4
@@ -29,7 +31,7 @@ json_escapes = {
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: Dict, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -39,7 +41,7 @@ def active_link(context: Dict, url_name: str, *args, **kwargs) -> ActiveLink:
 
 
 @register.inclusion_tag("_share.html", takes_context=True)
-def share_buttons(context: Dict, url: str, subject: str):
+def share_buttons(context: RequestContext, url: str, subject: str):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
@@ -89,3 +91,14 @@ def keepspaces(text: Optional[str]) -> str:
         .get_text(separator=" ")
         .strip()
     )
+
+
+@register.simple_tag(takes_context=True)
+def svg(context: RequestContext, name: str, css_class: str = "", **attrs) -> Dict:
+    return render_to_string(
+        f"svg/_{name}.svg", {"css_class": css_class}, request=context["request"]
+    )
+
+
+def _convert_attrs(attrs: Dict[str, str]) -> Dict[str, str]:
+    return {k.replace("_", "-"): v for k, v in attrs.items()}
