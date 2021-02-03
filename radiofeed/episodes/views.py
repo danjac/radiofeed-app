@@ -39,9 +39,9 @@ def episode_list(request: HttpRequest) -> HttpResponse:
         episode_pks = (
             Podcast.objects.filter(pk__in=subscriptions)
             .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-            .values("latest_episode")
+            .values_list("latest_episode", flat=True)
         )
-        episodes = episodes.filter(pk__in=episode_pks).order_by("-pub_date")
+        episodes = episodes.filter(pk__in=list(episode_pks)).order_by("-pub_date")
     else:
         episodes = episodes.none()
 
