@@ -27,23 +27,24 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     )
     has_subscriptions: bool = bool(subscriptions)
 
-    episodes = Episode.objects.select_related("podcast")
+    episodes = Episode.objects.select_related("podcast").distinct()
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     elif subscriptions:
         # we want a list of the *latest* episode for each podcast
-        latest_episodes = Episode.objects.filter(podcast=OuterRef("pk")).order_by(
-            "-pub_date"
+        latest_episodes = (
+            Episode.objects.filter(podcast=OuterRef("pk"))
+            .order_by("-pub_date")
+            .distinct()
         )
         episode_pks = (
             Podcast.objects.filter(pk__in=subscriptions)
             .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
             .values_list("latest_episode", flat=True)
         ).distinct()
-        episodes = (
-            episodes.filter(pk__in=set(episode_pks)).order_by("-pub_date").distinct()
-        )
+
+        episodes = episodes.filter(pk__in=set(episode_pks)).order_by("-pub_date")
     else:
         episodes = episodes.none()
 
