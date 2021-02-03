@@ -15,7 +15,7 @@
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
-  <div class="border border-gray-500 p-2 mb-3">
+  <div class="border p-2 mb-3">
     <label for="email_radio_{{forloop.counter}}"
            class="flex items-center">
 
