@@ -29,16 +29,7 @@
       <button data-action="toggle#toggle"
               class="focus:outline-none float-right hover:text-blue-500"
               title="Maximize Player">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor"
-             class="h-6 w-6">
-          <path stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 15l7-7 7 7" />
-        </svg>
+        {% svg "chevron_up" css_class="h-6 w-6" %}
       </button>
     </div>
   </div>
@@ -48,16 +39,7 @@
     <button data-action="toggle#toggle"
             class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
             title="Mimimize Player">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           fill="none"
-           viewBox="0 0 24 24"
-           stroke="currentColor"
-           class="h-6 w-6">
-        <path stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7" />
-      </svg>
+        {% svg "chevron_down" css_class="h-6 w-6" %}
     </button>
 
     <div class="mb-3 lg:hidden pr-1 text-sm w-64 sm:w-96 truncate">
@@ -98,16 +80,7 @@
                     data-action="player#pause"
                     data-player-target="pauseButton"
                     class="focus:outline-none hover:text-blue-500 mr-1">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   fill="none"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor"
-                   class="h-8 w-8 md:h-10 md:w-10">
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              {% svg "pause" css_class="h-8 w-8 md:h-10 md:w-10" %}
             </button>
 
             <button title="Play"
@@ -115,21 +88,7 @@
                     data-toggle-target="item"
                     data-player-target="playButton"
                     class="focus:outline-none mr-1 hidden hover:text-blue-600">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   fill="none"
-                   viewBox="0 0 24 24"
-                   stroke="currentColor"
-                   class="h-8 w-8 md:h-10 md:w-10">
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-
+              {% svg "play" css_class="h-8 w-8 md:h-10 md:w-10" %}
             </button>
 
             <form class="flex items-center"
@@ -146,20 +105,7 @@
                      value="stop">
               <button title="Stop"
                       class="focus:outline-none hover:text-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     fill="none"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     class="h-7 w-7 md:h-9 md:w-9">
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  <path stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                </svg>
+                {% svg "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
             </form>
 
@@ -180,47 +126,13 @@
 
             <button title="Skip back 10 seconds"
                     data-action="player#skipBack"
-                    class="focus:outline-none hover:text-blue-500 player--interactive mr-1">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   xmlns:xlink="http://www.w3.org/1999/xlink"
-                   aria-hidden="true"
-                   focusable="false"
-                   role="img"
-                   class="h-6 w-6 mr-2"
-                   width="1em"
-                   height="1em"
-                   preserveAspectRatio="xMidYMid meet"
-                   viewBox="0 0 32 32"
-                   style="transform: rotate(360deg);">
-                <path d="M4 18A12 12 0 1 0 16 6h-4V1L6 7l6 6V8h4A10 10 0 1 1 6 18z"
-                      fill="currentColor"></path>
-                <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
-                      fill="currentColor"></path>
-                <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
-                      fill="currentColor"></path>
-              </svg>
+                    class="focus:outline-none hover:text-blue-500 player--interactive mr-2">
+              {% svg "skip_back_10" css_class="h-6 w-6" %}
             </button>
             <button title="Skip forward 10 seconds"
                     data-action="player#skipForward"
                     class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                   xmlns:xlink="http://www.w3.org/1999/xlink"
-                   aria-hidden="true"
-                   focusable="false"
-                   role="img"
-                   class="h-6 w-6"
-                   width="1em"
-                   height="1em"
-                   preserveAspectRatio="xMidYMid meet"
-                   viewBox="0 0 32 32"
-                   style="transform: rotate(360deg);">
-                <path d="M26 18A10 10 0 1 1 16 8h4v5l6-6l-6-6v5h-4a12 12 0 1 0 12 12z"
-                      fill="currentColor"></path>
-                <path d="M19.63 22.13a2.84 2.84 0 0 1-1.28-.27a2.44 2.44 0 0 1-.89-.77a3.57 3.57 0 0 1-.52-1.25a7.69 7.69 0 0 1-.17-1.68a7.83 7.83 0 0 1 .17-1.68a3.65 3.65 0 0 1 .52-1.25a2.44 2.44 0 0 1 .89-.77a2.84 2.84 0 0 1 1.28-.27a2.44 2.44 0 0 1 2.16 1a5.23 5.23 0 0 1 .7 2.93a5.23 5.23 0 0 1-.7 2.93a2.44 2.44 0 0 1-2.16 1.08zm0-1.22a1.07 1.07 0 0 0 1-.55a3.38 3.38 0 0 0 .37-1.51v-1.38a3.31 3.31 0 0 0-.29-1.5a1.23 1.23 0 0 0-2.06 0a3.31 3.31 0 0 0-.29 1.5v1.38a3.38 3.38 0 0 0 .29 1.51a1.06 1.06 0 0 0 .98.55z"
-                      fill="currentColor"></path>
-                <path d="M10.63 22v-1.18h2v-5.19l-1.86 1l-.55-1.06l2.32-1.3H14v6.5h1.78V22z"
-                      fill="currentColor"></path>
-              </svg>
+              {% svg "skip_forward_10" css_class="h-6 w-6" %}
             </button>
           </div>
 
