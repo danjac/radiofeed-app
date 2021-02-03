@@ -53,8 +53,8 @@
     {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
-<div class="text-sm italic">
-  {{ episode.description|striptags|stripentities|truncatewords:30 }}
+<div class="text-sm italic markdown">
+  {{ episode.description|keepspaces|stripentities|urlize|truncatewords:30 }}
 </div>
 
 {% endwith %}

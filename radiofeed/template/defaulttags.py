@@ -9,6 +9,8 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 
+import bs4
+
 from .html import clean_html_content
 from .html import stripentities as _stripentities
 
@@ -74,3 +76,16 @@ def percent(value: Optional[float], total: Optional[float]) -> float:
 @register.filter
 def jsonify(value: Any) -> str:
     return mark_safe(json.dumps(value, cls=DjangoJSONEncoder).translate(json_escapes))
+
+
+@register.filter
+def keepspaces(text: Optional[str]) -> str:
+    # changes any <br /> <p> <li> etc to spaces
+    if not text:
+        return ""
+    return (
+        bs4.BeautifulSoup(text, features="lxml")
+        .find("body")
+        .get_text(separator=" ")
+        .strip()
+    )

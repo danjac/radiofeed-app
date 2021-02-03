@@ -34,8 +34,8 @@
   </div>
 </div>
 
-<div class="text-sm italic">
-  {{ podcast.description|striptags|stripentities|truncatewords:60 }}
+<div class="text-sm italic markdown">
+  {{ podcast.description|keepspaces|stripentities|urlize|truncatewords:60 }}
 </div>
 
 {% endblock %}

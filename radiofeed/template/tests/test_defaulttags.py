@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Podcast
 
-from ..defaulttags import active_link, jsonify, percent, share_buttons
+from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons
 
 
 class TestJsonify:
@@ -74,3 +74,11 @@ class TestActiveLink:
         assert route.url == reverse("podcasts:podcast_list")
         assert route.match
         assert route.exact
+
+
+class TestKeepspaces:
+    def test_value_is_none(self):
+        return keepspaces(None) == ""
+
+    def test_value_has_html(self):
+        return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
