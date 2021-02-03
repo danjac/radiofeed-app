@@ -1,7 +1,6 @@
 {% block episodes %}
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" with current_time=episode.current_time completed=episode.completed %}
-
 {% empty %}
 
 {% block empty %}
