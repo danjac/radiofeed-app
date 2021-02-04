@@ -62,9 +62,7 @@ class RssParser:
         if not entries:
             return []
 
-        pub_date = self.get_pub_date(entries)
-
-        if pub_date is None:
+        if pub_date := self.get_pub_date(entries) is None:
             return []
 
         do_update: bool = (
