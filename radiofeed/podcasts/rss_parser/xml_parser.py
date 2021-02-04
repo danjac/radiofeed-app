@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 import bs4
 import feedparser
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, conlist
 
 from .date_parser import parse_date
 
@@ -38,7 +38,7 @@ class Feed(BaseModel):
     language: Optional[str]
     image: Optional[str]
     categories: List[str]
-    items: List[Item]
+    items: conlist(Item, min_length=1)  # type: ignore
 
 
 def parse_xml(xml: bytes) -> Optional[Feed]:
