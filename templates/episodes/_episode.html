@@ -50,7 +50,9 @@
                 {% include "_explicit.html" with css_class="ml-2" %}
                 {% endif %}
               </div>
-              {% block extra_info %}{% endblock %}
+              {% if remove_url %}
+              {% include "episodes/_remove.html" with css_class="md:hidden ml-2" %}
+              {% endif %}
             </div>
 
           </div>
@@ -59,6 +61,8 @@
       </div>
     </div>
   </div>
-  {% block extra_buttons %}{% endblock %}
+  {% if remove_url %}
+  {% include "episodes/_remove.html" with css_class="hidden md:inline-block" %}
+  {% endif %}
 </div>
 {% endwith %}

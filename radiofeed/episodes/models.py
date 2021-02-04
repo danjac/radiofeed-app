@@ -223,6 +223,9 @@ class Bookmark(TimeStampedModel):
             models.Index(fields=["-created"]),
         ]
 
+    def get_remove_url(self) -> str:
+        return reverse("episodes:remove_bookmark", args=[self.episode_id])
+
 
 class AudioLogQuerySet(models.QuerySet):
     def search(self, search_term: str) -> models.QuerySet:
@@ -261,3 +264,6 @@ class AudioLog(TimeStampedModel):
         indexes = [
             models.Index(fields=["-updated"]),
         ]
+
+    def get_remove_url(self) -> str:
+        return reverse("episodes:remove_history", args=[self.episode_id])

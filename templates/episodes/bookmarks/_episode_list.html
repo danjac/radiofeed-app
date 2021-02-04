@@ -2,8 +2,7 @@
 
 {% block episodes %}
 {% for bookmark in page_obj %}
-{% include "episodes/bookmarks/_episode.html" with episode=bookmark.episode %}
-
+{% include "episodes/_episode.html" with episode=bookmark.episode remove_url=bookmark.get_remove_url %}
 {% empty %}
 {% block empty %}
 {% if search %}
@@ -12,6 +11,5 @@
 You do not have any bookmarks at the moment.
 {% endif %}
 {% endblock empty %}
-
 {% endfor %}
 {% endblock %}

@@ -2,8 +2,7 @@
 
 {% block episodes %}
 {% for log in page_obj %}
-{% include "episodes/history/_episode.html" with episode=log.episode %}
-
+{% include "episodes/_episode.html" with episode=log.episode remove_url=log.get_remove_url %}
 {% empty %}
 {% block empty %}
 {% if search %}
@@ -12,6 +11,5 @@
 Your history is currently empty.
 {% endif %}
 {% endblock empty %}
-
 {% endfor %}
 {% endblock %}
