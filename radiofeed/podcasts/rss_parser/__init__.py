@@ -13,7 +13,8 @@ from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
 from .headers import get_headers
 from .image import InvalidImageURL, fetch_image_from_url
-from .xml_parser import Feed, Item, parse_xml
+from .models import Feed, Item
+from .xml_parser import parse_xml
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +162,6 @@ class RssParser:
             pub_date=item.pub_date,
             guid=item.guid,
             title=item.title,
-            link=item.link[:500],
             duration=item.duration,
             explicit=item.explicit,
             description=item.description,

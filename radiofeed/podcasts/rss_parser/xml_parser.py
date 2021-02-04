@@ -1,44 +1,14 @@
-import datetime
 import logging
 from typing import Dict, List, Optional
 
 import bs4
 import feedparser
-from pydantic import BaseModel, ValidationError, conlist
+from pydantic import ValidationError
 
 from .date_parser import parse_date
+from .models import Audio, Feed, Item
 
 logger = logging.getLogger(__name__)
-
-
-class Audio(BaseModel):
-    url: str
-    type: str
-    length: Optional[int]
-
-
-class Item(BaseModel):
-    audio: Audio
-    title: str
-    guid: str
-    link: str
-    explicit: bool
-    description: str
-    pub_date: datetime.datetime
-    duration: str
-    keywords: str
-
-
-class Feed(BaseModel):
-    title: str
-    description: str
-    explicit: bool
-    link: str
-    authors: List[str]
-    language: Optional[str]
-    image: Optional[str]
-    categories: List[str]
-    items: conlist(Item, min_items=1)  # type: ignore
 
 
 def parse_xml(xml: bytes) -> Optional[Feed]:
@@ -74,7 +44,6 @@ def parse_item(entry: Dict) -> Optional[Item]:
         return Item(
             guid=entry["id"],
             title=entry.get("title"),
-            link=entry.get("link", ""),
             duration=entry.get("itunes_duration", ""),
             explicit=bool(entry.get("itunes_explicit", False)),
             audio=parse_audio(entry),
