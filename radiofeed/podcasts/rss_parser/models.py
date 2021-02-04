@@ -7,7 +7,7 @@ from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
-    length: Optional[int]
+    length: int = 0
 
     @validator("type")
     def is_audio(cls, value: str) -> str:
@@ -21,20 +21,20 @@ class Item(BaseModel):
     audio: Audio
     title: str
     guid: str
-    explicit: bool
-    description: str
+    explicit: bool = False
+    description: str = ""
+    keywords: str = ""
     pub_date: datetime.datetime
     duration: constr(max_length=30)  # type: ignore
-    keywords: str
 
 
 class Feed(BaseModel):
     title: str
     description: str
-    explicit: bool
+    explicit: bool = False
+    language: str = "en"
+    items: conlist(Item, min_items=1)  # type: ignore
     authors: List[str]
-    link: Optional[HttpUrl]
-    language: Optional[str]
     image: Optional[str]
     categories: List[str]
-    items: conlist(Item, min_items=1)  # type: ignore
+    link: Optional[HttpUrl] = None
