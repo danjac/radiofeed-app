@@ -101,8 +101,7 @@ def parse_audio(entry: Dict) -> Optional[Audio]:
         url = audio["url"]
         type = audio["type"]
     except (IndexError, KeyError):
-        url = None
-        type = None
+        return None
 
     length: Optional[int]
 
