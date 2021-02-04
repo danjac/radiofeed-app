@@ -39,7 +39,7 @@ class Feed(BaseModel):
     items: List[Item]
 
 
-def parse_xml(xml: str) -> Optional[Feed]:
+def parse_xml(xml: bytes) -> Optional[Feed]:
     result = feedparser.parse(xml)
     channel = result["feed"]
 
@@ -136,7 +136,7 @@ def parse_description(entry: Dict) -> str:
         return ""
 
 
-def parse_image(xml: str, channel: Dict) -> Optional[str]:
+def parse_image(xml: bytes, channel: Dict) -> Optional[str]:
     # try itunes image first
     soup = bs4.BeautifulSoup(xml, "lxml")
     tag = soup.find("itunes:image")
