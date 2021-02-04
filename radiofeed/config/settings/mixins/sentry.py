@@ -1,7 +1,10 @@
 import sentry_sdk
+from sentry.integrations.logging import ignore_logger
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from ..base import env
+
+ignore_logger("django.security.DisallowedHost")
 
 sentry_sdk.init(
     dsn=env("SENTRY_URL"),
