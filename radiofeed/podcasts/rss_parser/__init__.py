@@ -1,6 +1,6 @@
 import datetime
 from functools import lru_cache
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from django.utils import timezone
 
@@ -26,17 +26,17 @@ class RssParser:
     def parse(self) -> List[Episode]:
 
         try:
-            content, etag = self.fetch_content()
+            etag = self.fetch_etag()
+            if etag and etag == self.podcast.etag:
+                return []
+            xml = self.fetch_xml()
         except requests.RequestException as e:
             self.podcast.sync_error = str(e)
             self.podcast.num_retries += 1
             self.podcast.save()
             raise
 
-        if content is None:
-            return []
-
-        feed = parse_xml(content)
+        feed = parse_xml(xml)
 
         if not feed or feed.items:
             return []
@@ -97,24 +97,21 @@ class RssParser:
 
         return new_episodes
 
-    def fetch_content(self) -> Tuple[Optional[bytes], Optional[str]]:
+    def fetch_etag(self) -> Optional[str]:
         # fetch etag and last modified
         head_response = requests.head(
             self.podcast.rss, headers=get_headers(), timeout=5
         )
         head_response.raise_for_status()
         headers = head_response.headers
+        return headers.get("ETag")
 
-        # if etag hasn't changed then we can skip
-        etag = headers.get("ETag")
-        if etag and etag == self.podcast.etag:
-            return None, None
-
+    def fetch_xml(self) -> bytes:
         response = requests.get(
             self.podcast.rss, headers=get_headers(), stream=True, timeout=5
         )
         response.raise_for_status()
-        return response.content, etag
+        return response.content
 
     def extract_text(self, feed: Feed, categories: List[Category]) -> str:
         """Extract keywords from text content for recommender"""
