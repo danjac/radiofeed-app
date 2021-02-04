@@ -62,22 +62,9 @@ class RssParser:
         if not entries:
             return []
 
-        dates = [
-            d
-            for d in [
-                parse_date(str(e["published"]) if "published" in e else None)
-                for e in entries
-            ]
-            if d
-        ]
+        pub_date = self.get_pub_date(entries)
 
-        now: datetime.datetime = timezone.now()
-        pub_date: Optional[datetime.datetime] = None
-
-        if dates:
-            pub_date = max([date for date in dates if date and date < now])
-
-        if not pub_date:
+        if pub_date is None:
             return []
 
         do_update: bool = (
@@ -125,7 +112,7 @@ class RssParser:
             categories_dct[kw] for kw in keywords if kw in categories_dct
         ]
 
-        self.podcast.last_updated = now
+        self.podcast.last_updated = timezone.now()
         self.podcast.pub_date = pub_date
 
         keywords = [kw for kw in keywords if kw not in categories_dct]
@@ -170,6 +157,26 @@ class RssParser:
             + [e["title"] for e in entries if "title" in e][:6]
         )
         return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
+
+    def get_pub_date(self, entries: List[Dict]) -> Optional[datetime.datetime]:
+        dates = [
+            d
+            for d in [
+                parse_date(str(e["published"]) if "published" in e else None)
+                for e in entries
+            ]
+            if d
+        ]
+
+        if not dates:
+            return None
+
+        now = timezone.now()
+
+        try:
+            return max([date for date in dates if date and date < now])
+        except ValueError:
+            return None
 
     def create_episodes_from_feed(self, entries: List[Dict]) -> List[Episode]:
         """Parses new episodes from podcast feed."""
