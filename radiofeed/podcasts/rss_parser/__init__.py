@@ -102,7 +102,7 @@ class RssParser:
             self.podcast.pub_date = max(e.pub_date for e in new_episodes)
             self.podcast.save(update_fields=["pub_date"])
 
-        logging.debug(f"{len(new_episodes)} new episode(s)")
+        self.debug(f"{len(new_episodes)} new episode(s)")
         return new_episodes
 
     def fetch_etag(self) -> Optional[str]:
@@ -172,10 +172,10 @@ class RssParser:
         )
 
     def debug(self, message: str):
-        logging.debug(f"{self.podcast}:{self.podcast.id}:{message}")
+        logger.debug(f"{self.podcast}:{self.podcast.id}:{message}")
 
     def error(self, message: str):
-        logging.error(f"{self.podcast}:{self.podcast.id}:{message}")
+        logger.error(f"{self.podcast}:{self.podcast.id}:{message}")
 
 
 @lru_cache
