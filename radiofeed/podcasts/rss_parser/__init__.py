@@ -1,3 +1,4 @@
+import datetime
 from functools import lru_cache
 from typing import Dict, List, Optional, cast
 
@@ -70,7 +71,8 @@ class RssParser:
             if d
         ]
 
-        now = timezone.now()
+        now: datetime.datetime = timezone.now()
+        pub_date: Optional[datetime.datetime] = None
 
         if dates:
             pub_date = max([date for date in dates if date and date < now])
