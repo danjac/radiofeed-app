@@ -1,13 +1,20 @@
 import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, HttpUrl, conlist
+from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 
 class Audio(BaseModel):
-    type: str
+    type: constr(max_length=60)  # type: ignore
     url: HttpUrl
     length: Optional[int]
+
+    @validator("type")
+    def is_audio(cls, value: str) -> str:
+        if not value.startswith("audio/"):
+            raise ValueError("not a valid audio media")
+
+        return value
 
 
 class Item(BaseModel):
@@ -17,7 +24,7 @@ class Item(BaseModel):
     explicit: bool
     description: str
     pub_date: datetime.datetime
-    duration: str
+    duration: constr(max_length=30)  # type: ignore
     keywords: str
 
 
