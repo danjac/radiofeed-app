@@ -38,7 +38,7 @@ class Feed(BaseModel):
     language: Optional[str]
     image: Optional[str]
     categories: List[str]
-    items: conlist(Item, min_length=1)  # type: ignore
+    items: conlist(Item, min_items=1)  # type: ignore
 
 
 def parse_xml(xml: bytes) -> Optional[Feed]:
