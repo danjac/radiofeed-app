@@ -2,10 +2,9 @@
 
 {% block episodes %}
 {% for bookmark in page_obj %}
-{% include "episodes/bookmarks/_episode.html" with episode=bookmark.episode current_time=bookmark.current_time completed=bookmark.completed %}
+{% include "episodes/bookmarks/_episode.html" with episode=bookmark.episode %}
 
 {% empty %}
-
 {% block empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>

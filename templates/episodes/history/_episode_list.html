@@ -2,10 +2,9 @@
 
 {% block episodes %}
 {% for log in page_obj %}
-{% include "episodes/history/_episode.html" with episode=log.episode current_time=log.current_time completed=log.completed %}
+{% include "episodes/history/_episode.html" with episode=log.episode %}
 
 {% empty %}
-
 {% block empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
