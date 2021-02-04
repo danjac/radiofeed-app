@@ -62,7 +62,7 @@ class RssParser:
         if not entries:
             return []
 
-        if pub_date := self.get_pub_date(entries) is None:
+        if (pub_date := self.get_pub_date(entries)) is None:
             return []
 
         do_update: bool = (
@@ -228,9 +228,7 @@ class RssParser:
         except (KeyError, ValueError):
             pass
 
-        pub_date: Optional[datetime.datetime] = (
-            parse_date(entry["published"]) if "published" in entry else None
-        )
+        pub_date = parse_date(entry["published"]) if "published" in entry else None
         if pub_date is None or pub_date > timezone.now():
             return None
 
