@@ -35,6 +35,7 @@ lxml
 nltk
 pandas
 psycopg2-binary
+pydantic
 pyopenssl
 pytest
 pytest-asyncio

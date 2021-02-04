@@ -99,6 +99,7 @@ pyasn1-modules==0.2.8     # via service-identity
 pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycodestyle==2.6.0        # via autopep8
 pycparser==2.20           # via cffi
+pydantic==1.7.3           # via -r requirements.in
 pygments==2.7.4           # via django-silk, icecream, ipython
 pyhamcrest==2.0.2         # via twisted
 pyjwt[crypto]==2.0.1      # via django-allauth
