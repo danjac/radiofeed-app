@@ -76,6 +76,7 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 - **DJANGO_SETTINGS_MODULE**: should always be *radiofeed.config.settings.production*
 - **MAILGUN_API_KEY**: see your Mailgun settings
 - **MAILGUN_SENDER_DOMAIN**: see your Mailgun settings
+- **SENTRY_URL**: see your Sentry settings
 - **SECRET_KEY**: Django secret key. Use e.g. https://miniwebtool.com/django-secret-key-generator/ to create new key.
 
 Next add to Git and deploy:
