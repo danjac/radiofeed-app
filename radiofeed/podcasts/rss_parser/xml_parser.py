@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 
 import bs4
 import feedparser
+from icecream import ic
 from pydantic import BaseModel, ValidationError, conlist
 
 from .date_parser import parse_date
@@ -57,7 +58,7 @@ def parse_xml(xml: bytes) -> Optional[Feed]:
             items=parse_items(result),
         )
     except ValidationError as e:
-        logging.error(str(e))
+        ic("feed:", e)
         return None
 
 
@@ -82,7 +83,8 @@ def parse_item(entry: Dict) -> Optional[Item]:
             keywords=" ".join(parse_tags(entry.get("tags", []))),
             pub_date=parse_date(entry.get("published")),
         )
-    except ValidationError:
+    except ValidationError as e:
+        ic("item:", e)
         return None
 
 

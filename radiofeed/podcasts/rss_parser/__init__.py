@@ -1,4 +1,5 @@
 import datetime
+import logging
 from functools import lru_cache
 from typing import Dict, List, Optional
 
@@ -14,6 +15,8 @@ from .headers import get_headers
 from .image import InvalidImageURL, fetch_image_from_url
 from .xml_parser import Feed, Item, parse_xml
 
+logger = logging.getLogger(__name__)
+
 
 class RssParser:
     def __init__(self, podcast: Podcast):
@@ -28,6 +31,7 @@ class RssParser:
         try:
             etag = self.fetch_etag()
             if etag and etag == self.podcast.etag:
+                self.debug("Matching etag, no update")
                 return []
             xml = self.fetch_xml()
         except requests.RequestException as e:
@@ -38,11 +42,13 @@ class RssParser:
 
         feed = parse_xml(xml)
 
-        if not feed or feed.items:
+        if feed is None or not feed.items:
+            self.error("Feed is empty")
             return []
 
         pub_date = self.get_pub_date(feed)
         if not pub_date:
+            self.debug("No recent pub date or new episodes")
             return []
 
         do_update: bool = (
@@ -50,6 +56,7 @@ class RssParser:
         )
 
         if not do_update:
+            self.debug("No recent pub date or new episodes")
             return []
 
         if etag:
@@ -95,6 +102,7 @@ class RssParser:
             self.podcast.pub_date = max(e.pub_date for e in new_episodes)
             self.podcast.save(update_fields=["pub_date"])
 
+        logging.debug(f"{len(new_episodes)} new episode(s)")
         return new_episodes
 
     def fetch_etag(self) -> Optional[str]:
@@ -162,6 +170,12 @@ class RssParser:
             media_type=item.audio.type,
             length=item.audio.length,
         )
+
+    def debug(self, message: str):
+        logging.debug(f"{self.podcast}:{self.podcast.id}:{message}")
+
+    def error(self, message: str):
+        logging.error(f"{self.podcast}:{self.podcast.id}:{message}")
 
 
 @lru_cache
