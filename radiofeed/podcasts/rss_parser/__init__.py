@@ -137,15 +137,16 @@ class RssParser:
     def create_episodes_from_feed(self, feed: Feed) -> List[Episode]:
         """Parses new episodes from podcast feed."""
         guids = self.podcast.episode_set.values_list("guid", flat=True)
-        items = [item for item in feed.items if item.guid not in guids]
-        episodes = [
-            episode
-            for episode in [self.create_episode_from_item(item) for item in items]
-            if episode
-        ]
-        return Episode.objects.bulk_create(episodes, ignore_conflicts=True)
+        return Episode.objects.bulk_create(
+            [
+                self.create_episode_from_item(item)
+                for item in feed.items
+                if item.guid not in guids
+            ],
+            ignore_conflicts=True,
+        )
 
-    def create_episode_from_item(self, item: Item) -> Optional[Episode]:
+    def create_episode_from_item(self, item: Item) -> Episode:
 
         return Episode(
             podcast=self.podcast,
