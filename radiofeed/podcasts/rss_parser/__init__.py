@@ -220,7 +220,9 @@ class RssParser:
         except (KeyError, ValueError):
             pass
 
-        pub_date = parse_date(entry["published"])
+        pub_date: Optional[datetime.datetime] = (
+            parse_date(entry["published"]) if "published" in entry else None
+        )
         if pub_date is None or pub_date > timezone.now():
             return None
 
