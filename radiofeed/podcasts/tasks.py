@@ -1,12 +1,9 @@
-# Third Party Libraries
-# Django
 from django.contrib.auth import get_user_model
 
 import requests
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-# Local
 from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
@@ -33,10 +30,7 @@ def send_recommendation_emails() -> None:
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds() -> None:
     for rss in Podcast.objects.filter(num_retries__lt=3).values_list("rss", flat=True):
-        try:
-            sync_podcast_feed.delay(rss)
-        except RssParser.ParseError as e:
-            logger.error(e)
+        sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
@@ -53,4 +47,4 @@ def sync_podcast_feed(rss: str) -> None:
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
     except requests.HTTPError as e:
-        logger.exception(e)
+        logger.error(f"Error fetching {rss}: {e}")

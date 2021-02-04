@@ -18,18 +18,12 @@ from .image import InvalidImageURL, fetch_image_from_url
 
 
 class RssParser:
-    class ParseError(requests.RequestException):
-        ...
-
     def __init__(self, podcast: Podcast):
         self.podcast = podcast
 
     @classmethod
     def parse_from_podcast(cls, podcast) -> List[Episode]:
-        try:
-            return cls(podcast).parse()
-        except requests.RequestException as e:
-            raise cls.ParseError from e
+        return cls(podcast).parse()
 
     def parse(self) -> List[Episode]:
 
