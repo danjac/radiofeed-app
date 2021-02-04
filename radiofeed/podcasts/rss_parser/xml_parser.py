@@ -111,10 +111,7 @@ def parse_audio(entry: Dict) -> Optional[Audio]:
     except (KeyError, ValueError):
         length = None
 
-    try:
-        return Audio(url=url, type=type, length=length)
-    except ValidationError:
-        return None
+    return Audio(url=url, type=type, length=length)
 
 
 def parse_description(entry: Dict) -> str:
