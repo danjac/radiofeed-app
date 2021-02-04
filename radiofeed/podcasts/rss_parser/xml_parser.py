@@ -82,8 +82,7 @@ def parse_item(entry: Dict) -> Optional[Item]:
             keywords=" ".join(parse_tags(entry.get("tags", []))),
             pub_date=parse_date(entry.get("published")),
         )
-    except ValidationError as e:
-        logging.error(str(e))
+    except ValidationError:
         return None
 
 
@@ -114,8 +113,7 @@ def parse_audio(entry: Dict) -> Optional[Audio]:
 
     try:
         return Audio(url=url, type=type, length=length)
-    except ValidationError as e:
-        logging.error(str(e))
+    except ValidationError:
         return None
 
 
