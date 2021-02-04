@@ -33,7 +33,10 @@ def send_recommendation_emails() -> None:
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds() -> None:
     for rss in Podcast.objects.filter(num_retries__lt=3).values_list("rss", flat=True):
-        sync_podcast_feed.delay(rss)
+        try:
+            sync_podcast_feed.delay(rss)
+        except RssParser.ParseError as e:
+            logger.error(e)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
