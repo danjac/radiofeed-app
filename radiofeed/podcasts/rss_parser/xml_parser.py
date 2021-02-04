@@ -19,6 +19,7 @@ class Item(BaseModel):
     audio: Audio
     title: str
     guid: str
+    link: str
     explicit: bool
     description: str
     pub_date: datetime.datetime
@@ -38,7 +39,7 @@ class Feed(BaseModel):
     items: List[Item]
 
 
-def parse(xml: str) -> Optional[Feed]:
+def parse_xml(xml: str) -> Optional[Feed]:
     result = feedparser.parse(xml)
     channel = result["feed"]
 
@@ -71,7 +72,7 @@ def parse_item(entry: Dict) -> Optional[Item]:
         return Item(
             guid=entry["id"],
             title=entry.get("title"),
-            link=entry.get("link"),
+            link=entry.get("link", ""),
             duration=entry.get("itunes_duration", ""),
             explicit=bool(entry.get("itunes_explicit", False)),
             audio=parse_audio(entry),
