@@ -77,10 +77,11 @@ class RssParser:
         if dates:
             pub_date = max([date for date in dates if date and date < now])
 
-        do_update = (
-            pub_date
-            and self.podcast.last_updated is None
-            or self.podcast.last_updated < pub_date
+        if not pub_date:
+            return []
+
+        do_update: bool = (
+            self.podcast.last_updated is None or self.podcast.last_updated < pub_date
         )
 
         if not do_update:
