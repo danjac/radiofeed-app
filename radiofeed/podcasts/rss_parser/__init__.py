@@ -166,14 +166,16 @@ class RssParser:
                 self.podcast.authors,
             ]
             + [c.name for c in categories]
-            + [e["title"] for e in entries][:6]
+            + [e["title"] for e in entries if "title" in e][:6]
         )
         return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
 
     def create_episodes_from_feed(self, entries: List[Dict]) -> List[Episode]:
         """Parses new episodes from podcast feed."""
         guids = self.podcast.episode_set.values_list("guid", flat=True)
-        entries = [entry for entry in entries if entry["id"] not in guids]
+        entries = [
+            entry for entry in entries if "id" in entry and entry["id"] not in guids
+        ]
 
         episodes = [
             episode
