@@ -12,13 +12,13 @@ async-timeout==3.0.1      # via aioredis
 attrs==20.3.0             # via automat, pytest, service-identity, twisted
 autobahn==20.12.3         # via daphne
 automat==20.2.0           # via twisted
-autopep8==1.5.4           # via django-silk
+autopep8==1.5.5           # via django-silk
 backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
 bleach==3.3.0             # via -r requirements.in
-boto3==1.17.0             # via -r requirements.in
-botocore==1.20.0          # via boto3, s3transfer
+boto3==1.17.1             # via -r requirements.in
+botocore==1.20.1          # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.4              # via cryptography
@@ -48,13 +48,13 @@ django-redis==4.12.1      # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
-django-turbo-allauth==0.0.4  # via -r requirements.in
-django-turbo-response==0.0.32  # via -r requirements.in
+django-turbo-allauth==0.0.5  # via -r requirements.in
+django-turbo-response==0.0.33  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.6             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.8.0            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
-faker==5.8.0              # via factory-boy
+faker==6.0.0              # via factory-boy
 feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2019.11.30     # via django-silk
