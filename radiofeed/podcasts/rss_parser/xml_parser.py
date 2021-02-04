@@ -1,12 +1,14 @@
 import datetime
+import logging
 from typing import Dict, List, Optional
 
 import bs4
 import feedparser
-from icecream import ic
 from pydantic import BaseModel, ValidationError
 
 from .date_parser import parse_date
+
+logger = logging.getLogger(__name__)
 
 
 class Audio(BaseModel):
@@ -55,7 +57,7 @@ def parse_xml(xml: bytes) -> Optional[Feed]:
             items=parse_items(result),
         )
     except ValidationError as e:
-        ic(e)
+        logging.error(str(e))
         return None
 
 
@@ -81,7 +83,7 @@ def parse_item(entry: Dict) -> Optional[Item]:
             pub_date=parse_date(entry.get("published")),
         )
     except ValidationError as e:
-        ic(e)
+        logging.error(str(e))
         return None
 
 
@@ -113,7 +115,7 @@ def parse_audio(entry: Dict) -> Optional[Audio]:
     try:
         return Audio(url=url, type=type, length=length)
     except ValidationError as e:
-        ic(e)
+        logging.error(str(e))
         return None
 
 
