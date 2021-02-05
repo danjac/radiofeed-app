@@ -60,6 +60,7 @@
 
   {% endblock layout %}
   {% block player %}
+  {% if user.is_authenticated %}
   {% get_player as player %}
   <div id="player-container"
        data-turbo-permanent
@@ -76,6 +77,7 @@
        {% endif %}>
     {% include "episodes/player/_player.html" with episode=player.episode %}
   </div>
+  {% endif %}
   {% endblock player %}
 
   <turbo-frame id="modal"

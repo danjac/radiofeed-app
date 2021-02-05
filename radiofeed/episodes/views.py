@@ -209,6 +209,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
+@login_required
 def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
@@ -263,6 +264,7 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
+@login_required
 def player_timeupdate(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     if episode := request.player.get_episode():

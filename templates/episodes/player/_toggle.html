@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <form class="{{ css_class|default:'' }}"
       method="POST"
       id="{% if player_toggle_id %}{{ player_toggle_id }}{% else %}episode-play-toggle-{{ episode.id }}{% endif %}"
@@ -19,3 +20,10 @@
     </button>
   </div>
 </form>
+{% else %}
+<a title="Log in or sign up to play this episode"
+   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
+   class="text-gray-800 hover:text-blue-600 focus:outline-none">
+  {% svg "play" css_class="h-10 w-10" %}
+</a>
+{% endif %}

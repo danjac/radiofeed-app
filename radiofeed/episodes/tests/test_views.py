@@ -108,21 +108,6 @@ class TestEpisodeActions:
 
 
 class TestTogglePlayer:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:toggle_player", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
-
-        header = json.loads(resp["X-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 0
-        assert header["mediaUrl"] == episode.media_url
-
-        assert client.session["player"] == {
-            "episode": episode.id,
-            "current_time": 0,
-            "playback_rate": 1.0,
-        }
-
     def test_authenticated(self, client, login_user, episode):
         resp = client.post(reverse("episodes:toggle_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
@@ -171,28 +156,6 @@ class TestTogglePlayer:
 
 
 class TestPlayerTimeUpdate:
-    def test_anonymous(self, client, episode):
-        session = client.session
-        session.update(
-            {
-                "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
-                    "playback_rate": 1.0,
-                }
-            }
-        )
-        session.save()
-
-        resp = client.post(
-            reverse("episodes:player_timeupdate"),
-            data={"current_time": "1030.0001", "playback_rate": "1.2"},
-        )
-
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        assert client.session["player"]["current_time"] == 1030
-        assert client.session["player"]["playback_rate"] == 1.2
-
     def test_authenticated(self, client, login_user, episode):
         session = client.session
         session.update(
