@@ -20,7 +20,7 @@ class CategorySitemap(Sitemap):
 class PodcastSitemap(Sitemap):
     changefreq = "hourly"
     priority = 0.5
-    limit = 30
+    limit = 100
 
     def items(self) -> QuerySet:
         return Podcast.objects.order_by("-pub_date")
