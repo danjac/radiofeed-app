@@ -38,3 +38,12 @@ class Feed(BaseModel):
     image: Optional[str]
     link: Optional[HttpUrl]
     categories: List[str]
+
+    @validator("link", pre=True)
+    def add_http_to_domain(cls, value: Optional[str]) -> Optional[str]:
+        # links often just consist of domain
+        if not value:
+            return value
+        if not value.startswith("http"):
+            value = "http://" + value
+        return value
