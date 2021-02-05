@@ -25,23 +25,31 @@ def parse_xml(xml: bytes) -> Feed:
 
 
 def parse_items(result: Dict) -> Generator:
-    entries = list(
-        {e["id"]: e for e in result.get("entries", []) if "id" in e}.values()
-    )
-    for entry in entries:
-        try:
-            yield Item(
-                guid=entry["id"],
-                title=entry.get("title"),
-                duration=entry.get("itunes_duration", ""),
-                explicit=bool(entry.get("itunes_explicit", False)),
-                audio=parse_audio(entry),
-                description=parse_description(entry),
-                keywords=" ".join(parse_tags(entry.get("tags", []))),
-                pub_date=parse_date(entry.get("published")),
-            )
-        except ValidationError:
-            pass
+    guids = set()
+    for entry in result.get("entries", []):
+        guid = parse_guid(entry)
+        if guid and guid not in guids:
+            try:
+                yield Item(
+                    guid=guid,
+                    title=entry.get("title"),
+                    duration=entry.get("itunes_duration", ""),
+                    explicit=bool(entry.get("itunes_explicit", False)),
+                    audio=parse_audio(entry),
+                    description=parse_description(entry),
+                    keywords=" ".join(parse_tags(entry.get("tags", []))),
+                    pub_date=parse_date(entry.get("published")),
+                )
+                guids.add(guid)
+            except ValidationError:
+                pass
+
+
+def parse_guid(entry: Dict) -> Optional[str]:
+    for key in ("id", "itunes_episode"):
+        if key in entry and (value := entry[key]):
+            return value
+    return None
 
 
 def parse_tags(tags: List[Dict]) -> Generator:
