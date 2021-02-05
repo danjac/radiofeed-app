@@ -95,9 +95,9 @@ class TestParseDate:
 class TestRssParser:
     def test_parse_error(self, podcast, mocker, clear_categories_cache):
         mocker.patch("requests.head", side_effect=requests.RequestException)
-        with pytest.raises(requests.RequestException):
-            RssParser.parse_from_podcast(podcast)
-            podcast.refresh_from_db()
+        new_episodes = RssParser.parse_from_podcast(podcast)
+        assert len(new_episodes) == 0
+        podcast.refresh_from_db()
 
         assert podcast.num_retries == 1
 

@@ -36,7 +36,7 @@ class Feed(BaseModel):
     description: str
     explicit: bool = False
     language: str = "en"
-    link: str = ""
+    link: constr(max_length=500) = ""  # type: ignore
     items: conlist(Item, min_items=1)  # type: ignore
     authors: List[str]
     image: Optional[str]
