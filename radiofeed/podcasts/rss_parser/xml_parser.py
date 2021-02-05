@@ -46,15 +46,13 @@ def parse_items(result: Dict) -> Generator:
 
 def parse_tags(tags: List[Dict]) -> Generator:
     for t in tags:
-        term = t.get("term")
-        if term:
+        if term := t.get("term"):
             yield term
 
 
 def parse_authors(authors: List[Dict]) -> Generator:
     for a in authors:
-        name = a.get("name")
-        if name:
+        if name := a.get("name"):
             yield name
 
 
