@@ -36,5 +36,5 @@ class Feed(BaseModel):
     items: conlist(Item, min_items=1)  # type: ignore
     authors: List[str]
     image: Optional[str]
+    link: Optional[HttpUrl]
     categories: List[str]
-    link: Optional[HttpUrl] = None
