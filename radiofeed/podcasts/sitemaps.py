@@ -8,14 +8,11 @@ from .models import Category, Podcast
 
 
 class CategorySitemap(Sitemap):
-    changefreq = "monthly"
+    changefreq = "never"
     priority = 0.3
 
     def items(self) -> QuerySet:
         return Category.objects.order_by("name")
-
-    def lastmod(self, item: Category) -> datetime.datetime:
-        return item.created
 
 
 class PodcastSitemap(Sitemap):
