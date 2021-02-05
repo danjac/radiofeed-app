@@ -10,6 +10,7 @@ urlpatterns = [
     path("", views.landing_page, name="landing_page"),
     path("podcasts/", views.podcast_list, name="podcast_list"),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", views.search_itunes, name="search_itunes"),
     path("podcasts/<int:podcast_id>/actions/", views.podcast_actions, name="actions"),
     path("podcasts/<int:podcast_id>/~subscribe/", views.subscribe, name="subscribe"),
     path(
@@ -35,7 +36,6 @@ urlpatterns = [
         views.podcast_detail,
         name="podcast_detail",
     ),
-    path("itunes/", views.search_itunes, name="search_itunes"),
     path("discover/", views.category_list, name="category_list"),
     path(
         "discover/<int:category_id>/itunes/",
