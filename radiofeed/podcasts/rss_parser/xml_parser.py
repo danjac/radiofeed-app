@@ -17,8 +17,8 @@ def parse_xml(xml: bytes) -> Feed:
         description=channel.get("description", ""),
         link=channel.get("link", ""),
         explicit=bool(channel.get("itunes_explicit", False)),
-        authors=[a["name"] for a in channel.get("authors", []) if "name" in a],
         image=parse_image(xml, channel),
+        authors=list(parse_authors(channel.get("authors", []))),
         categories=list(parse_tags(channel.get("tags", []))),
         items=list(parse_items(result)),
     )
@@ -49,6 +49,13 @@ def parse_tags(tags: List[Dict]) -> Generator:
         term = t.get("term")
         if term:
             yield term
+
+
+def parse_authors(authors: List[Dict]) -> Generator:
+    for a in authors:
+        name = a.get("name")
+        if name:
+            yield name
 
 
 def parse_audio(entry: Dict) -> Optional[Audio]:
