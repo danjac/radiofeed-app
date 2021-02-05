@@ -35,7 +35,7 @@ def item():
         ),
         title="test",
         guid="test",
-        pub_date=timezone.now(),
+        pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
         duration="2000",
     )
 
