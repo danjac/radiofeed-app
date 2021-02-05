@@ -57,26 +57,18 @@ def parse_tags(tags: List[Dict]) -> List[str]:
 
 def parse_audio(entry: Dict) -> Optional[Audio]:
 
-    try:
-        audio = [
-            link
-            for link in entry.get("links", [])
-            if link.get("rel") == "enclosure"
-            and link.get("type", "").startswith("audio/")
-        ][0]
-        url = audio["url"]
-        type = audio["type"]
-    except (IndexError, KeyError):
-        return None
+    for link in entry.get("links", []):
+        try:
+            return Audio(
+                rel=link["rel"],
+                type=link["type"],
+                url=link["url"],
+                length=link.get("length", None),
+            )
+        except (ValidationError, KeyError):
+            pass
 
-    length: Optional[int]
-
-    try:
-        length = int(audio["length"])
-    except (KeyError, ValueError):
-        length = None
-
-    return Audio(url=url, type=type, length=length)
+    return None
 
 
 def parse_description(entry: Dict) -> str:

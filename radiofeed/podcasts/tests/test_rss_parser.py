@@ -1,21 +1,17 @@
-# Standard Library
 import datetime
 import json
 import pathlib
 import uuid
 
-# Django
 from django.utils import timezone
 
-# Third Party Libraries
 import pytest
 import pytz
 import requests
+from pydantic import ValidationError
 
-# RadioFeed
 from radiofeed.episodes.factories import EpisodeFactory
 
-# Local
 from ..factories import CategoryFactory, PodcastFactory
 from ..rss_parser import RssParser, get_categories_dict
 from ..rss_parser.date_parser import parse_date
@@ -34,6 +30,7 @@ def item():
     return Item(
         audio=Audio(
             type="audio/mpeg",
+            rel="enclosure",
             url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
         ),
         title="test",
@@ -166,6 +163,30 @@ class TestRssParser:
         RssParser.parse_from_podcast(podcast)
         podcast.refresh_from_db()
         assert podcast.episode_set.count() == 20
+
+
+class TestAudioModel:
+    def test_audio(self):
+        Audio(
+            type="audio/mpeg",
+            rel="enclosure",
+            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+        )
+
+    def test_not_enclosure(self):
+        with pytest.raises(ValidationError):
+            Audio(
+                type="audio/mpeg",
+                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+            )
+
+    def test_not_audio(self):
+        with pytest.raises(ValidationError):
+            Audio(
+                type="text/xml",
+                rel="enclosure",
+                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+            )
 
 
 class TestFeedModel:

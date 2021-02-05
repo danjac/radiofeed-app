@@ -10,7 +10,14 @@ from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
-    length: int = 0
+    rel: str
+    length: Optional[int]
+
+    @validator("rel")
+    def is_enclosure(cls, value: str) -> str:
+        if value != "enclosure":
+            raise ValueError("must be an enclosure")
+        return value
 
     @validator("type")
     def is_audio(cls, value: str) -> str:
