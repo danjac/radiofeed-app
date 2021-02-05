@@ -22,7 +22,7 @@
     {% if search %}
     <div class="mr-2 flex items-center hidden md:inline-block text-sm">
       <a class="link mr-1"
-         href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Podcasts</a>
+         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
       <span class="mr-1">|</span>
       <a class="link mr-1"
          href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
@@ -38,7 +38,7 @@
 {% if search %}
 <div class="mb-3 flex items-center justify-center md:hidden text-sm">
   <a class="link mr-2"
-     href="{% url 'podcasts:podcast_list' %}?q={{ search }}">Podcasts</a>
+     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
   <span class="mr-2">|</span>
   <a class="link mr-2"
      href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
