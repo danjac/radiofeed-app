@@ -6,6 +6,8 @@ from django.core.validators import URLValidator
 
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
+from .date_parser import parse_date
+
 
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
@@ -36,6 +38,12 @@ class Item(BaseModel):
     keywords: str = ""
     pub_date: datetime.datetime
     duration: constr(max_length=30)  # type: ignore
+
+    @validator("pub_date", pre=True)
+    def parse_date(cls, value: Optional[str]) -> datetime.datetime:
+        if (pub_date := parse_date(value)) is None:
+            raise ValueError("missing or invalid date")
+        return pub_date
 
 
 class Feed(BaseModel):

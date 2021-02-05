@@ -4,7 +4,6 @@ import bs4
 import feedparser
 from pydantic import ValidationError
 
-from .date_parser import parse_date
 from .models import Audio, Feed, Item
 
 
@@ -35,10 +34,10 @@ def parse_items(result: Dict) -> Generator:
                     title=entry.get("title"),
                     duration=entry.get("itunes_duration", ""),
                     explicit=bool(entry.get("itunes_explicit", False)),
+                    pub_date=entry.get("published", None),
                     audio=parse_audio(entry),
                     description=parse_description(entry),
                     keywords=" ".join(parse_tags(entry.get("tags", []))),
-                    pub_date=parse_date(entry.get("published")),
                 )
                 guids.add(guid)
             except ValidationError:
