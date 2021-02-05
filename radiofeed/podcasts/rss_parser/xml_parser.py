@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, Generator, List, Optional
 
 import bs4
 import feedparser
@@ -18,38 +18,37 @@ def parse_xml(xml: bytes) -> Feed:
         link=channel.get("link", ""),
         explicit=bool(channel.get("itunes_explicit", False)),
         authors=[a["name"] for a in channel.get("authors", []) if "name" in a],
-        categories=parse_tags(channel.get("tags", [])),
         image=parse_image(xml, channel),
-        items=parse_items(result),
+        categories=list(parse_tags(channel.get("tags", []))),
+        items=list(parse_items(result)),
     )
 
 
-def parse_items(result: Dict) -> List[Item]:
+def parse_items(result: Dict) -> Generator:
     entries = list(
         {e["id"]: e for e in result.get("entries", []) if "id" in e}.values()
     )
-    return [entry for entry in [parse_item(entry) for entry in entries] if entry]
+    for entry in entries:
+        try:
+            yield Item(
+                guid=entry["id"],
+                title=entry.get("title"),
+                duration=entry.get("itunes_duration", ""),
+                explicit=bool(entry.get("itunes_explicit", False)),
+                audio=parse_audio(entry),
+                description=parse_description(entry),
+                keywords=" ".join(parse_tags(entry.get("tags", []))),
+                pub_date=parse_date(entry.get("published")),
+            )
+        except ValidationError:
+            pass
 
 
-def parse_item(entry: Dict) -> Optional[Item]:
-
-    try:
-        return Item(
-            guid=entry["id"],
-            title=entry.get("title"),
-            duration=entry.get("itunes_duration", ""),
-            explicit=bool(entry.get("itunes_explicit", False)),
-            audio=parse_audio(entry),
-            description=parse_description(entry),
-            keywords=" ".join(parse_tags(entry.get("tags", []))),
-            pub_date=parse_date(entry.get("published")),
-        )
-    except ValidationError:
-        return None
-
-
-def parse_tags(tags: List[Dict]) -> List[str]:
-    return [t for t in [t["term"] for t in tags if "term" in t] if t]
+def parse_tags(tags: List[Dict]) -> Generator:
+    for t in tags:
+        term = t.get("term")
+        if term:
+            yield term
 
 
 def parse_audio(entry: Dict) -> Optional[Audio]:
