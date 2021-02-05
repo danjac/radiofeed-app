@@ -1,4 +1,3 @@
-import logging
 from typing import Dict, List, Optional
 
 import bs4
@@ -7,8 +6,6 @@ from pydantic import ValidationError
 
 from .date_parser import parse_date
 from .models import Audio, Feed, Item
-
-logger = logging.getLogger(__name__)
 
 
 def parse_xml(xml: bytes) -> Feed:
