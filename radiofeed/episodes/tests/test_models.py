@@ -64,10 +64,6 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "episode"
 
-    def test_log_activity_anonymous(self, anonymous_user, episode):
-        assert episode.log_activity(anonymous_user, current_time=1000) == (None, False)
-        assert AudioLog.objects.count() == 0
-
     def test_log_activity_new(self, user, episode):
         log, created = episode.log_activity(user, current_time=1000)
         assert created

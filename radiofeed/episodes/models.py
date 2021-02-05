@@ -130,13 +130,11 @@ class Episode(models.Model):
 
     def log_activity(
         self,
-        user: AnyUser,
+        user: settings.AUTH_USER_MODEL,
         current_time=0,
         completed: bool = False,
     ) -> Tuple[Optional["AudioLog"], bool]:
         # Updates audio log with current time
-        if user.is_anonymous:
-            return (None, False)
         now = timezone.now()
         return AudioLog.objects.update_or_create(
             episode=self,
