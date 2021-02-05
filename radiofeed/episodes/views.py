@@ -3,6 +3,7 @@ import json
 from typing import Dict, List, Optional
 
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -264,9 +265,11 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
 def player_timeupdate(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
+    if request.user.is_anonymous:
+        raise PermissionDenied
+
     if episode := request.player.get_episode():
         try:
             current_time = round(float(request.POST["current_time"]))

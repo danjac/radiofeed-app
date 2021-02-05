@@ -156,6 +156,13 @@ class TestTogglePlayer:
 
 
 class TestPlayerTimeUpdate:
+    def test_anonymous(self, client, anonymous_user, episode):
+        resp = client.post(
+            reverse("episodes:player_timeupdate"),
+            data={"current_time": "1030.0001", "playback_rate": "1.2"},
+        )
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+
     def test_authenticated(self, client, login_user, episode):
         session = client.session
         session.update(
