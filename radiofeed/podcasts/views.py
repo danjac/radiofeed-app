@@ -42,7 +42,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
     subscriptions: List[int]
 
-    if request.user.is_anonymous or request.search:
+    if request.user.is_anonymous:
         subscriptions = []
     else:
         subscriptions = list(
