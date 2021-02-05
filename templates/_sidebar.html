@@ -1,70 +1,91 @@
-      <nav class="pt-3">
-        <ul class="sidebar">
-          {% if user.is_authenticated %}
-          <li class="py-2">
-            {% active_link 'episodes:episode_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-              {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
-              New Releases
-            </a>
-          </li>
-          {% endif %}
+  <div class="flex justify-center md:hidden mb-3">
+    <form method="get"
+          action="{% url 'podcasts:search_podcasts' %}"
+          class="relative bg-transparent">
+      <input type="search"
+             name="q"
+             autocomplete="off"
+             aria-label="{{ placeholder|default:'Search' }}"
+             placeholder="Find podcast..."
+             class="px-4 py-1 focus:outline-none focus:ring rounded-full w-64 placeholder-opacity-100 text-gray-900">
+      <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+        <button type="submit"
+                title="Search"
+                class="focus:outline-none focus:shadow-outline text-gray-900">
+          {% svg "search" css_class="h-4 w-4" %}
+        </button>
+      </span>
+    </form>
+  </div>
 
-          <li class="py-2">
-            {% active_link 'podcasts:podcast_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-              {% svg "rss" css_class="h-5 w-5 mr-3" %}
-              Podcasts
-            </a>
-          </li>
-          <li class="py-2">
-            {% active_link 'podcasts:category_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-              {% svg "search" css_class="h-5 w-5 mr-3" %}
-              Discover
-            </a>
-          </li>
 
-          {% if user.is_authenticated %}
-          <li class="py-2">
-            {% active_link 'episodes:bookmark_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-              {% svg "bookmark" css_class="h-5 w-5 mr-3" %}
-              Bookmarks
-            </a>
-          </li>
+  <nav class="pt-3">
+    <ul class="sidebar">
+      {% if user.is_authenticated %}
+      <li class="py-2">
+        {% active_link 'episodes:episode_list' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
+          New Releases
+        </a>
+      </li>
+      {% endif %}
 
-          <li class="py-2">
-            {% active_link 'episodes:history' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-              {% svg "database" css_class="h-5 w-5 mr-3" %}
-              History
-            </a>
-          </li>
+      <li class="py-2">
+        {% active_link 'podcasts:podcast_list' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "rss" css_class="h-5 w-5 mr-3" %}
+          Podcasts
+        </a>
+      </li>
+      <li class="py-2">
+        {% active_link 'podcasts:category_list' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "search" css_class="h-5 w-5 mr-3" %}
+          Discover
+        </a>
+      </li>
 
-          <li class="py-2">
-            {% active_link '/account/' as link %}
-            <a href="{% url 'user_preferences' %}"
-               class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-              {% svg "adjustments" css_class="h-5 w-5 mr-3" %}
-              Settings
-            </a>
-          </li>
-          {% endif %}
+      {% if user.is_authenticated %}
+      <li class="py-2">
+        {% active_link 'episodes:bookmark_list' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "bookmark" css_class="h-5 w-5 mr-3" %}
+          Bookmarks
+        </a>
+      </li>
 
-          <li class="py-2">
-            {% active_link 'about' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-              {% svg "info" css_class="h-5 w-5 mr-3" %}
-              About
-            </a>
-          </li>
+      <li class="py-2">
+        {% active_link 'episodes:history' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "database" css_class="h-5 w-5 mr-3" %}
+          History
+        </a>
+      </li>
 
-        </ul>
-      </nav>
+      <li class="py-2">
+        {% active_link '/account/' as link %}
+        <a href="{% url 'user_preferences' %}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "adjustments" css_class="h-5 w-5 mr-3" %}
+          Settings
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="py-2">
+        {% active_link 'about' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+
+    </ul>
+  </nav>
