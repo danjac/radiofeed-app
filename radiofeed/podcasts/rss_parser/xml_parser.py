@@ -11,24 +11,20 @@ from .models import Audio, Feed, Item
 logger = logging.getLogger(__name__)
 
 
-def parse_xml(xml: bytes) -> Optional[Feed]:
+def parse_xml(xml: bytes) -> Feed:
     result = feedparser.parse(xml)
     channel = result["feed"]
 
-    try:
-        return Feed(
-            title=channel.get("title", None),
-            description=channel.get("description", ""),
-            link=channel.get("link", ""),
-            explicit=bool(channel.get("itunes_explicit", False)),
-            authors=[a["name"] for a in channel.get("authors", []) if "name" in a],
-            categories=parse_tags(channel.get("tags", [])),
-            image=parse_image(xml, channel),
-            items=parse_items(result),
-        )
-    except ValidationError as e:
-        logger.error(str(e))
-        return None
+    return Feed(
+        title=channel.get("title", None),
+        description=channel.get("description", ""),
+        link=channel.get("link", ""),
+        explicit=bool(channel.get("itunes_explicit", False)),
+        authors=[a["name"] for a in channel.get("authors", []) if "name" in a],
+        categories=parse_tags(channel.get("tags", [])),
+        image=parse_image(xml, channel),
+        items=parse_items(result),
+    )
 
 
 def parse_items(result: Dict) -> List[Item]:

@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 from django.utils import timezone
 
 import requests
+from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode
 
@@ -34,17 +35,11 @@ class RssParser:
             if etag and etag == self.podcast.etag:
                 self.debug("Matching etag, no update")
                 return []
-            xml = self.fetch_xml()
-        except requests.RequestException as e:
+            feed = self.fetch_rss_feed()
+        except (ValidationError, requests.RequestException) as e:
             self.podcast.sync_error = str(e)
             self.podcast.num_retries += 1
             self.podcast.save()
-            raise
-
-        feed = parse_xml(xml)
-
-        if feed is None or not feed.items:
-            self.error("Feed is empty")
             return []
 
         pub_date = self.get_pub_date(feed)
@@ -115,12 +110,12 @@ class RssParser:
         headers = head_response.headers
         return headers.get("ETag")
 
-    def fetch_xml(self) -> bytes:
+    def fetch_rss_feed(self) -> Feed:
         response = requests.get(
             self.podcast.rss, headers=get_headers(), stream=True, timeout=5
         )
         response.raise_for_status()
-        return response.content
+        return parse_xml(response.content)
 
     def extract_text(self, feed: Feed, categories: List[Category]) -> str:
         """Extract keywords from text content for recommender"""
