@@ -61,7 +61,7 @@ class RssParser:
         self.podcast.title = feed.title
         self.podcast.description = feed.description
         self.podcast.link = feed.link
-        self.podcast.language = (feed.language or "en")[:2].strip().lower()
+        self.podcast.language = feed.language
         self.podcast.explicit = feed.explicit
         self.podcast.last_updated = timezone.now()
         self.podcast.pub_date = pub_date

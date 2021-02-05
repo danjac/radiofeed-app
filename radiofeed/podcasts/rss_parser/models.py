@@ -49,6 +49,10 @@ class Feed(BaseModel):
     image: Optional[str]
     categories: List[str]
 
+    @validator("language")
+    def language_code(cls, value: str) -> str:
+        return (value[:2] if value else "en").strip().lower()
+
     @validator("link", pre=True)
     def prepare_link(cls, value: str) -> str:
         if not value:

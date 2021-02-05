@@ -190,6 +190,21 @@ class TestAudioModel:
 
 
 class TestFeedModel:
+    def test_language(self, item):
+
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            authors=[],
+            image=None,
+            link="http://reddit.com",
+            language="en-gb",
+            categories=[],
+        )
+
+        assert feed.language == "en"
+
     def test_valid_link(self, item):
         feed = Feed(
             title="test",
