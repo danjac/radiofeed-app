@@ -19,6 +19,7 @@ from radiofeed.episodes.factories import EpisodeFactory
 from ..factories import CategoryFactory, PodcastFactory
 from ..rss_parser import RssParser, get_categories_dict
 from ..rss_parser.date_parser import parse_date
+from ..rss_parser.models import Audio, Feed, Item
 
 pytestmark = pytest.mark.django_db
 
@@ -26,6 +27,20 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture(scope="function")
 def clear_categories_cache():
     get_categories_dict.cache_clear()
+
+
+@pytest.fixture
+def item():
+    return Item(
+        audio=Audio(
+            type="audio/mpeg",
+            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+        ),
+        title="test",
+        guid="test",
+        pub_date=timezone.now(),
+        duration="2000",
+    )
 
 
 class BaseMockResponse:
@@ -151,3 +166,18 @@ class TestRssParser:
         RssParser.parse_from_podcast(podcast)
         podcast.refresh_from_db()
         assert podcast.episode_set.count() == 20
+
+
+class TestFeedModel:
+    def test_domain_link(self, item):
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            authors=[],
+            image=None,
+            link="politicology.com",
+            categories=[],
+        )
+
+        assert feed.link == "http://politicology.com"
