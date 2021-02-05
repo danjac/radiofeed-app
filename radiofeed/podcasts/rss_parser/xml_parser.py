@@ -52,7 +52,7 @@ def parse_item(entry: Dict) -> Optional[Item]:
 
 
 def parse_tags(tags: List[Dict]) -> List[str]:
-    return [t["term"] for t in tags if "term" in t]
+    return [t for t in [t["term"] for t in tags if "term" in t] if t]
 
 
 def parse_audio(entry: Dict) -> Optional[Audio]:
