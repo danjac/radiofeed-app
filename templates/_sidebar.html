@@ -1,13 +1,5 @@
       <nav class="pt-3">
         <ul class="sidebar">
-          <li class="py-2">
-            {% active_link 'podcasts:podcast_list' as link %}
-            <a href="{{ link.url }}"
-               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-              {% svg "rss" css_class="h-5 w-5 mr-3" %}
-              Podcasts
-            </a>
-          </li>
           {% if user.is_authenticated %}
           <li class="py-2">
             {% active_link 'episodes:episode_list' as link %}
@@ -19,6 +11,14 @@
           </li>
           {% endif %}
 
+          <li class="py-2">
+            {% active_link 'podcasts:podcast_list' as link %}
+            <a href="{{ link.url }}"
+               class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+              {% svg "rss" css_class="h-5 w-5 mr-3" %}
+              Podcasts
+            </a>
+          </li>
           <li class="py-2">
             {% active_link 'podcasts:category_list' as link %}
             <a href="{{ link.url }}"

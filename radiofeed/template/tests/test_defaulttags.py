@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.models import Category
 
 from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons, svg
 
@@ -59,11 +59,10 @@ class TestActiveLink:
         assert not route.exact
 
     def test_active_link_non_exact_match(self, rf):
-        podcast = Podcast(id=1234, title="hello")
-        url = podcast.get_absolute_url()
+        url = Category(id=1234, name="test").get_absolute_url()
         req = rf.get(url)
-        route = active_link({"request": req}, "podcasts:podcast_list")
-        assert route.url == reverse("podcasts:podcast_list")
+        route = active_link({"request": req}, "podcasts:category_list")
+        assert route.url == reverse("podcasts:category_list")
         assert route.match
         assert not route.exact
 

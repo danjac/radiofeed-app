@@ -34,7 +34,7 @@ class TestLandingPage:
 
     def test_authenticated(self, client, login_user):
         resp = client.get(reverse("podcasts:landing_page"))
-        assert resp.url == reverse("podcasts:podcast_list")
+        assert resp.url == reverse("episodes:episode_list")
 
 
 class TestPodcastCoverImage:
@@ -66,10 +66,12 @@ class TestPodcastList:
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
 
+
+class TestSearchEpisodes:
     def test_search_anonymous(self, client):
         podcast = PodcastFactory(title="testing")
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        resp = client.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        resp = client.get(reverse("podcasts:search_podcasts"), {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == podcast
@@ -79,7 +81,7 @@ class TestPodcastList:
         PodcastFactory.create_batch(3, title="zzzz", keywords="zzzz")
         podcast = PodcastFactory(title="testing")
         SubscriptionFactory(user=login_user)
-        resp = client.get(reverse("podcasts:podcast_list"), {"q": "testing"})
+        resp = client.get(reverse("podcasts:search_podcasts"), {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == podcast

@@ -4,10 +4,11 @@ from typing import Dict, List, Optional
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
@@ -18,6 +19,7 @@ from radiofeed.podcasts.models import Podcast
 from .models import AudioLog, Bookmark, Episode
 
 
+@login_required
 def episode_list(request: HttpRequest) -> HttpResponse:
 
     subscriptions: List[int] = (
@@ -27,11 +29,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     )
     has_subscriptions: bool = bool(subscriptions)
 
-    episodes = Episode.objects.select_related("podcast").distinct()
-
-    if request.search:
-        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-    elif subscriptions:
+    if has_subscriptions:
         # we want a list of the *latest* episode for each podcast
         latest_episodes = (
             Episode.objects.filter(podcast=OuterRef("pk"))
@@ -46,24 +44,35 @@ def episode_list(request: HttpRequest) -> HttpResponse:
             .distinct()
         )
 
-        episodes = episodes.filter(pk__in=set(episode_ids)).order_by("-pub_date")
-    else:
-        episodes = episodes.none()
-
-    context = {
-        "page_obj": paginate(request, episodes),
-        "has_subscriptions": has_subscriptions,
-    }
-
-    if request.turbo.frame:
-
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("episodes/_episode_list.html", context)
-            .response(request)
+        episodes = (
+            Episode.objects.select_related("podcast")
+            .filter(pk__in=set(episode_ids))
+            .order_by("-pub_date")
+            .distinct()
         )
+    else:
+        episodes = Episode.objects.none()
 
-    return TemplateResponse(request, "episodes/index.html", context)
+    return episode_list_response(
+        request,
+        episodes,
+        "episodes/index.html",
+        {"has_subscriptions": has_subscriptions},
+    )
+
+
+def search_episodes(request: HttpRequest) -> HttpResponse:
+
+    if request.search:
+        episodes = (
+            Episode.objects.select_related("podcast")
+            .search(request.search)
+            .order_by("-rank", "-pub_date")
+        )
+    else:
+        episodes = Episode.objects.none()
+
+    return episode_list_response(request, episodes, "episodes/search.html")
 
 
 def episode_detail(
@@ -275,6 +284,28 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
+
+
+def episode_list_response(
+    request: HttpRequest,
+    episodes: QuerySet,
+    template_name: str,
+    extra_context: Optional[Dict] = None,
+) -> HttpResponse:
+    context = {
+        "page_obj": paginate(request, episodes),
+        "search_url": reverse("episodes:search_episodes"),
+        **(extra_context or {}),
+    }
+    if request.turbo.frame:
+
+        return (
+            TurboFrame(request.turbo.frame)
+            .template("episodes/_episode_list.html", context)
+            .response(request)
+        )
+
+    return TemplateResponse(request, template_name, context)
 
 
 def render_player_toggles(

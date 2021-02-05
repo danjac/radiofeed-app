@@ -10,34 +10,9 @@
     {% endif %}
   </h1>
   <div class="flex items-center justify-center sm:justify-end text-sm">
-    {% if search %}
-    <div class="mr-2 flex items-center hidden md:inline-block">
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'episodes:episode_list' %}?q={{ search }}">Episodes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500"
-         href="{{ request.path }}">Clear</a>
-    </div>
-    {% endif %}
     {% include "_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
-{% if search %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm leading-tight tracking-tight">
-  <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'episodes:episode_list' %}?q={{ search }}">Episodes</a>
-  <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-  <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-blue-500"
-     href="{{ request.path }}">Clear</a>
-</div>
-{% endif %}
-
 {% if top_rated_podcasts and user.is_authenticated %}
 <p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet. Search for new podcasts here or on the <a class="font-semibold underline"
      href="{% url 'podcasts:category_list' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>

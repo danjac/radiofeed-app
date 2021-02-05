@@ -16,7 +16,7 @@
     {% if search %}
     <div class="hidden md:inline-block mr-2 text-sm">
       <a class="link mr-1"
-         href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
+         href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
       <span class="mr-1 text-sm">|</span>
       <a class="link text-sm"
          href="{{ request.path }}">Clear</a>
@@ -28,7 +28,7 @@
 {% if search %}
 <div class="mb-3 flex items-center justify-center md:hidden text-sm">
   <a class="link mr-2"
-     href="{% url 'episodes:episode_list' %}?q={{ search }}">Search All Episodes</a>
+     href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
   <span class="mr-1">|</span>
   <a class="link mr-1 text-sm"
      href="{{ request.path }}">Clear</a>

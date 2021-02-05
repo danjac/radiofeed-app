@@ -125,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 HOME_URL = reverse_lazy("podcasts:landing_page")
-LOGIN_REDIRECT_URL = reverse_lazy("podcasts:podcast_list")
+LOGIN_REDIRECT_URL = reverse_lazy("episodes:episode_list")
 
 LOGIN_URL = "account_login"
 

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sm:flex justify-between items-center mb-3">
+  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">
+    Search Podcasts
+  </h1>
+  <div class="flex items-center justify-center sm:justify-end text-sm">
+    {% if search %}
+    <div class="mr-2 flex items-center hidden md:inline-block">
+      <a class="font-semibold hover:text-blue-500 mr-1"
+         href="{% url 'episodes:search_episodes' %}?q={{ search }}">Episodes</a>
+      <span class="mr-1">|</span>
+      <a class="font-semibold hover:text-blue-500 mr-1"
+         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+      <span class="mr-1">|</span>
+      <a class="font-semibold hover:text-blue-500"
+         href="{% url 'podcasts:podcast_list' %}">Clear</a>
+    </div>
+    {% endif %}
+    {% include "_search_form.html" with placeholder="Search podcasts..." %}
+  </div>
+</div>
+{% if search %}
+<div class="mb-3 flex items-center justify-center md:hidden text-sm leading-tight tracking-tight">
+  <a class="font-semibold hover:text-blue-500 mr-2"
+     href="{% url 'episodes:search_episodes' %}?q={{ search }}">Episodes</a>
+  <span class="mr-2">|</span>
+  <a class="font-semibold hover:text-blue-500 mr-2"
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+  <span class="mr-2">|</span>
+  <a class="font-semibold hover:text-blue-500"
+     href="{% url 'podcasts:podcast_list' %}">Clear</a>
+</div>
+{% endif %}
+
+{% include "podcasts/_podcast_list.html" %}
+
+{% endblock content %}

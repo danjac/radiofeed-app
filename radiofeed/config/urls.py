@@ -10,7 +10,7 @@ from radiofeed.users.views import accept_cookies, delete_account, user_preferenc
 
 urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
-    path("episodes/", include("radiofeed.episodes.urls")),
+    path("", include("radiofeed.episodes.urls")),
     path("account/preferences/", user_preferences, name="user_preferences"),
     path("account/~delete/", delete_account, name="delete_account"),
     path("account/", include("turbo_allauth.urls")),

@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -24,7 +24,7 @@ from .tasks import sync_podcast_feed
 
 def landing_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
-        return redirect("podcasts:podcast_list")
+        return redirect("episodes:episode_list")
 
     podcasts = Podcast.objects.filter(
         pub_date__isnull=False,
@@ -51,39 +51,36 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
     podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
-    if request.search:
-        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-    elif subscriptions:
+    if subscriptions:
         podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
     else:
         podcasts = Podcast.objects.filter(
             pub_date__isnull=False, promoted=True
         ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
 
-    context = {
-        "page_obj": paginate(request, podcasts),
-    }
-
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "podcasts/_podcast_list.html",
-                context,
-            )
-            .response(request)
-        )
-
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    return TemplateResponse(
+    return podcast_list_response(
         request,
+        podcasts,
         "podcasts/index.html",
-        {
-            **context,
-            "top_rated_podcasts": top_rated_podcasts,
-        },
+        {"top_rated_podcasts": top_rated_podcasts},
     )
+
+
+def search_podcasts(request: HttpRequest) -> HttpResponse:
+
+    if request.search:
+        podcasts = (
+            Podcast.objects.filter(pub_date__isnull=False)
+            .search(request.search)
+            .order_by("-rank", "-pub_date")
+        )
+
+    else:
+        podcasts = Podcast.objects.none()
+
+    return podcast_list_response(request, podcasts, "podcasts/search.html")
 
 
 @login_required
@@ -339,8 +336,37 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     )
 
 
+def podcast_list_response(
+    request: HttpRequest,
+    podcasts: QuerySet,
+    template_name: str,
+    extra_context: Optional[Dict] = None,
+) -> HttpResponse:
+
+    context = {
+        "page_obj": paginate(request, podcasts),
+        "search_url": reverse("podcasts:search_podcasts"),
+        **(extra_context or {}),
+    }
+
+    if request.turbo.frame:
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "podcasts/_podcast_list.html",
+                context,
+            )
+            .response(request)
+        )
+
+    return TemplateResponse(request, template_name, context)
+
+
 def podcast_detail_response(
-    request: HttpRequest, template_name: str, podcast: Podcast, context: Dict
+    request: HttpRequest,
+    template_name: str,
+    podcast: Podcast,
+    extra_context: Optional[Dict] = None,
 ) -> HttpResponse:
 
     context = {
@@ -348,7 +374,7 @@ def podcast_detail_response(
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
         "is_subscribed": is_podcast_subscribed(request, podcast),
         "og_data": get_podcast_opengraph_data(request, podcast),
-    } | context
+    } | (extra_context or {})
     return TemplateResponse(request, template_name, context)
 
 
