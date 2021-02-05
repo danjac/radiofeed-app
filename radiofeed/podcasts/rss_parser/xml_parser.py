@@ -19,7 +19,7 @@ def parse_xml(xml: bytes) -> Optional[Feed]:
         return Feed(
             title=channel.get("title", None),
             description=channel.get("description", ""),
-            link=channel.get("link", ""),
+            link=channel.get("link", None),
             explicit=bool(channel.get("itunes_explicit", False)),
             authors=[a["name"] for a in channel.get("authors", []) if "name" in a],
             categories=parse_tags(channel.get("tags", [])),
