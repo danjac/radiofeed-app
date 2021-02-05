@@ -22,7 +22,7 @@
            class="mr-4 cursor-pointer hidden lg:inline-block">
 
       <a class="text-lg font-bold"
-         href="{% url 'podcasts:podcast_list' %}">{{ request.site.name }}</a>
+         href="{% url user.is_authenticated|yesno:'episodes:episode_list,podcasts:podcast_list' %}">{{ request.site.name }}</a>
     </div>
 
     <form method="get"
