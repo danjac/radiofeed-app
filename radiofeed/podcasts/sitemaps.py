@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.sitemaps import Sitemap
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from .models import Category, Podcast
 
@@ -20,10 +21,13 @@ class CategorySitemap(Sitemap):
 class PodcastSitemap(Sitemap):
     changefreq = "hourly"
     priority = 0.5
-    limit = 30
+    limit = 100
 
     def items(self) -> QuerySet:
-        return Podcast.objects.order_by("-pub_date")
+        return Podcast.objects.filter(
+            pub_date__isnull=False,
+            pub_date__gt=timezone.now() - datetime.timedelta(hours=24),
+        ).order_by("-pub_date")
 
     def lastmod(self, item: Podcast) -> datetime.datetime:
         return item.pub_date
