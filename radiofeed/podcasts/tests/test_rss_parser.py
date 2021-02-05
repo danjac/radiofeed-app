@@ -169,7 +169,33 @@ class TestRssParser:
 
 
 class TestFeedModel:
-    def test_domain_link(self, item):
+    def test_valid_link(self, item):
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            authors=[],
+            image=None,
+            link="http://reddit.com",
+            categories=[],
+        )
+
+        assert feed.link == "http://reddit.com"
+
+    def test_empty_link(self, item):
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            authors=[],
+            image=None,
+            link="",
+            categories=[],
+        )
+
+        assert feed.link == ""
+
+    def test_missing_http(self, item):
         feed = Feed(
             title="test",
             description="test",

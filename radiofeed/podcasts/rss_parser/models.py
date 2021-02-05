@@ -1,6 +1,9 @@
 import datetime
 from typing import List, Optional
 
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 
@@ -33,17 +36,25 @@ class Feed(BaseModel):
     description: str
     explicit: bool = False
     language: str = "en"
+    link: str = ""
     items: conlist(Item, min_items=1)  # type: ignore
     authors: List[str]
     image: Optional[str]
-    link: Optional[HttpUrl]
     categories: List[str]
 
     @validator("link", pre=True)
-    def add_http_to_domain(cls, value: Optional[str]) -> Optional[str]:
-        # links often just consist of domain
+    def prepare_link(cls, value: str) -> str:
         if not value:
             return value
+
+        # links often just consist of domain: try prefixing http://
         if not value.startswith("http"):
             value = "http://" + value
+
+        # if not a valid URL, just return empty string
+        try:
+            URLValidator(value)
+        except ValidationError:
+            return ""
+
         return value
