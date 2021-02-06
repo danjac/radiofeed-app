@@ -344,6 +344,9 @@ def toggle_player(
 
     request.player.start(episode, current_time)
 
+    if QueueItem.objects.filter(user=request.user).count() == 0:
+        streams += [TurboStream("queue").append.render("All done!")]
+
     response = TurboStreamResponse(
         streams
         + render_player_toggles(request, episode, True)
