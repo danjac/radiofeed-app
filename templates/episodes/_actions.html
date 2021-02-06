@@ -33,38 +33,40 @@
 {% endif %}
 
 
-<div class="flex items-center w-full mb-3">
-  <a href="{{ podcast.get_absolute_url }}"
-     data-turbo-frame="_top">
-    {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
-  </a>
-  <div>
-    <div class="flex items-center mb-1">
-      <div class="mr-2">
-        {% include "episodes/player/_toggle.html" %}
+<div class="sm:flex items-center mb-3">
+  <div class="flex items-center w-full mb-3 sm:mb-0">
+    <a href="{{ podcast.get_absolute_url }}"
+       data-turbo-frame="_top">
+      {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
+    </a>
+    <div>
+      <div class="flex items-center mb-1">
+        <div class="mr-2">
+          {% include "episodes/player/_toggle.html" %}
+        </div>
       </div>
+      <div class="my-2">
+        {% include "episodes/_download.html" %}
+      </div>
+      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
-    <div class="my-2">
-      {% include "episodes/_download.html" %}
-    </div>
-    {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
-</div>
-{% if allow_favorites or allow_queue %}
-<div class="mb-3 flex items-center">
-  {% if allow_queue %}
-  <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-               class="mr-2">
-    {% include "episodes/queue/_toggle.html" %}
-  </turbo-frame>
+  {% if actions %}
+  <div class="flex items-center">
+    {% if 'queue' in actions %}
+    <turbo-frame id="{{ episode.get_queue_toggle_id }}"
+                 class="mr-2">
+      {% include "episodes/queue/_toggle.html" %}
+    </turbo-frame>
+    {% endif %}
+    {% if 'favorite' in actions %}
+    <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
+      {% include "episodes/favorites/_toggle.html" %}
+    </turbo-frame>
+    {% endif %}
+  </div>
   {% endif %}
-  {% if allow_favorites %}
-  <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
-    {% include "episodes/favorites/_toggle.html" %}
-  </turbo-frame>
-  {% endif %}
 </div>
-{% endif %}
 
 <div class="text-sm italic markdown">
   {{ episode.description|keepspaces|stripentities|truncatewords:30 }}

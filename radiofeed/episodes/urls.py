@@ -54,13 +54,13 @@ urlpatterns = [
         "episodes/<int:episode_id>/favorites/actions/",
         views.episode_actions,
         name="favorite_actions",
-        kwargs={"allow_favorites": False},
+        kwargs={"actions": ("queue",)},
     ),
     path(
         "episodes/<int:episode_id>/queue/actions/",
         views.episode_actions,
         name="queue_actions",
-        kwargs={"allow_queue": False},
+        kwargs={"actions": ("favorite",)},
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",

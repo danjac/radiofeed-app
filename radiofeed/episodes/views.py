@@ -1,6 +1,6 @@
 import http
 import json
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -101,8 +101,7 @@ def episode_detail(
 def episode_actions(
     request: HttpRequest,
     episode_id: str,
-    allow_favorites: bool = True,
-    allow_queue: bool = True,
+    actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
@@ -117,12 +116,12 @@ def episode_actions(
                 {
                     "episode": episode,
                     "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
+                    "actions": actions,
                     "is_episode_playing": request.player.is_playing(episode),
-                    "is_favorited": allow_favorites
+                    "is_favorited": "favorite" in actions
                     and is_episode_favorited(request, episode),
-                    "is_queued": allow_queue and is_episode_queued(request, episode),
-                    "allow_favorites": allow_favorites,
-                    "allow_queue": allow_queue,
+                    "is_queued": "queue" in actions
+                    and is_episode_queued(request, episode),
                 },
             )
             .response(request)
