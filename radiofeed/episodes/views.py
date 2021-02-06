@@ -268,18 +268,18 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
-    try:
-        payload = [int(item) for item in json.loads(request.body)["items"]]
-    except (json.JSONDecodeError, KeyError, ValueError):
-        raise HttpResponseBadRequest("Invalid JSON payload")
 
     qs = QueueItem.objects.filter(user=request.user)
     items = qs.in_bulk()
     for_update = []
-    for position, item_id in enumerate(payload, 1):
-        if item := items.get(item_id):
-            item.position = position
-            for_update.append(item)
+
+    try:
+        for position, item_id in enumerate(request.POST.getlist("items"), 1):
+            if item := items[int(item_id)]:
+                item.position = position
+                for_update.append(item)
+    except (KeyError, ValueError):
+        return HttpResponseBadRequest("Invalid payload")
 
     qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)

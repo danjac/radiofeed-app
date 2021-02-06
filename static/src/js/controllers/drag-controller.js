@@ -34,13 +34,17 @@ export default class extends Controller {
   update() {
     const items = this.draggableTargets.map((target) => target.dataset.id);
     if (items) {
+      const body = new FormData();
+
+      body.append('csrfmiddlewaretoken', this.csrfTokenValue);
+      items.forEach((item) => {
+        body.append('items', item);
+      });
+
       fetch(this.urlValue, {
+        body,
         method: 'POST',
-        contentType: 'application/json',
-        headers: {
-          'X-CSRFToken': this.csrfTokenValue,
-        },
-        body: JSON.stringify({ items }),
+        credentials: 'same-origin',
       });
     }
   }
