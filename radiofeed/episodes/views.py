@@ -259,15 +259,9 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
-    qs = QueueItem.objects.filter(user=request.user)
-    qs.filter(episode=episode).delete()
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        streams = [TurboStream(f"queue-item-{episode.id}").remove.render()]
-        if qs.count() == 0:
-            streams += [
-                TurboStream("queue").append.render("No more items left in queue"),
-            ]
-        return TurboStreamResponse(streams)
+        return TurboStreamResponse(render_remove_from_queue(request, episode))
     return episode_queue_response(request, episode, False)
 
 
@@ -348,13 +342,9 @@ def toggle_player(
 
     request.player.start(episode, current_time)
 
-    if QueueItem.objects.filter(user=request.user).count() == 0:
-        streams += [
-            TurboStream("queue").append.render("All done!"),
-        ]
-
     response = TurboStreamResponse(
         streams
+        + render_remove_from_queue(request, episode)
         + render_player_toggles(request, episode, True)
         + [
             TurboStream("player-container")
@@ -362,8 +352,6 @@ def toggle_player(
                 "episodes/player/_player.html", {"episode": episode}, request=request
             )
             .render(),
-            # remove from queue
-            TurboStream(f"queue-item-{episode.id}").remove.render(),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -446,6 +434,15 @@ def render_player_toggles(
             f"episode-play-actions-toggle-{episode.id}",
         ]
     ]
+
+
+def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
+    streams = [TurboStream(f"queue-item-{episode.id}").remove.render()]
+    if QueueItem.objects.filter(user=request.user).count() == 0:
+        streams += [
+            TurboStream("queue").append.render("No more items left in queue"),
+        ]
+    return streams
 
 
 def player_stop_response(streams: List[str]) -> HttpResponse:
