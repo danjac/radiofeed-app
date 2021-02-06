@@ -46,7 +46,7 @@
 
             <div class="flex items-center justify-between lg:justify-start text-sm">
               <div class="font-semibold text-gray-500 mr-2 flex items-center">
-                <span class="hidden md:inline-block">
+                <span{% if remove_url %} class="hidden sm:inline-block"{% endif %}>
                   {{ episode.pub_date|date }}
                 </span>
                 {% if episode.explicit %}

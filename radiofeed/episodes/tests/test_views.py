@@ -342,6 +342,18 @@ class TestRemoveFromQueue:
         assert QueueItem.objects.filter(user=login_user).count() == 0
 
 
+class TestClearQueue:
+    def test_post(self, client, login_user):
+
+        QueueItemFactory(user=login_user)
+        QueueItemFactory(user=login_user)
+        QueueItemFactory(user=login_user)
+
+        resp = client.post("episodes:clear_queue")
+        assert resp.url == reverse("episodes:queue")
+        assert QueueItem.objects.count() == 0
+
+
 class TestMoveQueueItems:
     def test_post(self, client, login_user):
 

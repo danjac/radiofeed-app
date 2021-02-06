@@ -2,6 +2,7 @@ import http
 import json
 from typing import Dict, List, Optional
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, QuerySet, Subquery
@@ -265,10 +266,19 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
         streams = [TurboStream(f"queue-item-{episode.id}").remove.render()]
         if qs.count() == 0:
             streams += [
-                TurboStream("queue").append.render("No more items left in queue")
+                TurboStream("clear-queue").remove.render(),
+                TurboStream("queue").append.render("No more items left in queue"),
             ]
         return TurboStreamResponse(streams)
     return episode_queue_response(request, episode, False)
+
+
+@require_POST
+@login_required
+def clear_queue(request: HttpRequest) -> HttpResponse:
+    QueueItem.objects.filter(user=request.user).delete()
+    messages.info(request, "Your queue has been emptied")
+    return redirect("episodes:queue")
 
 
 @require_POST
@@ -349,7 +359,10 @@ def toggle_player(
     request.player.start(episode, current_time)
 
     if QueueItem.objects.filter(user=request.user).count() == 0:
-        streams += [TurboStream("queue").append.render("All done!")]
+        streams += [
+            TurboStream("clear-queue").remove.render(),
+            TurboStream("queue").append.render("All done!"),
+        ]
 
     response = TurboStreamResponse(
         streams
