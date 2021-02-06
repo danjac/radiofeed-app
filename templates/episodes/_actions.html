@@ -50,17 +50,23 @@
     {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
+{% if allow_bookmarks or allow_queue %}
 <div class="mb-3 flex items-center">
+  {% if allow_bookmarks %}
   <turbo-frame id="{{ episode.get_bookmark_toggle_id }}"
                class="mr-2">
     {% include "episodes/bookmarks/_toggle.html" %}
   </turbo-frame>
+  {% endif %}
+  {% if allow_queue %}
   <button title="Add episode to Queue"
           class="btn btn-default flex items-center">
     {% svg "collection" css_class="btn-icon mr-2" %}
     Play Queue
   </button>
+  {% endif %}
 </div>
+{% endif %}
 
 <div class="text-sm italic markdown">
   {{ episode.description|keepspaces|stripentities|urlize|truncatewords:30 }}

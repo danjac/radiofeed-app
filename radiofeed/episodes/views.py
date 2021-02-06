@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
-from django.db.models import OuterRef, QuerySet, Subquery
+from django.db.models import Max, OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -17,7 +17,7 @@ from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 from radiofeed.pagination import paginate
 from radiofeed.podcasts.models import Podcast
 
-from .models import AudioLog, Bookmark, Episode
+from .models import AudioLog, Bookmark, Episode, QueueItem
 
 
 @login_required
@@ -97,7 +97,12 @@ def episode_detail(
 
 
 @login_required
-def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
+def episode_actions(
+    request: HttpRequest,
+    episode_id: str,
+    allow_bookmarks: bool = True,
+    allow_queue: bool = True,
+) -> HttpResponse:
     episode = get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
@@ -112,7 +117,10 @@ def episode_actions(request: HttpRequest, episode_id: str) -> HttpResponse:
                     "episode": episode,
                     "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
                     "is_episode_playing": request.player.is_playing(episode),
-                    "is_bookmarked": is_episode_bookmarked(request, episode),
+                    "is_bookmarked": allow_bookmarks
+                    and is_episode_bookmarked(request, episode),
+                    "allow_bookmarks": allow_bookmarks,
+                    "allow_queue": allow_queue,
                 },
             )
             .response(request)
@@ -208,6 +216,51 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     return episode_bookmark_response(request, episode, False)
 
 
+# Queue views
+
+
+@login_required
+def queue(request: HttpRequest) -> HttpResponse:
+    # we don't want to paginate the queue
+    return TemplateResponse(
+        request,
+        "episodes/queue/index.html",
+        {
+            "queue_items": QueueItem.objects.filter(user=request.user).order_by(
+                "position"
+            )
+        },
+    )
+
+
+@require_POST
+@login_required
+def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
+    episode = get_object_or_404(Episode, pk=episode_id)
+    position = (
+        QueueItem.objects.filter(user=request.user).aggregate(Max("position"))[
+            "position__max"
+        ]
+        or 0
+    )
+
+    try:
+        QueueItem.objects.create(user=request.user, episode=episode, position=position)
+    except IntegrityError:
+        pass
+
+    # NB: we probably don't want to add the "queue" button in the Queue itself
+    return episode_queue_response(request, episode, True)
+
+
+@require_POST
+@login_required
+def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
+    episode = get_object_or_404(Episode, pk=episode_id)
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+    return episode_queue_response(request, episode, False)
+
+
 # Player control views
 
 
@@ -238,6 +291,9 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         pk=episode_id,
     )
 
+    # remove from queue
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+
     current_time: int = 0 if episode.completed else episode.current_time or 0
 
     episode.log_activity(request.user, current_time=current_time)
@@ -253,6 +309,8 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
                 "episodes/player/_player.html", {"episode": episode}, request=request
             )
             .render(),
+            # remove from queue
+            TurboStream(f"queue-item-{episode.id}").remove.render(),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -348,6 +406,22 @@ def episode_bookmark_response(
             .template(
                 "episodes/bookmarks/_toggle.html",
                 {"episode": episode, "is_bookmarked": is_bookmarked},
+            )
+            .response(request)
+        )
+    return redirect(episode)
+
+
+def episode_queue_response(
+    request: HttpRequest, episode: Episode, is_queued: bool
+) -> HttpResponse:
+    if request.turbo:
+        # https://github.com/hotwired/turbo/issues/86
+        return (
+            TurboFrame(episode.get_bookmark_toggle_id())
+            .template(
+                "episodes/queue/_toggle.html",
+                {"episode": episode, "is_queued": is_queued},
             )
             .response(request)
         )

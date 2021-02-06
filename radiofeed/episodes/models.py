@@ -282,13 +282,3 @@ class QueueItem(TimeStampedModel):
         indexes = [
             models.Index(fields=["position"]),
         ]
-
-    def save(self, *args, **kwargs):
-        if not self.position:
-            self.position = (
-                self.user.queueitem_set.aggregate(models.Max("position"))[
-                    "position__max"
-                ]
-                or 0
-            ) + 1
-        return super().save(*args, **kwargs)

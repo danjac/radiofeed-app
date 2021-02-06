@@ -2,6 +2,7 @@
 
 {% block episodes %}
 {% for bookmark in page_obj %}
+{% url 'episodes:bookmark_actions' bookmark.episode.id as action_url %}
 {% include "episodes/_episode.html" with episode=bookmark.episode remove_url=bookmark.get_remove_url %}
 {% empty %}
 {% block empty %}

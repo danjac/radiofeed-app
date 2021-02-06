@@ -24,7 +24,26 @@ urlpatterns = [
         views.remove_bookmark,
         name="remove_bookmark",
     ),
+    path("queue/", views.queue, name="queue"),
+    path("queue/<int:episode_id>/~add/", views.add_to_queue, name="add_to_queue"),
+    path(
+        "queue/<int:episode_id>/~remove/",
+        views.remove_from_queue,
+        name="remove_from_queue",
+    ),
     path("episodes/<int:episode_id>/actions/", views.episode_actions, name="actions"),
+    path(
+        "episodes/<int:episode_id>/bookmarks/actions/",
+        views.episode_actions,
+        name="bookmark_actions",
+        kwargs={"allow_bookmarks": False},
+    ),
+    path(
+        "episodes/<int:episode_id>/queue/actions/",
+        views.episode_actions,
+        name="queue_actions",
+        kwargs={"allow_queue": False},
+    ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
         views.episode_detail,
