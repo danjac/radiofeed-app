@@ -2,13 +2,10 @@
       action="{{ remove_url }}"
       class="{{ css_class|default:'' }}">
   {% csrf_token %}
-  <button class="btn btn-secondary flex items-center px-1"
+  <button class="btn btn-secondary flex items-center p-2"
           name="remove"
           value="true"
           title="{{ btn_title }}">
-    {% svg "trash" css_class="btn-icon md:mr-2" %}
-    <span class="hidden md:inline-block">
-      Remove
-    </span>
+    {% svg "trash" css_class="btn-icon" %}
   </button>
 </form>
