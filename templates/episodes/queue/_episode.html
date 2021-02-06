@@ -1,3 +1,3 @@
 {% extends "episodes/_episode.html" %}
 {% block css_class %}{{ block.super }} draggable{% endblock %}
-{% block attrs %}id="queue-item-{{ episode.id }}" data-drag-target="draggable" data-id="{{ episode.id }}"{% endblock %}
+{% block attrs %}id="queue-item-{{ episode.id }}" data-drag-target="draggable" data-id="{{ item.id }}"{% endblock %}

@@ -33,15 +33,16 @@ export default class extends Controller {
 
   update() {
     const items = this.draggableTargets.map((target) => target.dataset.id);
-    console.log(items);
-    fetch(this.urlValue, {
-      method: 'POST',
-      contentType: 'application/json',
-      headers: {
-        'X-CSRFToken': this.csrfTokenValue,
-      },
-      body: JSON.stringify({ items }),
-    });
+    if (items) {
+      fetch(this.urlValue, {
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+          'X-CSRFToken': this.csrfTokenValue,
+        },
+        body: JSON.stringify({ items }),
+      });
+    }
   }
 
   get group() {

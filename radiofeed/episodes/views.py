@@ -274,7 +274,7 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
         raise HttpResponseBadRequest("Invalid JSON payload")
 
     qs = QueueItem.objects.filter(user=request.user)
-    items = {item.episode_id: item for item in qs}
+    items = qs.in_bulk()
     for_update = []
     for position, item_id in enumerate(payload, 1):
         if item := items.get(item_id):
@@ -282,7 +282,7 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
             for_update.append(item)
 
     qs.bulk_update(for_update, ["position"])
-    return HttpResponse("done")
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 # Player control views
