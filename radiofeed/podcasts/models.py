@@ -177,6 +177,11 @@ class RecommendationQuerySet(models.QuerySet):
                 )
             )
             | set(
+                user.queueitem_set.select_related("episode__podcast").values_list(
+                    "episode__podcast", flat=True
+                )
+            )
+            | set(
                 user.audiolog_set.select_related("episode__podcast").values_list(
                     "episode__podcast", flat=True
                 )
