@@ -77,12 +77,12 @@
     </div>
   </div>
   <div class="mb-3 flex items-center">
-    <turbo-frame id="{{ episode.get_bookmark_toggle_id }}"
-                 class="mr-2">
-      {% include "episodes/bookmarks/_toggle.html" %}
-    </turbo-frame>
-    <turbo-frame id="{{ episode.get_queue_toggle_id }}">
+    <turbo-frame id="{{ episode.get_queue_toggle_id }}" class="mr-2">
       {% include "episodes/queue/_toggle.html" %}
+    </turbo-frame>
+    <turbo-frame id="{{ episode.get_bookmark_toggle_id }}"
+                 >
+      {% include "episodes/bookmarks/_toggle.html" %}
     </turbo-frame>
   </div>
 
