@@ -3,13 +3,13 @@
       action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}">
   {% csrf_token %}
   {% if is_favorited %}
-  <button title="Remove episode from Bookmarks"
+  <button title="Remove episode from Favorites"
           class="btn btn-secondary flex items-center">
     {% svg "trash" css_class="btn-icon mr-2" %}
     Favorite
   </button>
   {% else %}
-  <button title="Add episode to Bookmarks"
+  <button title="Add episode to Favorites"
           class="btn btn-default flex items-center">
     {% svg "star" css_class="btn-icon mr-2" %}
     Favorite
@@ -17,7 +17,7 @@
   {% endif %}
 </form>
 {% else %}
-<a title="Log in or sign up to add this episode to Bookmarks"
+<a title="Log in or sign up to add this episode to Favorites"
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
    class="btn btn-default flex items-center">

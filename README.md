@@ -8,14 +8,9 @@ This is a very simple MVP podcast app. It has the following features:
 2. Discover podcasts through iTunes categories
 3. Search individual podcasts and episodes
 4. Play episodes using an embedded HTML5 audio player
-5. Bookmark episodes (logged in users)
-6. Subscribe to individual podcast feeds (logged in users)
+5. Favorite episodes
+6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
-
-Some ideas for additional features you might want to add in a fork:
-
-1. An episode queue that automatically plays the next episode in the queue when one is finished
-2. Allow users to compile and share their own lists or collections of podcasts
 
 For local development, first copy the .env.example file:
 

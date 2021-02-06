@@ -10,9 +10,10 @@ from .models import Podcast, Recommendation
 
 def send_recommendations_email(user):
     """Sends email with 3 recommended podcasts, based on:
-    - bookmarks
+    - favorites
     - subscriptions
     - play history
+    - play queue
 
     Podcasts should be just recommended once to each user.
     """
