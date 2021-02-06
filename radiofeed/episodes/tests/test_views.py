@@ -133,6 +133,13 @@ class TestTogglePlayer:
             "playback_rate": 1.0,
         }
 
+    def test_play_next_if_empty(self, client, login_user):
+        resp = client.post(reverse("episodes:play_next_episode"))
+        assert resp.status_code == http.HTTPStatus.OK
+
+        header = json.loads(resp["X-Player"])
+        assert header["action"] == "stop"
+
     def test_is_played(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
