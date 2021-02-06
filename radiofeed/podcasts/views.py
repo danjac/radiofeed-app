@@ -78,7 +78,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         )
 
     else:
-        podcasts = Podcast.objects.none()
+        return redirect("podcasts:podcast_list")
 
     return podcast_list_response(request, podcasts, "podcasts/search.html")
 

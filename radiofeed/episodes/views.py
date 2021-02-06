@@ -71,7 +71,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .order_by("-rank", "-pub_date")
         )
     else:
-        episodes = Episode.objects.none()
+        return redirect("episodes:episode_list")
 
     return episode_list_response(request, episodes, "episodes/search.html")
 
