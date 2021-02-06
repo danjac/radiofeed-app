@@ -3,31 +3,10 @@
 {% block subtitle %} | Play Queue{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3">
-  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">
-    Play Queue
-  </h1>
+<h1 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">
+  Play Queue
+</h1>
 
-  {% if queue_items|length %}
-
-  <form method="POST"
-        action="{% url 'episodes:clear_queue' %}"
-        data-controller="confirm"
-        data-confirm-text-value="Are you sure you want to clear your Play Queue?"
-        data-action="confirm#confirm"
-        id="clear-queue"
-        class="flex justify-center sm:justify-end">
-
-    {% csrf_token %}
-    <button class="btn btn-danger flex items-center">
-      {% svg "trash" css_class="btn-icon mr-2" %}
-      Clear Queue
-    </button>
-  </form>
-
-  {% endif %}
-
-</div>
 <div data-controller="drag"
      data-drag-handle-class="handle"
      data-drag-group-value="queue-items"
