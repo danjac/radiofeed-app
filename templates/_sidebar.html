@@ -64,8 +64,8 @@
         {% active_link 'episodes:bookmark_list' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "bookmark" css_class="h-5 w-5 mr-3" %}
-          Bookmarks
+          {% svg "star" css_class="h-5 w-5 mr-3" %}
+          Favorites
         </a>
       </li>
 

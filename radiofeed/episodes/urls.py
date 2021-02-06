@@ -34,10 +34,10 @@ urlpatterns = [
         views.remove_history,
         name="remove_history",
     ),
-    path("bookmarks/", views.bookmark_list, name="bookmark_list"),
-    path("bookmarks/<int:episode_id>/~add/", views.add_bookmark, name="add_bookmark"),
+    path("favorites/", views.bookmark_list, name="bookmark_list"),
+    path("favorites/<int:episode_id>/~add/", views.add_bookmark, name="add_bookmark"),
     path(
-        "bookmarks/<int:episode_id>/~remove/",
+        "favorites/<int:episode_id>/~remove/",
         views.remove_bookmark,
         name="remove_bookmark",
     ),
@@ -51,7 +51,7 @@ urlpatterns = [
     ),
     path("episodes/<int:episode_id>/actions/", views.episode_actions, name="actions"),
     path(
-        "episodes/<int:episode_id>/bookmarks/actions/",
+        "episodes/<int:episode_id>/favorites/actions/",
         views.episode_actions,
         name="bookmark_actions",
         kwargs={"allow_bookmarks": False},

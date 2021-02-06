@@ -6,13 +6,13 @@
   <button title="Remove episode from Bookmarks"
           class="btn btn-secondary flex items-center">
     {% svg "trash" css_class="btn-icon mr-2" %}
-    Bookmark
+    Favorite
   </button>
   {% else %}
   <button title="Add episode to Bookmarks"
           class="btn btn-default flex items-center">
-    {% svg "bookmark" css_class="btn-icon mr-2" %}
-    Bookmark
+    {% svg "star" css_class="btn-icon mr-2" %}
+    Favorite
   </button>
   {% endif %}
 </form>
@@ -21,7 +21,7 @@
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
    class="btn btn-default flex items-center">
-  {% svg "bookmark" css_class="btn-icon mr-2" %}
-  Bookmark
+  {% svg "star" css_class="btn-icon mr-2" %}
+  Favorite
 </a>
 {% endif %}
