@@ -58,7 +58,7 @@
       </form>
     </div>
     {% else %}
-    <div class="text-sm flex items-center">
+    <div class="text-sm md:text-base flex items-center">
       <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
          class="inline-block text-white hover:text-blue-500 mr-3">{% translate "Login" %}</a>
       <a href="{% url 'account_signup' %}"

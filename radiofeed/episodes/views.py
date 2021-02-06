@@ -228,9 +228,9 @@ def queue(request: HttpRequest) -> HttpResponse:
         request,
         "episodes/queue/index.html",
         {
-            "queue_items": QueueItem.objects.filter(user=request.user).order_by(
-                "position"
-            )
+            "queue_items": QueueItem.objects.filter(user=request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("position")
         },
     )
 
