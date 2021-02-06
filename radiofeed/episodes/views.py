@@ -420,7 +420,7 @@ def episode_queue_response(
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(episode.get_bookmark_toggle_id())
+            TurboFrame(episode.get_queue_toggle_id())
             .template(
                 "episodes/queue/_toggle.html",
                 {"episode": episode, "is_queued": is_queued},
