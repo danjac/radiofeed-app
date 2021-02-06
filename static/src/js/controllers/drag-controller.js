@@ -5,17 +5,21 @@ export default class extends Controller {
   static targets = ['draggable'];
 
   static values = {
-    draggable: String,
     group: String,
     url: String,
     csrfToken: String,
   };
 
+  static classes = ['handle'];
+
   connect() {
     // set put: false to prevent
+    //
+    const handle = '.' + this.handleClass;
+
     this.sortable = Sortable.create(this.element, {
+      handle,
       animation: 150,
-      draggable: this.draggableValue || '.draggable',
       group: this.group,
       onAdd: this.add.bind(this),
       onRemove: this.remove.bind(this),

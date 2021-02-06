@@ -1,3 +1,21 @@
 {% extends "episodes/_episode.html" %}
-{% block css_class %}{{ block.super }} draggable{% endblock %}
 {% block attrs %}id="queue-item-{{ episode.id }}" data-drag-target="draggable" data-id="{{ item.id }}"{% endblock %}
+
+{% block mobile_extra_buttons %}
+<div class="flex items-center md:hidden">
+  <button class="btn btn-secondary flex items-center px-1 mr-2 handle" title="Move">
+    {% svg "view_list" css_class="btn-icon" %}
+  </button>
+  {{ block.super }}
+</div>
+{% endblock %}
+
+{% block extra_buttons %}
+<div class="md:flex items-center hidden">
+  <button class="btn btn-secondary flex items-center px-1 mr-3 handle" title="Move">
+    {% svg "view_list" css_class="btn-icon mr-2" %}
+    Move
+  </button>
+  {{ block.super }}
+</div>
+{% endblock %}

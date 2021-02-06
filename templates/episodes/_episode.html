@@ -2,7 +2,8 @@
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url %}
 {% is_playing episode as is_episode_playing %}
 <div class="{% block css_class %}flex justify-between items-center mb-3 p-2 border hover:bg-gray-100{% endblock %}"
-     {% block attrs %}id="episode-{{ episode.id }}"{% endblock %}>
+     {% block attrs %}id="episode-{{ episode.id }}"
+     {% endblock %}>
   <div class="w-full">
     <div class="flex items-center w-full">
       <div class="mr-2 w-20">
@@ -45,14 +46,18 @@
 
             <div class="flex items-center justify-between lg:justify-start text-sm">
               <div class="font-semibold text-gray-500 mr-2 flex items-center">
-                {{ episode.pub_date|date }}
+                <span class="hidden md:inline-block">
+                  {{ episode.pub_date|date }}
+                </span>
                 {% if episode.explicit %}
                 {% include "_explicit.html" with css_class="ml-2" %}
                 {% endif %}
               </div>
+              {% block mobile_extra_buttons %}
               {% if remove_url %}
               {% include "episodes/_remove.html" with css_class="md:hidden ml-2" %}
               {% endif %}
+              {% endblock mobile_extra_buttons %}
             </div>
 
           </div>
@@ -61,8 +66,10 @@
       </div>
     </div>
   </div>
+  {% block extra_buttons %}
   {% if remove_url %}
   {% include "episodes/_remove.html" with css_class="hidden md:inline-block" %}
   {% endif %}
+  {% endblock extra_buttons %}
 </div>
 {% endwith %}
