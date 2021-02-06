@@ -81,11 +81,10 @@
                  class="mr-2">
       {% include "episodes/bookmarks/_toggle.html" %}
     </turbo-frame>
-    <button title="Add episode to Queue"
-            class="btn btn-default flex items-center">
-      {% svg "collection" css_class="btn-icon mr-2" %}
-      Add to Queue
-    </button>
+    <turbo-frame id="{{ episode.get_queue_toggle_id }}"
+                 class="mr-2">
+      {% include "episodes/queue/_toggle.html" %}
+    </turbo-frame>
   </div>
 
 

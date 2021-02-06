@@ -103,6 +103,10 @@ class Episode(models.Model):
         # https://github.com/hotwired/turbo/issues/86
         return f"episode-bookmark-{self.id}"
 
+    def get_queue_toggle_id(self) -> str:
+        # https://github.com/hotwired/turbo/issues/86
+        return f"episode-queue-{self.id}"
+
     def get_duration_in_seconds(self) -> int:
         """Returns duration string in h:m:s or h:m to seconds"""
         if not self.duration:

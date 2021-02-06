@@ -50,6 +50,16 @@
       </li>
 
       {% if user.is_authenticated %}
+
+      <li class="py-2">
+        {% active_link 'episodes:queue' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "collection" css_class="h-5 w-5 mr-3" %}
+          Play Queue
+        </a>
+      </li>
+
       <li class="py-2">
         {% active_link 'episodes:bookmark_list' as link %}
         <a href="{{ link.url }}"

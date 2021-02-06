@@ -91,6 +91,7 @@ def episode_detail(
         {
             "episode": episode,
             "is_bookmarked": is_episode_bookmarked(request, episode),
+            "is_queued": is_episode_queued(request, episode),
             "og_data": get_episode_opengraph_data(request, episode),
         },
     )
@@ -119,6 +120,7 @@ def episode_actions(
                     "is_episode_playing": request.player.is_playing(episode),
                     "is_bookmarked": allow_bookmarks
                     and is_episode_bookmarked(request, episode),
+                    "is_queued": allow_queue and is_episode_queued(request, episode),
                     "allow_bookmarks": allow_bookmarks,
                     "allow_queue": allow_queue,
                 },
@@ -445,6 +447,12 @@ def get_episode_opengraph_data(
         }
 
     return og_data
+
+
+def is_episode_queued(request: HttpRequest, episode: Episode) -> bool:
+    if request.user.is_anonymous:
+        return False
+    return QueueItem.objects.filter(episode=episode, user=request.user).exists()
 
 
 def is_episode_bookmarked(request: HttpRequest, episode: Episode) -> bool:

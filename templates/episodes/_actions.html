@@ -59,11 +59,10 @@
   </turbo-frame>
   {% endif %}
   {% if allow_queue %}
-  <button title="Add episode to Queue"
-          class="btn btn-default flex items-center">
-    {% svg "collection" css_class="btn-icon mr-2" %}
-    Play Queue
-  </button>
+  <turbo-frame id="{{ episode.get_bookmark_toggle_id }}"
+               class="mr-2">
+    {% include "episodes/queue/_toggle.html" %}
+  </turbo-frame>
   {% endif %}
 </div>
 {% endif %}
