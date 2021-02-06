@@ -2,7 +2,7 @@
 <form class="{{ css_class|default:'' }}"
       method="POST"
       id="{% if player_toggle_id %}{{ player_toggle_id }}{% else %}episode-play-toggle-{{ episode.id }}{% endif %}"
-      action="{% url 'episodes:toggle_player' episode.id %}">
+      action="{% if is_episode_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}
 
   <div class="flex items-center">

@@ -93,7 +93,7 @@
 
             <form class="flex items-center"
                   method="POST"
-                  action="{% url 'episodes:toggle_player' episode.id %}">
+                  action="{% url 'episodes:stop_player' %}">
               {% csrf_token %}
               <input type="hidden"
                      name="player_action"
@@ -107,7 +107,7 @@
             <form method="POST"
                   class="hidden"
                   data-player-target="playNext"
-                  action="{% url 'episodes:toggle_player' episode.id %}">
+                  action="{% url 'episodes:play_next_episode' %}">
               {% csrf_token %}
               <input type="hidden"
                      name="mark_complete"
@@ -115,7 +115,7 @@
               <!-- replace with play_next -->
               <input type="hidden"
                      name="player_action"
-                     value="stop">
+                     value="play_next">
             </form>
 
           </div>

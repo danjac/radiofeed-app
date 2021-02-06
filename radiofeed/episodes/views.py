@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, QuerySet, Subquery
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -290,7 +290,9 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @login_required
-def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def toggle_player(
+    request: HttpRequest, episode_id: Optional[int] = None
+) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
@@ -303,22 +305,40 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
 
-    if request.POST.get("player_action") == "stop":
-        response = TurboStreamResponse(
-            streams + [TurboStream("player-controls").remove.render()]
+    action = request.POST.get("player_action", "play")
+
+    if action == "stop":
+        return player_stop_response(streams)
+
+    if action == "play_next":
+
+        if next_item := (
+            QueueItem.objects.filter(user=request.user)
+            .select_related("episode")
+            .order_by("position")
+            .first()
+        ):
+
+            episode = next_item.episode
+            current_time = 0
+            next_item.delete()
+
+        else:
+            return player_stop_response(streams)
+
+    else:
+
+        if episode_id is None:
+            raise Http404()
+
+        episode = get_object_or_404(
+            Episode.objects.with_current_time(request.user).select_related("podcast"),
+            pk=episode_id,
         )
-        response["X-Player"] = json.dumps({"action": "stop"})
-        return response
 
-    episode = get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
-        pk=episode_id,
-    )
-
-    # remove from queue
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
-
-    current_time: int = 0 if episode.completed else episode.current_time or 0
+        # remove from queue
+        QueueItem.objects.filter(user=request.user, episode=episode).delete()
+        current_time = 0 if episode.completed else episode.current_time or 0
 
     episode.log_activity(request.user, current_time=current_time)
 
@@ -417,6 +437,14 @@ def render_player_toggles(
             f"episode-play-actions-toggle-{episode.id}",
         ]
     ]
+
+
+def player_stop_response(streams: List[str]) -> HttpResponse:
+    response = TurboStreamResponse(
+        streams + [TurboStream("player-controls").remove.render()]
+    )
+    response["X-Player"] = json.dumps({"action": "stop"})
+    return response
 
 
 def episode_bookmark_response(
