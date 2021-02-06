@@ -70,10 +70,12 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-    else:
+        return episode_list_response(request, episodes, "episodes/search.html")
+
+    if request.user.is_authenticated:
         return redirect("episodes:episode_list")
 
-    return episode_list_response(request, episodes, "episodes/search.html")
+    return redirect("podcasts:podcast_list")
 
 
 def episode_detail(

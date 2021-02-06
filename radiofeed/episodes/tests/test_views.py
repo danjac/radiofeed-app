@@ -38,22 +38,16 @@ class TestEpisodeList:
 
 
 class TestSearchEpisodes:
-    def test_anonymous_search(self, client):
+    def test_search_empty_anonymous(self, client):
+        resp = client.get(reverse("episodes:search_episodes"), {"q": ""})
+        assert resp.url == reverse("podcasts:podcast_list")
 
-        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        episode = EpisodeFactory(title="testing")
-        resp = client.get(reverse("episodes:search_episodes"), {"q": "testing"})
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
+    def test_search_empty_authenticated(self, client, login_user):
+        resp = client.get(reverse("episodes:search_episodes"), {"q": ""})
+        assert resp.url == reverse("episodes:episode_list")
 
-    def test_user_has_subscriptions_search(self, client, login_user):
-        "Ignore subs in search"
+    def test_search(self, client):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        SubscriptionFactory(
-            user=login_user,
-            podcast=EpisodeFactory(title="zzzz", keywords="zzzz").podcast,
-        )
         episode = EpisodeFactory(title="testing")
         resp = client.get(reverse("episodes:search_episodes"), {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
