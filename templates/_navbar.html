@@ -51,7 +51,8 @@
       </a>
       <form method="post"
             action="{% url 'account_logout' %}"
-            class="inline-block">
+            class="inline-block"
+            data-turbo="false">
         {% csrf_token %}
         <button class="text-white hover:text-blue-500">{% translate "Logout" %}</button>
       </form>

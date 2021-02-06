@@ -57,10 +57,6 @@ export default class extends Controller {
     useTurbo(this);
   }
 
-  disconnect() {
-    this.checkControlsAvailable();
-  }
-
   ended() {
     this.cancelTimeUpdateTimer();
     this.markCompleteTarget.value = 'true';
@@ -141,16 +137,11 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  turboLoad() {
-    this.checkControlsAvailable();
-  }
-
   turboSubmitEnd(event) {
     console.log('turboSubmitEnd');
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
     if (!headers || !headers.has('X-Player')) {
-      this.checkControlsAvailable();
       return;
     }
     const { action, mediaUrl, currentTime, metadata } = JSON.parse(
@@ -392,16 +383,6 @@ export default class extends Controller {
         method: 'POST',
         credentials: 'same-origin',
       });
-    }
-  }
-
-  checkControlsAvailable() {
-    // ensures audio is not "orphaned" if the controls are
-    // removed through a page reload
-    // hasControlsTarget not working so well here
-    if (!document.getElementById('player-controls')) {
-      this.closeAudio();
-      this.cancelTimeUpdateTimer();
     }
   }
 
