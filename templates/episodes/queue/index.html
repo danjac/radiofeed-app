@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block subtitle %} | Play Queue{% endblock %}
+
+{% block content %}
+<h1 class="text-lg font-bold mb-3 flex justify-center sm:justify-start">
+  Play Queue
+</h1>
+{% for item in queue_items %}
+{% url 'episodes:queue_actions' item.episode.id as action_url %}
+{% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
+{% include "episodes/queue/_episode.html" with episode=item.episode %}
+{% empty %}
+You do not have any items in queue.
+{% endfor %}
+{% endblock content %}

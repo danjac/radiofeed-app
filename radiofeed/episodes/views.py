@@ -260,6 +260,8 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
+    if "remove" in request.POST:
+        return TurboStream(f"queue-item-{episode.id}").remove.response()
     return episode_queue_response(request, episode, False)
 
 
