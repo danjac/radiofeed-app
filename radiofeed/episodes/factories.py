@@ -5,7 +5,7 @@ import uuid
 from django.utils import timezone
 
 # Third Party Libraries
-from factory import Faker, LazyFunction, SubFactory
+from factory import Faker, LazyFunction, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 
 # RadioFeed
@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 # Local
-from .models import AudioLog, Bookmark, Episode
+from .models import AudioLog, Bookmark, Episode, QueueItem
 
 
 class EpisodeFactory(DjangoModelFactory):
@@ -46,3 +46,12 @@ class AudioLogFactory(DjangoModelFactory):
 
     class Meta:
         model = AudioLog
+
+
+class QueueItemFactory(DjangoModelFactory):
+    episode = SubFactory(EpisodeFactory)
+    user = SubFactory(UserFactory)
+    position = Sequence(lambda n: n + 1)
+
+    class Meta:
+        model = QueueItem

@@ -12,7 +12,12 @@ import pytest
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 
 # Local
-from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from ..factories import (
+    AudioLogFactory,
+    BookmarkFactory,
+    EpisodeFactory,
+    QueueItemFactory,
+)
 from ..models import AudioLog, Bookmark, QueueItem
 
 pytestmark = pytest.mark.django_db
@@ -325,3 +330,46 @@ class TestAddToQueue:
 
         assert items[2].episode == third
         assert items[2].position == 3
+
+
+class TestRemoveFromQueue:
+    def test_post(self, client, login_user):
+        item = QueueItemFactory(user=login_user)
+        resp = client.post(
+            reverse("episodes:remove_from_queue", args=[item.episode.id])
+        )
+        assert resp.url == item.episode.get_absolute_url()
+        assert QueueItem.objects.filter(user=login_user).count() == 0
+
+
+class TestMoveQueueItems:
+    def test_post(self, client, login_user):
+
+        first = QueueItemFactory(user=login_user)
+        second = QueueItemFactory(user=login_user)
+        third = QueueItemFactory(user=login_user)
+
+        items = QueueItem.objects.filter(user=login_user).order_by("position")
+
+        assert items[0] == first
+        assert items[1] == second
+        assert items[2] == third
+
+        resp = client.post(
+            reverse("episodes:move_queue_items"),
+            {
+                "items": [
+                    third.id,
+                    first.id,
+                    second.id,
+                ]
+            },
+        )
+
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+
+        items = QueueItem.objects.filter(user=login_user).order_by("position")
+
+        assert items[0] == third
+        assert items[1] == first
+        assert items[2] == second

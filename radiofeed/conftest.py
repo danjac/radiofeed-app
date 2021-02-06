@@ -13,8 +13,9 @@ from radiofeed.episodes.factories import (
     AudioLogFactory,
     BookmarkFactory,
     EpisodeFactory,
+    QueueItemFactory,
 )
-from radiofeed.episodes.models import AudioLog, Bookmark, Episode
+from radiofeed.episodes.models import AudioLog, Bookmark, Episode, QueueItem
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.factories import UserFactory
@@ -83,6 +84,11 @@ def bookmark(user: settings.AUTH_USER_MODEL, episode: Episode) -> Bookmark:
 @pytest.fixture
 def audio_log(user: settings.AUTH_USER_MODEL, episode: Episode) -> AudioLog:
     return AudioLogFactory(user=user, episode=episode)
+
+
+@pytest.fixture
+def queue_item(user: settings.AUTH_USER_MODEL, episode: Episode) -> QueueItem:
+    return QueueItemFactory(user=user, episode=episode)
 
 
 def _make_login_user(
