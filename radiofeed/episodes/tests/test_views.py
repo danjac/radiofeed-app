@@ -102,8 +102,8 @@ class TestEpisodeActions:
 
 
 class TestTogglePlayer:
-    def test_authenticated(self, client, login_user, episode):
-        resp = client.post(reverse("episodes:toggle_player", args=[episode.id]))
+    def test_play(self, client, login_user, episode):
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
@@ -119,7 +119,7 @@ class TestTogglePlayer:
 
     def test_is_played(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
-        resp = client.post(reverse("episodes:toggle_player", args=[episode.id]))
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])
@@ -140,7 +140,7 @@ class TestTogglePlayer:
 
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(
-            reverse("episodes:toggle_player", args=[episode.id]),
+            reverse("episodes:stop_player"),
             {"player_action": "stop"},
         )
         assert resp.status_code == http.HTTPStatus.OK
