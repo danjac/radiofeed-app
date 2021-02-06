@@ -30,7 +30,7 @@ def landing_page(request: HttpRequest) -> HttpResponse:
         pub_date__isnull=False,
         cover_image__isnull=False,
         promoted=True,
-    ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+    ).order_by("-pub_date")[:12]
 
     return TemplateResponse(
         request, "podcasts/landing_page.html", {"podcasts": podcasts}

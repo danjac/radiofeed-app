@@ -3,12 +3,21 @@
 {% block navbar %}{% endblock %}
 {% block player %}{% endblock %}
 {% block layout %}
-<div class="min-h-full mx-auto flex justify-center items-center">
+<div class="flex justify-center items-center">
   <div class="p-12">
+    <h1 class="text-2xl font-bold flex items-center justify-center mb-3">
+      <img src="{% static 'img/wave.png' %}"
+           height="32"
+           width="32"
+           alt="{{ request.site.name }}"
+           class="mr-4">
 
-    <h1 class="text-xl md:text-2xl text-center mb-3">
-      Discover and listen to some great podcast content.
+      <span class="font-mono">{{ request.site.name }}</span>
+
     </h1>
+    <h2 class="text-xl md:text-2xl text-center mb-3">
+      Discover and listen to some great podcast content.
+    </h2>
 
     <div class="mb-3 flex justify-center">
       {% url 'podcasts:search_podcasts' as search_url %}
@@ -48,13 +57,9 @@
       </div>
     </div>
 
-    <div class="flex justify-center">
-      {% include "account/_social_logins.html" with css_class="text-center" %}
-    </div>
-
   </div>
 </div>
-<footer class="p-2 mt-4 justify-center bg-black text-gray-100 text-sm sm:flex items-center leading-tight tracking-tight">
+<footer class="p-2 mt-4 justify-center text-sm sm:flex items-center leading-tight tracking-tight">
   <div class="mb-2 sm:mb-0 sm:mr-2 text-center sm:block">
     <span class="mr-1">&copy; Dan Jacob {% now 'Y' %}</span>
     <a class="underline hover:text-blue-500"
