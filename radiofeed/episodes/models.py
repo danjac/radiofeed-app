@@ -272,6 +272,17 @@ class QueueItem(TimeStampedModel):
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     position = models.IntegerField(default=0)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name="uniq_queue_item", fields=["user", "episode"]),
+            models.UniqueConstraint(
+                name="uniq_queue_item_position", fields=["user", "position"]
+            ),
+        ]
+        indexes = [
+            models.Index(fields=["position"]),
+        ]
+
     def save(self, *args, **kwargs):
         if not self.position:
             self.position = (
