@@ -273,9 +273,6 @@ class QueueItem(TimeStampedModel):
     class Meta:
         constraints = [
             models.UniqueConstraint(name="uniq_queue_item", fields=["user", "episode"]),
-            models.UniqueConstraint(
-                name="uniq_queue_item_position", fields=["user", "position"]
-            ),
         ]
         indexes = [
             models.Index(fields=["position"]),
