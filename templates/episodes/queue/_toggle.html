@@ -1,0 +1,27 @@
+{% if user.is_authenticated %}
+<form method="post"
+      action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}">
+  {% csrf_token %}
+  {% if is_queued %}
+  <button title="Remove episode from Play Queue"
+          class="btn btn-secondary flex items-center">
+    {% svg "trash" css_class="btn-icon mr-2" %}
+    Queue
+  </button>
+  {% else %}
+  <button title="Add episode to Play Queue"
+          class="btn btn-default flex items-center">
+    {% svg "collection" css_class="btn-icon mr-2" %}
+    Queue
+  </button>
+  {% endif %}
+</form>
+{% else %}
+<a title="Log in or sign up to add this episode to Bookmarks"
+   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
+   data-turbo-frame="_top"
+   class="btn btn-default flex items-center">
+  {% svg "collection" css_class="btn-icon mr-2" %}
+  Queue
+</a>
+{% endif %}
