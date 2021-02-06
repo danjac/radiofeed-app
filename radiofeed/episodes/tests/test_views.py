@@ -349,7 +349,7 @@ class TestClearQueue:
         QueueItemFactory(user=login_user)
         QueueItemFactory(user=login_user)
 
-        resp = client.post("episodes:clear_queue")
+        resp = client.post(reverse("episodes:clear_queue"))
         assert resp.url == reverse("episodes:queue")
         assert QueueItem.objects.count() == 0
 
