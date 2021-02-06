@@ -41,6 +41,7 @@ cleaner = bleach.Cleaner(
 def linkify_callback(attrs: AttributeDict, new: bool = False) -> AttributeDict:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
+    attrs[(None, "data-turbo-frame")] = "_top"
     return attrs
 
 

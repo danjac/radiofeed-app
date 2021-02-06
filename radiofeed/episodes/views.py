@@ -244,7 +244,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
             "position__max"
         ]
         or 0
-    )
+    ) + 1
 
     try:
         QueueItem.objects.create(user=request.user, episode=episode, position=position)
