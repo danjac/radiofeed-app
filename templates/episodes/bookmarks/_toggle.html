@@ -1,18 +1,17 @@
 {% if user.is_authenticated %}
-{% svg "trash" css_class="btn-icon mr-2" as bookmark_icon %}
 <form method="post"
       action="{% if is_bookmarked %}{% url 'episodes:remove_bookmark' episode.id %}{% else %}{% url 'episodes:add_bookmark' episode.id %}{% endif %}">
   {% csrf_token %}
   {% if is_bookmarked %}
   <button title="Remove episode from Bookmarks"
           class="btn btn-secondary flex items-center">
-    {{ bookmark_icon }}
+    {% svg "trash" css_class="btn-icon mr-2" %}
     Bookmark
   </button>
   {% else %}
   <button title="Add episode to Bookmarks"
           class="btn btn-default flex items-center">
-    {{ bookmark_icon }}
+    {% svg "bookmark" css_class="btn-icon mr-2" %}
     Bookmark
   </button>
   {% endif %}
@@ -22,7 +21,7 @@
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
    class="btn btn-default flex items-center">
-  {{ bookmark_icon }}
+  {% svg "bookmark" css_class="btn-icon mr-2" %}
   Bookmark
 </a>
 {% endif %}
