@@ -265,3 +265,19 @@ class AudioLog(TimeStampedModel):
 
     def get_remove_url(self) -> str:
         return reverse("episodes:remove_history", args=[self.episode_id])
+
+
+class QueueItem(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.position:
+            self.position = (
+                self.user.queueitem_set.aggregate(models.Max("position"))[
+                    "position__max"
+                ]
+                or 0
+            ) + 1
+        return super().save(*args, **kwargs)
