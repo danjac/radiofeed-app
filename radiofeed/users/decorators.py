@@ -6,7 +6,9 @@ from django.http import HttpRequest, HttpResponse
 
 
 def ajax_login_required(view: Callable) -> Callable:
-    @functools.wraps
+    """Returns a 403 Forbidden if user is not authenticated."""
+
+    @functools.wraps(view)
     def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_anonymous:
             raise PermissionDenied
