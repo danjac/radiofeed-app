@@ -300,7 +300,7 @@ def toggle_player(
 
     # clear session
     if current_episode := request.player.eject():
-        streams += render_player_toggles(request, current_episode, False)
+        streams += render_player_toggle(request, current_episode, False)
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -345,7 +345,7 @@ def toggle_player(
     response = TurboStreamResponse(
         streams
         + render_remove_from_queue(request, episode)
-        + render_player_toggles(request, episode, True)
+        + render_player_toggle(request, episode, True)
         + [
             TurboStream("player-container")
             .update.template(
@@ -413,7 +413,7 @@ def episode_list_response(
     return TemplateResponse(request, template_name, context)
 
 
-def render_player_toggles(
+def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> List[str]:
 
