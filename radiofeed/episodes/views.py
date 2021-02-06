@@ -17,7 +17,7 @@ from radiofeed.pagination import paginate
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.decorators import ajax_login_required
 
-from .models import AudioLog, Bookmark, Episode, QueueItem
+from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 @login_required
@@ -90,7 +90,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_bookmarked": is_episode_bookmarked(request, episode),
+            "is_favorited": is_episode_favorited(request, episode),
             "is_queued": is_episode_queued(request, episode),
             "og_data": get_episode_opengraph_data(request, episode),
         },
@@ -101,7 +101,7 @@ def episode_detail(
 def episode_actions(
     request: HttpRequest,
     episode_id: str,
-    allow_bookmarks: bool = True,
+    allow_favorites: bool = True,
     allow_queue: bool = True,
 ) -> HttpResponse:
     episode = get_object_or_404(
@@ -118,10 +118,10 @@ def episode_actions(
                     "episode": episode,
                     "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
                     "is_episode_playing": request.player.is_playing(episode),
-                    "is_bookmarked": allow_bookmarks
-                    and is_episode_bookmarked(request, episode),
+                    "is_favorited": allow_favorites
+                    and is_episode_favorited(request, episode),
                     "is_queued": allow_queue and is_episode_queued(request, episode),
-                    "allow_bookmarks": allow_bookmarks,
+                    "allow_favorites": allow_favorites,
                     "allow_queue": allow_queue,
                 },
             )
@@ -172,50 +172,50 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @login_required
-def bookmark_list(request: HttpRequest) -> HttpResponse:
-    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
+def favorite_list(request: HttpRequest) -> HttpResponse:
+    favorites = Favorite.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
     if request.search:
-        bookmarks = bookmarks.search(request.search).order_by("-rank", "-created")
+        favorites = favorites.search(request.search).order_by("-rank", "-created")
     else:
-        bookmarks = bookmarks.order_by("-created")
+        favorites = favorites.order_by("-created")
 
     context: Dict = {
-        "page_obj": paginate(request, bookmarks),
+        "page_obj": paginate(request, favorites),
     }
 
     if request.turbo.frame:
 
         return (
             TurboFrame(request.turbo.frame)
-            .template("episodes/bookmarks/_episode_list.html", context)
+            .template("episodes/favorites/_episode_list.html", context)
             .response(request)
         )
 
-    return TemplateResponse(request, "episodes/bookmarks/index.html", context)
+    return TemplateResponse(request, "episodes/favorites/index.html", context)
 
 
 @require_POST
 @login_required
-def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
 
     try:
-        Bookmark.objects.create(episode=episode, user=request.user)
+        Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return episode_bookmark_response(request, episode, True)
+    return episode_favorite_response(request, episode, True)
 
 
 @require_POST
 @login_required
-def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
-    Bookmark.objects.filter(user=request.user, episode=episode).delete()
+    Favorite.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
-    return episode_bookmark_response(request, episode, False)
+    return episode_favorite_response(request, episode, False)
 
 
 # Queue views
@@ -456,16 +456,16 @@ def player_stop_response(streams: List[str]) -> HttpResponse:
     return response
 
 
-def episode_bookmark_response(
-    request: HttpRequest, episode: Episode, is_bookmarked: bool
+def episode_favorite_response(
+    request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
     if request.turbo:
         # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(episode.get_bookmark_toggle_id())
+            TurboFrame(episode.get_favorite_toggle_id())
             .template(
-                "episodes/bookmarks/_toggle.html",
-                {"episode": episode, "is_bookmarked": is_bookmarked},
+                "episodes/favorites/_toggle.html",
+                {"episode": episode, "is_favorited": is_favorited},
             )
             .response(request)
         )
@@ -513,7 +513,7 @@ def is_episode_queued(request: HttpRequest, episode: Episode) -> bool:
     return QueueItem.objects.filter(episode=episode, user=request.user).exists()
 
 
-def is_episode_bookmarked(request: HttpRequest, episode: Episode) -> bool:
+def is_episode_favorited(request: HttpRequest, episode: Episode) -> bool:
     if request.user.is_anonymous:
         return False
-    return Bookmark.objects.filter(episode=episode, user=request.user).exists()
+    return Favorite.objects.filter(episode=episode, user=request.user).exists()

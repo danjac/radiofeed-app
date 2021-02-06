@@ -61,7 +61,7 @@
       </li>
 
       <li class="py-2">
-        {% active_link 'episodes:bookmark_list' as link %}
+        {% active_link 'episodes:favorite_list' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% svg "star" css_class="h-5 w-5 mr-3" %}

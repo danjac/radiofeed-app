@@ -2,7 +2,7 @@
 import pytest
 
 # RadioFeed
-from radiofeed.episodes.factories import AudioLogFactory, BookmarkFactory
+from radiofeed.episodes.factories import AudioLogFactory, FavoriteFactory
 
 # Local
 from ..factories import (
@@ -20,7 +20,7 @@ class TestRecommendationManager:
     def test_for_user(self, user):
 
         subscribed = SubscriptionFactory(user=user).podcast
-        bookmarked = BookmarkFactory(user=user).episode.podcast
+        favorited = FavoriteFactory(user=user).episode.podcast
         listened = AudioLogFactory(user=user).episode.podcast
 
         received = RecommendationFactory(
@@ -29,7 +29,7 @@ class TestRecommendationManager:
         user.recommended_podcasts.add(received)
 
         first = RecommendationFactory(podcast=subscribed).recommended
-        second = RecommendationFactory(podcast=bookmarked).recommended
+        second = RecommendationFactory(podcast=favorited).recommended
         third = RecommendationFactory(podcast=listened).recommended
 
         # already received
@@ -37,9 +37,9 @@ class TestRecommendationManager:
         # not connected
         RecommendationFactory()
 
-        # already subscribed, listened to or bookmarked
+        # already subscribed, listened to or favorited
         RecommendationFactory(recommended=subscribed)
-        RecommendationFactory(recommended=bookmarked)
+        RecommendationFactory(recommended=favorited)
         RecommendationFactory(recommended=listened)
 
         recommended = [r.recommended for r in Recommendation.objects.for_user(user)]

@@ -1,16 +1,16 @@
 {% extends "episodes/_episode_list.html" %}
 
 {% block episodes %}
-{% for bookmark in page_obj %}
-{% url 'episodes:bookmark_actions' bookmark.episode.id as action_url %}
-{% url 'episodes:remove_bookmark' bookmark.episode.id as remove_url %}
-{% include "episodes/_episode.html" with episode=bookmark.episode %}
+{% for favorite in page_obj %}
+{% url 'episodes:favorite_actions' favorite.episode.id as action_url %}
+{% url 'episodes:remove_favorite' favorite.episode.id as remove_url %}
+{% include "episodes/_episode.html" with episode=favorite.episode %}
 {% empty %}
 {% block empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% else %}
-You do not have any bookmarks at the moment.
+You do not have any favorites at the moment.
 {% endif %}
 {% endblock empty %}
 {% endfor %}

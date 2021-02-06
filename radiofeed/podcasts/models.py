@@ -172,7 +172,7 @@ class RecommendationQuerySet(models.QuerySet):
     def for_user(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
         podcast_ids = (
             set(
-                user.bookmark_set.select_related("episode__podcast").values_list(
+                user.favorite_set.select_related("episode__podcast").values_list(
                     "episode__podcast", flat=True
                 )
             )

@@ -8,8 +8,8 @@ from django.utils import timezone
 import pytest
 
 # Local
-from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
-from ..models import AudioLog, Bookmark, Episode
+from ..factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
+from ..models import AudioLog, Episode, Favorite
 
 pytestmark = pytest.mark.django_db
 
@@ -118,11 +118,11 @@ class TestEpisodeModel:
         assert episode.get_previous_episode() == previous_episode
 
 
-class TestBookmarkManager:
+class TestFavoriteManager:
     def test_search(self):
         episode = EpisodeFactory(title="testing")
-        BookmarkFactory(episode=episode)
-        assert Bookmark.objects.search("testing").count() == 1
+        FavoriteFactory(episode=episode)
+        assert Favorite.objects.search("testing").count() == 1
 
 
 class TestAudioLogManager:

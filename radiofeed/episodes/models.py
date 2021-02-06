@@ -99,9 +99,9 @@ class Episode(models.Model):
     def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
-    def get_bookmark_toggle_id(self) -> str:
+    def get_favorite_toggle_id(self) -> str:
         # https://github.com/hotwired/turbo/issues/86
-        return f"episode-bookmark-{self.id}"
+        return f"episode-favorite-{self.id}"
 
     def get_queue_toggle_id(self) -> str:
         # https://github.com/hotwired/turbo/issues/86
@@ -190,7 +190,7 @@ class Episode(models.Model):
         return data
 
 
-class BookmarkQuerySet(models.QuerySet):
+class FavoriteQuerySet(models.QuerySet):
     def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
@@ -208,18 +208,19 @@ class BookmarkQuerySet(models.QuerySet):
         )
 
 
-BookmarkManager: models.Manager = models.Manager.from_queryset(BookmarkQuerySet)
+FavoriteManager: models.Manager = models.Manager.from_queryset(FavoriteQuerySet)
 
 
-class Bookmark(TimeStampedModel):
+class Favorite(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    objects = BookmarkManager()
+    objects = FavoriteManager()
 
     class Meta:
+
         constraints = [
-            models.UniqueConstraint(name="uniq_bookmark", fields=["user", "episode"])
+            models.UniqueConstraint(name="uniq_favorite", fields=["user", "episode"])
         ]
         indexes = [
             models.Index(fields=["-created"]),

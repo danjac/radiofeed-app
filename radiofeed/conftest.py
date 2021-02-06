@@ -11,11 +11,11 @@ import pytest
 
 from radiofeed.episodes.factories import (
     AudioLogFactory,
-    BookmarkFactory,
     EpisodeFactory,
+    FavoriteFactory,
     QueueItemFactory,
 )
-from radiofeed.episodes.models import AudioLog, Bookmark, Episode, QueueItem
+from radiofeed.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.factories import UserFactory
@@ -77,8 +77,8 @@ def episode(podcast: Podcast) -> Episode:
 
 
 @pytest.fixture
-def bookmark(user: settings.AUTH_USER_MODEL, episode: Episode) -> Bookmark:
-    return BookmarkFactory(user=user, episode=episode)
+def favorite(user: settings.AUTH_USER_MODEL, episode: Episode) -> Favorite:
+    return FavoriteFactory(user=user, episode=episode)
 
 
 @pytest.fixture

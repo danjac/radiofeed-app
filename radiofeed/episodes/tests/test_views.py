@@ -14,11 +14,11 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 # Local
 from ..factories import (
     AudioLogFactory,
-    BookmarkFactory,
     EpisodeFactory,
+    FavoriteFactory,
     QueueItemFactory,
 )
-from ..models import AudioLog, Bookmark, QueueItem
+from ..models import AudioLog, Favorite, QueueItem
 
 pytestmark = pytest.mark.django_db
 
@@ -65,20 +65,20 @@ class TestEpisodeDetail:
         resp = client.get(episode.get_absolute_url())
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_bookmarked"]
+        assert not resp.context_data["is_favorited"]
 
-    def test_user_not_bookmarked(self, client, login_user, episode):
+    def test_user_not_favorited(self, client, login_user, episode):
         resp = client.get(episode.get_absolute_url())
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_bookmarked"]
+        assert not resp.context_data["is_favorited"]
 
-    def test_user_bookmarked(self, client, login_user, episode):
-        BookmarkFactory(episode=episode, user=login_user)
+    def test_user_favorited(self, client, login_user, episode):
+        FavoriteFactory(episode=episode, user=login_user)
         resp = client.get(episode.get_absolute_url())
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
-        assert resp.context_data["is_bookmarked"]
+        assert resp.context_data["is_favorited"]
 
 
 class TestEpisodeActions:
@@ -88,22 +88,22 @@ class TestEpisodeActions:
         )
         assert resp.url == episode.get_absolute_url()
 
-    def test_user_not_bookmarked(self, client, login_user, episode):
+    def test_user_not_favorited(self, client, login_user, episode):
         resp = client.get(
             reverse("episodes:actions", args=[episode.id]), HTTP_TURBO_FRAME="modal"
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_bookmarked"]
+        assert not resp.context_data["is_favorited"]
 
-    def test_user_bookmarked(self, client, login_user, episode):
-        BookmarkFactory(episode=episode, user=login_user)
+    def test_user_favorited(self, client, login_user, episode):
+        FavoriteFactory(episode=episode, user=login_user)
         resp = client.get(
             reverse("episodes:actions", args=[episode.id]), HTTP_TURBO_FRAME="modal"
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["episode"] == episode
-        assert resp.context_data["is_bookmarked"]
+        assert resp.context_data["is_favorited"]
 
 
 class TestTogglePlayer:
@@ -258,10 +258,10 @@ class TestHistory:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestBookmarkList:
+class TestFavoriteList:
     def test_get(self, client, login_user):
-        BookmarkFactory.create_batch(3, user=login_user)
-        resp = client.get(reverse("episodes:bookmark_list"))
+        FavoriteFactory.create_batch(3, user=login_user)
+        resp = client.get(reverse("episodes:favorite_list"))
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
@@ -270,30 +270,30 @@ class TestBookmarkList:
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
-            BookmarkFactory(
+            FavoriteFactory(
                 user=login_user,
                 episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
-        BookmarkFactory(user=login_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(reverse("episodes:bookmark_list"), {"q": "testing"})
+        FavoriteFactory(user=login_user, episode=EpisodeFactory(title="testing"))
+        resp = client.get(reverse("episodes:favorite_list"), {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestAddBookmark:
+class TestAddFavorite:
     def test_post(self, client, login_user, episode):
-        resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
+        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
         assert resp.url == episode.get_absolute_url()
-        assert Bookmark.objects.filter(user=login_user, episode=episode).exists()
+        assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
-class TestRemoveBookmark:
+class TestRemoveFavorite:
     def test_post(self, client, login_user, episode):
-        BookmarkFactory(user=login_user, episode=episode)
-        resp = client.post(reverse("episodes:remove_bookmark", args=[episode.id]))
+        FavoriteFactory(user=login_user, episode=episode)
+        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
         assert resp.url == episode.get_absolute_url()
-        assert not Bookmark.objects.filter(user=login_user, episode=episode).exists()
+        assert not Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
 class TestRemoveHistory:

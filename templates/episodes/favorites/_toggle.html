@@ -1,8 +1,8 @@
 {% if user.is_authenticated %}
 <form method="post"
-      action="{% if is_bookmarked %}{% url 'episodes:remove_bookmark' episode.id %}{% else %}{% url 'episodes:add_bookmark' episode.id %}{% endif %}">
+      action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}">
   {% csrf_token %}
-  {% if is_bookmarked %}
+  {% if is_favorited %}
   <button title="Remove episode from Bookmarks"
           class="btn btn-secondary flex items-center">
     {% svg "trash" css_class="btn-icon mr-2" %}

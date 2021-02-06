@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.users.factories import UserFactory
 
 # Local
-from .models import AudioLog, Bookmark, Episode, QueueItem
+from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 class EpisodeFactory(DjangoModelFactory):
@@ -30,12 +30,12 @@ class EpisodeFactory(DjangoModelFactory):
         model = Episode
 
 
-class BookmarkFactory(DjangoModelFactory):
+class FavoriteFactory(DjangoModelFactory):
     episode = SubFactory(EpisodeFactory)
     user = SubFactory(UserFactory)
 
     class Meta:
-        model = Bookmark
+        model = Favorite
 
 
 class AudioLogFactory(DjangoModelFactory):
