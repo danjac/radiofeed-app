@@ -8,6 +8,7 @@ export default class extends Controller {
     draggable: String,
     group: String,
     url: String,
+    csrfToken: String,
   };
 
   connect() {
@@ -31,15 +32,20 @@ export default class extends Controller {
   }
 
   update() {
-    if (this.hasUrlValue) {
-      const items = [];
-      this.draggableTargets.forEach((target) => {
-        if (target.dataset.group === this.group) {
-          items.push(target.dataset.id);
-        }
-      });
-      //axios.post(this.urlValue, { items });
-    }
+    const items = [];
+    this.draggableTargets.forEach((target) => {
+      if (target.dataset.group === this.group) {
+        items.push(target.dataset.id);
+      }
+    });
+    fetch(this.urlValue, {
+      method: 'POST',
+      contentType: 'application/json',
+      headers: {
+        'X-CSRF-Token': this.csrfTokenValue,
+      },
+      body: JSON.stringify({ items }),
+    });
   }
 
   get group() {

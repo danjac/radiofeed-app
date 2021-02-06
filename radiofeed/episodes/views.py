@@ -3,7 +3,6 @@ import json
 from typing import Dict, List, Optional
 
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -16,6 +15,7 @@ from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import paginate
 from radiofeed.podcasts.models import Podcast
+from radiofeed.users.decorators import ajax_login_required
 
 from .models import AudioLog, Bookmark, Episode, QueueItem
 
@@ -265,6 +265,25 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     return episode_queue_response(request, episode, False)
 
 
+@require_POST
+@ajax_login_required
+def move_queue_items(request: HttpRequest) -> HttpResponse:
+    try:
+        payload = [int(item) for item in json.loads(request.body)["items"]]
+    except (json.JSONDecodeError, KeyError):
+        raise HttpResponseBadRequest("Invalid JSON payload")
+
+    qs = QueueItem.objects.filter(user=request.user)
+    items = qs.in_bulk()
+    for_update = []
+    for position, item_id in enumerate(payload, 1):
+        if item := items.get(item_id):
+            for_update.append(item)
+
+    qs.bulk_update(for_update, ["position"])
+    return HttpResponse("done")
+
+
 # Player control views
 
 
@@ -329,10 +348,9 @@ def toggle_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
+@ajax_login_required
 def player_timeupdate(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
-    if request.user.is_anonymous:
-        raise PermissionDenied
 
     if episode := request.player.get_episode():
         try:

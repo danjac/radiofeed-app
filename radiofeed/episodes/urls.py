@@ -25,6 +25,7 @@ urlpatterns = [
         name="remove_bookmark",
     ),
     path("queue/", views.queue, name="queue"),
+    path("queue/~move/", views.move_queue_items, name="move_queue_items"),
     path("queue/<int:episode_id>/~add/", views.add_to_queue, name="add_to_queue"),
     path(
         "queue/<int:episode_id>/~remove/",

@@ -8,7 +8,8 @@
 </h1>
 <div data-controller="drag"
      data-drag-group-value="queue-items"
-     data-drag-url-value="">
+     data-drag-url-value="{% url 'episodes:move_queue_items'%}"
+     data-drag-csrf-token-value="{{ csrf_token }}">
   {% for item in queue_items %}
   {% url 'episodes:queue_actions' item.episode.id as action_url %}
   {% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
