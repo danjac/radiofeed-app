@@ -7,13 +7,11 @@
 
   <div class="flex items-center">
     <button title="Close Player"
-            name="player_action"
             value="stop"
             class="text-gray-800 hover:text-blue-600 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
       {% svg "stop" css_class="h-12 w-12" %}
     </button>
     <button title="Open in Player"
-            name="player_action"
             value="start"
             class="text-gray-800 hover:text-blue-600 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
       {% svg "play" css_class="h-12 w-12" %}

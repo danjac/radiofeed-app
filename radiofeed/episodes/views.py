@@ -291,7 +291,7 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def toggle_player(
-    request: HttpRequest, episode_id: Optional[int] = None
+    request: HttpRequest, episode_id: Optional[int] = None, action: str = "play"
 ) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
@@ -305,12 +305,10 @@ def toggle_player(
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
 
-    action = request.POST.get("player_action", "play")
-
     if action == "stop":
         return player_stop_response(streams)
 
-    if action == "play_next":
+    if action == "next":
 
         if next_item := (
             QueueItem.objects.filter(user=request.user)

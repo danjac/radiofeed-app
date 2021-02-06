@@ -13,7 +13,7 @@ from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 
 # Local
 from ..factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
-from ..models import AudioLog, Bookmark
+from ..models import AudioLog, Bookmark, QueueItem
 
 pytestmark = pytest.mark.django_db
 
@@ -104,6 +104,22 @@ class TestEpisodeActions:
 class TestTogglePlayer:
     def test_play(self, client, login_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+
+        header = json.loads(resp["X-Player"])
+        assert header["action"] == "start"
+        assert header["currentTime"] == 0
+        assert header["mediaUrl"] == episode.media_url
+
+        assert client.session["player"] == {
+            "episode": episode.id,
+            "current_time": 0,
+            "playback_rate": 1.0,
+        }
+
+    def test_play_next(self, client, login_user, episode):
+        QueueItem.objects.create(position=0, user=login_user, episode=episode)
+        resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Player"])

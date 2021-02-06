@@ -95,9 +95,6 @@
                   method="POST"
                   action="{% url 'episodes:stop_player' %}">
               {% csrf_token %}
-              <input type="hidden"
-                     name="player_action"
-                     value="stop">
               <button title="Stop"
                       class="focus:outline-none hover:text-blue-500">
                 {% svg "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
@@ -112,10 +109,6 @@
               <input type="hidden"
                      name="mark_complete"
                      value="true">
-              <!-- replace with play_next -->
-              <input type="hidden"
-                     name="player_action"
-                     value="play_next">
             </form>
 
           </div>
