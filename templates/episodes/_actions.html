@@ -33,8 +33,8 @@
 {% endif %}
 
 
-<div class="sm:flex items-center mb-3">
-  <div class="flex items-center w-full mb-3 sm:mb-0">
+<div class="sm:flex items-center justify-between mb-3">
+  <div class="flex items-center mb-3 sm:mb-0">
     <a href="{{ podcast.get_absolute_url }}"
        data-turbo-frame="_top">
       {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
