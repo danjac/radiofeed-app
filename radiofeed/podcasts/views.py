@@ -402,6 +402,7 @@ def get_podcast_opengraph_data(
         "url": request.build_absolute_uri(podcast.get_absolute_url()),
         "title": f"{request.site.name} | {podcast.title}",
         "description": podcast.description,
+        "keywords": podcast.keywords,
     }
 
     if podcast.cover_image:

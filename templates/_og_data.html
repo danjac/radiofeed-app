@@ -1,4 +1,9 @@
 {% with og_description=og_data.description|striptags|stripentities|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
+<meta name="description"
+      content="{{ og_description }}" />
+<meta name="keywords"
+      content="{{ og_keywords|default:'podcasts, news, rss, itunes' }}" />
+
 <meta property="og:type"
       content="website" />
 <meta property="og:title"

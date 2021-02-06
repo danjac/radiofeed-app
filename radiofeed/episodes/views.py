@@ -491,6 +491,7 @@ def get_episode_opengraph_data(
         "url": request.build_absolute_uri(episode.get_absolute_url()),
         "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
         "description": episode.description,
+        "keywords": episode.keywords,
     }
 
     if episode.podcast.cover_image:
