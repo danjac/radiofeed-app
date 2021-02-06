@@ -17,7 +17,7 @@
   {% endif %}
 </form>
 {% else %}
-<a title="Log in or sign up to add this episode to Bookmarks"
+<a title="Log in or sign up to add this episode to your Play Queue"
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
    data-turbo-frame="_top"
    class="btn btn-default flex items-center">
