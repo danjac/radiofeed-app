@@ -39,7 +39,7 @@
     <button data-action="toggle#toggle"
             class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
             title="Mimimize Player">
-        {% svg "chevron_down" css_class="h-6 w-6" %}
+      {% svg "chevron_down" css_class="h-6 w-6" %}
     </button>
 
     <div class="mb-3 lg:hidden pr-1 text-sm w-64 sm:w-96 truncate">
@@ -93,13 +93,8 @@
 
             <form class="flex items-center"
                   method="POST"
-                  data-player-target="stop"
                   action="{% url 'episodes:toggle_player' episode.id %}">
               {% csrf_token %}
-              <input type="hidden"
-                     name="mark_complete"
-                     data-player-target="markComplete"
-                     value="false">
               <input type="hidden"
                      name="player_action"
                      value="stop">
@@ -107,6 +102,20 @@
                       class="focus:outline-none hover:text-blue-500">
                 {% svg "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
+            </form>
+
+            <form method="POST"
+                  class="hidden"
+                  data-player-target="playNext"
+                  action="{% url 'episodes:toggle_player' episode.id %}">
+              {% csrf_token %}
+              <input type="hidden"
+                     name="mark_complete"
+                     value="true">
+              <!-- replace with play_next -->
+              <input type="hidden"
+                     name="player_action"
+                     value="stop">
             </form>
 
           </div>

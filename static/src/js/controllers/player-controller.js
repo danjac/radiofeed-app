@@ -7,10 +7,10 @@ export default class extends Controller {
     'controls',
     'counter',
     'indicator',
-    'markComplete',
     'pauseButton',
     'playbackRate',
     'playButton',
+    'playNext',
     'progressBar',
     'stop',
   ];
@@ -59,8 +59,8 @@ export default class extends Controller {
 
   ended() {
     this.cancelTimeUpdateTimer();
-    this.markCompleteTarget.value = 'true';
-    this.stopTarget.requestSubmit();
+    console.log('ENDED');
+    this.playNextTarget.requestSubmit();
   }
 
   closePlayer() {
