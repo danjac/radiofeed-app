@@ -390,28 +390,6 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
-def episode_list_response(
-    request: HttpRequest,
-    episodes: QuerySet,
-    template_name: str,
-    extra_context: Optional[Dict] = None,
-) -> HttpResponse:
-    context = {
-        "page_obj": paginate(request, episodes),
-        "search_url": reverse("episodes:search_episodes"),
-        **(extra_context or {}),
-    }
-    if request.turbo.frame:
-
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("episodes/_episode_list.html", context)
-            .response(request)
-        )
-
-    return TemplateResponse(request, template_name, context)
-
-
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> List[str]:
@@ -442,6 +420,28 @@ def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str
             TurboStream("queue").append.render("No more items left in queue"),
         ]
     return streams
+
+
+def episode_list_response(
+    request: HttpRequest,
+    episodes: QuerySet,
+    template_name: str,
+    extra_context: Optional[Dict] = None,
+) -> HttpResponse:
+    context = {
+        "page_obj": paginate(request, episodes),
+        "search_url": reverse("episodes:search_episodes"),
+        **(extra_context or {}),
+    }
+    if request.turbo.frame:
+
+        return (
+            TurboFrame(request.turbo.frame)
+            .template("episodes/_episode_list.html", context)
+            .response(request)
+        )
+
+    return TemplateResponse(request, template_name, context)
 
 
 def player_stop_response(streams: List[str]) -> HttpResponse:
