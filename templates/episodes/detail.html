@@ -65,34 +65,40 @@
   </div>
   {% endif %}
 
-  <div class="sm:flex items-center mb-3">
-    <div class="flex items-center mb-3 sm:mb-0 sm:mr-6">
+  <div class="flex items-center mb-3">
+    <div>
       <a href="{{ podcast.get_absolute_url }}">
         {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
       </a>
-      <div>
-        <div class="flex items-center mb-1">
-          <div class="mr-3">
-            {% include "episodes/player/_toggle.html" %}
+    </div>
+
+    <div>
+
+      <div class="flex items-center mb-3">
+        <div class="mr-3">
+          {% include "episodes/player/_toggle.html" %}
+        </div>
+        <div>
+          <div class="mb-1">
+            {% include "episodes/_download.html" %}
           </div>
         </div>
-        <div class="my-2">
-          {% include "episodes/_download.html" %}
-        </div>
-        {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
       </div>
-    </div>
-    <div class="mb-3 flex items-center">
-      <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-                   class="mr-2">
-        {% include "episodes/queue/_toggle.html" %}
-      </turbo-frame>
-      <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
-        {% include "episodes/favorites/_toggle.html" %}
-      </turbo-frame>
-    </div>
-  </div>
 
+      <div class="mb-3 flex items-center">
+        <turbo-frame id="{{ episode.get_queue_toggle_id }}"
+                     class="mr-2">
+          {% include "episodes/queue/_toggle.html" %}
+        </turbo-frame>
+        <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
+          {% include "episodes/favorites/_toggle.html" %}
+        </turbo-frame>
+      </div>
+      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+
+    </div>
+
+  </div>
 
   <div class="markdown mb-3 text-sm">
     {{ episode.description|clean_html }}
