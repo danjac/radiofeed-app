@@ -153,7 +153,7 @@ def podcast_episode_list(
 
     if podcast.cover_image:
         podcast_image = get_thumbnail(
-            podcast.cover_image, "200", format="WEBP", crop="center"
+            podcast.cover_image, "200", format="PNG", crop="center"
         )
     else:
         podcast_image = None

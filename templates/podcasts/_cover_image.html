@@ -3,24 +3,26 @@
 <img class="object-cover border bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
      title="{{ podcast.title }}"
      alt="{{ podcast.title }}"
+     width="{{ size }}"
+     height="{{ size }}"
      {% if podcast_image %}
      src="{{ podcast_image.url }}"
      {% else %}
+
      {% if podcast.cover_image %}
+
      {% if is_turbo_frame or not lazy %}
      {% with size=image_size|default:"20" %}
-     {% thumbnail podcast.cover_image "200" format="WEBP" crop="center" as img %}
+     {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
      src="{{ img.url }}"
-     width="{{ img.width }}"
-     height="{{ img.height }}"
      {% empty %}src="{% static 'img/podcast-icon.png' %}"
-     width="200"
-     height="200"
      {% endthumbnail %}
      {% endwith %}
+
      {% else %}
      src="{% static 'img/podcast-icon.png' %}"
      {% endif %}
+
      {% else %}
      src="{% static 'img/podcast-icon.png' %}"
      {% endif %}
