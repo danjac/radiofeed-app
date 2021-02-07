@@ -39,6 +39,20 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
+    path(
+        "serviceworker.js",
+        TemplateView.as_view(
+            template_name="serviceworker.js", content_type="text/javascript"
+        ),
+        name="serviceworker",
+    ),
+    path(
+        "manifest.json",
+        TemplateView.as_view(
+            template_name="manifest.json", content_type="application/json"
+        ),
+        name="manifest",
+    ),
 ]
 
 
