@@ -12,6 +12,8 @@
   <title>
     {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
   </title>
+  <link rel="manifest"
+        href="/manifest.json">
   {% block meta %}
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible"

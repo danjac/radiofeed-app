@@ -53,6 +53,13 @@ urlpatterns = [
         ),
         name="manifest",
     ),
+    path(
+        "offline/",
+        TemplateView.as_view(
+            template_name="offline.html",
+        ),
+        name="offline",
+    ),
 ]
 
 
