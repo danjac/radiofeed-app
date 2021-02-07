@@ -97,3 +97,21 @@ class TestPodcastModel:
 
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "podcast"
+
+    def is_subscribed_anonymous(self, podcast, anonymous_user):
+        assert not podcast.is_subscribed(anonymous_user)
+
+    def is_subscribed_false(self, podcast, user):
+        assert not podcast.is_subscribed(user)
+
+    def is_subscribed_true(self):
+        sub = SubscriptionFactory()
+        assert sub.podcast.is_subscribed(sub.user)
+
+    def test_get_opengraph_data(self, rf, podcast):
+        req = rf.get("/")
+        og_data = podcast.get_opengraph_data(req)
+        assert og_data["og:title"] == podcast.title
+        assert (
+            og_data["og:url"] == "http://testserver.com/" + podcast.get_absolute_url()
+        )
