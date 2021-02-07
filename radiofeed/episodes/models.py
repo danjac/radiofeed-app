@@ -172,7 +172,7 @@ class Episode(models.Model):
 
         if self.podcast.cover_image:
             thumbnail = get_thumbnail(
-                self.podcast.cover_image, "200", format="PNG", crop="center"
+                self.podcast.cover_image, "200", format="WEBP", crop="center"
             )
 
             if thumbnail:
