@@ -100,7 +100,7 @@ def episode_detail(
 @login_required
 def episode_actions(
     request: HttpRequest,
-    episode_id: str,
+    episode_id: int,
     actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_object_or_404(
