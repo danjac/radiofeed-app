@@ -3,7 +3,7 @@
 
 {% block mobile_extra_buttons %}
 <div class="flex items-center md:hidden">
-  {% include "episodes/_remove.html" with css_class="mr-3" btn_title="Remove from Play Queue" %}
+  {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle"
           title="Move">
     {% svg "view_list" css_class="btn-icon" %}
@@ -13,7 +13,7 @@
 
 {% block extra_buttons %}
 <div class="md:flex items-center hidden">
-  {% include "episodes/_remove.html" with css_class="mr-3" btn_title="Remove from Play Queue" %}
+  {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle"
           title="Move">
     {% svg "view_list" css_class="btn-icon" %}

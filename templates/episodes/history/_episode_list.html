@@ -3,7 +3,7 @@
 {% block episodes %}
 {% for log in page_obj %}
 {% url 'episodes:remove_history' log.episode.id as remove_url %}
-{% include "episodes/_episode.html" with episode=log.episode %}
+{% include "episodes/_episode.html" with episode=log.episode remove_title="Remove episode from History" %}
 {% empty %}
 {% block empty %}
 {% if search %}

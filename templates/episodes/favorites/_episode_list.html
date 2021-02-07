@@ -4,7 +4,7 @@
 {% for favorite in page_obj %}
 {% url 'episodes:favorite_actions' favorite.episode.id as action_url %}
 {% url 'episodes:remove_favorite' favorite.episode.id as remove_url %}
-{% include "episodes/_episode.html" with episode=favorite.episode btn_title="Remove from Favorites" %}
+{% include "episodes/_episode.html" with episode=favorite.episode remove_title="Remove from Favorites" %}
 {% empty %}
 {% block empty %}
 {% if search %}
