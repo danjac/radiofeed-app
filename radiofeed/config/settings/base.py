@@ -99,7 +99,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-DEFAULT_PAGE_SIZE = 12
+DEFAULT_PAGE_SIZE = 30
 
 # base Django admin URL (should be something obscure in production)
 
