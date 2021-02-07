@@ -90,9 +90,9 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_favorited": is_episode_favorited(request, episode),
-            "is_queued": is_episode_queued(request, episode),
-            "og_data": get_episode_opengraph_data(request, episode),
+            "is_favorited": episode.is_favorited(request.user),
+            "is_queued": episode.is_queued(request.user),
+            "og_data": episode.get_opengraph_data(request),
         },
     )
 
@@ -119,9 +119,8 @@ def episode_actions(
                     "actions": actions,
                     "is_episode_playing": request.player.is_playing(episode),
                     "is_favorited": "favorite" in actions
-                    and is_episode_favorited(request, episode),
-                    "is_queued": "queue" in actions
-                    and is_episode_queued(request, episode),
+                    and episode.is_favorited(request.user),
+                    "is_queued": "queue" in actions and episode.is_queued(request.user),
                 },
             )
             .response(request)
@@ -482,35 +481,3 @@ def episode_queue_response(
             .response(request)
         )
     return redirect(episode)
-
-
-def get_episode_opengraph_data(
-    request: HttpRequest, episode: Episode
-) -> Dict[str, str]:
-    og_data: Dict = {
-        "url": request.build_absolute_uri(episode.get_absolute_url()),
-        "title": f"{request.site.name} | {episode.podcast.title} | {episode.title}",
-        "description": episode.description,
-        "keywords": episode.keywords,
-    }
-
-    if episode.podcast.cover_image:
-        og_data |= {
-            "image": episode.podcast.cover_image.url,
-            "image_height": episode.podcast.cover_image.height,
-            "image_width": episode.podcast.cover_image.width,
-        }
-
-    return og_data
-
-
-def is_episode_queued(request: HttpRequest, episode: Episode) -> bool:
-    if request.user.is_anonymous:
-        return False
-    return QueueItem.objects.filter(episode=episode, user=request.user).exists()
-
-
-def is_episode_favorited(request: HttpRequest, episode: Episode) -> bool:
-    if request.user.is_anonymous:
-        return False
-    return Favorite.objects.filter(episode=episode, user=request.user).exists()

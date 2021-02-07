@@ -94,7 +94,7 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
                 "podcasts/_actions.html",
                 {
                     "podcast": podcast,
-                    "is_subscribed": is_podcast_subscribed(request, podcast),
+                    "is_subscribed": podcast.is_subscribed(request.user),
                 },
             )
             .response(request)
@@ -372,8 +372,8 @@ def podcast_detail_response(
     context = {
         "podcast": podcast,
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
-        "is_subscribed": is_podcast_subscribed(request, podcast),
-        "og_data": get_podcast_opengraph_data(request, podcast),
+        "is_subscribed": podcast.is_subscribed(request.user),
+        "og_data": podcast.get_opengraph_data(request),
     } | (extra_context or {})
     return TemplateResponse(request, template_name, context)
 
@@ -392,29 +392,3 @@ def podcast_subscribe_response(
             .response(request)
         )
     return redirect(podcast.get_absolute_url())
-
-
-def get_podcast_opengraph_data(
-    request: HttpRequest, podcast: Podcast
-) -> Dict[str, str]:
-
-    og_data: Dict = {
-        "url": request.build_absolute_uri(podcast.get_absolute_url()),
-        "title": f"{request.site.name} | {podcast.title}",
-        "description": podcast.description,
-        "keywords": podcast.keywords,
-    }
-
-    if podcast.cover_image:
-        og_data |= {
-            "image": podcast.cover_image.url,
-            "image_height": podcast.cover_image.height,
-            "image_width": podcast.cover_image.width,
-        }
-    return og_data
-
-
-def is_podcast_subscribed(request: HttpRequest, podcast: Podcast) -> bool:
-    if request.user.is_anonymous:
-        return False
-    return Subscription.objects.filter(podcast=podcast, user=request.user).exists()

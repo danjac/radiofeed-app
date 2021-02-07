@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
+from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils import timezone
@@ -161,6 +162,33 @@ class Episode(models.Model):
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
+
+    def is_queued(self, user: AnyUser) -> bool:
+        if user.is_anonymous:
+            return False
+        return QueueItem.objects.filter(user=user, episode=self).exists()
+
+    def is_favorited(self, user: AnyUser) -> bool:
+        if user.is_anonymous:
+            return False
+        return Favorite.objects.filter(user=user, episode=self).exists()
+
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
+        og_data: Dict = {
+            "url": request.build_absolute_uri(self.get_absolute_url()),
+            "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
+            "description": self.description,
+            "keywords": self.keywords,
+        }
+
+        if self.podcast.cover_image:
+            og_data |= {
+                "image": self.podcast.cover_image.url,
+                "image_height": self.podcast.cover_image.height,
+                "image_width": self.podcast.cover_image.width,
+            }
+
+        return og_data
 
     def get_media_metadata(self) -> Dict:
         # https://developers.google.com/web/updates/2017/02/media-session
