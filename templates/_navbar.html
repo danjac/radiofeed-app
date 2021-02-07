@@ -54,15 +54,15 @@
             class="inline-block"
             data-turbo="false">
         {% csrf_token %}
-        <button class="text-white hover:text-blue-500">{% translate "Logout" %}</button>
+        <button class="text-white hover:text-blue-500">{% translate "logout" %}</button>
       </form>
     </div>
     {% else %}
     <div class="text-sm md:text-base flex items-center">
       <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
-         class="inline-block text-white hover:text-blue-500 mr-3">{% translate "Login" %}</a>
+         class="inline-block text-white hover:text-blue-500 mr-3">{% translate "login" %}</a>
       <a href="{% url 'account_signup' %}"
-         class="inline-block text-white hover:text-blue-500">{% translate "Signup" %}</a>
+         class="inline-block text-white hover:text-blue-500">{% translate "signup" %}</a>
     </div>
     {% endif %}
   </div>
