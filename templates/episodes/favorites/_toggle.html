@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
 <form method="post"
-      id="{{ episode.get_favorite_toggle_id }}"
+      id="{{ turbo_stream_target|default:episode.get_favorite_toggle_id }}"
       action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}">
   {% csrf_token %}
   {% if is_favorited %}

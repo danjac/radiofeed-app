@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
 <form method="post"
-      id="{{ podcast.get_subscribe_toggle_id }}"
+      id="{{ turbo_stream_target|default:podcast.get_subscribe_toggle_id }}"
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_subscribed %}
