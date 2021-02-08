@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets = ['close', 'modal'];
+  static targets: String[] = ['close', 'modal'];
 
   close() {
     // empty content of frame and reset src
@@ -9,7 +9,7 @@ export default class extends Controller {
     this.modalTarget.removeAttribute('src');
   }
 
-  closeOnEsc(event) {
+  closeOnEsc(event: Event) {
     if (event.which === 27) {
       this.close();
     }
