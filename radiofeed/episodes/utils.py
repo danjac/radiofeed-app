@@ -1,4 +1,3 @@
-# Standard Library
 import math
 from typing import Optional
 

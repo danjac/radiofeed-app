@@ -1,17 +1,12 @@
-# Standard Library
 import http
 import json
 
-# Django
 from django.urls import reverse
 
-# Third Party Libraries
 import pytest
 
-# RadioFeed
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 
-# Local
 from ..factories import (
     AudioLogFactory,
     EpisodeFactory,

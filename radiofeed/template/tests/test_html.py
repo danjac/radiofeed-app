@@ -1,4 +1,3 @@
-# Local
 from ..html import clean_html_content, stripentities
 
 

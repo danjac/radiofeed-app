@@ -1,10 +1,7 @@
-# Django
 from django.contrib import admin
 
-# Third Party Libraries
 from sorl.thumbnail.admin import AdminImageMixin
 
-# Local
 from .models import Category, Podcast
 
 

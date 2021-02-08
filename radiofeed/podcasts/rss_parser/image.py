@@ -1,4 +1,3 @@
-# Standard Library
 import io
 import mimetypes
 import os
@@ -6,13 +5,10 @@ import uuid
 from typing import Optional
 from urllib.parse import urlparse
 
-# Django
 from django.core.files.images import ImageFile
 
-# Third Party Libraries
 import requests
 
-# Local
 from .headers import get_headers
 
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")

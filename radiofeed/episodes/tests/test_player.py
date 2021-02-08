@@ -1,7 +1,5 @@
-# Third Party Libraries
 import pytest
 
-# Local
 from ..player import Player
 
 pytestmark = pytest.mark.django_db

@@ -1,7 +1,5 @@
-# Django
 from django.contrib.auth import get_user_model
 
-# Third Party Libraries
 from factory import Faker, post_generation
 from factory.django import DjangoModelFactory
 

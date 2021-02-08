@@ -1,4 +1,3 @@
-# Local
 from ..utils import format_duration
 
 

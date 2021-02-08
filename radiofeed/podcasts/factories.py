@@ -1,14 +1,10 @@
-# Django
 from django.utils import timezone
 
-# Third Party Libraries
 import factory
 from factory.django import DjangoModelFactory
 
-# RadioFeed
 from radiofeed.users.factories import UserFactory
 
-# Local
 from .models import Category, Podcast, Recommendation, Subscription
 
 
