@@ -18,7 +18,7 @@
       <img src="{% static 'img/wave.png' %}"
            height="32"
            width="32"
-           alt="{{ request.site.name }}"
+           alt="{{ request.site.name|lower }}"
            class="mr-4 hidden lg:inline-block">
 
       <a class="text-lg md:text-xl font-bold font-mono"
