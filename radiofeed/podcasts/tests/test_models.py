@@ -108,10 +108,9 @@ class TestPodcastModel:
         sub = SubscriptionFactory()
         assert sub.podcast.is_subscribed(sub.user)
 
-    def test_get_opengraph_data(self, rf, podcast):
+    def test_get_opengraph_data(self, rf, podcast, site):
         req = rf.get("/")
+        req.site = site
         og_data = podcast.get_opengraph_data(req)
-        assert og_data["og:title"] == podcast.title
-        assert (
-            og_data["og:url"] == "http://testserver.com/" + podcast.get_absolute_url()
-        )
+        assert podcast.title in og_data["title"]
+        assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
