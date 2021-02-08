@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
+from turbo_response.stream import TurboStreamTemplate
 
 from radiofeed.pagination import paginate
 from radiofeed.podcasts.models import Podcast
@@ -287,7 +288,9 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def toggle_player(
-    request: HttpRequest, episode_id: Optional[int] = None, action: str = "play"
+    request: HttpRequest,
+    episode_id: Optional[int] = None,
+    action: str = "play",
 ) -> HttpResponse:
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
@@ -344,7 +347,9 @@ def toggle_player(
         + [
             TurboStream("player-container")
             .update.template(
-                "episodes/player/_player.html", {"episode": episode}, request=request
+                "episodes/player/_player.html",
+                {"episode": episode},
+                request=request,
             )
             .render(),
             render_player_toggle(request, episode, True),
@@ -408,12 +413,7 @@ def render_player_toggle(
 def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
     streams = [
         TurboStream(f"queue-item-{episode.id}").remove.render(),
-        TurboStream(episode.get_queue_toggle_id())
-        .replace.template(
-            "episodes/queue/_toggle.html",
-            {"episode": episode, "is_queued": False},
-        )
-        .render(),
+        episode_queue_toggle_stream(episode, False).render(),
     ]
     if QueueItem.objects.filter(user=request.user).count() == 0:
         streams += [
@@ -467,16 +467,19 @@ def episode_favorite_response(
     return redirect(episode)
 
 
+def episode_queue_toggle_stream(
+    episode: Episode, is_queued: bool
+) -> TurboStreamTemplate:
+
+    return TurboStream(episode.get_queue_toggle_id()).replace.template(
+        "episodes/queue/_toggle.html",
+        {"episode": episode, "is_queued": is_queued},
+    )
+
+
 def episode_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:
-        return (
-            TurboStream(episode.get_queue_toggle_id())
-            .replace.template(
-                "episodes/queue/_toggle.html",
-                {"episode": episode, "is_queued": is_queued},
-            )
-            .response(request)
-        )
+        return episode_queue_toggle_stream(episode, is_queued).response(request)
     return redirect(episode)
