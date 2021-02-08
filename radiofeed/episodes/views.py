@@ -115,9 +115,7 @@ def episode_actions(
                 "episodes/_actions.html",
                 {
                     "episode": episode,
-                    "player_toggle_id": f"episode-play-actions-toggle-{episode.id}",
                     "actions": actions,
-                    "is_episode_playing": request.player.is_playing(episode),
                     "is_favorited": "favorite" in actions
                     and episode.is_favorited(request.user),
                     "is_queued": "queue" in actions and episode.is_queued(request.user),
@@ -298,7 +296,7 @@ def toggle_player(
 
     # clear session
     if current_episode := request.player.eject():
-        streams += render_player_toggle(request, current_episode, False)
+        streams += [render_player_toggle(request, current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -343,13 +341,13 @@ def toggle_player(
     response = TurboStreamResponse(
         streams
         + render_remove_from_queue(request, episode)
-        + render_player_toggle(request, episode, True)
         + [
             TurboStream("player-container")
             .update.template(
                 "episodes/player/_player.html", {"episode": episode}, request=request
             )
             .render(),
+            render_player_toggle(request, episode, True),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -391,25 +389,20 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
-) -> List[str]:
+) -> str:
 
-    return [
-        TurboStream(target)
+    return (
+        TurboStream(episode.get_player_toggle_id())
         .replace.template(
             "episodes/player/_toggle.html",
             {
                 "episode": episode,
                 "is_episode_playing": is_playing,
-                "player_toggle_id": target,
             },
             request=request,
         )
         .render()
-        for target in [
-            f"episode-play-toggle-{episode.id}",
-            f"episode-play-actions-toggle-{episode.id}",
-        ]
-    ]
+    )
 
 
 def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
