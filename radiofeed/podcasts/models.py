@@ -138,7 +138,6 @@ class Podcast(models.Model):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     def get_subscribe_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
         return f"podcast-subscribe-{self.id}"
 
     def is_subscribed(self, user: AnyUser) -> bool:

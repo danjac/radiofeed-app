@@ -86,9 +86,14 @@
       </div>
 
       <div class="mb-3 flex items-center">
-        {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
-        {% include "episodes/favorites/_toggle.html" %}
+        <div class="mr-2">
+          {% include "episodes/queue/_toggle.html" %}
+        </div>
+        <div>
+          {% include "episodes/favorites/_toggle.html" %}
+        </div>
       </div>
+
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
 
     </div>

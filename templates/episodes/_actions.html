@@ -53,10 +53,14 @@
       {% if actions %}
       <div class="flex items-center mb-3">
         {% if 'queue' in actions %}
-        {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
+        <div class="mr-2">
+          {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
+        </div>
         {% endif %}
         {% if 'favorite' in actions %}
-        {% include "episodes/favorites/_toggle.html" %}
+        <div>
+          {% include "episodes/favorites/_toggle.html" %}
+        </div>
         {% endif %}
       </div>
       {% endif %}

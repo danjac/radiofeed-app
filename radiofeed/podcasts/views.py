@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 
 from sorl.thumbnail import get_thumbnail
 from sorl.thumbnail.images import ImageFile
-from turbo_response import TurboFrame
+from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.pagination import paginate
 
@@ -382,10 +382,9 @@ def podcast_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     if request.turbo:
-        # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(podcast.get_subscribe_toggle_id())
-            .template(
+            TurboStream(podcast.get_subscribe_toggle_id())
+            .replace.template(
                 "podcasts/_subscribe.html",
                 {"podcast": podcast, "is_subscribed": is_subscribed},
             )
