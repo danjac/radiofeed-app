@@ -406,7 +406,15 @@ def render_player_toggle(
 
 
 def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
-    streams = [TurboStream(f"queue-item-{episode.id}").remove.render()]
+    streams = [
+        TurboStream(f"queue-item-{episode.id}").remove.render(),
+        TurboStream(episode.get_queue_toggle_id())
+        .replace.template(
+            "episodes/queue/_toggle.html",
+            {"episode": episode, "is_queued": False},
+        )
+        .render(),
+    ]
     if QueueItem.objects.filter(user=request.user).count() == 0:
         streams += [
             TurboStream("queue").append.render("No more items left in queue"),
