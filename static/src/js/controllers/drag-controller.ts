@@ -1,7 +1,16 @@
 import { Controller } from 'stimulus';
+// @ts-ignore
 import Sortable from 'sortablejs';
 
 export default class extends Controller {
+  handleClass: string;
+
+  draggableTargets: HTMLElement[];
+
+  csrfTokenValue: string;
+  groupValue: string;
+  urlValue: string;
+
   static targets: string[] = ['draggable'];
 
   static classes: string[] = ['handle'];
@@ -17,6 +26,7 @@ export default class extends Controller {
     //
     const handle = '.' + this.handleClass;
 
+    // @ts-ignore
     this.sortable = Sortable.create(this.element, {
       handle,
       animation: 150,

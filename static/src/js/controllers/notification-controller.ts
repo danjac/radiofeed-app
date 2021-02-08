@@ -1,12 +1,14 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static values: Object = {
+  timeoutValue: number;
+
+  static values: any = {
     timeout: Number,
   };
 
   connect() {
-    if (this.hasTimeoutValue && this.timeoutValue > 0) {
+    if (this.timeoutValue && this.timeoutValue > 0) {
       setTimeout(() => this.remove(), this.timeoutValue);
     }
   }

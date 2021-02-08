@@ -2,6 +2,38 @@ import { Controller } from 'stimulus';
 import useTurbo from '../turbo';
 
 export default class extends Controller {
+  audio: HTMLMediaElement;
+  audioListeners: any;
+
+  timeupdateTimer: ReturnType<typeof setTimeout>;
+
+  activeClass: string;
+  inactiveClass: string;
+
+  csrfTokenValue: string;
+  currentTimeValue: number;
+  durationValue: number;
+  mediaUrlValue: string;
+  metadataValue: any;
+  pausedValue: boolean;
+  playbackRateValue: number;
+  timeupdateUrlValue: string;
+  waitingValue: boolean;
+
+  hasCounterTarget: boolean;
+  hasIndicatorTarget: boolean;
+  hasPlaybackRateTarget: boolean;
+  hasPlayButtonTarget: boolean;
+  hasPauseButtonTarget: boolean;
+
+  counterTarget: HTMLElement;
+  indicatorTarget: HTMLElement;
+  pauseButtonTarget: HTMLElement;
+  playButtonTarget: HTMLElement;
+  playbackRateTarget: HTMLElement;
+  playNextTarget: HTMLFormElement;
+  progressBarTarget: HTMLElement;
+
   static targets: string[] = [
     'audio',
     'controls',
@@ -121,7 +153,7 @@ export default class extends Controller {
     this.changePlaybackRate(-0.1);
   }
 
-  skip(event: Event) {
+  skip(event: MouseEvent) {
     // user clicks on progress bar
     const position: number = this.calcEventPosition(event.clientX);
     if (!isNaN(position) && position > -1) {
@@ -137,7 +169,7 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  turboSubmitEnd(event: Event) {
+  turboSubmitEnd(event: CustomEvent) {
     console.log('turboSubmitEnd');
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
@@ -175,7 +207,7 @@ export default class extends Controller {
 
   // observers
   pausedValueChanged() {
-    if (this.hasPauseButtonTarget && this.playButtonTarget) {
+    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (this.pausedValue) {
         this.pauseButtonTarget.classList.add('hidden');
         this.playButtonTarget.classList.remove('hidden');
@@ -212,6 +244,7 @@ export default class extends Controller {
 
   metadataValueChanged() {
     if ('mediaSession' in navigator && this.metadataValue) {
+      // @ts-ignore
       navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
     }
   }
@@ -286,8 +319,8 @@ export default class extends Controller {
   }
 
   formatTimeRemaining(value: number): string {
-    if (!value || value < 0) return '00:00:00';
-    const duration = Math.floor(parseInt(value));
+    if (isNaN(value) || value < 0) return '00:00:00';
+    const duration = Math.floor(value);
 
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
@@ -375,7 +408,7 @@ export default class extends Controller {
       const body = new FormData();
 
       body.append('csrfmiddlewaretoken', this.csrfTokenValue);
-      body.append('current_time', this.currentTimeValue);
+      body.append('current_time', this.currentTimeValue.toString());
       body.append('playback_rate', this.playbackRateValue.toFixed(1));
 
       fetch(this.timeupdateUrlValue, {
@@ -388,7 +421,7 @@ export default class extends Controller {
 
   set enabled(enabled: boolean) {
     if (enabled) {
-      sessionStorage.setItem('player-enabled', true);
+      sessionStorage.setItem('player-enabled', 'true');
     } else {
       sessionStorage.removeItem('player-enabled');
     }

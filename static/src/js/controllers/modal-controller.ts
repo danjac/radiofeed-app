@@ -1,6 +1,8 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
+  modalTarget: HTMLElement;
+
   static targets: string[] = ['close', 'modal'];
 
   close() {
@@ -9,8 +11,8 @@ export default class extends Controller {
     this.modalTarget.removeAttribute('src');
   }
 
-  closeOnEsc(event: Event) {
-    if (event.which === 27) {
+  closeOnEsc(event: KeyboardEvent) {
+    if (event.code === '27') {
       this.close();
     }
   }
