@@ -2,11 +2,11 @@ import { Controller } from 'stimulus';
 import Sortable from 'sortablejs';
 
 export default class extends Controller {
-  static targets: String[] = ['draggable'];
+  static targets: string[] = ['draggable'];
 
-  static classes: String[] = ['handle'];
+  static classes: string[] = ['handle'];
 
-  static values: Object = {
+  static values: any = {
     group: String,
     url: String,
     csrfToken: String,
@@ -53,7 +53,7 @@ export default class extends Controller {
     }
   }
 
-  get group(): String {
+  get group(): string {
     return this.groupValue || 'shared';
   }
 }

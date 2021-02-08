@@ -1,7 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  static targets: String[] = ['close', 'modal'];
+  static targets: string[] = ['close', 'modal'];
 
   close() {
     // empty content of frame and reset src
