@@ -12,7 +12,7 @@ export default class extends Controller {
   }
 
   closeOnEsc(event: KeyboardEvent) {
-    if (event.code === '27') {
+    if (event.code === 'Escape') {
       this.close();
     }
   }
