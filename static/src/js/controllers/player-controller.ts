@@ -2,7 +2,7 @@ import { Controller } from 'stimulus';
 import useTurbo from '../turbo';
 
 export default class extends Controller {
-  static targets = [
+  static targets: String[] = [
     'audio',
     'controls',
     'counter',
@@ -15,9 +15,9 @@ export default class extends Controller {
     'stop',
   ];
 
-  static classes = ['active', 'inactive'];
+  static classes: String[] = ['active', 'inactive'];
 
-  static values = {
+  static values: Object = {
     csrfToken: String,
     currentTime: Number,
     duration: Number,
@@ -121,9 +121,9 @@ export default class extends Controller {
     this.changePlaybackRate(-0.1);
   }
 
-  skip(event) {
+  skip(event: Event) {
     // user clicks on progress bar
-    const position = this.calcEventPosition(event.clientX);
+    const position: Number = this.calcEventPosition(event.clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
     }
@@ -137,7 +137,7 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  turboSubmitEnd(event) {
+  turboSubmitEnd(event: Event) {
     console.log('turboSubmitEnd');
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
@@ -216,7 +216,7 @@ export default class extends Controller {
     }
   }
 
-  changePlaybackRate(increment) {
+  changePlaybackRate(increment: Number) {
     let newValue = this.playbackRateValue + increment;
     if (newValue > 2.0) {
       newValue = 2.0;
@@ -234,13 +234,13 @@ export default class extends Controller {
     }
   }
 
-  updateCounter(value) {
+  updateCounter(value: Number) {
     if (this.hasCounterTarget) {
       this.counterTarget.textContent = this.formatTimeRemaining(value);
     }
   }
 
-  calcPercentComplete() {
+  calcPercentComplete(): Number {
     if (!this.currentTimeValue || !this.durationValue) {
       return 0;
     }
@@ -252,7 +252,7 @@ export default class extends Controller {
     return (this.currentTimeValue / this.durationValue) * 100;
   }
 
-  calcEventPosition(clientX) {
+  calcEventPosition(clientX: Number): Number {
     if (!isNaN(clientX)) {
       const { left } = this.progressBarTarget.getBoundingClientRect();
       const width = this.progressBarTarget.clientWidth;
@@ -263,7 +263,7 @@ export default class extends Controller {
     }
   }
 
-  calcCurrentIndicatorPosition(pcComplete) {
+  calcCurrentIndicatorPosition(pcComplete: Number): Number {
     const clientWidth = this.progressBarTarget.clientWidth;
 
     let currentPosition, width;
@@ -285,7 +285,7 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  formatTimeRemaining(value) {
+  formatTimeRemaining(value: Number): String {
     if (!value || value < 0) return '00:00:00';
     const duration = Math.floor(parseInt(value));
 
@@ -386,7 +386,7 @@ export default class extends Controller {
     }
   }
 
-  set enabled(enabled) {
+  set enabled(enabled: Boolean) {
     if (enabled) {
       sessionStorage.setItem('player-enabled', true);
     } else {
@@ -394,7 +394,7 @@ export default class extends Controller {
     }
   }
 
-  get enabled() {
+  get enabled(): Boolean {
     return !!sessionStorage.getItem('player-enabled');
   }
 }
