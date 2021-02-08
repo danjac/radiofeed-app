@@ -299,7 +299,7 @@ export default class extends Controller {
     );
   }
 
-  skipTo(position) {
+  skipTo(position: Number) {
     if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
       this.audio.currentTime = this.currentTimeValue = position;
     }
