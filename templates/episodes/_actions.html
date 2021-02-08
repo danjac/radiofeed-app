@@ -53,15 +53,10 @@
       {% if actions %}
       <div class="flex items-center mb-3">
         {% if 'queue' in actions %}
-        <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-                     class="mr-2">
-          {% include "episodes/queue/_toggle.html" %}
-        </turbo-frame>
+        {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
         {% endif %}
         {% if 'favorite' in actions %}
-        <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
-          {% include "episodes/favorites/_toggle.html" %}
-        </turbo-frame>
+        {% include "episodes/favorites/_toggle.html" %}
         {% endif %}
       </div>
       {% endif %}

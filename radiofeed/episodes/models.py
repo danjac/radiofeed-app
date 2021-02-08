@@ -101,11 +101,9 @@ class Episode(models.Model):
         return filesizeformat(self.length) if self.length else None
 
     def get_favorite_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
         return f"episode-favorite-{self.id}"
 
     def get_queue_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
         return f"episode-queue-{self.id}"
 
     def get_duration_in_seconds(self) -> int:

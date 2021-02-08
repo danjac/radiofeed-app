@@ -1,6 +1,9 @@
 {% if user.is_authenticated %}
 <form method="post"
-      action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}">
+      id="{{ episode.get_favorite_toggle_id }}"
+      action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}"
+      {% if css_class %}class="{{ css_class }}"
+      {% endif %}>
   {% csrf_token %}
   {% if is_favorited %}
   <button title="Remove episode from Favorites"

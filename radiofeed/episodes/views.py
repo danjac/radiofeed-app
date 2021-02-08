@@ -455,10 +455,9 @@ def episode_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
     if request.turbo:
-        # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(episode.get_favorite_toggle_id())
-            .template(
+            TurboStream(episode.get_favorite_toggle_id())
+            .replace.template(
                 "episodes/favorites/_toggle.html",
                 {"episode": episode, "is_favorited": is_favorited},
             )
@@ -471,10 +470,9 @@ def episode_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:
-        # https://github.com/hotwired/turbo/issues/86
         return (
-            TurboFrame(episode.get_queue_toggle_id())
-            .template(
+            TurboStream(episode.get_queue_toggle_id())
+            .replace.template(
                 "episodes/queue/_toggle.html",
                 {"episode": episode, "is_queued": is_queued},
             )

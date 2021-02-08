@@ -1,6 +1,9 @@
 {% if user.is_authenticated %}
 <form method="post"
-      action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}">
+      id="{{ episode.get_queue_toggle_id }}"
+      action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}"
+      {% if css_class %}class="{{ css_class }}"
+      {% endif %}>
   {% csrf_token %}
   {% if is_queued %}
   <button title="Remove episode from Play Queue"

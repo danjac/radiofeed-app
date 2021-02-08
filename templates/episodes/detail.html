@@ -86,13 +86,8 @@
       </div>
 
       <div class="mb-3 flex items-center">
-        <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-                     class="mr-2">
-          {% include "episodes/queue/_toggle.html" %}
-        </turbo-frame>
-        <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
-          {% include "episodes/favorites/_toggle.html" %}
-        </turbo-frame>
+        {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
+        {% include "episodes/favorites/_toggle.html" %}
       </div>
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
 
