@@ -392,6 +392,16 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
+def episode_queue_toggle_stream(
+    episode: Episode, is_queued: bool
+) -> TurboStreamTemplate:
+
+    return TurboStream(episode.get_queue_toggle_id()).replace.template(
+        "episodes/queue/_toggle.html",
+        {"episode": episode, "is_queued": is_queued},
+    )
+
+
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
@@ -465,16 +475,6 @@ def episode_favorite_response(
             .response(request)
         )
     return redirect(episode)
-
-
-def episode_queue_toggle_stream(
-    episode: Episode, is_queued: bool
-) -> TurboStreamTemplate:
-
-    return TurboStream(episode.get_queue_toggle_id()).replace.template(
-        "episodes/queue/_toggle.html",
-        {"episode": episode, "is_queued": is_queued},
-    )
 
 
 def episode_queue_response(
