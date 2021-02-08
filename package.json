@@ -2,9 +2,9 @@
   "private": true,
   "scripts": {
     "watch-css": "postcss ./static/src/css/app.css -o ./static/dev/app.css",
-    "watch-js": "esbuild ./static/src/js/app.js --bundle --outfile=./static/dev/app.js",
+    "watch-js": "esbuild ./static/src/js/app.ts --bundle --outfile=./static/dev/app.js",
     "build-css": "NODE_ENV=production postcss ./static/src/css/app.css -o ./static/dist/app.css",
-    "build-js": "NODE_ENV=production esbuild ./static/src/js/app.js --bundle --minify --outfile=./static/dist/app.js"
+    "build-js": "NODE_ENV=production esbuild ./static/src/js/app.ts --bundle --minify --outfile=./static/dist/app.js"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.2.1",

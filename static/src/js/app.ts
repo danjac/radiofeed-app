@@ -11,7 +11,7 @@ import PlayerController from './controllers/player-controller';
 import ToggleController from './controllers/toggle-controller';
 
 // Stimulus setup
-const application = Application.start();
+const application: Application = Application.start();
 
 application.register('confirm', ConfirmController);
 application.register('drag', DragController);

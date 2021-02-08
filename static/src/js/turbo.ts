@@ -10,7 +10,9 @@
 //  console.log(event)
 // }
 //
-const turboEventHandlers = {
+import { Controller } from 'stimulus';
+
+const turboEventHandlers: Object = {
   'turbo:before-cache': 'turboBeforeCache',
   'turbo:before-fetch-request': 'turboBeforeVisit',
   'turbo:before-fetch-response': 'turboBeforeFetchResponse',
@@ -23,11 +25,11 @@ const turboEventHandlers = {
   'turbo:submit-start': 'turboSubmitStart',
 };
 
-const addListeners = (controller) => {
-  const listeners = {};
+const addListeners = (controller: Controller): Object => {
+  const listeners: Object = {};
 
-  Object.keys(turboEventHandlers).forEach((eventName) => {
-    const methodName = turboEventHandlers[eventName];
+  Object.keys(turboEventHandlers).forEach((eventName: String) => {
+    const methodName: String = turboEventHandlers[eventName];
     if (typeof controller[methodName] === 'function') {
       listeners[eventName] = controller[methodName].bind(controller);
       document.documentElement.addEventListener(eventName, listeners[eventName], true);
@@ -36,16 +38,16 @@ const addListeners = (controller) => {
   return listeners;
 };
 
-const removeListeners = (listeners) => {
-  Object.keys(listeners).forEach((eventName) => {
+const removeListeners = (listeners: Object) => {
+  Object.keys(listeners).forEach((eventName: String) => {
     document.documentElement.removeEventListener(eventName, listeners[eventName], true);
   });
 };
 
-export default (controller) => {
-  const listeners = addListeners(controller);
+export default (controller: Controller) => {
+  const listeners: Object = addListeners(controller);
 
-  const controllerDisconnect = controller.disconnect.bind(controller);
+  const controllerDisconnect: Function = controller.disconnect.bind(controller);
 
   Object.assign(controller, {
     disconnect() {
