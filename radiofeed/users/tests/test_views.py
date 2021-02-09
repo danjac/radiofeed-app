@@ -1,12 +1,16 @@
-# Standard Library
 import http
 
-# Django
 from django.conf import settings
 from django.urls import reverse
 
-# Third Party Libraries
 import pytest
+
+from radiofeed.episodes.factories import (
+    AudioLogFactory,
+    EpisodeFactory,
+    FavoriteFactory,
+)
+from radiofeed.podcasts.factories import SubscriptionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -22,6 +26,21 @@ class TestUserPreferences:
         assert resp.url == url
         login_user.refresh_from_db()
         assert not login_user.send_recommendations_email
+
+
+class TestUserStats:
+    def test_stats(self, client, login_user, podcast):
+        SubscriptionFactory(podcast=podcast, user=login_user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
+        AudioLogFactory(user=login_user)
+        FavoriteFactory(user=login_user)
+        resp = client.get(reverse("user_stats"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context["stats"]["subscriptions"] == 1
+        assert resp.context["stats"]["listened"] == 3
+        assert resp.context["most_listened"].count() == 2
+        assert resp.context["most_listened"][0] == podcast
 
 
 class TestDeleteAccount:

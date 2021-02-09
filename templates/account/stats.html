@@ -1,0 +1,48 @@
+{% extends "account/settings_base.html" %}
+
+{% load %}
+
+{% block subtitle %}Stats{% endblock %}
+
+{% block settings_content %}
+
+<table class="text-lg table-fixed w-full lg:w-1/2 mb-6">
+  <tr class="border-b">
+    <td class="w-1/2">Subscriptions</td>
+    <td class="w-1/2 font-bold text-right">{{ stats.subscriptions }} podcast{{ stats.subscriptions|pluralize }}</td>
+  </tr>
+  <tr class="border-b">
+    <td class="w-1/2">Favorites</td>
+    <td class="w-1/2 font-bold text-right">{{ stats.favorites }} episode{{ stats.favorites|pluralize }}</td>
+  </tr>
+  <tr class="border-b">
+    <td class="w-1/2">Listened</td>
+    <td class="w-1/2 font-bold text-right">{{ stats.listened }} episode{{ stats.listened|pluralize }}</td>
+  </tr>
+  <tr class="border-b">
+    <td class="w-1/2">In progress</td>
+    <td class="w-1/2 font-bold text-right">{{ stats.in_progress }} episode{{ stats.in_progress|pluralize }}</td>
+  </tr>
+  <tr class="border-b">
+    <td class="w-1/2">Completed</td>
+    <td class="w-1/2 font-bold text-right">{{ stats.completed }} episode{{ stats.completed|pluralize }}</td>
+  </tr>
+</table>
+
+{% if most_listened %}
+<h2 class="text-lg mb-3">Your most-listened to podcasts are:</h2>
+
+<ol class="list-decimal list-inside">
+  {% for podcast in most_listened %}
+  <li class="mb-3">
+    <a href="{{ podcast.get_absolute_url }}"
+       class="link">{{ podcast.title }}</a>
+  </li>
+  {% endfor %}
+</ol>
+
+{% endif %}
+
+
+
+{% endblock settings_content %}
