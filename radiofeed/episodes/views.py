@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 from turbo_response.stream import TurboStreamTemplate
 
-from radiofeed.pagination import paginate
+from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.decorators import ajax_login_required
 
@@ -142,18 +142,12 @@ def history(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-updated")
 
-    context = {
-        "page_obj": paginate(request, logs),
-    }
-    if request.turbo.frame:
-
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("episodes/history/_episode_list.html", context)
-            .response(request)
-        )
-
-    return TemplateResponse(request, "episodes/history/index.html", context)
+    return render_pagination_response(
+        request,
+        logs,
+        "episodes/history/index.html",
+        "episodes/history/_episode_list.html",
+    )
 
 
 @require_POST
@@ -178,19 +172,12 @@ def favorite_list(request: HttpRequest) -> HttpResponse:
     else:
         favorites = favorites.order_by("-created")
 
-    context: Dict = {
-        "page_obj": paginate(request, favorites),
-    }
-
-    if request.turbo.frame:
-
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("episodes/favorites/_episode_list.html", context)
-            .response(request)
-        )
-
-    return TemplateResponse(request, "episodes/favorites/index.html", context)
+    return render_pagination_response(
+        request,
+        favorites,
+        "episodes/favorites/index.html",
+        "episodes/favorites/_episode_list.html",
+    )
 
 
 @require_POST
@@ -438,20 +425,17 @@ def episode_list_response(
     template_name: str,
     extra_context: Optional[Dict] = None,
 ) -> HttpResponse:
-    context = {
-        "page_obj": paginate(request, episodes),
-        "search_url": reverse("episodes:search_episodes"),
-        **(extra_context or {}),
-    }
-    if request.turbo.frame:
 
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("episodes/_episode_list.html", context)
-            .response(request)
-        )
-
-    return TemplateResponse(request, template_name, context)
+    return render_pagination_response(
+        request,
+        episodes,
+        template_name,
+        "episodes/_episode_list.html",
+        extra_context={
+            "search_url": reverse("episodes:search_episodes"),
+            **(extra_context or {}),
+        },
+    )
 
 
 def player_stop_response(streams: List[str]) -> HttpResponse:
