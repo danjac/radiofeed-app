@@ -285,7 +285,7 @@ def toggle_player(
 
     # clear session
     if current_episode := request.player.eject():
-        streams += [render_player_toggle_stream(request, current_episode, False)]
+        streams += [player_toggle_stream(request, current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -338,7 +338,7 @@ def toggle_player(
                 request=request,
             )
             .render(),
-            render_player_toggle_stream(request, episode, True),
+            player_toggle_stream(request, episode, True),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -400,7 +400,7 @@ def remove_from_queue_streams(request: HttpRequest, episode: Episode) -> List[st
     return streams
 
 
-def render_player_toggle_stream(
+def player_toggle_stream(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
