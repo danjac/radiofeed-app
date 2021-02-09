@@ -85,7 +85,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     if request.turbo.frame:
         return (
@@ -105,7 +105,7 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     total_episodes: int = podcast.episode_set.count()
 
@@ -121,7 +121,7 @@ def podcast_recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
@@ -143,7 +143,7 @@ def podcast_episode_list(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
     ordering: Optional[str] = request.GET.get("ordering")
 
     # thumbnail will be same for all episodes, so just preload
@@ -291,7 +291,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
@@ -302,7 +302,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
+    podcast = get_podcast_or_404(podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return render_podcast_subscribe_response(request, podcast, False)
 
@@ -310,15 +310,18 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
     return (
         TurboFrame(request.turbo.frame)
         .template(
             "podcasts/_cover_image.html",
-            {"podcast": podcast},
+            {"podcast": get_podcast_or_404(podcast_id)},
         )
         .response(request)
     )
+
+
+def get_podcast_or_404(podcast_id: int) -> Podcast:
+    return get_object_or_404(Podcast, pk=podcast_id)
 
 
 def get_podcast_detail_context(
