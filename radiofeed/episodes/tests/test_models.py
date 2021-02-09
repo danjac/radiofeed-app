@@ -141,9 +141,9 @@ class TestEpisodeModel:
     def test_get_opengraph_data(self, rf, episode, site):
         req = rf.get("/")
         req.site = site
-        og_data = episode.get_opengraph_data(req)
-        assert episode.title in og_data["title"]
-        assert og_data["url"] == "http://testserver" + episode.get_absolute_url()
+        data = episode.get_opengraph_data(req)
+        assert episode.title in data["title"]
+        assert data["url"] == "http://testserver" + episode.get_absolute_url()
 
 
 class TestFavoriteManager:
