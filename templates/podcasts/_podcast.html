@@ -36,10 +36,6 @@
           {% endif %}
 
           <div class="inline-block text-gray-500">{{ podcast.pub_date|date }}</div>
-          {% if podcast.explicit %}
-          {% include "_explicit.html" with css_class="ml-2" %}
-          {% endif %}
-
         </div>
       </div>
     </div>

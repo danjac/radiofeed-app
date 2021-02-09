@@ -50,9 +50,6 @@
                 <span{% if remove_url %} class="hidden sm:inline-block"{% endif %}>
                   {{ episode.pub_date|date }}
                 </span>
-                {% if episode.explicit %}
-                {% include "_explicit.html" with css_class="ml-2" %}
-                {% endif %}
               </div>
               {% block mobile_extra_buttons %}
               {% if remove_url %}
