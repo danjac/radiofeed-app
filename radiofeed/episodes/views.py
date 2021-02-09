@@ -82,10 +82,8 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    episode = get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
-        pk=episode_id,
-    )
+    episode = get_episode_detail_or_404(request, episode_id)
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
@@ -104,10 +102,7 @@ def episode_actions(
     episode_id: int,
     actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
-    episode = get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
-        pk=episode_id,
-    )
+    episode = get_episode_detail_or_404(request, episode_id)
 
     if request.turbo.frame:
         return (
@@ -154,7 +149,7 @@ def history(request: HttpRequest) -> HttpResponse:
 @login_required
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_episode_or_404(episode_id)
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
     if request.turbo:
@@ -183,7 +178,7 @@ def favorite_list(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_episode_or_404(episode_id)
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
@@ -195,7 +190,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_episode_or_404(episode_id)
     Favorite.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
@@ -222,7 +217,7 @@ def queue(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_episode_or_404(episode_id)
     position = (
         QueueItem.objects.filter(user=request.user).aggregate(Max("position"))[
             "position__max"
@@ -241,7 +236,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_object_or_404(Episode, pk=episode_id)
+    episode = get_episode_or_404(episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStreamResponse(remove_from_queue_streams(request, episode))
@@ -314,10 +309,7 @@ def toggle_player(
         if episode_id is None:
             raise Http404()
 
-        episode = get_object_or_404(
-            Episode.objects.with_current_time(request.user).select_related("podcast"),
-            pk=episode_id,
-        )
+        episode = get_episode_detail_or_404(request, episode_id)
 
         # remove from queue
         QueueItem.objects.filter(user=request.user, episode=episode).delete()
@@ -376,6 +368,17 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
+
+
+def get_episode_or_404(episode_id: int) -> Episode:
+    return get_object_or_404(Episode, pk=episode_id)
+
+
+def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
+    return get_object_or_404(
+        Episode.objects.with_current_time(request.user).select_related("podcast"),
+        pk=episode_id,
+    )
 
 
 def episode_queue_toggle_stream(
