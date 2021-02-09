@@ -85,5 +85,6 @@ class TestKeepspaces:
 
 class TestSvg:
     def test_render_svg(self):
-        result = svg("ellipsis", css_class="h-4 w-4")
-        assert 'class="h-4 w-4"' in result
+        context = svg("ellipsis", css_class="h-4 w-4")
+        assert context["svg_template"] == "svg/_ellipsis.svg"
+        assert context["css_class"] == "h-4 w-4"

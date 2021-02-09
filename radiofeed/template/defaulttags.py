@@ -8,7 +8,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
-from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 import bs4
@@ -93,13 +92,9 @@ def keepspaces(text: Optional[str]) -> str:
     )
 
 
-@register.simple_tag
-def svg(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
-    return render_to_string(
-        f"svg/_{name}.svg",
-        {"css_class": css_class, "title": title, **_convert_attrs(attrs)},
-    )
-
-
-def _convert_attrs(attrs: Dict[str, str]) -> Dict[str, str]:
-    return {k.replace("_", "-"): v for k, v in attrs.items()}
+@register.inclusion_tag("_svg.html")
+def svg(name: str, **attrs) -> Dict:
+    return {
+        "svg_template": f"svg/_{name}.svg",
+        **attrs,
+    }
