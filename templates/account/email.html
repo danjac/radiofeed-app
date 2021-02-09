@@ -39,23 +39,24 @@
     </label>
   </div>
   {% endfor %}
-  <div class="sm:flex items-center justify-end mb-3">
+  <div class="flex items-center justify-evenly sm:justify-end mb-3">
 
-    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
+    <button class="btn btn-default flex items-center justify-center sm:mr-2"
             type="submit"
             value="1"
             name="action_send">
       {% svg "mail" css_class="btn-icon mr-2" %}
       {% translate 'Re-Verify' %}
     </button>
-    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
+
+    <button class="btn btn-default flex items-center justify-center sm:mr-2"
             value="1"
             name="action_primary">
       {% svg "sparkles" css_class="btn-icon mr-2" %}
-      {% translate 'Make Primary' %}
+      {% translate 'Primary' %}
 
     </button>
-    <button class="btn btn-danger flex items-center justify-center w-full sm:w-auto"
+    <button class="btn btn-danger flex items-center justify-center"
             type="submit"
             data-controller="confirm"
             data-confirm-text-value="Are you sure you want to remove this email address?"
