@@ -12,7 +12,7 @@
 //
 import { Controller } from 'stimulus';
 
-const turboEventHandlers: any = {
+const turboEventHandlers: { [key: string]: string } = {
   'turbo:before-cache': 'turboBeforeCache',
   'turbo:before-fetch-request': 'turboBeforeVisit',
   'turbo:before-fetch-response': 'turboBeforeFetchResponse',
