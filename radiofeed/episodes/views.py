@@ -55,7 +55,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     else:
         episodes = Episode.objects.none()
 
-    return episode_list_response(
+    return render_episode_list_response(
         request,
         episodes,
         "episodes/index.html",
@@ -71,7 +71,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return episode_list_response(request, episodes, "episodes/search.html")
+        return render_episode_list_response(request, episodes, "episodes/search.html")
 
     if request.user.is_authenticated:
         return redirect("episodes:episode_list")
@@ -189,7 +189,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return episode_favorite_response(request, episode, True)
+    return render_episode_favorite_response(request, episode, True)
 
 
 @require_POST
@@ -199,7 +199,7 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     Favorite.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
-    return episode_favorite_response(request, episode, False)
+    return render_episode_favorite_response(request, episode, False)
 
 
 # Queue views
@@ -235,8 +235,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    # NB: we probably don't want to add the "queue" button in the Queue itself
-    return episode_queue_response(request, episode, True)
+    return render_episode_queue_response(request, episode, True)
 
 
 @require_POST
@@ -245,8 +244,8 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        return TurboStreamResponse(render_remove_from_queue(request, episode))
-    return episode_queue_response(request, episode, False)
+        return TurboStreamResponse(render_remove_from_queue_streams(request, episode))
+    return render_episode_queue_response(request, episode, False)
 
 
 @require_POST
@@ -286,13 +285,13 @@ def toggle_player(
 
     # clear session
     if current_episode := request.player.eject():
-        streams += [render_player_toggle(request, current_episode, False)]
+        streams += [render_player_toggle_stream(request, current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
 
     if action == "stop":
-        return player_stop_response(streams)
+        return render_player_stop_response(streams)
 
     if action == "next":
 
@@ -308,7 +307,7 @@ def toggle_player(
             next_item.delete()
 
         else:
-            return player_stop_response(streams)
+            return render_player_stop_response(streams)
 
     else:
 
@@ -330,7 +329,7 @@ def toggle_player(
 
     response = TurboStreamResponse(
         streams
-        + render_remove_from_queue(request, episode)
+        + render_remove_from_queue_streams(request, episode)
         + [
             TurboStream("player-container")
             .update.template(
@@ -339,7 +338,7 @@ def toggle_player(
                 request=request,
             )
             .render(),
-            render_player_toggle(request, episode, True),
+            render_player_toggle_stream(request, episode, True),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -389,7 +388,7 @@ def episode_queue_toggle_stream(
     )
 
 
-def render_player_toggle(
+def render_player_toggle_stream(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
@@ -407,7 +406,9 @@ def render_player_toggle(
     )
 
 
-def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
+def render_remove_from_queue_streams(
+    request: HttpRequest, episode: Episode
+) -> List[str]:
     streams = [
         TurboStream(f"queue-item-{episode.id}").remove.render(),
         episode_queue_toggle_stream(episode, False).render(),
@@ -419,7 +420,7 @@ def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str
     return streams
 
 
-def episode_list_response(
+def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
     template_name: str,
@@ -438,7 +439,7 @@ def episode_list_response(
     )
 
 
-def player_stop_response(streams: List[str]) -> HttpResponse:
+def render_player_stop_response(streams: List[str]) -> HttpResponse:
     response = TurboStreamResponse(
         streams + [TurboStream("player-controls").remove.render()]
     )
@@ -446,7 +447,7 @@ def player_stop_response(streams: List[str]) -> HttpResponse:
     return response
 
 
-def episode_favorite_response(
+def render_episode_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
     if request.turbo:
@@ -461,7 +462,7 @@ def episode_favorite_response(
     return redirect(episode)
 
 
-def episode_queue_response(
+def render_episode_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:

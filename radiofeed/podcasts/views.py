@@ -60,7 +60,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    return podcast_list_response(
+    return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/index.html",
@@ -80,7 +80,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     else:
         return redirect("podcasts:podcast_list")
 
-    return podcast_list_response(request, podcasts, "podcasts/search.html")
+    return render_podcast_list_response(request, podcasts, "podcasts/search.html")
 
 
 @login_required
@@ -109,7 +109,7 @@ def podcast_detail(
 
     total_episodes: int = podcast.episode_set.count()
 
-    return podcast_detail_response(
+    return render_podcast_detail_response(
         request,
         "podcasts/detail/detail.html",
         podcast,
@@ -129,7 +129,7 @@ def podcast_recommendations(
         .order_by("-similarity", "-frequency")
     )[:12]
 
-    return podcast_detail_response(
+    return render_podcast_detail_response(
         request,
         "podcasts/detail/recommendations.html",
         podcast,
@@ -296,7 +296,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
         Subscription.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
         pass
-    return podcast_subscribe_response(request, podcast, True)
+    return render_podcast_subscribe_response(request, podcast, True)
 
 
 @require_POST
@@ -304,7 +304,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_object_or_404(Podcast, pk=podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    return podcast_subscribe_response(request, podcast, False)
+    return render_podcast_subscribe_response(request, podcast, False)
 
 
 @cache_page(60 * 60 * 24)
@@ -335,7 +335,7 @@ def get_podcast_detail_context(
     } | (extra_context or {})
 
 
-def podcast_list_response(
+def render_podcast_list_response(
     request: HttpRequest,
     podcasts: QuerySet,
     template_name: str,
@@ -351,7 +351,7 @@ def podcast_list_response(
     )
 
 
-def podcast_detail_response(
+def render_podcast_detail_response(
     request: HttpRequest,
     template_name: str,
     podcast: Podcast,
@@ -365,7 +365,7 @@ def podcast_detail_response(
     )
 
 
-def podcast_subscribe_response(
+def render_podcast_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
     if request.turbo:
