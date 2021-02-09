@@ -49,7 +49,7 @@
     {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     {% if episode.listened %}
     <div class="font-semibold text-gray-500 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
-      Listened {{ episode.listened|timesince }}
+      Listened {{ episode.listened|date }}
     </div>
     {% endif %}
     {% if episode.explicit %}
@@ -61,7 +61,7 @@
   </div>
   {% if episode.listened %}
   <div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 sm:hidden text-sm">
-    Listened {{ episode.listened|timesince }}
+    Listened {{ episode.listened|date }}
   </div>
   {% endif %}
 
