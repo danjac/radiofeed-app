@@ -244,7 +244,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_object_or_404(Episode, pk=episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        return TurboStreamResponse(render_remove_from_queue_streams(request, episode))
+        return TurboStreamResponse(remove_from_queue_streams(request, episode))
     return render_episode_queue_response(request, episode, False)
 
 
@@ -329,7 +329,7 @@ def toggle_player(
 
     response = TurboStreamResponse(
         streams
-        + render_remove_from_queue_streams(request, episode)
+        + remove_from_queue_streams(request, episode)
         + [
             TurboStream("player-container")
             .update.template(
@@ -388,6 +388,18 @@ def episode_queue_toggle_stream(
     )
 
 
+def remove_from_queue_streams(request: HttpRequest, episode: Episode) -> List[str]:
+    streams = [
+        TurboStream(f"queue-item-{episode.id}").remove.render(),
+        episode_queue_toggle_stream(episode, False).render(),
+    ]
+    if QueueItem.objects.filter(user=request.user).count() == 0:
+        streams += [
+            TurboStream("queue").append.render("No more items left in queue"),
+        ]
+    return streams
+
+
 def render_player_toggle_stream(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
@@ -404,20 +416,6 @@ def render_player_toggle_stream(
         )
         .render()
     )
-
-
-def render_remove_from_queue_streams(
-    request: HttpRequest, episode: Episode
-) -> List[str]:
-    streams = [
-        TurboStream(f"queue-item-{episode.id}").remove.render(),
-        episode_queue_toggle_stream(episode, False).render(),
-    ]
-    if QueueItem.objects.filter(user=request.user).count() == 0:
-        streams += [
-            TurboStream("queue").append.render("No more items left in queue"),
-        ]
-    return streams
 
 
 def render_episode_list_response(
