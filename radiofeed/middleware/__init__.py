@@ -18,7 +18,7 @@ class Search:
 
     @cached_property
     def value(self) -> str:
-        return self.request.GET.get(self.search_param, "")
+        return self.request.GET.get(self.search_param, "").strip()
 
 
 class SearchMiddleware:
