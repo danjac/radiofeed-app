@@ -21,13 +21,13 @@ from .forms import UserPreferencesForm
 
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
-    with handle_form(request, UserPreferencesForm, instance=request.user) as (form, ok):
-        if ok:
-            form.save()
-            messages.success(request, "Your preferences have been saved")
-            return redirect_303(request.path)
+    if result := handle_form(request, UserPreferencesForm, instance=request.user):
 
-        return render_form_response(request, form, "account/preferences.html")
+        result.form.save()
+        messages.success(request, "Your preferences have been saved")
+        return redirect_303(request.path)
+
+    return render_form_response(request, result.form, "account/preferences.html")
 
 
 @login_required
