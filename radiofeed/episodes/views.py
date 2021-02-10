@@ -297,10 +297,9 @@ def toggle_player(
             .first()
         ):
 
-            next_item.delete()
-
             return render_player_start_response(request, next_item.episode, streams)
 
+        # no more items in queue
         return render_player_stop_response(streams)
 
     # default: start new episode
@@ -309,8 +308,6 @@ def toggle_player(
 
     episode = get_episode_detail_or_404(request, episode_id)
 
-    # remove from queue
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
     current_time = 0 if episode.completed else episode.current_time or 0
     return render_player_start_response(request, episode, streams, current_time)
 
@@ -422,6 +419,9 @@ def render_player_stop_response(streams: List[str]) -> HttpResponse:
 def render_player_start_response(
     request: HttpRequest, episode: Episode, streams: List[str], current_time: int = 0
 ) -> HttpResponse:
+
+    # remove from queue
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
     episode.log_activity(request.user, current_time=current_time)
 

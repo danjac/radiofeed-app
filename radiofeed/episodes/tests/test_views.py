@@ -122,6 +122,8 @@ class TestTogglePlayer:
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
 
+        assert QueueItem.objects.count() == 0
+
         header = json.loads(resp["X-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 0
