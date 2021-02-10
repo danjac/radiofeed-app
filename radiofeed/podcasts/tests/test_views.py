@@ -251,6 +251,19 @@ class TestCategoryDetail:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
+class TestSubscribeToggle:
+    def test_is_subscribed(self, client, login_user, podcast):
+        SubscriptionFactory(podcast=podcast, user=login_user)
+        resp = client.post(reverse("podcasts:subscribe_toggle", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["is_subscribed"]
+
+    def test_is_not_subscribed(self, client, login_user, podcast):
+        resp = client.post(reverse("podcasts:subscribe_toggle", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["is_subscribed"]
+
+
 class TestSubscribe:
     def test_subscribe(self, client, login_user, podcast):
         resp = client.post(reverse("podcasts:subscribe", args=[podcast.id]))

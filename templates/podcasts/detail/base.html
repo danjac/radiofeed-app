@@ -29,7 +29,12 @@
     </li>
     {% endif %}
   </ul>
+  {% if user.is_authenticated %}
+  <turbo-frame id="podcast-subscribe-toggle"
+               src="{% url 'podcasts:subscribe_toggle' podcast.id %}"></turbo-frame>
+  {% else %}
   {% include "podcasts/_subscribe.html" %}
+  {% endif %}
 
 </nav>
 {% block podcast_content %}{% endblock %}
