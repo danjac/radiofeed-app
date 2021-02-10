@@ -14,7 +14,7 @@
 
   <div class="mb-3">
     <label class="flex items-center mb-2 w-full">
-      {% render_field form.send_recommendations_email class="mr-3 bg-gray-900" %}
+      {% render_field form.send_recommendations_email class="mr-3" %}
       {{ form.send_recommendations_email.label }}
     </label>
     {% include "_form_help_text.html" with help_text=form.send_recommendations_email.help_text %}
