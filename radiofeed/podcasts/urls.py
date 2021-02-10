@@ -10,11 +10,6 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path("podcasts/<int:podcast_id>/actions/", views.podcast_actions, name="actions"),
-    path(
-        "podcasts/<int:podcast_id>/subscribe/",
-        views.subscribe_toggle,
-        name="subscribe_toggle",
-    ),
     path("podcasts/<int:podcast_id>/~subscribe/", views.subscribe, name="subscribe"),
     path(
         "podcasts/<int:podcast_id>/~unsubscribe/", views.unsubscribe, name="unsubscribe"
