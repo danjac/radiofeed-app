@@ -2,7 +2,7 @@
 {% load cache %}
 
 {% block podcast_content %}
-{% cache 3600 recommendations podcast %}
+{% cache 3600 recommendations podcast.id request.user.username %}
 {% for recommendation in recommendations %}
 {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
 {% endfor %}
