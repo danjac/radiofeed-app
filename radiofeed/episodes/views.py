@@ -184,7 +184,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return render_episode_favorite_response(request, episode, True)
+    return render_episode_favorite_toggle_response(request, episode, True)
 
 
 @require_POST
@@ -194,7 +194,7 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     Favorite.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
-    return render_episode_favorite_response(request, episode, False)
+    return render_episode_favorite_toggle_response(request, episode, False)
 
 
 # Queue views
@@ -230,7 +230,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    return render_episode_queue_response(request, episode, True)
+    return render_episode_queue_toggle_response(request, episode, True)
 
 
 @require_POST
@@ -240,7 +240,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStreamResponse(remove_from_queue_streams(request, episode))
-    return render_episode_queue_response(request, episode, False)
+    return render_episode_queue_toggle_response(request, episode, False)
 
 
 @require_POST
@@ -452,7 +452,7 @@ def render_player_start_response(
     return response
 
 
-def render_episode_favorite_response(
+def render_episode_favorite_toggle_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
     if request.turbo:
@@ -467,7 +467,7 @@ def render_episode_favorite_response(
     return redirect(episode)
 
 
-def render_episode_queue_response(
+def render_episode_queue_toggle_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:
