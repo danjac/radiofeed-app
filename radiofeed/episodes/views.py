@@ -239,7 +239,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        return TurboStreamResponse(remove_from_queue_streams(request, episode))
+        return TurboStreamResponse(render_remove_from_queue_streams(request, episode))
     return render_episode_queue_toggle_response(request, episode, False)
 
 
@@ -280,7 +280,7 @@ def toggle_player(
 
     # clear session
     if current_episode := request.player.eject():
-        streams += [player_toggle_stream(request, current_episode, False)]
+        streams += [render_player_toggle_stream(request, current_episode, False)]
 
         if request.POST.get("mark_complete") == "true":
             current_episode.log_activity(request.user, current_time=0, completed=True)
@@ -349,7 +349,7 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
     )
 
 
-def episode_queue_toggle_stream(
+def episode_queue_toggle_stream_template(
     episode: Episode, is_queued: bool
 ) -> TurboStreamTemplate:
 
@@ -359,10 +359,12 @@ def episode_queue_toggle_stream(
     )
 
 
-def remove_from_queue_streams(request: HttpRequest, episode: Episode) -> List[str]:
+def render_remove_from_queue_streams(
+    request: HttpRequest, episode: Episode
+) -> List[str]:
     streams = [
         TurboStream(f"queue-item-{episode.id}").remove.render(),
-        episode_queue_toggle_stream(episode, False).render(),
+        episode_queue_toggle_stream_template(episode, False).render(),
     ]
     if QueueItem.objects.filter(user=request.user).count() == 0:
         streams += [
@@ -371,7 +373,7 @@ def remove_from_queue_streams(request: HttpRequest, episode: Episode) -> List[st
     return streams
 
 
-def player_toggle_stream(
+def render_player_toggle_stream(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
@@ -429,7 +431,7 @@ def render_player_start_response(
 
     response = TurboStreamResponse(
         streams
-        + remove_from_queue_streams(request, episode)
+        + render_remove_from_queue_streams(request, episode)
         + [
             TurboStream("player-container")
             .update.template(
@@ -438,7 +440,7 @@ def render_player_start_response(
                 request=request,
             )
             .render(),
-            player_toggle_stream(request, episode, True),
+            render_player_toggle_stream(request, episode, True),
         ]
     )
     response["X-Player"] = json.dumps(
@@ -471,5 +473,7 @@ def render_episode_queue_toggle_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:
-        return episode_queue_toggle_stream(episode, is_queued).response(request)
+        return episode_queue_toggle_stream_template(episode, is_queued).response(
+            request
+        )
     return redirect(episode)
