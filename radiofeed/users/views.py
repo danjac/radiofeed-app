@@ -14,24 +14,24 @@ from turbo_response import TurboStream, redirect_303, render_form_response
 
 from radiofeed.episodes.models import AudioLog, Favorite
 from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.shortcuts import handle_form
 
 from .forms import UserPreferencesForm
 
 
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
+    with handle_form(request, UserPreferencesForm, instance=request.user) as (
+        form,
+        is_success,
+    ):
+        if is_success:
 
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-
-        if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
             return redirect_303(request.path)
-    else:
-        form = UserPreferencesForm(instance=request.user)
 
-    return render_form_response(request, form, "account/preferences.html")
+        return render_form_response(request, form, "account/preferences.html")
 
 
 @login_required
