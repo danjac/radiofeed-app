@@ -292,7 +292,7 @@ def toggle_player(
 
         if next_item := (
             QueueItem.objects.filter(user=request.user)
-            .select_related("episode")
+            .select_related("episode", "episode__podcast")
             .order_by("position")
             .first()
         ):
