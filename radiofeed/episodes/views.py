@@ -9,6 +9,7 @@ from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadReque
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
@@ -63,6 +64,7 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     )
 
 
+@cache_page(60 * 60)
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if request.search:

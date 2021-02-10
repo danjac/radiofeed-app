@@ -68,6 +68,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
     )
 
 
+@cache_page(60 * 60)
 def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     if request.search:
@@ -102,6 +103,7 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return redirect(podcast.get_absolute_url())
 
 
+@cache_page(60 * 60 * 24)
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -117,6 +119,7 @@ def podcast_detail(
     )
 
 
+@cache_page(60 * 60 * 24)
 def podcast_recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -139,6 +142,7 @@ def podcast_recommendations(
     )
 
 
+@cache_page(60 * 60)
 def podcast_episode_list(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -187,6 +191,7 @@ def podcast_episode_list(
     )
 
 
+@cache_page(60 * 60 * 24)
 def category_list(request: HttpRequest) -> HttpResponse:
     categories = Category.objects.all()
 
@@ -210,6 +215,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     )
 
 
+@cache_page(60 * 60)
 def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] = None):
     category: Category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
@@ -231,6 +237,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
     )
 
 
+@cache_page(60 * 60 * 24)
 def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     error: bool = False
     results: itunes.SearchResultList = []
@@ -260,6 +267,7 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
+@cache_page(60 * 60 * 24)
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False
@@ -285,6 +293,22 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             "error": error,
             "clear_search_url": clear_search_url,
         },
+    )
+
+
+@login_required
+def subscribe_toggle(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(podcast_id)
+    is_subscribed = Subscription.objects.filter(
+        podcast=podcast, user=request.user
+    ).exists()
+    return (
+        TurboFrame("podcast-subscribe-toggle")
+        .template(
+            "podcasts/_subscribe.html",
+            {"podcast": podcast, "is_subscribed": is_subscribed},
+        )
+        .response(request)
     )
 
 
