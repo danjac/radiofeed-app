@@ -85,8 +85,6 @@ PodcastManager: models.Manager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    id = models.BigAutoField(primary_key=True, editable=False)
-
     rss = models.URLField(unique=True, max_length=500)
     etag = models.TextField(blank=True)
     title = models.TextField()

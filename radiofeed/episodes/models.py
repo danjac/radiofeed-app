@@ -53,8 +53,6 @@ EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    id = models.BigAutoField(primary_key=True, editable=False)
-
     podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     guid = models.TextField()
