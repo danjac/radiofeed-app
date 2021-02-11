@@ -5,7 +5,7 @@ from . import views
 app_name = "episodes"
 
 urlpatterns = [
-    path("new/", views.new_episodes, name="new_episodes"),
+    path("new/", views.new_episodes, name="index"),
     path("search/episodes/", views.search_episodes, name="search_episodes"),
     path(
         "player/<int:episode_id>/~start/",

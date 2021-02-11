@@ -6,7 +6,7 @@ app_name = "podcasts"
 
 urlpatterns = [
     path("", views.landing_page, name="landing_page"),
-    path("podcasts/", views.podcast_list, name="podcast_list"),
+    path("podcasts/", views.podcasts, name="index"),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path("podcasts/<int:podcast_id>/actions/", views.podcast_actions, name="actions"),
@@ -21,8 +21,8 @@ urlpatterns = [
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
-        views.podcast_episode_list,
-        name="podcast_episode_list",
+        views.podcast_episodes,
+        name="podcast_episodes",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
@@ -34,7 +34,7 @@ urlpatterns = [
         views.podcast_detail,
         name="podcast_detail",
     ),
-    path("discover/", views.category_list, name="category_list"),
+    path("discover/", views.categories, name="categories"),
     path(
         "discover/<int:category_id>/itunes/",
         views.itunes_category,

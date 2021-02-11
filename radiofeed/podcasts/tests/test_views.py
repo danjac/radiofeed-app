@@ -34,7 +34,7 @@ class TestLandingPage:
 
     def test_authenticated(self, client, login_user):
         resp = client.get(reverse("podcasts:landing_page"))
-        assert resp.url == reverse("episodes:new_episodes")
+        assert resp.url == reverse("episodes:index")
 
 
 class TestPodcastCoverImage:
@@ -46,14 +46,14 @@ class TestPodcastCoverImage:
 class TestPodcastList:
     def test_anonymous(self, client):
         PodcastFactory.create_batch(3, promoted=True)
-        resp = client.get(reverse("podcasts:podcast_list"), HTTP_TURBO_FRAME="podcasts")
+        resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_no_subscriptions(self, login_user, client):
         """If user has no subscriptions, just show general feed"""
         PodcastFactory.create_batch(3, promoted=True)
-        resp = client.get(reverse("podcasts:podcast_list"), HTTP_TURBO_FRAME="podcasts")
+        resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
@@ -61,7 +61,7 @@ class TestPodcastList:
         """If user has subscriptions, show only own feed"""
         PodcastFactory.create_batch(3)
         sub = SubscriptionFactory(user=login_user)
-        resp = client.get(reverse("podcasts:podcast_list"), HTTP_TURBO_FRAME="podcasts")
+        resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
@@ -72,7 +72,7 @@ class TestSearchEpisodes:
         resp = client.get(
             reverse("podcasts:search_podcasts"), {"q": ""}, HTTP_TURBO_FRAME="podcasts"
         )
-        assert resp.url == reverse("podcasts:podcast_list")
+        assert resp.url == reverse("podcasts:index")
 
     def test_search(self, client):
         podcast = PodcastFactory(title="testing")
@@ -162,7 +162,7 @@ class TestPodcastEpisodeList:
         EpisodeFactory.create_batch(3, podcast=podcast)
         resp = client.get(
             reverse(
-                "podcasts:podcast_episode_list",
+                "podcasts:podcast_episodes",
                 args=[podcast.id, podcast.slug],
             )
         )
@@ -173,7 +173,7 @@ class TestPodcastEpisodeList:
         EpisodeFactory.create_batch(3, podcast=podcast)
         resp = client.get(
             reverse(
-                "podcasts:podcast_episode_list",
+                "podcasts:podcast_episodes",
                 args=[podcast.id, podcast.slug],
             ),
             HTTP_TURBO_FRAME="episodes",
@@ -186,7 +186,7 @@ class TestPodcastEpisodeList:
         EpisodeFactory(title="testing", podcast=podcast)
         resp = client.get(
             reverse(
-                "podcasts:podcast_episode_list",
+                "podcasts:podcast_episodes",
                 args=[podcast.id, podcast.slug],
             ),
             {"q": "testing"},
@@ -207,7 +207,7 @@ class TestCategoryList:
         PodcastFactory(categories=[c2, parents[1]])
         PodcastFactory(categories=[c3, parents[2]])
 
-        resp = client.get(reverse("podcasts:category_list"))
+        resp = client.get(reverse("podcasts:categories"))
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 3
 
@@ -224,7 +224,7 @@ class TestCategoryList:
         PodcastFactory(categories=[c3])
         PodcastFactory(categories=[c4])
 
-        resp = client.get(reverse("podcasts:category_list"), {"q": "testing"})
+        resp = client.get(reverse("podcasts:categories"), {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["categories"]) == 2
 

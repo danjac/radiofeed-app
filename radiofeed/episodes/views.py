@@ -73,9 +73,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
         return redirect(
-            "episodes:new_episodes"
-            if request.user.is_authenticated
-            else "podcasts:podcast_list"
+            "episodes:index" if request.user.is_authenticated else "podcasts:index"
         )
 
     if request.turbo.frame:

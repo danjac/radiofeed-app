@@ -15,7 +15,7 @@
     <div class="text-sm">
       <div class="mb-2">
         <a class="link"
-           href="{% url 'podcasts:podcast_episode_list' podcast.id podcast.slug %}">
+           href="{% url 'podcasts:podcast_episodes' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
       </div>
       <div class="flex items-center mb-2">

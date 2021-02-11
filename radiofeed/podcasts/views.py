@@ -16,7 +16,7 @@ from sorl.thumbnail.images import ImageFile
 from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
-from radiofeed.pagination import render_pagination_response
+from radiofeed.pagination import paginate
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
@@ -38,8 +38,9 @@ def landing_page(request: HttpRequest) -> HttpResponse:
     )
 
 
-def podcast_list(request: HttpRequest) -> HttpResponse:
-    """Shows list of podcasts"""
+def podcasts(request: HttpRequest) -> HttpResponse:
+    """Shows list of podcasts: if user has subscriptions,
+    show most recently updated, otherwise show latest"""
 
     subscriptions: List[int]
 
@@ -77,7 +78,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
-        return redirect("podcasts:podcast_list")
+        return redirect("podcasts:index")
 
     if request.turbo.frame:
         podcasts = (
@@ -146,7 +147,7 @@ def podcast_recommendations(
     )
 
 
-def podcast_episode_list(
+def podcast_episodes(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
@@ -198,7 +199,7 @@ def podcast_episode_list(
     )
 
 
-def category_list(request: HttpRequest) -> HttpResponse:
+def categories(request: HttpRequest) -> HttpResponse:
     categories = Category.objects.all()
 
     if request.search:
@@ -288,7 +289,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     for podcast in new_podcasts:
         sync_podcast_feed.delay(rss=podcast.rss)
 
-    clear_search_url = f"{reverse('podcasts:podcast_list')}?q={request.search}"
+    clear_search_url = f"{reverse('podcasts:index')}?q={request.search}"
 
     return TemplateResponse(
         request,
@@ -383,6 +384,11 @@ def render_podcast_subscribe_response(
 def render_podcast_list_response(
     request: HttpRequest, podcasts: QuerySet, extra_context: Optional[Dict] = None
 ) -> HttpResponse:
-    return render_pagination_response(
-        request, podcasts, "podcasts/_podcast_list.html", extra_context
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_podcast_list.html",
+            {"page_obj": paginate(request, podcasts), **(extra_context or {})},
+        )
+        .response(request)
     )

@@ -24,7 +24,7 @@
     <ul class="sidebar">
       {% if user.is_authenticated %}
       <li class="py-2">
-        {% active_link 'episodes:new_episodes' as link %}
+        {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
           {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
@@ -34,7 +34,7 @@
       {% endif %}
 
       <li class="py-2">
-        {% active_link 'podcasts:podcast_list' as link %}
+        {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
           {% svg "rss" css_class="h-5 w-5 mr-3" %}
@@ -42,7 +42,7 @@
         </a>
       </li>
       <li class="py-2">
-        {% active_link 'podcasts:category_list' as link %}
+        {% active_link 'podcasts:categories' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% svg "search" css_class="h-5 w-5 mr-3" %}

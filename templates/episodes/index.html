@@ -14,7 +14,7 @@
 
 {% if not has_subscriptions %}
 <p class="text-center sm:text-left mb-3">You haven't subscribed to any podcasts yet. Search for new podcasts here or on the <a class="font-semibold underline"
-     href="{% url 'podcasts:category_list' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>
+     href="{% url 'podcasts:categories' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>
 {% endif %}
 
 {% include "episodes/_episode_list.html" %}

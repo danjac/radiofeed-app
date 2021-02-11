@@ -17,7 +17,7 @@
          href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
       <span class="mr-1">|</span>
       <a class="font-semibold hover:text-blue-500"
-         href="{% url 'podcasts:podcast_list' %}">Clear</a>
+         href="{% url 'podcasts:index' %}">Clear</a>
     </div>
     {% endif %}
     {% include "_search_form.html" with placeholder="Search podcasts..." %}
@@ -32,7 +32,7 @@
      href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'podcasts:podcast_list' %}">Clear</a>
+     href="{% url 'podcasts:index' %}">Clear</a>
 </div>
 {% endif %}
 
