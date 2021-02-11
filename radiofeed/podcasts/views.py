@@ -25,7 +25,7 @@ from .tasks import sync_podcast_feed
 
 def landing_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
-        return redirect("episodes:episode_list")
+        return redirect(settings.LOGIN_REDIRECT_URL)
 
     podcasts = Podcast.objects.filter(
         pub_date__isnull=False,

@@ -34,7 +34,7 @@ class TestLandingPage:
 
     def test_authenticated(self, client, login_user):
         resp = client.get(reverse("podcasts:landing_page"))
-        assert resp.url == reverse("episodes:episode_list")
+        assert resp.url == reverse("episodes:new_episodes")
 
 
 class TestPodcastCoverImage:

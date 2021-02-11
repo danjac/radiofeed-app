@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 from turbo_response.stream import TurboStreamTemplate
 
-from radiofeed.pagination import render_pagination_response
+from radiofeed.pagination import paginate
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.decorators import ajax_login_required
 
@@ -22,7 +22,7 @@ from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 @login_required
-def episode_list(request: HttpRequest) -> HttpResponse:
+def new_episodes(request: HttpRequest) -> HttpResponse:
 
     subscriptions: List[int] = (
         list(request.user.subscription_set.values_list("podcast", flat=True))
@@ -73,7 +73,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
         return redirect(
-            "episodes:episode_list"
+            "episodes:new_episodes"
             if request.user.is_authenticated
             else "podcasts:podcast_list"
         )
@@ -149,10 +149,13 @@ def history(request: HttpRequest) -> HttpResponse:
         else:
             logs = logs.order_by("-updated")
 
-        return render_pagination_response(
-            request,
-            logs,
-            "episodes/history/_episode_list.html",
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/history/_episode_list.html",
+                {"page_obj": paginate(request, logs)},
+            )
+            .response(request)
         )
 
     return TemplateResponse(request, "episodes/history/index.html")
@@ -171,7 +174,7 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @login_required
-def favorite_list(request: HttpRequest) -> HttpResponse:
+def favorites(request: HttpRequest) -> HttpResponse:
     if request.turbo.frame:
         favorites = Favorite.objects.filter(user=request.user).select_related(
             "episode", "episode__podcast"
@@ -181,10 +184,13 @@ def favorite_list(request: HttpRequest) -> HttpResponse:
         else:
             favorites = favorites.order_by("-created")
 
-        return render_pagination_response(
-            request,
-            favorites,
-            "episodes/favorites/_episode_list.html",
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "episodes/favorites/_episode_list.html",
+                {"page_obj": paginate(request, favorites)},
+            )
+            .response(request)
         )
 
     return TemplateResponse(request, "episodes/favorites/index.html")
@@ -476,6 +482,11 @@ def render_episode_queue_response(
 def render_episode_list_response(
     request: HttpRequest, episodes: QuerySet, extra_context: Optional[Dict] = None
 ) -> HttpResponse:
-    return render_pagination_response(
-        request, episodes, "episodes/_episode_list.html", extra_context
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "episodes/_episode_list.html",
+            {"page_obj": paginate(request, episodes), **(extra_context or {})},
+        )
+        .response(request)
     )

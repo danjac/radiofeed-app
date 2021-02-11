@@ -5,7 +5,7 @@ from . import views
 app_name = "episodes"
 
 urlpatterns = [
-    path("new/", views.episode_list, name="episode_list"),
+    path("new/", views.new_episodes, name="new_episodes"),
     path("search/episodes/", views.search_episodes, name="search_episodes"),
     path(
         "player/<int:episode_id>/~start/",
@@ -32,7 +32,7 @@ urlpatterns = [
         views.remove_history,
         name="remove_history",
     ),
-    path("favorites/", views.favorite_list, name="favorite_list"),
+    path("favorites/", views.favorites, name="favorites"),
     path("favorites/<int:episode_id>/~add/", views.add_favorite, name="add_favorite"),
     path(
         "favorites/<int:episode_id>/~remove/",

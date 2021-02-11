@@ -22,7 +22,7 @@
            class="mr-4 hidden lg:inline-block">
 
       <a class="text-lg md:text-xl font-bold font-mono"
-         href="{% url user.is_authenticated|yesno:'episodes:episode_list,podcasts:podcast_list' %}">{{ request.site.name|lower }}</a>
+         href="{% url user.is_authenticated|yesno:'episodes:new_episodes,podcasts:podcast_list' %}">{{ request.site.name|lower }}</a>
     </div>
 
     <form method="get"

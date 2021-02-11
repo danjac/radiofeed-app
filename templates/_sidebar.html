@@ -24,7 +24,7 @@
     <ul class="sidebar">
       {% if user.is_authenticated %}
       <li class="py-2">
-        {% active_link 'episodes:episode_list' as link %}
+        {% active_link 'episodes:new_episodes' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
           {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
@@ -62,7 +62,7 @@
       </li>
 
       <li class="py-2">
-        {% active_link 'episodes:favorite_list' as link %}
+        {% active_link 'episodes:favorites' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% svg "star" css_class="h-5 w-5 mr-3" %}
