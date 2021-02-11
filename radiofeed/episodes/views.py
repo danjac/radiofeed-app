@@ -475,7 +475,7 @@ def render_episode_queue_response(
 
 def render_episode_list_response(
     request: HttpRequest, episodes: QuerySet, extra_context: Optional[Dict] = None
-):
+) -> HttpResponse:
     return render_pagination_response(
         request, episodes, "episodes/_episode_list.html", extra_context
     )

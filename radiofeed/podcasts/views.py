@@ -62,8 +62,7 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
 
         return render_podcast_list_response(request, podcasts)
 
-    else:
-        top_rated_podcasts = not (subscriptions) and not (request.search)
+    top_rated_podcasts = not (subscriptions) and not (request.search)
 
     return TemplateResponse(
         request,
