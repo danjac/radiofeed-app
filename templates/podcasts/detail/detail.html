@@ -1,4 +1,5 @@
 {% extends "podcasts/detail/base.html" %}
+{% load cache %}
 
 {% block podcast_content %}
 <div class="p-2 mb-3 border">
@@ -46,6 +47,7 @@
     {{ podcast.description|clean_html }}
   </div>
   <div>
+    {% cache 3600 podcast-categories podcast.id %}
     {% for category in podcast.categories.all %}
     <a class="inline-block mr-3 mb-3 btn btn-default"
        title="{{ category.name }}"
@@ -56,6 +58,7 @@
       </div>
     </a>
     {% endfor %}
+    {% endcache %}
   </div>
 
 </div>

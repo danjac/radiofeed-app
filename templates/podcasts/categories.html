@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
+{% cache 3600 categories search %}
 <div class="sm:flex justify-between items-center mb-3 pb-2 border-b">
   <h2 class="text-lg font-bold mb-3 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
   <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
@@ -56,5 +58,5 @@
 
 {% endif %}
 </div>
-
+{% endcache %}
 {% endblock %}

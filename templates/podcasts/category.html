@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} | {{ category.name }}{% endblock %}
 
 {% block content %}
 
+{% cache 3600 category category.id %}
 <div class="mb-3 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:category_list' %}"
      class="link mr-1">Discover</a>
@@ -63,5 +65,6 @@
   {% endif %}
 </div>
 {% endif %}
+{% endcache %}
 {% include "podcasts/_podcast_list.html" %}
 {% endblock content %}

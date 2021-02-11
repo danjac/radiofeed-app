@@ -1,3 +1,4 @@
+{% if is_turbo_frame %}
 {% block episodes %}
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" %}
@@ -10,5 +11,11 @@
 {% endblock empty %}
 
 {% endfor %}
-{% endblock %}
 {% include "_pagination.html" %}
+{% endblock %}
+{% else %}
+<turbo-frame id="episode-list"
+             src="{{ request.get_full_path }}">
+  {% include "_loader.html" %}
+</turbo-frame>
+{% endif %}

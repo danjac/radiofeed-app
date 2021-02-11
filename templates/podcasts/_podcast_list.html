@@ -1,3 +1,4 @@
+{% if is_turbo_frame %}
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
@@ -6,3 +7,10 @@
 </p>
 {% endfor %}
 {% include "_pagination.html" %}
+{% else %}
+<turbo-frame id="podcast-list"
+             src="{{ request.get_full_path }}">
+  {% include "_loader.html" %}
+</turbo-frame>
+
+{% endif %}
