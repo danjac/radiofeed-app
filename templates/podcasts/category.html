@@ -5,7 +5,6 @@
 
 {% block content %}
 
-{% cache 3600 category category.id %}
 <div class="mb-3 text-sm flex justify-center sm:block">
   <a href="{% url 'podcasts:categories' %}"
      class="link mr-1">Discover</a>
@@ -50,6 +49,7 @@
 </div>
 {% endif %}
 
+{% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
 <div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start leading-tight tracking-tight">
   {% for child in children %}
