@@ -26,6 +26,8 @@ REDIS_URL = env("REDIS_URL")
 
 CACHES = {"default": env.cache("REDIS_URL")}
 
+DEFAULT_CACHE_TIMEOUT = 3600
+
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"

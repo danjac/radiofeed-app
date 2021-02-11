@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Prefetch, QuerySet
+from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -13,7 +13,6 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboFrame, TurboStream
 
-from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
 
 from . import itunes
@@ -52,17 +51,28 @@ def podcasts(request: HttpRequest) -> HttpResponse:
     if request.turbo.frame:
         podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
+        # user's subscribed podcasts
+
         if subscriptions:
             podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
-            cache_timeout = None
-        else:
-            podcasts = Podcast.objects.filter(
-                pub_date__isnull=False, promoted=True
-            ).order_by("-pub_date")
-            cache_timeout = 3600
 
-        return render_podcast_list_response(
-            request, podcasts, cache_timeout=cache_timeout
+            return render_paginated_response(
+                request,
+                podcasts,
+                "podcasts/_podcast_list.html",
+            )
+
+        # return promoted list, same as landing_page
+
+        podcasts = Podcast.objects.filter(
+            pub_date__isnull=False, promoted=True
+        ).order_by("-pub_date")
+
+        return render_paginated_response(
+            request,
+            podcasts,
+            "podcasts/_podcast_list_cached.html",
+            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
         )
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
@@ -88,7 +98,12 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return render_podcast_list_response(request, podcasts, cache_timeout=3600)
+        return render_paginated_response(
+            request,
+            podcasts,
+            "podcasts/_podcast_list_cached.html",
+            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
+        )
 
     return TemplateResponse(request, "podcasts/search.html")
 
@@ -169,16 +184,17 @@ def podcast_episodes(
             order_by = "pub_date" if ordering == "asc" else "-pub_date"
             episodes = episodes.order_by(order_by)
 
-        return render_episode_list_response(
+        return render_paginated_response(
             request,
             episodes,
+            "episodes/_episode_list_cached.html",
             {
+                "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
                 "podcast_image": podcast.get_cover_image_thumbnail(),
                 "podcast_url": reverse(
                     "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
                 ),
             },
-            cache_timeout=3600,
         )
 
     return render_podcast_detail_response(
@@ -228,7 +244,12 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
         else:
             podcasts = podcasts.order_by("-pub_date")
 
-        return render_podcast_list_response(request, podcasts, cache_timeout=3600)
+        return render_paginated_response(
+            request,
+            podcasts,
+            "podcasts/_podcast_list_cached.html",
+            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
+        )
 
     return TemplateResponse(
         request,
@@ -371,19 +392,3 @@ def render_podcast_subscribe_response(
             .response(request)
         )
     return redirect(podcast.get_absolute_url())
-
-
-def render_podcast_list_response(
-    request: HttpRequest,
-    podcasts: QuerySet,
-    extra_context: Optional[Dict] = None,
-    cache_timeout: Optional[int] = None,
-) -> HttpResponse:
-    return render_paginated_response(
-        request,
-        podcasts,
-        "podcasts/_podcast_list_cached.html"
-        if cache_timeout
-        else "podcasts/_podcast_list.html",
-        {"cache_timeout": cache_timeout, **(extra_context or {})},
-    )

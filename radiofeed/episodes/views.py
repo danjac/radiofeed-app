@@ -1,10 +1,11 @@
 import http
 import json
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Max, OuterRef, QuerySet, Subquery
+from django.db.models import Max, OuterRef, Subquery
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -57,7 +58,11 @@ def new_episodes(request: HttpRequest) -> HttpResponse:
         else:
             episodes = Episode.objects.none()
 
-        return render_episode_list_response(request, episodes)
+        return render_paginated_response(
+            request,
+            episodes,
+            "episodes/_episode_list.html",
+        )
 
     return TemplateResponse(
         request,
@@ -82,7 +87,12 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return render_episode_list_response(request, episodes)
+        return render_paginated_response(
+            request,
+            episodes,
+            "episodes/_episode_list_cached.html",
+            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
+        )
 
     return TemplateResponse(request, "episodes/search.html")
 
@@ -471,19 +481,3 @@ def render_episode_queue_response(
     if request.turbo:
         return episode_queue_stream_template(episode, is_queued).response(request)
     return redirect(episode)
-
-
-def render_episode_list_response(
-    request: HttpRequest,
-    episodes: QuerySet,
-    extra_context: Optional[Dict] = None,
-    cache_timeout: Optional[int] = None,
-) -> HttpResponse:
-    return render_paginated_response(
-        request,
-        episodes,
-        "episodes/_episode_list_cached.html"
-        if cache_timeout
-        else "episodes/_episode_list.html",
-        {"cache_timeout": cache_timeout, **(extra_context or {})},
-    )
