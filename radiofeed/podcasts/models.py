@@ -1,4 +1,5 @@
-from typing import Dict
+import dataclasses
+from typing import Dict, Protocol
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -10,17 +11,31 @@ from django.contrib.postgres.search import (
 )
 from django.db import models
 from django.http import HttpRequest
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 
 from radiofeed.typing import AnyUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
+class CoverImage(Protocol):
+    url: str
+    width: int
+    height: int
+
+
+@dataclasses.dataclass
+class PlaceholderCoverImage:
+    url: str
+    width: int
+    height: int
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -161,6 +176,18 @@ class Podcast(models.Model):
                 "image_width": self.cover_image.width,
             }
         return og_data
+
+    def get_cover_image_thumbnail(self) -> CoverImage:
+        """Returns cover image or placeholder. This is an expensive op,
+        so use with caution."""
+
+        return (
+            get_thumbnail(self.cover_image, "200", format="WEBP", crop="center")
+            if self.cover_image
+            else PlaceholderCoverImage(
+                url=static("img/podcast-icon.png"), height=200, width=200
+            )
+        )
 
 
 class Subscription(TimeStampedModel):

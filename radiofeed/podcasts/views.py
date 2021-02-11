@@ -11,8 +11,6 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
-from sorl.thumbnail import get_thumbnail
-from sorl.thumbnail.images import ImageFile
 from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
@@ -159,15 +157,6 @@ def podcast_episodes(
         # thumbnail will be same for all episodes, so just preload
         # it once here
 
-        podcast_image: Optional[ImageFile]
-
-        if podcast.cover_image:
-            podcast_image = get_thumbnail(
-                podcast.cover_image, "200", format="WEBP", crop="center"
-            )
-        else:
-            podcast_image = None
-
         episodes = podcast.episode_set.select_related("podcast")
 
         if request.search:
@@ -180,7 +169,7 @@ def podcast_episodes(
             request,
             episodes,
             {
-                "podcast_image": podcast_image,
+                "podcast_image": podcast.get_cover_image_thumbnail(),
                 "podcast_url": reverse(
                     "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
                 ),
