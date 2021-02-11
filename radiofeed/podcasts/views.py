@@ -54,14 +54,12 @@ def podcasts(request: HttpRequest) -> HttpResponse:
 
         if subscriptions:
             podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
-            cache = None
         else:
             podcasts = Podcast.objects.filter(
                 pub_date__isnull=False, promoted=True
             ).order_by("-pub_date")
-            cache = 3600
 
-        return render_podcast_list_response(request, podcasts, cache=cache)
+        return render_podcast_list_response(request, podcasts)
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
@@ -86,7 +84,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return render_podcast_list_response(request, podcasts, cache=3600)
+        return render_podcast_list_response(request, podcasts)
 
     return TemplateResponse(request, "podcasts/search.html")
 
@@ -176,7 +174,6 @@ def podcast_episodes(
                     "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
                 ),
             },
-            cache=3600,
         )
 
     return render_podcast_detail_response(
@@ -226,7 +223,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
         else:
             podcasts = podcasts.order_by("-pub_date")
 
-        return render_podcast_list_response(request, podcasts, cache=3600)
+        return render_podcast_list_response(request, podcasts)
 
     return TemplateResponse(
         request,
@@ -375,8 +372,7 @@ def render_podcast_list_response(
     request: HttpRequest,
     podcasts: QuerySet,
     extra_context: Optional[Dict] = None,
-    cache: Optional[int] = None,
 ) -> HttpResponse:
     return render_paginated_response(
-        request, podcasts, "podcasts/_podcast_list.html", extra_context, cache=cache
+        request, podcasts, "podcasts/_podcast_list.html", extra_context
     )

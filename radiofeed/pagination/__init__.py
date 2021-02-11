@@ -34,23 +34,16 @@ def render_paginated_response(
     queryset: QuerySet,
     template_name: str,
     extra_context: Optional[Dict] = None,
-    cache: Optional[int] = None,
     **pagination_kwargs
 ) -> HttpResponse:
-    def _get_response(request: HttpRequest) -> HttpResponse:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                template_name,
-                {
-                    "page_obj": paginate(request, queryset, **pagination_kwargs),
-                    **(extra_context or {}),
-                },
-            )
-            .response(request)
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            template_name,
+            {
+                "page_obj": paginate(request, queryset, **pagination_kwargs),
+                **(extra_context or {}),
+            },
         )
-
-    # tmp fix: check if cache breaking turbo
-    # if cache:
-    # return cache_page(cache)(_get_response)(request)
-    return _get_response(request)
+        .response(request)
+    )
