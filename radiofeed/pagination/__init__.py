@@ -5,9 +5,10 @@ from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.utils.translation import gettext as _
-from django.views.decorators.cache import cache_page
 
 from turbo_response import TurboFrame
+
+# from django.views.decorators.cache import cache_page
 
 
 def paginate(
@@ -49,6 +50,7 @@ def render_paginated_response(
             .response(request)
         )
 
-    if cache:
-        return cache_page(cache)(_get_response)(request)
+    # tmp fix: check if cache breaking turbo
+    # if cache:
+    # return cache_page(cache)(_get_response)(request)
     return _get_response(request)
