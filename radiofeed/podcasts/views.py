@@ -176,6 +176,7 @@ def podcast_episodes(
                     "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
                 ),
             },
+            cache=3600,
         )
 
     return render_podcast_detail_response(

@@ -82,7 +82,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return render_episode_list_response(request, episodes)
+        return render_episode_list_response(request, episodes, cache=3600)
 
     return TemplateResponse(request, "episodes/search.html")
 
@@ -474,8 +474,11 @@ def render_episode_queue_response(
 
 
 def render_episode_list_response(
-    request: HttpRequest, episodes: QuerySet, extra_context: Optional[Dict] = None
+    request: HttpRequest,
+    episodes: QuerySet,
+    extra_context: Optional[Dict] = None,
+    cache: Optional[int] = None,
 ) -> HttpResponse:
     return render_paginated_response(
-        request, episodes, "episodes/_episode_list.html", extra_context
+        request, episodes, "episodes/_episode_list.html", extra_context, cache
     )
