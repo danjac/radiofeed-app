@@ -36,7 +36,7 @@ def render_paginated_response(
     cache: Optional[int] = None,
     **pagination_kwargs
 ) -> HttpResponse:
-    def _get_response(request: HttpRequest):
+    def _get_response(request: HttpRequest) -> HttpResponse:
         return (
             TurboFrame(request.turbo.frame)
             .template(
