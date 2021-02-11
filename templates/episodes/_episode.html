@@ -9,11 +9,15 @@
       <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
+          {% if podcast_image %}
+          {% include "podcasts/_cover_image.html" %}
+          {% else %}
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                        loading="lazy"
                        src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
             {% include "podcasts/_cover_image.html" with lazy=True %}
           </turbo-frame>
+          {% endif %}
         </a>
       </div>
       <div class="leading-tight w-full">
@@ -43,9 +47,10 @@
 
             <div class="flex items-center justify-between lg:justify-start text-sm">
               <div class="font-semibold text-gray-500 mr-2 flex items-center">
-                <span{% if remove_url %} class="hidden sm:inline-block"{% endif %}>
+                <span{% if remove_url %} class="hidden sm:inline-block"
+                                         {% endif %}>
                   {{ episode.pub_date|date }}
-                </span>
+                  </span>
               </div>
               {% block mobile_extra_buttons %}
               {% if remove_url %}
