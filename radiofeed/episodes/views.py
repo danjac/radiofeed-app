@@ -120,6 +120,7 @@ def episode_actions(
                 {
                     "episode": episode,
                     "actions": actions,
+                    "is_episode_playing": request.player.is_playing(episode),
                     "is_favorited": "favorite" in actions
                     and episode.is_favorited(request.user),
                     "is_queued": "queue" in actions and episode.is_queued(request.user),
@@ -402,7 +403,11 @@ def render_player_toggle_stream(
 
 def render_player_stop_response(streams: List[str]) -> HttpResponse:
     response = TurboStreamResponse(
-        streams + [TurboStream("player-controls").remove.render()]
+        streams
+        + [
+            TurboStream("player-controls").remove.render(),
+            TurboStream("modal").update.render(),
+        ]
     )
     response["X-Player"] = json.dumps({"action": "stop"})
     return response
@@ -430,6 +435,7 @@ def render_player_start_response(
                 request=request,
             )
             .render(),
+            TurboStream("modal").update.render(),
             render_player_toggle_stream(request, episode, True),
         ]
     )

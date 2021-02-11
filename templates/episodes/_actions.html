@@ -36,7 +36,8 @@
       </a>
     </div>
     <div>
-      <div class="mb-3">
+      <div class="mb-3 flex items-center">
+        {% include "episodes/player/_toggle.html" with css_class="mr-2" %}
         {% include "episodes/_download.html" %}
       </div>
       {% if actions %}

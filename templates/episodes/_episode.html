@@ -32,9 +32,6 @@
         </div>
 
         <div class="flex items-center">
-          <div class="mr-2">
-            {% include "episodes/player/_toggle.html" %}
-          </div>
           {% if user.is_authenticated %}
           <a class="mr-2 link"
              href="{% if action_url %}{{ action_url }}{% else %}{% url 'episodes:actions' episode.id %}{% endif %}"
