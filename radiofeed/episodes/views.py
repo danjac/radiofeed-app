@@ -477,7 +477,13 @@ def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
     extra_context: Optional[Dict] = None,
+    cache_timeout: Optional[int] = None,
 ) -> HttpResponse:
     return render_paginated_response(
-        request, episodes, "episodes/_episode_list.html", extra_context
+        request,
+        episodes,
+        "episodes/_episode_list_cached.html"
+        if cache_timeout
+        else "episodes/_episode_list.html",
+        {"cache_timeout": cache_timeout, **(extra_context or {})},
     )
