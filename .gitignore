@@ -15,6 +15,8 @@ __pycache__
 .vscode/
 .coverage
 
+.idea/
+
 node_modules/
 
 *.bak
