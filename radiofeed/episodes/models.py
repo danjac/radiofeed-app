@@ -80,10 +80,12 @@ class Episode(models.Model):
             models.UniqueConstraint(fields=["podcast", "guid"], name="unique_episode")
         ]
         indexes = [
+            models.Index(fields=["podcast", "pub_date"]),
+            models.Index(fields=["podcast", "-pub_date"]),
             models.Index(fields=["podcast"]),
             models.Index(fields=["guid"]),
-            models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
+            models.Index(fields=["-pub_date"]),
             GinIndex(fields=["search_vector"]),
         ]
 

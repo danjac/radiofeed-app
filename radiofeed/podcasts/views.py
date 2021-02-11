@@ -168,9 +168,7 @@ def podcast_episodes(
         else:
             podcast_image = None
 
-        episodes = podcast.episode_set.with_current_time(request.user).select_related(
-            "podcast"
-        )
+        episodes = podcast.episode_set.select_related("podcast")
 
         if request.search:
             episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
