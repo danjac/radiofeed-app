@@ -11,8 +11,8 @@
 {% endblock empty %}
 
 {% endfor %}
-{% include "_pagination.html" %}
 {% endblock %}
+{% include "_pagination.html" %}
 {% else %}
 <turbo-frame id="episode-list"
              src="{{ request.get_full_path }}">
