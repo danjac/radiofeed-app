@@ -18,7 +18,7 @@ from ..models import AudioLog, Favorite, QueueItem
 pytestmark = pytest.mark.django_db
 
 
-class TestEpisodeList:
+class TestNewEpisodes:
     def test_user_no_subscriptions(self, client, login_user):
         EpisodeFactory.create_batch(3)
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
@@ -38,12 +38,22 @@ class TestEpisodeList:
 
 
 class TestSearchEpisodes:
+    def test_page(self, client):
+        resp = client.get(reverse("episodes:search_episodes"), {"q": "test"})
+        assert resp.status_code == http.HTTPStatus.OK
+
     def test_search_empty_anonymous(self, client):
-        resp = client.get(reverse("episodes:search_episodes"), {"q": ""})
+        resp = client.get(
+            reverse("episodes:search_episodes"),
+            {"q": ""},
+        )
         assert resp.url == reverse("podcasts:index")
 
     def test_search_empty_authenticated(self, client, login_user):
-        resp = client.get(reverse("episodes:search_episodes"), {"q": ""})
+        resp = client.get(
+            reverse("episodes:search_episodes"),
+            {"q": ""},
+        )
         assert resp.url == reverse("episodes:index")
 
     def test_search(self, client):

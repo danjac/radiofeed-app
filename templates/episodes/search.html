@@ -15,7 +15,7 @@
       {% if user.is_authenticated %}
       <span class="mr-1">|</span>
       <a class="font-semibold hover:text-blue-500"
-         href="{% url 'episodes:episode_list' %}">Clear</a>
+         href="{% url 'episodes:index' %}">Clear</a>
       {% endif %}
     </div>
     {% endif %}
@@ -29,7 +29,7 @@
   {% if user.is_authenticated %}
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'episodes:episode_list' %}">Clear</a>
+     href="{% url 'episodes:index' %}">Clear</a>
   {% endif %}
 </div>
 {% endif %}

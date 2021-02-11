@@ -43,7 +43,7 @@ class TestPodcastCoverImage:
         assert resp.status_code == http.HTTPStatus.OK
 
 
-class TestPodcastList:
+class TestPodcasts:
     def test_anonymous(self, client):
         PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
