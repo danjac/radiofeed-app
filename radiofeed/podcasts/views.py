@@ -40,7 +40,7 @@ def landing_page(request: HttpRequest) -> HttpResponse:
 
 def podcasts(request: HttpRequest) -> HttpResponse:
     """Shows list of podcasts: if user has subscriptions,
-    show most recently updated, otherwise show latest"""
+    show most recently updated, otherwise show promoted podcasts"""
 
     subscriptions: List[int]
 
@@ -59,7 +59,7 @@ def podcasts(request: HttpRequest) -> HttpResponse:
         else:
             podcasts = Podcast.objects.filter(
                 pub_date__isnull=False, promoted=True
-            ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+            ).order_by("-pub_date")
 
         return render_podcast_list_response(request, podcasts)
 
