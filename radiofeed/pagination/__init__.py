@@ -1,41 +1,8 @@
-from typing import Dict, Optional
-
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
-from django.template.response import TemplateResponse
+from django.http import Http404, HttpRequest
 from django.utils.translation import gettext as _
-
-from turbo_response import TurboFrame
-
-
-def get_pagination_context(
-    request: HttpRequest, queryset: QuerySet, **pagination_kwargs
-) -> Dict:
-    return {"page_obj": paginate(request, queryset, **pagination_kwargs)}
-
-
-def render_pagination_response(
-    request: HttpRequest,
-    queryset: QuerySet,
-    template_name,
-    extra_context: Optional[Dict] = None,
-    **pagination_kwargs,
-) -> HttpResponse:
-
-    context = {
-        **get_pagination_context(request, queryset, **pagination_kwargs),
-        **(extra_context or {}),
-    }
-
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(template_name, context)
-            .response(request)
-        )
-    return TemplateResponse(request, template_name, context)
 
 
 def paginate(
