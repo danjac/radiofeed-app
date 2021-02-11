@@ -31,52 +31,62 @@ def episode_list(request: HttpRequest) -> HttpResponse:
     )
     has_subscriptions: bool = bool(subscriptions)
 
-    if has_subscriptions:
-        # we want a list of the *latest* episode for each podcast
-        latest_episodes = (
-            Episode.objects.filter(podcast=OuterRef("pk"))
-            .order_by("-pub_date")
-            .distinct()
-        )
+    if request.turbo.frame:
 
-        episode_ids = (
-            Podcast.objects.filter(pk__in=subscriptions)
-            .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-            .values_list("latest_episode", flat=True)
-            .distinct()
-        )
+        if has_subscriptions:
+            # we want a list of the *latest* episode for each podcast
+            latest_episodes = (
+                Episode.objects.filter(podcast=OuterRef("pk"))
+                .order_by("-pub_date")
+                .distinct()
+            )
 
-        episodes = (
-            Episode.objects.select_related("podcast")
-            .filter(pk__in=set(episode_ids))
-            .order_by("-pub_date")
-            .distinct()
-        )
-    else:
-        episodes = Episode.objects.none()
+            episode_ids = (
+                Podcast.objects.filter(pk__in=subscriptions)
+                .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
+                .values_list("latest_episode", flat=True)
+                .distinct()
+            )
 
-    return render_episode_list_response(
+            episodes = (
+                Episode.objects.select_related("podcast")
+                .filter(pk__in=set(episode_ids))
+                .order_by("-pub_date")
+                .distinct()
+            )
+        else:
+            episodes = Episode.objects.none()
+
+        return render_episode_list_response(request, episodes)
+
+    return TemplateResponse(
         request,
-        episodes,
         "episodes/index.html",
-        {"has_subscriptions": has_subscriptions},
+        {
+            "has_subscriptions": has_subscriptions,
+            "search_url": reverse("episodes:search_episodes"),
+        },
     )
 
 
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
-    if request.search:
+    if not request.search:
+        return redirect(
+            "episodes:episode_list"
+            if request.user.is_authenticated
+            else "podcasts:podcast_list"
+        )
+
+    if request.turbo.frame:
         episodes = (
             Episode.objects.select_related("podcast")
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        return render_episode_list_response(request, episodes, "episodes/search.html")
+        return render_episode_list_response(request, episodes)
 
-    if request.user.is_authenticated:
-        return redirect("episodes:episode_list")
-
-    return redirect("podcasts:podcast_list")
+    return TemplateResponse(request, "episodes/search.html")
 
 
 def episode_detail(
@@ -126,23 +136,26 @@ def episode_actions(
 @login_required
 def history(request: HttpRequest) -> HttpResponse:
 
-    logs = (
-        AudioLog.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("-updated")
-    )
+    if request.turbo.frame:
 
-    if request.search:
-        logs = logs.search(request.search).order_by("-rank", "-updated")
-    else:
-        logs = logs.order_by("-updated")
+        logs = (
+            AudioLog.objects.filter(user=request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("-updated")
+        )
 
-    return render_pagination_response(
-        request,
-        logs,
-        "episodes/history/index.html",
-        "episodes/history/_episode_list.html",
-    )
+        if request.search:
+            logs = logs.search(request.search).order_by("-rank", "-updated")
+        else:
+            logs = logs.order_by("-updated")
+
+        return render_pagination_response(
+            request,
+            logs,
+            "episodes/history/_episode_list.html",
+        )
+
+    return TemplateResponse(request, "episodes/history/index.html")
 
 
 @require_POST
@@ -159,20 +172,22 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @login_required
 def favorite_list(request: HttpRequest) -> HttpResponse:
-    favorites = Favorite.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
-    if request.search:
-        favorites = favorites.search(request.search).order_by("-rank", "-created")
-    else:
-        favorites = favorites.order_by("-created")
+    if request.turbo.frame:
+        favorites = Favorite.objects.filter(user=request.user).select_related(
+            "episode", "episode__podcast"
+        )
+        if request.search:
+            favorites = favorites.search(request.search).order_by("-rank", "-created")
+        else:
+            favorites = favorites.order_by("-created")
 
-    return render_pagination_response(
-        request,
-        favorites,
-        "episodes/favorites/index.html",
-        "episodes/favorites/_episode_list.html",
-    )
+        return render_pagination_response(
+            request,
+            favorites,
+            "episodes/favorites/_episode_list.html",
+        )
+
+    return TemplateResponse(request, "episodes/favorites/index.html")
 
 
 @require_POST
@@ -391,25 +406,6 @@ def render_player_toggle_stream(
     )
 
 
-def render_episode_list_response(
-    request: HttpRequest,
-    episodes: QuerySet,
-    template_name: str,
-    extra_context: Optional[Dict] = None,
-) -> HttpResponse:
-
-    return render_pagination_response(
-        request,
-        episodes,
-        template_name,
-        "episodes/_episode_list.html",
-        extra_context={
-            "search_url": reverse("episodes:search_episodes"),
-            **(extra_context or {}),
-        },
-    )
-
-
 def render_player_stop_response(streams: List[str]) -> HttpResponse:
     response = TurboStreamResponse(
         streams + [TurboStream("player-controls").remove.render()]
@@ -475,3 +471,11 @@ def render_episode_queue_response(
     if request.turbo:
         return episode_queue_stream_template(episode, is_queued).response(request)
     return redirect(episode)
+
+
+def render_episode_list_response(
+    request: HttpRequest, episodes: QuerySet, extra_context: Optional[Dict] = None
+):
+    return render_pagination_response(
+        request, episodes, "episodes/_episode_list.html", extra_context
+    )

@@ -20,7 +20,6 @@ def render_pagination_response(
     request: HttpRequest,
     queryset: QuerySet,
     template_name,
-    pagination_template_name,
     extra_context: Optional[Dict] = None,
     **pagination_kwargs,
 ) -> HttpResponse:
@@ -33,7 +32,7 @@ def render_pagination_response(
     if request.turbo.frame:
         return (
             TurboFrame(request.turbo.frame)
-            .template(pagination_template_name, context)
+            .template(template_name, context)
             .response(request)
         )
     return TemplateResponse(request, template_name, context)

@@ -21,7 +21,7 @@ pytestmark = pytest.mark.django_db
 class TestEpisodeList:
     def test_user_no_subscriptions(self, client, login_user):
         EpisodeFactory.create_batch(3)
-        resp = client.get(reverse("episodes:episode_list"))
+        resp = client.get(reverse("episodes:episode_list"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 0
 
@@ -31,7 +31,7 @@ class TestEpisodeList:
         episode = EpisodeFactory()
         SubscriptionFactory(user=login_user, podcast=episode.podcast)
 
-        resp = client.get(reverse("episodes:episode_list"))
+        resp = client.get(reverse("episodes:episode_list"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
@@ -49,7 +49,11 @@ class TestSearchEpisodes:
     def test_search(self, client):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
-        resp = client.get(reverse("episodes:search_episodes"), {"q": "testing"})
+        resp = client.get(
+            reverse("episodes:search_episodes"),
+            {"q": "testing"},
+            HTTP_TURBO_FRAME="episodes",
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
@@ -235,7 +239,7 @@ class TestPlayerTimeUpdate:
 class TestHistory:
     def test_get(self, client, login_user):
         AudioLogFactory.create_batch(3, user=login_user)
-        resp = client.get(reverse("episodes:history"))
+        resp = client.get(reverse("episodes:history"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
@@ -250,7 +254,9 @@ class TestHistory:
             )
 
         AudioLogFactory(user=login_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(reverse("episodes:history"), {"q": "testing"})
+        resp = client.get(
+            reverse("episodes:history"), {"q": "testing"}, HTTP_TURBO_FRAME="episodes"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
 
@@ -258,7 +264,9 @@ class TestHistory:
 class TestFavoriteList:
     def test_get(self, client, login_user):
         FavoriteFactory.create_batch(3, user=login_user)
-        resp = client.get(reverse("episodes:favorite_list"))
+        resp = client.get(
+            reverse("episodes:favorite_list"), HTTP_TURBO_FRAME="episodes"
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
@@ -273,7 +281,11 @@ class TestFavoriteList:
             )
 
         FavoriteFactory(user=login_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(reverse("episodes:favorite_list"), {"q": "testing"})
+        resp = client.get(
+            reverse("episodes:favorite_list"),
+            {"q": "testing"},
+            HTTP_TURBO_FRAME="episodes",
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
 

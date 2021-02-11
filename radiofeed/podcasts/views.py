@@ -15,6 +15,7 @@ from sorl.thumbnail import get_thumbnail
 from sorl.thumbnail.images import ImageFile
 from turbo_response import TurboFrame, TurboStream
 
+from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_pagination_response
 
 from . import itunes
@@ -49,38 +50,45 @@ def podcast_list(request: HttpRequest) -> HttpResponse:
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
+    if request.turbo.frame:
+        podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
-    if subscriptions:
-        podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
+        if subscriptions:
+            podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
+        else:
+            podcasts = Podcast.objects.filter(
+                pub_date__isnull=False, promoted=True
+            ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+
+        return render_podcast_list_response(request, podcasts)
+
     else:
-        podcasts = Podcast.objects.filter(
-            pub_date__isnull=False, promoted=True
-        ).order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    top_rated_podcasts = not (subscriptions) and not (request.search)
-
-    return render_podcast_list_response(
+    return TemplateResponse(
         request,
-        podcasts,
         "podcasts/index.html",
-        {"top_rated_podcasts": top_rated_podcasts},
+        {
+            "top_rated_podcasts": top_rated_podcasts,
+            "search_url": reverse("podcasts:search_podcasts"),
+        },
     )
 
 
 def search_podcasts(request: HttpRequest) -> HttpResponse:
 
-    if request.search:
+    if not request.search:
+        return redirect("podcasts:podcast_list")
+
+    if request.turbo.frame:
         podcasts = (
             Podcast.objects.filter(pub_date__isnull=False)
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
+        return render_podcast_list_response(request, podcasts)
 
-    else:
-        return redirect("podcasts:podcast_list")
-
-    return render_podcast_list_response(request, podcasts, "podcasts/search.html")
+    return TemplateResponse(request, "podcasts/search.html")
 
 
 @login_required
@@ -146,44 +154,48 @@ def podcast_episode_list(
     podcast = get_podcast_or_404(podcast_id)
     ordering: Optional[str] = request.GET.get("ordering")
 
-    # thumbnail will be same for all episodes, so just preload
-    # it once here
+    if request.turbo.frame:
 
-    podcast_image: Optional[ImageFile]
+        # thumbnail will be same for all episodes, so just preload
+        # it once here
 
-    if podcast.cover_image:
-        podcast_image = get_thumbnail(
-            podcast.cover_image, "200", format="WEBP", crop="center"
+        podcast_image: Optional[ImageFile]
+
+        if podcast.cover_image:
+            podcast_image = get_thumbnail(
+                podcast.cover_image, "200", format="WEBP", crop="center"
+            )
+        else:
+            podcast_image = None
+
+        episodes = podcast.episode_set.with_current_time(request.user).select_related(
+            "podcast"
         )
-    else:
-        podcast_image = None
 
-    episodes = podcast.episode_set.with_current_time(request.user).select_related(
-        "podcast"
-    )
+        if request.search:
+            episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+        else:
+            order_by = "pub_date" if ordering == "asc" else "-pub_date"
+            episodes = episodes.order_by(order_by)
 
-    if request.search:
-        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-    else:
-        order_by = "pub_date" if ordering == "asc" else "-pub_date"
-        episodes = episodes.order_by(order_by)
-
-    return render_pagination_response(
-        request,
-        episodes,
-        "podcasts/detail/episodes.html",
-        "episodes/_episode_list.html",
-        extra_context=get_podcast_detail_context(
+        return render_episode_list_response(
             request,
-            podcast,
+            episodes,
             {
-                "ordering": ordering,
                 "podcast_image": podcast_image,
                 "podcast_url": reverse(
                     "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
                 ),
             },
-        ),
+        )
+
+    return render_podcast_detail_response(
+        request,
+        "podcasts/detail/episodes.html",
+        podcast,
+        {
+            "ordering": ordering,
+        },
     )
 
 
@@ -215,18 +227,20 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
         Category.objects.select_related("parent"), pk=category_id
     )
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    if request.turbo.frame:
 
-    if request.search:
-        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-    else:
-        podcasts = podcasts.order_by("-pub_date")
+        podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
-    return render_pagination_response(
+        if request.search:
+            podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+        else:
+            podcasts = podcasts.order_by("-pub_date")
+
+        return render_podcast_list_response(request, podcasts)
+
+    return TemplateResponse(
         request,
-        podcasts,
         "podcasts/category.html",
-        "podcasts/_podcast_list.html",
         {"category": category, "children": category.children.order_by("name")},
     )
 
@@ -338,22 +352,6 @@ def get_podcast_detail_context(
     } | (extra_context or {})
 
 
-def render_podcast_list_response(
-    request: HttpRequest,
-    podcasts: QuerySet,
-    template_name: str,
-    extra_context: Optional[Dict] = None,
-) -> HttpResponse:
-
-    return render_pagination_response(
-        request,
-        podcasts,
-        template_name,
-        "podcasts/_podcast_list.html",
-        {"search_url": reverse("podcasts:search_podcasts"), **(extra_context or {})},
-    )
-
-
 def render_podcast_detail_response(
     request: HttpRequest,
     template_name: str,
@@ -381,3 +379,11 @@ def render_podcast_subscribe_response(
             .response(request)
         )
     return redirect(podcast.get_absolute_url())
+
+
+def render_podcast_list_response(
+    request: HttpRequest, podcasts: QuerySet, extra_context: Optional[Dict] = None
+) -> HttpResponse:
+    return render_pagination_response(
+        request, podcasts, "podcasts/_podcast_list.html", extra_context
+    )
