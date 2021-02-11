@@ -20,11 +20,6 @@ urlpatterns = [
         name="podcast_cover_image",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/",
-        views.podcast_episodes,
-        name="podcast_episodes",
-    ),
-    path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
         views.podcast_recommendations,
         name="podcast_recommendations",
@@ -33,6 +28,11 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/<slug:slug>/about/",
         views.podcast_detail,
         name="podcast_detail",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/<slug:slug>/",
+        views.podcast_episodes,
+        name="podcast_episodes",
     ),
     path("discover/", views.categories, name="categories"),
     path(
