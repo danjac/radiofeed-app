@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
-from radiofeed.pagination import paginate
+from radiofeed.pagination import render_paginated_response
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
@@ -371,11 +371,6 @@ def render_podcast_subscribe_response(
 def render_podcast_list_response(
     request: HttpRequest, podcasts: QuerySet, extra_context: Optional[Dict] = None
 ) -> HttpResponse:
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "podcasts/_podcast_list.html",
-            {"page_obj": paginate(request, podcasts), **(extra_context or {})},
-        )
-        .response(request)
+    return render_paginated_response(
+        request, podcasts, "podcasts/_podcast_list.html", extra_context
     )

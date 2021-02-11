@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 from turbo_response.stream import TurboStreamTemplate
 
-from radiofeed.pagination import paginate
+from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.decorators import ajax_login_required
 
@@ -147,13 +147,8 @@ def history(request: HttpRequest) -> HttpResponse:
         else:
             logs = logs.order_by("-updated")
 
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/history/_episode_list.html",
-                {"page_obj": paginate(request, logs)},
-            )
-            .response(request)
+        return render_paginated_response(
+            request, logs, "episodes/history/_episode_list.html"
         )
 
     return TemplateResponse(request, "episodes/history/index.html")
@@ -182,13 +177,8 @@ def favorites(request: HttpRequest) -> HttpResponse:
         else:
             favorites = favorites.order_by("-created")
 
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/favorites/_episode_list.html",
-                {"page_obj": paginate(request, favorites)},
-            )
-            .response(request)
+        return render_paginated_response(
+            request, favorites, "episodes/favorites/_episode_list.html"
         )
 
     return TemplateResponse(request, "episodes/favorites/index.html")
@@ -480,11 +470,6 @@ def render_episode_queue_response(
 def render_episode_list_response(
     request: HttpRequest, episodes: QuerySet, extra_context: Optional[Dict] = None
 ) -> HttpResponse:
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "episodes/_episode_list.html",
-            {"page_obj": paginate(request, episodes), **(extra_context or {})},
-        )
-        .response(request)
+    return render_paginated_response(
+        request, episodes, "episodes/_episode_list.html", extra_context
     )
