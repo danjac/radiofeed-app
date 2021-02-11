@@ -296,7 +296,8 @@ def toggle_player(
     """Add episode to session and returns HTML component. The player info
     is then added to the session."""
 
-    streams: List[str] = []
+    # always close modal first if open
+    streams: List[str] = [TurboStream("modal").update.render()]
 
     # clear session
     if current_episode := request.player.eject():
@@ -416,7 +417,6 @@ def render_player_stop_response(streams: List[str]) -> HttpResponse:
         streams
         + [
             TurboStream("player-controls").remove.render(),
-            TurboStream("modal").update.render(),
         ]
     )
     response["X-Player"] = json.dumps({"action": "stop"})
@@ -445,7 +445,6 @@ def render_player_start_response(
                 request=request,
             )
             .render(),
-            TurboStream("modal").update.render(),
             render_player_toggle_stream(request, episode, True),
         ]
     )
