@@ -1,24 +1,24 @@
 {% if user.is_authenticated %}
+{% if is_queued %}
+<a title="Queued"
+   class="btn btn-secondary flex items-center"
+   data-turbo-frame="_top"
+   href="{% url 'episodes:queue' %}">
+  {% svg "collection" css_class="btn-icon mr-2" %}
+  Queue
+</a>
+{% else %}
 <form method="post"
       id="{{ turbo_stream_target|default:episode.get_queue_toggle_id }}"
-      action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}">
+      action="{% url 'episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
-  {% if is_queued %}
-  <a title="Queued"
-     class="btn btn-secondary flex items-center"
-     data-turbo-frame="_top"
-     href="{% url 'episodes:queue' %}">
-    {% svg "collection" css_class="btn-icon mr-2" %}
-    Queue
-  </a>
-  {% else %}
   <button title="Add episode to Play Queue"
           class="btn btn-default flex items-center">
     {% svg "collection" css_class="btn-icon mr-2" %}
     Queue
   </button>
-  {% endif %}
 </form>
+{% endif %}
 {% else %}
 <a title="Log in or sign up to add this episode to your Play Queue"
    href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
