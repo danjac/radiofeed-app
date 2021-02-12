@@ -40,7 +40,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return render_episode_favorite_response(request, episode, True)
+    return render_favorite_response(request, episode, True)
 
 
 @require_POST
@@ -50,10 +50,10 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     Favorite.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
         return TurboStream(f"episode-{episode.id}").remove.response()
-    return render_episode_favorite_response(request, episode, False)
+    return render_favorite_response(request, episode, False)
 
 
-def render_episode_favorite_response(
+def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
     if request.turbo:

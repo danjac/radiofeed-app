@@ -47,7 +47,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    return render_episode_queue_response(request, episode, True)
+    return render_queue_response(request, episode, True)
 
 
 @require_POST
@@ -56,8 +56,8 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
     if "remove" in request.POST:
-        return TurboStreamResponse(render_remove_from_queue_streams(request, episode))
-    return render_episode_queue_response(request, episode, False)
+        return TurboStreamResponse(render_remove_from_queue(request, episode))
+    return render_queue_response(request, episode, False)
 
 
 @require_POST
@@ -90,9 +90,7 @@ def episode_queue_stream_template(
     )
 
 
-def render_remove_from_queue_streams(
-    request: HttpRequest, episode: Episode
-) -> List[str]:
+def render_remove_from_queue(request: HttpRequest, episode: Episode) -> List[str]:
     streams = [
         TurboStream(f"queue-item-{episode.id}").remove.render(),
         episode_queue_stream_template(episode, False).render(),
@@ -104,7 +102,7 @@ def render_remove_from_queue_streams(
     return streams
 
 
-def render_episode_queue_response(
+def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
     if request.turbo:

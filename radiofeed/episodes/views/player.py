@@ -12,7 +12,7 @@ from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
 from . import get_episode_detail_or_404
-from .queue import render_remove_from_queue_streams
+from .queue import render_remove_from_queue
 
 
 @require_POST
@@ -97,11 +97,11 @@ def render_player_eject(request: HttpRequest, mark_completed: bool = False) -> s
     if current_episode := request.player.eject():
         if mark_completed:
             current_episode.log_activity(request.user, current_time=0, completed=True)
-        return render_player_toggle_stream(request, current_episode, False)
+        return render_player_toggle(request, current_episode, False)
     return ""
 
 
-def render_player_toggle_stream(
+def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
@@ -143,7 +143,7 @@ def render_player_start_response(
 
     response = TurboStreamResponse(
         streams
-        + render_remove_from_queue_streams(request, episode)
+        + render_remove_from_queue(request, episode)
         + [
             TurboStream("player-container")
             .update.template(
@@ -152,7 +152,7 @@ def render_player_start_response(
                 request=request,
             )
             .render(),
-            render_player_toggle_stream(request, episode, True),
+            render_player_toggle(request, episode, True),
         ]
     )
     response["X-Player"] = json.dumps(
