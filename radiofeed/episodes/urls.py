@@ -49,6 +49,12 @@ urlpatterns = [
         favorites.remove_favorite,
         name="remove_favorite",
     ),
+    path(
+        "favorites/<int:episode_id>/actions/",
+        episodes.episode_actions,
+        name="favorite_actions",
+        kwargs={"actions": ("queue",)},
+    ),
     path("queue/", queue.index, name="queue"),
     path("queue/~move/", queue.move_queue_items, name="move_queue_items"),
     path("queue/<int:episode_id>/~add/", queue.add_to_queue, name="add_to_queue"),
@@ -56,5 +62,11 @@ urlpatterns = [
         "queue/<int:episode_id>/~remove/",
         queue.remove_from_queue,
         name="remove_from_queue",
+    ),
+    path(
+        "queue/<int:episode_id>/actions/",
+        episodes.episode_actions,
+        name="queue_actions",
+        kwargs={"actions": ("favorite",)},
     ),
 ]

@@ -1,16 +1,14 @@
 {% if user.is_authenticated %}
 <form method="post"
       id="{{ turbo_stream_target|default:episode.get_queue_toggle_id }}"
-      action="{% url 'episodes:add_to_queue' episode.id %}">
+      action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
   {% if is_queued %}
-  <a title="Queued"
-     class="btn btn-secondary flex items-center"
-     data-turbo-frame="_top"
-     href="{% url 'episodes:queue' %}">
-    {% svg "collection" css_class="btn-icon mr-2" %}
+  <button title="Remove episode from Play Queue"
+          class="btn btn-secondary flex items-center">
+    {% svg "trash" css_class="btn-icon mr-2" %}
     Queue
-  </a>
+  </button>
   {% else %}
   <button title="Add episode to Play Queue"
           class="btn btn-default flex items-center">
