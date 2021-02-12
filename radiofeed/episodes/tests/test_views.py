@@ -318,9 +318,16 @@ class TestRemoveHistory:
         AudioLogFactory(user=login_user, episode=episode)
         AudioLogFactory(user=login_user)
         resp = client.post(reverse("episodes:remove_history", args=[episode.id]))
-        assert resp.url == reverse("episodes:history")
+        assert resp.status_code == http.HTTPStatus.OK
         assert not AudioLog.objects.filter(user=login_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=login_user).count() == 1
+
+    def test_post_none_remaining(self, client, login_user, episode):
+        AudioLogFactory(user=login_user, episode=episode)
+        resp = client.post(reverse("episodes:remove_history", args=[episode.id]))
+        assert resp.url == reverse("episodes:history")
+        assert not AudioLog.objects.filter(user=login_user, episode=episode).exists()
+        assert AudioLog.objects.filter(user=login_user).count() == 0
 
 
 class TestAddToQueue:

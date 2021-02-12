@@ -47,9 +47,15 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 @login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    Favorite.objects.filter(user=request.user, episode=episode).delete()
+
+    favorites = Favorite.objects.filter(user=request.user)
+    favorites.filter(episode=episode).delete()
+
     if "remove" in request.POST:
-        return redirect("episodes:favorites")
+        if favorites.count() == 0:
+            return redirect("episodes:favorites")
+        return TurboStream(episode.get_favorite_dom_id()).remove.response()
+
     return render_favorite_response(request, episode, False)
 
 

@@ -49,9 +49,13 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+    items = QueueItem.objects.filter(user=request.user)
+    items.filter(episode=episode).delete()
+
     if "remove" in request.POST:
-        return redirect("episodes:queue")
+        if items.count() == 0:
+            return redirect("episodes:queue")
+        return TurboStream(episode.get_queue_dom_id()).remove.response()
     return render_queue_response(request, episode, False)
 
 

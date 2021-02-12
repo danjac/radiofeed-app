@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
+from turbo_response import TurboStream
+
 from radiofeed.pagination import render_paginated_response
 
 from ..models import AudioLog
@@ -37,5 +39,12 @@ def index(request: HttpRequest) -> HttpResponse:
 @login_required
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    AudioLog.objects.filter(user=request.user, episode=episode).delete()
-    return redirect("episodes:history")
+
+    logs = AudioLog.objects.filter(user=request.user)
+
+    logs.filter(episode=episode).delete()
+
+    if logs.count() == 0:
+        return redirect("episodes:history")
+
+    return TurboStream(episode.get_history_dom_id()).remove.response()
