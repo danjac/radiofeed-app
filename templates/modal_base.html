@@ -1,11 +1,11 @@
-<div class="modal fixed w-full h-full top-0 left-0 flex items-center justify-center z-50"
+<div class="modal fixed w-full h-full top-0 left-0 flex items-center justify-center z-50 dark:bg-black"
      data-action="keyup@window->modal#closeOnEsc">
   <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 
   <div
-       class="modal-container w-full bg-white h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
+       class="modal-container w-full bg-white dark:bg-gray-800 h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
 
-    <button class="modal-close absolute top-0 text-black md:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
+    <button class="modal-close absolute top-0 text-black md:text-white dark:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
             data-action="modal#close">
       {% svg "x" css_class="fill-current" %}
       <span class="text-sm">(Esc)</span>
