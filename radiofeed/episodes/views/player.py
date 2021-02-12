@@ -47,8 +47,10 @@ def stop_player(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
+    """Marks current episode complete, starts next episode in queue
+    or closes player if queue empty."""
 
-    streams: List[str] = [render_player_eject(request)]
+    streams: List[str] = [render_player_eject(request, mark_completed=True)]
 
     if next_item := (
         QueueItem.objects.filter(user=request.user)
