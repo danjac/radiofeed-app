@@ -264,20 +264,20 @@ class TestCategoryDetail:
 class TestSubscribe:
     def test_subscribe(self, client, login_user, podcast):
         resp = client.post(reverse("podcasts:subscribe", args=[podcast.id]))
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
         assert Subscription.objects.filter(podcast=podcast, user=login_user).exists()
 
     def test_already_subscribed(self, client, login_user, podcast):
         SubscriptionFactory(user=login_user, podcast=podcast)
         resp = client.post(reverse("podcasts:subscribe", args=[podcast.id]))
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestUnsubscribe:
     def test_unsubscribe(self, client, login_user, podcast):
         SubscriptionFactory(user=login_user, podcast=podcast)
         resp = client.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
-        assert resp.url == podcast.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
         assert not Subscription.objects.filter(
             podcast=podcast, user=login_user
         ).exists()

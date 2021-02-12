@@ -4,6 +4,12 @@ from typing import Type
 from django.forms import Form
 from django.http import HttpRequest
 
+from turbo_response import TurboStream
+
+
+def render_close_modal() -> str:
+    return TurboStream("modal").update.render()
+
 
 @dataclasses.dataclass
 class FormResult:

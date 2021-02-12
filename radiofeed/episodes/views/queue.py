@@ -10,10 +10,11 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream, TurboStreamResponse
 
+from radiofeed.shortcuts import render_close_modal
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
-from . import get_episode_or_404, render_close_modal
+from . import get_episode_or_404
 
 
 @login_required

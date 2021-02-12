@@ -7,9 +7,10 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
+from radiofeed.shortcuts import render_close_modal
 
 from ..models import Episode, Favorite
-from . import get_episode_or_404, render_close_modal
+from . import get_episode_or_404
 
 
 @login_required
