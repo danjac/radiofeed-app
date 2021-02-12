@@ -23,7 +23,7 @@
 }
 
 .btn-secondary {
-  @apply border border-blue-800 text-blue-800;
+  @apply border border-blue-800 text-blue-800 dark:text-white dark:border-white;
 }
 
 .btn-secondary[disabled] {
@@ -31,7 +31,7 @@
 }
 
 .btn-secondary:hover {
-  @apply border-blue-600 text-blue-600 bg-gray-100;
+  @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800;
 }
 
 .btn-danger {

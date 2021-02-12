@@ -3,7 +3,7 @@
 }
 
 .markdown a {
-  @apply underline break-words text-gray-900;
+  @apply underline break-words text-gray-900 dark:text-gray-100;
 }
 
 .markdown p {
@@ -20,5 +20,5 @@
 
 .markdown a:hover,
 .markdown a:visited {
-  @apply text-gray-500;
+  @apply text-gray-500 dark:text-gray-300;
 }

@@ -1,0 +1,5 @@
+input,
+select,
+textarea {
+  @apply dark:bg-gray-100 dark:text-white;
+}

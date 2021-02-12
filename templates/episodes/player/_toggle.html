@@ -8,12 +8,12 @@
   <div class="flex items-center">
     <button title="Close Player"
             value="stop"
-            class="text-gray-800 hover:text-blue-600 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
       {% svg "stop" css_class="h-10 w-10" %}
     </button>
     <button title="Open in Player"
             value="start"
-            class="text-gray-800 hover:text-blue-600 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600  dark:text-gray-100 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
       {% svg "play" css_class="h-10 w-10" %}
     </button>
   </div>

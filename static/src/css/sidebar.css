@@ -1,5 +1,5 @@
 .sidebar a {
-  @apply text-gray-800 font-semibold;
+  @apply text-gray-800 font-semibold dark:text-gray-100;
 }
 
 .sidebar a:hover {
@@ -7,5 +7,5 @@
 }
 
 .sidebar .sidebar--active {
-  @apply text-blue-600 text-lg font-bold;
+  @apply text-blue-600 text-lg font-bold dark:text-blue-500;
 }
