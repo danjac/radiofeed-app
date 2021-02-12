@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-from turbo_response import TurboStream
+from turbo_response import TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 
@@ -56,13 +55,15 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
-    if request.turbo:
-        return (
-            TurboStream(episode.get_favorite_toggle_id())
-            .replace.template(
-                "episodes/favorites/_toggle.html",
-                {"episode": episode, "is_favorited": is_favorited},
-            )
-            .response(request)
+    streams = [
+        TurboStream(episode.get_favorite_toggle_id())
+        .replace.template(
+            "episodes/favorites/_toggle.html",
+            {"episode": episode, "is_favorited": is_favorited},
+            request=request,
         )
-    return redirect(episode)
+        .render()
+    ]
+    if not is_favorited:
+        streams += [TurboStream(f"favorite-{episode.id}").remove.render()]
+    return TurboStreamResponse(streams)
