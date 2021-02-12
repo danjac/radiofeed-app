@@ -10,7 +10,11 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream, TurboStreamResponse
 
-from radiofeed.shortcuts import render_close_modal
+from radiofeed.streams import (
+    render_close_modal,
+    render_info_message,
+    render_success_message,
+)
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
@@ -46,7 +50,13 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    return render_queue_response(request, episode, True)
+    return TurboStreamResponse(
+        [
+            render_close_modal(),
+            render_success_message("You have added this episode to your Play Queue"),
+        ]
+        + render_queue_streams(request, episode, True)
+    )
 
 
 @require_POST
@@ -54,7 +64,14 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    return render_queue_response(request, episode, False)
+
+    return TurboStreamResponse(
+        [
+            render_close_modal(),
+            render_info_message("You have removed this episode from your Play Queue"),
+        ]
+        + render_queue_streams(request, episode, False)
+    )
 
 
 @require_POST
@@ -98,11 +115,3 @@ def render_queue_streams(
             streams += [TurboStream("queue").append.render("Your queue is now empty.")]
 
     return streams
-
-
-def render_queue_response(
-    request: HttpRequest, episode: Episode, is_queued: bool
-) -> HttpResponse:
-    return TurboStreamResponse(
-        render_queue_streams(request, episode, False) + [render_close_modal()]
-    )

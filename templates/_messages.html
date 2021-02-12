@@ -1,15 +1,6 @@
-{% if messages %}
-<div class="flex justify-center">
+<div class="flex justify-center"
+     id="messages">
   {% for message in messages %}
-  <div data-controller="notification"
-       data-notification-timeout-value="3000"
-       class="fixed z-50 w-4/5 lg:w-1/3 flex items-center p-3 rounded shadow-xl mt-3 message {{ message.tags }}">
-    <div class="mx-auto text-center">{{ message }}</div>
-    <button data-action="notification#remove"
-            class="float-right focus:outline-none">
-      {% svg "x_circle" css_class="h-6 w-6" %}
-    </button>
-  </div>
+  {% include "_message.html" %}
   {% endfor %}
 </div>
-{% endif %}

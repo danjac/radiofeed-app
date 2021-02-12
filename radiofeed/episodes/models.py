@@ -105,6 +105,9 @@ class Episode(models.Model):
     def get_dom_id(self) -> str:
         return f"episode-{self.id}"
 
+    def get_history_dom_id(self) -> str:
+        return f"history-{self.id}"
+
     def get_queue_dom_id(self) -> str:
         return f"queue-item-{self.id}"
 
@@ -112,13 +115,13 @@ class Episode(models.Model):
         return f"favorite-{self.id}"
 
     def get_favorite_toggle_id(self) -> str:
-        return f"episode-favorite-{self.id}"
+        return f"favorite-toggle-{self.id}"
 
     def get_queue_toggle_id(self) -> str:
-        return f"episode-queue-{self.id}"
+        return f"queue-toggle-{self.id}"
 
     def get_player_toggle_id(self) -> str:
-        return f"episode-player-{self.id}"
+        return f"player-toggle-{self.id}"
 
     def get_duration_in_seconds(self) -> int:
         """Returns duration string in h:m:s or h:m to seconds"""

@@ -153,7 +153,7 @@ class Podcast(models.Model):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     def get_subscribe_toggle_id(self) -> str:
-        return f"podcast-subscribe-{self.id}"
+        return f"subscribe-toggle-{self.id}"
 
     def is_subscribed(self, user: AnyUser) -> bool:
         if user.is_anonymous:
