@@ -6,6 +6,7 @@
       href="{% static 'apple-touch-icon.png' %}">
 <link rel="stylesheet"
       data-turbo-track="reload"
+      media="screen"
       href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
 <script src="{% static debug|yesno:'dev/app.js,dist/app.js' %}"
         defer
