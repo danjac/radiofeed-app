@@ -22,43 +22,33 @@ def start_player(
     episode_id: int,
 ) -> HttpResponse:
 
-    # always close modal first if open
-    streams: List[str] = [TurboStream("modal").update.render()]
-
-    # clear session
-    if current_episode := request.player.eject():
-        streams += [render_player_toggle_stream(request, current_episode, False)]
-
     episode = get_episode_detail_or_404(request, episode_id)
-
     current_time = 0 if episode.completed else episode.current_time or 0
-    return render_player_start_response(request, episode, streams, current_time)
+
+    return render_player_start_response(
+        request,
+        episode,
+        [
+            render_close_modal(),
+            render_player_eject(request),
+        ],
+        current_time,
+    )
 
 
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-
-    # always close modal first if open
-    streams: List[str] = [TurboStream("modal").update.render()]
-
-    # clear session
-    if current_episode := request.player.eject():
-        streams += [render_player_toggle_stream(request, current_episode, False)]
-
-    return render_player_stop_response(streams)
+    return render_player_stop_response(
+        [render_close_modal(), render_player_eject(request)]
+    )
 
 
 @require_POST
 @login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
 
-    streams: List[str] = []
-
-    # clear session
-    if current_episode := request.player.eject():
-        streams += [render_player_toggle_stream(request, current_episode, False)]
-        current_episode.log_activity(request.user, current_time=0, completed=True)
+    streams: List[str] = [render_player_eject(request)]
 
     if next_item := (
         QueueItem.objects.filter(user=request.user)
@@ -95,6 +85,18 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
+
+
+def render_close_modal() -> str:
+    return TurboStream("modal").update.render()
+
+
+def render_player_eject(request: HttpRequest, mark_completed: bool = False) -> str:
+    if current_episode := request.player.eject():
+        if mark_completed:
+            current_episode.log_activity(request.user, current_time=0, completed=True)
+        return render_player_toggle_stream(request, current_episode, False)
+    return ""
 
 
 def render_player_toggle_stream(
