@@ -19,7 +19,7 @@
          name="{{ redirect_field_name }}"
          value="{{ redirect_field_value }}" />
   {% endif %}
-  {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" WIDGET_CLASS="p-1 w-full dark:bg-gray-900 text-white" %}
+  {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" WIDGET_CLASS="p-1 w-full dark:bg-gray-900 dark:text-white" %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
   <div class="mb-3">
     {% render_field form.login aria-label=form.login.label placeholder=form.login.label class=WIDGET_CLASS %}

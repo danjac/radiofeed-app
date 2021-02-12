@@ -2,7 +2,8 @@
      data-action="keyup@window->modal#closeOnEsc">
   <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 
-  <div class="modal-container w-full bg-white h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
+  <div
+       class="modal-container w-full bg-white h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
 
     <button class="modal-close absolute top-0 text-black md:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
             data-action="modal#close">
@@ -11,7 +12,7 @@
     </button>
 
     <!-- Add margin if you want to see some of the overlay behind the modal-->
-    <div class="modal-content py-4 text-left px-6">
+    <div class="modal-content py-4 text-left px-6 dark:bg-gray-800 dark:text-white">
       <!--Title-->
       <div class="flex justify-between items-center pb-3">
         <p class="w-64 sm:w-full flex flex-wrap font-bold">{% block modal_header %}{% endblock %}</p>

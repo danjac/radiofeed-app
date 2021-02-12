@@ -8,7 +8,7 @@
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
+<div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
 
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
