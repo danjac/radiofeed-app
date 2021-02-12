@@ -3,13 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 
-from turbo_response import TurboStream, TurboStreamResponse
-
-from radiofeed.streams import (
-    render_close_modal,
-    render_info_message,
-    render_success_message,
-)
+from turbo_response import TurboStream
 
 from ..models import Podcast, Subscription
 from . import get_podcast_or_404
@@ -37,20 +31,11 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def render_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    streams = [
+    return (
         TurboStream(podcast.get_subscribe_toggle_id())
         .replace.template(
             "podcasts/_subscribe.html",
             {"podcast": podcast, "is_subscribed": is_subscribed},
-            request=request,
         )
-        .render(),
-        render_close_modal(),
-    ]
-
-    if is_subscribed:
-        streams += [render_success_message("You are now subscribed to this podcast")]
-    else:
-        streams += [render_info_message("You are no longer subscribed to this podcast")]
-
-    return TurboStreamResponse(streams)
+        .response(request)
+    )

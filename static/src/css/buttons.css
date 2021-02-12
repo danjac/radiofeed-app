@@ -2,6 +2,10 @@
   @apply text-sm px-2 py-1 rounded font-semibold;
 }
 
+.btn[disabled] {
+  @apply cursor-not-allowed font-normal opacity-75;
+}
+
 .btn:focus {
   @apply outline-none;
 }
@@ -10,12 +14,20 @@
   @apply text-white bg-blue-800;
 }
 
+.btn-default[disabled] {
+  @apply text-white bg-blue-600;
+}
+
 .btn-default:hover {
   @apply hover:bg-blue-600;
 }
 
 .btn-secondary {
   @apply border border-blue-800 text-blue-800;
+}
+
+.btn-secondary[disabled] {
+  @apply border-blue-600 text-blue-600 bg-gray-100;
 }
 
 .btn-secondary:hover {

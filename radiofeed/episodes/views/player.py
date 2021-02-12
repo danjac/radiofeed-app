@@ -8,7 +8,6 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream, TurboStreamResponse
 
-from radiofeed.streams import render_close_modal
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
@@ -161,3 +160,7 @@ def render_player_start_response(
         }
     )
     return response
+
+
+def render_close_modal() -> str:
+    return TurboStream("modal").update.render()

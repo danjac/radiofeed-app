@@ -4,11 +4,13 @@
       action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}">
   {% csrf_token %}
   {% if is_queued %}
-  <button title="Remove episode from Play Queue"
-          class="btn btn-secondary flex items-center">
-    {% svg "trash" css_class="btn-icon mr-2" %}
+  <a title="Queued"
+     class="btn btn-secondary flex items-center"
+     data-turbo-frame="_top"
+     href="{% url 'episodes:queue' %}">
+    {% svg "collection" css_class="btn-icon mr-2" %}
     Queue
-  </button>
+  </a>
   {% else %}
   <button title="Add episode to Play Queue"
           class="btn btn-default flex items-center">

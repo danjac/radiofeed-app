@@ -4,11 +4,13 @@
       action="{% if is_favorited %}{% url 'episodes:remove_favorite' episode.id %}{% else %}{% url 'episodes:add_favorite' episode.id %}{% endif %}">
   {% csrf_token %}
   {% if is_favorited %}
-  <button title="Remove episode from Favorites"
+  <a href="{% url 'episodes:favorites' %}"
+     title="Favorited"
+     data-turbo-frame="_top"
           class="btn btn-secondary flex items-center">
-    {% svg "trash" css_class="btn-icon mr-2" %}
+    {% svg "star" css_class="btn-icon mr-2" %}
     Favorite
-  </button>
+  </a>
   {% else %}
   <button title="Add episode to Favorites"
           class="btn btn-default flex items-center">

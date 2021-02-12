@@ -6,7 +6,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
-from radiofeed.streams import render_info_message
 
 from ..models import AudioLog
 from . import get_episode_or_404
@@ -42,7 +41,6 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
     streams = [
         TurboStream(episode.get_history_dom_id()).remove.render(),
-        render_info_message("You have removed this episode from your History"),
     ]
     if AudioLog.objects.filter(user=request.user).count() == 0:
         streams += [TurboStream("history").append.render("Your History is now empty")]

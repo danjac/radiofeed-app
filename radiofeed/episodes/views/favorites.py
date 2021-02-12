@@ -7,11 +7,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
-from radiofeed.streams import (
-    render_close_modal,
-    render_info_message,
-    render_success_message,
-)
 
 from ..models import Episode, Favorite
 from . import get_episode_or_404
@@ -44,13 +39,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return TurboStreamResponse(
-        [
-            render_close_modal(),
-            render_favorite_toggle(request, episode, True),
-            render_success_message("You have added this episode to your Favorites"),
-        ]
-    )
+    return render_favorite_response(request, episode, True)
 
 
 @require_POST
@@ -58,27 +47,13 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     Favorite.objects.filter(user=request.user, episode=episode).delete()
-
-    streams = [
-        render_close_modal(),
-        render_favorite_toggle(request, episode, False),
-        render_info_message("You have removed this episode from your Favorites"),
-        TurboStream(episode.get_favorite_dom_id()).remove.render(),
-    ]
-
-    if Favorite.objects.filter(user=request.user).count() == 0:
-        streams += [
-            TurboStream("favorites").append.render(
-                "You do not have any favorite items remaining."
-            )
-        ]
-    return TurboStreamResponse(streams)
+    return render_favorite_response(request, episode, False)
 
 
-def render_favorite_toggle(
+def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
-) -> str:
-    return (
+) -> HttpResponse:
+    streams = [
         TurboStream(episode.get_favorite_toggle_id())
         .replace.template(
             "episodes/favorites/_toggle.html",
@@ -86,4 +61,17 @@ def render_favorite_toggle(
             request=request,
         )
         .render()
-    )
+    ]
+
+    if not is_favorited:
+        streams += [
+            TurboStream(episode.get_favorite_dom_id()).remove.render(),
+        ]
+
+        if Favorite.objects.filter(user=request.user).count() == 0:
+            streams += [
+                TurboStream("favorites").append.render(
+                    "You do not have any favorite items remaining."
+                )
+            ]
+    return TurboStreamResponse(streams)
