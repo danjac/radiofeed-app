@@ -1,30 +1,19 @@
 from django.urls import path
 
-from . import views
-from .views import favorites, history, player, queue
+from .views import episodes, favorites, history, player, queue
 
 app_name = "episodes"
 
 
 urlpatterns = [
-    path("new/", views.index, name="index"),
-    path("search/episodes/", views.search_episodes, name="search_episodes"),
-    path("episodes/<int:episode_id>/actions/", views.episode_actions, name="actions"),
+    path("new/", episodes.index, name="index"),
+    path("search/episodes/", episodes.search_episodes, name="search_episodes"),
     path(
-        "episodes/<int:episode_id>/favorites/actions/",
-        views.episode_actions,
-        name="favorite_actions",
-        kwargs={"actions": ("queue",)},
-    ),
-    path(
-        "episodes/<int:episode_id>/queue/actions/",
-        views.episode_actions,
-        name="queue_actions",
-        kwargs={"actions": ("favorite",)},
+        "episodes/<int:episode_id>/actions/", episodes.episode_actions, name="actions"
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
-        views.episode_detail,
+        episodes.episode_detail,
         name="episode_detail",
     ),
     path(
@@ -60,6 +49,12 @@ urlpatterns = [
         favorites.remove_favorite,
         name="remove_favorite",
     ),
+    path(
+        "favorites/<int:episode_id>/actions/",
+        episodes.episode_actions,
+        name="favorite_actions",
+        kwargs={"actions": ("queue",)},
+    ),
     path("queue/", queue.index, name="queue"),
     path("queue/~move/", queue.move_queue_items, name="move_queue_items"),
     path("queue/<int:episode_id>/~add/", queue.add_to_queue, name="add_to_queue"),
@@ -67,5 +62,11 @@ urlpatterns = [
         "queue/<int:episode_id>/~remove/",
         queue.remove_from_queue,
         name="remove_from_queue",
+    ),
+    path(
+        "queue/<int:episode_id>/actions/",
+        episodes.episode_actions,
+        name="queue_actions",
+        kwargs={"actions": ("favorite",)},
     ),
 ]
