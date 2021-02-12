@@ -301,7 +301,7 @@ class TestFavoriteList:
 class TestAddFavorite:
     def test_post(self, client, login_user, episode):
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
         assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
@@ -309,7 +309,7 @@ class TestRemoveFavorite:
     def test_post(self, client, login_user, episode):
         FavoriteFactory(user=login_user, episode=episode)
         resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
         assert not Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
@@ -331,7 +331,7 @@ class TestAddToQueue:
 
         for episode in (first, second, third):
             resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
-            assert resp.url == episode.get_absolute_url()
+            assert resp.status_code == http.HTTPStatus.OK
 
         items = (
             QueueItem.objects.filter(user=login_user)
@@ -355,7 +355,7 @@ class TestRemoveFromQueue:
         resp = client.post(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
-        assert resp.url == item.episode.get_absolute_url()
+        assert resp.status_code == http.HTTPStatus.OK
         assert QueueItem.objects.filter(user=login_user).count() == 0
 
 
