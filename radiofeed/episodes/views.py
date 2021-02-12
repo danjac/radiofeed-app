@@ -334,6 +334,62 @@ def toggle_player(
 
 
 @require_POST
+@login_required
+def start_player(
+    request: HttpRequest,
+    episode_id: int,
+) -> HttpResponse:
+
+    # always close modal first if open
+    streams: List[str] = [TurboStream("modal").update.render()]
+
+    # clear session
+    if current_episode := request.player.eject():
+        streams += [render_player_toggle_stream(request, current_episode, False)]
+
+    episode = get_episode_detail_or_404(request, episode_id)
+
+    current_time = 0 if episode.completed else episode.current_time or 0
+    return render_player_start_response(request, episode, streams, current_time)
+
+
+@require_POST
+@login_required
+def stop_player(request: HttpRequest) -> HttpResponse:
+
+    # always close modal first if open
+    streams: List[str] = [TurboStream("modal").update.render()]
+
+    # clear session
+    if current_episode := request.player.eject():
+        streams += [render_player_toggle_stream(request, current_episode, False)]
+
+    return render_player_stop_response(streams)
+
+
+@require_POST
+@login_required
+def play_next_episode(request: HttpRequest) -> HttpResponse:
+
+    streams: List[str] = []
+
+    # clear session
+    if current_episode := request.player.eject():
+        streams += [render_player_toggle_stream(request, current_episode, False)]
+        current_episode.log_activity(request.user, current_time=0, completed=True)
+
+    if next_item := (
+        QueueItem.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("position")
+        .first()
+    ):
+
+        return render_player_start_response(request, next_item.episode, streams)
+    return render_player_stop_response(streams)
+
+
+@require_POST
 @ajax_login_required
 def player_timeupdate(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
