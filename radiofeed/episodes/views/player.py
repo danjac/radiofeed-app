@@ -11,7 +11,7 @@ from turbo_response import TurboStream, TurboStreamResponse
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
-from . import get_episode_detail_or_404
+from . import get_episode_detail_or_404, render_close_modal
 from .queue import render_queue_streams
 
 
@@ -87,10 +87,6 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
-
-
-def render_close_modal() -> str:
-    return TurboStream("modal").update.render()
 
 
 def render_player_eject(request: HttpRequest, mark_completed: bool = False) -> str:

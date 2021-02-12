@@ -1,5 +1,5 @@
 {% extends "episodes/_episode.html" %}
-{% block attrs %}id="queue-item-{{ episode.id }}" data-drag-target="draggable" data-id="{{ item.id }}"{% endblock %}
+{% block attrs %}id="{{ episode.get_queue_dom_id }}" data-drag-target="draggable" data-id="{{ item.id }}"{% endblock %}
 
 {% block mobile_extra_buttons %}
 <div class="flex items-center md:hidden">

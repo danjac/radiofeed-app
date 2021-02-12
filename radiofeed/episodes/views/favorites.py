@@ -9,7 +9,7 @@ from turbo_response import TurboStream, TurboStreamResponse
 from radiofeed.pagination import render_paginated_response
 
 from ..models import Episode, Favorite
-from . import get_episode_or_404
+from . import get_episode_or_404, render_close_modal
 
 
 @login_required
@@ -47,8 +47,6 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     Favorite.objects.filter(user=request.user, episode=episode).delete()
-    if "remove" in request.POST:
-        return TurboStream(f"episode-{episode.id}").remove.response()
     return render_favorite_response(request, episode, False)
 
 
@@ -62,8 +60,15 @@ def render_favorite_response(
             {"episode": episode, "is_favorited": is_favorited},
             request=request,
         )
-        .render()
+        .render(),
+        render_close_modal(),
     ]
     if not is_favorited:
-        streams += [TurboStream(f"favorite-{episode.id}").remove.render()]
+        streams += [TurboStream(episode.get_favorite_dom_id()).remove.render()]
+        if Favorite.objects.filter(user=request.user).count() == 0:
+            streams += [
+                TurboStream("favorites").append.render(
+                    "You do not have any favorite items remaining."
+                )
+            ]
     return TurboStreamResponse(streams)

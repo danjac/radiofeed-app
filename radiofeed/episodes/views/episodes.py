@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -113,22 +113,20 @@ def episode_detail(
 def episode_actions(
     request: HttpRequest,
     episode_id: int,
-    actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_episode_detail_or_404(request, episode_id)
 
     if request.turbo.frame:
+
         return (
             TurboFrame(request.turbo.frame)
             .template(
                 "episodes/_actions.html",
                 {
                     "episode": episode,
-                    "actions": actions,
                     "is_episode_playing": request.player.is_playing(episode),
-                    "is_favorited": "favorite" in actions
-                    and episode.is_favorited(request.user),
-                    "is_queued": "queue" in actions and episode.is_queued(request.user),
+                    "is_favorited": episode.is_favorited(request.user),
+                    "is_queued": episode.is_queued(request.user),
                 },
             )
             .response(request)

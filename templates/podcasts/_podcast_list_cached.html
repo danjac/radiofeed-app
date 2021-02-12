@@ -1,7 +1,7 @@
 {% extends "podcasts/_podcast_list.html" %}
 {% load cache %}
 {% block podcasts %}
-{% cache cache_timeout podcasts request.get_full_path %}
+{% cache cache_timeout podcasts request.get_full_path request.user.username %}
 {{ block.super }}
 {% endcache %}
 {% endblock %}

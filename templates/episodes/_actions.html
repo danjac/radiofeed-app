@@ -42,21 +42,14 @@
         </div>
         {% include "episodes/_download.html" %}
       </div>
-      {% if actions %}
       <div class="flex items-center mb-3">
-        {% if 'queue' in actions %}
         <div class="mr-2">
           {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
         </div>
-        {% endif %}
-        {% if 'favorite' in actions %}
         <div>
           {% include "episodes/favorites/_toggle.html" %}
         </div>
-        {% endif %}
       </div>
-      {% endif %}
-
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
 
     </div>

@@ -102,6 +102,15 @@ class Episode(models.Model):
     def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
+    def get_dom_id(self) -> str:
+        return f"episode-{self.id}"
+
+    def get_queue_dom_id(self) -> str:
+        return f"queue-item-{self.id}"
+
+    def get_favorite_dom_id(self) -> str:
+        return f"favorite-{self.id}"
+
     def get_favorite_toggle_id(self) -> str:
         return f"episode-favorite-{self.id}"
 
