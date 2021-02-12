@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, Subquery
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -284,53 +284,6 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 
 
 # Player control views
-
-
-@require_POST
-@login_required
-def toggle_player(
-    request: HttpRequest,
-    episode_id: Optional[int] = None,
-    action: str = "play",
-) -> HttpResponse:
-    """Add episode to session and returns HTML component. The player info
-    is then added to the session."""
-
-    # always close modal first if open
-    streams: List[str] = [TurboStream("modal").update.render()]
-
-    # clear session
-    if current_episode := request.player.eject():
-        streams += [render_player_toggle_stream(request, current_episode, False)]
-
-        if request.POST.get("mark_complete") == "true":
-            current_episode.log_activity(request.user, current_time=0, completed=True)
-
-    if action == "stop":
-        return render_player_stop_response(streams)
-
-    if action == "next":
-
-        if next_item := (
-            QueueItem.objects.filter(user=request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("position")
-            .first()
-        ):
-
-            return render_player_start_response(request, next_item.episode, streams)
-
-        # no more items in queue
-        return render_player_stop_response(streams)
-
-    # default: start new episode
-    if episode_id is None:
-        raise Http404()
-
-    episode = get_episode_detail_or_404(request, episode_id)
-
-    current_time = 0 if episode.completed else episode.current_time or 0
-    return render_player_start_response(request, episode, streams, current_time)
 
 
 @require_POST
