@@ -106,9 +106,6 @@
                   data-player-target="playNext"
                   action="{% url 'episodes:play_next_episode' %}">
               {% csrf_token %}
-              <input type="hidden"
-                     name="mark_complete"
-                     value="true">
             </form>
 
           </div>
