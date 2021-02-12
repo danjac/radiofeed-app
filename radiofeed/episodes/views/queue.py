@@ -3,12 +3,13 @@ from typing import List
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Max
+from django.db.models import Max, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-from turbo_response import TurboStream, TurboStreamResponse
+from turbo_response import TurboStream
 
 from radiofeed.users.decorators import ajax_login_required
 
@@ -21,11 +22,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "episodes/queue/index.html",
-        {
-            "queue_items": QueueItem.objects.filter(user=request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("position")
-        },
+        {"queue_items": get_queue_items(request)},
     )
 
 
@@ -45,15 +42,17 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    return TurboStreamResponse(render_queue_streams(request, episode, True))
+    return render_queue_response(request, episode, True)
 
 
 @require_POST
 @login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    return TurboStreamResponse(render_queue_streams(request, episode, False))
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+    if "remove" in request.POST:
+        return redirect("episodes:queue")
+    return render_queue_response(request, episode, False)
 
 
 @require_POST
@@ -76,26 +75,25 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-def render_queue_streams(
+def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> List[str]:
-    streams = [
+    return (
         TurboStream(episode.get_queue_toggle_id())
         .replace.template(
             "episodes/queue/_toggle.html",
-            {"episode": episode, "is_queued": is_queued},
-            request=request,
+            {
+                "episode": episode,
+                "is_queued": is_queued,
+            },
         )
-        .render(),
-    ]
+        .response(request)
+    )
 
-    if not is_queued:
-        streams += [
-            TurboStream(episode.get_queue_dom_id()).remove.render(),
-        ]
-        if QueueItem.objects.filter(user=request.user).count() == 0:
-            streams += [
-                TurboStream("queue").append.render("Your Play Queue is now empty.")
-            ]
 
-    return streams
+def get_queue_items(request: HttpRequest) -> QuerySet:
+    return (
+        QueueItem.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("position")
+    )

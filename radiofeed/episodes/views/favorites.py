@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-from turbo_response import TurboStream, TurboStreamResponse
+from turbo_response import TurboStream
 
 from radiofeed.pagination import render_paginated_response
 
@@ -47,31 +48,19 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     Favorite.objects.filter(user=request.user, episode=episode).delete()
+    if "remove" in request.POST:
+        return redirect("episodes:favorites")
     return render_favorite_response(request, episode, False)
 
 
 def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
-    streams = [
+    return (
         TurboStream(episode.get_favorite_toggle_id())
         .replace.template(
             "episodes/favorites/_toggle.html",
             {"episode": episode, "is_favorited": is_favorited},
-            request=request,
         )
-        .render()
-    ]
-
-    if not is_favorited:
-        streams += [
-            TurboStream(episode.get_favorite_dom_id()).remove.render(),
-        ]
-
-        if Favorite.objects.filter(user=request.user).count() == 0:
-            streams += [
-                TurboStream("favorites").append.render(
-                    "You do not have any favorite items remaining."
-                )
-            ]
-    return TurboStreamResponse(streams)
+        .response(request)
+    )

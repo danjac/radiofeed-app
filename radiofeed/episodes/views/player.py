@@ -12,7 +12,7 @@ from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
 from . import get_episode_detail_or_404
-from .queue import render_queue_streams
+from .queue import get_queue_items
 
 
 @require_POST
@@ -139,8 +139,8 @@ def render_player_start_response(
 
     response = TurboStreamResponse(
         streams
-        + render_queue_streams(request, episode, False)
         + [
+            render_player_toggle(request, episode, True),
             TurboStream("player-container")
             .update.template(
                 "episodes/player/_player.html",
@@ -148,7 +148,13 @@ def render_player_start_response(
                 request=request,
             )
             .render(),
-            render_player_toggle(request, episode, True),
+            TurboStream("queue")
+            .replace.template(
+                "episodes/queue/_episode_list.html",
+                {"queue_items": get_queue_items(request)},
+                request=request,
+            )
+            .render(),
         ]
     )
     response["X-Player"] = json.dumps(

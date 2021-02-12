@@ -1,9 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
-
-from turbo_response import TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 
@@ -39,9 +38,4 @@ def index(request: HttpRequest) -> HttpResponse:
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
-    streams = [
-        TurboStream(episode.get_history_dom_id()).remove.render(),
-    ]
-    if AudioLog.objects.filter(user=request.user).count() == 0:
-        streams += [TurboStream("history").append.render("Your History is now empty")]
-    return TurboStreamResponse(streams)
+    return redirect("episodes:history")
