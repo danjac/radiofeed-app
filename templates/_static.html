@@ -5,22 +5,10 @@
 <link rel="apple-touch-icon image_src"
       href="{% static 'apple-touch-icon.png' %}">
 
-{% static debug|yesno:'dev/app.css,dist/app.css' as css %}
-
-<link rel="preload"
-      href="{{ css }}"
-      as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-  <link rel="stylesheet"
-        href="{{ css }}"></noscript>
-
-<!---
 <link rel="stylesheet"
       data-turbo-track="reload"
       media="screen"
       href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
--->
 <script src="{% static debug|yesno:'dev/app.js,dist/app.js' %}"
         defer
         data-turbo-track="reload"></script>
