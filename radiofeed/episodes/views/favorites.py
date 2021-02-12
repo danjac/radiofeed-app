@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
@@ -53,7 +52,9 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     if "remove" in request.POST:
         if favorites.count() == 0:
-            return redirect("episodes:favorites")
+            return TurboStream("favorites").replace.response(
+                "There are no more episodes in your Favorites."
+            )
         return TurboStream(episode.get_favorite_dom_id()).remove.response()
 
     return render_favorite_response(request, episode, False)

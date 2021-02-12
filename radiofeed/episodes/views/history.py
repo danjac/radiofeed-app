@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
@@ -45,6 +44,6 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     logs.filter(episode=episode).delete()
 
     if logs.count() == 0:
-        return redirect("episodes:history")
+        return TurboStream("history").replace.response("Your History is now empty.")
 
     return TurboStream(episode.get_history_dom_id()).remove.response()

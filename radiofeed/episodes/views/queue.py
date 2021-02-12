@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
@@ -54,7 +53,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     if "remove" in request.POST:
         if items.count() == 0:
-            return redirect("episodes:queue")
+            return TurboStream("queue").replace.response("Your Play Queue is now empty")
         return TurboStream(episode.get_queue_dom_id()).remove.response()
     return render_queue_response(request, episode, False)
 
