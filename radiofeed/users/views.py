@@ -6,8 +6,10 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream, redirect_303, render_form_response
@@ -79,4 +81,28 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
         expires=timezone.now() + datetime.timedelta(days=30),
         samesite="Lax",
     )
+    return response
+
+
+@require_POST
+def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
+    dark_mode = request.COOKIES.get("dark-mode")
+
+    redirect_url = request.POST.get("redirect_url")
+    if not redirect_url or not url_has_allowed_host_and_scheme(
+        redirect_url, {request.get_host()}, request.is_secure()
+    ):
+        redirect_url = settings.HOME_URL
+
+    response = redirect(redirect_url)
+
+    if dark_mode:
+        response.delete_cookie("dark-mode")
+    else:
+        response.set_cookie(
+            "dark-mode",
+            value="true",
+            expires=timezone.now() + datetime.timedelta(days=30),
+            samesite="Lax",
+        )
     return response

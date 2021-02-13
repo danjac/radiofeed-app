@@ -97,5 +97,22 @@
         </a>
       </li>
 
+      <li class="py-2">
+        <form method="POST"
+              data-turbo="false"
+              action="{% url 'toggle_dark_mode' %}">
+          {% csrf_token %}
+          <button class="flex items-center link">
+            {% if dark_mode %}
+            {% svg "sun" css_class="h-5 w-5 mr-3" %}
+            Day Mode
+            {% else %}
+            {% svg "moon" css_class="h-5 w-5 mr-3" %}
+            Night Mode
+            {% endif %}
+          </button>
+        </form>
+      </li>
+
     </ul>
   </nav>

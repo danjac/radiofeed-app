@@ -7,11 +7,12 @@
 {% block content %}
 <h1 class="mb-3 text-lg font-bold">{% translate "Sign Up" %}</h1>
 
-<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
+<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to
+  use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
 
-<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-800{% endif %}"
+<form class="p-3 border dark:border-gray-500 w-full sm:w-1/2 {% if form.errors %}border-red-800 dark:border-red-500{% endif %}"
       method="post"
       id="{{ view.turbo_stream_target }}"
       action="{% url 'socialaccount_signup' %}"
@@ -24,13 +25,13 @@
          value="{{ redirect_field_value }}" />
   {% endif %}
   {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-800" %}
+  {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" WIDGET_CLASS="p-1 w-full dark:bg-gray-900 dark:text-white" %}
   <div class="mb-3">
-    {% render_field form.username aria-label=form.username.label placeholder=form.username.label class="p-1 w-full" %}
+    {% render_field form.username aria-label=form.username.label placeholder=form.username.label class=WIDGET_CLASS %}
     {% include "_form_errors.html" with errors=form.username.errors %}
   </div>
   <div class="mb-3">
-    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
+    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class=WIDGET_CLASS %}
     {% include "_form_errors.html" with errors=form.email.errors %}
   </div>
   {% endwith %}

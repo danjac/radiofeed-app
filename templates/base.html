@@ -6,7 +6,10 @@
 
 <!DOCTYPE html>
 {% get_current_language as language_code %}
-<html lang="{{ language_code }}">
+<html lang="{{ language_code }}"
+      {% if dark_mode %}
+      class="dark"
+      {% endif %}>
 
 <head>
   <title>

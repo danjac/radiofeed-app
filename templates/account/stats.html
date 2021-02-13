@@ -48,7 +48,7 @@
 <div class="border p-3">
   <ol class="list-decimal list-inside">
     {% for podcast in most_listened %}
-    <li class="mb-3">
+    <li class="{% if not forloop.last %}mb-3{% endif %}">
       <a href="{{ podcast.get_absolute_url }}"
          class="link">{{ podcast.title }}</a>
     </li>
