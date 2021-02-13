@@ -82,8 +82,7 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
             playback_rate = 1.0
 
         episode.log_activity(request.user, current_time)
-        request.player.current_time = current_time
-        request.player.playback_rate = playback_rate
+        request.player.update(current_time=current_time, playback_rate=playback_rate)
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")

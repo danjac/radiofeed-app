@@ -53,6 +53,14 @@ class Player:
             "playback_rate": self.playback_rate,
         }
 
+    def update(self, current_time: int, playback_rate: float) -> None:
+        self.session_data.update(
+            {
+                "current_time": current_time,
+                "playback_rate": playback_rate,
+            }
+        )
+
     @property
     def current_time(self) -> float:
         return self.session_data.get("current_time", 0)
