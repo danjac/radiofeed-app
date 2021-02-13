@@ -54,8 +54,9 @@ class Player:
         }
 
     def update(self, current_time: int, playback_rate: float) -> None:
-        self.session_data.update(
+        self.session_data = PlayerInfo(
             {
+                **self.session_data,  # type: ignore
                 "current_time": current_time,
                 "playback_rate": playback_rate,
             }
