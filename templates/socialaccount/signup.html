@@ -26,7 +26,8 @@
          value="{{ redirect_field_value }}" />
   {% endif %}
 
-  {% include "_form_errors.html" with errors=form.non_field_errors %}
+  {% include "forms/_errors.html" with errors=form.non_field_errors %}
+
   <div class="mb-3">
     {% include "forms/_field.html" with field=form.username %}
   </div>
