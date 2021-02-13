@@ -1,6 +1,7 @@
 {% load episodes %}
 {% if user.is_authenticated %}
 {% get_player as player %}
+{% with episode=player.episode %}
 <div id="player"
      data-turbo-permanent
      data-controller="player"
@@ -9,11 +10,12 @@
      data-player-csrf-token-value="{{ csrf_token }}"
      data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
      {% if episode %}
-     data-player-media-url-value="{{ player.episode.media_url }}"
+     data-player-media-url-value="{{ episode.media_url }}"
      data-player-playback-rate-value="{{ player.playback_rate|default:1.0 }}"
      data-player-current-time-value="{{ player.current_time|default:0 }}"
-     data-player-metadata-value='{{ player.episode.get_media_metadata|jsonify }}'
+     data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'
      {% endif %}>
-  {% include "episodes/player/_controls.html" with episode=player.episode %}
+  {% include "episodes/player/_controls.html" %}
 </div>
+{% endwith %}
 {% endif %}
