@@ -9,12 +9,12 @@
   <a href="{% url 'podcasts:categories' %}"
      class="link mr-1">Discover</a>
   {% if category.parent %}
-  <span class="text-gray-500 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
      class="link mr-1">{{ category.parent.name }}</a>
   {% endif %}
-  <span class="text-gray-500 mr-1">&gt;</span>
-  <span class="text-gray-500">{{ category.name }}</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300">{{ category.name }}</span>
 </div>
 
 <div class="sm:flex justify-between items-center mb-3">
