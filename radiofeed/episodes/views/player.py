@@ -109,9 +109,8 @@ def render_player_toggle(
                 "episode": episode,
                 "is_episode_playing": is_playing,
             },
-            request=request,
         )
-        .render()
+        .render(request=request)
     )
 
 
@@ -145,16 +144,14 @@ def render_player_start_response(
             .update.template(
                 "episodes/player/_controls.html",
                 {"episode": episode},
-                request=request,
             )
-            .render(),
+            .render(request=request),
             TurboStream("queue")
             .replace.template(
                 "episodes/queue/_episode_list.html",
                 {"queue_items": get_queue_items(request)},
-                request=request,
             )
-            .render(),
+            .render(request=request),
         ]
     )
     response["X-Player"] = json.dumps(
