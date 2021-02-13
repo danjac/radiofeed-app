@@ -1,6 +1,6 @@
 import http
 import json
-from typing import List
+from typing import List, Optional
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -23,25 +23,19 @@ def start_player(
 ) -> HttpResponse:
 
     episode = get_episode_detail_or_404(request, episode_id)
-    current_time = 0 if episode.completed else episode.current_time or 0
 
-    return render_player_start_response(
+    return render_start_response(
         request,
         episode,
-        [
-            render_close_modal(),
-            render_player_eject(request),
-        ],
-        current_time,
+        eject_current_episode(request),
+        current_time=0 if episode.completed else (episode.current_time or 0),
     )
 
 
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-    return render_player_stop_response(
-        [render_close_modal(), render_player_eject(request)]
-    )
+    return render_stop_response(eject_current_episode(request))
 
 
 @require_POST
@@ -50,7 +44,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    streams: List[str] = [render_player_eject(request, mark_completed=True)]
+    current_episode = eject_current_episode(request, mark_completed=True)
 
     if next_item := (
         QueueItem.objects.filter(user=request.user)
@@ -59,8 +53,8 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
         .first()
     ):
 
-        return render_player_start_response(request, next_item.episode, streams)
-    return render_player_stop_response(streams)
+        return render_start_response(request, next_item.episode, current_episode)
+    return render_stop_response(current_episode)
 
 
 @require_POST
@@ -88,18 +82,6 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
-def render_close_modal() -> str:
-    return TurboStream("modal").update.render()
-
-
-def render_player_eject(request: HttpRequest, mark_completed: bool = False) -> str:
-    if current_episode := request.player.eject():
-        if mark_completed:
-            current_episode.log_activity(request.user, current_time=0, completed=True)
-        return render_player_toggle(request, current_episode, False)
-    return ""
-
-
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
@@ -117,7 +99,15 @@ def render_player_toggle(
     )
 
 
-def render_player_stop_response(streams: List[str]) -> HttpResponse:
+def render_stop_response(
+    request: HttpRequest,
+    current_episode: Optional[Episode] = None,
+) -> HttpResponse:
+    streams: List[str] = []
+
+    if current_episode:
+        streams.append(render_player_toggle(request, current_episode, False))
+
     response = TurboStreamResponse(
         streams
         + [
@@ -128,9 +118,17 @@ def render_player_stop_response(streams: List[str]) -> HttpResponse:
     return response
 
 
-def render_player_start_response(
-    request: HttpRequest, episode: Episode, streams: List[str], current_time: int = 0
+def render_start_response(
+    request: HttpRequest,
+    episode: Episode,
+    current_episode: Optional[Episode] = None,
+    current_time: int = 0,
 ) -> HttpResponse:
+
+    streams: List[str] = []
+
+    if current_episode:
+        streams.append(render_player_toggle(request, current_episode, False))
 
     # remove from queue
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
@@ -166,3 +164,13 @@ def render_player_start_response(
         }
     )
     return response
+
+
+def eject_current_episode(
+    request: HttpRequest, mark_completed: bool = False
+) -> Optional[Episode]:
+    if current_episode := request.player.eject():
+        if mark_completed:
+            current_episode.log_activity(request.user, current_time=0, completed=True)
+        return current_episode
+    return None
