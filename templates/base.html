@@ -1,6 +1,6 @@
 {% spaceless %}
 
-{% load static i18n episodes %}
+{% load static i18n %}
 
 {% endspaceless %}
 
@@ -58,26 +58,7 @@
   </div>
 
   {% endblock layout %}
-  {% block player %}
-  {% if user.is_authenticated %}
-  {% get_player as player %}
-  <div id="player-container"
-       data-turbo-permanent
-       data-controller="player"
-       data-player-active-class="player--active"
-       data-player-inactive-class="player--inactive"
-       data-player-csrf-token-value="{{ csrf_token }}"
-       data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
-       {% if player.episode %}
-       data-player-media-url-value="{{ player.episode.media_url }}"
-       data-player-playback-rate-value="{{ player.playback_rate|default:1.0 }}"
-       data-player-current-time-value="{{ player.current_time|default:0 }}"
-       data-player-metadata-value='{{ player.episode.get_media_metadata|jsonify }}'
-       {% endif %}>
-    {% include "episodes/player/_player.html" with episode=player.episode %}
-  </div>
-  {% endif %}
-  {% endblock player %}
+  {% block player %}{% include "episodes/player/_player.html" %}{% endblock %}
 
   <turbo-frame id="modal"
                data-modal-target="modal"></turbo-frame>

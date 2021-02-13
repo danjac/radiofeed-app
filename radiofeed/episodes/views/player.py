@@ -141,9 +141,9 @@ def render_player_start_response(
         streams
         + [
             render_player_toggle(request, episode, True),
-            TurboStream("player-container")
+            TurboStream("player")
             .update.template(
-                "episodes/player/_player.html",
+                "episodes/player/_controls.html",
                 {"episode": episode},
                 request=request,
             )
