@@ -88,6 +88,10 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
+def render_close_modal() -> str:
+    return TurboStream("modal").update.render()
+
+
 def render_player_eject(request: HttpRequest, mark_completed: bool = False) -> str:
     if current_episode := request.player.eject():
         if mark_completed:
@@ -162,7 +166,3 @@ def render_player_start_response(
         }
     )
     return response
-
-
-def render_close_modal() -> str:
-    return TurboStream("modal").update.render()
