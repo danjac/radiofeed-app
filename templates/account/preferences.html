@@ -1,23 +1,19 @@
 {% extends "account/settings_base.html" %}
 
-{% load i18n widget_tweaks %}
+{% load i18n %}
 
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
 
-<form class="p-3 border w-full md:w-3/4 lg:w-1/2 dark:border-gray-500"
+<form class="{% include "forms/_form_css.html" %}"
       method="post"
       action="{% url 'user_preferences' %}"
       novalidate>
   {% csrf_token %}
 
   <div class="mb-3">
-    <label class="flex items-center mb-2 w-full">
-      {% render_field form.send_recommendations_email class="mr-3" %}
-      {{ form.send_recommendations_email.label }}
-    </label>
-    {% include "_form_help_text.html" with help_text=form.send_recommendations_email.help_text %}
+    {% include "forms/_checkbox_field.html" with field=form.send_recommendations_email %}
   </div>
 
   <div class="flex items-center justify-end">

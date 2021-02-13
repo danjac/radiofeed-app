@@ -9,7 +9,7 @@
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-<form class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800 dark:border-red-500{% endif %}"
+<form class="{% include "forms/_form_css.html" %}"
       method="post"
       action="{% url 'account_login' %}"
       novalidate>
@@ -19,24 +19,17 @@
          name="{{ redirect_field_name }}"
          value="{{ redirect_field_value }}" />
   {% endif %}
-  {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" WIDGET_CLASS="p-1 w-full dark:bg-gray-900 dark:text-white" %}
-  {% include "_form_errors.html" with errors=form.non_field_errors %}
+
+  {% include "forms/_errors.html" with errors=form.non_field_errors %}
   <div class="mb-3">
-    {% render_field form.login aria-label=form.login.label placeholder=form.login.label class=WIDGET_CLASS %}
-    {% include "_form_errors.html" with errors=form.login.errors %}
+    {% include "forms/_field.html" with field=form.login %}
   </div>
   <div class="mb-3">
-    {% render_field form.password aria-label=form.password.label placeholder=form.password.label class=WIDGET_CLASS %}
-    {% include "_form_errors.html" with errors=form.password.errors %}
+    {% include "forms/_field.html" with field=form.password %}
   </div>
   <div class="mb-3">
-    <label class="flex items-center mb-2 w-full">
-      {% render_field form.remember class="mr-3 dark:bg-gray-900" %}
-      {{ form.remember.label }}
-    </label>
-    {% include "_form_errors.html" with errors=form.remember.errors %}
+    {% include "forms/_checkbox_field.html" with field=form.remember %}
   </div>
-  {% endwith %}
 
   <div class="flex items-center justify-end">
     <a class="link mr-3"
@@ -46,6 +39,7 @@
       {% svg "login" css_class="btn-icon mr-2" %}
       {% translate "Sign In" %}</button>
   </div>
+
 </form>
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 {% endblock %}
