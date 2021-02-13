@@ -31,7 +31,7 @@ def index(request: HttpRequest) -> HttpResponse:
         )
     return TemplateResponse(
         request,
-        "podcasts/categories.html",
+        "podcasts/categories/index.html",
         {"categories": categories},
     )
 
@@ -59,7 +59,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
 
     return TemplateResponse(
         request,
-        "podcasts/category.html",
+        "podcasts/categories/detail.html",
         {"category": category, "children": category.children.order_by("name")},
     )
 
