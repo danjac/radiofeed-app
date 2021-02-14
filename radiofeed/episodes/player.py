@@ -41,8 +41,9 @@ class Player:
             .first()
         )
 
-    def eject(self) -> Optional[Episode]:
-        episode = self.get_episode()
+    def eject(self, mark_completed: bool = False) -> Optional[Episode]:
+        if (episode := self.get_episode()) and mark_completed:
+            episode.log_activity(self.request.user, current_time=0, completed=True)
         self.request.session["player"] = _empty_player_info()
         return episode
 

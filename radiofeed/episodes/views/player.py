@@ -27,7 +27,7 @@ def start_player(
     return render_start_response(
         request,
         episode,
-        eject_current_episode(request),
+        request.player.eject(),
         current_time=0 if episode.completed else (episode.current_time or 0),
     )
 
@@ -35,7 +35,7 @@ def start_player(
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-    return render_stop_response(eject_current_episode(request))
+    return render_stop_response(request.player.eject())
 
 
 @require_POST
@@ -44,7 +44,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    current_episode = eject_current_episode(request, mark_completed=True)
+    current_episode = request.player.eject(mark_completed=True)
 
     if next_item := (
         QueueItem.objects.filter(user=request.user)
@@ -164,13 +164,3 @@ def render_start_response(
         }
     )
     return response
-
-
-def eject_current_episode(
-    request: HttpRequest, mark_completed: bool = False
-) -> Optional[Episode]:
-    if current_episode := request.player.eject():
-        if mark_completed:
-            current_episode.log_activity(request.user, current_time=0, completed=True)
-        return current_episode
-    return None
