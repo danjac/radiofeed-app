@@ -1,5 +1,5 @@
-{% if is_turbo_frame %}
-{% block podcasts %}
+{% extends "_pagination.html" %}
+{% block results %}
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
@@ -7,12 +7,4 @@
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>. {% endif %}
 </p>
 {% endfor %}
-{% include "_pagination.html" %}
-{% endblock %}
-{% else %}
-<turbo-frame id="podcast-list"
-             src="{{ request.get_full_path }}">
-  {% include "_loader.html" %}
-</turbo-frame>
-
-{% endif %}
+{% endblock results %}

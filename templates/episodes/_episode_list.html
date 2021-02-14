@@ -1,21 +1,13 @@
-{% if is_turbo_frame %}
-{% block episodes %}
+{% extends "_pagination.html" %}
+
+{% block results %}
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" %}
 {% empty %}
 
-{% block empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
-{% endblock empty %}
 
 {% endfor %}
-{% endblock %}
-{% include "_pagination.html" %}
-{% else %}
-<turbo-frame id="episode-list"
-             src="{{ request.get_full_path }}">
-  {% include "_loader.html" %}
-</turbo-frame>
-{% endif %}
+{% endblock results %}
