@@ -35,7 +35,7 @@ def start_player(
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-    return render_stop_response(request.player.eject())
+    return render_stop_response(request, request.player.eject())
 
 
 @require_POST
@@ -54,7 +54,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     ):
 
         return render_start_response(request, next_item.episode, current_episode)
-    return render_stop_response(current_episode)
+    return render_stop_response(request, current_episode)
 
 
 @require_POST

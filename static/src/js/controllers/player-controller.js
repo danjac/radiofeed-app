@@ -2,39 +2,7 @@ import { Controller } from 'stimulus';
 import useTurbo from '../turbo';
 
 export default class extends Controller {
-  audio: HTMLMediaElement;
-  audioListeners: any;
-
-  timeupdateTimer: ReturnType<typeof setTimeout>;
-
-  activeClass: string;
-  inactiveClass: string;
-
-  csrfTokenValue: string;
-  currentTimeValue: number;
-  durationValue: number;
-  mediaUrlValue: string;
-  metadataValue: any;
-  pausedValue: boolean;
-  playbackRateValue: number;
-  timeupdateUrlValue: string;
-  waitingValue: boolean;
-
-  hasCounterTarget: boolean;
-  hasIndicatorTarget: boolean;
-  hasPlaybackRateTarget: boolean;
-  hasPlayButtonTarget: boolean;
-  hasPauseButtonTarget: boolean;
-
-  counterTarget: HTMLElement;
-  indicatorTarget: HTMLElement;
-  pauseButtonTarget: HTMLElement;
-  playButtonTarget: HTMLElement;
-  playbackRateTarget: HTMLElement;
-  playNextTarget: HTMLFormElement;
-  progressBarTarget: HTMLElement;
-
-  static targets: string[] = [
+  static targets = [
     'audio',
     'controls',
     'counter',
@@ -47,9 +15,9 @@ export default class extends Controller {
     'stop',
   ];
 
-  static classes: string[] = ['active', 'inactive'];
+  static classes = ['active', 'inactive'];
 
-  static values: any = {
+  static values = {
     csrfToken: String,
     currentTime: Number,
     duration: Number,
@@ -153,9 +121,9 @@ export default class extends Controller {
     this.changePlaybackRate(-0.1);
   }
 
-  skip(event: MouseEvent) {
+  skip({ clientX }) {
     // user clicks on progress bar
-    const position: number = this.calcEventPosition(event.clientX);
+    const position = this.calcEventPosition(clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
     }
@@ -169,8 +137,7 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  turboSubmitEnd(event: CustomEvent) {
-    console.log('turboSubmitEnd');
+  turboSubmitEnd(event) {
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
     if (!headers || !headers.has('X-Player')) {
@@ -179,9 +146,7 @@ export default class extends Controller {
     const { action, mediaUrl, currentTime, metadata } = JSON.parse(
       headers.get('X-Player')
     );
-    console.log('ACTION', action);
     if (action === 'stop') {
-      console.log('close player');
       this.closePlayer();
       return;
     }
@@ -190,7 +155,6 @@ export default class extends Controller {
     this.mediaUrlValue = mediaUrl;
     this.currentTimeValue = parseFloat(currentTime || 0);
 
-    console.log('metadata', metadata);
     if (metadata) {
       this.metadataValue = metadata;
     }
@@ -201,8 +165,6 @@ export default class extends Controller {
     this.audio.currentTime = this.currentTimeValue;
 
     this.play();
-
-    console.log('play:', mediaUrl, currentTime);
   }
 
   // observers
@@ -249,7 +211,7 @@ export default class extends Controller {
     }
   }
 
-  changePlaybackRate(increment: number) {
+  changePlaybackRate(increment) {
     let newValue = this.playbackRateValue + increment;
     if (newValue > 2.0) {
       newValue = 2.0;
@@ -267,13 +229,13 @@ export default class extends Controller {
     }
   }
 
-  updateCounter(value: number) {
+  updateCounter(value) {
     if (this.hasCounterTarget) {
       this.counterTarget.textContent = this.formatTimeRemaining(value);
     }
   }
 
-  calcPercentComplete(): number {
+  calcPercentComplete() {
     if (!this.currentTimeValue || !this.durationValue) {
       return 0;
     }
@@ -285,7 +247,7 @@ export default class extends Controller {
     return (this.currentTimeValue / this.durationValue) * 100;
   }
 
-  calcEventPosition(clientX: number): number {
+  calcEventPosition(clientX) {
     if (!isNaN(clientX)) {
       const { left } = this.progressBarTarget.getBoundingClientRect();
       const width = this.progressBarTarget.clientWidth;
@@ -296,7 +258,7 @@ export default class extends Controller {
     }
   }
 
-  calcCurrentIndicatorPosition(pcComplete: number): number {
+  calcCurrentIndicatorPosition(pcComplete) {
     const clientWidth = this.progressBarTarget.clientWidth;
 
     let currentPosition, width;
@@ -318,7 +280,7 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  formatTimeRemaining(value: number): string {
+  formatTimeRemaining(value) {
     if (isNaN(value) || value < 0) return '00:00:00';
     const duration = Math.floor(value);
 
@@ -332,7 +294,7 @@ export default class extends Controller {
     );
   }
 
-  skipTo(position: number) {
+  skipTo(position) {
     if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
       this.audio.currentTime = this.currentTimeValue = position;
     }
@@ -352,7 +314,6 @@ export default class extends Controller {
   }
 
   initAudio() {
-    console.log('initAudio');
     if (!this.audio) {
       this.audio = new Audio();
       this.audio.preload = 'metadata';
@@ -419,7 +380,7 @@ export default class extends Controller {
     }
   }
 
-  set enabled(enabled: boolean) {
+  set enabled(enabled) {
     if (enabled) {
       sessionStorage.setItem('player-enabled', 'true');
     } else {
@@ -427,7 +388,7 @@ export default class extends Controller {
     }
   }
 
-  get enabled(): boolean {
+  get enabled() {
     return !!sessionStorage.getItem('player-enabled');
   }
 }

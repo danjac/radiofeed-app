@@ -1,13 +1,11 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  textValue: string;
-
-  static values: any = {
+  static values = {
     text: String,
   };
 
-  confirm(event: Event) {
+  confirm(event) {
     if (!window.confirm(this.textValue)) {
       event.preventDefault();
     }

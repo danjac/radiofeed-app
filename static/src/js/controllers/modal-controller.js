@@ -1,9 +1,7 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  modalTarget: HTMLElement;
-
-  static targets: string[] = ['close', 'modal'];
+  static targets = ['close', 'modal'];
 
   close() {
     // empty content of frame and reset src
@@ -11,7 +9,7 @@ export default class extends Controller {
     this.modalTarget.removeAttribute('src');
   }
 
-  closeOnEsc(event: KeyboardEvent) {
+  closeOnEsc(event) {
     if (event.code === 'Escape') {
       this.close();
     }

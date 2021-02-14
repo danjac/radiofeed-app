@@ -1,14 +1,11 @@
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  element: HTMLFormElement;
-  submittingValue: Boolean;
-
   static values = {
     submitting: Boolean,
   };
 
-  submit(event: Event) {
+  submit(event) {
     if (this.submittingValue) {
       event.preventDefault();
       return;
