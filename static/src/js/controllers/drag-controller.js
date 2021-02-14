@@ -16,7 +16,6 @@ export default class extends Controller {
     //
     const handle = '.' + this.handleClass;
 
-    // @ts-ignore
     this.sortable = Sortable.create(this.element, {
       handle,
       animation: 150,

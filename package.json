@@ -11,7 +11,7 @@
     "@types/sortablejs": "^1.10.6",
     "autoprefixer": "^10.0.1",
     "cssnano": "^4.1.10",
-    "esbuild": "^0.8.40",
+    "esbuild": "^0.8.46",
     "postcss": "^8.1.7",
     "postcss-cli": "^8.2.0",
     "postcss-import": "^14.0.0",
