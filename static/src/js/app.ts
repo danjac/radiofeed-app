@@ -4,6 +4,7 @@ import { Application } from 'stimulus';
 
 import ConfirmController from './controllers/confirm-controller';
 import DragController from './controllers/drag-controller';
+import FormController from './controllers/form-controller';
 import LinkController from './controllers/link-controller';
 import ModalController from './controllers/modal-controller';
 import NotificationController from './controllers/notification-controller';
@@ -15,6 +16,7 @@ const application: Application = Application.start();
 
 application.register('confirm', ConfirmController);
 application.register('drag', DragController);
+application.register('form', FormController);
 application.register('link', LinkController);
 application.register('modal', ModalController);
 application.register('notification', NotificationController);

@@ -12,10 +12,7 @@
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
 
-<form class="{% include "forms/_form_css.html" %}"
-      method="post"
-      action="{% url 'account_signup' %}"
-      novalidate>
+<form {% include "forms/_form_attrs.html" %}>
   {% csrf_token %}
   {% if redirect_field_value %}
   <input type="hidden"

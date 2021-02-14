@@ -2,7 +2,8 @@
   @apply text-sm px-2 py-1 rounded font-semibold;
 }
 
-.btn[disabled] {
+.btn[disabled],
+form.submitting .btn {
   @apply cursor-not-allowed font-normal opacity-75;
 }
 
@@ -14,7 +15,8 @@
   @apply text-white bg-blue-800;
 }
 
-.btn-default[disabled] {
+.btn-default[disabled],
+form.submitting .btn-default {
   @apply text-white bg-blue-600;
 }
 
@@ -26,7 +28,8 @@
   @apply border border-blue-800 text-blue-800 dark:text-white dark:border-white;
 }
 
-.btn-secondary[disabled] {
+.btn-secondary[disabled],
+form.submitting .btn-secondary {
   @apply border-blue-600 text-blue-600 bg-gray-100;
 }
 

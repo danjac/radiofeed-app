@@ -17,13 +17,13 @@
 <div class="mb-3 w-full md:w-3/4 lg:w-1/2 border p-3{% if form.errors %} border-red-500{% endif %}">
   <p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <b>{{ email }}</b> is an e-mail address for user <b>{{ user_display }}</b>.{% endblocktranslate %}</p>
 
-  <form method="post"
-        action="{% url 'account_confirm_email' confirmation.key %}">
+  {% url 'account_confirm_email' confirmation.key as action_url %}
+
+  <form {% include "forms/_form_attrs.html" %}>
     {% csrf_token %}
     <div class="flex items-center justify-end">
       <button type="submit"
               class="btn btn-default flex items-center">
-
         {% svg "check" css_class="btn-icon mr-2" %}
         {% translate 'Confirm' %}</button>
     </div>

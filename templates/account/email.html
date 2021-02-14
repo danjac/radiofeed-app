@@ -82,10 +82,7 @@
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
 
-<form class="{% include "forms/_form_css.html" %}"
-      method="post"
-      action="{% url 'account_email' %}"
-      novalidate>
+<form {% include "forms/_form_attrs.html" %}>
   {% csrf_token %}
   {% include "forms/_errors.html" with errors=form.non_field_errors %}
   <div class="mb-3">

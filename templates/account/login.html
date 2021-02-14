@@ -9,10 +9,7 @@
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-<form class="{% include "forms/_form_css.html" %}"
-      method="post"
-      action="{% url 'account_login' %}"
-      novalidate>
+<form {% include "forms/_form_attrs.html" %}>
   {% csrf_token %}
   {% if redirect_field_value %}
   <input type="hidden"
