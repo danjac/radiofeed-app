@@ -114,7 +114,7 @@ def render_stop_response(
             TurboStream("player-controls").remove.render(),
         ]
     )
-    response["X-Player"] = json.dumps({"action": "stop"})
+    response["X-Media-Player"] = json.dumps({"action": "stop"})
     return response
 
 
@@ -155,7 +155,7 @@ def render_start_response(
             .render(request=request),
         ]
     )
-    response["X-Player"] = json.dumps(
+    response["X-Media-Player"] = json.dumps(
         {
             "action": "start",
             "mediaUrl": episode.media_url,

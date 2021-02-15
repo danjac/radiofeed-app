@@ -140,11 +140,11 @@ export default class extends Controller {
   turboSubmitEnd(event) {
     const { fetchResponse } = event.detail;
     const headers = fetchResponse.response ? fetchResponse.response.headers : null;
-    if (!headers || !headers.has('X-Player')) {
+    if (!headers || !headers.has('X-Media-Player')) {
       return;
     }
     const { action, mediaUrl, currentTime, metadata } = JSON.parse(
-      headers.get('X-Player')
+      headers.get('X-Media-Player')
     );
     if (action === 'stop') {
       this.closePlayer();

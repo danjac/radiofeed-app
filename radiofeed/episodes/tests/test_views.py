@@ -120,7 +120,7 @@ class TestTogglePlayer:
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Player"])
+        header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 0
         assert header["mediaUrl"] == episode.media_url
@@ -138,7 +138,7 @@ class TestTogglePlayer:
 
         assert QueueItem.objects.count() == 0
 
-        header = json.loads(resp["X-Player"])
+        header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 0
         assert header["mediaUrl"] == episode.media_url
@@ -153,7 +153,7 @@ class TestTogglePlayer:
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Player"])
+        header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "stop"
 
     def test_is_played(self, client, login_user, episode):
@@ -161,7 +161,7 @@ class TestTogglePlayer:
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Player"])
+        header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 2000
         assert header["mediaUrl"] == episode.media_url
@@ -184,7 +184,7 @@ class TestTogglePlayer:
         )
         assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Player"])
+        header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "stop"
 
 
