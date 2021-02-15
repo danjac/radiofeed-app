@@ -139,7 +139,8 @@ export default class extends Controller {
 
   turboSubmitEnd(event) {
     const { fetchResponse } = event.detail;
-    const headers = fetchResponse.response ? fetchResponse.response.headers : null;
+    const headers =
+      fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
     if (!headers || !headers.has('X-Media-Player')) {
       return;
     }
