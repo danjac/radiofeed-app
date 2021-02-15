@@ -1,6 +1,5 @@
 {% load static pagination %}
 
-{% if is_turbo_frame %}
 
 {% block results %}{% endblock %}
 
@@ -8,13 +7,6 @@
 <turbo-frame id="page-{{ page_obj.next_page_number }}"
              src="{% pagination_url page_obj.next_page_number %}"
              loading="lazy">
-  {% include "_loader.html" %}
-</turbo-frame>
-{% endif %}
-
-{% else %}
-<turbo-frame id="result-list"
-             src="{{ request.get_full_path }}">
   {% include "_loader.html" %}
 </turbo-frame>
 {% endif %}

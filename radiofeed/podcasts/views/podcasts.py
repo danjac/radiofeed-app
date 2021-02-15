@@ -46,39 +46,26 @@ def index(request: HttpRequest) -> HttpResponse:
             request.user.subscription_set.values_list("podcast", flat=True)
         )
 
-    if request.turbo.frame:
-        podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
+    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
 
-        # user's subscribed podcasts
+    if subscriptions:
+        podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
 
-        if subscriptions:
-            podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
-
-            return render_paginated_response(
-                request,
-                podcasts,
-                "podcasts/_podcast_list.html",
-            )
-
-        # return promoted list, same as landing_page
+    else:
 
         podcasts = Podcast.objects.filter(
             pub_date__isnull=False, promoted=True
         ).order_by("-pub_date")
 
-        return render_paginated_response(
-            request,
-            podcasts,
-            "podcasts/_podcast_list_cached.html",
-            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
-        )
-
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    return TemplateResponse(
+    return render_paginated_response(
         request,
+        podcasts,
         "podcasts/index.html",
+        "podcasts/_podcast_list.html",
         {
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
             "top_rated_podcasts": top_rated_podcasts,
             "search_url": reverse("podcasts:search_podcasts"),
         },
@@ -90,20 +77,20 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return redirect("podcasts:index")
 
-    if request.turbo.frame:
-        podcasts = (
-            Podcast.objects.filter(pub_date__isnull=False)
-            .search(request.search)
-            .order_by("-rank", "-pub_date")
-        )
-        return render_paginated_response(
-            request,
-            podcasts,
-            "podcasts/_podcast_list_cached.html",
-            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
-        )
-
-    return TemplateResponse(request, "podcasts/search.html")
+    podcasts = (
+        Podcast.objects.filter(pub_date__isnull=False)
+        .search(request.search)
+        .order_by("-rank", "-pub_date")
+    )
+    return render_paginated_response(
+        request,
+        podcasts,
+        "podcasts/search.html",
+        "podcasts/_podcast_list_cached.html",
+        {
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+        },
+    )
 
 
 @login_required

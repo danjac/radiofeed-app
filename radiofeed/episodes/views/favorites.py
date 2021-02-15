@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream
@@ -14,20 +13,20 @@ from . import get_episode_or_404
 
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
-    if request.turbo.frame:
-        favorites = Favorite.objects.filter(user=request.user).select_related(
-            "episode", "episode__podcast"
-        )
-        if request.search:
-            favorites = favorites.search(request.search).order_by("-rank", "-created")
-        else:
-            favorites = favorites.order_by("-created")
+    favorites = Favorite.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
+    )
+    if request.search:
+        favorites = favorites.search(request.search).order_by("-rank", "-created")
+    else:
+        favorites = favorites.order_by("-created")
 
-        return render_paginated_response(
-            request, favorites, "episodes/favorites/_episode_list.html"
-        )
-
-    return TemplateResponse(request, "episodes/favorites/index.html")
+    return render_paginated_response(
+        request,
+        favorites,
+        "episodes/favorites/index.html",
+        "episodes/favorites/_episode_list.html",
+    )
 
 
 @require_POST

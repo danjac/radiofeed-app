@@ -25,43 +25,38 @@ def index(request: HttpRequest) -> HttpResponse:
         if request.user.is_authenticated
         else []
     )
+
     has_subscriptions: bool = bool(subscriptions)
 
-    if request.turbo.frame:
-
-        if has_subscriptions:
-            # we want a list of the *latest* episode for each podcast
-            latest_episodes = (
-                Episode.objects.filter(podcast=OuterRef("pk"))
-                .order_by("-pub_date")
-                .distinct()
-            )
-
-            episode_ids = (
-                Podcast.objects.filter(pk__in=subscriptions)
-                .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-                .values_list("latest_episode", flat=True)
-                .distinct()
-            )
-
-            episodes = (
-                Episode.objects.select_related("podcast")
-                .filter(pk__in=set(episode_ids))
-                .order_by("-pub_date")
-                .distinct()
-            )
-        else:
-            episodes = Episode.objects.none()
-
-        return render_paginated_response(
-            request,
-            episodes,
-            "episodes/_episode_list.html",
+    if has_subscriptions:
+        # we want a list of the *latest* episode for each podcast
+        latest_episodes = (
+            Episode.objects.filter(podcast=OuterRef("pk"))
+            .order_by("-pub_date")
+            .distinct()
         )
 
-    return TemplateResponse(
+        episode_ids = (
+            Podcast.objects.filter(pk__in=subscriptions)
+            .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
+            .values_list("latest_episode", flat=True)
+            .distinct()
+        )
+
+        episodes = (
+            Episode.objects.select_related("podcast")
+            .filter(pk__in=set(episode_ids))
+            .order_by("-pub_date")
+            .distinct()
+        )
+    else:
+        episodes = Episode.objects.none()
+
+    return render_paginated_response(
         request,
+        episodes,
         "episodes/index.html",
+        "episodes/_episode_list.html",
         {
             "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
@@ -76,20 +71,19 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
             "episodes:index" if request.user.is_authenticated else "podcasts:index"
         )
 
-    if request.turbo.frame:
-        episodes = (
-            Episode.objects.select_related("podcast")
-            .search(request.search)
-            .order_by("-rank", "-pub_date")
-        )
-        return render_paginated_response(
-            request,
-            episodes,
-            "episodes/_episode_list_cached.html",
-            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
-        )
+    episodes = (
+        Episode.objects.select_related("podcast")
+        .search(request.search)
+        .order_by("-rank", "-pub_date")
+    )
 
-    return TemplateResponse(request, "episodes/search.html")
+    return render_paginated_response(
+        request,
+        episodes,
+        "episodes/search.html",
+        "episodes/_episode_list_cached.html",
+        {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
+    )
 
 
 def episode_detail(

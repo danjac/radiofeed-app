@@ -41,26 +41,23 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
         Category.objects.select_related("parent"), pk=category_id
     )
 
-    if request.turbo.frame:
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
-        podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    if request.search:
+        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+    else:
+        podcasts = podcasts.order_by("-pub_date")
 
-        if request.search:
-            podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-        else:
-            podcasts = podcasts.order_by("-pub_date")
-
-        return render_paginated_response(
-            request,
-            podcasts,
-            "podcasts/_podcast_list_cached.html",
-            {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
-        )
-
-    return TemplateResponse(
+    return render_paginated_response(
         request,
+        podcasts,
         "podcasts/categories/detail.html",
-        {"category": category, "children": category.children.order_by("name")},
+        "podcasts/_podcast_list_cached.html",
+        {
+            "category": category,
+            "children": category.children.order_by("name"),
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+        },
     )
 
 

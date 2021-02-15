@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
+from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 
 from turbo_response import TurboFrame
@@ -33,17 +34,19 @@ def render_paginated_response(
     request: HttpRequest,
     queryset: QuerySet,
     template_name: str,
+    partial_template_name: str,
     extra_context: Optional[Dict] = None,
     **pagination_kwargs
 ) -> HttpResponse:
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            template_name,
-            {
-                "page_obj": paginate(request, queryset, **pagination_kwargs),
-                **(extra_context or {}),
-            },
+    context = {
+        "page_obj": paginate(request, queryset, **pagination_kwargs),
+        "pagination_template": partial_template_name,
+        **(extra_context or {}),
+    }
+    if request.turbo.frame:
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(partial_template_name, context)
+            .response(request)
         )
-        .response(request)
-    )
+    return TemplateResponse(request, template_name, context)

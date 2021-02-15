@@ -55,38 +55,27 @@ def podcast_episodes(
     podcast = get_podcast_or_404(podcast_id)
     ordering: Optional[str] = request.GET.get("ordering")
 
-    if request.turbo.frame:
+    episodes = podcast.episode_set.select_related("podcast")
 
-        # thumbnail will be same for all episodes, so just preload
-        # it once here
+    if request.search:
+        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+    else:
+        order_by = "pub_date" if ordering == "asc" else "-pub_date"
+        episodes = episodes.order_by(order_by)
 
-        episodes = podcast.episode_set.select_related("podcast")
-
-        if request.search:
-            episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-        else:
-            order_by = "pub_date" if ordering == "asc" else "-pub_date"
-            episodes = episodes.order_by(order_by)
-
-        return render_paginated_response(
-            request,
-            episodes,
-            "episodes/_episode_list_cached.html",
-            {
-                "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
-                "podcast_image": podcast.get_cover_image_thumbnail(),
-                "podcast_url": reverse(
-                    "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
-                ),
-            },
-        )
-
-    return render_podcast_detail_response(
+    return render_paginated_response(
         request,
+        episodes,
         "podcasts/detail/episodes.html",
-        podcast,
+        "episodes/_episode_list_cached.html",
         {
+            **get_podcast_detail_context(request, podcast),
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
             "ordering": ordering,
+            "podcast_image": podcast.get_cover_image_thumbnail(),
+            "podcast_url": reverse(
+                "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
+            ),
         },
     )
 
