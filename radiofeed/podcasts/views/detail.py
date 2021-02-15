@@ -1,11 +1,10 @@
 from typing import Dict, Optional
 
-from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
 
-from radiofeed.pagination import render_paginated_response
+from radiofeed.episodes.views import render_episode_list
 
 from ..models import Podcast, Recommendation
 from . import get_podcast_or_404
@@ -63,20 +62,19 @@ def podcast_episodes(
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
 
-    return render_paginated_response(
+    return render_episode_list(
         request,
         episodes,
         "podcasts/detail/episodes.html",
-        "episodes/_episode_list_cached.html",
         {
             **get_podcast_detail_context(request, podcast),
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
             "ordering": ordering,
             "podcast_image": podcast.get_cover_image_thumbnail(),
             "podcast_url": reverse(
                 "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
             ),
         },
+        cached=True,
     )
 
 

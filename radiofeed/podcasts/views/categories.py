@@ -1,16 +1,14 @@
 from typing import List, Optional
 
-from django.conf import settings
 from django.db.models import Prefetch
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
-from radiofeed.pagination import render_paginated_response
-
 from .. import itunes
 from ..models import Category, Podcast
 from ..tasks import sync_podcast_feed
+from . import render_podcast_list
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -48,16 +46,15 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_paginated_response(
+    return render_podcast_list(
         request,
         podcasts,
         "podcasts/categories/detail.html",
-        "podcasts/_podcast_list_cached.html",
         {
             "category": category,
             "children": category.children.order_by("name"),
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
         },
+        cached=True,
     )
 
 

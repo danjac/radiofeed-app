@@ -1,6 +1,5 @@
 from typing import List, Optional, Tuple
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery
 from django.http import HttpRequest, HttpResponse
@@ -10,11 +9,10 @@ from django.urls import reverse
 
 from turbo_response import TurboFrame
 
-from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
 
 from ..models import Episode
-from . import get_episode_detail_or_404
+from . import get_episode_detail_or_404, render_episode_list
 
 
 @login_required
@@ -52,11 +50,10 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         episodes = Episode.objects.none()
 
-    return render_paginated_response(
+    return render_episode_list(
         request,
         episodes,
         "episodes/index.html",
-        "episodes/_episode_list.html",
         {
             "has_subscriptions": has_subscriptions,
             "search_url": reverse("episodes:search_episodes"),
@@ -77,12 +74,11 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return render_paginated_response(
+    return render_episode_list(
         request,
         episodes,
         "episodes/search.html",
-        "episodes/_episode_list_cached.html",
-        {"cache_timeout": settings.DEFAULT_CACHE_TIMEOUT},
+        cached=True,
     )
 
 

@@ -10,12 +10,10 @@ from django.views.decorators.cache import cache_page
 
 from turbo_response import TurboFrame
 
-from radiofeed.pagination import render_paginated_response
-
 from .. import itunes
 from ..models import Podcast
 from ..tasks import sync_podcast_feed
-from . import get_podcast_or_404
+from . import get_podcast_or_404, render_podcast_list
 
 
 def landing_page(request: HttpRequest) -> HttpResponse:
@@ -59,16 +57,15 @@ def index(request: HttpRequest) -> HttpResponse:
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    return render_paginated_response(
+    return render_podcast_list(
         request,
         podcasts,
         "podcasts/index.html",
-        "podcasts/_podcast_list.html",
         {
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
             "top_rated_podcasts": top_rated_podcasts,
             "search_url": reverse("podcasts:search_podcasts"),
         },
+        cached=not (subscriptions),
     )
 
 
@@ -82,14 +79,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         .search(request.search)
         .order_by("-rank", "-pub_date")
     )
-    return render_paginated_response(
+    return render_podcast_list(
         request,
         podcasts,
         "podcasts/search.html",
-        "podcasts/_podcast_list_cached.html",
-        {
-            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
-        },
+        cached=True,
     )
 
 
