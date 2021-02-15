@@ -48,8 +48,7 @@
     <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
     {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     {% if episode.listened %}
-    <div
-         class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
+    <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
       Listened {{ episode.listened|date }}
     </div>
     {% endif %}
@@ -89,7 +88,16 @@
         </div>
       </div>
 
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+      <div class="flex items-center">
+        {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+        {% if episode.link %}
+        <div class="text-sm font-semibold ml-2">
+          <a href="{{ episode.link }}"
+             rel="nofollow"
+             target="_blank">Website</a>
+        </div>
+        {% endif %}
+      </div>
 
     </div>
 
