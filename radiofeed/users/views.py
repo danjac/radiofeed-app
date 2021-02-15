@@ -43,7 +43,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
         Podcast.objects.filter(episode__audiolog__user=request.user)
         .annotate(num_listened=Count("episode__audiolog"))
         .order_by("-num_listened")
-        .distinct()[:5]
+        .distinct()[:10]
     )
 
     return TemplateResponse(
