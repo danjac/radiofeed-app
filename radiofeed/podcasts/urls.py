@@ -29,17 +29,17 @@ urlpatterns = [
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
-        detail.podcast_recommendations,
+        detail.recommendations,
         name="podcast_recommendations",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/about/",
-        detail.podcast_detail,
+        detail.about,
         name="podcast_detail",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
-        detail.podcast_episodes,
+        detail.episodes,
         name="podcast_episodes",
     ),
     path("discover/", categories.index, name="categories"),

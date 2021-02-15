@@ -10,7 +10,7 @@ from ..models import Podcast, Recommendation
 from . import get_podcast_or_404
 
 
-def podcast_detail(
+def about(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
@@ -19,13 +19,13 @@ def podcast_detail(
 
     return render_podcast_detail_response(
         request,
-        "podcasts/detail/detail.html",
+        "podcasts/detail/about.html",
         podcast,
         {"total_episodes": total_episodes},
     )
 
 
-def podcast_recommendations(
+def recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 
@@ -47,7 +47,7 @@ def podcast_recommendations(
     )
 
 
-def podcast_episodes(
+def episodes(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
 

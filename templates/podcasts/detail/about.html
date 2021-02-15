@@ -47,9 +47,9 @@
     {{ podcast.description|clean_html }}
   </div>
   <div>
-    {% cache 3600 podcast-categories podcast.id %}
+    {# cache 3600 podcast-categories podcast.id #}
     {% for category in podcast.categories.all %}
-    <a class="inline-block mr-3 mb-3 btn btn-default"
+    <a class="inline-block space-x-3 space-y-3 btn btn-default"
        title="{{ category.name }}"
        href="{{ category.get_absolute_url }}">
       <div class="flex items-center">
@@ -58,7 +58,7 @@
       </div>
     </a>
     {% endfor %}
-    {% endcache %}
+    {# endcache #}
   </div>
 
 </div>
