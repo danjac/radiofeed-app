@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import reverse
 
-from radiofeed.episodes.views import render_episode_list
+from radiofeed.episodes.views import render_episode_list_response
 
 from ..models import Podcast, Recommendation
 from . import get_podcast_or_404
@@ -62,7 +62,7 @@ def podcast_episodes(
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
 
-    return render_episode_list(
+    return render_episode_list_response(
         request,
         episodes,
         "podcasts/detail/episodes.html",

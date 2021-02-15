@@ -12,7 +12,7 @@ from turbo_response import TurboFrame
 from radiofeed.podcasts.models import Podcast
 
 from ..models import Episode
-from . import get_episode_detail_or_404, render_episode_list
+from . import get_episode_detail_or_404, render_episode_list_response
 
 
 @login_required
@@ -50,7 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         episodes = Episode.objects.none()
 
-    return render_episode_list(
+    return render_episode_list_response(
         request,
         episodes,
         "episodes/index.html",
@@ -74,7 +74,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return render_episode_list(
+    return render_episode_list_response(
         request,
         episodes,
         "episodes/search.html",

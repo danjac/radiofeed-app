@@ -21,7 +21,7 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
     )
 
 
-def render_episode_list(
+def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
     template_name: str,

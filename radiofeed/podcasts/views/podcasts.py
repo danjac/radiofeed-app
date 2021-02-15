@@ -13,7 +13,7 @@ from turbo_response import TurboFrame
 from .. import itunes
 from ..models import Podcast
 from ..tasks import sync_podcast_feed
-from . import get_podcast_or_404, render_podcast_list
+from . import get_podcast_or_404, render_podcast_list_response
 
 
 def landing_page(request: HttpRequest) -> HttpResponse:
@@ -57,7 +57,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     top_rated_podcasts = not (subscriptions) and not (request.search)
 
-    return render_podcast_list(
+    return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/index.html",
@@ -79,7 +79,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         .search(request.search)
         .order_by("-rank", "-pub_date")
     )
-    return render_podcast_list(
+    return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/search.html",

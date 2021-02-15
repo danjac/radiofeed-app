@@ -14,7 +14,7 @@ def get_podcast_or_404(podcast_id: int) -> Podcast:
     return get_object_or_404(Podcast, pk=podcast_id)
 
 
-def render_podcast_list(
+def render_podcast_list_response(
     request: HttpRequest,
     podcasts: QuerySet,
     template_name: str,

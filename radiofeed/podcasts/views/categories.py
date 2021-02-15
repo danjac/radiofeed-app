@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 from .. import itunes
 from ..models import Category, Podcast
 from ..tasks import sync_podcast_feed
-from . import render_podcast_list
+from . import render_podcast_list_response
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -46,7 +46,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_podcast_list(
+    return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/categories/detail.html",
