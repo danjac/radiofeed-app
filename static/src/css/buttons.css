@@ -12,7 +12,7 @@ form.submitting .btn {
 }
 
 .btn-default {
-  @apply text-white bg-blue-800;
+  @apply text-white bg-blue-800 border border-blue-800 dark:border-white;
 }
 
 .btn-default[disabled],
