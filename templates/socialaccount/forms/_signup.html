@@ -1,0 +1,15 @@
+{% load i18n %}
+{% block form_hidden_fields %}
+{% if redirect_field_value %}
+<input type="hidden"
+       name="{{ redirect_field_name }}"
+       value="{{ redirect_field_value }}" />
+{% endif %}
+{% endblock %}
+
+{% block form_buttons %}
+    <button class="btn btn-default"
+            type="submit">
+      {% svg "plus" css_class="btn-icon mr-2" %}
+      {% translate "Sign Up" %}</button>
+{% endblock %}

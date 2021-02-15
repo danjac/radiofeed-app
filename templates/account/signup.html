@@ -11,35 +11,7 @@
   <a class="underline hover:text-blue-500"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
-
-<form {% include "forms/_form_attrs.html" %}>
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden"
-         name="{{ redirect_field_name }}"
-         value="{{ redirect_field_value }}" />
-  {% endif %}
-  {% include "forms/_errors.html" with errors=form.non_field_errors %}
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.username %}
-  </div>
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.email %}
-  </div>
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.password1 %}
-  </div>
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.password2 %}
-  </div>
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Sign Up" %}</button>
-  </div>
-</form>
+{% include "account/forms/_signup.html" %}
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 
 {% endblock %}

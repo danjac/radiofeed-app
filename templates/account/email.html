@@ -81,22 +81,6 @@
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-
-<form {% include "forms/_form_attrs.html" %}>
-  {% csrf_token %}
-  {% include "forms/_errors.html" with errors=form.non_field_errors %}
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.email %}
-  </div>
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            name="action_add"
-            value="1"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Add E-Mail" %}
-    </button>
-  </div>
-</form>
+{% include "account/forms/_email.html" %}
 {% endif %}
 {% endblock %}

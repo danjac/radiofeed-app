@@ -1,0 +1,32 @@
+<form {% block form_attrs %}{% include "forms/_form_attrs.html" %}{% endblock %}>
+  {% csrf_token %}
+
+  {% block hidden_fields %}
+
+  {% for field in form %}
+  {% if field.is_hidden %}
+  {{ field }}
+  {% endif %}
+  {% endfor %}
+
+  {% endblock %}
+
+  {% include "forms/_errors.html" with errors=form.non_field_errors %}
+
+  {% for field in form %}
+  {% if not field.is_hidden %}
+  <div class="mb-3">
+    {% if field.field.widget.input_type == "checkbox" %}
+    {% include "forms/_checkbox_field.html" %}
+    {% else %}
+    {% include "forms/_field.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+  {% endfor %}
+
+  <div class="flex items-center justify-end">
+    {% block form_buttons %}{% endblock %}
+  </div>
+
+  </form>

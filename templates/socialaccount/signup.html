@@ -11,32 +11,6 @@
   use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
+{% include "socialaccount/forms/_signup.html" %}
 
-<form {% include "forms/_form_attrs.html" %}>
-
-  {% csrf_token %}
-  {% include "forms/_errors.html" with errors=form.non_field_errors %}
-
-  {% if redirect_field_value %}
-  <input type="hidden"
-         name="{{ redirect_field_name }}"
-         value="{{ redirect_field_value }}" />
-  {% endif %}
-
-  {% include "forms/_errors.html" with errors=form.non_field_errors %}
-
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.username %}
-  </div>
-  <div class="mb-3">
-    {% include "forms/_field.html" with field=form.email %}
-  </div>
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Sign Up" %}</button>
-  </div>
-</form>
 {% endblock %}

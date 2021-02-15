@@ -5,21 +5,5 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-
-<form {% include "forms/_form_attrs.html"%}>
-  {% csrf_token %}
-
-  <div class="mb-3">
-    {% include "forms/_checkbox_field.html" with field=form.send_recommendations_email %}
-  </div>
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            type="submit">
-      {% svg "check" css_class="btn-icon mr-2" %}
-      {% translate "Save Changes" %}
-    </button>
-  </div>
-</form>
-
+{% include "account/forms/_preferences.html" %}
 {% endblock %}
