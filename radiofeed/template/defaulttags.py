@@ -93,19 +93,20 @@ def keepspaces(text: Optional[str]) -> str:
 
 
 @register.inclusion_tag("_svg.html")
-def svg(name: str, **attrs) -> Dict:
+def svg(name: str, css_class="", **attrs) -> Dict:
     return {
         "svg_template": f"svg/_{name}.svg",
-        **attrs,
+        "css_class": css_class,
+        "attrs": _to_html_attrs(attrs),
     }
 
 
 @register.inclusion_tag("_button.html")
 def button(
     text: str,
-    icon: Optional[str] = None,
+    icon: str = "",
     type: str = "default",
-    css_class: Optional[str] = None,
+    css_class: str = "",
     **attrs,
 ) -> Dict:
     return {
