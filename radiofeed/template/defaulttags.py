@@ -108,7 +108,7 @@ def svg(name: str, css_class="", **attrs) -> Dict:
     }
 
 
-@register.inclusion_tag("_button.html")
+@register.inclusion_tag("forms/_button.html")
 def button(
     text: str,
     icon: str = "",
