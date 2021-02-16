@@ -12,7 +12,7 @@
     <a class="link mr-2 hidden sm:inline-block text-sm"
        href="{{ request.path }}">Clear</a>
     {% endif %}
-    {% include "_search_form.html" with placeholder="Filter categories..." %}
+    {% include "forms/_search_form.html" with placeholder="Filter categories..." %}
   </div>
   {% if search %}
   <div class="sm:hidden mb-3 flex justify-center">
