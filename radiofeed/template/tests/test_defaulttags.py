@@ -2,7 +2,26 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Category
 
-from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons, svg
+from ..defaulttags import (
+    active_link,
+    htmlattrs,
+    jsonify,
+    keepspaces,
+    percent,
+    share_buttons,
+    svg,
+)
+
+
+class TestHtmlAttrs:
+    def test_empty_dict(self):
+        assert htmlattrs({}) == ""
+
+    def test_attrs(self):
+        assert (
+            htmlattrs({"data_action": "submit", "type": "button"})
+            == 'data-action="submit" type="button"'
+        )
 
 
 class TestJsonify:

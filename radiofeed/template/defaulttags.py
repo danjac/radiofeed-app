@@ -92,12 +92,19 @@ def keepspaces(text: Optional[str]) -> str:
     )
 
 
+@register.filter
+def htmlattrs(attrs: Dict) -> str:
+    return mark_safe(
+        " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
+    )
+
+
 @register.inclusion_tag("_svg.html")
 def svg(name: str, css_class="", **attrs) -> Dict:
     return {
         "svg_template": f"svg/_{name}.svg",
         "css_class": css_class,
-        "attrs": _to_html_attrs(attrs),
+        "attrs": htmlattrs(attrs),
     }
 
 
@@ -114,11 +121,5 @@ def button(
         "icon": icon,
         "type": type,
         "css_class": css_class,
-        "attrs": _to_html_attrs(attrs),
+        "attrs": htmlattrs(attrs),
     }
-
-
-def _to_html_attrs(attrs: Dict) -> str:
-    return mark_safe(
-        " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
-    )
