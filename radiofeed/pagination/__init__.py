@@ -9,8 +9,6 @@ from django.utils.translation import gettext as _
 
 from turbo_response import TurboFrame
 
-# from django.views.decorators.cache import cache_page
-
 
 def paginate(
     request: HttpRequest,
