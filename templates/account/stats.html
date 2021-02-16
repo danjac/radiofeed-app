@@ -13,7 +13,7 @@
 
     <h2 class="font-bold mb-3">Your Most Listened Podcasts</h2>
 
-    <div class="border p-3 dark:border-gray-500">
+    <div class="border p-3 dark:border-gray-500 text-sm">
       <ol class="list-decimal list-inside">
         {% for podcast in most_listened %}
         <li class="{% if not forloop.last %}mb-3{% endif %}">
@@ -31,7 +31,7 @@
 
     <h2 class="font-bold mb-3">Other Stats</h2>
 
-    <div class="divide-y mb-3 border p-3 dark:border-gray-500 dark:divide-gray-500">
+    <div class="divide-y mb-3 border p-3 dark:border-gray-500 dark:divide-gray-500 text-sm">
 
       <div class="flex justify-between py-3">
         <div class="w-1/2">Joined</div>
