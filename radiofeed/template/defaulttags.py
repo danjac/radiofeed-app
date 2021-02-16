@@ -39,7 +39,7 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
     return ActiveLink(url, False, False)
 
 
-@register.inclusion_tag("_share.html", takes_context=True)
+@register.inclusion_tag("share/_share_buttons.html", takes_context=True)
 def share_buttons(context: RequestContext, url: str, subject: str):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
