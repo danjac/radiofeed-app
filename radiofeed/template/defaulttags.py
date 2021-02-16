@@ -99,7 +99,7 @@ def htmlattrs(attrs: Dict) -> str:
     )
 
 
-@register.inclusion_tag("_svg.html")
+@register.inclusion_tag("svg/_svg.html")
 def svg(name: str, css_class="", **attrs) -> Dict:
     return {
         "svg_template": f"svg/_{name}.svg",
