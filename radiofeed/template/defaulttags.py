@@ -102,9 +102,19 @@ def svg(name: str, **attrs) -> Dict:
 
 @register.inclusion_tag("_button.html")
 def button(
-    text: str, icon: Optional[str] = None, type: str = "default", **attrs
+    text: str,
+    icon: Optional[str] = None,
+    type: str = "default",
+    css_class: Optional[str] = None,
+    **attrs,
 ) -> Dict:
-    return {"text": text, "icon": icon, "type": type, "attrs": _to_html_attrs(attrs)}
+    return {
+        "text": text,
+        "icon": icon,
+        "type": type,
+        "css_class": css_class,
+        "attrs": _to_html_attrs(attrs),
+    }
 
 
 def _to_html_attrs(attrs: Dict) -> str:
