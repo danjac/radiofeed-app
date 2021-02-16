@@ -1,8 +1,5 @@
 {% load static pagination %}
-
-
 {% block results %}{% endblock %}
-
 {% if page_obj.has_next %}
 <turbo-frame id="page-{{ page_obj.next_page_number }}"
              src="{% pagination_url page_obj.next_page_number %}"
