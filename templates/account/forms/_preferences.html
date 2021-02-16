@@ -1,9 +1,5 @@
 {% extends "forms/base.html" %}
 {% load i18n %}
 {% block form_buttons %}
-<button class="btn btn-default flex items-center"
-        type="submit">
-  {% svg "check" css_class="btn-icon mr-2" %}
-  {% translate "Save Changes" %}
-</button>
+{% button _("Save Changes") icon="check" %}
 {% endblock %}

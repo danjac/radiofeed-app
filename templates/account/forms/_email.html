@@ -1,11 +1,5 @@
 {% extends "forms/base.html" %}
 {% load i18n %}
 {% block form_buttons %}
-<button class="btn btn-default flex items-center"
-        name="action_add"
-        value="1"
-        type="submit">
-  {% svg "plus" css_class="btn-icon mr-2" %}
-  {% translate "Add E-Mail" %}
-</button>
+{% button _("Add E-Mail") icon="plus" name="action_add" value="1" %}
 {% endblock %}

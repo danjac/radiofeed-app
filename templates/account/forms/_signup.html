@@ -11,8 +11,5 @@
 {% endblock %}
 
 {% block form_buttons %}
-<button class="btn btn-default flex items-center"
-        type="submit">
-  {% svg "plus" css_class="btn-icon mr-2" %}
-  {% translate "Sign Up" %}</button>
+{% button _("Sign Up") icon="plus" %}
 {% endblock %}

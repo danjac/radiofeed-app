@@ -98,3 +98,16 @@ def svg(name: str, **attrs) -> Dict:
         "svg_template": f"svg/_{name}.svg",
         **attrs,
     }
+
+
+@register.inclusion_tag("_button.html")
+def button(
+    text: str, icon: Optional[str] = None, type: str = "default", **attrs
+) -> Dict:
+    return {"text": text, "icon": icon, "type": type, "attrs": _to_html_attrs(attrs)}
+
+
+def _to_html_attrs(attrs: Dict) -> str:
+    return mark_safe(
+        " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
+    )

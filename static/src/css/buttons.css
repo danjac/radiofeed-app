@@ -38,7 +38,7 @@ form.submitting .btn-secondary {
 }
 
 .btn-danger {
-  @apply text-white bg-red-800;
+  @apply text-white bg-red-800 border border-red-800 dark:border-white;
 }
 
 .btn-danger:hover {
