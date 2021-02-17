@@ -1,5 +1,6 @@
 {% extends "forms/_form.html" %}
 {% load i18n %}
+{% block form_attrs %}{{ block.super }} id="{{ turbo_stream_target }}"{% endblock %}
 {% block form_buttons %}
 {% button _("Save Changes") icon="check" %}
 {% endblock %}

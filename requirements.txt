@@ -18,8 +18,8 @@ backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
 bleach==3.3.0             # via -r requirements.in
-boto3==1.17.7             # via -r requirements.in
-botocore==1.20.7          # via boto3, s3transfer
+boto3==1.17.9             # via -r requirements.in
+botocore==1.20.9          # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.5              # via cryptography
@@ -33,7 +33,7 @@ click==7.1.2              # via celery, click-didyoumean, click-plugins, click-r
 colorama==0.4.4           # via icecream
 constantly==15.1.0        # via twisted
 coverage==5.4             # via pytest-cov
-cryptography==3.4.4       # via -r requirements.in, autobahn, pyjwt, pyopenssl, service-identity
+cryptography==3.4.6       # via -r requirements.in, autobahn, pyjwt, pyopenssl, service-identity
 daphne==3.0.1             # via channels
 decorator==4.4.2          # via ipython
 defusedxml==0.6.0         # via python3-openid
@@ -47,14 +47,13 @@ django-environ==0.4.5     # via -r requirements.in
 django-extensions==3.1.1  # via -r requirements.in
 django-model-utils==4.1.1  # via -r requirements.in
 django-redis==4.12.1      # via -r requirements.in
-django-reusable-components==0.8.1  # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.1  # via django-celery-beat
 django-turbo-allauth==0.0.5  # via -r requirements.in
-django-turbo-response==0.0.34  # via -r requirements.in, django-turbo-allauth
+django-turbo-response==0.0.35  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
-django==3.1.6             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-reusable-components, django-silk, django-storages, django-timezone-field, django-turbo-allauth
+django==3.1.6             # via -r requirements.in, channels, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.8.0            # via pytest-xdist
 executing==0.5.4          # via icecream
 factory-boy==3.2.0        # via -r requirements.in
@@ -101,7 +100,7 @@ pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycodestyle==2.6.0        # via autopep8
 pycparser==2.20           # via cffi
 pydantic==1.7.3           # via -r requirements.in
-pygments==2.7.4           # via django-silk, icecream, ipython
+pygments==2.8.0           # via django-silk, icecream, ipython
 pyhamcrest==2.0.2         # via twisted
 pyjwt[crypto]==2.0.1      # via django-allauth
 pyopenssl==20.0.1         # via -r requirements.in, twisted
@@ -125,7 +124,7 @@ requests==2.25.1          # via django-allauth, django-anymail, django-silk, req
 s3transfer==0.3.4         # via boto3
 scikit-learn==0.24.1      # via sklearn
 scipy==1.6.0              # via scikit-learn
-sentry-sdk==0.20.1        # via -r requirements.in
+sentry-sdk==0.20.2        # via -r requirements.in
 service-identity==18.1.0  # via twisted
 sgmllib3k==1.0.0          # via feedparser
 six==1.15.0               # via asttokens, automat, bleach, click-repl, html5lib, pyopenssl, python-dateutil
@@ -143,7 +142,7 @@ txaio==20.12.1            # via autobahn
 unidecode==1.2.0          # via -r requirements.in
 urllib3==1.26.3           # via botocore, requests, sentry-sdk
 uvicorn==0.13.3           # via -r requirements.in
-uvloop==0.15.0            # via -r requirements.in
+uvloop==0.15.1            # via -r requirements.in
 vine==5.0.0               # via amqp, celery
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach, html5lib
