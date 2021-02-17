@@ -35,8 +35,6 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         request,
         form,
         "account/preferences.html",
-        turbo_stream_target="preferences-form",
-        turbo_stream_template="account/forms/_preferences.html",
     )
 
 
