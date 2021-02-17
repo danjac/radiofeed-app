@@ -28,7 +28,13 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         messages.success(request, "Your preferences have been saved")
         return redirect_303(request.path)
 
-    return render_form_response(request, result.form, "account/preferences.html")
+    return render_form_response(
+        request,
+        result.form,
+        "account/preferences.html",
+        turbo_stream_target="preferences-form",
+        turbo_stream_template="account/forms/_preferences.html",
+    )
 
 
 @login_required
