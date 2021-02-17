@@ -1,10 +1,10 @@
-// Base Service Worker implementation.  To use your own Service Worker, set the PWA_SERVICE_WORKER_PATH variable in settings.py
 {% load static %}
 
-var staticCacheName = 'django-pwa-v' + new Date().getTime();
+var staticCacheName = 'radiofeed-' + new Date().getTime();
 var filesToCache = [
   '{% url "offline" %}',
   '{% static debug|yesno:'dev/app.css,dist/app.css' %}',
+  '{% static debug|yesno:'dev/app.js,dist/app.js' %}',
   '{% static 'img/wave.png' %}'
 ];
 
@@ -24,7 +24,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((cacheName) => cacheName.startsWith('django-pwa-'))
+          .filter((cacheName) => cacheName.startsWith('radiofeed-'))
           .filter((cacheName) => cacheName !== staticCacheName)
           .map((cacheName) => caches.delete(cacheName))
       );

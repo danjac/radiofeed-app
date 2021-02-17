@@ -5,10 +5,40 @@
 <link rel="apple-touch-icon image_src"
       href="{% static 'apple-touch-icon.png' %}">
 
+<link rel="manifest"
+      href="/manifest.json">
+<meta name="mobile-web-app-capable"
+      content="yes">
+<meta name="application-name"
+      content="{{ request.site.name }}">
+
+<meta name="apple-mobile-web-app-capable"
+      content="yes">
+<meta name="apple-mobile-web-app-title"
+      content="{{ request.site.name }}">
+<meta name="apple-mobile-web-app-status-bar-style"
+      content="">
+
+<meta name="theme-color" content="#eee">
+
 <link rel="stylesheet"
       data-turbo-track="reload"
       media="screen"
       href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
+
 <script src="{% static debug|yesno:'dev/app.js,dist/app.js' %}"
         defer
         data-turbo-track="reload"></script>
+
+<script>
+  // Initialize the service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/serviceworker.js', {
+      scope: '/'
+    }).then(function(registration) {
+      console.log('radiofeed: ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('radiofeed: ServiceWorker registration failed: ', err); {};
+    });
+  }
+</script>

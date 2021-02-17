@@ -4,12 +4,12 @@
   "name": "{{ request.site.name }}",
   "short_name": "{{ request.site.name }}",
   "description": "Podcast app",
-  "start_url": "/",
+  "start_url": "{% url 'offline' %}",
   "display": "standalone",
   "scope": "/",
   "orientation": "any",
-  "background_color": "default",
-  "theme_color": "default",
+  "background_color": "#fff",
+  "theme_color": "#eee",
   "status_bar": "default",
   "icons": [
     {
