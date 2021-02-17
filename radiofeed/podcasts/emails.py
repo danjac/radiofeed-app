@@ -42,7 +42,7 @@ def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
         "podcasts/emails/recommendations.html", context
     )
     send_mail(
-        f"Hi {user.username}, here are 3 new podcasts you might like!",
+        f"Hi {user.username}, here are some new podcasts you might like!",
         message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
