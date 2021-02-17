@@ -22,7 +22,7 @@
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
-    {% include "_search_form.html" with placeholder="Search episodes" %}
+    {% include "forms/_search_form.html" with placeholder="Search episodes" %}
   </div>
 </div>
 {% if search %}
@@ -34,5 +34,5 @@
      href="{{ request.path }}">Clear</a>
 </div>
 {% endif %}
-{% include "episodes/_episode_list.html" %}
+{% include pagination_template %}
 {% endblock %}

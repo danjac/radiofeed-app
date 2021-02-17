@@ -1,4 +1,3 @@
-# Local
 from ..templatetags import pagination_url
 
 

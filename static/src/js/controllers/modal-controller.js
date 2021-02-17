@@ -10,7 +10,7 @@ export default class extends Controller {
   }
 
   closeOnEsc(event) {
-    if (event.which === 27) {
+    if (event.code === 'Escape') {
       this.close();
     }
   }

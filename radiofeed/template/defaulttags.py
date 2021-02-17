@@ -8,7 +8,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter
-from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 import bs4
@@ -40,7 +39,7 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
     return ActiveLink(url, False, False)
 
 
-@register.inclusion_tag("_share.html", takes_context=True)
+@register.inclusion_tag("share/_share_buttons.html", takes_context=True)
 def share_buttons(context: RequestContext, url: str, subject: str):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
@@ -93,13 +92,34 @@ def keepspaces(text: Optional[str]) -> str:
     )
 
 
-@register.simple_tag
-def svg(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
-    return render_to_string(
-        f"svg/_{name}.svg",
-        {"css_class": css_class, "title": title, **_convert_attrs(attrs)},
+@register.filter
+def htmlattrs(attrs: Dict) -> str:
+    return mark_safe(
+        " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
     )
 
 
-def _convert_attrs(attrs: Dict[str, str]) -> Dict[str, str]:
-    return {k.replace("_", "-"): v for k, v in attrs.items()}
+@register.inclusion_tag("svg/_svg.html")
+def svg(name: str, css_class="", **attrs) -> Dict:
+    return {
+        "svg_template": f"svg/_{name}.svg",
+        "css_class": css_class,
+        "attrs": htmlattrs(attrs),
+    }
+
+
+@register.inclusion_tag("forms/_button.html")
+def button(
+    text: str,
+    icon: str = "",
+    type: str = "default",
+    css_class: str = "",
+    **attrs,
+) -> Dict:
+    return {
+        "text": text,
+        "icon": icon,
+        "type": type,
+        "css_class": css_class,
+        "attrs": htmlattrs(attrs),
+    }

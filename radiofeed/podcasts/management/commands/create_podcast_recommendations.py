@@ -1,7 +1,5 @@
-# Django
 from django.core.management.base import BaseCommand
 
-# RadioFeed
 from radiofeed.podcasts.recommender import PodcastRecommender
 
 

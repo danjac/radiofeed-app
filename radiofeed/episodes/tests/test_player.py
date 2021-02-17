@@ -1,7 +1,6 @@
-# Third Party Libraries
 import pytest
 
-# Local
+from ..models import AudioLog
 from ..player import Player
 
 pytestmark = pytest.mark.django_db
@@ -52,6 +51,32 @@ class TestPlayer:
         assert not player
         assert player.current_time == 0
         assert player.playback_rate == 1.0
+
+    def test_eject_and_mark_completed(self, rf, user, episode):
+        req = rf.get("/")
+        req.user = user
+        req.session = {
+            "player": {
+                "episode": episode.id,
+                "current_time": 1000,
+                "playback_rate": 1.2,
+            }
+        }
+
+        player = Player(req)
+        assert player.current_time == 1000
+        assert player.playback_rate == 1.2
+        current_episode = player.eject(mark_completed=True)
+
+        assert current_episode == episode
+
+        assert not player
+        assert player.current_time == 0
+        assert player.playback_rate == 1.0
+
+        log = AudioLog.objects.get(episode=episode, user=user)
+        assert log.completed
+        assert log.current_time == 0
 
     def test_is_playing_true(self, rf, episode):
         req = rf.get("/")

@@ -1,13 +1,18 @@
 {% load thumbnail static %}
 {% spaceless %}
-<img class="object-cover border bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
+<img class="object-cover border dark:border-gray-500 bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
      title="{{ podcast.title }}"
      alt="{{ podcast.title }}"
      {% if podcast_image %}
      src="{{ podcast_image.url }}"
+     width="{{ podcast_image.width }}"
+     height="{{ podcast_image.height }}"
+     {% elif lazy %}
+     src="{% static 'img/podcast-icon.png' %}"
+     width="200"
+     height="200"
      {% else %}
      {% if podcast.cover_image %}
-     {% if is_turbo_frame or not lazy %}
      {% with size=image_size|default:"20" %}
      {% thumbnail podcast.cover_image "200" format="WEBP" crop="center" as img %}
      src="{{ img.url }}"
@@ -20,9 +25,8 @@
      {% endwith %}
      {% else %}
      src="{% static 'img/podcast-icon.png' %}"
-     {% endif %}
-     {% else %}
-     src="{% static 'img/podcast-icon.png' %}"
+     width="200"
+     height="200"
      {% endif %}
      {% endif %} />
 {% endspaceless %}

@@ -1,4 +1,3 @@
-# Standard Library
 import collections
 import datetime
 import logging
@@ -6,18 +5,15 @@ import operator
 import statistics
 from typing import Dict, Generator, List, Tuple
 
-# Django
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 
-# Third Party Libraries
 import pandas
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Local
 from ..models import Category, Podcast, Recommendation
 from .text_parser import get_stopwords
 

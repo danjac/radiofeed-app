@@ -1,14 +1,13 @@
-{% block episodes %}
+{% extends "pagination/_object_list.html" %}
+
+{% block results %}
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" %}
 {% empty %}
 
-{% block empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
-{% endblock empty %}
 
 {% endfor %}
-{% endblock %}
-{% include "_pagination.html" %}
+{% endblock results %}

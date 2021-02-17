@@ -1,6 +1,6 @@
 {% extends "account/settings_base.html" %}
 
-{% load i18n widget_tweaks %}
+{% load i18n %}
 
 {% block subtitle %} | {% translate "E-mail Addresses" %}{% endblock %}
 
@@ -15,7 +15,7 @@
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
-  <div class="border p-2 mb-3">
+  <div class="border p-2 mb-3 dark:border-gray-500">
     <label for="email_radio_{{forloop.counter}}"
            class="flex items-center">
 
@@ -39,32 +39,10 @@
     </label>
   </div>
   {% endfor %}
-  <div class="sm:flex items-center justify-end mb-3">
-
-    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
-            type="submit"
-            value="1"
-            name="action_send">
-      {% svg "mail" css_class="btn-icon mr-2" %}
-      {% translate 'Re-Verify' %}
-    </button>
-    <button class="btn btn-default flex items-center justify-center mb-1 sm:mb-0 sm:mr-1 w-full sm:w-auto"
-            value="1"
-            name="action_primary">
-      {% svg "sparkles" css_class="btn-icon mr-2" %}
-      {% translate 'Make Primary' %}
-
-    </button>
-    <button class="btn btn-danger flex items-center justify-center w-full sm:w-auto"
-            type="submit"
-            data-controller="confirm"
-            data-confirm-text-value="Are you sure you want to remove this email address?"
-            data-action="confirm#confirm"
-            value="1"
-            name="action_remove">
-      {% svg "trash" css_class="btn-icon mr-2" %}
-      {% translate 'Remove' %}
-    </button>
+  <div class="flex items-center justify-evenly sm:justify-end mb-3 space-x-2">
+    {% button _("Re-Verify") icon="mail" name="action_send" value="1" %}
+    {% button _("Primary") icon="sparkles" name="action_primary" value="1" %}
+    {% button _("Remove") icon="trash" type="danger" data_controller="confirm" data_confirm_text_value=_("Are you sure you want to remove this email address?") data_action="confirm#confirm" name="action_remove" value="1" %}
     {% endwith %}
   </div>
 
@@ -72,34 +50,14 @@
 
 {% else %}
 
-<p><strong>{% translate 'Warning:'%}</strong> {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
+<p><strong>{% translate 'Warning:'%}</strong>
+  {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
+</p>
 
 {% endif %}
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% endif %}"
-      method="post"
-      action="{% url 'account_email' %}"
-      novalidate>
-  {% csrf_token %}
-  {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-800" %}
-  <div class="mb-3">
-    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.email.errors %}
-  </div>
-  {% endwith %}
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            name="action_add"
-            value="1"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Add E-Mail" %}
-    </button>
-  </div>
-</form>
+{% include "account/forms/_email.html" %}
 {% endif %}
 {% endblock %}

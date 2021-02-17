@@ -15,11 +15,11 @@
       {% if user.is_authenticated %}
       <span class="mr-1">|</span>
       <a class="font-semibold hover:text-blue-500"
-         href="{% url 'episodes:episode_list' %}">Clear</a>
+         href="{% url 'episodes:index' %}">Clear</a>
       {% endif %}
     </div>
     {% endif %}
-    {% include "_search_form.html" with placeholder="Search episodes..." %}
+    {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
   </div>
 </div>
 {% if search %}
@@ -29,9 +29,9 @@
   {% if user.is_authenticated %}
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'episodes:episode_list' %}">Clear</a>
+     href="{% url 'episodes:index' %}">Clear</a>
   {% endif %}
 </div>
 {% endif %}
-{% include "episodes/_episode_list.html" %}
+{% include pagination_template %}
 {% endblock content %}

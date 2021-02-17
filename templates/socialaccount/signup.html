@@ -1,45 +1,16 @@
 {% extends "socialaccount/base.html" %}
 
-{% load i18n widget_tweaks %}
+{% load i18n %}
 
 {% block head_title %}{% translate "Signup" %}{% endblock %}
 
 {% block content %}
 <h1 class="mb-3 text-lg font-bold">{% translate "Sign Up" %}</h1>
 
-<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
+<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to
+  use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
+{% include "account/forms/_signup.html" %}
 
-<form class="p-3 border w-full sm:w-1/2 {% if form.errors %}border-red-800{% endif %}"
-      method="post"
-      id="{{ view.turbo_stream_target }}"
-      action="{% url 'socialaccount_signup' %}"
-      novalidate>
-
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden"
-         name="{{ redirect_field_name }}"
-         value="{{ redirect_field_value }}" />
-  {% endif %}
-  {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-800" %}
-  <div class="mb-3">
-    {% render_field form.username aria-label=form.username.label placeholder=form.username.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.username.errors %}
-  </div>
-  <div class="mb-3">
-    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.email.errors %}
-  </div>
-  {% endwith %}
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Sign Up" %}</button>
-  </div>
-</form>
 {% endblock %}

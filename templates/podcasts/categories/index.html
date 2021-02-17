@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load cache %}
+
+{% block subtitle %} | Discover{% endblock %}
+
+{% block content %}
+{% cache 3600 categories search %}
+<div class="sm:flex justify-between items-center mb-3 pb-3 border-b dark:border-gray-500">
+  <h2 class="text-lg font-bold mb-3 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
+  <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
+    {% if search %}
+    <a class="link mr-2 hidden sm:inline-block text-sm"
+       href="{{ request.path }}">Clear</a>
+    {% endif %}
+    {% include "forms/_search_form.html" with placeholder="Filter categories..." %}
+  </div>
+  {% if search %}
+  <div class="sm:hidden mb-3 flex justify-center">
+    <a class="link text-sm"
+       href="{{ request.path }}">Clear</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="divide-y divide-gray-300 dark:divide-gray-500">
+  {% if search %}
+  {% for category in categories %}
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
+    <a href="{{ category.get_absolute_url }}"
+       class="link mb-3">{{ category.name }}</a>
+  </div>
+  {% empty %}
+  <p class="text-center sm:text-left">
+    No categories have been found matching <b>{{ search }}.</b>
+  </p>
+  {% endfor %}
+  {% else %}
+  {% for category in categories %}
+  {% with children=category.children.all %}
+  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
+    <div{% if children %} class="mb-3"
+                          {% endif %}>
+      <a href="{{ category.get_absolute_url }}"
+         class="link">{{ category.name }}</a>
+  </div>
+  {% if children %}
+  <div class="flex flex-wrap items-center">
+    {% for child in children %}
+    <a class="link mb-2 mr-3 text-sm"
+       href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endwith %}
+{% empty %}
+{% endfor %}
+
+{% endif %}
+</div>
+{% endcache %}
+{% endblock %}

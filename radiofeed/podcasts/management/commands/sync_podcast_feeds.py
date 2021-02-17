@@ -1,7 +1,5 @@
-# Django
 from django.core.management.base import BaseCommand, CommandParser
 
-# RadioFeed
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.rss_parser import RssParser
 from radiofeed.podcasts.tasks import sync_podcast_feed

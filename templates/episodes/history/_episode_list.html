@@ -1,16 +1,16 @@
-{% extends "episodes/_episode_list.html" %}
+{% extends "pagination/_object_list.html" %}
 
-{% block episodes %}
-{% for log in page_obj %}
-{% url 'episodes:remove_history' log.episode.id as remove_url %}
-{% include "episodes/_episode.html" with episode=log.episode remove_title="Remove episode from History" %}
-{% empty %}
-{% block empty %}
-{% if search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
-{% else %}
-Your history is currently empty.
-{% endif %}
-{% endblock empty %}
-{% endfor %}
+{% block results %}
+<div id="history">
+  {% for log in page_obj %}
+  {% url 'episodes:remove_history' log.episode.id as remove_url %}
+  {% include "episodes/_episode.html" with episode=log.episode remove_title="Remove episode from History" dom_id=log.episode.get_history_dom_id %}
+  {% empty %}
+  {% if search %}
+  <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+  {% else %}
+  Your History is currently empty.
+  {% endif %}
+  {% endfor %}
+</div>
 {% endblock %}

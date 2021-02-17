@@ -1,7 +1,5 @@
-# Third Party Libraries
 import pytest
 
-# Local
 from ..factories import EpisodeFactory
 from ..player import Player
 from ..templatetags.episodes import format_duration, get_player, is_playing

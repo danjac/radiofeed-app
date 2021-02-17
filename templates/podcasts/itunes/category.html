@@ -4,18 +4,18 @@
 {% block content %}
 
 <div class="mb-3 text-sm flex justify-center sm:block">
-  <a href="{% url 'podcasts:category_list' %}"
+  <a href="{% url 'podcasts:categories' %}"
      class="link mr-1">Discover</a>
   {% if category.parent %}
-  <span class="text-gray-500 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
      class="link mr-1">{{ category.parent.name }}</a>
   {% endif %}
-  <span class="text-gray-500 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
   <a href="{{ category.get_absolute_url }}"
      class="link mr-1">{{ category.name }}</a>
-  <span class="text-gray-500 mr-1">&gt;</span>
-  <span class="text-gray-500 mr-1">iTunes</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300 mr-1">iTunes</span>
 </div>
 
 <h2 class="text-base md:text-lg font-semibold mb-3 flex justify-center sm:block">

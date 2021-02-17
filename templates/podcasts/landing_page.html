@@ -21,7 +21,7 @@
 
     <div class="mb-3 flex justify-center">
       {% url 'podcasts:search_podcasts' as search_url %}
-      {% include "_search_form.html" with placeholder="Find a podcast..." %}
+      {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
     </div>
 
     {% cache 86400 promoted_podcasts %}

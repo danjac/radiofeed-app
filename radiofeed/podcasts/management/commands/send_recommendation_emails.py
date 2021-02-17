@@ -1,8 +1,6 @@
-# Django
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-# RadioFeed
 from radiofeed.podcasts.emails import send_recommendations_email
 
 

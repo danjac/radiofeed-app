@@ -26,6 +26,8 @@ REDIS_URL = env("REDIS_URL")
 
 CACHES = {"default": env.cache("REDIS_URL")}
 
+DEFAULT_CACHE_TIMEOUT = 3600
+
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
@@ -99,7 +101,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-DEFAULT_PAGE_SIZE = 12
+DEFAULT_PAGE_SIZE = 30
 
 # base Django admin URL (should be something obscure in production)
 
@@ -126,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 HOME_URL = reverse_lazy("podcasts:landing_page")
-LOGIN_REDIRECT_URL = reverse_lazy("episodes:episode_list")
+LOGIN_REDIRECT_URL = reverse_lazy("episodes:index")
 
 LOGIN_URL = "account_login"
 
@@ -210,6 +212,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "radiofeed.template.context_processors.google_tracking_id",
+                "radiofeed.template.context_processors.is_dark_mode",
                 "radiofeed.template.context_processors.is_cookies_accepted",
                 "radiofeed.template.context_processors.search",
             ],

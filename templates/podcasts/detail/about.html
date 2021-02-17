@@ -1,0 +1,66 @@
+{% extends "podcasts/detail/base.html" %}
+{% load cache %}
+
+{% block podcast_content %}
+<div class="p-2 mb-3 border dark:border-gray-500">
+  {% if podcast.authors %}
+  <div class="text-gray-500 dark:text-gray-300 font-semibold mb-3">{{ podcast.authors }}</div>
+  {% endif %}
+
+
+  <div class="flex items-center w-full mb-3">
+
+    {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 mr-2" %}
+
+    <div class="text-sm">
+      <div class="mb-2">
+        <a class="link"
+           href="{% url 'podcasts:podcast_episodes' podcast.id podcast.slug %}">
+          {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
+      </div>
+      <div class="flex items-center mb-2">
+        {% if podcast.link %}
+        <a href="{{ podcast.link }}"
+           class="link mr-2"
+           target="_blank"
+           rel="noopener">Website</a>
+        {% endif %}
+        <a href="{{ podcast.rss }}"
+           class="link mr-2"
+           target="_blank"
+           rel="noopener">RSS</a>
+        <a href="{{ podcast.itunes }}"
+           class="link mr-2"
+           target="_blank"
+           rel="noopener">iTunes</a>
+      </div>
+      {% share_buttons podcast.get_absolute_url podcast.title %}
+    </div>
+  </div>
+  {% if podcast.explicit %}
+  <div class="text-sm font-semibold mb-3">
+    This podcast may contain explicit content.
+  </div>
+  {% endif %}
+
+  <div class="markdown text-sm mb-3">
+    {{ podcast.description|clean_html }}
+  </div>
+  <div class="space-x-1 space-y-1">
+    {% cache 3600 podcast-categories podcast.id %}
+    {% for category in podcast.categories.all %}
+    <a class="inline-block btn btn-default"
+       title="{{ category.name }}"
+       href="{{ category.get_absolute_url }}">
+      <div class="flex items-center">
+        {% svg "tag" css_class="btn-icon mr-2" %}
+        {{ category.name }}
+      </div>
+    </a>
+    {% endfor %}
+    {% endcache %}
+  </div>
+
+</div>
+
+{% endblock %}

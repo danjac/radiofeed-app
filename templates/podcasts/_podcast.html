@@ -1,19 +1,15 @@
-<div class="p-2 border mb-3 hover:bg-gray-100">
+<div class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-800 dark:border-gray-500">
   <div class="flex items-center justify-between">
     <div class="font-bold flex items-center sm:mb-0">
 
       <div class="mr-2">
         <a href="{{ podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% if podcast.cover_image and not podcast_image %}
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                        loading="lazy"
                        src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
             {% include "podcasts/_cover_image.html" with lazy=True %}
           </turbo-frame>
-          {% else %}
-          {% include "podcasts/_cover_image.html" %}
-          {% endif %}
         </a>
       </div>
 
@@ -35,11 +31,7 @@
           </a>
           {% endif %}
 
-          <div class="inline-block text-gray-500">{{ podcast.pub_date|date }}</div>
-          {% if podcast.explicit %}
-          {% include "_explicit.html" with css_class="ml-2" %}
-          {% endif %}
-
+          <div class="inline-block text-gray-500 dark:text-gray-100">{{ podcast.pub_date|date }}</div>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { Controller } from 'stimulus';
 import Sortable from 'sortablejs';
 
 export default class extends Controller {
+  static classes = ['handle'];
   static targets = ['draggable'];
 
   static values = {
@@ -9,8 +10,6 @@ export default class extends Controller {
     url: String,
     csrfToken: String,
   };
-
-  static classes = ['handle'];
 
   connect() {
     // set put: false to prevent

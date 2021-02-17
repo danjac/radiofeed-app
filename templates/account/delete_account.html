@@ -13,14 +13,7 @@
         class="flex justify-end"
         novalidate>
     {% csrf_token %}
-    <button class="btn btn-danger flex items-center"
-            name="confirm-delete"
-            value="true"
-            type="submit">
-
-      {% svg "trash" css_class="btn-icon mr-2" %}
-      Yes, delete my account
-    </button>
+    {% button "Yes, delete my account" icon="trash" type="danger" name="confirm-delete" %}
   </form>
 </div>
 {% endblock settings_content %}

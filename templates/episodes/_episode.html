@@ -1,21 +1,22 @@
 {% load episodes %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url %}
 {% is_playing episode as is_episode_playing %}
-<div class="{% block css_class %}flex justify-between items-center mb-3 p-2 border hover:bg-gray-100{% endblock %}"
-     {% block attrs %}id="episode-{{ episode.id }}"
+<div class="{% block css_class %}flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800{% endblock %}"
+     {% block attrs %}id="{{ dom_id|default:episode.get_dom_id }}"
      {% endblock %}>
   <div class="w-full">
     <div class="flex items-center w-full">
       <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% if podcast.cover_image and not podcast_image %}
+          {% if podcast_image %}
+          {% include "podcasts/_cover_image.html" %}
+          {% else %}
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
+                       loading="lazy"
                        src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
             {% include "podcasts/_cover_image.html" with lazy=True %}
           </turbo-frame>
-          {% else %}
-          {% include "podcasts/_cover_image.html" %}
           {% endif %}
         </a>
       </div>
@@ -31,12 +32,12 @@
         </div>
 
         <div class="flex items-center">
+          {% if user.is_authenticated %}
           <div class="mr-2">
             {% include "episodes/player/_toggle.html" %}
           </div>
-          {% if user.is_authenticated %}
           <a class="mr-2 link"
-             href="{% if action_url %}{{ action_url }}{% else %}{% url 'episodes:actions' episode.id %}{% endif %}"
+             href="{% block actions_url %}{% url 'episodes:actions' episode.id %}{% endblock %}"
              title="Actions"
              data-turbo-frame="modal">
             {% svg "ellipsis" css_class="w-6 h-6" %}
@@ -44,18 +45,13 @@
           {% endif %}
           <div class="w-full">
 
-            <div class="flex items-center justify-between lg:justify-start text-sm">
-              <div class="font-semibold text-gray-500 mr-2 flex items-center">
-                <span{% if remove_url %} class="hidden sm:inline-block"{% endif %}>
-                  {{ episode.pub_date|date }}
-                </span>
-                {% if episode.explicit %}
-                {% include "_explicit.html" with css_class="ml-2" %}
-                {% endif %}
+            <div class="flex items-center justify-end sm:justify-start text-sm">
+              <div class="font-semibold text-gray-500 dark:text-gray-100 mr-2 flex items-center sm:inline-block{% if remove_url %} hidden{% endif %}">
+                {{ episode.pub_date|date }}
               </div>
               {% block mobile_extra_buttons %}
               {% if remove_url %}
-              {% include "episodes/_remove.html" with css_class="md:hidden ml-2" %}
+              {% include "episodes/_remove.html" with css_class="sm:hidden ml-2" %}
               {% endif %}
               {% endblock mobile_extra_buttons %}
             </div>

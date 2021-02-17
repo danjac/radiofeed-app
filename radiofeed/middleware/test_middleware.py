@@ -1,4 +1,3 @@
-# Local
 from . import SearchMiddleware
 
 

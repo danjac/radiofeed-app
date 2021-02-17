@@ -41,8 +41,9 @@ class Player:
             .first()
         )
 
-    def eject(self) -> Optional[Episode]:
-        episode = self.get_episode()
+    def eject(self, mark_completed: bool = False) -> Optional[Episode]:
+        if (episode := self.get_episode()) and mark_completed:
+            episode.log_activity(self.request.user, current_time=0, completed=True)
         self.request.session["player"] = _empty_player_info()
         return episode
 
@@ -52,6 +53,15 @@ class Player:
             "current_time": self.current_time,
             "playback_rate": self.playback_rate,
         }
+
+    def update(self, current_time: int, playback_rate: float) -> None:
+        self.session_data = PlayerInfo(
+            {
+                **self.session_data,  # type: ignore
+                "current_time": current_time,
+                "playback_rate": playback_rate,
+            }
+        )
 
     @property
     def current_time(self) -> float:

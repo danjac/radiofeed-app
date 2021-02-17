@@ -35,7 +35,7 @@
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 {% is_playing episode as is_episode_playing %}
-<div class="p-2 border mb-3">
+<div class="p-3 border mb-3 dark:border-gray-500">
 
   <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
   <h2 class="mb-3">
@@ -44,24 +44,18 @@
       {{ podcast.title }}
     </a>
   </h2>
-  <div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
+  <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
     <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
     {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     {% if episode.listened %}
-    <div class="font-semibold text-gray-500 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
-      Listened {{ episode.listened|timesince }}
-    </div>
-    {% endif %}
-    {% if episode.explicit %}
-    <div class="inline-block font-semibold text-red-500 ml-2 flex items-center">
-      {% include "_explicit.html" with css_class="mr-1" %}
-      Explicit
+    <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
+      Listened {{ episode.listened|date }}
     </div>
     {% endif %}
   </div>
   {% if episode.listened %}
-  <div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 sm:hidden text-sm">
-    Listened {{ episode.listened|timesince }}
+  <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 sm:hidden text-sm">
+    Listened {{ episode.listened|date }}
   </div>
   {% endif %}
 
@@ -86,21 +80,35 @@
       </div>
 
       <div class="mb-3 flex items-center">
-        <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-                     class="mr-2">
+        <div class="mr-2">
           {% include "episodes/queue/_toggle.html" %}
-        </turbo-frame>
-        <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
+        </div>
+        <div>
           {% include "episodes/favorites/_toggle.html" %}
-        </turbo-frame>
+        </div>
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+
+      <div class="flex items-center">
+        {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+        {% if episode.link %}
+        <div class="text-sm font-semibold ml-2">
+          <a href="{{ episode.link }}"
+             rel="nofollow"
+             target="_blank">Website</a>
+        </div>
+        {% endif %}
+      </div>
 
     </div>
 
   </div>
+  {% if episode.explicit %}
+  <div class="text-sm font-semibold mb-3">
+    This episode may contain explicit content.
+  </div>
+  {% endif %}
 
-  <div class="markdown mb-3 text-sm">
+  <div class="markdown text-sm">
     {{ episode.description|clean_html }}
   </div>
 </div>

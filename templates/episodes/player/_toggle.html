@@ -1,19 +1,19 @@
 {% if user.is_authenticated %}
 <form class="{{ css_class|default:'' }}"
       method="POST"
-      id="{% if player_toggle_id %}{{ player_toggle_id }}{% else %}episode-play-toggle-{{ episode.id }}{% endif %}"
+      id="{{ turbo_stream_target|default:episode.get_player_toggle_id }}"
       action="{% if is_episode_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}
 
   <div class="flex items-center">
     <button title="Close Player"
             value="stop"
-            class="text-gray-800 hover:text-blue-600 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
       {% svg "stop" css_class="h-10 w-10" %}
     </button>
     <button title="Open in Player"
             value="start"
-            class="text-gray-800 hover:text-blue-600 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600  dark:text-gray-100 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
       {% svg "play" css_class="h-10 w-10" %}
     </button>
   </div>

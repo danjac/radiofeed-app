@@ -3,6 +3,7 @@
 const colors = require('tailwindcss/colors');
 
 module.exports = {
+  darkMode: 'class',
   future: {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
@@ -24,7 +25,7 @@ module.exports = {
     },
   },
   variants: {
-    textColor: ['responsive', 'hover', 'focus', 'visited'],
+    textColor: ['responsive', 'hover', 'focus', 'visited', 'dark'],
   },
   plugins: [require('@tailwindcss/forms')],
 };

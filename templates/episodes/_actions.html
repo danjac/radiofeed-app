@@ -8,7 +8,8 @@
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<div class="font-semibold text-gray-500 flex flex-wrap items-center mb-3 text-sm">
+<div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
   {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
@@ -18,16 +19,9 @@
   </div>
   {% endif %}
 
-  {% if episode.explicit %}
-
-  <div class="inline-block font-semibold text-red-500 ml-2 flex items-center">
-    {% include "_explicit.html" with css_class="mr-1" %}
-    Explicit
-  </div>
-  {% endif %}
 </div>
 {% if episode.listened %}
-<div class="mb-3 sm:hidden text-gray-500 text-sm font-semibold">
+<div class="mb-3 sm:hidden text-gray-500 dark:text-gray-300 text-sm font-semibold">
   Listened {{ episode.listened|date }}
 </div>
 {% endif %}
@@ -42,36 +36,33 @@
       </a>
     </div>
     <div>
+      <div class="mb-3 flex items-center">
+        {% include "episodes/_download.html" %}
+      </div>
       <div class="flex items-center mb-3">
+        {% if "queue" in actions %}
         <div class="mr-2">
-          {% include "episodes/player/_toggle.html" %}
+          {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
         </div>
-        <div class="my-2">
-          {% include "episodes/_download.html" %}
-        </div>
-      </div>
-      {% if actions %}
-      <div class="flex items-center mb-3">
-        {% if 'queue' in actions %}
-        <turbo-frame id="{{ episode.get_queue_toggle_id }}"
-                     class="mr-2">
-          {% include "episodes/queue/_toggle.html" %}
-        </turbo-frame>
         {% endif %}
-        {% if 'favorite' in actions %}
-        <turbo-frame id="{{ episode.get_favorite_toggle_id }}">
+        {% if "favorite" in actions %}
+        <div>
           {% include "episodes/favorites/_toggle.html" %}
-        </turbo-frame>
+        </div>
         {% endif %}
       </div>
-      {% endif %}
-
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
 
     </div>
 
   </div>
 </div>
+
+{% if episode.explicit %}
+<div class="text-sm font-semibold mb-3">
+  This episode may contain explicit content.
+</div>
+{% endif %}
 
 <div class="text-sm italic markdown">
   {{ episode.description|keepspaces|stripentities|truncatewords:30 }}

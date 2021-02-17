@@ -1,19 +1,12 @@
 {% if user.is_authenticated %}
 <form method="post"
-      action="{% if is_queued %}{% url 'episodes:remove_from_queue' episode.id %}{% else %}{% url 'episodes:add_to_queue' episode.id %}{% endif %}">
+      id="{{ turbo_stream_target|default:episode.get_queue_toggle_id }}"
+      action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
   {% if is_queued %}
-  <button title="Remove episode from Play Queue"
-          class="btn btn-secondary flex items-center">
-    {% svg "trash" css_class="btn-icon mr-2" %}
-    Queue
-  </button>
+  {% button "Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" %}
   {% else %}
-  <button title="Add episode to Play Queue"
-          class="btn btn-default flex items-center">
-    {% svg "collection" css_class="btn-icon mr-2" %}
-    Queue
-  </button>
+  {% button "Queue" icon="collection" title="Add episode to your Play Queue" %}
   {% endif %}
 </form>
 {% else %}

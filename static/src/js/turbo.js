@@ -10,6 +10,8 @@
 //  console.log(event)
 // }
 //
+import { Controller } from 'stimulus';
+
 const turboEventHandlers = {
   'turbo:before-cache': 'turboBeforeCache',
   'turbo:before-fetch-request': 'turboBeforeVisit',

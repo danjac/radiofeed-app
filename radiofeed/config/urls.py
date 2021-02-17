@@ -8,7 +8,7 @@ from django.views.generic import TemplateView
 
 from radiofeed.episodes.sitemaps import EpisodeSitemap
 from radiofeed.podcasts.sitemaps import CategorySitemap, PodcastSitemap
-from radiofeed.users.views import accept_cookies, delete_account, user_preferences
+from radiofeed.users.views import accept_cookies, toggle_dark_mode
 
 sitemaps = {
     "categories": CategorySitemap,
@@ -22,10 +22,9 @@ SITEMAPS_CACHE_TIMEOUT = 3600
 urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.episodes.urls")),
-    path("account/preferences/", user_preferences, name="user_preferences"),
-    path("account/~delete/", delete_account, name="delete_account"),
-    path("account/", include("turbo_allauth.urls")),
+    path("account/", include("radiofeed.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
+    path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
     path(

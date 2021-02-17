@@ -1,14 +1,12 @@
-# Django
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
-# Local
 from .models import Podcast, Recommendation
 
 
-def send_recommendations_email(user):
+def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
     """Sends email with 3 recommended podcasts, based on:
     - favorites
     - subscriptions

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load cache %}
+
+{% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} | {{ category.name }}{% endblock %}
+
+{% block content %}
+
+<div class="mb-3 text-sm flex justify-center sm:block">
+  <a href="{% url 'podcasts:categories' %}"
+     class="link mr-1">Discover</a>
+  {% if category.parent %}
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <a href="{{ category.parent.get_absolute_url }}"
+     class="link mr-1">{{ category.parent.name }}</a>
+  {% endif %}
+  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300">{{ category.name }}</span>
+</div>
+
+<div class="sm:flex justify-between items-center mb-3">
+  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
+  <div class="flex items-center justify-center sm:justify-end">
+    {% if search %}
+    <div class="mr-2 flex items-center hidden md:inline-block text-sm">
+      <a class="link mr-1"
+         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
+      <span class="mr-1">|</span>
+      <a class="link mr-1"
+         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+      <span class="mr-1">|</span>
+      <a class="link"
+         href="{{ request.path }}">Clear</a>
+    </div>
+    {% endif %}
+    {% include "forms/_search_form.html" with placeholder="Search category..." %}
+  </div>
+</div>
+
+{% if search %}
+<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+  <a class="link mr-2"
+     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
+  <span class="mr-2">|</span>
+  <a class="link mr-2"
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+  <span class="mr-2">|</span>
+  <a class="link"
+     href="{{ request.path }}">Clear</a>
+</div>
+{% endif %}
+
+{% cache 3600 category category.id %}
+{% if children or category.itunes_genre_id %}
+<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start leading-tight tracking-tight">
+  {% for child in children %}
+  <a href="{{ child.get_absolute_url }}"
+     class="link mr-2">{{ child.name }}</a>
+  {% endfor %}
+  {% if category.itunes_genre_id %}
+  {% if children %}
+  <span class="mr-2">|</span>
+  {% endif %}
+  <a href="{% url 'podcasts:itunes_category' category.id %}"
+     class="link">iTunes</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endcache %}
+{% include pagination_template %}
+{% endblock content %}

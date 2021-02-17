@@ -1,18 +1,13 @@
-# Standard Library
 import uuid
 
-# Django
 from django.utils import timezone
 
-# Third Party Libraries
 from factory import Faker, LazyFunction, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 
-# RadioFeed
 from radiofeed.podcasts.factories import PodcastFactory
 from radiofeed.users.factories import UserFactory
 
-# Local
 from .models import AudioLog, Episode, Favorite, QueueItem
 
 

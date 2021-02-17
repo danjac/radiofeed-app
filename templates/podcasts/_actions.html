@@ -17,22 +17,18 @@
   </a>
 
   <div class="text-sm">
-    {% if podcast.explicit %}
-    <div class="text-red-500 font-semibold mb-3 flex items-center">
-      {% include "_explicit.html" with css_class="mr-2" %}
-      Explicit
-    </div>
-    {% endif %}
-
     <div class="mb-3">
-      <turbo-frame id="{{ podcast.get_subscribe_toggle_id }}">
-        {% include "podcasts/_subscribe.html" %}
-      </turbo-frame>
+      {% include "podcasts/_subscribe.html" %}
     </div>
 
     {% share_buttons podcast.get_absolute_url podcast.title %}
   </div>
 </div>
+{% if podcast.explicit %}
+<div class="text-sm font-semibold mb-3">
+  This podcast may contain explicit content.
+</div>
+{% endif %}
 
 <div class="text-sm italic markdown">
   {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}

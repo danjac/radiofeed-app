@@ -1,14 +1,15 @@
-# Standard Library
 import datetime
 
-# Django
 from django.utils import timezone
 
-# Third Party Libraries
 import pytest
 
-# Local
-from ..factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
+from ..factories import (
+    AudioLogFactory,
+    EpisodeFactory,
+    FavoriteFactory,
+    QueueItemFactory,
+)
 from ..models import AudioLog, Episode, Favorite
 
 pytestmark = pytest.mark.django_db
@@ -116,6 +117,33 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() == next_episode
         assert episode.get_previous_episode() == previous_episode
+
+    def is_favorited_anonymous(self, episode, anonymous_user):
+        assert not episode.is_favorited(anonymous_user)
+
+    def is_favorited_false(self, episode, user):
+        assert not episode.is_favorited(user)
+
+    def is_favorited_true(self):
+        fave = FavoriteFactory()
+        assert fave.episode.is_favorited(fave.user)
+
+    def is_queued_anonymous(self, episode, anonymous_user):
+        assert not episode.is_queued(anonymous_user)
+
+    def is_queued_false(self, episode, user):
+        assert not episode.is_queued(user)
+
+    def is_queued_true(self):
+        item = QueueItemFactory()
+        assert item.episode.is_queued(item.user)
+
+    def test_get_opengraph_data(self, rf, episode, site):
+        req = rf.get("/")
+        req.site = site
+        data = episode.get_opengraph_data(req)
+        assert episode.title in data["title"]
+        assert data["url"] == "http://testserver" + episode.get_absolute_url()
 
 
 class TestFavoriteManager:

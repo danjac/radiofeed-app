@@ -1,17 +1,12 @@
 {% if user.is_authenticated %}
 <form method="post"
+      id="{{ turbo_stream_target|default:podcast.get_subscribe_toggle_id }}"
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_subscribed %}
-  <button class="btn btn-secondary flex items-center">
-    {% svg "eye_slash" css_class="btn-icon mr-2" %}
-    Unsubscribe
-  </button>
+  {% button "Unsubscribe" icon="trash" type="secondary" title="Remove podcast from your Subscriptions" %}
   {% else %}
-  <button class="btn btn-default flex items-center">
-    {% svg "eye" css_class="btn-icon mr-2" %}
-    Subscribe
-  </button>
+  {% button "Subscribe" icon="eye" title="Add podcast to your Subscriptions" %}
   {% endif %}
 </form>
 {% else %}

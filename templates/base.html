@@ -1,12 +1,15 @@
 {% spaceless %}
 
-{% load static i18n episodes %}
+{% load static i18n %}
 
 {% endspaceless %}
 
 <!DOCTYPE html>
 {% get_current_language as language_code %}
-<html lang="{{ language_code }}">
+<html lang="{{ language_code }}"
+      {% if dark_mode %}
+      class="dark"
+      {% endif %}>
 
 <head>
   <title>
@@ -26,28 +29,28 @@
         content="Dan Jacob {% now "Y" %}">
   <meta name="robots"
         content="index,follow" />
-  {% include "_og_data.html" %}
-  {% include "_google_tracking.html" %}
+  {% include "share/_og_data.html" %}
+  {% include "common/_google_tracking.html" %}
   {% endblock meta %}
-  {% include "_static.html" %}
+  {% include "common/_static.html" %}
 </head>
 
 <body {% block bodyattrs %}
-      class="h-screen container-lg mx-auto antialiased font-sans"
+      class="h-screen container-lg mx-auto antialiased font-sans dark:bg-gray-900 dark:text-white"
       data-controller="toggle modal"
       {% endblock %}>
 
-  {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+  {% block navbar %}{% include "common/_navbar.html" %}{% endblock %}
 
-  {% include "_messages.html" %}
-  {% include "_cookie_notice.html" %}
+  {% include "common/_messages.html" %}
+  {% include "common/_cookie_notice.html" %}
 
   {% block layout %}
 
   <div class="min-h-full mx-auto flex relative mt-2">
     <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static"
          data-toggle-target="item">
-      {% include "_sidebar.html" %}
+      {% include "common/_sidebar.html" %}
     </div>
 
     <div class="w-full p-2 lg:px-5"
@@ -57,26 +60,7 @@
   </div>
 
   {% endblock layout %}
-  {% block player %}
-  {% if user.is_authenticated %}
-  {% get_player as player %}
-  <div id="player-container"
-       data-turbo-permanent
-       data-controller="player"
-       data-player-active-class="player--active"
-       data-player-inactive-class="player--inactive"
-       data-player-csrf-token-value="{{ csrf_token }}"
-       data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
-       {% if player.episode %}
-       data-player-media-url-value="{{ player.episode.media_url }}"
-       data-player-playback-rate-value="{{ player.playback_rate|default:1.0 }}"
-       data-player-current-time-value="{{ player.current_time|default:0 }}"
-       data-player-metadata-value='{{ player.episode.get_media_metadata|jsonify }}'
-       {% endif %}>
-    {% include "episodes/player/_player.html" with episode=player.episode %}
-  </div>
-  {% endif %}
-  {% endblock player %}
+  {% block player %}{% include "episodes/player/_player.html" %}{% endblock %}
 
   <turbo-frame id="modal"
                data-modal-target="modal"></turbo-frame>

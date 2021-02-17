@@ -1,6 +1,6 @@
 {% extends "account/base.html" %}
 
-{% load i18n widget_tweaks %}
+{% load i18n %}
 
 {% block head_title %}{% translate "Signup" %}{% endblock %}
 
@@ -11,45 +11,7 @@
   <a class="underline hover:text-blue-500"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}</p>
 
-
-<form class="p-3 border w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800{% endif %}"
-      method="post"
-      action="{% url 'account_signup' %}"
-      novalidate>
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden"
-         name="{{ redirect_field_name }}"
-         value="{{ redirect_field_value }}" />
-  {% endif %}
-  {% include "_form_errors.html" with errors=form.non_field_errors %}
-  {% with WIDGET_ERROR_CLASS="border-red-800" %}
-  <div class="mb-3">
-    {% render_field form.username aria-label=form.username.label placeholder=form.username.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.username.errors %}
-  </div>
-  <div class="mb-3">
-    {% render_field form.email aria-label=form.email.label placeholder=form.email.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.email.errors %}
-  </div>
-  <div class="mb-3">
-    {% render_field form.password1 aria-label=form.password2.label placeholder=form.password1.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.password1.errors %}
-  </div>
-  <div class="mb-3">
-    {% render_field form.password2 aria-label=form.password2.label placeholder=form.password2.label class="p-1 w-full" %}
-    {% include "_form_errors.html" with errors=form.password2.errors %}
-  </div>
-
-  {% endwith %}
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            type="submit">
-      {% svg "plus" css_class="btn-icon mr-2" %}
-      {% translate "Sign Up" %}</button>
-  </div>
-</form>
+{% include "account/forms/_signup.html" %}
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 
 {% endblock %}

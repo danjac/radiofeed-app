@@ -1,0 +1,121 @@
+  <div class="flex justify-center md:hidden mb-3">
+    <form method="get"
+          action="{% url 'podcasts:search_podcasts' %}"
+          class="relative bg-transparent">
+      <input type="search"
+             name="q"
+             autocomplete="off"
+             aria-label="{{ placeholder|default:'Search' }}"
+             placeholder="Find a podcast..."
+             class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+      <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+        <button type="submit"
+                title="Search"
+                class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+          {% svg "search" css_class="h-4 w-4" %}
+        </button>
+      </span>
+    </form>
+  </div>
+
+
+  <nav class="pt-3">
+    <ul class="sidebar">
+      {% if user.is_authenticated %}
+      <li class="py-2">
+        {% active_link 'episodes:index' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
+          New Releases
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="py-2">
+        {% active_link 'podcasts:index' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "rss" css_class="h-5 w-5 mr-3" %}
+          Podcasts
+        </a>
+      </li>
+      <li class="py-2">
+        {% active_link 'podcasts:categories' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "search" css_class="h-5 w-5 mr-3" %}
+          Discover
+        </a>
+      </li>
+
+      {% if user.is_authenticated %}
+
+      <li class="py-2">
+        {% active_link 'episodes:queue' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "collection" css_class="h-5 w-5 mr-3" %}
+          Play Queue
+        </a>
+      </li>
+
+      <li class="py-2">
+        {% active_link 'episodes:favorites' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "star" css_class="h-5 w-5 mr-3" %}
+          Favorites
+        </a>
+      </li>
+
+      <li class="py-2">
+        {% active_link 'episodes:history' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "database" css_class="h-5 w-5 mr-3" %}
+          History
+        </a>
+      </li>
+
+      <li class="py-2">
+        {% active_link '/account/' as link %}
+        <a href="{% url 'user_preferences' %}"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% svg "adjustments" css_class="h-5 w-5 mr-3" %}
+          Settings
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="py-2">
+        {% active_link 'about' as link %}
+        <a href="{{ link.url }}"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% svg "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+
+      <li class="py-2">
+        <form method="POST"
+              data-turbo="false"
+              action="{% url 'toggle_dark_mode' %}">
+          {% csrf_token %}
+          <input type="hidden"
+                 name="redirect_url"
+                 value="{{ request.get_full_path }}">
+          <button class="flex items-center link">
+            {% if dark_mode %}
+            {% svg "sun" css_class="h-5 w-5 mr-3" %}
+            Day Mode
+            {% else %}
+            {% svg "moon" css_class="h-5 w-5 mr-3" %}
+            Night Mode
+            {% endif %}
+          </button>
+        </form>
+      </li>
+
+    </ul>
+  </nav>

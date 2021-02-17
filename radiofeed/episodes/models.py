@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
+from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils import timezone
@@ -79,10 +80,12 @@ class Episode(models.Model):
             models.UniqueConstraint(fields=["podcast", "guid"], name="unique_episode")
         ]
         indexes = [
+            models.Index(fields=["podcast", "pub_date"]),
+            models.Index(fields=["podcast", "-pub_date"]),
             models.Index(fields=["podcast"]),
             models.Index(fields=["guid"]),
-            models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
+            models.Index(fields=["-pub_date"]),
             GinIndex(fields=["search_vector"]),
         ]
 
@@ -99,13 +102,26 @@ class Episode(models.Model):
     def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
+    def get_dom_id(self) -> str:
+        return f"episode-{self.id}"
+
+    def get_history_dom_id(self) -> str:
+        return f"history-{self.id}"
+
+    def get_queue_dom_id(self) -> str:
+        return f"queue-item-{self.id}"
+
+    def get_favorite_dom_id(self) -> str:
+        return f"favorite-{self.id}"
+
     def get_favorite_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
-        return f"episode-favorite-{self.id}"
+        return f"favorite-toggle-{self.id}"
 
     def get_queue_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
-        return f"episode-queue-{self.id}"
+        return f"queue-toggle-{self.id}"
+
+    def get_player_toggle_id(self) -> str:
+        return f"player-toggle-{self.id}"
 
     def get_duration_in_seconds(self) -> int:
         """Returns duration string in h:m:s or h:m to seconds"""
@@ -161,6 +177,33 @@ class Episode(models.Model):
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
+
+    def is_queued(self, user: AnyUser) -> bool:
+        if user.is_anonymous:
+            return False
+        return QueueItem.objects.filter(user=user, episode=self).exists()
+
+    def is_favorited(self, user: AnyUser) -> bool:
+        if user.is_anonymous:
+            return False
+        return Favorite.objects.filter(user=user, episode=self).exists()
+
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
+        og_data: Dict = {
+            "url": request.build_absolute_uri(self.get_absolute_url()),
+            "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
+            "description": self.description,
+            "keywords": self.keywords,
+        }
+
+        if self.podcast.cover_image:
+            og_data |= {
+                "image": self.podcast.cover_image.url,
+                "image_height": self.podcast.cover_image.height,
+                "image_width": self.podcast.cover_image.width,
+            }
+
+        return og_data
 
     def get_media_metadata(self) -> Dict:
         # https://developers.google.com/web/updates/2017/02/media-session

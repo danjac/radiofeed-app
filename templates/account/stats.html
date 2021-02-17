@@ -1,0 +1,45 @@
+{% extends "account/settings_base.html" %}
+
+{% load %}
+
+{% block subtitle %} | Stats{% endblock %}
+
+{% block settings_content %}
+
+<h2 class="font-bold mb-3">
+  Stats for {{ user.username }}
+</h2>
+<div class="w-full lg:w-1/2 divide-y mb-3 border p-3 dark:border-gray-500 dark:divide-gray-500 text-sm">
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">Joined</div>
+    <div class="w-1/2 font-bold text-right">{{ user.date_joined|date }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">Subscriptions</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.subscriptions }} podcast{{ stats.subscriptions|pluralize }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">Favorites</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.favorites }} episode{{ stats.favorites|pluralize }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">Listened</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.listened }} episode{{ stats.listened|pluralize }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">In progress</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.in_progress }} episode{{ stats.in_progress|pluralize }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
+    <div class="w-1/2">Completed</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.completed }} episode{{ stats.completed|pluralize }}</div>
+  </div>
+</div>
+
+{% endblock settings_content %}

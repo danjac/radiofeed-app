@@ -6,7 +6,7 @@ export default class extends Controller {
   };
 
   connect() {
-    if (this.hasTimeoutValue && this.timeoutValue > 0) {
+    if (this.timeoutValue && this.timeoutValue > 0) {
       setTimeout(() => this.remove(), this.timeoutValue);
     }
   }

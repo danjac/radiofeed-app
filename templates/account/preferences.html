@@ -1,32 +1,9 @@
 {% extends "account/settings_base.html" %}
 
-{% load i18n widget_tweaks %}
+{% load i18n %}
 
-{% block head_title %}{% translate "Signup" %}{% endblock %}
+{% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-
-<form class="p-3 border w-full md:w-3/4 lg:w-1/2"
-      method="post"
-      action="{% url 'user_preferences' %}"
-      novalidate>
-  {% csrf_token %}
-
-  <div class="mb-3">
-    <label class="flex items-center mb-2 w-full">
-      {% render_field form.send_recommendations_email class="mr-3 bg-gray-900" %}
-      {{ form.send_recommendations_email.label }}
-    </label>
-    {% include "_form_help_text.html" with help_text=form.send_recommendations_email.help_text %}
-  </div>
-
-  <div class="flex items-center justify-end">
-    <button class="btn btn-default flex items-center"
-            type="submit">
-      {% svg "check" css_class="btn-icon mr-2" %}
-      {% translate "Save Changes" %}
-    </button>
-  </div>
-</form>
-
+{% include "account/forms/_preferences.html" %}
 {% endblock %}

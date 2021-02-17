@@ -7,18 +7,6 @@
   Play Queue
 </h1>
 
-<div data-controller="drag"
-     data-drag-handle-class="handle"
-     data-drag-group-value="queue-items"
-     data-drag-url-value="{% url 'episodes:move_queue_items'%}"
-     data-drag-csrf-token-value="{{ csrf_token }}"
-     id="queue">
-  {% for item in queue_items %}
-  {% url 'episodes:queue_actions' item.episode.id as action_url %}
-  {% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
-  {% include "episodes/queue/_episode.html" with episode=item.episode %}
-  {% empty %}
-  You do not have any items in your Play Queue.
-  {% endfor %}
-</div>
+{% include "episodes/queue/_episode_list.html" %}
+
 {% endblock content %}

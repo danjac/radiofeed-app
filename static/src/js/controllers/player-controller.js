@@ -121,9 +121,9 @@ export default class extends Controller {
     this.changePlaybackRate(-0.1);
   }
 
-  skip(event) {
+  skip({ clientX }) {
     // user clicks on progress bar
-    const position = this.calcEventPosition(event.clientX);
+    const position = this.calcEventPosition(clientX);
     if (!isNaN(position) && position > -1) {
       this.skipTo(position);
     }
@@ -138,18 +138,16 @@ export default class extends Controller {
   }
 
   turboSubmitEnd(event) {
-    console.log('turboSubmitEnd');
     const { fetchResponse } = event.detail;
-    const headers = fetchResponse.response ? fetchResponse.response.headers : null;
-    if (!headers || !headers.has('X-Player')) {
+    const headers =
+      fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
+    if (!headers || !headers.has('X-Media-Player')) {
       return;
     }
     const { action, mediaUrl, currentTime, metadata } = JSON.parse(
-      headers.get('X-Player')
+      headers.get('X-Media-Player')
     );
-    console.log('ACTION', action);
     if (action === 'stop') {
-      console.log('close player');
       this.closePlayer();
       return;
     }
@@ -158,7 +156,6 @@ export default class extends Controller {
     this.mediaUrlValue = mediaUrl;
     this.currentTimeValue = parseFloat(currentTime || 0);
 
-    console.log('metadata', metadata);
     if (metadata) {
       this.metadataValue = metadata;
     }
@@ -169,13 +166,11 @@ export default class extends Controller {
     this.audio.currentTime = this.currentTimeValue;
 
     this.play();
-
-    console.log('play:', mediaUrl, currentTime);
   }
 
   // observers
   pausedValueChanged() {
-    if (this.hasPauseButtonTarget && this.playButtonTarget) {
+    if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (this.pausedValue) {
         this.pauseButtonTarget.classList.add('hidden');
         this.playButtonTarget.classList.remove('hidden');
@@ -212,6 +207,7 @@ export default class extends Controller {
 
   metadataValueChanged() {
     if ('mediaSession' in navigator && this.metadataValue) {
+      // @ts-ignore
       navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
     }
   }
@@ -286,8 +282,8 @@ export default class extends Controller {
   }
 
   formatTimeRemaining(value) {
-    if (!value || value < 0) return '00:00:00';
-    const duration = Math.floor(parseInt(value));
+    if (isNaN(value) || value < 0) return '00:00:00';
+    const duration = Math.floor(value);
 
     const hours = Math.floor(duration / 3600);
     const minutes = Math.floor((duration % 3600) / 60);
@@ -319,7 +315,6 @@ export default class extends Controller {
   }
 
   initAudio() {
-    console.log('initAudio');
     if (!this.audio) {
       this.audio = new Audio();
       this.audio.preload = 'metadata';
@@ -375,7 +370,7 @@ export default class extends Controller {
       const body = new FormData();
 
       body.append('csrfmiddlewaretoken', this.csrfTokenValue);
-      body.append('current_time', this.currentTimeValue);
+      body.append('current_time', this.currentTimeValue.toString());
       body.append('playback_rate', this.playbackRateValue.toFixed(1));
 
       fetch(this.timeupdateUrlValue, {
@@ -388,7 +383,7 @@ export default class extends Controller {
 
   set enabled(enabled) {
     if (enabled) {
-      sessionStorage.setItem('player-enabled', true);
+      sessionStorage.setItem('player-enabled', 'true');
     } else {
       sessionStorage.removeItem('player-enabled');
     }

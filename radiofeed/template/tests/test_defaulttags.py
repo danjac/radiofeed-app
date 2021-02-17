@@ -2,7 +2,26 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Category
 
-from ..defaulttags import active_link, jsonify, keepspaces, percent, share_buttons, svg
+from ..defaulttags import (
+    active_link,
+    htmlattrs,
+    jsonify,
+    keepspaces,
+    percent,
+    share_buttons,
+    svg,
+)
+
+
+class TestHtmlAttrs:
+    def test_empty_dict(self):
+        assert htmlattrs({}) == ""
+
+    def test_attrs(self):
+        assert (
+            htmlattrs({"data_action": "submit", "type": "button"})
+            == 'data-action="submit" type="button"'
+        )
 
 
 class TestJsonify:
@@ -53,24 +72,24 @@ class TestActiveLink:
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = active_link({"request": req}, "podcasts:podcast_list")
-        assert route.url == reverse("podcasts:podcast_list")
+        route = active_link({"request": req}, "podcasts:index")
+        assert route.url == reverse("podcasts:index")
         assert not route.match
         assert not route.exact
 
     def test_active_link_non_exact_match(self, rf):
         url = Category(id=1234, name="test").get_absolute_url()
         req = rf.get(url)
-        route = active_link({"request": req}, "podcasts:category_list")
-        assert route.url == reverse("podcasts:category_list")
+        route = active_link({"request": req}, "podcasts:categories")
+        assert route.url == reverse("podcasts:categories")
         assert route.match
         assert not route.exact
 
     def test_active_link_exact_match(self, rf):
-        url = reverse("podcasts:podcast_list")
+        url = reverse("podcasts:index")
         req = rf.get(url)
-        route = active_link({"request": req}, "podcasts:podcast_list")
-        assert route.url == reverse("podcasts:podcast_list")
+        route = active_link({"request": req}, "podcasts:index")
+        assert route.url == reverse("podcasts:index")
         assert route.match
         assert route.exact
 
@@ -85,5 +104,6 @@ class TestKeepspaces:
 
 class TestSvg:
     def test_render_svg(self):
-        result = svg("ellipsis", css_class="h-4 w-4")
-        assert 'class="h-4 w-4"' in result
+        context = svg("ellipsis", css_class="h-4 w-4")
+        assert context["svg_template"] == "svg/_ellipsis.svg"
+        assert context["css_class"] == "h-4 w-4"

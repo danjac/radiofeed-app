@@ -1,4 +1,6 @@
-# Django
+import dataclasses
+from typing import Dict, Protocol
+
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
@@ -8,18 +10,32 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.db import models
+from django.http import HttpRequest
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 
-# Third Party Libraries
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
-from sorl.thumbnail import ImageField
+from sorl.thumbnail import ImageField, get_thumbnail
 
 from radiofeed.typing import AnyUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
+class CoverImage(Protocol):
+    url: str
+    width: int
+    height: int
+
+
+@dataclasses.dataclass
+class PlaceholderCoverImage:
+    url: str
+    width: int
+    height: int
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -102,7 +118,7 @@ class Podcast(models.Model):
 
     last_updated = models.DateTimeField(null=True, blank=True)
 
-    explicit: bool = models.BooleanField(default=False)
+    explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
 
     categories = models.ManyToManyField(Category, blank=True)
@@ -130,15 +146,48 @@ class Podcast(models.Model):
         return self.title or self.rss
 
     def get_absolute_url(self) -> str:
-        return reverse("podcasts:podcast_episode_list", args=[self.id, self.slug])
+        return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])
 
     @property
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     def get_subscribe_toggle_id(self) -> str:
-        # https://github.com/hotwired/turbo/issues/86
-        return f"podcast-subscribe-{self.id}"
+        return f"subscribe-toggle-{self.id}"
+
+    def is_subscribed(self, user: AnyUser) -> bool:
+        if user.is_anonymous:
+            return False
+        return Subscription.objects.filter(podcast=self, user=user).exists()
+
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
+
+        og_data = {
+            "url": request.build_absolute_uri(self.get_absolute_url()),
+            "title": f"{request.site.name} | {self.title}",
+            "description": self.description,
+            "keywords": self.keywords,
+        }
+
+        if self.cover_image:
+            og_data |= {
+                "image": self.cover_image.url,
+                "image_height": self.cover_image.height,
+                "image_width": self.cover_image.width,
+            }
+        return og_data
+
+    def get_cover_image_thumbnail(self) -> CoverImage:
+        """Returns cover image or placeholder. This is an expensive op,
+        so use with caution."""
+
+        return (
+            get_thumbnail(self.cover_image, "200", format="WEBP", crop="center")
+            if self.cover_image
+            else PlaceholderCoverImage(
+                url=static("img/podcast-icon.png"), height=200, width=200
+            )
+        )
 
 
 class Subscription(TimeStampedModel):

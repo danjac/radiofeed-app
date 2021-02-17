@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block subtitle %} | Search Podcasts {% endblock %}
+
 {% block content %}
 <div class="sm:flex justify-between items-center mb-3">
   <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">
@@ -15,10 +17,10 @@
          href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
       <span class="mr-1">|</span>
       <a class="font-semibold hover:text-blue-500"
-         href="{% url 'podcasts:podcast_list' %}">Clear</a>
+         href="{% url 'podcasts:index' %}">Clear</a>
     </div>
     {% endif %}
-    {% include "_search_form.html" with placeholder="Search podcasts..." %}
+    {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
 {% if search %}
@@ -30,10 +32,10 @@
      href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'podcasts:podcast_list' %}">Clear</a>
+     href="{% url 'podcasts:index' %}">Clear</a>
 </div>
 {% endif %}
 
-{% include "podcasts/_podcast_list.html" %}
+{% include pagination_template %}
 
 {% endblock content %}

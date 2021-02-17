@@ -1,0 +1,5 @@
+{% extends "episodes/_episode.html" %}
+{% block attrs %}id="{{ episode.get_favorite_dom_id }}"{% endblock %}
+{% block actions_url %}{% url 'episodes:favorite_actions' episode.id %}{% endblock %}
+
+
