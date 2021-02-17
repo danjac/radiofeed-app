@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -15,7 +14,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, redirect_303, render_form_response
 
 from radiofeed.episodes.models import AudioLog, Favorite
-from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.models import Subscription
 from radiofeed.shortcuts import handle_form
 
 from .forms import UserPreferencesForm
@@ -39,18 +38,6 @@ def user_stats(request: HttpRequest) -> HttpResponse:
     subscriptions = Subscription.objects.filter(user=request.user)
     favorites = Favorite.objects.filter(user=request.user)
 
-    most_listened = (
-        Podcast.objects.annotate(
-            num_listened=Count(
-                "episode__audiolog",
-                filter=Q(episode__audiolog__user=request.user),
-            )
-        )
-        .filter(num_listened__gt=0)
-        .order_by("-num_listened")
-        .distinct()[:10]
-    )
-
     return TemplateResponse(
         request,
         "account/stats.html",
@@ -62,7 +49,6 @@ def user_stats(request: HttpRequest) -> HttpResponse:
                 "subscriptions": subscriptions.count(),
                 "favorites": favorites.count(),
             },
-            "most_listened": most_listened,
         },
     )
 

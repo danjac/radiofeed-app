@@ -39,8 +39,6 @@ class TestUserStats:
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context["stats"]["subscriptions"] == 1
         assert resp.context["stats"]["listened"] == 3
-        assert resp.context["most_listened"].count() == 2
-        assert resp.context["most_listened"][0] == podcast
 
 
 class TestDeleteAccount:
