@@ -5,5 +5,5 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-{% include "account/forms/_preferences.html" %}
+{% include "account/forms/_preferences.html" with form_id=turbo_stream_target %}
 {% endblock %}
