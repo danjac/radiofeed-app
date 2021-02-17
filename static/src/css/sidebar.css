@@ -3,9 +3,9 @@
 }
 
 .sidebar a:hover {
-  @apply text-blue-600 dark:text-blue-300;
+  @apply text-blue-600 dark:text-blue-400;
 }
 
 .sidebar .sidebar--active {
-  @apply text-blue-600 text-lg font-bold dark:text-blue-300;
+  @apply text-blue-600 text-lg font-bold dark:text-blue-400;
 }
