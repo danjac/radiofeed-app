@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -40,8 +40,13 @@ def user_stats(request: HttpRequest) -> HttpResponse:
     favorites = Favorite.objects.filter(user=request.user)
 
     most_listened = (
-        Podcast.objects.filter(episode__audiolog__user=request.user)
-        .annotate(num_listened=Count("episode__audiolog"))
+        Podcast.objects.annotate(
+            num_listened=Count(
+                "episode__audiolog",
+                filter=Q(episode__audiolog__user=request.user),
+            )
+        )
+        .filter(num_listened__gt=0)
         .order_by("-num_listened")
         .distinct()[:10]
     )
