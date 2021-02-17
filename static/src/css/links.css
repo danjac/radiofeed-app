@@ -3,7 +3,7 @@
 }
 
 .link:hover {
-  @apply text-blue-600 font-semibold dark:text-blue-500;
+  @apply text-blue-600 font-semibold dark:text-blue-400;
 }
 
 .inactive-link {
