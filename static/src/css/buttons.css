@@ -30,11 +30,11 @@ form.submitting .btn-default {
 
 .btn-secondary[disabled],
 form.submitting .btn-secondary {
-  @apply border-blue-600 text-blue-600 bg-gray-100;
+  @apply border-blue-600 text-blue-600 bg-gray-100 dark:text-blue-300 dark:border-blue-300;
 }
 
 .btn-secondary:hover {
-  @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800;
+  @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-300 dark:border-blue-300;
 }
 
 .btn-danger {
