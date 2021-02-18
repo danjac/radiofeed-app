@@ -74,7 +74,7 @@ def episodes(
                 "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
             ),
         },
-        cached=True,
+        cached=request.user.is_anonymous,
     )
 
 

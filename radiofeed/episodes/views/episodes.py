@@ -78,7 +78,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         request,
         episodes,
         "episodes/search.html",
-        cached=True,
+        cached=request.user.is_anonymous,
     )
 
 
