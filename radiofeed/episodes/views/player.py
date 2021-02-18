@@ -158,8 +158,8 @@ def render_start_response(
     response["X-Media-Player"] = json.dumps(
         {
             "action": "start",
-            "mediaUrl": episode.media_url,
             "currentTime": current_time,
+            "mediaUrl": episode.media_url,
             "metadata": episode.get_media_metadata(),
         }
     )
