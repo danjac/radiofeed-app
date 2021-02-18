@@ -129,6 +129,13 @@ export default class extends Controller {
     }
   }
 
+  showPosition({ clientX }) {
+    const position = this.calcEventPosition(clientX);
+    if (!isNaN(position)) {
+      this.progressBarTarget.setAttribute('title', this.formatTime(position));
+    }
+  }
+
   skipBack() {
     this.skipTo(this.audio.currentTime - 10);
   }
@@ -232,7 +239,7 @@ export default class extends Controller {
 
   updateCounter(value) {
     if (this.hasCounterTarget) {
-      this.counterTarget.textContent = this.formatTimeRemaining(value);
+      this.counterTarget.textContent = this.formatTime(value);
     }
   }
 
@@ -281,7 +288,7 @@ export default class extends Controller {
     return currentPosition;
   }
 
-  formatTimeRemaining(value) {
+  formatTime(value) {
     if (isNaN(value) || value < 0) return '00:00:00';
     const duration = Math.floor(value);
 
@@ -289,10 +296,9 @@ export default class extends Controller {
     const minutes = Math.floor((duration % 3600) / 60);
     const seconds = Math.floor(duration % 60);
 
-    return (
-      '-' +
-      [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':')
-    );
+    return [hours, minutes, seconds]
+      .map((t) => t.toString().padStart(2, '0'))
+      .join(':');
   }
 
   skipTo(position) {
