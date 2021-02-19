@@ -52,6 +52,7 @@ EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
 
 
 class Episode(models.Model):
+    id = models.BigAutoField(primary_key=True)
 
     podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
@@ -255,6 +256,8 @@ FavoriteManager: models.Manager = models.Manager.from_queryset(FavoriteQuerySet)
 
 
 class Favorite(TimeStampedModel):
+    id = models.BigAutoField(primary_key=True)
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
@@ -292,6 +295,8 @@ AudioLogManager: models.Manager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
+    id = models.BigAutoField(primary_key=True)
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     updated = models.DateTimeField()

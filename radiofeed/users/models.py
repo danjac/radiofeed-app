@@ -34,7 +34,7 @@ class UserQuerySet(models.QuerySet):
         return self.filter(username__iregex=r"^(%s)+" % "|".join(names))
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(
         self, username: str, email: str, password: Optional[str] = None, **kwargs
     ) -> settings.AUTH_USER_MODEL:
@@ -59,6 +59,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
+    id = models.BigAutoField(primary_key=True)
+
     send_recommendations_email = models.BooleanField(default=True)
 
     objects = UserManager()
