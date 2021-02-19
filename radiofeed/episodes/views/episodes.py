@@ -118,7 +118,6 @@ def episode_actions(
                 {
                     "episode": episode,
                     "actions": actions,
-                    "is_episode_playing": request.player.is_playing(episode),
                     "is_favorited": is_favorited,
                     "is_queued": is_queued,
                 },
