@@ -24,10 +24,9 @@ def start_player(
 
     episode = get_episode_detail_or_404(request, episode_id)
 
-    return render_start_response(
+    return render_player(
         request,
         episode,
-        request.player.eject(),
         current_time=0 if episode.completed else (episode.current_time or 0),
     )
 
@@ -35,7 +34,7 @@ def start_player(
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-    return render_stop_response(request, request.player.eject())
+    return render_player(request)
 
 
 @require_POST
@@ -44,17 +43,18 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    current_episode = request.player.eject(mark_completed=True)
-
-    if next_item := (
+    next_item = (
         QueueItem.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
         .first()
-    ):
+    )
 
-        return render_start_response(request, next_item.episode, current_episode)
-    return render_stop_response(request, current_episode)
+    return render_player(
+        request,
+        next_episode=next_item.episode if next_item else None,
+        mark_completed=True,
+    )
 
 
 @require_POST
@@ -99,52 +99,43 @@ def render_player_toggle(
     )
 
 
-def render_stop_response(
+def render_player(
     request: HttpRequest,
-    current_episode: Optional[Episode] = None,
-) -> HttpResponse:
-    streams: List[str] = []
-
-    if current_episode:
-        streams.append(render_player_toggle(request, current_episode, False))
-
-    response = TurboStreamResponse(
-        streams
-        + [
-            TurboStream("player-controls").remove.render(),
-        ]
-    )
-    response["X-Media-Player"] = json.dumps({"action": "stop"})
-    return response
-
-
-def render_start_response(
-    request: HttpRequest,
-    episode: Episode,
-    current_episode: Optional[Episode] = None,
+    next_episode: Optional[Episode] = None,
     current_time: int = 0,
+    mark_completed: bool = False,
 ) -> HttpResponse:
 
     streams: List[str] = []
 
-    if current_episode:
+    if current_episode := request.player.eject(mark_completed=mark_completed):
         streams.append(render_player_toggle(request, current_episode, False))
+
+    if next_episode is None:
+        response = TurboStreamResponse(
+            streams
+            + [
+                TurboStream("player-controls").remove.render(),
+            ]
+        )
+        response["X-Media-Player"] = json.dumps({"action": "stop"})
+        return response
 
     # remove from queue
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+    QueueItem.objects.filter(user=request.user, episode=next_episode).delete()
 
-    episode.log_activity(request.user, current_time=current_time)
+    next_episode.log_activity(request.user, current_time=current_time)
 
-    request.player.start(episode, current_time)
+    request.player.start(next_episode, current_time)
 
     response = TurboStreamResponse(
         streams
         + [
-            render_player_toggle(request, episode, True),
+            render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
                 "episodes/player/_controls.html",
-                {"episode": episode},
+                {"episode": next_episode},
             )
             .render(request=request),
             TurboStream("queue")
@@ -159,8 +150,8 @@ def render_start_response(
         {
             "action": "start",
             "currentTime": current_time,
-            "mediaUrl": episode.media_url,
-            "metadata": episode.get_media_metadata(),
+            "mediaUrl": next_episode.media_url,
+            "metadata": next_episode.get_media_metadata(),
         }
     )
     return response
