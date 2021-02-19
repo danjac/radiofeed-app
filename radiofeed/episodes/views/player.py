@@ -65,10 +65,8 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     if episode := request.player.get_episode():
         try:
             current_time = round(float(request.POST["current_time"]))
-        except KeyError:
-            return HttpResponseBadRequest("current_time not provided")
-        except ValueError:
-            return HttpResponseBadRequest("current_time invalid")
+        except (KeyError, ValueError):
+            return HttpResponseBadRequest("current_time missing or invalid")
 
         try:
             playback_rate = float(request.POST["playback_rate"])
