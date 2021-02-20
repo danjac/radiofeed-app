@@ -7,7 +7,7 @@
 
     <button class="modal-close absolute top-0 text-black md:text-white dark:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
             data-action="modal#close">
-      {% svg "x" css_class="fill-current" %}
+      {% component "svg" "x" css_class="fill-current" %}
       <span class="text-sm">(Esc)</span>
     </button>
 
@@ -18,7 +18,7 @@
         <p class="w-64 sm:w-full flex flex-wrap font-bold">{% block modal_header %}{% endblock %}</p>
         <div class="modal-close cursor-pointer z-50 hidden md:inline-block">
           <button data-action="modal#close">
-            {% svg "x" css_class="fill-current" %}
+            {% component "svg" "x" css_class="fill-current" %}
           </button>
         </div>
       </div>

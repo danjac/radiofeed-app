@@ -13,7 +13,7 @@
         class="flex justify-end"
         novalidate>
     {% csrf_token %}
-    {% button "Yes, delete my account" icon="trash" type="danger" name="confirm-delete" %}
+    {% component "button" "Yes, delete my account" icon="trash" type="danger" name="confirm-delete" %}
   </form>
 </div>
 {% endblock settings_content %}

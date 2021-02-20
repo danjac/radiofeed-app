@@ -13,7 +13,7 @@
         <button type="submit"
                 title="Search"
                 class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-          {% svg "search" css_class="h-4 w-4" %}
+          {% component "svg" "search" css_class="h-4 w-4" %}
         </button>
       </span>
     </form>
@@ -26,7 +26,7 @@
         {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% svg "lightning_bolt" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "lightning_bolt" css_class="h-5 w-5 mr-3" %}
           New Releases
         </a>
       </li>
@@ -35,7 +35,7 @@
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% svg "rss" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "rss" css_class="h-5 w-5 mr-3" %}
           Podcasts
         </a>
       </li>
@@ -43,7 +43,7 @@
         {% active_link 'podcasts:categories' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "search" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "search" css_class="h-5 w-5 mr-3" %}
           Discover
         </a>
       </li>
@@ -54,7 +54,7 @@
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "collection" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "collection" css_class="h-5 w-5 mr-3" %}
           Play Queue
         </a>
       </li>
@@ -63,7 +63,7 @@
         {% active_link 'episodes:favorites' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "star" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "star" css_class="h-5 w-5 mr-3" %}
           Favorites
         </a>
       </li>
@@ -72,7 +72,7 @@
         {% active_link 'episodes:history' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "database" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "database" css_class="h-5 w-5 mr-3" %}
           History
         </a>
       </li>
@@ -81,7 +81,7 @@
         {% active_link '/account/' as link %}
         <a href="{% url 'user_preferences' %}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% svg "adjustments" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "adjustments" css_class="h-5 w-5 mr-3" %}
           Settings
         </a>
       </li>
@@ -91,7 +91,7 @@
         {% active_link 'about' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% svg "info" css_class="h-5 w-5 mr-3" %}
+          {% component "svg" "info" css_class="h-5 w-5 mr-3" %}
           About
         </a>
       </li>
@@ -106,10 +106,10 @@
                  value="{{ request.get_full_path }}">
           <button class="flex items-center link">
             {% if dark_mode %}
-            {% svg "sun" css_class="h-5 w-5 mr-3" %}
+            {% component "svg" "sun" css_class="h-5 w-5 mr-3" %}
             Day Mode
             {% else %}
-            {% svg "moon" css_class="h-5 w-5 mr-3" %}
+            {% component "svg" "moon" css_class="h-5 w-5 mr-3" %}
             Night Mode
             {% endif %}
           </button>
