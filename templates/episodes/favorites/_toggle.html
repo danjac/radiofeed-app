@@ -3,8 +3,8 @@
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
   {% csrf_token %}
   {% if is_favorited %}
-  {% component "button" "Favorite" icon="trash" type="secondary" title="Remove episode from your Favorites" %}
+  {% button "Favorite" icon="trash" type="secondary" title="Remove episode from your Favorites" %}
   {% else %}
-  {% component "button" "Favorite" icon="star" title="Add episode to your Favorites" %}
+  {% button "Favorite" icon="star" title="Add episode to your Favorites" %}
   {% endif %}
 </form>

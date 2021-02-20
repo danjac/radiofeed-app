@@ -3,8 +3,8 @@
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_subscribed %}
-  {% component "button" "Unsubscribe" icon="trash" type="secondary" title="Remove podcast from your Subscriptions" %}
+  {% button "Unsubscribe" icon="trash" type="secondary" title="Remove podcast from your Subscriptions" %}
   {% else %}
-  {% component "button" "Subscribe" icon="eye" title="Add podcast to your Subscriptions" %}
+  {% button "Subscribe" icon="eye" title="Add podcast to your Subscriptions" %}
   {% endif %}
 </form>

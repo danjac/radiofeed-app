@@ -7,13 +7,13 @@
               title="Toggle Menu"
               data-action="toggle#toggle"
               data-toggle-target="item">
-        {% component "svg" "menu" css_class="h-6 w-6" %}
+        {% svg "menu" css_class="h-6 w-6" %}
       </button>
       <button class="hidden lg:hidden mr-3"
               data-action="toggle#toggle"
               title="Toggle Menu"
               data-toggle-target="item">
-        {% component "svg" "chevron_down" css_class="h-6 w-6" %}
+        {% svg "chevron_down" css_class="h-6 w-6" %}
       </button>
       <img src="{% static 'img/wave.png' %}"
            height="32"
@@ -38,7 +38,7 @@
         <button type="submit"
                 title="Search"
                 class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-          {% component "svg" "search" css_class="h-4 w-4" %}
+          {% svg "search" css_class="h-4 w-4" %}
         </button>
       </span>
     </form>
