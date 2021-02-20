@@ -5,9 +5,34 @@
      data-drag-csrf-token-value="{{ csrf_token }}"
      id="queue">
   {% for item in queue_items %}
-  {% url 'episodes:queue_actions' item.episode.id as action_url %}
+
+  {% url 'episodes:queue_actions' item.episode.id as actions_url %}
   {% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
-  {% include "episodes/queue/_episode.html" with episode=item.episode %}
+
+  {% component_block "episode" item.episode dom_id=episode.get_queue_dom_id actions_url=actions_url %}
+
+  {% slot mobile_extra_buttons %}
+  <div class="flex items-center md:hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+    <button class="btn btn-secondary flex items-center p-2 handle border-none"
+            title="Move">
+      {% component "svg" "view_list" css_class="btn-icon h-6 w-6" %}
+    </button>
+  </div>
+  {% endslot %}
+
+  {% slot extra_buttons %}
+  <div class="md:flex items-center hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+    <button class="btn btn-secondary flex items-center p-2 handle border-none"
+            title="Move">
+      {% component "svg" "view_list" css_class="btn-icon h-6 w-6" %}
+    </button>
+  </div>
+  {% endslot %}
+
+  {% endcomponent_block %}
+
   {% empty %}
   You do not have any items in your Play Queue.
   {% endfor %}
