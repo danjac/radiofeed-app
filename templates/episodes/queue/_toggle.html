@@ -1,4 +1,3 @@
-{% if user.is_authenticated %}
 <form method="post"
       id="{{ turbo_stream_target|default:episode.get_queue_toggle_id }}"
       action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
@@ -9,12 +8,3 @@
   {% button "Queue" icon="collection" title="Add episode to your Play Queue" %}
   {% endif %}
 </form>
-{% else %}
-<a title="Log in or sign up to add this episode to your Play Queue"
-   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
-   data-turbo-frame="_top"
-   class="btn btn-default flex items-center">
-  {% svg "collection" css_class="btn-icon mr-2" %}
-  Queue
-</a>
-{% endif %}

@@ -1,4 +1,3 @@
-{% if user.is_authenticated %}
 <form method="post"
       id="{{ turbo_stream_target|default:episode.get_favorite_toggle_id }}"
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
@@ -9,12 +8,3 @@
   {% button "Favorite" icon="star" title="Add episode to your Favorites" %}
   {% endif %}
 </form>
-{% else %}
-<a title="Log in or sign up to add this episode to Favorites"
-   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
-   data-turbo-frame="_top"
-   class="btn btn-default flex items-center">
-  {% svg "star" css_class="btn-icon mr-2" %}
-  Favorite
-</a>
-{% endif %}

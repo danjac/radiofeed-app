@@ -79,6 +79,7 @@
         </div>
       </div>
 
+      {% if user.is_authenticated %}
       <div class="mb-3 flex items-center">
         <div class="mr-2">
           {% include "episodes/queue/_toggle.html" %}
@@ -87,6 +88,7 @@
           {% include "episodes/favorites/_toggle.html" %}
         </div>
       </div>
+      {% endif %}
 
       <div class="flex items-center">
         {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}

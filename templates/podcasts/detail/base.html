@@ -26,7 +26,9 @@
     </li>
     {% endif %}
   </ul>
+  {% if user.is_authenticated %}
   {% include "podcasts/_subscribe.html" %}
+  {% endif %}
 
 </nav>
 {% block podcast_content %}{% endblock %}

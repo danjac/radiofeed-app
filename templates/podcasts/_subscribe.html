@@ -1,4 +1,3 @@
-{% if user.is_authenticated %}
 <form method="post"
       id="{{ turbo_stream_target|default:podcast.get_subscribe_toggle_id }}"
       action="{% if is_subscribed %}{% url 'podcasts:unsubscribe' podcast.id %}{% else %}{% url 'podcasts:subscribe' podcast.id %}{% endif %}">
@@ -9,12 +8,3 @@
   {% button "Subscribe" icon="eye" title="Add podcast to your Subscriptions" %}
   {% endif %}
 </form>
-{% else %}
-<a class="btn btn-default flex items-center"
-   data-turbo-frame="_top"
-   title="Log in or sign up to subscribe to this podcast"
-   href="{% url 'account_login' %}?next={{ request.path|urlencode }}">
-  {% svg "eye" css_class="btn-icon mr-2" %}
-  Subscribe
-</a>
-{% endif %}
