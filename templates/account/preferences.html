@@ -5,9 +5,13 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
+<<<<<<< HEAD
 {% component_block "form" form %}
 {% slot form_buttons %}
 {% component "button" text=_("Save Changes") icon="check" %}
 {% endslot %}
 {% endcomponent_block %}
+=======
+{% include "account/forms/_preferences.html" %}
+>>>>>>> parent of d96b749 (Adding components)
 {% endblock %}
