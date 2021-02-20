@@ -5,5 +5,5 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-{% include "account/forms/_preferences.html" %}
+{% include "forms/_form.html" with submit_text=_("Save Changes") %}
 {% endblock %}

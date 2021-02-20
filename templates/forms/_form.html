@@ -26,7 +26,11 @@
   {% endblock %}
 
   <div class="flex items-center justify-end">
-    {% block form_buttons %}{% endblock %}
+    {% block form_buttons %}
+    {% if submit_text %}
+    {% button submit_text icon=submit_icon|default:'check' %}
+    {% endif %}
+    {% endblock %}
   </div>
 
 </form>
