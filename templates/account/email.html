@@ -58,12 +58,6 @@
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-
-{% component_block "form" form %}
-{% slot form_buttons %}
-{% component "button" _("Add E-Mail") icon="plus" name="action_add" value="1" %}
-{% endslot %}
-{% endcomponent_block %}
-
+{% include "account/forms/_email.html" %}
 {% endif %}
 {% endblock %}

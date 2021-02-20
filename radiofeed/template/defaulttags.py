@@ -97,3 +97,29 @@ def htmlattrs(attrs: Dict) -> str:
     return mark_safe(
         " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
     )
+
+
+@register.inclusion_tag("svg/_svg.html")
+def svg(name: str, css_class="", **attrs) -> Dict:
+    return {
+        "svg_template": f"svg/_{name}.svg",
+        "css_class": css_class,
+        "attrs": htmlattrs(attrs),
+    }
+
+
+@register.inclusion_tag("forms/_button.html")
+def button(
+    text: str,
+    icon: str = "",
+    type: str = "default",
+    css_class: str = "",
+    **attrs,
+) -> Dict:
+    return {
+        "text": text,
+        "icon": icon,
+        "type": type,
+        "css_class": css_class,
+        "attrs": htmlattrs(attrs),
+    }
