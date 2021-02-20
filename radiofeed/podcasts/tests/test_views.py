@@ -24,19 +24,6 @@ from ..models import Subscription
 pytestmark = pytest.mark.django_db
 
 
-class TestLandingPage:
-    def test_anonymous(self, client):
-        PodcastFactory.create_batch(3, promoted=True)
-        PodcastFactory()
-        resp = client.get(reverse("podcasts:landing_page"))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 3
-
-    def test_authenticated(self, client, login_user):
-        resp = client.get(reverse("podcasts:landing_page"))
-        assert resp.url == reverse("episodes:index")
-
-
 class TestPodcastCoverImage:
     def test_get(self, client, podcast):
         resp = client.get(reverse("podcasts:podcast_cover_image", args=[podcast.id]))

@@ -1,6 +1,5 @@
 from typing import List
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
@@ -16,56 +15,32 @@ from ..tasks import sync_podcast_feed
 from . import get_podcast_or_404, render_podcast_list_response
 
 
-def landing_page(request: HttpRequest) -> HttpResponse:
-    if request.user.is_authenticated:
-        return redirect(settings.LOGIN_REDIRECT_URL)
-
-    podcasts = Podcast.objects.filter(
-        pub_date__isnull=False,
-        cover_image__isnull=False,
-        promoted=True,
-    ).order_by("-pub_date")[:12]
-
-    return TemplateResponse(
-        request, "podcasts/landing_page.html", {"podcasts": podcasts}
+def index(request: HttpRequest) -> HttpResponse:
+    subscriptions = (
+        list(request.user.subscription_set.values_list("podcast", flat=True))
+        if request.user.is_authenticated
+        else []
+    )
+    podcasts = (
+        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-
-def index(request: HttpRequest) -> HttpResponse:
-    """Shows list of podcasts: if user has subscriptions,
-    show most recently updated, otherwise show promoted podcasts"""
-
-    subscriptions: List[int]
-
-    if request.user.is_anonymous:
-        subscriptions = []
-    else:
-        subscriptions = list(
-            request.user.subscription_set.values_list("podcast", flat=True)
-        )
-
-    podcasts = Podcast.objects.filter(pub_date__isnull=False).distinct()
-
     if subscriptions:
-        podcasts = podcasts.filter(pk__in=subscriptions).order_by("-pub_date")
-
+        podcasts = podcasts.filter(pk__in=subscriptions)
+        show_promotions = False
     else:
-
-        podcasts = Podcast.objects.filter(
-            pub_date__isnull=False, promoted=True
-        ).order_by("-pub_date")
-
-    top_rated_podcasts = not (subscriptions) and not (request.search)
+        podcasts = podcasts.filter(promoted=True)
+        show_promotions = True
 
     return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/index.html",
         {
-            "top_rated_podcasts": top_rated_podcasts,
+            "show_promotions": show_promotions,
             "search_url": reverse("podcasts:search_podcasts"),
         },
-        cached=not (subscriptions),
+        cached=request.user.is_anonymous,
     )
 
 

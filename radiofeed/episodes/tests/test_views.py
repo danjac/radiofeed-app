@@ -19,13 +19,27 @@ pytestmark = pytest.mark.django_db
 
 
 class TestNewEpisodes:
-    def test_user_no_subscriptions(self, client, login_user):
+    def test_anonymous(self, client, login_user):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["page_obj"].object_list) == 0
+        assert len(resp.context_data["page_obj"].object_list) == 1
+
+    def test_user_no_subscriptions(self, client, login_user):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+
+        EpisodeFactory.create_batch(3)
+        resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
     def test_user_has_subscriptions(self, client, login_user):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()

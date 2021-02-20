@@ -5,7 +5,6 @@ from .views import categories, detail, podcasts, subscriptions
 app_name = "podcasts"
 
 urlpatterns = [
-    path("", podcasts.landing_page, name="landing_page"),
     path("podcasts/", podcasts.index, name="index"),
     path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
     path("search/itunes/", podcasts.search_itunes, name="search_itunes"),

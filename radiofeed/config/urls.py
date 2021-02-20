@@ -20,8 +20,8 @@ sitemaps = {
 SITEMAPS_CACHE_TIMEOUT = 3600
 
 urlpatterns = [
-    path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.episodes.urls")),
+    path("", include("radiofeed.podcasts.urls")),
     path("account/", include("radiofeed.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),

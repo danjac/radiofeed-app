@@ -1,4 +1,5 @@
   <div class="flex justify-center md:hidden mb-3">
+
     <form method="get"
           action="{% url 'podcasts:search_podcasts' %}"
           class="relative bg-transparent">
@@ -21,7 +22,6 @@
 
   <nav class="pt-3">
     <ul class="sidebar">
-      {% if user.is_authenticated %}
       <li class="py-2">
         {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
@@ -30,7 +30,6 @@
           New Releases
         </a>
       </li>
-      {% endif %}
 
       <li class="py-2">
         {% active_link 'podcasts:index' as link %}

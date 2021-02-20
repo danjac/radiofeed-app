@@ -6,7 +6,7 @@ app_name = "episodes"
 
 
 urlpatterns = [
-    path("new/", episodes.index, name="index"),
+    path("", episodes.index, name="index"),
     path("search/episodes/", episodes.search_episodes, name="search_episodes"),
     path(
         "episodes/<int:episode_id>/actions/", episodes.episode_actions, name="actions"

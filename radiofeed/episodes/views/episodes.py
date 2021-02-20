@@ -15,49 +15,50 @@ from ..models import Episode
 from . import get_episode_detail_or_404, render_episode_list_response
 
 
-@login_required
 def index(request: HttpRequest) -> HttpResponse:
 
-    subscriptions: List[int] = (
-        list(request.user.subscription_set.values_list("podcast", flat=True))
-        if request.user.is_authenticated
-        else []
+    podcast_ids: List[int] = []
+    show_promotions: bool = False
+
+    if request.user.is_authenticated:
+        podcast_ids = list(
+            request.user.subscription_set.values_list("podcast", flat=True)
+        )
+
+    if not podcast_ids:
+        podcast_ids = list(
+            Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
+        )
+        show_promotions = True
+
+    # we want a list of the *latest* episode for each podcast
+    latest_episodes = (
+        Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
     )
 
-    has_subscriptions: bool = bool(subscriptions)
+    episode_ids = (
+        Podcast.objects.filter(pk__in=podcast_ids)
+        .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
+        .values_list("latest_episode", flat=True)
+        .distinct()
+    )
 
-    if has_subscriptions:
-        # we want a list of the *latest* episode for each podcast
-        latest_episodes = (
-            Episode.objects.filter(podcast=OuterRef("pk"))
-            .order_by("-pub_date")
-            .distinct()
-        )
-
-        episode_ids = (
-            Podcast.objects.filter(pk__in=subscriptions)
-            .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-            .values_list("latest_episode", flat=True)
-            .distinct()
-        )
-
-        episodes = (
-            Episode.objects.select_related("podcast")
-            .filter(pk__in=set(episode_ids))
-            .order_by("-pub_date")
-            .distinct()
-        )
-    else:
-        episodes = Episode.objects.none()
+    episodes = (
+        Episode.objects.select_related("podcast")
+        .filter(pk__in=set(episode_ids))
+        .order_by("-pub_date")
+        .distinct()
+    )
 
     return render_episode_list_response(
         request,
         episodes,
         "episodes/index.html",
         {
-            "has_subscriptions": has_subscriptions,
+            "show_promotions": show_promotions,
             "search_url": reverse("episodes:search_episodes"),
         },
+        cached=request.user.is_anonymous,
     )
 
 
