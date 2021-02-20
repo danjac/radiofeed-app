@@ -19,7 +19,8 @@ class Form(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "forms/_form.html"
+        # tmp name for now: move to _form.html later
+        return "forms/_form_component.html"
 
 
 component.registry.register(name="form", component=Form)
