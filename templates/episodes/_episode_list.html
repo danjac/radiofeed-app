@@ -2,7 +2,7 @@
 
 {% block results %}
 {% for episode in page_obj %}
-{% component "episode" episode %}
+{% include "episodes/_episode.html" %}
 {% empty %}
 
 {% if search %}

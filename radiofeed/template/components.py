@@ -1,15 +1,15 @@
 from typing import Dict
 
-from django.forms import Form
+from django.forms import Form as DjangoForm
 
 from django_components import component
 
 from .defaulttags import htmlattrs
 
 
-class FormComponent(component.Component):
+class Form(component.Component):
     def context(
-        self, form: Form, action_url: str = "", css_class: str = "", **attrs
+        self, form: DjangoForm, action_url: str = "", css_class: str = "", **attrs
     ) -> Dict:
         return {
             "form": form,
@@ -22,10 +22,10 @@ class FormComponent(component.Component):
         return "forms/_form.html"
 
 
-component.registry.register(name="form", component=FormComponent)
+component.registry.register(name="form", component=Form)
 
 
-class ButtonComponent(component.Component):
+class Button(component.Component):
     def context(
         self,
         text: str,
@@ -46,10 +46,10 @@ class ButtonComponent(component.Component):
         return "forms/_button.html"
 
 
-component.registry.register(name="button", component=ButtonComponent)
+component.registry.register(name="button", component=Button)
 
 
-class SvgComponent(component.Component):
+class Svg(component.Component):
     def context(self, name: str, css_class="", **attrs) -> Dict:
         return {
             "name": name,
@@ -61,4 +61,4 @@ class SvgComponent(component.Component):
         return f"svg/_{context['name']}.svg"
 
 
-component.registry.register(name="svg", component=SvgComponent)
+component.registry.register(name="svg", component=Svg)
