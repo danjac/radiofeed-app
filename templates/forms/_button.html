@@ -1,4 +1,4 @@
 <button class="btn btn-{{ type|default:'default' }} {% if icon %}flex items-center{% endif %}{% if css_class %} {{ css_class }}{% endif %}" {{ attrs }}>
-  {% if icon %}{% svg icon css_class="btn-icon mr-2" %}{% endif %}
+  {% if icon %}{% component "svg" name=icon css_class="btn-icon mr-2" %}{% endif %}
   {{ text }}
 </button>

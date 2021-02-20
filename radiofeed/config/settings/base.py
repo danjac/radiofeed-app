@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "turbo_allauth",
+    "django_components",
     "django_extensions",
     "django_celery_beat",
     "djcelery_email",
@@ -217,6 +218,7 @@ TEMPLATES = [
                 "radiofeed.template.context_processors.search",
             ],
             "builtins": [
+                "django_components.templatetags.component_tags",
                 "radiofeed.template.defaulttags",
             ],
             "libraries": {
@@ -251,3 +253,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+COMPONENTS = {"libraries": ["radiofeed.template.components"]}

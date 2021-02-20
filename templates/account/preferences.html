@@ -5,5 +5,9 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-{% include "account/forms/_preferences.html" %}
+{% component_block name="form" %}
+{% slot form_buttons %}
+{% component "button" text=_("Save Changes") icon="check" %}
+{% endslot %}
+{% endcomponent_block %}
 {% endblock %}
