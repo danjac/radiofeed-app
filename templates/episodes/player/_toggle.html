@@ -13,15 +13,9 @@
     </button>
     <button title="Open in Player"
             value="start"
-            class="text-gray-800 hover:text-blue-600  dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
       {% svg "play" css_class="h-10 w-10" %}
     </button>
   </div>
 </form>
-{% else %}
-<a title="Log in or sign up to play this episode"
-   href="{% url 'account_login' %}?next={{ request.path|urlencode }}"
-   class="text-gray-800 hover:text-blue-600 focus:outline-none">
-  {% svg "play" css_class="h-10 w-10" %}
-</a>
 {% endif %}

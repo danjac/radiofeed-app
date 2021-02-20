@@ -69,13 +69,13 @@
     <div>
 
       <div class="flex items-center mb-3">
+        {% if user.is_authenticated %}
         <div class="mr-3">
           {% include "episodes/player/_toggle.html" %}
         </div>
+        {% endif %}
         <div>
-          <div class="mb-1">
-            {% include "episodes/_download.html" %}
-          </div>
+          {% include "episodes/_download.html" %}
         </div>
       </div>
 
