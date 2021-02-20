@@ -9,7 +9,20 @@
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-{% include "account/forms/_login.html" %}
+{% component_block "form" form %}
+{% slot hidden_fields %}
+{% if redirect_field_value %}
+<input type="hidden"
+       name="{{ redirect_field_name }}"
+       value="{{ redirect_field_value }}" />
+{% endif %}
+{% endslot %}
+{% slot form_buttons %}
+<a class="link mr-3"
+   href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+{% component "button" _("Sign In") icon="login" %}
+{% endslot %}
+{% endcomponent_block %}
 
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 {% endblock %}

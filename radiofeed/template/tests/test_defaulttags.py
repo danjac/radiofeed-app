@@ -9,7 +9,6 @@ from ..defaulttags import (
     keepspaces,
     percent,
     share_buttons,
-    svg,
 )
 
 
@@ -100,10 +99,3 @@ class TestKeepspaces:
 
     def test_value_has_html(self):
         return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
-
-
-class TestSvg:
-    def test_render_svg(self):
-        context = svg("ellipsis", css_class="h-4 w-4")
-        assert context["svg_template"] == "svg/_ellipsis.svg"
-        assert context["css_class"] == "h-4 w-4"

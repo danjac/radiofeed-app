@@ -1,13 +1,18 @@
 from typing import Dict
 
+from django.forms import Form as DjangoForm
+
 from django_components import component
 
 from .defaulttags import htmlattrs
 
 
 class Form(component.Component):
-    def context(self, action_url: str = "", css_class: str = "", **attrs) -> Dict:
+    def context(
+        self, form: DjangoForm, action_url: str = "", css_class: str = "", **attrs
+    ) -> Dict:
         return {
+            "form": form,
             "action_url": action_url,
             "css_class": css_class,
             "attrs": htmlattrs(attrs),
