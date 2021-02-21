@@ -115,7 +115,7 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return (
         TurboFrame(request.turbo.frame)
         .template(
-            "podcasts/_cover_image.html",
+            "podcasts/components/_cover_image.html",
             {"podcast": get_podcast_or_404(podcast_id)},
         )
         .response(request)

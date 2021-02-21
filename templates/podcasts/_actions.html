@@ -13,7 +13,7 @@
 
   <a href="{{ podcast.get_absolute_url }}"
      data-turbo-frame="_top">
-    {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 mr-2" %}
+    {% component "cover_image" podcast lazy=False css_class="h-28 w-28 mr-2" %}
   </a>
 
   <div class="text-sm">

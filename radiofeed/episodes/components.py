@@ -34,7 +34,7 @@ class EpisodeComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "episodes/_episode.html"
+        return "episodes/components/_episode.html"
 
 
 component.registry.register(name="episode", component=EpisodeComponent)

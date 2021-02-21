@@ -17,7 +17,7 @@ class PodcastComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "podcasts/_podcast.html"
+        return "podcasts/components/_podcast.html"
 
 
 component.registry.register(name="podcast", component=PodcastComponent)
@@ -40,7 +40,7 @@ class CoverImageComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "podcasts/_cover_image.html"
+        return "podcasts/components/_cover_image.html"
 
 
 component.registry.register(name="cover_image", component=CoverImageComponent)
