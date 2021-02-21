@@ -23,7 +23,7 @@ class ShareButtonsComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/_share_buttons.html"
+        return "components/buttons/_share_buttons.html"
 
 
 component.registry.register(name="share_buttons", component=ShareButtonsComponent)
@@ -64,7 +64,7 @@ class ButtonComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/_button.html"
+        return "components/buttons/_button.html"
 
 
 component.registry.register(name="button", component=ButtonComponent)
