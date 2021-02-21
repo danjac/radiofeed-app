@@ -18,7 +18,7 @@
 
   <div class="text-sm">
     <div class="mb-3">
-      {% include "podcasts/_subscribe.html" %}
+      {% component "subscribe_toggle" podcast is_subscribed %}
     </div>
     {% component "share_buttons" podcast.get_absolute_url podcast.title %}
   </div>

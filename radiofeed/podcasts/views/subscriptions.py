@@ -34,7 +34,7 @@ def render_subscribe_response(
     return (
         TurboStream(podcast.get_subscribe_toggle_id())
         .replace.template(
-            "podcasts/_subscribe.html",
+            "podcasts/components/_subscribe_toggle.html",
             {"podcast": podcast, "is_subscribed": is_subscribed},
         )
         .response(request)

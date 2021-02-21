@@ -44,3 +44,14 @@ class CoverImageComponent(component.Component):
 
 
 component.registry.register(name="cover_image", component=CoverImageComponent)
+
+
+class SubscribeToggleComponent(component.Component):
+    def context(self, podcast: Podcast, is_subscribed: bool):
+        return {"podcast": podcast, "is_subscribed": is_subscribed}
+
+    def template(self, context: Dict) -> str:
+        return "podcasts/components/_subscribe_toggle.html"
+
+
+component.registry.register(name="subscribe_toggle", component=SubscribeToggleComponent)

@@ -27,7 +27,7 @@
     {% endif %}
   </ul>
   {% if user.is_authenticated %}
-  {% include "podcasts/_subscribe.html" %}
+  {% component "subscribe_toggle" podcast is_subscribed %}
   {% endif %}
 
 </nav>
