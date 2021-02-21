@@ -13,7 +13,7 @@
     {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
     <button class="btn btn-secondary flex items-center p-2 handle border-none"
             title="Move">
-      {% svg "view_list" css_class="btn-icon h-6 w-6" %}
+      {% component "icon" "view_list" css_class="btn-icon h-6 w-6" %}
     </button>
   </div>
   {% endslot %}
@@ -22,7 +22,7 @@
     {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
     <button class="btn btn-secondary flex items-center p-2 handle border-none"
             title="Move">
-      {% svg "view_list" css_class="btn-icon h-6 w-6" %}
+      {% component "icon" "view_list" css_class="btn-icon h-6 w-6" %}
     </button>
   </div>
   {% endslot %}

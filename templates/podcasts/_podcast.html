@@ -24,7 +24,7 @@
              href="{% url 'podcasts:actions' podcast.id %}"
              title="Actions"
              data-turbo-frame="modal">
-            {% svg "ellipsis" css_class="w-6 h-6" %}
+            {% component "icon" "ellipsis" css_class="w-6 h-6" %}
           </a>
           {% endif %}
 

@@ -45,4 +45,16 @@ component.registry.register(name="button", component=ButtonComponent)
 
 
 class IconComponent(component.Component):
-    ...
+    def context(self, name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
+        return {
+            "name": name,
+            "css_class": css_class,
+            "title": title,
+            "attrs": htmlattrs(attrs),
+        }
+
+    def template(self, context: Dict) -> str:
+        return f"svg/_{context['name']}.svg"
+
+
+component.registry.register(name="icon", component=IconComponent)
