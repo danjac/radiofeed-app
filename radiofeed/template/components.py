@@ -5,15 +5,13 @@ from django.forms import Field, Form
 
 from django_components import component
 
-from .defaulttags import htmlattrs
-
 
 class FormComponent(component.Component):
     def context(self, form: Form, action_url: str = "", **attrs) -> Dict:
         return {
             "form": form,
             "action_url": action_url,
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
@@ -24,8 +22,8 @@ component.registry.register(name="form", component=FormComponent)
 
 
 class FormFieldComponent(component.Component):
-    def context(self, field: Field, **attrs) -> Dict:
-        return {"field": field, "attrs": attrs}
+    def context(self, field: Field, css_class: str = "") -> Dict:
+        return {"field": field, "css_class": css_class}
 
     def template(self, context: Dict) -> str:
         input_type = context["field"].field.widget.input_type
@@ -53,7 +51,7 @@ class SearchFormComponent(component.Component):
             "search_param": search_param,
             "placeholder": placeholder,
             "css_class": css_class,
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
@@ -79,7 +77,7 @@ class ButtonComponent(component.Component):
             "type": type,
             "css_class": css_class,
             "tag": "a" if "href" in attrs else "button",
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
@@ -110,7 +108,7 @@ class IconComponent(component.Component):
             "name": name,
             "css_class": css_class,
             "title": title,
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
@@ -121,17 +119,18 @@ component.registry.register(name="icon", component=IconComponent)
 
 
 class ShareButtonsComponent(component.Component):
-    def context(self, url: str, subject: str) -> Dict:
+    def context(self, url: str, subject: str, css_class: str = "") -> Dict:
         url = parse.quote(self.outer_context["request"].build_absolute_uri(url))
         subject = parse.quote(subject)
 
         return {
+            "css_class": css_class,
             "share_urls": {
                 "email": f"mailto:?subject={subject}&body={url}",
                 "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
                 "twitter": f"https://twitter.com/share?url={url}&text={subject}",
                 "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
-            }
+            },
         }
 
     def template(self, context: Dict) -> str:

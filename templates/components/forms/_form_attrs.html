@@ -6,4 +6,5 @@ data-controller="form"
 data-action="form#submit"
 novalidate
 action="{{ action_url|default:request.get_full_path }}"
+{{ attrs|htmlattrs }}
 {% endspaceless %}

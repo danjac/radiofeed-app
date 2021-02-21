@@ -2,8 +2,6 @@ from typing import Dict, Optional
 
 from django_components import component
 
-from radiofeed.template.defaulttags import htmlattrs
-
 from .models import CoverImage, Podcast
 
 
@@ -13,7 +11,7 @@ class PodcastComponent(component.Component):
             "podcast": podcast,
             "podcast_url": podcast.get_absolute_url(),
             "css_class": css_class,
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
