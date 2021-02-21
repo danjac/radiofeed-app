@@ -5,9 +5,10 @@
      data-drag-csrf-token-value="{{ csrf_token }}"
      id="queue">
   {% for item in queue_items %}
-  {% url 'episodes:queue_actions' item.episode.id as actions_url %}
-  {% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
-  {% component_block "episode" item.episode dom_id=item.episode.get_queue_dom_id actions_url=actions_url data_drag_target="draggable" data_id=item.id %}
+  {% with episode=item.episode %}
+  {% url 'episodes:queue_actions' episode.id as actions_url %}
+  {% url 'episodes:remove_from_queue' episode.id as remove_url %}
+  {% component_block "episode" episode dom_id=episode.get_queue_dom_id actions_url=actions_url data_drag_target="draggable" data_id=item.id %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
     {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
@@ -27,6 +28,7 @@
   </div>
   {% endslot %}
   {% endcomponent_block %}
+  {% endwith %}
   {% empty %}
   You do not have any items in your Play Queue.
   {% endfor %}
