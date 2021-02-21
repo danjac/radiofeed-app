@@ -1,10 +1,32 @@
 from typing import Dict
+from urllib import parse
 
 from django.forms import Form
 
 from django_components import component
 
 from .defaulttags import htmlattrs
+
+
+class ShareButtonsComponent(component.Component):
+    def context(self, url: str, subject: str) -> Dict:
+        url = parse.quote(self.outer_context["request"].build_absolute_uri(url))
+        subject = parse.quote(subject)
+
+        return {
+            "share_urls": {
+                "email": f"mailto:?subject={subject}&body={url}",
+                "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
+                "twitter": f"https://twitter.com/share?url={url}&text={subject}",
+                "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
+            }
+        }
+
+    def template(self, context: Dict) -> str:
+        return "components/_share_buttons.html"
+
+
+component.registry.register(name="share_buttons", component=ShareButtonsComponent)
 
 
 class FormComponent(component.Component):
@@ -16,6 +38,10 @@ class FormComponent(component.Component):
 
 
 component.registry.register(name="form", component=FormComponent)
+
+
+class SearchFormComponent(component.Component):
+    ...
 
 
 class ButtonComponent(component.Component):

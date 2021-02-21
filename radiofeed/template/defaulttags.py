@@ -1,7 +1,6 @@
 import collections
 import json
 from typing import Any, Dict, Optional
-from urllib import parse
 
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
@@ -37,21 +36,6 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
     elif context["request"].path.startswith(url):
         return ActiveLink(url, True, False)
     return ActiveLink(url, False, False)
-
-
-@register.inclusion_tag("share/_share_buttons.html", takes_context=True)
-def share_buttons(context: RequestContext, url: str, subject: str):
-    url = parse.quote(context["request"].build_absolute_uri(url))
-    subject = parse.quote(subject)
-
-    return {
-        "share_urls": {
-            "email": f"mailto:?subject={subject}&body={url}",
-            "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
-            "twitter": f"https://twitter.com/share?url={url}&text={subject}",
-            "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
-        }
-    }
 
 
 @register.filter
@@ -97,29 +81,3 @@ def htmlattrs(attrs: Dict) -> str:
     return mark_safe(
         " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
     )
-
-
-@register.inclusion_tag("svg/_svg.html")
-def svg(name: str, css_class="", **attrs) -> Dict:
-    return {
-        "svg_template": f"svg/_{name}.svg",
-        "css_class": css_class,
-        "attrs": htmlattrs(attrs),
-    }
-
-
-@register.inclusion_tag("forms/_button.html")
-def button(
-    text: str,
-    icon: str = "",
-    type: str = "default",
-    css_class: str = "",
-    **attrs,
-) -> Dict:
-    return {
-        "text": text,
-        "icon": icon,
-        "type": type,
-        "css_class": css_class,
-        "attrs": htmlattrs(attrs),
-    }

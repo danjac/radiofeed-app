@@ -91,7 +91,7 @@
       {% endif %}
 
       <div class="flex items-center">
-        {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+        {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
         {% if episode.link %}
         <div class="text-sm font-semibold ml-2">
           <a href="{{ episode.link }}"

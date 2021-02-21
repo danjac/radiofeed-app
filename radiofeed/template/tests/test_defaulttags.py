@@ -2,15 +2,7 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Category
 
-from ..defaulttags import (
-    active_link,
-    htmlattrs,
-    jsonify,
-    keepspaces,
-    percent,
-    share_buttons,
-    svg,
-)
+from ..defaulttags import active_link, htmlattrs, jsonify, keepspaces, percent
 
 
 class TestHtmlAttrs:
@@ -38,34 +30,6 @@ class TestPercent:
 
     def test_percent(self):
         assert percent(30, 60) == 50
-
-
-class TestShareButtons:
-    def test_share(self, rf):
-        url = "/podcasts/1234/test/"
-        share_urls = share_buttons({"request": rf.get(url)}, url, "Test Podcast")[
-            "share_urls"
-        ]
-
-        assert (
-            share_urls["email"]
-            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/1234/test/"
-        )
-
-        assert (
-            share_urls["facebook"]
-            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/1234/test/"
-        )
-
-        assert (
-            share_urls["twitter"]
-            == "https://twitter.com/share?url=http%3A//testserver/podcasts/1234/test/&text=Test%20Podcast"
-        )
-
-        assert (
-            share_urls["linkedin"]
-            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/1234/test/"
-        )
 
 
 class TestActiveLink:
@@ -100,10 +64,3 @@ class TestKeepspaces:
 
     def test_value_has_html(self):
         return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
-
-
-class TestSvg:
-    def test_render_svg(self):
-        context = svg("ellipsis", css_class="h-4 w-4")
-        assert context["svg_template"] == "svg/_ellipsis.svg"
-        assert context["css_class"] == "h-4 w-4"

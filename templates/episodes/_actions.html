@@ -51,8 +51,7 @@
         </div>
         {% endif %}
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
-
+      {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
 
   </div>
