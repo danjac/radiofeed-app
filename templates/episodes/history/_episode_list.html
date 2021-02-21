@@ -4,7 +4,19 @@
 <div id="history">
   {% for log in page_obj %}
   {% url 'episodes:remove_history' log.episode.id as remove_url %}
-  {% include "episodes/_episode.html" with episode=log.episode remove_title="Remove episode from History" dom_id=log.episode.get_history_dom_id %}
+  {% component_block "episode" log.episode dom_id=log.episode.get_history_dom_id %}
+  {% slot mobile_extra_buttons %}
+  <div class="flex items-center md:hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from History" %}
+  </div>
+  {% endslot %}
+  {% slot extra_buttons %}
+  <div class="md:flex items-center hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from History" %}
+  </div>
+  {% endslot %}
+  {% endcomponent_block %}
+
   {% empty %}
   {% if search %}
   <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>

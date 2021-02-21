@@ -60,9 +60,9 @@
   {% endif %}
 
   <div class="flex items-center mb-3">
-    <div>
+    <div class="mr-3">
       <a href="{{ podcast.get_absolute_url }}">
-        {% include "podcasts/_cover_image.html" with image_css_class="h-28 w-28 hover:opacity-75 mr-2" %}
+        {% component "cover_image" podcast lazy=False css_class="h-28 w-28 hover:opacity-75" %}
       </a>
     </div>
 
