@@ -11,3 +11,9 @@
     - vars.yml
   roles:
     - assets
+
+- name: Deploy app
+  hosts: localhosts
+  gather_facts: no
+  shell: |
+    git push dokku main
