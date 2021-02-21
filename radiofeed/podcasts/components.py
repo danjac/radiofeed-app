@@ -29,7 +29,6 @@ class CoverImageComponent(component.Component):
         podcast: Podcast,
         lazy: bool = False,
         cover_image: Optional[CoverImage] = None,
-        image_size: int = 20,
         css_class: str = "",
     ) -> Dict:
         """If cover_image is provided,  we don't need to lazy-load the image."""
@@ -37,7 +36,6 @@ class CoverImageComponent(component.Component):
             "podcast": podcast,
             "lazy": lazy and not (cover_image),
             "cover_image": cover_image,
-            "image_size": image_size,
             "css_class": css_class,
         }
 
