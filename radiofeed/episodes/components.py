@@ -38,3 +38,45 @@ class EpisodeComponent(component.Component):
 
 
 component.registry.register(name="episode", component=EpisodeComponent)
+
+
+class FavoriteToggleComponent(component.Component):
+    def context(self, episode: Episode, is_favorited: bool):
+        return {
+            "episode": episode,
+            "is_favorited": is_favorited,
+        }
+
+    def template(self, context: Dict) -> str:
+        return "episodes/components/_favorite_toggle.html"
+
+
+component.registry.register(name="favorite_toggle", component=FavoriteToggleComponent)
+
+
+class QueueToggleComponent(component.Component):
+    def context(self, episode: Episode, is_queued: bool):
+        return {
+            "episode": episode,
+            "is_queued": is_queued,
+        }
+
+    def template(self, context: Dict) -> str:
+        return "episodes/components/_queue_toggle.html"
+
+
+component.registry.register(name="queue_toggle", component=QueueToggleComponent)
+
+
+class PlayerToggleComponent(component.Component):
+    def context(self, episode: Episode, is_playing: bool):
+        return {
+            "episode": episode,
+            "episode_is_playing": is_playing,
+        }
+
+    def template(self, context: Dict) -> str:
+        return "episodes/components/_player_toggle.html"
+
+
+component.registry.register(name="player_toggle", component=PlayerToggleComponent)

@@ -71,7 +71,7 @@
       <div class="flex items-center mb-3">
         {% if user.is_authenticated %}
         <div class="mr-3">
-          {% include "episodes/player/_toggle.html" %}
+          {% component "player_toggle" episode is_episode_playing %}
         </div>
         {% endif %}
         <div>
@@ -82,10 +82,10 @@
       {% if user.is_authenticated %}
       <div class="mb-3 flex items-center">
         <div class="mr-2">
-          {% include "episodes/queue/_toggle.html" %}
+          {% component "queue_toggle" episode is_queued %}
         </div>
         <div>
-          {% include "episodes/favorites/_toggle.html" %}
+          {% component "favorite_toggle" episode is_favorited %}
         </div>
       </div>
       {% endif %}

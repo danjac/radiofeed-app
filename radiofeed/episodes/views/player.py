@@ -87,7 +87,7 @@ def render_player_toggle(
     return (
         TurboStream(episode.get_player_toggle_id())
         .replace.template(
-            "episodes/player/_toggle.html",
+            "episodes/components/_player_toggle.html",
             {
                 "episode": episode,
                 "is_episode_playing": is_playing,

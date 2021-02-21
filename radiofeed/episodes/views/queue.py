@@ -84,7 +84,7 @@ def render_queue_response(
     return (
         TurboStream(episode.get_queue_toggle_id())
         .replace.template(
-            "episodes/queue/_toggle.html",
+            "episodes/components/_queue_toggle.html",
             {
                 "episode": episode,
                 "is_queued": is_queued,

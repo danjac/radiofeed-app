@@ -65,7 +65,7 @@ def render_favorite_response(
     return (
         TurboStream(episode.get_favorite_toggle_id())
         .replace.template(
-            "episodes/favorites/_toggle.html",
+            "episodes/components/_favorite_toggle.html",
             {"episode": episode, "is_favorited": is_favorited},
         )
         .response(request)

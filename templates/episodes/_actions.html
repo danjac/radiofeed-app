@@ -39,16 +39,12 @@
       <div class="mb-3 flex items-center">
         {% include "episodes/_download.html" %}
       </div>
-      <div class="flex items-center mb-3">
+      <div class="flex items-center space-x-3 mb-3">
         {% if "queue" in actions %}
-        <div class="mr-2">
-          {% include "episodes/queue/_toggle.html" with css_class="mr-2" %}
-        </div>
+        {% component "queue_toggle" episode is_queued %}
         {% endif %}
         {% if "favorite" in actions %}
-        <div>
-          {% include "episodes/favorites/_toggle.html" %}
-        </div>
+        {% component "favorite_toggle" episode is_favorited %}
         {% endif %}
       </div>
       {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
