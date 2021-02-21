@@ -3,9 +3,20 @@
 {% block results %}
 <div id="favorites">
   {% for favorite in page_obj %}
-  {% url 'episodes:favorite_actions' favorite.episode.id as action_url %}
+  {% url 'episodes:favorite_actions' favorite.episode.id as actions_url %}
   {% url 'episodes:remove_favorite' favorite.episode.id as remove_url %}
-  {% include "episodes/favorites/_episode.html" with episode=favorite.episode remove_title="Remove from Favorites" %}
+  {% component_block "episode" favorite.episode dom_id=item.favorite.get_favorite_dom_id actions_url=actions_url %}
+  {% slot mobile_extra_buttons %}
+  <div class="flex items-center md:hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+  </div>
+  {% endslot %}
+  {% slot extra_buttons %}
+  <div class="md:flex items-center hidden">
+    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+  </div>
+  {% endslot %}
+  {% endcomponent_block %}
   {% empty %}
   {% if search %}
   <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
