@@ -3,7 +3,7 @@
   hosts: all
   become: yes
   roles:
-    # - dokku_bot.ansible_dokku
+    - dokku_bot.ansible_dokku
     - geerlingguy.swap
   vars:
     swap_file_size_mb: '1048'
@@ -12,28 +12,39 @@
       - name: dokku
         username: dokku
         ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
-    # TBD: install postgres+redis plugins
-    # install letsencrypt
-    # set environ variables
-    # dokku_config
-    #
+    dokku_plugins:
+      - name: letsencrypt
+        url: https://github.com/dokku/dokku-letsencrypt.git
+      - name: postgres
+        url: https://github.com/dokku/dokku-postgres.git
+      - name: redis
+        url: https://github.com/dokku/dokku-redis.git
+
 - name: Create dokku app
   hosts: all
   dokku_app:
-    app: radiofeed
+    app: &appname radiofeed
+
+- name: add domain
+  hosts: all
+  dokku_domains:
+    app: *appname
+    domains:
+      - '{{ domain }}'
 
 - name: Set environment variables
   hosts: all
   dokku_config:
-    app: radiofeed
+    app: *appname
     restart: false
     config:
       BUILDPACK_URL: https://github.com/heroku/heroku-buildpack-python
       DJANGO_SETTINGS_MODULE: radiofeed.config.settings.production
       DISABLE_COLLECTSTATIC: 1
+      DOKKU_LETSENCRYPT_EMAIL: '{{ letsencrypt_email }}'
       ADMIN_URL: '{{ admin_url }}'
       ADMINS: '{{ admins }}'
-      ALLOWED_HOSTS: '{{ hosts }}'
+      ALLOWED_HOSTS: '{{ domain }}'
       SECRET_KEY: '{{ secret_key }}'
       AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
       AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
