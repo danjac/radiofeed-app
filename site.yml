@@ -3,3 +3,11 @@
   gather_facts: no
   roles:
     - tests
+
+- name: Build and deploy assets to S3
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vars.yml
+  roles:
+    - assets

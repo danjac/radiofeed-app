@@ -1,0 +1,13 @@
+- name: Build JS assets
+  shell: |
+    docker-compose run --rm assets yarn build-js
+
+- name: Build CSS assets
+  shell: |
+    docker-compose run --rm assets yarn build-css
+
+- name: Deploy assets to S3
+  shell: |
+    docker-compose run --rm \
+      -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
+      django ./manage.py collectstatic --noinput -v 3 -i dev -i src
