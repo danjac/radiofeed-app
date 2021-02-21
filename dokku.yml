@@ -31,14 +31,14 @@
       BUILDPACK_URL: https://github.com/heroku/heroku-buildpack-python
       DJANGO_SETTINGS_MODULE: radiofeed.config.settings.production
       DISABLE_COLLECTSTATIC: 1
-      ADMIN_URL: { { admin_url } }
-      ADMINS: { { admins } }
-      ALLOWED_HOSTS: { { hosts } }
-      SECRET_KEY: { { secret_key } }
-      AWS_ACCESS_KEY_ID: { { aws_access_key_id } }
-      AWS_SECRET_ACCESS_KEY: { { aws_secret_access_key } }
-      AWS_S3_CUSTOM_DOMAIN: { { aws_s3_custom_domain } }
-      AWS_STORAGE_BUCKET_NAME: { { aws_storage_bucket_name } }
-      MAILGUN_API_KEY: { { mailgun_api_key } }
-      MAILGUN_SENDER_DOMAIN: { { mailgun_sender_domain } }
-      SENTRY_URL: { { sentry_url } }
+      ADMIN_URL: '{{ admin_url }}'
+      ADMINS: '{{ admins }}'
+      ALLOWED_HOSTS: '{{ hosts }}'
+      SECRET_KEY: '{{ secret_key }}'
+      AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
+      AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+      AWS_S3_CUSTOM_DOMAIN: '{{ aws_s3_custom_domain }}'
+      AWS_STORAGE_BUCKET_NAME: '{{ aws_storage_bucket_name }}'
+      MAILGUN_API_KEY: '{{ mailgun_api_key }}'
+      MAILGUN_SENDER_DOMAIN: '{{ mailgun_sender_domain }}'
+      SENTRY_URL: '{{ sentry_url }}'
