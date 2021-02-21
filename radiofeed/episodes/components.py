@@ -1,9 +1,10 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from django.urls import reverse
 
 from django_components import component
 
+from radiofeed.podcasts.models import CoverImage
 from radiofeed.template.defaulttags import htmlattrs
 
 from .models import Episode
@@ -16,6 +17,7 @@ class EpisodeComponent(component.Component):
         dom_id: str = "",
         podcast_url: str = "",
         actions_url: str = "",
+        cover_image: Optional[CoverImage] = None,
         **attrs,
     ) -> Dict:
         return {
@@ -27,6 +29,7 @@ class EpisodeComponent(component.Component):
             or reverse("episodes:actions", args=[episode.id]),
             "episode_url": episode.get_absolute_url(),
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
+            "cover_image": cover_image,
             "attrs": htmlattrs(attrs),
         }
 

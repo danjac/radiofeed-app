@@ -69,7 +69,7 @@ def episodes(
         {
             **get_podcast_detail_context(request, podcast),
             "ordering": ordering,
-            "podcast_image": podcast.get_cover_image_thumbnail(),
+            "cover_image": podcast.get_cover_image_thumbnail(),
             "podcast_url": reverse(
                 "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
             ),

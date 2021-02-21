@@ -1,32 +1,38 @@
 {% load thumbnail static %}
 {% spaceless %}
-<img class="object-cover border dark:border-gray-500 bg-transparent {{ image_css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
-     title="{{ podcast.title }}"
-     alt="{{ podcast.title }}"
-     {% if podcast_image %}
-     src="{{ podcast_image.url }}"
-     width="{{ podcast_image.width }}"
-     height="{{ podcast_image.height }}"
-     {% elif lazy %}
-     src="{% static 'img/podcast-icon.png' %}"
-     width="200"
-     height="200"
-     {% else %}
-     {% if podcast.cover_image %}
-     {% with size=image_size|default:"20" %}
-     {% thumbnail podcast.cover_image "200" format="WEBP" crop="center" as img %}
-     src="{{ img.url }}"
-     width="{{ img.width }}"
-     height="{{ img.height }}"
-     {% empty %}src="{% static 'img/podcast-icon.png' %}"
-     width="200"
-     height="200"
-     {% endthumbnail %}
-     {% endwith %}
-     {% else %}
-     src="{% static 'img/podcast-icon.png' %}"
-     width="200"
-     height="200"
-     {% endif %}
-     {% endif %} />
-{% endspaceless %}
+{% if lazy %}
+<turbo-frame id="podcast-cover-image-{{ podcast.id }}"
+             loading="lazy"
+             src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
+  {% endif %}
+  <img class="object-cover border dark:border-gray-500 bg-transparent {{ css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
+       title="{{ podcast.title }}"
+       alt="{{ podcast.title }}"
+       {% if podcast_image %}
+       src="{{ podcast_image.url }}"
+       width="{{ podcast_image.width }}"
+       height="{{ podcast_image.height }}"
+       {% elif lazy %}
+       src="{% static 'img/podcast-icon.png' %}"
+       width="200"
+       height="200"
+       {% else %}
+       {% if podcast.cover_image %}
+       {% thumbnail podcast.cover_image "200" format="WEBP" crop="center" as img %}
+       src="{{ img.url }}"
+       width="{{ img.width }}"
+       height="{{ img.height }}"
+       {% empty %}src="{% static 'img/podcast-icon.png' %}"
+       width="200"
+       height="200"
+       {% endthumbnail %}
+       {% else %}
+       src="{% static 'img/podcast-icon.png' %}"
+       width="200"
+       height="200"
+       {% endif %}
+       {% endif %} />
+  {% endspaceless %}
+  {% if lazy %}
+</turbo-frame>
+{% endif %}

@@ -8,15 +8,7 @@
       <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% if podcast_image %}
-          {% include "podcasts/_cover_image.html" %}
-          {% else %}
-          <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
-                       loading="lazy"
-                       src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
-            {% include "podcasts/_cover_image.html" with lazy=True %}
-          </turbo-frame>
-          {% endif %}
+          {% component "cover_image" podcast lazy=True cover_image=cover_image %}
         </a>
       </div>
       <div class="leading-tight w-full">

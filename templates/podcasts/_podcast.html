@@ -5,11 +5,7 @@
       <div class="mr-2">
         <a href="{{ podcast_url }}"
            data-turbo-frame="_top">
-          <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
-                       loading="lazy"
-                       src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
-            {% include "podcasts/_cover_image.html" with lazy=True %}
-          </turbo-frame>
+          {% component "cover_image" podcast=podcast lazy=True %}
         </a>
       </div>
 
