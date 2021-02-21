@@ -2,12 +2,10 @@
 
 {% block results %}
 {% for episode in page_obj %}
-{% include "episodes/_episode.html" %}
+{% component "episode" episode %}
 {% empty %}
-
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
-
 {% endfor %}
 {% endblock results %}
