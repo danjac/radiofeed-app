@@ -1,3 +1,4 @@
+# https://github.com/dokku/ansible-dokku#requirements
 - name: Install dokku
   hosts: all
   become: yes
@@ -11,3 +12,7 @@
       - name: dokku
         username: dokku
         ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+    # TBD: install postgres+redis plugins
+    # install letsencrypt
+    # set environ variables
+    # dokku_config
