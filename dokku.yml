@@ -2,7 +2,7 @@
   hosts: all
   become: yes
   roles:
-    - dokku_bot.ansible_dokku
+    # - dokku_bot.ansible_dokku
     - geerlingguy.swap
   vars:
     swap_file_size_mb: '1048'
