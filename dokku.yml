@@ -1,8 +1,8 @@
-- name: Install dokku and install swap
+- name: Install dokku
   hosts:
-    - dokku
-  become: yes
-  remote_user: root
-  gather_facts: no
+    - all
   roles:
-    - swap
+    - dokku_bot.ansible_dokku
+    - geerlingguy.swap
+  vars:
+    - swap_file_size_mb: '1048'
