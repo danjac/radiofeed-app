@@ -1,7 +1,7 @@
 from typing import Dict
 from urllib import parse
 
-from django.forms import Form
+from django.forms import Field, Form
 
 from django_components import component
 
@@ -10,13 +10,33 @@ from .defaulttags import htmlattrs
 
 class FormComponent(component.Component):
     def context(self, form: Form, action_url: str = "", **attrs) -> Dict:
-        return {"form": form, "action_url": action_url, "attrs": htmlattrs(attrs)}
+        return {
+            "form": form,
+            "action_url": action_url,
+            "attrs": htmlattrs(attrs),
+        }
 
     def template(self, context: Dict) -> str:
         return "components/forms/_form.html"
 
 
 component.registry.register(name="form", component=FormComponent)
+
+
+class FormFieldComponent(component.Component):
+    def context(self, field: Field, **attrs) -> Dict:
+        return {"field": field, "attrs": attrs}
+
+    def template(self, context: Dict) -> str:
+        input_type = context["field"].field.widget.input_type
+        return (
+            "components/forms/_checkbox_field.html"
+            if input_type == "checkbox"
+            else "components/forms/_field.html"
+        )
+
+
+component.registry.register(name="form_field", component=FormFieldComponent)
 
 
 class SearchFormComponent(component.Component):

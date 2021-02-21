@@ -4,6 +4,6 @@
   {% render_field field class=css_class %}
   {{ field.label }}
 </label>
-{% include "forms/_errors.html" with errors=field.errors %}
-{% include "forms/_help_text.html" with help_text=field.help_text %}
+{% include "components/forms/_errors.html" with errors=field.errors %}
+{% include "components/forms/_help_text.html" with help_text=field.help_text %}
 {% endwith %}
