@@ -16,3 +16,11 @@ class FormComponent(component.Component):
 
 
 component.registry.register(name="form", component=FormComponent)
+
+
+class ButtonComponent(component.Component):
+    ...
+
+
+class IconComponent(component.Component):
+    ...
