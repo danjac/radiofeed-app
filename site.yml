@@ -1,0 +1,5 @@
+- name: Run all tests
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - tests
