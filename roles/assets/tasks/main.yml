@@ -10,4 +10,7 @@
   shell: |
     docker-compose run --rm \
       -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
+      -e AWS_ACCESS_KEY_ID={{aws_access_key_id}} \
+      -e AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}} \
+      -e AWS_STORAGE_BUCKET_NAME={{aws_storage_bucket_name}} \
       django ./manage.py collectstatic --noinput -v 3 -i dev -i src
