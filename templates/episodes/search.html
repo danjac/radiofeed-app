@@ -19,7 +19,7 @@
       {% endif %}
     </div>
     {% endif %}
-    {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
+    {% component "search_form" placeholder="Search episodes..." %}
   </div>
 </div>
 {% if search %}
