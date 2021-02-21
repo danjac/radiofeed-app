@@ -80,7 +80,7 @@ class IconComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return f"components/svg/_{context['name']}.svg"
+        return f"components/icons/_{context['name']}.svg"
 
 
 component.registry.register(name="icon", component=IconComponent)
