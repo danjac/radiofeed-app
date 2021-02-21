@@ -9,12 +9,12 @@
   {% component_block "episode" episode dom_id=episode.get_favorite_dom_id actions_url=actions_url %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
-    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+    {% component "remove_button" remove_url css_class="mr-3" title="Remove from Favorites" %}
   </div>
   {% endslot %}
   {% slot extra_buttons %}
   <div class="md:flex items-center hidden">
-    {% include "episodes/_remove.html" with css_class="mr-3" remove_title="Remove from Play Queue" %}
+    {% component "remove_button" remove_url css_class="mr-3" title="Remove from Favorites" %}
   </div>
   {% endslot %}
   {% endcomponent_block %}

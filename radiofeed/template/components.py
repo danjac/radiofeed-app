@@ -89,6 +89,21 @@ class ButtonComponent(component.Component):
 component.registry.register(name="button", component=ButtonComponent)
 
 
+class RemoveButtonComponent(component.Component):
+    def context(self, remove_url: str, css_class: str = "", title: str = "") -> Dict:
+        return {
+            "remove_url": remove_url,
+            "css_class": css_class,
+            "title": title,
+        }
+
+    def template(self, context: Dict) -> str:
+        return "components/buttons/_remove_button.html"
+
+
+component.registry.register(name="remove_button", component=RemoveButtonComponent)
+
+
 class IconComponent(component.Component):
     def context(self, name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
         return {
