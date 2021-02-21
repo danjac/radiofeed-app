@@ -54,6 +54,6 @@
       MAILGUN_SENDER_DOMAIN: '{{ mailgun_sender_domain }}'
       SENTRY_URL: '{{ sentry_url }}'
 # TBD:
-# letsencrypt:cron-job --add
+# dokku letsencrypt:cron-job --add
 # dokku ps:scale myapp worker=1
 # dokku ps:scale myapp beat=1
