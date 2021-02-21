@@ -12,7 +12,7 @@ class FormComponent(component.Component):
         return {"form": form, "action_url": action_url, "attrs": htmlattrs(attrs)}
 
     def template(self, context: Dict) -> str:
-        return "forms/_form.html"
+        return "components/forms/_form.html"
 
 
 component.registry.register(name="form", component=FormComponent)
@@ -38,7 +38,7 @@ class ButtonComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "forms/_button.html"
+        return "components/_button.html"
 
 
 component.registry.register(name="button", component=ButtonComponent)
@@ -54,7 +54,7 @@ class IconComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return f"svg/_{context['name']}.svg"
+        return f"components/svg/_{context['name']}.svg"
 
 
 component.registry.register(name="icon", component=IconComponent)

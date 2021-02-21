@@ -1,0 +1,19 @@
+<form method="get"
+      action="{{ search_url|default:request.path }}"
+      class="relative bg-transparent">
+  <input type="search"
+         name="{{ search_param|default:'q' }}"
+         autocomplete="off"
+         aria-label="{{ placeholder|default:'Search' }}"
+         value="{{ search|default:'' }}"
+         {% if placeholder %}placeholder="{{ placeholder }}"
+         {% endif %}
+         class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white">
+  <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+    <button type="submit"
+            title="Search"
+            class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+      {% component "icon" "search" css_class="h-4 w-4" %}
+    </button>
+  </span>
+</form>

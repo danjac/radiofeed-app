@@ -1,0 +1,9 @@
+{% spaceless %}
+{% if form_id %}id="{{ form_id }}"{% endif %}
+class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800 dark:border-red-500{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
+method="post"
+data-controller="form"
+data-action="form#submit"
+novalidate
+action="{{ action_url|default:request.get_full_path }}"
+{% endspaceless %}
