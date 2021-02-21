@@ -12,7 +12,7 @@ class FormComponent(component.Component):
         return {"form": form, "action_url": action_url, "attrs": htmlattrs(attrs)}
 
     def template(self, context: Dict) -> str:
-        return "forms/_form_component.html"
+        return "forms/_form.html"
 
 
 component.registry.register(name="form", component=FormComponent)
