@@ -3,7 +3,7 @@
     <div class="font-bold flex items-center sm:mb-0">
 
       <div class="mr-2">
-        <a href="{{ podcast.get_absolute_url }}"
+        <a href="{{ podcast_url }}"
            data-turbo-frame="_top">
           <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
                        loading="lazy"
@@ -15,7 +15,7 @@
 
       <div>
         <div class="mb-2 text-sm md:text-base tracking-tight leading-tight w-56 sm:w-96 truncate md:w-full">
-          <a href="{{ podcast.get_absolute_url }}"
+          <a href="{{ podcast_url }}"
              title="{{ podcast.title|stripentities }}"
              data-turbo-frame="_top"
              class="link">{{ podcast.title|stripentities|truncatechars:80 }}</a>
