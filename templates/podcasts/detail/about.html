@@ -51,14 +51,9 @@
   <div class="space-x-1 space-y-1">
     {% cache 3600 podcast-categories podcast.id %}
     {% for category in podcast.categories.all %}
-    <a class="inline-block btn btn-default"
-       title="{{ category.name }}"
-       href="{{ category.get_absolute_url }}">
-      <div class="flex items-center">
-        {% svg "tag" css_class="btn-icon mr-2" %}
-        {{ category.name }}
-      </div>
-    </a>
+    <div class="inline-block">
+      {% component "button" category.name icon="tag" title=category.name href=category.get_absolute_url %}
+    </div>
     {% endfor %}
     {% endcache %}
   </div>
