@@ -43,3 +43,9 @@ celerybeat-schedule
 # Common typos
 :w
 '
+
+# Ansible
+
+.vault_pass
+hosts
+vars.yml
