@@ -13,7 +13,7 @@
     - assets
 
 - name: Deploy app
-  hosts: localhosts
+  hosts: localhost
   gather_facts: no
-  shell: |
-    git push dokku main
+  tasks:
+    - shell: git push dokku main
