@@ -1,8 +1,13 @@
 - name: Install dokku
-  hosts:
-    - all
+  hosts: all
+  become: yes
   roles:
     - dokku_bot.ansible_dokku
     - geerlingguy.swap
   vars:
-    - swap_file_size_mb: '1048'
+    swap_file_size_mb: '1048'
+    dokku_version: 0.21.4
+    dokku_users:
+      - name: dokku
+        username: dokku
+        ssh_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"
