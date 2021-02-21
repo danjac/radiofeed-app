@@ -12,9 +12,9 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
-For local development, first copy the .env.example file:
+For local development just run docker-compose:
 
-> cp .env.example .env
+> docker-compose build && docker-compose up -d
 
 To get started, first run migrate and load the categories:
 
@@ -80,7 +80,11 @@ Next add to Git and deploy:
 
 > git remote add dokku dokku@my-domain-or-ip-address:myapp
 
-> ./scripts/deploy
+Deployment requires Ansible. First copy vars.yml.example to vars.yml, set the required env variables and encrypt vars.yml with ansible-vault.
+
+You can deploy with this command:
+
+> ansible-playbook site.yml
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
