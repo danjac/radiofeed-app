@@ -21,7 +21,7 @@
 {% slot form_buttons %}
 <a class="link mr-3"
    href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-{% button _("Sign In") icon="login" %}
+{% component "button" _("Sign In") icon="login" %}
 {% endslot %}
 {% endcomponent_block %}
 
