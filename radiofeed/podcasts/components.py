@@ -28,6 +28,7 @@ class CoverImageComponent(component.Component):
         lazy: bool = False,
         cover_image: Optional[CoverImage] = None,
         css_class: str = "",
+        **attrs,
     ) -> Dict:
         """If cover_image is provided,  we don't need to lazy-load the image."""
 
@@ -39,6 +40,7 @@ class CoverImageComponent(component.Component):
             "lazy": lazy and not (cover_image),
             "cover_image": cover_image,
             "css_class": css_class,
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:

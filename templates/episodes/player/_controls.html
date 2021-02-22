@@ -10,18 +10,7 @@
        class="hidden">
     <div class="flex items-center justify-between relative">
       <div class="flex items-center">
-        <img data-controller="link"
-             data-link-url-value="{{ podcast.get_absolute_url }}"
-             data-action="click->link#visit"
-             class="object-cover block cursor-pointer h-8 w-8 self-center mr-2 hover:opacity-75 bg-transparent border border-white"
-             title="{{ podcast.title }}"
-             {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-             src="{{ img.url }}"
-             {% empty %}src="{% static 'img/podcast-icon.png' %}"
-             {% endthumbnail %}
-             role="link"
-             width="30"
-             height="30">
+        {% component "cover_image" podcast lazy=False data_controller="link" data_link_url_value=podcast.get_absolute_url data_action="click->link#visit" role="link" css_class="h-8 w-8 hover:opacity-75 bg-transparent border-white mr-2 cursor-pointer" %}
         <a href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}"
            class="player--title w-64 sm:w-96 md:w-full truncate text-sm">{{ episode.title|truncatechars:80 }}</a>
@@ -50,18 +39,7 @@
     </div>
     <div class="flex items-stretch">
 
-      <img data-controller="link"
-           data-link-url-value="{{ podcast.get_absolute_url }}"
-           data-action="click->link#visit"
-           class="object-cover block cursor-pointer h-16 w-16 lg:h-24 lg:w-24 self-center mr-2 border border-white"
-           title="{{ podcast.title }}"
-           {% thumbnail podcast.cover_image "200" format="PNG" crop="center" as img %}
-           src="{{ img.url }}"
-           {% empty %}src="{% static 'img/podcast-icon.png' %}"
-           {% endthumbnail %}
-           role="link"
-           width="30"
-           height="30">
+      {% component "cover_image" podcast lazy=False data_controller="link" data_link_url_value=podcast.get_absolute_url data_action="click->link#visit" role="link" css_class="mr-2 h-16 w-16 lg:h-24 lg:w-24 self-center hover:opacity-75 border-white cursor-pointer" width=30 height=30 %}
 
       <div class="w-full self-start">
 

@@ -5,7 +5,7 @@
              loading="lazy"
              src="{% url 'podcasts:podcast_cover_image' podcast.id %}">
   {% endif %}
-  <img class="object-cover border dark:border-gray-500 bg-transparent {{ css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
+  <img class="object-cover border dark:border-gray-500 bg-transparent {{ css_class|default:"h-16 w-16 hover:opacity-75" }}"
        title="{{ podcast.title }}"
        alt="{{ podcast.title }}"
        {% if cover_image %}
@@ -16,7 +16,7 @@
        src="{% static 'img/podcast-icon.png' %}"
        width="200"
        height="200"
-       {% endif %} />
+       {% endif %} {{ attrs|htmlattrs }} />
   {% endspaceless %}
   {% if lazy %}
 </turbo-frame>

@@ -78,6 +78,8 @@ def keepspaces(text: Optional[str]) -> str:
 
 @register.filter
 def htmlattrs(attrs: Dict) -> str:
+    if not attrs:
+        return ""
     return mark_safe(
         " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
     )
