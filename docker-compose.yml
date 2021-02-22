@@ -6,9 +6,6 @@ x-env: &default-env
   EMAIL_HOST: mailhog
   EMAIL_PORT: 1025
   SECRET_KEY: seekrit
-  #AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-  #AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-  #AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
 
 volumes:
   pg_data: {}
@@ -17,7 +14,6 @@ services:
   postgres:
     image: postgres:11.8
     environment:
-      # for development only!
       - POSTGRES_PASSWORD=password
     volumes:
       - pg_data:/var/lib/postgresql/data
