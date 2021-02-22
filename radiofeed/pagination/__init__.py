@@ -32,19 +32,19 @@ def render_paginated_response(
     request: HttpRequest,
     queryset: QuerySet,
     template_name: str,
-    partial_template_name: str,
+    pagination_template_name: str,
     extra_context: Optional[Dict] = None,
     **pagination_kwargs
 ) -> HttpResponse:
     context = {
         "page_obj": paginate(request, queryset, **pagination_kwargs),
-        "pagination_template": partial_template_name,
+        "pagination_template": pagination_template_name,
         **(extra_context or {}),
     }
     if request.turbo.frame:
         return (
             TurboFrame(request.turbo.frame)
-            .template(partial_template_name, context)
+            .template(pagination_template_name, context)
             .response(request)
         )
     return TemplateResponse(request, template_name, context)
