@@ -7,7 +7,7 @@ from .models import Podcast, Recommendation
 
 
 def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
-    """Sends email with 3 recommended podcasts, based on:
+    """Sends email with 2 or 3 recommended podcasts, based on:
     - favorites
     - subscriptions
     - play history
