@@ -7,6 +7,8 @@ from ..defaulttags import active_link, htmlattrs, jsonify, keepspaces, percent
 
 class TestHtmlAttrs:
     def test_empty_dict(self):
+        assert htmlattrs(None) == ""
+        assert htmlattrs("") == ""
         assert htmlattrs({}) == ""
 
     def test_attrs(self):
