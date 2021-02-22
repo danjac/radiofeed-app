@@ -80,11 +80,11 @@ Next add to Git and deploy:
 
 > git remote add dokku dokku@my-domain-or-ip-address:myapp
 
-Deployment requires Ansible. First copy vars.yml.example to vars.yml, set the required env variables and encrypt vars.yml with ansible-vault.
+First copy **.env.template** to **.env** and set the correct AWS variables.
 
 You can deploy with this command:
 
-> ansible-playbook site.yml
+> ./scripts/deploy
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
