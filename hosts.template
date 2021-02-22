@@ -1,0 +1,6 @@
+[dokku]
+# IP address here
+
+[all:vars]
+ansible_connection=ssh
+ansible_user=root
