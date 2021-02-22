@@ -1,4 +1,3 @@
-# Local
 from ..base import env
 
 DEFAULT_FILE_STORAGE = "radiofeed.config.storages.MediaStorage"

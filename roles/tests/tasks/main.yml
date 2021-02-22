@@ -1,3 +1,0 @@
-- name: Run backend tests
-  shell: |
-    docker-compose run --rm django pytest
