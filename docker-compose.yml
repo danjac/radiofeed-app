@@ -21,15 +21,30 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - pg_data:/var/lib/postgresql/data
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   redis:
     image: redis:5.0.7
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:
       - '8025:8025'
       - '1025:1025'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   assets: &assets
     build:
@@ -39,6 +54,11 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   watchjs:
     <<: *assets
@@ -63,6 +83,11 @@ services:
     ports:
       - '80:8000'
     command: /start-django
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   celeryworker:
     <<: *django
