@@ -1,5 +1,4 @@
 import { Controller } from 'stimulus';
-import useTurbo from '../turbo';
 
 export default class extends Controller {
   static targets = [
@@ -53,13 +52,8 @@ export default class extends Controller {
     }
   }
 
-  connect() {
-    useTurbo(this);
-  }
-
   ended() {
     this.cancelTimeUpdateTimer();
-    console.log('ENDED');
     this.playNextTarget.requestSubmit();
   }
 
@@ -144,7 +138,7 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  turboSubmitEnd(event) {
+  toggle(event) {
     const { fetchResponse } = event.detail;
     const headers =
       fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
