@@ -112,11 +112,15 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
+    podcast = get_podcast_or_404(podcast_id)
     return (
         TurboFrame(request.turbo.frame)
         .template(
             "podcasts/components/_cover_image.html",
-            {"podcast": get_podcast_or_404(podcast_id)},
+            {
+                "podcast": podcast,
+                "cover_image": podcast.get_cover_image_thumbnail(),
+            },
         )
         .response(request)
     )

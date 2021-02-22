@@ -1,4 +1,4 @@
-{% load thumbnail static %}
+{% load static %}
 {% spaceless %}
 {% if lazy %}
 <turbo-frame id="podcast-cover-image-{{ podcast.id }}"
@@ -8,29 +8,14 @@
   <img class="object-cover border dark:border-gray-500 bg-transparent {{ css_class|default:"h-16 w-16 hover:opacity-75 mr-2" }}"
        title="{{ podcast.title }}"
        alt="{{ podcast.title }}"
-       {% if podcast_image %}
-       src="{{ podcast_image.url }}"
-       width="{{ podcast_image.width }}"
-       height="{{ podcast_image.height }}"
-       {% elif lazy %}
-       src="{% static 'img/podcast-icon.png' %}"
-       width="200"
-       height="200"
-       {% else %}
-       {% if podcast.cover_image %}
-       {% thumbnail podcast.cover_image "200" format="WEBP" crop="center" as img %}
-       src="{{ img.url }}"
-       width="{{ img.width }}"
-       height="{{ img.height }}"
-       {% empty %}src="{% static 'img/podcast-icon.png' %}"
-       width="200"
-       height="200"
-       {% endthumbnail %}
+       {% if cover_image %}
+       src="{{ cover_image.url }}"
+       width="{{ cover_image.width }}"
+       height="{{ cover_image.height }}"
        {% else %}
        src="{% static 'img/podcast-icon.png' %}"
        width="200"
        height="200"
-       {% endif %}
        {% endif %} />
   {% endspaceless %}
   {% if lazy %}

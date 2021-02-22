@@ -30,6 +30,10 @@ class CoverImageComponent(component.Component):
         css_class: str = "",
     ) -> Dict:
         """If cover_image is provided,  we don't need to lazy-load the image."""
+
+        if not lazy and cover_image is None:
+            cover_image = podcast.get_cover_image_thumbnail()
+
         return {
             "podcast": podcast,
             "lazy": lazy and not (cover_image),
