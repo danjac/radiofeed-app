@@ -18,4 +18,11 @@
     </button>
   </div>
 </form>
+{% else %}
+<div class="flex items-center">
+  <a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}" data-turbo-frame="_top"
+    title="Login or sign up to play this episode">
+    {% component "icon" "play" css_class="h-10 w-10" %}
+  </a>
+</div>
 {% endif %}

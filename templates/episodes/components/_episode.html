@@ -22,7 +22,6 @@
         </div>
 
         <div class="flex items-center">
-          {% if user.is_authenticated %}
           <div class="mr-2">
             {% is_playing episode as is_episode_playing %}
             {% component "player_toggle" episode is_episode_playing %}
@@ -33,7 +32,6 @@
              data-turbo-frame="modal">
             {% component "icon" "ellipsis" css_class="w-6 h-6" %}
           </a>
-          {% endif %}
           <div class="w-full">
 
             <div class="flex items-center justify-end sm:justify-start text-sm">

@@ -26,9 +26,7 @@
     </li>
     {% endif %}
   </ul>
-  {% if user.is_authenticated %}
   {% component "subscribe_toggle" podcast is_subscribed %}
-  {% endif %}
 
 </nav>
 {% block podcast_content %}{% endblock %}

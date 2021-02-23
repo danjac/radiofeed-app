@@ -69,17 +69,14 @@
     <div>
 
       <div class="flex items-center mb-3">
-        {% if user.is_authenticated %}
         <div class="mr-3">
           {% component "player_toggle" episode is_episode_playing %}
         </div>
-        {% endif %}
         <div>
           {% include "episodes/_download.html" %}
         </div>
       </div>
 
-      {% if user.is_authenticated %}
       <div class="mb-3 flex items-center">
         <div class="mr-2">
           {% component "queue_toggle" episode is_queued %}
@@ -88,7 +85,6 @@
           {% component "favorite_toggle" episode is_favorited %}
         </div>
       </div>
-      {% endif %}
 
       <div class="flex items-center">
         {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}

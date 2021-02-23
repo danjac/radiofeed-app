@@ -48,8 +48,6 @@
         </a>
       </li>
 
-      {% if user.is_authenticated %}
-
       <li class="py-2">
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
@@ -58,6 +56,7 @@
           Play Queue
         </a>
       </li>
+
 
       <li class="py-2">
         {% active_link 'episodes:favorites' as link %}
@@ -80,12 +79,11 @@
       <li class="py-2">
         {% active_link '/account/' as link %}
         <a href="{% url 'user_preferences' %}"
-           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+           class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
           {% component "icon" "adjustments" css_class="h-5 w-5 mr-3" %}
           Settings
         </a>
       </li>
-      {% endif %}
 
       <li class="py-2">
         {% active_link 'about' as link %}

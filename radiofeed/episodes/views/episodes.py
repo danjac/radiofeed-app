@@ -1,6 +1,5 @@
 from typing import List, Optional, Tuple
 
-from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
@@ -100,7 +99,6 @@ def episode_detail(
     )
 
 
-@login_required
 def episode_actions(
     request: HttpRequest,
     episode_id: int,

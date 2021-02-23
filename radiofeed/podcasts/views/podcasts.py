@@ -1,6 +1,5 @@
 from typing import List
 
-from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -62,7 +61,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
-@login_required
 def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
 
