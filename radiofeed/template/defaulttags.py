@@ -3,10 +3,12 @@ import json
 from typing import Any, Dict, Optional
 
 from django import template
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
-from django.template.defaultfilters import stringfilter
+from django.template.defaultfilters import stringfilter, urlencode
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 import bs4
@@ -83,3 +85,8 @@ def htmlattrs(attrs: Dict) -> str:
     return mark_safe(
         " ".join([f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()])
     )
+
+
+@register.filter
+def login_url(url: str) -> str:
+    return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"

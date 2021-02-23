@@ -10,8 +10,5 @@
   {% endif %}
 </form>
 {% else %}
-<a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}"
-   data-turbo-frame="_top">
-  {% component "button" "Favorite" icon="star" title="Login or sign up to add episode to your Favorites" %}
-</a>
+{% component "button" "Favorite" icon="star" href=episode.get_absolute_url|login_url title="Login or sign up to add episode to your Favorites" data_turbo_frame="_top" %}
 {% endif %}

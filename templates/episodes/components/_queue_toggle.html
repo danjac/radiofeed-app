@@ -10,8 +10,5 @@
   {% endif %}
 </form>
 {% else %}
-<a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}"
-   data-turbo-frame="_top">
-  {% component "button" "Queue" icon="collection" title="Login or sign up to add episode to your Play Queue" %}
-</a>
+{% component "button" "Queue" icon="collection" href=episode.get_absolute_url|login_url title="Login or sign up to add episode to your Play Queue" data_turbo_frame="_top" %}
 {% endif %}

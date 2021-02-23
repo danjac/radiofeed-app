@@ -2,7 +2,20 @@ from django.urls import reverse
 
 from radiofeed.podcasts.models import Category
 
-from ..defaulttags import active_link, htmlattrs, jsonify, keepspaces, percent
+from ..defaulttags import (
+    active_link,
+    htmlattrs,
+    jsonify,
+    keepspaces,
+    login_url,
+    percent,
+)
+
+
+class TestLoginUrl:
+    def test_login_url(self):
+        url = "/podcasts/1234/test"
+        assert login_url(url) == "/account/login/?next=/podcasts/1234/test"
 
 
 class TestHtmlAttrs:

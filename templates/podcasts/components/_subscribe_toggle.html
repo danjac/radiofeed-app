@@ -10,8 +10,5 @@
   {% endif %}
 </form>
 {% else %}
-<a href="{% url 'account_login' %}?next={{ podcast.get_absolute_url|urlencode }}"
-   data-turbo-frame="_top">
-  {% component "button" "Subscribe" icon="eye" title="Login or sign up to subscribe to this podcast" %}
-</a>
+{% component "button" "Subscribe" icon="eye" href=podcast.get_absolute_url|login_url title="Login or sign up to subscribe to this podcast" data_turbo_frame="_top" %}
 {% endif %}
