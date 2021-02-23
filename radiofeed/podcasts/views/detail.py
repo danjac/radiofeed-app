@@ -57,7 +57,7 @@ def episodes(
     episodes = podcast.episode_set.select_related("podcast")
 
     if request.search:
-        episodes = episodes.search(request.search).order_by("rank", "-pub_date")
+        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     else:
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)

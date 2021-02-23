@@ -51,7 +51,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)
         .search(request.search)
-        .order_by("rank", "-pub_date")
+        .order_by("-rank", "-pub_date")
     )
     return render_podcast_list_response(
         request,

@@ -42,7 +42,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
     podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
-        podcasts = podcasts.search(request.search).order_by("rank", "-pub_date")
+        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 
