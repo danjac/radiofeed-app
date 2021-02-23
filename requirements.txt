@@ -18,8 +18,8 @@ backcall==0.2.0           # via ipython
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.3.0         # via celery
 bleach==3.3.0             # via -r requirements.in
-boto3==1.17.12            # via -r requirements.in
-botocore==1.20.12         # via boto3, s3transfer
+boto3==1.17.14            # via -r requirements.in
+botocore==1.20.14         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.5              # via cryptography
@@ -61,7 +61,7 @@ factory-boy==3.2.0        # via -r requirements.in
 faker==6.4.1              # via factory-boy
 feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
-gprof2dot==2019.11.30     # via django-silk
+gprof2dot==2021.2.21      # via django-silk
 gunicorn==20.0.4          # via -r requirements.in
 h11==0.12.0               # via uvicorn
 hiredis==1.1.0            # via aioredis
