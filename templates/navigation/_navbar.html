@@ -59,7 +59,7 @@
     </div>
     {% else %}
     <div class="text-sm md:text-base flex items-center">
-      <a href="{% url 'account_login' %}?next={{ request.get_full_path }}"
+      <a href="{{ request.get_full_path|login_url }}"
          class="inline-block text-white hover:text-blue-500 mr-3">{% translate "login" %}</a>
       <a href="{% url 'account_signup' %}"
          class="inline-block text-white hover:text-blue-500">{% translate "signup" %}</a>

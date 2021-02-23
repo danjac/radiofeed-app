@@ -17,6 +17,10 @@ class TestLoginUrl:
         url = "/podcasts/1234/test"
         assert login_url(url) == "/account/login/?next=/podcasts/1234/test"
 
+    def test_login_url_with_query_string(self):
+        url = "/podcasts/1234/test?ok=true"
+        assert login_url(url) == "/account/login/?next=/podcasts/1234/test%3Fok%3Dtrue"
+
 
 class TestHtmlAttrs:
     def test_empty_dict(self):
