@@ -27,6 +27,11 @@
   </div>
 
   <div class="flex justify-between py-3">
+    <div class="w-1/2">In Queue</div>
+    <div class="w-1/2 font-bold text-right">{{ stats.in_queue }} episode{{ stats.in_queue|pluralize }}</div>
+  </div>
+
+  <div class="flex justify-between py-3">
     <div class="w-1/2">Listened</div>
     <div class="w-1/2 font-bold text-right">{{ stats.listened }} episode{{ stats.listened|pluralize }}</div>
   </div>
