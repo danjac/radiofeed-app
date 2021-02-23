@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import categories, detail, podcasts, subscriptions
+from .views import categories, detail, podcasts, subscribe
 
 app_name = "podcasts"
 
@@ -18,12 +18,12 @@ urlpatterns = [
     ),
     path(
         "podcasts/<int:podcast_id>/~subscribe/",
-        subscriptions.subscribe,
+        subscribe.subscribe,
         name="subscribe",
     ),
     path(
         "podcasts/<int:podcast_id>/~unsubscribe/",
-        subscriptions.unsubscribe,
+        subscribe.unsubscribe,
         name="unsubscribe",
     ),
     path(
