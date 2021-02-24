@@ -25,14 +25,17 @@ class RssParser:
         self.podcast = podcast
 
     @classmethod
-    def parse_from_podcast(cls, podcast) -> List[Episode]:
-        return cls(podcast).parse()
+    def parse_from_podcast(cls, podcast, **kwargs) -> List[Episode]:
+        return cls(podcast).parse(**kwargs)
 
-    def parse(self) -> List[Episode]:
+    def parse(self, force_update: bool = False) -> List[Episode]:
 
         try:
-            etag = self.fetch_etag()
-            if etag and etag == self.podcast.etag:
+            if (
+                (etag := self.fetch_etag())
+                and etag == self.podcast.etag
+                and not force_update
+            ):
                 self.debug("Matching etag, no update")
                 return []
             feed = self.fetch_rss_feed()
@@ -47,7 +50,7 @@ class RssParser:
             self.debug("No recent pub date or new episodes")
             return []
 
-        do_update: bool = (
+        do_update: bool = force_update or (
             self.podcast.last_updated is None or self.podcast.last_updated < pub_date
         )
 

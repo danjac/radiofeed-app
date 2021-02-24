@@ -24,6 +24,8 @@ from radiofeed.typing import AnyUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+THUMBNAIL_SIZE = 200
+
 
 class CoverImage(Protocol):
     url: str
@@ -183,12 +185,18 @@ class Podcast(models.Model):
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
-        return (
-            get_thumbnail(self.cover_image, "200", format="WEBP", crop="center")
-            if self.cover_image
-            else PlaceholderCoverImage(
-                url=static("img/podcast-icon.png"), height=200, width=200
-            )
+        if self.cover_image:
+            if (
+                img := get_thumbnail(
+                    self.cover_image, str(THUMBNAIL_SIZE), format="WEBP", crop="center"
+                )
+            ) and img.size is not None:
+                return img
+
+        return PlaceholderCoverImage(
+            url=static("img/podcast-icon.png"),
+            height=THUMBNAIL_SIZE,
+            width=THUMBNAIL_SIZE,
         )
 
 

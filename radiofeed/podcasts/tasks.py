@@ -39,11 +39,11 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str) -> None:
+def sync_podcast_feed(rss: str, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        RssParser.parse_from_podcast(podcast)
+        RssParser.parse_from_podcast(podcast, force_update=force_update)
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
     except requests.HTTPError as e:
