@@ -25,3 +25,7 @@
 .markdown a:hover {
   @apply text-blue-500 dark:text-blue-400;
 }
+
+.markdown img:not([src]) {
+  @apply hidden;
+}
