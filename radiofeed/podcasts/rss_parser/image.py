@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from django.core.files.images import ImageFile
 
 import requests
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from .headers import get_headers
 
@@ -44,7 +44,12 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
 
         return ImageFile(fp, name=filename)
 
-    except (requests.RequestException, KeyError, ValueError) as e:
+    except (
+        requests.RequestException,
+        UnidentifiedImageError,
+        KeyError,
+        ValueError,
+    ) as e:
         raise InvalidImageURL from e
 
 
