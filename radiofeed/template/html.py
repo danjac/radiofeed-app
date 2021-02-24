@@ -8,6 +8,64 @@ Attribute = Tuple[Optional[str], str]
 AttributeDict = Dict[Attribute, str]
 
 
+def allow_src(tag, name, value):
+    if name in ("alt", "height", "width"):
+        return True
+    if name == "src":
+        return value.startswith("https://")
+    return False
+
+
+ALLOWED_TAGS = [
+    "a",
+    "abbr",
+    "acronym",
+    "address",
+    "b",
+    "br",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "i",
+    "img",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "q",
+    "s",
+    "small",
+    "strike",
+    "strong",
+    "span",
+    "sub",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "tfoot",
+    "th",
+    "thead",
+    "tr",
+    "tt",
+    "u",
+    "ul",
+]
+
+ALLOWED_ATTRS = {
+    "a": ["href", "target", "title"],
+    "img": allow_src,
+}
+
+
 class RemoveEmptyFilter(optionaltags.Filter):
     """Remove stray paragraphs with no content"""
 
@@ -32,7 +90,8 @@ class RemoveEmptyFilter(optionaltags.Filter):
 
 
 cleaner = bleach.Cleaner(
-    tags=bleach.ALLOWED_TAGS + ["p", "div", "br"],
+    attributes=ALLOWED_ATTRS,
+    tags=ALLOWED_TAGS,
     strip=True,
     filters=[whitespace.Filter, RemoveEmptyFilter],
 )
