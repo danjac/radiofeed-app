@@ -35,7 +35,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render_podcast_list_response(
         request,
         podcasts,
-        "podcasts/index.html",
+        "podcasts/list/index.html",
         {
             "show_promotions": show_promotions,
             "search_url": reverse("podcasts:search_podcasts"),
@@ -57,7 +57,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     return render_podcast_list_response(
         request,
         podcasts,
-        "podcasts/search.html",
+        "podcasts/list/search.html",
         cached=True,
     )
 
@@ -69,7 +69,7 @@ def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "podcasts/_actions.html",
+                "podcasts/list/_actions.html",
                 {
                     "podcast": podcast,
                     "is_subscribed": podcast.is_subscribed(request.user),
