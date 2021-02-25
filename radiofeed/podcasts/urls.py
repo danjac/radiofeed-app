@@ -1,57 +1,57 @@
 from django.urls import path
 
-from .views import categories, list_detail
+from . import views
 
 app_name = "podcasts"
 
 urlpatterns = [
-    path("podcasts/", list_detail.index, name="index"),
-    path("search/podcasts/", list_detail.search_podcasts, name="search_podcasts"),
-    path("search/itunes/", list_detail.search_itunes, name="search_itunes"),
+    path("podcasts/", views.index, name="index"),
+    path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
         "podcasts/<int:podcast_id>/actions/",
-        list_detail.podcast_actions,
+        views.podcast_actions,
         name="actions",
     ),
     path(
         "podcasts/<int:podcast_id>/cover-image/",
-        list_detail.podcast_cover_image,
+        views.podcast_cover_image,
         name="podcast_cover_image",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
-        list_detail.recommendations,
+        views.recommendations,
         name="podcast_recommendations",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/about/",
-        list_detail.about,
+        views.about,
         name="podcast_detail",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
-        list_detail.episodes,
+        views.episodes,
         name="podcast_episodes",
     ),
     path(
         "podcasts/<int:podcast_id>/~subscribe/",
-        list_detail.subscribe,
+        views.subscribe,
         name="subscribe",
     ),
     path(
         "podcasts/<int:podcast_id>/~unsubscribe/",
-        list_detail.unsubscribe,
+        views.unsubscribe,
         name="unsubscribe",
     ),
-    path("discover/", categories.index, name="categories"),
+    path("discover/", views.categories, name="categories"),
     path(
         "discover/<int:category_id>/itunes/",
-        categories.itunes_category,
+        views.itunes_category,
         name="itunes_category",
     ),
     path(
         "discover/<int:category_id>/<slug:slug>/",
-        categories.category_detail,
+        views.category_detail,
         name="category_detail",
     ),
 ]

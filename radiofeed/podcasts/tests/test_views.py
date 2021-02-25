@@ -279,7 +279,7 @@ class TestITunesCategory:
                 )
             ], []
 
-        mocker.patch("radiofeed.podcasts.views.categories.sync_podcast_feed.delay")
+        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
         resp = client.get(reverse("podcasts:itunes_category", args=[category.id]))
 
@@ -313,7 +313,7 @@ class TestSearchITunes:
                 )
             ], []
 
-        mocker.patch("radiofeed.podcasts.views.podcasts.sync_podcast_feed.delay")
+        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
         resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
 
