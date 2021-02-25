@@ -84,20 +84,6 @@ def episodes(
     )
 
 
-def get_podcast_detail_context(
-    request: HttpRequest,
-    podcast: Podcast,
-    extra_context: Optional[Dict] = None,
-) -> Dict:
-
-    return {
-        "podcast": podcast,
-        "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
-        "is_subscribed": podcast.is_subscribed(request.user),
-        "og_data": podcast.get_opengraph_data(request),
-    } | (extra_context or {})
-
-
 @cache_page(60 * 60 * 24)
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
@@ -148,6 +134,20 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return render_subscribe_response(request, podcast, False)
+
+
+def get_podcast_detail_context(
+    request: HttpRequest,
+    podcast: Podcast,
+    extra_context: Optional[Dict] = None,
+) -> Dict:
+
+    return {
+        "podcast": podcast,
+        "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
+        "is_subscribed": podcast.is_subscribed(request.user),
+        "og_data": podcast.get_opengraph_data(request),
+    } | (extra_context or {})
 
 
 def render_podcast_detail_response(
