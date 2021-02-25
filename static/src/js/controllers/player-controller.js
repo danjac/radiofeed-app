@@ -60,6 +60,7 @@ export default class extends Controller {
   closePlayer() {
     this.durationValue = 0;
     this.mediaUrlValue = '';
+    this.metadataValue = {};
     this.closeAudio();
     this.cancelTimeUpdateTimer();
   }
@@ -207,9 +208,12 @@ export default class extends Controller {
   }
 
   metadataValueChanged() {
-    if ('mediaSession' in navigator && this.metadataValue) {
-      // @ts-ignore
-      navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
+    if ('mediaSession' in navigator) {
+      if (Object.keys(this.metadataValue).length > 0) {
+        navigator.mediaSession.metadata = new window.MediaMetadata(this.metadataValue);
+      } else {
+        navigator.mediaSession.metadata = null;
+      }
     }
   }
 
