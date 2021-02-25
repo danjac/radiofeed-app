@@ -1,4 +1,5 @@
 import functools
+
 from typing import Callable
 
 from django.core.exceptions import PermissionDenied

@@ -3,9 +3,11 @@ import datetime
 import logging
 import operator
 import statistics
+
 from typing import Dict, Generator, List, Tuple
 
 import pandas
+
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower

@@ -7,6 +7,7 @@ import django.db.models.deletion
 import django.utils.timezone
 import model_utils.fields
 import sorl.thumbnail.fields
+
 from django.conf import settings
 from django.db import migrations, models
 

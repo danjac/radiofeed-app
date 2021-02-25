@@ -1,4 +1,5 @@
 import dataclasses
+
 from typing import Type
 
 from django.forms import Form

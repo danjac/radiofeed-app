@@ -2,10 +2,12 @@ import io
 import mimetypes
 import os
 import uuid
+
 from typing import Optional, Tuple
 from urllib.parse import urlparse
 
 import requests
+
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 

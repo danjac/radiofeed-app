@@ -1,8 +1,10 @@
 import collections
 import json
+
 from typing import Any, Dict, Optional
 
 import bs4
+
 from django import template
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder

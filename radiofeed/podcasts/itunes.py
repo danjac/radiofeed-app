@@ -1,8 +1,10 @@
 import dataclasses
 import json
+
 from typing import Dict, List, Optional, Tuple, Union
 
 import requests
+
 from django.core.cache import cache
 from django.utils.encoding import force_str
 

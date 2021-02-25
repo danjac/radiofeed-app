@@ -1,5 +1,6 @@
 # Third Party Libraries
 import pytest
+
 from allauth.account.models import EmailAddress
 
 # Local

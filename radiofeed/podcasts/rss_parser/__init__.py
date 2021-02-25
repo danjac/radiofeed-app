@@ -1,9 +1,11 @@
 import datetime
 import logging
+
 from functools import lru_cache
 from typing import Dict, List, Optional
 
 import requests
+
 from django.utils import timezone
 from pydantic import ValidationError
 
