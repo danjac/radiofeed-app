@@ -7,7 +7,7 @@ from turbo_response import TurboStream
 from radiofeed.shortcuts import render_component
 
 from ..models import Podcast, Subscription
-from . import get_podcast_or_404
+from .list_detail import get_podcast_or_404
 
 
 @require_POST
