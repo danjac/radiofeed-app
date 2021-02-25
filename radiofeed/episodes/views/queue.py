@@ -55,7 +55,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     if "remove" in request.POST:
         if items.count() == 0:
             return TurboStream("queue").replace.response("Your Play Queue is now empty")
-        return TurboStream(episode.get_queue_dom_id()).remove.response()
+        return TurboStream(episode.dom.queue).remove.response()
     return render_queue_response(request, episode, False)
 
 
@@ -79,17 +79,17 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-def render_queue_response(
-    request: HttpRequest, episode: Episode, is_queued: bool
-) -> List[str]:
-    return TurboStream(episode.get_queue_toggle_id()).replace.response(
-        render_component(request, "queue_toggle", episode, is_queued)
-    )
-
-
 def get_queue_items(request: HttpRequest) -> QuerySet:
     return (
         QueueItem.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
+    )
+
+
+def render_queue_response(
+    request: HttpRequest, episode: Episode, is_queued: bool
+) -> List[str]:
+    return TurboStream(episode.dom.queue_toggle).replace.response(
+        render_component(request, "queue_toggle", episode, is_queued)
     )

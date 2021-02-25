@@ -44,4 +44,4 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     if logs.count() == 0:
         return TurboStream("history").replace.response("Your History is now empty.")
 
-    return TurboStream(episode.get_history_dom_id()).remove.response()
+    return TurboStream(episode.dom.history).remove.response()

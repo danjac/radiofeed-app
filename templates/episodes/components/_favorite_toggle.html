@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
 <form method="post"
-      id="{{ episode.get_favorite_toggle_id }}"
+      id="{{ episode.dom.favorite_toggle }}"
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
   {% csrf_token %}
   {% if is_favorited %}

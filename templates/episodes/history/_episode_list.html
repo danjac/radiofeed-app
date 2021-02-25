@@ -4,7 +4,7 @@
 <div id="history">
   {% for log in page_obj %}
   {% url 'episodes:remove_history' log.episode.id as remove_url %}
-  {% component_block "episode" log.episode dom_id=log.episode.get_history_dom_id %}
+  {% component_block "episode" log.episode dom_id=log.episode.dom.history %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
     {% component "remove_button" remove_url css_class="mr-3" title="Remove from History" %}

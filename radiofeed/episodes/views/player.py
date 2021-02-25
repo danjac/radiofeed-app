@@ -85,7 +85,7 @@ def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
-    return TurboStream(episode.get_player_toggle_id()).replace.render(
+    return TurboStream(episode.dom.player_toggle).replace.render(
         render_component(request, "player_toggle", episode, is_playing)
     )
 

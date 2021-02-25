@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Dict, Optional, Tuple
 
 from django.conf import settings
@@ -9,6 +10,7 @@ from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 
 from model_utils.models import TimeStampedModel
@@ -16,6 +18,18 @@ from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.typing import AnyUser
+
+
+@dataclasses.dataclass
+class EpisodeDomRefs:
+    episode: str
+    history: str
+    queue: str
+    favorite: str
+
+    queue_toggle: str
+    favorite_toggle: str
+    player_toggle: str
 
 
 class EpisodeQuerySet(models.QuerySet):
@@ -103,26 +117,17 @@ class Episode(models.Model):
     def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
-    def get_dom_id(self) -> str:
-        return f"episode-{self.id}"
-
-    def get_history_dom_id(self) -> str:
-        return f"history-{self.id}"
-
-    def get_queue_dom_id(self) -> str:
-        return f"queue-item-{self.id}"
-
-    def get_favorite_dom_id(self) -> str:
-        return f"favorite-{self.id}"
-
-    def get_favorite_toggle_id(self) -> str:
-        return f"favorite-toggle-{self.id}"
-
-    def get_queue_toggle_id(self) -> str:
-        return f"queue-toggle-{self.id}"
-
-    def get_player_toggle_id(self) -> str:
-        return f"player-toggle-{self.id}"
+    @cached_property
+    def dom(self) -> EpisodeDomRefs:
+        return EpisodeDomRefs(
+            episode=f"episode-{self.id}",
+            queue=f"queue-{self.id}",
+            history=f"history-{self.id}",
+            favorite=f"favorite-{self.id}",
+            queue_toggle=f"queue-toggle-{self.id}",
+            favorite_toggle=f"favorite-toggle-{self.id}",
+            player_toggle=f"player-toggle-{self.id}",
+        )
 
     def get_duration_in_seconds(self) -> int:
         """Returns duration string in h:m:s or h:m to seconds"""
