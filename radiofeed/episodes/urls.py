@@ -1,19 +1,21 @@
 from django.urls import path
 
-from .views import episodes, favorites, history, player, queue
+from .views import favorites, history, list_detail, player, queue
 
 app_name = "episodes"
 
 
 urlpatterns = [
-    path("", episodes.index, name="index"),
-    path("search/episodes/", episodes.search_episodes, name="search_episodes"),
+    path("", list_detail.index, name="index"),
+    path("search/episodes/", list_detail.search_episodes, name="search_episodes"),
     path(
-        "episodes/<int:episode_id>/actions/", episodes.episode_actions, name="actions"
+        "episodes/<int:episode_id>/actions/",
+        list_detail.episode_actions,
+        name="actions",
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
-        episodes.episode_detail,
+        list_detail.episode_detail,
         name="episode_detail",
     ),
     path(
@@ -51,7 +53,7 @@ urlpatterns = [
     ),
     path(
         "favorites/<int:episode_id>/actions/",
-        episodes.episode_actions,
+        list_detail.episode_actions,
         name="favorite_actions",
         kwargs={"actions": ("queue",)},
     ),
@@ -65,7 +67,7 @@ urlpatterns = [
     ),
     path(
         "queue/<int:episode_id>/actions/",
-        episodes.episode_actions,
+        list_detail.episode_actions,
         name="queue_actions",
         kwargs={"actions": ("favorite",)},
     ),

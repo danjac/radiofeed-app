@@ -14,7 +14,7 @@ from radiofeed.shortcuts import render_component
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
-from . import get_episode_or_404
+from .list_detail import get_episode_or_404
 
 
 @login_required

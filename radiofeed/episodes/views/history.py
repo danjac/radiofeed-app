@@ -6,7 +6,7 @@ from turbo_response import TurboStream
 from radiofeed.pagination import render_paginated_response
 
 from ..models import AudioLog
-from . import get_episode_or_404
+from .list_detail import get_episode_or_404
 
 
 @login_required

@@ -8,7 +8,7 @@ from radiofeed.pagination import render_paginated_response
 from radiofeed.shortcuts import render_component
 
 from ..models import Episode, Favorite
-from . import get_episode_or_404
+from .list_detail import get_episode_or_404
 
 
 @login_required
