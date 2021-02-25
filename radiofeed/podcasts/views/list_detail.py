@@ -65,24 +65,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
-def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_podcast_or_404(podcast_id)
-
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "podcasts/list/_preview.html",
-                {
-                    "podcast": podcast,
-                    "is_subscribed": podcast.is_subscribed(request.user),
-                },
-            )
-            .response(request)
-        )
-    return redirect(podcast.get_absolute_url())
-
-
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False

@@ -1,13 +1,32 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
-from turbo_response import TurboStream
+from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.shortcuts import render_component
 
 from ..models import Podcast, Subscription
 from .list_detail import get_podcast_or_404
+
+
+def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(podcast_id)
+
+    if request.turbo.frame:
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "podcasts/list/_preview.html",
+                {
+                    "podcast": podcast,
+                    "is_subscribed": podcast.is_subscribed(request.user),
+                },
+            )
+            .response(request)
+        )
+    return redirect(podcast.get_absolute_url())
 
 
 @require_POST
