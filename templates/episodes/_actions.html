@@ -27,29 +27,26 @@
 {% endif %}
 
 
-<div class="flex items-center justify-between mb-3">
-  <div class="flex items-center mb-3 sm:mb-0">
-    <div>
-      <a href="{{ podcast.get_absolute_url }}"
-         data-turbo-frame="_top">
-        {% component "cover_image" podcast lazy=False css_class="h-28 w-28 hover:opacity-75 mr-2" %}
-      </a>
+<div class="flex items-center mb-3">
+  <div class="mr-2">
+    <a href="{{ podcast.get_absolute_url }}"
+       data-turbo-frame="_top">
+      {% component "cover_image" podcast lazy=False css_class="h-28 w-28 hover:opacity-75 mr-2" %}
+    </a>
+  </div>
+  <div>
+    <div class="mb-3 flex items-center">
+      {% include "episodes/_download.html" %}
     </div>
-    <div>
-      <div class="mb-3 flex items-center">
-        {% include "episodes/_download.html" %}
-      </div>
-      <div class="flex items-center space-x-3 mb-3">
-        {% if "queue" in actions %}
-        {% component "queue_toggle" episode is_queued %}
-        {% endif %}
-        {% if "favorite" in actions %}
-        {% component "favorite_toggle" episode is_favorited %}
-        {% endif %}
-      </div>
-      {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+    <div class="flex items-center space-x-3 mb-3">
+      {% if "queue" in actions %}
+      {% component "queue_toggle" episode is_queued %}
+      {% endif %}
+      {% if "favorite" in actions %}
+      {% component "favorite_toggle" episode is_favorited %}
+      {% endif %}
     </div>
-
+    {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
 
