@@ -33,9 +33,9 @@ def render_episode_list_response(
 
     if cached:
         extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
-        partial_template_name = "episodes/_episode_list_cached.html"
+        partial_template_name = "episodes/list/_episode_list_cached.html"
     else:
-        partial_template_name = "episodes/_episode_list.html"
+        partial_template_name = "episodes/list/_episode_list.html"
 
     return render_paginated_response(
         request, episodes, template_name, partial_template_name, extra_context

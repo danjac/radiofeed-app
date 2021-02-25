@@ -44,7 +44,7 @@
   </h2>
   <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
     <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
-    {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    {% include "episodes/detail/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     {% if episode.listened %}
     <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center ml-2 hidden sm:inline-block text-sm">
       Listened {{ episode.listened|date }}
@@ -71,7 +71,7 @@
           {% component "player_toggle" episode is_playing %}
         </div>
         <div>
-          {% include "episodes/_download.html" %}
+          {% include "episodes/detail/_download.html" %}
         </div>
       </div>
 

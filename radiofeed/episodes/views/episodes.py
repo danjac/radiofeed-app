@@ -51,7 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render_episode_list_response(
         request,
         episodes,
-        "episodes/index.html",
+        "episodes/list/index.html",
         {
             "show_promotions": show_promotions,
             "search_url": reverse("episodes:search_episodes"),
@@ -76,26 +76,8 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     return render_episode_list_response(
         request,
         episodes,
-        "episodes/search.html",
+        "episodes/list/search.html",
         cached=request.user.is_anonymous,
-    )
-
-
-def episode_detail(
-    request: HttpRequest, episode_id: int, slug: Optional[str] = None
-) -> HttpResponse:
-    episode = get_episode_detail_or_404(request, episode_id)
-
-    return TemplateResponse(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": episode,
-            "is_playing": request.player.is_playing(episode),
-            "is_favorited": episode.is_favorited(request.user),
-            "is_queued": episode.is_queued(request.user),
-            "og_data": episode.get_opengraph_data(request),
-        },
     )
 
 
@@ -113,7 +95,7 @@ def episode_actions(
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "episodes/_actions.html",
+                "episodes/detail/_actions.html",
                 {
                     "episode": episode,
                     "actions": actions,
@@ -125,3 +107,21 @@ def episode_actions(
         )
 
     return redirect(episode.get_absolute_url())
+
+
+def episode_detail(
+    request: HttpRequest, episode_id: int, slug: Optional[str] = None
+) -> HttpResponse:
+    episode = get_episode_detail_or_404(request, episode_id)
+
+    return TemplateResponse(
+        request,
+        "episodes/detail/about.html",
+        {
+            "episode": episode,
+            "is_playing": request.player.is_playing(episode),
+            "is_favorited": episode.is_favorited(request.user),
+            "is_queued": episode.is_queued(request.user),
+            "og_data": episode.get_opengraph_data(request),
+        },
+    )
