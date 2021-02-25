@@ -1,18 +1,17 @@
-from typing import List
+from typing import Dict, List, Optional
 
+from django.conf import settings
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.decorators.cache import cache_page
-from turbo_response import TurboFrame
 
-from radiofeed.shortcuts import render_component
+from radiofeed.pagination import render_paginated_response
 
 from .. import itunes
 from ..models import Podcast
 from ..tasks import sync_podcast_feed
-from . import get_podcast_or_404, render_podcast_list_response
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -62,24 +61,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
-def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_podcast_or_404(podcast_id)
-
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "podcasts/list/_actions.html",
-                {
-                    "podcast": podcast,
-                    "is_subscribed": podcast.is_subscribed(request.user),
-                },
-            )
-            .response(request)
-        )
-    return redirect(podcast.get_absolute_url())
-
-
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False
@@ -108,16 +89,22 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     )
 
 
-@cache_page(60 * 60 * 24)
-def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Lazy-loaded podcast image"""
-    podcast = get_podcast_or_404(podcast_id)
-    return TurboFrame(request.turbo.frame).response(
-        render_component(
-            request,
-            "cover_image",
-            podcast,
-            lazy=False,
-            cover_image=podcast.get_cover_image_thumbnail(),
-        )
+def render_podcast_list_response(
+    request: HttpRequest,
+    podcasts: QuerySet,
+    template_name: str,
+    extra_context: Optional[Dict] = None,
+    cached: bool = False,
+) -> HttpResponse:
+
+    extra_context = extra_context or {}
+
+    if cached:
+        extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
+        partial_template_name = "podcasts/list/_podcast_list_cached.html"
+    else:
+        partial_template_name = "podcasts/list/_podcast_list.html"
+
+    return render_paginated_response(
+        request, podcasts, template_name, partial_template_name, extra_context
     )

@@ -1,13 +1,19 @@
 from typing import Dict, Optional
 
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_POST
+from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
+from radiofeed.shortcuts import render_component
 
-from ..models import Podcast, Recommendation
-from . import get_podcast_or_404
+from ..models import Podcast, Recommendation, Subscription
 
 
 def about(
@@ -92,6 +98,58 @@ def get_podcast_detail_context(
     } | (extra_context or {})
 
 
+@cache_page(60 * 60 * 24)
+def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    """Lazy-loaded podcast image"""
+    podcast = get_podcast_or_404(podcast_id)
+    return TurboFrame(request.turbo.frame).response(
+        render_component(
+            request,
+            "cover_image",
+            podcast,
+            lazy=False,
+            cover_image=podcast.get_cover_image_thumbnail(),
+        )
+    )
+
+
+def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(podcast_id)
+
+    if request.turbo.frame:
+        return (
+            TurboFrame(request.turbo.frame)
+            .template(
+                "podcasts/detail/_actions.html",
+                {
+                    "podcast": podcast,
+                    "is_subscribed": podcast.is_subscribed(request.user),
+                },
+            )
+            .response(request)
+        )
+    return redirect(podcast.get_absolute_url())
+
+
+@require_POST
+@login_required
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(podcast_id)
+    try:
+        Subscription.objects.create(user=request.user, podcast=podcast)
+    except IntegrityError:
+        pass
+    return render_subscribe_response(request, podcast, True)
+
+
+@require_POST
+@login_required
+def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(podcast_id)
+    Subscription.objects.filter(podcast=podcast, user=request.user).delete()
+    return render_subscribe_response(request, podcast, False)
+
+
 def render_podcast_detail_response(
     request: HttpRequest,
     template_name: str,
@@ -104,3 +162,16 @@ def render_podcast_detail_response(
         template_name,
         get_podcast_detail_context(request, podcast, extra_context),
     )
+
+
+def render_subscribe_response(
+    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+) -> HttpResponse:
+
+    return TurboStream(podcast.dom.subscribe_toggle).replace.response(
+        render_component(request, "subscribe_toggle", podcast, is_subscribed)
+    )
+
+
+def get_podcast_or_404(podcast_id: int) -> Podcast:
+    return get_object_or_404(Podcast, pk=podcast_id)

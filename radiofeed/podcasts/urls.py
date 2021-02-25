@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import categories, detail, podcasts, subscribe
+from .views import categories, detail, podcasts
 
 app_name = "podcasts"
 
@@ -8,23 +8,11 @@ urlpatterns = [
     path("podcasts/", podcasts.index, name="index"),
     path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
     path("search/itunes/", podcasts.search_itunes, name="search_itunes"),
-    path(
-        "podcasts/<int:podcast_id>/actions/", podcasts.podcast_actions, name="actions"
-    ),
+    path("podcasts/<int:podcast_id>/actions/", detail.podcast_actions, name="actions"),
     path(
         "podcasts/<int:podcast_id>/cover-image/",
-        podcasts.podcast_cover_image,
+        detail.podcast_cover_image,
         name="podcast_cover_image",
-    ),
-    path(
-        "podcasts/<int:podcast_id>/~subscribe/",
-        subscribe.subscribe,
-        name="subscribe",
-    ),
-    path(
-        "podcasts/<int:podcast_id>/~unsubscribe/",
-        subscribe.unsubscribe,
-        name="unsubscribe",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
@@ -40,6 +28,16 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/<slug:slug>/",
         detail.episodes,
         name="podcast_episodes",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/~subscribe/",
+        detail.subscribe,
+        name="subscribe",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/~unsubscribe/",
+        detail.unsubscribe,
+        name="unsubscribe",
     ),
     path("discover/", categories.index, name="categories"),
     path(
