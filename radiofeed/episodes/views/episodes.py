@@ -92,8 +92,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": request.user.is_authenticated
-            and request.player.is_playing(episode),
+            "is_playing": request.player.is_playing(episode),
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
             "og_data": episode.get_opengraph_data(request),

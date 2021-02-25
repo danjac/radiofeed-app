@@ -26,13 +26,12 @@ class EpisodeComponent(component.Component):
             "podcast": episode.podcast,
             "dom_id": dom_id or episode.get_dom_id(),
             "duration": episode.get_duration_in_seconds(),
-            "is_playing": request.user.is_authenticated
-            and request.player.is_playing(episode),
             "actions_url": actions_url
             or reverse("episodes:actions", args=[episode.id]),
             "episode_url": episode.get_absolute_url(),
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
             "cover_image": cover_image,
+            "is_playing": request.player.is_playing(episode),
             "attrs": htmlattrs(attrs),
         }
 

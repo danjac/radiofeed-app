@@ -30,7 +30,10 @@ class Player:
         )
 
     def is_playing(self, episode: Episode):
-        return self.session_data["episode"] == episode.id
+        return (
+            self.request.user.is_authenticated
+            and self.session_data["episode"] == episode.id
+        )
 
     def get_episode(self) -> Optional[Episode]:
         if self.session_data["episode"] is None:
