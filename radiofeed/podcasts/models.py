@@ -14,6 +14,7 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 
 from model_utils.models import TimeStampedModel
@@ -36,8 +37,19 @@ class CoverImage(Protocol):
 @dataclasses.dataclass
 class PlaceholderCoverImage:
     url: str
-    width: int
-    height: int
+    width: int = THUMBNAIL_SIZE
+    height: int = THUMBNAIL_SIZE
+
+
+_cover_image_placeholder = PlaceholderCoverImage(
+    url=static("img/podcast-icon.png"),
+)
+
+
+@dataclasses.dataclass
+class PodcastDomRefs:
+    list_item: str
+    subscribe_toggle: str
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -156,8 +168,12 @@ class Podcast(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "podcast"
 
-    def get_subscribe_toggle_id(self) -> str:
-        return f"subscribe-toggle-{self.id}"
+    @cached_property
+    def dom(self) -> PodcastDomRefs:
+        return PodcastDomRefs(
+            list_item=f"podcast-{self.id}",
+            subscribe_toggle=f"subscribe-toggle-{self.id}",
+        )
 
     def is_subscribed(self, user: AnyUser) -> bool:
         if user.is_anonymous:
@@ -193,11 +209,7 @@ class Podcast(models.Model):
             ) and img.size is not None:
                 return img
 
-        return PlaceholderCoverImage(
-            url=static("img/podcast-icon.png"),
-            height=THUMBNAIL_SIZE,
-            width=THUMBNAIL_SIZE,
-        )
+        return _cover_image_placeholder
 
 
 class Subscription(TimeStampedModel):

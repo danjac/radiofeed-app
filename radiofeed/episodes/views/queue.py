@@ -55,7 +55,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     if "remove" in request.POST:
         if items.count() == 0:
             return TurboStream("queue").replace.response("Your Play Queue is now empty")
-        return TurboStream(episode.dom.queue).remove.response()
+        return TurboStream(episode.dom.queue_list_item).remove.response()
     return render_queue_response(request, episode, False)
 
 

@@ -24,7 +24,7 @@ class EpisodeComponent(component.Component):
         return {
             "episode": episode,
             "podcast": episode.podcast,
-            "dom_id": dom_id or episode.dom.episode,
+            "dom_id": dom_id or episode.dom.list_item,
             "duration": episode.get_duration_in_seconds(),
             "actions_url": actions_url
             or reverse("episodes:actions", args=[episode.id]),

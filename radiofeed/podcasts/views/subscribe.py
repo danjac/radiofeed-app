@@ -34,6 +34,6 @@ def render_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
 
-    return TurboStream(podcast.get_subscribe_toggle_id()).replace.response(
+    return TurboStream(podcast.dom.subscribe_toggle).replace.response(
         render_component(request, "subscribe_toggle", podcast, is_subscribed)
     )

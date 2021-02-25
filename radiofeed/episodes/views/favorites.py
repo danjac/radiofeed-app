@@ -55,7 +55,7 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
             return TurboStream("favorites").replace.response(
                 "There are no more episodes in your Favorites."
             )
-        return TurboStream(episode.dom.favorite).remove.response()
+        return TurboStream(episode.dom.favorite_list_item).remove.response()
 
     return render_favorite_response(request, episode, False)
 
