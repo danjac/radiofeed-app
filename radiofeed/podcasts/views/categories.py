@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 from .. import itunes
 from ..models import Category, Podcast
 from ..tasks import sync_podcast_feed
-from .list_detail import render_podcast_list_response
+from . import render_podcast_list_response
 
 
 def index(request: HttpRequest) -> HttpResponse:

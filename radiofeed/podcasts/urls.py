@@ -1,42 +1,44 @@
 from django.urls import path
 
-from .views import actions, categories, list_detail
+from .views import categories, detail, podcasts, subscribe
 
 app_name = "podcasts"
 
 urlpatterns = [
-    path("podcasts/", list_detail.index, name="index"),
-    path("search/podcasts/", list_detail.search_podcasts, name="search_podcasts"),
-    path("search/itunes/", list_detail.search_itunes, name="search_itunes"),
-    path("podcasts/<int:podcast_id>/preview/", list_detail.preview, name="preview"),
+    path("podcasts/", podcasts.index, name="index"),
+    path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", podcasts.search_itunes, name="search_itunes"),
+    path(
+        "podcasts/<int:podcast_id>/actions/", podcasts.podcast_actions, name="actions"
+    ),
     path(
         "podcasts/<int:podcast_id>/cover-image/",
-        list_detail.podcast_cover_image,
+        podcasts.podcast_cover_image,
         name="podcast_cover_image",
     ),
     path(
         "podcasts/<int:podcast_id>/~subscribe/",
-        actions.subscribe,
+        subscribe.subscribe,
         name="subscribe",
     ),
     path(
         "podcasts/<int:podcast_id>/~unsubscribe/",
-        actions.unsubscribe,
+        subscribe.unsubscribe,
         name="unsubscribe",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
-        list_detail.recommendations,
+        detail.recommendations,
         name="podcast_recommendations",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/about/",
-        list_detail.about,
+        detail.about,
         name="podcast_detail",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
-        list_detail.episodes,
+        detail.episodes,
         name="podcast_episodes",
     ),
     path("discover/", categories.index, name="categories"),

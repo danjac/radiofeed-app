@@ -83,13 +83,13 @@ class TestPodcastRecommendations:
 
 class TestPodcastActions:
     def test_not_turbo_frame(self, client, login_user, podcast):
-        resp = client.get(reverse("podcasts:preview", args=[podcast.id]))
+        resp = client.get(reverse("podcasts:actions", args=[podcast.id]))
         assert resp.url == podcast.get_absolute_url()
 
     def test_authenticated(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         resp = client.get(
-            reverse("podcasts:preview", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
+            reverse("podcasts:actions", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
@@ -99,7 +99,7 @@ class TestPodcastActions:
         EpisodeFactory.create_batch(3, podcast=podcast)
         SubscriptionFactory(podcast=podcast, user=login_user)
         resp = client.get(
-            reverse("podcasts:preview", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
+            reverse("podcasts:actions", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
@@ -313,7 +313,7 @@ class TestSearchITunes:
                 )
             ], []
 
-        mocker.patch("radiofeed.podcasts.views.list_detail.sync_podcast_feed.delay")
+        mocker.patch("radiofeed.podcasts.views.podcasts.sync_podcast_feed.delay")
         mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
         resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
 
