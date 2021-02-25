@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
 <form method="post"
-      id="{{ turbo_stream_target|default:episode.get_queue_toggle_id }}"
+      id="{{ episode.get_queue_toggle_id }}"
       action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
   {% if is_queued %}

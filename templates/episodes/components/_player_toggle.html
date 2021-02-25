@@ -1,7 +1,7 @@
 {% if user.is_authenticated %}
 <form class="{{ css_class|default:'' }}"
       method="POST"
-      id="{{ turbo_stream_target|default:episode.get_player_toggle_id }}"
+      id="{{ episode.get_player_toggle_id }}"
       action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}
 
