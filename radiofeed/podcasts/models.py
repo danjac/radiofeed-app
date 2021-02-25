@@ -1,4 +1,3 @@
-import dataclasses
 from typing import Dict, Protocol
 
 from django.conf import settings
@@ -17,6 +16,7 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
+import box
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
@@ -34,22 +34,9 @@ class CoverImage(Protocol):
     height: int
 
 
-@dataclasses.dataclass
-class PlaceholderCoverImage:
-    url: str
-    width: int = THUMBNAIL_SIZE
-    height: int = THUMBNAIL_SIZE
-
-
-_cover_image_placeholder = PlaceholderCoverImage(
-    url=static("img/podcast-icon.png"),
+_cover_image_placeholder = box.Box(
+    url=static("img/podcast-icon.png"), width=THUMBNAIL_SIZE, height=THUMBNAIL_SIZE
 )
-
-
-@dataclasses.dataclass
-class PodcastDomRefs:
-    list_item: str
-    subscribe_toggle: str
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -169,9 +156,10 @@ class Podcast(models.Model):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     @cached_property
-    def dom(self) -> PodcastDomRefs:
-        return PodcastDomRefs(
+    def dom(self) -> box.Box:
+        return box.Box(
             list_item=f"podcast-{self.id}",
+            cover_image=f"podcast-cover-image-{self.id}",
             subscribe_toggle=f"subscribe-toggle-{self.id}",
         )
 

@@ -46,6 +46,7 @@ pytest-mock
 pytest-randomly
 pytest-xdist
 python-dateutil
+python-box[all]
 pytz
 redis
 sentry_sdk

@@ -1,4 +1,3 @@
-import dataclasses
 from typing import Dict, Optional, Tuple
 
 from django.conf import settings
@@ -13,23 +12,12 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
+import box
 from model_utils.models import TimeStampedModel
 from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.typing import AnyUser
-
-
-@dataclasses.dataclass
-class EpisodeDomRefs:
-    list_item: str
-    history_list_item: str
-    queue_list_item: str
-    favorite_list_item: str
-
-    queue_toggle: str
-    favorite_toggle: str
-    player_toggle: str
 
 
 class EpisodeQuerySet(models.QuerySet):
@@ -118,8 +106,8 @@ class Episode(models.Model):
         return filesizeformat(self.length) if self.length else None
 
     @cached_property
-    def dom(self) -> EpisodeDomRefs:
-        return EpisodeDomRefs(
+    def dom(self) -> box.Box:
+        return box.Box(
             favorite_list_item=f"favorite-{self.id}",
             favorite_toggle=f"favorite-toggle-{self.id}",
             history_list_item=f"history-{self.id}",
