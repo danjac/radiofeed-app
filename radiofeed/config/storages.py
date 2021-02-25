@@ -5,11 +5,8 @@ These allow both media and storage to use the same S3
 bucket safely with different sub-locations.
 """
 
-# Django
 from django.conf import settings
 from django.contrib.staticfiles.storage import ManifestFilesMixin
-
-# Third Party Libraries
 from storages.backends.s3boto3 import S3Boto3Storage
 
 
