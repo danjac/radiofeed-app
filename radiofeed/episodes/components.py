@@ -20,11 +20,14 @@ class EpisodeComponent(component.Component):
         cover_image: Optional[CoverImage] = None,
         **attrs,
     ) -> Dict:
+        request = self.outer_context["request"]
         return {
             "episode": episode,
             "podcast": episode.podcast,
             "dom_id": dom_id or episode.get_dom_id(),
             "duration": episode.get_duration_in_seconds(),
+            "is_playing": request.user.is_authenticated
+            and request.player.is_playing(episode),
             "actions_url": actions_url
             or reverse("episodes:actions", args=[episode.id]),
             "episode_url": episode.get_absolute_url(),

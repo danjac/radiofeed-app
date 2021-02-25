@@ -1,4 +1,3 @@
-{% load episodes %}
 <div class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 {{ css_class|default:'' }}"
      id="{{ dom_id|default:episode.get_dom_id }}"
      {{ attrs }}>
@@ -23,8 +22,7 @@
 
         <div class="flex items-center">
           <div class="mr-2">
-            {% is_playing episode as episode_is_playing %}
-            {% component "player_toggle" episode is_playing=episode_is_playing %}
+            {% component "player_toggle" episode is_playing %}
           </div>
           <a class="mr-2 link"
              href="{{ actions_url }}"
