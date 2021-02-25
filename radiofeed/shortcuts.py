@@ -11,13 +11,13 @@ from django_components.component import registry
 def render_component(request: HttpRequest, component_name: str, *args, **kwargs) -> str:
     """Render a component as string. Use with turbo streams/frames
     to render the component in a response."""
-    req_context = RequestContext(request)
+    context = RequestContext(request)
 
     component = registry.get(component_name)(component_name)
-    component.outer_context = req_context.flatten()
+    component.outer_context = context.flatten()
 
-    with req_context.update(component.context(*args, **kwargs)):
-        return component.render(req_context)
+    with context.update(component.context(*args, **kwargs)):
+        return component.render(context)
 
 
 @dataclasses.dataclass
