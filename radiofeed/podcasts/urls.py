@@ -8,12 +8,12 @@ urlpatterns = [
     path("podcasts/", list_detail.index, name="index"),
     path("search/podcasts/", list_detail.search_podcasts, name="search_podcasts"),
     path("search/itunes/", list_detail.search_itunes, name="search_itunes"),
+    path("podcasts/<int:podcast_id>/preview/", list_detail.preview, name="preview"),
     path(
         "podcasts/<int:podcast_id>/cover-image/",
         list_detail.podcast_cover_image,
         name="podcast_cover_image",
     ),
-    path("podcasts/<int:podcast_id>/preview/", actions.preview, name="preview"),
     path(
         "podcasts/<int:podcast_id>/~subscribe/",
         actions.subscribe,
