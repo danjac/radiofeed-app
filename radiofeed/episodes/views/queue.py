@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream
 
+from radiofeed.shortcuts import render_component
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
@@ -81,16 +82,8 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> List[str]:
-    return (
-        TurboStream(episode.get_queue_toggle_id())
-        .replace.template(
-            "episodes/components/_queue_toggle.html",
-            {
-                "episode": episode,
-                "is_queued": is_queued,
-            },
-        )
-        .response(request)
+    return TurboStream(episode.get_queue_toggle_id()).replace.response(
+        render_component(request, "queue_toggle", episode, is_queued)
     )
 
 

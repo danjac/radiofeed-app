@@ -2,26 +2,30 @@
 <form class="{{ css_class|default:'' }}"
       method="POST"
       id="{{ turbo_stream_target|default:episode.get_player_toggle_id }}"
-      action="{% if is_episode_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
+      action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}
 
   <div class="flex items-center">
+    {% if is_playing %}
     <button title="Close Player"
             value="stop"
-            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none{% if not is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none">
       {% component "icon" "stop" css_class="h-10 w-10" %}
     </button>
+    {% else %}
     <button title="Open in Player"
             value="start"
-            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none{% if is_episode_playing %} hidden{% endif %}">
+            class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none">
       {% component "icon" "play" css_class="h-10 w-10" %}
     </button>
+    {% endif %}
   </div>
 </form>
 {% else %}
 <div class="flex items-center">
-  <a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}" data-turbo-frame="_top"
-    title="Login or sign up to play this episode">
+  <a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}"
+     data-turbo-frame="_top"
+     title="Login or sign up to play this episode">
     {% component "icon" "play" css_class="h-10 w-10" %}
   </a>
 </div>

@@ -5,6 +5,8 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream
 
+from radiofeed.shortcuts import render_component
+
 from ..models import Podcast, Subscription
 from . import get_podcast_or_404
 
@@ -31,11 +33,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def render_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
-    return (
-        TurboStream(podcast.get_subscribe_toggle_id())
-        .replace.template(
-            "podcasts/components/_subscribe_toggle.html",
-            {"podcast": podcast, "is_subscribed": is_subscribed},
-        )
-        .response(request)
+
+    return TurboStream(podcast.get_subscribe_toggle_id()).replace.response(
+        render_component(request, "subscribe_toggle", podcast, is_subscribed)
     )

@@ -10,13 +10,13 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def is_playing(context: Dict, episode: Episode) -> bool:
-    return context["request"].player.is_playing(episode)
+def get_player(context: Dict) -> PlayerInfo:
+    return context["request"].player.as_dict()
 
 
 @register.simple_tag(takes_context=True)
-def get_player(context: Dict) -> PlayerInfo:
-    return context["request"].player.as_dict()
+def is_playing(context: Dict, episode: Episode) -> bool:
+    return context["request"].player.is_playing(episode)
 
 
 @register.filter

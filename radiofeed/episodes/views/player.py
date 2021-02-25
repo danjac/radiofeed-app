@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 
 from turbo_response import TurboStream, TurboStreamResponse
 
+from radiofeed.shortcuts import render_component
 from radiofeed.users.decorators import ajax_login_required
 
 from ..models import Episode, QueueItem
@@ -84,16 +85,8 @@ def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
-    return (
-        TurboStream(episode.get_player_toggle_id())
-        .replace.template(
-            "episodes/components/_player_toggle.html",
-            {
-                "episode": episode,
-                "is_episode_playing": is_playing,
-            },
-        )
-        .render(request=request)
+    return TurboStream(episode.get_player_toggle_id()).replace.render(
+        render_component(request, "player_toggle", episode, is_playing)
     )
 
 

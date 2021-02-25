@@ -8,6 +8,8 @@ from django.views.decorators.cache import cache_page
 
 from turbo_response import TurboFrame
 
+from radiofeed.shortcuts import render_component
+
 from .. import itunes
 from ..models import Podcast
 from ..tasks import sync_podcast_feed
@@ -111,14 +113,12 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
     podcast = get_podcast_or_404(podcast_id)
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "podcasts/components/_cover_image.html",
-            {
-                "podcast": podcast,
-                "cover_image": podcast.get_cover_image_thumbnail(),
-            },
+    return TurboFrame(request.turbo.frame).response(
+        render_component(
+            request,
+            "cover_image",
+            podcast,
+            lazy=False,
+            cover_image=podcast.get_cover_image_thumbnail(),
         )
-        .response(request)
     )

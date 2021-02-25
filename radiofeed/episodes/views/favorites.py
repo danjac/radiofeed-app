@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream
 
 from radiofeed.pagination import render_paginated_response
+from radiofeed.shortcuts import render_component
 
 from ..models import Episode, Favorite
 from . import get_episode_or_404
@@ -62,11 +63,6 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
-    return (
-        TurboStream(episode.get_favorite_toggle_id())
-        .replace.template(
-            "episodes/components/_favorite_toggle.html",
-            {"episode": episode, "is_favorited": is_favorited},
-        )
-        .response(request)
+    return TurboStream(episode.get_favorite_toggle_id()).replace.response(
+        render_component(request, "favorite_toggle", episode, is_favorited)
     )

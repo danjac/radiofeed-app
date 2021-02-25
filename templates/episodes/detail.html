@@ -34,7 +34,6 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-{% is_playing episode as is_episode_playing %}
 <div class="p-3 border mb-3 dark:border-gray-500">
 
   <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
@@ -70,7 +69,8 @@
 
       <div class="flex items-center mb-3">
         <div class="mr-3">
-          {% component "player_toggle" episode is_episode_playing %}
+          {% is_playing episode as episode_is_playing %}
+          {% component "player_toggle" episode is_playing=episode_is_playing %}
         </div>
         <div>
           {% include "episodes/_download.html" %}

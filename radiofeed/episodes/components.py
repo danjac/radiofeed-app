@@ -41,7 +41,7 @@ component.registry.register(name="episode", component=EpisodeComponent)
 
 
 class FavoriteToggleComponent(component.Component):
-    def context(self, episode: Episode, is_favorited: bool):
+    def context(self, episode: Episode, is_favorited: bool) -> Dict:
         return {
             "episode": episode,
             "is_favorited": is_favorited,
@@ -55,7 +55,7 @@ component.registry.register(name="favorite_toggle", component=FavoriteToggleComp
 
 
 class QueueToggleComponent(component.Component):
-    def context(self, episode: Episode, is_queued: bool):
+    def context(self, episode: Episode, is_queued: bool) -> Dict:
         return {
             "episode": episode,
             "is_queued": is_queued,
@@ -69,10 +69,10 @@ component.registry.register(name="queue_toggle", component=QueueToggleComponent)
 
 
 class PlayerToggleComponent(component.Component):
-    def context(self, episode: Episode, is_playing: bool):
+    def context(self, episode: Episode, is_playing: bool) -> Dict:
         return {
             "episode": episode,
-            "episode_is_playing": is_playing,
+            "is_playing": is_playing,
         }
 
     def template(self, context: Dict) -> str:

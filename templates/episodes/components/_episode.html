@@ -23,8 +23,8 @@
 
         <div class="flex items-center">
           <div class="mr-2">
-            {% is_playing episode as is_episode_playing %}
-            {% component "player_toggle" episode is_episode_playing %}
+            {% is_playing episode as episode_is_playing %}
+            {% component "player_toggle" episode is_playing=episode_is_playing %}
           </div>
           <a class="mr-2 link"
              href="{{ actions_url }}"
