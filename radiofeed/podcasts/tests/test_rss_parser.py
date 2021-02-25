@@ -3,11 +3,10 @@ import json
 import pathlib
 import uuid
 
-from django.utils import timezone
-
 import pytest
 import pytz
 import requests
+from django.utils import timezone
 from pydantic import ValidationError
 
 from radiofeed.episodes.factories import EpisodeFactory

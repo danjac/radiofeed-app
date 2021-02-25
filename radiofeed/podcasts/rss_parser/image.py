@@ -5,9 +5,8 @@ import uuid
 from typing import Optional, Tuple
 from urllib.parse import urlparse
 
-from django.core.files.images import ImageFile
-
 import requests
+from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 
 from .headers import get_headers

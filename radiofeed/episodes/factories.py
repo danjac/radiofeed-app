@@ -1,7 +1,6 @@
 import uuid
 
 from django.utils import timezone
-
 from factory import Faker, LazyFunction, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 

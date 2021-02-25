@@ -1,7 +1,6 @@
 from typing import Dict, Optional
 
 from django.urls import reverse
-
 from django_components import component
 
 from radiofeed.podcasts.models import CoverImage

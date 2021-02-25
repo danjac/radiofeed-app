@@ -1,14 +1,10 @@
-# Standard Library
 import pathlib
 import socket
 from email.utils import getaddresses
 
-# Django
+import environ
 from django.contrib import messages
 from django.urls import reverse_lazy
-
-# Third Party Libraries
-import environ
 
 env = environ.Env()
 

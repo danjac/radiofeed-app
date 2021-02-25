@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
-
 from turbo_response import TurboStream
 
 from radiofeed.pagination import render_paginated_response

@@ -7,7 +7,6 @@ from django.db.models import Max, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
-
 from turbo_response import TurboStream
 
 from radiofeed.shortcuts import render_component

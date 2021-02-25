@@ -3,7 +3,6 @@ from functools import lru_cache
 from typing import List
 
 from django.template.defaultfilters import striptags
-
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer

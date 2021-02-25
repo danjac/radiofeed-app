@@ -1,9 +1,8 @@
 import http
 
+import pytest
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-
-import pytest
 
 from ..decorators import ajax_login_required
 

@@ -1,5 +1,6 @@
 from typing import Dict, Protocol
 
+import box
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
@@ -15,8 +16,6 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-
-import box
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail

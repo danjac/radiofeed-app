@@ -5,7 +5,6 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
-
 from turbo_response import TurboFrame
 
 from radiofeed.shortcuts import render_component

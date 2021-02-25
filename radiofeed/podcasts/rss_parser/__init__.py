@@ -3,9 +3,8 @@ import logging
 from functools import lru_cache
 from typing import Dict, List, Optional
 
-from django.utils import timezone
-
 import requests
+from django.utils import timezone
 from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode

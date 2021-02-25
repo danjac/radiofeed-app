@@ -1,16 +1,10 @@
-# Standard Library
 import http
 
-# Django
+import pytest
 from django.urls import reverse
 
-# Third Party Libraries
-import pytest
-
-# RadioFeed
 from radiofeed.episodes.factories import EpisodeFactory
 
-# Local
 from .. import itunes
 from ..factories import (
     CategoryFactory,

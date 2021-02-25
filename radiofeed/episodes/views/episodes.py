@@ -5,7 +5,6 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-
 from turbo_response import TurboFrame
 
 from radiofeed.podcasts.models import Podcast

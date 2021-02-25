@@ -2,7 +2,6 @@ from typing import Dict
 from urllib import parse
 
 from django.forms import Field, Form
-
 from django_components import component
 
 

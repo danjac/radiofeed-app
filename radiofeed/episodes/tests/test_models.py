@@ -1,8 +1,7 @@
 import datetime
 
-from django.utils import timezone
-
 import pytest
+from django.utils import timezone
 
 from ..factories import (
     AudioLogFactory,

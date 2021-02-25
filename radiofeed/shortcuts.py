@@ -4,7 +4,6 @@ from typing import Type
 from django.forms import Form
 from django.http import HttpRequest
 from django.template.context import RequestContext
-
 from django_components.component import registry
 
 

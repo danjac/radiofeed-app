@@ -6,7 +6,6 @@ from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
-
 from turbo_response import TurboFrame
 
 

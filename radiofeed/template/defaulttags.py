@@ -2,6 +2,7 @@ import collections
 import json
 from typing import Any, Dict, Optional
 
+import bs4
 from django import template
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
@@ -10,8 +11,6 @@ from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-
-import bs4
 
 from .html import clean_html_content
 from .html import stripentities as _stripentities

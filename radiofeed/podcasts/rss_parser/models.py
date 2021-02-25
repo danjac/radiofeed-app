@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
-
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 from .date_parser import parse_date

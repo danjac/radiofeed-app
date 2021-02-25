@@ -1,6 +1,5 @@
-from django.utils import timezone
-
 import factory
+from django.utils import timezone
 from factory.django import DjangoModelFactory
 
 from radiofeed.users.factories import UserFactory

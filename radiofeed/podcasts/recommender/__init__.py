@@ -5,12 +5,11 @@ import operator
 import statistics
 from typing import Dict, Generator, List, Tuple
 
+import pandas
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
-
-import pandas
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 

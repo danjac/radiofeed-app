@@ -1,9 +1,8 @@
 import http
 import json
 
-from django.urls import reverse
-
 import pytest
+from django.urls import reverse
 
 from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
 

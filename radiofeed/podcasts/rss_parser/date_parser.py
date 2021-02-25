@@ -1,9 +1,8 @@
 import datetime
 from typing import Optional
 
-from django.utils.timezone import is_aware, make_aware
-
 from dateutil import parser as date_parser
+from django.utils.timezone import is_aware, make_aware
 
 TZ_INFOS = {
     k: v * 3600
