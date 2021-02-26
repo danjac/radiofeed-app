@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
+from turbo_response import Action, TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
@@ -406,11 +406,17 @@ def render_favorite_response(
         )
     ]
 
+    num_favorites = request.user.favorite_set.count()
+
     if is_favorited:
         streams.append(
-            TurboStream("favorites").prepend.render(
-                render_component(request, "favorite", episode)
-            )
+            TurboStream("favorites")
+            .action(Action.UPDATE if num_favorites == 1 else Action.PREPEND)
+            .render(render_component(request, "favorite", episode))
+        )
+    elif num_favorites == 0:
+        streams.append(
+            TurboStream("favorites").update.render("You have no more Favorites.")
         )
     else:
         streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
