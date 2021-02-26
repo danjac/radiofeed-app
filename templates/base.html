@@ -58,7 +58,8 @@
   </div>
 
   {% endblock layout %}
-  {% block player %}{% include "episodes/_player.html" %}{% endblock %}
+
+  {% block player %}{% component "player" %}{% endblock %}
 
   <turbo-frame id="modal"
                data-modal-target="modal"></turbo-frame>

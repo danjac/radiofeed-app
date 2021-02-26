@@ -450,12 +450,7 @@ def render_player(
         streams
         + [
             render_player_toggle(request, next_episode, True),
-            TurboStream("player")
-            .update.template(
-                "episodes/_player_controls.html",
-                {"episode": next_episode},
-            )
-            .render(request=request),
+            TurboStream("player").replace.render(render_component(request, "player")),
             TurboStream("queue")
             .replace.template(
                 "episodes/_queue.html",

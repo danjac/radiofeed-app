@@ -1,16 +1,10 @@
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from django import template
 
 from .. import utils
-from ..player import PlayerInfo
 
 register = template.Library()
-
-
-@register.simple_tag(takes_context=True)
-def get_player(context: Dict) -> PlayerInfo:
-    return context["request"].player.as_dict()
 
 
 @register.filter
