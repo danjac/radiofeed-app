@@ -4,7 +4,6 @@ from django.urls import reverse
 from django_components import component
 
 from radiofeed.podcasts.models import CoverImage
-from radiofeed.template.defaulttags import htmlattrs
 
 from .models import Episode
 
@@ -43,7 +42,7 @@ class EpisodeComponent(component.Component):
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
             "cover_image": cover_image,
             "is_playing": request.player.is_playing(episode),
-            "attrs": htmlattrs(attrs),
+            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
