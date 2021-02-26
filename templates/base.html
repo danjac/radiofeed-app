@@ -40,17 +40,17 @@
       data-controller="toggle modal"
       {% endblock %}>
 
-  {% block navbar %}{% include "navigation/_navbar.html" %}{% endblock %}
+  {% block navbar %}{% include "_navbar.html" %}{% endblock %}
 
-  {% include "notifications/_messages.html" %}
-  {% include "notifications/_cookie_notice.html" %}
+  {% include "_messages.html" %}
+  {% include "_cookie_notice.html" %}
 
   {% block layout %}
 
   <div class="min-h-full mx-auto flex relative mt-2">
     <div class="hidden lg:block w-full lg:w-64 p-3 absolute left-0 top-0 sm:static"
          data-toggle-target="item">
-      {% include "navigation/_sidebar.html" %}
+      {% include "_sidebar.html" %}
     </div>
 
     <div class="w-full p-2 lg:px-5"
