@@ -4,14 +4,14 @@ from typing import Type
 
 from django.forms import Form
 from django.http import HttpRequest
-from django.template.context import RequestContext
+from django.template.context import make_context
 from django_components.component import registry
 
 
 def render_component(request: HttpRequest, component_name: str, *args, **kwargs) -> str:
     """Render a component as string. Use with turbo streams/frames
     to render the component in a response."""
-    context = RequestContext(request, {"request": request})
+    context = make_context({"request": request}, request)
 
     component = registry.get(component_name)(component_name)
     component.outer_context = context.flatten()
