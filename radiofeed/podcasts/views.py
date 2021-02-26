@@ -186,7 +186,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "podcasts/detail/_actions.html",
+                "podcasts/detail/_preview.html",
                 {
                     "podcast": podcast,
                     "is_subscribed": podcast.is_subscribed(request.user),

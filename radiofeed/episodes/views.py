@@ -104,7 +104,7 @@ def preview(
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "episodes/detail/_actions.html",
+                "episodes/detail/_preview.html",
                 {
                     "episode": episode,
                     "actions": actions,
