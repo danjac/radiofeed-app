@@ -41,7 +41,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render_podcast_list_response(
         request,
         podcasts,
-        "podcasts/list/index.html",
+        "podcasts/index.html",
         {
             "show_promotions": show_promotions,
             "search_url": reverse("podcasts:search_podcasts"),
@@ -63,7 +63,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     return render_podcast_list_response(
         request,
         podcasts,
-        "podcasts/list/search.html",
+        "podcasts/search.html",
         cached=True,
     )
 
@@ -87,7 +87,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/itunes/search.html",
+        "podcasts/itunes_search.html",
         {
             "results": results,
             "error": error,
@@ -105,7 +105,7 @@ def about(
 
     return render_podcast_detail_response(
         request,
-        "podcasts/detail/about.html",
+        "podcasts/about.html",
         podcast,
         {"total_episodes": total_episodes},
     )
@@ -125,7 +125,7 @@ def recommendations(
 
     return render_podcast_detail_response(
         request,
-        "podcasts/detail/recommendations.html",
+        "podcasts/recommendations.html",
         podcast,
         {
             "recommendations": recommendations,
@@ -151,7 +151,7 @@ def episodes(
     return render_episode_list_response(
         request,
         episodes,
-        "podcasts/detail/episodes.html",
+        "podcasts/episodes.html",
         {
             **get_podcast_detail_context(request, podcast),
             "ordering": ordering,
@@ -186,7 +186,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "podcasts/detail/_preview.html",
+                "podcasts/_preview.html",
                 {
                     "podcast": podcast,
                     "is_subscribed": podcast.is_subscribed(request.user),
@@ -234,7 +234,7 @@ def categories(request: HttpRequest) -> HttpResponse:
         )
     return TemplateResponse(
         request,
-        "podcasts/categories/index.html",
+        "podcasts/categories.html",
         {"categories": categories},
     )
 
@@ -254,7 +254,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] 
     return render_podcast_list_response(
         request,
         podcasts,
-        "podcasts/categories/detail.html",
+        "podcasts/category_detail.html",
         {
             "category": category,
             "children": category.children.order_by("name"),
@@ -283,7 +283,7 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/itunes/category.html",
+        "podcasts/itunes_category.html",
         {
             "category": category,
             "results": results,
@@ -345,9 +345,9 @@ def render_podcast_list_response(
 
     if cached:
         extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
-        pagination_template_name = "podcasts/list/_podcast_list_cached.html"
+        pagination_template_name = "podcasts/_podcasts_cached.html"
     else:
-        pagination_template_name = "podcasts/list/_podcast_list.html"
+        pagination_template_name = "podcasts/_podcasts.html"
 
     return render_paginated_response(
         request, podcasts, template_name, pagination_template_name, extra_context

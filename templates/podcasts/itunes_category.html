@@ -23,7 +23,7 @@
 </h2>
 
 {% for result in results %}
-{% include "podcasts/itunes/_result.html" %}
+{% include "podcasts/_itunes_result.html" %}
 {% empty %}
 {% if error %}
 <p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
