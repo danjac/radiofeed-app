@@ -8,18 +8,6 @@ from radiofeed.podcasts.models import CoverImage
 from .models import Episode
 
 
-class PlayerComponent(component.Component):
-    def context(self) -> Dict:
-        player = self.outer_context["request"].player
-        return {"player": player.as_dict()}
-
-    def template(self, context: Dict) -> str:
-        return "episodes/components/_player.html"
-
-
-component.registry.register(name="player", component=PlayerComponent)
-
-
 class EpisodeComponent(component.Component):
     def context(
         self,

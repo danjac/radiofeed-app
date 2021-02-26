@@ -1,4 +1,6 @@
+{% load episodes %}
 {% if user.is_authenticated %}
+{% get_player as player %}
 {% with episode=player.episode %}
 <div id="player"
      data-turbo-permanent
@@ -15,7 +17,7 @@
      data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'
      {% endif %}>
   {% if episode %}
-  {% include "episodes/components/_player_controls.html" %}
+  {% include "episodes/_player_controls.html" %}
   {% endif %}
 </div>
 {% endwith %}

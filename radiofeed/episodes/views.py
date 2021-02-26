@@ -452,7 +452,7 @@ def render_player(
             render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
-                "episodes/components/_player_controls.html",
+                "episodes/_player_controls.html",
                 {
                     "episode": next_episode,
                 },
