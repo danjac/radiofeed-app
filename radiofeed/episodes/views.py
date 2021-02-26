@@ -412,11 +412,6 @@ def render_favorite_response(
                 render_component(request, "favorite", episode)
             )
         )
-
-    elif request.user.favorite_set.count() == 0:
-        streams.append(
-            TurboStream("favorites").replace.render("You have no more Favorites")
-        )
     else:
         streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
 

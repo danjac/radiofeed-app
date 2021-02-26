@@ -37,14 +37,9 @@ component.registry.register(name="episode", component=EpisodeComponent)
 
 
 class FavoriteComponent(component.Component):
-    def context(
-        self,
-        episode: Episode,
-        **attrs,
-    ) -> Dict:
+    def context(self, episode: Episode) -> Dict:
         return {
             "episode": episode,
-            "attrs": attrs,
         }
 
     def template(self, context: Dict) -> str:
