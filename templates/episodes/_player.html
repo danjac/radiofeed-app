@@ -16,7 +16,7 @@
      data-player-current-time-value="{{ player.current_time|default:0 }}"
      data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'
      {% endif %}>
-  {% include "episodes/player/_controls.html" %}
+  {% include "episodes/_player_controls.html" %}
 </div>
 {% endwith %}
 {% endif %}

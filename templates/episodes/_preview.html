@@ -12,7 +12,7 @@
 
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
-  {% include "episodes/detail/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+  {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
 
   {% if episode.listened %}
   <div class="ml-2 hidden sm:inline-block">
@@ -37,7 +37,7 @@
   </div>
   <div>
     <div class="mb-3 flex items-center">
-      {% include "episodes/detail/_download.html" %}
+      {% include "episodes/_download.html" %}
     </div>
     <div class="flex items-center space-x-3 mb-3">
       {% if "queue" in actions %}

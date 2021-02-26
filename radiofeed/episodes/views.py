@@ -60,7 +60,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return render_episode_list_response(
         request,
         episodes,
-        "episodes/list/index.html",
+        "episodes/index.html",
         {
             "show_promotions": show_promotions,
             "search_url": reverse("episodes:search_episodes"),
@@ -85,7 +85,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     return render_episode_list_response(
         request,
         episodes,
-        "episodes/list/search.html",
+        "episodes/search.html",
         cached=request.user.is_anonymous,
     )
 
@@ -104,7 +104,7 @@ def preview(
         return (
             TurboFrame(request.turbo.frame)
             .template(
-                "episodes/detail/_preview.html",
+                "episodes/_preview.html",
                 {
                     "episode": episode,
                     "actions": actions,
@@ -125,7 +125,7 @@ def episode_detail(
 
     return TemplateResponse(
         request,
-        "episodes/detail/about.html",
+        "episodes/about.html",
         {
             "episode": episode,
             "is_playing": request.player.is_playing(episode),
@@ -153,8 +153,8 @@ def history(request: HttpRequest) -> HttpResponse:
     return render_paginated_response(
         request,
         logs,
-        "episodes/history/index.html",
-        "episodes/history/_episode_list.html",
+        "episodes/history.html",
+        "episodes/_history.html",
     )
 
 
@@ -186,8 +186,8 @@ def favorites(request: HttpRequest) -> HttpResponse:
     return render_paginated_response(
         request,
         favorites,
-        "episodes/favorites/index.html",
-        "episodes/favorites/_episode_list.html",
+        "episodes/favorites.html",
+        "episodes/_favorites.html",
     )
 
 
@@ -225,7 +225,7 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def queue(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/queue/index.html",
+        "episodes/queue.html",
         {"queue_items": get_queue_items(request)},
     )
 
@@ -379,12 +379,16 @@ def render_episode_list_response(
 
     if cached:
         extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
-        pagination_template_name = "episodes/list/_episode_list_cached.html"
+        pagination_template_name = "episodes/_episodes_cached.html"
     else:
-        pagination_template_name = "episodes/list/_episode_list.html"
+        pagination_template_name = "episodes/_episodes.html"
 
     return render_paginated_response(
-        request, episodes, template_name, pagination_template_name, extra_context
+        request,
+        episodes,
+        template_name,
+        pagination_template_name,
+        extra_context,
     )
 
 
@@ -448,13 +452,13 @@ def render_player(
             render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
-                "episodes/player/_controls.html",
+                "episodes/_player_controls.html",
                 {"episode": next_episode},
             )
             .render(request=request),
             TurboStream("queue")
             .replace.template(
-                "episodes/queue/_episode_list.html",
+                "episodes/_queue.html",
                 {"queue_items": get_queue_items(request)},
             )
             .render(request=request),
