@@ -12,7 +12,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
-from radiofeed.episodes.views.list_detail import render_episode_list_response
+from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
 from radiofeed.shortcuts import render_component
 
