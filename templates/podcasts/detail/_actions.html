@@ -30,8 +30,8 @@
 </div>
 {% endif %}
 
-<div class="text-sm italic markdown">
-  {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}
+<div class="text-sm">
+  {{ podcast.description|keepspaces|stripentities|truncatewords:120 }}
 </div>
 
 {% endblock %}

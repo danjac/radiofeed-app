@@ -57,8 +57,8 @@
 </div>
 {% endif %}
 
-<div class="text-sm italic markdown">
-  {{ episode.description|keepspaces|stripentities|truncatewords:30 }}
+<div class="text-sm">
+  {{ episode.description|keepspaces|stripentities|truncatewords:120 }}
 </div>
 
 {% endwith %}
