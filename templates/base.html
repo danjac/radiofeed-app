@@ -12,6 +12,7 @@
       {% endif %}>
 
 <head>
+  {% block head %}
   <title>
     {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
   </title>
@@ -23,14 +24,15 @@
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="turbo-cache-control"
         content="no-cache">
- <meta name="copyright"
+  <meta name="copyright"
         content="Dan Jacob {% now "Y" %}">
   <meta name="robots"
         content="index,follow" />
-  {% include "meta/_og_data.html" %}
-  {% include "meta/_google_tracking.html" %}
+  {% include "_og_data.html" %}
   {% endblock meta %}
+  {% include "_google_tracking.html" %}
   {% include "_static.html" %}
+  {% endblock head %}
 </head>
 
 <body {% block bodyattrs %}
