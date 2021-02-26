@@ -90,7 +90,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     )
 
 
-def episode_actions(
+def preview(
     request: HttpRequest,
     episode_id: int,
     actions: Tuple[str, ...] = ("favorite", "queue"),

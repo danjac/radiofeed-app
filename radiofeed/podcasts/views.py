@@ -179,7 +179,7 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     )
 
 
-def podcast_actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
 
     if request.turbo.frame:

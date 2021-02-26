@@ -9,9 +9,9 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
-        "podcasts/<int:podcast_id>/actions/",
-        views.podcast_actions,
-        name="actions",
+        "podcasts/<int:podcast_id>/preview/",
+        views.preview,
+        name="preview",
     ),
     path(
         "podcasts/<int:podcast_id>/cover-image/",

@@ -15,7 +15,7 @@ class EpisodeComponent(component.Component):
         episode: Episode,
         dom_id: str = "",
         podcast_url: str = "",
-        actions_url: str = "",
+        preview_url: str = "",
         cover_image: Optional[CoverImage] = None,
         **attrs,
     ) -> Dict:
@@ -25,8 +25,8 @@ class EpisodeComponent(component.Component):
             "podcast": episode.podcast,
             "dom_id": dom_id or episode.dom.list_item,
             "duration": episode.get_duration_in_seconds(),
-            "actions_url": actions_url
-            or reverse("episodes:actions", args=[episode.id]),
+            "preview_url": preview_url
+            or reverse("episodes:episode_preview", args=[episode.id]),
             "episode_url": episode.get_absolute_url(),
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
             "cover_image": cover_image,

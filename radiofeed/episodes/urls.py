@@ -9,9 +9,9 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("search/episodes/", views.search_episodes, name="search_episodes"),
     path(
-        "episodes/<int:episode_id>/actions/",
-        views.episode_actions,
-        name="actions",
+        "episodes/<int:episode_id>/preview/",
+        views.preview,
+        name="episode_preview",
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
@@ -52,9 +52,9 @@ urlpatterns = [
         name="remove_favorite",
     ),
     path(
-        "favorites/<int:episode_id>/actions/",
-        views.episode_actions,
-        name="favorite_actions",
+        "favorites/<int:episode_id>/preview/",
+        views.preview,
+        name="favorite_preview",
         kwargs={"actions": ("queue",)},
     ),
     path("queue/", views.queue, name="queue"),
@@ -66,9 +66,9 @@ urlpatterns = [
         name="remove_from_queue",
     ),
     path(
-        "queue/<int:episode_id>/actions/",
-        views.episode_actions,
+        "queue/<int:episode_id>/preview/",
+        views.preview,
         name="queue_actions",
-        kwargs={"actions": ("favorite",)},
+        kwargs={"preview": ("favorite",)},
     ),
 ]
