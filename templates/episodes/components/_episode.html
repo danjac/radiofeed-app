@@ -25,7 +25,7 @@
             {% component "player_toggle" episode is_playing %}
           </div>
           <a class="mr-2 link"
-             href="{{ preview_url }}"
+             href="{% url 'episodes:preview' episode.id %}"
              title="Preview"
              data-turbo-frame="modal">
             {% component "icon" "ellipsis" css_class="w-6 h-6" %}

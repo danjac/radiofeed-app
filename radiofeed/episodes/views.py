@@ -1,7 +1,7 @@
 import http
 import json
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -93,13 +93,10 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 def preview(
     request: HttpRequest,
     episode_id: int,
-    actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_episode_detail_or_404(request, episode_id)
 
     if request.turbo.frame:
-        is_favorited = "favorite" in actions and episode.is_favorited(request.user)
-        is_queued = "queue" in actions and episode.is_queued(request.user)
 
         return (
             TurboFrame(request.turbo.frame)
@@ -107,9 +104,8 @@ def preview(
                 "episodes/_preview.html",
                 {
                     "episode": episode,
-                    "actions": actions,
-                    "is_favorited": is_favorited,
-                    "is_queued": is_queued,
+                    "is_favorited": episode.is_favorited(request.user),
+                    "is_queued": episode.is_queued(request.user),
                 },
             )
             .response(request)
@@ -211,13 +207,6 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     favorites = Favorite.objects.filter(user=request.user)
     favorites.filter(episode=episode).delete()
 
-    if "remove" in request.POST:
-        if favorites.count() == 0:
-            return TurboStream("favorites").replace.response(
-                "There are no more episodes in your Favorites."
-            )
-        return TurboStream(episode.dom.favorite_list_item).remove.response()
-
     return render_favorite_response(request, episode, False)
 
 
@@ -255,11 +244,6 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     items = QueueItem.objects.filter(user=request.user)
     items.filter(episode=episode).delete()
-
-    if "remove" in request.POST:
-        if items.count() == 0:
-            return TurboStream("queue").replace.response("Your Play Queue is now empty")
-        return TurboStream(episode.dom.queue_list_item).remove.response()
     return render_queue_response(request, episode, False)
 
 
@@ -376,6 +360,17 @@ def render_player_toggle(
     )
 
 
+def render_queue_items(request: HttpRequest) -> str:
+    return (
+        TurboStream("queue")
+        .replace.template(
+            "episodes/_queue.html",
+            {"queue_items": get_queue_items(request)},
+        )
+        .render(request=request)
+    )
+
+
 def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
@@ -404,16 +399,42 @@ def render_episode_list_response(
 def render_favorite_response(
     request: HttpRequest, episode: Episode, is_favorited: bool
 ) -> HttpResponse:
-    return TurboStream(episode.dom.favorite_toggle).replace.response(
-        render_component(request, "favorite_toggle", episode, is_favorited)
-    )
+
+    streams: List[str] = [
+        TurboStream(episode.dom.favorite_toggle).replace.render(
+            render_component(request, "favorite_toggle", episode, is_favorited)
+        )
+    ]
+
+    if is_favorited:
+        streams.append(
+            TurboStream("favorites").prepend.render(
+                render_component(
+                    request, "episode", episode, dom_id=episode.dom.favorite_list_item
+                )
+            )
+        )
+
+    elif request.user.favorite_set.count() == 0:
+        streams.append(
+            TurboStream("favorites").replace.render("You have no more Favorites")
+        )
+    else:
+        streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
+
+    return TurboStreamResponse(streams)
 
 
 def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
-) -> List[str]:
-    return TurboStream(episode.dom.queue_toggle).replace.response(
-        render_component(request, "queue_toggle", episode, is_queued)
+) -> HttpResponse:
+    return TurboStreamResponse(
+        [
+            render_queue_items(request),
+            TurboStream(episode.dom.queue_toggle).replace.render(
+                render_component(request, "queue_toggle", episode, is_queued)
+            ),
+        ]
     )
 
 
@@ -450,18 +471,13 @@ def render_player_response(
         streams
         + [
             render_player_toggle(request, next_episode, True),
+            render_queue_items(request),
             TurboStream("player")
             .update.template(
                 "episodes/_player_controls.html",
                 {
                     "episode": next_episode,
                 },
-            )
-            .render(request=request),
-            TurboStream("queue")
-            .replace.template(
-                "episodes/_queue.html",
-                {"queue_items": get_queue_items(request)},
             )
             .render(request=request),
         ]
