@@ -287,7 +287,7 @@ class TestHistory:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestFavoriteList:
+class TestFavorites:
     def test_get(self, client, login_user):
         FavoriteFactory.create_batch(3, user=login_user)
         resp = client.get(reverse("episodes:favorites"), HTTP_TURBO_FRAME="episodes")
@@ -344,6 +344,13 @@ class TestRemoveHistory:
         assert resp.status_code == http.HTTPStatus.OK
         assert not AudioLog.objects.filter(user=login_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=login_user).count() == 0
+
+
+class TestQueue:
+    def test_get(self, client, login_user):
+        QueueItemFactory.create_batch(3, user=login_user)
+        resp = client.get(reverse("episodes:queue"))
+        assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestAddToQueue:
