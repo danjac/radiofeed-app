@@ -292,7 +292,7 @@ def start_player(
 
     episode = get_episode_detail_or_404(request, episode_id)
 
-    return render_player(
+    return render_player_response(
         request,
         episode,
         current_time=0 if episode.completed else (episode.current_time or 0),
@@ -302,7 +302,7 @@ def start_player(
 @require_POST
 @login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
-    return render_player(request)
+    return render_player_response(request)
 
 
 @require_POST
@@ -318,7 +318,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
         .first()
     )
 
-    return render_player(
+    return render_player_response(
         request,
         next_episode=next_item.episode if next_item else None,
         mark_completed=True,
@@ -367,6 +367,15 @@ def get_queue_items(request: HttpRequest) -> QuerySet:
     )
 
 
+def render_player_toggle(
+    request: HttpRequest, episode: Episode, is_playing: bool
+) -> str:
+
+    return TurboStream(episode.dom.player_toggle).replace.render(
+        render_component(request, "player_toggle", episode, is_playing)
+    )
+
+
 def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
@@ -408,16 +417,7 @@ def render_queue_response(
     )
 
 
-def render_player_toggle(
-    request: HttpRequest, episode: Episode, is_playing: bool
-) -> str:
-
-    return TurboStream(episode.dom.player_toggle).replace.render(
-        render_component(request, "player_toggle", episode, is_playing)
-    )
-
-
-def render_player(
+def render_player_response(
     request: HttpRequest,
     next_episode: Optional[Episode] = None,
     current_time: int = 0,
