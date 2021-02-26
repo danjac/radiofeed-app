@@ -7,12 +7,12 @@
   {% component_block "episode" log.episode dom_id=log.episode.dom.history_list_item %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
-    {% component "remove_button" remove_url css_class="mr-3" title="Remove from History" %}
+    {% component "remove_button" remove_url title="Remove from History" %}
   </div>
   {% endslot %}
   {% slot extra_buttons %}
   <div class="md:flex items-center hidden">
-    {% component "remove_button" remove_url css_class="mr-3" title="Remove from History" %}
+    {% component "remove_button" remove_url title="Remove from History" %}
   </div>
   {% endslot %}
   {% endcomponent_block %}

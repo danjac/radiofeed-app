@@ -5,9 +5,11 @@
      data-drag-csrf-token-value="{{ csrf_token }}"
      id="queue">
   {% for item in queue_items %}
+  {% url 'episodes:remove_from_queue' item.episode.id as remove_url %}
   {% component_block "episode" item.episode dom_id=item.episode.dom.queue_list_item data_drag_target="draggable" data_id=item.id %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
+    {% component "remove_button" remove_url css_class="mr-3" title="Remove from Play Queue" %}
     <button class="btn btn-secondary flex items-center p-2 handle border-none"
             title="Move">
       {% component "icon" "view_list" css_class="btn-icon h-6 w-6" %}
@@ -16,6 +18,7 @@
   {% endslot %}
   {% slot extra_buttons %}
   <div class="md:flex items-center hidden">
+    {% component "remove_button" remove_url css_class="mr-3" title="Remove from Play Queue" %}
     <button class="btn btn-secondary flex items-center p-2 handle border-none"
             title="Move">
       {% component "icon" "view_list" css_class="btn-icon h-6 w-6" %}

@@ -3,7 +3,7 @@
 {% block results %}
 <div id="favorites">
   {% for favorite in page_obj %}
-  {% component "episode" favorite.episode dom_id=favorite.episode.dom.favorite_list_item %}
+  {% component "favorite" favorite.episode %}
   {% empty %}
   {% if search %}
   <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>

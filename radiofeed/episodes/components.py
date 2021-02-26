@@ -36,6 +36,24 @@ class EpisodeComponent(component.Component):
 component.registry.register(name="episode", component=EpisodeComponent)
 
 
+class FavoriteComponent(component.Component):
+    def context(
+        self,
+        episode: Episode,
+        **attrs,
+    ) -> Dict:
+        return {
+            "episode": episode,
+            "attrs": attrs,
+        }
+
+    def template(self, context: Dict) -> str:
+        return "episodes/components/_favorite.html"
+
+
+component.registry.register(name="favorite", component=FavoriteComponent)
+
+
 class FavoriteToggleComponent(component.Component):
     def context(self, episode: Episode, is_favorited: bool) -> Dict:
         return {

@@ -1,0 +1,13 @@
+{% url 'episodes:remove_favorite' episode.id as remove_url %}
+{% component_block "episode" episode dom_id=episode.dom.favorite_list_item %}
+{% slot mobile_extra_buttons %}
+<div class="flex items-center md:hidden">
+  {% component "remove_button" remove_url title="Remove from History" %}
+</div>
+{% endslot %}
+{% slot extra_buttons %}
+<div class="md:flex items-center hidden">
+  {% component "remove_button" remove_url title="Remove from History" %}
+</div>
+{% endslot %}
+{% endcomponent_block %}

@@ -409,9 +409,7 @@ def render_favorite_response(
     if is_favorited:
         streams.append(
             TurboStream("favorites").prepend.render(
-                render_component(
-                    request, "episode", episode, dom_id=episode.dom.favorite_list_item
-                )
+                render_component(request, "favorite", episode)
             )
         )
 
