@@ -4,11 +4,13 @@ from radiofeed.podcasts.models import Category
 
 from ..defaulttags import (
     active_link,
+    button,
     htmlattrs,
     jsonify,
     keepspaces,
     login_url,
     percent,
+    share_buttons,
 )
 
 
@@ -83,3 +85,40 @@ class TestKeepspaces:
 
     def test_value_has_html(self):
         return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
+
+
+class TestButtonComponent:
+    def test_context_is_button(self):
+        ctx = button("button").context("test")
+        assert ctx["tag"] == "button"
+
+    def test_context_is_link(self):
+        ctx = button("button").context("test", href="/")
+        assert ctx["tag"] == "a"
+
+
+class TestShareButtons:
+    def test_share_buttons(self, rf):
+        url = "/podcasts/1234/test/"
+        context = {"request": rf.get(url)}
+        share_urls = share_buttons(context, "Test Podcast")["share_urls"]
+
+        assert (
+            share_urls["email"]
+            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/1234/test/"
+        )
+
+        assert (
+            share_urls["facebook"]
+            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/1234/test/"
+        )
+
+        assert (
+            share_urls["twitter"]
+            == "https://twitter.com/share?url=http%3A//testserver/podcasts/1234/test/&text=Test%20Podcast"
+        )
+
+        assert (
+            share_urls["linkedin"]
+            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/1234/test/"
+        )
