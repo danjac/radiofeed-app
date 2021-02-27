@@ -46,7 +46,7 @@
     {% if user.is_authenticated %}
     <div class="text-sm md:text-base flex items-center">
       <a href="{% url 'user_preferences' %}"
-         class="inline-block text-white hover:text-blue-500 mr-3">
+         class="inline-block text-white hover:text-blue-500 mr-3 hidden md:block">
         {{ user.username }}
       </a>
       <form method="post"
