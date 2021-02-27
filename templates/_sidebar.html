@@ -13,7 +13,7 @@
         <button type="submit"
                 title="Search"
                 class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-          {% component "icon" "search" css_class="h-4 w-4" %}
+          {% icon "search" css_class="h-4 w-4" %}
         </button>
       </span>
     </form>
@@ -26,7 +26,7 @@
         {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% component "icon" "lightning_bolt" css_class="h-5 w-5 mr-3" %}
+          {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
           New Releases
         </a>
       </li>
@@ -35,7 +35,7 @@
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% component "icon" "rss" css_class="h-5 w-5 mr-3" %}
+          {% icon "rss" css_class="h-5 w-5 mr-3" %}
           Podcasts
         </a>
       </li>
@@ -43,7 +43,7 @@
         {% active_link 'podcasts:categories' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% component "icon" "search" css_class="h-5 w-5 mr-3" %}
+          {% icon "search" css_class="h-5 w-5 mr-3" %}
           Discover
         </a>
       </li>
@@ -52,7 +52,7 @@
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% component "icon" "collection" css_class="h-5 w-5 mr-3" %}
+          {% icon "collection" css_class="h-5 w-5 mr-3" %}
           Play Queue
         </a>
       </li>
@@ -62,7 +62,7 @@
         {% active_link 'episodes:favorites' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% component "icon" "star" css_class="h-5 w-5 mr-3" %}
+          {% icon "star" css_class="h-5 w-5 mr-3" %}
           Favorites
         </a>
       </li>
@@ -71,7 +71,7 @@
         {% active_link 'episodes:history' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% component "icon" "database" css_class="h-5 w-5 mr-3" %}
+          {% icon "database" css_class="h-5 w-5 mr-3" %}
           History
         </a>
       </li>
@@ -80,7 +80,7 @@
         {% active_link '/account/' as link %}
         <a href="{% url 'user_preferences' %}"
            class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
-          {% component "icon" "adjustments" css_class="h-5 w-5 mr-3" %}
+          {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
           Settings
         </a>
       </li>
@@ -93,7 +93,7 @@
               data-turbo="false">
           {% csrf_token %}
           <button class="flex items-center link">
-            {% component "icon" "logout" css_class="h-5 w-5 mr-3" %}
+            {% icon "logout" css_class="h-5 w-5 mr-3" %}
             Logout
           </button>
         </form>
@@ -104,7 +104,7 @@
         {% active_link 'about' as link %}
         <a href="{{ link.url }}"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% component "icon" "info" css_class="h-5 w-5 mr-3" %}
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
           About
         </a>
       </li>
@@ -119,10 +119,10 @@
                  value="{{ request.get_full_path }}">
           <button class="flex items-center link">
             {% if dark_mode %}
-            {% component "icon" "sun" css_class="h-5 w-5 mr-3" %}
+            {% icon "sun" css_class="h-5 w-5 mr-3" %}
             Day Mode
             {% else %}
-            {% component "icon" "moon" css_class="h-5 w-5 mr-3" %}
+            {% icon "moon" css_class="h-5 w-5 mr-3" %}
             Night Mode
             {% endif %}
           </button>

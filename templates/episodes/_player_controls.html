@@ -16,7 +16,7 @@
         <button data-action="toggle#toggle"
                 class="focus:outline-none float-right hover:text-blue-500"
                 title="Maximize Player">
-          {% component "icon" "chevron_up" css_class="h-6 w-6" %}
+          {% icon "chevron_up" css_class="h-6 w-6" %}
         </button>
       </div>
     </div>
@@ -26,7 +26,7 @@
       <button data-action="toggle#toggle"
               class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
               title="Mimimize Player">
-        {% component "icon" "chevron_down" css_class="h-6 w-6" %}
+        {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
 
       <div class="mb-3 lg:hidden pr-1 text-sm w-64 sm:w-96 truncate">
@@ -56,7 +56,7 @@
                       data-action="player#pause"
                       data-player-target="pauseButton"
                       class="focus:outline-none hover:text-blue-500 mr-1">
-                {% component "icon" "pause" css_class="h-8 w-8 md:h-10 md:w-10" %}
+                {% icon "pause" css_class="h-8 w-8 md:h-10 md:w-10" %}
               </button>
 
               <button title="Play"
@@ -64,7 +64,7 @@
                       data-toggle-target="item"
                       data-player-target="playButton"
                       class="focus:outline-none mr-1 hidden hover:text-blue-600">
-                {% component "icon" "play" css_class="h-8 w-8 md:h-10 md:w-10" %}
+                {% icon "play" css_class="h-8 w-8 md:h-10 md:w-10" %}
               </button>
 
               <form class="flex items-center"
@@ -73,7 +73,7 @@
                 {% csrf_token %}
                 <button title="Stop"
                         class="focus:outline-none hover:text-blue-500">
-                  {% component "icon" "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
+                  {% icon "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
                 </button>
               </form>
 
@@ -102,12 +102,12 @@
               <button title="Skip back 10 seconds"
                       data-action="player#skipBack"
                       class="focus:outline-none hover:text-blue-500 player--interactive mr-2">
-                {% component "icon" "skip_back_10" css_class="h-6 w-6" %}
+                {% icon "skip_back_10" css_class="h-6 w-6" %}
               </button>
               <button title="Skip forward 10 seconds"
                       data-action="player#skipForward"
                       class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
-                {% component "icon" "skip_forward_10" css_class="h-6 w-6" %}
+                {% icon "skip_forward_10" css_class="h-6 w-6" %}
               </button>
             </div>
 

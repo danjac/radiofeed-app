@@ -9,13 +9,13 @@
     <button title="Close Player"
             value="stop"
             class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none">
-      {% component "icon" "stop" css_class="h-10 w-10" %}
+      {% icon "stop" css_class="h-10 w-10" %}
     </button>
     {% else %}
     <button title="Open in Player"
             value="start"
             class="text-gray-800 hover:text-blue-600 dark:text-gray-100 dark:hover:text-blue-400 focus:outline-none">
-      {% component "icon" "play" css_class="h-10 w-10" %}
+      {% icon "play" css_class="h-10 w-10" %}
     </button>
     {% endif %}
   </div>
@@ -25,7 +25,7 @@
   <a href="{% url 'account_login' %}?next={{ episode.get_absolute_url|urlencode }}"
      data-turbo-frame="_top"
      title="Login or sign up to play this episode">
-    {% component "icon" "play" css_class="h-10 w-10" %}
+    {% icon "play" css_class="h-10 w-10" %}
   </a>
 </div>
 {% endif %}
