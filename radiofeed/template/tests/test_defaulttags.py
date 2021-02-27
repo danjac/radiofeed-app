@@ -89,11 +89,11 @@ class TestKeepspaces:
 
 class TestButtonComponent:
     def test_context_is_button(self):
-        ctx = button("button").context("test")
+        ctx = button("test")
         assert ctx["tag"] == "button"
 
     def test_context_is_link(self):
-        ctx = button("button").context("test", href="/")
+        ctx = button("test", href="/")
         assert ctx["tag"] == "a"
 
 
@@ -101,7 +101,7 @@ class TestShareButtons:
     def test_share_buttons(self, rf):
         url = "/podcasts/1234/test/"
         context = {"request": rf.get(url)}
-        share_urls = share_buttons(context, "Test Podcast")["share_urls"]
+        share_urls = share_buttons(context, url, "Test Podcast")["share_urls"]
 
         assert (
             share_urls["email"]

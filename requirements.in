@@ -16,7 +16,6 @@ django-environ
 django-extensions
 django-model-utils
 django-redis
-django-reusable-components
 django-silk
 django-storages
 django-turbo-allauth
