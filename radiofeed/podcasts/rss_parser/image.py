@@ -27,20 +27,19 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         if not image_url:
             raise ValueError("image_url is empty")
 
-        resp = requests.get(image_url, headers=get_headers(), stream=True)
-        resp.raise_for_status()
+        response = requests.get(image_url, headers=get_headers(), stream=True)
+        response.raise_for_status()
 
-        content_type = resp.headers["Content-Type"].split(";")[0]
+        content_type = response.headers["Content-Type"].split(";")[0]
+        filename = get_image_filename(image_url, content_type)
 
-        img = Image.open(io.BytesIO(resp.content))
+        img = Image.open(io.BytesIO(response.content))
 
         if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
             img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
 
         # remove Alpha channel
         img = img.convert("RGB")
-
-        filename = get_image_filename(image_url, content_type)
 
         fp = io.BytesIO()
         img.seek(0)
