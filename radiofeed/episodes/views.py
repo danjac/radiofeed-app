@@ -72,9 +72,7 @@ def index(request: HttpRequest) -> HttpResponse:
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
-        return redirect(
-            "episodes:index" if request.user.is_authenticated else "podcasts:index"
-        )
+        return redirect("episodes:index")
 
     episodes = (
         Episode.objects.select_related("podcast")

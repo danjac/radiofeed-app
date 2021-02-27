@@ -61,7 +61,7 @@ class TestSearchEpisodes:
             reverse("episodes:search_episodes"),
             {"q": ""},
         )
-        assert resp.url == reverse("podcasts:index")
+        assert resp.url == reverse("episodes:index")
 
     def test_search_empty_authenticated(self, client, login_user):
         resp = client.get(
