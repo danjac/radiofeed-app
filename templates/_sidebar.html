@@ -85,6 +85,21 @@
         </a>
       </li>
 
+      {% if user.is_authenticated %}
+      <li class="py-2 md:hidden">
+        <form method="post"
+              action="{% url 'account_logout' %}"
+              class="inline-block"
+              data-turbo="false">
+          {% csrf_token %}
+          <button class="flex items-center link">
+            {% component "icon" "logout" css_class="h-5 w-5 mr-3" %}
+            Logout
+          </button>
+        </form>
+      </li>
+      {% endif %}
+
       <li class="py-2">
         {% active_link 'about' as link %}
         <a href="{{ link.url }}"

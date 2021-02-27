@@ -46,12 +46,12 @@
     {% if user.is_authenticated %}
     <div class="text-sm md:text-base flex items-center">
       <a href="{% url 'user_preferences' %}"
-         class="inline-block text-white hover:text-blue-500 mr-3 hidden md:block">
+         class="inline-block text-white hover:text-blue-500 mr-3">
         {{ user.username }}
       </a>
       <form method="post"
             action="{% url 'account_logout' %}"
-            class="inline-block"
+            class="hidden md:inline-block"
             data-turbo="false">
         {% csrf_token %}
         <button class="text-white hover:text-blue-500">{% translate "logout" %}</button>
