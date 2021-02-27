@@ -14,16 +14,7 @@
 {% user_display confirmation.email_address.user as user_display %}
 
 {% url 'account_confirm_email' confirmation.key as action_url %}
-
-{% component_block "form" form %}
-{% slot form_header %}
-<p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <b>{{ email }}</b> is an e-mail address for user <b>{{ user_display }}</b>.{% endblocktranslate %}</p>
-{% endslot %}
-{% slot form_buttons %}
-{% button _("Confirm") icon="check" %}
-{% endslot %}
-{% endcomponent_block %}
-
+{% include "account/forms/_email_confirm.html" %}
 {% else %}
 
 {% url 'account_email' as email_url %}
