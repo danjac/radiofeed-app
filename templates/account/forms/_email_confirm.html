@@ -1,4 +1,5 @@
 {% extends "forms/_form.html" %}
+{% load i18n %}
 {% block form_header %}
 <p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <b>{{ email }}</b> is an e-mail address for user <b>{{ user_display }}</b>.{% endblocktranslate %}</p>
 {% endblock %}
