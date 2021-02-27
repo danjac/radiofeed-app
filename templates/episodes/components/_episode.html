@@ -36,7 +36,13 @@
               <div class="font-semibold text-gray-500 dark:text-gray-100 mr-2 flex items-center sm:inline-slot{% if remove_url %} hidden{% endif %}">
                 {{ episode.pub_date|date }}
               </div>
-              {% slot mobile_extra_buttons %}{% endslot %}
+              {% slot mobile_extra_buttons %}
+              {% if remove_url %}
+              <div class="flex items-center md:hidden">
+                {% component "remove_button" remove_url title="Remove" %}
+              </div>
+              {% endif %}
+              {% endslot %}
             </div>
 
           </div>
@@ -45,5 +51,11 @@
       </div>
     </div>
   </div>
-  {% slot extra_buttons %}{% endslot %}
+  {% slot extra_buttons %}
+  {% if remove_url %}
+  <div class="md:flex items-center hidden">
+    {% component "remove_button" remove_url title="Remove from Favorites" %}
+  </div>
+  {% endif %}
+  {% endslot %}
 </div>

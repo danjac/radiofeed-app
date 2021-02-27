@@ -4,19 +4,7 @@
 <div id="history">
   {% for log in page_obj %}
   {% url 'episodes:remove_history' log.episode.id as remove_url %}
-  {% component_block "episode" log.episode dom_id=log.episode.dom.history_list_item %}
-  {% slot mobile_extra_buttons %}
-  <div class="flex items-center md:hidden">
-    {% component "remove_button" remove_url title="Remove from History" %}
-  </div>
-  {% endslot %}
-  {% slot extra_buttons %}
-  <div class="md:flex items-center hidden">
-    {% component "remove_button" remove_url title="Remove from History" %}
-  </div>
-  {% endslot %}
-  {% endcomponent_block %}
-
+  {% component "episode" log.episode dom_id=log.episode.dom.history_list_item remove_url=remove_url %}
   {% empty %}
   {% if search %}
   <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>

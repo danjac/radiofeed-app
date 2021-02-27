@@ -8,7 +8,7 @@
   {% with episode=item.episode %}
   {% url 'episodes:remove_from_queue' episode.id as remove_url %}
   {% url 'episodes:queue_preview' episode.id as preview_url %}
-  {% component_block "episode" episode dom_id=episode.dom.queue_list_item preview_url=preview_url data_drag_target="draggable" data_id=item.id %}
+  {% component_block "episode" episode dom_id=episode.dom.queue_list_item preview_url=preview_url remove_url=remove_url data_drag_target="draggable" data_id=item.id %}
   {% slot mobile_extra_buttons %}
   <div class="flex items-center md:hidden">
     {% component "remove_button" remove_url css_class="mr-3" title="Remove from Play Queue" %}

@@ -15,6 +15,7 @@ class EpisodeComponent(component.Component):
         dom_id: str = "",
         podcast_url: str = "",
         preview_url: str = "",
+        remove_url: str = "",
         cover_image: Optional[CoverImage] = None,
         **attrs,
     ) -> Dict:
@@ -28,6 +29,7 @@ class EpisodeComponent(component.Component):
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
             "preview_url": preview_url
             or reverse("episodes:episode_preview", args=[episode.id]),
+            "remove_url": remove_url,
             "cover_image": cover_image,
             "is_playing": request.player.is_playing(episode),
             "attrs": attrs,
