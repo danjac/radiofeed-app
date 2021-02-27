@@ -4,7 +4,8 @@
 {% block podcast_content %}
 {% cache 3600 recommendations podcast.id request.user.username %}
 {% for recommendation in recommendations %}
-{% component "podcast" podcast=recommendation.recommended %}
+{% block "podcasts/_podcast.html" %}
 {% endfor %}
 {% endcache %}
+
 {% endblock podcast_content %}
