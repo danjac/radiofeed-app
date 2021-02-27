@@ -2,7 +2,7 @@ import collections
 import json
 
 from typing import Any, Dict, Optional
-from urllib.urlparse import parse
+from urllib import parse
 
 import bs4
 

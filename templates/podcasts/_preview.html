@@ -22,7 +22,7 @@
     <div class="mb-3">
       {% component "subscribe_toggle" podcast is_subscribed %}
     </div>
-    {% component "share_buttons" podcast.get_absolute_url podcast.title %}
+    {% share_buttons  podcast.get_absolute_url podcast.title %}
   </div>
 </div>
 {% if podcast.explicit %}

@@ -48,7 +48,7 @@
       {% component "favorite_toggle" episode is_favorited %}
       {% endif %}
     </div>
-    {% component "share_buttons" episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+    {% share_buttons  episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
 
