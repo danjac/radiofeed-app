@@ -352,14 +352,6 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
     )
 
 
-def get_queue_items(request: HttpRequest) -> QuerySet:
-    return (
-        QueueItem.objects.filter(user=request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("position")
-    )
-
-
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
