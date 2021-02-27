@@ -3,7 +3,22 @@
 {% block results %}
 <div id="favorites">
   {% for favorite in page_obj %}
-  {% component "favorite" favorite.episode %}
+  {% with episode=favorite.episode %}
+  {% url 'episodes:favorite_preview' episode.id as preview_url %}
+  {% url 'episodes:remove_favorite' episode.id as remove_url %}
+  {% component_block "episode" episode dom_id=episode.dom.favorite_list_item preview_url=preview_url %}
+  {% slot mobile_extra_buttons %}
+  <div class="flex items-center md:hidden">
+    {% component "remove_button" remove_url title="Remove from Favorites" %}
+  </div>
+  {% endslot %}
+  {% slot extra_buttons %}
+  <div class="md:flex items-center hidden">
+    {% component "remove_button" remove_url title="Remove from Favorites" %}
+  </div>
+  {% endslot %}
+  {% endcomponent_block %}
+  {% endwith %}
   {% empty %}
   {% if search %}
   <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>

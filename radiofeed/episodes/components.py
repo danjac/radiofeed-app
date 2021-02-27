@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 
+from django.urls import reverse
 from django_components import component
 
 from radiofeed.podcasts.models import CoverImage
@@ -13,6 +14,7 @@ class EpisodeComponent(component.Component):
         episode: Episode,
         dom_id: str = "",
         podcast_url: str = "",
+        preview_url: str = "",
         cover_image: Optional[CoverImage] = None,
         **attrs,
     ) -> Dict:
@@ -24,6 +26,8 @@ class EpisodeComponent(component.Component):
             "duration": episode.get_duration_in_seconds(),
             "episode_url": episode.get_absolute_url(),
             "podcast_url": podcast_url or episode.podcast.get_absolute_url(),
+            "preview_url": preview_url
+            or reverse("episodes:episode_preview", args=[episode.id]),
             "cover_image": cover_image,
             "is_playing": request.player.is_playing(episode),
             "attrs": attrs,
@@ -34,19 +38,6 @@ class EpisodeComponent(component.Component):
 
 
 component.registry.register(name="episode", component=EpisodeComponent)
-
-
-class FavoriteComponent(component.Component):
-    def context(self, episode: Episode) -> Dict:
-        return {
-            "episode": episode,
-        }
-
-    def template(self, context: Dict) -> str:
-        return "episodes/components/_favorite.html"
-
-
-component.registry.register(name="favorite", component=FavoriteComponent)
 
 
 class FavoriteToggleComponent(component.Component):

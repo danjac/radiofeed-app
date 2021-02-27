@@ -11,7 +11,7 @@ urlpatterns = [
     path(
         "episodes/<int:episode_id>/preview/",
         views.preview,
-        name="preview",
+        name="episode_preview",
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
@@ -51,6 +51,12 @@ urlpatterns = [
         views.remove_favorite,
         name="remove_favorite",
     ),
+    path(
+        "favorites/<int:episode_id>/preview/",
+        views.preview,
+        name="favorite_preview",
+        kwargs={"actions": ("queue",)},
+    ),
     path("queue/", views.queue, name="queue"),
     path("queue/~move/", views.move_queue_items, name="move_queue_items"),
     path("queue/<int:episode_id>/~add/", views.add_to_queue, name="add_to_queue"),
@@ -58,5 +64,11 @@ urlpatterns = [
         "queue/<int:episode_id>/~remove/",
         views.remove_from_queue,
         name="remove_from_queue",
+    ),
+    path(
+        "queue/<int:episode_id>/preview/",
+        views.preview,
+        name="queue_preview",
+        kwargs={"actions": ("favorite",)},
     ),
 ]

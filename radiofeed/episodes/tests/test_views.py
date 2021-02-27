@@ -107,13 +107,13 @@ class TestEpisodeDetail:
 class TestPreview:
     def test_not_turbo_frame(self, client, login_user, episode):
         resp = client.get(
-            reverse("episodes:preview", args=[episode.id]),
+            reverse("episodes:episode_preview", args=[episode.id]),
         )
         assert resp.url == episode.get_absolute_url()
 
     def test_user_not_favorited(self, client, login_user, episode):
         resp = client.get(
-            reverse("episodes:preview", args=[episode.id]),
+            reverse("episodes:episode_preview", args=[episode.id]),
             HTTP_TURBO_FRAME="modal",
         )
         assert resp.status_code == http.HTTPStatus.OK
@@ -123,7 +123,7 @@ class TestPreview:
     def test_user_favorited(self, client, login_user, episode):
         FavoriteFactory(episode=episode, user=login_user)
         resp = client.get(
-            reverse("episodes:preview", args=[episode.id]),
+            reverse("episodes:episode_preview", args=[episode.id]),
             HTTP_TURBO_FRAME="modal",
         )
         assert resp.status_code == http.HTTPStatus.OK

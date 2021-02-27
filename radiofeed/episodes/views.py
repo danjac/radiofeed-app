@@ -1,7 +1,7 @@
 import http
 import json
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from turbo_response import Action, TurboFrame, TurboStream, TurboStreamResponse
+from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
@@ -93,10 +93,14 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 def preview(
     request: HttpRequest,
     episode_id: int,
+    actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_episode_detail_or_404(request, episode_id)
 
     if request.turbo.frame:
+
+        is_favorited = "favorite" in actions and episode.is_favorited(request.user)
+        is_queued = "queue" in actions and episode.is_queued(request.user)
 
         return (
             TurboFrame(request.turbo.frame)
@@ -104,8 +108,9 @@ def preview(
                 "episodes/_preview.html",
                 {
                     "episode": episode,
-                    "is_favorited": episode.is_favorited(request.user),
-                    "is_queued": episode.is_queued(request.user),
+                    "actions": actions,
+                    "is_favorited": is_favorited,
+                    "is_queued": is_queued,
                 },
             )
             .response(request)
@@ -215,7 +220,11 @@ def queue(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "episodes/queue.html",
-        {"queue_items": get_queue_items(request)},
+        {
+            "queue_items": QueueItem.objects.filter(user=request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("position")
+        },
     )
 
 
@@ -360,17 +369,6 @@ def render_player_toggle(
     )
 
 
-def render_queue_items(request: HttpRequest) -> str:
-    return (
-        TurboStream("queue")
-        .replace.template(
-            "episodes/_queue.html",
-            {"queue_items": get_queue_items(request)},
-        )
-        .render(request=request)
-    )
-
-
 def render_episode_list_response(
     request: HttpRequest,
     episodes: QuerySet,
@@ -406,20 +404,13 @@ def render_favorite_response(
         )
     ]
 
-    num_favorites = request.user.favorite_set.count()
-
-    if is_favorited:
-        streams.append(
-            TurboStream("favorites")
-            .action(Action.UPDATE if num_favorites == 1 else Action.PREPEND)
-            .render(render_component(request, "favorite", episode))
-        )
-    elif num_favorites == 0:
-        streams.append(
-            TurboStream("favorites").update.render("You have no more Favorites.")
-        )
-    else:
-        streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
+    if not is_favorited:
+        if request.user.favorite_set.count() == 0:
+            streams.append(
+                TurboStream("favorites").replace.render("You have no more Favorites.")
+            )
+        else:
+            streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
 
     return TurboStreamResponse(streams)
 
@@ -427,14 +418,22 @@ def render_favorite_response(
 def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
-    return TurboStreamResponse(
-        [
-            render_queue_items(request),
-            TurboStream(episode.dom.queue_toggle).replace.render(
-                render_component(request, "queue_toggle", episode, is_queued)
-            ),
-        ]
-    )
+    streams = [
+        TurboStream(episode.dom.queue_toggle).replace.render(
+            render_component(request, "queue_toggle", episode, is_queued)
+        ),
+    ]
+    if not is_queued:
+        if request.user.queueitem_set.count() == 0:
+            streams.append(
+                TurboStream("queue").replace.render(
+                    "You have no more episodes in your Play Queue"
+                )
+            )
+        else:
+            streams.append(TurboStream(episode.dom.queue_list_item).remove.render())
+
+    return TurboStreamResponse(streams)
 
 
 def render_player_response(
@@ -462,6 +461,11 @@ def render_player_response(
     # remove from queue
     QueueItem.objects.filter(user=request.user, episode=next_episode).delete()
 
+    if request.user.queueitem_set.count() == 0:
+        streams.append(TurboStream("queue").replace.render("All done!"))
+    else:
+        streams.append(TurboStream(next_episode.dom.queue_list_item).remove.render())
+
     next_episode.log_activity(request.user, current_time=current_time)
 
     request.player.start(next_episode, current_time)
@@ -470,7 +474,6 @@ def render_player_response(
         streams
         + [
             render_player_toggle(request, next_episode, True),
-            render_queue_items(request),
             TurboStream("player")
             .update.template(
                 "episodes/_player_controls.html",
