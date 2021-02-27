@@ -1,0 +1,4 @@
+{% spaceless %}<{{ tag }}{% endspaceless %} class="btn btn-{{ type|default:'default' }} {% if icon %}flex items-center{% endif %}{% if css_class %} {{ css_class }}{% endif %}" {{ attrs|htmlattrs }}>
+  {% if icon %}{% icon icon css_class="btn-icon mr-2" %}{% endif %}
+  {{ text }}
+  {% spaceless %}</{{ tag }}>{% endspaceless %}

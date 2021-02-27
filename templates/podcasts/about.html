@@ -52,7 +52,7 @@
     {% cache 3600 podcast-categories podcast.id %}
     {% for category in podcast.categories.all %}
     <div class="inline-block">
-      {% component "button" category.name icon="tag" title=category.name href=category.get_absolute_url %}
+      {% button category.name icon="tag" title=category.name href=category.get_absolute_url %}
     </div>
     {% endfor %}
     {% endcache %}

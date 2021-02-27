@@ -8,6 +8,7 @@ import bs4
 from django import template
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
+from django.forms import Field
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import stringfilter, urlencode
@@ -39,6 +40,11 @@ def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> Acti
     elif context["request"].path.startswith(url):
         return ActiveLink(url, True, False)
     return ActiveLink(url, False, False)
+
+
+@register.filter
+def widget_type(field: Field) -> str:
+    return field.field.widget.input_type
 
 
 @register.filter
@@ -101,4 +107,22 @@ def icon(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
         "title": title,
         "attrs": attrs,
         "svg_template": f"components/icons/_{name}.svg",
+    }
+
+
+@register.inclusion_tag("forms/_button.html")
+def button(
+    text: str,
+    icon: str = "",
+    type: str = "default",
+    css_class: str = "",
+    **attrs,
+) -> Dict:
+    return {
+        "text": text,
+        "icon": icon,
+        "type": type,
+        "css_class": css_class,
+        "tag": "a" if "href" in attrs else "button",
+        "attrs": attrs,
     }

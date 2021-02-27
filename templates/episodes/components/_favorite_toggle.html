@@ -4,11 +4,11 @@
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
   {% csrf_token %}
   {% if is_favorited %}
-  {% component "button" "Favorite" icon="trash" type="secondary" title="Remove episode from your Favorites" %}
+  {% button "Favorite" icon="trash" type="secondary" title="Remove episode from your Favorites" %}
   {% else %}
-  {% component "button" "Favorite" icon="star" title="Add episode to your Favorites" %}
+  {% button "Favorite" icon="star" title="Add episode to your Favorites" %}
   {% endif %}
 </form>
 {% else %}
-{% component "button" "Favorite" icon="star" href=episode.get_absolute_url|login_url title="Login or sign up to add episode to your Favorites" data_turbo_frame="_top" %}
+{% button "Favorite" icon="star" href=episode.get_absolute_url|login_url title="Login or sign up to add episode to your Favorites" data_turbo_frame="_top" %}
 {% endif %}

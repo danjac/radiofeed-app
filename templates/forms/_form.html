@@ -1,0 +1,36 @@
+<form {% block form_attrs %}{% include "forms/_form_attrs.html" %}{% endblock %}>
+  {% csrf_token %}
+
+  {% block form_header %}{% endblock %}
+
+  {% block form_hidden_fields %}
+  {% for field in form.fields %}
+  {% if field.is_hidden %}{{ field }}{% endif %}
+  {% endfor %}
+  {% endblock %}
+
+  {% block non_field_errors %}
+  {% include "forms/_errors.html" with errors=form.non_field_errors %}
+  {% endblock %}
+
+  {% block form_fields %}
+  {% for field in form %}
+  {% if not field.is_hidden %}
+  <div class="mb-3">
+    {% if field|widget_type == "checkbox" %}
+    {% include "forms/_checkbox_field.html" %}
+    {% else %}
+    {% include "forms/_field.html" %}
+    {% endif %}
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endblock %}
+
+  <div class="flex items-center justify-end">
+    {% block form_buttons %}{% endblock %}
+  </div>
+
+  {% block form_footer %}{% endblock %}
+
+</form>

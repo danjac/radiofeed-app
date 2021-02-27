@@ -1,0 +1,6 @@
+{% load widget_tweaks %}
+{% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" css_class=css_class|default:'p-1 w-full dark:bg-gray-900 dark:text-white' %}
+{% render_field field aria-label=field.label placeholder=field.label class=css_class %}
+{% include "components/forms/_errors.html" with errors=field.errors %}
+{% include "components/forms/_help_text.html" with help_text=field.help_text %}
+{% endwith %}
