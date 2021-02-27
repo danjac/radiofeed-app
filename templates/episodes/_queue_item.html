@@ -2,7 +2,7 @@
 {% block extra_attrs %}data_drag-target="draggable" data-id=item.id{% endblock %}
 {% block mobile_extra_buttons %}
 <div class="flex items-center md:hidden">
-  {% component "remove_button" remove_url css_class="mr-3" title="Remove from Play Queue" %}
+  {% include "forms/_remove_button.html" css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
     {% icon "view_list" css_class="btn-icon h-6 w-6" %}
@@ -11,7 +11,7 @@
 {% endblock %}
 {% block extra_buttons %}
 <div class="md:flex items-center hidden">
-  {% component "remove_button" remove_url css_class="mr-3" title="Remove from Play Queue" %}
+  {% include "forms/_remove_button.html" css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
     {% icon "view_list" css_class="btn-icon h-6 w-6" %}
