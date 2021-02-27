@@ -15,7 +15,7 @@
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
-    {% component "search_form" placeholder="Search favorites..." %}
+    {% include "search_form.html" with placeholder="Search favorites..." %}
   </div>
 </div>
 {% if search %}

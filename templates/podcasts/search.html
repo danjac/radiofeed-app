@@ -20,7 +20,7 @@
          href="{% url 'podcasts:index' %}">Clear</a>
     </div>
     {% endif %}
-    {% component "search_form" placeholder="Search podcasts..." %}
+    {% include "search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
 {% if search %}

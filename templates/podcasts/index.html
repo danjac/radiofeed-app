@@ -12,7 +12,7 @@
     {% endif %}
   </h1>
   <div class="flex items-center justify-center sm:justify-end">
-    {% component "search_form" placeholder="Search podcasts..." search_url=search_url %}
+    {% include "search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
 

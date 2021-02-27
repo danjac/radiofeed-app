@@ -32,7 +32,7 @@
          href="{{ request.path }}">Clear</a>
     </div>
     {% endif %}
-    {% component "search_form" placeholder="Search category..." %}
+    {% include "search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
 
