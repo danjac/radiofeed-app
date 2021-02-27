@@ -80,7 +80,7 @@ class ButtonComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/buttons/_button.html"
+        return "components/_button.html"
 
 
 component.registry.register(name="button", component=ButtonComponent)
@@ -95,7 +95,7 @@ class RemoveButtonComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/buttons/_remove_button.html"
+        return "components/_remove_button.html"
 
 
 component.registry.register(name="remove_button", component=RemoveButtonComponent)
@@ -133,7 +133,7 @@ class ShareButtonsComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/buttons/_share_buttons.html"
+        return "components/_share_buttons.html"
 
 
 component.registry.register(name="share_buttons", component=ShareButtonsComponent)
