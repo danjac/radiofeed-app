@@ -28,7 +28,11 @@
   {% endblock %}
 
   <div class="flex items-center justify-end">
-    {% block form_buttons %}{% endblock %}
+    {% block form_buttons %}
+    {% if submit %}
+    {% button submit icon="check" %}
+    {% endif %}
+    {% endblock %}
   </div>
 
   {% block form_footer %}{% endblock %}

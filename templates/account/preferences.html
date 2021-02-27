@@ -5,10 +5,5 @@
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-
-{% component_block "form" form %}
-{% slot form_buttons %}
-{% button _("Save Changes") icon="check" %}
-{% endslot %}
-{% endcomponent_block %}
+{% include "forms/_form.html" with submit=_("Save Changes") %}
 {% endblock %}
