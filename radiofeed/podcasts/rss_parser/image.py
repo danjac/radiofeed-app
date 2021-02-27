@@ -3,7 +3,7 @@ import mimetypes
 import os
 import uuid
 
-from typing import Optional, Tuple
+from typing import Optional
 from urllib.parse import urlparse
 
 import requests
@@ -37,11 +37,11 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
             img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
 
-        filename, ext = get_image_filename(image_url, content_type)
+        filename = get_image_filename(image_url, content_type)
 
         fp = io.BytesIO()
         img.seek(0)
-        img.save(fp, "PNG" if ext == ".png" else "JPEG")
+        img.save(fp, "PNG")
 
         return ImageFile(fp, name=filename)
 
@@ -54,7 +54,7 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         raise InvalidImageURL from e
 
 
-def get_image_filename(image_url: str, content_type: str) -> Tuple[str, str]:
+def get_image_filename(image_url: str, content_type: str) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
@@ -69,4 +69,4 @@ def get_image_filename(image_url: str, content_type: str) -> Tuple[str, str]:
         ext = mimetypes.guess_extension(content_type)
     if ext not in IMAGE_EXTENSIONS:
         raise ValueError("Invalid file extension:" + image_url)
-    return uuid.uuid4().hex + ext, ext
+    return uuid.uuid4().hex + ext
