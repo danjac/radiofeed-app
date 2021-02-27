@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <form {% block form_attrs %}{% include "forms/_form_attrs.html" %}{% endblock %}>
   {% csrf_token %}
 
@@ -17,7 +18,7 @@
   {% for field in form %}
   {% if not field.is_hidden %}
   <div class="mb-3">
-    {% if field|widget_type == "checkbox" %}
+    {% if field|widget_type == "checkboxinput" %}
     {% include "forms/_checkbox_field.html" %}
     {% else %}
     {% include "forms/_field.html" %}

@@ -9,7 +9,6 @@ import bs4
 from django import template
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
-from django.forms import Field
 from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.template.defaultfilters import stringfilter, urlencode
@@ -41,11 +40,6 @@ def active_link(context: Context, url_name: str, *args, **kwargs) -> ActiveLink:
     elif context["request"].path.startswith(url):
         return ActiveLink(url, True, False)
     return ActiveLink(url, False, False)
-
-
-@register.filter
-def widget_type(field: Field) -> str:
-    return field.field.widget.input_type
 
 
 @register.filter
