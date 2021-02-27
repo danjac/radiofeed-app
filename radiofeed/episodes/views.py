@@ -397,9 +397,12 @@ def render_favorite_response(
 ) -> HttpResponse:
 
     streams: List[str] = [
-        TurboStream(episode.dom.favorite_toggle).replace.render(
-            render_component(request, "favorite_toggle", episode, is_favorited)
+        TurboStream(episode.dom.favorite_toggle)
+        .replace.template(
+            "episodes/_favorite_toggle.html",
+            {"episode": episode, "is_favorited": is_favorited},
         )
+        .render(request=request)
     ]
 
     if not is_favorited and "remove" in request.POST:

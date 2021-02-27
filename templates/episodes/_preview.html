@@ -45,7 +45,7 @@
       {% component "queue_toggle" episode is_queued %}
       {% endif %}
       {% if "favorite" in actions %}
-      {% component "favorite_toggle" episode is_favorited %}
+      {% include "episodes/_favorite_toggle.html" %}
       {% endif %}
     </div>
     {% share_buttons  episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
