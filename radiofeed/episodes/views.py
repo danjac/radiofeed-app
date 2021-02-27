@@ -123,7 +123,7 @@ def episode_detail(
 
     return TemplateResponse(
         request,
-        "episodes/about.html",
+        "episodes/detail.html",
         {
             "episode": episode,
             "is_playing": request.player.is_playing(episode),
