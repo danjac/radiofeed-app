@@ -14,7 +14,6 @@ from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
-from radiofeed.shortcuts import render_component
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
@@ -331,8 +330,13 @@ def render_subscribe_response(
     request: HttpRequest, podcast: Podcast, is_subscribed: bool
 ) -> HttpResponse:
 
-    return TurboStream(podcast.dom.subscribe_toggle).replace.response(
-        render_component(request, "subscribe_toggle", podcast, is_subscribed)
+    return (
+        TurboStream(podcast.dom.subscribe_toggle)
+        .replace.template(
+            "podcasts/_subscribe_toggle.html",
+            {"podcast": podcast, "is_subscribed": is_subscribed},
+        )
+        .response(request=request)
     )
 
 

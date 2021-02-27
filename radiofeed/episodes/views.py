@@ -16,7 +16,6 @@ from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
-from radiofeed.shortcuts import render_component
 from radiofeed.users.decorators import ajax_login_required
 
 from .models import AudioLog, Episode, Favorite, QueueItem
@@ -419,11 +418,15 @@ def render_favorite_response(
 def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
-    streams = [
-        TurboStream(episode.dom.queue_toggle).replace.render(
-            render_component(request, "queue_toggle", episode, is_queued)
-        ),
+
+    streams: List[str] = [
+        TurboStream(episode.dom.queue_toggle)
+        .replace.template(
+            "episodes/_queue_toggle.html", {"episode": episode, "is_queued": is_queued}
+        )
+        .render(request=request),
     ]
+
     if not is_queued and "remove" in request.POST:
         if request.user.queueitem_set.count() == 0:
             streams.append(

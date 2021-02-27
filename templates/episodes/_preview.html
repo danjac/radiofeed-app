@@ -42,7 +42,7 @@
     </div>
     <div class="flex items-center space-x-3 mb-3">
       {% if "queue" in actions %}
-      {% component "queue_toggle" episode is_queued %}
+      {% include "episodes/_queue_toggle.html" %}
       {% endif %}
       {% if "favorite" in actions %}
       {% include "episodes/_favorite_toggle.html" %}

@@ -4,8 +4,6 @@ from typing import Type
 
 from django.forms import Form
 from django.http import HttpRequest
-from django.template.context import make_context
-from django_components.component import registry
 
 
 @dataclasses.dataclass
@@ -31,15 +29,3 @@ def handle_form(
         return FormResult(form, form.is_valid())
 
     return FormResult(form_class(**form_kwargs))
-
-
-def render_component(request: HttpRequest, component_name: str, *args, **kwargs) -> str:
-    """Render a component as string. Use with turbo streams/frames
-    to render the component in a response."""
-    context = make_context({"request": request}, request)
-
-    component = registry.get(component_name)(component_name)
-    component.outer_context = context.flatten()
-
-    with context.update(component.context(*args, **kwargs)):
-        return component.render(context)

@@ -1,0 +1,14 @@
+{% if user.is_authenticated %}
+<form method="post"
+      id="{{ episode.dom.queue_toggle }}"
+      action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
+  {% csrf_token %}
+  {% if is_queued %}
+  {% button "Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" %}
+  {% else %}
+  {% button "Queue" icon="collection" title="Add episode to your Play Queue" %}
+  {% endif %}
+</form>
+{% else %}
+{% button "Queue" icon="collection" href=episode.get_absolute_url|login_url title="Login or sign up to add episode to your Play Queue" data_turbo_frame="_top" %}
+{% endif %}
