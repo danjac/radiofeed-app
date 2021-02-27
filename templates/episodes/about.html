@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load podcasts %}
+{% load episodes podcasts %}
 
 {% block subtitle %} | {{ episode.podcast.title }} | {{ episode.title }}{% endblock %}
 
@@ -69,7 +69,8 @@
 
       <div class="flex items-center mb-3">
         <div class="mr-3">
-          {% component "player_toggle" episode is_playing %}
+            {% is_playing episode as is_playing %}
+          {% include "episodes/_player_toggle.html" %}
         </div>
         <div>
           {% include "episodes/_download.html" %}
