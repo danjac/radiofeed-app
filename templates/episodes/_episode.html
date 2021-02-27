@@ -1,0 +1,64 @@
+{% with podcast=episode.podcast %}
+<div class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 {{ css_class|default:'' }}"
+     id="{{ dom_id|default:episode.dom.list_item }}"
+     {% block extra_attrs %}{% endblock %}>
+  <div class="w-full">
+    <div class="flex items-center w-full">
+      <div class="mr-2 w-20">
+        <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
+           data-turbo-frame="_top">
+          {% component "cover_image" podcast lazy=True cover_image=cover_image %}
+        </a>
+      </div>
+      <div class="leading-tight w-full">
+
+        <div class="mb-1 w-56 truncate sm:w-96 lg:w-full text-sm">
+          <a href="{{ episode_url }}"
+             class="link"
+             data-turbo-frame="_top"
+             title="{{ episode.title|stripentities }}">
+            {{ episode.title|stripentities|truncatechars:120 }}
+          </a>
+        </div>
+
+        <div class="flex items-center">
+          <div class="mr-2">
+            {% component "player_toggle" episode is_playing %}
+          </div>
+          {% url 'episodes:episode_preview' episode.id as default_preview_url %}
+          <a class="mr-2 link"
+             href="{{ preview_url|default:default_preview_url }}"
+             title="Preview"
+             data-turbo-frame="modal">
+            {% component "icon" "ellipsis" css_class="w-6 h-6" %}
+          </a>
+          <div class="w-full">
+
+            <div class="flex items-center justify-end sm:justify-start text-sm">
+              <div class="font-semibold text-gray-500 dark:text-gray-100 mr-2 flex items-center sm:inline-slot{% if remove_url %} hidden{% endif %}">
+                {{ episode.pub_date|date }}
+              </div>
+              {% block mobile_extra_buttons %}
+              {% if remove_url %}
+              <div class="flex items-center md:hidden">
+                {% component "remove_button" remove_url title="Remove" %}
+              </div>
+              {% endif %}
+              {% endblock %}
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {% block extra_buttons %}
+  {% if remove_url %}
+  <div class="md:flex items-center hidden">
+    {% component "remove_button" remove_url title="Remove" %}
+  </div>
+  {% endif %}
+  {% endblock %}
+</div>
+{% endwith %}

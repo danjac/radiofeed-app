@@ -1,8 +1,9 @@
 {% extends "pagination/_object_list.html" %}
+{% load episodes %}
 
 {% block results %}
 {% for episode in page_obj %}
-{% component "episode" episode cover_image=cover_image podcast_url=podcast_url %}
+{% include "episodes/_episode.html" %}
 {% empty %}
 {% if search %}
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
