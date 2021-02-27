@@ -2,6 +2,7 @@ import collections
 import json
 
 from typing import Any, Dict, Optional
+from urllib.urlparse import parse
 
 import bs4
 
@@ -10,7 +11,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms import Field
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
+from django.template.context import Context
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -33,7 +34,7 @@ json_escapes = {
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: RequestContext, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context: Context, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -125,4 +126,22 @@ def button(
         "css_class": css_class,
         "tag": "a" if "href" in attrs else "button",
         "attrs": attrs,
+    }
+
+
+@register.inclusion_tag("_share_buttons.html", takes_context=True)
+def share_buttons(
+    context: Context, url: str, subject: str, css_class: str = ""
+) -> Dict:
+    url = parse.quote(context["request"].build_absolute_uri(url))
+    subject = parse.quote(subject)
+
+    return {
+        "css_class": css_class,
+        "share_urls": {
+            "email": f"mailto:?subject={subject}&body={url}",
+            "facebook": f"https://www.facebook.com/sharer/sharer.php?u={url}",
+            "twitter": f"https://twitter.com/share?url={url}&text={subject}",
+            "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
+        },
     }
