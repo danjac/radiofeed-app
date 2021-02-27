@@ -54,7 +54,7 @@ class SearchFormComponent(component.Component):
         }
 
     def template(self, context: Dict) -> str:
-        return "components/forms/_search_form.html"
+        return "components/forms/_forms/_search_form.html"
 
 
 component.registry.register(name="search_form", component=SearchFormComponent)

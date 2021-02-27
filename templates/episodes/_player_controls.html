@@ -8,7 +8,7 @@
          class="hidden">
       <div class="flex items-center justify-between relative">
         <div class="flex items-center">
-          {% component "cover_image" podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" css_class="h-8 w-8 hover:opacity-75 bg-transparent border-white mr-2 cursor-pointer" %}
+          {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" css_class="h-8 w-8 hover:opacity-75 bg-transparent border-white mr-2 cursor-pointer" %}
           <a href="{{ episode.get_absolute_url }}"
              title="{{ episode.title }}"
              class="player--title w-64 sm:w-96 md:w-full truncate text-sm">{{ episode.title|truncatechars:80 }}</a>
@@ -37,7 +37,7 @@
       </div>
       <div class="flex items-stretch">
 
-        {% component "cover_image" podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" css_class="mr-2 h-16 w-16 lg:h-24 lg:w-24 self-center hover:opacity-75 border-white cursor-pointer" width=30 height=30 %}
+        {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" css_class="mr-2 h-16 w-16 lg:h-24 lg:w-24 self-center hover:opacity-75 border-white cursor-pointer" width=30 height=30 %}
 
         <div class="w-full self-start">
 

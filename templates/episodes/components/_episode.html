@@ -6,7 +6,7 @@
       <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% component "cover_image" podcast lazy=True cover_image=cover_image %}
+          {% cover_image podcast lazy=True cover_image=cover_image %}
         </a>
       </div>
       <div class="leading-tight w-full">

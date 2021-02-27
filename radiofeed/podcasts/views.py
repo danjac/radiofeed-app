@@ -168,14 +168,17 @@ def episodes(
 def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Lazy-loaded podcast image"""
     podcast = get_podcast_or_404(podcast_id)
-    return TurboFrame(request.turbo.frame).response(
-        render_component(
-            request,
-            "cover_image",
-            podcast,
-            lazy=False,
-            cover_image=podcast.get_cover_image_thumbnail(),
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_cover_image.html",
+            {
+                "podcast": podcast,
+                "lazy": False,
+                "cover_image": podcast.get_cover_image_thumbnail(),
+            },
         )
+        .response(request)
     )
 
 

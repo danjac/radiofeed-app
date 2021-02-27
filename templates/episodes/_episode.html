@@ -1,3 +1,4 @@
+{% load podcasts %}
 {% with podcast=episode.podcast %}
 <div class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 {{ css_class|default:'' }}"
      id="{{ dom_id|default:episode.dom.list_item }}"
@@ -7,7 +8,7 @@
       <div class="mr-2 w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
-          {% component "cover_image" podcast lazy=True cover_image=cover_image %}
+          {% cover_image podcast lazy=True cover_image=cover_image %}
         </a>
       </div>
       <div class="leading-tight w-full">
