@@ -37,6 +37,9 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
             img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
 
+        # remove Alpha channel
+        img = img.convert("RGB")
+
         filename = get_image_filename(image_url, content_type)
 
         fp = io.BytesIO()
