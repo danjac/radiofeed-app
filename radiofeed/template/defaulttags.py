@@ -107,7 +107,7 @@ def icon(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
         "css_class": css_class,
         "title": title,
         "attrs": attrs,
-        "svg_template": f"components/icons/_{name}.svg",
+        "svg_template": f"icons/_{name}.svg",
     }
 
 
