@@ -404,7 +404,7 @@ def render_favorite_response(
         )
     ]
 
-    if not is_favorited:
+    if not is_favorited and "remove" in request.POST:
         if request.user.favorite_set.count() == 0:
             streams.append(
                 TurboStream("favorites").replace.render("You have no more Favorites.")
@@ -423,7 +423,7 @@ def render_queue_response(
             render_component(request, "queue_toggle", episode, is_queued)
         ),
     ]
-    if not is_queued:
+    if not is_queued and "remove" in request.POST:
         if request.user.queueitem_set.count() == 0:
             streams.append(
                 TurboStream("queue").replace.render(
