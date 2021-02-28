@@ -3,7 +3,7 @@
 {% with is_podcasts=podcasts.exists is_episodes=episodes.exists %}
 {% if is_podcasts or is_episodes %}
 <div class="relative">
-  <div class="z-50 w-full top-0 absolute bg-white dark:bg-gray-800 border dark:border-gray-600 mt-2 shadow-xl">
+  <div class="z-50 w-full top-0 absolute rounded bg-white dark:bg-gray-800 border dark:border-gray-600 mt-2 shadow-xl">
     {% if is_podcasts %}
     <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Podcasts</div>
     {% for podcast in podcasts|slice:3 %}
