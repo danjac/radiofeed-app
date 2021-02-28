@@ -1,10 +1,10 @@
 {% load cache podcasts %}
 {% cache cache_timeout podcasts_autocomplete request.search %}
-{% with is_podcasts=podcasts.exists is_episodes=episodes.exists %}
-{% if is_podcasts or is_episodes %}
+{% with num_podcasts=podcasts.count num_episodes=episodes.count %}
+{% if num_podcasts or num_episodes %}
 <div class="relative">
   <div class="z-50 w-full top-0 absolute rounded bg-white dark:bg-gray-800 border dark:border-gray-600 mt-2 shadow-xl">
-    {% if is_podcasts %}
+    {% if num_podcasts %}
     <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Podcasts</div>
     {% for podcast in podcasts|slice:3 %}
     <a class="flex items-center p-1 mb-1 hover:bg-gray-100 dark:hover:bg-gray-500 focus:outline-none"
@@ -21,7 +21,7 @@
     </a>
     {% endfor %}
     {% endif %}
-    {% if is_episodes %}
+    {% if num_episodes %}
     <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Episodes</div>
     {% for episode in episodes|slice:3 %}
     <a class="flex items-center p-1 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none"
@@ -38,12 +38,14 @@
     </a>
     {% endfor %}
     {% endif %}
+    {% if num_podcasts > 3 or num_episodes > 3 %}
     <a class="p-1 border-t dark:border-gray-600 block text-center focus:outline-none text-black dark:text-white text-sm font-semibold more-results"
        data-autocomplete-target="result"
-       href="{{ search_url }}"
+       href="{% if num_podcasts > 3 %}{{ search_url }}{% else %}{% url 'episodes:search_episodes' %}?q={{ request.search }}{% endif %}"
        data-turbo-frame="_top">
       More results...
     </a>
+    {% endif %}
   </div>
 </div>
 {% endif %}
