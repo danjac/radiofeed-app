@@ -1,8 +1,7 @@
 {% load podcasts %}
 {% with num_podcasts=podcasts|length %}
 {% if num_podcasts %}
-<div class="z-50 w-full absolute bg-white dark:bg-gray-800 border dark:border-gray-500 p-3 mt-2"
-     data-action="keydown@window->autocomplete#navigate">
+<div class="z-50 w-full absolute bg-white dark:bg-gray-800 border dark:border-gray-500 p-3 mt-2">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
   <div class="flex items-center {% if not forloop.last %} mb-3{% endif %}"

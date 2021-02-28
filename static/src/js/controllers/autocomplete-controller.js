@@ -8,25 +8,29 @@ export default class extends Controller {
     this.index = 0;
   }
 
-  typeahead() {
+  typeahead(event) {
+    console.log('typeahead...', event.code);
+    if (event.code === 'escape') {
+      return;
+    }
     this.searchValue = this.inputTarget.value.trim();
   }
 
   navigate(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
+    console.log('navigate...', event.code);
+    if (this.resultTargets.length === 0) {
+      return;
+    }
     let position, target;
 
     switch (event.code) {
-      case 'escape':
-        this.resultsTarget.textContent = '';
-        this.resultsTarget.setAttribute('src', '');
+      case 'Escape':
+        this.close();
         break;
-      case 'down':
+      case 'ArrowDown':
         position = 1;
         break;
-      case 'up':
+      case 'ArrowUp':
         position = -1;
         break;
       default:
@@ -39,6 +43,7 @@ export default class extends Controller {
 
     if (target) {
       this.index += position;
+      target.focus();
     } else {
       this.index = 0;
       this.inputTarget.focus();
@@ -49,5 +54,13 @@ export default class extends Controller {
     if (this.searchValue.length > 3) {
       this.formTarget.requestSubmit();
     }
+  }
+
+  close() {
+    this.inputTarget.value = '';
+    this.searchValue = '';
+    console.log('resultstarget', this.resultstarget);
+    this.resultsTarget.textContent = '';
+    this.resultsTarget.setAttribute('src', '');
   }
 }

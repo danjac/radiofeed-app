@@ -29,6 +29,7 @@
           action="{% url 'podcasts:search_podcasts' %}"
           data-controller="autocomplete"
           data-autocomplete-target="form"
+          data-action="keydown@window->autocomplete#navigate"
           data-turbo-frame="navbar-search-results"
           class="relative bg-transparent hidden md:block">
       <input type="search"
