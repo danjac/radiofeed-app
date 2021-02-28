@@ -69,15 +69,14 @@
 
       <div class="flex items-center mb-3">
         <div class="mr-3">
-            {% is_playing episode as is_playing %}
+          {% is_playing episode as is_playing %}
           {% include "episodes/_player_toggle.html" %}
         </div>
         <div>
           {% include "episodes/_download.html" %}
         </div>
       </div>
-
-      <div class="mb-3 flex items-center">
+      <div class="flex items-center mb-3">
         <div class="mr-2">
           {% include "episodes/_queue_toggle.html" %}
         </div>
@@ -85,7 +84,6 @@
           {% include "episodes/_favorite_toggle.html" %}
         </div>
       </div>
-
       <div class="flex items-center">
         {% share_buttons  episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
         {% if episode.link %}
@@ -93,13 +91,11 @@
           <a href="{{ episode.link }}"
              rel="nofollow"
              class="link"
-             target="_blank">Website</a>
+             target="_blank">Link</a>
         </div>
         {% endif %}
       </div>
-
     </div>
-
   </div>
   {% if episode.explicit %}
   <div class="text-sm font-semibold mb-3">
