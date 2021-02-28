@@ -2,6 +2,7 @@ import '@hotwired/turbo';
 import 'form-request-submit-polyfill';
 import { Application } from 'stimulus';
 
+import AutocompleteController from './controllers/autocomplete-controller';
 import ConfirmController from './controllers/confirm-controller';
 import DragController from './controllers/drag-controller';
 import FormController from './controllers/form-controller';
@@ -14,6 +15,7 @@ import ToggleController from './controllers/toggle-controller';
 // Stimulus setup
 const application = Application.start();
 
+application.register('autocomplete', AutocompleteController);
 application.register('confirm', ConfirmController);
 application.register('drag', DragController);
 application.register('form', FormController);

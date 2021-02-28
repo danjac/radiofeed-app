@@ -12,6 +12,7 @@ def cover_image(
     podcast: Podcast,
     lazy: bool = False,
     cover_image: Optional[CoverImage] = None,
+    size: str = "16",
     css_class: str = "",
     **attrs,
 ) -> Dict:
@@ -23,5 +24,6 @@ def cover_image(
         "lazy": lazy and not (cover_image),
         "cover_image": cover_image,
         "css_class": css_class,
+        "img_size": size,
         "attrs": attrs,
     }

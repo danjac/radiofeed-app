@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -51,14 +51,26 @@ def index(request: HttpRequest) -> HttpResponse:
 
 def search_podcasts(request: HttpRequest) -> HttpResponse:
 
+    podcasts: Union[List, QuerySet] = (
+        (
+            Podcast.objects.filter(pub_date__isnull=False)
+            .search(request.search)
+            .order_by("-rank", "-pub_date")
+        )
+        if request.search
+        else []
+    )
+
+    if request.turbo.frame:
+        return (
+            TurboFrame(request.turbo.frame)
+            .template("podcasts/_search.html", {"podcasts": podcasts[:9]})
+            .response(request)
+        )
+
     if not request.search:
         return redirect("podcasts:index")
 
-    podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
-        .search(request.search)
-        .order_by("-rank", "-pub_date")
-    )
     return render_podcast_list_response(
         request,
         podcasts,
@@ -175,6 +187,7 @@ def podcast_cover_image(request: HttpRequest, podcast_id: int) -> HttpResponse:
                 "podcast": podcast,
                 "lazy": False,
                 "cover_image": podcast.get_cover_image_thumbnail(),
+                "img_size": request.GET.get("size", "16"),
             },
         )
         .response(request)
