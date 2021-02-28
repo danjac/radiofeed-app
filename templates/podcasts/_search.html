@@ -7,7 +7,7 @@
     {% if is_podcasts %}
     <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Podcasts</div>
     {% for podcast in podcasts|slice:3 %}
-    <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-500 focus:outline-none"
+    <a class="flex items-center p-1 mb-1 hover:bg-gray-100 dark:hover:bg-gray-500 focus:outline-none"
        href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title|stripentities }}"
        data-turbo-frame="_top"
@@ -22,9 +22,9 @@
     {% endfor %}
     {% endif %}
     {% if is_episodes %}
-    <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white{% if is_podcasts %} mt-1{% endif %}">Episodes</div>
+    <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Episodes</div>
     {% for episode in episodes|slice:3 %}
-    <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none"
+    <a class="flex items-center p-1 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none"
        href="{{ episode.get_absolute_url }}"
        title="{{ episode.title|stripentities }}"
        data-turbo-frame="_top"
