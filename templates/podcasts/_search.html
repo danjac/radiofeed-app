@@ -3,25 +3,18 @@
 <div class="z-50 w-full absolute bg-white dark:bg-gray-800 border dark:border-gray-500 mt-2 shadow-xl">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
-  <div class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-500 cursor-pointer"
-       data-controller="link"
-       data-link-url-value="{{ podcast_url }}"
-       data-action="click->link#visit"
-       data-autocomplete-target="result">
+  <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-500 cursor-pointer"
+     href="{{ podcast.get_absolute_url }}"
+     title="{{ podcast.title|stripentities }}"
+     data-turbo-frame="_top"
+     data-autocomplete-target="result">
     <div class="mr-2">
-      <a href="{{ podcast_url }}"
-         title="{{ podcast.title|stripentities }}"
-         data-turbo-frame="_top">
-        {% cover_image podcast=podcast lazy=False size="8" %}
-      </a>
+      {% cover_image podcast=podcast lazy=False size="8" %}
     </div>
-    <div class="text-sm tracking-tight leading-tight w-64 truncate">
-      <a href="{{ podcast_url }}"
-         title="{{ podcast.title|stripentities }}"
-         data-turbo-frame="_top"
-         class="link">{{ podcast.title|stripentities|truncatechars:60 }}</a>
+    <div class="text-sm tracking-tight leading-tight w-64 truncate link">
+      {{ podcast.title|stripentities|truncatechars:60 }}
     </div>
-  </div>
+  </a>
   {% endwith %}
   {% endfor %}
   {% if num_podcasts > 9 %}
