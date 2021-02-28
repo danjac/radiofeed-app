@@ -13,6 +13,16 @@ module.exports = {
     options: {
       safelist: [
         'type', // [type='checkbox']
+        'h-8',
+        'w-8',
+        'h-16',
+        'w-16',
+        'h-20',
+        'w-20',
+        'h-24',
+        'w-24',
+        'h-28',
+        'w-28',
       ],
       keyframes: true,
     },
