@@ -30,7 +30,16 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         response = requests.get(image_url, headers=get_headers(), stream=True)
         response.raise_for_status()
 
-        content_type = response.headers["Content-Type"].split(";")[0]
+        content_type: Optional[str] = None
+
+        try:
+            content_type = response.headers["Content-Type"].split(";")[0]
+        except KeyError:
+            content_type, _ = mimetypes.guess_type(image_url)
+
+        if not content_type:
+            raise ValueError("Content type not provided")
+
         filename = get_image_filename(image_url, content_type)
 
         img = Image.open(io.BytesIO(response.content))
@@ -50,7 +59,6 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
     except (
         requests.RequestException,
         UnidentifiedImageError,
-        KeyError,
         ValueError,
     ) as e:
         raise InvalidImageURL from e

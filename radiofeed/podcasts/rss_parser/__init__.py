@@ -74,8 +74,8 @@ class RssParser:
             try:
                 if feed.image and (img := fetch_image_from_url(feed.image)):
                     self.podcast.cover_image = img
-            except InvalidImageURL:
-                pass
+            except InvalidImageURL as e:
+                self.debug(f"Invalid image: {str(e)}")
 
         categories_dct = get_categories_dict()
 
