@@ -1,5 +1,4 @@
 {% load podcasts %}
-{% with num_podcasts=podcasts|length %}
 {% if num_podcasts %}
 <div class="z-50 w-full absolute bg-white dark:bg-gray-800 border dark:border-gray-500 mt-2 shadow-xl">
   {% for podcast in podcasts %}
@@ -26,9 +25,9 @@
   {% endwith %}
   {% endfor %}
   {% if num_podcasts > 9 %}
-  <div class="mt-3"
+  <div class="py-1 text-center bg-gray-200 dark:bg-gray-600"
        data-autocomplete-target="result">
-    <a href="{{ request.get_full_path }}"
+    <a href="{{ search_url }}"
        data-turbo-frame="_top"
        class="link text-sm">
       More results...
@@ -37,4 +36,3 @@
   {% endif %}
 </div>
 {% endif %}
-{% endwith %}

@@ -50,32 +50,53 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def search_podcasts(request: HttpRequest) -> HttpResponse:
-
-    podcasts: Union[List, QuerySet] = (
-        (
-            Podcast.objects.filter(pub_date__isnull=False)
-            .search(request.search)
-            .order_by("-rank", "-pub_date")
-        )
-        if request.search
-        else []
-    )
-
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template("podcasts/_search.html", {"podcasts": podcasts[:9]})
-            .response(request)
-        )
-
     if not request.search:
         return redirect("podcasts:index")
+
+    podcasts = (
+        Podcast.objects.filter(pub_date__isnull=False)
+        .search(request.search)
+        .order_by("-rank", "-pub_date")
+    )
 
     return render_podcast_list_response(
         request,
         podcasts,
         "podcasts/search.html",
         cached=True,
+    )
+
+
+def search_podcasts_autocomplete(request: HttpRequest) -> HttpResponse:
+    search_url = f"{reverse('podcasts:search_podcasts')}?q={request.search}"
+
+    if not request.turbo.frame:
+        return redirect(search_url)
+
+    podcasts: Union[List, QuerySet]
+
+    if request.search:
+        podcasts = (
+            Podcast.objects.filter(pub_date__isnull=False)
+            .search(request.search)
+            .order_by("-rank", "-pub_date")
+        )
+        num_podcasts = podcasts.count()
+    else:
+        podcasts = []
+        num_podcasts = 0
+
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_search.html",
+            {
+                "podcasts": podcasts[:9],
+                "num_podcasts": num_podcasts,
+                "search_url": search_url,
+            },
+        )
+        .response(request)
     )
 
 
