@@ -81,19 +81,17 @@ def search_podcasts_autocomplete(request: HttpRequest) -> HttpResponse:
             .search(request.search)
             .order_by("-rank", "-pub_date")
         )
-        num_podcasts = podcasts.count()
     else:
-        podcasts = []
-        num_podcasts = 0
+        podcasts = Podcast.objects.none()
 
     return (
         TurboFrame(request.turbo.frame)
         .template(
             "podcasts/_search.html",
             {
-                "podcasts": podcasts[:9],
-                "num_podcasts": num_podcasts,
+                "podcasts": podcasts,
                 "search_url": search_url,
+                "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
             },
         )
         .response(request)

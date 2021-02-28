@@ -28,15 +28,15 @@
     <form method="get"
           action="{% url 'podcasts:search_podcasts_autocomplete' %}"
           data-controller="autocomplete"
+          data-autocomplete-selected-class="autocomplete--selected"
           data-autocomplete-target="form"
-          data-action="keyup@window->autocomplete#close"
           data-turbo-frame="navbar-search-results"
           class="relative bg-transparent hidden md:block">
       <input type="search"
              name="q"
              autocomplete="off"
              aria-label="{{ placeholder|default:'Search' }}"
-             data-action="keyup->autocomplete#typeahead"
+             data-action="keyup->autocomplete#typeahead keyup@window->autocomplete#navigate"
              data-autocomplete-target="input"
              placeholder="Find a podcast..."
              class="px-4 py-1 focus:outline-none focus:ring w-72 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900">
