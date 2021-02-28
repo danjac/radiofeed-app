@@ -69,12 +69,16 @@ export default class extends Controller {
   }
 
   handleClose() {
+    this.index = 0;
+    this.selectedTarget = null;
     this.resultsTarget.textContent = '';
     this.resultsTarget.setAttribute('src', '');
   }
 
   searchValueChanged() {
     if (this.searchValue.length > 3) {
+      this.index = 0;
+      this.selectedTarget = null;
       this.formTarget.requestSubmit();
     }
   }

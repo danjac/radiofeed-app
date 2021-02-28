@@ -1,33 +1,49 @@
 {% load cache podcasts %}
 {% cache cache_timeout podcasts_autocomplete request.search %}
-{% with num_podcasts=podcasts.count %}
-{% if num_podcasts %}
+{% with is_podcasts=podcasts.exists is_episodes=episodes.exists %}
+{% if is_podcasts or is_episodes %}
 <div class="relative">
-  <div class="z-50 w-full top-0 absolute bg-white dark:bg-gray-800 border dark:border-gray-500 mt-2 shadow-xl">
-    {% for podcast in podcasts|slice:9 %}
-    {% with podcast_url=podcast.get_absolute_url %}
-    <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 focus:outline-none"
+  <div class="z-50 w-full top-0 absolute bg-white dark:bg-gray-800 border dark:border-gray-600 mt-2 shadow-xl">
+    {% if is_podcasts %}
+    <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white">Podcasts</div>
+    {% for podcast in podcasts|slice:3 %}
+    <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-500 focus:outline-none"
        href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title|stripentities }}"
        data-turbo-frame="_top"
        data-autocomplete-target="result">
       <div class="mr-2">
-        {% cover_image podcast=podcast lazy=False size="8" %}
+        {% cover_image podcast=podcast lazy=True size="8" %}
       </div>
       <div class="text-sm tracking-tight leading-tight w-64 truncate link">
         {{ podcast.title|stripentities|truncatechars:60 }}
       </div>
     </a>
-    {% endwith %}
     {% endfor %}
-    {% if num_podcasts > 9 %}
-    <a class="py-1 block text-center bg-gray-200 dark:bg-gray-600 focus:outline-none text-black dark:text-white hover:text-blue-800 dark:hover:text-blue-500 text-sm font-semibold more-results"
+    {% endif %}
+    {% if is_episodes %}
+    <div class="font-bold p-1 text-center bg-gray-100 dark:bg-gray-600 text-sm text-black dark:text-white{% if is_podcasts %} mt-1{% endif %}">Episodes</div>
+    {% for episode in episodes|slice:3 %}
+    <a class="flex items-center p-1 {% if not forloop.last %} mb-1{% endif %} hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none"
+       href="{{ episode.get_absolute_url }}"
+       title="{{ episode.title|stripentities }}"
+       data-turbo-frame="_top"
+       data-autocomplete-target="result">
+      <div class="mr-2">
+        {% cover_image podcast=episode.podcast lazy=True size="8" %}
+      </div>
+      <div class="text-sm tracking-tight leading-tight w-64 truncate link">
+        {{ episode.title|stripentities|truncatechars:60 }}
+      </div>
+    </a>
+    {% endfor %}
+    {% endif %}
+    <a class="p-1 border-t dark:border-gray-600 block text-center focus:outline-none text-black dark:text-white text-sm font-semibold more-results"
        data-autocomplete-target="result"
        href="{{ search_url }}"
        data-turbo-frame="_top">
       More results...
     </a>
-    {% endif %}
   </div>
 </div>
 {% endif %}
