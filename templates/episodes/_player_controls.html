@@ -1,6 +1,6 @@
 {% load podcasts %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail %}
-<div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-1 font-semibold opacity-90 shadow-lg"
+<div class="fixed bottom-0 z-10 bg-black text-white w-full p-1 font-semibold opacity-90 shadow-lg"
      data-controller="toggle"
      data-player-target="controls"
      id="player-controls">
