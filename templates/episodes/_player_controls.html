@@ -1,6 +1,6 @@
 {% load podcasts %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail %}
-<div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-2 font-semibold"
+<div class="fixed bottom-0 z-10  bg-gradient-to-b from-gray-700 to-black text-white w-full p-1 font-semibold opacity-90 shadow-lg"
      data-controller="toggle"
      data-player-target="controls"
      id="player-controls">
@@ -25,30 +25,24 @@
   <div data-toggle-target="item"
        class="relative">
     <button data-action="toggle#toggle"
-            class="absolute right-0 top-0 focus-outline-none hover:text-blue-500"
+            class="absolute right-0 top-0 focus-outline-none hover:text-blue-500 md:hidden"
             title="Mimimize Player">
       {% icon "chevron_down" css_class="h-6 w-6" %}
     </button>
 
-    <div class="mb-3 lg:hidden pr-1 text-sm w-64 sm:w-96 truncate">
+    <div class="mb-1 md:hidden pr-1 text-sm w-64 sm:w-96 truncate">
       <a href="{{ episode.get_absolute_url }}"
          class="player--title"
          title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
 
     </div>
-    <div class="flex items-stretch">
+    <div class="flex items-center">
 
-      {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" img_size="16" css_class="mr-2 lg:h-24 lg:w-24 self-center hover:opacity-75 border-white cursor-pointer" width=30 height=30 %}
+      {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
 
-      <div class="w-full self-start">
+      <div class="w-full">
 
-        <div class="mb-3 hidden lg:flex text-sm">
-          <a href="{{ episode.get_absolute_url }}"
-             class="player--title"
-             title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
-        </div>
-
-        <div class="flex justify-between items-center w-full mb-2">
+        <div class="flex justify-between items-center w-full mb-1">
 
           <div class="flex items-center">
 
@@ -57,7 +51,7 @@
                     data-action="player#pause"
                     data-player-target="pauseButton"
                     class="focus:outline-none hover:text-blue-500 mr-1">
-              {% icon "pause" css_class="h-8 w-8 md:h-10 md:w-10" %}
+              {% icon "pause" css_class="h-8 w-8 md:h-9 md:w-9" %}
             </button>
 
             <button title="Play"
@@ -65,7 +59,7 @@
                     data-toggle-target="item"
                     data-player-target="playButton"
                     class="focus:outline-none mr-1 hidden hover:text-blue-600">
-              {% icon "play" css_class="h-8 w-8 md:h-10 md:w-10" %}
+              {% icon "play" css_class="h-8 w-8 md:h-9 md:w-9" %}
             </button>
 
             <form class="flex items-center"
@@ -74,7 +68,7 @@
               {% csrf_token %}
               <button title="Stop"
                       class="focus:outline-none hover:text-blue-500">
-                {% icon "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
+                {% icon "stop" css_class="h-7 w-7 md:h-8 md:w-8" %}
               </button>
             </form>
 
@@ -84,6 +78,11 @@
                   action="{% url 'episodes:play_next_episode' %}">
               {% csrf_token %}
             </form>
+            <div class="hidden md:inline-block text-sm ml-2 w-96 lg:w-full truncate">
+              <a href="{{ episode.get_absolute_url }}"
+                 class="player--title"
+                 title="{{ episode.title }}">{{ episode.title|truncatechars:100 }}</a>
+            </div>
 
           </div>
 
@@ -112,10 +111,9 @@
             </button>
           </div>
 
-
         </div>
 
-        <div class="flex items-center justify-center w-full">
+        <div class="flex items-center w-full">
           <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
                data-player-target="progressBar"
                data-action="click->player#skip mouseover->player#showPosition">
@@ -127,6 +125,15 @@
                data-player-target="counter">-00.00.00</div>
         </div>
       </div>
+
+      <div class="hidden md:block ml-3 pl-2">
+        <button data-action="toggle#toggle"
+                class="focus-outline-none hover:text-blue-500"
+                title="Mimimize Player">
+          {% icon "chevron_down" css_class="h-6 w-6" %}
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

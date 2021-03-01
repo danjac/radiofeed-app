@@ -13,6 +13,7 @@ module.exports = {
     options: {
       safelist: [
         'type', // [type='checkbox']
+        'animate-pulse',
         'h-8',
         'w-8',
         'h-16',
