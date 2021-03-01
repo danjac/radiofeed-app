@@ -17,8 +17,8 @@ module.exports = {
         'type', // [type='checkbox']
         'animate-pulse',
       ]
-        .concat(sizes.map((size) => `h-{size}`))
-        .concat(sizes.map((size) => `w-{size}`)),
+        .concat(sizes.map((size) => `h-${size}`))
+        .concat(sizes.map((size) => `w-${size}`)),
       keyframes: true,
     },
   },
