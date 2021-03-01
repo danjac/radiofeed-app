@@ -109,6 +109,11 @@
                     class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
               {% icon "skip_forward_10" css_class="h-6 w-6" %}
             </button>
+            <button data-action="toggle#toggle"
+                    class="focus-outline-none hover:text-blue-500 hidden md:inline-block ml-3"
+                    title="Mimimize Player">
+              {% icon "chevron_down" css_class="h-6 w-6" %}
+            </button>
           </div>
 
         </div>
@@ -124,14 +129,6 @@
           <div class="w-20 text-right tracking-tighter text-sm md:text-base player--counter"
                data-player-target="counter">-00.00.00</div>
         </div>
-      </div>
-
-      <div class="hidden md:block ml-3 pl-2">
-        <button data-action="toggle#toggle"
-                class="focus-outline-none hover:text-blue-500"
-                title="Mimimize Player">
-          {% icon "chevron_down" css_class="h-6 w-6" %}
-        </button>
       </div>
 
     </div>
