@@ -51,7 +51,7 @@
                     data-action="player#pause"
                     data-player-target="pauseButton"
                     class="focus:outline-none hover:text-blue-500 mr-1">
-              {% icon "pause" css_class="h-8 w-8 md:h-9 md:w-9" %}
+              {% icon "pause" css_class="h-8 w-8" %}
             </button>
 
             <button title="Play"
@@ -59,7 +59,7 @@
                     data-toggle-target="item"
                     data-player-target="playButton"
                     class="focus:outline-none mr-1 hidden hover:text-blue-600">
-              {% icon "play" css_class="h-8 w-8 md:h-9 md:w-9" %}
+              {% icon "play" css_class="h-8 w-8" %}
             </button>
 
             <form class="flex items-center"
@@ -68,7 +68,7 @@
               {% csrf_token %}
               <button title="Stop"
                       class="focus:outline-none hover:text-blue-500">
-                {% icon "stop" css_class="h-7 w-7 md:h-8 md:w-8" %}
+                {% icon "stop" css_class="h-8 w-8" %}
               </button>
             </form>
 
