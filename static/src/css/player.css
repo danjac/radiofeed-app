@@ -11,7 +11,7 @@
 }
 
 .player--active .player--progress {
-  @apply bg-gradient-to-r from-blue-900 to-blue-600;
+  @apply bg-gradient-to-r from-blue-900 to-blue-600 dark:from-blue-800;
 }
 
 .player--indicator {
