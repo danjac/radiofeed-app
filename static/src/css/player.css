@@ -36,5 +36,5 @@
 
 .player--inactive .player--progress,
 .player--inactive .player--indicator {
-  @apply bg-gray-800;
+  @apply bg-gray-800 dark:bg-gray-600;
 }

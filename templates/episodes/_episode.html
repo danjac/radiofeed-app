@@ -1,6 +1,6 @@
 {% load episodes podcasts %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 {{ css_class|default:'' }}"
+<div class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
      id="{{ dom_id|default:episode.dom.list_item }}"
      {% block extra_attrs %}{% endblock %}>
   <div class="w-full">
