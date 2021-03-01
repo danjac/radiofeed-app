@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,6 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
-from radiofeed.episodes.models import Episode
 from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
 
@@ -65,45 +64,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
         podcasts,
         "podcasts/search.html",
         cached=True,
-    )
-
-
-def search_podcasts_autocomplete(request: HttpRequest) -> HttpResponse:
-    search_url = f"{reverse('podcasts:search_podcasts')}?q={request.search}"
-
-    if not request.turbo.frame:
-        return redirect(search_url)
-
-    podcasts: Union[List, QuerySet]
-
-    if request.search:
-        podcasts = (
-            Podcast.objects.filter(pub_date__isnull=False)
-            .search(request.search)
-            .order_by("-rank", "-pub_date")
-        )
-        episodes = (
-            Episode.objects.filter(pub_date__isnull=False)
-            .search(request.search)
-            .select_related("podcast")
-            .order_by("-rank", "-pub_date")
-        )
-    else:
-        podcasts = Podcast.objects.none()
-        episodes = Episode.objects.none()
-
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "podcasts/_search.html",
-            {
-                "podcasts": podcasts,
-                "episodes": episodes,
-                "search_url": search_url,
-                "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
-            },
-        )
-        .response(request)
     )
 
 

@@ -69,28 +69,6 @@ class TestSearchPodcasts:
         assert resp.context_data["page_obj"].object_list[0] == podcast
 
 
-class TestSearchPodcastsAutocomplete:
-    def test_search_empty(self, client):
-        resp = client.get(
-            reverse("podcasts:search_podcasts_autocomplete"),
-            {"q": ""},
-            HTTP_TURBO_FRAME="podcasts",
-        )
-        assert len(resp.context_data["podcasts"]) == 0
-
-    def test_search(self, client):
-        podcast = PodcastFactory(title="testing")
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        resp = client.get(
-            reverse("podcasts:search_podcasts_autocomplete"),
-            {"q": "testing"},
-            HTTP_TURBO_FRAME="podcasts",
-        )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["podcasts"]) == 1
-        assert resp.context_data["podcasts"][0] == podcast
-
-
 class TestPodcastRecommendations:
     def test_get(self, client, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
