@@ -61,7 +61,7 @@
   <div class="flex items-center mb-3">
     <div class="mr-3 sm:mr-6">
       <a href="{{ podcast.get_absolute_url }}">
-        {% cover_image podcast lazy=False size="28" %}
+        {% cover_image podcast lazy=False size="24" %}
       </a>
     </div>
 
@@ -84,19 +84,21 @@
           {% include "episodes/_favorite_toggle.html" %}
         </div>
       </div>
-      <div class="flex items-center">
-        {% share_buttons  episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
-        {% if episode.link %}
-        <div class="text-sm font-semibold ml-2">
-          <a href="{{ episode.link }}"
-             rel="nofollow"
-             class="link"
-             target="_blank">Link</a>
-        </div>
-        {% endif %}
-      </div>
     </div>
   </div>
+
+  <div class="flex items-center mb-3">
+    {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+    {% if episode.link %}
+    <div class="text-sm font-semibold ml-2">
+      <a href="{{ episode.link }}"
+         rel="nofollow"
+         class="link"
+         target="_blank">Link</a>
+    </div>
+    {% endif %}
+  </div>
+
   {% if episode.explicit %}
   <div class="text-sm font-semibold mb-3">
     This episode may contain explicit content.
