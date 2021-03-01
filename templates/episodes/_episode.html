@@ -5,7 +5,7 @@
      {% block extra_attrs %}{% endblock %}>
   <div class="w-full">
     <div class="flex items-center w-full">
-      <div class="mr-2 w-20">
+      <div class="w-20">
         <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
            data-turbo-frame="_top">
           {% cover_image podcast lazy=True cover_image=cover_image %}
