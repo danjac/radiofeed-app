@@ -8,7 +8,7 @@
 </a>
 {% endblock %}
 {% block modal_content %}
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url %}
 <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
 
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
@@ -49,7 +49,7 @@
       {% endif %}
     </div>
     <div class="flex items-center">
-      {% share_buttons  episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+      {% share_buttons episode_url podcast.title|add:" | "|add:episode.title %}
       {% if episode.link %}
       <div class="text-sm font-semibold ml-2">
         <a href="{{ episode.link }}"
@@ -69,7 +69,9 @@
 {% endif %}
 
 <div class="text-sm markdown">
-  {{ episode.description|keepspaces|stripentities|truncatewords:100 }}
+  {{ episode.description|keepspaces|stripentities|truncatewords:60 }}
+  <a href="{{ episode_url }}"
+     data-turbo-frame="_top">Read more...</a>
 </div>
 
 {% endwith %}
