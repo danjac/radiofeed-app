@@ -34,9 +34,6 @@
 
 <div class="text-sm markdown">
   {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}
-  <a href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}"
-     class="link"
-     data-turbo-frame="_top">More details</a>
 </div>
 {% endwith %}
 {% endblock %}
