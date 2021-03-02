@@ -52,13 +52,20 @@ def password() -> str:
 
 
 @pytest.fixture
-def login_user(client: Client, password: str) -> settings.AUTH_USER_MODEL:
-    return _make_login_user(client, password)
+def login_user(
+    client: Client, user: settings.AUTH_USER_MODEL
+) -> settings.AUTH_USER_MODEL:
+    client.force_login(user)
+    return user
 
 
 @pytest.fixture
-def login_admin_user(client: Client, password: str) -> settings.AUTH_USER_MODEL:
-    return _make_login_user(client, password, is_staff=True)
+def login_admin_user(
+    client: Client,
+) -> settings.AUTH_USER_MODEL:
+    user = UserFactory(is_staff=True)
+    client.force_login(user)
+    return user
 
 
 @pytest.fixture
@@ -89,13 +96,3 @@ def audio_log(user: settings.AUTH_USER_MODEL, episode: Episode) -> AudioLog:
 @pytest.fixture
 def queue_item(user: settings.AUTH_USER_MODEL, episode: Episode) -> QueueItem:
     return QueueItemFactory(user=user, episode=episode)
-
-
-def _make_login_user(
-    client: Client, password: str, **defaults
-) -> settings.AUTH_USER_MODEL:
-    user = UserFactory(**defaults)
-    user.set_password(password)
-    user.save()
-    client.login(username=user.username, password=password)
-    return user
