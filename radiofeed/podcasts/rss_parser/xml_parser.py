@@ -34,6 +34,7 @@ def parse_items(result: Dict) -> Generator:
                     guid=guid,
                     title=entry.get("title"),
                     duration=entry.get("itunes_duration", ""),
+                    link=entry.get("link", ""),
                     explicit=bool(entry.get("itunes_explicit", False)),
                     pub_date=entry.get("published", None),
                     audio=parse_audio(entry),
