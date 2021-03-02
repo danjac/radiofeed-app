@@ -1,6 +1,6 @@
-from typing import Dict, Protocol
+import dataclasses
 
-import box
+from typing import Dict, Protocol
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -34,7 +34,21 @@ class CoverImage(Protocol):
     height: int
 
 
-_cover_image_placeholder = box.Box(
+@dataclasses.dataclass
+class PlaceholderImage:
+    url: str
+    width: int
+    height: int
+
+
+@dataclasses.dataclass
+class PodcastDOM:
+    list_item: str
+    cover_image: str
+    subscribe_toggle: str
+
+
+_cover_image_placeholder = PlaceholderImage(
     url=static("img/podcast-icon.png"), width=THUMBNAIL_SIZE, height=THUMBNAIL_SIZE
 )
 
@@ -156,8 +170,8 @@ class Podcast(models.Model):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     @cached_property
-    def dom(self) -> box.Box:
-        return box.Box(
+    def dom(self) -> PodcastDOM:
+        return PodcastDOM(
             list_item=f"podcast-{self.id}",
             cover_image=f"podcast-cover-image-{self.id}",
             subscribe_toggle=f"subscribe-toggle-{self.id}",

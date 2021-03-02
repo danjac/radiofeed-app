@@ -1,6 +1,6 @@
-from typing import Dict, Optional, Tuple
+import dataclasses
 
-import box
+from typing import Dict, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -18,6 +18,17 @@ from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.typing import AnyUser
+
+
+@dataclasses.dataclass
+class EpisodeDOM:
+    favorite_list_item: str
+    favorite_toggle: str
+    history_list_item: str
+    list_item: str
+    player_toggle: str
+    queue_list_item: str
+    queue_toggle: str
 
 
 class EpisodeQuerySet(models.QuerySet):
@@ -106,8 +117,8 @@ class Episode(models.Model):
         return filesizeformat(self.length) if self.length else None
 
     @cached_property
-    def dom(self) -> box.Box:
-        return box.Box(
+    def dom(self) -> EpisodeDOM:
+        return EpisodeDOM(
             favorite_list_item=f"favorite-{self.id}",
             favorite_toggle=f"favorite-toggle-{self.id}",
             history_list_item=f"history-{self.id}",
