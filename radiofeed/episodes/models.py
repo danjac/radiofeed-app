@@ -22,12 +22,13 @@ from radiofeed.typing import AnyUser
 
 @dataclasses.dataclass
 class EpisodeDOM:
-    favorite_list_item: str
+
+    episode: str
+    favorite: str
     favorite_toggle: str
-    history_list_item: str
-    list_item: str
+    history: str
     player_toggle: str
-    queue_list_item: str
+    queue: str
     queue_toggle: str
 
 
@@ -119,12 +120,12 @@ class Episode(models.Model):
     @cached_property
     def dom(self) -> EpisodeDOM:
         return EpisodeDOM(
-            favorite_list_item=f"favorite-{self.id}",
+            favorite=f"favorite-{self.id}",
             favorite_toggle=f"favorite-toggle-{self.id}",
-            history_list_item=f"history-{self.id}",
-            list_item=f"episode-{self.id}",
+            history=f"history-{self.id}",
+            episode=f"episode-{self.id}",
             player_toggle=f"player-toggle-{self.id}",
-            queue_list_item=f"queue-{self.id}",
+            queue=f"queue-{self.id}",
             queue_toggle=f"queue-toggle-{self.id}",
         )
 

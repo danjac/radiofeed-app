@@ -168,7 +168,7 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     if logs.count() == 0:
         return TurboStream("history").replace.response("Your History is now empty.")
 
-    return TurboStream(episode.dom.history_list_item).remove.response()
+    return TurboStream(episode.dom.history).remove.response()
 
 
 @login_required
@@ -410,7 +410,7 @@ def render_favorite_response(
                 TurboStream("favorites").replace.render("You have no more Favorites.")
             )
         else:
-            streams.append(TurboStream(episode.dom.favorite_list_item).remove.render())
+            streams.append(TurboStream(episode.dom.favorite).remove.render())
 
     return TurboStreamResponse(streams)
 
@@ -435,7 +435,7 @@ def render_queue_response(
                 )
             )
         else:
-            streams.append(TurboStream(episode.dom.queue_list_item).remove.render())
+            streams.append(TurboStream(episode.dom.queue).remove.render())
 
     return TurboStreamResponse(streams)
 
@@ -468,7 +468,7 @@ def render_player_response(
     if request.user.queueitem_set.count() == 0:
         streams.append(TurboStream("queue").replace.render("All done!"))
     else:
-        streams.append(TurboStream(next_episode.dom.queue_list_item).remove.render())
+        streams.append(TurboStream(next_episode.dom.queue).remove.render())
 
     next_episode.log_activity(request.user, current_time=current_time)
 

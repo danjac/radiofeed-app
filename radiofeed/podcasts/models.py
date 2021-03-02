@@ -43,7 +43,7 @@ class PlaceholderImage:
 
 @dataclasses.dataclass
 class PodcastDOM:
-    list_item: str
+    podcast: str
     cover_image: str
     subscribe_toggle: str
 
@@ -172,7 +172,7 @@ class Podcast(models.Model):
     @cached_property
     def dom(self) -> PodcastDOM:
         return PodcastDOM(
-            list_item=f"podcast-{self.id}",
+            podcast=f"podcast-{self.id}",
             cover_image=f"podcast-cover-image-{self.id}",
             subscribe_toggle=f"subscribe-toggle-{self.id}",
         )
