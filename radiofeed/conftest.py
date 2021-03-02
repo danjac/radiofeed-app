@@ -60,9 +60,7 @@ def login_user(
 
 
 @pytest.fixture
-def login_admin_user(
-    client: Client,
-) -> settings.AUTH_USER_MODEL:
+def login_admin_user(client: Client) -> settings.AUTH_USER_MODEL:
     user = UserFactory(is_staff=True)
     client.force_login(user)
     return user
