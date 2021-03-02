@@ -20,32 +20,20 @@
 <div class="sm:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
   <div class="flex items-center justify-center sm:justify-end">
-    {% if search %}
-    <div class="mr-2 flex items-center hidden md:inline-block text-sm">
-      <a class="link mr-1"
-         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
-      <span class="mr-1">|</span>
-      <a class="link mr-1"
-         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="link"
-         href="{{ request.path }}">Clear</a>
-    </div>
-    {% endif %}
     {% include "forms/_search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
 
 {% if search %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+<div class="mb-3 flex items-center justify-center sm:justify-start text-sm">
   <a class="link mr-2"
-     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Podcasts</a>
+     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
   <span class="mr-2">|</span>
   <a class="link mr-2"
-     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
   <span class="mr-2">|</span>
   <a class="link"
-     href="{{ request.path }}">Clear</a>
+     href="{{ request.path }}">Clear Search</a>
 </div>
 {% endif %}
 
@@ -61,7 +49,7 @@
   <span class="mr-2">|</span>
   {% endif %}
   <a href="{% url 'podcasts:itunes_category' category.id %}"
-     class="link">iTunes</a>
+     class="link">{{ category.name }} in iTunes</a>
   {% endif %}
 </div>
 {% endif %}

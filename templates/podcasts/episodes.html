@@ -19,19 +19,21 @@
          href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
       <span class="mr-1 text-sm">|</span>
       <a class="link text-sm"
-         href="{{ request.path }}">Clear</a>
+         href="{{ request.path }}">Clear Search</a>
     </div>
     {% endif %}
+  </div>
+  <div class="flex items-center justify-center sm:justify-start">
     {% include "forms/_search_form.html" with placeholder="Search this podcast..." %}
   </div>
 </div>
 {% if search %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm">
+<div class="mb-3 flex items-center justify-center sm:justify-start md:hidden text-sm">
   <a class="link mr-2"
      href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
   <span class="mr-1">|</span>
   <a class="link mr-1 text-sm"
-     href="{{ request.path }}">Clear</a>
+     href="{{ request.path }}">Clear Search</a>
 </div>
 {% endif %}
 {% include pagination_template %}

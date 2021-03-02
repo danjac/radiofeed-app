@@ -7,34 +7,30 @@
   <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">
     Search Podcasts
   </h1>
-  <div class="flex items-center justify-center sm:justify-end text-sm">
-    {% if search %}
-    <div class="mr-2 flex items-center hidden md:inline-block">
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'episodes:search_episodes' %}?q={{ search }}">Episodes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500"
-         href="{% url 'podcasts:index' %}">Clear</a>
-    </div>
-    {% endif %}
+  <div class="flex items-center justify-center hidden md:inline-block text-sm leading-tight tracking-tight">
+    <a class="font-semibold hover:text-blue-500 mr-2"
+       href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search Episodes</a>
+    <span class="mr-2">|</span>
+    <a class="font-semibold hover:text-blue-500 mr-2"
+       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
+    <span class="mr-2">|</span>
+    <a class="font-semibold hover:text-blue-500"
+       href="{% url 'podcasts:index' %}">Clear Search</a>
+  </div>
+  <div class="flex items-center justify-center md:justify-start">
     {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
-{% if search %}
-<div class="mb-3 flex items-center justify-center md:hidden text-sm leading-tight tracking-tight">
+<div class="mb-3 flex flex-wrap items-center justify-center sm:justify-start md:hidden text-sm leading-tight tracking-tight">
   <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'episodes:search_episodes' %}?q={{ search }}">Episodes</a>
+     href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search Episodes</a>
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
   <span class="mr-2">|</span>
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'podcasts:index' %}">Clear</a>
+     href="{% url 'podcasts:index' %}">Clear Search</a>
 </div>
-{% endif %}
 
 {% include pagination_template %}
 
