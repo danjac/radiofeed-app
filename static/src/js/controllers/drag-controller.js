@@ -36,7 +36,7 @@ export default class extends Controller {
 
   update() {
     const items = this.draggableTargets.map((target) => target.dataset.id);
-    if (items) {
+    if (items.length > 0) {
       const body = new FormData();
 
       body.append('csrfmiddlewaretoken', this.csrfTokenValue);
