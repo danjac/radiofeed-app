@@ -4,7 +4,18 @@
 {% block podcast_content %}
 <div class="p-2 mb-3 border dark:border-gray-500">
   {% if podcast.authors %}
-  <div class="text-gray-500 dark:text-gray-300 font-semibold mb-3">{{ podcast.authors }}</div>
+  <div class="mb-3">
+    {% if podcast.link %}
+    <a href="{{ podcast.link }}"
+       class="link"
+       target="_blank"
+       rel="noopener">{{ podcast.authors }}</a>
+    {% else %}
+    <span class="text-gray-500 dark:text-gray-300 font-semibold">
+      {{ podcast.authors }}
+    </span>
+    {% endif %}
+  </div>
   {% endif %}
 
 
