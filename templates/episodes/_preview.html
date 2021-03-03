@@ -48,17 +48,7 @@
       {% include "episodes/_favorite_toggle.html" %}
       {% endif %}
     </div>
-    <div class="flex items-center">
-      {% share_buttons episode_url podcast.title|add:" | "|add:episode.title %}
-      {% if episode.link %}
-      <div class="text-sm font-semibold ml-2">
-        <a href="{{ episode.link }}"
-           rel="nofollow"
-           class="link"
-           target="_blank">Link</a>
-      </div>
-      {% endif %}
-    </div>
+    {% share_buttons episode_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
 
