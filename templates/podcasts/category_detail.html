@@ -17,29 +17,34 @@
   <span class="text-gray-500 dark:text-gray-300">{{ category.name }}</span>
 </div>
 
-{% if search %}
-<h2 class="text-lg font-bold mb-3 flex justify-center sm:justify-start">{{ category.name }}</h2>
-<div class="sm:flex justify-between items-center mb-3">
-  <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
+<div class="lg:flex items-center justify-between mb-3">
+  <h2 class="text-lg font-bold mb-2 lg:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
+  <div class="flex items-center justify-center sm:justify-start lg:justify-end mb-2 lg:mb-0">
     {% include "forms/_search_form.html" with placeholder="Search category..." %}
-  </div>
-  <div class="flex items-center justify-center sm:justify-start text-sm">
-    <a class="link mr-2"
-       href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-    <span class="mr-2">|</span>
-    <a class="link mr-2"
-       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
-    <span class="mr-2">|</span>
-    <a class="link"
-       href="{{ request.path }}">Clear Search</a>
+    {% if search %}
+    <div class="items-center text-sm ml-3 hidden sm:flex">
+      <a class="link mr-1"
+         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
+      <span class="mr-1">|</span>
+      <a class="link mr-1"
+         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+      <span class="mr-1">|</span>
+      <a class="link"
+         href="{{ request.path }}">Clear Search</a>
+    </div>
+    {% endif %}
   </div>
 </div>
-{% else %}
-<div class="sm:flex justify-between items-center mb-3">
-  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
-  <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search category..." %}
-  </div>
+{% if search %}
+<div class="flex items-center text-sm sm:hidden justify-center mb-3">
+  <a class="link mr-1"
+     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
+  <span class="mr-1">|</span>
+  <a class="link mr-1"
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
+  <span class="mr-1">|</span>
+  <a class="link"
+     href="{{ request.path }}">Clear Search</a>
 </div>
 {% endif %}
 
