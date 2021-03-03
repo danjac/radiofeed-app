@@ -7,25 +7,24 @@
   <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">Favorites</h1>
   <div class="flex items-center justify-center sm:justify-end text-sm">
     {% include "forms/_search_form.html" with placeholder="Search Favorites..." %}
+    {% if search %}
+    <div class="hidden sm:flex items-center text-sm ml-3">
+      <a class="font-semibold hover:text-blue-500 mr-1"
+         href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
+      <span class="mr-1">|</span>
+      <a class="font-semibold hover:text-blue-500 mr-1"
+         href="{{ request.path }}">Clear Search</a>
+    </div>
+    {% endif %}
   </div>
-  {% if search %}
-  <div class="hidden sm:flex items-center text-sm">
-    <a class="font-semibold hover:text-blue-500 mr-2"
-       href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
-    <span class="mr-2">|</span>
-    <a class="font-semibold hover:text-blue-500 mr-2"
-       href="{{ request.path }}">Clear</a>
-  </div>
-  {% endif %}
 </div>
 {% if search %}
 <div class="flex justify-center sm:hidden text-sm mb-3">
   <a class="font-semibold hover:text-blue-500 mr-2"
      href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
   <span class="mr-2">|</span>
-
   <a class="font-semibold hover:text-blue-500"
-     href="{{ request.path }}">Clear</a>
+     href="{{ request.path }}">Clear Search</a>
 </div>
 {% endif %}
 {% include pagination_template %}
