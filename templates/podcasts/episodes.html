@@ -3,6 +3,7 @@
 {% block podcast_content %}
 
 <div class="sm:flex justify-between items-center mb-3">
+  {% if not search %}
   <div class="flex justify-center sm:justify-start mb-2 sm:mr-3 sm:mb-0 items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
@@ -12,6 +13,7 @@
        class="link">Oldest First</a>
     {% endif %}
   </div>
+  {% endif %}
   <div class="flex items-center justify-center sm:justify-start">
     {% if search %}
     <div class="hidden md:inline-block mr-2 text-sm">
