@@ -30,9 +30,11 @@ def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
 
     user.recommended_podcasts.add(*podcasts)
 
+    site = Site.objects.get_current()
+
     context = {
         "recipient": user,
-        "site": Site.objects.get_current(),
+        "site": site,
         "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
         "podcasts": podcasts,
     }
@@ -42,7 +44,7 @@ def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
         "podcasts/emails/recommendations.html", context
     )
     send_mail(
-        f"Hi {user.username}, here are some new podcasts you might like!",
+        f"[{site.name}] Hi {user.username}, here are some new podcasts you might like!",
         message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
