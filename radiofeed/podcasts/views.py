@@ -82,15 +82,13 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     for podcast in new_podcasts:
         sync_podcast_feed.delay(rss=podcast.rss)
 
-    clear_search_url = f"{reverse('podcasts:index')}?q={request.search}"
-
     return TemplateResponse(
         request,
         "podcasts/itunes_search.html",
         {
             "results": results,
             "error": error,
-            "clear_search_url": clear_search_url,
+            "clear_search_url": reverse("podcasts:index"),
         },
     )
 
