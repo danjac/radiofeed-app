@@ -3,12 +3,13 @@
 {% block podcast_content %}
 
 <div class="sm:flex justify-between items-center py-3 border-t dark:border-gray-500">
+
   <div class="flex items-center justify-center sm:justify-start mb-2 sm:mb-0">
     {% include "forms/_search_form.html" with placeholder="Search this podcast..." %}
   </div>
 
   {% if search %}
-  <div class="flex justify-center sm:justify-start items-center">
+  <div class="flex justify-center sm:justify-start items-center text-sm">
     <a class="link mr-1"
        href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search All Episodes</a>
     <span class="mr-1 text-sm">|</span>
@@ -16,7 +17,7 @@
        href="{{ request.path }}">Clear Search</a>
   </div>
   {% else %}
-  <div class="flex justify-center sm:justify-start items-center">
+  <div class="flex justify-center sm:justify-start items-center text-sm">
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="link">Newest First</a>
