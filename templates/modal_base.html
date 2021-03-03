@@ -5,7 +5,7 @@
   <div
        class="modal-container w-full bg-white dark:bg-gray-800 h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
 
-    <button class="modal-close absolute top-0 text-black md:text-white dark:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50"
+    <button class="modal-close absolute top-0 text-black md:text-white dark:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50 focus:outline-none"
             data-action="modal#close">
       {% icon "x" css_class="fill-current" %}
       <span class="text-sm">(Esc)</span>
@@ -17,7 +17,7 @@
       <div class="flex justify-between items-center pb-3">
         <p class="w-64 sm:w-full flex flex-wrap font-bold">{% block modal_header %}{% endblock %}</p>
         <div class="modal-close cursor-pointer z-50 hidden md:inline-block">
-          <button data-action="modal#close">
+          <button data-action="modal#close focus:outline-none">
             {% icon "x" css_class="fill-current" %}
           </button>
         </div>
