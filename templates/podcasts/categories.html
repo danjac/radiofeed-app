@@ -4,23 +4,20 @@
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
-{% cache 3600 categories search %}
 <div class="sm:flex justify-between items-center mb-3 pb-3 border-b dark:border-gray-500">
   <h2 class="text-lg font-bold mb-3 sm:mb-0 flex justify-center sm:justify-start">Discover New Podcasts</h2>
   <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
-    {% if search %}
-    <a class="link mr-2 hidden sm:inline-block text-sm"
-       href="{{ request.path }}">Clear Search</a>
-    {% endif %}
     {% include "forms/_search_form.html" with placeholder="Filter categories..." %}
   </div>
   {% if search %}
-  <div class="sm:hidden mb-3 flex justify-center">
+  <div class="mb-3 sm:mb-0 flex justify-center">
     <a class="link text-sm"
        href="{{ request.path }}">Clear Search</a>
   </div>
   {% endif %}
 </div>
+
+{% cache 3600 categories search %}
 
 <div class="divide-y divide-gray-300 dark:divide-gray-500">
   {% if search %}
