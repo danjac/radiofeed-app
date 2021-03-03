@@ -9,7 +9,7 @@
   {% include "episodes/_episode.html" with dom_id=episode.dom.favorite %}
   {% endwith %}
   {% empty %}
-  <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
+  <p class="text-center sm:text-left">
     {% if search %}
     No results found for <span class="font-bold">{{ search }}</span>.
     {% else %}

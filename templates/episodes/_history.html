@@ -6,7 +6,7 @@
   {% url 'episodes:remove_history' log.episode.id as remove_url %}
   {% include "episodes/_episode.html" with episode=log.episode dom_id=log.episode.dom.history %}
   {% empty %}
-  <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
+  <p class="text-center sm:text-left">
     {% if search %}
     No results found for <span class="font-bold">{{ search }}</span>.
     {% else %}
