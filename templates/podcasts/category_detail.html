@@ -17,12 +17,13 @@
   <span class="text-gray-500 dark:text-gray-300">{{ category.name }}</span>
 </div>
 
-<div class="lg:flex items-center justify-between mb-3">
-  <h2 class="text-lg font-bold mb-2 lg:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
-  <div class="flex items-center justify-center sm:justify-start lg:justify-end mb-2 lg:mb-0">
+<div class="sm:flex items-center justify-between mb-3">
+  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
+  <div class="flex items-center justify-center sm:justify-start sm:justify-end mb-2 sm:mb-0">
     {% include "forms/_search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
+
 {% if not search %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
