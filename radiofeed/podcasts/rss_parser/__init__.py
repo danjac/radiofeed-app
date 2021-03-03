@@ -176,7 +176,10 @@ class RssParser:
         if not image_url:
             return None, ""
 
-        etag = self.fetch_etag(image_url)
+        try:
+            etag = self.fetch_etag(image_url)
+        except requests.RequestException:
+            return None, ""
 
         if not self.podcast.cover_image or etag != self.podcast.cover_image_etag:
             try:
