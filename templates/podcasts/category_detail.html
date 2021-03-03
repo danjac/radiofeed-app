@@ -21,33 +21,8 @@
   <h2 class="text-lg font-bold mb-2 lg:mb-0 flex justify-center sm:justify-start">{{ category.name }}</h2>
   <div class="flex items-center justify-center sm:justify-start lg:justify-end mb-2 lg:mb-0">
     {% include "forms/_search_form.html" with placeholder="Search category..." %}
-    {% if search %}
-    <div class="items-center text-sm ml-3 hidden sm:flex">
-      <a class="link mr-1"
-         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-      <span class="mr-1">|</span>
-      <a class="link mr-1"
-         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="link"
-         href="{{ request.path }}">Clear Search</a>
-    </div>
-    {% endif %}
   </div>
 </div>
-{% if search %}
-<div class="flex items-center text-sm sm:hidden justify-center mb-3">
-  <a class="link mr-1"
-     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-  <span class="mr-1">|</span>
-  <a class="link mr-1"
-     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-  <span class="mr-1">|</span>
-  <a class="link"
-     href="{{ request.path }}">Clear Search</a>
-</div>
-{% endif %}
-
 {% if not search %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}

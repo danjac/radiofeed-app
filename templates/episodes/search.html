@@ -9,21 +9,7 @@
   </h1>
   <div class="flex items-center justify-center sm:justify-start">
     {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
-    <div class="hidden sm:inline-block text-sm ml-3">
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500"
-         href="{% url 'episodes:index' %}">Clear Search</a>
-    </div>
   </div>
-</div>
-<div class="mb-3 flex justify-center items-center sm:hidden text-sm">
-  <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-  <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-blue-500"
-     href="{% url 'episodes:index' %}">Clear Search</a>
 </div>
 {% include pagination_template %}
 {% endblock content %}

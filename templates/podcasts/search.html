@@ -8,28 +8,14 @@
     Search Podcasts
   </h1>
   <div class="flex items-center justify-center md:justify-start">
+    <a class="font-semibold hover:text-blue-500 mr-2 text-sm hidden sm:inline-block"
+       href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
     {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
-    <div class="flex items-center justify-center hidden md:inline-block text-sm ml-3">
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search Episodes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500 mr-1"
-         href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-      <span class="mr-1">|</span>
-      <a class="font-semibold hover:text-blue-500"
-         href="{% url 'podcasts:index' %}">Clear Search</a>
-    </div>
   </div>
 </div>
-<div class="mb-3 flex flex-wrap items-center justify-center sm:justify-start md:hidden text-sm leading-tight tracking-tight">
-  <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'episodes:search_episodes' %}?q={{ search }}">Search Episodes</a>
-  <span class="mr-2">|</span>
-  <a class="font-semibold hover:text-blue-500 mr-2"
-     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">iTunes</a>
-  <span class="mr-2">|</span>
+<div class="mb-3 flex justify-center sm:hidden text-sm">
   <a class="font-semibold hover:text-blue-500"
-     href="{% url 'podcasts:index' %}">Clear Search</a>
+     href="{% url 'podcasts:search_itunes' %}?q={{ search }}">Search iTunes</a>
 </div>
 
 {% include pagination_template %}
