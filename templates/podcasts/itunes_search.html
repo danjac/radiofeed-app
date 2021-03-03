@@ -23,9 +23,9 @@
 {% include "podcasts/_itunes_result.html" %}
 {% empty %}
 {% if error %}
-<p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
+<p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">Unable to connect to the ITunes API at the moment.</p>
 {% elif search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+<p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
 {% endfor %}
 
