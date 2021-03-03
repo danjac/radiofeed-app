@@ -26,7 +26,7 @@
 {% if not search %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start pt-3 border-t dark:border-gray-500">
+<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="link mr-2">{{ child.name }}</a>
