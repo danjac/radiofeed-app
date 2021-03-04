@@ -5,7 +5,7 @@ on:
     branches: main
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     env:
       DJANGO_SETTINGS_MODULE: radiofeed.config.settings.test
