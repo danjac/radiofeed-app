@@ -78,13 +78,11 @@ Next add to Git and deploy:
 
 > dokku git:set --global deploy-branch main
 
+> dokku ssh:add deploy-ssh /path/to/my_pub
+
 > git remote add dokku dokku@my-domain-or-ip-address:myapp
 
 First copy **.env.template** to **.env** and set the correct AWS variables.
-
-You can deploy with this command:
-
-> ./scripts/deploy
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
