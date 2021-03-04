@@ -13,16 +13,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
       - name: Run test suite
+      - uses: actions/checkout@v1
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: build assets
+      - name: Build assets
+      - uses: actions/checkout@v1
         run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
+
+      - name: Store assets
+      - uses: actions/upload-artifact@v2
         with:
           name: assets-dist
           path: static/dist
