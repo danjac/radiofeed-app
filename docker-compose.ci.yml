@@ -27,3 +27,12 @@ services:
       - postgres
     volumes:
       - .:/app
+
+  assets:
+    build:
+      context: .
+      dockerfile: assets.dockerfile
+    privileged: true
+    volumes:
+      - .:/app
+      - /app/node_modules

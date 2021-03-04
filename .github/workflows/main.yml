@@ -9,10 +9,20 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
       - name: Run test suite
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: build assets
+        run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
+        with:
+          name: assets-dist
+          path: static/dist
