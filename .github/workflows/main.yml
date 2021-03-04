@@ -37,4 +37,6 @@ jobs:
           AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
-        run: docker-compose -f docker-compose.ci.yml run --rm django collectstatic--noinput -v 3 -i dev -i src
+        run: |
+          docker-compose -f docker-compose.ci.yml run --rm django |
+          ./manage.py collectstatic --noinput -v 3 -i dev -i src
