@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Run test suite
-      - uses: actions/checkout@v1
+        uses: actions/checkout@v1
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
   build:
@@ -22,11 +22,11 @@ jobs:
 
     steps:
       - name: Build assets
-      - uses: actions/checkout@v1
+        uses: actions/checkout@v1
         run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
 
       - name: Store assets
-      - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: assets-dist
           path: static/dist
