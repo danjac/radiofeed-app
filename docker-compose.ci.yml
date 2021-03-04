@@ -2,7 +2,7 @@ version: '3.4'
 
 x-env: &default-env
   DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-  REDIS_URL: http://dummy-redis
+  REDIS_URL: redis://redis:6379/0
   SECRET_KEY: seekrit
 
 volumes:
