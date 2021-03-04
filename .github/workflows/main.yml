@@ -11,31 +11,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: radiofeed.config.settings.deploy
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
       - name: Run test suite
-        env:
-          DJANGO_SETTINGS_MODULE: radiofeed.config.settings.test
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
       - name: Build assets
         run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
 
       - name: Upload assets to S3
-        env:
-          DJANGO_SETTINGS_MODULE: radiofeed.config.settings.deploy
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_S3_CUSTOM_DOMAIN: ${{ secrets.AWS_S3_CUSTOM_DOMAIN }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
         run: |
           docker-compose -f docker-compose.ci.yml run --rm django ./manage.py collectstatic --noinput -v 3 -i dev -i src
