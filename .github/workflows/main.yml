@@ -18,7 +18,7 @@ jobs:
 
       - name: Run test suite
         env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
       - name: Build assets
