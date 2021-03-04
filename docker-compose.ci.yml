@@ -19,7 +19,7 @@ services:
   django:
     build:
       context: .
-      dockerfile: django.dockerfile
+      dockerfile: django.ci.dockerfile
     restart: on-failure
     privileged: true
     environment: *default-env
@@ -31,7 +31,7 @@ services:
   assets:
     build:
       context: .
-      dockerfile: assets.dockerfile
+      dockerfile: assets.ci.dockerfile
     privileged: true
     volumes:
       - .:/app

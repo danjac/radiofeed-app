@@ -14,7 +14,7 @@ WORKDIR /app
 COPY postcss.config.js ./postcss.config.js
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
-COPY yarn.lock ./yarn.lock
+COPY assets.dockerfile yarn.lock* ./
 
 RUN yarn
 

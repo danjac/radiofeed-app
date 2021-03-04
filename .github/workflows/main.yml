@@ -22,6 +22,7 @@ jobs:
       - name: Build assets
         run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
 
+      # we might be able to deploy immediately to s3 without storing...
       - name: Store assets
         uses: actions/upload-artifact@v2
         with:
