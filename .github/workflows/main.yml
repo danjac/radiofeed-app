@@ -27,3 +27,10 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: radiofeed.config.settings.test
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
+
+      - name: Build frontend assets
+        run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
+
+      - name: Upload assets to S3
+        run: |
+          docker-compose -f docker-compose.ci.yml run --rm django ./manage.py collectstatic --noinput -v 3 -i dev -i src
