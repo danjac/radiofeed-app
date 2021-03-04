@@ -9,19 +9,16 @@ on:
       - main
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
       - name: Run test suite
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Build assets
         run: docker-compose -f docker-compose.ci.yml run --rm assets yarn build
 
