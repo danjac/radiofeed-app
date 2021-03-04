@@ -2,11 +2,10 @@ import datetime
 import logging
 
 from functools import lru_cache
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import requests
 
-from django.core.files.images import ImageFile
 from django.utils import timezone
 from pydantic import ValidationError
 
@@ -71,10 +70,6 @@ class RssParser:
         self.podcast.last_updated = timezone.now()
         self.podcast.pub_date = pub_date
 
-        self.podcast.cover_image, self.podcast.cover_image_etag = self.fetch_image(
-            feed.image
-        )
-
         categories = self.extract_categories(feed)
 
         self.podcast.authors = ", ".join(feed.authors)
@@ -82,11 +77,31 @@ class RssParser:
         self.podcast.extracted_text = self.extract_text(feed, categories)
         self.podcast.sync_error = ""
         self.podcast.num_retries = 0
+
+        self.sync_cover_image(feed.image)
+
         self.podcast.save()
 
         self.podcast.categories.set(categories)
 
         return True
+
+    def sync_cover_image(self, image_url: Optional[str]) -> None:
+        if not image_url:
+            return
+
+        try:
+            etag = self.fetch_etag(image_url)
+        except requests.RequestException:
+            return
+
+        if not self.podcast.cover_image or etag != self.podcast.cover_image_etag:
+            try:
+                if image_url := fetch_image_from_url(image_url):
+                    self.podcast.cover_image = image_url
+                    self.podcast.cover_image_etag = etag
+            except InvalidImageURL:
+                pass
 
     def sync_episodes(self, feed: Feed) -> List[Episode]:
         new_episodes = self.create_episodes_from_feed(feed)
@@ -170,23 +185,6 @@ class RssParser:
             media_type=item.audio.type,
             length=item.audio.length,
         )
-
-    def fetch_image(self, image_url: Optional[str]) -> Tuple[Optional[ImageFile], str]:
-        if not image_url:
-            return None, ""
-
-        try:
-            etag = self.fetch_etag(image_url)
-        except requests.RequestException:
-            return None, ""
-
-        if not self.podcast.cover_image or etag != self.podcast.cover_image_etag:
-            try:
-                return (fetch_image_from_url(image_url), etag or "")
-            except InvalidImageURL:
-                pass
-
-        return None, ""
 
 
 @lru_cache
