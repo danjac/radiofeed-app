@@ -38,7 +38,6 @@ class RssParser:
                 and etag == self.podcast.etag
                 and not force_update
             ):
-                self.debug("Matching etag, no update")
                 return []
             feed = self.fetch_rss_feed()
         except (ValidationError, requests.RequestException) as e:
@@ -49,7 +48,6 @@ class RssParser:
 
         pub_date = self.get_pub_date(feed)
         if not pub_date:
-            self.debug("No recent pub date or new episodes")
             return []
 
         do_update: bool = force_update or (
@@ -57,7 +55,6 @@ class RssParser:
         )
 
         if not do_update:
-            self.debug("No recent pub date or new episodes")
             return []
 
         if etag:
@@ -100,7 +97,6 @@ class RssParser:
             self.podcast.pub_date = max(e.pub_date for e in new_episodes)
             self.podcast.save(update_fields=["pub_date"])
 
-        self.debug(f"{len(new_episodes)} new episode(s)")
         return new_episodes
 
     def fetch_etag(self, url: str) -> Optional[str]:
