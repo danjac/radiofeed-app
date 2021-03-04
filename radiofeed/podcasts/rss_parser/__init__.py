@@ -171,12 +171,6 @@ class RssParser:
             length=item.audio.length,
         )
 
-    def debug(self, message: str):
-        logger.debug(f"{self.podcast}:{self.podcast.id}:{message}")
-
-    def error(self, message: str):
-        logger.error(f"{self.podcast}:{self.podcast.id}:{message}")
-
     def fetch_image(self, image_url: Optional[str]) -> Tuple[Optional[ImageFile], str]:
         if not image_url:
             return None, ""
