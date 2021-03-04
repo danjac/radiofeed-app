@@ -1,0 +1,15 @@
+name: Docker Image CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run test suite
+        env:
+          DJANGO_SETTINGS_MODULE: radiofeed.config.settings.test
+          REDIS_URL: http://dummy-redis
+        run: docker-compose -f docker-compose.ci.yml run --rm django pytest
