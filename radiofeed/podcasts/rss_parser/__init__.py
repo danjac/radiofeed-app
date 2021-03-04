@@ -33,11 +33,8 @@ class RssParser:
     def parse(self, force_update: bool = False) -> List[Episode]:
 
         try:
-            if (
-                (etag := self.fetch_etag(self.podcast.rss))
-                and etag == self.podcast.etag
-                and not force_update
-            ):
+            etag = self.fetch_etag(self.podcast.rss)
+            if etag and etag == self.podcast.etag and not force_update:
                 return []
             feed = self.fetch_rss_feed()
         except (ValidationError, requests.RequestException) as e:
@@ -46,16 +43,22 @@ class RssParser:
             self.podcast.save()
             return []
 
-        pub_date = self.get_pub_date(feed)
-        if not pub_date:
-            return []
+        if self.sync_podcast(feed, etag, force_update):
+            return self.sync_episodes(feed)
 
-        do_update: bool = force_update or (
+        return []
+
+    def sync_podcast(self, feed: Feed, etag: Optional[str], force_update: bool) -> bool:
+
+        if not (pub_date := self.get_pub_date(feed)):
+            return False
+
+        do_update = force_update or (
             self.podcast.last_updated is None or self.podcast.last_updated < pub_date
         )
 
         if not do_update:
-            return []
+            return False
 
         if etag:
             self.podcast.etag = etag
@@ -72,25 +75,20 @@ class RssParser:
             feed.image
         )
 
-        categories_dct = get_categories_dict()
-
-        categories = [
-            categories_dct[name] for name in feed.categories if name in categories_dct
-        ]
-
-        keywords = [name for name in feed.categories if name not in categories_dct]
-        self.podcast.keywords = " ".join(keywords)
+        categories = self.extract_categories(feed)
 
         self.podcast.authors = ", ".join(feed.authors)
+        self.podcast.keywords = " ".join(self.extract_keywords(feed))
         self.podcast.extracted_text = self.extract_text(feed, categories)
-
         self.podcast.sync_error = ""
         self.podcast.num_retries = 0
-
         self.podcast.save()
 
         self.podcast.categories.set(categories)
 
+        return True
+
+    def sync_episodes(self, feed: Feed) -> List[Episode]:
         new_episodes = self.create_episodes_from_feed(feed)
 
         if new_episodes:
@@ -112,6 +110,17 @@ class RssParser:
         )
         response.raise_for_status()
         return parse_xml(response.content)
+
+    def extract_categories(self, feed: Feed) -> List[Category]:
+        categories_dct = get_categories_dict()
+
+        return [
+            categories_dct[name] for name in feed.categories if name in categories_dct
+        ]
+
+    def extract_keywords(self, feed: Feed) -> List[str]:
+        categories_dct = get_categories_dict()
+        return [name for name in feed.categories if name not in categories_dct]
 
     def extract_text(self, feed: Feed, categories: List[Category]) -> str:
         """Extract keywords from text content for recommender"""
