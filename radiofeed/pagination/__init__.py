@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 from django.conf import settings
-from django.core.paginator import InvalidPage, Paginator
+from django.core.paginator import InvalidPage, Page, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
@@ -16,7 +16,7 @@ def paginate(
     param: str = "page",
     allow_empty: bool = True,
     orphans: int = 0,
-):
+) -> Page:
 
     paginator = Paginator(
         queryset, page_size, allow_empty_first_page=allow_empty, orphans=orphans
