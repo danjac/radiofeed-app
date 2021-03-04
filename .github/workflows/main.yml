@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Run test suite
+        env:
+          DJANGO_SETTINGS_MODULE: radiofeed.config.settings.test
         run: docker-compose -f docker-compose.ci.yml run --rm django pytest
 
       - name: Build assets
