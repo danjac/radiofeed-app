@@ -99,9 +99,9 @@ def parse_description(entry: Dict) -> str:
         return ""
 
 
-def parse_image(xml: bytes, channel: Dict) -> Optional[str]:
+def parse_image(raw: bytes, channel: Dict) -> Optional[str]:
     # try itunes image first
-    soup = bs4.BeautifulSoup(xml, "lxml")
+    soup = bs4.BeautifulSoup(raw, "lxml")
     tag = soup.find("itunes:image")
     if tag and "href" in tag.attrs:
         return tag.attrs["href"]
