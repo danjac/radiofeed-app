@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandParser
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.rss_parser import RssParser
 from radiofeed.podcasts.tasks import sync_podcast_feed
 
 
@@ -22,24 +21,26 @@ class Command(BaseCommand):
             help="Sync each podcast using celery task",
         )
 
+        parser.add_argument(
+            "--force-update",
+            action="store_true",
+            help="Force update",
+        )
+
     def handle(self, *args, **options) -> None:
         podcasts = Podcast.objects.all()
 
         if options["no_pub_date"]:
             podcasts = podcasts.filter(pub_date__isnull=True)
 
+        force_update = options["force_update"]
+
         for podcast in podcasts:
             self.stdout.write(f"Syncing podcast {podcast}")
             if options["use_celery"]:
-                sync_podcast_feed.delay(rss=podcast.rss)
+                sync_podcast_feed.delay(rss=podcast.rss, force_update=force_update)
             else:
                 try:
-                    new_episodes = RssParser.parse_from_podcast(podcast)
-                    if new_episodes:
-                        self.stdout.write(
-                            self.style.SUCCESS(
-                                f"{podcast.title}: {len(new_episodes)} new episode(s)"
-                            )
-                        )
+                    sync_podcast_feed(rss=podcast.rss, force_update=force_update)
                 except Exception as e:
                     self.stdout.write(self.style.ERROR(str(e)))
