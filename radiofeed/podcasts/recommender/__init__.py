@@ -101,6 +101,9 @@ def recommendations_from_matches(matches: MatchesDict) -> Generator:
 
 def find_similarities_for_podcasts(podcasts: QuerySet, language: str) -> Generator:
 
+    if not podcasts.exists():
+        return
+
     for podcast_id, recommended in find_similarities(podcasts, language):
         for recommended_id, similarity in recommended:
             similarity = round(similarity, 2)
@@ -112,8 +115,6 @@ def find_similarities(podcasts: QuerySet, language: str) -> Generator:
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
     """
-    if not podcasts.exists():
-        return
 
     df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
 
