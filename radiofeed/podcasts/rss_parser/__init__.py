@@ -79,7 +79,7 @@ class RssParser:
         self.podcast.sync_error = ""
         self.podcast.num_retries = 0
 
-        if self.podcast.cover_image is None:
+        if not self.podcast.cover_image:
             self.podcast.cover_image = self.extract_cover_image(feed)
 
         self.podcast.save()
