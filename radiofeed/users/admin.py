@@ -12,7 +12,7 @@ class UserAdmin(auth_admin.UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     fieldsets = (
-        ("User", {"fields": ("autoplay", "send_recommendations_email")}),
+        ("User", {"fields": ("send_recommendations_email",)}),
     ) + auth_admin.UserAdmin.fieldsets
 
     list_display = ["username", "email", "is_superuser"]
