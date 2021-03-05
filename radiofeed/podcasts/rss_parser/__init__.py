@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 import requests
 
+from django.core.files.images import ImageFile
 from django.utils import timezone
 from pydantic import ValidationError
 
@@ -78,7 +79,8 @@ class RssParser:
         self.podcast.sync_error = ""
         self.podcast.num_retries = 0
 
-        self.sync_cover_image(feed.image)
+        if self.podcast.cover_image is None:
+            self.podcast.cover_image = self.extract_cover_image(feed)
 
         self.podcast.save()
 
@@ -86,21 +88,16 @@ class RssParser:
 
         return True
 
-    def sync_cover_image(self, image_url: Optional[str]) -> None:
-        if not image_url:
-            return
+    def extract_cover_image(self, feed: Feed) -> Optional[ImageFile]:
+        if not feed.image:
+            return None
 
         try:
-            etag = self.fetch_etag(image_url)
-        except requests.RequestException:
-            return
+            return fetch_image_from_url(feed.image)
+        except InvalidImageURL:
+            pass
 
-        if not self.podcast.cover_image or etag != self.podcast.cover_image_etag:
-            try:
-                self.podcast.cover_image = fetch_image_from_url(image_url)
-                self.podcast.cover_image_etag = etag
-            except InvalidImageURL:
-                pass
+        return None
 
     def sync_episodes(self, feed: Feed) -> List[Episode]:
         new_episodes = self.create_episodes_from_feed(feed)
