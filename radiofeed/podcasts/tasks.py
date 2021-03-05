@@ -8,7 +8,7 @@ from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
 from .recommender import PodcastRecommender
-from .rss_parser import RssParser
+from .rss_parser import sync_rss_feed
 
 logger = get_task_logger(__name__)
 
@@ -43,7 +43,7 @@ def sync_podcast_feed(rss: str, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        RssParser.parse_from_podcast(podcast, force_update=force_update)
+        sync_rss_feed(podcast, force_update=force_update)
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
     except requests.HTTPError as e:

@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from radiofeed.episodes.factories import EpisodeFactory
 
 from ..factories import CategoryFactory, PodcastFactory
-from ..rss_parser import RssParser, get_categories_dict
+from ..rss_parser import get_categories_dict, sync_rss_feed
 from ..rss_parser.date_parser import parse_date
 from ..rss_parser.models import Audio, Feed, Item
 
@@ -89,13 +89,11 @@ class TestParseDate:
         assert parse_date("Fri, 33 June 2020 16:58:03 +0000") is None
 
 
-class TestRssParser:
+class TestSyncRssFeed:
     def test_parse_error(self, podcast, mocker, clear_categories_cache):
         mocker.patch("requests.head", side_effect=requests.RequestException)
-        new_episodes = RssParser.parse_from_podcast(podcast)
-        assert len(new_episodes) == 0
+        assert not sync_rss_feed(podcast)
         podcast.refresh_from_db()
-
         assert podcast.num_retries == 1
 
     def test_parse(self, mocker, clear_categories_cache):
@@ -117,7 +115,7 @@ class TestRssParser:
             last_updated=None,
             pub_date=None,
         )
-        RssParser.parse_from_podcast(podcast)
+        assert sync_rss_feed(podcast)
         podcast.refresh_from_db()
 
         assert podcast.last_updated
@@ -140,7 +138,7 @@ class TestRssParser:
             pub_date=None,
         )
 
-        RssParser.parse_from_podcast(podcast)
+        assert not sync_rss_feed(podcast)
         podcast.refresh_from_db()
 
         assert podcast.pub_date is None
@@ -160,7 +158,7 @@ class TestRssParser:
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167650")
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167326")
 
-        RssParser.parse_from_podcast(podcast)
+        assert sync_rss_feed(podcast)
         podcast.refresh_from_db()
         assert podcast.episode_set.count() == 20
 

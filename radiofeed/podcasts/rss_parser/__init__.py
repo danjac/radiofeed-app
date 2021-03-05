@@ -22,165 +22,164 @@ from .xml_parser import parse_xml
 logger = logging.getLogger(__name__)
 
 
-class RssParser:
-    def __init__(self, podcast: Podcast):
-        self.podcast = podcast
+def sync_rss_feed(podcast: Podcast, force_update: bool = False) -> bool:
 
-    @classmethod
-    def parse_from_podcast(cls, podcast, **kwargs) -> List[Episode]:
-        return cls(podcast).parse(**kwargs)
-
-    def parse(self, force_update: bool = False) -> List[Episode]:
-
-        try:
-            etag = self.fetch_etag(self.podcast.rss)
-            if etag and etag == self.podcast.etag and not force_update:
-                return []
-            feed = self.fetch_rss_feed()
-        except (ValidationError, requests.RequestException) as e:
-            self.podcast.sync_error = str(e)
-            self.podcast.num_retries += 1
-            self.podcast.save()
-            return []
-
-        if self.sync_podcast(feed, etag, force_update):
-            return self.sync_episodes(feed)
-
-        return []
-
-    def sync_podcast(self, feed: Feed, etag: Optional[str], force_update: bool) -> bool:
-
-        if not (pub_date := self.get_pub_date(feed)):
+    try:
+        etag = fetch_etag(podcast.rss)
+        if etag and etag == podcast.etag and not force_update:
             return False
+        feed = fetch_rss_feed(podcast.rss)
+    except (ValidationError, requests.RequestException) as e:
+        podcast.sync_error = str(e)
+        podcast.num_retries += 1
+        podcast.save()
+        return False
 
-        do_update = force_update or (
-            self.podcast.last_updated is None or self.podcast.last_updated < pub_date
-        )
+    return sync_podcast(podcast, etag, feed, force_update)
 
-        if not do_update:
-            return False
 
-        if etag:
-            self.podcast.etag = etag
+def sync_podcast(podcast: Podcast, etag: str, feed: Feed, force_update: bool) -> bool:
 
-        self.podcast.title = feed.title
-        self.podcast.description = feed.description
-        self.podcast.link = feed.link
-        self.podcast.language = feed.language
-        self.podcast.explicit = feed.explicit
-        self.podcast.last_updated = timezone.now()
-        self.podcast.pub_date = pub_date
+    if not (pub_date := extract_pub_date(feed)):
+        return False
 
-        categories = self.extract_categories(feed)
+    do_update = force_update or (
+        podcast.last_updated is None or podcast.last_updated < pub_date
+    )
 
-        self.podcast.authors = ", ".join(feed.authors)
-        self.podcast.keywords = " ".join(self.extract_keywords(feed))
-        self.podcast.extracted_text = self.extract_text(feed, categories)
-        self.podcast.sync_error = ""
-        self.podcast.num_retries = 0
+    if not do_update:
+        return False
 
-        if not self.podcast.cover_image:
-            self.podcast.cover_image = self.extract_cover_image(feed)
+    if etag:
+        podcast.etag = etag
 
-        self.podcast.save()
+    podcast.title = feed.title
+    podcast.description = feed.description
+    podcast.link = feed.link
+    podcast.language = feed.language
+    podcast.explicit = feed.explicit
+    podcast.last_updated = timezone.now()
+    podcast.pub_date = pub_date
 
-        self.podcast.categories.set(categories)
+    categories = extract_categories(feed)
 
-        return True
+    podcast.authors = ", ".join(feed.authors)
 
-    def extract_cover_image(self, feed: Feed) -> Optional[ImageFile]:
-        if not feed.image:
-            return None
+    podcast.keywords = extract_keywords_from_feed(feed)
+    podcast.extracted_text = extract_text(podcast, feed, categories)
 
-        try:
-            return fetch_image_from_url(feed.image)
-        except InvalidImageURL:
-            pass
+    podcast.sync_error = ""
+    podcast.num_retries = 0
 
+    if not podcast.cover_image:
+        podcast.cover_image = extract_cover_image(feed)
+
+    podcast.save()
+
+    podcast.categories.set(categories)
+
+    sync_episodes(podcast, feed)
+
+    return True
+
+
+def sync_episodes(podcast: Podcast, feed: Feed) -> List[Episode]:
+    new_episodes = create_episodes_from_feed(podcast, feed)
+
+    if new_episodes:
+        podcast.pub_date = max(e.pub_date for e in new_episodes)
+        podcast.save(update_fields=["pub_date"])
+
+    return new_episodes
+
+
+def fetch_etag(url: str) -> str:
+    # fetch etag and last modified
+    head_response = requests.head(url, headers=get_headers(), timeout=5)
+    head_response.raise_for_status()
+    headers = head_response.headers
+    return headers.get("ETag", "")
+
+
+def fetch_rss_feed(rss: str) -> Feed:
+    response = requests.get(rss, headers=get_headers(), stream=True, timeout=5)
+    response.raise_for_status()
+    return parse_xml(response.content)
+
+
+def extract_pub_date(feed: Feed) -> Optional[datetime.datetime]:
+    now = timezone.now()
+    try:
+        return max([item.pub_date for item in feed.items if item.pub_date < now])
+    except ValueError:
         return None
 
-    def sync_episodes(self, feed: Feed) -> List[Episode]:
-        new_episodes = self.create_episodes_from_feed(feed)
 
-        if new_episodes:
-            self.podcast.pub_date = max(e.pub_date for e in new_episodes)
-            self.podcast.save(update_fields=["pub_date"])
+def extract_categories(feed: Feed) -> List[Category]:
+    categories_dct = get_categories_dict()
+    return [categories_dct[name] for name in feed.categories if name in categories_dct]
 
-        return new_episodes
 
-    def fetch_etag(self, url: str) -> str:
-        # fetch etag and last modified
-        head_response = requests.head(url, headers=get_headers(), timeout=5)
-        head_response.raise_for_status()
-        headers = head_response.headers
-        return headers.get("ETag", "")
+def extract_keywords_from_feed(feed: Feed) -> str:
+    categories_dct = get_categories_dict()
+    return " ".join([name for name in feed.categories if name not in categories_dct])
 
-    def fetch_rss_feed(self) -> Feed:
-        response = requests.get(
-            self.podcast.rss, headers=get_headers(), stream=True, timeout=5
-        )
-        response.raise_for_status()
-        return parse_xml(response.content)
 
-    def extract_categories(self, feed: Feed) -> List[Category]:
-        categories_dct = get_categories_dict()
-
-        return [
-            categories_dct[name] for name in feed.categories if name in categories_dct
+def extract_text(podcast: Podcast, feed: Feed, categories: List[Category]) -> str:
+    """Extract keywords from text content for recommender"""
+    text = " ".join(
+        [
+            podcast.title,
+            podcast.description,
+            podcast.keywords,
+            podcast.authors,
         ]
+        + [c.name for c in categories]
+        + [item.title for item in feed.items][:6]
+    )
+    return " ".join([kw for kw in extract_keywords(podcast.language, text)])
 
-    def extract_keywords(self, feed: Feed) -> List[str]:
-        categories_dct = get_categories_dict()
-        return [name for name in feed.categories if name not in categories_dct]
 
-    def extract_text(self, feed: Feed, categories: List[Category]) -> str:
-        """Extract keywords from text content for recommender"""
-        text = " ".join(
-            [
-                self.podcast.title,
-                self.podcast.description,
-                self.podcast.keywords,
-                self.podcast.authors,
-            ]
-            + [c.name for c in categories]
-            + [item.title for item in feed.items][:6]
-        )
-        return " ".join([kw for kw in extract_keywords(self.podcast.language, text)])
+def extract_cover_image(feed: Feed) -> Optional[ImageFile]:
+    if not feed.image:
+        return None
 
-    def get_pub_date(self, feed: Feed) -> Optional[datetime.datetime]:
-        now = timezone.now()
-        try:
-            return max([item.pub_date for item in feed.items if item.pub_date < now])
-        except ValueError:
-            return None
+    try:
+        return fetch_image_from_url(feed.image)
+    except InvalidImageURL:
+        pass
 
-    def create_episodes_from_feed(self, feed: Feed) -> List[Episode]:
-        """Parses new episodes from podcast feed."""
-        guids = self.podcast.episode_set.values_list("guid", flat=True)
-        return Episode.objects.bulk_create(
-            [
-                self.create_episode_from_item(item)
-                for item in feed.items
-                if item.guid not in guids
-            ],
-            ignore_conflicts=True,
-        )
+    return None
 
-    def create_episode_from_item(self, item: Item) -> Episode:
 
-        return Episode(
-            podcast=self.podcast,
-            pub_date=item.pub_date,
-            guid=item.guid,
-            title=item.title,
-            duration=item.duration,
-            explicit=item.explicit,
-            description=item.description,
-            keywords=item.keywords,
-            media_url=item.audio.url,
-            media_type=item.audio.type,
-            length=item.audio.length,
-        )
+def create_episodes_from_feed(podcast: Podcast, feed: Feed) -> List[Episode]:
+    """Parses new episodes from podcast feed."""
+    guids = podcast.episode_set.values_list("guid", flat=True)
+    return Episode.objects.bulk_create(
+        [
+            create_episode_from_item(podcast, item)
+            for item in feed.items
+            if item.guid not in guids
+        ],
+        ignore_conflicts=True,
+    )
+
+
+def create_episode_from_item(podcast: Podcast, item: Item) -> Episode:
+
+    return Episode(
+        podcast=podcast,
+        pub_date=item.pub_date,
+        guid=item.guid,
+        title=item.title,
+        duration=item.duration,
+        explicit=item.explicit,
+        description=item.description,
+        keywords=item.keywords,
+        media_url=item.audio.url,
+        media_type=item.audio.type,
+        length=item.audio.length,
+    )
 
 
 @lru_cache
