@@ -97,9 +97,8 @@ class RssParser:
 
         if not self.podcast.cover_image or etag != self.podcast.cover_image_etag:
             try:
-                if image_url := fetch_image_from_url(image_url):
-                    self.podcast.cover_image = image_url
-                    self.podcast.cover_image_etag = etag
+                self.podcast.cover_image = fetch_image_from_url(image_url)
+                self.podcast.cover_image_etag = etag
             except InvalidImageURL:
                 pass
 
