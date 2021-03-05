@@ -99,7 +99,7 @@ class RssParser:
             try:
                 if image_url := fetch_image_from_url(image_url):
                     self.podcast.cover_image = image_url
-                    self.podcast.cover_image_etag = etag or ""
+                    self.podcast.cover_image_etag = etag
             except InvalidImageURL:
                 pass
 
@@ -112,12 +112,12 @@ class RssParser:
 
         return new_episodes
 
-    def fetch_etag(self, url: str) -> Optional[str]:
+    def fetch_etag(self, url: str) -> str:
         # fetch etag and last modified
         head_response = requests.head(url, headers=get_headers(), timeout=5)
         head_response.raise_for_status()
         headers = head_response.headers
-        return headers.get("ETag")
+        return headers.get("ETag", "")
 
     def fetch_rss_feed(self) -> Feed:
         response = requests.get(
