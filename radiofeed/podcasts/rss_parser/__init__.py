@@ -22,7 +22,13 @@ from .xml_parser import parse_xml
 logger = logging.getLogger(__name__)
 
 
-def sync_rss_feed(podcast: Podcast, force_update: bool = False) -> bool:
+def parse_rss(podcast: Podcast, force_update: bool = False) -> bool:
+    """Parses RSS feed for podcast. If force_update is provided will
+    re-fetch all podcast info, episodes etc even if podcast does not
+    have new content (provided a valid feed is available).
+
+    Returns True if podcast is updated.
+    """
 
     feed, etag = fetch_rss_feed(podcast, force_update)
     if feed is None:
@@ -62,7 +68,7 @@ def sync_podcast(
     podcast.keywords = extract_keywords_from_feed(feed)
     podcast.extracted_text = extract_text(podcast, feed, categories)
 
-    podcast.sync_error = ""
+    podcast.parse_error = ""
     podcast.num_retries = 0
 
     if not podcast.cover_image:
@@ -123,7 +129,7 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
         response.raise_for_status()
         return parse_xml(response.content), etag
     except (ValidationError, requests.RequestException) as e:
-        podcast.sync_error = str(e)
+        podcast.parse_error = str(e)
         podcast.num_retries += 1
         podcast.save()
 

@@ -17,8 +17,8 @@ def mock_send_email(mocker):
 
 
 @pytest.fixture
-def mock_sync_rss_feed(mocker):
-    return mocker.patch("radiofeed.podcasts.tasks.sync_rss_feed")
+def mock_parse_rss(mocker):
+    return mocker.patch("radiofeed.podcasts.tasks.parse_rss")
 
 
 class TestSendRecommendationEmails:
@@ -39,14 +39,14 @@ class TestSendRecommendationEmails:
 
 
 class TestSyncPodcastFeed:
-    def test_sync_podcast_feed_if_no_podcast_found(self, mock_sync_rss_feed):
+    def test_sync_podcast_feed_if_no_podcast_found(self, mock_parse_rss):
         tasks.sync_podcast_feed(12345)
-        mock_sync_rss_feed.assert_not_called()
+        mock_parse_rss.assert_not_called()
 
-    def test_sync_podcast_feed_if_http_error(self, mock_sync_rss_feed, podcast):
-        mock_sync_rss_feed.side_effect = requests.HTTPError("Boom")
+    def test_sync_podcast_feed_if_http_error(self, mock_parse_rss, podcast):
+        mock_parse_rss.side_effect = requests.HTTPError("Boom")
         tasks.sync_podcast_feed(podcast.rss)
 
-    def test_sync_podcast_feed_no_errors(self, mock_sync_rss_feed, podcast):
+    def test_sync_podcast_feed_no_errors(self, mock_parse_rss, podcast):
         tasks.sync_podcast_feed(podcast.rss)
-        mock_sync_rss_feed.assert_called()
+        mock_parse_rss.assert_called()
