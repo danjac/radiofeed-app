@@ -35,20 +35,21 @@ def sync_rss_feed(podcast: Podcast, force_update: bool = False) -> bool:
         podcast.save()
         return False
 
-    return sync_podcast(podcast, etag, feed, force_update)
+    pub_date = extract_pub_date(feed)
+
+    if do_update(podcast, etag, pub_date, force_update):
+        return sync_podcast(podcast, feed, etag, pub_date, force_update)
+
+    return False
 
 
-def sync_podcast(podcast: Podcast, etag: str, feed: Feed, force_update: bool) -> bool:
-
-    if not (pub_date := extract_pub_date(feed)):
-        return False
-
-    do_update = force_update or (
-        podcast.last_updated is None or podcast.last_updated < pub_date
-    )
-
-    if not do_update:
-        return False
+def sync_podcast(
+    podcast: Podcast,
+    feed: Feed,
+    etag: str,
+    pub_date: Optional[datetime.datetime],
+    force_update: bool,
+) -> bool:
 
     if etag:
         podcast.etag = etag
@@ -91,6 +92,21 @@ def sync_episodes(podcast: Podcast, feed: Feed) -> List[Episode]:
         podcast.save(update_fields=["pub_date"])
 
     return new_episodes
+
+
+def do_update(
+    podcast: Podcast,
+    etag: str,
+    pub_date: Optional[datetime.datetime],
+    force_update: bool,
+) -> bool:
+    if not pub_date:
+        return False
+
+    if force_update:
+        return True
+
+    return podcast.last_updated is None or podcast.last_updated < pub_date
 
 
 def fetch_etag(url: str) -> str:
