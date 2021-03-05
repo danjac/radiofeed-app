@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from functools import lru_cache
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import requests
 
@@ -24,15 +24,8 @@ logger = logging.getLogger(__name__)
 
 def sync_rss_feed(podcast: Podcast, force_update: bool = False) -> bool:
 
-    try:
-        etag = fetch_etag(podcast.rss)
-        if etag and etag == podcast.etag and not force_update:
-            return False
-        feed = fetch_rss_feed(podcast.rss)
-    except (ValidationError, requests.RequestException) as e:
-        podcast.sync_error = str(e)
-        podcast.num_retries += 1
-        podcast.save()
+    feed, etag = fetch_rss_feed(podcast, force_update)
+    if feed is None:
         return False
 
     pub_date = extract_pub_date(feed)
@@ -117,10 +110,24 @@ def fetch_etag(url: str) -> str:
     return headers.get("ETag", "")
 
 
-def fetch_rss_feed(rss: str) -> Feed:
-    response = requests.get(rss, headers=get_headers(), stream=True, timeout=5)
-    response.raise_for_status()
-    return parse_xml(response.content)
+def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed], str]:
+
+    try:
+        etag = fetch_etag(podcast.rss)
+        if etag and etag == podcast.etag and not force_update:
+            return None, etag
+
+        response = requests.get(
+            podcast.rss, headers=get_headers(), stream=True, timeout=5
+        )
+        response.raise_for_status()
+        return parse_xml(response.content), etag
+    except (ValidationError, requests.RequestException) as e:
+        podcast.sync_error = str(e)
+        podcast.num_retries += 1
+        podcast.save()
+
+    return None, ""
 
 
 def extract_pub_date(feed: Feed) -> Optional[datetime.datetime]:
