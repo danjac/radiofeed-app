@@ -4,7 +4,7 @@ import pytest
 # Local
 from ..factories import CategoryFactory, PodcastFactory
 from ..models import Recommendation
-from ..recommender import PodcastRecommender
+from ..recommender import recommend
 from ..recommender.text_parser import clean_text, extract_keywords
 
 pytestmark = pytest.mark.django_db
@@ -18,7 +18,7 @@ class TestPodcastRecommender:
             pub_date=None,
         )
 
-        PodcastRecommender.recommend()
+        recommend()
         assert Recommendation.objects.count() == 0
 
     def test_create_podcast_recommendations_with_no_categories(self):
@@ -34,7 +34,7 @@ class TestPodcastRecommender:
             title="Philosophy things",
             keywords="thinking",
         )
-        PodcastRecommender.recommend()
+        recommend()
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)
             .order_by("similarity")
@@ -62,7 +62,7 @@ class TestPodcastRecommender:
             categories=[cat_2, cat_3],
         )
 
-        PodcastRecommender.recommend()
+        recommend()
         recommendations = (
             Recommendation.objects.filter(podcast=podcast_1)
             .order_by("similarity")

@@ -20,147 +20,131 @@ from .text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 
-
 MatchesDict = Dict[Tuple[int, int], List[float]]
 
+NUM_MATCHES: int = 12
+NUM_RECENT_EPISODES: int = 6
+MAX_PUB_DAYS: int = 90
 
-class PodcastRecommender:
-    def __init__(
-        self,
-        num_matches: int = 12,
-        num_recent_episodes: int = 6,
-        max_pub_days: int = 90,
-    ):
-        self.num_matches = num_matches
-        self.num_recent_episodes = num_recent_episodes
-        self.max_pub_days = max_pub_days
 
-    @classmethod
-    def recommend(cls, *args, **kwargs) -> None:
-        return cls(*args, **kwargs).do_recommend()
+def recommend() -> None:
+    podcasts = get_podcast_queryset()
 
-    def do_recommend(self) -> None:
+    # separate by language, so we don't get false matches
+    categories = Category.objects.order_by("name")
 
-        self.queryset = self.get_podcast_queryset()
+    languages = [
+        lang
+        for lang in podcasts.values_list(Lower("language"), flat=True).distinct()
+        if lang
+    ]
 
-        # separate by language, so we don't get false matches
-        self.categories = Category.objects.order_by("name")
+    for language in languages:
+        create_recommendations_for_language(podcasts, language, categories)
 
-        languages = [
-            lang
-            for lang in self.queryset.values_list(
-                Lower("language"), flat=True
-            ).distinct()
-            if lang
-        ]
 
-        for language in languages:
-            self.create_recommendations_for_language(language)
+def get_podcast_queryset() -> QuerySet:
+    min_pub_date = timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
+    return Podcast.objects.filter(pub_date__gt=min_pub_date).exclude(extracted_text="")
 
-    def get_podcast_queryset(self) -> QuerySet:
-        min_pub_date = timezone.now() - datetime.timedelta(days=self.max_pub_days)
-        return Podcast.objects.filter(pub_date__gt=min_pub_date).exclude(
-            extracted_text=""
-        )
 
-    def create_recommendations_for_language(self, language: str) -> None:
-        logger.info("Recommendations for %s", language)
+def create_recommendations_for_language(
+    podcasts: QuerySet, language: str, categories: QuerySet
+) -> None:
+    logger.info("Recommendations for %s", language)
 
-        matches = self.build_matches_dict(language)
+    matches = build_matches_dict(podcasts, language, categories)
 
-        with transaction.atomic():
+    with transaction.atomic():
 
-            Recommendation.objects.filter(podcast__language=language).delete()
+        Recommendation.objects.filter(podcast__language=language).delete()
 
-            if matches:
-                logger.info("Inserting %d recommendations:%s", len(matches), language)
-                Recommendation.objects.bulk_create(
-                    self.recommendations_from_matches(matches),
-                    batch_size=100,
-                    ignore_conflicts=True,
-                )
-
-    def recommendations_from_matches(self, matches: MatchesDict) -> Generator:
-        for (podcast_id, recommended_id), values in matches.items():
-            frequency = len(values)
-            similarity = statistics.median(values)
-
-            yield Recommendation(
-                podcast_id=podcast_id,
-                recommended_id=recommended_id,
-                similarity=similarity,
-                frequency=frequency,
+        if matches:
+            logger.info("Inserting %d recommendations:%s", len(matches), language)
+            Recommendation.objects.bulk_create(
+                recommendations_from_matches(matches),
+                batch_size=100,
+                ignore_conflicts=True,
             )
 
-    def build_matches_dict(self, language: str) -> MatchesDict:
 
-        matches = collections.defaultdict(list)
-        queryset = self.queryset.filter(language__iexact=language)
+def build_matches_dict(
+    podcasts: QuerySet, language: str, categories: QuerySet
+) -> MatchesDict:
 
-        # individual graded category matches
-        for category in self.categories:
-            logger.info("Recommendations for %s:%s", language, category)
-            for (
-                podcast_id,
-                recommended_id,
-                similarity,
-            ) in self.find_similarities_for_podcasts(
-                language, queryset.filter(categories=category)
-            ):
-                matches[(podcast_id, recommended_id)].append(similarity)
+    matches = collections.defaultdict(list)
+    podcasts = podcasts.filter(language__iexact=language)
 
-        return matches
-
-    def find_similarities_for_podcasts(
-        self, language: str, queryset: QuerySet
-    ) -> Generator:
-
-        for podcast_id, recommended in self.find_similarities(
-            language,
-            queryset,
+    # individual graded category matches
+    for category in categories:
+        logger.info("Recommendations for %s:%s", language, category)
+        for (podcast_id, recommended_id, similarity,) in find_similarities_for_podcasts(
+            podcasts.filter(categories=category), language
         ):
-            for recommended_id, similarity in recommended:
-                similarity = round(similarity, 2)
-                if similarity > 0:
-                    yield podcast_id, recommended_id, similarity
+            matches[(podcast_id, recommended_id)].append(similarity)
 
-    def find_similarities(self, language: str, queryset: QuerySet) -> Generator:
-        """Given a queryset, will yield tuples of
-        (id, (similar_1, similar_2, ...)) based on text content.
-        """
-        if not queryset.exists():
-            return
+    return matches
 
-        df = pandas.DataFrame(queryset.values("id", "extracted_text"))
 
-        df.drop_duplicates(inplace=True)
+def recommendations_from_matches(matches: MatchesDict) -> Generator:
+    for (podcast_id, recommended_id), values in matches.items():
+        frequency = len(values)
+        similarity = statistics.median(values)
 
-        vec = TfidfVectorizer(
-            stop_words=get_stopwords(language),
-            max_features=3000,
-            ngram_range=(1, 2),
+        yield Recommendation(
+            podcast_id=podcast_id,
+            recommended_id=recommended_id,
+            similarity=similarity,
+            frequency=frequency,
         )
 
+
+def find_similarities_for_podcasts(podcasts: QuerySet, language: str) -> Generator:
+
+    for podcast_id, recommended in find_similarities(podcasts, language):
+        for recommended_id, similarity in recommended:
+            similarity = round(similarity, 2)
+            if similarity > 0:
+                yield podcast_id, recommended_id, similarity
+
+
+def find_similarities(podcasts: QuerySet, language: str) -> Generator:
+    """Given a queryset, will yield tuples of
+    (id, (similar_1, similar_2, ...)) based on text content.
+    """
+    if not podcasts.exists():
+        return
+
+    df = pandas.DataFrame(podcasts.values("id", "extracted_text"))
+
+    df.drop_duplicates(inplace=True)
+
+    vec = TfidfVectorizer(
+        stop_words=get_stopwords(language),
+        max_features=3000,
+        ngram_range=(1, 2),
+    )
+
+    try:
+        count_matrix = vec.fit_transform(df["extracted_text"])
+    except ValueError:
+        # empty set
+        return
+
+    cosine_sim = cosine_similarity(count_matrix)
+
+    for index in df.index:
+        current_id = df.loc[index, "id"]
         try:
-            count_matrix = vec.fit_transform(df["extracted_text"])
-        except ValueError:
-            # empty set
-            return
-
-        cosine_sim = cosine_similarity(count_matrix)
-
-        for index in df.index:
-            current_id = df.loc[index, "id"]
-            try:
-                similar = list(enumerate(cosine_sim[index]))
-            except IndexError:
-                continue
-            sorted_similar = sorted(similar, key=operator.itemgetter(1), reverse=True)[
-                : self.num_matches
-            ]
-            matches = [
-                (df.loc[row, "id"], similarity)
-                for row, similarity in sorted_similar
-                if df.loc[row, "id"] != current_id
-            ]
-            yield (current_id, matches)
+            similar = list(enumerate(cosine_sim[index]))
+        except IndexError:
+            continue
+        sorted_similar = sorted(similar, key=operator.itemgetter(1), reverse=True)[
+            :NUM_MATCHES
+        ]
+        matches = [
+            (df.loc[row, "id"], similarity)
+            for row, similarity in sorted_similar
+            if df.loc[row, "id"] != current_id
+        ]
+        yield (current_id, matches)

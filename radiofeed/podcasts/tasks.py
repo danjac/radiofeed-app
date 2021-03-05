@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
-from .recommender import PodcastRecommender
+from .recommender import recommend
 from .rss_parser import sync_rss_feed
 
 logger = get_task_logger(__name__)
@@ -35,7 +35,7 @@ def sync_podcast_feeds() -> None:
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
 def create_podcast_recommendations() -> None:
-    PodcastRecommender.recommend()
+    recommend()
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
