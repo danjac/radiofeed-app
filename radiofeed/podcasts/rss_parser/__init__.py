@@ -14,10 +14,10 @@ from radiofeed.episodes.models import Episode
 
 from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
+from .feed_parser import parse_feed
 from .headers import get_headers
 from .image import InvalidImageURL, fetch_image_from_url
 from .models import Feed, Item
-from .xml_parser import parse_xml
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +127,7 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
             podcast.rss, headers=get_headers(), stream=True, timeout=5
         )
         response.raise_for_status()
-        return parse_xml(response.content), etag
+        return parse_feed(response.content), etag
     except (ValidationError, requests.RequestException) as e:
         podcast.parse_error = str(e)
         podcast.num_retries += 1
