@@ -7,7 +7,7 @@
          class="object-cover border mr-2 h-16 w-16 bg-transparent" />
     {% endif %}
     <div>
-      <a {% if result.podcast %}
+      <a {% if result.podcast and result.podcast.pub_date %}
          href="{{ result.podcast.get_absolute_url }}"
          {% else %}
          href="{{ result.itunes }}"
