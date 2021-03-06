@@ -16,12 +16,11 @@ from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.decorators import ajax_login_required, with_new_user_cta
+from radiofeed.users.decorators import ajax_login_required
 
 from .models import AudioLog, Episode, Favorite, QueueItem
 
 
-@with_new_user_cta
 def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids: List[int] = []
@@ -69,7 +68,6 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@with_new_user_cta
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
@@ -118,7 +116,6 @@ def preview(
     return redirect(episode.get_absolute_url())
 
 
-@with_new_user_cta
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:

@@ -1,6 +1,7 @@
-{% if request.show_new_user_cta %}
-<div data-controller="toggle"
-     data-toggle-target="item">
+{% if show_new_user_cta %}
+<form method="POST"
+      id="new-user-cta"
+      action="{% url 'confirm_new_user_cta' %}">
   {% csrf_token %}
   <div class="md:hidden border dark:border-gray-500 p-3 mb-3">
     {% include "account/new_user_cta/_content.html" %}
@@ -8,5 +9,5 @@
   <div class="hidden md:block">
     {% include "account/new_user_cta/_modal.html" %}
   </div>
-</div>
+</form>
 {% endif %}

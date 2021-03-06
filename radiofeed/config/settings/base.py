@@ -212,6 +212,7 @@ TEMPLATES = [
                 "radiofeed.template.context_processors.google_tracking_id",
                 "radiofeed.template.context_processors.is_dark_mode",
                 "radiofeed.template.context_processors.is_cookies_accepted",
+                "radiofeed.template.context_processors.show_new_user_cta",
                 "radiofeed.template.context_processors.search",
             ],
             "builtins": [

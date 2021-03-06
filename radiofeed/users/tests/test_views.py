@@ -66,6 +66,13 @@ class TestAcceptCookies:
         assert "accept-cookies" in resp.cookies
 
 
+class TestConfirmNewUserCTA:
+    def test_post(self, client):
+        resp = client.post(reverse("confirm_new_user_cta"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert "new-user-cta" in resp.cookies
+
+
 class TestToggleDarkMode:
     def test_post_day_mode(self, client):
         client.cookies["dark-mode"] = "true"
