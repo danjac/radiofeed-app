@@ -38,7 +38,7 @@ def sync_podcast_feeds() -> None:
         Q(last_updated__lt=timezone.now() - datetime.timedelta(hours=12))
         | Q(last_updated__isnull=True),
         num_retries__lt=3,
-    )
+    ).distinct()
     for rss in podcasts.values_list("rss", flat=True):
         sync_podcast_feed.delay(rss)
 
