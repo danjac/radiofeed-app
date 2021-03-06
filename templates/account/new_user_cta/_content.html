@@ -25,13 +25,15 @@
   </form>
   </p>
 </div>
-<ul class="list-disc list-inside mb-3 md:mb-6">
-  <li>Subscribe to podcasts</li>
-  <li>Play episodes in the integrated player</li>
-  <li>Keep track of episodes you've listened to</li>
-  <li>Add episodes to your Play Queue to listen to later</li>
-  <li>Add episodes to your Favorites</li>
-</ul>
+<div class="mb-3 md:mb-6 flex justify-center">
+  <ul class="list-disc list-inside">
+    <li>Subscribe to podcasts</li>
+    <li>Play episodes in the integrated player</li>
+    <li>Keep track of episodes you've listened to</li>
+    <li>Add episodes to your Play Queue to listen to later</li>
+    <li>Add episodes to your Favorites</li>
+  </ul>
+</div>
 <form class="flex justify-center"
       method="POST"
       action="{{ confirm_url }}">
@@ -40,5 +42,5 @@
          value="{{ request.get_full_path }}">
   {% csrf_token %}
   <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto">
-    Got it! </button>
+    Got it, thanks!</button>
 </form>
