@@ -94,6 +94,11 @@ def login_url(url: str) -> str:
     return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
+@register.filter
+def signup_url(url: str) -> str:
+    return f"{reverse('account_signup')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+
+
 @register.inclusion_tag("icons/_svg.html")
 def icon(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
     return {

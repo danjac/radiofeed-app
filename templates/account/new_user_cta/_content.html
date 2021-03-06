@@ -10,7 +10,7 @@
     {% csrf_token %}
     <input type="hidden"
            name="redirect_url"
-           value="{% url 'account_login' %}">
+           value="{{ request.get_full_path|login_url }}">
     <button class="font-semibold underline">Login</button> or
   </form>
   <form class="inline-block"
@@ -20,7 +20,7 @@
     {% csrf_token %}
     <input type="hidden"
            name="redirect_url"
-           value="{% url 'account_signup' %}">
+           value="{{ request.get_full_path|signup_url }}">
     <button class="font-semibold underline">Signup</button> to:
   </form>
   </p>
