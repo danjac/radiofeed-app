@@ -1,4 +1,5 @@
 {% url 'confirm_new_user_cta' as confirm_url %}
+{% with redirect_url=request.get_full_path %}
 <h1 class="text-xl flex justify-center mb-3 font-bold">Welcome to Audiotrails!</h1>
 <div class="mb-3 flex justify-center text-lg">
   <p>
@@ -10,7 +11,7 @@
     {% csrf_token %}
     <input type="hidden"
            name="redirect_url"
-           value="{{ request.get_full_path|login_url }}">
+           value="{{ redirect_url|login_url }}">
     <button class="font-semibold underline">Login</button> or
   </form>
   <form class="inline-block"
@@ -20,7 +21,7 @@
     {% csrf_token %}
     <input type="hidden"
            name="redirect_url"
-           value="{{ request.get_full_path|signup_url }}">
+           value="{{ redirect_url|signup_url }}">
     <button class="font-semibold underline">Signup</button> to:
   </form>
   </p>
@@ -39,8 +40,9 @@
       action="{{ confirm_url }}">
   <input type="hidden"
          name="redirect_url"
-         value="{{ request.get_full_path }}">
+         value="{{ redirect_url }}">
   {% csrf_token %}
   <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto">
     Got it, thanks!</button>
 </form>
+{% endwith %}
