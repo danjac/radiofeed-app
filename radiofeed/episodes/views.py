@@ -1,3 +1,4 @@
+import datetime
 import http
 import json
 
@@ -11,6 +12,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
@@ -25,6 +27,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids: List[int] = []
     show_promotions: bool = False
+    show_cta: bool = request.user.is_anonymous and "new-user-cta" not in request.COOKIES
 
     if request.user.is_authenticated:
         podcast_ids = list(
@@ -56,16 +59,25 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    return render_episode_list_response(
+    response = render_episode_list_response(
         request,
         episodes,
         "episodes/index.html",
         {
             "show_promotions": show_promotions,
+            "show_cta": show_cta,
             "search_url": reverse("episodes:search_episodes"),
         },
         cached=request.user.is_anonymous,
     )
+    response.set_cookie(
+        "new-user-cta",
+        value="true",
+        expires=timezone.now() + datetime.timedelta(days=30),
+        samesite="Lax",
+    )
+
+    return response
 
 
 def search_episodes(request: HttpRequest) -> HttpResponse:

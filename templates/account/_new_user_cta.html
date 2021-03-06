@@ -1,0 +1,29 @@
+<div data-controller="toggle"
+     data-toggle-target="item">
+  {% csrf_token %}
+  <div class="md:hidden border dark:border-gray-500 p-3 mb-3">
+    <h1 class="text-xl flex justify-center mb-3 font-bold">Welcome to Audiotrails!</h1>
+    <div class="mb-3 flex justify-center text-lg">
+      <p>
+        <a class="font-semibold underline"
+           href="{% url 'account_login' %}">Login</a> or <a class="font-semibold underline"
+           href="{% url 'account_signup' %}">signup</a> to:
+      </p>
+    </div>
+    <ul class="list-disc list-inside mb-3">
+      <li>Subscribe to podcasts</li>
+      <li>Play episodes in the builtin player</li>
+      <li>Keep track of episodes you've listened to</li>
+      <li>Add episodes to your Play Queue to listen to later</li>
+      <li>Add episodes to your Favorites</li>
+    </ul>
+    <div class="flex justify-center">
+      <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto"
+              data-action="toggle#toggle">
+        Got it! </button>
+    </div>
+  </div>
+  <div class="hidden md:block">
+    {% include "account/_new_user_cta_modal.html" %}
+  </div>
+</div>

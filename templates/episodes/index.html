@@ -15,6 +15,8 @@
 {% if show_promotions and user.is_authenticated %}
 <p class="text-center sm:text-left mb-3 border p-3 dark:border-gray-500">You haven't subscribed to any podcasts yet. Search for new podcasts here or on the <a class="font-semibold underline"
      href="{% url 'podcasts:categories' %}">Discover</a> page and click the "Subscribe" button to add them to your collection.</p>
+{% elif show_cta %}
+{% include "account/_new_user_cta.html" %}
 {% endif %}
 
 {% include pagination_template %}
