@@ -1,13 +1,15 @@
 - name: Update and upgrade apt packages
+  become: yes
   hosts: all
-  become: true
-  become_user: root
+  gather_facts: no
   tasks:
     - name: Run updates
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
 
 - name: Add swap
+  become: yes
   hosts: all
+  gather_facts: no
   roles:
     - geerlingguy.swap
   vars:
