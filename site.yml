@@ -1,7 +1,7 @@
 - name: Update and upgrade apt packages
   hosts: all
   become: true
-  apt:
-    upgrade: yes
-    update_cache: yes
-    cache_valid_time: 86400 #One day
+  become_user: root
+  tasks:
+    - name: Run updates
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
