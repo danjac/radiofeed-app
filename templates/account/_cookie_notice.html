@@ -1,9 +1,13 @@
 {% load i18n %}
 {% if not accept_cookies %}
-<form class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50" id="accept-cookies"
-  method="post"
-  action="{% url 'accept_cookies' %}">
+<form class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50"
+      id="accept-cookies"
+      method="post"
+      action="{% url 'accept_cookies' %}">
   {% csrf_token %}
+  <input type="hidden"
+         name="redirect_url"
+         value="{{ request.get_full_path }}">
   <div class="px-2">
     <div class="md:flex items-center">
       <p class="mb-3 md:mb-0 md:mr-4">

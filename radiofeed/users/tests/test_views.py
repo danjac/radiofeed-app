@@ -4,6 +4,7 @@ import pytest
 
 from django.conf import settings
 from django.urls import reverse
+from turbo_response.constants import TURBO_STREAM_MIME_TYPE
 
 from radiofeed.episodes.factories import (
     AudioLogFactory,
@@ -62,6 +63,13 @@ class TestDeleteAccount:
 class TestAcceptCookies:
     def test_post(self, client):
         resp = client.post(reverse("accept_cookies"))
+        assert resp.url == "/"
+        assert "accept-cookies" in resp.cookies
+
+    def test_post_turbo(self, client):
+        resp = client.post(
+            reverse("accept_cookies"), HTTP_ACCEPT=TURBO_STREAM_MIME_TYPE
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert "accept-cookies" in resp.cookies
 
@@ -69,6 +77,13 @@ class TestAcceptCookies:
 class TestConfirmNewUserCTA:
     def test_post(self, client):
         resp = client.post(reverse("confirm_new_user_cta"))
+        assert resp.url == "/"
+        assert "new-user-cta" in resp.cookies
+
+    def test_post_turbo(self, client):
+        resp = client.post(
+            reverse("confirm_new_user_cta"), HTTP_ACCEPT=TURBO_STREAM_MIME_TYPE
+        )
         assert resp.status_code == http.HTTPStatus.OK
         assert "new-user-cta" in resp.cookies
 

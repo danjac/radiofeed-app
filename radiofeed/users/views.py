@@ -72,7 +72,11 @@ def delete_account(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 def accept_cookies(request: HttpRequest) -> HttpResponse:
-    response = TurboStream("accept-cookies").remove.response()
+    response = (
+        TurboStream("accept-cookies").remove.response()
+        if request.turbo
+        else redirect(get_redirect_url(request))
+    )
     response.set_cookie(
         "accept-cookies",
         value="true",
@@ -86,13 +90,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
     dark_mode = request.COOKIES.get("dark-mode")
 
-    redirect_url = request.POST.get("redirect_url")
-    if not redirect_url or not url_has_allowed_host_and_scheme(
-        redirect_url, {request.get_host()}, request.is_secure()
-    ):
-        redirect_url = settings.HOME_URL
-
-    response = redirect(redirect_url)
+    response = redirect(get_redirect_url(request))
 
     if dark_mode:
         response.delete_cookie("dark-mode")
@@ -108,7 +106,11 @@ def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 def confirm_new_user_cta(request: HttpRequest) -> HttpResponse:
-    response = TurboStream("new-user-cta").remove.response()
+    response = (
+        TurboStream("new-user-cta").remove.response()
+        if request.turbo
+        else redirect(get_redirect_url(request))
+    )
     response.set_cookie(
         "new-user-cta",
         value="true",
@@ -116,3 +118,16 @@ def confirm_new_user_cta(request: HttpRequest) -> HttpResponse:
         samesite="Lax",
     )
     return response
+
+
+def get_redirect_url(
+    request: HttpRequest,
+    redirect_url_param: str = "redirect_url",
+    default_url=settings.HOME_URL,
+) -> str:
+    redirect_url = request.POST.get(redirect_url_param)
+    if redirect_url and url_has_allowed_host_and_scheme(
+        redirect_url, {request.get_host()}, request.is_secure()
+    ):
+        return redirect_url
+    return default_url

@@ -3,6 +3,9 @@
       id="new-user-cta"
       action="{% url 'confirm_new_user_cta' %}">
   {% csrf_token %}
+  <input type="hidden"
+         name="redirect_url"
+         value="{{ request.get_full_path }}">
   <div class="md:hidden border dark:border-gray-500 p-3 mb-3">
     {% include "account/new_user_cta/_content.html" %}
   </div>
