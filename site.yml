@@ -5,3 +5,10 @@
   tasks:
     - name: Run updates
       apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+- name: Add swap
+  hosts: all
+  roles:
+    - geerlingguy.swap
+  vars:
+    swap_file_size_mb: '2048'
