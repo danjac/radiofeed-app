@@ -4,7 +4,7 @@
 {% block navbar %}{% endblock %}
 {% block layout %}
 <div class="flex items-center sm:h-full mx-auto justify-center">
-  <div class="p-2 sm:p-6 sm:bg-gray-100 sm:dark:bg-gray-800">
+  <div class="p-2 sm:p-6 sm:bg-gray-100 sm:dark:bg-gray-900 sm:rounded">
     <div class="mb-3 flex items-center justify-center p-3">
       <img src="{% static 'img/wave.png' %}"
            height="32"
@@ -35,19 +35,20 @@
     {% endif %}
     <div class="flex justify-center">
       <div class="p-3">
-        <div class="mb-3 flex justify-center text-lg">
-          <p>
-            <a href="{% url 'account_login' %}"
-               class="font-semibold underline">Login</a> or
-            <a href="{% url 'account_signup' %}"
-               class="font-semibold underline">Signup</a>
-          </p>
+
+        <div class="flex justify-center text-center mb-3">
+          <a href="{% url 'account_signup' %}"
+             class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full">
+            Sign up</a>
         </div>
-        <div class="flex justify-center text-center">
-          <a href="{% url 'podcasts:index' %}"
-             class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto">
-            Browse podcasts</a>
+
+        <div>
+          <a href="{% url 'account_login' %}"
+             class="font-semibold underline">
+            Log in to my account
+            </a>
         </div>
+
       </div>
     </div>
   </div>
