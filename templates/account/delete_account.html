@@ -10,6 +10,7 @@
   </p>
   <form action="{% url 'delete_account' %}"
         method="post"
+        data-turbo="false"
         class="flex justify-end"
         novalidate>
     {% csrf_token %}

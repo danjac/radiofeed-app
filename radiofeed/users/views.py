@@ -66,7 +66,7 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect_303(settings.HOME_URL)
+        return redirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
 
 
