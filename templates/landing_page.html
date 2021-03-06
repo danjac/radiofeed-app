@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static podcasts %}
+{% load cache static podcasts %}
 
 {% block navbar %}{% endblock %}
 {% block layout %}
@@ -20,6 +20,7 @@
       {% url 'podcasts:search_podcasts' as search_url %}
       {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
     </div>
+    {% cache 3600 landing_page_promoted_podcasts %}
     {% get_promoted_podcasts limit=6 as podcasts %}
     {% if podcasts %}
     <div class="flex justify-center mb-6 md:mb-3">
@@ -33,6 +34,7 @@
       </div>
     </div>
     {% endif %}
+    {% endcache %}
     <div class="flex justify-center">
       <div class="p-3">
 
