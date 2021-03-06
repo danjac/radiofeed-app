@@ -1,3 +1,4 @@
+{% if request.show_new_user_cta %}
 <div data-controller="toggle"
      data-toggle-target="item">
   {% csrf_token %}
@@ -24,6 +25,7 @@
     </div>
   </div>
   <div class="hidden md:block">
-    {% include "episodes/_new_user_cta_modal.html" %}
+    {% include "account/_new_user_cta_modal.html" %}
   </div>
 </div>
+{% endif %}

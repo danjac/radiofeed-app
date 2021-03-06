@@ -14,12 +14,14 @@ from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
+from radiofeed.users.decorators import with_new_user_cta
 
 from . import itunes
 from .models import Category, Podcast, Recommendation, Subscription
 from .tasks import sync_podcast_feed
 
 
+@with_new_user_cta
 def index(request: HttpRequest) -> HttpResponse:
     subscriptions = (
         list(request.user.subscription_set.values_list("podcast", flat=True))
@@ -49,6 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
+@with_new_user_cta
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return redirect("podcasts:index")
@@ -67,6 +70,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
+@with_new_user_cta
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False
@@ -93,6 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     )
 
 
+@with_new_user_cta
 def about(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -108,6 +113,7 @@ def about(
     )
 
 
+@with_new_user_cta
 def recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -130,6 +136,7 @@ def recommendations(
     )
 
 
+@with_new_user_cta
 def episodes(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -158,6 +165,84 @@ def episodes(
             ),
         },
         cached=request.user.is_anonymous,
+    )
+
+
+@with_new_user_cta
+def categories(request: HttpRequest) -> HttpResponse:
+    categories = Category.objects.all()
+
+    if request.search:
+        categories = categories.search(request.search).order_by("-similarity", "name")
+    else:
+        categories = (
+            categories.filter(parent__isnull=True)
+            .prefetch_related(
+                Prefetch(
+                    "children",
+                    queryset=Category.objects.order_by("name"),
+                )
+            )
+            .order_by("name")
+        )
+    return TemplateResponse(
+        request,
+        "podcasts/categories.html",
+        {"categories": categories},
+    )
+
+
+@with_new_user_cta
+def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] = None):
+    category: Category = get_object_or_404(
+        Category.objects.select_related("parent"), pk=category_id
+    )
+
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+
+    if request.search:
+        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+    else:
+        podcasts = podcasts.order_by("-pub_date")
+
+    return render_podcast_list_response(
+        request,
+        podcasts,
+        "podcasts/category_detail.html",
+        {
+            "category": category,
+            "children": category.children.order_by("name"),
+        },
+        cached=True,
+    )
+
+
+def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
+    error: bool = False
+    results: itunes.SearchResultList = []
+    new_podcasts: List[Podcast] = []
+
+    category = get_object_or_404(
+        Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
+        pk=category_id,
+    )
+    try:
+        results, new_podcasts = itunes.fetch_itunes_genre(category.itunes_genre_id)
+        error = False
+    except (itunes.Timeout, itunes.Invalid):
+        error = True
+
+    for podcast in new_podcasts:
+        sync_podcast_feed.delay(rss=podcast.rss)
+
+    return TemplateResponse(
+        request,
+        "podcasts/itunes_category.html",
+        {
+            "category": category,
+            "results": results,
+            "error": error,
+        },
     )
 
 
@@ -215,82 +300,6 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
     return render_subscribe_response(request, podcast, False)
-
-
-def categories(request: HttpRequest) -> HttpResponse:
-    categories = Category.objects.all()
-
-    if request.search:
-        categories = categories.search(request.search).order_by("-similarity", "name")
-    else:
-        categories = (
-            categories.filter(parent__isnull=True)
-            .prefetch_related(
-                Prefetch(
-                    "children",
-                    queryset=Category.objects.order_by("name"),
-                )
-            )
-            .order_by("name")
-        )
-    return TemplateResponse(
-        request,
-        "podcasts/categories.html",
-        {"categories": categories},
-    )
-
-
-def category_detail(request: HttpRequest, category_id: int, slug: Optional[str] = None):
-    category: Category = get_object_or_404(
-        Category.objects.select_related("parent"), pk=category_id
-    )
-
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
-
-    if request.search:
-        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
-    else:
-        podcasts = podcasts.order_by("-pub_date")
-
-    return render_podcast_list_response(
-        request,
-        podcasts,
-        "podcasts/category_detail.html",
-        {
-            "category": category,
-            "children": category.children.order_by("name"),
-        },
-        cached=True,
-    )
-
-
-def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
-    error: bool = False
-    results: itunes.SearchResultList = []
-    new_podcasts: List[Podcast] = []
-
-    category = get_object_or_404(
-        Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
-        pk=category_id,
-    )
-    try:
-        results, new_podcasts = itunes.fetch_itunes_genre(category.itunes_genre_id)
-        error = False
-    except (itunes.Timeout, itunes.Invalid):
-        error = True
-
-    for podcast in new_podcasts:
-        sync_podcast_feed.delay(rss=podcast.rss)
-
-    return TemplateResponse(
-        request,
-        "podcasts/itunes_category.html",
-        {
-            "category": category,
-            "results": results,
-            "error": error,
-        },
-    )
 
 
 def get_podcast_or_404(podcast_id: int) -> Podcast:

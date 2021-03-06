@@ -1,4 +1,3 @@
-import datetime
 import http
 import json
 
@@ -12,17 +11,17 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.decorators import ajax_login_required
+from radiofeed.users.decorators import ajax_login_required, with_new_user_cta
 
 from .models import AudioLog, Episode, Favorite, QueueItem
 
 
+@with_new_user_cta
 def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids: List[int] = []
@@ -59,7 +58,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    response = render_episode_list_response(
+    return render_episode_list_response(
         request,
         episodes,
         "episodes/index.html",
@@ -70,16 +69,9 @@ def index(request: HttpRequest) -> HttpResponse:
         },
         cached=request.user.is_anonymous,
     )
-    response.set_cookie(
-        "new-user-cta",
-        value="true",
-        expires=timezone.now() + datetime.timedelta(days=30),
-        samesite="Lax",
-    )
-
-    return response
 
 
+@with_new_user_cta
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
@@ -128,6 +120,7 @@ def preview(
     return redirect(episode.get_absolute_url())
 
 
+@with_new_user_cta
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
