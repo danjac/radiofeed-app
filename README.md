@@ -82,8 +82,6 @@ Next add to Git and deploy:
 
 > git remote add dokku dokku@my-domain-or-ip-address:myapp
 
-First copy **.env.template** to **.env** and set the correct AWS variables.
-
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
