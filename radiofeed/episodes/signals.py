@@ -11,7 +11,7 @@ def close_player(
     user: settings.AUTH_USER_MODEL,
     request: HttpRequest,
     **kwargs
-):
+) -> None:
     # removes current player from session
     request.session.pop("player", None)
 
