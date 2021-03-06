@@ -1,6 +1,6 @@
 import datetime
 
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -53,7 +53,7 @@ class Feed(BaseModel):
     language: str = "en"
     link: constr(max_length=500) = ""  # type: ignore
     items: conlist(Item, min_items=1)  # type: ignore
-    authors: List[str]
+    authors: Set[str]
     image: Optional[str]
     categories: List[str]
 

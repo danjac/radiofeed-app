@@ -18,7 +18,7 @@ def parse_feed(raw: bytes) -> Feed:
         link=channel.get("link", ""),
         explicit=bool(channel.get("itunes_explicit", False)),
         image=parse_image(raw, channel),
-        authors=list(parse_authors(channel.get("authors", []))),
+        authors=set(parse_authors(channel.get("authors", []))),
         categories=list(parse_tags(channel.get("tags", []))),
         items=list(parse_items(result)),
     )
