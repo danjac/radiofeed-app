@@ -26,7 +26,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids: List[int] = []
     show_promotions: bool = False
-    show_cta: bool = request.user.is_anonymous and "new-user-cta" not in request.COOKIES
 
     if request.user.is_authenticated:
         podcast_ids = list(
@@ -64,7 +63,6 @@ def index(request: HttpRequest) -> HttpResponse:
         "episodes/index.html",
         {
             "show_promotions": show_promotions,
-            "show_cta": show_cta,
             "search_url": reverse("episodes:search_episodes"),
         },
         cached=request.user.is_anonymous,
