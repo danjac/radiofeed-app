@@ -7,6 +7,13 @@ from ..models import CoverImage, Podcast
 register = template.Library()
 
 
+@register.simple_tag
+def get_promoted_podcasts(limit: int):
+    return Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
+        "-pub_date"
+    )[:limit]
+
+
 @register.inclusion_tag("podcasts/_cover_image.html")
 def cover_image(
     podcast: Podcast,

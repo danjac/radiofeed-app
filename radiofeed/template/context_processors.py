@@ -18,10 +18,3 @@ def is_cookies_accepted(request: HttpRequest) -> Dict:
 
 def is_dark_mode(request: HttpRequest) -> Dict:
     return {"dark_mode": "dark-mode" in request.COOKIES}
-
-
-def show_new_user_cta(request: HttpRequest) -> Dict:
-    return {
-        "show_new_user_cta": request.user.is_anonymous
-        and "new-user-cta" not in request.COOKIES
-    }

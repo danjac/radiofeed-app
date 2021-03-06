@@ -104,22 +104,6 @@ def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
     return response
 
 
-@require_POST
-def confirm_new_user_cta(request: HttpRequest) -> HttpResponse:
-    response = (
-        TurboStream("new-user-cta").remove.response()
-        if request.turbo
-        else redirect(get_redirect_url(request))
-    )
-    response.set_cookie(
-        "new-user-cta",
-        value="true",
-        expires=timezone.now() + datetime.timedelta(days=30),
-        samesite="Lax",
-    )
-    return response
-
-
 def get_redirect_url(
     request: HttpRequest,
     redirect_url_param: str = "redirect_url",

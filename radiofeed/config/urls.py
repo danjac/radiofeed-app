@@ -2,13 +2,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 
 from radiofeed.episodes.sitemaps import EpisodeSitemap
 from radiofeed.podcasts.sitemaps import CategorySitemap, PodcastSitemap
-from radiofeed.users.views import accept_cookies, confirm_new_user_cta, toggle_dark_mode
+from radiofeed.users.views import accept_cookies, toggle_dark_mode
 
 sitemaps = {
     "categories": CategorySitemap,
@@ -19,12 +22,19 @@ sitemaps = {
 
 SITEMAPS_CACHE_TIMEOUT = 3600
 
+
+def landing_page(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect("episodes:index")
+    return TemplateResponse(request, "landing_page.html")
+
+
 urlpatterns = [
+    path("", landing_page, name="landing_page"),
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
     path("account/", include("radiofeed.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
-    path("confirm-new-user-cta/", confirm_new_user_cta, name="confirm_new_user_cta"),
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),

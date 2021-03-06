@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static podcasts %}
+
+{% block navbar %}{% endblock %}
+{% block layout %}
+<div class="flex items-center sm:h-full mx-auto justify-center">
+  <div class="p-2 sm:p-6 sm:bg-gray-100 sm:dark:bg-gray-800">
+    <div class="mb-3 flex items-center justify-center p-3">
+      <img src="{% static 'img/wave.png' %}"
+           height="32"
+           width="32"
+           alt="{{ request.site.name }}"
+           class="mr-4">
+      <h1 class="text-xl md:text-2xl text-center font-bold">
+        Audiotrails
+      </h1>
+    </div>
+    <h2 class="italic mb-3 text-center">The best little podcast app on the web</h2>
+    <div class="mb-6 flex items-center justify-center p-3">
+      {% url 'podcasts:search_podcasts' as search_url %}
+      {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
+    </div>
+    {% get_promoted_podcasts limit=6 as podcasts %}
+    {% if podcasts %}
+    <div class="flex justify-center mb-6 md:mb-3">
+      <div class="grid grid-flow-col grid-cols-3 sm:grid-cols-1 grid-rows-2 sm:grid-rows-1 gap-6 sm:gap-2">
+        {% for podcast in podcasts %}
+        <a href="{{ podcast.get_absolute_url }}"
+           class="h-20 w-20 md:h-32 md:w-32 block">
+          {% cover_image podcast=podcast lazy=False size="20" css_class="md:h-32 md:w-32" %}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="flex justify-center">
+      <div class="p-3">
+        <div class="mb-3 flex justify-center text-lg">
+          <p>
+            <a href="{% url 'account_login' %}"
+               class="font-semibold underline">Login</a> or
+            <a href="{% url 'account_signup' %}"
+               class="font-semibold underline">Signup</a>
+          </p>
+        </div>
+        <div class="flex justify-center text-center">
+          <a href="{% url 'podcasts:index' %}"
+             class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto">
+            Browse podcasts</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
