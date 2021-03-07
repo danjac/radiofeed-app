@@ -1,0 +1,14 @@
+- name: Setup Dokku
+  become: yes
+  hosts: all
+  gather_facts: no
+  vars_files: vars.yml
+  roles:
+    - dokku_bot.ansible_dokku
+
+  tasks:
+    - name: Set environment variables
+      dokku_config:
+        app: '{{ app_name }}'
+        config:
+          ADMIN_URL: '{{ admin_url }}'
