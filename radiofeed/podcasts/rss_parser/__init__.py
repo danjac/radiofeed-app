@@ -22,44 +22,46 @@ from .models import Feed, Item
 logger = logging.getLogger(__name__)
 
 
-def parse_rss(podcast: Podcast, force_update: bool = False) -> bool:
+def parse_rss(podcast: Podcast, force_update: bool = False) -> int:
     """Parses RSS feed for podcast. If force_update is provided will
     re-fetch all podcast info, episodes etc even if podcast does not
     have new content (provided a valid feed is available).
 
-    Returns True if podcast is updated.
+    Returns number of new epiosdes.
     """
 
     feed, etag = fetch_rss_feed(podcast, force_update)
     if feed is None:
-        return False
+        return 0
 
-    pub_date = extract_pub_date(feed)
+    if sync_podcast(podcast, feed, etag, force_update):
+        return sync_episodes(podcast, feed)
 
-    if do_update(podcast, etag, pub_date, force_update):
-        return sync_podcast(podcast, feed, etag, pub_date, force_update)
-
-    return False
+    return 0
 
 
 def sync_podcast(
     podcast: Podcast,
     feed: Feed,
     etag: str,
-    pub_date: Optional[datetime.datetime],
     force_update: bool,
 ) -> bool:
 
-    if etag:
-        podcast.etag = etag
+    pub_date = extract_pub_date(feed)
+
+    if not do_update(podcast, etag, pub_date, force_update):
+        return False
+
+    podcast.etag = etag
+    podcast.pub_date = pub_date
 
     podcast.title = feed.title
     podcast.description = feed.description
     podcast.link = feed.link
     podcast.language = feed.language
     podcast.explicit = feed.explicit
+
     podcast.last_updated = timezone.now()
-    podcast.pub_date = pub_date
 
     categories = extract_categories(feed)
 
@@ -78,19 +80,17 @@ def sync_podcast(
 
     podcast.categories.set(categories)
 
-    sync_episodes(podcast, feed)
-
     return True
 
 
-def sync_episodes(podcast: Podcast, feed: Feed) -> List[Episode]:
+def sync_episodes(podcast: Podcast, feed: Feed) -> int:
     new_episodes = create_episodes_from_feed(podcast, feed)
 
     if new_episodes:
         podcast.pub_date = max(e.pub_date for e in new_episodes)
         podcast.save(update_fields=["pub_date"])
 
-    return new_episodes
+    return len(new_episodes)
 
 
 def do_update(
