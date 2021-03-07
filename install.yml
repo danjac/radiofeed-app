@@ -5,11 +5,24 @@
   vars_files: vars.yml
   vars:
     dokku_version: 0.21.4
+    dokku_plugins:
+      - name: clone
+        url: https://github.com/crisward/dokku-clone.git
+      - name: letsencrypt
+        url: https://github.com/dokku/dokku-letsencrypt.git
+      - name: postgres
+        url: https://github.com/dokku/dokku-postgres.git
+      - name: redis
+        url: https://github.com/dokku/dokku-redis.git
   roles:
     - dokku_bot.ansible_dokku
       # - backups
-
   tasks:
+    - name: Add domain
+      dokku_domains:
+        app: '{{ app_name }}'
+        domains: '{{ domain_name }}'
+
     - name: Set environment variables
       dokku_config:
         app: '{{ app_name }}'
