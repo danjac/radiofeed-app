@@ -1,5 +1,16 @@
-- name: Copy postgreql backup script and make executable
-- name: Make /var/backups/dokku-postgres and transfer owner to dokku user
+- name: Copy postgreql backup script
+  ansible.builtin.copy:
+    src: '{{ role_path }}/files/postgresql-backup.sh'
+    dest: /root/postgresql-backup.sh
+    follow: yes
+
+- name: Make script executable
+  file:
+    path: /root/postgresql-backup.sh
+    owner: root
+    group: root
+    mode: 'u+x'
+
 - name: Set up cron to back up PostgreSQL once a week
   ansible.builtin.cron:
     name: 'backup pg'
