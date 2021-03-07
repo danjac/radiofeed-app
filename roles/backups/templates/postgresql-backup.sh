@@ -16,8 +16,8 @@ do
   dokku postgres:export $APP > "$DIR/$APP-db.sql"
 done
 
-# delete backup files older than 14 days
-OLD=$(find $BASE_DIR -type d -mtime +14)
+# delete backup files older than 7 days
+OLD=$(find $BASE_DIR -type d -mtime +7)
 if [ -n "$OLD" ] ; then
   echo deleting old backup files: $OLD
   echo $OLD | xargs rm -rfv
