@@ -80,7 +80,6 @@ INSTALLED_APPS = [
     "djcelery_email",
     "widget_tweaks",
     "sorl.thumbnail",
-    "channels",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [

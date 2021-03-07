@@ -3,8 +3,6 @@ beautifulsoup4
 bleach
 boto3
 celery
-channels
-channels-redis
 cryptography>=3.2
 dj-database-url
 django
@@ -27,7 +25,6 @@ future
 gunicorn
 html5lib
 httptools
-icecream
 ipython
 # https://github.com/ipython/ipython/issues/12740
 jedi==0.17.2
@@ -51,7 +48,4 @@ sentry_sdk
 sklearn
 sorl-thumbnail
 unidecode
-uvicorn
-uvloop
-websockets
 werkzeug
