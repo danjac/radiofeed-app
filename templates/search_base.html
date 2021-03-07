@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<nav class="mb-3 flex justify-between">
-  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
+<nav class="mb-3 sm:flex justify-between sm:flex-row-reverse">
+  <div class="flex items-center justify-center sm:justify-end mb-2 sm:mb-0">
+    {% include "forms/_search_form.html" with placeholder="Search..." %}
+  </div>
+  <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
     {% active_link 'podcasts:search_podcasts' as link %}
     <li class="mr-6 pb-1{% if link.match %} tab--active{% endif %}">
       <a class="link"
@@ -18,7 +21,6 @@
          href="{{ link.url }}?q={{ search }}">iTunes</a>
     </li>
   </ul>
-  {% include "forms/_search_form.html" with placeholder="Search..." %}
 </nav>
 
 
