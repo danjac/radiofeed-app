@@ -1,0 +1,9 @@
+- name: Copy postgreql backup script and make executable
+- name: Make /var/backups/dokku-postgres and transfer owner to dokku user
+- name: Set up cron to back up PostgreSQL once a week
+  ansible.builtin.cron:
+    name: 'backup pg'
+    minute: '0'
+    hour: '0'
+    weekday: '0'
+    job: '/root/postgresql-backups.sh'
