@@ -1,0 +1,6 @@
+- name: Prune containers older than 24h
+  community.docker.docker_prune:
+    containers: yes
+    containers_filters:
+      # only consider containers created more than 24 hours ago
+      until: 24h

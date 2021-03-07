@@ -3,5 +3,6 @@
   hosts: all
   gather_facts: no
   roles:
+    - docker
     - apt-update
     - geerlingguy.swap
