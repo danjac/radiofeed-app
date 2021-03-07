@@ -1,15 +1,7 @@
-{% extends "base.html" %}
+{% extends "search_base.html" %}
 
-{% block subtitle %} | Search Episodes{% endblock %}
+{% block subtitle %} | Search Episodes {% endblock %}
 
-{% block content %}
-<div class="sm:flex justify-between items-center mb-3">
-  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">
-    Search Episodes
-  </h1>
-  <div class="flex items-center justify-center sm:justify-start">
-    {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
-  </div>
-</div>
+{% block search_content %}
 {% include pagination_template %}
-{% endblock content %}
+{% endblock %}

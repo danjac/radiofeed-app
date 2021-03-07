@@ -1,21 +1,8 @@
-{% extends "base.html" %}
-{% load thumbnail pagination %}
+{% extends "search_base.html" %}
 
-{% block content %}
-<div class="sm:flex justify-between items-center mb-3">
-  <h1 class="text-lg font-bold mb-2 sm:mb-0 flex justify-center sm:justify-start">iTunes Search</h1>
-  <div class="flex items-center justify-center sm:justify-end">
-    <a class="font-semibold hover:text-blue-500 hidden sm:inline-block text-sm mr-2"
-       href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-    {% include "forms/_search_form.html" with placeholder="Search iTunes..." %}
-  </div>
-</div>
+{% block subtitle %} | Search iTunes {% endblock %}
 
-<div class="mb-3 flex justify-center sm:hidden text-sm">
-  <a class="font-semibold hover:text-blue-500"
-     href="{% url 'podcasts:search_podcasts' %}?q={{ search }}">Search Podcasts</a>
-</div>
-
+{% block search_content %}
 
 {% for result in results %}
 {% include "podcasts/_itunes_result.html" %}
@@ -26,6 +13,4 @@
 <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
 {% endif %}
 {% endfor %}
-
-
-{% endblock content %}
+{% endblock %}
