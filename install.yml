@@ -7,7 +7,7 @@
     dokku_version: 0.21.4
   roles:
     - dokku_bot.ansible_dokku
-    # TBD: add backups role
+      # - backups
 
   tasks:
     - name: Set environment variables

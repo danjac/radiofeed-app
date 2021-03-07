@@ -1,6 +1,0 @@
-- name: Update and upgrade apt packages
-  become: yes
-  hosts: all
-  gather_facts: no
-  roles:
-    - backups
