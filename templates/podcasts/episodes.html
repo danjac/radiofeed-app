@@ -4,12 +4,10 @@
 
 <div class="sm:flex items-center mb-3 justify-between">
 
-  {% if search %}
-  <div class="hidden sm:flex justify-start items-center text-sm">
-    <span class="inactive-link">Oldest First</span>
-  </div>
-  {% else %}
   <div class="flex justify-center sm:justify-start items-center text-sm mb-2 sm:mb-0">
+    {% if search %}
+    <span class="inactive-link">Oldest First</span>
+    {% else %}
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="link">Newest First</a>
@@ -17,28 +15,13 @@
     <a href="{{ request.path }}?ordering=asc"
        class="link">Oldest First</a>
     {% endif %}
+    {% endif %}
   </div>
-  {% endif %}
 
   <div class="flex items-center justify-center sm:justify-end">
-    {% if search %}
-    <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
-       class="link text-sm mr-3 hidden sm:inline-block">
-      Search all episodes
-    </a>
-    {% endif %}
     {% include "forms/_search_form.html" with placeholder="Search this podcast..." %}
   </div>
 
 </div>
-{% if search %}
-<div class="mb-3 flex justify-center sm:hidden">
-  <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
-     class="link text-sm">
-    Search all episodes
-  </a>
-</div>
-{% endif %}
-
 {% include pagination_template %}
 {% endblock %}
