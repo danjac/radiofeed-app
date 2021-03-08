@@ -8,7 +8,7 @@ from typing import Dict, Generator, List, Tuple
 
 import pandas
 
-from django.db import transaction
+from django.db import connection, transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
@@ -29,6 +29,12 @@ MAX_PUB_DAYS: int = 90
 
 def recommend() -> None:
     podcasts = get_podcast_queryset()
+
+    # clear out current recommendations
+    with connection.cursor() as cursor:
+        cursor.execute(
+            'TRUNCATE TABLE "{0}" CASCADE'.format(Recommendation._meta.db_table)
+        )
 
     # separate by language, so we don't get false matches
     categories = Category.objects.order_by("name")
@@ -56,8 +62,6 @@ def create_recommendations_for_language(
     matches = build_matches_dict(podcasts, language, categories)
 
     with transaction.atomic():
-
-        Recommendation.objects.filter(podcast__language=language).delete()
 
         if matches:
             logger.info("Inserting %d recommendations:%s", len(matches), language)

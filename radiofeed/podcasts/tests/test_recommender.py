@@ -2,7 +2,7 @@
 import pytest
 
 # Local
-from ..factories import CategoryFactory, PodcastFactory
+from ..factories import CategoryFactory, PodcastFactory, RecommendationFactory
 from ..models import Recommendation
 from ..recommender import recommend
 from ..recommender.text_parser import clean_text, extract_keywords
@@ -56,6 +56,11 @@ class TestPodcastRecommender:
             extracted_text="Another cool science podcast science physics astronomy",
             categories=[cat_1, cat_2],
         )
+
+        # ensure old recommendations are removed
+        RecommendationFactory(podcast=podcast_1)
+        RecommendationFactory(podcast=podcast_2)
+
         # must have at least one category in common
         PodcastFactory(
             extracted_text="Philosophy things thinking",
