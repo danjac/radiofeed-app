@@ -36,9 +36,9 @@ def recommend() -> None:
             'TRUNCATE TABLE "{0}" CASCADE'.format(Recommendation._meta.db_table)
         )
 
-    # separate by language, so we don't get false matches
     categories = Category.objects.order_by("name")
 
+    # separate by language, so we don't get false matches
     languages = [
         lang
         for lang in podcasts.values_list(Lower("language"), flat=True).distinct()
@@ -46,7 +46,7 @@ def recommend() -> None:
     ]
 
     for language in languages:
-        create_recommendations_for_language(podcasts, language, categories)
+        create_recommendations_for_language(podcasts, categories, language)
 
 
 def get_podcast_queryset() -> QuerySet:
@@ -55,11 +55,17 @@ def get_podcast_queryset() -> QuerySet:
 
 
 def create_recommendations_for_language(
-    podcasts: QuerySet, language: str, categories: QuerySet
+    podcasts: QuerySet,
+    categories: QuerySet,
+    language: str,
 ) -> None:
     logger.info("Recommendations for %s", language)
 
-    matches = build_matches_dict(podcasts, language, categories)
+    matches = build_matches_dict(
+        podcasts,
+        categories,
+        language,
+    )
 
     with transaction.atomic():
 
@@ -73,7 +79,9 @@ def create_recommendations_for_language(
 
 
 def build_matches_dict(
-    podcasts: QuerySet, language: str, categories: QuerySet
+    podcasts: QuerySet,
+    categories: QuerySet,
+    language: str,
 ) -> MatchesDict:
 
     matches = collections.defaultdict(list)
