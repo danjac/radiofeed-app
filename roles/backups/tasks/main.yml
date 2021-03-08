@@ -1,20 +1,20 @@
 - name: Copy postgreql backup script
   ansible.builtin.copy:
-    src: '{{ role_path }}/files/postgresql-backup.sh'
-    dest: /root/postgresql-backup.sh
+    src: '{{ role_path }}/files/pg-backup.sh'
+    dest: /root/pg-backup.sh
     follow: yes
 
 - name: Make script executable
   file:
-    path: /root/postgresql-backup.sh
+    path: /root/pg-backup.sh
     owner: root
     group: root
     mode: 'u+x'
 
 - name: Set up cron to back up PostgreSQL once a week
   ansible.builtin.cron:
-    name: 'backup pg'
+    name: 'backup postgres'
     minute: '0'
     hour: '0'
     weekday: '0'
-    job: '/root/postgresql-backups.sh'
+    job: '/root/pg-backup.sh'
