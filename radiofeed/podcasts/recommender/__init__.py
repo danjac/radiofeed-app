@@ -50,8 +50,9 @@ def recommend() -> None:
 
 
 def get_podcast_queryset() -> QuerySet:
-    min_pub_date = timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
-    return Podcast.objects.filter(pub_date__gt=min_pub_date).exclude(extracted_text="")
+    return Podcast.objects.filter(
+        pub_date__gt=timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
+    ).exclude(extracted_text="")
 
 
 def create_recommendations_for_language(
