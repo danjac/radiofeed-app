@@ -6,7 +6,8 @@
 
   <div class="flex justify-center sm:justify-start items-center text-sm mb-2 sm:mb-0">
     {% if search %}
-    <span class="inactive-link">Oldest First</span>
+    <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
+       class="link">Search All Episodes</a>
     {% else %}
     {% if ordering == 'asc' %}
     <a href="{{ request.path }}"
