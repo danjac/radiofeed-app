@@ -6,4 +6,5 @@
   roles:
     - docker
     - apt-update
+    - pg-vacuum
     - geerlingguy.swap
