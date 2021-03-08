@@ -8,14 +8,12 @@
     {% if search %}
     <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
        class="link">Search All Episodes</a>
-    {% else %}
-    {% if ordering == 'asc' %}
+    {% elif ordering == 'asc' %}
     <a href="{{ request.path }}"
        class="link">Newest First</a>
     {% else %}
     <a href="{{ request.path }}?ordering=asc"
        class="link">Oldest First</a>
-    {% endif %}
     {% endif %}
   </div>
 
