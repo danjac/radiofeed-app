@@ -16,7 +16,7 @@
         url: https://github.com/dokku/dokku-redis.git
   roles:
     - dokku_bot.ansible_dokku
-      # - backups
+    - backups
   tasks:
     - name: Add domain
       dokku_domains:
