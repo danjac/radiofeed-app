@@ -4,7 +4,7 @@
   hosts: all
   gather_facts: no
   roles:
+    - pg-vacuum
     - docker
     - apt-update
-    - pg-vacuum
     - geerlingguy.swap
