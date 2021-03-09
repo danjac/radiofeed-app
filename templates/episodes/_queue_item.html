@@ -1,7 +1,7 @@
 {% extends "episodes/_episode.html" %}
 {% block extra_attrs %}data-drag-target="draggable" data-id={{ item.id }}{% endblock %}
 {% block mobile_extra_buttons %}
-<div class="flex items-center md:hidden">
+<div class="flex items-center sm:hidden">
   {% include "forms/_remove_button.html" with css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
@@ -10,7 +10,7 @@
 </div>
 {% endblock %}
 {% block extra_buttons %}
-<div class="md:flex items-center hidden">
+<div class="sm:flex items-center hidden">
   {% include "forms/_remove_button.html" with css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
