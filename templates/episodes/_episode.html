@@ -30,7 +30,7 @@
           {% url 'episodes:episode_preview' episode.id as default_preview_url %}
           <a class="mr-2 link"
              href="{{ preview_url|default:default_preview_url }}"
-             title="Preview"
+             title="Preview for {{ episode.title }}"
              data-turbo-frame="modal">
             {% icon "ellipsis" css_class="w-6 h-6" %}
           </a>
