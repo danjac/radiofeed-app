@@ -389,6 +389,30 @@ class TestRemoveFromQueue:
         assert QueueItem.objects.filter(user=login_user).count() == 0
 
 
+class TestMoveQueueItemFirst:
+    def test_post(self, client, login_user):
+        first = QueueItemFactory(user=login_user)
+        second = QueueItemFactory(user=login_user)
+        third = QueueItemFactory(user=login_user)
+
+        items = QueueItem.objects.filter(user=login_user).order_by("position")
+
+        assert items[0] == first
+        assert items[1] == second
+        assert items[2] == third
+
+        resp = client.post(
+            reverse("episodes:move_queue_item_first", args=[third.episode.id])
+        )
+        assert resp.status_code == http.HTTPStatus.OK
+
+        items = QueueItem.objects.filter(user=login_user).order_by("position")
+
+        assert items[0] == third
+        assert items[1] == first
+        assert items[2] == second
+
+
 class TestMoveQueueItems:
     def test_post(self, client, login_user):
 

@@ -217,11 +217,7 @@ def queue(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "episodes/queue.html",
-        {
-            "queue_items": QueueItem.objects.filter(user=request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("position")
-        },
+        {"queue_items": get_queue_items(request)},
     )
 
 
@@ -255,6 +251,32 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
+def move_queue_item_first(request: HttpRequest, episode_id: int) -> HttpResponse:
+
+    qs = QueueItem.objects.filter(user=request.user)
+
+    item = get_object_or_404(qs, episode__pk=episode_id)
+    item.position = 1
+
+    for_update = [item]
+
+    for position, item in enumerate(qs.exclude(pk=item.pk).order_by("position"), 2):
+        item.position = position
+        for_update.append(item)
+
+    qs.bulk_update(for_update, ["position"])
+
+    return (
+        TurboStream("queue")
+        .replace.template(
+            "episodes/_queue.html", {"queue_items": get_queue_items(request)}
+        )
+        .response(request)
+    )
+
+
+@require_POST
+@ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
     qs = QueueItem.objects.filter(user=request.user)
@@ -274,7 +296,7 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def start_player(
     request: HttpRequest,
     episode_id: int,
@@ -290,13 +312,13 @@ def start_player(
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
     return render_player_response(request)
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
@@ -346,6 +368,14 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
     return get_object_or_404(
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
+    )
+
+
+def get_queue_items(request: HttpRequest) -> QuerySet:
+    return (
+        QueueItem.objects.filter(user=request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("position")
     )
 
 

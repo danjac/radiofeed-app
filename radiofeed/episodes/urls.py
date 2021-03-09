@@ -59,6 +59,11 @@ urlpatterns = [
     ),
     path("queue/", views.queue, name="queue"),
     path("queue/~move/", views.move_queue_items, name="move_queue_items"),
+    path(
+        "queue/~move-first/<int:episode_id>/",
+        views.move_queue_item_first,
+        name="move_queue_item_first",
+    ),
     path("queue/<int:episode_id>/~add/", views.add_to_queue, name="add_to_queue"),
     path(
         "queue/<int:episode_id>/~remove/",
