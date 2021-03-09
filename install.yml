@@ -23,6 +23,11 @@
         app: '{{ app_name }}'
         domains: '{{ domain_name }}'
 
+    - name: Clone repo
+      dokku_clone:
+        app: '{{ app_name }}'
+        repository: https://github.com/danjac/radiofeed.git
+
     - name: Set environment variables
       dokku_config:
         app: '{{ app_name }}'
