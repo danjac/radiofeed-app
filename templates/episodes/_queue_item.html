@@ -1,17 +1,8 @@
 {% extends "episodes/_episode.html" %}
 {% block extra_attrs %}data-drag-target="draggable" data-id={{ item.id }}{% endblock %}
 {% block mobile_extra_buttons %}
-<div class="flex items-center sm:hidden">
-  {% include "forms/_remove_button.html" with css_class="mr-2" title="Remove from Play Queue" %}
-  <form class="inline-block mr-2"
-        action="{% url 'episodes:move_queue_item_first' episode.id %}"
-        method="POST">
-    {% csrf_token %}
-    <button class="btn btn-secondary flex items-center p-2 border-none"
-            title="Move First">
-      {% icon "chevron_up" css_class="btn-icon h-6 w-6" %}
-    </button>
-  </form>
+<div class="flex items-center md:hidden">
+  {% include "forms/_remove_button.html" with css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
     {% icon "view_list" css_class="btn-icon h-6 w-6" %}
@@ -19,17 +10,8 @@
 </div>
 {% endblock %}
 {% block extra_buttons %}
-<div class="sm:flex items-center hidden">
-  {% include "forms/_remove_button.html" with css_class="mr-2" title="Remove from Play Queue" %}
-  <form class="inline-block mr-2"
-        action="{% url 'episodes:move_queue_item_first' episode.id %}"
-        method="POST">
-    {% csrf_token %}
-    <button class="btn btn-secondary flex items-center p-2 border-none"
-            title="Move First">
-      {% icon "chevron_up" css_class="btn-icon h-6 w-6" %}
-    </button>
-  </form>
+<div class="md:flex items-center hidden">
+  {% include "forms/_remove_button.html" with css_class="mr-3" title="Remove from Play Queue" %}
   <button class="btn btn-secondary flex items-center p-2 handle border-none"
           title="Move">
     {% icon "view_list" css_class="btn-icon h-6 w-6" %}
