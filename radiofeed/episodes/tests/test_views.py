@@ -5,7 +5,7 @@ import pytest
 
 from django.urls import reverse
 
-from radiofeed.podcasts.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.factories import FollowFactory, PodcastFactory
 
 from ..factories import (
     AudioLogFactory,
@@ -43,7 +43,7 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        SubscriptionFactory(user=login_user, podcast=episode.podcast)
+        FollowFactory(user=login_user, podcast=episode.podcast)
 
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK

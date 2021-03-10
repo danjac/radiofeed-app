@@ -5,7 +5,7 @@ from factory.django import DjangoModelFactory
 
 from radiofeed.users.factories import UserFactory
 
-from .models import Category, Podcast, Recommendation, Subscription
+from .models import Category, Follow, Podcast, Recommendation
 
 
 class CategoryFactory(DjangoModelFactory):
@@ -45,9 +45,9 @@ class RecommendationFactory(DjangoModelFactory):
         model = Recommendation
 
 
-class SubscriptionFactory(DjangoModelFactory):
+class FollowFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     podcast = factory.SubFactory(PodcastFactory)
 
     class Meta:
-        model = Subscription
+        model = Follow

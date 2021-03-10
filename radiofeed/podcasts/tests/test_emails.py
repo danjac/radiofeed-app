@@ -3,7 +3,7 @@ import pytest
 
 # Local
 from ..emails import send_recommendations_email
-from ..factories import RecommendationFactory, SubscriptionFactory
+from ..factories import FollowFactory, RecommendationFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -17,10 +17,10 @@ class TestSendRecommendationEmail:
 
     def test_send_if_sufficient_recommendations(self, user, mailoutbox):
 
-        first = SubscriptionFactory(user=user).podcast
-        second = SubscriptionFactory(user=user).podcast
+        first = FollowFactory(user=user).podcast
+        second = FollowFactory(user=user).podcast
 
-        third = SubscriptionFactory(user=user).podcast
+        third = FollowFactory(user=user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)

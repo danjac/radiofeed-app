@@ -7,9 +7,9 @@ from radiofeed.episodes.factories import AudioLogFactory, FavoriteFactory
 # Local
 from ..factories import (
     CategoryFactory,
+    FollowFactory,
     PodcastFactory,
     RecommendationFactory,
-    SubscriptionFactory,
 )
 from ..models import Category, Podcast, Recommendation
 
@@ -19,16 +19,16 @@ pytestmark = pytest.mark.django_db
 class TestRecommendationManager:
     def test_for_user(self, user):
 
-        subscribed = SubscriptionFactory(user=user).podcast
+        following = FollowFactory(user=user).podcast
         favorited = FavoriteFactory(user=user).episode.podcast
         listened = AudioLogFactory(user=user).episode.podcast
 
         received = RecommendationFactory(
-            podcast=SubscriptionFactory(user=user).podcast
+            podcast=FollowFactory(user=user).podcast
         ).recommended
         user.recommended_podcasts.add(received)
 
-        first = RecommendationFactory(podcast=subscribed).recommended
+        first = RecommendationFactory(podcast=following).recommended
         second = RecommendationFactory(podcast=favorited).recommended
         third = RecommendationFactory(podcast=listened).recommended
 
@@ -37,8 +37,8 @@ class TestRecommendationManager:
         # not connected
         RecommendationFactory()
 
-        # already subscribed, listened to or favorited
-        RecommendationFactory(recommended=subscribed)
+        # already following, listened to or favorited
+        RecommendationFactory(recommended=following)
         RecommendationFactory(recommended=favorited)
         RecommendationFactory(recommended=listened)
 
@@ -68,26 +68,24 @@ class TestPodcastManager:
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
-    def test_with_subscription_count(self):
-        subscribed_1 = PodcastFactory()
-        subscribed_2 = PodcastFactory()
-        unsubscribed = PodcastFactory()
+    def test_with_follow_count(self):
+        following_1 = PodcastFactory()
+        following_2 = PodcastFactory()
+        not_following = PodcastFactory()
 
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_1)
-        SubscriptionFactory(podcast=subscribed_2)
+        FollowFactory(podcast=following_1)
+        FollowFactory(podcast=following_1)
+        FollowFactory(podcast=following_2)
 
-        podcasts = Podcast.objects.with_subscription_count().order_by(
-            "-subscription_count"
-        )
+        podcasts = Podcast.objects.with_follow_count().order_by("-follow_count")
 
-        assert podcasts[0].id == subscribed_1.id
-        assert podcasts[1].id == subscribed_2.id
-        assert podcasts[2].id == unsubscribed.id
+        assert podcasts[0].id == following_1.id
+        assert podcasts[1].id == following_2.id
+        assert podcasts[2].id == not_following.id
 
-        assert podcasts[0].subscription_count == 2
-        assert podcasts[1].subscription_count == 1
-        assert podcasts[2].subscription_count == 0
+        assert podcasts[0].follow_count == 2
+        assert podcasts[1].follow_count == 1
+        assert podcasts[2].follow_count == 0
 
 
 class TestPodcastModel:
@@ -98,15 +96,15 @@ class TestPodcastModel:
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "podcast"
 
-    def is_subscribed_anonymous(self, podcast, anonymous_user):
-        assert not podcast.is_subscribed(anonymous_user)
+    def is_following_anonymous(self, podcast, anonymous_user):
+        assert not podcast.is_following(anonymous_user)
 
-    def is_subscribed_false(self, podcast, user):
-        assert not podcast.is_subscribed(user)
+    def is_following_false(self, podcast, user):
+        assert not podcast.is_following(user)
 
-    def is_subscribed_true(self):
-        sub = SubscriptionFactory()
-        assert sub.podcast.is_subscribed(sub.user)
+    def is_following_true(self):
+        sub = FollowFactory()
+        assert sub.podcast.is_following(sub.user)
 
     def test_get_opengraph_data(self, rf, podcast, site):
         req = rf.get("/")

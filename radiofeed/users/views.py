@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, redirect_303, render_form_response
 
 from radiofeed.episodes.models import AudioLog, Favorite, QueueItem
-from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.models import Follow
 
 from .forms import UserPreferencesForm
 
@@ -40,7 +40,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 def user_stats(request: HttpRequest) -> HttpResponse:
 
     logs = AudioLog.objects.filter(user=request.user)
-    subscriptions = Subscription.objects.filter(user=request.user)
+    follows = Follow.objects.filter(user=request.user)
     favorites = Favorite.objects.filter(user=request.user)
     queue_items = QueueItem.objects.filter(user=request.user)
 
@@ -52,7 +52,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
                 "listened": logs.count(),
                 "in_progress": logs.filter(completed__isnull=True).count(),
                 "completed": logs.filter(completed__isnull=False).count(),
-                "subscriptions": subscriptions.count(),
+                "follows": follows.count(),
                 "in_queue": queue_items.count(),
                 "favorites": favorites.count(),
             },

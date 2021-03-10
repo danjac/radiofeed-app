@@ -34,14 +34,14 @@ urlpatterns = [
         name="podcast_episodes",
     ),
     path(
-        "podcasts/<int:podcast_id>/~subscribe/",
-        views.subscribe,
-        name="subscribe",
+        "podcasts/<int:podcast_id>/~follow/",
+        views.follow,
+        name="follow",
     ),
     path(
-        "podcasts/<int:podcast_id>/~unsubscribe/",
-        views.unsubscribe,
-        name="unsubscribe",
+        "podcasts/<int:podcast_id>/~unfollow/",
+        views.unfollow,
+        name="unfollow",
     ),
     path("discover/", views.categories, name="categories"),
     path(

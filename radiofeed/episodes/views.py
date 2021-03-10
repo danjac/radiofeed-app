@@ -27,9 +27,7 @@ def index(request: HttpRequest) -> HttpResponse:
     show_promotions: bool = False
 
     if request.user.is_authenticated:
-        podcast_ids = list(
-            request.user.subscription_set.values_list("podcast", flat=True)
-        )
+        podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
 
     if not podcast_ids:
         podcast_ids = list(

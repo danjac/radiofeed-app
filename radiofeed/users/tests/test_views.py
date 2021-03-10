@@ -11,7 +11,7 @@ from radiofeed.episodes.factories import (
     EpisodeFactory,
     FavoriteFactory,
 )
-from radiofeed.podcasts.factories import SubscriptionFactory
+from radiofeed.podcasts.factories import FollowFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -31,14 +31,14 @@ class TestUserPreferences:
 
 class TestUserStats:
     def test_stats(self, client, login_user, podcast):
-        SubscriptionFactory(podcast=podcast, user=login_user)
+        FollowFactory(podcast=podcast, user=login_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
         AudioLogFactory(user=login_user)
         FavoriteFactory(user=login_user)
         resp = client.get(reverse("user_stats"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context["stats"]["subscriptions"] == 1
+        assert resp.context["stats"]["follows"] == 1
         assert resp.context["stats"]["listened"] == 3
 
 

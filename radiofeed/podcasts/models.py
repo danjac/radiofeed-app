@@ -45,7 +45,7 @@ class PlaceholderImage:
 class PodcastDOM:
     podcast: str
     cover_image: str
-    subscribe_toggle: str
+    follow_toggle: str
 
 
 _cover_image_placeholder = PlaceholderImage(
@@ -106,8 +106,8 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_subscription_count(self) -> models.QuerySet:
-        return self.annotate(subscription_count=models.Count("subscription"))
+    def with_follow_count(self) -> models.QuerySet:
+        return self.annotate(follow_count=models.Count("follow"))
 
 
 PodcastManager: models.Manager = models.Manager.from_queryset(PodcastQuerySet)
@@ -174,13 +174,13 @@ class Podcast(models.Model):
         return PodcastDOM(
             podcast=f"podcast-{self.id}",
             cover_image=f"podcast-cover-image-{self.id}",
-            subscribe_toggle=f"subscribe-toggle-{self.id}",
+            follow_toggle=f"follow-toggle-{self.id}",
         )
 
-    def is_subscribed(self, user: AnyUser) -> bool:
+    def is_following(self, user: AnyUser) -> bool:
         if user.is_anonymous:
             return False
-        return Subscription.objects.filter(podcast=self, user=user).exists()
+        return Follow.objects.filter(podcast=self, user=user).exists()
 
     def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
 
@@ -214,7 +214,7 @@ class Podcast(models.Model):
         return _cover_image_placeholder
 
 
-class Subscription(TimeStampedModel):
+class Follow(TimeStampedModel):
     id = models.BigAutoField(primary_key=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -222,25 +222,21 @@ class Subscription(TimeStampedModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                name="uniq_subscription", fields=["user", "podcast"]
-            )
+            models.UniqueConstraint(name="uniq_follow", fields=["user", "podcast"])
         ]
         indexes = [models.Index(fields=["-created"])]
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def with_subscribed(self, user: AnyUser) -> models.QuerySet:
-        """Marks which recommendations are subscribed by this user."""
+    def with_followed(self, user: AnyUser) -> models.QuerySet:
+        """Marks which recommendations are followed by this user."""
         if user.is_anonymous:
             return self.annotate(
-                is_subscribed=models.Value(False, output_field=models.BooleanField())
+                is_followed=models.Value(False, output_field=models.BooleanField())
             )
         return self.annotate(
-            is_subscribed=models.Exists(
-                Subscription.objects.filter(
-                    user=user, podcast=models.OuterRef("recommended")
-                )
+            is_followed=models.Exists(
+                Follow.objects.filter(user=user, podcast=models.OuterRef("recommended"))
             )
         )
 
@@ -261,7 +257,7 @@ class RecommendationQuerySet(models.QuerySet):
                     "episode__podcast", flat=True
                 )
             )
-            | set(user.subscription_set.values_list("podcast", flat=True))
+            | set(user.follow_set.values_list("podcast", flat=True))
         )
 
         return self.filter(podcast__pk__in=podcast_ids).exclude(

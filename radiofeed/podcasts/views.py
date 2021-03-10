@@ -16,13 +16,13 @@ from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
 
 from . import itunes
-from .models import Category, Podcast, Recommendation, Subscription
+from .models import Category, Follow, Podcast, Recommendation
 from .tasks import sync_podcast_feed
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    subscriptions = (
-        list(request.user.subscription_set.values_list("podcast", flat=True))
+    follows = (
+        list(request.user.follow_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else []
     )
@@ -30,8 +30,8 @@ def index(request: HttpRequest) -> HttpResponse:
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    if subscriptions:
-        podcasts = podcasts.filter(pk__in=subscriptions)
+    if follows:
+        podcasts = podcasts.filter(pk__in=follows)
         show_promotions = False
     else:
         podcasts = podcasts.filter(promoted=True)
@@ -266,7 +266,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
                 "podcasts/_preview.html",
                 {
                     "podcast": podcast,
-                    "is_subscribed": podcast.is_subscribed(request.user),
+                    "is_following": podcast.is_following(request.user),
                 },
             )
             .response(request)
@@ -276,21 +276,21 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_POST
 @login_required
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
     try:
-        Subscription.objects.create(user=request.user, podcast=podcast)
+        Follow.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
         pass
-    return render_subscribe_response(request, podcast, True)
+    return render_follow_response(request, podcast, True)
 
 
 @require_POST
 @login_required
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
-    Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_subscribe_response(request, podcast, False)
+    Follow.objects.filter(podcast=podcast, user=request.user).delete()
+    return render_follow_response(request, podcast, False)
 
 
 def get_podcast_or_404(podcast_id: int) -> Podcast:
@@ -306,7 +306,7 @@ def get_podcast_detail_context(
     return {
         "podcast": podcast,
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
-        "is_subscribed": podcast.is_subscribed(request.user),
+        "is_following": podcast.is_following(request.user),
         "og_data": podcast.get_opengraph_data(request),
     } | (extra_context or {})
 
@@ -325,15 +325,15 @@ def render_podcast_detail_response(
     )
 
 
-def render_subscribe_response(
-    request: HttpRequest, podcast: Podcast, is_subscribed: bool
+def render_follow_response(
+    request: HttpRequest, podcast: Podcast, is_following: bool
 ) -> HttpResponse:
 
     return (
-        TurboStream(podcast.dom.subscribe_toggle)
+        TurboStream(podcast.dom.follow_toggle)
         .replace.template(
-            "podcasts/_subscribe_toggle.html",
-            {"podcast": podcast, "is_subscribed": is_subscribed},
+            "podcasts/_follow_toggle.html",
+            {"podcast": podcast, "is_following": is_following},
         )
         .response(request=request)
     )

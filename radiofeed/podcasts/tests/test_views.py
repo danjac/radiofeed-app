@@ -9,12 +9,12 @@ from radiofeed.episodes.factories import EpisodeFactory
 from .. import itunes
 from ..factories import (
     CategoryFactory,
+    FollowFactory,
     PodcastFactory,
     RecommendationFactory,
-    SubscriptionFactory,
 )
 from ..itunes import SearchResult
-from ..models import Subscription
+from ..models import Follow
 
 pytestmark = pytest.mark.django_db
 
@@ -32,17 +32,17 @@ class TestPodcasts:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_no_subscriptions(self, login_user, client):
-        """If user has no subscriptions, just show general feed"""
+    def test_user_is_following(self, login_user, client):
+        """If user is not following any podcasts, just show general feed"""
         PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_has_subscriptions(self, client, login_user):
-        """If user has subscriptions, show only own feed"""
+    def test_user_is_not_following(self, client, login_user):
+        """If user following any podcasts, show only own feed with these pdocasts"""
         PodcastFactory.create_batch(3)
-        sub = SubscriptionFactory(user=login_user)
+        sub = FollowFactory(user=login_user)
         resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -93,17 +93,17 @@ class TestPreview:
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert not resp.context_data["is_subscribed"]
+        assert not resp.context_data["is_following"]
 
-    def test_subscribed(self, client, login_user, podcast):
+    def test_following(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
-        SubscriptionFactory(podcast=podcast, user=login_user)
+        FollowFactory(podcast=podcast, user=login_user)
         resp = client.get(
             reverse("podcasts:preview", args=[podcast.id]), HTTP_TURBO_FRAME="modal"
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["is_subscribed"]
+        assert resp.context_data["is_following"]
 
 
 class TestPodcastDetail:
@@ -115,7 +115,7 @@ class TestPodcastDetail:
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
-        assert not resp.context_data["is_subscribed"]
+        assert not resp.context_data["is_following"]
 
     def test_authenticated(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
@@ -125,18 +125,18 @@ class TestPodcastDetail:
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
-        assert not resp.context_data["is_subscribed"]
+        assert not resp.context_data["is_following"]
 
-    def test_subscribed(self, client, login_user, podcast):
+    def test_user_is_following(self, client, login_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
-        SubscriptionFactory(podcast=podcast, user=login_user)
+        FollowFactory(podcast=podcast, user=login_user)
         resp = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
         assert resp.context_data["total_episodes"] == 3
-        assert resp.context_data["is_subscribed"]
+        assert resp.context_data["is_following"]
 
 
 class TestPodcastEpisodeList:
@@ -243,26 +243,24 @@ class TestCategoryDetail:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestSubscribe:
+class TestFollow:
     def test_subscribe(self, client, login_user, podcast):
-        resp = client.post(reverse("podcasts:subscribe", args=[podcast.id]))
+        resp = client.post(reverse("podcasts:follow", args=[podcast.id]))
         assert resp.status_code == http.HTTPStatus.OK
-        assert Subscription.objects.filter(podcast=podcast, user=login_user).exists()
+        assert Follow.objects.filter(podcast=podcast, user=login_user).exists()
 
-    def test_already_subscribed(self, client, login_user, podcast):
-        SubscriptionFactory(user=login_user, podcast=podcast)
-        resp = client.post(reverse("podcasts:subscribe", args=[podcast.id]))
+    def test_already_following(self, client, login_user, podcast):
+        FollowFactory(user=login_user, podcast=podcast)
+        resp = client.post(reverse("podcasts:follow", args=[podcast.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
 
-class TestUnsubscribe:
+class TestUnfollow:
     def test_unsubscribe(self, client, login_user, podcast):
-        SubscriptionFactory(user=login_user, podcast=podcast)
-        resp = client.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
+        FollowFactory(user=login_user, podcast=podcast)
+        resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert resp.status_code == http.HTTPStatus.OK
-        assert not Subscription.objects.filter(
-            podcast=podcast, user=login_user
-        ).exists()
+        assert not Follow.objects.filter(podcast=podcast, user=login_user).exists()
 
 
 class TestITunesCategory:
