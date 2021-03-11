@@ -9,7 +9,7 @@
 {% endblock %}
 {% block modal_content %}
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
-<h2 class="mb-2">
+<h2 class="mb-3">
   <a href="{{ podcast_url }}"
      data-turbo-frame="_top"
      class="link text-sm">
@@ -17,7 +17,7 @@
   </a>
 </h2>
 
-<div class="flex items-center mb-2 space-x-2">
+<div class="flex items-center mb-3 space-x-2">
   <div>
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
@@ -36,14 +36,14 @@
 </div>
 
 {% if episode.listened %}
-<div class="text-sm space-y-2 font-semibold text-gray-500 dark:text-gray-300 mb-2">
+<div class="text-sm space-y-2 font-semibold text-gray-500 dark:text-gray-300 mb-3">
   <div>
     Listened {{ episode.listened|date }}
   </div>
 </div>
 {% endif %}
 
-<div class="flex items-center space-x-2 mb-2">
+<div class="flex items-center space-x-2 mb-3">
   {% if "queue" in actions %}
   {% include "episodes/_queue_toggle.html" %}
   {% endif %}
@@ -53,7 +53,7 @@
 </div>
 
 {% if episode.explicit %}
-<div class="text-sm font-semibold mb-2">
+<div class="text-sm font-semibold mb-3">
   This episode may contain explicit content.
 </div>
 {% endif %}
