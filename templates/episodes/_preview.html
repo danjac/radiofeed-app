@@ -33,14 +33,14 @@
   <div class="mr-2">
     <a href="{{ podcast.get_absolute_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="24" css_class="mr-2" %}
+      {% cover_image podcast lazy=False size="28" css_class="mr-2" %}
     </a>
   </div>
   <div>
     <div class="mb-3 flex items-center">
       {% include "episodes/_download.html" %}
     </div>
-    <div class="flex items-center space-x-3 mb-3">
+    <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-3">
       {% if "queue" in actions %}
       {% include "episodes/_queue_toggle.html" %}
       {% endif %}
@@ -48,7 +48,6 @@
       {% include "episodes/_favorite_toggle.html" %}
       {% endif %}
     </div>
-    {% share_buttons episode_url podcast.title|add:" | "|add:episode.title %}
   </div>
 </div>
 

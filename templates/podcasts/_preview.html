@@ -15,15 +15,16 @@
   <div class="mr-3">
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="20" css_class="mr-2" %}
+      {% cover_image podcast lazy=False size="24" css_class="mr-2" %}
     </a>
   </div>
 
-  <div class="text-sm">
+  <div>
     <div class="mb-3">
       {% include "podcasts/_follow_toggle.html" %}
     </div>
-    {% share_buttons podcast_url podcast.title %}
+
+    <div class="font-semibold text-sm text-gray-500 dark:text-gray-100">{{ podcast.pub_date|date }}</div>
   </div>
 </div>
 {% if podcast.explicit %}
