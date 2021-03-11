@@ -204,8 +204,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
-    favorites = Favorite.objects.filter(user=request.user)
-    favorites.filter(episode=episode).delete()
+    Favorite.objects.filter(user=request.user, episode=episode).delete()
 
     return render_favorite_response(request, episode, False)
 
@@ -246,8 +245,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    items = QueueItem.objects.filter(user=request.user)
-    items.filter(episode=episode).delete()
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
     return render_queue_response(request, episode, False)
 
 
