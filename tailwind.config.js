@@ -2,7 +2,7 @@
 
 const colors = require('tailwindcss/colors');
 
-const sizes = [8, 14, 16, 18, 20, 24, 28];
+const sizes = [8, 14, 16, 18, 20, 24, 28, 30, 32];
 
 module.exports = {
   darkMode: 'class',
