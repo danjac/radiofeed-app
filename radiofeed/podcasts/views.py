@@ -1,7 +1,6 @@
 from typing import Dict, List, Optional
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch, QuerySet
 from django.http import HttpRequest, HttpResponse
@@ -14,6 +13,7 @@ from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
+from radiofeed.users.decorators import ajax_login_required
 
 from . import itunes
 from .models import Category, Follow, Podcast, Recommendation
@@ -275,7 +275,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
     try:
@@ -286,7 +286,7 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(podcast_id)
     Follow.objects.filter(podcast=podcast, user=request.user).delete()

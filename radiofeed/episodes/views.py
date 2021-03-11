@@ -155,7 +155,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
@@ -188,7 +188,7 @@ def favorites(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
@@ -200,7 +200,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
@@ -224,7 +224,7 @@ def queue(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     position = (
@@ -243,7 +243,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     items = QueueItem.objects.filter(user=request.user)
@@ -272,7 +272,7 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def start_player(
     request: HttpRequest,
     episode_id: int,
@@ -288,13 +288,13 @@ def start_player(
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def stop_player(request: HttpRequest) -> HttpResponse:
     return render_player_response(request)
 
 
 @require_POST
-@login_required
+@ajax_login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
