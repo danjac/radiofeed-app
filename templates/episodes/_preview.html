@@ -16,9 +16,6 @@
     {{ podcast.title }}
   </a>
 </h2>
-<div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-2 text-sm">
-
-</div>
 
 <div class="flex items-center mb-2 space-x-2">
   <div>
@@ -37,14 +34,14 @@
   </div>
 
 </div>
+
+{% if episode.listened %}
 <div class="text-sm space-y-2 font-semibold text-gray-500 dark:text-gray-300 mb-2">
-  {% if episode.listened %}
   <div>
     Listened {{ episode.listened|date }}
   </div>
-  {% endif %}
 </div>
-
+{% endif %}
 
 <div class="flex items-center space-x-2 mb-2">
   {% if "queue" in actions %}
