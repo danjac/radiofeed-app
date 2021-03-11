@@ -20,11 +20,8 @@
   </div>
 
   <div>
-    <div class="mb-3">
-      {% include "podcasts/_follow_toggle.html" %}
-    </div>
-
-    <div class="font-semibold text-sm text-gray-500 dark:text-gray-100">{{ podcast.pub_date|date }}</div>
+    <div class="mb-3 font-semibold text-sm text-gray-500 dark:text-gray-100">{{ podcast.pub_date|date }}</div>
+    {% include "podcasts/_follow_toggle.html" %}
   </div>
 </div>
 {% if podcast.explicit %}
