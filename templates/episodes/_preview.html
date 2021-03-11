@@ -18,44 +18,41 @@
 </h2>
 <div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-2 text-sm">
 
-  <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
+</div>
 
-  {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+<div class="flex items-center mb-2 space-x-2">
+  <div>
+    <a href="{{ podcast_url }}"
+       data-turbo-frame="_top">
+      {% cover_image podcast lazy=False size="20" css_class="mr-2" %}
+    </a>
+  </div>
 
+  <div class="text-sm">
+    <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
+    <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">
+      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    </div>
+    {% include "episodes/_download.html" %}
+  </div>
+
+</div>
+<div class="text-sm space-y-2 font-semibold text-gray-500 dark:text-gray-300 mb-2">
   {% if episode.listened %}
-  <div class="ml-2 hidden sm:inline-block">
+  <div>
     Listened {{ episode.listened|date }}
   </div>
   {% endif %}
-
 </div>
-{% if episode.listened %}
-<div class="mb-2 sm:hidden text-gray-500 dark:text-gray-300 text-sm font-semibold">
-  Listened {{ episode.listened|date }}
-</div>
-{% endif %}
 
 
-<div class="flex items-center mb-2">
-  <div class="mr-2">
-    <a href="{{ podcast_url }}"
-       data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="28" css_class="mr-2" %}
-    </a>
-  </div>
-  <div>
-    <div class="mb-2 flex items-center">
-      {% include "episodes/_download.html" %}
-    </div>
-    <div class="space-y-2">
-      {% if "queue" in actions %}
-      {% include "episodes/_queue_toggle.html" %}
-      {% endif %}
-      {% if "favorite" in actions %}
-      {% include "episodes/_favorite_toggle.html" %}
-      {% endif %}
-    </div>
-  </div>
+<div class="flex items-center space-x-2 mb-2">
+  {% if "queue" in actions %}
+  {% include "episodes/_queue_toggle.html" %}
+  {% endif %}
+  {% if "favorite" in actions %}
+  {% include "episodes/_favorite_toggle.html" %}
+  {% endif %}
 </div>
 
 {% if episode.explicit %}
