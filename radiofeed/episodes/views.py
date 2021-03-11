@@ -467,8 +467,6 @@ def render_player_response(
     # remove from queue
     QueueItem.objects.filter(user=request.user, episode=next_episode).delete()
 
-    streams.append(render_queue_toggle(request, next_episode, is_queued=False))
-
     if request.user.queueitem_set.count() == 0:
         streams.append(TurboStream("queue").replace.render("All done!"))
     else:
@@ -481,6 +479,7 @@ def render_player_response(
     response = TurboStreamResponse(
         streams
         + [
+            render_queue_toggle(request, next_episode, False),
             render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
