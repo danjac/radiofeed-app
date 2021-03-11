@@ -8,8 +8,15 @@
 </a>
 {% endblock %}
 {% block modal_content %}
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url %}
-<div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-3 text-sm">
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
+<h2 class="mb-2">
+  <a href="{{ podcast_url }}"
+     data-turbo-frame="_top"
+     class="link text-sm">
+    {{ podcast.title }}
+  </a>
+</h2>
+<div class="font-semibold text-gray-500 dark:text-gray-300 flex flex-wrap items-center mb-2 text-sm">
 
   <div class="md:inline-block mr-2">{{ episode.pub_date|date }}</div>
 
@@ -23,21 +30,21 @@
 
 </div>
 {% if episode.listened %}
-<div class="mb-3 sm:hidden text-gray-500 dark:text-gray-300 text-sm font-semibold">
+<div class="mb-2 sm:hidden text-gray-500 dark:text-gray-300 text-sm font-semibold">
   Listened {{ episode.listened|date }}
 </div>
 {% endif %}
 
 
-<div class="flex items-center mb-3">
+<div class="flex items-center mb-2">
   <div class="mr-2">
-    <a href="{{ podcast.get_absolute_url }}"
+    <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
       {% cover_image podcast lazy=False size="28" css_class="mr-2" %}
     </a>
   </div>
   <div>
-    <div class="mb-3 flex items-center">
+    <div class="mb-2 flex items-center">
       {% include "episodes/_download.html" %}
     </div>
     <div class="space-y-2">
@@ -52,7 +59,7 @@
 </div>
 
 {% if episode.explicit %}
-<div class="text-sm font-semibold mb-3">
+<div class="text-sm font-semibold mb-2">
   This episode may contain explicit content.
 </div>
 {% endif %}
