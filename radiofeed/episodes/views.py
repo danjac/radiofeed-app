@@ -347,6 +347,16 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
     )
 
 
+def render_queue_toggle(request: HttpRequest, episode: Episode, is_queued: bool) -> str:
+    return (
+        TurboStream(episode.dom.queue_toggle)
+        .replace.template(
+            "episodes/_queue_toggle.html", {"episode": episode, "is_queued": is_queued}
+        )
+        .render(request=request)
+    )
+
+
 def render_player_toggle(
     request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
@@ -417,13 +427,7 @@ def render_queue_response(
     request: HttpRequest, episode: Episode, is_queued: bool
 ) -> HttpResponse:
 
-    streams: List[str] = [
-        TurboStream(episode.dom.queue_toggle)
-        .replace.template(
-            "episodes/_queue_toggle.html", {"episode": episode, "is_queued": is_queued}
-        )
-        .render(request=request),
-    ]
+    streams: List[str] = [render_queue_toggle(request, episode, is_queued)]
 
     if not is_queued and "remove" in request.POST:
         if request.user.queueitem_set.count() == 0:
@@ -463,13 +467,7 @@ def render_player_response(
     # remove from queue
     QueueItem.objects.filter(user=request.user, episode=next_episode).delete()
 
-    streams.append(
-        TurboStream(next_episode.dom.queue_toggle)
-        .replace.template(
-            "episodes/_queue_toggle.html", {"episode": next_episode, "is_queued": False}
-        )
-        .render(request=request)
-    )
+    streams.append(render_queue_toggle(request, next_episode, is_queued=False))
 
     if request.user.queueitem_set.count() == 0:
         streams.append(TurboStream("queue").replace.render("All done!"))
