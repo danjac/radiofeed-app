@@ -28,12 +28,12 @@
     </a>
   </div>
 
-  <div class="text-sm">
+  <div class="text-sm space-y-1">
+    {% include "episodes/_download.html" %}
     <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
     <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">
       {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
     </div>
-    {% include "episodes/_download.html" %}
   </div>
 
 </div>

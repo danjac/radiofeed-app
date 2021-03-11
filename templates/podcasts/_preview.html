@@ -19,9 +19,9 @@
     </a>
   </div>
 
-  <div>
-    <div class="mb-3 font-semibold text-sm text-gray-500 dark:text-gray-100">{{ podcast.pub_date|date }}</div>
+  <div class="space-y-3">
     {% include "podcasts/_follow_toggle.html" %}
+    <div class="mb-3 font-semibold text-sm text-gray-500 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
   </div>
 </div>
 {% if podcast.explicit %}

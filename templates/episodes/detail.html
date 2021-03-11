@@ -49,15 +49,15 @@
         {% cover_image podcast lazy=False size="24" %}
       </a>
     </div>
-    <div>
-      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
-      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">
-        {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-      </div>
+    <div class="space-y-1">
       <div class="flex items-center space-x-3">
         {% is_playing episode as is_playing %}
         {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
+      </div>
+      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
+      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">
+        {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
       </div>
     </div>
   </div>
