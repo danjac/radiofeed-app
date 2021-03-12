@@ -59,7 +59,9 @@ def percent(value: Optional[float], total: Optional[float]) -> float:
     if not value or not total:
         return 0
 
-    return (value / total) * 100
+    if (pc := (value / total) * 100) > 100:
+        return 100
+    return pc
 
 
 @register.filter

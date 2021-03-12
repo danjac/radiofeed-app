@@ -1,12 +1,9 @@
   <div class="font-semibold text-gray-500 dark:text-gray-300 text-sm {{ css_class|default:'' }}">
     Listened {{ episode.listened|date }}
     {% with episode.current_time|percent:duration as pc_complete %}
-    {% if pc_complete > 0.9 %}
-    {% if pc_complete >= 100 or episode.completed %}
-    (100% done)
-    {% else %}
+    {% if episode.completed %}
+    {% elif pc_complete > 0.9 %}
     ({{ pc_complete|floatformat:'0' }}% done)
-    {% endif %}
     {% endif %}
     {% endwith %}
   </div>
