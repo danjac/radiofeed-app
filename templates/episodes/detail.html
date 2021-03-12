@@ -80,7 +80,7 @@
     {% include "episodes/_favorite_toggle.html" %}
   </div>
 
-  {% if episode.explicit %}
+  {% if episode.explicit or podcast.explicit %}
   <div class="text-sm font-semibold mb-3">
     This episode may contain explicit content.
   </div>
