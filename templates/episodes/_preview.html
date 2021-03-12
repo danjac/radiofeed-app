@@ -41,18 +41,7 @@
 
 </div>
 {% if episode.listened %}
-<div class="font-semibold text-gray-500 dark:text-gray-300 text-sm mb-3">
-  Listened {{ episode.listened|date }}
-  {% with episode.current_time|percent:duration as pc_complete %}
-  {% if pc_complete %}
-  {% if pc_complete >= 100 or episode.completed %}
-  (100% done)
-  {% else %}
-  ({{ pc_complete|floatformat:'0' }}% done)
-  {% endif %}
-  {% endif %}
-  {% endwith %}
-</div>
+{% include "episodes/_listened.html" with css_class="mb-3" %}
 {% endif %}
 
 <div class="flex items-center space-x-2 mb-3">
