@@ -133,6 +133,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     authors = models.TextField(blank=True)
 
+    created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(null=True, blank=True)
 
     explicit = models.BooleanField(default=False)

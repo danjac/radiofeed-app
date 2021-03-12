@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 from django import template
+from django.db.models import QuerySet
 
 from ..models import CoverImage, Podcast
 
@@ -8,10 +9,13 @@ register = template.Library()
 
 
 @register.simple_tag
-def get_promoted_podcasts(limit: int):
-    return Podcast.objects.filter(pub_date__isnull=False, promoted=True).order_by(
-        "-pub_date"
-    )[:limit]
+def get_recently_added_podcasts(limit: int) -> QuerySet:
+    return get_available_podcasts().order_by("-created", "-pub_date")[:limit]
+
+
+@register.simple_tag
+def get_promoted_podcasts(limit: int) -> QuerySet:
+    return get_available_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
 
 @register.inclusion_tag("podcasts/_cover_image.html")
@@ -34,3 +38,9 @@ def cover_image(
         "img_size": size,
         "attrs": attrs,
     }
+
+
+def get_available_podcasts() -> QuerySet:
+    return Podcast.objects.filter(
+        pub_date__isnull=False, cover_image__isnull=False
+    ).exclude(cover_image="")
