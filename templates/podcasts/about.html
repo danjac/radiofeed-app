@@ -19,19 +19,19 @@
   {% endif %}
 
 
-  <div class="flex items-center w-full mb-3">
+  <div class="flex items-center w-full mb-3 space-x-3">
 
-    <div class="mr-3">
-      {% cover_image podcast lazy=False size="24" %}
+    <div>
+      {% cover_image podcast lazy=False size="20" %}
     </div>
 
-    <div class="text-sm">
-      <div class="mb-2">
+    <div class="text-sm space-y-2">
+      <div>
         <a class="link"
            href="{% url 'podcasts:podcast_episodes' podcast.id podcast.slug %}">
           {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
       </div>
-      <div class="flex items-center mb-2">
+      <div class="flex items-center">
         {% if podcast.link %}
         <a href="{{ podcast.link }}"
            class="link mr-2"

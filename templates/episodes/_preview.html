@@ -28,22 +28,24 @@
 
   <div class="text-sm space-y-1">
     <div class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
+    <div class="text-sm space-x-2 font-semibold text-gray-500 dark:text-gray-300 flex items-center flex-wrap mb-3">
+      <div>
+        {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+      </div>
+    </div>
+
     <div>
       {% include "episodes/_download.html" %}
     </div>
   </div>
 
 </div>
-<div class="text-sm space-x-2 font-semibold text-gray-500 dark:text-gray-300 flex items-center flex-wrap mb-3">
-  <div>
-    {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-  </div>
-  {% if episode.listened %}
-  <div>
-    Listened {{ episode.listened|date }}
-  </div>
-  {% endif %}
+{% if episode.listened %}
+<div class="text-sm mb-3 font-semibold text-gray-500 dark:text-gray-300">
+  Listened {{ episode.listened|date }}
 </div>
+{% endif %}
+
 <div class="flex items-center space-x-2 mb-3">
   {% if "queue" in actions %}
   {% include "episodes/_queue_toggle.html" %}
