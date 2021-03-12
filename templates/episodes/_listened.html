@@ -2,6 +2,7 @@
     Listened {{ episode.listened|date }}
     {% with episode.current_time|percent:duration as pc_complete %}
     {% if episode.completed %}
+    (100% done)
     {% elif pc_complete > 0.9 %}
     ({{ pc_complete|floatformat:'0' }}% done)
     {% endif %}
