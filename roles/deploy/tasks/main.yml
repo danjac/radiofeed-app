@@ -21,4 +21,4 @@
     django ./manage.py collectstatic --noinput -v 3 -i dev -i src
 
 - name: Push to Dokku
-  shell: git push deploy dokku
+  shell: git push dokku main
