@@ -155,6 +155,7 @@ class Podcast(models.Model):
 
     class Meta:
         indexes = [
+            models.Index(fields=["-created", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),
