@@ -5,17 +5,15 @@
 
 {% block content %}
 
-{% cache 3600 recently_added_podcasts %}
+{% cache 3600 recommended_podcasts request.user.username %}
+{% get_recommendations 12 as recommendations %}
+{% if recommendations|length > 6 %}
+<h2 class="text-lg font-bold mb-2 flex items-center justify-center sm:justify-start">Recommended Podcasts</h2>
+{% include "podcasts/_podcast_carousel.html" with podcasts=recommendations %}
+{% else %}
 {% get_recently_added_podcasts 12 as podcasts %}
-{% if podcasts %}
 <h2 class="text-lg font-bold mb-2 flex items-center justify-center sm:justify-start">Recently Updated Podcasts</h2>
-<div class="overflow-x-auto mb-3">
-  <div class="flex items-center space-x-3">
-    {% for podcast in podcasts %}
-    {% cover_image podcast size="32" lazy=False css_class="cursor-pointer" role="link" data_controller="link" data_action="click->link#visit" data_link_url_value=podcast.get_absolute_url %}
-    {% endfor %}
-  </div>
-</div>
+{% include "podcasts/_podcast_carousel.html" %}
 {% endif %}
 {% endcache %}
 

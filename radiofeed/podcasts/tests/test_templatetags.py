@@ -1,14 +1,44 @@
 import pytest
 
-from ..factories import PodcastFactory
+from ..factories import FollowFactory, PodcastFactory, RecommendationFactory
 from ..models import _cover_image_placeholder
 from ..templatetags.podcasts import (
     cover_image,
     get_promoted_podcasts,
     get_recently_added_podcasts,
+    get_recommendations,
 )
 
 pytestmark = pytest.mark.django_db
+
+
+class TestGetRecommendations:
+    def test_anonymous(self, rf, anonymous_user):
+        RecommendationFactory.create_batch(3)
+        req = rf.get("/")
+        req.user = anonymous_user
+        podcasts = get_recommendations({"request": req}, 6)
+        assert len(podcasts) == 0
+
+    def test_no_recommendations(self, rf, user):
+        RecommendationFactory.create_batch(3)
+        req = rf.get("/")
+        req.user = user
+        podcasts = get_recommendations({"request": req}, 6)
+
+        assert len(podcasts) == 0
+
+    def test_recommendations(self, rf, user, podcast):
+        FollowFactory(podcast=podcast, user=user)
+        RecommendationFactory.create_batch(3)
+        recommended = RecommendationFactory(podcast=podcast).recommended
+
+        req = rf.get("/")
+        req.user = user
+        podcasts = get_recommendations({"request": req}, 6)
+
+        assert len(podcasts) == 1
+        assert podcasts[0] == recommended
 
 
 class TestGetRecentlyAddedPodcasts:

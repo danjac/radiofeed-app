@@ -22,18 +22,7 @@
     </div>
     {% cache 3600 landing_page_promoted_podcasts %}
     {% get_promoted_podcasts limit=6 as podcasts %}
-    {% if podcasts %}
-    <div class="flex justify-center mb-6 md:mb-3">
-      <div class="grid grid-flow-col grid-cols-3 sm:grid-cols-1 grid-rows-2 sm:grid-rows-1 gap-6 sm:gap-2">
-        {% for podcast in podcasts %}
-        <a href="{{ podcast.get_absolute_url }}"
-           class="h-20 w-20 md:h-32 md:w-32 block">
-          {% cover_image podcast=podcast lazy=False size="20" css_class="md:h-32 md:w-32" %}
-        </a>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
+    {% include "podcasts/_podcast_carousel.html" %}
     {% endcache %}
     <div class="flex justify-center">
       <div class="p-3">
@@ -48,7 +37,7 @@
           <a href="{% url 'account_login' %}"
              class="underline link">
             Sign in to my account
-            </a>
+          </a>
         </div>
 
       </div>
