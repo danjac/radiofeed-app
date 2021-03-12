@@ -43,6 +43,8 @@
       {{ podcast.title }}
     </a>
   </h2>
+
+  <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">{{ episode.pub_date|date }}</div>
   <div class="flex items-center mb-3 space-x-3">
     <div>
       <a href="{{ podcast.get_absolute_url }}">
@@ -50,28 +52,31 @@
       </a>
     </div>
     <div class="space-y-1">
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-3 mb-3">
+        {% is_playing episode as is_playing %}
+        {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
       </div>
-      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
-      <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-1">
-        {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-      </div>
+
       <div class="mb-3">
         {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
       </div>
 
     </div>
   </div>
-  {% if episode.listened %}
-  <div class="font-semibold text-gray-500 dark:text-gray-300 text-sm mb-3">
-    Listened {{ episode.listened|date }}
-  </div>
-  {% endif %}
 
+  <div class="flex items-center flex-wrap space-x-2 mb-3">
+    <div class="text-sm font-semibold text-gray-500 dark:text-gray-300">
+      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    </div>
+
+    {% if episode.listened %}
+    <div class="font-semibold text-gray-500 dark:text-gray-300 text-sm">
+      Listened {{ episode.listened|date }}
+    </div>
+    {% endif %}
+  </div>
   <div class="flex items-center space-x-3 mb-3">
-    {% is_playing episode as is_playing %}
-    {% include "episodes/_player_toggle.html" %}
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
   </div>
@@ -81,6 +86,7 @@
     This episode may contain explicit content.
   </div>
   {% endif %}
+
 
   <div class="markdown text-sm">
     {{ episode.description|clean_html }}

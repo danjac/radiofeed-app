@@ -8,41 +8,42 @@
 </a>
 {% endblock %}
 {% block modal_content %}
+
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
-<h2 class="mb-3">
+<h2 class="text-sm mb-3">
   <a href="{{ podcast_url }}"
      data-turbo-frame="_top"
-     class="link text-sm">
-    {{ podcast.title }}
+     class="link">
+    {{ podcast.title|truncatechars:120 }}
   </a>
 </h2>
 
 <div class="flex items-center mb-3 space-x-2">
-  <div>
+  <div class="w-20">
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="20" css_class="mr-2" %}
+      {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
 
   <div class="text-sm space-y-1">
-    {% include "episodes/_download.html" %}
-    <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">{{ episode.pub_date|date }}</div>
-    <div class="font-semibold text-gray-500 dark:text-gray-300 mb-1">
-      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    <div class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
+    <div>
+      {% include "episodes/_download.html" %}
     </div>
   </div>
 
 </div>
-
-{% if episode.listened %}
-<div class="text-sm space-y-2 font-semibold text-gray-500 dark:text-gray-300 mb-3">
+<div class="text-sm space-x-2 font-semibold text-gray-500 dark:text-gray-300 flex items-center flex-wrap mb-3">
+  <div>
+    {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+  </div>
+  {% if episode.listened %}
   <div>
     Listened {{ episode.listened|date }}
   </div>
+  {% endif %}
 </div>
-{% endif %}
-
 <div class="flex items-center space-x-2 mb-3">
   {% if "queue" in actions %}
   {% include "episodes/_queue_toggle.html" %}
@@ -51,6 +52,7 @@
   {% include "episodes/_favorite_toggle.html" %}
   {% endif %}
 </div>
+
 
 {% if episode.explicit %}
 <div class="text-sm font-semibold mb-3">
