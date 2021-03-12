@@ -17,7 +17,7 @@ def get_recommendations(context: Dict, limit: int) -> List[Podcast]:
         (podcast_id, podcast_id)
         for podcast_id in Recommendation.objects.for_user(user)
         .select_related("recommended")
-        .order_by("-frequency", "-similarity", "-recommended__pub_date")
+        .order_by("-recommended__pub_date", "-similarity")
         .values_list("recommended", flat=True)
         .distinct()[:limit]
     ).keys()
