@@ -3,7 +3,7 @@
 <div class="overflow-x-auto mb-3">
   <div class="flex items-center space-x-3">
     {% for podcast in podcasts %}
-    {% cover_image podcast size="32" lazy=True css_class="cursor-pointer" role="link" data_controller="link" data_action="click->link#visit" data_link_url_value=podcast.get_absolute_url %}
+    {% cover_image podcast size="32" lazy=False css_class="cursor-pointer" role="link" data_controller="link" data_action="click->link#visit" data_link_url_value=podcast.get_absolute_url %}
     {% endfor %}
   </div>
 </div>
