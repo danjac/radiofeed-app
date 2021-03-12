@@ -64,6 +64,7 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 - **ADMIN_URL**: should be something other than "admin/". Must end in forward slash.
 - **ALLOWED_HOSTS**: enter your domains, separated by comma e.g. *mysite.com, myothersite.com*. If you are using wildcard domain with subdomains for each community you just need the wildcard domain without the "*".
 - **AWS_ACCESS_KEY_ID**: see your S3 settings
+- **AWS_SECRET_ACCESS_KEY**: see your S3 settings
 - **AWS_S3_CUSTOM_DOMAIN**: your cloudfront domain e.g. *xyz123abcdefg.cloudfront.net*
 - **AWS_STORAGE_BUCKET_NAME**: see your S3 settings
 - **BUILDPACK_URL**: should be *https://github.com/heroku/heroku-buildpack-python*
@@ -103,6 +104,14 @@ You should now be able to access the Django management commands:
 > dokku run python manage.py [command] [...options]
 
 Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run *loaddata* and *sync_podcast_feeds* commands to add the categories and podcasts and sync the RSS feeds.
+
+## Deployment
+
+This application uses Ansible for deployment (tested on version 2.10.3). Create a file *vars.yml* with the environment variables above. You should use ansible-vault to encrypt this file.
+
+To deploy just run:
+
+> ansible-playbook deploy.yml
 
 ## LICENSE
 
