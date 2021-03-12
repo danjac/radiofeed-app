@@ -1,20 +1,17 @@
 {% load episodes %}
 {% with formatted_duration=duration|format_duration %}
 
-{% if completed %}
-<span class="line-through"
-      title="Completed">
-  {{ formatted_duration }}
-</span>
-{% else %}
-
 {% with current_time|percent:duration as pc_complete %}
-{% if pc_complete %}
+{% if completed or pc_complete >= 100 %}
+<span title="Completed">
+  {{ formatted_duration }}
+  (100%)
+</span>
+{% elif pc_complete and pc_complete > 0.9 %}
 {% with formatted_pc_complete=pc_complete|floatformat:'0' %}
 <span title="{{ formatted_pc_complete }}% Completed">
   {{ formatted_duration }}
   ({{ formatted_pc_complete }}%)
-
 </span>
 {% endwith %}
 {% else %}
@@ -23,6 +20,5 @@
 </span>
 {% endif %}
 {% endwith %}
-{% endif %}
 
 {% endwith %}
