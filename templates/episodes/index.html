@@ -5,20 +5,6 @@
 
 {% block content %}
 
-{% cache 3600 new_releases_podcasts request.user.username %}
-{% get_recommendations 12 as recommendations %}
-{% if recommendations|length > 6 %}
-<h2 class="text-lg font-bold mb-2 flex items-center justify-center sm:justify-start">Recommended Podcasts</h2>
-{% include "podcasts/_podcast_carousel.html" with podcasts=recommendations %}
-{% else %}
-{% cache 3600 recently_added_podcasts %}
-{% get_recently_added_podcasts 12 as podcasts %}
-<h2 class="text-lg font-bold mb-2 flex items-center justify-center sm:justify-start">Recently Updated Podcasts</h2>
-{% include "podcasts/_podcast_carousel.html" %}
-{% endcache %}
-{% endif %}
-{% endcache %}
-
 <div class="sm:flex justify-between items-center mb-3">
   <h2 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">
     New Releases
