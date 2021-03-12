@@ -44,8 +44,13 @@
     </a>
   </h2>
   <div title="Date Published"
-       class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">
-    {{ episode.pub_date|date }}
+       class="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-300 space-x-2 mb-3">
+    <div>
+      {{ episode.pub_date|date }}
+    </div>
+    <div>
+      {{ duration|format_duration }} long
+    </div>
   </div>
   <div class="flex items-center mb-3 space-x-3">
     <div>
@@ -66,16 +71,20 @@
 
     </div>
   </div>
-  <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 space-y-1 mb-3">
-    <div>
-      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-    </div>
-    {% if episode.listened %}
-    <div>
-      Listened {{ episode.listened|date }}
-    </div>
+  {% if episode.listened %}
+  <div class="font-semibold text-gray-500 dark:text-gray-300 text-sm mb-3">
+    Listened {{ episode.listened|date }}
+    {% with episode.current_time|percent:duration as pc_complete %}
+    {% if pc_complete %}
+    {% if pc_complete >= 100 or episode.completed %}
+    (100% done)
+    {% else %}
+    ({{ pc_complete|floatformat:'0' }}% done)
     {% endif %}
+    {% endif %}
+    {% endwith %}
   </div>
+  {% endif %}
 
 
   <div class="flex items-center space-x-3 mb-3">

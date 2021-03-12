@@ -1,5 +1,5 @@
 {% extends "modal_base.html" %}
-{% load podcasts %}
+{% load episodes podcasts %}
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
    title="{{ episode.title }}"
@@ -20,11 +20,6 @@
   </a>
 </h2>
 
-{% if episode.listened %}
-<div title="Date Published"
-     class="font-semibold text-gray-500 dark:text-gray-300 text-sm mb-3">{{ episode.pub_date|date }}</div>
-{% endif %}
-
 <div class="flex items-center mb-3 space-x-2">
   <div class="w-20">
     <a href="{{ podcast_url }}"
@@ -34,24 +29,31 @@
   </div>
 
   <div class="text-sm space-y-1">
-    {% if not episode.listened %}
     <div title="Date Published"
          class="font-semibold text-gray-500 dark:text-gray-300 text-sm">{{ episode.pub_date|date }}</div>
-    {% endif %}
     <div class="font-semibold text-gray-500 dark:text-gray-300">
-      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+      {{ duration|format_duration }} long
     </div>
-    {% if episode.listened %}
-    <div class="font-semibold text-gray-500 dark:text-gray-300">
-      Listened {{ episode.listened|date }}
-    </div>
-    {% endif %}
     <div>
       {% include "episodes/_download.html" %}
     </div>
   </div>
 
 </div>
+{% if episode.listened %}
+<div class="font-semibold text-gray-500 dark:text-gray-300 text-sm mb-3">
+  Listened {{ episode.listened|date }}
+  {% with episode.current_time|percent:duration as pc_complete %}
+  {% if pc_complete %}
+  {% if pc_complete >= 100 or episode.completed %}
+  (100% done)
+  {% else %}
+  ({{ pc_complete|floatformat:'0' }}% done)
+  {% endif %}
+  {% endif %}
+  {% endwith %}
+</div>
+{% endif %}
 
 <div class="flex items-center space-x-2 mb-3">
   {% if "queue" in actions %}
