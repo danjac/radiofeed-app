@@ -1,0 +1,6 @@
+- name: Run unit tests
+  shell: |
+    docker-compose -f {{compose_file}} run --rm \
+    -e SECRET_KEY="{{secret_key}}" \
+    -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.test \
+    django pytest --reuse-db
