@@ -43,11 +43,9 @@
       {{ podcast.title }}
     </a>
   </h2>
-  <div class="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">
-    <div>
-      {{ episode.pub_date|date }}
-      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
-    </div>
+  <div title="Date Published"
+       class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">
+    {{ episode.pub_date|date }}
   </div>
   <div class="flex items-center mb-3 space-x-3">
     <div>
@@ -68,11 +66,16 @@
 
     </div>
   </div>
-  {% if episode.listened %}
-  <div class="text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">
-    Listened {{ episode.listened|date }}
+  <div class="flex flex-wrap items-center space-x-2 text-sm font-semibold text-gray-500 dark:text-gray-300 mb-3">
+    <div>
+      {% include "episodes/_current_time.html" with current_time=episode.current_time completed=episode.completed %}
+    </div>
+    {% if episode.listened %}
+    <div>
+      Listened {{ episode.listened|date }}
+    </div>
+    {% endif %}
   </div>
-  {% endif %}
 
 
   <div class="flex items-center space-x-3 mb-3">

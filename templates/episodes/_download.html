@@ -1,4 +1,5 @@
 <a class="text-sm underline link {{ css_class|default:'' }}"
+   title="Download and play on your device"
    download
    href="{{ episode.media_url }}">
   {% with file_size=episode.get_file_size %}
