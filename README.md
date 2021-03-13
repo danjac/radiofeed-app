@@ -107,7 +107,7 @@ Use the Django shell or relevant commands to set up an admin user, and set the d
 
 ## Deployment
 
-This application uses Ansible for deployment (tested on version 2.10.3). Create a file *vars.yml* with the environment variables above. You should use ansible-vault to encrypt this file.
+This application uses Ansible for deployment (tested on version 2.10.3). Create a file *vars.yml* with the environment variables above. You can copy the file *vars.yml.template*. You should use ansible-vault to encrypt this file.
 
 To deploy just run:
 
