@@ -47,7 +47,7 @@
           Discover
         </a>
       </li>
-
+      {% if user.is_authenticated %}
       <li class="py-2">
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
@@ -85,7 +85,6 @@
         </a>
       </li>
 
-      {% if user.is_authenticated %}
       <li class="py-2 md:hidden">
         <form method="post"
               action="{% url 'account_logout' %}"
