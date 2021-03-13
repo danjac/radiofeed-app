@@ -518,9 +518,10 @@ def render_player_response(
         return response
 
     # remove from queue
-    get_queue_items(request).filter(episode=next_episode).delete()
+    queue_items = get_queue_items(request)
+    queue_items.filter(episode=next_episode).delete()
 
-    if request.user.queueitem_set.count() == 0:
+    if queue_items.count() == 0:
         streams.append(TurboStream("queue").replace.render("All done!"))
     else:
         streams.append(TurboStream(next_episode.dom.queue).remove.render())
