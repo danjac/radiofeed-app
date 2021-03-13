@@ -242,7 +242,7 @@ def queue(request: HttpRequest) -> HttpResponse:
         request,
         "episodes/queue.html",
         {
-            "queue_items": QueueItem.objects.filter(user=request.user)
+            "queue_items": get_queue_items(request)
             .select_related("episode", "episode__podcast")
             .order_by("position")
         },
@@ -255,7 +255,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(episode_id, with_podcast=True)
 
-    items = QueueItem.objects.filter(user=request.user)
+    items = get_queue_items(request)
     play_next = request.POST.get("next") == "true"
 
     if play_next:
@@ -297,7 +297,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
-    items = QueueItem.objects.filter(user=request.user)
+    items = get_queue_items(request)
     items.filter(episode=episode).delete()
 
     streams: List[str] = [render_queue_toggle(request, episode, is_queued=False)]
@@ -318,7 +318,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
-    qs = QueueItem.objects.filter(user=request.user)
+    qs = get_queue_items(request)
     items = qs.in_bulk()
     for_update = []
 
@@ -363,7 +363,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     or closes player if queue empty."""
 
     next_item = (
-        QueueItem.objects.filter(user=request.user)
+        get_queue_items(request)
         .select_related("episode", "episode__podcast")
         .order_by("position")
         .first()
@@ -411,6 +411,10 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
+
+
+def get_queue_items(request: HttpRequest) -> QuerySet:
+    return QueueItem.objects.filter(user=request.user)
 
 
 def render_queue_toggle(request: HttpRequest, episode: Episode, is_queued: bool) -> str:
@@ -501,7 +505,7 @@ def render_player_response(
         return response
 
     # remove from queue
-    QueueItem.objects.filter(user=request.user, episode=next_episode).delete()
+    get_queue_items(request).filter(episode=next_episode).delete()
 
     if request.user.queueitem_set.count() == 0:
         streams.append(TurboStream("queue").replace.render("All done!"))
