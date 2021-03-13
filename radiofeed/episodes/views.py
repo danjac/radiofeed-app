@@ -1,7 +1,7 @@
 import http
 import json
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -89,14 +89,13 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 def preview(
     request: HttpRequest,
     episode_id: int,
-    actions: Tuple[str, ...] = ("favorite", "queue"),
 ) -> HttpResponse:
     episode = get_episode_detail_or_404(request, episode_id)
 
     if request.turbo.frame:
 
-        is_favorited = "favorite" in actions and episode.is_favorited(request.user)
-        is_queued = "queue" in actions and episode.is_queued(request.user)
+        is_favorited = episode.is_favorited(request.user)
+        is_queued = episode.is_queued(request.user)
 
         return (
             TurboFrame(request.turbo.frame)
@@ -104,7 +103,6 @@ def preview(
                 "episodes/_preview.html",
                 {
                     "episode": episode,
-                    "actions": actions,
                     "is_favorited": is_favorited,
                     "is_queued": is_queued,
                 },

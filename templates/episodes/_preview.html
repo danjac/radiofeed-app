@@ -49,12 +49,8 @@
   </div>
   {% if user.is_authenticated %}
   <div class="space-y-3">
-    {% if "queue" in actions %}
     {% include "episodes/_queue_toggle.html" %}
-    {% endif %}
-    {% if "favorite" in actions %}
     {% include "episodes/_favorite_toggle.html" %}
-    {% endif %}
   </div>
   {% else %}
   <div class="text-sm space-y-1">
