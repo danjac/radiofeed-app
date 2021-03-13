@@ -296,11 +296,13 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+
+    items = QueueItem.objects.filter(user=request.user)
+    items.filter(episode=episode).delete()
 
     streams: List[str] = [render_queue_toggle(request, episode, is_queued=False)]
 
-    if request.user.queueitem_set.count() == 0:
+    if items.count() == 0:
         streams.append(
             TurboStream("queue").update.render(
                 "You have no more episodes in your Play Queue"
