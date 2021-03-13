@@ -3,8 +3,7 @@
 {% block results %}
 <div id="history">
   {% for log in page_obj %}
-  {% url 'episodes:remove_history' log.episode.id as remove_url %}
-  {% include "episodes/_episode.html" with episode=log.episode dom_id=log.episode.dom.history %}
+  {% include "episodes/_audio_log.html" with episode=log.episode dom_id=log.episode.dom.history %}
   {% empty %}
   <p class="text-center sm:text-left">
     {% if search %}

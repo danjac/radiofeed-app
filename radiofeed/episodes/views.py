@@ -155,7 +155,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
     logs = get_audio_logs(request)

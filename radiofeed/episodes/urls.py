@@ -37,8 +37,8 @@ urlpatterns = [
     path("history/", views.history, name="history"),
     path(
         "history/<int:episode_id>/~remove/",
-        views.remove_history,
-        name="remove_history",
+        views.remove_audio_log,
+        name="remove_audio_log",
     ),
     path("favorites/", views.favorites, name="favorites"),
     path(

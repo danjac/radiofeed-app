@@ -1,0 +1,11 @@
+{% extends "episodes/_episode.html" %}
+{% block mobile_extra_buttons %}
+<div class="flex items-center sm:hidden">
+  {% include "episodes/_remove_audio_log.html" %}
+</div>
+{% endblock %}
+{% block extra_buttons %}
+<div class="sm:flex items-center hidden">
+  {% include "episodes/_remove_audio_log.html" %}
+</div>
+{% endblock %}

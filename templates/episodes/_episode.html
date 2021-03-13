@@ -27,9 +27,8 @@
             {% is_playing episode as is_playing %}
             {% include "episodes/_player_toggle.html" %}
           </div>
-          {% url 'episodes:episode_preview' episode.id as default_preview_url %}
           <a class="mr-2 link"
-             href="{{ preview_url|default:default_preview_url }}"
+             href="{% url 'episodes:episode_preview' episode.id %}"
              title="Preview for {{ episode.title }}"
              data-turbo-frame="modal">
             {% icon "ellipsis" css_class="w-6 h-6" %}
@@ -41,13 +40,7 @@
                    class="text-gray-500 dark:text-gray-300 font-semibold mr-2 flex items-center sm:inline-slot{% if remove_url %} hidden{% endif %}">
                 {{ episode.pub_date|date }}
               </div>
-              {% block mobile_extra_buttons %}
-              {% if remove_url %}
-              <div class="flex items-center sm:hidden">
-                {% include "forms/_remove_button.html" with title="Remove" %}
-              </div>
-              {% endif %}
-              {% endblock %}
+              {% block mobile_extra_buttons %}{% endblock %}
             </div>
 
           </div>
@@ -56,12 +49,6 @@
       </div>
     </div>
   </div>
-  {% block extra_buttons %}
-  {% if remove_url %}
-  <div class="sm:flex items-center hidden">
-    {% include "forms/_remove_button.html" with title="Remove" %}
-  </div>
-  {% endif %}
-  {% endblock %}
+  {% block extra_buttons %}{% endblock %}
 </div>
 {% endwith %}
