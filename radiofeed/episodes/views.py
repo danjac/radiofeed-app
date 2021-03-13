@@ -13,6 +13,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
+from turbo_response.constants import Action
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
@@ -190,13 +191,30 @@ def favorites(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id)
+    episode = get_episode_or_404(episode_id, with_podcast=True)
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
-    return render_favorite_response(request, episode, True)
+
+    if Favorite.objects.filter(user=request.user).count() == 1:
+        action = Action.UPDATE
+    else:
+        action = Action.PREPEND
+
+    return TurboStreamResponse(
+        [
+            render_favorite_toggle(request, episode, is_favorited=True),
+            TurboStream("favorites")
+            .action(action)
+            .template(
+                "episodes/_episode.html",
+                {"episode": episode, "dom_id": episode.dom.favorite},
+            )
+            .render(request=request),
+        ]
+    )
 
 
 @require_POST
@@ -204,9 +222,20 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
-    Favorite.objects.filter(user=request.user, episode=episode).delete()
+    favorites = Favorite.objects.filter(user=request.user)
 
-    return render_favorite_response(request, episode, False)
+    favorites.filter(episode=episode).delete()
+
+    streams: List[str] = [render_favorite_toggle(request, episode, is_favorited=False)]
+
+    if favorites.count() == 0:
+        streams.append(
+            TurboStream("favorites").update.render("You have no more Favorites.")
+        )
+    else:
+        streams.append(TurboStream(episode.dom.favorite).remove.render())
+
+    return TurboStreamResponse(streams)
 
 
 @login_required
@@ -225,20 +254,44 @@ def queue(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id)
+
+    episode = get_episode_or_404(episode_id, with_podcast=True)
+
     items = QueueItem.objects.filter(user=request.user)
-    if request.POST.get("next"):
+    play_next = request.POST.get("next") == "true"
+
+    if play_next:
         items.update(position=F("position") + 1)
         position = 1
     else:
         position = (items.aggregate(Max("position"))["position__max"] or 0) + 1
 
     try:
-        QueueItem.objects.create(user=request.user, episode=episode, position=position)
+        new_item = QueueItem.objects.create(
+            user=request.user, episode=episode, position=position
+        )
     except IntegrityError:
         pass
 
-    return render_queue_response(request, episode, True)
+    if request.user.queueitem_set.count() == 1:
+        action = Action.UPDATE
+    elif play_next:
+        action = Action.PREPEND
+    else:
+        action = Action.APPEND
+
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=True),
+            TurboStream("queue")
+            .action(action)
+            .template(
+                "episodes/_queue_item.html",
+                {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},
+            )
+            .render(request=request),
+        ]
+    )
 
 
 @require_POST
@@ -246,7 +299,19 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
-    return render_queue_response(request, episode, False)
+
+    streams: List[str] = [render_queue_toggle(request, episode, is_queued=False)]
+
+    if request.user.queueitem_set.count() == 0:
+        streams.append(
+            TurboStream("queue").update.render(
+                "You have no more episodes in your Play Queue"
+            )
+        )
+    else:
+        streams.append(TurboStream(episode.dom.queue).remove.render())
+
+    return TurboStreamResponse(streams)
 
 
 @require_POST
@@ -334,8 +399,11 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
-def get_episode_or_404(episode_id: int) -> Episode:
-    return get_object_or_404(Episode, pk=episode_id)
+def get_episode_or_404(episode_id: int, with_podcast: bool = False) -> Episode:
+    qs = Episode.objects.all()
+    if with_podcast:
+        qs = qs.select_related("podcast")
+    return get_object_or_404(qs, pk=episode_id)
 
 
 def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
@@ -350,6 +418,19 @@ def render_queue_toggle(request: HttpRequest, episode: Episode, is_queued: bool)
         TurboStream(episode.dom.queue_toggle)
         .replace.template(
             "episodes/_queue_toggle.html", {"episode": episode, "is_queued": is_queued}
+        )
+        .render(request=request)
+    )
+
+
+def render_favorite_toggle(
+    request: HttpRequest, episode: Episode, is_favorited: bool
+) -> str:
+    return (
+        TurboStream(episode.dom.favorite_toggle)
+        .replace.template(
+            "episodes/_favorite_toggle.html",
+            {"episode": episode, "is_favorited": is_favorited},
         )
         .render(request=request)
     )
@@ -395,49 +476,6 @@ def render_episode_list_response(
         pagination_template_name,
         extra_context,
     )
-
-
-def render_favorite_response(
-    request: HttpRequest, episode: Episode, is_favorited: bool
-) -> HttpResponse:
-
-    streams: List[str] = [
-        TurboStream(episode.dom.favorite_toggle)
-        .replace.template(
-            "episodes/_favorite_toggle.html",
-            {"episode": episode, "is_favorited": is_favorited},
-        )
-        .render(request=request)
-    ]
-
-    if not is_favorited and "remove" in request.POST:
-        if request.user.favorite_set.count() == 0:
-            streams.append(
-                TurboStream("favorites").replace.render("You have no more Favorites.")
-            )
-        else:
-            streams.append(TurboStream(episode.dom.favorite).remove.render())
-
-    return TurboStreamResponse(streams)
-
-
-def render_queue_response(
-    request: HttpRequest, episode: Episode, is_queued: bool
-) -> HttpResponse:
-
-    streams: List[str] = [render_queue_toggle(request, episode, is_queued)]
-
-    if not is_queued and "remove" in request.POST:
-        if request.user.queueitem_set.count() == 0:
-            streams.append(
-                TurboStream("queue").replace.render(
-                    "You have no more episodes in your Play Queue"
-                )
-            )
-        else:
-            streams.append(TurboStream(episode.dom.queue).remove.render())
-
-    return TurboStreamResponse(streams)
 
 
 def render_player_response(

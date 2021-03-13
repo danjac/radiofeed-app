@@ -4,8 +4,6 @@
 <div id="favorites">
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
-  {% url 'episodes:favorite_preview' episode.id as preview_url %}
-  {% url 'episodes:remove_favorite' episode.id as remove_url %}
   {% include "episodes/_episode.html" with dom_id=episode.dom.favorite %}
   {% endwith %}
   {% empty %}

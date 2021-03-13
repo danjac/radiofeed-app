@@ -6,8 +6,6 @@
      id="queue">
   {% for item in queue_items %}
   {% with episode=item.episode %}
-  {% url 'episodes:remove_from_queue' episode.id as remove_url %}
-  {% url 'episodes:queue_preview' episode.id as preview_url %}
   {% include "episodes/_queue_item.html" with dom_id=episode.dom.queue %}
   {% endwith %}
   {% empty %}
