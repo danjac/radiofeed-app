@@ -1,34 +1,12 @@
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from django import template
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from ..models import CoverImage, Podcast, Recommendation
+from ..models import CoverImage, Podcast
 
 register = template.Library()
-
-
-@register.simple_tag(takes_context=True)
-def get_recommendations(context: Dict, limit: int) -> List[Podcast]:
-    if (user := context["request"].user).is_anonymous:
-        return []
-    podcast_ids = dict(
-        (podcast_id, podcast_id)
-        for podcast_id in Recommendation.objects.for_user(user)
-        .exclude(recommended__cover_image="")
-        .select_related("recommended")
-        .order_by("-recommended__pub_date", "-similarity")
-        .values_list("recommended", flat=True)
-        .distinct()[:limit]
-    ).keys()
-    podcasts = Podcast.objects.in_bulk(podcast_ids)
-    return [podcasts[podcast_id] for podcast_id in podcast_ids]
-
-
-@register.simple_tag
-def get_recently_added_podcasts(limit: int) -> QuerySet:
-    return get_available_podcasts().order_by("-created", "-pub_date")[:limit]
 
 
 @register.simple_tag
