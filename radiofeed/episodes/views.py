@@ -90,7 +90,9 @@ def preview(
     request: HttpRequest,
     episode_id: int,
 ) -> HttpResponse:
-    episode = get_episode_detail_or_404(request, episode_id)
+    episode = get_episode_or_404(
+        request, episode_id, with_podcast=True, with_current_time=True
+    )
 
     if request.turbo.frame:
 
@@ -116,7 +118,9 @@ def preview(
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
-    episode = get_episode_detail_or_404(request, episode_id)
+    episode = get_episode_or_404(
+        request, episode_id, with_podcast=True, with_current_time=True
+    )
 
     return TemplateResponse(
         request,
@@ -156,7 +160,7 @@ def history(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id)
+    episode = get_episode_or_404(request, episode_id)
 
     logs = get_audio_logs(request)
 
@@ -187,7 +191,7 @@ def favorites(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id, with_podcast=True)
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
@@ -216,7 +220,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id)
+    episode = get_episode_or_404(request, episode_id)
 
     favorites = get_favorites(request)
 
@@ -251,7 +255,7 @@ def queue(request: HttpRequest) -> HttpResponse:
 @ajax_login_required
 def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    episode = get_episode_or_404(episode_id, with_podcast=True)
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     items = get_queue_items(request)
     play_next = request.POST.get("next") == "true"
@@ -293,7 +297,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(episode_id)
+    episode = get_episode_or_404(request, episode_id)
 
     items = get_queue_items(request)
     items.filter(episode=episode).delete()
@@ -339,7 +343,9 @@ def start_player(
     episode_id: int,
 ) -> HttpResponse:
 
-    episode = get_episode_detail_or_404(request, episode_id)
+    episode = get_episode_or_404(
+        request, episode_id, with_podcast=True, with_current_time=True
+    )
 
     return render_player_response(
         request,
@@ -397,18 +403,19 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest("No player loaded")
 
 
-def get_episode_or_404(episode_id: int, with_podcast: bool = False) -> Episode:
+def get_episode_or_404(
+    request: HttpRequest,
+    episode_id: int,
+    *,
+    with_podcast: bool = False,
+    with_current_time: bool = False,
+) -> Episode:
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
+    if with_current_time:
+        qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
-
-
-def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
-    return get_object_or_404(
-        Episode.objects.with_current_time(request.user).select_related("podcast"),
-        pk=episode_id,
-    )
 
 
 def get_audio_logs(request: HttpRequest) -> QuerySet:
