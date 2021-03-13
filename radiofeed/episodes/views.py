@@ -271,7 +271,7 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    if request.user.queueitem_set.count() == 1:
+    if items.count() == 1:
         action = Action.UPDATE
     elif play_next:
         action = Action.PREPEND
