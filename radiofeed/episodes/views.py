@@ -135,7 +135,7 @@ def episode_detail(
 def history(request: HttpRequest) -> HttpResponse:
 
     logs = (
-        AudioLog.objects.filter(user=request.user)
+        get_audio_logs(request)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )
@@ -158,7 +158,7 @@ def history(request: HttpRequest) -> HttpResponse:
 def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
-    logs = AudioLog.objects.filter(user=request.user)
+    logs = get_audio_logs(request)
 
     logs.filter(episode=episode).delete()
 
@@ -170,9 +170,7 @@ def remove_history(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @login_required
 def favorites(request: HttpRequest) -> HttpResponse:
-    favorites = Favorite.objects.filter(user=request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    favorites = get_favorites(request).select_related("episode", "episode__podcast")
     if request.search:
         favorites = favorites.search(request.search).order_by("-rank", "-created")
     else:
@@ -196,7 +194,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    if Favorite.objects.filter(user=request.user).count() == 1:
+    if get_favorites(request).count() == 1:
         action = Action.UPDATE
     else:
         action = Action.PREPEND
@@ -220,7 +218,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
 
-    favorites = Favorite.objects.filter(user=request.user)
+    favorites = get_favorites(request)
 
     favorites.filter(episode=episode).delete()
 
@@ -411,6 +409,14 @@ def get_episode_detail_or_404(request: HttpRequest, episode_id: int) -> Episode:
         Episode.objects.with_current_time(request.user).select_related("podcast"),
         pk=episode_id,
     )
+
+
+def get_audio_logs(request: HttpRequest) -> QuerySet:
+    return AudioLog.objects.filter(user=request.user)
+
+
+def get_favorites(request: HttpRequest) -> QuerySet:
+    return Favorite.objects.filter(user=request.user)
 
 
 def get_queue_items(request: HttpRequest) -> QuerySet:
