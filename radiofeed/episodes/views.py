@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Max, OuterRef, QuerySet, Subquery
+from django.db.models import F, Max, OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -226,12 +226,12 @@ def queue(request: HttpRequest) -> HttpResponse:
 @ajax_login_required
 def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(episode_id)
-    position = (
-        QueueItem.objects.filter(user=request.user).aggregate(Max("position"))[
-            "position__max"
-        ]
-        or 0
-    ) + 1
+    items = QueueItem.objects.filter(user=request.user)
+    if request.POST.get("next"):
+        items.update(position=F("position") + 1)
+        position = 1
+    else:
+        position = (items.aggregate(Max("position"))["position__max"] or 0) + 1
 
     try:
         QueueItem.objects.create(user=request.user, episode=episode, position=position)

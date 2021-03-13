@@ -19,6 +19,26 @@
     {{ podcast.title|truncatechars:100 }}
   </a>
 </h2>
+{% if user.is_authenticated %}
+<div class="text-sm space-y-2 mb-3">
+
+  <div class="flex items-center space-x-2">
+
+    <div title="Date Published"
+         class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
+    <div class="font-semibold text-gray-500 dark:text-gray-300">
+      {{ duration|format_duration }} long
+    </div>
+
+  </div>
+
+  {% if episode.listened %}
+  <div>
+    {% include "episodes/_listened.html" %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
 
 <div class="flex items-center mb-3 space-x-3">
   <div>
@@ -27,10 +47,19 @@
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
-
+  {% if user.is_authenticated %}
+  <div class="space-y-3">
+    {% if "queue" in actions %}
+    {% include "episodes/_queue_toggle.html" %}
+    {% endif %}
+    {% if "favorite" in actions %}
+    {% include "episodes/_favorite_toggle.html" %}
+    {% endif %}
+  </div>
+  {% else %}
   <div class="text-sm space-y-1">
     <div title="Date Published"
-         class="font-semibold text-gray-500 dark:text-gray-300 text-sm">{{ episode.pub_date|date }}</div>
+         class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
     <div class="font-semibold text-gray-500 dark:text-gray-300">
       {{ duration|format_duration }} long
     </div>
@@ -38,21 +67,15 @@
       {% include "episodes/_download.html" %}
     </div>
   </div>
+  {% endif %}
 
 </div>
-{% if episode.listened %}
-{% include "episodes/_listened.html" with css_class="mb-3" %}
+
+{% if user.is_authenticated %}
+<div class="mb-3">
+  {% include "episodes/_download.html" %}
+</div>
 {% endif %}
-
-<div class="flex items-center space-x-2 mb-3">
-  {% if "queue" in actions %}
-  {% include "episodes/_queue_toggle.html" %}
-  {% endif %}
-  {% if "favorite" in actions %}
-  {% include "episodes/_favorite_toggle.html" %}
-  {% endif %}
-</div>
-
 
 {% if episode.explicit or podcast.explicit %}
 <div class="text-sm font-semibold mb-3">
