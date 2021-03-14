@@ -1,7 +1,9 @@
 {% if user.is_authenticated %}
 <form method="POST"
       id="{{ episode.dom.player_toggle }}"
-      action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
+      action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}"
+      {% if is_modal %}data-action="modal#close"
+      {% endif %}>
   {% csrf_token %}
 
   <div class="flex items-center">
