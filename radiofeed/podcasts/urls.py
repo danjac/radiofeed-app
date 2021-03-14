@@ -6,6 +6,7 @@ app_name = "podcasts"
 
 urlpatterns = [
     path("podcasts/", views.index, name="index"),
+    path("featured/", views.index, name="featured", kwargs={"featured": True}),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(

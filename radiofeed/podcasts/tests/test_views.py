@@ -32,14 +32,23 @@ class TestPodcasts:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following(self, login_user, client):
+    def test_user_is_following_featured(self, login_user, client):
+        """If user is not following any podcasts, just show general feed"""
+        PodcastFactory.create_batch(3, promoted=True)
+        sub = FollowFactory(user=login_user).podcast
+        resp = client.get(reverse("podcasts:featured"), HTTP_TURBO_FRAME="podcasts")
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 3
+        assert sub not in resp.context_data["page_obj"].object_list
+
+    def test_user_is_not_following(self, login_user, client):
         """If user is not following any podcasts, just show general feed"""
         PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_not_following(self, client, login_user):
+    def test_user_is_following(self, client, login_user):
         """If user following any podcasts, show only own feed with these pdocasts"""
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=login_user)

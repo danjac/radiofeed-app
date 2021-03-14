@@ -20,7 +20,7 @@ from .models import Category, Follow, Podcast, Recommendation
 from .tasks import sync_podcast_feed
 
 
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
     follows = (
         list(request.user.follow_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
@@ -30,12 +30,12 @@ def index(request: HttpRequest) -> HttpResponse:
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    if follows:
-        podcasts = podcasts.filter(pk__in=follows)
-        show_promotions = False
-    else:
+    show_promotions: bool = featured or not follows
+
+    if show_promotions:
         podcasts = podcasts.filter(promoted=True)
-        show_promotions = True
+    else:
+        podcasts = podcasts.filter(pk__in=follows)
 
     return render_podcast_list_response(
         request,
@@ -43,6 +43,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "podcasts/index.html",
         {
             "show_promotions": show_promotions,
+            "has_follows": bool(follows),
             "search_url": reverse("podcasts:search_podcasts"),
         },
         cached=request.user.is_anonymous,

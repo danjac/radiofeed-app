@@ -5,16 +5,20 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm flex justify-center items-center sm:block">
-  <a href="{% url 'podcasts:categories' %}"
-     class="link mr-1">Discover</a>
+<div class="mb-3 text-sm flex justify-center sm:justify-start items-center space-x-1">
+  <div>
+    <a href="{% url 'podcasts:categories' %}"
+       class="link">Discover</a>
+  </div>
   {% if category.parent %}
-  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
-  <a href="{{ category.parent.get_absolute_url }}"
-     class="link mr-1">{{ category.parent.name }}</a>
+  <div class="text-gray-500 dark:text-gray-300">&gt;</div>
+  <div>
+    <a href="{{ category.parent.get_absolute_url }}"
+       class="link mr-1">{{ category.parent.name }}</a>
+  </div>
   {% endif %}
-  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
-  <span class="text-gray-500 dark:text-gray-300">{{ category.name }}</span>
+  <div class="text-gray-500 dark:text-gray-300">&gt;</div>
+  <div class="text-gray-500 dark:text-gray-300">{{ category.name }}</div>
 </div>
 
 <div class="sm:flex items-center justify-between mb-3">
@@ -32,14 +36,14 @@
 {% else %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start">
+<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start space-x-2">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
-     class="link mr-2">{{ child.name }}</a>
+     class="link">{{ child.name }}</a>
   {% endfor %}
   {% if category.itunes_genre_id %}
   {% if children %}
-  <span class="mr-2">|</span>
+  <div>|</div>
   {% endif %}
   <a href="{% url 'podcasts:itunes_category' category.id %}"
      class="link">{{ category.name }} in iTunes</a>
