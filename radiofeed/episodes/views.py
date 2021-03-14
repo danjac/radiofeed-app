@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import F, Max, OuterRef, QuerySet, Subquery
+from django.db.models import F, OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -262,33 +262,20 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     items = get_queue_items(request)
-    play_next = request.POST.get("next") == "true"
-
-    if play_next:
-        items.update(position=F("position") + 1)
-        position = 1
-    else:
-        position = (items.aggregate(Max("position"))["position__max"] or 0) + 1
+    items.update(position=F("position") + 1)
 
     try:
         new_item = QueueItem.objects.create(
-            user=request.user, episode=episode, position=position
+            user=request.user, episode=episode, position=1
         )
     except IntegrityError:
         pass
-
-    if items.count() == 1:
-        action = Action.UPDATE
-    elif play_next:
-        action = Action.PREPEND
-    else:
-        action = Action.APPEND
 
     return TurboStreamResponse(
         [
             render_queue_toggle(request, episode, is_queued=True),
             TurboStream("queue")
-            .action(action)
+            .action(Action.UPDATE if items.count() == 1 else Action.PREPEND)
             .template(
                 "episodes/_queue_item.html",
                 {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},

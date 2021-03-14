@@ -360,30 +360,6 @@ class TestAddToQueue:
         third = EpisodeFactory()
 
         for episode in (first, second, third):
-            resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
-            assert resp.status_code == http.HTTPStatus.OK
-
-        items = (
-            QueueItem.objects.filter(user=login_user)
-            .select_related("episode")
-            .order_by("position")
-        )
-
-        assert items[0].episode == first
-        assert items[0].position == 1
-
-        assert items[1].episode == second
-        assert items[1].position == 2
-
-        assert items[2].episode == third
-        assert items[2].position == 3
-
-    def test_post_add_next(self, client, login_user):
-        first = EpisodeFactory()
-        second = EpisodeFactory()
-        third = EpisodeFactory()
-
-        for episode in (first, second, third):
             resp = client.post(
                 reverse(
                     "episodes:add_to_queue",

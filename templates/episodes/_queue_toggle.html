@@ -7,8 +7,7 @@
   {% if is_queued %}
   {% button "Remove from Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" %}
   {% else %}
-  {% button "Play Next" name="next" value="true" icon="chevron_up" type="secondary" title="Add episode to your Play Queue" css_class="mr-2" %}
-  {% button "Play Last" name="last" value="true" icon="chevron_down" type="secondary" title="Add episode to your Play Queue" %}
+  {% button "Play Next" name="next" value="true" icon="collection" type="secondary" title="Add episode to your Play Queue" %}
   {% endif %}
 </form>
 {% endif %}
