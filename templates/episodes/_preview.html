@@ -19,22 +19,6 @@
     {{ podcast.title|truncatechars:100 }}
   </a>
 </h2>
-{% if user.is_authenticated %}
-<div class="text-sm space-y-2 mb-3">
-
-  <div class="flex items-center space-x-2">
-
-    <div title="Date Published"
-         class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
-    <div class="font-semibold text-gray-500 dark:text-gray-300">
-      {{ duration|format_duration }} long
-    </div>
-
-  </div>
-
-</div>
-{% endif %}
-
 <div class="flex items-center mb-3 space-x-3">
   <div>
     <a href="{{ podcast_url }}"
@@ -42,12 +26,6 @@
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
-  {% if user.is_authenticated %}
-  <div class="space-y-3">
-    {% include "episodes/_queue_toggle.html" %}
-    {% include "episodes/_favorite_toggle.html" %}
-  </div>
-  {% else %}
   <div class="text-sm space-y-1">
     <div title="Date Published"
          class="font-semibold text-gray-500 dark:text-gray-300">{{ episode.pub_date|date }}</div>
@@ -58,23 +36,20 @@
       {% include "episodes/_download.html" %}
     </div>
   </div>
-  {% endif %}
 
 </div>
 
 {% if user.is_authenticated %}
-<div class="mb-3 space-y-2">
-  {% if episode.listened %}
-  <div>
-    {% include "episodes/_listened.html" %}
-  </div>
-  {% endif %}
 
-  <div>
-    {% include "episodes/_download.html" %}
-  </div>
+{% if episode.listened %}
+{% include "episodes/_listened.html" with css_class="mb-3" %}
+{% endif %}
 
+<div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-3">
+  {% include "episodes/_queue_toggle.html" %}
+  {% include "episodes/_favorite_toggle.html" %}
 </div>
+
 {% endif %}
 
 {% if episode.explicit or podcast.explicit %}
