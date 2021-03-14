@@ -29,6 +29,15 @@ def landing_page(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "landing_page.html")
 
 
+@cache_page(SITEMAPS_CACHE_TIMEOUT)
+def robots(request: HttpRequest) -> HttpResponse:
+    return TemplateResponse(
+        request,
+        "robots.txt",
+        {"sitemap_url": request.build_absolute_uri("/sitemap.xml")},
+    )
+
+
 urlpatterns = [
     path("", landing_page, name="landing_page"),
     path("", include("radiofeed.episodes.urls")),
@@ -38,6 +47,7 @@ urlpatterns = [
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
+    path("robots.txt", robots, name="robots"),
     path(
         "sitemap.xml",
         cache_page(SITEMAPS_CACHE_TIMEOUT)(sitemaps_views.index),
