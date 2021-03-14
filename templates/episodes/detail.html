@@ -36,10 +36,10 @@
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 <div class="p-3 border dark:border-gray-500">
 
-  <h1 class="font-bold mb-3 sm:text-lg">{{ episode.title }}</h1>
+  <h1 class="font-bold mb-3">{{ episode.title }}</h1>
   <h2 class="mb-3">
     <a href="{{ podcast.get_absolute_url }}"
-       class="link">
+       class="link text-sm">
       {{ podcast.title }}
     </a>
   </h2>
@@ -52,9 +52,6 @@
       {{ duration|format_duration }} long
     </div>
   </div>
-  {% if episode.listened %}
-  {% include "episodes/_listened.html" with css_class="mb-3" %}
-  {% endif %}
   <div class="flex items-center mb-3 space-x-3">
     <div>
       <a href="{{ podcast.get_absolute_url }}">
@@ -75,6 +72,10 @@
     </div>
   </div>
   {% if user.is_authenticated %}
+  {% if episode.listened %}
+  {% include "episodes/_listened.html" with css_class="mb-3" %}
+  {% endif %}
+
   <div class="mb-3 space-y-3 sm:flex items-center sm:space-y-0 sm:space-x-3">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}

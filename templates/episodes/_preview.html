@@ -32,11 +32,6 @@
 
   </div>
 
-  {% if episode.listened %}
-  <div>
-    {% include "episodes/_listened.html" %}
-  </div>
-  {% endif %}
 </div>
 {% endif %}
 
@@ -68,8 +63,17 @@
 </div>
 
 {% if user.is_authenticated %}
-<div class="mb-3">
-  {% include "episodes/_download.html" %}
+<div class="mb-3 space-y-2">
+  {% if episode.listened %}
+  <div>
+    {% include "episodes/_listened.html" %}
+  </div>
+  {% endif %}
+
+  <div>
+    {% include "episodes/_download.html" %}
+  </div>
+
 </div>
 {% endif %}
 
