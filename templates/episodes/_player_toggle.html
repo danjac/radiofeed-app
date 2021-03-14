@@ -1,6 +1,6 @@
 {% if user.is_authenticated %}
 <form method="POST"
-      id="{{ episode.dom.player_toggle }}"
+      id="{% if is_modal %}{{ episode.dom.player_modal_toggle }}{% else %}{{ episode.dom.player_toggle }}{% endif %}"
       action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}"
       {% if is_modal %}data-action="modal#close"
       {% endif %}>
