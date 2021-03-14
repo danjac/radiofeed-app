@@ -5,9 +5,9 @@
       action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
   {% if is_queued %}
-  {% button "Remove from Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" %}
+  {% button "Play Next" icon="trash" type="secondary" title="Remove episode from your Play Queue" %}
   {% else %}
-  {% button "Play Next" name="next" value="true" icon="collection" type="secondary" title="Add episode to your Play Queue" %}
+  {% button "Play Next" name="next" value="true" icon="collection" title="Add episode to your Play Queue" %}
   {% endif %}
 </form>
 {% endif %}
