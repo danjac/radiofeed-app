@@ -57,7 +57,8 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     list_filter = (PubDateFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("__str__", "pub_date")
+    list_display = ("__str__", "pub_date", "promoted")
+    list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
 
