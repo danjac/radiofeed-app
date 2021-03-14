@@ -25,10 +25,12 @@ from .models import AudioLog, Episode, Favorite, QueueItem
 def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids: List[int] = []
+    listened_ids: List[int] = []
     show_promotions: bool = False
 
     if request.user.is_authenticated:
         podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
+        listened_ids = list(get_audio_logs(request).values_list("episode", flat=True))
 
     if not podcast_ids:
         podcast_ids = list(
@@ -40,6 +42,9 @@ def index(request: HttpRequest) -> HttpResponse:
     latest_episodes = (
         Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
     )
+
+    if listened_ids:
+        latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
 
     episode_ids = (
         Podcast.objects.filter(pk__in=podcast_ids)

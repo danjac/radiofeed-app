@@ -5,8 +5,12 @@
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" %}
 {% empty %}
-{% if search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
-{% endif %}
+<p class="text-center sm:text-left">
+  {% if search %}
+  No results found for <span class="font-bold">{{ search }}</span>.
+  {% else %}
+  Nothing to see here.
+  {% endif %}
+</p>
 {% endfor %}
 {% endblock results %}
