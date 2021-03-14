@@ -12,8 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from turbo_response import TurboFrame, TurboStream, TurboStreamResponse
-from turbo_response.constants import Action
+from turbo_response import Action, TurboFrame, TurboStream, TurboStreamResponse
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
