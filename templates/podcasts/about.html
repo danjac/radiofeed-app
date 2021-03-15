@@ -22,10 +22,10 @@
   <div class="flex items-center w-full mb-3 space-x-3">
 
     <div>
-      {% cover_image podcast lazy=False size="20" %}
+      {% cover_image podcast lazy=False size="24" %}
     </div>
 
-    <div class="text-sm space-y-2">
+    <div class="text-sm space-y-3">
       <div>
         <a class="link"
            href="{% url 'podcasts:podcast_episodes' podcast.id podcast.slug %}">

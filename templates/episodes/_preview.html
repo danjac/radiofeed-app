@@ -23,10 +23,10 @@
   <div>
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="20" %}
+      {% cover_image podcast lazy=False size="24" %}
     </a>
   </div>
-  <div class="space-y-1">
+  <div class="space-y-2">
     <div class="flex items-center text-sm space-x-2 font-semibold text-gray-500 dark:text-gray-300">
       <div title="Date Published">{{ episode.pub_date|date }}</div>
       <div>
