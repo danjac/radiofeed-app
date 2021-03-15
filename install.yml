@@ -4,7 +4,7 @@
   gather_facts: yes
   vars_files: vars.yml
   vars:
-    dokku_version: 0.21.4
+    dokku_packages_state: present
     dokku_plugins:
       - name: clone
         url: https://github.com/crisward/dokku-clone.git
