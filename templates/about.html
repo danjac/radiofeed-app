@@ -5,23 +5,25 @@
 {% block content %}
 <h1 class="font-bold text-lg mb-3">About This Site</h1>
 <p class="leading-tight tracking-tight mb-3">
-  This is a simple podcast app. You can listen to your favorite podcasts here!
+<b>{{ request.site.name }}</b> is a web application for discovering, following and listening to your favorite podcasts.
 </p>
-
+<p class="leading-tight tracking-tight mb-3">
+  We are an open-source project covered by the GNU Affero General Public License (AGPL).
+</p>
 <div class="leading-tight tracking-tight mb-3 flex items-center space-x-3">
-  <div>&copy; Dan Jacob {% now 'Y' %}</div>
   <div>
     <a class="underline hover:text-blue-500"
        target="_blank"
        rel="noopener"
-       href="https://github.com/danjac/radiofeed/">Source Code</a>
+       href="https://github.com/danjac/radiofeed/">Source code</a>
   </div>
   <div>
     <a class="underline hover:text-blue-500"
        target="_blank"
        rel="noopener"
-       href="https://github.com/danjac/radiofeed/issues">Issues</a>
+       href="https://github.com/danjac/radiofeed/issues">Report an issue</a>
   </div>
+  <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500" href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
 </div>
 
 <h2 class="font-semibold mb-3 pt-3 border-t dark:border-gray-500">Additional Credits</h2>
