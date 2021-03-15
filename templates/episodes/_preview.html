@@ -11,11 +11,11 @@
 {% block modal_content %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
-<h2 class="text-sm mb-3 font-semibold">
+<h2 class="text-sm mb-3">
   <a href="{{ podcast_url }}"
      title="{{ podcast.title }}"
      data-turbo-frame="_top"
-     class="link">
+     class="link font-semibold text-gray-100 dark:text-gray-300">
     {{ podcast.title|truncatechars:100 }}
   </a>
 </h2>
