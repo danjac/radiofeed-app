@@ -1,21 +1,25 @@
 <div class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500">
-  <div class="flex items-center">
+  <div class="flex items-center space-x-3">
     {% if result.image %}
-    <img src="{{ result.image }}"
-         height="16"
-         width="16"
-         class="object-cover border mr-2 h-16 w-16 bg-transparent" />
-    {% endif %}
     <div>
-      <a {% if result.podcast and result.podcast.pub_date %}
-         href="{{ result.podcast.get_absolute_url }}"
-         {% else %}
-         href="{{ result.itunes }}"
-         rel="noopener"
-         target="_blank"
-         {% endif %}
-         title="{{ result.title }}"
-         class="link block mb-2 text-sm md:text-base w-64 md:w-full truncate">{{ result.title|truncatechars:60 }}</a>
+      <img src="{{ result.image }}"
+           height="16"
+           width="16"
+           class="object-cover border mr-2 h-16 w-16 bg-transparent" />
+    </div>
+    {% endif %}
+    <div class="space-y-3">
+      <div class="text-sm w-56 sm:w-96 truncate md:w-full">
+        <a {% if result.podcast and result.podcast.pub_date %}
+           href="{{ result.podcast.get_absolute_url }}"
+           {% else %}
+           href="{{ result.itunes }}"
+           rel="noopener"
+           target="_blank"
+           {% endif %}
+           title="{{ result.title }}"
+           class="link">{{ result.title|truncatechars:120 }}</a>
+      </div>
       <div class="text-sm flex items-center">
         <a href="{{ result.rss }}"
            class="link mr-2"
