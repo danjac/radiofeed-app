@@ -24,7 +24,7 @@ urlpatterns = [
         name="start_player",
     ),
     path(
-        "player/~start/",
+        "player/~stop/",
         views.stop_player,
         name="stop_player",
     ),
