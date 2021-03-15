@@ -1,0 +1,21 @@
+- name: Set environment variables
+  dokku_config:
+    app: '{{ app_name }}'
+    restart: false
+    config:
+      ADMIN_URL: '{{ admin_url }}'
+      ADMINS: '{{ admins }}'
+      AWS_ACCESS_KEY_ID: '{{ aws_access_key_id }}'
+      AWS_SECRET_ACCESS_KEY: '{{ aws_secret_access_key }}'
+      AWS_STORAGE_BUCKET_NAME: '{{ aws_storage_bucket_name }}'
+      AWS_S3_CUSTOM_DOMAIN: '{{ aws_s3_custom_domain }}'
+      BUILDPACK_URL: https://github.com/heroku/heroku-buildpack-python
+      ALLOWED_HOSTS: '{{ domain_name }}'
+      DISABLE_COLLECTSTATIC: '1'
+      DJANGO_SETTINGS_MODULE: radiofeed.config.settings.production
+      DOKKU_LETSENCRYPT_EMAIL: '{{ letsencrypt_email }}'
+      GOOGLE_TRACKING_ID: '{{ google_tracking_id }}'
+      MAILGUN_API_KEY: '{{ mailgun_api_key }}'
+      MAILGUN_SENDER_DOMAIN: '{{ mailgun_sender_domain }}'
+      SECRET_KEY: '{{ secret_key }}'
+      SENTRY_URL: '{{ sentry_url }}'
