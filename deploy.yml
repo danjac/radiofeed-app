@@ -4,5 +4,4 @@
   vars_files: vars.yml
   roles:
     - tests
-    - configure
     - deploy
