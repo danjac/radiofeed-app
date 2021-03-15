@@ -4,10 +4,10 @@
 
 {% block content %}
 
-<h1 class="font-bold mb-3 text-lg">{{ podcast.title|stripentities }}</h1>
+<h1 class="font-bold mb-3">{{ podcast.title|stripentities }}</h1>
 
 <nav class="mb-3 flex justify-between">
-  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm">
+  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none text-sm">
     {% active_link 'podcasts:podcast_episodes' podcast.id podcast.slug as link %}
     <li class="mr-6 pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="link"

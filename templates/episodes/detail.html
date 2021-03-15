@@ -43,22 +43,23 @@
       {{ podcast.title }}
     </a>
   </h2>
-  <div title="Date Published"
-       class="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-300 space-x-2 mb-3">
-    <div>
-      {{ episode.pub_date|date }}
-    </div>
-    <div>
-      {{ duration|format_duration }}
-    </div>
-  </div>
   <div class="flex items-center mb-3 space-x-3">
     <div>
       <a href="{{ podcast.get_absolute_url }}">
         {% cover_image podcast lazy=False size="24" %}
       </a>
     </div>
-    <div class="space-y-3">
+    <div class="space-y-2">
+      <div title="Date Published"
+           class="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-300 space-x-2">
+        <div>
+          {{ episode.pub_date|date }}
+        </div>
+        <div>
+          {{ duration|format_duration }}
+        </div>
+      </div>
+
       <div class="flex items-center space-x-2 sm:space-x-3">
         {% is_playing episode as is_playing %}
         {% include "episodes/_player_toggle.html" %}
@@ -83,7 +84,6 @@
     This episode may contain explicit content.
   </div>
   {% endif %}
-
 
   <div class="markdown text-sm">
     {{ episode.description|clean_html }}

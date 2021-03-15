@@ -21,9 +21,9 @@
   <div class="text-gray-500 dark:text-gray-300">{{ category.name }}</div>
 </div>
 
-<div class="sm:flex items-center justify-between mb-3">
-  <h2 class="text-lg font-bold mb-2 sm:mb-0 flex items-center justify-center sm:justify-start">{{ category.name }}</h2>
-  <div class="flex items-center justify-center sm:justify-start sm:justify-end mb-2 sm:mb-0 text-sm">
+<div class="sm:flex items-center justify-between mb-3 space-y-2 sm:space-y-0">
+  <h2 class="font-bold flex items-center justify-center sm:justify-start">{{ category.name }}</h2>
+  <div class="flex items-center justify-center sm:justify-end">
     {% include "forms/_search_form.html" with placeholder="Search category..." %}
   </div>
 </div>
@@ -42,9 +42,6 @@
      class="link">{{ child.name }}</a>
   {% endfor %}
   {% if category.itunes_genre_id %}
-  {% if children %}
-  <div>|</div>
-  {% endif %}
   <a href="{% url 'podcasts:itunes_category' category.id %}"
      class="link">{{ category.name }} in iTunes</a>
   {% endif %}

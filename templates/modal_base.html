@@ -16,7 +16,7 @@
     <div class="modal-content py-4 text-left px-6 dark:bg-gray-800 dark:text-white">
       <!--Title-->
       <div class="flex justify-between items-center pb-3">
-        <p class="w-64 sm:w-full flex flex-wrap font-bold">{% block modal_header %}{% endblock %}</p>
+        <p class="w-64 sm:w-full flex flex-wrap font-bold text-sm">{% block modal_header %}{% endblock %}</p>
         {% block content_close_button %}
         <div class="modal-close cursor-pointer z-50 hidden md:inline-block">
           <button data-action="modal#close focus:outline-none">
