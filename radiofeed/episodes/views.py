@@ -202,16 +202,13 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
-    if get_favorites(request).count() == 1:
-        action = Action.UPDATE
-    else:
-        action = Action.PREPEND
-
     return TurboStreamResponse(
         [
             render_favorite_toggle(request, episode, is_favorited=True),
             TurboStream("favorites")
-            .action(action)
+            .action(
+                Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
+            )
             .template(
                 "episodes/_episode.html",
                 {"episode": episode, "dom_id": episode.dom.favorite},
