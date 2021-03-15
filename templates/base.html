@@ -59,7 +59,8 @@
 
   {% block player %}{% include "episodes/_player.html" %}{% endblock %}
 
-  {% include "_modal.html" %}
+  <turbo-frame id="modal"
+               data-modal-target="modal"></turbo-frame>
 
 </body>
 

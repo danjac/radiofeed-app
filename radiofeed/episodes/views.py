@@ -445,46 +445,20 @@ def render_favorite_toggle(
 
 
 def render_player_toggle(
-    request: HttpRequest,
-    episode: Episode,
-    is_playing: bool,
-    dom_id: str,
-    is_modal: bool,
+    request: HttpRequest, episode: Episode, is_playing: bool
 ) -> str:
 
     return (
-        TurboStream(dom_id)
+        TurboStream(episode.dom.player_toggle)
         .replace.template(
             "episodes/_player_toggle.html",
             {
                 "episode": episode,
                 "is_playing": is_playing,
-                "is_modal": is_modal,
             },
         )
         .render(request=request)
     )
-
-
-def render_player_toggles(
-    request: HttpRequest, episode: Episode, is_playing: bool
-) -> List[str]:
-    return [
-        render_player_toggle(
-            request,
-            episode,
-            is_playing,
-            dom_id=episode.dom.player_toggle,
-            is_modal=False,
-        ),
-        render_player_toggle(
-            request,
-            episode,
-            is_playing,
-            dom_id=episode.dom.player_modal_toggle,
-            is_modal=True,
-        ),
-    ]
 
 
 def render_episode_list_response(
@@ -521,17 +495,8 @@ def render_player_response(
 
     streams: List[str] = []
 
-    # close modal if player opened from within preview
-    if "is_modal" in request.POST:
-        streams.append(TurboStream("modal").replace.template("_modal.html").render())
-
-    # close current running episode
     if current_episode := request.player.eject(mark_completed=mark_completed):
-        streams += render_player_toggles(
-            request,
-            current_episode,
-            is_playing=False,
-        )
+        streams.append(render_player_toggle(request, current_episode, False))
 
     if next_episode is None:
         response = TurboStreamResponse(
@@ -552,7 +517,6 @@ def render_player_response(
     else:
         streams.append(TurboStream(next_episode.dom.queue).remove.render())
 
-    # start new episode
     next_episode.log_activity(request.user, current_time=current_time)
 
     request.player.start(next_episode, current_time)
@@ -561,6 +525,7 @@ def render_player_response(
         streams
         + [
             render_queue_toggle(request, next_episode, False),
+            render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
                 "episodes/_player_controls.html",
@@ -570,7 +535,6 @@ def render_player_response(
             )
             .render(request=request),
         ]
-        + render_player_toggles(request, next_episode, True)
     )
     response["X-Media-Player"] = json.dumps(
         {
