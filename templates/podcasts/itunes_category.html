@@ -3,24 +3,24 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm flex justify-center sm:block">
+<div class="mb-3 text-sm flex justify-center sm:justify-start space-x-1">
   <a href="{% url 'podcasts:categories' %}"
-     class="link mr-1">Discover</a>
+     class="link">Discover</a>
   {% if category.parent %}
-  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300">&gt;</span>
   <a href="{{ category.parent.get_absolute_url }}"
-     class="link mr-1">{{ category.parent.name }}</a>
+     class="link">{{ category.parent.name }}</a>
   {% endif %}
-  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300">&gt;</span>
   <a href="{{ category.get_absolute_url }}"
-     class="link mr-1">{{ category.name }}</a>
-  <span class="text-gray-500 dark:text-gray-300 mr-1">&gt;</span>
-  <span class="text-gray-500 dark:text-gray-300 mr-1">iTunes</span>
+     class="link">{{ category.name }}</a>
+  <span class="text-gray-500 dark:text-gray-300">&gt;</span>
+  <span class="text-gray-500 dark:text-gray-300">iTunes</span>
 </div>
 
-<h2 class="text-base md:text-lg font-semibold mb-3 flex justify-center sm:block">
+<h1 class="font-bold mb-3 flex justify-center sm:block">
   Top-Rated {{ category.name }} Podcasts on iTunes
-</h2>
+</h1>
 
 {% for result in results %}
 {% include "podcasts/_itunes_result.html" %}
