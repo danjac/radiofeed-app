@@ -15,7 +15,7 @@
   <div>
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="24" %}
+      {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
 
@@ -23,7 +23,6 @@
     <div title="Date last published"
          class="font-semibold text-sm text-gray-500 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
     {% include "podcasts/_follow_toggle.html" %}
-    {% share_buttons  podcast.get_absolute_url podcast.title %}
   </div>
 
 </div>
