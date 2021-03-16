@@ -36,6 +36,27 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
+class SyncErrorFilter(admin.SimpleListFilter):
+    title = "With sync error"
+    parameter_name = "num_retries"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> Iterable[Tuple[str, str]]:
+        return (
+            ("yes", "With sync errors"),
+            ("no", "With no sync errors"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset) -> QuerySet:
+        value = self.value()
+        if value == "yes":
+            return queryset.filter(num_retries__gt=0)
+        if value == "no":
+            return queryset.filter(num_retries=0)
+        return queryset
+
+
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -54,7 +75,7 @@ class PromotedFilter(admin.SimpleListFilter):
 
 @admin.register(Podcast)
 class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_filter = (PubDateFilter, PromotedFilter)
+    list_filter = (PubDateFilter, PromotedFilter, SyncErrorFilter)
 
     ordering = ("-pub_date",)
     list_display = ("__str__", "pub_date", "promoted")
