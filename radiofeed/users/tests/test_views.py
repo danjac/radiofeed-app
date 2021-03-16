@@ -63,7 +63,7 @@ class TestDeleteAccount:
 class TestAcceptCookies:
     def test_post(self, client):
         resp = client.post(reverse("accept_cookies"))
-        assert resp.url == "/new/"
+        assert resp.url == "/"
         assert "accept-cookies" in resp.cookies
 
     def test_post_turbo(self, client):
@@ -78,10 +78,10 @@ class TestToggleDarkMode:
     def test_post_day_mode(self, client):
         client.cookies["dark-mode"] = "true"
         resp = client.post(reverse("toggle_dark_mode"))
-        assert resp.url == "/new/"
+        assert resp.url == "/"
         assert resp.cookies["dark-mode"].value == ""
 
     def test_post_night_mode(self, client):
         resp = client.post(reverse("toggle_dark_mode"))
-        assert resp.url == "/new/"
+        assert resp.url == "/"
         assert resp.cookies["dark-mode"].value == "true"

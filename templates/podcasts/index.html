@@ -3,6 +3,7 @@
 {% block subtitle %} | Podcasts {% endblock %}
 
 {% block content %}
+
 <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
   <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg">
     {% if show_promotions %}
@@ -18,7 +19,6 @@
   {% endif %}
 </div>
 
-{% if user.is_authenticated %}
 {% if has_follows %}
 <div class="sm:flex items-center justify-between space-y-3 sm:space-y-0 mb-3">
   <div class="flex items-center justify-center sm:justify-start text-sm">
@@ -34,9 +34,6 @@
     {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
-{% else %}
-{% include "podcasts/_follow_cta.html" %}
-{% endif %}
 {% endif %}
 
 {% include pagination_template %}

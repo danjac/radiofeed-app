@@ -22,17 +22,19 @@
           </a>
         </div>
 
-        <div class="flex items-center">
-          <div class="mr-2">
+        <div class="flex items-center space-x-2">
+          <div>
             {% is_playing episode as is_playing %}
             {% include "episodes/_player_toggle.html" %}
           </div>
-          <a class="mr-2 link"
-             href="{% url 'episodes:episode_preview' episode.id %}"
-             title="Preview for {{ episode.title }}"
-             data-turbo-frame="modal">
-            {% icon "ellipsis" css_class="w-6 h-6" %}
-          </a>
+          <div>
+            <a class="link"
+               href="{% url 'episodes:episode_preview' episode.id %}"
+               title="Preview for {{ episode.title }}"
+               data-turbo-frame="modal">
+              {% icon "ellipsis" css_class="w-6 h-6" %}
+            </a>
+          </div>
           <div class="w-full">
 
             <div class="flex items-center justify-end sm:justify-start text-sm">
