@@ -1,5 +1,5 @@
   <div class="font-semibold text-gray-500 dark:text-gray-300 text-sm {{ css_class|default:'' }}">
-    Listened {{ episode.listened|date }}
+    Listened {{ episode.listened|timesince }} ago
     {% with episode.current_time|percent:duration as pc_complete %}
     {% if episode.completed %}
     (100% done)

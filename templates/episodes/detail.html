@@ -65,7 +65,6 @@
         {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
   </div>
   {% if user.is_authenticated %}
@@ -78,6 +77,10 @@
     {% include "episodes/_favorite_toggle.html" %}
   </div>
   {% endif %}
+
+  <div class="mb-3">
+    {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+  </div>
 
   {% if episode.explicit or podcast.explicit %}
   <div class="text-sm font-semibold mb-3">
