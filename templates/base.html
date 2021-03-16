@@ -50,9 +50,11 @@
 
     <main class="w-full p-2 lg:px-5"
           data-toggle-target="item">
+      {% block signup_cta %}
       {% if not user.is_authenticated %}
       {% include "_signup_cta.html" %}
       {% endif %}
+      {% endblock %}
       {% block content %}{% endblock %}
     </main>
   </div>
