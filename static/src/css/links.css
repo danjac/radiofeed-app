@@ -7,5 +7,5 @@
 }
 
 .inactive-link {
-  @apply text-gray-500 cursor-not-allowed;
+  @apply text-gray-600 cursor-not-allowed;
 }

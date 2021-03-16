@@ -39,7 +39,7 @@
   <h1 class="font-bold mb-3">{{ episode.title }}</h1>
   <h2 class="mb-3">
     <a href="{{ podcast.get_absolute_url }}"
-       class="link text-sm">
+       class="link text-sm text-gray-600 dark:text-gray-300">
       {{ podcast.title }}
     </a>
   </h2>
@@ -51,7 +51,7 @@
     </div>
     <div class="space-y-2">
       <div title="Date Published"
-           class="flex items-center text-sm font-semibold text-gray-500 dark:text-gray-300 space-x-2">
+           class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-2">
         <div>
           {{ episode.pub_date|date }}
         </div>

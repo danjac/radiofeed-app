@@ -11,14 +11,14 @@
        class="link">Discover</a>
   </div>
   {% if category.parent %}
-  <div class="text-gray-500 dark:text-gray-300">&gt;</div>
+  <div class="text-gray-600 dark:text-gray-300">&gt;</div>
   <div>
     <a href="{{ category.parent.get_absolute_url }}"
        class="link mr-1">{{ category.parent.name }}</a>
   </div>
   {% endif %}
-  <div class="text-gray-500 dark:text-gray-300">&gt;</div>
-  <div class="text-gray-500 dark:text-gray-300">{{ category.name }}</div>
+  <div class="text-gray-600 dark:text-gray-300">&gt;</div>
+  <div class="text-gray-600 dark:text-gray-300">{{ category.name }}</div>
 </div>
 
 <div class="sm:flex items-center justify-between mb-3 space-y-2 sm:space-y-0">

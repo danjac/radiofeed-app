@@ -3,7 +3,7 @@
 }
 
 .markdown hr {
-  @apply text-gray-300 dark:text-gray-500;
+  @apply text-gray-300 dark:text-gray-600;
 }
 
 .markdown a {
@@ -23,7 +23,7 @@
 }
 
 .markdown a:visited {
-  @apply text-gray-500 dark:text-gray-300;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .markdown a:hover {
