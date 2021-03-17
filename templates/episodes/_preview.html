@@ -23,7 +23,7 @@
       <a href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}"
          title="{{ podcast.title }}"
          data-turbo-frame="_top"
-         class="link font-semibold text-gray-600 dark:text-gray-300">
+         class="link">
         {{ podcast.title|truncatechars:100 }}
       </a>
     </h2>
