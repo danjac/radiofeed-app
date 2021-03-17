@@ -32,7 +32,7 @@ def parse_feed(raw: bytes) -> Feed:
         image=parse_attribute(channel, "itunes:image", "href"),
         authors=set(
             parse_text_list(channel, "itunes:owner/itunes:name")
-            + parse_text_list(channel, "itunes/author")
+            + parse_text_list(channel, "itunes:author")
         ),
         categories=parse_attribute_list(channel, ".//itunes:category", "text"),
         explicit=parse_explicit(channel),
