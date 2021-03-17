@@ -123,6 +123,7 @@ class TestSyncRssFeed:
 
         assert podcast.title == "Mysterious Universe"
         assert podcast.etag
+        assert podcast.cover_image
         assert podcast.authors
         assert podcast.extracted_text
         assert podcast.categories.count() == 6
@@ -135,6 +136,7 @@ class TestSyncRssFeed:
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=timezone.now(),
+            cover_image=None,
             pub_date=None,
         )
 
@@ -144,6 +146,7 @@ class TestSyncRssFeed:
         assert podcast.pub_date is None
         assert podcast.title != "Mysterious Universe"
         assert podcast.episode_set.count() == 0
+        assert not podcast.cover_image
 
     def test_parse_existing_episodes(self, mocker, clear_categories_cache):
         mocker.patch("requests.head", return_value=MockHeaderResponse())
