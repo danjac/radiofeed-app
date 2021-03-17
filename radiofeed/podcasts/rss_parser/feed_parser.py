@@ -24,13 +24,15 @@ def parse_feed(raw: bytes) -> Feed:
         strip_cdata=False, ns_clean=True, recover=True, encoding="utf-8"
     )
 
-    rss = lxml.etree.fromstring(
-        raw,
-        parser=parser,
-    )
-    channel = rss.find("channel")
+    if (
+        rss := lxml.etree.fromstring(
+            raw,
+            parser=parser,
+        )
+    ) is None:
+        raise ValueError("Not a valid RSS feed")
 
-    if channel is None:
+    if (channel := rss.find("channel")) is None:
         raise ValueError("Not a valid RSS feed")
 
     return Feed(
