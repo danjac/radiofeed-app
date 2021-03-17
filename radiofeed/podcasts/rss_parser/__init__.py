@@ -139,7 +139,7 @@ def fetch_rss_feed(
         ValueError,
         requests.RequestException,
     ) as e:
-        podcast.parse_error = str(e)
+        podcast.sync_error = str(e)
         podcast.num_retries += 1
         podcast.save()
 
