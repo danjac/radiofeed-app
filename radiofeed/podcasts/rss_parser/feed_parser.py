@@ -114,8 +114,6 @@ def parse_audio(item: ElementBase) -> Optional[Audio]:
         type=enclosure.attrib.get("type"),
     )
 
-    return None
-
 
 def parse_description(item: ElementBase) -> str:
 
