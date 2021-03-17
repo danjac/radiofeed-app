@@ -8,6 +8,7 @@ import requests
 
 from django.core.files.images import ImageFile
 from django.utils import timezone
+from lxml.etree import XMLSyntaxError
 from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode
@@ -128,7 +129,12 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
         )
         response.raise_for_status()
         return parse_feed(response.content), etag
-    except (ValidationError, requests.RequestException) as e:
+    except (
+        ValidationError,
+        XMLSyntaxError,
+        ValueError,
+        requests.RequestException,
+    ) as e:
         podcast.parse_error = str(e)
         podcast.num_retries += 1
         podcast.save()
