@@ -20,8 +20,13 @@ NAMESPACES = {
 
 
 def parse_feed(raw: bytes) -> Feed:
+    parser = lxml.etree.XMLParser(
+        strip_cdata=False, ns_clean=True, recover=True, encoding="utf-8"
+    )
+
     rss = lxml.etree.fromstring(
-        raw, parser=lxml.etree.XMLParser(strip_cdata=False, encoding="utf-8")
+        raw,
+        parser=parser,
     )
     channel = rss.find("channel")
 
