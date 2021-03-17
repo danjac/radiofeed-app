@@ -98,7 +98,7 @@ class TestSyncRssFeed:
 
     def test_parse(self, mocker, clear_categories_cache):
         mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.txt"))
+        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
         [
             CategoryFactory(name=name)
             for name in (
@@ -130,7 +130,7 @@ class TestSyncRssFeed:
 
     def test_parse_if_already_updated(self, mocker, clear_categories_cache):
         mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.txt"))
+        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
 
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
@@ -147,7 +147,7 @@ class TestSyncRssFeed:
 
     def test_parse_existing_episodes(self, mocker, clear_categories_cache):
         mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.txt"))
+        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=None,
@@ -170,13 +170,6 @@ class TestAudioModel:
             rel="enclosure",
             url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
         )
-
-    def test_not_enclosure(self):
-        with pytest.raises(ValidationError):
-            Audio(
-                type="audio/mpeg",
-                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-            )
 
     def test_not_audio(self):
         with pytest.raises(ValidationError):

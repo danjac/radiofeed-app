@@ -1,114 +1,127 @@
-from typing import Dict, Generator, List, Optional
+from typing import Generator, List, Optional
 
-import bs4
-import feedparser
+import lxml
 
+from lxml.etree import ElementBase
 from pydantic import ValidationError
 
 from .models import Audio, Feed, Item
 
+NAMESPACES = {
+    "atom": "http://www.w3.org/2005/Atom",
+    "content": "http://purl.org/rss/1.0/modules/content/",
+    "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+    "media": "http://search.yahoo.com/mrss/",
+    "podcast": "https://podcastindex.org/namespace/1.0",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+}
+
 
 def parse_feed(raw: bytes) -> Feed:
-    result = feedparser.parse(raw)
-    channel = result["feed"]
+    rss = lxml.etree.fromstring(raw, parser=lxml.etree.XMLParser(strip_cdata=False))
+    channel = rss.find("channel")
+
+    if channel is None:
+        raise ValueError("Not a valid RSS feed")
 
     return Feed(
-        title=channel.get("title", None),
-        description=channel.get("description", ""),
-        link=channel.get("link", ""),
-        explicit=bool(channel.get("itunes_explicit", False)),
-        image=parse_image(raw, channel),
-        authors=set(parse_authors(channel.get("authors", []))),
-        categories=list(parse_tags(channel.get("tags", []))),
-        items=list(parse_items(result)),
+        title=parse_text(channel, "title"),
+        description=parse_text(channel, "description"),
+        link=parse_text(channel, "link"),
+        image=parse_attribute(channel, "itunes:image", "href"),
+        authors=set(
+            parse_text_list(channel, "itunes:owner/itunes:name")
+            + parse_text_list(channel, "itunes/author")
+        ),
+        categories=parse_attribute_list(channel, ".//itunes:category", "text"),
+        explicit=parse_explicit(channel),
+        items=list(parse_rss_items(channel)),
     )
 
 
-def parse_items(result: Dict) -> Generator:
+def parse_tag(parent: ElementBase, xpath: str) -> Optional[ElementBase]:
+    return parent.find(xpath, NAMESPACES)
+
+
+def parse_tags(parent: ElementBase, xpath: str) -> List[ElementBase]:
+    return parent.findall(xpath, NAMESPACES)
+
+
+def parse_attribute(parent: ElementBase, xpath: str, attr: str) -> Optional[str]:
+    if (tag := parse_tag(parent, xpath)) is None:
+        return None
+    try:
+        return tag.attrib[attr]
+    except KeyError:
+        return None
+
+
+def parse_attribute_list(parent: ElementBase, xpath: str, attr: str) -> List[str]:
+    return [
+        (tag.attrib[attr] or "")
+        for tag in parse_tags(parent, xpath)
+        if attr in tag.attrib
+    ]
+
+
+def parse_text(parent: ElementBase, xpath: str) -> str:
+    if (tag := parse_tag(parent, xpath)) is None:
+        return ""
+    return tag.text or ""
+
+
+def parse_text_list(parent: ElementBase, xpath: str) -> List[str]:
+    return [(item.text or "") for item in parse_tags(parent, xpath)]
+
+
+def parse_explicit(parent: ElementBase) -> bool:
+    return parse_text(parent, "itunes:explicit").lower() == "yes"
+
+
+def parse_rss_items(channel: ElementBase) -> Generator:
+
     guids = set()
-    for entry in result.get("entries", []):
-        guid = parse_guid(entry)
+    for item in parse_tags(channel, "item"):
+        guid = parse_text(item, "guid") or parse_text(item, "itunes:episode")
+
         if guid and guid not in guids:
             try:
                 yield Item(
                     guid=guid,
-                    title=entry.get("title"),
-                    duration=entry.get("itunes_duration", ""),
-                    link=entry.get("link", ""),
-                    explicit=bool(entry.get("itunes_explicit", False)),
-                    pub_date=entry.get("published", None),
-                    audio=parse_audio(entry),
-                    description=parse_description(entry),
-                    keywords=" ".join(parse_tags(entry.get("tags", []))),
+                    title=parse_text(item, "title"),
+                    duration=parse_text(item, "itunes:duration"),
+                    link=parse_text(item, "link"),
+                    pub_date=parse_text(item, "pubDate"),
+                    explicit=parse_explicit(item),
+                    audio=parse_audio(item),
+                    description=parse_description(item),
+                    keywords=parse_text(item, "itunes:keywords"),
                 )
                 guids.add(guid)
             except ValidationError:
                 pass
 
 
-def parse_guid(entry: Dict) -> Optional[str]:
-    for key in ("id", "itunes_episode"):
-        if key in entry and (value := entry[key]):
-            return value
-    return None
+def parse_audio(item: ElementBase) -> Optional[Audio]:
 
+    if (enclosure := parse_tag(item, "enclosure")) is None:
+        return None
 
-def parse_tags(tags: List[Dict]) -> Generator:
-    for t in tags:
-        if term := t.get("term"):
-            yield term
-
-
-def parse_authors(authors: List[Dict]) -> Generator:
-    for a in authors:
-        if name := a.get("name"):
-            yield name
-
-
-def parse_audio(entry: Dict) -> Optional[Audio]:
-
-    for link in entry.get("links", []):
-        try:
-            return Audio(
-                rel=link["rel"],
-                type=link["type"],
-                url=link["url"],
-                length=link.get("length", None),
-            )
-        except (ValidationError, KeyError):
-            pass
+    return Audio(
+        length=enclosure.attrib.get("length"),
+        url=enclosure.attrib.get("url"),
+        type=enclosure.attrib.get("type"),
+    )
 
     return None
 
 
-def parse_description(entry: Dict) -> str:
-    try:
-        return (
-            [
-                c["value"]
-                for c in entry.get("content", [])
-                if c.get("type") == "text/html"
-            ]
-            + [
-                entry[field]
-                for field in ("description", "summary", "subtitle")
-                if field in entry and entry[field]
-            ]
-        )[0]
-    except (KeyError, IndexError):
-        return ""
+def parse_description(item: ElementBase) -> str:
 
-
-def parse_image(raw: bytes, channel: Dict) -> Optional[str]:
-    # try itunes image first
-    soup = bs4.BeautifulSoup(raw, "lxml")
-    tag = soup.find("itunes:image")
-    if tag and "href" in tag.attrs:
-        return tag.attrs["href"]
-
-    try:
-        return channel["image"]["href"]
-    except KeyError:
-        pass
-
-    return None
+    return (
+        parse_text(item, "content:encoded")
+        or parse_text(item, "description")
+        or parse_text(item, "summary")
+        or parse_text(item, "subtitle")
+    )

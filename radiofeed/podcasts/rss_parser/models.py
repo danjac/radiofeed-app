@@ -12,14 +12,7 @@ from .date_parser import parse_date
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
-    rel: str
     length: Optional[int]
-
-    @validator("rel")
-    def is_enclosure(cls, value: str) -> str:
-        if value != "enclosure":
-            raise ValueError("must be an enclosure")
-        return value
 
     @validator("type")
     def is_audio(cls, value: str) -> str:
