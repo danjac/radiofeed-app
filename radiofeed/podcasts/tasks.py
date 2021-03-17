@@ -40,7 +40,7 @@ def sync_podcast_feeds() -> None:
         num_retries__lt=3,
     ).distinct()
     for rss in podcasts.values_list("rss", flat=True):
-        sync_podcast_feed.delay(rss)
+        sync_podcast_feed.delay(rss, raise_exception=True)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
@@ -49,11 +49,13 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str, force_update: bool = False) -> None:
+def sync_podcast_feed(
+    rss: str, *, force_update: bool = False, raise_exception: bool = False
+) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        parse_rss(podcast, force_update=force_update)
+        parse_rss(podcast, force_update=force_update, raise_exception=raise_exception)
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
     except requests.HTTPError as e:
