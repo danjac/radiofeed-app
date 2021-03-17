@@ -29,6 +29,7 @@ class Item(BaseModel):
     explicit: bool = False
     description: str = ""
     keywords: str = ""
+    link: constr(max_length=500) = ""  # type: ignore
     pub_date: datetime.datetime
     duration: constr(max_length=30)  # type: ignore
 

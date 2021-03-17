@@ -205,6 +205,7 @@ def create_episode_from_item(podcast: Podcast, item: Item) -> Episode:
         explicit=item.explicit,
         description=item.description,
         keywords=item.keywords,
+        link=item.link,
         media_url=item.audio.url,
         media_type=item.audio.type,
         length=item.audio.length,
