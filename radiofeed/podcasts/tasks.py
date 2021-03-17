@@ -40,7 +40,7 @@ def sync_podcast_feeds() -> None:
         num_retries__lt=3,
     ).distinct()
     for rss in podcasts.values_list("rss", flat=True):
-        sync_podcast_feed.delay(rss, raise_exception=True)
+        sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="radiofeed.podcasts.create_podcast_recommendations")
