@@ -27,14 +27,15 @@ def parse_feed(raw: bytes) -> Feed:
 
     return Feed(
         title=parse_text(channel, "title"),
-        description=parse_text(channel, "description"),
         link=parse_text(channel, "link"),
-        image=parse_attribute(channel, "itunes:image", "href"),
+        image=parse_attribute(channel, "itunes:image", "href")
+        or parse_text(channel, "image/url"),
         authors=set(
             parse_text_list(channel, "itunes:owner/itunes:name")
             + parse_text_list(channel, "itunes:author")
         ),
         categories=parse_attribute_list(channel, ".//itunes:category", "text"),
+        description=parse_channel_description(channel),
         explicit=parse_explicit(channel),
         items=list(parse_rss_items(channel)),
     )
@@ -95,8 +96,8 @@ def parse_rss_items(channel: ElementBase) -> Generator:
                     pub_date=parse_text(item, "pubDate"),
                     explicit=parse_explicit(item),
                     audio=parse_audio(item),
-                    description=parse_description(item),
-                    keywords=parse_text(item, "itunes:keywords"),
+                    description=parse_item_description(item),
+                    keywords=parse_item_keywords(item),
                 )
                 guids.add(guid)
             except ValidationError:
@@ -115,11 +116,26 @@ def parse_audio(item: ElementBase) -> Optional[Audio]:
     )
 
 
-def parse_description(item: ElementBase) -> str:
+def parse_channel_description(channel: ElementBase) -> str:
+    return (
+        parse_text(channel, "description")
+        or parse_text(channel, "itunes:summary")
+        or parse_text(channel, "itunes:subtitle")
+    )
+
+
+def parse_item_description(item: ElementBase) -> str:
 
     return (
         parse_text(item, "content:encoded")
         or parse_text(item, "description")
-        or parse_text(item, "summary")
-        or parse_text(item, "subtitle")
+        or parse_text(item, "itunes:summary")
+        or parse_text(item, "itunes:subtitle")
     )
+
+
+def parse_item_keywords(item: ElementBase) -> str:
+    rv = parse_text_list(item, "category")
+    if (keywords := parse_text(item, "itunes:keywords")) :
+        rv.append(keywords)
+    return " ".join(rv)
