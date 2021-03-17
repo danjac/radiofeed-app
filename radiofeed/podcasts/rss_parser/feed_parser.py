@@ -10,6 +10,7 @@ from .models import Audio, Feed, Item
 NAMESPACES = {
     "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
+    "dc": "http://purl.org/dc/elements/1.1/",
     "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
     "media": "http://search.yahoo.com/mrss/",
@@ -28,13 +29,9 @@ def parse_feed(raw: bytes) -> Feed:
     return Feed(
         title=parse_text(channel, "title"),
         link=parse_text(channel, "link"),
-        image=parse_attribute(channel, "itunes:image", "href")
-        or parse_text(channel, "image/url"),
-        authors=set(
-            parse_text_list(channel, "itunes:owner/itunes:name")
-            + parse_text_list(channel, "itunes:author")
-        ),
         categories=parse_attribute_list(channel, ".//itunes:category", "text"),
+        authors=set(parse_channel_authors(channel)),
+        image=parse_channel_image(channel),
         description=parse_channel_description(channel),
         explicit=parse_explicit(channel),
         items=list(parse_rss_items(channel)),
@@ -116,11 +113,26 @@ def parse_audio(item: ElementBase) -> Optional[Audio]:
     )
 
 
+def parse_channel_image(channel: ElementBase) -> Optional[str]:
+    return (
+        parse_attribute(channel, "itunes:image", "href")
+        or parse_text(channel, "image/url")
+        or parse_attribute(channel, "googleplay:image", "href")
+    )
+
+
 def parse_channel_description(channel: ElementBase) -> str:
     return (
         parse_text(channel, "description")
+        or parse_text(channel, "googleplay:description")
         or parse_text(channel, "itunes:summary")
         or parse_text(channel, "itunes:subtitle")
+    )
+
+
+def parse_channel_authors(channel: ElementBase) -> List[str]:
+    return parse_text_list(channel, "itunes:owner/itunes:name") + parse_text_list(
+        channel, "itunes:author"
     )
 
 
@@ -129,6 +141,7 @@ def parse_item_description(item: ElementBase) -> str:
     return (
         parse_text(item, "content:encoded")
         or parse_text(item, "description")
+        or parse_text(item, "googleplay:description")
         or parse_text(item, "itunes:summary")
         or parse_text(item, "itunes:subtitle")
     )
