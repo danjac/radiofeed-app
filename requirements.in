@@ -20,7 +20,6 @@ django-turbo-allauth
 django-turbo-response
 django-widget-tweaks
 factory-boy
-feedparser==6.0.2
 future
 gunicorn
 html5lib

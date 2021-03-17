@@ -47,7 +47,6 @@ django==3.1.7             # via -r requirements.in, django-allauth, django-anyma
 execnet==1.8.0            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
 faker==6.6.0              # via factory-boy
-feedparser==6.0.2         # via -r requirements.in
 future==0.18.2            # via -r requirements.in
 gprof2dot==2021.2.21      # via django-silk
 gunicorn==20.0.4          # via -r requirements.in
@@ -105,7 +104,6 @@ s3transfer==0.3.4         # via boto3
 scikit-learn==0.24.1      # via sklearn
 scipy==1.6.1              # via scikit-learn
 sentry-sdk==1.0.0         # via -r requirements.in
-sgmllib3k==1.0.0          # via feedparser
 six==1.15.0               # via bleach, click-repl, html5lib, pyopenssl, python-dateutil
 sklearn==0.0              # via -r requirements.in
 sorl-thumbnail==12.7.0    # via -r requirements.in
