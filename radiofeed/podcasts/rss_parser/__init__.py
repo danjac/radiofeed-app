@@ -75,7 +75,7 @@ def sync_podcast(
     podcast.keywords = extract_keywords_from_feed(feed)
     podcast.extracted_text = extract_text(podcast, feed, categories)
 
-    podcast.parse_error = ""
+    podcast.sync_error = ""
     podcast.num_retries = 0
 
     if not podcast.cover_image:
