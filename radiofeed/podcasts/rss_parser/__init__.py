@@ -145,8 +145,6 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
 
         raise RssParserException from e
 
-    return None, ""
-
 
 def extract_pub_date(feed: Feed) -> Optional[datetime.datetime]:
     now = timezone.now()
