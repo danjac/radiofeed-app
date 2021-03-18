@@ -174,7 +174,7 @@ class Podcast(models.Model):
         return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
 
     def get_recommendations_url(self) -> str:
-        return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
+        return reverse("podcasts:podcast_recommendations", args=[self.id, self.slug])
 
     @property
     def slug(self) -> str:
