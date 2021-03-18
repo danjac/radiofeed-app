@@ -103,9 +103,9 @@ class ChannelParser(FeedParser):
 
         guids = set()
 
-        for rss_item in [ItemParser(tag) for tag in self.parse_tags("item")]:
+        for parser in [ItemParser(tag) for tag in self.parse_tags("item")]:
             try:
-                item = rss_item.as_item()
+                item = parser.as_item()
                 if item.guid not in guids:
                     yield item
                 guids.add(item.guid)
