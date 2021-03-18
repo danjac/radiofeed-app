@@ -27,7 +27,7 @@ def parse_feed(raw: bytes) -> Feed:
     if (channel := rss.find("channel")) is None:
         raise InvalidFeedError("RSS does not contain <channel />")
 
-    return RssChannel(channel).as_feed()
+    return ChannelParser(channel).as_feed()
 
 
 class Feedparser:
@@ -78,7 +78,7 @@ class Feedparser:
         return self.parse_text("itunes:explicit").lower() == "yes"
 
 
-class RssChannel(Feedparser):
+class ChannelParser(Feedparser):
     def parse_image(self) -> Optional[str]:
         return (
             self.parse_attribute("itunes:image", "href")
@@ -103,7 +103,7 @@ class RssChannel(Feedparser):
 
         guids = set()
 
-        for rss_item in [RssItem(tag) for tag in self.parse_tags("item")]:
+        for rss_item in [ItemParser(tag) for tag in self.parse_tags("item")]:
             try:
                 item = rss_item.as_item()
                 if item.guid not in guids:
@@ -125,7 +125,7 @@ class RssChannel(Feedparser):
         )
 
 
-class RssItem(Feedparser):
+class ItemParser(Feedparser):
     def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
