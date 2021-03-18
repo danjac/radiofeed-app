@@ -15,17 +15,26 @@ pytestmark = pytest.mark.django_db
 
 @pytest.fixture
 def mock_send_email(mocker):
-    return mocker.patch("radiofeed.podcasts.tasks.send_recommendations_email")
+    return mocker.patch(
+        "radiofeed.podcasts.tasks.send_recommendations_email",
+        autospec=True,
+    )
 
 
 @pytest.fixture
 def mock_sync_podcast_feed(mocker):
-    return mocker.patch("radiofeed.podcasts.tasks.sync_podcast_feed.delay")
+    return mocker.patch(
+        "radiofeed.podcasts.tasks.sync_podcast_feed.delay",
+        autospec=True,
+    )
 
 
 @pytest.fixture
 def mock_parse_rss(mocker):
-    return mocker.patch("radiofeed.podcasts.tasks.parse_rss")
+    return mocker.patch(
+        "radiofeed.podcasts.tasks.parse_rss",
+        autospec=True,
+    )
 
 
 class TestSendRecommendationEmails:

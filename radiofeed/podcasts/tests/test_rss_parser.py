@@ -91,14 +91,18 @@ class TestParseDate:
 
 class TestSyncRssFeed:
     def test_parse_error(self, podcast, mocker, clear_categories_cache):
-        mocker.patch("requests.head", side_effect=requests.RequestException)
+        mocker.patch(
+            "requests.head", autospec=True, side_effect=requests.RequestException
+        )
         assert not parse_rss(podcast)
         podcast.refresh_from_db()
         assert podcast.num_retries == 1
 
     def test_parse(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
+        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+        mocker.patch(
+            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
+        )
         [
             CategoryFactory(name=name)
             for name in (
@@ -130,8 +134,10 @@ class TestSyncRssFeed:
         assert podcast.episode_set.count() == 20
 
     def test_parse_if_already_updated(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
+        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+        mocker.patch(
+            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
+        )
 
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
@@ -149,8 +155,10 @@ class TestSyncRssFeed:
         assert not podcast.cover_image
 
     def test_parse_existing_episodes(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", return_value=MockHeaderResponse())
-        mocker.patch("requests.get", return_value=MockResponse("rss_mock.xml"))
+        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+        mocker.patch(
+            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
+        )
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=None,

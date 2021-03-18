@@ -286,9 +286,18 @@ class TestITunesCategory:
                 )
             ], []
 
-        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
-        mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
-        resp = client.get(reverse("podcasts:itunes_category", args=[category.id]))
+        mocker.patch(
+            "radiofeed.podcasts.views.sync_podcast_feed.delay",
+            autospec=True,
+        )
+        mocker.patch.object(
+            itunes,
+            "fetch_itunes_genre",
+            mock_fetch_itunes_genre,
+        )
+        resp = client.get(
+            reverse("podcasts:itunes_category", args=[category.id]),
+        )
 
         assert resp.status_code == http.HTTPStatus.OK
         assert not resp.context_data["error"]
@@ -299,7 +308,12 @@ class TestITunesCategory:
 
         category = CategoryFactory(itunes_genre_id=1200)
 
-        mocker.patch.object(itunes, "fetch_itunes_genre", side_effect=itunes.Invalid)
+        mocker.patch.object(
+            itunes,
+            "fetch_itunes_genre",
+            side_effect=itunes.Invalid,
+            autospec=True,
+        )
 
         resp = client.get(reverse("podcasts:itunes_category", args=[category.id]))
 
@@ -320,8 +334,15 @@ class TestSearchITunes:
                 )
             ], []
 
-        mocker.patch("radiofeed.podcasts.views.sync_podcast_feed.delay")
-        mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
+        mocker.patch(
+            "radiofeed.podcasts.views.sync_podcast_feed.delay",
+            autospec=True,
+        )
+        mocker.patch.object(
+            itunes,
+            "search_itunes",
+            mock_search_itunes,
+        )
         resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
 
         assert resp.status_code == http.HTTPStatus.OK
@@ -336,7 +357,12 @@ class TestSearchITunes:
         assert len(resp.context_data["results"]) == 0
 
     def test_invalid_results(self, client, mocker):
-        mocker.patch.object(itunes, "search_itunes", side_effect=itunes.Invalid)
+        mocker.patch.object(
+            itunes,
+            "search_itunes",
+            side_effect=itunes.Invalid,
+            autospec=True,
+        )
 
         resp = client.get(reverse("podcasts:search_itunes"), {"q": "testing"})
 
