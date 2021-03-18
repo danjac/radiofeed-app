@@ -103,9 +103,7 @@ class Feed(BaseModel):
     ) -> List[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
 
-        pub_date = self.get_pub_date()
-
-        if not pub_date:
+        if (pub_date := self.get_pub_date()) is None:
             return []
 
         if (
