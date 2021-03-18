@@ -178,7 +178,6 @@ class TestAudioModel:
     def test_audio(self):
         Audio(
             type="audio/mpeg",
-            rel="enclosure",
             url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
         )
 
@@ -186,7 +185,6 @@ class TestAudioModel:
         with pytest.raises(ValidationError):
             Audio(
                 type="text/xml",
-                rel="enclosure",
                 url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
             )
 
