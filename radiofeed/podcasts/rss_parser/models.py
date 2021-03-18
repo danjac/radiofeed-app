@@ -14,7 +14,8 @@ from radiofeed.episodes.models import Episode
 from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
 from .date_parser import parse_date
-from .image import InvalidImageURL, fetch_image_from_url
+from .exceptions import InvalidImageURL
+from .image import fetch_image_from_url
 
 CategoryDict = Dict[str, Category]
 

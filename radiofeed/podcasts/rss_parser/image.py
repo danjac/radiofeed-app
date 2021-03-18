@@ -11,14 +11,11 @@ import requests
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 
+from .exceptions import InvalidImageURL
 from .headers import get_headers
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
-
-
-class InvalidImageURL(Exception):
-    ...
 
 
 def fetch_image_from_url(image_url: str) -> ImageFile:
