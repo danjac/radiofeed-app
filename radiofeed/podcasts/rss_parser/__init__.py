@@ -143,6 +143,8 @@ def fetch_rss_feed(
         podcast.num_retries += 1
         podcast.save()
 
+        logger.error(f"Podcast:{podcast.id}:{podcast.rss}:{str(e)}")
+
         if raise_exception:
             raise
 
