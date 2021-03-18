@@ -23,9 +23,11 @@ from .models import Feed, Item
 logger = logging.getLogger(__name__)
 
 
-def parse_rss(
-    podcast: Podcast, *, force_update: bool = False, raise_exception: bool = False
-) -> int:
+class RssParserException(Exception):
+    ...
+
+
+def parse_rss(podcast: Podcast, *, force_update: bool = False) -> int:
     """Parses RSS feed for podcast. If force_update is provided will
     re-fetch all podcast info, episodes etc even if podcast does not
     have new content (provided a valid feed is available).
@@ -33,7 +35,7 @@ def parse_rss(
     Returns number of new epiosdes.
     """
 
-    feed, etag = fetch_rss_feed(podcast, force_update, raise_exception)
+    feed, etag = fetch_rss_feed(podcast, force_update)
     if feed is None:
         return 0
 
@@ -119,9 +121,7 @@ def fetch_etag(url: str) -> str:
     return headers.get("ETag", "")
 
 
-def fetch_rss_feed(
-    podcast: Podcast, force_update: bool, raise_exception: bool
-) -> Tuple[Optional[Feed], str]:
+def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed], str]:
 
     try:
         etag = fetch_etag(podcast.rss)
@@ -143,10 +143,7 @@ def fetch_rss_feed(
         podcast.num_retries += 1
         podcast.save()
 
-        logger.error(f"Podcast:{podcast.id}:{podcast.rss}:{str(e)}")
-
-        if raise_exception:
-            raise
+        raise RssParserException from e
 
     return None, ""
 

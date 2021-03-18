@@ -1,7 +1,6 @@
 import datetime
 
 import pytest
-import requests
 
 from django.utils import timezone
 
@@ -9,6 +8,7 @@ from radiofeed.users.factories import UserFactory
 
 from .. import tasks
 from ..factories import PodcastFactory
+from ..rss_parser import RssParserException
 
 pytestmark = pytest.mark.django_db
 
@@ -81,8 +81,8 @@ class TestSyncPodcastFeed:
         tasks.sync_podcast_feed(12345)
         mock_parse_rss.assert_not_called()
 
-    def test_http_error(self, mock_parse_rss, podcast):
-        mock_parse_rss.side_effect = requests.HTTPError("Boom")
+    def test_parser_exception(self, mock_parse_rss, podcast):
+        mock_parse_rss.side_effect = RssParserException("Boom")
         tasks.sync_podcast_feed(podcast.rss)
 
     def test_ok(self, mock_parse_rss, podcast):

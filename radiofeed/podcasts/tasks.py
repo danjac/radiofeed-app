@@ -1,7 +1,5 @@
 import datetime
 
-import requests
-
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
@@ -12,7 +10,7 @@ from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
 from .recommender import recommend
-from .rss_parser import parse_rss
+from .rss_parser import RssParserException, parse_rss
 
 logger = get_task_logger(__name__)
 
@@ -49,14 +47,12 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feed")
-def sync_podcast_feed(
-    rss: str, *, force_update: bool = False, raise_exception: bool = False
-) -> None:
+def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        parse_rss(podcast, force_update=force_update, raise_exception=raise_exception)
+        parse_rss(podcast, force_update=force_update)
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
-    except requests.HTTPError as e:
+    except RssParserException as e:
         logger.error(f"Error fetching {rss}: {e}")

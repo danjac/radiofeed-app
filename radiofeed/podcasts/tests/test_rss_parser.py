@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from radiofeed.episodes.factories import EpisodeFactory
 
 from ..factories import CategoryFactory, PodcastFactory
-from ..rss_parser import get_categories_dict, parse_rss
+from ..rss_parser import RssParserException, get_categories_dict, parse_rss
 from ..rss_parser.date_parser import parse_date
 from ..rss_parser.models import Audio, Feed, Item
 
@@ -89,12 +89,15 @@ class TestParseDate:
         assert parse_date("Fri, 33 June 2020 16:58:03 +0000") is None
 
 
-class TestSyncRssFeed:
+class TestParseRss:
     def test_parse_error(self, podcast, mocker, clear_categories_cache):
         mocker.patch(
             "requests.head", autospec=True, side_effect=requests.RequestException
         )
-        assert not parse_rss(podcast)
+        with pytest.raises(RssParserException) as e:
+            parse_rss(podcast)
+            assert e.rss == podcast.rss
+
         podcast.refresh_from_db()
         assert podcast.num_retries == 1
 
