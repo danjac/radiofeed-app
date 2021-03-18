@@ -20,6 +20,11 @@ from .image import fetch_image_from_url
 CategoryDict = Dict[str, Category]
 
 
+@lru_cache
+def get_categories_dict() -> CategoryDict:
+    return {c.name: c for c in Category.objects.all()}
+
+
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
@@ -201,8 +206,3 @@ class Feed(BaseModel):
             pass
 
         return None
-
-
-@lru_cache
-def get_categories_dict() -> CategoryDict:
-    return {c.name: c for c in Category.objects.all()}
