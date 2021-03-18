@@ -1,6 +1,6 @@
 - name: Build and compress assets
   shell: |
-    docker-compose -f {{compose_file}} run --rm
+    docker-compose -f {{compose_file}} run --rm \
     -e SECRET_KEY="{{secret_key}}" \
     -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.deploy \
     -e AWS_ACCESS_KEY_ID={{aws_access_key_id}} \
