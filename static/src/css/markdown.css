@@ -15,8 +15,8 @@
 }
 
 .markdown p:empty,
-div:empty,
-li:empty {
+.markdown div:empty,
+.markdown li:empty {
   @apply hidden;
 }
 
