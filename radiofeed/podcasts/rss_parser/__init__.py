@@ -33,7 +33,7 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> List[Episode]:
             podcast.rss, headers=get_headers(), stream=True, timeout=5
         )
         response.raise_for_status()
-        return parse_feed(response.content, podcast, etag, force_update)
+        return parse_feed(response.content).sync_podcast(podcast, etag, force_update)
     except (
         InvalidFeedError,
         ValidationError,

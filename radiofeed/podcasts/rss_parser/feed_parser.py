@@ -5,16 +5,11 @@ import lxml
 from lxml.etree import ElementBase
 from pydantic import ValidationError
 
-from radiofeed.episodes.models import Episode
-
-from ..models import Podcast
 from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
 
-def parse_feed(
-    raw: bytes, podcast: Podcast, etag: str, force_update: bool
-) -> List[Episode]:
+def parse_feed(raw: bytes) -> Feed:
 
     if (
         rss := lxml.etree.fromstring(
@@ -32,7 +27,7 @@ def parse_feed(
     if (channel := rss.find("channel")) is None:
         raise InvalidFeedError("RSS does not contain <channel />")
 
-    return RssChannel(channel).as_feed().sync_podcast(podcast, etag, force_update)
+    return RssChannel(channel).as_feed()
 
 
 class Feedparser:
