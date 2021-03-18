@@ -20,7 +20,7 @@
   </div>
   <div class="space-y-2">
     <h2 class="text-sm w-48 sm:w-96 truncate">
-      <a href="{% url 'podcasts:podcast_detail' podcast.id podcast.slug %}"
+      <a href="{{ podcast.get_detail_url }}"
          title="{{ podcast.title }}"
          data-turbo-frame="_top"
          class="link">

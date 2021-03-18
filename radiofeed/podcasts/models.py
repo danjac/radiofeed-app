@@ -167,6 +167,9 @@ class Podcast(models.Model):
     def get_absolute_url(self) -> str:
         return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])
 
+    def get_detail_url(self) -> str:
+        return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
+
     @property
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "podcast"

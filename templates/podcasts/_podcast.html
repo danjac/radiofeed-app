@@ -1,5 +1,4 @@
 {% load podcasts %}
-{% with podcast_url=podcast.get_absolute_url %}
 <div class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
      id="{{ podcast.dom.podcast }}"
      {{ attrs|htmlattrs }}>
@@ -7,7 +6,7 @@
     <div class="font-bold flex items-center space-x-2">
 
       <div>
-        <a href="{{ podcast_url }}"
+        <a href="{{ podcast.get_absolute_url }}"
            data-turbo-frame="_top">
           {% cover_image podcast=podcast lazy=True %}
         </a>
@@ -15,7 +14,7 @@
 
       <div>
         <div class="mb-2 text-sm w-56 sm:w-96 truncate md:w-full">
-          <a href="{{ podcast_url }}"
+          <a href="{{ podcast.get_detail_url }}"
              title="{{ podcast.title|stripentities }}"
              data-turbo-frame="_top"
              class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
@@ -36,4 +35,3 @@
     </div>
   </div>
 </div>
-{% endwith %}

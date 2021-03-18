@@ -1,7 +1,7 @@
 {% extends "modal_base.html" %}
 {% load podcasts %}
 {% block modal_header %}
-<a href="{{ podcast.get_absolute_url }}"
+<a href="{{ podcast.get_detail_url }}"
    class="font-semibold hover:text-blue-500"
    data-turbo-frame="_top">
   {{ podcast.title|truncatechars:120 }}
@@ -10,10 +10,9 @@
 
 {% block modal_content %}
 
-{% with podcast_url=podcast.get_absolute_url %}
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
-    <a href="{{ podcast_url }}"
+    <a href="{{ podcast.get_absolute_url }}"
        data-turbo-frame="_top">
       {% cover_image podcast lazy=False size="20" %}
     </a>
@@ -35,5 +34,4 @@
 <div class="text-sm markdown">
   {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}
 </div>
-{% endwith %}
 {% endblock %}
