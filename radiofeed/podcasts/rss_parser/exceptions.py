@@ -1,0 +1,6 @@
+class InvalidFeedError(ValueError):
+    ...
+
+
+class RssParserError(ValueError):
+    ...

@@ -51,8 +51,8 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        if num_episodes := parse_rss(podcast, force_update=force_update):
-            logger.info(f"Podcast {podcast} has {num_episodes} new episode(s)")
+        if episodes := parse_rss(podcast, force_update=force_update):
+            logger.info(f"Podcast {podcast} has {len(episodes)} new episode(s)")
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
     except RssParserError as e:
