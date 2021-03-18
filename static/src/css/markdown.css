@@ -14,6 +14,16 @@
   @apply py-1;
 }
 
+.markdown p:empty,
+div:empty,
+li:empty {
+  @apply hidden;
+}
+
+.markdown br:nth-child(2n + 1) {
+  @apply hidden;
+}
+
 .markdown ol {
   @apply list-decimal list-inside;
 }
@@ -22,7 +32,6 @@
   @apply list-disc list-inside;
 }
 
-.markdown a:visited,
 .markdown a:hover {
   @apply text-blue-600 font-semibold dark:text-blue-400;
 }

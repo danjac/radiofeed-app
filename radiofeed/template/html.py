@@ -10,7 +10,7 @@ Attribute = Tuple[Optional[str], str]
 AttributeDict = Dict[Attribute, str]
 
 
-def allow_src(tag, name, value):
+def allow_src(_, name: str, value: str) -> bool:
     if name in ("alt", "height", "width"):
         return True
     if name == "src":
