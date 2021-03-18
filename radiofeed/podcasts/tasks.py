@@ -10,7 +10,8 @@ from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
 from .recommender import recommend
-from .rss_parser import RssParserError, parse_rss
+from .rss_parser import parse_rss
+from .rss_parser.exceptions import RssParserError
 
 logger = get_task_logger(__name__)
 
