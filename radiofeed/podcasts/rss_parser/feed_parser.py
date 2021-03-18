@@ -27,10 +27,10 @@ def parse_feed(raw: bytes) -> Feed:
     if (channel := rss.find("channel")) is None:
         raise InvalidFeedError("RSS does not contain <channel />")
 
-    return ChannelParser(channel).parse()
+    return FeedParser(channel).parse()
 
 
-class FeedParser:
+class RssParser:
     NAMESPACES = {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
@@ -78,7 +78,7 @@ class FeedParser:
         return self.parse_text("itunes:explicit").lower() == "yes"
 
 
-class ChannelParser(FeedParser):
+class FeedParser(RssParser):
     def parse_image(self) -> Optional[str]:
         return (
             self.parse_attribute("itunes:image", "href")
@@ -125,7 +125,7 @@ class ChannelParser(FeedParser):
         )
 
 
-class ItemParser(FeedParser):
+class ItemParser(RssParser):
     def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
