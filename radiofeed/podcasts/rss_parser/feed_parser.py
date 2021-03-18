@@ -30,7 +30,7 @@ def parse_feed(raw: bytes) -> Feed:
     return ChannelParser(channel).as_feed()
 
 
-class Feedparser:
+class FeedParser:
     NAMESPACES = {
         "atom": "http://www.w3.org/2005/Atom",
         "content": "http://purl.org/rss/1.0/modules/content/",
@@ -78,7 +78,7 @@ class Feedparser:
         return self.parse_text("itunes:explicit").lower() == "yes"
 
 
-class ChannelParser(Feedparser):
+class ChannelParser(FeedParser):
     def parse_image(self) -> Optional[str]:
         return (
             self.parse_attribute("itunes:image", "href")
@@ -125,7 +125,7 @@ class ChannelParser(Feedparser):
         )
 
 
-class ItemParser(Feedparser):
+class ItemParser(FeedParser):
     def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
