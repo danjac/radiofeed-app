@@ -11,17 +11,6 @@ from ..models import Podcast
 from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
-NAMESPACES = {
-    "atom": "http://www.w3.org/2005/Atom",
-    "content": "http://purl.org/rss/1.0/modules/content/",
-    "dc": "http://purl.org/dc/elements/1.1/",
-    "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-    "media": "http://search.yahoo.com/mrss/",
-    "podcast": "https://podcastindex.org/namespace/1.0",
-    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-}
-
 
 def parse_feed(
     raw: bytes, podcast: Podcast, etag: str, force_update: bool
@@ -44,14 +33,25 @@ def parse_feed(
 
 
 class Feedparser:
+    NAMESPACES = {
+        "atom": "http://www.w3.org/2005/Atom",
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "media": "http://search.yahoo.com/mrss/",
+        "podcast": "https://podcastindex.org/namespace/1.0",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    }
+
     def __init__(self, parent: ElementBase):
         self.parent = parent
 
     def parse_tag(self, xpath: str) -> Optional[ElementBase]:
-        return self.parent.find(xpath, NAMESPACES)
+        return self.parent.find(xpath, self.NAMESPACES)
 
     def parse_tags(self, xpath: str) -> List[ElementBase]:
-        return self.parent.findall(xpath, NAMESPACES)
+        return self.parent.findall(xpath, self.NAMESPACES)
 
     def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
         if (tag := self.parse_tag(xpath)) is None:
