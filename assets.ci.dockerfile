@@ -6,5 +6,6 @@ COPY postcss.config.js ./postcss.config.js
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
 
+RUN yarn cache clean
 RUN yarn
 
