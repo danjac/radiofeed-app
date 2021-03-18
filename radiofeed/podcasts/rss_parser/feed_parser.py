@@ -42,14 +42,14 @@ class RssParser:
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
-    def __init__(self, parent: ElementBase):
-        self.parent = parent
+    def __init__(self, tag: ElementBase):
+        self.tag = tag
 
     def parse_tag(self, xpath: str) -> Optional[ElementBase]:
-        return self.parent.find(xpath, self.NAMESPACES)
+        return self.tag.find(xpath, self.NAMESPACES)
 
     def parse_tags(self, xpath: str) -> List[ElementBase]:
-        return self.parent.findall(xpath, self.NAMESPACES)
+        return self.tag.findall(xpath, self.NAMESPACES)
 
     def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
         if (tag := self.parse_tag(xpath)) is None:
