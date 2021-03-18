@@ -20,7 +20,7 @@ def parse_rss(podcast: Podcast, *, force_update: bool = False) -> int:
     re-fetch all podcast info, episodes etc even if podcast does not
     have new content (provided a valid feed is available).
 
-    Returns number of new epiosdes.
+    Returns number of new episodes.
     """
 
     feed, etag = fetch_rss_feed(podcast, force_update)
@@ -30,15 +30,11 @@ def parse_rss(podcast: Podcast, *, force_update: bool = False) -> int:
     return len(feed.sync_podcast(podcast, etag, force_update))
 
 
-def fetch_etag(url: str) -> str:
-    # fetch etag and last modified
-    head_response = requests.head(url, headers=get_headers(), timeout=5)
-    head_response.raise_for_status()
-    headers = head_response.headers
-    return headers.get("ETag", "")
-
-
 def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed], str]:
+    """Fetches RSS and generates Feed. Checks etag header if we need to do an update.
+    If any errors occur (e.g. RSS unavailable or invalid RSS) the error is saved in database
+    and RssParserError raised.
+    """
 
     try:
         etag = fetch_etag(podcast.rss)
@@ -61,3 +57,11 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
         podcast.save()
 
         raise RssParserError from e
+
+
+def fetch_etag(url: str) -> str:
+    # fetch etag and last modified
+    head_response = requests.head(url, headers=get_headers(), timeout=5)
+    head_response.raise_for_status()
+    headers = head_response.headers
+    return headers.get("ETag", "")
