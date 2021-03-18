@@ -13,9 +13,9 @@ from pydantic import ValidationError
 from radiofeed.episodes.factories import EpisodeFactory
 
 from ..factories import CategoryFactory, PodcastFactory
-from ..rss_parser import RssParserError, get_categories_dict, parse_rss
+from ..rss_parser import RssParserError, parse_rss
 from ..rss_parser.date_parser import parse_date
-from ..rss_parser.models import Audio, Feed, Item
+from ..rss_parser.models import Audio, Feed, Item, get_categories_dict
 
 pytestmark = pytest.mark.django_db
 
