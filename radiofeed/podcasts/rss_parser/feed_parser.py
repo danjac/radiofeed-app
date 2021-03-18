@@ -79,6 +79,18 @@ class RssParser:
 
 
 class FeedParser(RssParser):
+    def parse(self) -> Feed:
+        return Feed(
+            title=self.parse_text("title"),
+            link=self.parse_text("link"),
+            categories=self.parse_attribute_list(".//itunes:category", "text"),
+            authors=set(self.parse_authors()),
+            image=self.parse_image(),
+            description=self.parse_description(),
+            explicit=self.parse_explicit(),
+            items=list(self.parse_items()),
+        )
+
     def parse_image(self) -> Optional[str]:
         return (
             self.parse_attribute("itunes:image", "href")
@@ -112,20 +124,21 @@ class FeedParser(RssParser):
             except ValidationError:
                 pass
 
-    def parse(self) -> Feed:
-        return Feed(
-            title=self.parse_text("title"),
-            link=self.parse_text("link"),
-            categories=self.parse_attribute_list(".//itunes:category", "text"),
-            authors=set(self.parse_authors()),
-            image=self.parse_image(),
-            description=self.parse_description(),
-            explicit=self.parse_explicit(),
-            items=list(self.parse_items()),
-        )
-
 
 class ItemParser(RssParser):
+    def parse(self) -> Item:
+        return Item(
+            guid=self.parse_guid(),
+            title=self.parse_text("title"),
+            duration=self.parse_text("itunes:duration"),
+            link=self.parse_text("link"),
+            pub_date=self.parse_text("pubDate"),
+            explicit=self.parse_explicit(),
+            audio=self.parse_audio(),
+            description=self.parse_description(),
+            keywords=self.parse_keywords(),
+        )
+
     def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
@@ -155,16 +168,3 @@ class ItemParser(RssParser):
         if (keywords := self.parse_text("itunes:keywords")) :
             rv.append(keywords)
         return " ".join(rv)
-
-    def parse(self) -> Item:
-        return Item(
-            guid=self.parse_guid(),
-            title=self.parse_text("title"),
-            duration=self.parse_text("itunes:duration"),
-            link=self.parse_text("link"),
-            pub_date=self.parse_text("pubDate"),
-            explicit=self.parse_explicit(),
-            audio=self.parse_audio(),
-            description=self.parse_description(),
-            keywords=self.parse_keywords(),
-        )
