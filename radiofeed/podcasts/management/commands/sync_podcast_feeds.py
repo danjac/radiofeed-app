@@ -36,8 +36,8 @@ class Command(BaseCommand):
         force_update = options["force_update"]
 
         for podcast in podcasts:
-            self.stdout.write(f"Syncing podcast {podcast}")
             if options["use_celery"]:
+                self.stdout.write(f"Create sync task for {podcast}")
                 sync_podcast_feed.delay(rss=podcast.rss, force_update=force_update)
             else:
                 try:
