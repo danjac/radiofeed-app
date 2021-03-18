@@ -40,129 +40,132 @@ def parse_feed(
     if (channel := rss.find("channel")) is None:
         raise InvalidFeedError("RSS does not contain <channel />")
 
-    return Feed(
-        title=parse_text(channel, "title"),
-        link=parse_text(channel, "link"),
-        categories=parse_attribute_list(channel, ".//itunes:category", "text"),
-        authors=set(parse_channel_authors(channel)),
-        image=parse_channel_image(channel),
-        description=parse_channel_description(channel),
-        explicit=parse_explicit(channel),
-        items=list(parse_rss_items(channel)),
-    ).sync_podcast(podcast, etag, force_update)
+    return RssChannel(channel).as_feed().sync_podcast(podcast, etag, force_update)
 
 
-def parse_tag(parent: ElementBase, xpath: str) -> Optional[ElementBase]:
-    return parent.find(xpath, NAMESPACES)
+class Feedparser:
+    def __init__(self, parent: ElementBase):
+        self.parent = parent
+
+    def parse_tag(self, xpath: str) -> Optional[ElementBase]:
+        return self.parent.find(xpath, NAMESPACES)
+
+    def parse_tags(self, xpath: str) -> List[ElementBase]:
+        return self.parent.findall(xpath, NAMESPACES)
+
+    def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
+        if (tag := self.parse_tag(xpath)) is None:
+            return None
+        try:
+            return tag.attrib[attr]
+        except KeyError:
+            return None
+
+    def parse_attribute_list(self, xpath: str, attr: str) -> List[str]:
+        return [
+            (tag.attrib[attr] or "")
+            for tag in self.parse_tags(xpath)
+            if attr in tag.attrib
+        ]
+
+    def parse_text(self, xpath: str) -> str:
+        if (tag := self.parse_tag(xpath)) is None:
+            return ""
+        return tag.text or ""
+
+    def parse_text_list(self, xpath: str) -> List[str]:
+        return [(item.text or "") for item in self.parse_tags(xpath)]
+
+    def parse_explicit(self) -> bool:
+        return self.parse_text("itunes:explicit").lower() == "yes"
 
 
-def parse_tags(parent: ElementBase, xpath: str) -> List[ElementBase]:
-    return parent.findall(xpath, NAMESPACES)
+class RssChannel(Feedparser):
+    def parse_image(self) -> Optional[str]:
+        return (
+            self.parse_attribute("itunes:image", "href")
+            or self.parse_text("image/url")
+            or self.parse_attribute("googleplay:image", "href")
+        )
 
+    def parse_description(self) -> str:
+        return (
+            self.parse_text("description")
+            or self.parse_text("googleplay:description")
+            or self.parse_text("itunes:summary")
+            or self.parse_text("itunes:subtitle")
+        )
 
-def parse_attribute(parent: ElementBase, xpath: str, attr: str) -> Optional[str]:
-    if (tag := parse_tag(parent, xpath)) is None:
-        return None
-    try:
-        return tag.attrib[attr]
-    except KeyError:
-        return None
+    def parse_authors(self) -> List[str]:
+        return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
+            "itunes:author"
+        )
 
+    def parse_items(self) -> Generator:
 
-def parse_attribute_list(parent: ElementBase, xpath: str, attr: str) -> List[str]:
-    return [
-        (tag.attrib[attr] or "")
-        for tag in parse_tags(parent, xpath)
-        if attr in tag.attrib
-    ]
-
-
-def parse_text(parent: ElementBase, xpath: str) -> str:
-    if (tag := parse_tag(parent, xpath)) is None:
-        return ""
-    return tag.text or ""
-
-
-def parse_text_list(parent: ElementBase, xpath: str) -> List[str]:
-    return [(item.text or "") for item in parse_tags(parent, xpath)]
-
-
-def parse_explicit(parent: ElementBase) -> bool:
-    return parse_text(parent, "itunes:explicit").lower() == "yes"
-
-
-def parse_rss_items(channel: ElementBase) -> Generator:
-
-    guids = set()
-    for item in parse_tags(channel, "item"):
-        guid = parse_text(item, "guid") or parse_text(item, "itunes:episode")
-
-        if guid and guid not in guids:
+        for item in {
+            item.guid: item
+            for item in [RssItem(tag) for tag in self.parse_tags("item")]
+        }.values():
             try:
-                yield Item(
-                    guid=guid,
-                    title=parse_text(item, "title"),
-                    duration=parse_text(item, "itunes:duration"),
-                    link=parse_text(item, "link"),
-                    pub_date=parse_text(item, "pubDate"),
-                    explicit=parse_explicit(item),
-                    audio=parse_audio(item),
-                    description=parse_item_description(item),
-                    keywords=parse_item_keywords(item),
-                )
-                guids.add(guid)
+                yield item.as_item()
             except ValidationError:
                 pass
 
-
-def parse_audio(item: ElementBase) -> Optional[Audio]:
-
-    if (enclosure := parse_tag(item, "enclosure")) is None:
-        return None
-
-    return Audio(
-        length=enclosure.attrib.get("length"),
-        url=enclosure.attrib.get("url"),
-        type=enclosure.attrib.get("type"),
-    )
-
-
-def parse_channel_image(channel: ElementBase) -> Optional[str]:
-    return (
-        parse_attribute(channel, "itunes:image", "href")
-        or parse_text(channel, "image/url")
-        or parse_attribute(channel, "googleplay:image", "href")
-    )
+    def as_feed(self) -> Feed:
+        return Feed(
+            title=self.parse_text("title"),
+            link=self.parse_text("link"),
+            categories=self.parse_attribute_list(".//itunes:category", "text"),
+            authors=set(self.parse_authors()),
+            image=self.parse_image(),
+            description=self.parse_description(),
+            explicit=self.parse_explicit(),
+            items=list(self.parse_items()),
+        )
 
 
-def parse_channel_description(channel: ElementBase) -> str:
-    return (
-        parse_text(channel, "description")
-        or parse_text(channel, "googleplay:description")
-        or parse_text(channel, "itunes:summary")
-        or parse_text(channel, "itunes:subtitle")
-    )
+class RssItem(Feedparser):
+    def __init__(self, parent: ElementBase):
+        super().__init__(parent)
+        self.guid = self.parse_text("guid") or self.parse_text("itunes:episode")
 
+    def parse_audio(self) -> Optional[Audio]:
 
-def parse_channel_authors(channel: ElementBase) -> List[str]:
-    return parse_text_list(channel, "itunes:owner/itunes:name") + parse_text_list(
-        channel, "itunes:author"
-    )
+        if (enclosure := self.parse_tag("enclosure")) is None:
+            return None
 
+        return Audio(
+            length=enclosure.attrib.get("length"),
+            url=enclosure.attrib.get("url"),
+            type=enclosure.attrib.get("type"),
+        )
 
-def parse_item_description(item: ElementBase) -> str:
+    def parse_description(self) -> str:
 
-    return (
-        parse_text(item, "content:encoded")
-        or parse_text(item, "description")
-        or parse_text(item, "googleplay:description")
-        or parse_text(item, "itunes:summary")
-        or parse_text(item, "itunes:subtitle")
-    )
+        return (
+            self.parse_text("content:encoded")
+            or self.parse_text("description")
+            or self.parse_text("googleplay:description")
+            or self.parse_text("itunes:summary")
+            or self.parse_text("itunes:subtitle")
+        )
 
+    def parse_keywords(self) -> str:
+        rv = self.parse_text_list("category")
+        if (keywords := self.parse_text("itunes:keywords")) :
+            rv.append(keywords)
+        return " ".join(rv)
 
-def parse_item_keywords(item: ElementBase) -> str:
-    rv = parse_text_list(item, "category")
-    if (keywords := parse_text(item, "itunes:keywords")) :
-        rv.append(keywords)
-    return " ".join(rv)
+    def as_item(self) -> Item:
+        return Item(
+            guid=self.guid,
+            title=self.parse_text("title"),
+            duration=self.parse_text("itunes:duration"),
+            link=self.parse_text("link"),
+            pub_date=self.parse_text("pubDate"),
+            explicit=self.parse_explicit(),
+            audio=self.parse_audio(),
+            description=self.parse_description(),
+            keywords=self.parse_keywords(),
+        )
