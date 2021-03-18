@@ -10,7 +10,7 @@ from . import itunes
 from .emails import send_recommendations_email
 from .models import Podcast
 from .recommender import recommend
-from .rss_parser import RssParserException, parse_rss
+from .rss_parser import RssParserError, parse_rss
 
 logger = get_task_logger(__name__)
 
@@ -54,5 +54,5 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
         parse_rss(podcast, force_update=force_update)
     except Podcast.DoesNotExist:
         logger.error(f"No podcast found for RSS {rss}")
-    except RssParserException as e:
+    except RssParserError as e:
         logger.error(f"Error fetching {rss}: {e}")

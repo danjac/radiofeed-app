@@ -8,7 +8,7 @@ from radiofeed.users.factories import UserFactory
 
 from .. import tasks
 from ..factories import PodcastFactory
-from ..rss_parser import RssParserException
+from ..rss_parser import RssParserError
 
 pytestmark = pytest.mark.django_db
 
@@ -82,7 +82,7 @@ class TestSyncPodcastFeed:
         mock_parse_rss.assert_not_called()
 
     def test_parser_exception(self, mock_parse_rss, podcast):
-        mock_parse_rss.side_effect = RssParserException("Boom")
+        mock_parse_rss.side_effect = RssParserError("Boom")
         tasks.sync_podcast_feed(podcast.rss)
 
     def test_ok(self, mock_parse_rss, podcast):

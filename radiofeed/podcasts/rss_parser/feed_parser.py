@@ -19,6 +19,10 @@ NAMESPACES = {
 }
 
 
+class InvalidFeedError(ValueError):
+    ...
+
+
 def parse_feed(raw: bytes) -> Feed:
     parser = lxml.etree.XMLParser(
         strip_cdata=False, ns_clean=True, recover=True, encoding="utf-8"
@@ -30,10 +34,10 @@ def parse_feed(raw: bytes) -> Feed:
             parser=parser,
         )
     ) is None:
-        raise ValueError("Not a valid RSS feed")
+        raise InvalidFeedError("No RSS content found")
 
     if (channel := rss.find("channel")) is None:
-        raise ValueError("Not a valid RSS feed")
+        raise InvalidFeedError("RSS does not contain <channel />")
 
     return Feed(
         title=parse_text(channel, "title"),

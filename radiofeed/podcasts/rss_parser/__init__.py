@@ -15,7 +15,7 @@ from radiofeed.episodes.models import Episode
 
 from ..models import Category, Podcast
 from ..recommender.text_parser import extract_keywords
-from .feed_parser import parse_feed
+from .feed_parser import InvalidFeedError, parse_feed
 from .headers import get_headers
 from .image import InvalidImageURL, fetch_image_from_url
 from .models import Feed, Item
@@ -23,7 +23,7 @@ from .models import Feed, Item
 logger = logging.getLogger(__name__)
 
 
-class RssParserException(Exception):
+class RssParserError(Exception):
     ...
 
 
@@ -134,16 +134,16 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
         response.raise_for_status()
         return parse_feed(response.content), etag
     except (
+        InvalidFeedError,
         ValidationError,
         XMLSyntaxError,
-        ValueError,
         requests.RequestException,
     ) as e:
         podcast.sync_error = str(e)
         podcast.num_retries += 1
         podcast.save()
 
-        raise RssParserException from e
+        raise RssParserError from e
 
 
 def extract_pub_date(feed: Feed) -> Optional[datetime.datetime]:

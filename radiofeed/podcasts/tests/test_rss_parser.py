@@ -13,7 +13,7 @@ from pydantic import ValidationError
 from radiofeed.episodes.factories import EpisodeFactory
 
 from ..factories import CategoryFactory, PodcastFactory
-from ..rss_parser import RssParserException, get_categories_dict, parse_rss
+from ..rss_parser import RssParserError, get_categories_dict, parse_rss
 from ..rss_parser.date_parser import parse_date
 from ..rss_parser.models import Audio, Feed, Item
 
@@ -94,7 +94,7 @@ class TestParseRss:
         mocker.patch(
             "requests.head", autospec=True, side_effect=requests.RequestException
         )
-        with pytest.raises(RssParserException) as e:
+        with pytest.raises(RssParserError) as e:
             parse_rss(podcast)
             assert e.rss == podcast.rss
 
