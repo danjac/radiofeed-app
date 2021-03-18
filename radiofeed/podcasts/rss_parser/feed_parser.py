@@ -27,7 +27,7 @@ def parse_feed(raw: bytes) -> Feed:
     if (channel := rss.find("channel")) is None:
         raise InvalidFeedError("RSS does not contain <channel />")
 
-    return ChannelParser(channel).get_feed()
+    return ChannelParser(channel).parse()
 
 
 class FeedParser:
@@ -105,14 +105,14 @@ class ChannelParser(FeedParser):
 
         for parser in [ItemParser(tag) for tag in self.parse_tags("item")]:
             try:
-                item = parser.get_item()
+                item = parser.parse()
                 if item.guid not in guids:
                     yield item
                 guids.add(item.guid)
             except ValidationError:
                 pass
 
-    def get_feed(self) -> Feed:
+    def parse(self) -> Feed:
         return Feed(
             title=self.parse_text("title"),
             link=self.parse_text("link"),
@@ -156,7 +156,7 @@ class ItemParser(FeedParser):
             rv.append(keywords)
         return " ".join(rv)
 
-    def get_item(self) -> Item:
+    def parse(self) -> Item:
         return Item(
             guid=self.parse_guid(),
             title=self.parse_text("title"),
