@@ -50,7 +50,7 @@ class Item(BaseModel):
             raise ValueError("missing or invalid date")
         return pub_date
 
-    def as_episode(self, **kwargs) -> Episode:
+    def make_episode(self, **kwargs) -> Episode:
         return Episode(
             pub_date=self.pub_date,
             guid=self.guid,
@@ -99,7 +99,7 @@ class Feed(BaseModel):
 
         return value
 
-    def sync_podcast(
+    def update_podcast(
         self, podcast: Podcast, etag: str, force_update: bool
     ) -> List[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
@@ -139,10 +139,20 @@ class Feed(BaseModel):
 
         podcast.save()
 
-        return self.sync_episodes(podcast)
+        return self.create_episodes(podcast)
 
-    def sync_episodes(self, podcast: Podcast) -> List[Episode]:
-        new_episodes = self.create_episodes(podcast)
+    def create_episodes(self, podcast: Podcast) -> List[Episode]:
+        """Parses new episodes from podcast feed."""
+        guids = podcast.episode_set.values_list("guid", flat=True)
+
+        new_episodes = Episode.objects.bulk_create(
+            [
+                item.make_episode(podcast=podcast)
+                for item in self.items
+                if item.guid not in guids
+            ],
+            ignore_conflicts=True,
+        )
 
         if new_episodes:
             podcast.pub_date = max(e.pub_date for e in new_episodes)
@@ -191,18 +201,6 @@ class Feed(BaseModel):
             pass
 
         return None
-
-    def create_episodes(self, podcast: Podcast) -> List[Episode]:
-        """Parses new episodes from podcast feed."""
-        guids = podcast.episode_set.values_list("guid", flat=True)
-        return Episode.objects.bulk_create(
-            [
-                item.as_episode(podcast=podcast)
-                for item in self.items
-                if item.guid not in guids
-            ],
-            ignore_conflicts=True,
-        )
 
 
 @lru_cache
