@@ -56,7 +56,7 @@ def fetch_rss_feed(podcast: Podcast, force_update: bool) -> Tuple[Optional[Feed]
         podcast.num_retries += 1
         podcast.save()
 
-        raise RssParserError from e
+        raise RssParserError(podcast.sync_error) from e
 
 
 def fetch_etag(url: str) -> str:
