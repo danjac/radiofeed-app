@@ -20,7 +20,10 @@ def parse_feed(
         rss := lxml.etree.fromstring(
             raw,
             parser=lxml.etree.XMLParser(
-                strip_cdata=False, ns_clean=True, recover=True, encoding="utf-8"
+                strip_cdata=False,
+                ns_clean=True,
+                recover=True,
+                encoding="utf-8",
             ),
         )
     ) is None:
@@ -103,12 +106,14 @@ class RssChannel(Feedparser):
 
     def parse_items(self) -> Generator:
 
-        for item in {
-            item.guid: item
-            for item in [RssItem(tag) for tag in self.parse_tags("item")]
-        }.values():
+        guids = set()
+
+        for rss_item in [RssItem(tag) for tag in self.parse_tags("item")]:
             try:
-                yield item.as_item()
+                item = rss_item.as_item()
+                if item.guid not in guids:
+                    yield item
+                guids.add(item.guid)
             except ValidationError:
                 pass
 
@@ -126,9 +131,8 @@ class RssChannel(Feedparser):
 
 
 class RssItem(Feedparser):
-    def __init__(self, parent: ElementBase):
-        super().__init__(parent)
-        self.guid = self.parse_text("guid") or self.parse_text("itunes:episode")
+    def parse_guid(self) -> str:
+        return self.parse_text("guid") or self.parse_text("itunes:episode")
 
     def parse_audio(self) -> Optional[Audio]:
 
@@ -159,7 +163,7 @@ class RssItem(Feedparser):
 
     def as_item(self) -> Item:
         return Item(
-            guid=self.guid,
+            guid=self.parse_guid(),
             title=self.parse_text("title"),
             duration=self.parse_text("itunes:duration"),
             link=self.parse_text("link"),
