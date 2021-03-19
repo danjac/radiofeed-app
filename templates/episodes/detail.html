@@ -33,19 +33,19 @@
 {% endif %}
 {% endwith %}
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 <div class="p-3 border dark:border-gray-500">
 
   <h1 class="font-bold mb-3">{{ episode.title }}</h1>
   <h2 class="mb-3">
-    <a href="{{ podcast.get_detail_url }}"
+    <a href="{{ podcast_url }}"
        class="link text-sm">
       {{ podcast.title }}
     </a>
   </h2>
   <div class="flex items-center mb-3 space-x-3">
     <div>
-      <a href="{{ podcast.get_absolute_url }}">
+      <a href="{{ podcast_url }}">
         {% cover_image podcast lazy=False size="24" %}
       </a>
     </div>

@@ -6,7 +6,7 @@
   <div class="flex items-center w-full space-x-2">
 
     <div>
-      <a href="{{ podcast_url|default:podcast.get_absolute_url }}"
+      <a href="{{ podcast.get_absolute_url }}"
          data-turbo-frame="_top">
         {% cover_image podcast lazy=True cover_image=cover_image %}
       </a>

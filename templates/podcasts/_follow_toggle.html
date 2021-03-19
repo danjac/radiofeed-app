@@ -1,6 +1,7 @@
 {% if user.is_authenticated %}
 <form method="post"
-      id="{{ podcast.dom.follow_toggle }}" action="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}">
+      id="{{ podcast.dom.follow_toggle }}"
+      action="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_following %}
   {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" %}
@@ -8,4 +9,6 @@
   {% button "Follow" icon="eye" title="Follow this podcast" %}
   {% endif %}
 </form>
+{% else %}
+{% button "Follow" icon="eye_slash" href=podcast.get_absolute_url|login_url title="Login or signup to follow this podcast" data_turbo_frame="_top" %}
 {% endif %}
