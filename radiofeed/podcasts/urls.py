@@ -25,7 +25,7 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/episodes",
+        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
         views.episodes,
         name="podcast_episodes",
     ),
