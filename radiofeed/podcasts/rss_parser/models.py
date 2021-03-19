@@ -170,7 +170,7 @@ class Feed(BaseModel):
         """Parses new episodes from podcast feed."""
         guids = podcast.episode_set.values_list("guid", flat=True)
 
-        new_episodes = Episode.objects.bulk_create(
+        return Episode.objects.bulk_create(
             [
                 item.make_episode(podcast=podcast)
                 for item in self.items
@@ -178,8 +178,6 @@ class Feed(BaseModel):
             ],
             ignore_conflicts=True,
         )
-
-        return new_episodes
 
     def get_categories(self, categories_dct: CategoryDict) -> List[Category]:
         return [
