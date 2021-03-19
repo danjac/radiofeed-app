@@ -114,9 +114,6 @@ class Feed(BaseModel):
         if not self.do_update(podcast, pub_date, force_update):
             return []
 
-        if new_episodes := self.create_episodes(podcast):
-            pub_date = max(e.pub_date for e in new_episodes)
-
         # timestamps
         podcast.etag = etag
         podcast.pub_date = pub_date
@@ -148,7 +145,8 @@ class Feed(BaseModel):
         podcast.save()
         podcast.categories.set(categories)
 
-        return new_episodes
+        # episodes
+        return self.create_episodes(podcast)
 
     def do_update(
         self,
