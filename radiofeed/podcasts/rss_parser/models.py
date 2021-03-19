@@ -104,7 +104,7 @@ class Feed(BaseModel):
 
         return value
 
-    def update_podcast(
+    def sync_podcast(
         self, podcast: Podcast, etag: str, force_update: bool
     ) -> List[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
