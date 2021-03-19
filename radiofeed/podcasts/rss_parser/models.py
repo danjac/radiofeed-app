@@ -114,32 +114,38 @@ class Feed(BaseModel):
         if not self.do_update(podcast, pub_date, force_update):
             return []
 
-        podcast.title = self.title
-        podcast.description = self.description
-        podcast.link = self.link
-        podcast.language = self.language
-        podcast.explicit = self.explicit
-        podcast.authors = ", ".join(self.authors)
+        new_episodes = self.create_episodes(podcast)
 
-        if not podcast.cover_image:
-            podcast.cover_image = self.fetch_cover_image()
+        if new_episodes:
+            pub_date = max(e.pub_date for e in new_episodes)
 
         categories_dct = get_categories_dict()
+
         categories = self.get_categories(categories_dct)
         podcast.categories.set(categories)
 
-        podcast.keywords = self.get_keywords(categories_dct)
-        podcast.extracted_text = self.extract_text(podcast, categories)
+        kwargs = {
+            "etag": etag,
+            "pub_date": pub_date,
+            "last_updated": timezone.now(),
+            "title": self.title,
+            "description": self.description,
+            "link": self.link,
+            "language": self.language,
+            "explicit": self.explicit,
+            "authors": ", ".join(self.authors),
+            "keywords": self.get_keywords(categories_dct),
+            "extracted_text": self.extract_text(podcast, categories),
+            "sync_error": "",
+            "num_retries": 0,
+        }
 
-        podcast.last_updated = timezone.now()
-        podcast.etag = etag
-        podcast.pub_date = pub_date
-        podcast.sync_error = ""
-        podcast.num_retries = 0
+        if not podcast.cover_image:
+            kwargs["cover_image"] = self.fetch_cover_image()
 
-        podcast.save()
+        Podcast.objects.filter(pk=podcast.id).update(**kwargs)
 
-        return self.create_episodes(podcast)
+        return new_episodes
 
     def do_update(
         self,
@@ -172,10 +178,6 @@ class Feed(BaseModel):
             ],
             ignore_conflicts=True,
         )
-
-        if new_episodes:
-            podcast.pub_date = max(e.pub_date for e in new_episodes)
-            podcast.save(update_fields=["pub_date"])
 
         return new_episodes
 
