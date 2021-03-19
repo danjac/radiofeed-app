@@ -129,9 +129,9 @@ class TestParseRss:
         assert podcast.pub_date
 
         assert podcast.title == "Mysterious Universe"
+        assert podcast.authors == "8th Kind"
         assert podcast.etag
         assert podcast.cover_image
-        assert podcast.authors
         assert podcast.extracted_text
         assert podcast.categories.count() == 6
         assert podcast.episode_set.count() == 20

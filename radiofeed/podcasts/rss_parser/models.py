@@ -125,7 +125,7 @@ class Feed(BaseModel):
         podcast.link = self.link
         podcast.language = self.language
         podcast.explicit = self.explicit
-        podcast.authors = ", ".join(self.authors)
+        podcast.authors = self.get_authors()
 
         # keywords
         categories_dct = get_categories_dict()
@@ -179,6 +179,9 @@ class Feed(BaseModel):
             ],
             ignore_conflicts=True,
         )
+
+    def get_authors(self) -> str:
+        return ", ".join([a for a in [a.strip() for a in self.authors] if a])
 
     def get_categories(self, categories_dct: CategoryDict) -> List[Category]:
         return [
