@@ -10,6 +10,7 @@ import requests
 
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
+from requests.structures import CaseInsensitiveDict
 
 from .exceptions import InvalidImageURL
 from .headers import get_headers
@@ -27,31 +28,12 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         response = requests.get(image_url, headers=get_headers(), stream=True)
         response.raise_for_status()
 
-        content_type: Optional[str] = None
-
-        try:
-            content_type = response.headers["Content-Type"].split(";")[0]
-        except KeyError:
-            content_type, _ = mimetypes.guess_type(image_url)
-
-        if not content_type:
+        if (content_type := get_content_type(image_url, response.headers)) is None:
             raise ValueError("Content type not provided")
 
         filename = get_image_filename(image_url, content_type)
 
-        img = Image.open(io.BytesIO(response.content))
-
-        if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
-            img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
-
-        # remove Alpha channel
-        img = img.convert("RGB")
-
-        fp = io.BytesIO()
-        img.seek(0)
-        img.save(fp, "PNG")
-
-        return ImageFile(fp, name=filename)
+        return ImageFile(get_image_file(response.content), name=filename)
 
     except (
         requests.RequestException,
@@ -59,6 +41,33 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         ValueError,
     ) as e:
         raise InvalidImageURL from e
+
+
+def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> Optional[str]:
+    content_type: Optional[str] = None
+
+    try:
+        content_type = headers["Content-Type"].split(";")[0]
+    except KeyError:
+        content_type, _ = mimetypes.guess_type(image_url)
+
+    return content_type
+
+
+def get_image_file(raw: bytes) -> io.BytesIO:
+    img = Image.open(io.BytesIO(raw))
+
+    if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
+        img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
+
+    # remove Alpha channel
+    img = img.convert("RGB")
+
+    fp = io.BytesIO()
+    img.seek(0)
+    img.save(fp, "PNG")
+
+    return fp
 
 
 def get_image_filename(image_url: str, content_type: str) -> str:
