@@ -119,31 +119,36 @@ class Feed(BaseModel):
         if new_episodes:
             pub_date = max(e.pub_date for e in new_episodes)
 
+        # timestamps
+        podcast.etag = etag
+        podcast.pub_date = pub_date
+        podcast.last_updated = timezone.now()
+
+        # description
+        podcast.title = self.title
+        podcast.description = self.description
+        podcast.link = self.link
+        podcast.language = self.language
+        podcast.explicit = self.explicit
+        podcast.authors = ", ".join(self.authors)
+
+        # keywords
         categories_dct = get_categories_dict()
-
         categories = self.get_categories(categories_dct)
-        podcast.categories.set(categories)
 
-        kwargs = {
-            "etag": etag,
-            "pub_date": pub_date,
-            "last_updated": timezone.now(),
-            "title": self.title,
-            "description": self.description,
-            "link": self.link,
-            "language": self.language,
-            "explicit": self.explicit,
-            "authors": ", ".join(self.authors),
-            "keywords": self.get_keywords(categories_dct),
-            "extracted_text": self.extract_text(podcast, categories),
-            "sync_error": "",
-            "num_retries": 0,
-        }
+        podcast.keywords = self.get_keywords(categories_dct)
+        podcast.extracted_text = self.extract_text(podcast, categories)
 
+        # reset errors
+        podcast.sync_error = ""
+        podcast.num_retries = 0
+
+        # image
         if not podcast.cover_image:
-            kwargs["cover_image"] = self.fetch_cover_image()
+            podcast.cover_image = self.fetch_cover_image()
 
-        Podcast.objects.filter(pk=podcast.id).update(**kwargs)
+        podcast.save()
+        podcast.categories.set(categories)
 
         return new_episodes
 
