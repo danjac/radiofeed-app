@@ -109,14 +109,9 @@ class Feed(BaseModel):
     ) -> List[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
 
-        if (pub_date := self.get_pub_date()) is None:
-            return []
+        pub_date = self.get_pub_date()
 
-        if (
-            not force_update
-            and podcast.last_updated
-            and podcast.last_updated > pub_date
-        ):
+        if not self.do_update(podcast, pub_date, force_update):
             return []
 
         podcast.title = self.title
@@ -145,6 +140,25 @@ class Feed(BaseModel):
         podcast.save()
 
         return self.create_episodes(podcast)
+
+    def do_update(
+        self,
+        podcast: Podcast,
+        pub_date: Optional[datetime.datetime],
+        force_update: bool,
+    ) -> bool:
+
+        if pub_date is None:
+            return False
+
+        if (
+            not force_update
+            and podcast.last_updated
+            and podcast.last_updated > pub_date
+        ):
+            return False
+
+        return True
 
     def create_episodes(self, podcast: Podcast) -> List[Episode]:
         """Parses new episodes from podcast feed."""
