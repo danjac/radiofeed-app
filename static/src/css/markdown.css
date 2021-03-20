@@ -3,7 +3,7 @@
 }
 
 .markdown hr {
-  @apply text-gray-300 dark:text-gray-600;
+  @apply border-gray-300 dark:border-gray-600;
 }
 
 .markdown a {
