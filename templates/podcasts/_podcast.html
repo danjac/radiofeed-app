@@ -21,8 +21,8 @@
              class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
 
         </div>
-        <div class="font-semibold text-sm flex flex-wrap items-center">
-          <a class="mr-2 link"
+        <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
+          <a class="link"
              href="{% url 'podcasts:preview' podcast.id %}"
              title="Preview for {{ podcast.title }}"
              data-turbo-frame="modal">
