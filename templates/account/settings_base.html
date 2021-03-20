@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block robots %}
+<meta name="robots" content="noindex" />
+{% endblock %}
+
 {% block content %}
 {% if user.is_authenticated %}
 <h1 class="font-bold mb-3 text-lg">Settings</h1>

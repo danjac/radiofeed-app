@@ -21,8 +21,10 @@
         content="no-cache">
   <meta name="copyright"
         content="Dan Jacob {% now "Y" %}">
+  {% block robots %}
   <meta name="robots"
         content="index,follow" />
+  {% endblock robots %}
   {% include "_og_data.html" %}
   {% endblock meta %}
   {% include "_google_tracking.html" %}
