@@ -79,7 +79,7 @@ class Feed(BaseModel):
     language: str = "en"
     link: constr(max_length=500) = ""  # type: ignore
     items: conlist(Item, min_items=1)  # type: ignore
-    authors: Set[str]
+    creators: Set[str]
     image: Optional[str]
     categories: List[str]
 
@@ -125,7 +125,7 @@ class Feed(BaseModel):
         podcast.link = self.link
         podcast.language = self.language
         podcast.explicit = self.explicit
-        podcast.authors = self.get_authors()
+        podcast.creators = self.get_creators()
 
         # keywords
         categories_dct = get_categories_dict()
@@ -180,8 +180,8 @@ class Feed(BaseModel):
             ignore_conflicts=True,
         )
 
-    def get_authors(self) -> str:
-        return ", ".join([a for a in [a.strip() for a in self.authors] if a])
+    def get_creators(self) -> str:
+        return ", ".join([a for a in [a.strip() for a in self.creators] if a])
 
     def get_categories(self, categories_dct: CategoryDict) -> List[Category]:
         return [
@@ -200,7 +200,7 @@ class Feed(BaseModel):
                 podcast.title,
                 podcast.description,
                 podcast.keywords,
-                podcast.authors,
+                podcast.creators,
             ]
             + [c.name for c in categories]
             + [item.title for item in self.items][:6]

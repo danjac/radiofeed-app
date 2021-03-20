@@ -129,7 +129,7 @@ class TestParseRss:
         assert podcast.pub_date
 
         assert podcast.title == "Mysterious Universe"
-        assert podcast.authors == "8th Kind"
+        assert podcast.creators == "8th Kind"
         assert podcast.etag
         assert podcast.cover_image
         assert podcast.extracted_text
@@ -199,7 +199,7 @@ class TestFeedModel:
             title="test",
             description="test",
             items=[item],
-            authors=[],
+            creators=[],
             image=None,
             link="http://reddit.com",
             language="en-gb",
@@ -213,7 +213,7 @@ class TestFeedModel:
             title="test",
             description="test",
             items=[item],
-            authors=[],
+            creators=[],
             image=None,
             link="http://reddit.com",
             categories=[],
@@ -226,7 +226,7 @@ class TestFeedModel:
             title="test",
             description="test",
             items=[item],
-            authors=[],
+            creators=[],
             image=None,
             link="",
             categories=[],
@@ -239,7 +239,7 @@ class TestFeedModel:
             title="test",
             description="test",
             items=[item],
-            authors=[],
+            creators=[],
             image=None,
             link="politicology.com",
             categories=[],

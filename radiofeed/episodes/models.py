@@ -216,7 +216,7 @@ class Episode(models.Model):
         data: Dict = {
             "title": self.title,
             "album": self.podcast.title,
-            "artist": self.podcast.authors,
+            "artist": self.podcast.creators,
         }
 
         if self.podcast.cover_image:

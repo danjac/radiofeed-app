@@ -131,7 +131,7 @@ class Podcast(models.Model):
     link = models.URLField(null=True, blank=True, max_length=500)
     keywords = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
-    authors = models.TextField(blank=True)
+    creators = models.TextField(blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(null=True, blank=True)

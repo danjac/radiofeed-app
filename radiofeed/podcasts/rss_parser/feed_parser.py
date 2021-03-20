@@ -84,7 +84,7 @@ class FeedParser(RssParser):
             title=self.parse_text("title"),
             link=self.parse_text("link"),
             categories=self.parse_attribute_list(".//itunes:category", "text"),
-            authors=set(self.parse_authors()),
+            creators=set(self.parse_creators()),
             image=self.parse_image(),
             description=self.parse_description(),
             explicit=self.parse_explicit(),
@@ -106,7 +106,7 @@ class FeedParser(RssParser):
             or self.parse_text("itunes:subtitle")
         )
 
-    def parse_authors(self) -> List[str]:
+    def parse_creators(self) -> List[str]:
         return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
             "itunes:author"
         )
