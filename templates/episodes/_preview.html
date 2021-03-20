@@ -9,6 +9,32 @@
 </a>
 {% endblock %}
 {% block modal_content %}
+{% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
+{% if prev_episode or next_episode %}
+<div class="text-sm flex justify-between mb-3 mt-3 md:mt-0">
+  {% if prev_episode %}
+  <a class="link"
+     href="{{ prev_episode.get_preview_url }}"
+     title="{{ prev_episode.title }}">
+    Previous
+  </a>
+
+  {% else %}
+  <span class="inactive-link">Previous</span>
+  {% endif %}
+  {% if next_episode %}
+  <a class="link"
+     href="{{ next_episode.get_preview_url }}"
+     title="{{ next_episode.title }}">
+    Next
+  </a>
+  {% else %}
+  <span class="inactive-link">Next</span>
+  {% endif %}
+</div>
+{% endif %}
+{% endwith %}
+
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
 <div class="flex items-center mb-3 space-x-3">

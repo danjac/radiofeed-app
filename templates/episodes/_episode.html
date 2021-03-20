@@ -27,7 +27,7 @@
         {% include "episodes/_player_toggle.html" with is_modal=True %}
         <div>
           <a class="link"
-             href="{% url 'episodes:episode_preview' episode.id %}"
+             href="{{ episode.get_preview_url }}"
              title="Preview for {{ episode.title }}"
              data-turbo-frame="modal">
             {% icon "ellipsis" css_class="w-6 h-6" %}

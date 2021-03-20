@@ -110,6 +110,9 @@ class Episode(models.Model):
     def get_absolute_url(self) -> str:
         return reverse("episodes:episode_detail", args=[self.id, self.slug])
 
+    def get_preview_url(self) -> str:
+        return reverse("episodes:episode_preview", args=[self.id])
+
     @property
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "episode"
