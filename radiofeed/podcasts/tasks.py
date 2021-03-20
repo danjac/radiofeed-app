@@ -3,7 +3,6 @@ import datetime
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
-from django.db.models import Q
 from django.utils import timezone
 
 from . import itunes
@@ -32,13 +31,27 @@ def send_recommendation_emails() -> None:
 
 @shared_task(name="radiofeed.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds() -> None:
-    # get podcasts that haven't been updated in last 12 hours
-    podcasts = Podcast.objects.filter(
-        Q(last_updated__lt=timezone.now() - datetime.timedelta(hours=12))
-        | Q(last_updated__isnull=True),
-        num_retries__lt=3,
-    ).distinct()
-    for rss in podcasts.values_list("rss", flat=True):
+    # ignore any with persistent errors
+
+    podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
+
+    # get podcasts that haven't been synced yet
+    for rss in (
+        podcasts.filter(last_updated__isnull=True)
+        .values_list("rss", flat=True)
+        .iterator()
+    ):
+        sync_podcast_feed.delay(rss)
+
+    # get podcasts not updated in last 12 hours
+    for rss in (
+        podcasts.filter(
+            last_updated__isnull=False,
+            last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
+        )
+        .values_list("rss", flat=True)
+        .iterator()
+    ):
         sync_podcast_feed.delay(rss)
 
 
