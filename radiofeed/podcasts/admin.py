@@ -38,15 +38,15 @@ class PubDateFilter(admin.SimpleListFilter):
 
 
 class SyncErrorFilter(admin.SimpleListFilter):
-    title = "With sync error"
-    parameter_name = "num_retries"
+    title = "Blocklist (3+ sync errors)"
+    parameter_name = "blocklisted"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> Iterable[Tuple[str, str]]:
         return (
-            ("yes", "With sync errors"),
-            ("no", "With no sync errors"),
+            ("yes", "Blocklisted"),
+            ("no", "Allowed"),
         )
 
     def queryset(self, request: HttpRequest, queryset) -> QuerySet:
