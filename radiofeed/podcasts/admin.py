@@ -52,7 +52,7 @@ class SyncErrorFilter(admin.SimpleListFilter):
     def queryset(self, request: HttpRequest, queryset) -> QuerySet:
         value = self.value()
         if value == "yes":
-            return queryset.filter(num_retries__gt=0)
+            return queryset.filter(num_retries__gte=3)
         if value == "no":
             return queryset.filter(num_retries=0)
         return queryset
