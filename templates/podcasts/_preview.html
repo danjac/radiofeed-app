@@ -19,9 +19,9 @@
   </div>
 
   <div class="space-y-3">
+    {% include "podcasts/_follow_toggle.html" %}
     <div title="Date last published"
          class="font-semibold text-sm text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
-    {% include "podcasts/_follow_toggle.html" %}
   </div>
 
 </div>

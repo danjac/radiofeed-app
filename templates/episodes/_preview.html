@@ -18,25 +18,26 @@
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
-  <div class="space-y-2">
-    <h2 class="text-sm w-48 sm:w-96 truncate">
+  <div class="space-y-1">
+    <div class="text-sm w-48 sm:w-96 truncate">
       <a href="{{ podcast_url }}"
          title="{{ podcast.title }}"
          data-turbo-frame="_top"
          class="link">
         {{ podcast.title|truncatechars:100 }}
       </a>
-    </h2>
+    </div>
+
+    <div>
+      {% include "episodes/_download.html" %}
+    </div>
+
     <div class="flex items-center text-sm space-x-2 font-semibold text-gray-600 dark:text-gray-300">
       <div title="Date Published">{{ episode.pub_date|date }}</div>
       <div>
         {{ duration|format_duration }}
       </div>
     </div>
-    <div class="flex items-center space-x-2 sm:space-x-3">
-      {% include "episodes/_download.html" %}
-    </div>
-
   </div>
 
 </div>
