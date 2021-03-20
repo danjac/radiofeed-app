@@ -65,7 +65,7 @@
   <div class="markdown text-sm mb-3">
     {{ podcast.description|clean_html }}
   </div>
-  <div class="space-x-1 space-y-1">
+  <div class="space-x-2 space-y-2">
     {% cache 3600 podcast-categories podcast.id %}
     {% for category in podcast.categories.all %}
     <div class="inline-block">
