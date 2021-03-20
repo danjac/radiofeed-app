@@ -3,6 +3,7 @@ from typing import Iterable, Tuple
 from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.safestring import mark_safe
 from sorl.thumbnail.admin import AdminImageMixin
 
 from .models import Category, Podcast
@@ -78,10 +79,17 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     list_filter = (PubDateFilter, PromotedFilter, SyncErrorFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("__str__", "pub_date", "promoted")
+    list_display = ("title_with_strikethru", "pub_date", "promoted")
     list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
+
+    def title_with_strikethru(self, obj: Podcast) -> str:
+        if obj.num_retries >= 3:
+            return mark_safe(f"<s>{obj.title}</s>")
+        return obj.title
+
+    title_with_strikethru.short_description = "Title"  # type: ignore
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str
