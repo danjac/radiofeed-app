@@ -1,7 +1,7 @@
 import dataclasses
 import json
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 import requests
 
@@ -42,10 +42,7 @@ class SearchResult:
         return json.dumps(self.as_dict())
 
 
-def fetch_itunes_genre(
-    genre_id,
-    num_results=20,
-):
+def fetch_itunes_genre(genre_id, num_results=20):
     """Fetch top rated results for genre"""
     return _get_or_create_podcasts(
         _get_search_results(
@@ -83,7 +80,7 @@ def crawl_itunes(limit):
     new_podcasts = 0
 
     for category in categories:
-        podcasts: List[Podcast] = []
+        podcasts = []
 
         try:
             results, podcasts = fetch_itunes_genre(
@@ -96,9 +93,7 @@ def crawl_itunes(limit):
     return new_podcasts
 
 
-def _get_or_create_podcasts(
-    results,
-):
+def _get_or_create_podcasts(results):
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
@@ -118,10 +113,10 @@ def _get_or_create_podcasts(
 
 
 def _get_search_results(
-    params: Dict,
-    cache_key: str,
-    cache_timeout: int = 86400,
-    requests_timeout: int = 3,
+    params,
+    cache_key,
+    cache_timeout=86400,
+    requests_timeout=3,
 ):
 
     results = cache.get(cache_key)
