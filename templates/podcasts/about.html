@@ -19,6 +19,7 @@
     </div>
 
     <div class="text-sm space-y-3">
+      {% cache 600 podcast_detail_epsiode_count podcast.id %}
       {% with num_episodes=podcast.episode_set.count %}
       {% if num_episodes %}
       <div>
@@ -28,6 +29,7 @@
       </div>
       {% endif %}
       {% endwith %}
+      {% endcache %}
       <div class="flex items-center space-x-2">
         {% if podcast.link %}
         <div>

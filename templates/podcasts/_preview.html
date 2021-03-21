@@ -1,5 +1,6 @@
 {% extends "modal_base.html" %}
-{% load podcasts %}
+{% load cache podcasts %}
+
 {% block modal_header %}
 <a href="{{ podcast.get_absolute_url }}"
    class="font-semibold hover:text-blue-500"
@@ -20,7 +21,8 @@
 
   <div class="space-y-1">
     {% include "podcasts/_follow_toggle.html" %}
-    {% with podcast.episode_set.count as num_episodes %}
+    {% cache 600 podcast_preview_epsiode_count podcast.id %}
+    {% with num_episodes=podcast.episode_set.count %}
     {% if num_episodes %}
     <div>
       <a href="{{ podcast.get_episodes_url }}"
@@ -31,6 +33,7 @@
     </div>
     {% endif %}
     {% endwith %}
+    {% endcache %}
     <div title="Date last published"
          class="font-semibold text-sm text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
   </div>
