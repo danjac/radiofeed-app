@@ -58,16 +58,19 @@
   <div class="markdown text-sm mb-3">
     {{ podcast.description|clean_html }}
   </div>
-  <div class="space-x-2 space-y-2">
-    {% cache 3600 podcast-categories podcast.id %}
-    {% for category in podcast.categories.all %}
+  {% cache 3600 podcast-categories podcast.id %}
+  {% with categories=podcast.categories.all %}
+  {% if categories %}
+  <div class="space-x-1 sm:space-x-2 space-y-2">
+    {% for category in categories %}
     <div class="inline-block">
       {% button category.name icon="tag" type="tag" title=category.name href=category.get_absolute_url %}
     </div>
     {% endfor %}
-    {% endcache %}
   </div>
-
+  {% endif %}
+  {% endwith %}
+  {% endcache %}
 </div>
 
 {% endblock %}
