@@ -1,7 +1,7 @@
 import dataclasses
 import json
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional
 
 import requests
 
@@ -29,7 +29,7 @@ class SearchResult:
     image: str
     podcast: Optional[Podcast] = None
 
-    def as_dict(self) -> Dict:
+    def as_dict(self):
         return {
             "rss": self.rss,
             "title": self.title,
@@ -42,13 +42,10 @@ class SearchResult:
         return json.dumps(self.as_dict())
 
 
-SearchResultList = List[SearchResult]
-
-
 def fetch_itunes_genre(
-    genre_id: Union[str, int],
-    num_results: int = 20,
-) -> Tuple[SearchResultList, List[Podcast]]:
+    genre_id,
+    num_results=20,
+):
     """Fetch top rated results for genre"""
     return _get_or_create_podcasts(
         _get_search_results(
@@ -62,9 +59,7 @@ def fetch_itunes_genre(
     )
 
 
-def search_itunes(
-    search_term: str, num_results: int = 12
-) -> Tuple[SearchResultList, List[Podcast]]:
+def search_itunes(search_term, num_results=12):
     """Does a search query on the iTunes API."""
 
     return _get_or_create_podcasts(
@@ -79,7 +74,7 @@ def search_itunes(
     )
 
 
-def crawl_itunes(limit: int = 100) -> int:
+def crawl_itunes(limit):
     categories = (
         Category.objects.filter(itunes_genre_id__isnull=False)
         .prefetch_related("podcast_set")
@@ -102,8 +97,8 @@ def crawl_itunes(limit: int = 100) -> int:
 
 
 def _get_or_create_podcasts(
-    results: SearchResultList,
-) -> Tuple[SearchResultList, List[Podcast]]:
+    results,
+):
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
@@ -127,7 +122,7 @@ def _get_search_results(
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,
-) -> SearchResultList:
+):
 
     results = cache.get(cache_key)
     if results is None:
