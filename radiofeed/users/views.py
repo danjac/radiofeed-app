@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -19,7 +18,7 @@ from .forms import UserPreferencesForm
 
 
 @login_required
-def user_preferences(request: HttpRequest) -> HttpResponse:
+def user_preferences(request):
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -37,7 +36,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request):
 
     logs = AudioLog.objects.filter(user=request.user)
     follows = Follow.objects.filter(user=request.user)
@@ -61,7 +60,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-def delete_account(request: HttpRequest) -> HttpResponse:
+def delete_account(request):
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
@@ -71,7 +70,7 @@ def delete_account(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def accept_cookies(request: HttpRequest) -> HttpResponse:
+def accept_cookies(request):
     response = (
         TurboStream("accept-cookies").remove.response()
         if request.turbo
@@ -87,7 +86,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
+def toggle_dark_mode(request):
     dark_mode = request.COOKIES.get("dark-mode")
 
     response = redirect(get_redirect_url(request))
@@ -105,8 +104,8 @@ def toggle_dark_mode(request: HttpRequest) -> HttpResponse:
 
 
 def get_redirect_url(
-    request: HttpRequest,
-    redirect_url_param: str = "redirect_url",
+    request,
+    redirect_url_param="redirect_url",
     default_url=settings.HOME_URL,
 ) -> str:
     redirect_url = request.POST.get(redirect_url_param)

@@ -1,7 +1,5 @@
 import dataclasses
 
-from typing import Dict, Protocol
-
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
@@ -11,7 +9,6 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.db import models
-from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
@@ -21,17 +18,9 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
-from radiofeed.typing import AnyUser
-
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 THUMBNAIL_SIZE = 200
-
-
-class CoverImage(Protocol):
-    url: str
-    width: int
-    height: int
 
 
 @dataclasses.dataclass
@@ -54,7 +43,7 @@ _cover_image_placeholder = PlaceholderImage(
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term: str, base_similarity=0.2) -> models.QuerySet:
+    def search(self, search_term: str, base_similarity=0.2):
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -89,15 +78,15 @@ class Category(models.Model):
         return self.name
 
     @property
-    def slug(self) -> str:
+    def slug(self):
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self) -> str:
+    def get_absolute_url(self):
         return reverse("podcasts:category_detail", args=[self.id, self.slug])
 
 
 class PodcastQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term):
         if not search_term:
             return self.none()
 
@@ -106,7 +95,7 @@ class PodcastQuerySet(models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_follow_count(self) -> models.QuerySet:
+    def with_follow_count(self):
         return self.annotate(follow_count=models.Count("follow"))
 
 
@@ -161,42 +150,42 @@ class Podcast(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title or self.rss
 
-    def get_absolute_url(self) -> str:
+    def get_absolute_url(self):
         return self.get_detail_url()
 
-    def get_preview_url(self) -> str:
+    def get_preview_url(self):
         return reverse("podcasts:preview", args=[self.id])
 
-    def get_detail_url(self) -> str:
+    def get_detail_url(self):
         return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
 
-    def get_episodes_url(self) -> str:
+    def get_episodes_url(self):
         return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])
 
-    def get_recommendations_url(self) -> str:
+    def get_recommendations_url(self):
         return reverse("podcasts:podcast_recommendations", args=[self.id, self.slug])
 
     @property
-    def slug(self) -> str:
+    def slug(self):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
     @cached_property
-    def dom(self) -> PodcastDOM:
+    def dom(self):
         return PodcastDOM(
             podcast=f"podcast-{self.id}",
             cover_image=f"podcast-cover-image-{self.id}",
             follow_toggle=f"follow-toggle-{self.id}",
         )
 
-    def is_following(self, user: AnyUser) -> bool:
+    def is_following(self, user):
         if user.is_anonymous:
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
 
-    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
+    def get_opengraph_data(self, request):
 
         og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
@@ -213,7 +202,7 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_cover_image_thumbnail(self) -> CoverImage:
+    def get_cover_image_thumbnail(self):
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
@@ -242,7 +231,7 @@ class Follow(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def with_followed(self, user: AnyUser) -> models.QuerySet:
+    def with_followed(self, user):
         """Marks which recommendations are followed by this user."""
         if user.is_anonymous:
             return self.annotate(
@@ -254,7 +243,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
+    def for_user(self, user):
         podcast_ids = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(

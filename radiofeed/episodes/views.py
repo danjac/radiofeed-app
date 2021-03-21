@@ -1,13 +1,11 @@
 import http
 import json
 
-from typing import Dict, List, Optional
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import F, OuterRef, QuerySet, Subquery
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -21,11 +19,11 @@ from radiofeed.users.decorators import ajax_login_required
 from .models import AudioLog, Episode, Favorite, QueueItem
 
 
-def index(request: HttpRequest) -> HttpResponse:
+def index(request):
 
-    podcast_ids: List[int] = []
-    listened_ids: List[int] = []
-    show_promotions: bool = False
+    podcast_ids = []
+    listened_ids = []
+    show_promotions = False
 
     if request.user.is_authenticated:
         podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
@@ -71,7 +69,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request):
 
     if not request.search:
         return redirect("episodes:index")
@@ -91,9 +89,9 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 def preview(
-    request: HttpRequest,
-    episode_id: int,
-) -> HttpResponse:
+    request,
+    episode_id,
+):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -119,9 +117,7 @@ def preview(
     return redirect(episode.get_absolute_url())
 
 
-def episode_detail(
-    request: HttpRequest, episode_id: int, slug: Optional[str] = None
-) -> HttpResponse:
+def episode_detail(request, episode_id, slug=None):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -140,7 +136,7 @@ def episode_detail(
 
 
 @login_required
-def history(request: HttpRequest) -> HttpResponse:
+def history(request):
 
     logs = (
         get_audio_logs(request)
@@ -163,7 +159,7 @@ def history(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_audio_log(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     logs = get_audio_logs(request)
@@ -177,7 +173,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @login_required
-def favorites(request: HttpRequest) -> HttpResponse:
+def favorites(request):
     favorites = get_favorites(request).select_related("episode", "episode__podcast")
     if request.search:
         favorites = favorites.search(request.search).order_by("-rank", "-created")
@@ -194,7 +190,7 @@ def favorites(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     try:
@@ -220,14 +216,14 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     favorites = get_favorites(request)
 
     favorites.filter(episode=episode).delete()
 
-    streams: List[str] = [render_favorite_toggle(request, episode, is_favorited=False)]
+    streams = [render_favorite_toggle(request, episode, is_favorited=False)]
 
     if favorites.count() == 0:
         streams.append(
@@ -240,7 +236,7 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @login_required
-def queue(request: HttpRequest) -> HttpResponse:
+def queue(request):
     return TemplateResponse(
         request,
         "episodes/queue.html",
@@ -254,7 +250,7 @@ def queue(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_to_queue(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
@@ -284,13 +280,13 @@ def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     items = get_queue_items(request)
     items.filter(episode=episode).delete()
 
-    streams: List[str] = [render_queue_toggle(request, episode, is_queued=False)]
+    streams = [render_queue_toggle(request, episode, is_queued=False)]
 
     if items.count() == 0:
         streams.append(
@@ -306,7 +302,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def move_queue_items(request: HttpRequest) -> HttpResponse:
+def move_queue_items(request):
 
     qs = get_queue_items(request)
     items = qs.in_bulk()
@@ -327,9 +323,9 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ajax_login_required
 def start_player(
-    request: HttpRequest,
-    episode_id: int,
-) -> HttpResponse:
+    request,
+    episode_id,
+):
 
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
@@ -344,13 +340,13 @@ def start_player(
 
 @require_POST
 @ajax_login_required
-def stop_player(request: HttpRequest) -> HttpResponse:
+def stop_player(request):
     return render_player_response(request)
 
 
 @require_POST
 @ajax_login_required
-def play_next_episode(request: HttpRequest) -> HttpResponse:
+def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
@@ -370,7 +366,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def player_timeupdate(request: HttpRequest) -> HttpResponse:
+def player_timeupdate(request):
     """Update current play time of episode"""
 
     if episode := request.player.get_episode():
@@ -392,11 +388,11 @@ def player_timeupdate(request: HttpRequest) -> HttpResponse:
 
 
 def get_episode_or_404(
-    request: HttpRequest,
-    episode_id: int,
+    request,
+    episode_id,
     *,
-    with_podcast: bool = False,
-    with_current_time: bool = False,
+    with_podcast=False,
+    with_current_time=False,
 ) -> Episode:
     qs = Episode.objects.all()
     if with_podcast:
@@ -406,19 +402,19 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def get_audio_logs(request: HttpRequest) -> QuerySet:
+def get_audio_logs(request) -> QuerySet:
     return AudioLog.objects.filter(user=request.user)
 
 
-def get_favorites(request: HttpRequest) -> QuerySet:
+def get_favorites(request) -> QuerySet:
     return Favorite.objects.filter(user=request.user)
 
 
-def get_queue_items(request: HttpRequest) -> QuerySet:
+def get_queue_items(request) -> QuerySet:
     return QueueItem.objects.filter(user=request.user)
 
 
-def render_queue_toggle(request: HttpRequest, episode: Episode, is_queued: bool) -> str:
+def render_queue_toggle(request, episode, is_queued) -> str:
     return (
         TurboStream(episode.dom.queue_toggle)
         .replace.template(
@@ -428,9 +424,7 @@ def render_queue_toggle(request: HttpRequest, episode: Episode, is_queued: bool)
     )
 
 
-def render_favorite_toggle(
-    request: HttpRequest, episode: Episode, is_favorited: bool
-) -> str:
+def render_favorite_toggle(request, episode, is_favorited) -> str:
     return (
         TurboStream(episode.dom.favorite_toggle)
         .replace.template(
@@ -441,9 +435,7 @@ def render_favorite_toggle(
     )
 
 
-def render_player_toggle(
-    request: HttpRequest, episode: Episode, is_playing: bool
-) -> str:
+def render_player_toggle(request, episode, is_playing) -> str:
 
     return (
         TurboStream(episode.dom.player_toggle)
@@ -459,12 +451,12 @@ def render_player_toggle(
 
 
 def render_episode_list_response(
-    request: HttpRequest,
-    episodes: QuerySet,
-    template_name: str,
-    extra_context: Optional[Dict] = None,
-    cached: bool = False,
-) -> HttpResponse:
+    request,
+    episodes,
+    template_name,
+    extra_context,
+    cached=False,
+):
 
     extra_context = extra_context or {}
 
@@ -484,13 +476,13 @@ def render_episode_list_response(
 
 
 def render_player_response(
-    request: HttpRequest,
-    next_episode: Optional[Episode] = None,
-    current_time: int = 0,
-    mark_completed: bool = False,
-) -> HttpResponse:
+    request,
+    next_episode=None,
+    current_time=0,
+    mark_completed=False,
+):
 
-    streams: List[str] = []
+    streams = []
 
     if current_episode := request.player.eject(mark_completed=mark_completed):
         streams.append(render_player_toggle(request, current_episode, False))

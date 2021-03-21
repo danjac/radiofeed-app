@@ -1,12 +1,9 @@
 import dataclasses
 
-from typing import Dict, Optional, Tuple
-
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
-from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils import timezone
@@ -17,7 +14,6 @@ from model_utils.models import TimeStampedModel
 from sorl.thumbnail import get_thumbnail
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.typing import AnyUser
 
 
 @dataclasses.dataclass
@@ -33,7 +29,7 @@ class EpisodeDOM:
 
 
 class EpisodeQuerySet(models.QuerySet):
-    def with_current_time(self, user: AnyUser) -> models.QuerySet:
+    def with_current_time(self, user):
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -52,7 +48,7 @@ class EpisodeQuerySet(models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term):
         if not search_term:
             return self.none()
 
@@ -104,24 +100,24 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title or self.guid
 
-    def get_absolute_url(self) -> str:
+    def get_absolute_url(self):
         return reverse("episodes:episode_detail", args=[self.id, self.slug])
 
-    def get_preview_url(self) -> str:
+    def get_preview_url(self):
         return reverse("episodes:episode_preview", args=[self.id])
 
     @property
-    def slug(self) -> str:
+    def slug(self):
         return slugify(self.title, allow_unicode=False) or "episode"
 
-    def get_file_size(self) -> Optional[str]:
+    def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
 
     @cached_property
-    def dom(self) -> EpisodeDOM:
+    def dom(self):
         return EpisodeDOM(
             favorite=f"favorite-{self.id}",
             favorite_toggle=f"favorite-toggle-{self.id}",
@@ -159,10 +155,10 @@ class Episode(models.Model):
 
     def log_activity(
         self,
-        user: settings.AUTH_USER_MODEL,
+        user,
         current_time=0,
-        completed: bool = False,
-    ) -> Tuple[Optional["AudioLog"], bool]:
+        completed=False,
+    ):
         # Updates audio log with current time
         now = timezone.now()
         return AudioLog.objects.update_or_create(
@@ -175,30 +171,30 @@ class Episode(models.Model):
             },
         )
 
-    def get_next_episode(self) -> Optional["Episode"]:
+    def get_next_episode(self):
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self) -> Optional["Episode"]:
+    def get_previous_episode(self):
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def is_queued(self, user: AnyUser) -> bool:
+    def is_queued(self, user):
         if user.is_anonymous:
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user: AnyUser) -> bool:
+    def is_favorited(self, user):
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
-        og_data: Dict = {
+    def get_opengraph_data(self, request):
+        og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,
@@ -214,9 +210,9 @@ class Episode(models.Model):
 
         return og_data
 
-    def get_media_metadata(self) -> Dict:
+    def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session
-        data: Dict = {
+        data = {
             "title": self.title,
             "album": self.podcast.title,
             "artist": self.podcast.creators,
@@ -243,7 +239,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term):
         if not search_term:
             return self.none()
 
@@ -282,7 +278,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term):
         if not search_term:
             return self.none()
 
