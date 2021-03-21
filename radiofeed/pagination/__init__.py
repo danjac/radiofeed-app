@@ -1,21 +1,19 @@
-from typing import Dict, Optional
-
 from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from turbo_response import TurboFrame
 
 
 def paginate(
-    request: HttpRequest,
+    request,
     queryset: QuerySet,
-    page_size: int = settings.DEFAULT_PAGE_SIZE,
-    param: str = "page",
-    allow_empty: bool = True,
-    orphans: int = 0,
+    page_size=settings.DEFAULT_PAGE_SIZE,
+    param="page",
+    allow_empty=True,
+    orphans=0,
 ) -> Page:
 
     paginator = Paginator(
@@ -28,13 +26,13 @@ def paginate(
 
 
 def render_paginated_response(
-    request: HttpRequest,
-    queryset: QuerySet,
-    template_name: str,
-    pagination_template_name: str,
-    extra_context: Optional[Dict] = None,
+    request,
+    queryset,
+    template_name,
+    pagination_template_name,
+    extra_context=None,
     **pagination_kwargs
-) -> HttpResponse:
+):
     context = {
         "page_obj": paginate(request, queryset, **pagination_kwargs),
         "pagination_template": pagination_template_name,

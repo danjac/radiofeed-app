@@ -1,13 +1,10 @@
-from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject, cached_property
-
-from radiofeed.typing import HttpCallable
 
 
 class Search:
-    search_param: str = "q"
+    search_param = "q"
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request):
         self.request = request
 
     def __str__(self) -> str:
@@ -22,9 +19,9 @@ class Search:
 
 
 class SearchMiddleware:
-    def __init__(self, get_response: HttpCallable):
+    def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request):
         request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
