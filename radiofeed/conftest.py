@@ -1,5 +1,3 @@
-from typing import Type
-
 import pytest
 
 from django.conf import settings
@@ -15,14 +13,12 @@ from radiofeed.episodes.factories import (
     FavoriteFactory,
     QueueItemFactory,
 )
-from radiofeed.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from radiofeed.podcasts.factories import CategoryFactory, PodcastFactory
-from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.factories import UserFactory
 
 
 @pytest.fixture
-def site() -> Site:
+def site():
     return Site.objects.get_current()
 
 
@@ -32,22 +28,22 @@ def get_response() -> HttpResponse:
 
 
 @pytest.fixture
-def user_model() -> Type[settings.AUTH_USER_MODEL]:
+def user_model():
     return get_user_model()
 
 
 @pytest.fixture
-def user() -> settings.AUTH_USER_MODEL:
+def user():
     return UserFactory()
 
 
 @pytest.fixture
-def anonymous_user() -> AnonymousUser:
+def anonymous_user():
     return AnonymousUser()
 
 
 @pytest.fixture
-def password() -> str:
+def password():
     return "t3SzTP4sZ"
 
 
@@ -60,37 +56,37 @@ def login_user(
 
 
 @pytest.fixture
-def login_admin_user(client: Client) -> settings.AUTH_USER_MODEL:
+def login_admin_user(client):
     user = UserFactory(is_staff=True)
     client.force_login(user)
     return user
 
 
 @pytest.fixture
-def category() -> Category:
+def category():
     return CategoryFactory()
 
 
 @pytest.fixture
-def podcast() -> Podcast:
+def podcast():
     return PodcastFactory()
 
 
 @pytest.fixture
-def episode(podcast: Podcast) -> Episode:
+def episode(podcast):
     return EpisodeFactory(podcast=podcast)
 
 
 @pytest.fixture
-def favorite(user: settings.AUTH_USER_MODEL, episode: Episode) -> Favorite:
+def favorite(user, episode):
     return FavoriteFactory(user=user, episode=episode)
 
 
 @pytest.fixture
-def audio_log(user: settings.AUTH_USER_MODEL, episode: Episode) -> AudioLog:
+def audio_log(user, episode):
     return AudioLogFactory(user=user, episode=episode)
 
 
 @pytest.fixture
-def queue_item(user: settings.AUTH_USER_MODEL, episode: Episode) -> QueueItem:
+def queue_item(user, episode):
     return QueueItemFactory(user=user, episode=episode)

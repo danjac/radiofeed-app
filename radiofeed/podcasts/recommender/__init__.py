@@ -4,8 +4,6 @@ import logging
 import operator
 import statistics
 
-from typing import Dict, Generator, List, Tuple
-
 import pandas
 
 from django.db import connection, transaction
@@ -20,14 +18,13 @@ from .text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 
-MatchesDict = Dict[Tuple[int, int], List[float]]
 
 NUM_MATCHES: int = 12
 NUM_RECENT_EPISODES: int = 6
 MAX_PUB_DAYS: int = 90
 
 
-def recommend() -> None:
+def recommend():
     podcasts = get_podcast_queryset()
 
     # clear out current recommendations
@@ -56,10 +53,10 @@ def get_podcast_queryset() -> QuerySet:
 
 
 def create_recommendations_for_language(
-    podcasts: QuerySet,
-    categories: QuerySet,
-    language: str,
-) -> None:
+    podcasts,
+    categories,
+    language,
+):
     logger.info("Recommendations for %s", language)
 
     matches = build_matches_dict(
@@ -80,10 +77,10 @@ def create_recommendations_for_language(
 
 
 def build_matches_dict(
-    podcasts: QuerySet,
-    categories: QuerySet,
-    language: str,
-) -> MatchesDict:
+    podcasts,
+    categories,
+    language,
+):
 
     matches = collections.defaultdict(list)
     podcasts = podcasts.filter(language__iexact=language)
@@ -99,7 +96,7 @@ def build_matches_dict(
     return matches
 
 
-def recommendations_from_matches(matches: MatchesDict) -> Generator:
+def recommendations_from_matches(matches):
     for (podcast_id, recommended_id), values in matches.items():
         frequency = len(values)
         similarity = statistics.median(values)
@@ -112,7 +109,7 @@ def recommendations_from_matches(matches: MatchesDict) -> Generator:
         )
 
 
-def find_similarities_for_podcasts(podcasts: QuerySet, language: str) -> Generator:
+def find_similarities_for_podcasts(podcasts, language):
 
     if not podcasts.exists():
         return
@@ -124,7 +121,7 @@ def find_similarities_for_podcasts(podcasts: QuerySet, language: str) -> Generat
                 yield podcast_id, recommended_id, similarity
 
 
-def find_similarities(podcasts: QuerySet, language: str) -> Generator:
+def find_similarities(podcasts, language):
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
     """

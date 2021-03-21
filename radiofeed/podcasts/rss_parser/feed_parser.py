@@ -1,15 +1,12 @@
-from typing import Generator, List, Optional
-
 import lxml
 
-from lxml.etree import ElementBase
 from pydantic import ValidationError
 
 from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
 
-def parse_feed(raw: bytes) -> Feed:
+def parse_feed(raw: bytes):
 
     if (
         rss := lxml.etree.fromstring(
@@ -42,16 +39,16 @@ class RssParser:
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
-    def __init__(self, tag: ElementBase):
+    def __init__(self, tag):
         self.tag = tag
 
-    def parse_tag(self, xpath: str) -> Optional[ElementBase]:
+    def parse_tag(self, xpath):
         return self.tag.find(xpath, self.NAMESPACES)
 
-    def parse_tags(self, xpath: str) -> List[ElementBase]:
+    def parse_tags(self, xpath):
         return self.tag.findall(xpath, self.NAMESPACES)
 
-    def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
+    def parse_attribute(self, xpath, attr):
         if (tag := self.parse_tag(xpath)) is None:
             return None
         try:
@@ -59,19 +56,19 @@ class RssParser:
         except KeyError:
             return None
 
-    def parse_attribute_list(self, xpath: str, attr: str) -> List[str]:
+    def parse_attribute_list(self, xpath, attr):
         return [
             (tag.attrib[attr] or "")
             for tag in self.parse_tags(xpath)
             if attr in tag.attrib
         ]
 
-    def parse_text(self, xpath: str) -> str:
+    def parse_text(self, xpath):
         if (tag := self.parse_tag(xpath)) is None:
             return ""
         return tag.text or ""
 
-    def parse_text_list(self, xpath: str) -> List[str]:
+    def parse_text_list(self, xpath):
         return [(item.text or "") for item in self.parse_tags(xpath)]
 
     def parse_explicit(self) -> bool:
@@ -79,7 +76,7 @@ class RssParser:
 
 
 class FeedParser(RssParser):
-    def parse(self) -> Feed:
+    def parse(self):
         return Feed(
             title=self.parse_text("title"),
             link=self.parse_text("link"),
@@ -91,14 +88,14 @@ class FeedParser(RssParser):
             items=list(self.parse_items()),
         )
 
-    def parse_image(self) -> Optional[str]:
+    def parse_image(self):
         return (
             self.parse_attribute("itunes:image", "href")
             or self.parse_text("image/url")
             or self.parse_attribute("googleplay:image", "href")
         )
 
-    def parse_description(self) -> str:
+    def parse_description(self):
         return (
             self.parse_text("description")
             or self.parse_text("googleplay:description")
@@ -106,12 +103,12 @@ class FeedParser(RssParser):
             or self.parse_text("itunes:subtitle")
         )
 
-    def parse_creators(self) -> List[str]:
+    def parse_creators(self):
         return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
             "itunes:author"
         )
 
-    def parse_items(self) -> Generator:
+    def parse_items(self):
 
         guids = set()
 
@@ -139,10 +136,10 @@ class ItemParser(RssParser):
             keywords=self.parse_keywords(),
         )
 
-    def parse_guid(self) -> str:
+    def parse_guid(self):
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
-    def parse_audio(self) -> Optional[Audio]:
+    def parse_audio(self):
 
         if (enclosure := self.parse_tag("enclosure")) is None:
             return None
@@ -153,7 +150,7 @@ class ItemParser(RssParser):
             type=enclosure.attrib.get("type"),
         )
 
-    def parse_description(self) -> str:
+    def parse_description(self):
 
         return (
             self.parse_text("content:encoded")
@@ -163,7 +160,7 @@ class ItemParser(RssParser):
             or self.parse_text("itunes:subtitle")
         )
 
-    def parse_keywords(self) -> str:
+    def parse_keywords(self):
         rv = self.parse_text_list("category")
         if (keywords := self.parse_text("itunes:keywords")) :
             rv.append(keywords)
