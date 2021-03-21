@@ -7,7 +7,7 @@ from radiofeed.podcasts.emails import send_recommendations_email
 class Command(BaseCommand):
     help = "Sends podcast recommendation emails"
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, *args, **kwargs):
         users = get_user_model().objects.filter(
             send_recommendations_email=True, is_active=True
         )

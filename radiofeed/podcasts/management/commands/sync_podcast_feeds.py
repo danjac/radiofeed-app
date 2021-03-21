@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandParser
+from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tasks import sync_podcast_feed
@@ -7,7 +7,7 @@ from radiofeed.podcasts.tasks import sync_podcast_feed
 class Command(BaseCommand):
     help = "Updates all podcasts from their RSS feeds."
 
-    def add_arguments(self, parser: CommandParser) -> None:
+    def add_arguments(self, parser):
 
         parser.add_argument(
             "--no-pub-date",
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             help="Force update",
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
         podcasts = Podcast.objects.all()
 
         if options["no_pub_date"]:

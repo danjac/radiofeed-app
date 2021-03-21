@@ -1,28 +1,26 @@
-from typing import Dict, Optional
-
 from django import template
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from ..models import CoverImage, Podcast
+from ..models import Podcast
 
 register = template.Library()
 
 
 @register.simple_tag
-def get_promoted_podcasts(limit: int) -> QuerySet:
+def get_promoted_podcasts(limit):
     return get_available_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
 
 @register.inclusion_tag("podcasts/_cover_image.html")
 def cover_image(
-    podcast: Podcast,
-    lazy: bool = False,
-    cover_image: Optional[CoverImage] = None,
-    size: str = "16",
-    css_class: str = "",
+    podcast,
+    lazy=False,
+    cover_image=None,
+    size="16",
+    css_class="",
     **attrs,
-) -> Dict:
+):
     if not lazy and cover_image is None:
         cover_image = podcast.get_cover_image_thumbnail()
 
