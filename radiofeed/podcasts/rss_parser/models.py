@@ -181,7 +181,7 @@ class Feed(BaseModel):
         )
 
     def get_creators(self) -> str:
-        return ", ".join([a for a in [a.strip() for a in self.creators] if a])
+        return ", ".join(set([a for a in [a.strip() for a in self.creators] if a]))
 
     def get_categories(self, categories_dct: CategoryDict) -> List[Category]:
         return [
