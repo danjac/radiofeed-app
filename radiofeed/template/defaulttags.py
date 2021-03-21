@@ -1,7 +1,6 @@
 import collections
 import json
 
-from typing import Any, Dict, Optional
 from urllib import parse
 
 import bs4
@@ -10,7 +9,6 @@ from django import template
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
-from django.template.context import Context
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -33,7 +31,7 @@ json_escapes = {
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: Context, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -44,18 +42,18 @@ def active_link(context: Context, url_name: str, *args, **kwargs) -> ActiveLink:
 
 @register.filter
 @stringfilter
-def clean_html(value: str) -> str:
+def clean_html(value):
     return mark_safe(_stripentities(clean_html_content(value or "")))
 
 
 @register.filter
 @stringfilter
-def stripentities(value: str) -> str:
+def stripentities(value):
     return _stripentities(value or "")
 
 
 @register.filter
-def percent(value: Optional[float], total: Optional[float]) -> float:
+def percent(value, total) -> float:
     if not value or not total:
         return 0
 
@@ -65,12 +63,12 @@ def percent(value: Optional[float], total: Optional[float]) -> float:
 
 
 @register.filter
-def jsonify(value: Any) -> str:
+def jsonify(value):
     return mark_safe(json.dumps(value, cls=DjangoJSONEncoder).translate(json_escapes))
 
 
 @register.filter
-def keepspaces(text: Optional[str]) -> str:
+def keepspaces(text):
     # changes any <br /> <p> <li> etc to spaces
     if not text:
         return ""
@@ -83,7 +81,7 @@ def keepspaces(text: Optional[str]) -> str:
 
 
 @register.filter
-def htmlattrs(attrs: Dict) -> str:
+def htmlattrs(attrs):
     if not attrs:
         return ""
     return mark_safe(
@@ -92,17 +90,17 @@ def htmlattrs(attrs: Dict) -> str:
 
 
 @register.filter
-def login_url(url: str) -> str:
+def login_url(url):
     return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
 @register.filter
-def signup_url(url: str) -> str:
+def signup_url(url):
     return f"{reverse('account_signup')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
 @register.inclusion_tag("icons/_svg.html")
-def icon(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
+def icon(name, css_class="", title="", **attrs):
     return {
         "name": name,
         "css_class": css_class,
@@ -114,12 +112,12 @@ def icon(name: str, css_class: str = "", title: str = "", **attrs) -> Dict:
 
 @register.inclusion_tag("forms/_button.html")
 def button(
-    text: str,
-    icon: str = "",
-    type: str = "default",
-    css_class: str = "",
+    text,
+    icon="",
+    type="default",
+    css_class="",
     **attrs,
-) -> Dict:
+):
     return {
         "text": text,
         "icon": icon,
@@ -131,9 +129,7 @@ def button(
 
 
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
-def share_buttons(
-    context: Context, url: str, subject: str, css_class: str = ""
-) -> Dict:
+def share_buttons(context, url, subject, css_class=""):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
