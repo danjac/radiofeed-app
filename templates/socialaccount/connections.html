@@ -10,7 +10,7 @@
   {% if form.accounts %}
   <p class="mb-3">{% blocktranslate %}You can sign in to your account using any of the following third party accounts:{% endblocktranslate %}</p>
   <form method="post"
-        class="mb-3 border-b border-gray-500 pb-3"
+        class="mb-3 border-b dark:border-gray-500 pb-3"
         action="{% url 'socialaccount_connections' %}">
     {% csrf_token %}
 
