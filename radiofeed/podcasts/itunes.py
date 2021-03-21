@@ -72,11 +72,7 @@ def search_itunes(search_term, num_results=12):
 
 
 def crawl_itunes(limit):
-    categories = (
-        Category.objects.filter(itunes_genre_id__isnull=False)
-        .prefetch_related("podcast_set")
-        .order_by("name")
-    )
+    categories = Category.objects.filter(itunes_genre_id__isnull=False).order_by("name")
     new_podcasts = 0
 
     for category in categories:
