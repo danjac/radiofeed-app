@@ -1,9 +1,7 @@
 import math
 
-from typing import Optional
 
-
-def format_duration(total_seconds: Optional[int]) -> str:
+def format_duration(total_seconds):
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
     if not total_seconds:
         return ""
