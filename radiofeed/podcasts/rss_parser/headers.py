@@ -1,7 +1,5 @@
 import random
 
-from typing import Dict
-
 USER_AGENTS = [
     (
         "Mozilla/5.0 (X11; Linux x86_64) "
@@ -41,7 +39,7 @@ USER_AGENTS = [
 ]
 
 
-def get_headers() -> Dict[str, str]:
+def get_headers():
     """Return randomized user agent in case only browser clients allowed."""
     return {
         "User-Agent": random.choice(USER_AGENTS),
