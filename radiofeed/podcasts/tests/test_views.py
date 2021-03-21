@@ -123,7 +123,6 @@ class TestPodcastDetail:
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["total_episodes"] == 3
         assert not resp.context_data["is_following"]
 
     def test_authenticated(self, client, login_user, podcast):
@@ -133,7 +132,6 @@ class TestPodcastDetail:
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["total_episodes"] == 3
         assert not resp.context_data["is_following"]
 
     def test_user_is_following(self, client, login_user, podcast):
@@ -144,7 +142,6 @@ class TestPodcastDetail:
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["total_episodes"] == 3
         assert resp.context_data["is_following"]
 
 
