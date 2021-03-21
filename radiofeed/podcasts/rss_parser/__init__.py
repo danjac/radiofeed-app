@@ -8,7 +8,7 @@ from .feed_parser import parse_feed
 from .headers import get_headers
 
 
-def parse_rss(podcast, force_update):
+def parse_rss(podcast, force_update=False):
     """Fetches RSS and generates Feed. Checks etag header if we need to do an update.
     If any errors occur (e.g. RSS unavailable or invalid RSS) the error is saved in database
     and RssParserError raised.

@@ -454,7 +454,7 @@ def render_episode_list_response(
     request,
     episodes,
     template_name,
-    extra_context,
+    extra_context=None,
     cached=False,
 ):
 
