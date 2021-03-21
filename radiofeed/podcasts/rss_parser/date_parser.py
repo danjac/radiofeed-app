@@ -1,7 +1,3 @@
-import datetime
-
-from typing import Optional
-
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
@@ -239,7 +235,7 @@ TZ_INFOS = {
 }
 
 
-def parse_date(value: Optional[str]) -> Optional[datetime.datetime]:
+def parse_date(value):
     if not value:
         return None
     try:

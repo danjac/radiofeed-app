@@ -1,19 +1,14 @@
-from typing import List
-
 import requests
 
 from lxml.etree import XMLSyntaxError
 from pydantic import ValidationError
 
-from radiofeed.episodes.models import Episode
-
-from ..models import Podcast
 from .exceptions import InvalidFeedError, RssParserError
 from .feed_parser import parse_feed
 from .headers import get_headers
 
 
-def parse_rss(podcast: Podcast, force_update: bool = False) -> List[Episode]:
+def parse_rss(podcast, force_update):
     """Fetches RSS and generates Feed. Checks etag header if we need to do an update.
     If any errors occur (e.g. RSS unavailable or invalid RSS) the error is saved in database
     and RssParserError raised.
