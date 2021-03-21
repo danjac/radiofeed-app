@@ -16,7 +16,7 @@ logger = get_task_logger(__name__)
 
 
 @shared_task(name="radiofeed.podcasts.crawl_itunes")
-def crawl_itunes(limit: int = 100) -> None:
+def crawl_itunes(limit: int = 300) -> None:
     itunes.crawl_itunes(limit)
 
 
