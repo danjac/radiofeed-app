@@ -2,7 +2,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
-from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
@@ -23,7 +22,7 @@ SITEMAPS_CACHE_TIMEOUT = 3600
 
 
 @cache_page(SITEMAPS_CACHE_TIMEOUT)
-def robots(request: HttpRequest) -> HttpResponse:
+def robots(request):
     return TemplateResponse(
         request,
         "robots.txt",
