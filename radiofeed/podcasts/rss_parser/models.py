@@ -1,27 +1,24 @@
 import datetime
 
 from functools import lru_cache
-from typing import Dict, List, Optional, Set
+from typing import List, Optional, Set
 
 from django.core.exceptions import ValidationError
-from django.core.files.images import ImageFile
 from django.core.validators import URLValidator
 from django.utils import timezone
 from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 from radiofeed.episodes.models import Episode
 
-from ..models import Category, Podcast
+from ..models import Category
 from ..recommender.text_parser import extract_keywords
 from .date_parser import parse_date
 from .exceptions import InvalidImageURL
 from .image import fetch_image_from_url
 
-CategoryDict = Dict[str, Category]
-
 
 @lru_cache
-def get_categories_dict() -> CategoryDict:
+def get_categories_dict():
     return {c.name: c for c in Category.objects.all()}
 
 
@@ -31,7 +28,7 @@ class Audio(BaseModel):
     length: Optional[int]
 
     @validator("type")
-    def is_audio(cls, value: str) -> str:
+    def is_audio(cls, value):
         if not value.startswith("audio/"):
             raise ValueError("not a valid audio media")
 
@@ -50,7 +47,7 @@ class Item(BaseModel):
     duration: constr(max_length=30)  # type: ignore
 
     @validator("pub_date", pre=True)
-    def parse_date(cls, value: Optional[str]) -> datetime.datetime:
+    def parse_date(cls, value):
         if (pub_date := parse_date(value)) is None:
             raise ValueError("missing or invalid date")
         return pub_date
@@ -84,11 +81,11 @@ class Feed(BaseModel):
     categories: List[str]
 
     @validator("language")
-    def language_code(cls, value: str) -> str:
+    def language_code(cls, value):
         return (value[:2] if value else "en").strip().lower()
 
     @validator("link", pre=True)
-    def prepare_link(cls, value: str) -> str:
+    def prepare_link(cls, value: str):
         if not value:
             return value
 
@@ -104,9 +101,7 @@ class Feed(BaseModel):
 
         return value
 
-    def sync_podcast(
-        self, podcast: Podcast, etag: str, force_update: bool
-    ) -> List[Episode]:
+    def sync_podcast(self, podcast, etag, force_update):
         """Sync podcast data with feed. Returns list of new episodes."""
 
         pub_date = self.get_pub_date()
@@ -150,10 +145,10 @@ class Feed(BaseModel):
 
     def do_update(
         self,
-        podcast: Podcast,
-        pub_date: Optional[datetime.datetime],
-        force_update: bool,
-    ) -> bool:
+        podcast,
+        pub_date,
+        force_update,
+    ):
 
         if pub_date is None:
             return False
@@ -167,7 +162,7 @@ class Feed(BaseModel):
 
         return True
 
-    def create_episodes(self, podcast: Podcast) -> List[Episode]:
+    def create_episodes(self, podcast):
         """Parses new episodes from podcast feed."""
         guids = podcast.episode_set.values_list("guid", flat=True)
 
@@ -180,20 +175,20 @@ class Feed(BaseModel):
             ignore_conflicts=True,
         )
 
-    def get_creators(self) -> str:
+    def get_creators(self):
         return ", ".join(set([a for a in [a.strip() for a in self.creators] if a]))
 
-    def get_categories(self, categories_dct: CategoryDict) -> List[Category]:
+    def get_categories(self, categories_dct):
         return [
             categories_dct[name] for name in self.categories if name in categories_dct
         ]
 
-    def get_keywords(self, categories_dct: CategoryDict) -> str:
+    def get_keywords(self, categories_dct):
         return " ".join(
             [name for name in self.categories if name not in categories_dct]
         )
 
-    def extract_text(self, podcast: Podcast, categories: List[Category]) -> str:
+    def extract_text(self, podcast, categories):
         """Extract keywords from text content for recommender"""
         text = " ".join(
             [
@@ -207,14 +202,14 @@ class Feed(BaseModel):
         )
         return " ".join([kw for kw in extract_keywords(podcast.language, text)])
 
-    def get_pub_date(self) -> Optional[datetime.datetime]:
+    def get_pub_date(self):
         now = timezone.now()
         try:
             return max([item.pub_date for item in self.items if item.pub_date < now])
         except ValueError:
             return None
 
-    def fetch_cover_image(self) -> Optional[ImageFile]:
+    def fetch_cover_image(self):
         if not self.image:
             return None
 

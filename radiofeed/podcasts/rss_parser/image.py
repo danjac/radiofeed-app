@@ -10,7 +10,6 @@ import requests
 
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
-from requests.structures import CaseInsensitiveDict
 
 from .exceptions import InvalidImageURL
 from .headers import get_headers
@@ -19,7 +18,7 @@ MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
-def fetch_image_from_url(image_url: str) -> ImageFile:
+def fetch_image_from_url(image_url):
     """Get an ImageFile object from a URL. """
     try:
         if not image_url:
@@ -43,7 +42,7 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         raise InvalidImageURL from e
 
 
-def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> Optional[str]:
+def get_content_type(image_url, headers):
     content_type: Optional[str] = None
 
     try:
@@ -54,7 +53,7 @@ def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> Optional[s
     return content_type
 
 
-def get_image_file(raw: bytes) -> io.BytesIO:
+def get_image_file(raw):
     img = Image.open(io.BytesIO(raw))
 
     if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
@@ -70,7 +69,7 @@ def get_image_file(raw: bytes) -> io.BytesIO:
     return fp
 
 
-def get_image_filename(image_url: str, content_type: str) -> str:
+def get_image_filename(image_url, content_type):
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
