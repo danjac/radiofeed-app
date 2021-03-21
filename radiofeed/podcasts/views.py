@@ -92,15 +92,11 @@ def search_itunes(request):
 
 
 def about(request, podcast_id, slug=None):
-    podcast = get_podcast_or_404(podcast_id)
-
-    total_episodes = podcast.episode_set.count()
 
     return render_podcast_detail_response(
         request,
         "podcasts/about.html",
-        podcast,
-        {"total_episodes": total_episodes},
+        get_podcast_or_404(podcast_id),
     )
 
 

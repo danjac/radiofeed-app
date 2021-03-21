@@ -19,11 +19,15 @@
     </div>
 
     <div class="text-sm space-y-3">
+      {% with num_episodes=podcast.episode_set.count %}
+      {% if num_episodes %}
       <div>
         <a class="link"
-           href="{% url 'podcasts:podcast_episodes' podcast.id podcast.slug %}">
-          {{ total_episodes }} episode{{ total_episodes|pluralize }}</a>
+           href="{{ podcast.get_episodes_url }}">
+          {{ num_episodes }} episode{{ num_episodes|pluralize }}</a>
       </div>
+      {% endif %}
+      {% endwith %}
       <div class="flex items-center space-x-2">
         {% if podcast.link %}
         <div>

@@ -14,12 +14,23 @@
   <div>
     <a href="{{ podcast.get_absolute_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="20" %}
+      {% cover_image podcast lazy=False size="24" %}
     </a>
   </div>
 
-  <div class="space-y-3">
+  <div class="space-y-1">
     {% include "podcasts/_follow_toggle.html" %}
+    {% with podcast.episode_set.count as num_episodes %}
+    {% if num_episodes %}
+    <div>
+      <a href="{{ podcast.get_episodes_url }}"
+         class="text-sm link"
+         data-turbo-frame="_top">
+        {{ num_episodes }} episode{{ num_episodes|pluralize }}
+      </a>
+    </div>
+    {% endif %}
+    {% endwith %}
     <div title="Date last published"
          class="font-semibold text-sm text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
   </div>
