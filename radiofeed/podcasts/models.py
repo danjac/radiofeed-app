@@ -43,7 +43,7 @@ _cover_image_placeholder = PlaceholderImage(
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term: str, base_similarity=0.2):
+    def search(self, search_term, base_similarity=0.2):
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
