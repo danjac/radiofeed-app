@@ -1,8 +1,4 @@
-from typing import Iterable, Tuple
-
 from django.contrib import admin
-from django.db.models import QuerySet
-from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 from sorl.thumbnail.admin import AdminImageMixin
 
@@ -20,15 +16,13 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub date"
     parameter_name = "pub_date"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[Tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
         )
 
-    def queryset(self, request: HttpRequest, queryset) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(pub_date__isnull=False)
@@ -41,15 +35,13 @@ class SyncErrorFilter(admin.SimpleListFilter):
     title = "Blocklist (3+ sync errors)"
     parameter_name = "blocklisted"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[Tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "Blocklisted"),
             ("no", "Allowed"),
         )
 
-    def queryset(self, request: HttpRequest, queryset) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(num_retries__gte=3)
@@ -62,12 +54,10 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[Tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (("yes", "Promoted"),)
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(promoted=True)
@@ -84,16 +74,14 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
 
-    def title_with_strikethru(self, obj: Podcast) -> str:
+    def title_with_strikethru(self, obj):
         if obj.num_retries >= 3:
             return mark_safe(f"<s>{obj.title}</s>")
         return obj.title
 
-    title_with_strikethru.short_description = "Title"  # type: ignore
+    title_with_strikethru.short_description = "Title"
 
-    def get_search_results(
-        self, request: HttpRequest, queryset: QuerySet, search_term: str
-    ) -> Tuple[QuerySet, bool]:
+    def get_search_results(self, request, queryset, search_term):
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False
