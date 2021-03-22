@@ -5,7 +5,7 @@
 <div id="player"
      data-turbo-permanent
      data-controller="player"
-     data-action="turbo:submit-end@window->player#serverResponse keydown@window->player#togglePause"
+     data-action="turbo:submit-end@window->player#toggle keydown@window->player#togglePause"
      data-player-active-class="player--active"
      data-player-inactive-class="player--inactive"
      data-player-csrf-token-value="{{ csrf_token }}"
