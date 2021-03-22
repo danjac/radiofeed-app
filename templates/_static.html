@@ -8,9 +8,9 @@
 <link rel="stylesheet"
       data-turbo-track="reload"
       media="screen"
-      href="{% static debug|yesno:'dev/app.css,dist.app.css' %}">
+      href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
 
 <script defer
         data-turbo-track="reload"
-        src="{% static debug|yesno:'dev/app.js,dist.app.js' %}">
+        src="{% static debug|yesno:'dev/app.js,dist/app.js' %}">
 </script>
