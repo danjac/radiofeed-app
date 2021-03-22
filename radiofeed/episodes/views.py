@@ -4,7 +4,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import F, OuterRef, QuerySet, Subquery
+from django.db.models import F, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -391,7 +391,7 @@ def get_episode_or_404(
     *,
     with_podcast=False,
     with_current_time=False,
-) -> Episode:
+):
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
@@ -400,15 +400,15 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def get_audio_logs(request) -> QuerySet:
+def get_audio_logs(request):
     return AudioLog.objects.filter(user=request.user)
 
 
-def get_favorites(request) -> QuerySet:
+def get_favorites(request):
     return Favorite.objects.filter(user=request.user)
 
 
-def get_queue_items(request) -> QuerySet:
+def get_queue_items(request):
     return QueueItem.objects.filter(user=request.user)
 
 

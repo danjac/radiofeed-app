@@ -107,7 +107,7 @@ def get_redirect_url(
     request,
     redirect_url_param="redirect_url",
     default_url=settings.HOME_URL,
-) -> str:
+):
     redirect_url = request.POST.get(redirect_url_param)
     if redirect_url and url_has_allowed_host_and_scheme(
         redirect_url, {request.get_host()}, request.is_secure()

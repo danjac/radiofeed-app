@@ -23,7 +23,7 @@ def site():
 
 
 @pytest.fixture
-def get_response() -> HttpResponse:
+def get_response():
     return lambda req: HttpResponse()
 
 
@@ -48,9 +48,7 @@ def password():
 
 
 @pytest.fixture
-def login_user(
-    client: Client, user: settings.AUTH_USER_MODEL
-) -> settings.AUTH_USER_MODEL:
+def login_user(client: Client, user: settings.AUTH_USER_MODEL):
     client.force_login(user)
     return user
 

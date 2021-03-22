@@ -281,7 +281,7 @@ def unfollow(request, podcast_id):
     return render_follow_response(request, podcast, False)
 
 
-def get_podcast_or_404(podcast_id) -> Podcast:
+def get_podcast_or_404(podcast_id):
     return get_object_or_404(Podcast, pk=podcast_id)
 
 

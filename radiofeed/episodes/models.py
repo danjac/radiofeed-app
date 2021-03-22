@@ -128,7 +128,7 @@ class Episode(models.Model):
             queue_toggle=f"queue-toggle-{self.id}",
         )
 
-    def get_duration_in_seconds(self) -> int:
+    def get_duration_in_seconds(self):
         """Returns duration string in h:m:s or h:m to seconds"""
         if not self.duration:
             return 0

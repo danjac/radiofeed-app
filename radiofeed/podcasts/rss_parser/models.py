@@ -52,7 +52,7 @@ class Item(BaseModel):
             raise ValueError("missing or invalid date")
         return pub_date
 
-    def make_episode(self, **kwargs) -> Episode:
+    def make_episode(self, **kwargs):
         return Episode(
             pub_date=self.pub_date,
             guid=self.guid,

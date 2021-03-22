@@ -53,7 +53,7 @@ def stripentities(value):
 
 
 @register.filter
-def percent(value, total) -> float:
+def percent(value, total):
     if not value or not total:
         return 0
 

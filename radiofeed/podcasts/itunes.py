@@ -38,7 +38,7 @@ class SearchResult:
             "podcast": self.podcast,
         }
 
-    def as_json(self) -> str:
+    def as_json(self):
         return json.dumps(self.as_dict())
 
 

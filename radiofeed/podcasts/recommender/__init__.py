@@ -7,7 +7,6 @@ import statistics
 import pandas
 
 from django.db import connection, transaction
-from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -46,7 +45,7 @@ def recommend():
         create_recommendations_for_language(podcasts, categories, language)
 
 
-def get_podcast_queryset() -> QuerySet:
+def get_podcast_queryset():
     return Podcast.objects.filter(
         pub_date__gt=timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
     ).exclude(extracted_text="")

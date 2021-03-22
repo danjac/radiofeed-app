@@ -1,5 +1,4 @@
 from django import template
-from django.db.models import QuerySet
 from django.utils import timezone
 
 from ..models import Podcast
@@ -34,7 +33,7 @@ def cover_image(
     }
 
 
-def get_available_podcasts() -> QuerySet:
+def get_available_podcasts():
     return Podcast.objects.filter(
         pub_date__isnull=False, cover_image__isnull=False, pub_date__lt=timezone.now()
     ).exclude(cover_image="")

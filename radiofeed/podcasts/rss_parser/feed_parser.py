@@ -71,7 +71,7 @@ class RssParser:
     def parse_text_list(self, xpath):
         return [(item.text or "") for item in self.parse_tags(xpath)]
 
-    def parse_explicit(self) -> bool:
+    def parse_explicit(self):
         return self.parse_text("itunes:explicit").lower() == "yes"
 
 
@@ -123,7 +123,7 @@ class FeedParser(RssParser):
 
 
 class ItemParser(RssParser):
-    def parse(self) -> Item:
+    def parse(self):
         return Item(
             guid=self.parse_guid(),
             title=self.parse_text("title"),

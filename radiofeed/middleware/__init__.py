@@ -7,14 +7,14 @@ class Search:
     def __init__(self, request):
         self.request = request
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.value
 
-    def __bool__(self) -> bool:
+    def __bool__(self):
         return bool(self.value)
 
     @cached_property
-    def value(self) -> str:
+    def value(self):
         return self.request.GET.get(self.search_param, "").strip()
 
 
