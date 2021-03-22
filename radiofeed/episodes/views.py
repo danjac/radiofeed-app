@@ -350,15 +350,13 @@ def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    next_item = (
+    if next_item := (
         get_queue_items(request)
         .with_current_time(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
         .first()
-    )
-
-    if next_item:
+    ):
         next_episode = next_item.episode
         current_time = next_item.current_time or 0
     else:
