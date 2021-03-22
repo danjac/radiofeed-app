@@ -283,21 +283,12 @@ def add_to_queue(request, episode_id):
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
-    items = get_queue_items(request)
-    items.filter(episode=episode).delete()
-
-    streams = [render_queue_toggle(request, episode, is_queued=False)]
-
-    if items.count() == 0:
-        streams.append(
-            TurboStream("queue").update.render(
-                "You have no more episodes in your Play Queue"
-            )
-        )
-    else:
-        streams.append(TurboStream(episode.dom.queue).remove.render())
-
-    return TurboStreamResponse(streams)
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=False),
+            render_remove_from_queue(request, episode),
+        ]
+    )
 
 
 @require_POST
@@ -421,7 +412,7 @@ def get_queue_items(request) -> QuerySet:
     return QueueItem.objects.filter(user=request.user)
 
 
-def render_queue_toggle(request, episode, is_queued) -> str:
+def render_queue_toggle(request, episode, is_queued):
     return (
         TurboStream(episode.dom.queue_toggle)
         .replace.template(
@@ -431,7 +422,19 @@ def render_queue_toggle(request, episode, is_queued) -> str:
     )
 
 
-def render_favorite_toggle(request, episode, is_favorited) -> str:
+def render_remove_from_queue(request, episode):
+    # remove from queue
+    items = get_queue_items(request)
+    items.filter(episode=episode).delete()
+
+    if items.count() == 0:
+        return TurboStream("queue").replace.render(
+            "You have no more episodes in your Play Queue"
+        )
+    return TurboStream(episode.dom.queue).remove.render()
+
+
+def render_favorite_toggle(request, episode, is_favorited):
     return (
         TurboStream(episode.dom.favorite_toggle)
         .replace.template(
@@ -442,7 +445,7 @@ def render_favorite_toggle(request, episode, is_favorited) -> str:
     )
 
 
-def render_player_toggle(request, episode, is_playing) -> str:
+def render_player_toggle(request, episode, is_playing):
 
     return (
         TurboStream(episode.dom.player_toggle)
@@ -505,16 +508,9 @@ def render_player_response(
         return response
 
     # remove from queue
-    queue_items = get_queue_items(request)
-    queue_items.filter(episode=next_episode).delete()
-
-    if queue_items.count() == 0:
-        streams.append(TurboStream("queue").replace.render("All done!"))
-    else:
-        streams.append(TurboStream(next_episode.dom.queue).remove.render())
+    streams.append(render_remove_from_queue(request, next_episode))
 
     next_episode.log_activity(request.user, current_time=current_time)
-
     request.player.start(next_episode, current_time)
 
     response = TurboStreamResponse(
