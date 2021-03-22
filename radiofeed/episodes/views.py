@@ -88,10 +88,7 @@ def search_episodes(request):
     )
 
 
-def preview(
-    request,
-    episode_id,
-):
+def preview(request, episode_id):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
