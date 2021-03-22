@@ -318,10 +318,27 @@ class AudioLog(TimeStampedModel):
         ]
 
 
+class QueueItemQuerySet(models.QuerySet):
+    def with_current_time(self, user):
+        """Adds current_time annotation."""
+        return self.annotate(
+            current_time=models.Subquery(
+                AudioLog.objects.filter(
+                    user=user, episode=models.OuterRef("episode")
+                ).values("current_time")
+            ),
+        )
+
+
+QueueItemManager: models.Manager = models.Manager.from_queryset(QueueItemQuerySet)
+
+
 class QueueItem(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
     position = models.IntegerField(default=0)
+
+    objects = QueueItemManager()
 
     class Meta:
         constraints = [

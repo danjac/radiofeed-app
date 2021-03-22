@@ -10,7 +10,7 @@ from ..factories import (
     FavoriteFactory,
     QueueItemFactory,
 )
-from ..models import AudioLog, Episode, Favorite
+from ..models import AudioLog, Episode, Favorite, QueueItem
 
 pytestmark = pytest.mark.django_db
 
@@ -158,3 +158,16 @@ class TestAudioLogManager:
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
+
+
+class TestQueueItemManager:
+    def test_with_current_time_if_not_played(self, user):
+        QueueItemFactory(user=user)
+        item = QueueItem.objects.with_current_time(user).first()
+        assert item.current_time is None
+
+    def test_with_current_time_if_played(self, user):
+        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
+        QueueItemFactory(user=user, episode=log.episode)
+        item = QueueItem.objects.with_current_time(user).first()
+        assert item.current_time == 20
