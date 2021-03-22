@@ -8,8 +8,16 @@
 <link rel="stylesheet"
       data-turbo-track="reload"
       media="screen"
-      href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
+      {% if debug %}
+      href="{% static 'dev/app.css' %}?{% now 'U' %}"
+      {% else %}
+      href="{% static 'dist/app.css' %}"
+      {% endif %}>
 
-<script src="{% static debug|yesno:'dev/app.js,dist/app.js' %}"
-        defer
-        data-turbo-track="reload"></script>
+<script defer
+        data-turbo-track="reload"
+        {% if debug %}
+        src="{% static 'dev/app.js' %}?{% now 'U' %}"
+        {% else %}
+        src="{% static 'dist/app.js' %}"
+        {% endif %}></script>

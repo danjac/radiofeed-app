@@ -2,8 +2,6 @@
 
 const colors = require('tailwindcss/colors');
 
-const sizes = [8, 14, 16, 18, 20, 24, 28, 30, 32];
-
 module.exports = {
   darkMode: 'class',
   future: {
@@ -11,16 +9,8 @@ module.exports = {
     purgeLayersByDefault: true,
   },
   purge: {
-    content: ['./templates/**/*.html', './static/src/js/**/*.js'],
-    options: {
-      safelist: [
-        'type', // [type='checkbox']
-        'animate-pulse',
-      ]
-        .concat(sizes.map((size) => `h-${size}`))
-        .concat(sizes.map((size) => `w-${size}`)),
-      keyframes: true,
-    },
+    content: ['./templates/**/*.html', './static/src/js/**/*.js', './safelist.txt'],
+    keyframes: true,
   },
   theme: {
     extend: {

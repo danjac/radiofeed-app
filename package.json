@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "check-updates": "ncu -u",
-    "watch-css": "postcss ./static/src/css/app.css -o ./static/dev/app.css",
+    "watch-css": "TAILWIND_MODE=build postcss ./static/src/css/app.css -o ./static/dev/app.css",
     "watch-js": "esbuild ./static/src/js/app.js --bundle --outfile=./static/dev/app.js",
     "build": "yarn build-css && yarn build-js",
     "build-css": "NODE_ENV=production postcss ./static/src/css/app.css -o ./static/dist/app.css",
@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/jit": "^0.1.5",
     "@types/sortablejs": "^1.10.6",
     "autoprefixer": "^10.2.5",
     "cssnano": "^4.1.10",
