@@ -82,6 +82,24 @@ export default class extends Controller {
     this.audio.pause();
   }
 
+  togglePause(event) {
+    if (event.code == 'Space' && this.hasControlsTarget && !!this.audio) {
+      switch (event.target.tagName) {
+        case 'INPUT':
+        case 'SELECT':
+        case 'TEXTAREA':
+          return;
+        default:
+          if (this.pausedValue) {
+            this.play();
+          } else {
+            this.pause();
+          }
+          event.preventDefault();
+      }
+    }
+  }
+
   resumed() {
     this.enabled = true;
     this.pausedValue = false;
