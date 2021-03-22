@@ -157,7 +157,7 @@ export default class extends Controller {
     this.skipTo(this.audio.currentTime + 10);
   }
 
-  toggle(event) {
+  serverResponse(event) {
     // handle Turbo Stream response to toggle player on/off. Action details
     // should be in X-Media-Player header
     const { fetchResponse } = event.detail;
