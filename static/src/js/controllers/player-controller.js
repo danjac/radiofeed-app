@@ -52,6 +52,39 @@ export default class extends Controller {
     }
   }
 
+  serverResponse(event) {
+    // handle Turbo Stream response to toggle player on/off. Action details
+    // should be in X-Media-Player header
+    const { fetchResponse } = event.detail;
+    const headers =
+      fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
+    if (!headers || !headers.has('X-Media-Player')) {
+      return;
+    }
+    const { action, mediaUrl, currentTime, metadata } = JSON.parse(
+      headers.get('X-Media-Player')
+    );
+    if (action === 'stop') {
+      this.closePlayer();
+      return;
+    }
+    // default : play
+    //
+    this.mediaUrlValue = mediaUrl;
+    this.currentTimeValue = parseFloat(currentTime || 0);
+
+    if (metadata) {
+      this.metadataValue = metadata;
+    }
+
+    this.initAudio();
+
+    this.audio.src = this.mediaUrlValue;
+    this.audio.currentTime = this.currentTimeValue;
+
+    this.play();
+  }
+
   ended() {
     this.cancelTimeUpdateTimer();
     this.playNextTarget.requestSubmit();
@@ -155,39 +188,6 @@ export default class extends Controller {
 
   skipForward() {
     this.skipTo(this.audio.currentTime + 10);
-  }
-
-  serverResponse(event) {
-    // handle Turbo Stream response to toggle player on/off. Action details
-    // should be in X-Media-Player header
-    const { fetchResponse } = event.detail;
-    const headers =
-      fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
-    if (!headers || !headers.has('X-Media-Player')) {
-      return;
-    }
-    const { action, mediaUrl, currentTime, metadata } = JSON.parse(
-      headers.get('X-Media-Player')
-    );
-    if (action === 'stop') {
-      this.closePlayer();
-      return;
-    }
-    // default : play
-    //
-    this.mediaUrlValue = mediaUrl;
-    this.currentTimeValue = parseFloat(currentTime || 0);
-
-    if (metadata) {
-      this.metadataValue = metadata;
-    }
-
-    this.initAudio();
-
-    this.audio.src = this.mediaUrlValue;
-    this.audio.currentTime = this.currentTimeValue;
-
-    this.play();
   }
 
   // observers
