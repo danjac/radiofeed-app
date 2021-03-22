@@ -352,14 +352,23 @@ def play_next_episode(request):
 
     next_item = (
         get_queue_items(request)
+        .with_current_time(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
         .first()
     )
 
+    if next_item:
+        next_episode = next_item.episode
+        current_time = next_item.current_time or 0
+    else:
+        next_episode = None
+        current_time = 0
+
     return render_player_response(
         request,
-        next_episode=next_item.episode if next_item else None,
+        next_episode=next_episode,
+        current_time=current_time,
         mark_completed=True,
     )
 

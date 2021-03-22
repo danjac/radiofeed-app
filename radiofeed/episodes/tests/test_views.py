@@ -165,6 +165,25 @@ class TestTogglePlayer:
             "playback_rate": 1.0,
         }
 
+    def test_play_next_if_next_episode_history(self, client, login_user):
+        log = AudioLogFactory(user=login_user, current_time=30)
+        QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
+        resp = client.post(reverse("episodes:play_next_episode"))
+        assert resp.status_code == http.HTTPStatus.OK
+
+        assert QueueItem.objects.count() == 0
+
+        header = json.loads(resp["X-Media-Player"])
+        assert header["action"] == "start"
+        assert header["currentTime"] == 30
+        assert header["mediaUrl"] == log.episode.media_url
+
+        assert client.session["player"] == {
+            "episode": log.episode.id,
+            "current_time": 30,
+            "playback_rate": 1.0,
+        }
+
     def test_play_next_if_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK

@@ -165,8 +165,8 @@ class Episode(models.Model):
             episode=self,
             user=user,
             defaults={
-                "current_time": current_time,
                 "updated": now,
+                "current_time": current_time or 0,
                 "completed": now if completed else None,
             },
         )
