@@ -116,19 +116,12 @@ export default class extends Controller {
   }
 
   togglePause(event) {
-    if (event.code == 'Space' && this.hasControlsTarget && !!this.audio) {
-      switch (event.target.tagName) {
-        case 'INPUT':
-        case 'SELECT':
-        case 'TEXTAREA':
-          return;
-        default:
-          if (this.pausedValue) {
-            this.play();
-          } else {
-            this.pause();
-          }
-          event.preventDefault();
+    if (event.code == 'Space' && this.hasControlsTarget && !this.isInputTarget(event)) {
+      event.preventDefault();
+      if (this.pausedValue) {
+        this.play();
+      } else {
+        this.pause();
       }
     }
   }
@@ -403,6 +396,10 @@ export default class extends Controller {
         credentials: 'same-origin',
       });
     }
+  }
+
+  isInputTarget(event) {
+    return event.target.tagName.match(/INPUT|SELECT|TEXTAREA/i) !== null;
   }
 
   set enabled(enabled) {
