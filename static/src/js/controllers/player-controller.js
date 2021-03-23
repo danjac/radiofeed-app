@@ -399,7 +399,7 @@ export default class extends Controller {
   }
 
   isInputTarget(event) {
-    return event.target.tagName.match(/INPUT|SELECT|TEXTAREA/i) !== null;
+    return /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName);
   }
 
   set enabled(enabled) {
