@@ -1,6 +1,7 @@
 {% load static %}
 const cacheName = "app-cache";
 
+/*
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(cacheName).then(function(cache) {
@@ -13,6 +14,7 @@ self.addEventListener('install', function(event) {
     })
   );
 });
+*/
 
 self.addEventListener('fetch', function(event) {
   if (!/^https?:$/i.test(new URL(event.request.url).protocol)) return;
@@ -21,7 +23,7 @@ self.addEventListener('fetch', function(event) {
       return cache.match(event.request).then(function (response) {
         const request = new Request(event.request.url, {mode: 'no-cors'})
         return response || fetch(request).then(function(response) {
-          cache.put(event.request, response);
+          cache.put(event.request, response.clone());
           return response;
         });
       });
