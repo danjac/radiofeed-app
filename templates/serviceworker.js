@@ -1,7 +1,6 @@
 {% load static %}
 const cacheName = "app-cache-{{ request.site.domain }}";
 
-/*
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(cacheName).then(function(cache) {
@@ -9,12 +8,11 @@ self.addEventListener('install', function(event) {
         [
           "{% static debug|yesno:'dev/app.css,dist/app.css' %}",
           "{% static debug|yesno:'dev/app.js,dist/app.js' %}"
-        ]
+        ].map(url => new Request(url, {mode: 'no-cors'}))
       );
     })
   );
 });
-*/
 
 // deletes old cache
 self.addEventListener('activate', function(event) {
@@ -41,10 +39,10 @@ self.addEventListener('fetch', function(event) {
     caches.open(cacheName).then(function(cache) {
       return cache.match(event.request).then(function (response) {
         return response || fetch(new Request(event.request.url, {mode: 'no-cors'})).then(function(response) {
-          console.log('caching', event.request.url)
+          //console.log('caching', event.request.url)
           cache.put(event.request, response.clone());
           return response;
-        });
+        }).catch(function() { console.log('Unable to cache', event.request.url) });
       });
     })
   );
