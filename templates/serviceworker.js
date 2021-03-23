@@ -1,5 +1,5 @@
 {% load static %}
-const cacheName = "app-cache";
+const cacheName = "app-cache-{{ request.site.domain }}";
 
 /*
 self.addEventListener('install', function(event) {
@@ -16,13 +16,32 @@ self.addEventListener('install', function(event) {
 });
 */
 
+// deletes old cache
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+        }).map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
+    })
+  );
+});
+
 self.addEventListener('fetch', function(event) {
-  if (!/^https?:$/i.test(new URL(event.request.url).protocol)) return;
+
+  const url = new URL(event.request.url);
+    if (!/\.(jpg|png|gif|webp|css|js).*$/.test(url.pathname) || !/^(http|https):$/.test(url.protocol))  {
+    return;
+  }
+
   event.respondWith(
     caches.open(cacheName).then(function(cache) {
       return cache.match(event.request).then(function (response) {
-        const request = new Request(event.request.url, {mode: 'no-cors'})
-        return response || fetch(request).then(function(response) {
+        return response || fetch(new Request(event.request.url, {mode: 'no-cors'})).then(function(response) {
+          console.log('caching', event.request.url)
           cache.put(event.request, response.clone());
           return response;
         });
@@ -30,3 +49,4 @@ self.addEventListener('fetch', function(event) {
     })
   );
 });
+
