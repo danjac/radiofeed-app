@@ -2,7 +2,7 @@
     {{ episode.completed|yesno:"Completed,Listened" }} {{ episode.listened|date }}
     {% if not episode.completed %}
     {% with episode.current_time|percent:duration as pc_complete %}
-    {% if pc_complete > 0.9 and pc_complete < 1.0 %}
+    {% if pc_complete > 0.9 %}
     ({{ pc_complete|floatformat:'0' }}% done)
     {% endif %}
     {% endwith %}
