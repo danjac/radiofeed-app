@@ -1,6 +1,6 @@
 - name: Deploy application to production
   hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   vars:
     dokku_packages_state: present
   vars_files: vars.yml
