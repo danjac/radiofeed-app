@@ -1,7 +1,11 @@
 - name: Deploy application to production
   hosts: localhost
   gather_facts: no
+  vars:
+    dokku_packages_state: present
   vars_files: vars.yml
   roles:
     - tests
+    - dokku_bot.ansible_dokku
+    - configure
     - deploy
