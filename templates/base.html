@@ -52,6 +52,12 @@
 
     <main class="w-full p-2 lg:px-5"
           data-toggle-target="item">
+      <noscript>
+        <p class="p-3 bg-gray-200 dark:bg-gray-800 rounded mb-3 text-center">
+          This site works best with JavaScript enabled.
+        </p>
+      </noscript>
+
       {% block signup_cta %}
       {% if not user.is_authenticated %}
       {% include "_signup_cta.html" %}
