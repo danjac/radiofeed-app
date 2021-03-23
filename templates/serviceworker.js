@@ -15,12 +15,13 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  if (!/^https?:$/i.test(new URL(event.request.url).protocol)) return;
   event.respondWith(
     caches.open(cacheName).then(function(cache) {
-      if (!/^https?:$/i.test(new URL(request.url).protocol)) return;
-      return cache.match(event.request).then(function (response) {
-        return response || fetch(event.request).then(function(response) {
-          cache.put(event.request, response.clone());
+      const request = new Request(event.request.url, {mode: 'no-cors'});
+      return cache.match(request).then(function (response) {
+        return response || fetch(request).then(function(response) {
+          cache.put(request, response.clone());
           return response;
         });
       });
