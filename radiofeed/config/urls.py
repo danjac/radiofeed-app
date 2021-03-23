@@ -30,6 +30,12 @@ def robots(request):
     )
 
 
+def serviceworker(request):
+    return TemplateResponse(
+        request, "serviceworker.js", content_type="application/javascript"
+    )
+
+
 urlpatterns = [
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
@@ -38,6 +44,7 @@ urlpatterns = [
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path(settings.ADMIN_URL, admin.site.urls),
+    path("serviceworker.js", serviceworker, name="serviceworker"),
     path("robots.txt", robots, name="robots"),
     path(
         "sitemap.xml",
