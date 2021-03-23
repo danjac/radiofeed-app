@@ -1,6 +1,8 @@
 {% load static %}
 const cacheName = "app-cache-{{ request.site.domain }}";
 
+/*
+ * cache.addAll not working with CDN assets
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(cacheName).then(function(cache) {
@@ -13,6 +15,7 @@ self.addEventListener('install', function(event) {
     })
   );
 });
+*/
 
 // deletes old cache
 self.addEventListener('activate', function(event) {
