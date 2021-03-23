@@ -95,17 +95,14 @@ def preview(request, episode_id):
 
     if request.turbo.frame:
 
-        is_favorited = episode.is_favorited(request.user)
-        is_queued = episode.is_queued(request.user)
-
         return (
             TurboFrame(request.turbo.frame)
             .template(
                 "episodes/_preview.html",
                 {
                     "episode": episode,
-                    "is_favorited": is_favorited,
-                    "is_queued": is_queued,
+                    "is_favorited": episode.is_favorited(request.user),
+                    "is_queued": episode.is_queued(request.user),
                 },
             )
             .response(request)
