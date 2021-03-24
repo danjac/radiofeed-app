@@ -5,10 +5,8 @@
 {% if not search %}
 <div class="py-3 border-b border-t sm:p-3 sm:border dark:border-gray-500 mb-3">
   {% if podcast.creators %}
-  <div class="mb-3 text-sm">
-    <span class="font-semibold text-gray-600 dark:text-gray-300">
-      {{ podcast.creators }}
-    </span>
+  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm mb-3">
+    {{ podcast.creators }}
   </div>
   {% endif %}
 
@@ -20,15 +18,7 @@
     </div>
 
     <div class="text-sm space-y-3">
-      {% cache 600 podcast_detail_epsiode_count podcast.id %}
-      {% with num_episodes=podcast.episode_set.count %}
-      {% if num_episodes %}
-      <div class="font-semibold text-gray-600 dark:text-gray-300">
-          {{ num_episodes }} episode{{ num_episodes|pluralize }}
-      </div>
-      {% endif %}
-      {% endwith %}
-      {% endcache %}
+      {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-2">
         {% if podcast.link %}
         <div>
@@ -54,6 +44,16 @@
       {% share_buttons podcast.get_absolute_url podcast.title %}
     </div>
   </div>
+  {# cache 600 podcast_detail_epsiode_count podcast.id #}
+  {% with num_episodes=podcast.episode_set.count %}
+  {% if num_episodes %}
+  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm mb-3">
+    {{ num_episodes }} episode{{ num_episodes|pluralize }}
+  </div>
+  {% endif %}
+  {% endwith %}
+  {# endcache #}
+
   {% if podcast.explicit %}
   <div class="text-sm font-semibold mb-3">
     This podcast may contain explicit content.
