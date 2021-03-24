@@ -1,5 +1,5 @@
 {% extends "modal_base.html" %}
-{% load cache podcasts %}
+{% load podcasts %}
 
 {% block modal_header %}
 <a href="{{ podcast.get_absolute_url }}"
@@ -16,25 +16,12 @@
   <div>
     <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
-      {% cover_image podcast lazy=False size="24" %}
+      {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
 
-  <div class="space-y-1">
+  <div class="space-y-3">
     {% include "podcasts/_follow_toggle.html" %}
-    {% cache 600 podcast_preview_epsiode_count podcast.id %}
-    {% with num_episodes=podcast.episode_set.count %}
-    {% if num_episodes %}
-    <div>
-      <a href="{{ podcast_url }}"
-         class="text-sm link"
-         data-turbo-frame="_top">
-        {{ num_episodes }} episode{{ num_episodes|pluralize }}
-      </a>
-    </div>
-    {% endif %}
-    {% endwith %}
-    {% endcache %}
     <div title="Date last published"
          class="font-semibold text-sm text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
   </div>
