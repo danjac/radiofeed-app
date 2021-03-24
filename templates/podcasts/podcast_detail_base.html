@@ -26,7 +26,7 @@
 </nav>
 {% else %}
 <div class="flex items-center justify-between mb-3">
-  <h1 class="font-bold mb-3 flex flex-wrap">{{ podcast.title|stripentities }}</h1>
+  <h1 class="font-bold flex flex-wrap">{{ podcast.title|stripentities }}</h1>
   {% include "podcasts/_follow_toggle.html" %}
 </div>
 {% endif %}

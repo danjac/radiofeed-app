@@ -101,11 +101,12 @@ def recommendations(request, podcast_id, slug=None):
         .order_by("-similarity", "-frequency")
     )[:12]
 
-    return render_podcast_detail_response(
+    return TemplateResponse(
         request,
         "podcasts/recommendations.html",
         podcast,
         {
+            **get_podcast_detail_context(request, podcast),
             "recommendations": recommendations,
         },
     )
@@ -120,20 +121,26 @@ def episodes(request, podcast_id, slug=None):
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+        cover_image = podcast.get_cover_image_thumbnail()
     else:
         order_by = "pub_date" if ordering == "asc" else "-pub_date"
         episodes = episodes.order_by(order_by)
+        cover_image = None
+
+    context = {
+        "ordering": ordering,
+        "cover_image": cover_image,
+        "no_cover_image": cover_image is None,
+    }
+
+    if not request.turbo.frame:
+        context |= get_podcast_detail_context(request, podcast)
 
     return render_episode_list_response(
         request,
         episodes,
         "podcasts/episodes.html",
-        {
-            **get_podcast_detail_context(request, podcast),
-            "ordering": ordering,
-            "no_cover_image": not (request.search),
-            "cover_image": podcast.get_cover_image_thumbnail(),
-        },
+        context,
         cached=request.user.is_anonymous,
     )
 
@@ -286,20 +293,6 @@ def get_podcast_detail_context(
         "is_following": podcast.is_following(request.user),
         "og_data": podcast.get_opengraph_data(request),
     } | (extra_context or {})
-
-
-def render_podcast_detail_response(
-    request,
-    template_name,
-    podcast,
-    extra_context=None,
-):
-
-    return TemplateResponse(
-        request,
-        template_name,
-        get_podcast_detail_context(request, podcast, extra_context),
-    )
 
 
 def render_follow_response(request, podcast, is_following):
