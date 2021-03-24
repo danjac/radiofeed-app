@@ -14,13 +14,3 @@
         data-turbo-track="reload"
         src="{% static debug|yesno:'dev/app.js,dist/app.js' %}">
 </script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-                    .register("{% url 'serviceworker' %}")
-      .then(function() {
-        console.log("Service Worker Registered");
-      });
-  }
-</script>
