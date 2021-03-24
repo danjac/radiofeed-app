@@ -123,8 +123,7 @@ def episodes(request, podcast_id, slug=None):
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
         cover_image = podcast.get_cover_image_thumbnail()
     else:
-        order_by = "pub_date" if ordering == "asc" else "-pub_date"
-        episodes = episodes.order_by(order_by)
+        episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
         cover_image = None
 
     context = {
