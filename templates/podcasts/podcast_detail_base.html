@@ -4,32 +4,25 @@
 
 {% block content %}
 
-
-{% if has_recommendations %}
 <h1 class="font-bold mb-3">{{ podcast.title|stripentities }}</h1>
+
 <nav class="mb-3 flex justify-between">
-  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none text-sm pb-1 space-x-6">
+  {% if has_recommendations %}
+  <ul class="flex items-center text-sm pb-1 space-x-6">
     {% active_link podcast.get_episodes_url as link %}
     <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}">Episodes</a>
     </li>
-    {% if has_recommendations %}
     {% active_link podcast.get_recommendations_url as link %}
     <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}">Similar</a>
     </li>
-    {% endif %}
   </ul>
+  {% endif %}
   {% include "podcasts/_follow_toggle.html" %}
 </nav>
-{% else %}
-<div class="flex items-center justify-between mb-3">
-  <h1 class="font-bold flex flex-wrap">{{ podcast.title|stripentities }}</h1>
-  {% include "podcasts/_follow_toggle.html" %}
-</div>
-{% endif %}
 
 {% block podcast_content %}{% endblock %}
 {% endblock %}
