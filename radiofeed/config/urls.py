@@ -5,7 +5,6 @@ from django.contrib.sitemaps import views as sitemaps_views
 from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
 
 from radiofeed.episodes.sitemaps import EpisodeSitemap
 from radiofeed.podcasts.sitemaps import CategorySitemap, PodcastSitemap
@@ -18,6 +17,10 @@ sitemaps = {
 }
 
 
+def static_page(template_name):
+    return lambda request: TemplateResponse(request, template_name)
+
+
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request):
     return TemplateResponse(
@@ -25,11 +28,6 @@ def robots(request):
         "robots.txt",
         {"sitemap_url": request.build_absolute_uri("/sitemap.xml")},
     )
-
-
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def about(request):
-    return TemplateResponse(request, "about.html")
 
 
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
@@ -45,7 +43,7 @@ urlpatterns = [
     path("account/", include("radiofeed.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
-    path("about/", about, name="about"),
+    path("about/", static_page("about.html"), name="about"),
     path("serviceworker.js", serviceworker, name="serviceworker"),
     path("robots.txt", robots, name="robots"),
     path(
@@ -73,10 +71,10 @@ if settings.DEBUG:
 
     # allow preview/debugging of error views in development
     urlpatterns += [
-        path("errors/400/", TemplateView.as_view(template_name="400.html")),
-        path("errors/403/", TemplateView.as_view(template_name="403.html")),
-        path("errors/404/", TemplateView.as_view(template_name="404.html")),
-        path("errors/405/", TemplateView.as_view(template_name="405.html")),
-        path("errors/500/", TemplateView.as_view(template_name="500.html")),
-        path("errors/csrf/", TemplateView.as_view(template_name="403_csrf.html")),
+        path("errors/400/", static_page("400.html")),
+        path("errors/403/", static_page("403.html")),
+        path("errors/404/", static_page("404.html")),
+        path("errors/405/", static_page("405.html")),
+        path("errors/500/", static_page("500.html")),
+        path("errors/csrf/", static_page("403_csrf.html")),
     ]
