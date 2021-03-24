@@ -23,10 +23,8 @@
       {% cache 600 podcast_detail_epsiode_count podcast.id %}
       {% with num_episodes=podcast.episode_set.count %}
       {% if num_episodes %}
-      <div>
-        <a class="link"
-           href="{{ podcast.get_episodes_url }}">
-          {{ num_episodes }} episode{{ num_episodes|pluralize }}</a>
+      <div class="font-semibold text-gray-600 dark:text-gray-300">
+          {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </div>
       {% endif %}
       {% endwith %}
