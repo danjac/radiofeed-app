@@ -105,10 +105,9 @@ def recommendations(request, podcast_id, slug=None):
         request,
         "podcasts/recommendations.html",
         podcast,
-        {
-            **get_podcast_detail_context(request, podcast),
-            "recommendations": recommendations,
-        },
+        get_podcast_detail_context(
+            request, podcast, {"recommendations": recommendations}
+        ),
     )
 
 
@@ -133,7 +132,7 @@ def episodes(request, podcast_id, slug=None):
     }
 
     if not request.turbo.frame:
-        context |= get_podcast_detail_context(request, podcast)
+        context = get_podcast_detail_context(request, podcast, context)
 
     return render_episode_list_response(
         request,
