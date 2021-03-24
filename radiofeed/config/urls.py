@@ -18,10 +18,7 @@ sitemaps = {
 }
 
 
-SITEMAPS_CACHE_TIMEOUT = 3600
-
-
-@cache_page(SITEMAPS_CACHE_TIMEOUT)
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request):
     return TemplateResponse(
         request,
@@ -30,6 +27,12 @@ def robots(request):
     )
 
 
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+def about(request):
+    return TemplateResponse(request, "about.html")
+
+
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def serviceworker(request):
     return TemplateResponse(
         request, "serviceworker.js", content_type="application/javascript"
@@ -42,21 +45,21 @@ urlpatterns = [
     path("account/", include("radiofeed.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
-    path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
-    path(settings.ADMIN_URL, admin.site.urls),
+    path("about/", about, name="about"),
     path("serviceworker.js", serviceworker, name="serviceworker"),
     path("robots.txt", robots, name="robots"),
     path(
         "sitemap.xml",
-        cache_page(SITEMAPS_CACHE_TIMEOUT)(sitemaps_views.index),
+        cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.index),
         {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
     ),
     path(
         "sitemap-<section>.xml",
-        cache_page(SITEMAPS_CACHE_TIMEOUT)(sitemaps_views.sitemap),
+        cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.sitemap),
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
+    path(settings.ADMIN_URL, admin.site.urls),
 ]
 
 
