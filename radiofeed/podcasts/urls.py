@@ -1,8 +1,15 @@
+from django.shortcuts import redirect
 from django.urls import path
 
 from . import views
 
 app_name = "podcasts"
+
+
+# legacy redirect
+def redirect_episodes_page(request, podcast_id, slug):
+    return redirect("podcasts:podcast_episodes", podcast_id, slug, permanent=True)
+
 
 urlpatterns = [
     path("podcasts/", views.index, name="index"),
@@ -25,14 +32,13 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        "podcasts/<int:podcast_id>/<slug:slug>/",
         views.episodes,
         name="podcast_episodes",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/",
-        views.about,
-        name="podcast_detail",
+        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        redirect_episodes_page,
     ),
     path(
         "podcasts/<int:podcast_id>/~follow/",

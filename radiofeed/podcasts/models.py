@@ -154,13 +154,10 @@ class Podcast(models.Model):
         return self.title or self.rss
 
     def get_absolute_url(self):
-        return self.get_detail_url()
+        return self.get_episodes_url()
 
     def get_preview_url(self):
         return reverse("podcasts:preview", args=[self.id])
-
-    def get_detail_url(self):
-        return reverse("podcasts:podcast_detail", args=[self.id, self.slug])
 
     def get_episodes_url(self):
         return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])

@@ -8,11 +8,6 @@
 
 <nav class="mb-3 flex justify-between">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none text-sm pb-1 space-x-6">
-    {% active_link podcast.get_detail_url as link %}
-    <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
-      <a class="link"
-         href="{{ link.url }}">About</a>
-    </li>
     {% active_link podcast.get_episodes_url as link %}
     <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
       <a class="link"

@@ -115,37 +115,14 @@ class TestPreview:
         assert resp.context_data["is_following"]
 
 
-class TestPodcastDetail:
-    def test_anonymous(self, client, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        resp = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["podcast"] == podcast
-        assert not resp.context_data["is_following"]
-
-    def test_authenticated(self, client, login_user, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        resp = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["podcast"] == podcast
-        assert not resp.context_data["is_following"]
-
-    def test_user_is_following(self, client, login_user, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        FollowFactory(podcast=podcast, user=login_user)
-        resp = client.get(
-            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
-        )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["podcast"] == podcast
-        assert resp.context_data["is_following"]
-
-
 class TestPodcastEpisodeList:
+    def test_legacy_redirect(self, client, podcast):
+        resp = client.get(f"/podcasts/{podcast.id}/{podcast.slug}/episodes/")
+        assert resp.status_code == http.HTTPStatus.MOVED_PERMANENTLY
+        assert resp.url == reverse(
+            "podcasts:podcast_episodes", args=[podcast.id, podcast.slug]
+        )
+
     def test_get_podcast(self, client, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         resp = client.get(

@@ -91,15 +91,6 @@ def search_itunes(request):
     )
 
 
-def about(request, podcast_id, slug=None):
-
-    return render_podcast_detail_response(
-        request,
-        "podcasts/about.html",
-        get_podcast_or_404(podcast_id),
-    )
-
-
 def recommendations(request, podcast_id, slug=None):
 
     podcast = get_podcast_or_404(podcast_id)
@@ -140,10 +131,8 @@ def episodes(request, podcast_id, slug=None):
         {
             **get_podcast_detail_context(request, podcast),
             "ordering": ordering,
+            "no_cover_image": not (request.search),
             "cover_image": podcast.get_cover_image_thumbnail(),
-            "podcast_url": reverse(
-                "podcasts:podcast_detail", args=[podcast.id, podcast.slug]
-            ),
         },
         cached=request.user.is_anonymous,
     )
