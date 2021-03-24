@@ -104,7 +104,6 @@ def recommendations(request, podcast_id, slug=None):
     return TemplateResponse(
         request,
         "podcasts/recommendations.html",
-        podcast,
         get_podcast_detail_context(
             request, podcast, {"recommendations": recommendations}
         ),
@@ -290,7 +289,8 @@ def get_podcast_detail_context(
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
         "is_following": podcast.is_following(request.user),
         "og_data": podcast.get_opengraph_data(request),
-    } | (extra_context or {})
+        **(extra_context or {}),
+    }
 
 
 def render_follow_response(request, podcast, is_following):
