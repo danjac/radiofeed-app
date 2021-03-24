@@ -30,6 +30,13 @@ def robots(request):
     )
 
 
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+def serviceworker(request):
+    return TemplateResponse(
+        request, "serviceworker.js", content_type="application/javascript"
+    )
+
+
 urlpatterns = [
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
@@ -37,6 +44,7 @@ urlpatterns = [
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", static_page("about.html"), name="about"),
+    path("serviceworker.js", serviceworker, name="serviceworker"),
     path("robots.txt", robots, name="robots"),
     path(
         "sitemap.xml",
