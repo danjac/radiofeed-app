@@ -439,19 +439,30 @@ def render_favorite_toggle(request, episode, is_favorited):
     )
 
 
-def render_player_toggle(request, episode, is_playing):
-
+def render_player_toggle(request, episode, target, is_playing, is_modal):
     return (
-        TurboStream(episode.dom.player_toggle)
+        TurboStream(target)
         .replace.template(
             "episodes/_player_toggle.html",
             {
                 "episode": episode,
                 "is_playing": is_playing,
+                "is_modal": is_modal,
             },
         )
         .render(request=request)
     )
+
+
+def render_player_toggles(request, episode, is_playing):
+    return [
+        render_player_toggle(
+            request, episode, episode.dom.player_toggle, is_playing, is_modal=False
+        ),
+        render_player_toggle(
+            request, episode, episode.dom.player_modal_toggle, is_playing, is_modal=True
+        ),
+    ]
 
 
 def render_episode_list_response(
@@ -489,7 +500,11 @@ def render_player_response(
     streams = []
 
     if current_episode := request.player.eject(mark_completed=mark_completed):
-        streams.append(render_player_toggle(request, current_episode, False))
+        streams += render_player_toggles(request, current_episode, False)
+
+    # close modal
+    if request.POST.get("is_modal"):
+        streams.append(TurboStream("modal").update.render())
 
     if next_episode is None:
         response = TurboStreamResponse(
@@ -509,9 +524,9 @@ def render_player_response(
 
     response = TurboStreamResponse(
         streams
+        + render_player_toggles(request, next_episode, True)
         + [
             render_queue_toggle(request, next_episode, False),
-            render_player_toggle(request, next_episode, True),
             TurboStream("player")
             .update.template(
                 "episodes/_player_controls.html",
@@ -520,7 +535,7 @@ def render_player_response(
                 },
             )
             .render(request=request),
-        ]
+        ],
     )
     response["X-Media-Player"] = json.dumps(
         {

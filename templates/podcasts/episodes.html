@@ -18,7 +18,9 @@
     </div>
 
     <div class="text-sm space-y-3">
+
       {% include "podcasts/_follow_toggle.html" %}
+
       <div class="flex items-center space-x-2">
         {% if podcast.link %}
         <div>
@@ -44,7 +46,7 @@
       {% share_buttons podcast.get_absolute_url podcast.title %}
     </div>
   </div>
-  {# cache 600 podcast_detail_epsiode_count podcast.id #}
+  {% cache 600 podcast_detail_epsiode_count podcast.id %}
   {% with num_episodes=podcast.episode_set.count %}
   {% if num_episodes %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm mb-3">
@@ -52,7 +54,7 @@
   </div>
   {% endif %}
   {% endwith %}
-  {# endcache #}
+  {% endcache %}
 
   {% if podcast.explicit %}
   <div class="text-sm font-semibold mb-3">

@@ -10,5 +10,7 @@
   {% endif %}
 </form>
 {% else %}
-{% button "Follow" icon="eye_slash" href=podcast.get_absolute_url|login_url title="Login or signup to follow this podcast" data_turbo_frame="_top" %}
+<div class="flex items-center">
+  {% button "Follow" icon="eye_slash" href=podcast.get_absolute_url|login_url title="Login or signup to follow this podcast" data_turbo_frame="_top" %}
+</div>
 {% endif %}

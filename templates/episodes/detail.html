@@ -66,6 +66,7 @@
         {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
       </div>
+
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
 
@@ -75,11 +76,12 @@
   {% if episode.listened %}
   {% include "episodes/_listened.html" with css_class="mb-3" %}
   {% endif %}
-
   <div class="flex items-center space-x-3 mb-3">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
   </div>
+
+
   {% endif %}
 
   {% if episode.explicit or podcast.explicit %}
