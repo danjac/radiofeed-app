@@ -10,10 +10,11 @@
 {% endblock %}
 
 {% block modal_content %}
+{% with podcast_url=podcast.get_absolute_url %}
 
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
-    <a href="{{ podcast.get_absolute_url }}"
+    <a href="{{ podcast_url }}"
        data-turbo-frame="_top">
       {% cover_image podcast lazy=False size="24" %}
     </a>
@@ -25,7 +26,7 @@
     {% with num_episodes=podcast.episode_set.count %}
     {% if num_episodes %}
     <div>
-      <a href="{{ podcast.get_episodes_url }}"
+      <a href="{{ podcast_url }}"
          class="text-sm link"
          data-turbo-frame="_top">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
