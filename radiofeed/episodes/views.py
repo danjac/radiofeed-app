@@ -533,15 +533,15 @@ def render_player_response(
         render_player_streams(request, current_episode, next_episode)
     )
 
-    if next_episode is None:
-        header = {"action": "stop"}
-    else:
-        header = {
+    response["X-Media-Player"] = json.dumps(
+        {"action": "stop"}
+        if next_episode is None
+        else {
             "action": "start",
             "currentTime": current_time,
             "mediaUrl": next_episode.media_url,
             "metadata": next_episode.get_media_metadata(),
         }
+    )
 
-    response["X-Media-Player"] = json.dumps(header)
     return response
