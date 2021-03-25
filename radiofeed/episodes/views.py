@@ -490,6 +490,36 @@ def render_episode_list_response(
     )
 
 
+def render_player_toggles(request, episode, is_playing):
+    yield render_player_toggle(request, episode, is_playing, is_modal=False)
+    yield render_player_toggle(request, episode, is_playing, is_modal=True)
+
+
+def render_player_streams(request, current_episode, next_episode):
+    if request.POST.get("is_modal"):
+        yield TurboStream("modal").update.render()
+
+    if current_episode:
+        yield from render_player_toggles(request, current_episode, False)
+
+    if next_episode:
+        # remove from queue
+        yield render_remove_from_queue(request, next_episode)
+        yield render_queue_toggle(request, next_episode, False)
+
+        yield from render_player_toggles(request, next_episode, True)
+
+        yield TurboStream("player").update.template(
+            "episodes/_player_controls.html",
+            {
+                "episode": next_episode,
+            },
+        ).render(request=request)
+
+    else:
+        yield TurboStream("player-controls").remove.render()
+
+
 def render_player_response(
     request,
     next_episode=None,
@@ -517,32 +547,3 @@ def render_player_response(
 
     response["X-Media-Player"] = json.dumps(header)
     return response
-
-
-def render_player_streams(request, current_episode, next_episode):
-
-    if current_episode:
-        yield render_player_toggle(request, current_episode, False, is_modal=False)
-        yield render_player_toggle(request, current_episode, False, is_modal=True)
-
-    if request.POST.get("is_modal"):
-        yield TurboStream("modal").update.render()
-
-    if next_episode is None:
-
-        yield TurboStream("player-controls").remove.render()
-        return
-
-    # remove from queue
-    yield render_remove_from_queue(request, next_episode)
-    yield render_queue_toggle(request, next_episode, False)
-
-    yield render_player_toggle(request, next_episode, True, is_modal=False)
-    yield render_player_toggle(request, next_episode, True, is_modal=True)
-
-    yield TurboStream("player").update.template(
-        "episodes/_player_controls.html",
-        {
-            "episode": next_episode,
-        },
-    ).render(request=request)
