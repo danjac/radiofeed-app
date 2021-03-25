@@ -105,11 +105,7 @@ def preview(request, episode_id):
             TurboFrame(request.turbo.frame)
             .template(
                 "episodes/_preview.html",
-                {
-                    "episode": episode,
-                    "is_favorited": episode.is_favorited(request.user),
-                    "is_queued": episode.is_queued(request.user),
-                },
+                get_episode_detail_context(request, episode),
             )
             .response(request)
         )
@@ -125,13 +121,9 @@ def episode_detail(request, episode_id, slug=None):
     return TemplateResponse(
         request,
         "episodes/detail.html",
-        {
-            "episode": episode,
-            "is_playing": request.player.is_playing(episode),
-            "is_favorited": episode.is_favorited(request.user),
-            "is_queued": episode.is_queued(request.user),
-            "og_data": episode.get_opengraph_data(request),
-        },
+        get_episode_detail_context(
+            request, episode, {"og_data": episode.get_opengraph_data(request)}
+        ),
     )
 
 
@@ -399,6 +391,16 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
+
+
+def get_episode_detail_context(request, episode, extra_context=None):
+    return {
+        "episode": episode,
+        "is_playing": request.player.is_playing(episode),
+        "is_favorited": episode.is_favorited(request.user),
+        "is_queued": episode.is_queued(request.user),
+        **(extra_context or {}),
+    }
 
 
 def get_audio_logs(request):

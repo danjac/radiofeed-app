@@ -35,7 +35,6 @@
       </div>
     </div>
     <div class="flex items-center space-x-2 sm:space-x-3">
-      {% is_playing episode as is_playing %}
       {% include "episodes/_player_toggle.html" with is_modal=True %}
       {% include "episodes/_download.html" %}
     </div>
