@@ -9,7 +9,7 @@
 
     <div>
       {% if no_cover_image %}
-      {% include "episodes/_player_toggle.html" with is_modal=True %}
+      {% include "episodes/_player_toggle.html" %}
       {% else %}
       <a href="{{ podcast.get_absolute_url }}"
          data-turbo-frame="_top">
@@ -30,7 +30,7 @@
 
       <div class="flex items-center space-x-2">
         {% if not no_cover_image %}
-        {% include "episodes/_player_toggle.html" with is_modal=True %}
+        {% include "episodes/_player_toggle.html" %}
         {% endif %}
         <div>
           <a class="link"

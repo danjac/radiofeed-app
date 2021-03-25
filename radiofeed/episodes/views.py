@@ -503,6 +503,7 @@ def render_player_response(
         streams += render_player_toggles(request, current_episode, False)
 
     # close modal
+
     if request.POST.get("is_modal"):
         streams.append(TurboStream("modal").update.render())
 
