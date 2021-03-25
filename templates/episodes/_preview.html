@@ -27,16 +27,14 @@
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
-  <div class="space-y-2">
+  <div class="space-y-3">
     <div class="flex items-center text-sm space-x-2 font-semibold text-gray-600 dark:text-gray-300">
       <div title="Date Published">{{ episode.pub_date|date }}</div>
       <div>
         {{ duration|format_duration }}
       </div>
     </div>
-    <div class="flex items-center space-x-2 sm:space-x-3">
-      {% is_playing episode as is_playing %}
-      {% include "episodes/_player_toggle.html" with is_modal=True %}
+    <div>
       {% include "episodes/_download.html" %}
     </div>
 
