@@ -26,6 +26,4 @@ application.register('notification', NotificationController);
 application.register('player', PlayerController);
 application.register('toggle', ToggleController);
 
-// prefetch
-console.log('prefetching...');
 prefetch();
