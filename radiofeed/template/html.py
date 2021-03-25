@@ -4,15 +4,6 @@ import bleach
 
 from html5lib.filters import optionaltags, whitespace
 
-
-def allow_src(_, name, value):
-    if name in ("alt", "height", "width"):
-        return True
-    if name == "src":
-        return value.startswith("https://")
-    return False
-
-
 ALLOWED_TAGS = [
     "a",
     "abbr",
@@ -32,7 +23,6 @@ ALLOWED_TAGS = [
     "h6",
     "hr",
     "i",
-    "img",
     "li",
     "ol",
     "p",
@@ -59,7 +49,6 @@ ALLOWED_TAGS = [
 
 ALLOWED_ATTRS = {
     "a": ["href", "target", "title"],
-    "img": allow_src,
 }
 
 
