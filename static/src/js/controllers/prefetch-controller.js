@@ -18,6 +18,7 @@ export default class extends Controller {
       }
 
       let prefetcher;
+
       hoverintent(
         el,
         () => {
