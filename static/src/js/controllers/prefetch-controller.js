@@ -1,10 +1,10 @@
-// Instant click setup
+import { Controller } from 'stimulus';
 
 import hoverintent from 'hoverintent';
 
-export default function prefetch(interval = 50, sensitivity = 5) {
-  document.addEventListener('turbo:load', () => {
-    document.querySelectorAll('a').forEach((el) => {
+export default class extends Controller {
+  connect() {
+    this.element.querySelectorAll('a').forEach((el) => {
       if (el.dataset.turbo === 'false') {
         return;
       }
@@ -35,5 +35,5 @@ export default function prefetch(interval = 50, sensitivity = 5) {
         }
       );
     });
-  });
+  }
 }
