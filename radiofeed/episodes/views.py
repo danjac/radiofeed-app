@@ -502,8 +502,9 @@ def render_player_streams(request, current_episode, next_episode):
     if current_episode:
         yield from render_player_toggles(request, current_episode, False)
 
-    if next_episode:
-        # remove from queue
+    if next_episode is None:
+        yield TurboStream("player-controls").remove.render()
+    else:
         yield render_remove_from_queue(request, next_episode)
         yield render_queue_toggle(request, next_episode, False)
 
@@ -515,9 +516,6 @@ def render_player_streams(request, current_episode, next_episode):
                 "episode": next_episode,
             },
         ).render(request=request)
-
-    else:
-        yield TurboStream("player-controls").remove.render()
 
 
 def render_player_response(
