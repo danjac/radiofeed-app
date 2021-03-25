@@ -13,7 +13,7 @@ export default class extends Controller {
     const sensitivity = this.sensitivityValue || 5;
 
     this.element.querySelectorAll('a').forEach((el) => {
-      if (el.dataset.turbo === 'false') {
+      if (el.dataset.turbo === 'false' || el.dataset.turboFrame) {
         return;
       }
 
