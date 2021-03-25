@@ -3,7 +3,15 @@ import { Controller } from 'stimulus';
 import hoverintent from 'hoverintent';
 
 export default class extends Controller {
+  static values = {
+    interval: Number,
+    sensitivity: Number,
+  };
+
   connect() {
+    const interval = this.intervalValue || 50;
+    const sensitivity = this.sensitivityValue || 5;
+
     this.element.querySelectorAll('a').forEach((el) => {
       if (el.dataset.turbo === 'false') {
         return;
