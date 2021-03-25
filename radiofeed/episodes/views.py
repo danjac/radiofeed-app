@@ -378,8 +378,9 @@ def player_timeupdate(request):
         except (KeyError, ValueError):
             playback_rate = 1.0
 
-        episode.log_activity(request.user, current_time)
-        request.player.update(current_time=current_time, playback_rate=playback_rate)
+        request.player.update(
+            episode, current_time=current_time, playback_rate=playback_rate
+        )
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
@@ -496,7 +497,6 @@ def render_player_response(
     current_episode = request.player.eject(mark_completed=mark_completed)
 
     if next_episode:
-        next_episode.log_activity(request.user, current_time=current_time)
         request.player.start(next_episode, current_time)
 
     response = TurboStreamStreamingResponse(
