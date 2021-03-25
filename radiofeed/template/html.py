@@ -74,7 +74,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
             if token["type"] == "StartTag" and token["name"] in self.elements:
                 if (
                     next["type"] == "Character"
-                    and next["data"] == ""
+                    and next["data"].strip() == ""
                     or next["type"] == "EmptyTag"
                 ):
                     remove = True
