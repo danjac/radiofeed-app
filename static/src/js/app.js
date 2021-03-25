@@ -1,6 +1,9 @@
 import '@hotwired/turbo';
 import 'form-request-submit-polyfill';
+
 import { Application } from 'stimulus';
+
+import prefetch from './prefetch';
 
 import ConfirmController from './controllers/confirm-controller';
 import DragController from './controllers/drag-controller';
@@ -22,3 +25,7 @@ application.register('modal', ModalController);
 application.register('notification', NotificationController);
 application.register('player', PlayerController);
 application.register('toggle', ToggleController);
+
+// prefetch
+console.log('prefetching...');
+prefetch();
