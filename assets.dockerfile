@@ -16,6 +16,7 @@ COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
 COPY assets.dockerfile yarn.lock* ./
 
+RUN if [ -d /app/node_modules ]; then rm -Rf /app/node_modules/*; fi
 RUN yarn cache clean
 RUN yarn
 
