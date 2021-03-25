@@ -15,14 +15,3 @@
         src="{% static debug|yesno:'dev/app.js,dist/app.js' %}">
 </script>
 
-{% if not debug %}
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-                    .register("{% url 'serviceworker' %}")
-      .then(function() {
-        console.log("Service Worker Registered");
-      });
-  }
-</script>
-{% endif %}
