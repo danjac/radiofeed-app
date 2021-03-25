@@ -10,7 +10,6 @@ import LinkController from './controllers/link-controller';
 import ModalController from './controllers/modal-controller';
 import NotificationController from './controllers/notification-controller';
 import PlayerController from './controllers/player-controller';
-import PrefetchController from './controllers/prefetch-controller';
 import ToggleController from './controllers/toggle-controller';
 
 // Stimulus setup
@@ -23,5 +22,4 @@ application.register('link', LinkController);
 application.register('modal', ModalController);
 application.register('notification', NotificationController);
 application.register('player', PlayerController);
-application.register('prefetch', PrefetchController);
 application.register('toggle', ToggleController);
