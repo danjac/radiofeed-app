@@ -119,15 +119,12 @@ def episodes(request, podcast_id, slug=None):
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-        cover_image = podcast.get_cover_image_thumbnail()
     else:
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
-        cover_image = None
 
     context = {
         "ordering": ordering,
-        "cover_image": cover_image,
-        "no_cover_image": cover_image is None,
+        "cover_image": podcast.get_cover_image_thumbnail(),
     }
 
     if not request.turbo.frame:

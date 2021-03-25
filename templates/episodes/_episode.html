@@ -8,14 +8,10 @@
     {% is_playing episode as is_playing %}
 
     <div>
-      {% if no_cover_image %}
-      {% include "episodes/_player_toggle.html" %}
-      {% else %}
       <a href="{{ podcast.get_absolute_url }}"
          data-turbo-frame="_top">
         {% cover_image podcast lazy=True cover_image=cover_image %}
       </a>
-      {% endif %}
     </div>
 
     <div class="space-y-1">
@@ -29,9 +25,7 @@
       </div>
 
       <div class="flex items-center space-x-2">
-        {% if not no_cover_image %}
         {% include "episodes/_player_toggle.html" %}
-        {% endif %}
         <div>
           <a class="link"
              href="{{ episode.get_preview_url }}"
