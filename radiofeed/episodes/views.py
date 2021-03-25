@@ -465,6 +465,13 @@ def render_player_toggle(request, episode, is_playing, is_modal):
     )
 
 
+def render_player_toggles(request, episode, is_playing):
+    return [
+        render_player_toggle(request, episode, is_playing, is_modal=False),
+        render_player_toggle(request, episode, is_playing, is_modal=True),
+    ]
+
+
 def render_episode_list_response(
     request,
     episodes,
@@ -488,11 +495,6 @@ def render_episode_list_response(
         pagination_template_name,
         extra_context,
     )
-
-
-def render_player_toggles(request, episode, is_playing):
-    yield render_player_toggle(request, episode, is_playing, is_modal=False)
-    yield render_player_toggle(request, episode, is_playing, is_modal=True)
 
 
 def render_player_streams(request, current_episode, next_episode):
