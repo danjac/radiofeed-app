@@ -151,6 +151,7 @@ class TestTogglePlayer:
         QueueItem.objects.create(position=0, user=login_user, episode=episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
+        assert list(resp.streaming_content)
 
         assert QueueItem.objects.count() == 0
 
@@ -170,6 +171,7 @@ class TestTogglePlayer:
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
+        assert list(resp.streaming_content)
 
         assert QueueItem.objects.count() == 0
 

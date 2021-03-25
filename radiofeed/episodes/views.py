@@ -10,7 +10,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from turbo_response import Action, TurboFrame, TurboStream, TurboStreamResponse
+from turbo_response import (
+    Action,
+    TurboFrame,
+    TurboStream,
+    TurboStreamResponse,
+    TurboStreamStreamingResponse,
+)
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
@@ -456,13 +462,6 @@ def render_player_toggle(request, episode, is_playing, is_modal):
     )
 
 
-def render_player_toggles(request, episode, is_playing):
-    return [
-        render_player_toggle(request, episode, is_playing, is_modal=False),
-        render_player_toggle(request, episode, is_playing, is_modal=True),
-    ]
-
-
 def render_episode_list_response(
     request,
     episodes,
@@ -494,52 +493,54 @@ def render_player_response(
     current_time=0,
     mark_completed=False,
 ):
+    current_episode = request.player.eject(mark_completed=mark_completed)
 
-    streams = []
+    if next_episode:
+        next_episode.log_activity(request.user, current_time=current_time)
+        request.player.start(next_episode, current_time)
 
-    if current_episode := request.player.eject(mark_completed=mark_completed):
-        streams += render_player_toggles(request, current_episode, False)
-
-    if request.POST.get("is_modal"):
-        streams.append(TurboStream("modal").update.render())
+    response = TurboStreamStreamingResponse(
+        render_player_streams(request, current_episode, next_episode)
+    )
 
     if next_episode is None:
-        response = TurboStreamResponse(
-            streams
-            + [
-                TurboStream("player-controls").remove.render(),
-            ]
-        )
-        response["X-Media-Player"] = json.dumps({"action": "stop"})
-        return response
-
-    # remove from queue
-    streams.append(render_remove_from_queue(request, next_episode))
-
-    next_episode.log_activity(request.user, current_time=current_time)
-    request.player.start(next_episode, current_time)
-
-    response = TurboStreamResponse(
-        streams
-        + render_player_toggles(request, next_episode, True)
-        + [
-            render_queue_toggle(request, next_episode, False),
-            TurboStream("player")
-            .update.template(
-                "episodes/_player_controls.html",
-                {
-                    "episode": next_episode,
-                },
-            )
-            .render(request=request),
-        ],
-    )
-    response["X-Media-Player"] = json.dumps(
-        {
+        header = {"action": "stop"}
+    else:
+        header = {
             "action": "start",
             "currentTime": current_time,
             "mediaUrl": next_episode.media_url,
             "metadata": next_episode.get_media_metadata(),
         }
-    )
+
+    response["X-Media-Player"] = json.dumps(header)
     return response
+
+
+def render_player_streams(request, current_episode, next_episode):
+
+    if current_episode:
+        yield render_player_toggle(request, current_episode, False, is_modal=False)
+        yield render_player_toggle(request, current_episode, False, is_modal=True)
+
+    if request.POST.get("is_modal"):
+        yield TurboStream("modal").update.render()
+
+    if next_episode is None:
+
+        yield TurboStream("player-controls").remove.render()
+        return
+
+    # remove from queue
+    yield render_remove_from_queue(request, next_episode)
+    yield render_queue_toggle(request, next_episode, False)
+
+    yield render_player_toggle(request, next_episode, True, is_modal=False)
+    yield render_player_toggle(request, next_episode, True, is_modal=True)
+
+    yield TurboStream("player").update.template(
+        "episodes/_player_controls.html",
+        {
+            "episode": next_episode,
+        },
+    ).render(request=request)
