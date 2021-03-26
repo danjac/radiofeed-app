@@ -90,14 +90,6 @@ export default class extends Controller {
     this.playNextTarget.requestSubmit();
   }
 
-  closePlayer() {
-    this.durationValue = 0;
-    this.mediaUrlValue = '';
-    this.metadataValue = {};
-    this.closeAudio();
-    this.cancelTimeUpdateTimer();
-  }
-
   loadedMetaData() {
     this.durationValue = this.audio.duration;
   }
@@ -354,6 +346,14 @@ export default class extends Controller {
         this.audio.addEventListener(event, this.audioListeners[event])
       );
     }
+  }
+
+  closePlayer() {
+    this.durationValue = 0;
+    this.mediaUrlValue = '';
+    this.metadataValue = {};
+    this.closeAudio();
+    this.cancelTimeUpdateTimer();
   }
 
   closeAudio() {
