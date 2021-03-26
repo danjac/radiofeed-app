@@ -20,17 +20,19 @@
 
 <body class="h-screen container-lg mx-auto antialiased dark:bg-black dark:text-white">
 
-  <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
-    <img src="{% static 'img/wave.png' %}"
-         height="32"
-         width="32"
-         alt="{{ request.site.name }}"
-         class="mr-4 cursor-pointer hidden lg:inline-block">
+  <header class="bg-black dark:bg-gray-800 text-white w-full shadow mb-6">
+    <div class="flex items-center space-x-3 p-3 lg:px-5">
+      <img src="{% static 'img/wave.png' %}"
+           height="32"
+           width="32"
+           alt="{{ request.site.name }}"
+           class="mr-4 cursor-pointer hidden lg:inline-block">
 
-    <a href="/"
-       class="md:text-lg font-bold text-white hover:text-blue-500">{{ request.site.name }}</a>
+      <a href="/"
+         class="md:text-lg font-bold text-white hover:text-blue-500">{{ request.site.name }}</a>
+    </div>
   </header>
-  <div class="h-md:full">
+  <div class="mx-auto">
     <div class="border dark:border-gray-500 mx-auto p-1 md:p-5 w-5/6 md:w-3/4 align-middle text-center">
       {% block content %}{% endblock %}
     </div>
