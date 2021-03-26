@@ -52,7 +52,7 @@ export default class extends Controller {
     }
   }
 
-  serverResponse(event) {
+  togglePlayer(event) {
     // handle Turbo Stream response to toggle player on/off. Action details
     // should be in X-Media-Player header
     const { fetchResponse } = event.detail;
