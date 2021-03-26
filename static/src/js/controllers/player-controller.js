@@ -334,6 +334,19 @@ export default class extends Controller {
     }
   }
 
+  closeAudio() {
+    if (this.audio) {
+      Object.keys(this.audioListeners || {}).forEach((event) =>
+        this.audio.removeEventListener(event, this.audioListeners[event])
+      );
+
+      this.audio.src = '';
+      this.audio.pause();
+      this.audio = null;
+      this.enabled = false;
+    }
+  }
+
   openPlayer({ metadata, currentTime, mediaUrl }) {
     // default : play
     //
@@ -358,19 +371,6 @@ export default class extends Controller {
     this.metadataValue = {};
     this.closeAudio();
     this.cancelTimeUpdateTimer();
-  }
-
-  closeAudio() {
-    if (this.audio) {
-      Object.keys(this.audioListeners || {}).forEach((event) =>
-        this.audio.removeEventListener(event, this.audioListeners[event])
-      );
-
-      this.audio.src = '';
-      this.audio.pause();
-      this.audio = null;
-      this.enabled = false;
-    }
   }
 
   startTimeUpdateTimer() {
