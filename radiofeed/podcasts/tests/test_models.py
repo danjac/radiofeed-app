@@ -2,7 +2,11 @@
 import pytest
 
 # RadioFeed
-from radiofeed.episodes.factories import AudioLogFactory, FavoriteFactory
+from radiofeed.episodes.factories import (
+    AudioLogFactory,
+    EpisodeFactory,
+    FavoriteFactory,
+)
 
 # Local
 from ..factories import (
@@ -92,6 +96,10 @@ class TestPodcastModel:
     def test_slug(self):
         podcast = Podcast(title="Testing")
         assert podcast.slug == "testing"
+
+    def test_get_cached_episode_count(self, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        assert podcast.get_cached_episode_count() == 3
 
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "podcast"

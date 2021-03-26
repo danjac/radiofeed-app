@@ -8,6 +8,7 @@ from django.contrib.postgres.search import (
     SearchVectorField,
     TrigramSimilarity,
 )
+from django.core.cache import cache
 from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
@@ -181,6 +182,13 @@ class Podcast(models.Model):
         if user.is_anonymous:
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
+
+    def get_cached_episode_count(self):
+        return cache.get_or_set(
+            f"podcast-episode-count-{self.id}",
+            lambda: self.episode_set.count(),
+            timeout=settings.DEFAULT_CACHE_TIMEOUT,
+        )
 
     def get_opengraph_data(self, request):
 

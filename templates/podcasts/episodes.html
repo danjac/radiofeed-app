@@ -46,15 +46,13 @@
       {% share_buttons podcast.get_absolute_url podcast.title %}
     </div>
   </div>
-  {% cache 600 podcast_detail_epsiode_count podcast.id %}
-  {% with num_episodes=podcast.episode_set.count %}
+  {% with num_episodes=podcast.get_cached_episode_count %}
   {% if num_episodes %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm mb-3">
     {{ num_episodes }} episode{{ num_episodes|pluralize }}
   </div>
   {% endif %}
   {% endwith %}
-  {% endcache %}
 
   {% if podcast.explicit %}
   <div class="text-sm font-semibold mb-3">

@@ -22,8 +22,18 @@
 
   <div class="space-y-3">
     {% include "podcasts/_follow_toggle.html" %}
-    <div title="Date last published"
-         class="font-semibold text-sm text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
+    {% with num_episodes=podcast.get_cached_episode_count %}
+    {% if num_episodes %}
+    <div>
+      <a href="{{ podcast_url }}"
+         class="link text-sm"
+         data-turbo-frame="_top">
+        {{ num_episodes }} episode{{ num_episodes|pluralize }}
+      </a>
+    </div>
+    {% endif %}
+    {% endwith %}
+
   </div>
 
 </div>
