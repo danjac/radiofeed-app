@@ -48,7 +48,7 @@ class EpisodeAdmin(admin.ModelAdmin):
     podcast_title.short_description = "Podcast"
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request).select_related("podcast")
+        qs = super().get_queryset(request)
         qs.count = CountProxy(qs)
         return qs
 
