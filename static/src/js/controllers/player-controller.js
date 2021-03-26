@@ -66,9 +66,9 @@ export default class extends Controller {
     );
     if (action === 'stop') {
       this.closePlayer();
-      return;
+    } else {
+      this.openPlayer({ mediaUrl, currentTime, metadata });
     }
-    this.openPlayer({ mediaUrl, currentTime, metadata });
   }
 
   ended() {
