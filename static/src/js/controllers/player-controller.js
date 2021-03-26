@@ -68,21 +68,7 @@ export default class extends Controller {
       this.closePlayer();
       return;
     }
-    // default : play
-    //
-    this.mediaUrlValue = mediaUrl;
-    this.currentTimeValue = parseFloat(currentTime || 0);
-
-    if (metadata) {
-      this.metadataValue = metadata;
-    }
-
-    this.initAudio();
-
-    this.audio.src = this.mediaUrlValue;
-    this.audio.currentTime = this.currentTimeValue;
-
-    this.play();
+    this.openPlayer({ mediaUrl, currentTime, metadata });
   }
 
   ended() {
@@ -346,6 +332,24 @@ export default class extends Controller {
         this.audio.addEventListener(event, this.audioListeners[event])
       );
     }
+  }
+
+  openPlayer({ metadata, currentTime, mediaUrl }) {
+    // default : play
+    //
+    this.mediaUrlValue = mediaUrl;
+    this.currentTimeValue = parseFloat(currentTime || 0);
+
+    if (metadata) {
+      this.metadataValue = metadata;
+    }
+
+    this.initAudio();
+
+    this.audio.src = this.mediaUrlValue;
+    this.audio.currentTime = this.currentTimeValue;
+
+    this.play();
   }
 
   closePlayer() {
