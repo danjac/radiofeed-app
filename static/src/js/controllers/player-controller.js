@@ -348,19 +348,14 @@ export default class extends Controller {
   }
 
   openPlayer({ metadata, currentTime, mediaUrl }) {
-    // default : play
-    //
-    this.mediaUrlValue = mediaUrl;
-    this.currentTimeValue = parseFloat(currentTime || 0);
+    this.initAudio();
+
+    this.audio.src = this.mediaUrlValue = mediaUrl;
+    this.audio.currentTime = this.currentTimeValue = parseFloat(currentTime || 0);
 
     if (metadata) {
       this.metadataValue = metadata;
     }
-
-    this.initAudio();
-
-    this.audio.src = this.mediaUrlValue;
-    this.audio.currentTime = this.currentTimeValue;
 
     this.play();
   }
