@@ -10,7 +10,7 @@
          {% if placeholder %}placeholder="{{ placeholder }}"
          {% endif %}
          class="px-2 py-1 focus:outline-none focus:ring rounded w-72 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white">
-  <span class="absolute inset-y-0 right-0 flex items-center pr-3">
+  <div class="absolute inset-y-0 right-0 flex items-center pr-3">
     <div class="flex items-center">
       {% if search %}
       <a href="{{ clear_search_url|default:request.path }}"
@@ -25,5 +25,5 @@
         {% icon "search" css_class="h-4 w-4" %}
       </button>
     </div>
-  </span>
+  </div>
 </form>
