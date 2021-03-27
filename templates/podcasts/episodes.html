@@ -46,6 +46,7 @@
       {% share_buttons podcast.get_absolute_url podcast.title %}
     </div>
   </div>
+
   {% with num_episodes=podcast.get_cached_episode_count %}
   {% if num_episodes %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm mb-3">
@@ -63,6 +64,11 @@
   <div class="markdown text-sm mb-3">
     {{ podcast.description|clean_html }}
   </div>
+
+  <div class="text-sm mb-3">
+    <strong>Disclaimer:</strong> Podcast content and artwork are the property of its owner and are not affiliated with or endorsed by {{ request.site.name }}. Audio is streamed directly from their servers.
+  </div>
+
   {% cache 3600 podcast-categories podcast.id %}
   {% with categories=podcast.categories.all %}
   {% if categories %}
