@@ -73,7 +73,6 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
-    show_full_result_count = False
 
     def title_with_strikethru(self, obj):
         if obj.num_retries >= 3:

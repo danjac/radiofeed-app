@@ -19,6 +19,8 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
+from radiofeed.db import FastCountProxyMixin
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 THUMBNAIL_SIZE = 200
@@ -86,7 +88,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", args=[self.id, self.slug])
 
 
-class PodcastQuerySet(models.QuerySet):
+class PodcastQuerySet(FastCountProxyMixin, models.QuerySet):
     def search(self, search_term):
         if not search_term:
             return self.none()

@@ -13,6 +13,7 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from sorl.thumbnail import get_thumbnail
 
+from radiofeed.db import FastCountProxyMixin
 from radiofeed.podcasts.models import Podcast
 
 
@@ -29,7 +30,7 @@ class EpisodeDOM:
     queue_toggle: str
 
 
-class EpisodeQuerySet(models.QuerySet):
+class EpisodeQuerySet(FastCountProxyMixin, models.QuerySet):
     def with_current_time(self, user):
 
         """Adds `completed`, `current_time` and `listened` annotations."""
