@@ -165,12 +165,12 @@ class Feed(BaseModel):
     def create_or_update_episodes(self, podcast):
         """Parses new episodes from podcast feed."""
 
-        # remove any episodes that may have been deleted on the podcast
-        Episode.objects.filter(podcast=podcast).exclude(
-            guid__in=[item.guid for item in self.items]
-        ).delete()
+        episodes = Episode.objects.filter(podcast=podcast)
 
-        guids = Episode.objects.filter(podcast=podcast).values_list("guid", flat=True)
+        # remove any episodes that may have been deleted on the podcast
+        episodes.exclude(guid__in=[item.guid for item in self.items]).delete()
+
+        guids = episodes.values_list("guid", flat=True)
 
         return Episode.objects.bulk_create(
             [
