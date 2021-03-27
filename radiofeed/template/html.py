@@ -62,7 +62,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
         for _, token, next in self.slider():
             if token["type"] == "StartTag" and token["name"] in self.elements:
                 if (
-                    next["type"] == "Character"
+                    next["type"] == "Characters"
                     and next["data"].strip() == ""
                     or next["type"] == "EmptyTag"
                 ):
