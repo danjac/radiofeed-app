@@ -170,11 +170,18 @@ class TestParseRss:
 
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=168097")
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167650")
-        EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167326")
+        should_change = EpisodeFactory(
+            podcast=podcast,
+            guid="https://mysteriousuniverse.org/?p=167326",
+            title="changeme",
+        )
 
         assert parse_rss(podcast)
         podcast.refresh_from_db()
         assert podcast.episode_set.count() == 20
+
+        should_change.refresh_from_db()
+        assert should_change.title == "23.22 – MU Podcast – KGB Time Cops"
 
 
 class TestAudioModel:

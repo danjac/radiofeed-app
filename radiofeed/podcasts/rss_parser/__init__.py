@@ -3,6 +3,7 @@ import requests
 from lxml.etree import XMLSyntaxError
 from pydantic import ValidationError
 
+from .date_parser import parse_date
 from .exceptions import InvalidFeedError, RssParserError
 from .feed_parser import parse_feed
 from .headers import get_headers
@@ -17,11 +18,11 @@ def parse_rss(podcast, force_update=False):
     try:
         head_response = requests.head(podcast.rss, headers=get_headers(), timeout=5)
         head_response.raise_for_status()
-        if (
-            (etag := head_response.headers.get("ETag", ""))
-            and etag == podcast.etag
-            and not force_update
-        ):
+
+        etag = head_response.headers.get("ETag", "")
+        last_modified = parse_date(head_response.headers.get("Last-Modified", None))
+
+        if not should_update(podcast, etag, last_modified, force_update):
             return []
 
         response = requests.get(
@@ -40,3 +41,13 @@ def parse_rss(podcast, force_update=False):
         podcast.save()
 
         raise RssParserError(podcast.sync_error) from e
+
+
+def should_update(podcast, etag, last_modified, force_update):
+    if force_update:
+        return True
+    if etag and etag != podcast.etag:
+        return True
+    if last_modified and podcast.pub_date and last_modified > podcast.pub_date:
+        return True
+    return False

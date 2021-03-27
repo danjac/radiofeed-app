@@ -68,6 +68,28 @@ class Item(BaseModel):
             **kwargs,
         )
 
+    def update_episode(self, episode):
+
+        values = (
+            ("title", self.title),
+            ("duration", self.duration),
+            ("explicit", self.explicit),
+            ("description", self.description),
+            ("keywords", self.keywords),
+            ("link", self.link),
+            ("media_url", self.audio.url),
+            ("media_type", self.audio.type),
+            ("length", self.audio.length),
+        )
+
+        do_update = False
+
+        for field, value in values:
+            if getattr(episode, field) != value:
+                setattr(episode, field, value)
+                do_update = True
+        return do_update
+
 
 class Feed(BaseModel):
     title: str
@@ -141,7 +163,7 @@ class Feed(BaseModel):
         podcast.categories.set(categories)
 
         # episodes
-        return self.create_episodes(podcast)
+        return self.create_or_update_episodes(podcast)
 
     def do_update(
         self,
@@ -162,9 +184,35 @@ class Feed(BaseModel):
 
         return True
 
-    def create_episodes(self, podcast):
+    def create_or_update_episodes(self, podcast):
         """Parses new episodes from podcast feed."""
-        guids = podcast.episode_set.values_list("guid", flat=True)
+
+        items = {item.guid: item for item in self.items}
+
+        for_update = []
+        guids = []
+
+        for episode in Episode.objects.filter(podcast=podcast):
+            if (item := items.get(episode.guid)) :
+                if item.update_episode(episode):
+                    for_update.append(episode)
+                guids.append(episode.guid)
+
+        if for_update:
+            Episode.objects.bulk_update(
+                for_update,
+                (
+                    "title",
+                    "duration",
+                    "explicit",
+                    "description",
+                    "keywords",
+                    "link",
+                    "media_url",
+                    "media_type",
+                    "length",
+                ),
+            )
 
         return Episode.objects.bulk_create(
             [
