@@ -1,6 +1,7 @@
 - name: Run unit tests locally
   hosts: localhost
   gather_facts: no
+  vars_files: vars.yml
   roles:
     - tests
 
