@@ -47,10 +47,10 @@ class EpisodeAdmin(admin.ModelAdmin):
 
     podcast_title.short_description = "Podcast"
 
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        qs.count = CountProxy(qs)
-        return qs
+    # def get_queryset(self, request):
+    # qs = super().get_queryset(request)
+    # qs.count = CountProxy(qs)
+    # return qs
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
