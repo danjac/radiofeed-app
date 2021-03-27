@@ -34,10 +34,10 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
-<div class="sm:p-3 sm:border dark:border-gray-500">
+<div class="sm:p-3 sm:border dark:border-gray-500 space-y-3">
 
-  <h1 class="font-bold mb-3">{{ episode.title }}</h1>
-  <h2 class="mb-3">
+  <h1 class="font-bold">{{ episode.title }}</h1>
+  <h2>
     <a href="{{ podcast_url }}"
        class="link text-sm">
       {{ podcast.title }}
@@ -45,7 +45,7 @@
   </h2>
 
   <div title="Date Published"
-       class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
+       class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3">
     <div>
       {{ episode.pub_date|date }}
     </div>
@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <div class="flex items-center mb-3 space-x-3">
+  <div class="flex items-center space-x-3">
     <div>
       <a href="{{ podcast_url }}">
         {% cover_image podcast lazy=False size="24" %}
@@ -66,17 +66,15 @@
         {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
       </div>
-
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
     </div>
-
   </div>
 
   {% if user.is_authenticated %}
   {% if episode.listened %}
-  {% include "episodes/_listened.html" with css_class="mb-3" %}
+  {% include "episodes/_listened.html" %}
   {% endif %}
-  <div class="flex items-center space-x-3 mb-3">
+  <div class="flex items-center space-x-3">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
   </div>
@@ -85,15 +83,14 @@
   {% endif %}
 
   {% if episode.explicit or podcast.explicit %}
-  <div class="text-sm font-semibold mb-3">
+  <div class="text-sm font-semibold">
     This episode may contain explicit content.
   </div>
   {% endif %}
 
-  <div class="markdown text-sm mb-3">
+  <div class="markdown text-sm">
     {{ episode.description|clean_html }}
   </div>
-
   {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %}
