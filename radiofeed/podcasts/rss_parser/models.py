@@ -68,28 +68,6 @@ class Item(BaseModel):
             **kwargs,
         )
 
-    def update_episode(self, episode):
-
-        values = (
-            ("title", self.title),
-            ("duration", self.duration),
-            ("explicit", self.explicit),
-            ("description", self.description),
-            ("keywords", self.keywords),
-            ("link", self.link),
-            ("media_url", self.audio.url),
-            ("media_type", self.audio.type),
-            ("length", self.audio.length),
-        )
-
-        do_update = False
-
-        for field, value in values:
-            if getattr(episode, field) != value:
-                setattr(episode, field, value)
-                do_update = True
-        return do_update
-
 
 class Feed(BaseModel):
     title: str
@@ -187,32 +165,12 @@ class Feed(BaseModel):
     def create_or_update_episodes(self, podcast):
         """Parses new episodes from podcast feed."""
 
-        items = {item.guid: item for item in self.items}
+        # remove any episodes that may have been deleted on the podcast
+        Episode.objects.filter(podcast=podcast).exclude(
+            guid__in=[item.guid for item in self.items]
+        ).delete()
 
-        for_update = []
-        guids = []
-
-        for episode in Episode.objects.filter(podcast=podcast):
-            if (item := items.get(episode.guid)) :
-                if item.update_episode(episode):
-                    for_update.append(episode)
-                guids.append(episode.guid)
-
-        if for_update:
-            Episode.objects.bulk_update(
-                for_update,
-                (
-                    "title",
-                    "duration",
-                    "explicit",
-                    "description",
-                    "keywords",
-                    "link",
-                    "media_url",
-                    "media_type",
-                    "length",
-                ),
-            )
+        guids = Episode.objects.filter(podcast=podcast).values_list("guid", flat=True)
 
         return Episode.objects.bulk_create(
             [

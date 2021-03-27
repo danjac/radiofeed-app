@@ -11,6 +11,7 @@ from django.utils import timezone
 from pydantic import ValidationError
 
 from radiofeed.episodes.factories import EpisodeFactory
+from radiofeed.episodes.models import Episode
 
 from ..factories import CategoryFactory, PodcastFactory
 from ..rss_parser import RssParserError, parse_rss
@@ -170,18 +171,15 @@ class TestParseRss:
 
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=168097")
         EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167650")
-        should_change = EpisodeFactory(
-            podcast=podcast,
-            guid="https://mysteriousuniverse.org/?p=167326",
-            title="changeme",
-        )
+        EpisodeFactory(podcast=podcast, guid="https://mysteriousuniverse.org/?p=167326")
 
-        assert parse_rss(podcast)
+        # check episode not present is deleted
+        EpisodeFactory(podcast=podcast, guid="some-random")
+
+        assert len(parse_rss(podcast)) == 17
         podcast.refresh_from_db()
         assert podcast.episode_set.count() == 20
-
-        should_change.refresh_from_db()
-        assert should_change.title == "23.22 – MU Podcast – KGB Time Cops"
+        assert not Episode.objects.filter(guid="some-random").exists()
 
 
 class TestAudioModel:
