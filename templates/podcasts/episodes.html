@@ -66,10 +66,12 @@
   {% cache 3600 podcast-categories podcast.id %}
   {% with categories=podcast.categories.all %}
   {% if categories %}
-  <div class="space-x-1 sm:space-x-2 space-y-2">
+  <div class="space-y-2">
     {% for category in categories %}
     <div class="inline-block">
-      {% button category.name icon="tag" type="tag" title=category.name href=category.get_absolute_url %}
+      {% with css_class=forloop.last|yesno:",mr-2" %}
+      {% button category.name icon="tag" type="tag" title=category.name href=category.get_absolute_url css_class=css_class %}
+      {% endwith %}
     </div>
     {% endfor %}
   </div>
