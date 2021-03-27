@@ -11,15 +11,6 @@
 {% block modal_content %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url %}
-<div class="text-sm w-72 sm:w-96 truncate mb-3">
-  <a href="{{ podcast_url }}"
-     title="{{ podcast.title }}"
-     data-turbo-frame="_top"
-     class="link">
-    {{ podcast.title|truncatechars:100 }}
-  </a>
-</div>
-
 <div class="flex items-center mb-3 space-x-3">
   <div>
     <a href="{{ podcast_url }}"
