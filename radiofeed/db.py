@@ -1,7 +1,7 @@
 from django.db import connections
 
 
-class FastCountProxyMixin:
+class FastCountMixin:
     def count(self):
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
