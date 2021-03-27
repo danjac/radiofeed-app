@@ -141,7 +141,7 @@ class Feed(BaseModel):
         podcast.categories.set(categories)
 
         # episodes
-        return self.create_or_update_episodes(podcast)
+        return self.create_episodes(podcast)
 
     def do_update(
         self,
@@ -162,8 +162,9 @@ class Feed(BaseModel):
 
         return True
 
-    def create_or_update_episodes(self, podcast):
-        """Parses new episodes from podcast feed."""
+    def create_episodes(self, podcast):
+        """Parses new episodes from podcast feed. Remove any episodes
+        no longer in the feed."""
 
         episodes = Episode.objects.filter(podcast=podcast)
 
