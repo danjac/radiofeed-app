@@ -65,9 +65,7 @@
     {{ podcast.description|clean_html }}
   </div>
 
-  <p class="text-sm mb-3 font-semibold text-gray-600 dark:text-gray-300">
-    Disclaimer: the content and artwork of this podcast are the property of its owner and are not affiliated with or endorsed by {{ request.site.name }}.
-  </p>
+  {% include "podcasts/_disclaimer.html" %}
 
   {% cache 3600 podcast-categories podcast.id %}
   {% with categories=podcast.categories.all %}

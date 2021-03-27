@@ -90,9 +90,11 @@
   </div>
   {% endif %}
 
-  <div class="markdown text-sm">
+  <div class="markdown text-sm mb-3">
     {{ episode.description|clean_html }}
   </div>
+
+  {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %}
 {% endblock %}
