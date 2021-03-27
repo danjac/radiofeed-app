@@ -1,7 +1,20 @@
-- name: Run unit tests and deploy application
+- name: Run unit tests locally
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - tests
+
+- name: Configure dokku environment
+  hosts: all
+  become: yes
+  gather_facts: yes
+  vars_files: vars.yml
+  roles:
+    - configure
+
+- name: Deploy application to Dokku
   hosts: localhost
   gather_facts: no
   vars_files: vars.yml
   roles:
-    - tests
     - deploy
