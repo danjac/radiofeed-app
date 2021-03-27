@@ -65,7 +65,7 @@
     {{ podcast.description|clean_html }}
   </div>
 
-  {% include "podcasts/_disclaimer.html" %}
+  {% include "podcasts/_disclaimer.html" with css_class="mb-3" %}
 
   {% cache 3600 podcast-categories podcast.id %}
   {% with categories=podcast.categories.all %}
