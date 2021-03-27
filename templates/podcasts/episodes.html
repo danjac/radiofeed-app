@@ -65,8 +65,8 @@
     {{ podcast.description|clean_html }}
   </div>
 
-  <p class="text-sm mb-3 italic">
-    <strong>Disclaimer:</strong> Podcast content and artwork of <strong>{{ podcast.title }}</strong> are the property of its owner and are not affiliated with or endorsed by {{ request.site.name }}.
+  <p class="text-sm mb-3 font-semibold text-gray-600 dark:text-gray-300">
+    Disclaimer: the content and artwork of this podcast are the property of its owner and are not affiliated with or endorsed by {{ request.site.name }}.
   </p>
 
   {% cache 3600 podcast-categories podcast.id %}
