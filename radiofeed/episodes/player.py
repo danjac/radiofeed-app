@@ -72,7 +72,7 @@ class Player:
 
     @current_time.setter
     def current_time(self, current_time):
-        self.session_data = {**self.session_data, "current_time": current_time}  # type: ignore
+        self.session_data = {**self.session_data, "current_time": current_time}
 
     @property
     def playback_rate(self):
@@ -80,7 +80,7 @@ class Player:
 
     @playback_rate.setter
     def playback_rate(self, playback_rate):
-        self.session_data = {**self.session_data, "playback_rate": playback_rate}  # type: ignore
+        self.session_data = {**self.session_data, "playback_rate": playback_rate}
 
     @property
     def session_data(self):
