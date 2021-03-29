@@ -51,13 +51,6 @@ class Player:
         self.request.session["player"] = _empty_player_info()
         return episode
 
-    def as_dict(self):
-        return {
-            "episode": self.get_episode(),
-            "current_time": self.current_time,
-            "playback_rate": self.playback_rate,
-        }
-
     def update(self, episode, current_time, playback_rate):
         self.create_audio_log(episode, current_time=current_time)
         self.session_data = PlayerInfo(
@@ -67,6 +60,13 @@ class Player:
                 "playback_rate": playback_rate,
             }
         )
+
+    def as_dict(self):
+        return {
+            "episode": self.get_episode(),
+            "current_time": self.current_time,
+            "playback_rate": self.playback_rate,
+        }
 
     def create_audio_log(
         self,
