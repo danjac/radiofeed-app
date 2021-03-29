@@ -20,8 +20,10 @@
   </div>
   <div class="space-y-3">
     <div class="flex items-center text-sm space-x-2 font-semibold text-gray-600 dark:text-gray-300">
-      <div title="Date Published">{{ episode.pub_date|date }}</div>
-      <div>
+      <div title="Date Published">
+        <time datetime="{{ episode.pub_date|date:"c" }}">{{ episode.pub_date|date }}</time>
+      </div>
+      <div class="Duration">
         {{ duration|format_duration }}
       </div>
     </div>

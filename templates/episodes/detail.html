@@ -44,12 +44,11 @@
     </a>
   </h2>
 
-  <div title="Date Published"
-       class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3">
-    <div>
-      {{ episode.pub_date|date }}
+  <div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3">
+    <div title="Date Published">
+      <time datetime="{{ episode.pub_date|date:"c" }}">{{ episode.pub_date|date }}</time>
     </div>
-    <div>
+    <div title="Duration">
       {{ duration|format_duration }}
     </div>
   </div>
