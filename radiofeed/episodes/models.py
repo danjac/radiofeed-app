@@ -6,7 +6,6 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -155,24 +154,6 @@ class Episode(models.Model):
             return (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
         except ValueError:
             return 0
-
-    def create_audio_log(
-        self,
-        user,
-        current_time=0,
-        completed=False,
-    ):
-        # Updates audio log with current time
-        now = timezone.now()
-        return AudioLog.objects.update_or_create(
-            episode=self,
-            user=user,
-            defaults={
-                "updated": now,
-                "current_time": current_time or 0,
-                "completed": now if completed else None,
-            },
-        )
 
     def get_next_episode(self):
         try:

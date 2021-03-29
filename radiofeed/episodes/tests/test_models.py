@@ -65,21 +65,6 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "episode"
 
-    def test_create_audio_log_new(self, user, episode):
-        log, created = episode.create_audio_log(user, current_time=1000)
-        assert created
-        assert log.current_time == 1000
-
-    def test_create_audio_log_existing(self, user, episode):
-        last_logged_at = timezone.now() - datetime.timedelta(days=2)
-        AudioLogFactory(
-            user=user, episode=episode, current_time=1000, updated=last_logged_at
-        )
-        log, created = episode.create_audio_log(user, current_time=1030)
-        assert not created
-        assert log.current_time == 1030
-        assert log.updated > last_logged_at
-
     def test_get_duration_in_seconds_if_empty(self):
         assert Episode().get_duration_in_seconds() == 0
         assert Episode(duration="").get_duration_in_seconds() == 0
