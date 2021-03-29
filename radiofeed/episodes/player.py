@@ -11,10 +11,6 @@ class PlayerInfo(TypedDict):
     playback_rate: float
 
 
-def _empty_player_info():
-    return PlayerInfo(episode=None, current_time=0, playback_rate=1.0)
-
-
 class Player:
     """Manages session state of player"""
 
@@ -48,14 +44,14 @@ class Player:
     def eject(self, mark_completed=False):
         if (episode := self.get_episode()) and mark_completed:
             self.create_audio_log(episode, current_time=0, completed=True)
-        self.request.session["player"] = _empty_player_info()
+        self.request.session["player"] = self.empty_player_info()
         return episode
 
     def update(self, episode, current_time, playback_rate):
         self.create_audio_log(episode, current_time=current_time)
         self.session_data = PlayerInfo(
             {
-                **self.session_data,  # type: ignore
+                **self.session_data,
                 "current_time": current_time,
                 "playback_rate": playback_rate,
             }
@@ -87,6 +83,9 @@ class Player:
             },
         )
 
+    def empty_player_info(self):
+        return PlayerInfo(episode=None, current_time=0, playback_rate=1.0)
+
     @property
     def current_time(self):
         return self.session_data.get("current_time", 0)
@@ -105,7 +104,7 @@ class Player:
 
     @property
     def session_data(self):
-        return self.request.session.setdefault("player", _empty_player_info())
+        return self.request.session.setdefault("player", self.empty_player_info())
 
     @session_data.setter
     def session_data(self, player_info):
