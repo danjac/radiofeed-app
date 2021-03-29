@@ -10,17 +10,12 @@
   @apply underline break-words text-gray-800 dark:text-gray-100;
 }
 
-.markdown span,
-.markdown u {
-  @apply break-words;
-}
-
 .markdown a:hover {
   @apply text-blue-600 dark:text-blue-400;
 }
 
 .markdown p {
-  @apply py-1 break-words;
+  @apply py-1;
 }
 
 .markdown p:empty,
