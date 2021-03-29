@@ -21,7 +21,7 @@
   <div class="space-y-3">
     <div class="flex items-center text-sm space-x-2 font-semibold text-gray-600 dark:text-gray-300">
       <div title="Date Published">
-        <time datetime="{{ episode.pub_date|date:"c" }}">{{ episode.pub_date|date }}</time>
+        {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
       </div>
       <div class="Duration">
         {{ duration|format_duration }}

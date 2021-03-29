@@ -30,7 +30,9 @@
           </a>
 
           <div title="Date last published"
-               class="font-semibold inline-block text-gray-600 dark:text-gray-300">{{ podcast.pub_date|date }}</div>
+               class="font-semibold inline-block text-gray-600 dark:text-gray-300">
+            {% include "episodes/_pub_date.html" with pub_date=podcast.pub_date %}
+          </div>
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@
           <div class="flex items-center text-sm space-x-2">
             <div title="Date Published"
                  class="text-gray-600 dark:text-gray-300 font-semibold">
-              {{ episode.pub_date|date }}
+              {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
             </div>
           </div>
         </div>
