@@ -34,8 +34,6 @@
 
 </div>
 
-{% if user.is_authenticated %}
-
 {% if episode.listened %}
 {% include "episodes/_listened.html" with css_class="mb-3" %}
 {% endif %}
@@ -44,9 +42,6 @@
   {% include "episodes/_queue_toggle.html" %}
   {% include "episodes/_favorite_toggle.html" %}
 </div>
-
-
-{% endif %}
 
 {% if episode.explicit or podcast.explicit %}
 <div class="text-sm font-semibold mb-3">
