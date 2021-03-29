@@ -156,7 +156,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def log_activity(
+    def create_audio_log(
         self,
         user,
         current_time=0,

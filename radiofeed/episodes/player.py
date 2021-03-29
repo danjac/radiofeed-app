@@ -23,7 +23,7 @@ class Player:
         return bool(self.session_data["episode"])
 
     def start(self, episode, current_time):
-        episode.log_activity(self.request.user, current_time=current_time)
+        episode.create_audio_log(self.request.user, current_time=current_time)
         self.session_data = PlayerInfo(
             episode=episode.id, current_time=current_time, playback_rate=1.0
         )
@@ -45,7 +45,7 @@ class Player:
 
     def eject(self, mark_completed=False):
         if (episode := self.get_episode()) and mark_completed:
-            episode.log_activity(self.request.user, current_time=0, completed=True)
+            episode.create_audio_log(self.request.user, current_time=0, completed=True)
         self.request.session["player"] = _empty_player_info()
         return episode
 
@@ -57,7 +57,7 @@ class Player:
         }
 
     def update(self, episode, current_time, playback_rate):
-        episode.log_activity(self.request.user, current_time)
+        episode.create_audio_log(self.request.user, current_time)
         self.session_data = PlayerInfo(
             {
                 **self.session_data,  # type: ignore
