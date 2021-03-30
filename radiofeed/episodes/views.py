@@ -250,9 +250,10 @@ def queue(request):
 def add_to_queue(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+
     if request.user.is_anonymous:
         messages.error(request, "You must be logged in to update your Play Queue")
-        return redirect_to_login(reverse("episodes:history"))
+        return redirect_to_login(episode.get_absolute_url())
 
     items = get_queue_items(request)
     items.update(position=F("position") + 1)
@@ -281,9 +282,10 @@ def add_to_queue(request, episode_id):
 @require_POST
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
+
     if request.user.is_anonymous:
         messages.error(request, "You must be logged in to update your Play Queue")
-        return redirect_to_login(reverse("episodes:history"))
+        return redirect_to_login(episode.get_absolute_url())
 
     return TurboStreamResponse(
         [
@@ -325,6 +327,7 @@ def start_player(
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
+
     if request.user.is_anonymous:
         messages.error(request, "You must be logged in to play episodes")
         return redirect_to_login(episode.get_absolute_url())
