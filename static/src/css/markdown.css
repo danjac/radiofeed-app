@@ -52,3 +52,7 @@
 .markdown img:not([src]) {
   @apply hidden;
 }
+
+.markdown table {
+  @apply table-auto w-full;
+}
