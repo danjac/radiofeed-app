@@ -56,3 +56,12 @@
 .markdown table {
   @apply table-auto w-full;
 }
+
+.markdown td,
+.markdown th {
+  @apply border p-1 dark:border-gray-500;
+}
+
+.markdown th {
+  @apply text-left bg-gray-100 dark:bg-gray-800 font-semibold;
+}
