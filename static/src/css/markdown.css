@@ -1,5 +1,5 @@
 .markdown {
-  @apply break-words text-gray-900 dark:text-gray-100;
+  @apply break-words text-gray-800 dark:text-gray-200 leading-snug tracking-tight;
 }
 
 .markdown hr {
@@ -7,7 +7,7 @@
 }
 
 .markdown a {
-  @apply underline break-words text-gray-800 dark:text-gray-100;
+  @apply break-words underline;
 }
 
 .markdown a:hover {
