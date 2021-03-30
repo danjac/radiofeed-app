@@ -33,7 +33,7 @@ class Player:
         )
 
     def get_episode(self):
-        if self.session_data["episode"] is None:
+        if self.session_data["episode"] is None or self.request.user.is_anonymous:
             return None
         return (
             Episode.objects.filter(pk=self.session_data["episode"])

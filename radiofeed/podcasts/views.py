@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
@@ -10,7 +12,6 @@ from turbo_response import TurboFrame, TurboStream
 
 from radiofeed.episodes.views import render_episode_list_response
 from radiofeed.pagination import render_paginated_response
-from radiofeed.users.decorators import ajax_login_required
 
 from . import itunes
 from .models import Category, Follow, Podcast, Recommendation
@@ -253,9 +254,14 @@ def preview(request, podcast_id):
 
 
 @require_POST
-@ajax_login_required
 def follow(request, podcast_id):
+
     podcast = get_podcast_or_404(podcast_id)
+
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to follow podcasts")
+        return redirect_to_login(podcast.get_absolute_url())
+
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
@@ -264,9 +270,14 @@ def follow(request, podcast_id):
 
 
 @require_POST
-@ajax_login_required
 def unfollow(request, podcast_id):
+
     podcast = get_podcast_or_404(podcast_id)
+
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to unfollow podcasts")
+        return redirect_to_login(podcast.get_absolute_url())
+
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, False)
 

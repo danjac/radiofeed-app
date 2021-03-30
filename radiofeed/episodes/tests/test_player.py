@@ -26,9 +26,10 @@ class TestPlayer:
         assert player.current_time == 0
         assert player.playback_rate == 1.0
 
-    def test_not_empty(self, rf, episode):
+    def test_not_empty(self, rf, user, episode):
         player = self.make_player(
             rf,
+            user=user,
             session={
                 "player": {
                     "episode": episode.id,
@@ -42,9 +43,10 @@ class TestPlayer:
         assert player.current_time == 1000
         assert player.playback_rate == 1.2
 
-    def test_eject(self, rf, episode):
+    def test_eject(self, rf, user, episode):
         player = self.make_player(
             rf,
+            user=user,
             session={
                 "player": {
                     "episode": episode.id,

@@ -2,7 +2,9 @@ import http
 import json
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import F, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -10,12 +12,16 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from turbo_response import Action, TurboFrame, TurboStream
-from turbo_response.decorators import turbo_stream_response
+from turbo_response import (
+    Action,
+    TurboFrame,
+    TurboStream,
+    TurboStreamResponse,
+    TurboStreamStreamingResponse,
+)
 
 from radiofeed.pagination import render_paginated_response
 from radiofeed.podcasts.models import Podcast
-from radiofeed.users.decorators import ajax_login_required
 
 from .models import AudioLog, Episode, Favorite, QueueItem
 
@@ -145,8 +151,11 @@ def history(request):
 
 
 @require_POST
-@ajax_login_required
 def remove_audio_log(request, episode_id):
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your History")
+        return redirect_to_login(reverse("episodes:history"))
+
     episode = get_episode_or_404(request, episode_id)
 
     logs = get_audio_logs(request)
@@ -176,44 +185,52 @@ def favorites(request):
 
 
 @require_POST
-@ajax_login_required
-@turbo_stream_response
 def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your Favorites")
+        return redirect_to_login(episode.get_absolute_url())
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
 
-    yield render_favorite_toggle(request, episode, is_favorited=True)
-
-    yield TurboStream("favorites").action(
-        Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
-    ).template(
-        "episodes/_episode.html",
-        {"episode": episode, "dom_id": episode.dom.favorite},
-    ).render(
-        request=request
+    return TurboStreamResponse(
+        [
+            render_favorite_toggle(request, episode, is_favorited=True),
+            TurboStream("favorites")
+            .action(
+                Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
+            )
+            .template(
+                "episodes/_episode.html",
+                {"episode": episode, "dom_id": episode.dom.favorite},
+            )
+            .render(request=request),
+        ]
     )
 
 
 @require_POST
-@ajax_login_required
-@turbo_stream_response
 def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
-    favorites = get_favorites(request)
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your Favorites")
+        return redirect_to_login(episode.get_absolute_url())
 
+    favorites = get_favorites(request)
     favorites.filter(episode=episode).delete()
 
-    yield render_favorite_toggle(request, episode, is_favorited=False)
-
-    if favorites.count() == 0:
-        yield TurboStream("favorites").update.render("You have no more Favorites.")
-    else:
-        yield TurboStream(episode.dom.favorite).remove.render()
+    return TurboStreamResponse(
+        [
+            render_favorite_toggle(request, episode, is_favorited=False),
+            TurboStream("favorites").update.render("You have no more Favorites.")
+            if favorites.count() == 0
+            else TurboStream(episode.dom.favorite).remove.render(),
+        ]
+    )
 
 
 @login_required
@@ -230,11 +247,12 @@ def queue(request):
 
 
 @require_POST
-@ajax_login_required
-@turbo_stream_response
 def add_to_queue(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your Play Queue")
+        return redirect_to_login(reverse("episodes:history"))
 
     items = get_queue_items(request)
     items.update(position=F("position") + 1)
@@ -246,31 +264,41 @@ def add_to_queue(request, episode_id):
     except IntegrityError:
         pass
 
-    yield render_queue_toggle(request, episode, is_queued=True)
-
-    yield TurboStream("queue").action(
-        Action.UPDATE if items.count() == 1 else Action.PREPEND
-    ).template(
-        "episodes/_queue_item.html",
-        {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},
-    ).render(
-        request=request
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=True),
+            TurboStream("queue")
+            .action(Action.UPDATE if items.count() == 1 else Action.PREPEND)
+            .template(
+                "episodes/_queue_item.html",
+                {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},
+            )
+            .render(request=request),
+        ]
     )
 
 
 @require_POST
-@ajax_login_required
-@turbo_stream_response
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your Play Queue")
+        return redirect_to_login(reverse("episodes:history"))
 
-    yield render_queue_toggle(request, episode, is_queued=False)
-    yield render_remove_from_queue(request, episode)
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=False),
+            render_remove_from_queue(request, episode),
+        ]
+    )
 
 
 @require_POST
-@ajax_login_required
 def move_queue_items(request):
+
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to update your Play Queue")
+        return redirect_to_login(reverse("episodes:queue"))
 
     qs = get_queue_items(request)
     items = qs.in_bulk()
@@ -289,7 +317,6 @@ def move_queue_items(request):
 
 
 @require_POST
-@ajax_login_required
 def start_player(
     request,
     episode_id,
@@ -298,6 +325,9 @@ def start_player(
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to play episodes")
+        return redirect_to_login(episode.get_absolute_url())
 
     return render_player_response(
         request,
@@ -307,16 +337,21 @@ def start_player(
 
 
 @require_POST
-@ajax_login_required
 def stop_player(request):
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to play episodes")
+        return redirect(settings.LOGIN_URL)
     return render_player_response(request)
 
 
 @require_POST
-@ajax_login_required
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
+
+    if request.user.is_anonymous:
+        messages.error(request, "You must be logged in to play episodes")
+        return redirect(settings.LOGIN_URL)
 
     if next_item := (
         get_queue_items(request)
@@ -340,7 +375,6 @@ def play_next_episode(request):
 
 
 @require_POST
-@ajax_login_required
 def player_timeupdate(request):
     """Update current play time of episode"""
 
@@ -475,7 +509,6 @@ def render_episode_list_response(
     )
 
 
-@turbo_stream_response
 def render_player_streams(request, current_episode, next_episode):
     if request.POST.get("is_modal"):
         yield TurboStream("modal").update.render()
@@ -514,7 +547,9 @@ def render_player_response(
     if next_episode:
         request.player.start(next_episode, current_time)
 
-    response = render_player_streams(request, current_episode, next_episode)
+    response = TurboStreamStreamingResponse(
+        render_player_streams(request, current_episode, next_episode)
+    )
 
     response["X-Media-Player"] = json.dumps(
         {"action": "stop"}

@@ -132,6 +132,21 @@ class TestPreview:
 
 
 class TestTogglePlayer:
+    def test_play_anonymous(self, client, user, episode):
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert resp.url
+
+    def test_play_next_anonymous(self, client):
+        resp = client.post(reverse("episodes:play_next_episode"))
+        assert resp.url
+
+    def test_stop_anonymous(self, client):
+        resp = client.post(
+            reverse("episodes:stop_player"),
+            {"player_action": "stop"},
+        )
+        assert resp.url
+
     def test_play(self, client, login_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
@@ -231,7 +246,7 @@ class TestPlayerTimeUpdate:
             reverse("episodes:player_timeupdate"),
             data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
-        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
 
     def test_authenticated(self, client, login_user, episode):
         session = client.session
@@ -336,23 +351,33 @@ class TestFavorites:
 
 
 class TestAddFavorite:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+        assert resp.url
+
     def test_post(self, client, login_user, episode):
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert len(list(resp.streaming_content)) == 2
         assert resp.status_code == http.HTTPStatus.OK
         assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
 class TestRemoveFavorite:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
+        assert resp.url
+
     def test_post(self, client, login_user, episode):
         FavoriteFactory(user=login_user, episode=episode)
         resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert len(list(resp.streaming_content)) == 2
         assert resp.status_code == http.HTTPStatus.OK
         assert not Favorite.objects.filter(user=login_user, episode=episode).exists()
 
 
 class TestRemoveHistory:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
+        assert resp.url
+
     def test_post(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode)
         AudioLogFactory(user=login_user)
@@ -377,6 +402,10 @@ class TestQueue:
 
 
 class TestAddToQueue:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
+        assert resp.url
+
     def test_post(self, client, login_user):
         first = EpisodeFactory()
         second = EpisodeFactory()
@@ -391,7 +420,6 @@ class TestAddToQueue:
                 data={"next": "true"},
             )
             assert resp.status_code == http.HTTPStatus.OK
-            assert len(list(resp.streaming_content)) == 2
 
         items = (
             QueueItem.objects.filter(user=login_user)
@@ -410,17 +438,24 @@ class TestAddToQueue:
 
 
 class TestRemoveFromQueue:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_from_queue", args=[episode.id]))
+        assert resp.url
+
     def test_post(self, client, login_user):
         item = QueueItemFactory(user=login_user)
         resp = client.post(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
-        assert len(list(resp.streaming_content)) == 2
         assert resp.status_code == http.HTTPStatus.OK
         assert QueueItem.objects.filter(user=login_user).count() == 0
 
 
 class TestMoveQueueItems:
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:move_queue_items"))
+        assert resp.url
+
     def test_post(self, client, login_user):
 
         first = QueueItemFactory(user=login_user)
