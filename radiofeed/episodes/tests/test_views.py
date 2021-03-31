@@ -427,13 +427,13 @@ class TestAddToQueue:
             .order_by("position")
         )
 
-        assert items[0].episode == third
+        assert items[0].episode == first
         assert items[0].position == 1
 
         assert items[1].episode == second
         assert items[1].position == 2
 
-        assert items[2].episode == first
+        assert items[2].episode == third
         assert items[2].position == 3
 
 

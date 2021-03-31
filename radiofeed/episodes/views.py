@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
-from django.db.models import F, OuterRef, Subquery
+from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -256,11 +256,12 @@ def add_to_queue(request, episode_id):
         return redirect_to_login(episode.get_absolute_url())
 
     items = get_queue_items(request)
-    items.update(position=F("position") + 1)
+
+    position = items.aggregate(Max("position"))["position__max"] or 0
 
     try:
         new_item = QueueItem.objects.create(
-            user=request.user, episode=episode, position=1
+            user=request.user, episode=episode, position=position + 1
         )
     except IntegrityError:
         pass
@@ -269,7 +270,7 @@ def add_to_queue(request, episode_id):
         [
             render_queue_toggle(request, episode, is_queued=True),
             TurboStream("queue")
-            .action(Action.UPDATE if items.count() == 1 else Action.PREPEND)
+            .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
             .template(
                 "episodes/_queue_item.html",
                 {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},
@@ -453,7 +454,7 @@ def render_remove_from_queue(request, episode):
     items.filter(episode=episode).delete()
 
     if items.count() == 0:
-        return TurboStream("queue").replace.render(
+        return TurboStream("queue").update.render(
             "You have no more episodes in your Play Queue"
         )
     return TurboStream(episode.dom.queue).remove.render()
