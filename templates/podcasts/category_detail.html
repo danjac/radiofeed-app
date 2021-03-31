@@ -36,7 +36,7 @@
 {% else %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
-<div class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start space-x-2">
+<nav class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start space-x-2">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="link">{{ child.name }}</a>
@@ -45,7 +45,7 @@
   <a href="{% url 'podcasts:itunes_category' category.id %}"
      class="link">{{ category.name }} in iTunes</a>
   {% endif %}
-</div>
+</nav>
 {% endif %}
 {% endcache %}
 {% endif %}

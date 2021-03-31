@@ -1,6 +1,6 @@
 {% load podcasts %}
 {% with podcast_url=podcast.get_absolute_url %}
-<div class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
+<article class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
      id="{{ podcast.dom.podcast }}"
      {{ attrs|htmlattrs }}>
   <div class="flex items-center justify-between">
@@ -37,5 +37,5 @@
       </div>
     </div>
   </div>
-</div>
+</article>
 {% endwith %}

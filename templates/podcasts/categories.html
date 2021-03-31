@@ -16,7 +16,7 @@
 <div class="divide-y divide-gray-300 dark:divide-gray-500">
   {% if search %}
   {% for category in categories %}
-  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
+  <div>
     <a href="{{ category.get_absolute_url }}"
        class="link mb-3">{{ category.name }}</a>
   </div>
@@ -28,26 +28,25 @@
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
-  <div class="mb-3{% if not forloop.first %} pt-3{% endif %}">
-    <div{% if children %} class="mb-3"
-                          {% endif %}>
+  <section class="py-3 space-y-3">
+    <div>
       <a href="{{ category.get_absolute_url }}"
          class="link">{{ category.name }}</a>
-  </div>
-  {% if children %}
-  <div class="flex flex-wrap items-center">
-    {% for child in children %}
-    <a class="link mb-2 mr-3 text-sm"
-       href="{{ child.get_absolute_url }}">{{ child.name }}</a>
-    {% endfor %}
-  </div>
-  {% endif %}
-</div>
-{% endwith %}
-{% empty %}
-{% endfor %}
+    </div>
+    {% if children %}
+    <nav class="flex flex-wrap items-center">
+      {% for child in children %}
+      <a class="link text-sm{% if not forloop.last %} mr-3{% endif %}"
+         href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+      {% endfor %}
+    </nav>
+    {% endif %}
+  </section>
+  {% endwith %}
+  {% empty %}
+  {% endfor %}
 
-{% endif %}
+  {% endif %}
 </div>
 {% endcache %}
 {% endblock %}

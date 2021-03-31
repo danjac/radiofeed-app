@@ -43,8 +43,8 @@
 </div>
 {% endif %}
 
-<div class="text-sm markdown">
+<blockquote class="text-sm markdown">
   {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}
-</div>
+</blockquote>
 {% endwith %}
 {% endblock %}

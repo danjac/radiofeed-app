@@ -7,7 +7,7 @@
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
-<div class="text-sm flex justify-between mb-3 border-b dark:border-gray-500 sm:border-0 pb-3 sm:pb-0">
+<nav class="text-sm flex justify-between mb-3 border-b dark:border-gray-500 sm:border-0 pb-3 sm:pb-0">
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
@@ -28,13 +28,12 @@
   <span class="inactive-link">Next</span>
   {% endif %}
 
-
-</div>
+</nav>
 {% endif %}
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
-<div class="sm:p-3 sm:border dark:border-gray-500 space-y-3">
+<article class="sm:p-3 sm:border dark:border-gray-500 space-y-3">
 
   <h1 class="font-bold">{{ episode.title }}</h1>
   <h2>
@@ -83,10 +82,11 @@
   </div>
   {% endif %}
 
-  <div class="markdown text-sm sm:max-w-2xl lg:max-w-3xl">
+  <blockquote class="markdown text-sm sm:max-w-2xl lg:max-w-3xl">
     {{ episode.description|clean_html }}
-  </div>
+  </blockquote>
+
   {% include "podcasts/_disclaimer.html" %}
-</div>
+</article>
 {% endwith %}
 {% endblock %}

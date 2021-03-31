@@ -3,7 +3,7 @@
 
 {% block podcast_content %}
 {% if not search %}
-<div class="py-3 border-b border-t sm:p-3 sm:border dark:border-gray-500 space-y-3 mb-3">
+<article class="py-3 border-b border-t sm:p-3 sm:border dark:border-gray-500 space-y-3 mb-3">
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
     {{ podcast.creators }}
@@ -59,9 +59,9 @@
   </div>
   {% endif %}
 
-  <div class="markdown text-sm sm:max-w-2xl lg:max-w-3xl">
+  <blockquote class="markdown text-sm sm:max-w-2xl lg:max-w-3xl">
     {{ podcast.description|clean_html }}
-  </div>
+  </blockquote>
 
   {% include "podcasts/_disclaimer.html" %}
 
@@ -80,7 +80,7 @@
   {% endif %}
   {% endwith %}
   {% endcache %}
-</div>
+</article>
 {% endif %}
 
 <div class="sm:flex items-center mb-3 justify-between">
