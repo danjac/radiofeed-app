@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="font-bold mb-3 text-lg">About This Site</h1>
 <p class="text-sm mb-3">
-<b>{{ request.site.name }}</b> is a web application for discovering, following and listening to your favorite podcasts.
+  <b>{{ request.site.name }}</b> is a web application for discovering, following and listening to your favorite podcasts.
 </p>
 <p class="text-sm mb-3">
   This is an open-source project covered by the GNU Affero General Public License (AGPL).
@@ -23,12 +23,12 @@
        rel="noopener"
        href="https://github.com/danjac/audiotrails/issues">Report an issue</a>
   </div>
-  <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500" href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
+  <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
+       href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
 </div>
-
 <h2 class="font-semibold mb-3 pt-3 border-t dark:border-gray-500">Additional Credits</h2>
 
-<ul class="text-sm">
+<ul class="text-sm mb-3">
 
   <li class="mb-3">
     Share icons from <a target="_blank"
@@ -57,4 +57,13 @@
 
   </li>
 </ul>
+
+<h2 class="font-semibold pt-3 mb-3 border-t dark:border-gray-500">Disclaimer</h2>
+
+<p class="text-sm mb-3">
+  All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with nor ensorsed by {{ request.site.name }}. All audio files are played directly from the source.
+</p>
+
+
+
 {% endblock content %}
