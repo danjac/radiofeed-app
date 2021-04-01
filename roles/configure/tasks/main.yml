@@ -1,7 +1,7 @@
 - name: Set environment variables
   shell: |
     dokku config:set --no-restart {{ app_name }} DISABLE_COLLECTSTATIC='1' && \
-    dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE=radiofeed.config.settings.production && \
+    dokku config:set --no-restart {{ app_name }} DJANGO_SETTINGS_MODULE=audiotrails.config.settings.production && \
     dokku config:set --no-restart {{ app_name }} BUILDPACK_URL=https://github.com/heroku/heroku-buildpack-python && \
     dokku config:set --no-restart {{ app_name }} ADMIN_URL='{{ admin_url }}' && \
     dokku config:set --no-restart {{ app_name }} ADMINS='{{ admins }}' && \

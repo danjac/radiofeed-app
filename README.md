@@ -22,11 +22,11 @@ To get started, first run migrate and load the categories:
 
 > ./scripts/manage migrate
 
-> ./scripts/manage loaddata radiofeed/podcasts/fixtures/categories.json
+> ./scripts/manage loaddata audiotrails/podcasts/fixtures/categories.json
 
 You can then import a sample list of podcasts:
 
-> ./scripts/manage loaddata radiofeed/podcasts/fixtures/podcasts.json
+> ./scripts/manage loaddata audiotrails/podcasts/fixtures/podcasts.json
 
 Alternatively, use the Django admin to add podcasts.
 
@@ -71,7 +71,7 @@ Ensure the following environment variables are set (*dokku config:set --no-resta
 - **AWS_STORAGE_BUCKET_NAME**: see your S3 settings
 - **BUILDPACK_URL**: should be *https://github.com/heroku/heroku-buildpack-python*
 - **DISABLE_COLLECTSTATIC**: set to "1"
-- **DJANGO_SETTINGS_MODULE**: should always be *radiofeed.config.settings.production*
+- **DJANGO_SETTINGS_MODULE**: should always be *audiotrails.config.settings.production*
 - **MAILGUN_API_KEY**: see your Mailgun settings
 - **MAILGUN_SENDER_DOMAIN**: see your Mailgun settings
 - **SENTRY_URL**: see your Sentry settings

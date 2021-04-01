@@ -26,4 +26,4 @@
     - name: Clone repo
       dokku_clone:
         app: '{{ app_name }}'
-        repository: https://github.com/danjac/radiofeed.git
+        repository: https://github.com/danjac/audiotrails.git

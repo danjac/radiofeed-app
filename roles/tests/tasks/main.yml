@@ -2,5 +2,5 @@
   shell: |
     docker-compose -f {{compose_file}} run --rm \
     -e SECRET_KEY="{{secret_key}}" \
-    -e DJANGO_SETTINGS_MODULE=radiofeed.config.settings.test \
+    -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.test \
     django pytest --reuse-db
