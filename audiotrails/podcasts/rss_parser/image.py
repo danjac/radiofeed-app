@@ -10,6 +10,7 @@ import requests
 
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
+from PIL.Image import DecompressionBombError
 
 from .exceptions import InvalidImageURL
 from .headers import get_headers
@@ -36,6 +37,7 @@ def fetch_image_from_url(image_url):
 
     except (
         requests.RequestException,
+        DecompressionBombError,
         UnidentifiedImageError,
         ValueError,
     ) as e:
