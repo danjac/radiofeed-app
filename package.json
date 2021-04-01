@@ -9,15 +9,15 @@
     "build-js": "NODE_ENV=production esbuild ./static/src/js/app.js --bundle --minify --target=chrome58,firefox57,safari11,edge18 --outfile=./static/dist/app.js"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.2.1",
-    "@tailwindcss/jit": "^0.1.9",
+    "@tailwindcss/forms": "^0.3.2",
+    "@tailwindcss/jit": "^0.1.18",
     "autoprefixer": "^10.2.5",
     "cssnano": "^4.1.10",
-    "esbuild": "^0.10.0",
+    "esbuild": "^0.11.2",
     "npm-check-updates": "^11.3.0",
-    "postcss": "^8.2.8",
+    "postcss": "^8.2.9",
     "postcss-cli": "^8.3.1",
-    "postcss-import": "^14.0.0",
+    "postcss-import": "^14.0.1",
     "tailwindcss": "^2.0.4"
   },
   "dependencies": {
