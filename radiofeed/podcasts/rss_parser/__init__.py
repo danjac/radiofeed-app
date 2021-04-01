@@ -16,7 +16,11 @@ def parse_rss(podcast, force_update=False):
     """
 
     try:
-        etag, last_modified = get_last_modified_headers(podcast.rss)
+        head_response = requests.head(podcast.rss, headers=get_headers(), timeout=5)
+        head_response.raise_for_status()
+
+        etag = head_response.headers.get("ETag", "")
+        last_modified = get_last_modified_date(head_response.headers)
 
         if not should_update(podcast, etag, last_modified, force_update):
             return []
@@ -37,15 +41,6 @@ def parse_rss(podcast, force_update=False):
         podcast.save()
 
         raise RssParserError(podcast.sync_error) from e
-
-
-def get_last_modified_headers(url):
-    head_response = requests.head(url, headers=get_headers(), timeout=5)
-    head_response.raise_for_status()
-
-    return head_response.headers.get("ETag", ""), get_last_modified_date(
-        head_response.headers
-    )
 
 
 def get_last_modified_date(headers):
