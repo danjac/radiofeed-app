@@ -40,7 +40,7 @@
              rel="noopener">iTunes</a>
         </div>
       </div>
-      {% share_buttons podcast.get_absolute_url podcast.title %}
+      {% share_buttons podcast.get_absolute_url podcast.title|stripentities %}
     </div>
   </div>
 

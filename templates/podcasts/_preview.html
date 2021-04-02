@@ -5,7 +5,7 @@
 <a href="{{ podcast.get_absolute_url }}"
    class="font-semibold hover:text-blue-500"
    data-turbo-frame="_top">
-  {{ podcast.title|truncatechars:120 }}
+  {{ podcast.title|stripentities|truncatechars:120 }}
 </a>
 {% endblock %}
 

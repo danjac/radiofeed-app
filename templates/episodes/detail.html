@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load episodes podcasts %}
 
-{% block subtitle %} | {{ episode.podcast.title }} | {{ episode.title }}{% endblock %}
+{% block subtitle %} | {{ episode.podcast.title|stripentities }} | {{ episode.title|stripentities }}{% endblock %}
 
 {% block content %}
 
@@ -11,7 +11,7 @@
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.title }}">
+     title="{{ prev_episode.title|stripentities }}">
     Previous
   </a>
 
@@ -21,7 +21,7 @@
   {% if next_episode %}
   <a class="link"
      href="{{ next_episode.get_absolute_url }}"
-     title="{{ next_episode.title }}">
+     title="{{ next_episode.title|stripentities }}">
     Next
   </a>
   {% else %}
@@ -35,11 +35,11 @@
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 <article class="sm:p-2 sm:border dark:border-gray-500 space-y-3">
 
-  <h1 class="font-bold">{{ episode.title }}</h1>
+  <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
     <a href="{{ podcast_url }}"
        class="link text-sm">
-      {{ podcast.title }}
+      {{ podcast.title|stripentities }}
     </a>
   </h2>
 
@@ -64,7 +64,7 @@
         {% include "episodes/_player_toggle.html" %}
         {% include "episodes/_download.html" %}
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title %}
+      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
     </div>
   </div>
 

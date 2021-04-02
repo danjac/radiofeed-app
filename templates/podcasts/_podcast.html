@@ -24,7 +24,7 @@
         <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
           <a class="link"
              href="{{ podcast.get_preview_url }}"
-             title="Preview for {{ podcast.title }}"
+             title="Preview for {{ podcast.title|stripentities }}"
              data-turbo-frame="modal">
             {% icon "ellipsis" css_class="w-6 h-6" %}
           </a>

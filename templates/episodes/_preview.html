@@ -5,7 +5,7 @@
    title="{{ episode.title }}"
    class="link"
    data-turbo-frame="_top">
-  {{ episode.title|truncatechars:100 }}
+  {{ episode.title|stripentities|truncatechars:100 }}
 </a>
 {% endblock %}
 {% block modal_content %}

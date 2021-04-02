@@ -6,8 +6,8 @@
              src="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}
   <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}"
-       title="{{ podcast.title }}"
-       alt="{{ podcast.title }}"
+       title="{{ podcast.title|stripentities }}"
+       alt="{{ podcast.title|stripentities }}"
        {% if cover_image %}
        src="{{ cover_image.url }}"
        width="{{ cover_image.width }}"
