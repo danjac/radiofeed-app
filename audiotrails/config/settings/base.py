@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "turbo_response",
     "turbo_allauth",
     "django_extensions",
     "django_celery_beat",
