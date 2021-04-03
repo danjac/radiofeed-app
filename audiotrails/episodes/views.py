@@ -3,6 +3,7 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -148,11 +149,10 @@ def history(request):
     )
 
 
-@login_required
+@require_POST
 def remove_audio_log(request, episode_id):
-
     episode = get_episode_or_404(request, episode_id)
-    if request.method == "POST":
+    if request.user.is_authenticated:
 
         logs = get_audio_logs(request)
 
@@ -162,7 +162,7 @@ def remove_audio_log(request, episode_id):
             return TurboStream("history").replace.response("Your History is now empty.")
 
         return TurboStream(episode.dom.history).remove.response()
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
 @login_required
@@ -181,10 +181,10 @@ def favorites(request):
     )
 
 
-@login_required
+@require_POST
 def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    if request.method == "POST":
+    if request.user.is_authenticated:
         try:
             Favorite.objects.create(episode=episode, user=request.user)
         except IntegrityError:
@@ -206,14 +206,14 @@ def add_favorite(request, episode_id):
                 .render(request=request),
             ]
         )
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
-@login_required
+@require_POST
 def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
-    if request.method == "POST":
+    if request.user.is_authenticated:
         favorites = get_favorites(request)
         favorites.filter(episode=episode).delete()
 
@@ -225,7 +225,7 @@ def remove_favorite(request, episode_id):
                 else TurboStream(episode.dom.favorite).remove.render(),
             ]
         )
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
 @login_required
@@ -241,11 +241,11 @@ def queue(request):
     )
 
 
-@login_required
+@require_POST
 def add_to_queue(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    if request.method == "POST":
+    if request.user.is_authenticated:
 
         items = get_queue_items(request)
 
@@ -270,13 +270,13 @@ def add_to_queue(request, episode_id):
                 .render(request=request),
             ]
         )
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
-@login_required
+@require_POST
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
-    if request.method == "POST":
+    if request.user.is_authenticated:
 
         return TurboStreamResponse(
             [
@@ -284,7 +284,7 @@ def remove_from_queue(request, episode_id):
                 render_remove_from_queue(request, episode),
             ]
         )
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
 @require_POST
@@ -309,7 +309,7 @@ def move_queue_items(request):
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
-@login_required
+@require_POST
 def start_player(
     request,
     episode_id,
@@ -319,7 +319,7 @@ def start_player(
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    if request.method == "POST":
+    if request.user.is_authenticated:
 
         return render_player_response(
             request,
@@ -327,38 +327,43 @@ def start_player(
             current_time=0 if episode.completed else (episode.current_time or 0),
         )
 
-    return redirect(episode)
+    return redirect_to_login(episode.get_absolute_url())
 
 
-@login_required
+@require_POST
 def stop_player(request):
-    return render_player_response(request)
+    if request.user.is_authenticated:
+        return render_player_response(request)
+    return redirect_to_login(settings.HOME_URL)
 
 
-@login_required
+@require_POST
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
+    if request.user.is_authenticated:
 
-    if next_item := (
-        get_queue_items(request)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("position")
-        .first()
-    ):
-        next_episode = next_item.episode
-        current_time = next_item.current_time or 0
-    else:
-        next_episode = None
-        current_time = 0
+        if next_item := (
+            get_queue_items(request)
+            .with_current_time(request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("position")
+            .first()
+        ):
+            next_episode = next_item.episode
+            current_time = next_item.current_time or 0
+        else:
+            next_episode = None
+            current_time = 0
 
-    return render_player_response(
-        request,
-        next_episode=next_episode,
-        current_time=current_time,
-        mark_completed=True,
-    )
+        return render_player_response(
+            request,
+            next_episode=next_episode,
+            current_time=current_time,
+            mark_completed=True,
+        )
+
+    return redirect_to_login(settings.HOME_URL)
 
 
 @require_POST

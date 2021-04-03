@@ -132,9 +132,9 @@ class TestPreview:
 
 
 class TestStartPlayer:
-    def test_get(self, client, user, login_user, episode):
-        resp = client.get(reverse("episodes:start_player", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert resp.url
 
     def test_play_from_start(self, client, login_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
@@ -217,6 +217,12 @@ class TestPlayNextEpisode:
 
 
 class TestStopPlayer:
+    def test_anonymous(self, client):
+        resp = client.post(
+            reverse("episodes:stop_player"),
+        )
+        assert resp.url
+
     def test_stop(self, client, login_user, episode):
         session = client.session
         session.update({"player": {"episode": episode.id, "current_time": 1000}})
@@ -225,7 +231,6 @@ class TestStopPlayer:
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(
             reverse("episodes:stop_player"),
-            {"player_action": "stop"},
         )
         assert resp.status_code == http.HTTPStatus.OK
 
@@ -344,9 +349,9 @@ class TestFavorites:
 
 
 class TestAddFavorite:
-    def test_get(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+        assert resp.url
 
     def test_post(self, client, login_user, episode):
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
@@ -355,9 +360,9 @@ class TestAddFavorite:
 
 
 class TestRemoveFavorite:
-    def test_get(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
+        assert resp.url
 
     def test_post(self, client, login_user, episode):
         FavoriteFactory(user=login_user, episode=episode)
@@ -367,9 +372,9 @@ class TestRemoveFavorite:
 
 
 class TestRemoveHistory:
-    def test_get(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:remove_audio_log", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
+        assert resp.url
 
     def test_post(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode)
@@ -395,9 +400,9 @@ class TestQueue:
 
 
 class TestAddToQueue:
-    def test_get(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:add_to_queue", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
+        assert resp.url
 
     def test_post(self, client, login_user):
         first = EpisodeFactory()
@@ -431,9 +436,9 @@ class TestAddToQueue:
 
 
 class TestRemoveFromQueue:
-    def test_get(self, client, login_user, episode):
-        resp = client.get(reverse("episodes:remove_from_queue", args=[episode.id]))
-        assert resp.url == episode.get_absolute_url()
+    def test_anonymous(self, client, episode):
+        resp = client.post(reverse("episodes:remove_from_queue", args=[episode.id]))
+        assert resp.url
 
     def test_post(self, client, login_user):
         item = QueueItemFactory(user=login_user)

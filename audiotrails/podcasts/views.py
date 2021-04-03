@@ -1,11 +1,12 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
 from audiotrails.episodes.views import render_episode_list_response
@@ -251,12 +252,12 @@ def preview(request, podcast_id):
     return redirect(podcast.get_absolute_url())
 
 
-@login_required
+@require_POST
 def follow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
-    if request.method == "POST":
+    if request.user.is_authenticated:
 
         try:
             Follow.objects.create(user=request.user, podcast=podcast)
@@ -264,19 +265,19 @@ def follow(request, podcast_id):
             pass
         return render_follow_response(request, podcast, True)
 
-    return redirect(podcast)
+    return redirect_to_login(podcast.get_absolute_url())
 
 
-@login_required
+@require_POST
 def unfollow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
-    if request.method == "POST":
+    if request.user.is_authenticated:
         Follow.objects.filter(podcast=podcast, user=request.user).delete()
         return render_follow_response(request, podcast, False)
 
-    return redirect(podcast)
+    return redirect_to_login(podcast.get_absolute_url())
 
 
 def get_podcast_or_404(podcast_id):

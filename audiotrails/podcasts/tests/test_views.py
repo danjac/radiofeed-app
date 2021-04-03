@@ -227,9 +227,9 @@ class TestCategoryDetail:
 
 
 class TestFollow:
-    def test_get(self, client, login_user, podcast):
-        resp = client.get(reverse("podcasts:follow", args=[podcast.id]))
-        assert resp.url == podcast.get_absolute_url()
+    def test_anonymous(self, client, podcast):
+        resp = client.post(reverse("podcasts:follow", args=[podcast.id]))
+        assert resp.url
 
     def test_subscribe(self, client, login_user, podcast):
         resp = client.post(reverse("podcasts:follow", args=[podcast.id]))
@@ -243,9 +243,9 @@ class TestFollow:
 
 
 class TestUnfollow:
-    def test_get(self, client, login_user, podcast):
-        resp = client.get(reverse("podcasts:unfollow", args=[podcast.id]))
-        assert resp.url == podcast.get_absolute_url()
+    def test_post(self, client, podcast):
+        resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
+        assert resp.url
 
     def test_unsubscribe(self, client, login_user, podcast):
         FollowFactory(user=login_user, podcast=podcast)
