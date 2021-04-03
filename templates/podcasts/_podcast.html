@@ -13,13 +13,13 @@
     </div>
 
     <div>
-      <h3 class="mb-2 text-sm w-64 sm:w-96 truncate lg:w-full">
+      <h2 class="mb-2 text-sm w-64 sm:w-96 truncate lg:w-full">
         <a href="{{ podcast_url }}"
            title="{{ podcast.title|stripentities }}"
            data-turbo-frame="_top"
            class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
 
-      </h3>
+      </h2>
       <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
         <a class="link"
            href="{{ podcast.get_preview_url }}"
