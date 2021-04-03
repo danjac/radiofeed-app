@@ -131,23 +131,12 @@ class TestPreview:
         assert resp.context_data["is_favorited"]
 
 
-class TestTogglePlayer:
-    def test_play_anonymous(self, client, user, episode):
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert resp.url
+class TestStartPlayer:
+    def test_get(self, client, user, login_user, episode):
+        resp = client.get(reverse("episodes:start_player", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
-    def test_play_next_anonymous(self, client):
-        resp = client.post(reverse("episodes:play_next_episode"))
-        assert resp.url
-
-    def test_stop_anonymous(self, client):
-        resp = client.post(
-            reverse("episodes:stop_player"),
-            {"player_action": "stop"},
-        )
-        assert resp.url
-
-    def test_play(self, client, login_user, episode):
+    def test_play_from_start(self, client, login_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
@@ -162,7 +151,25 @@ class TestTogglePlayer:
             "playback_rate": 1.0,
         }
 
-    def test_play_next(self, client, login_user, episode):
+    def test_play_episode_in_history(self, client, login_user, episode):
+        AudioLogFactory(user=login_user, episode=episode, current_time=2000)
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+
+        header = json.loads(resp["X-Media-Player"])
+        assert header["action"] == "start"
+        assert header["currentTime"] == 2000
+        assert header["mediaUrl"] == episode.media_url
+
+        assert client.session["player"] == {
+            "episode": episode.id,
+            "current_time": 2000,
+            "playback_rate": 1.0,
+        }
+
+
+class TestPlayNextEpisode:
+    def test_has_next_in_queue(self, client, login_user, episode):
         QueueItem.objects.create(position=0, user=login_user, episode=episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
@@ -181,7 +188,7 @@ class TestTogglePlayer:
             "playback_rate": 1.0,
         }
 
-    def test_play_next_if_next_episode_history(self, client, login_user):
+    def test_play_next_episode_in_history(self, client, login_user):
         log = AudioLogFactory(user=login_user, current_time=30)
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
@@ -201,29 +208,15 @@ class TestTogglePlayer:
             "playback_rate": 1.0,
         }
 
-    def test_play_next_if_empty(self, client, login_user):
+    def test_queue_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
 
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "stop"
 
-    def test_is_played(self, client, login_user, episode):
-        AudioLogFactory(user=login_user, episode=episode, current_time=2000)
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 2000
-        assert header["mediaUrl"] == episode.media_url
-
-        assert client.session["player"] == {
-            "episode": episode.id,
-            "current_time": 2000,
-            "playback_rate": 1.0,
-        }
-
+class TestStopPlayer:
     def test_stop(self, client, login_user, episode):
         session = client.session
         session.update({"player": {"episode": episode.id, "current_time": 1000}})
@@ -351,9 +344,9 @@ class TestFavorites:
 
 
 class TestAddFavorite:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.url
+    def test_get(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:add_favorite", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
     def test_post(self, client, login_user, episode):
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
@@ -362,9 +355,9 @@ class TestAddFavorite:
 
 
 class TestRemoveFavorite:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert resp.url
+    def test_get(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:remove_favorite", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
     def test_post(self, client, login_user, episode):
         FavoriteFactory(user=login_user, episode=episode)
@@ -374,9 +367,9 @@ class TestRemoveFavorite:
 
 
 class TestRemoveHistory:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
-        assert resp.url
+    def test_get(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:remove_audio_log", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
     def test_post(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode)
@@ -402,9 +395,9 @@ class TestQueue:
 
 
 class TestAddToQueue:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
-        assert resp.url
+    def test_get(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:add_to_queue", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
     def test_post(self, client, login_user):
         first = EpisodeFactory()
@@ -438,9 +431,9 @@ class TestAddToQueue:
 
 
 class TestRemoveFromQueue:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_from_queue", args=[episode.id]))
-        assert resp.url
+    def test_get(self, client, login_user, episode):
+        resp = client.get(reverse("episodes:remove_from_queue", args=[episode.id]))
+        assert resp.url == episode.get_absolute_url()
 
     def test_post(self, client, login_user):
         item = QueueItemFactory(user=login_user)
@@ -454,7 +447,7 @@ class TestRemoveFromQueue:
 class TestMoveQueueItems:
     def test_anonymous(self, client, episode):
         resp = client.post(reverse("episodes:move_queue_items"))
-        assert resp.url
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
 
     def test_post(self, client, login_user):
 

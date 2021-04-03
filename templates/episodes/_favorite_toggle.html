@@ -11,7 +11,7 @@
   {% endif %}
 </form>
 {% else %}
-<div>
+<div class="flex items-center">
   {% button "Favorites" icon="star" title="Login or signup to add episode to your Favorites" href=episode.get_absolute_url|login_url data_turbo_frame="_top" %}
 </div>
 {% endif %}

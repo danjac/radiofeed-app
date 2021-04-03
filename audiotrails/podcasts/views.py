@@ -1,13 +1,11 @@
 from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
-from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
 from audiotrails.episodes.views import render_episode_list_response
@@ -253,33 +251,32 @@ def preview(request, podcast_id):
     return redirect(podcast.get_absolute_url())
 
 
-@require_POST
+@login_required
 def follow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
-    if request.user.is_anonymous:
-        messages.error(request, "You must be logged in to follow podcasts")
-        return redirect_to_login(podcast.get_absolute_url())
+    if request.method == "POST":
 
-    try:
-        Follow.objects.create(user=request.user, podcast=podcast)
-    except IntegrityError:
-        pass
-    return render_follow_response(request, podcast, True)
+        try:
+            Follow.objects.create(user=request.user, podcast=podcast)
+        except IntegrityError:
+            pass
+        return render_follow_response(request, podcast, True)
+
+    return redirect(podcast)
 
 
-@require_POST
+@login_required
 def unfollow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
 
-    if request.user.is_anonymous:
-        messages.error(request, "You must be logged in to unfollow podcasts")
-        return redirect_to_login(podcast.get_absolute_url())
+    if request.method == "POST":
+        Follow.objects.filter(podcast=podcast, user=request.user).delete()
+        return render_follow_response(request, podcast, False)
 
-    Follow.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_follow_response(request, podcast, False)
+    return redirect(podcast)
 
 
 def get_podcast_or_404(podcast_id):

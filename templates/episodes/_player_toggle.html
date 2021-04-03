@@ -1,4 +1,4 @@
-{% if request.is_authenticated %}
+{% if user.is_authenticated %}
 <form method="POST"
       data-turbo-frame="_top"
       id="{% if is_modal %}{{ episode.dom.player_modal_toggle }}{% else %}{{ episode.dom.player_toggle }}{% endif %}"
