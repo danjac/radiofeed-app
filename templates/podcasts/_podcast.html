@@ -1,38 +1,36 @@
 {% load podcasts %}
 {% with podcast_url=podcast.get_absolute_url %}
 <article class="p-2 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
-     id="{{ podcast.dom.podcast }}"
-     {{ attrs|htmlattrs }}>
-  <div class="flex items-center justify-between">
-    <div class="font-bold flex items-center space-x-2">
+         id="{{ podcast.dom.podcast }}"
+         {{ attrs|htmlattrs }}>
+  <div class="font-bold flex items-center space-x-2">
 
-      <div>
+    <div>
+      <a href="{{ podcast_url }}"
+         data-turbo-frame="_top">
+        {% cover_image podcast=podcast lazy=True %}
+      </a>
+    </div>
+
+    <div>
+      <h3 class="mb-2 text-sm w-64 sm:w-96 truncate lg:w-full">
         <a href="{{ podcast_url }}"
-           data-turbo-frame="_top">
-          {% cover_image podcast=podcast lazy=True %}
+           title="{{ podcast.title|stripentities }}"
+           data-turbo-frame="_top"
+           class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
+
+      </h3>
+      <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
+        <a class="link"
+           href="{{ podcast.get_preview_url }}"
+           title="Preview for {{ podcast.title|stripentities }}"
+           data-turbo-frame="modal">
+          {% icon "ellipsis" css_class="w-6 h-6" %}
         </a>
-      </div>
 
-      <div>
-        <h3 class="mb-2 text-sm w-64 sm:w-96 truncate lg:w-full">
-          <a href="{{ podcast_url }}"
-             title="{{ podcast.title|stripentities }}"
-             data-turbo-frame="_top"
-             class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
-
-        </h3>
-        <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
-          <a class="link"
-             href="{{ podcast.get_preview_url }}"
-             title="Preview for {{ podcast.title|stripentities }}"
-             data-turbo-frame="modal">
-            {% icon "ellipsis" css_class="w-6 h-6" %}
-          </a>
-
-          <div title="Date last published"
-               class="font-semibold inline-block text-gray-600 dark:text-gray-300">
-            {% include "episodes/_pub_date.html" with pub_date=podcast.pub_date %}
-          </div>
+        <div title="Date last published"
+             class="font-semibold inline-block text-gray-600 dark:text-gray-300">
+          {% include "episodes/_pub_date.html" with pub_date=podcast.pub_date %}
         </div>
       </div>
     </div>
