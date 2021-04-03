@@ -496,33 +496,6 @@ def render_episode_list_response(
     )
 
 
-def render_player_streams(request, current_episode, next_episode):
-    if request.POST.get("is_modal"):
-        yield TurboStream("modal").update.render()
-
-    if current_episode:
-        for is_modal in (True, False):
-            yield render_player_toggle(
-                request, current_episode, False, is_modal=is_modal
-            )
-
-    if next_episode is None:
-        yield TurboStream("player-controls").remove.render()
-    else:
-        yield render_remove_from_queue(request, next_episode)
-        yield render_queue_toggle(request, next_episode, False)
-
-        for is_modal in (True, False):
-            yield render_player_toggle(request, next_episode, True, is_modal=is_modal)
-
-        yield TurboStream("player").update.template(
-            "episodes/_player_controls.html",
-            {
-                "episode": next_episode,
-            },
-        ).render(request=request)
-
-
 def render_player_response(
     request,
     next_episode=None,
@@ -550,3 +523,30 @@ def render_player_response(
     )
 
     return response
+
+
+def render_player_streams(request, current_episode, next_episode):
+    if request.POST.get("is_modal"):
+        yield TurboStream("modal").update.render()
+
+    if current_episode:
+        for is_modal in (True, False):
+            yield render_player_toggle(
+                request, current_episode, False, is_modal=is_modal
+            )
+
+    if next_episode is None:
+        yield TurboStream("player-controls").remove.render()
+    else:
+        yield render_remove_from_queue(request, next_episode)
+        yield render_queue_toggle(request, next_episode, False)
+
+        for is_modal in (True, False):
+            yield render_player_toggle(request, next_episode, True, is_modal=is_modal)
+
+        yield TurboStream("player").update.template(
+            "episodes/_player_controls.html",
+            {
+                "episode": next_episode,
+            },
+        ).render(request=request)
