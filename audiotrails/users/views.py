@@ -13,21 +13,20 @@ from turbo_response import TurboStream, redirect_303, render_form_response
 
 from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
 from audiotrails.podcasts.models import Follow
-from audiotrails.shortcuts import handle_form
 
 from .forms import UserPreferencesForm
 
 
 @login_required
 def user_preferences(request):
-    with handle_form(request, UserPreferencesForm, instance=request.user) as (
-        form,
-        success,
-    ):
-        if success:
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
             return redirect_303(request.path)
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return render_form_response(
         request,
