@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <form method="post"
       id="{{ podcast.dom.follow_toggle }}"
       data-turbo-frame="_top"
@@ -9,3 +10,8 @@
   {% button "Follow" icon="eye" title="Follow this podcast" %}
   {% endif %}
 </form>
+{% else %}
+<div>
+  {% button "Follow" icon="eye" title="Login or signup to follow this podcast" href=podcast.get_absolute_url|login_url data_turbo_frame="_top" %}
+</div>
+{% endif %}

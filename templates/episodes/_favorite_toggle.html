@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <form method="post"
       id="{{ episode.dom.favorite_toggle }}"
       data-turbo-frame="_top"
@@ -9,3 +10,8 @@
   {% button "Favorites" icon="star" title="Add episode to your Favorites" %}
   {% endif %}
 </form>
+{% else %}
+<div>
+  {% button "Favorites" icon="star" title="Login or signup to add episode to your Favorites" href=episode.get_absolute_url|login_url data_turbo_frame="_top" %}
+</div>
+{% endif %}
