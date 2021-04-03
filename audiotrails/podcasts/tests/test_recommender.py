@@ -1,7 +1,5 @@
-# Third Party Libraries
 import pytest
 
-# Local
 from ..factories import CategoryFactory, PodcastFactory, RecommendationFactory
 from ..models import Recommendation
 from ..recommender import recommend
