@@ -41,7 +41,7 @@ django-redis==4.12.1      # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.2  # via django-celery-beat
-django-turbo-allauth==0.0.6  # via -r requirements.in
+django-turbo-allauth==0.0.7  # via -r requirements.in
 django-turbo-response==0.0.46  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.7             # via -r requirements.in, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
