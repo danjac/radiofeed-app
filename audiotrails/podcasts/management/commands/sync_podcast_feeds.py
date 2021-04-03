@@ -1,13 +1,19 @@
 from django.core.management.base import BaseCommand
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.podcasts.tasks import sync_podcast_feed
+from audiotrails.podcasts.tasks import sync_podcast_feed, sync_podcast_feeds
 
 
 class Command(BaseCommand):
     help = "Updates all podcasts from their RSS feeds."
 
     def add_arguments(self, parser):
+
+        parser.add_argument(
+            "--run-job",
+            action="store_true",
+            help="Just runs the sync_podcast_feeds celery task with no arguments",
+        )
 
         parser.add_argument(
             "--no-pub-date",
@@ -28,6 +34,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+
+        if options["run_job"]:
+            sync_podcast_feeds.delay()
+            return
+
         podcasts = Podcast.objects.all()
 
         if options["no_pub_date"]:
