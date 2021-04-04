@@ -11,7 +11,12 @@
       data-turbo="false"
       class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2">
   {% csrf_token %}
-  {% button "Export OPML" icon="rss" title="Export OPML" %}
+  <p class="mb-3 text-sm">
+    You can export the RSS feeds of the podcasts you are following in OPML format.
+  </p>
+  <div class="flex items-center justify-end">
+    {% button "Export OPML" icon="rss" title="Export OPML" %}
+  </div>
 </form>
 
 {% endblock %}

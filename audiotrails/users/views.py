@@ -43,7 +43,7 @@ def export_opml(request):
             Podcast.objects.filter(follow__user=request.user)
             .distinct()
             .order_by("-pub_date")
-        )[:300]
+        )[:500]
         response = TemplateResponse(
             request,
             "account/opml.xml",
