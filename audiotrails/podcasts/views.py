@@ -265,7 +265,7 @@ def follow(request, podcast_id):
             pass
         return render_follow_response(request, podcast, True)
 
-    return redirect_to_login(podcast.get_absolute_url())
+    return redirect_podcast_to_login(podcast)
 
 
 @require_POST
@@ -277,7 +277,7 @@ def unfollow(request, podcast_id):
         Follow.objects.filter(podcast=podcast, user=request.user).delete()
         return render_follow_response(request, podcast, False)
 
-    return redirect_to_login(podcast.get_absolute_url())
+    return redirect_podcast_to_login(podcast)
 
 
 def get_podcast_or_404(podcast_id):
@@ -297,6 +297,10 @@ def get_podcast_detail_context(
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
+
+
+def redirect_podcast_to_login(podcast):
+    return redirect_to_login(podcast.get_absolute_url())
 
 
 def render_follow_response(request, podcast, is_following):

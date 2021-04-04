@@ -162,7 +162,7 @@ def remove_audio_log(request, episode_id):
             return TurboStream("history").replace.response("Your History is now empty.")
 
         return TurboStream(episode.dom.history).remove.response()
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @login_required
@@ -206,7 +206,7 @@ def add_favorite(request, episode_id):
                 .render(request=request),
             ]
         )
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @require_POST
@@ -225,7 +225,7 @@ def remove_favorite(request, episode_id):
                 else TurboStream(episode.dom.favorite).remove.render(),
             ]
         )
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @login_required
@@ -270,7 +270,7 @@ def add_to_queue(request, episode_id):
                 .render(request=request),
             ]
         )
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @require_POST
@@ -284,7 +284,7 @@ def remove_from_queue(request, episode_id):
                 render_remove_from_queue(request, episode),
             ]
         )
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @require_POST
@@ -327,7 +327,7 @@ def start_player(
             current_time=0 if episode.completed else (episode.current_time or 0),
         )
 
-    return redirect_to_login(episode.get_absolute_url())
+    return redirect_episode_to_login(episode)
 
 
 @require_POST
@@ -412,6 +412,10 @@ def get_episode_detail_context(request, episode, extra_context=None):
         "is_queued": episode.is_queued(request.user),
         **(extra_context or {}),
     }
+
+
+def redirect_episode_to_login(episode):
+    return redirect_to_login(episode.get_absolute_url())
 
 
 def get_audio_logs(request):
