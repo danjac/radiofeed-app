@@ -1,0 +1,17 @@
+{% extends "account/settings_base.html" %}
+
+{% load i18n %}
+
+{% block subtitle %} | Export{% endblock %}
+
+{% block settings_content %}
+
+<form method="POST"
+      action="{{ request.path }}"
+      data-turbo="false"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2">
+  {% csrf_token %}
+  {% button "Export OPML" icon="rss" title="Export OPML" %}
+</form>
+
+{% endblock %}
