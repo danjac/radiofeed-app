@@ -186,7 +186,7 @@ def add_favorite(request, episode_id):
     try:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
-        pass
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     return [
         render_favorite_toggle(request, episode, is_favorited=True),
@@ -251,7 +251,7 @@ def add_to_queue(request, episode_id):
             user=request.user, episode=episode, position=position + 1
         )
     except IntegrityError:
-        pass
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
     return [
         render_queue_toggle(request, episode, is_queued=True),

@@ -239,7 +239,7 @@ class TestFollow:
     def test_already_following(self, client, login_user, podcast):
         FollowFactory(user=login_user, podcast=podcast)
         resp = client.post(reverse("podcasts:follow", args=[podcast.id]))
-        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
 
 class TestUnfollow:

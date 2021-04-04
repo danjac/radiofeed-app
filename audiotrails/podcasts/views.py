@@ -1,7 +1,10 @@
+import http
+
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import Prefetch
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -262,7 +265,7 @@ def follow(request, podcast_id):
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
     except IntegrityError:
-        pass
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return render_follow_response(request, podcast, True)
 
 

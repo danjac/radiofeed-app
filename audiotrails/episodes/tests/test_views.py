@@ -358,6 +358,12 @@ class TestAddFavorite:
         assert resp.status_code == http.HTTPStatus.OK
         assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
+    @pytest.mark.django_db(transaction=True)
+    def test_already_favorite(self, client, login_user, episode):
+        FavoriteFactory(episode=episode, user=login_user)
+        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+
 
 class TestRemoveFavorite:
     def test_anonymous(self, client, episode):
@@ -415,7 +421,6 @@ class TestAddToQueue:
                     "episodes:add_to_queue",
                     args=[episode.id],
                 ),
-                data={"next": "true"},
             )
             assert resp.status_code == http.HTTPStatus.OK
 
@@ -433,6 +438,17 @@ class TestAddToQueue:
 
         assert items[2].episode == third
         assert items[2].position == 3
+
+    @pytest.mark.django_db(transaction=True)
+    def test_post_already_queued(self, client, login_user, episode):
+        QueueItemFactory(episode=episode, user=login_user)
+        resp = client.post(
+            reverse(
+                "episodes:add_to_queue",
+                args=[episode.id],
+            ),
+        )
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
 
 class TestRemoveFromQueue:
