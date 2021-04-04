@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, redirect_303, render_form_response
 
 from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
-from audiotrails.podcasts.models import Follow
+from audiotrails.podcasts.models import Follow, Podcast
 
 from .forms import UserPreferencesForm
 
@@ -33,6 +33,26 @@ def user_preferences(request):
         form,
         "account/preferences.html",
     )
+
+
+@login_required
+def export_opml(request):
+    if request.method == "POST":
+        podcasts = Podcast.objects.filter(
+            pk__in=request.user.follow_set.values_list("podcast")
+        ).order_by("-pub_date")
+        response = TemplateResponse(
+            request,
+            "account/opml.xml",
+            {"podcasts": podcasts},
+            content_type="application/xml",
+        )
+        response[
+            "Content-Disposition"
+        ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.xml"
+        return response
+
+    return TemplateResponse(request, "account/export_opml.html")
 
 
 @login_required

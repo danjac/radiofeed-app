@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path("preferences/", views.user_preferences, name="user_preferences"),
     path("stats/", views.user_stats, name="user_stats"),
+    path("~export/", views.export_opml, name="export_opml"),
     path("~delete/", views.delete_account, name="delete_account"),
     path("", include("turbo_allauth.urls")),
 ]

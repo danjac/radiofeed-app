@@ -14,7 +14,12 @@
       <a class="hover:text-blue-500"
          href="{{ link.url }}">Preferences</a>
     </li>
-    {% active_link 'user_stats' as link %}
+    {% active_link 'export_opml' as link %}
+    <li class="pb-1{% if link.exact %} tab--active{% endif %}">
+      <a class="hover:text-blue-500"
+         href="{{ link.url }}">Export</a>
+    </li>
+     {% active_link 'user_stats' as link %}
     <li class="pb-1{% if link.exact %} tab--active{% endif %}">
       <a class="hover:text-blue-500"
          href="{{ link.url }}">Statistics</a>

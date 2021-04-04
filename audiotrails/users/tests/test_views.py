@@ -42,6 +42,18 @@ class TestUserStats:
         assert resp.context["stats"]["listened"] == 3
 
 
+class TestExportOPML:
+    def test_get(self, client, login_user):
+        resp = client.get(reverse("export_opml"))
+        assert resp.status_code == http.HTTPStatus.OK
+
+    def test_post(self, client, login_user, podcast):
+        FollowFactory(podcast=podcast, user=login_user)
+        resp = client.post(reverse("export_opml"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "application/xml"
+
+
 class TestDeleteAccount:
     def test_get(self, client, login_user, user_model):
         # make sure we don't accidentally delete account on get request
