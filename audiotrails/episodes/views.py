@@ -186,7 +186,7 @@ def add_favorite(request, episode_id):
     try:
         Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+        pass
 
     return [
         render_favorite_toggle(request, episode, is_favorited=True),
@@ -251,22 +251,28 @@ def add_to_queue(request, episode_id):
             user=request.user, episode=episode, position=position + 1
         )
     except IntegrityError:
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+        new_item = None
 
-    return [
+    streams = [
         render_queue_toggle(request, episode, is_queued=True),
-        TurboStream("queue")
-        .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
-        .template(
-            "episodes/_queue_item.html",
-            {
-                "episode": episode,
-                "item": new_item,
-                "dom_id": episode.dom.queue,
-            },
-        )
-        .render(request=request),
     ]
+
+    if new_item:
+        streams.append(
+            TurboStream("queue")
+            .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
+            .template(
+                "episodes/_queue_item.html",
+                {
+                    "episode": episode,
+                    "item": new_item,
+                    "dom_id": episode.dom.queue,
+                },
+            )
+            .render(request=request)
+        )
+
+    return streams
 
 
 @require_POST

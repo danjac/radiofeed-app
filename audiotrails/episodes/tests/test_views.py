@@ -362,7 +362,7 @@ class TestAddFavorite:
     def test_already_favorite(self, client, login_user, episode):
         FavoriteFactory(episode=episode, user=login_user)
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestRemoveFavorite:
@@ -448,7 +448,7 @@ class TestAddToQueue:
                 args=[episode.id],
             ),
         )
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        assert resp.status_code == http.HTTPStatus.OK
 
 
 class TestRemoveFromQueue:
