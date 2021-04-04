@@ -9,42 +9,88 @@
 <h2 class="font-bold mb-3">
   Statistics for {{ user.username }}
 </h2>
-<div class="w-full lg:w-1/2 divide-y mb-3 border p-3 dark:border-gray-500 dark:divide-gray-500 text-sm">
+<div class="w-full lg:w-1/2 divide-y mb-3 border pb-3 px-3 space-y-3 dark:border-gray-500 dark:divide-gray-500 text-sm">
 
-  <div class="flex justify-between py-3">
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">Joined</div>
     <div class="w-1/2 font-bold text-right">{{ user.date_joined|date }}</div>
   </div>
 
-  <div class="flex justify-between py-3">
+  {% if stats.follows %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">Following</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.follows }} podcast{{ stats.follows|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{% url 'podcasts:index' %}"
+         class="link font-bold underline">
+        {{ stats.follows }} podcast{{ stats.follows|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
 
-  <div class="flex justify-between py-3">
+  {% if stats.favorites %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">Favorites</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.favorites }} episode{{ stats.favorites|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{% url 'episodes:favorites' %}"
+         class="link font-bold underline">
+        {{ stats.favorites }} episode{{ stats.favorites|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
 
-  <div class="flex justify-between py-3">
+
+  {% if stats.in_queue %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">In Queue</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.in_queue }} episode{{ stats.in_queue|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{% url 'episodes:queue' %}"
+         class="link font-bold underline">
+        {{ stats.in_queue }} episode{{ stats.in_queue|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
 
-  <div class="flex justify-between py-3">
+  {% url 'episodes:history' as history_url %}
+
+  {% if stats.listened %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">Listened</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.listened }} episode{{ stats.listened|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{{ history_url }}"
+         class="link font-bold underline">
+        {{ stats.listened }} episode{{ stats.listened|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
 
-  <div class="flex justify-between py-3">
+  {% if stats.in_progress %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">In progress</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.in_progress }} episode{{ stats.in_progress|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{{ history_url }}"
+         class="link font-bold underline">
+        {{ stats.in_progress }} episode{{ stats.in_progress|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
 
-  <div class="flex justify-between py-3">
+  {% if stats.completed %}
+  <div class="flex justify-between pt-3">
     <div class="w-1/2">Completed</div>
-    <div class="w-1/2 font-bold text-right">{{ stats.completed }} episode{{ stats.completed|pluralize }}</div>
+    <div class="w-1/2 font-bold text-right">
+      <a href="{{ history_url }}"
+         class="link font-bold underline">
+        {{ stats.completed }} episode{{ stats.completed|pluralize }}
+      </a>
+    </div>
   </div>
+  {% endif %}
+
 </div>
 
 {% endblock settings_content %}
