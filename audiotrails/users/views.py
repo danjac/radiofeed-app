@@ -38,9 +38,11 @@ def user_preferences(request):
 @login_required
 def export_opml(request):
     if request.method == "POST":
-        podcasts = Podcast.objects.filter(
-            pk__in=request.user.follow_set.values_list("podcast")
-        ).order_by("-pub_date")
+        podcasts = (
+            Podcast.objects.filter(follow__user=request.user)
+            .distinct()
+            .order_by("-pub_date")
+        )
         response = TemplateResponse(
             request,
             "account/opml.xml",
