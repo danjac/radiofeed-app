@@ -42,16 +42,22 @@ class TestUserStats:
         assert resp.context["stats"]["listened"] == 3
 
 
-class TestExportOPML:
+class TestExportPodcastFeeds:
     def test_get(self, client, login_user):
-        resp = client.get(reverse("export_opml"))
+        resp = client.get(reverse("export_podcast_feeds"))
         assert resp.status_code == http.HTTPStatus.OK
 
-    def test_post(self, client, login_user, podcast):
+    def test_export_opml(self, client, login_user, podcast):
         FollowFactory(podcast=podcast, user=login_user)
-        resp = client.post(reverse("export_opml"))
+        resp = client.post(reverse("export_podcast_feeds"), {"format": "opml"})
         assert resp.status_code == http.HTTPStatus.OK
         assert resp["Content-Type"] == "application/xml"
+
+    def test_export_csv(self, client, login_user, podcast):
+        FollowFactory(podcast=podcast, user=login_user)
+        resp = client.post(reverse("export_podcast_feeds"), {"format": "csv"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "text/csv"
 
 
 class TestDeleteAccount:

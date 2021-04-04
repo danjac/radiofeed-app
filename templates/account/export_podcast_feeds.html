@@ -12,10 +12,11 @@
       class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2">
   {% csrf_token %}
   <p class="mb-3 text-sm">
-    You can export the RSS feeds of the podcasts you are following in OPML format.
+    You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
   </p>
-  <div class="flex items-center justify-end">
-    {% button "Export OPML" icon="rss" title="Export OPML" %}
+  <div class="flex items-center justify-end space-x-2">
+    {% button "Export CSV" icon="table" title="Export CSV" name="format" value="csv" %}
+    {% button "Export OPML" icon="rss" title="Export OPML" name="format" value="opml" %}
   </div>
 </form>
 
