@@ -152,17 +152,17 @@ def history(request):
 @require_POST
 def remove_audio_log(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
-    if request.user.is_authenticated:
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
-        logs = get_audio_logs(request)
+    logs = get_audio_logs(request)
 
-        logs.filter(episode=episode).delete()
+    logs.filter(episode=episode).delete()
 
-        if logs.count() == 0:
-            return TurboStream("history").replace.response("Your History is now empty.")
+    if logs.count() == 0:
+        return TurboStream("history").replace.response("Your History is now empty.")
 
-        return TurboStream(episode.dom.history).remove.response()
-    return redirect_episode_to_login(episode)
+    return TurboStream(episode.dom.history).remove.response()
 
 
 @login_required
@@ -184,48 +184,47 @@ def favorites(request):
 @require_POST
 def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    if request.user.is_authenticated:
-        try:
-            Favorite.objects.create(episode=episode, user=request.user)
-        except IntegrityError:
-            pass
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
-        return TurboStreamResponse(
-            [
-                render_favorite_toggle(request, episode, is_favorited=True),
-                TurboStream("favorites")
-                .action(
-                    Action.UPDATE
-                    if get_favorites(request).count() == 1
-                    else Action.PREPEND
-                )
-                .template(
-                    "episodes/_episode.html",
-                    {"episode": episode, "dom_id": episode.dom.favorite},
-                )
-                .render(request=request),
-            ]
-        )
-    return redirect_episode_to_login(episode)
+    try:
+        Favorite.objects.create(episode=episode, user=request.user)
+    except IntegrityError:
+        pass
+
+    return TurboStreamResponse(
+        [
+            render_favorite_toggle(request, episode, is_favorited=True),
+            TurboStream("favorites")
+            .action(
+                Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
+            )
+            .template(
+                "episodes/_episode.html",
+                {"episode": episode, "dom_id": episode.dom.favorite},
+            )
+            .render(request=request),
+        ]
+    )
 
 
 @require_POST
 def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
-    if request.user.is_authenticated:
-        favorites = get_favorites(request)
-        favorites.filter(episode=episode).delete()
+    favorites = get_favorites(request)
+    favorites.filter(episode=episode).delete()
 
-        return TurboStreamResponse(
-            [
-                render_favorite_toggle(request, episode, is_favorited=False),
-                TurboStream("favorites").update.render("You have no more Favorites.")
-                if favorites.count() == 0
-                else TurboStream(episode.dom.favorite).remove.render(),
-            ]
-        )
-    return redirect_episode_to_login(episode)
+    return TurboStreamResponse(
+        [
+            render_favorite_toggle(request, episode, is_favorited=False),
+            TurboStream("favorites").update.render("You have no more Favorites.")
+            if favorites.count() == 0
+            else TurboStream(episode.dom.favorite).remove.render(),
+        ]
+    )
 
 
 @login_required
@@ -245,46 +244,52 @@ def queue(request):
 def add_to_queue(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    if request.user.is_authenticated:
 
-        items = get_queue_items(request)
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
-        position = items.aggregate(Max("position"))["position__max"] or 0
+    items = get_queue_items(request)
 
-        try:
-            new_item = QueueItem.objects.create(
-                user=request.user, episode=episode, position=position + 1
-            )
-        except IntegrityError:
-            pass
+    position = items.aggregate(Max("position"))["position__max"] or 0
 
-        return TurboStreamResponse(
-            [
-                render_queue_toggle(request, episode, is_queued=True),
-                TurboStream("queue")
-                .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
-                .template(
-                    "episodes/_queue_item.html",
-                    {"episode": episode, "item": new_item, "dom_id": episode.dom.queue},
-                )
-                .render(request=request),
-            ]
+    try:
+        new_item = QueueItem.objects.create(
+            user=request.user, episode=episode, position=position + 1
         )
-    return redirect_episode_to_login(episode)
+    except IntegrityError:
+        pass
+
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=True),
+            TurboStream("queue")
+            .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
+            .template(
+                "episodes/_queue_item.html",
+                {
+                    "episode": episode,
+                    "item": new_item,
+                    "dom_id": episode.dom.queue,
+                },
+            )
+            .render(request=request),
+        ]
+    )
 
 
 @require_POST
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
-    if request.user.is_authenticated:
 
-        return TurboStreamResponse(
-            [
-                render_queue_toggle(request, episode, is_queued=False),
-                render_remove_from_queue(request, episode),
-            ]
-        )
-    return redirect_episode_to_login(episode)
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
+
+    return TurboStreamResponse(
+        [
+            render_queue_toggle(request, episode, is_queued=False),
+            render_remove_from_queue(request, episode),
+        ]
+    )
 
 
 @require_POST
@@ -318,52 +323,50 @@ def start_player(
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
-    if request.user.is_authenticated:
-
-        return render_player_response(
-            request,
-            episode,
-            current_time=0 if episode.completed else (episode.current_time or 0),
-        )
-
-    return redirect_episode_to_login(episode)
+    return render_player_response(
+        request,
+        episode,
+        current_time=0 if episode.completed else (episode.current_time or 0),
+    )
 
 
 @require_POST
 def stop_player(request):
-    if request.user.is_authenticated:
-        return render_player_response(request)
-    return redirect_to_login(settings.HOME_URL)
+    if request.user.is_anonymous:
+        return redirect_to_login(settings.HOME_URL)
+
+    return render_player_response(request)
 
 
 @require_POST
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
-    if request.user.is_authenticated:
+    if request.user.is_anonymous:
+        return redirect_to_login(settings.HOME_URL)
 
-        if next_item := (
-            get_queue_items(request)
-            .with_current_time(request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("position")
-            .first()
-        ):
-            next_episode = next_item.episode
-            current_time = next_item.current_time or 0
-        else:
-            next_episode = None
-            current_time = 0
+    if next_item := (
+        get_queue_items(request)
+        .with_current_time(request.user)
+        .select_related("episode", "episode__podcast")
+        .order_by("position")
+        .first()
+    ):
+        next_episode = next_item.episode
+        current_time = next_item.current_time or 0
+    else:
+        next_episode = None
+        current_time = 0
 
-        return render_player_response(
-            request,
-            next_episode=next_episode,
-            current_time=current_time,
-            mark_completed=True,
-        )
-
-    return redirect_to_login(settings.HOME_URL)
+    return render_player_response(
+        request,
+        next_episode=next_episode,
+        current_time=current_time,
+        mark_completed=True,
+    )
 
 
 @require_POST
@@ -434,7 +437,8 @@ def render_queue_toggle(request, episode, is_queued):
     return (
         TurboStream(episode.dom.queue_toggle)
         .replace.template(
-            "episodes/_queue_toggle.html", {"episode": episode, "is_queued": is_queued}
+            "episodes/_queue_toggle.html",
+            {"episode": episode, "is_queued": is_queued},
         )
         .render(request=request)
     )

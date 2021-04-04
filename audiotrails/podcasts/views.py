@@ -256,28 +256,25 @@ def preview(request, podcast_id):
 def follow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
+    if request.user.is_anonymous:
+        return redirect_podcast_to_login(podcast)
 
-    if request.user.is_authenticated:
-
-        try:
-            Follow.objects.create(user=request.user, podcast=podcast)
-        except IntegrityError:
-            pass
-        return render_follow_response(request, podcast, True)
-
-    return redirect_podcast_to_login(podcast)
+    try:
+        Follow.objects.create(user=request.user, podcast=podcast)
+    except IntegrityError:
+        pass
+    return render_follow_response(request, podcast, True)
 
 
 @require_POST
 def unfollow(request, podcast_id):
 
     podcast = get_podcast_or_404(podcast_id)
+    if request.user.is_anonymous:
+        return redirect_podcast_to_login(podcast)
 
-    if request.user.is_authenticated:
-        Follow.objects.filter(podcast=podcast, user=request.user).delete()
-        return render_follow_response(request, podcast, False)
-
-    return redirect_podcast_to_login(podcast)
+    Follow.objects.filter(podcast=podcast, user=request.user).delete()
+    return render_follow_response(request, podcast, False)
 
 
 def get_podcast_or_404(podcast_id):

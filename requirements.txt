@@ -10,12 +10,12 @@ asgiref==3.3.1            # via django
 attrs==20.3.0             # via pytest
 autopep8==1.5.6           # via django-silk
 backcall==0.2.0           # via ipython
-backports.entry-points-selectable==1.0.2  # via pytest-randomly
+backports.entry-points-selectable==1.0.3  # via pytest-randomly
 beautifulsoup4==4.9.3     # via -r requirements.in
 billiard==3.6.4.0         # via celery
 bleach==3.3.0             # via -r requirements.in
-boto3==1.17.43            # via -r requirements.in
-botocore==1.20.43         # via boto3, s3transfer
+boto3==1.17.44            # via -r requirements.in
+botocore==1.20.44         # via boto3, s3transfer
 celery==5.0.5             # via -r requirements.in, django-celery-beat, django-celery-email
 certifi==2020.12.5        # via requests, sentry-sdk
 cffi==1.14.5              # via cryptography
@@ -26,7 +26,7 @@ click-repl==0.1.6         # via celery
 click==7.1.2              # via celery, click-didyoumean, click-plugins, click-repl, nltk
 coverage==5.5             # via pytest-cov
 cryptography==3.4.7       # via -r requirements.in, pyjwt, pyopenssl
-decorator==5.0.3          # via ipython
+decorator==5.0.5          # via ipython
 defusedxml==0.7.1         # via python3-openid
 dj-database-url==0.5.0    # via -r requirements.in
 django-allauth==0.44.0    # via -r requirements.in, django-turbo-allauth
@@ -41,8 +41,8 @@ django-redis==4.12.1      # via -r requirements.in
 django-silk==4.1.0        # via -r requirements.in
 django-storages==1.11.1   # via -r requirements.in
 django-timezone-field==4.1.2  # via django-celery-beat
-django-turbo-allauth==0.0.7  # via -r requirements.in
-django-turbo-response==0.0.46  # via -r requirements.in, django-turbo-allauth
+django-turbo-allauth==0.0.8  # via -r requirements.in
+django-turbo-response==0.0.47  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
 django==3.1.7             # via -r requirements.in, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.8.0            # via pytest-xdist
@@ -92,7 +92,7 @@ pytest-forked==1.3.0      # via pytest-xdist
 pytest-mock==3.5.1        # via -r requirements.in
 pytest-randomly==3.6.0    # via -r requirements.in
 pytest-xdist==2.2.1       # via -r requirements.in
-pytest==6.2.2             # via -r requirements.in, pytest-asyncio, pytest-cov, pytest-django, pytest-forked, pytest-mock, pytest-randomly, pytest-xdist
+pytest==6.2.3             # via -r requirements.in, pytest-asyncio, pytest-cov, pytest-django, pytest-forked, pytest-mock, pytest-randomly, pytest-xdist
 python-crontab==2.5.1     # via django-celery-beat
 python-dateutil==2.8.1    # via -r requirements.in, botocore, django-silk, faker, pandas, python-crontab
 python3-openid==3.2.0     # via django-allauth
