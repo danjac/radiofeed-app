@@ -272,7 +272,7 @@ class RecommendationQuerySet(models.QuerySet):
 
         return self.filter(podcast__pk__in=podcast_ids).exclude(
             recommended__pk__in=podcast_ids
-            | set(user.recommended_podcasts.values_list("pk", flat=True))
+            | set(user.recommended_podcasts.distinct().values_list("pk", flat=True))
         )
 
 
