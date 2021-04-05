@@ -1,3 +1,5 @@
+import mimetypes
+
 import lxml
 
 from pydantic import ValidationError
@@ -144,10 +146,18 @@ class ItemParser(RssParser):
         if (enclosure := self.parse_tag("enclosure")) is None:
             return None
 
+        url = enclosure.attrib.get("url")
+
+        if not (media_type := enclosure.attrib.get("type")):
+            media_type, _ = mimetypes.guess_type(url)
+
+        if (length := enclosure.attrib.get("length")) :
+            length = length.replace(",", "")
+
         return Audio(
-            length=enclosure.attrib.get("length"),
-            url=enclosure.attrib.get("url"),
-            type=enclosure.attrib.get("type"),
+            length=length,
+            type=media_type,
+            url=url,
         )
 
     def parse_description(self):
