@@ -129,9 +129,16 @@ def accept_cookies(request):
 
 @require_POST
 def toggle_dark_mode(request):
-    dark_mode = request.COOKIES.get("dark-mode")
+    dark_mode = request.COOKIES.get("dark-mode", False)
 
-    response = redirect(get_redirect_url(request))
+    if request.turbo:
+        response = (
+            TurboStream("dark-mode-toggle")
+            .replace.template("_dark_mode_toggle.html", {"dark_mode": not (dark_mode)})
+            .response(request)
+        )
+    else:
+        response = redirect(get_redirect_url(request))
 
     if dark_mode:
         response.delete_cookie("dark-mode")

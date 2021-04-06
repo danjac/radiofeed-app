@@ -109,23 +109,7 @@
       </li>
 
       <li class="py-2">
-        <form method="POST"
-              data-turbo="false"
-              action="{% url 'toggle_dark_mode' %}">
-          {% csrf_token %}
-          <input type="hidden"
-                 name="redirect_url"
-                 value="{{ request.get_full_path }}">
-          <button class="flex items-center link w-full focus:outline-none">
-            {% if dark_mode %}
-            {% icon "sun" css_class="h-5 w-5 mr-3" %}
-            Day Mode
-            {% else %}
-            {% icon "moon" css_class="h-5 w-5 mr-3" %}
-            Night Mode
-            {% endif %}
-          </button>
-        </form>
+        {% include "_dark_mode_toggle.html" %}
       </li>
 
     </ul>
