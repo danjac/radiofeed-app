@@ -30,6 +30,9 @@ EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
 
+# prevent deprecation warnings
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 ATOMIC_REQUESTS = True
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
