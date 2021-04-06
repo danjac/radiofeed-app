@@ -1,11 +1,10 @@
-# ansible-galaxy collection install community.docker
 - name: Update and upgrade apt packages
   become: yes
   hosts: all
   vars_files: vars.yml
   gather_facts: no
   roles:
-    - pg-backup
+    # - pg-backup
     - pg-vacuum
     - docker
     - apt-update
