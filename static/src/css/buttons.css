@@ -52,6 +52,7 @@ form.submitting .btn-secondary {
 .btn-tag:hover {
   @apply hover:bg-purple-600;
 }
+
 .btn-icon {
   @apply h-4 w-4;
 }

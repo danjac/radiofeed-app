@@ -1,16 +1,16 @@
-aside.sidebar {
+.sidebar-container {
   @apply hidden lg:block;
 }
 
-main.sidebar {
+.sidebar-target {
   @apply block;
 }
 
-aside.sidebar--active {
+.sidebar-container.sidebar--active {
   @apply block;
 }
 
-main.sidebar.sidebar--active {
+.sidebar-target.sidebar--active {
   @apply hidden lg:block;
 }
 
