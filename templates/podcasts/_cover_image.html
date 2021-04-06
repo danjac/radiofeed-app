@@ -5,7 +5,7 @@
              loading="lazy"
              src="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}
-  <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}"
+  <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}{% if lazy %} filter blur{% endif %}"
        title="{{ podcast.title|stripentities }}"
        alt="{{ podcast.title|stripentities }}"
        {% if cover_image %}
