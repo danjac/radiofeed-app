@@ -185,10 +185,13 @@ class Podcast(models.Model):
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
 
+    def get_episode_count(self):
+        return self.episode_set.distinct().count()
+
     def get_cached_episode_count(self):
         return cache.get_or_set(
             f"podcast-episode-count-{self.id}",
-            lambda: self.episode_set.count(),
+            self.get_episode_count,
             timeout=settings.DEFAULT_CACHE_TIMEOUT,
         )
 

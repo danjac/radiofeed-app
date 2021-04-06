@@ -97,7 +97,13 @@ class TestPodcastModel:
         podcast = Podcast(title="Testing")
         assert podcast.slug == "testing"
 
+    def test_get_episode_count(self, podcast):
+        EpisodeFactory.create_batch(3)
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        assert podcast.get_episode_count() == 3
+
     def test_get_cached_episode_count(self, podcast):
+        EpisodeFactory.create_batch(3)
         EpisodeFactory.create_batch(3, podcast=podcast)
         assert podcast.get_cached_episode_count() == 3
 
