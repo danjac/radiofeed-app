@@ -44,7 +44,7 @@ django-timezone-field==4.1.2  # via django-celery-beat
 django-turbo-allauth==0.0.8  # via -r requirements.in
 django-turbo-response==0.0.47  # via -r requirements.in, django-turbo-allauth
 django-widget-tweaks==1.4.8  # via -r requirements.in
-django==3.1.8             # via -r requirements.in, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-extensions, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
+django==3.2               # via -r requirements.in, django-allauth, django-anymail, django-appconf, django-celery-beat, django-celery-email, django-extensions, django-model-utils, django-redis, django-silk, django-storages, django-timezone-field, django-turbo-allauth
 execnet==1.8.0            # via pytest-xdist
 factory-boy==3.2.0        # via -r requirements.in
 faker==8.0.0              # via factory-boy

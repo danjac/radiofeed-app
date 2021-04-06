@@ -53,9 +53,9 @@ ROOT_URLCONF = "audiotrails.config.urls"
 ASGI_APPLICATION = "audiotrails.config.asgi.application"
 
 LOCAL_APPS = [
-    "audiotrails.episodes.apps.EpisodesConfig",
-    "audiotrails.podcasts.apps.PodcastsConfig",
-    "audiotrails.users.apps.UsersConfig",
+    "audiotrails.episodes",
+    "audiotrails.podcasts",
+    "audiotrails.users",
 ]
 
 
