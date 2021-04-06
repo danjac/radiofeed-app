@@ -12,3 +12,5 @@ mailgun_api_key:
 mailgun_sender_domain:
 secret_key:
 sentry_url:
+app_db_name:
+aws_backups_bucket_name:

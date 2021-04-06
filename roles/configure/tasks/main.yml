@@ -7,7 +7,6 @@
     dokku config:set --no-restart {{ app_name }} ADMINS='{{ admins }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_ACCESS_KEY_ID='{{ aws_access_key_id }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_SECRET_ACCESS_KEY='{{ aws_secret_access_key }}' && \
-    dokku config:set --no-restart {{ app_name }} AWS_SECRET_ACCESS_KEY='{{ aws_secret_access_key }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_STORAGE_BUCKET_NAME='{{ aws_storage_bucket_name }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_S3_CUSTOM_DOMAIN='{{ aws_s3_custom_domain }}' && \
     dokku config:set --no-restart {{ app_name }} ALLOWED_HOSTS='{{ domain_name }}' && \
