@@ -64,6 +64,7 @@
 
             <form class="flex items-center"
                   method="POST"
+                  data-player-target="stopButton"
                   action="{% url 'episodes:stop_player' %}">
               {% csrf_token %}
               <button title="Stop"

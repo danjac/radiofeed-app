@@ -11,7 +11,7 @@ export default class extends Controller {
     'playButton',
     'playNext',
     'progressBar',
-    'stop',
+    'stopButton',
   ];
 
   static classes = ['active', 'inactive'];
@@ -93,14 +93,51 @@ export default class extends Controller {
     this.audio.pause();
   }
 
-  togglePause(event) {
-    if (event.code == 'Space' && this.hasControlsTarget && !this.isInputTarget(event)) {
-      event.preventDefault();
-      if (this.pausedValue) {
-        this.play();
-      } else {
-        this.pause();
-      }
+  shortcuts(event) {
+    // ignore if player not running or inside an input element
+    if (!this.hasControlsTarget || this.isInputTarget(event)) {
+      return;
+    }
+
+    switch (event.code) {
+      case 'Space':
+        event.preventDefault();
+        this.togglePause();
+        return;
+      case 'ArrowLeft':
+        event.preventDefault();
+        this.skipBack();
+        return;
+      case 'ArrowRight':
+        event.preventDefault();
+        this.skipForward();
+        return;
+      default:
+    }
+
+    switch (event.key) {
+      case '-':
+        event.preventDefault();
+        this.decrementPlaybackRate();
+        return;
+
+      case '+':
+        event.preventDefault();
+        this.incrementPlaybackRate();
+        return;
+
+      case 's':
+        event.preventDefault();
+        this.stopButtonTarget.requestSubmit();
+        return;
+    }
+  }
+
+  togglePause() {
+    if (this.pausedValue) {
+      this.play();
+    } else {
+      this.pause();
     }
   }
 
