@@ -213,7 +213,6 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "audiotrails.template.context_processors.google_tracking_id",
-                "audiotrails.template.context_processors.is_dark_mode",
                 "audiotrails.template.context_processors.is_cookies_accepted",
                 "audiotrails.template.context_processors.search",
             ],

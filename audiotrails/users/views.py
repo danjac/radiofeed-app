@@ -127,31 +127,6 @@ def accept_cookies(request):
     return response
 
 
-@require_POST
-def toggle_dark_mode(request):
-    dark_mode = request.COOKIES.get("dark-mode", False)
-
-    if request.turbo:
-        response = (
-            TurboStream("dark-mode-toggle")
-            .replace.template("_dark_mode_toggle.html", {"dark_mode": not (dark_mode)})
-            .response(request)
-        )
-    else:
-        response = redirect(get_redirect_url(request))
-
-    if dark_mode:
-        response.delete_cookie("dark-mode")
-    else:
-        response.set_cookie(
-            "dark-mode",
-            value="true",
-            expires=timezone.now() + datetime.timedelta(days=30),
-            samesite="Lax",
-        )
-    return response
-
-
 def get_redirect_url(
     request,
     redirect_url_param="redirect_url",

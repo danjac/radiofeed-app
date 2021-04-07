@@ -11,7 +11,3 @@ def google_tracking_id(request):
 
 def is_cookies_accepted(request):
     return {"accept_cookies": "accept-cookies" in request.COOKIES}
-
-
-def is_dark_mode(request):
-    return {"dark_mode": "dark-mode" in request.COOKIES}

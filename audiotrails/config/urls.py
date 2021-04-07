@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 
 from audiotrails.episodes.sitemaps import EpisodeSitemap
 from audiotrails.podcasts.sitemaps import CategorySitemap, PodcastSitemap
-from audiotrails.users.views import accept_cookies, toggle_dark_mode
+from audiotrails.users.views import accept_cookies
 
 sitemaps = {
     "categories": CategorySitemap,
@@ -35,7 +35,6 @@ urlpatterns = [
     path("", include("audiotrails.podcasts.urls")),
     path("account/", include("audiotrails.users.urls")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
-    path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
     path("about/", static_page("about.html"), name="about"),
     path("robots.txt", robots, name="robots"),
     path(

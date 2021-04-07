@@ -90,16 +90,3 @@ class TestAcceptCookies:
         )
         assert resp.status_code == http.HTTPStatus.OK
         assert "accept-cookies" in resp.cookies
-
-
-class TestToggleDarkMode:
-    def test_post_day_mode(self, client):
-        client.cookies["dark-mode"] = "true"
-        resp = client.post(reverse("toggle_dark_mode"))
-        assert resp.url == "/"
-        assert resp.cookies["dark-mode"].value == ""
-
-    def test_post_night_mode(self, client):
-        resp = client.post(reverse("toggle_dark_mode"))
-        assert resp.url == "/"
-        assert resp.cookies["dark-mode"].value == "true"
