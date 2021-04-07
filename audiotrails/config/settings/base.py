@@ -213,7 +213,6 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "audiotrails.template.context_processors.google_tracking_id",
                 "audiotrails.template.context_processors.is_cookies_accepted",
                 "audiotrails.template.context_processors.search",
             ],
@@ -241,5 +240,3 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
-
-GOOGLE_TRACKING_ID = env("GOOGLE_TRACKING_ID", default=None)
