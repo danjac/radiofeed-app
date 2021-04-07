@@ -94,6 +94,7 @@ MIDDLEWARE = [
     "audiotrails.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "turbo_response.middleware.TurboMiddleware",
+    "audiotrails.middleware.RedirectExceptionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
