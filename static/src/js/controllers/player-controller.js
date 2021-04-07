@@ -112,6 +112,10 @@ export default class extends Controller {
         event.preventDefault();
         this.skipForward();
         return;
+      case 'Delete':
+        event.preventDefault();
+        this.stopButtonTarget.requestSubmit();
+        return;
       default:
     }
 
@@ -124,11 +128,6 @@ export default class extends Controller {
       case '+':
         event.preventDefault();
         this.incrementPlaybackRate();
-        return;
-
-      case 's':
-        event.preventDefault();
-        this.stopButtonTarget.requestSubmit();
         return;
     }
   }
