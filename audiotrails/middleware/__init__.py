@@ -1,19 +1,21 @@
 from django.utils.functional import SimpleLazyObject, cached_property
 
 
-class RedirectException(Exception):
-    def __init__(self, response, *args, **kwargs):
-        self.response = response
-        super().__init__(*args, **kwargs)
-
-
-class RedirectExceptionMiddleware:
+class BaseMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         return self.get_response(request)
 
+
+class RedirectException(Exception):
+    def __init__(self, response, *args, **kwargs):
+        self.response = response
+        super().__init__(*args, **kwargs)
+
+
+class RedirectExceptionMiddleware(BaseMiddleware):
     def process_exception(self, request, exception):
         if isinstance(exception, RedirectException):
             return exception.response
@@ -37,10 +39,7 @@ class Search:
         return self.request.GET.get(self.search_param, "").strip()
 
 
-class SearchMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
+class SearchMiddleware(BaseMiddleware):
     def __call__(self, request):
         request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
