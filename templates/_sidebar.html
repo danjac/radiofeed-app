@@ -25,6 +25,7 @@
       <li class="py-2">
         {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
+           accesskey="1"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
           {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
           New Releases
@@ -34,6 +35,7 @@
       <li class="py-2">
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
+           accesskey="2"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
           {% icon "rss" css_class="h-5 w-5 mr-3" %}
           Podcasts
@@ -42,6 +44,7 @@
       <li class="py-2">
         {% active_link 'podcasts:categories' as link %}
         <a href="{{ link.url }}"
+           accesskey="3"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "search" css_class="h-5 w-5 mr-3" %}
           Discover
@@ -51,6 +54,7 @@
       <li class="py-2">
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
+           accesskey="4"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "collection" css_class="h-5 w-5 mr-3" %}
           Play Queue
@@ -61,6 +65,7 @@
       <li class="py-2">
         {% active_link 'episodes:favorites' as link %}
         <a href="{{ link.url }}"
+           accesskey="5"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "star" css_class="h-5 w-5 mr-3" %}
           Favorites
@@ -70,6 +75,7 @@
       <li class="py-2">
         {% active_link 'episodes:history' as link %}
         <a href="{{ link.url }}"
+           accesskey="6"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "database" css_class="h-5 w-5 mr-3" %}
           History
@@ -79,12 +85,26 @@
       <li class="py-2">
         {% active_link '/account/' as link %}
         <a href="{% url 'user_preferences' %}"
+           accesskey="7"
            class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
           {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
           Settings
         </a>
       </li>
 
+      {% endif %}
+
+      <li class="py-2">
+        {% active_link 'about' as link %}
+        <a href="{{ link.url }}"
+           accesskey="8"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+
+      {% if user.is_authenticated %}
       <li class="py-2 md:hidden">
         <form method="post"
               action="{% url 'account_logout' %}"
@@ -98,15 +118,6 @@
         </form>
       </li>
       {% endif %}
-
-      <li class="py-2">
-        {% active_link 'about' as link %}
-        <a href="{{ link.url }}"
-           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
-          About
-        </a>
-      </li>
 
     </ul>
   </nav>
