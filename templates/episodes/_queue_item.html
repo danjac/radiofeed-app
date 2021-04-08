@@ -1,8 +1,10 @@
 {% extends "episodes/_episode.html" %}
 {% block extra_attrs %}data-drag-target="draggable" data-id={{ item.id }}{% endblock %}
 {% block extra_buttons %}
-<button class="btn btn-secondary flex items-center p-2 handle border-none"
-        title="Move">
-  {% icon "view_list" css_class="btn-icon h-6 w-6" %}
-</button>
+<div class="flex items-center">
+  <button class="btn btn-secondary flex items-center p-2 handle border-none"
+          title="Move">
+    {% icon "view_list" css_class="btn-icon h-6 w-6" %}
+  </button>
+</div>
 {% endblock %}
