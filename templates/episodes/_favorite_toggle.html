@@ -5,9 +5,9 @@
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
   {% csrf_token %}
   {% if is_favorited %}
-  {% button "Favorites" icon="trash" type="secondary" title="Remove episode from your Favorites" access_key="f" %}
+  {% button "Favorites" icon="trash" type="secondary" title="Remove episode from your Favorites" %}
   {% else %}
-  {% button "Favorites" icon="star" title="Add episode to your Favorites" access_key="f" %}
+  {% button "Favorites" icon="star" title="Add episode to your Favorites" %}
   {% endif %}
 </form>
 {% else %}
