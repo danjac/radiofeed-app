@@ -70,14 +70,13 @@ def jsonify(value):
 @register.filter
 def keepspaces(text):
     # changes any <br /> <p> <li> etc to spaces
-    if not text:
+    if text is None:
         return ""
-    return (
-        bs4.BeautifulSoup(text, features="lxml")
-        .find("body")
-        .get_text(separator=" ")
-        .strip()
-    )
+    if not (text := text.strip()):
+        return ""
+    if (tag := bs4.BeautifulSoup(text, features="lxml").find("body")) is None:
+        return ""
+    return tag.get_text(separator=" ").strip()
 
 
 @register.filter

@@ -83,6 +83,9 @@ class TestKeepspaces:
     def test_value_is_none(self):
         return keepspaces(None) == ""
 
+    def test_value_does_not_have_body(self):
+        return keepspaces("\n    ") == ""
+
     def test_value_has_html(self):
         return keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
 
