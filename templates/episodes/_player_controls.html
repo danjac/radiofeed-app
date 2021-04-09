@@ -33,16 +33,16 @@
     <div class="mb-1 md:hidden pr-1 text-sm w-64 sm:w-96 truncate">
       <a href="{{ episode.get_absolute_url }}"
          class="player--title"
-         title="{{ episode_title }}">{{ episode_title|truncatechars:100 }}</a>
+         title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
 
     </div>
     <div class="flex items-center">
 
       {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
 
-      <div class="w-full">
+      <div class="w-full space-y-1">
 
-        <div class="flex justify-between items-center w-full mb-1">
+        <div class="flex justify-between items-center w-full">
 
           <div class="flex items-center space-x-1">
 
@@ -75,12 +75,12 @@
 
             {% include "episodes/_play_next.html" %}
 
-            <div class="hidden md:inline-block text-sm ml-2 w-96 lg:w-full truncate">
-              <a href="{{ episode.get_absolute_url }}"
-                 class="player--title"
-                 title="{{ episode_title }}">{{ episode_title|truncatechars:100 }}</a>
-            </div>
+          </div>
 
+          <div class="hidden md:block text-sm text-center w-96 lg:w-full truncate">
+            <a href="{{ episode.get_absolute_url }}"
+               class="player--title"
+               title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
           </div>
 
           <div class="flex items-center">
