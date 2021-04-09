@@ -116,6 +116,10 @@ export default class extends Controller {
         event.preventDefault();
         this.stopButtonTarget.click();
         return;
+      case 'Tab':
+        event.preventDefault();
+        this.playNext();
+        return;
       default:
     }
 
@@ -128,10 +132,6 @@ export default class extends Controller {
       case '+':
         event.preventDefault();
         this.incrementPlaybackRate();
-        return;
-      case '>':
-        event.preventDefault();
-        this.playNext();
         return;
     }
   }
