@@ -435,6 +435,14 @@ def delete_queue_item(request, episode):
     return items.exists()
 
 
+def render_play_next(request, has_more_items):
+    return (
+        TurboStream("play-next")
+        .replace.template("episodes/_play_next.html", {"has_next": has_more_items})
+        .render(request=request)
+    )
+
+
 def render_queue_toggle(request, episode, is_queued):
     return (
         TurboStream(episode.dom.queue_toggle)
@@ -532,14 +540,6 @@ def render_player_response(
     )
 
     return response
-
-
-def render_play_next(request, has_more_items):
-    return (
-        TurboStream("play-next")
-        .replace.template("episodes/_play_next.html", {"has_next": has_more_items})
-        .render(request=request)
-    )
 
 
 @turbo_stream_response
