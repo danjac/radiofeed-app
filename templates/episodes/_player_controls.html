@@ -1,36 +1,11 @@
 {% load podcasts %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities %}
 <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold"
-     data-controller="toggle"
      data-player-target="controls"
      id="player-controls">
 
-  <div data-toggle-target="item"
-       class="hidden">
-    <div class="flex items-center justify-between relative">
-      <div class="flex items-center">
-        {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" size="8" css_class="bg-transparent border-white mr-2 cursor-pointer" %}
-        <a href="{{ episode.get_absolute_url }}"
-           title="{{ episode_title }}"
-           class="player--title w-64 sm:w-96 md:w-full truncate text-sm">{{ episode_title|truncatechars:80 }}</a>
-      </div>
-      <button data-action="toggle#toggle"
-              class="focus:outline-none float-right hover:text-blue-500"
-              title="Maximize Player">
-        {% icon "chevron_up" css_class="h-6 w-6" %}
-      </button>
-    </div>
-  </div>
-
-  <div data-toggle-target="item"
-       class="relative">
-    <button data-action="toggle#toggle"
-            class="absolute right-0 top-0 focus-outline-none hover:text-blue-500 md:hidden"
-            title="Mimimize Player">
-      {% icon "chevron_down" css_class="h-6 w-6" %}
-    </button>
-
-    <div class="mb-1 md:hidden pr-1 text-sm w-64 sm:w-96 truncate">
+  <div class="relative space-y-1">
+    <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
       <a href="{{ episode.get_absolute_url }}"
          class="player--title"
          title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
@@ -77,7 +52,7 @@
 
           </div>
 
-          <div class="hidden md:block text-sm text-center w-96 lg:w-full truncate">
+          <div class="hidden sm:block text-sm text-center w-96 lg:w-full truncate">
             <a href="{{ episode.get_absolute_url }}"
                class="player--title"
                title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
@@ -105,11 +80,6 @@
                     data-action="player#skipForward"
                     class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
               {% icon "skip_forward_10" css_class="h-6 w-6" %}
-            </button>
-            <button data-action="toggle#toggle"
-                    class="focus-outline-none hover:text-blue-500 hidden md:inline-block ml-3"
-                    title="Mimimize Player">
-              {% icon "chevron_down" css_class="h-6 w-6" %}
             </button>
           </div>
 
