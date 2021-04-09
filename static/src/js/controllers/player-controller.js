@@ -9,7 +9,7 @@ export default class extends Controller {
     'pauseButton',
     'playbackRate',
     'playButton',
-    'playNext',
+    'playNextButton',
     'progressBar',
     'stopButton',
   ];
@@ -73,7 +73,7 @@ export default class extends Controller {
 
   ended() {
     this.cancelTimeUpdateTimer();
-    this.playNextTarget.requestSubmit();
+    this.playNext();
   }
 
   loadedMetaData() {
@@ -114,7 +114,7 @@ export default class extends Controller {
         return;
       case 'Delete':
         event.preventDefault();
-        this.stopButtonTarget.requestSubmit();
+        this.stopButtonTarget.click();
         return;
       default:
     }
@@ -128,6 +128,10 @@ export default class extends Controller {
       case '+':
         event.preventDefault();
         this.incrementPlaybackRate();
+        return;
+      case '>':
+        event.preventDefault();
+        this.playNext();
         return;
     }
   }
@@ -428,6 +432,12 @@ export default class extends Controller {
         method: 'POST',
         credentials: 'same-origin',
       });
+    }
+  }
+
+  playNext() {
+    if (this.hasPlayNextButtonTarget) {
+      this.playNextButtonTarget.click();
     }
   }
 

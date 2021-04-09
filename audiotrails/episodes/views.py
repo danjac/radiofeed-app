@@ -251,6 +251,7 @@ def add_to_queue(request, episode_id):
 
     streams = [
         render_queue_toggle(request, episode, is_queued=True),
+        render_play_next(request, True),
     ]
 
     if new_item:
@@ -276,9 +277,12 @@ def add_to_queue(request, episode_id):
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id, auth_required=True)
 
+    has_more_items = delete_queue_item(request, episode)
+
     return [
         render_queue_toggle(request, episode, is_queued=False),
-        render_remove_from_queue(request, episode),
+        render_remove_from_queue(request, episode, has_more_items),
+        render_play_next(request, has_more_items),
     ]
 
 
@@ -425,6 +429,12 @@ def get_queue_items(request):
     return QueueItem.objects.filter(user=request.user)
 
 
+def delete_queue_item(request, episode):
+    items = get_queue_items(request)
+    items.filter(episode=episode).delete()
+    return items.exists()
+
+
 def render_queue_toggle(request, episode, is_queued):
     return (
         TurboStream(episode.dom.queue_toggle)
@@ -436,12 +446,8 @@ def render_queue_toggle(request, episode, is_queued):
     )
 
 
-def render_remove_from_queue(request, episode):
-    # remove from queue
-    items = get_queue_items(request)
-    items.filter(episode=episode).delete()
-
-    if items.count() == 0:
+def render_remove_from_queue(request, episode, has_more_items):
+    if not has_more_items:
         return TurboStream("queue").update.render(
             "You have no more episodes in your Play Queue"
         )
@@ -528,6 +534,14 @@ def render_player_response(
     return response
 
 
+def render_play_next(request, has_more_items):
+    return (
+        TurboStream("play-next")
+        .replace.template("episodes/_play_next.html", {"has_next": has_more_items})
+        .render(request=request)
+    )
+
+
 @turbo_stream_response
 def render_player_streams(request, current_episode, next_episode):
     if request.POST.get("is_modal"):
@@ -542,7 +556,9 @@ def render_player_streams(request, current_episode, next_episode):
     if next_episode is None:
         yield TurboStream("player-controls").remove.render()
     else:
-        yield render_remove_from_queue(request, next_episode)
+        has_more_items = delete_queue_item(request, next_episode)
+
+        yield render_remove_from_queue(request, next_episode, has_more_items)
         yield render_queue_toggle(request, next_episode, False)
 
         for is_modal in (True, False):
@@ -552,5 +568,6 @@ def render_player_streams(request, current_episode, next_episode):
             "episodes/_player_controls.html",
             {
                 "episode": next_episode,
+                "has_next": has_more_items,
             },
         ).render(request=request)

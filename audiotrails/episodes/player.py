@@ -2,7 +2,7 @@ from typing import Optional, TypedDict
 
 from django.utils import timezone
 
-from .models import AudioLog, Episode
+from .models import AudioLog, Episode, QueueItem
 
 
 class PlayerInfo(TypedDict):
@@ -41,6 +41,11 @@ class Player:
             .first()
         )
 
+    def has_next(self):
+        if self.request.user.is_authenticated:
+            return QueueItem.objects.filter(user=self.request.user).exists()
+        return False
+
     def eject(self, mark_completed=False):
         if (episode := self.get_episode()) and mark_completed:
             self.create_audio_log(episode, current_time=0, completed=True)
@@ -58,10 +63,12 @@ class Player:
         )
 
     def as_dict(self):
+        episode = self.get_episode()
         return {
-            "episode": self.get_episode(),
+            "episode": episode,
             "current_time": self.current_time,
             "playback_rate": self.playback_rate,
+            "has_next": episode and self.has_next(),
         }
 
     def create_audio_log(

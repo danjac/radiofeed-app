@@ -17,7 +17,7 @@
      data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'
      {% endif %}>
   {% if episode %}
-  {% include "episodes/_player_controls.html" %}
+  {% include "episodes/_player_controls.html" with has_next=player.has_next %}
   {% endif %}
 </div>
 {% endwith %}
