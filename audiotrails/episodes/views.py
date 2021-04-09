@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -6,32 +7,18 @@ from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from turbo_response import Action, TurboFrame, TurboStream
 from turbo_response.decorators import turbo_stream_response
 
+from audiotrails.middleware import RedirectException
 from audiotrails.pagination import render_paginated_response
 from audiotrails.podcasts.models import Podcast
 
-from ..models import Episode, Favorite, QueueItem
-from .renderers import (
-    render_favorite_toggle,
-    render_play_next,
-    render_queue_toggle,
-    render_remove_from_queue,
-)
-from .responses import render_episode_list_response, render_player_response
-from .services import (
-    delete_queue_item,
-    get_audio_logs,
-    get_episode_detail_context,
-    get_episode_or_404,
-    get_favorites,
-    get_queue_items,
-)
+from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 def index(request):
@@ -399,3 +386,188 @@ def player_timeupdate(request):
 
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
+
+
+def get_episode_or_404(
+    request,
+    episode_id,
+    *,
+    with_podcast=False,
+    with_current_time=False,
+    auth_required=False,
+):
+    qs = Episode.objects.all()
+    if with_podcast:
+        qs = qs.select_related("podcast")
+    if with_current_time:
+        qs = qs.with_current_time(request.user)
+    episode = get_object_or_404(qs, pk=episode_id)
+    if auth_required and not request.user.is_authenticated:
+        raise RedirectException(redirect_to_login(episode.get_absolute_url()))
+    return episode
+
+
+def get_episode_detail_context(request, episode, extra_context=None):
+    return {
+        "episode": episode,
+        "is_playing": request.player.is_playing(episode),
+        "is_favorited": episode.is_favorited(request.user),
+        "is_queued": episode.is_queued(request.user),
+        **(extra_context or {}),
+    }
+
+
+def get_audio_logs(request):
+    return AudioLog.objects.filter(user=request.user)
+
+
+def get_favorites(request):
+    return Favorite.objects.filter(user=request.user)
+
+
+def get_queue_items(request):
+    return QueueItem.objects.filter(user=request.user)
+
+
+def delete_queue_item(request, episode):
+    items = get_queue_items(request)
+    items.filter(episode=episode).delete()
+    return items.exists()
+
+
+def render_play_next(request, has_more_items):
+    return (
+        TurboStream("play-next")
+        .replace.template("episodes/_play_next.html", {"has_next": has_more_items})
+        .render(request=request)
+    )
+
+
+def render_queue_toggle(request, episode, is_queued):
+    return (
+        TurboStream(episode.dom.queue_toggle)
+        .replace.template(
+            "episodes/_queue_toggle.html",
+            {"episode": episode, "is_queued": is_queued},
+        )
+        .render(request=request)
+    )
+
+
+def render_remove_from_queue(request, episode, has_more_items):
+    if not has_more_items:
+        return TurboStream("queue").update.render(
+            "You have no more episodes in your Play Queue"
+        )
+    return TurboStream(episode.dom.queue).remove.render()
+
+
+def render_favorite_toggle(request, episode, is_favorited):
+    return (
+        TurboStream(episode.dom.favorite_toggle)
+        .replace.template(
+            "episodes/_favorite_toggle.html",
+            {"episode": episode, "is_favorited": is_favorited},
+        )
+        .render(request=request)
+    )
+
+
+def render_player_toggle(request, episode, is_playing, is_modal):
+    return (
+        TurboStream(
+            episode.dom.player_modal_toggle if is_modal else episode.dom.player_toggle
+        )
+        .replace.template(
+            "episodes/_player_toggle.html",
+            {
+                "episode": episode,
+                "is_playing": is_playing,
+                "is_modal": is_modal,
+            },
+        )
+        .render(request=request)
+    )
+
+
+def render_episode_list_response(
+    request,
+    episodes,
+    template_name,
+    extra_context=None,
+    cached=False,
+):
+
+    extra_context = extra_context or {}
+
+    if cached:
+        extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
+        pagination_template_name = "episodes/_episodes_cached.html"
+    else:
+        pagination_template_name = "episodes/_episodes.html"
+
+    return render_paginated_response(
+        request,
+        episodes,
+        template_name,
+        pagination_template_name,
+        extra_context,
+    )
+
+
+def render_player_response(
+    request,
+    next_episode=None,
+    current_time=0,
+    mark_completed=False,
+):
+    current_episode = request.player.eject(mark_completed=mark_completed)
+
+    if next_episode:
+        request.player.start(next_episode, current_time)
+
+    response = render_player_streams(request, current_episode, next_episode)
+
+    response["X-Media-Player"] = json.dumps(
+        {"action": "stop"}
+        if next_episode is None
+        else {
+            "action": "start",
+            "currentTime": current_time,
+            "mediaUrl": next_episode.media_url,
+            "metadata": next_episode.get_media_metadata(),
+        }
+    )
+
+    return response
+
+
+@turbo_stream_response
+def render_player_streams(request, current_episode, next_episode):
+    if request.POST.get("is_modal"):
+        yield TurboStream("modal").update.render()
+
+    if current_episode:
+        for is_modal in (True, False):
+            yield render_player_toggle(
+                request, current_episode, False, is_modal=is_modal
+            )
+
+    if next_episode is None:
+        yield TurboStream("player-controls").remove.render()
+    else:
+        has_more_items = delete_queue_item(request, next_episode)
+
+        yield render_remove_from_queue(request, next_episode, has_more_items)
+        yield render_queue_toggle(request, next_episode, False)
+
+        for is_modal in (True, False):
+            yield render_player_toggle(request, next_episode, True, is_modal=is_modal)
+
+        yield TurboStream("player").update.template(
+            "episodes/_player_controls.html",
+            {
+                "episode": next_episode,
+                "has_next": has_more_items,
+            },
+        ).render(request=request)
