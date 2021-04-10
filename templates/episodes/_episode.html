@@ -1,52 +1,53 @@
 {% load episodes podcasts %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|stripentities episode_title_trunc=episode.title|stripentities|truncatechars:120 %}
-<section class="flex justify-between items-center mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
+<section class="mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
          id="{{ dom_id|default:episode.dom.episode }}"
          {% block extra_attrs %}{% endblock %}>
-  <div class="flex items-center w-full space-x-2">
+  <h2 class="truncate md:hidden text-sm mb-1">
+    <a href="{{ episode_url }}"
+       class="link"
+       data-turbo-frame="_top"
+       title="{{ episode_title }}">
+      {{ episode_title_trunc }}
+    </a>
+  </h2>
 
-    {% is_playing episode as is_playing %}
+  <div class="flex justify-between items-center">
+    <div class="flex items-center w-full space-x-2">
 
-    <div>
-      <a href="{{ podcast.get_absolute_url }}"
-         data-turbo-frame="_top">
-        {% cover_image podcast lazy=True cover_image=cover_image %}
-      </a>
-    </div>
-
-    <div class="space-y-1">
-      <h2 class="truncate w-52 sm:w-96 md:hidden text-sm">
-        <a href="{{ episode_url }}"
-           class="link"
-           data-turbo-frame="_top"
-           title="{{ episode_title }}">
-          {{ episode_title_trunc }}
+      <div>
+        <a href="{{ podcast.get_absolute_url }}"
+           data-turbo-frame="_top">
+          {% cover_image podcast lazy=True cover_image=cover_image %}
         </a>
-      </h2>
+      </div>
 
-      <div class="flex items-center space-x-2">
-        {% include "episodes/_player_toggle.html" %}
-        <div class="space-y-2">
-          <h2 class="hidden md:block text-sm">
-            <a href="{{ episode_url }}"
-               class="link"
-               data-turbo-frame="_top"
-               title="{{ episode_title }}">
-              {{ episode_title_trunc }}
-            </a>
-          </h2>
-          <div>
-            <a class="link"
-               href="{{ episode.get_preview_url }}"
-               title="Preview for {{ episode.title }}"
-               data-turbo-frame="modal">
-              {% icon "ellipsis" css_class="w-6 h-6" %}
-            </a>
+      <div class="space-y-1">
+        <div class="flex items-center space-x-2">
+          {% is_playing episode as is_playing %}
+          {% include "episodes/_player_toggle.html" %}
+          <div class="space-y-2">
+            <h2 class="hidden md:block text-sm">
+              <a href="{{ episode_url }}"
+                 class="link"
+                 data-turbo-frame="_top"
+                 title="{{ episode_title }}">
+                {{ episode_title_trunc }}
+              </a>
+            </h2>
+            <div>
+              <a class="link"
+                 href="{{ episode.get_preview_url }}"
+                 title="Preview for {{ episode.title }}"
+                 data-turbo-frame="modal">
+                {% icon "ellipsis" css_class="w-6 h-6" %}
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    {% block extra_buttons %}{% endblock %}
   </div>
-  {% block extra_buttons %}{% endblock %}
 </section>
 {% endwith %}
