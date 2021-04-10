@@ -3,7 +3,7 @@
 <section class="mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
          id="{{ dom_id|default:episode.dom.episode }}"
          {% block extra_attrs %}{% endblock %}>
-  <h2 class="truncate md:hidden text-sm mb-1">
+  <h2 class="sm:hidden text-sm mb-1 truncate">
     <a href="{{ episode_url }}"
        class="link"
        data-turbo-frame="_top"
@@ -27,7 +27,7 @@
           {% is_playing episode as is_playing %}
           {% include "episodes/_player_toggle.html" %}
           <div class="space-y-2">
-            <h2 class="hidden md:block text-sm">
+            <h2 class="hidden sm:block w-96 lg:w-full text-sm truncate">
               <a href="{{ episode_url }}"
                  class="link"
                  data-turbo-frame="_top"
