@@ -73,7 +73,11 @@ export default class extends Controller {
 
   ended() {
     this.cancelTimeUpdateTimer();
-    this.playNext();
+    if (this.hasPlayNextButtonTarget) {
+      this.playNextButtonTarget.click();
+    } else {
+      this.stopButtonTarget.click();
+    }
   }
 
   loadedMetaData() {
@@ -118,7 +122,9 @@ export default class extends Controller {
         return;
       case 'Tab':
         event.preventDefault();
-        this.playNext();
+        if (this.hasPlayNextButtonTarget) {
+          this.playNextButtonTarget.click();
+        }
         return;
       default:
     }
@@ -432,14 +438,6 @@ export default class extends Controller {
         method: 'POST',
         credentials: 'same-origin',
       });
-    }
-  }
-
-  playNext() {
-    if (this.hasPlayNextButtonTarget) {
-      this.playNextButtonTarget.click();
-    } else {
-      this.stopButtonTarget.click();
     }
   }
 
