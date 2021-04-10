@@ -169,7 +169,7 @@ class ItemParser(RssParser):
             "itunes:summary",
             "itunes:subtitle",
         ):
-            if value := self.parse_text("content:encoded").strip():
+            if value := self.parse_text(tagname).strip():
                 return value
 
         return ""
