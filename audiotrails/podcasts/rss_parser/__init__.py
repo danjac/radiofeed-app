@@ -55,6 +55,4 @@ def should_update(podcast, etag, last_modified, force_update):
         return True
     if etag and etag != podcast.etag:
         return True
-    if last_modified and last_modified > podcast.pub_date:
-        return True
-    return False
+    return last_modified and last_modified > podcast.pub_date

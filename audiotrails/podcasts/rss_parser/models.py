@@ -153,14 +153,13 @@ class Feed(BaseModel):
         if pub_date is None:
             return False
 
-        if (
-            not force_update
-            and podcast.last_updated
-            and podcast.last_updated > pub_date
-        ):
-            return False
-
-        return True
+        return any(
+            (
+                force_update,
+                podcast.last_updated is None,
+                podcast.last_updated and podcast.last_updated < pub_date,
+            )
+        )
 
     def create_episodes(self, podcast):
         """Parses new episodes from podcast feed. Remove any episodes
@@ -183,7 +182,7 @@ class Feed(BaseModel):
         )
 
     def get_creators(self):
-        return ", ".join(set([a for a in [a.strip() for a in self.creators] if a]))
+        return ", ".join({a for a in [a.strip() for a in self.creators] if a})
 
     def get_categories(self, categories_dct):
         return [
@@ -191,9 +190,7 @@ class Feed(BaseModel):
         ]
 
     def get_keywords(self, categories_dct):
-        return " ".join(
-            [name for name in self.categories if name not in categories_dct]
-        )
+        return " ".join(name for name in self.categories if name not in categories_dct)
 
     def extract_text(self, podcast, categories):
         """Extract keywords from text content for recommender"""
@@ -207,12 +204,12 @@ class Feed(BaseModel):
             + [c.name for c in categories]
             + [item.title for item in self.items][:6]
         )
-        return " ".join([kw for kw in extract_keywords(podcast.language, text)])
+        return " ".join(extract_keywords(podcast.language, text))
 
     def get_pub_date(self):
         now = timezone.now()
         try:
-            return max([item.pub_date for item in self.items if item.pub_date < now])
+            return max(item.pub_date for item in self.items if item.pub_date < now)
         except ValueError:
             return None
 
