@@ -162,13 +162,17 @@ class ItemParser(RssParser):
 
     def parse_description(self):
 
-        return (
-            self.parse_text("content:encoded").strip()
-            or self.parse_text("description").strip()
-            or self.parse_text("googleplay:description").strip()
-            or self.parse_text("itunes:summary").strip()
-            or self.parse_text("itunes:subtitle").strip()
-        )
+        for tagname in (
+            "content:encoded",
+            "description",
+            "googleplay:description",
+            "itunes:summary",
+            "itunes:subtitle",
+        ):
+            if value := self.parse_text("content:encoded").strip():
+                return value
+
+        return ""
 
     def parse_keywords(self):
         rv = self.parse_text_list("category")
