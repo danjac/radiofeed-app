@@ -438,6 +438,8 @@ export default class extends Controller {
   playNext() {
     if (this.hasPlayNextButtonTarget) {
       this.playNextButtonTarget.click();
+    } else {
+      this.stopButtonTarget.click();
     }
   }
 
