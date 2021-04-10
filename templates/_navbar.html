@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load static %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
   <div class="flex items-center justify-between p-3 lg:px-5">
 
@@ -27,7 +27,7 @@
 
     <form method="get"
           action="{% url 'podcasts:search_podcasts' %}"
-          class="relative bg-transparent hidden md:block">
+          class="relative bg-transparent hidden sm:block">
       <input type="search"
              name="q"
              autocomplete="off"
@@ -44,25 +44,21 @@
     </form>
 
     {% if user.is_authenticated %}
-    <div class="text-sm md:text-base flex items-center">
-      <a href="{% url 'user_preferences' %}"
-         class="inline-block text-white hover:text-blue-500 md:mr-3">
-        {{ user.username }}
-      </a>
+    <div class="text-sm md:text-base flex items-center space-x-3">
       <form method="post"
             action="{% url 'account_logout' %}"
-            class="hidden md:inline-block focus:outline-none"
+            class="focus:outline-none"
             data-turbo="false">
         {% csrf_token %}
-        <button class="text-white hover:text-blue-500">{% translate "logout" %}</button>
+        <button class="text-white hover:text-blue-500">Logout</button>
       </form>
     </div>
     {% else %}
     <div class="text-sm md:text-base flex items-center">
       <a href="{{ request.get_full_path|login_url }}"
-         class="inline-block text-white hover:text-blue-500 mr-3">{% translate "login" %}</a>
+         class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
       <a href="{{ request.get_full_path|signup_url }}"
-         class="inline-block text-white hover:text-blue-500">{% translate "signup" %}</a>
+         class="inline-block text-white hover:text-blue-500">Signup</a>
     </div>
     {% endif %}
   </div>

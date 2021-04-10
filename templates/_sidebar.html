@@ -1,4 +1,4 @@
-  <div class="flex justify-center sm:justify-start md:hidden mb-3">
+  <div class="flex justify-center sm:hidden mb-3">
 
     <form method="get"
           action="{% url 'podcasts:search_podcasts' %}"
@@ -103,21 +103,6 @@
           About
         </a>
       </li>
-
-      {% if user.is_authenticated %}
-      <li class="py-2 md:hidden">
-        <form method="post"
-              action="{% url 'account_logout' %}"
-              class="inline-block"
-              data-turbo="false">
-          {% csrf_token %}
-          <button class="flex items-center link focus:outline-none w-full">
-            {% icon "logout" css_class="h-5 w-5 mr-3" %}
-            Logout
-          </button>
-        </form>
-      </li>
-      {% endif %}
 
     </ul>
   </nav>
