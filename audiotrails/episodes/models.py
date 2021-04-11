@@ -15,6 +15,8 @@ from sorl.thumbnail import get_thumbnail
 from audiotrails.db import FastCountMixin
 from audiotrails.podcasts.models import Podcast
 
+from .utils import duration_in_seconds
+
 
 @dataclasses.dataclass
 class EpisodeDOM:
@@ -129,29 +131,7 @@ class Episode(models.Model):
         )
 
     def get_duration_in_seconds(self):
-        """Returns duration string in h:m:s or h:m to seconds"""
-        if not self.duration:
-            return 0
-        hours, minutes, seconds = 0, 0, 0
-        parts = self.duration.split(":")
-        num_parts = len(parts)
-
-        try:
-            if num_parts == 1:
-                seconds = int(parts[0])
-            elif num_parts == 2:
-                [minutes, seconds] = [int(p) for p in parts]
-            elif num_parts == 3:
-                [hours, minutes, seconds] = [int(p) for p in parts]
-            else:
-                return 0
-        except ValueError:
-            return 0
-
-        try:
-            return (int(hours) * 3600) + (int(minutes) * 60) + int(seconds)
-        except ValueError:
-            return 0
+        return duration_in_seconds(self.duration or "")
 
     def get_next_episode(self):
         try:

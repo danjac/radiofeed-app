@@ -6,15 +6,30 @@ def format_duration(total_seconds):
     if not total_seconds:
         return ""
 
-    total_hours = math.floor(total_seconds / 3600)
-    total_minutes = round((total_seconds % 3600) / 60)
-
-    if not total_minutes and not total_hours:
-        return "<1min"
-
     rv = []
-    if total_hours:
+
+    if total_hours := math.floor(total_seconds / 3600):
         rv.append(f"{total_hours}h")
-    if total_minutes:
+
+    if total_minutes := round((total_seconds % 3600) / 60):
         rv.append(f"{total_minutes}min")
-    return " ".join(rv)
+
+    return " ".join(rv) if rv else "<1min"
+
+
+def duration_in_seconds(duration):
+    """Returns total number of seconds given string in [h:][m:]s format.
+    Invalid formats return zero."""
+
+    if not duration:
+        return 0
+
+    try:
+        return sum(
+            (int(part) * multiplier)
+            for (part, multiplier) in zip(
+                reversed(duration.split(":")[:3]), (1, 60, 3600)
+            )
+        )
+    except ValueError:
+        return 0
