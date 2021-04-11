@@ -24,13 +24,21 @@
                 {{ episode_title_trunc }}
               </a>
             </h2>
-            <div>
-              <a class="link"
-                 href="{{ episode.get_preview_url }}"
-                 title="Preview for {{ episode.title }}"
-                 data-turbo-frame="modal">
-                {% icon "ellipsis" css_class="w-6 h-6" %}
-              </a>
+            <div class="space-x-2 flex items-center">
+
+              <div>
+                <a class="link"
+                   href="{{ episode.get_preview_url }}"
+                   title="Preview for {{ episode.title }}"
+                   data-turbo-frame="modal">
+                  {% icon "ellipsis" css_class="w-6 h-6" %}
+                </a>
+              </div>
+
+              <div title="Date Published"
+                   class="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
+              </div>
             </div>
           </div>
         </div>
