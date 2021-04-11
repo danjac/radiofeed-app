@@ -27,7 +27,7 @@
           {% is_playing episode as is_playing %}
           {% include "episodes/_player_toggle.html" %}
           <div class="space-y-2">
-            <h2 class="hidden sm:block w-96 lg:w-full text-sm truncate">
+            <h2 class="hidden sm:block max-w-md lg:max-w-full text-sm truncate">
               <a href="{{ episode_url }}"
                  class="link"
                  data-turbo-frame="_top"
