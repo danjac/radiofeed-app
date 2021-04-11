@@ -58,13 +58,14 @@ def clean_text(text):
 
 
 def extract_keywords(language, text):
-    text = clean_text(text).lower()
 
-    if not text:
+    if not (text := clean_text(text).lower()):
         return []
-
-    tokens = [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]
 
     stopwords = get_stopwords(language)
 
-    return [token for token in tokens if token and token not in stopwords]
+    return [token for token in tokenize(text) if token and token not in stopwords]
+
+
+def tokenize(text):
+    return [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]

@@ -4,11 +4,6 @@
       id="{% if is_modal %}{{ episode.dom.player_modal_toggle }}{% else %}{{ episode.dom.player_toggle }}{% endif %}"
       action="{% if is_playing %}{% url 'episodes:stop_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}
-  {% if is_modal %}
-  <input type="hidden"
-         name="is_modal"
-         value="true">
-  {% endif %}
   <div class="flex items-center">
     {% if is_playing %}
     <button title="Close Player"
