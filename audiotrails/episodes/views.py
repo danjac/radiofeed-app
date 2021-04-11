@@ -473,17 +473,14 @@ def render_favorite_toggle(request, episode, is_favorited):
     )
 
 
-def render_player_toggle(request, episode, is_playing, is_modal):
+def render_player_toggle(request, episode, is_playing):
     return (
-        TurboStream(
-            episode.dom.player_modal_toggle if is_modal else episode.dom.player_toggle
-        )
+        TurboStream(episode.dom.player_toggle)
         .replace.template(
             "episodes/_player_toggle.html",
             {
                 "episode": episode,
                 "is_playing": is_playing,
-                "is_modal": is_modal,
             },
         )
         .render(request=request)
@@ -548,10 +545,11 @@ def render_player_streams(request, current_episode, next_episode):
         yield TurboStream("modal").update.render()
 
     if current_episode:
-        for is_modal in (True, False):
-            yield render_player_toggle(
-                request, current_episode, False, is_modal=is_modal
-            )
+        yield render_player_toggle(
+            request,
+            current_episode,
+            False,
+        )
 
     if next_episode is None:
         yield TurboStream("player-controls").remove.render()
@@ -560,9 +558,7 @@ def render_player_streams(request, current_episode, next_episode):
 
         yield render_remove_from_queue(request, next_episode, has_more_items)
         yield render_queue_toggle(request, next_episode, False)
-
-        for is_modal in (True, False):
-            yield render_player_toggle(request, next_episode, True, is_modal=is_modal)
+        yield render_player_toggle(request, next_episode, True)
 
         yield TurboStream("player").update.template(
             "episodes/_player_controls.html",

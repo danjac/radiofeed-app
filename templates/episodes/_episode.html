@@ -3,15 +3,6 @@
 <section class="mb-3 p-2 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
          id="{{ dom_id|default:episode.dom.episode }}"
          {% block extra_attrs %}{% endblock %}>
-  <h2 class="sm:hidden text-sm mb-1 truncate">
-    <a href="{{ episode_url }}"
-       class="link"
-       data-turbo-frame="_top"
-       title="{{ episode_title }}">
-      {{ episode_title_trunc }}
-    </a>
-  </h2>
-
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-2">
 
@@ -24,10 +15,8 @@
 
       <div class="space-y-1">
         <div class="flex items-center space-x-2">
-          {% is_playing episode as is_playing %}
-          {% include "episodes/_player_toggle.html" %}
           <div class="space-y-2">
-            <h2 class="hidden sm:block max-w-md lg:max-w-full text-sm truncate">
+            <h2 class="w-52 sm:w-96 md:w-full text-sm truncate">
               <a href="{{ episode_url }}"
                  class="link"
                  data-turbo-frame="_top"
