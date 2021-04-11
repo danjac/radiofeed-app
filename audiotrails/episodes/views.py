@@ -86,7 +86,7 @@ def search_episodes(request):
         request,
         episodes,
         "episodes/search.html",
-        cached=request.user.is_anonymous,
+        cached=True,
     )
 
 
