@@ -39,42 +39,42 @@ def user_preferences(request):
 
 @login_required
 def export_podcast_feeds(request):
-    if request.method == "POST":
-        # set a max limit of 500 for now to prevent a DOS attack
-        podcasts = (
-            Podcast.objects.filter(follow__user=request.user, pub_date__isnull=False)
-            .distinct()
-            .order_by("-pub_date")
-        )[:500]
+    if request.method != "POST":
+        return TemplateResponse(request, "account/export_podcast_feeds.html")
 
-        filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}"
+    # set a max limit of 500 for now to prevent a DOS attack
+    podcasts = (
+        Podcast.objects.filter(follow__user=request.user, pub_date__isnull=False)
+        .distinct()
+        .order_by("-pub_date")
+    )[:500]
 
-        if request.POST.get("format") == "opml":
-            response = TemplateResponse(
-                request,
-                "account/opml.xml",
-                {"podcasts": podcasts},
-                content_type="application/xml",
+    filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}"
+
+    if request.POST.get("format") == "opml":
+        response = TemplateResponse(
+            request,
+            "account/opml.xml",
+            {"podcasts": podcasts},
+            content_type="application/xml",
+        )
+        response["Content-Disposition"] = f"attachment; filename={filename}.xml"
+        return response
+    else:
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f"attachment; filename={filename}.csv"
+        writer = csv.writer(response)
+        writer.writerow(["Title", "RSS", "Website", "Published"])
+        for podcast in podcasts:
+            writer.writerow(
+                [
+                    podcast.title,
+                    podcast.rss,
+                    podcast.link,
+                    podcast.pub_date.strftime("%Y-%m-%d"),
+                ]
             )
-            response["Content-Disposition"] = f"attachment; filename={filename}.xml"
-            return response
-        else:
-            response = HttpResponse(content_type="text/csv")
-            response["Content-Disposition"] = f"attachment; filename={filename}.csv"
-            writer = csv.writer(response)
-            writer.writerow(["Title", "RSS", "Website", "Published"])
-            for podcast in podcasts:
-                writer.writerow(
-                    [
-                        podcast.title,
-                        podcast.rss,
-                        podcast.link,
-                        podcast.pub_date.strftime("%Y-%m-%d"),
-                    ]
-                )
-            return response
-
-    return TemplateResponse(request, "account/export_podcast_feeds.html")
+    return response
 
 
 @login_required
