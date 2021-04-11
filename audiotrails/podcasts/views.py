@@ -136,7 +136,7 @@ def episodes(request, podcast_id, slug=None):
         episodes,
         "podcasts/episodes.html",
         context,
-        cached=request.user.is_anonymous,
+        cached=True,
     )
 
 
