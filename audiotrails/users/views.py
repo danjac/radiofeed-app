@@ -58,20 +58,21 @@ def export_podcast_feeds(request):
             content_type="application/xml",
         )
         response["Content-Disposition"] = f"attachment; filename={filename}.xml"
-    else:
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = f"attachment; filename={filename}.csv"
-        writer = csv.writer(response)
-        writer.writerow(["Title", "RSS", "Website", "Published"])
-        for podcast in podcasts:
-            writer.writerow(
-                [
-                    podcast.title,
-                    podcast.rss,
-                    podcast.link,
-                    podcast.pub_date.strftime("%Y-%m-%d"),
-                ]
-            )
+        return response
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f"attachment; filename={filename}.csv"
+    writer = csv.writer(response)
+    writer.writerow(["Title", "RSS", "Website", "Published"])
+    for podcast in podcasts:
+        writer.writerow(
+            [
+                podcast.title,
+                podcast.rss,
+                podcast.link,
+                podcast.pub_date.strftime("%Y-%m-%d"),
+            ]
+        )
     return response
 
 
@@ -79,9 +80,6 @@ def export_podcast_feeds(request):
 def user_stats(request):
 
     logs = AudioLog.objects.filter(user=request.user)
-    follows = Follow.objects.filter(user=request.user)
-    favorites = Favorite.objects.filter(user=request.user)
-    queue_items = QueueItem.objects.filter(user=request.user)
 
     return TemplateResponse(
         request,
@@ -91,9 +89,9 @@ def user_stats(request):
                 "listened": logs.count(),
                 "in_progress": logs.filter(completed__isnull=True).count(),
                 "completed": logs.filter(completed__isnull=False).count(),
-                "follows": follows.count(),
-                "in_queue": queue_items.count(),
-                "favorites": favorites.count(),
+                "follows": Follow.objects.filter(user=request.user).count(),
+                "in_queue": QueueItem.objects.filter(user=request.user).count(),
+                "favorites": Favorite.objects.filter(user=request.user).count(),
             },
         },
     )
