@@ -48,6 +48,12 @@
 .markdown li ol {
   @apply mr-2;
 }
+
+.markdown li div,
+.markdown li p {
+  @apply inline-block;
+}
+
 /* img might have src stripped out if unsafe */
 .markdown img:not([src]) {
   @apply hidden;
