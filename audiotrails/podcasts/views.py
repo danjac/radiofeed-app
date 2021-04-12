@@ -10,7 +10,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
 from audiotrails.episodes.views import render_episode_list_response
-from audiotrails.middleware import RedirectException
 from audiotrails.pagination import render_paginated_response
 
 from . import itunes
@@ -256,7 +255,10 @@ def preview(request, podcast_id):
 @require_POST
 def follow(request, podcast_id):
 
-    podcast = get_podcast_or_404(request, podcast_id, auth_required=True)
+    podcast = get_podcast_or_404(request, podcast_id)
+
+    if request.user.is_anonymous:
+        return redirect_podcast_to_login(podcast)
 
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
@@ -268,17 +270,17 @@ def follow(request, podcast_id):
 @require_POST
 def unfollow(request, podcast_id):
 
-    podcast = get_podcast_or_404(request, podcast_id, auth_required=True)
+    podcast = get_podcast_or_404(request, podcast_id)
+
+    if request.user.is_anonymous:
+        return redirect_podcast_to_login(podcast)
 
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, False)
 
 
-def get_podcast_or_404(request, podcast_id, auth_required=False):
-    podcast = get_object_or_404(Podcast, pk=podcast_id)
-    if auth_required and not request.user.is_authenticated:
-        raise RedirectException(redirect_to_login(podcast.get_absolute_url()))
-    return podcast
+def get_podcast_or_404(request, podcast_id):
+    return get_object_or_404(Podcast, pk=podcast_id)
 
 
 def get_podcast_detail_context(
@@ -294,6 +296,10 @@ def get_podcast_detail_context(
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
+
+
+def redirect_podcast_to_login(podcast):
+    return redirect_to_login(podcast.get_absolute_url())
 
 
 def render_follow_response(request, podcast, is_following):

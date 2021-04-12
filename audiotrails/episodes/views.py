@@ -14,7 +14,6 @@ from django.views.decorators.http import require_POST
 from turbo_response import Action, TurboFrame, TurboStream
 from turbo_response.decorators import turbo_stream_response
 
-from audiotrails.middleware import RedirectException
 from audiotrails.pagination import render_paginated_response
 from audiotrails.podcasts.models import Podcast
 
@@ -147,7 +146,10 @@ def history(request):
 
 @require_POST
 def remove_audio_log(request, episode_id):
-    episode = get_episode_or_404(request, episode_id, auth_required=True)
+    episode = get_episode_or_404(request, episode_id)
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     logs = get_audio_logs(request)
 
@@ -178,9 +180,10 @@ def favorites(request):
 @require_POST
 @turbo_stream_response
 def add_favorite(request, episode_id):
-    episode = get_episode_or_404(
-        request, episode_id, with_podcast=True, auth_required=True
-    )
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
@@ -204,7 +207,10 @@ def add_favorite(request, episode_id):
 @require_POST
 @turbo_stream_response
 def remove_favorite(request, episode_id):
-    episode = get_episode_or_404(request, episode_id, auth_required=True)
+    episode = get_episode_or_404(request, episode_id)
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     favorites = get_favorites(request)
     favorites.filter(episode=episode).delete()
@@ -234,9 +240,10 @@ def queue(request):
 @turbo_stream_response
 def add_to_queue(request, episode_id):
 
-    episode = get_episode_or_404(
-        request, episode_id, with_podcast=True, auth_required=True
-    )
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     items = get_queue_items(request)
 
@@ -275,7 +282,10 @@ def add_to_queue(request, episode_id):
 @require_POST
 @turbo_stream_response
 def remove_from_queue(request, episode_id):
-    episode = get_episode_or_404(request, episode_id, auth_required=True)
+    episode = get_episode_or_404(request, episode_id)
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     has_more_items = delete_queue_item(request, episode)
 
@@ -317,10 +327,12 @@ def start_player(
     episode = get_episode_or_404(
         request,
         episode_id,
-        auth_required=True,
         with_podcast=True,
         with_current_time=True,
     )
+
+    if request.user.is_anonymous:
+        return redirect_episode_to_login(episode)
 
     return render_player_response(
         request,
@@ -394,17 +406,13 @@ def get_episode_or_404(
     *,
     with_podcast=False,
     with_current_time=False,
-    auth_required=False,
 ):
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
     if with_current_time:
         qs = qs.with_current_time(request.user)
-    episode = get_object_or_404(qs, pk=episode_id)
-    if auth_required and not request.user.is_authenticated:
-        raise RedirectException(redirect_to_login(episode.get_absolute_url()))
-    return episode
+    return get_object_or_404(qs, pk=episode_id)
 
 
 def get_episode_detail_context(request, episode, extra_context=None):
@@ -485,6 +493,10 @@ def render_player_toggle(request, episode, is_playing):
         )
         .render(request=request)
     )
+
+
+def redirect_episode_to_login(episode):
+    return redirect_to_login(episode.get_absolute_url())
 
 
 def render_episode_list_response(

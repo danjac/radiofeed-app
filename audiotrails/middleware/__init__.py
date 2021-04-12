@@ -9,19 +9,6 @@ class BaseMiddleware:
         return self.get_response(request)
 
 
-class RedirectException(Exception):
-    def __init__(self, response, *args, **kwargs):
-        self.response = response
-        super().__init__(*args, **kwargs)
-
-
-class RedirectExceptionMiddleware(BaseMiddleware):
-    def process_exception(self, request, exception):
-        if isinstance(exception, RedirectException):
-            return exception.response
-        return None
-
-
 class Search:
     search_param = "q"
 
