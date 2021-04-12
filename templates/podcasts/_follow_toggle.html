@@ -7,11 +7,11 @@
   {% if is_following %}
   {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" %}
   {% else %}
-  {% button "Follow" icon="eye" title="Follow this podcast" %}
+  {% button "Follow" icon="eye" type="primary" title="Follow this podcast" %}
   {% endif %}
 </form>
 {% else %}
 <div class="flex items-center">
-  {% button "Follow" icon="eye" title="Login or signup to follow this podcast" href=podcast.get_absolute_url|login_url data_turbo_frame="_top" %}
+  {% button "Follow" icon="eye" type="primary" title="Login or signup to follow this podcast" href=podcast.get_absolute_url|login_url data_turbo_frame="_top" %}
 </div>
 {% endif %}

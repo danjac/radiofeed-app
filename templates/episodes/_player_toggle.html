@@ -8,12 +8,12 @@
     {% if is_playing %}
     {% button "Close Player" icon="stop" type="secondary" title="Close Player" %}
     {% else %}
-    {% button "Play Episode" icon="play" type="tag" title="Open Episode in Player" %}
+    {% button "Play Episode" icon="play" type="primary" title="Open Episode in Player" %}
     {% endif %}
   </div>
 </form>
 {% else %}
 <div class="flex items-center">
-  {% button "Play Episode" icon="play" type="tag" title="Login or signup to play this episode" href=episode.get_absolute_url|login_url  data_turbo_target="_top" %}
+  {% button "Play Episode" icon="play" type="primary" title="Login or signup to play this episode" href=episode.get_absolute_url|login_url  data_turbo_target="_top" %}
 </div>
 {% endif %}
