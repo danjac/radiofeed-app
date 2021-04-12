@@ -1,5 +1,5 @@
 {% extends "podcasts/podcast_detail_base.html" %}
-{% load cache podcasts %}
+{% load podcasts %}
 
 {% block podcast_content %}
 {% if not search %}
@@ -63,22 +63,8 @@
   </blockquote>
 
   {% include "podcasts/_disclaimer.html" %}
+  {% include "podcasts/_categories.html" %}
 
-  {% cache 3600 podcast-categories podcast.id %}
-  {% with categories=podcast.categories.all %}
-  {% if categories %}
-  <div class="space-y-2">
-    {% for category in categories %}
-    <div class="inline-block">
-      {% with css_class=forloop.last|yesno:",mr-2" %}
-      {% button category.name icon="tag" type="link" title=category.name href=category.get_absolute_url css_class=css_class %}
-      {% endwith %}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-  {% endwith %}
-  {% endcache %}
 </div>
 {% endif %}
 
