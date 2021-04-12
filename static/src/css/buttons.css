@@ -53,6 +53,14 @@ form.submitting .btn-secondary {
   @apply bg-red-600;
 }
 
+.btn-link {
+  @apply border border-gray-500 text-gray-800 dark:text-white;
+}
+
+.btn-link:hover {
+  @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-300;
+}
+
 .btn-icon {
   @apply h-4 w-4;
 }

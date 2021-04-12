@@ -71,7 +71,7 @@
     {% for category in categories %}
     <div class="inline-block">
       {% with css_class=forloop.last|yesno:",mr-2" %}
-      {% button category.name icon="tag" type="secondary" title=category.name href=category.get_absolute_url css_class=css_class %}
+      {% button category.name icon="tag" type="link" title=category.name href=category.get_absolute_url css_class=css_class %}
       {% endwith %}
     </div>
     {% endfor %}
