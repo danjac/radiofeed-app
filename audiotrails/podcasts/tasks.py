@@ -31,28 +31,21 @@ def send_recommendation_emails():
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds():
-    # ignore any with persistent errors
-
     podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
 
-    # get podcasts that haven't been synced yet
-    for rss in (
-        podcasts.filter(last_updated__isnull=True)
-        .values_list("rss", flat=True)
-        .iterator()
-    ):
-        sync_podcast_feed.delay(rss)
-
-    # get podcasts not updated in last 12 hours
-    for rss in (
+    querysets = (
+        # new podcasts
+        podcasts.filter(last_updated__isnull=True),
+        # podcasts updated > 12 hours ago
         podcasts.filter(
             last_updated__isnull=False,
             last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
-        )
-        .values_list("rss", flat=True)
-        .iterator()
-    ):
-        sync_podcast_feed.delay(rss)
+        ),
+    )
+
+    for qs in querysets:
+        for rss in qs.values_list("rss", flat=True).iterator():
+            sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="audiotrails.podcasts.create_podcast_recommendations")
