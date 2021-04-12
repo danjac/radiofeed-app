@@ -245,38 +245,35 @@ def add_to_queue(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    items = get_queue_items(request)
-
-    position = items.aggregate(Max("position"))["position__max"] or 0
-
-    try:
-        new_item = QueueItem.objects.create(
-            user=request.user, episode=episode, position=position + 1
-        )
-    except IntegrityError:
-        new_item = None
-
     streams = [
         render_queue_toggle(request, episode, is_queued=True),
         render_play_next(request, True),
     ]
 
-    if new_item:
-        streams.append(
-            TurboStream("queue")
-            .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
-            .template(
-                "episodes/_queue_item.html",
-                {
-                    "episode": episode,
-                    "item": new_item,
-                    "dom_id": episode.dom.queue,
-                },
-            )
-            .render(request=request)
-        )
+    items = get_queue_items(request)
 
-    return streams
+    try:
+        new_item = QueueItem.objects.create(
+            user=request.user,
+            episode=episode,
+            position=(items.aggregate(Max("position"))["position__max"] or 0) + 1,
+        )
+    except IntegrityError:
+        return streams
+
+    return streams + [
+        TurboStream("queue")
+        .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
+        .template(
+            "episodes/_queue_item.html",
+            {
+                "episode": episode,
+                "item": new_item,
+                "dom_id": episode.dom.queue,
+            },
+        )
+        .render(request=request)
+    ]
 
 
 @require_POST
