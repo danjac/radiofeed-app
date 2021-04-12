@@ -51,8 +51,9 @@ def get_last_modified_date(headers):
 
 
 def should_update(podcast, etag, last_modified, force_update):
-    if force_update or not podcast.pub_date:
-        return True
-    if etag and etag != podcast.etag:
-        return True
-    return last_modified and last_modified > podcast.pub_date
+    return (
+        force_update
+        or podcast.pub_date is None
+        or (etag and etag != podcast.etag)
+        or (last_modified and last_modified > podcast.pub_date),
+    )
