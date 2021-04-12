@@ -22,10 +22,9 @@ def crawl_itunes(limit=300):
 
 @shared_task(name="audiotrails.podcasts.send_recommendation_emails")
 def send_recommendation_emails():
-    users = get_user_model().objects.filter(
+    for user in get_user_model().objects.filter(
         send_recommendations_email=True, is_active=True
-    )
-    for user in users:
+    ):
         send_recommendations_email(user)
 
 
