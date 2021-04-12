@@ -543,7 +543,7 @@ def render_player_response(
 def render_player_streams(request, current_episode, next_episode):
 
     if request.POST.get("is_modal"):
-        yield TurboStream("modal").remove.render()
+        yield TurboStream("modal").update.render()
 
     if current_episode:
         yield render_player_toggle(
