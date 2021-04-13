@@ -94,18 +94,16 @@ def preview(request, episode_id):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    if request.turbo.frame:
-
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "episodes/_preview.html",
-                get_episode_detail_context(request, episode),
-            )
-            .response(request)
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "episodes/_preview.html",
+            get_episode_detail_context(request, episode),
         )
-
-    return redirect(episode.get_absolute_url())
+        .response(request)
+        if request.turbo.frame
+        else redirect(episode.get_absolute_url())
+    )
 
 
 def episode_detail(request, episode_id, slug=None):

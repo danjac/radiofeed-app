@@ -237,8 +237,8 @@ def podcast_cover_image(request, podcast_id):
 def preview(request, podcast_id):
     podcast = get_podcast_or_404(request, podcast_id)
 
-    if request.turbo.frame:
-        return (
+    return (
+        (
             TurboFrame(request.turbo.frame)
             .template(
                 "podcasts/_preview.html",
@@ -249,7 +249,9 @@ def preview(request, podcast_id):
             )
             .response(request)
         )
-    return redirect(podcast.get_absolute_url())
+        if request.turbo.frame
+        else redirect(podcast.get_absolute_url())
+    )
 
 
 @require_POST
