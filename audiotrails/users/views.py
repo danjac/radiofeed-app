@@ -9,7 +9,6 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from turbo_response import TurboStream, redirect_303, render_form_response
 
@@ -17,6 +16,7 @@ from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
 from audiotrails.podcasts.models import Follow, Podcast
 
 from .forms import UserPreferencesForm
+from .utils import get_redirect_url
 
 
 @login_required
@@ -121,16 +121,3 @@ def accept_cookies(request):
         samesite="Lax",
     )
     return response
-
-
-def get_redirect_url(
-    request,
-    redirect_url_param="redirect_url",
-    default_url=settings.HOME_URL,
-):
-    redirect_url = request.POST.get(redirect_url_param)
-    if redirect_url and url_has_allowed_host_and_scheme(
-        redirect_url, {request.get_host()}, request.is_secure()
-    ):
-        return redirect_url
-    return default_url
