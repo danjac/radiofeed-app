@@ -1,4 +1,3 @@
-{% if user.is_authenticated %}
 <form method="POST"
       data-turbo-frame="_top"
       id="{{ episode.dom.player_toggle }}"
@@ -17,8 +16,3 @@
     {% endif %}
   </div>
 </form>
-{% else %}
-<div class="flex items-center">
-  {% button "Play Episode" icon="play" type="primary" title="Login or signup to play this episode" href=episode.get_absolute_url|login_url  data_turbo_frame="_top" %}
-</div>
-{% endif %}
