@@ -60,7 +60,7 @@ class EpisodeQuerySet(FastCountMixin, models.QuerySet):
         ).filter(search_vector=query)
 
 
-EpisodeManager: models.Manager = models.Manager.from_queryset(EpisodeQuerySet)
+EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 
 class Episode(models.Model):
@@ -217,7 +217,7 @@ class FavoriteQuerySet(models.QuerySet):
         )
 
 
-FavoriteManager: models.Manager = models.Manager.from_queryset(FavoriteQuerySet)
+FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 
 class Favorite(TimeStampedModel):
@@ -255,7 +255,7 @@ class AudioLogQuerySet(models.QuerySet):
         )
 
 
-AudioLogManager: models.Manager = models.Manager.from_queryset(AudioLogQuerySet)
+AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 
 class AudioLog(TimeStampedModel):
@@ -289,7 +289,7 @@ class QueueItemQuerySet(models.QuerySet):
         )
 
 
-QueueItemManager: models.Manager = models.Manager.from_queryset(QueueItemQuerySet)
+QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
