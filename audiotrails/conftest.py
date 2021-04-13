@@ -1,11 +1,9 @@
 import pytest
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.http import HttpResponse
-from django.test import Client
 
 from audiotrails.episodes.factories import (
     AudioLogFactory,
@@ -48,7 +46,7 @@ def password():
 
 
 @pytest.fixture
-def login_user(client: Client, user: settings.AUTH_USER_MODEL):
+def login_user(client, user):
     client.force_login(user)
     return user
 
