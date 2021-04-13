@@ -107,8 +107,6 @@ PodcastManager: models.Manager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    id = models.BigAutoField(primary_key=True)
-
     rss = models.URLField(unique=True, max_length=500)
     etag = models.TextField(blank=True)
     title = models.TextField()
@@ -228,7 +226,6 @@ class Podcast(models.Model):
 
 
 class Follow(TimeStampedModel):
-    id = models.BigAutoField(primary_key=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
@@ -285,7 +282,6 @@ RecommendationManager: models.Manager = models.Manager.from_queryset(
 
 
 class Recommendation(models.Model):
-    id = models.BigAutoField(primary_key=True)
 
     podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
     recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)

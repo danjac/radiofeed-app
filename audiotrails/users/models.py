@@ -52,8 +52,6 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
 
 class User(AbstractUser):
-    id = models.BigAutoField(primary_key=True)
-
     send_recommendations_email = models.BooleanField(default=True)
 
     objects = UserManager()
