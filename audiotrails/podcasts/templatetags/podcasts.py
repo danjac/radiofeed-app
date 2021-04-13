@@ -1,14 +1,6 @@
 from django import template
-from django.utils import timezone
-
-from ..models import Podcast
 
 register = template.Library()
-
-
-@register.simple_tag
-def get_promoted_podcasts(limit):
-    return get_available_podcasts().filter(promoted=True).order_by("-pub_date")[:limit]
 
 
 @register.inclusion_tag("podcasts/_cover_image.html")
@@ -31,9 +23,3 @@ def cover_image(
         "img_size": size,
         "attrs": attrs,
     }
-
-
-def get_available_podcasts():
-    return Podcast.objects.filter(
-        pub_date__isnull=False, cover_image__isnull=False, pub_date__lt=timezone.now()
-    ).exclude(cover_image="")

@@ -2,17 +2,9 @@ import pytest
 
 from ..factories import PodcastFactory
 from ..models import _cover_image_placeholder
-from ..templatetags.podcasts import cover_image, get_promoted_podcasts
+from ..templatetags.podcasts import cover_image
 
 pytestmark = pytest.mark.django_db
-
-
-class TestGetPromotedPodcasts:
-    def test_get_podcasts(self):
-        PodcastFactory(cover_image="test.jpg", promoted=False)
-        PodcastFactory.create_batch(2, cover_image="test.jpg", promoted=True)
-        podcasts = get_promoted_podcasts(3)
-        assert len(podcasts) == 2
 
 
 class TestCoverImage:
