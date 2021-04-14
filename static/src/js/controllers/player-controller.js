@@ -121,11 +121,13 @@ export default class extends Controller {
         this.stopButtonTarget.click();
         return;
       case 'Tab':
-        event.preventDefault();
-        if (this.hasPlayNextButtonTarget) {
-          this.playNextButtonTarget.click();
+        if (event.shiftKey) {
+          event.preventDefault();
+          if (this.hasPlayNextButtonTarget) {
+            this.playNextButtonTarget.click();
+          }
+          return;
         }
-        return;
       default:
     }
 
