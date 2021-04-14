@@ -1,0 +1,3 @@
+- name: Clear Django sessions
+  shell: |
+    dokku --rm run {{ app_name }} ./manage.py clearsessions

@@ -5,6 +5,7 @@
   gather_facts: no
   roles:
     # - pg-backup
+    - clear-sessions
     - pg-vacuum
     - docker
     - apt-update
