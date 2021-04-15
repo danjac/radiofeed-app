@@ -40,10 +40,10 @@ def index(request, featured=False):
         "podcasts/index.html",
         {
             "show_promotions": show_promotions,
-            "has_follows": (follows),
+            "has_follows": follows,
             "search_url": reverse("podcasts:search_podcasts"),
         },
-        cached=request.user.is_anonymous,
+        cached=show_promotions,
     )
 
 
