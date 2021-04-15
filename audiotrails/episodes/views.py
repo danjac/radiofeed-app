@@ -573,13 +573,11 @@ def render_player_streams(request, current_episode, next_episode):
             False,
         )
 
-    if next_episode:
-        has_more_items = delete_queue_item(request, next_episode)
+    has_more_items = delete_queue_item(request, next_episode) if next_episode else False
 
+    if next_episode:
         yield render_remove_from_queue(request, next_episode, has_more_items)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
-    else:
-        has_more_items = False
 
     yield render_player_controls(request, next_episode, has_more_items)
