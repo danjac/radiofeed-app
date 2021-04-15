@@ -567,11 +567,7 @@ def render_player_streams(request, current_episode, next_episode):
         yield TurboStream("modal").update.render()
 
     if current_episode:
-        yield render_player_toggle(
-            request,
-            current_episode,
-            False,
-        )
+        yield render_player_toggle(request, current_episode, False)
 
     has_more_items = delete_queue_item(request, next_episode) if next_episode else False
 
