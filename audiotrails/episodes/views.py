@@ -515,21 +515,17 @@ def render_episode_list_response(
     extra_context=None,
     cached=False,
 ):
-
-    extra_context = extra_context or {}
-
-    if cached:
-        extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
-        pagination_template_name = "episodes/_episodes_cached.html"
-    else:
-        pagination_template_name = "episodes/_episodes.html"
-
     return render_paginated_response(
         request,
         episodes,
         template_name,
-        pagination_template_name,
-        extra_context,
+        pagination_template_name="episodes/_episodes_cached.html"
+        if cached
+        else "episodes/_episodes.html",
+        extra_context={
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            **(extra_context or {}),
+        },
     )
 
 

@@ -324,14 +324,15 @@ def render_podcast_list_response(
     cached=False,
 ):
 
-    extra_context = extra_context or {}
-
-    if cached:
-        extra_context["cache_timeout"] = settings.DEFAULT_CACHE_TIMEOUT
-        pagination_template_name = "podcasts/_podcasts_cached.html"
-    else:
-        pagination_template_name = "podcasts/_podcasts.html"
-
     return render_paginated_response(
-        request, podcasts, template_name, pagination_template_name, extra_context
+        request,
+        podcasts,
+        template_name,
+        pagination_template_name="podcasts/_podcasts_cached.html"
+        if cached
+        else "podcasts/_podcasts.html",
+        extra_context={
+            "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            **(extra_context or {}),
+        },
     )
