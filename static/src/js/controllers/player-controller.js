@@ -31,11 +31,6 @@ export default class extends Controller {
   // events
 
   async initialize() {
-    // Audio object is used instead of <audio> element to prevent resets
-    // and skips with page transitions
-    //
-    //this.initAudio();
-
     this.playbackRateValue = this.playbackRateValue || 1.0;
 
     this.pausedValue = !this.enabled;
@@ -355,51 +350,15 @@ export default class extends Controller {
     }
   }
 
-  /*
-  initAudio() {
-    if (!this.audio) {
-      this.audio = new Audio();
-      this.audio.preload = 'metadata';
-
-      this.audioListeners = {
-        canplaythrough: this.canPlay.bind(this),
-        ended: this.ended.bind(this),
-        loadedmetadata: this.loadedMetaData.bind(this),
-        play: this.resumed.bind(this),
-        playing: this.canPlay.bind(this),
-        pause: this.paused.bind(this),
-        seeking: this.wait.bind(this),
-        suspend: this.wait.bind(this),
-        stalled: this.wait.bind(this),
-        waiting: this.wait.bind(this),
-        error: this.wait.bind(this),
-        timeupdate: this.timeUpdate.bind(this),
-      };
-      Object.keys(this.audioListeners).forEach((event) =>
-        this.audio.addEventListener(event, this.audioListeners[event])
-      );
-    }
-  }
-  */
-
   closeAudio() {
     if (this.hasAudioTarget) {
-      /*
-      Object.keys(this.audioListeners || {}).forEach((event) =>
-        this.audio.removeEventListener(event, this.audioListeners[event])
-      );
-      */
-
       this.audioTarget.src = '';
       this.audioTarget.pause();
-      //this.audio = null;
       this.enabled = false;
     }
   }
 
   openPlayer({ mediaUrl, currentTime, metadata }) {
-    //this.initAudio();
-
     this.metadataValue = metadata || {};
 
     this.audioTarget.src = this.mediaUrlValue = mediaUrl;
