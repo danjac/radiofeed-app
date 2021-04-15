@@ -490,6 +490,20 @@ def render_player_toggle(request, episode, is_playing):
     )
 
 
+def render_player_controls(request, episode, has_more_items):
+    return (
+        TurboStream("player-controls")
+        .replace.template(
+            "episodes/_player_controls.html",
+            {
+                "episode": episode,
+                "has_next": has_more_items,
+            },
+        )
+        .render(request=request)
+    )
+
+
 def redirect_episode_to_login(episode):
     return redirect_to_login(episode.get_absolute_url())
 
@@ -559,19 +573,13 @@ def render_player_streams(request, current_episode, next_episode):
             False,
         )
 
-    if next_episode is None:
-        yield TurboStream("player-controls").remove.render()
-    else:
+    if next_episode:
         has_more_items = delete_queue_item(request, next_episode)
 
         yield render_remove_from_queue(request, next_episode, has_more_items)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
+    else:
+        has_more_items = False
 
-        yield TurboStream("player").update.template(
-            "episodes/_player_controls.html",
-            {
-                "episode": next_episode,
-                "has_next": has_more_items,
-            },
-        ).render(request=request)
+    yield render_player_controls(request, next_episode, has_more_items)

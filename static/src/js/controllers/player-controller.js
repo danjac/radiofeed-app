@@ -34,16 +34,16 @@ export default class extends Controller {
     // Audio object is used instead of <audio> element to prevent resets
     // and skips with page transitions
     //
-    this.initAudio();
+    //this.initAudio();
 
     this.playbackRateValue = this.playbackRateValue || 1.0;
 
-    this.audio.currentTime = this.currentTimeValue;
-    this.audio.src = this.mediaUrlValue;
-
     this.pausedValue = !this.enabled;
 
-    if (this.audio && this.mediaUrlValue) {
+    if (this.hasAudioTarget && this.mediaUrlValue) {
+      this.audioTarget.currentTime = this.currentTimeValue;
+      this.audioTarget.src = this.mediaUrlValue;
+
       if (this.pausedValue) {
         this.pause();
       } else {
@@ -81,12 +81,12 @@ export default class extends Controller {
   }
 
   loadedMetaData() {
-    this.durationValue = this.audio.duration;
+    this.durationValue = this.audioTarget.duration;
   }
 
   async play() {
     try {
-      await this.audio.play();
+      await this.audioTarget.play();
     } catch (e) {
       console.error(e);
       this.pausedValue = true;
@@ -94,7 +94,7 @@ export default class extends Controller {
   }
 
   pause() {
-    this.audio.pause();
+    this.audioTarget.pause();
   }
 
   shortcuts(event) {
@@ -171,7 +171,7 @@ export default class extends Controller {
 
   timeUpdate() {
     // playing time update
-    const { currentTime } = this.audio;
+    const { currentTime } = this.audioTarget;
     this.currentTimeValue = currentTime;
     this.waitingValue = false;
   }
@@ -200,11 +200,11 @@ export default class extends Controller {
   }
 
   skipBack() {
-    this.skipTo(this.audio.currentTime - 10);
+    this.skipTo(this.audioTarget.currentTime - 10);
   }
 
   skipForward() {
-    this.skipTo(this.audio.currentTime + 10);
+    this.skipTo(this.audioTarget.currentTime + 10);
   }
 
   // observers
@@ -236,8 +236,8 @@ export default class extends Controller {
   }
 
   playbackRateValueChanged() {
-    if (this.audio) {
-      this.audio.playbackRate = this.playbackRateValue;
+    if (this.hasAudioTarget) {
+      this.audioTarget.playbackRate = this.playbackRateValue;
     }
     if (this.hasPlaybackRateTarget) {
       this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1) + 'x';
@@ -338,7 +338,7 @@ export default class extends Controller {
 
   skipTo(position) {
     if (!isNaN(position) && !this.pausedValue && !this.waitingValue) {
-      this.audio.currentTime = this.currentTimeValue = position;
+      this.audioTarget.currentTime = this.currentTimeValue = position;
     }
   }
 
@@ -355,6 +355,7 @@ export default class extends Controller {
     }
   }
 
+  /*
   initAudio() {
     if (!this.audio) {
       this.audio = new Audio();
@@ -379,27 +380,30 @@ export default class extends Controller {
       );
     }
   }
+  */
 
   closeAudio() {
-    if (this.audio) {
+    if (this.hasAudioTarget) {
+      /*
       Object.keys(this.audioListeners || {}).forEach((event) =>
         this.audio.removeEventListener(event, this.audioListeners[event])
       );
+      */
 
-      this.audio.src = '';
-      this.audio.pause();
-      this.audio = null;
+      this.audioTarget.src = '';
+      this.audioTarget.pause();
+      //this.audio = null;
       this.enabled = false;
     }
   }
 
   openPlayer({ mediaUrl, currentTime, metadata }) {
-    this.initAudio();
+    //this.initAudio();
 
     this.metadataValue = metadata || {};
 
-    this.audio.src = this.mediaUrlValue = mediaUrl;
-    this.audio.currentTime = this.currentTimeValue = parseFloat(currentTime || 0);
+    this.audioTarget.src = this.mediaUrlValue = mediaUrl;
+    this.audioTarget.currentTime = this.currentTimeValue = parseFloat(currentTime || 0);
 
     this.play();
   }
