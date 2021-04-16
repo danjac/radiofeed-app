@@ -1,3 +1,4 @@
+import functools
 import http
 import json
 
@@ -361,18 +362,32 @@ def play_next_episode(request):
     )
 
 
-@require_POST
-def player_timeupdate(request):
-    """Update current play time of episode"""
+def handle_player_status_update(view):
+    @functools.wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if request.player:
+            try:
+                view(request, *args, **kwargs)
+            except (KeyError, ValueError):
+                return HttpResponseBadRequest("current_time missing or invalid")
+            return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+        return HttpResponseBadRequest("No player loaded")
 
-    if request.player:
-        try:
-            request.player.current_time = round(float(request.POST["current_time"]))
-            request.player.playback_rate = float(request.POST["playback_rate"])
-        except (KeyError, ValueError):
-            return HttpResponseBadRequest("current_time missing or invalid")
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-    return HttpResponseBadRequest("No player loaded")
+    return wrapper
+
+
+@require_POST
+@handle_player_status_update
+def player_update_current_time(request):
+    """Update current play time of episode"""
+    request.player.current_time = round(float(request.POST["current_time"]))
+
+
+@require_POST
+@handle_player_status_update
+def player_update_playback_rate(request):
+    """Update current playback rate of episode"""
+    request.player.playback_rate = float(request.POST["playback_rate"])
 
 
 def get_episode_or_404(

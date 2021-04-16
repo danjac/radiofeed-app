@@ -9,7 +9,8 @@
      data-player-active-class="player--active"
      data-player-inactive-class="player--inactive"
      data-player-csrf-token-value="{{ csrf_token }}"
-     data-player-timeupdate-url-value="{% url 'episodes:player_timeupdate' %}"
+     data-player-timeupdate-url-value="{% url 'episodes:player_update_current_time' %}"
+     data-player-playback-rate-url-value="{% url 'episodes:player_update_playback_rate' %}"
      {% if episode %}
      data-player-media-url-value="{{ episode.media_url }}"
      data-player-playback-rate-value="{{ player.playback_rate|default:1.0 }}"

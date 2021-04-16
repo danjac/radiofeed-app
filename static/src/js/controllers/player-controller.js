@@ -24,6 +24,7 @@ export default class extends Controller {
     metadata: Object,
     paused: Boolean,
     playbackRate: Number,
+    playbackRateUrl: String,
     timeupdateUrl: String,
     waiting: Boolean,
   };
@@ -235,6 +236,7 @@ export default class extends Controller {
     if (this.hasPlaybackRateTarget) {
       this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1) + 'x';
     }
+    this.postPlaybackRate();
   }
 
   metadataValueChanged() {
@@ -374,7 +376,7 @@ export default class extends Controller {
 
   startTimeUpdateTimer() {
     if (!this.timeupdateTimer) {
-      this.timeupdateTimer = setInterval(this.sendTimeUpdate.bind(this), 5000);
+      this.timeupdateTimer = setInterval(this.postTimeUpdate.bind(this), 5000);
     }
   }
 
@@ -385,20 +387,32 @@ export default class extends Controller {
     }
   }
 
-  sendTimeUpdate() {
+  postPlaybackRate() {
+    this.postData(this.playbackRateUrlValue, {
+      playback_rate: this.playbackRateValue.toFixed(1),
+    });
+  }
+
+  postTimeUpdate() {
     if (this.currentTimeValue) {
-      const body = new FormData();
-
-      body.append('csrfmiddlewaretoken', this.csrfTokenValue);
-      body.append('current_time', this.currentTimeValue.toString());
-      body.append('playback_rate', this.playbackRateValue.toFixed(1));
-
-      fetch(this.timeupdateUrlValue, {
-        body,
-        method: 'POST',
-        credentials: 'same-origin',
-      });
+      this.postData(this.timeupdateUrlValue, { current_time: this.currentTimeValue });
     }
+  }
+
+  postData(url, formData) {
+    const body = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      body.append(key, formData[key]);
+    });
+
+    body.append('csrfmiddlewaretoken', this.csrfTokenValue);
+
+    fetch(url, {
+      body,
+      method: 'POST',
+      credentials: 'same-origin',
+    });
   }
 
   isInputTarget(event) {
