@@ -56,13 +56,13 @@ export default class extends Controller {
     if (!headers || !headers.has('X-Media-Player')) {
       return;
     }
-    const { action, mediaUrl, currentTime, metadata } = JSON.parse(
+    const { action, mediaUrl, currentTime, playbackRate, metadata } = JSON.parse(
       headers.get('X-Media-Player')
     );
     if (action === 'stop') {
       this.closePlayer();
     } else {
-      this.openPlayer({ mediaUrl, currentTime, metadata });
+      this.openPlayer({ mediaUrl, currentTime, playbackRate, playbackRate, metadata });
     }
   }
 
@@ -354,8 +354,9 @@ export default class extends Controller {
     this.enabled = false;
   }
 
-  openPlayer({ mediaUrl, currentTime, metadata }) {
+  openPlayer({ mediaUrl, currentTime, playbackRate, metadata }) {
     this.metadataValue = metadata || {};
+    this.playbackRateValue = playbackRate;
 
     this.audioTarget.src = this.mediaUrlValue = mediaUrl;
     this.audioTarget.currentTime = this.currentTimeValue = parseFloat(currentTime || 0);

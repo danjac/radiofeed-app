@@ -245,7 +245,6 @@ class TestPlayerTimeUpdate:
             data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        assert client.session["player"]["playback_rate"] == 1.2
 
         log.refresh_from_db()
         assert log.current_time == 1030

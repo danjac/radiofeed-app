@@ -1,8 +1,4 @@
-import datetime
-
 import pytest
-
-from django.utils import timezone
 
 from ..factories import AudioLogFactory
 from ..player import Player
@@ -159,23 +155,3 @@ class TestPlayer:
     def test_is_playing_empty(self, rf, episode, user):
         player = self.make_player(rf, user=user)
         assert not player.is_playing(episode)
-
-    def test_create_audio_log_new(self, rf, episode, user):
-        player = self.make_player(rf, user=user)
-        log, created = player.create_audio_log(episode, current_time=1000)
-        assert created
-        assert log.current_time == 1000
-
-    def test_create_audio_log_existing(self, rf, episode, user):
-        last_logged_at = timezone.now() - datetime.timedelta(days=2)
-        player = self.make_player(rf, user=user)
-        AudioLogFactory(
-            user=user,
-            episode=episode,
-            current_time=1000,
-            updated=last_logged_at,
-        )
-        log, created = player.create_audio_log(episode, current_time=1030)
-        assert not created
-        assert log.current_time == 1030
-        assert log.updated > last_logged_at

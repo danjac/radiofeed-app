@@ -4,6 +4,7 @@ import json
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -319,21 +320,12 @@ def start_player(
     episode_id,
 ):
 
-    episode = get_episode_or_404(
-        request,
-        episode_id,
-        with_podcast=True,
-        with_current_time=True,
-    )
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    return render_player_response(
-        request,
-        episode,
-        current_time=0 if episode.completed else (episode.current_time or 0),
-    )
+    return render_player_response(request, episode)
 
 
 @require_POST
@@ -359,15 +351,12 @@ def play_next_episode(request):
         .first()
     ):
         next_episode = next_item.episode
-        current_time = next_item.current_time or 0
     else:
         next_episode = None
-        current_time = 0
 
     return render_player_response(
         request,
         next_episode=next_episode,
-        current_time=current_time,
         mark_completed=True,
     )
 
@@ -376,21 +365,12 @@ def play_next_episode(request):
 def player_timeupdate(request):
     """Update current play time of episode"""
 
-    if episode := request.player.episode:
+    if request.player:
         try:
-            current_time = round(float(request.POST["current_time"]))
+            request.player.current_time = round(float(request.POST["current_time"]))
+            request.player.playback_rate = float(request.POST["playback_rate"])
         except (KeyError, ValueError):
             return HttpResponseBadRequest("current_time missing or invalid")
-
-        try:
-            playback_rate = float(request.POST["playback_rate"])
-        except (KeyError, ValueError):
-            playback_rate = 1.0
-
-        request.player.update(
-            episode, current_time=current_time, playback_rate=playback_rate
-        )
-
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     return HttpResponseBadRequest("No player loaded")
 
@@ -518,27 +498,25 @@ def render_episode_list_response(
 def render_player_response(
     request,
     next_episode=None,
-    current_time=0,
     mark_completed=False,
 ):
     current_episode = request.player.eject(mark_completed=mark_completed)
 
-    if next_episode:
-        request.player.start(next_episode, current_time)
-
     response = render_player_streams(request, current_episode, next_episode)
 
-    response["X-Media-Player"] = json.dumps(
-        {"action": "stop"}
-        if next_episode is None
-        else {
+    if next_episode:
+        log = request.player.start(next_episode)
+        header_info = {
             "action": "start",
-            "currentTime": current_time,
+            "currentTime": log.current_time,
+            "playbackRate": log.playback_rate,
             "mediaUrl": next_episode.media_url,
             "metadata": next_episode.get_media_metadata(),
         }
-    )
+    else:
+        header_info = {"action": "stop"}
 
+    response["X-Media-Player"] = json.dumps(header_info, cls=DjangoJSONEncoder)
     return response
 
 

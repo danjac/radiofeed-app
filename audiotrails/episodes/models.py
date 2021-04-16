@@ -265,7 +265,9 @@ class AudioLog(TimeStampedModel):
     updated = models.DateTimeField()
     completed = models.DateTimeField(null=True, blank=True)
     current_time = models.IntegerField(default=0)
+
     is_playing = models.BooleanField(default=False)
+    playback_rate = models.DecimalField(default=1.0, max_digits=2, decimal_places=1)
 
     objects = AudioLogManager()
 
