@@ -369,9 +369,9 @@ def handle_player_status_update(view):
             try:
                 view(request, *args, **kwargs)
             except (KeyError, ValueError):
-                return HttpResponseBadRequest("current_time missing or invalid")
+                return HttpResponseBadRequest("missing or invalid data")
             return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-        return HttpResponseBadRequest("No player loaded")
+        return HttpResponseBadRequest("no player loaded")
 
     return wrapper
 
