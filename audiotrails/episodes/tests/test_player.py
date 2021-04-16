@@ -5,7 +5,6 @@ import pytest
 from django.utils import timezone
 
 from ..factories import AudioLogFactory
-from ..models import AudioLog
 from ..player import Player
 
 pytestmark = pytest.mark.django_db
@@ -18,46 +17,52 @@ class TestPlayer:
         req.session = session or {}
         return Player(req)
 
-    def test_empty(self, rf):
-        player = Player(rf)
-        player = self.make_player(rf)
+    def test_empty(self, rf, user):
+        player = self.make_player(rf, user)
         assert not player
-        assert player.get_episode() is None
+        assert player.episode is None
         assert player.current_time == 0
         assert player.playback_rate == 1.0
 
     def test_not_empty(self, rf, user, episode):
+        AudioLogFactory(
+            user=user,
+            episode=episode,
+            is_playing=True,
+            current_time=1000,
+        )
         player = self.make_player(
             rf,
             user=user,
             session={
                 "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
                     "playback_rate": 1.2,
                 }
             },
         )
         assert player
-        assert player.get_episode() == episode
+        assert player.episode == episode
         assert player.current_time == 1000
         assert player.playback_rate == 1.2
 
     def test_eject(self, rf, user, episode):
-        player = self.make_player(
-            rf,
+        log = AudioLogFactory(
             user=user,
-            session={
-                "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
-                    "playback_rate": 1.2,
-                }
-            },
+            episode=episode,
+            is_playing=True,
+            current_time=1000,
         )
+        session = {
+            "player": {
+                "playback_rate": 1.2,
+            }
+        }
+
+        player = self.make_player(rf, user=user, session=session)
 
         assert player.current_time == 1000
         assert player.playback_rate == 1.2
+
         current_episode = player.eject()
 
         assert current_episode == episode
@@ -66,21 +71,29 @@ class TestPlayer:
         assert player.current_time == 0
         assert player.playback_rate == 1.0
 
+        log.refresh_from_db()
+
+        assert not log.is_playing
+        assert not log.completed
+
     def test_eject_and_mark_completed(self, rf, user, episode):
-        player = self.make_player(
-            rf,
+        log = AudioLogFactory(
             user=user,
-            session={
-                "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
-                    "playback_rate": 1.2,
-                }
-            },
+            episode=episode,
+            is_playing=True,
+            current_time=1000,
         )
+        session = {
+            "player": {
+                "playback_rate": 1.2,
+            }
+        }
+
+        player = self.make_player(rf, user=user, session=session)
 
         assert player.current_time == 1000
         assert player.playback_rate == 1.2
+
         current_episode = player.eject(mark_completed=True)
 
         assert current_episode == episode
@@ -89,33 +102,35 @@ class TestPlayer:
         assert player.current_time == 0
         assert player.playback_rate == 1.0
 
-        log = AudioLog.objects.get(episode=episode, user=user)
+        log.refresh_from_db()
         assert log.completed
         assert log.current_time == 0
 
     def test_is_playing_true(self, rf, episode, user):
+        AudioLogFactory(
+            user=user,
+            episode=episode,
+            is_playing=True,
+            current_time=1000,
+        )
         player = self.make_player(
             rf,
             user=user,
-            session={
-                "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
-                    "playback_rate": 1.2,
-                }
-            },
         )
 
         assert player.is_playing(episode)
 
     def test_is_playing_anonymous(self, rf, episode, anonymous_user):
+        AudioLogFactory(
+            episode=episode,
+            is_playing=True,
+            current_time=1000,
+        )
         player = self.make_player(
             rf,
             user=anonymous_user,
             session={
                 "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
                     "playback_rate": 1.2,
                 }
             },
@@ -124,13 +139,16 @@ class TestPlayer:
         assert not player.is_playing(episode)
 
     def test_is_playing_false(self, rf, episode, user):
+        AudioLogFactory(
+            episode=episode,
+            is_playing=False,
+            current_time=1000,
+        )
         player = self.make_player(
             rf,
             user=user,
             session={
                 "player": {
-                    "episode": 12345,
-                    "current_time": 1000,
                     "playback_rate": 1.2,
                 }
             },
@@ -152,7 +170,10 @@ class TestPlayer:
         last_logged_at = timezone.now() - datetime.timedelta(days=2)
         player = self.make_player(rf, user=user)
         AudioLogFactory(
-            user=user, episode=episode, current_time=1000, updated=last_logged_at
+            user=user,
+            episode=episode,
+            current_time=1000,
+            updated=last_logged_at,
         )
         log, created = player.create_audio_log(episode, current_time=1030)
         assert not created

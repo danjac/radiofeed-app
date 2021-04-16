@@ -376,7 +376,7 @@ def play_next_episode(request):
 def player_timeupdate(request):
     """Update current play time of episode"""
 
-    if episode := request.player.get_episode():
+    if episode := request.player.episode:
         try:
             current_time = round(float(request.POST["current_time"]))
         except (KeyError, ValueError):
@@ -546,7 +546,7 @@ def render_player_response(
 def render_player_streams(request, current_episode, next_episode):
 
     if request.POST.get("is_modal"):
-        yield TurboStream("modal").update.render()
+        yield TurboStream("modal").replace.template("_modal.html").render()
 
     if current_episode:
         yield render_player_toggle(request, current_episode, False)

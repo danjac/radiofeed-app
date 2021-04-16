@@ -1,13 +1,12 @@
-from typing import Optional, TypedDict
+from typing import TypedDict
 
 from django.utils import timezone
+from django.utils.functional import cached_property
 
-from .models import AudioLog, Episode, QueueItem
+from .models import AudioLog, QueueItem
 
 
 class PlayerInfo(TypedDict):
-    episode: Optional[int]
-    current_time: float
     playback_rate: float
 
 
@@ -18,65 +17,52 @@ class Player:
         self.request = request
 
     def __bool__(self):
-        return bool(self.session_data["episode"])
+        return self.episode is not None
 
     def start(self, episode, current_time):
         self.create_audio_log(episode, current_time=current_time)
-        self.session_data = PlayerInfo(
-            episode=episode.id, current_time=current_time, playback_rate=1.0
-        )
+        self.session_data = PlayerInfo(playback_rate=1.0)
+
+    def eject(self, mark_completed=False):
+        self.request.session["player"] = self.empty_player_info()
+        if (log := self.current_log) and (episode := self.episode):
+            now = timezone.now()
+
+            log.updated = now
+            log.is_playing = False
+
+            if mark_completed:
+                log.completed = now
+                log.current_time = 0
+
+            log.save()
+
+            # reset cached property
+            del self.current_log
+
+            return episode
+
+        return None
+
+    def update(self, episode, current_time, playback_rate):
+        self.create_audio_log(episode, current_time=current_time)
+        self.session_data = PlayerInfo(playback_rate=playback_rate)
 
     def is_playing(self, episode):
-        return (
-            self.request.user.is_authenticated
-            and self.session_data["episode"] == episode.id
-        )
-
-    def get_episode(self):
-        if self.session_data["episode"] is None or self.request.user.is_anonymous:
-            return None
-        return (
-            Episode.objects.filter(pk=self.session_data["episode"])
-            .select_related("podcast")
-            .first()
-        )
+        if self.request.user.is_anonymous:
+            return False
+        return self.episode == episode
 
     def has_next(self):
         if self.request.user.is_authenticated:
             return QueueItem.objects.filter(user=self.request.user).exists()
         return False
 
-    def eject(self, mark_completed=False):
-        if (episode := self.get_episode()) and mark_completed:
-            self.create_audio_log(episode, current_time=0, completed=True)
-        self.request.session["player"] = self.empty_player_info()
-        return episode
-
-    def update(self, episode, current_time, playback_rate):
-        self.create_audio_log(episode, current_time=current_time)
-        self.session_data = PlayerInfo(
-            {
-                **self.session_data,
-                "current_time": current_time,
-                "playback_rate": playback_rate,
-            }
-        )
-
-    def as_dict(self):
-        episode = self.get_episode()
-        return {
-            "episode": episode,
-            "current_time": self.current_time,
-            "playback_rate": self.playback_rate,
-            "has_next": episode and self.has_next(),
-        }
-
     def create_audio_log(
         self,
         episode,
         *,
         current_time=0,
-        completed=False,
     ):
         # Updates audio log with current time
         now = timezone.now()
@@ -86,20 +72,30 @@ class Player:
             defaults={
                 "updated": now,
                 "current_time": current_time or 0,
-                "completed": now if completed else None,
+                "is_playing": True,
             },
         )
 
     def empty_player_info(self):
-        return PlayerInfo(episode=None, current_time=0, playback_rate=1.0)
+        return PlayerInfo(playback_rate=1.0)
+
+    @cached_property
+    def current_log(self):
+        if self.request.user.is_anonymous:
+            return None
+        return (
+            AudioLog.objects.filter(user=self.request.user, is_playing=True)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
+
+    @property
+    def episode(self):
+        return self.current_log.episode if self.current_log else None
 
     @property
     def current_time(self):
-        return self.session_data.get("current_time", 0)
-
-    @current_time.setter
-    def current_time(self, current_time):
-        self.session_data = {**self.session_data, "current_time": current_time}
+        return self.current_log.current_time if self.current_log else 0
 
     @property
     def playback_rate(self):
@@ -107,7 +103,7 @@ class Player:
 
     @playback_rate.setter
     def playback_rate(self, playback_rate):
-        self.session_data = {**self.session_data, "playback_rate": playback_rate}
+        self.session_data = PlayerInfo(playback_rate=playback_rate)
 
     @property
     def session_data(self):
@@ -116,3 +112,11 @@ class Player:
     @session_data.setter
     def session_data(self, player_info):
         self.request.session["player"] = player_info
+
+    def as_dict(self):
+        return {
+            "episode": self.episode,
+            "current_time": self.current_time,
+            "playback_rate": self.playback_rate,
+            "has_next": self.episode and self.has_next(),
+        }

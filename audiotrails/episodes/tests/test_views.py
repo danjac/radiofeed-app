@@ -146,8 +146,6 @@ class TestStartPlayer:
         assert header["mediaUrl"] == episode.media_url
 
         assert client.session["player"] == {
-            "episode": episode.id,
-            "current_time": 0,
             "playback_rate": 1.0,
         }
 
@@ -162,8 +160,6 @@ class TestStartPlayer:
         assert header["mediaUrl"] == episode.media_url
 
         assert client.session["player"] == {
-            "episode": episode.id,
-            "current_time": 2000,
             "playback_rate": 1.0,
         }
 
@@ -183,8 +179,6 @@ class TestPlayNextEpisode:
         assert header["mediaUrl"] == episode.media_url
 
         assert client.session["player"] == {
-            "episode": episode.id,
-            "current_time": 0,
             "playback_rate": 1.0,
         }
 
@@ -203,8 +197,6 @@ class TestPlayNextEpisode:
         assert header["mediaUrl"] == log.episode.media_url
 
         assert client.session["player"] == {
-            "episode": log.episode.id,
-            "current_time": 30,
             "playback_rate": 1.0,
         }
 
@@ -247,27 +239,15 @@ class TestPlayerTimeUpdate:
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
 
     def test_authenticated(self, client, login_user, episode):
-        session = client.session
-        session.update(
-            {
-                "player": {
-                    "episode": episode.id,
-                    "current_time": 1000,
-                    "playback_rate": 1.0,
-                }
-            }
-        )
-        session.save()
-
+        log = AudioLogFactory(user=login_user, episode=episode, is_playing=True)
         resp = client.post(
             reverse("episodes:player_timeupdate"),
             data={"current_time": "1030.0001", "playback_rate": "1.2"},
         )
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        assert client.session["player"]["current_time"] == 1030
         assert client.session["player"]["playback_rate"] == 1.2
 
-        log = AudioLog.objects.get(user=login_user, episode=episode)
+        log.refresh_from_db()
         assert log.current_time == 1030
 
     def test_player_not_running(self, client, login_user, episode):
