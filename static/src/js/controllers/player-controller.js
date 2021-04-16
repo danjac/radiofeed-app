@@ -256,7 +256,7 @@ export default class extends Controller {
       newValue = 0.5;
     }
     this.playbackRateValue = newValue;
-    this.postPlaybackRate(newValue);
+    this.sendPlaybackRateUpdate();
   }
 
   updateProgressBar() {
@@ -376,7 +376,7 @@ export default class extends Controller {
 
   startTimeUpdateTimer() {
     if (!this.timeupdateTimer) {
-      this.timeupdateTimer = setInterval(this.postTimeUpdate.bind(this), 5000);
+      this.timeupdateTimer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
     }
   }
 
@@ -387,19 +387,21 @@ export default class extends Controller {
     }
   }
 
-  postPlaybackRate(playbackRate) {
-    this.postData(this.playbackRateUrlValue, {
-      playback_rate: playbackRate.toFixed(1),
+  sendPlaybackRateUpdate() {
+    this.sendPlayerStatusUpdate(this.playbackRateUrlValue, {
+      playback_rate: this.playbackRateValue.toFixed(1),
     });
   }
 
-  postTimeUpdate() {
+  sendCurrentTimeUpdate() {
     if (this.currentTimeValue) {
-      this.postData(this.timeupdateUrlValue, { current_time: this.currentTimeValue });
+      this.sendPlayerStatusUpdate(this.timeupdateUrlValue, {
+        current_time: this.currentTimeValue,
+      });
     }
   }
 
-  postData(url, formData) {
+  sendPlayerStatusUpdate(url, formData) {
     const body = new FormData();
 
     Object.keys(formData).forEach((key) => {
