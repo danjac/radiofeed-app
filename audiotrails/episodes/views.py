@@ -368,10 +368,10 @@ def handle_player_status_update(view):
         if request.player:
             try:
                 view(request, *args, **kwargs)
+                return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
             except (KeyError, ValueError):
-                return HttpResponseBadRequest("missing or invalid data")
-            return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-        return HttpResponseBadRequest("no player loaded")
+                pass
+        return HttpResponseBadRequest("missing or invalid data")
 
     return wrapper
 
