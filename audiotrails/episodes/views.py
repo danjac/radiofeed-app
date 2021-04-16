@@ -367,8 +367,7 @@ def handle_player_status_update(view):
     def wrapper(request, *args, **kwargs):
         if request.player:
             try:
-                view(request, *args, **kwargs)
-                return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+                return view(request, *args, **kwargs)
             except (KeyError, ValueError):
                 pass
         return HttpResponseBadRequest("missing or invalid data")
@@ -381,6 +380,7 @@ def handle_player_status_update(view):
 def player_update_current_time(request):
     """Update current play time of episode"""
     request.player.current_time = round(float(request.POST["current_time"]))
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @require_POST
@@ -388,6 +388,7 @@ def player_update_current_time(request):
 def player_update_playback_rate(request):
     """Update current playback rate of episode"""
     request.player.playback_rate = float(request.POST["playback_rate"])
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 def get_episode_or_404(
