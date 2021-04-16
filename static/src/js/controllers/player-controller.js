@@ -388,9 +388,11 @@ export default class extends Controller {
   }
 
   postPlaybackRate() {
-    this.postData(this.playbackRateUrlValue, {
-      playback_rate: this.playbackRateValue.toFixed(1),
-    });
+    if (this.hasControlsTarget) {
+      this.postData(this.playbackRateUrlValue, {
+        playback_rate: this.playbackRateValue.toFixed(1),
+      });
+    }
   }
 
   postTimeUpdate() {
