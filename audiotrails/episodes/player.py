@@ -17,7 +17,7 @@ class Player:
         self.request = request
 
     def __bool__(self):
-        return self.episode is not None
+        return self.current_log is not None
 
     def start(self, episode, current_time):
         self.create_audio_log(episode, current_time=current_time)
@@ -25,7 +25,8 @@ class Player:
 
     def eject(self, mark_completed=False):
         self.request.session["player"] = self.empty_player_info()
-        if (log := self.current_log) and (episode := self.episode):
+        if (log := self.current_log) :
+
             now = timezone.now()
 
             log.updated = now
@@ -37,9 +38,10 @@ class Player:
 
             log.save()
 
+            episode = log.episode
+
             # reset cached property
             del self.current_log
-
             return episode
 
         return None
@@ -51,7 +53,7 @@ class Player:
     def is_playing(self, episode):
         if self.request.user.is_anonymous:
             return False
-        return self.episode == episode
+        return self.episode
 
     def has_next(self):
         if self.request.user.is_authenticated:
