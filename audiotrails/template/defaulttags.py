@@ -6,6 +6,7 @@ from urllib import parse
 import bs4
 
 from django import template
+from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
@@ -94,6 +95,11 @@ def login_url(url):
 @register.filter
 def signup_url(url):
     return f"{reverse('account_signup')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+
+
+@register.simple_tag
+def get_privacy_details():
+    return settings.PRIVACY_DETAILS
 
 
 @register.inclusion_tag("icons/_svg.html")

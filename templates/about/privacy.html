@@ -3,6 +3,7 @@
 
 {% block about_content %}
 
+{% get_privacy_details as privacy_details %}
 {% get_providers as socialaccount_providers %}
 
 <h1 class="font-bold mb-3">Privacy Policy</h1>
@@ -28,7 +29,7 @@
 
 <p class="mb-3 text-sm tracking-tight leading-tight"><b>Cookies</b> are small files that are placed on Your computer, mobile device or any other device by a website, containing the details of Your browsing history on that website among its many uses.</p>
 
-<p class="mb-3 text-sm tracking-tight leading-tight"><b>Country</b> refers to: <b>Finland</b></p>
+<p class="mb-3 text-sm tracking-tight leading-tight"><b>Country</b> refers to: <b>{{ privacy_details.host_country }}</b></p>
 
 <p class="mb-3 text-sm tracking-tight leading-tight"><b>Device</b> means any device that can access the Service such as a computer, a cellphone or a digital tablet.</p>
 
@@ -215,6 +216,6 @@
 
 <h2 class="font-semibold mb-3">Contact Us</h2>
 
-<p class="mb-3 text-sm tracking-tight leading-tight">If you have any questions about this Privacy Policy, You can contact us at <a href="mailto:danjac2018@gmail.com" class="link underline">danjac2018@gmail.com</a>.</p>
+<p class="mb-3 text-sm tracking-tight leading-tight">If you have any questions about this Privacy Policy, You can contact us at <a href="mailto:{{ privacy_details.contact_email }}" class="link underline">{{ privacy_details.contact_email }}</a>.</p>
 
 {% endblock about_content %}

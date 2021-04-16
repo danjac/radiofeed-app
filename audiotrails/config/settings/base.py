@@ -239,3 +239,9 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
+
+PRIVACY_DETAILS = {
+    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
+    "host_country": env("HOST_COUNTRY", default="Finland"),
+    "age_of_consent": env("AGE_OF_CONSENT", default=18),
+}
