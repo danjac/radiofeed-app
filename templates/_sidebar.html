@@ -95,10 +95,10 @@
       {% endif %}
 
       <li class="py-2">
-        {% active_link 'about' as link %}
+        {% active_link '/about/' as link %}
         <a href="{{ link.url }}"
            accesskey="8"
-           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "info" css_class="h-5 w-5 mr-3" %}
           About
         </a>

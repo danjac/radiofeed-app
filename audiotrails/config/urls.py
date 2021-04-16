@@ -30,12 +30,30 @@ def robots(request):
     )
 
 
+about_urls = [
+    path(
+        "",
+        static_page("about/credits.html"),
+        name="credits",
+    ),
+    path(
+        "shortcuts/",
+        static_page("about/shortcuts.html"),
+        name="shortcuts",
+    ),
+    path(
+        "privacy/",
+        static_page("about/privacy.html"),
+        name="privacy",
+    ),
+]
+
 urlpatterns = [
     path("", include("audiotrails.episodes.urls")),
     path("", include("audiotrails.podcasts.urls")),
     path("account/", include("audiotrails.users.urls")),
+    path("about/", include((about_urls, "about"), namespace="about")),
     path("accept-cookies/", accept_cookies, name="accept_cookies"),
-    path("about/", static_page("about.html"), name="about"),
     path("robots.txt", robots, name="robots"),
     path(
         "sitemap.xml",
