@@ -236,7 +236,6 @@ export default class extends Controller {
     if (this.hasPlaybackRateTarget) {
       this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1) + 'x';
     }
-    this.postPlaybackRate();
   }
 
   metadataValueChanged() {
@@ -257,6 +256,7 @@ export default class extends Controller {
       newValue = 0.5;
     }
     this.playbackRateValue = newValue;
+    this.postPlaybackRate(newValue);
   }
 
   updateProgressBar() {
@@ -387,12 +387,10 @@ export default class extends Controller {
     }
   }
 
-  postPlaybackRate() {
-    if (this.hasControlsTarget) {
-      this.postData(this.playbackRateUrlValue, {
-        playback_rate: this.playbackRateValue.toFixed(1),
-      });
-    }
+  postPlaybackRate(playbackRate) {
+    this.postData(this.playbackRateUrlValue, {
+      playback_rate: playbackRate.toFixed(1),
+    });
   }
 
   postTimeUpdate() {
