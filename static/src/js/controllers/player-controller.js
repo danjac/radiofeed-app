@@ -35,7 +35,7 @@ export default class extends Controller {
 
     this.pausedValue = !this.enabled;
 
-    if (this.hasAudioTarget && this.mediaUrlValue) {
+    if (this.mediaUrlValue) {
       this.audioTarget.currentTime = this.currentTimeValue;
       this.audioTarget.src = this.mediaUrlValue;
 
@@ -231,9 +231,7 @@ export default class extends Controller {
   }
 
   playbackRateValueChanged() {
-    if (this.hasAudioTarget) {
-      this.audioTarget.playbackRate = this.playbackRateValue;
-    }
+    this.audioTarget.playbackRate = this.playbackRateValue;
     if (this.hasPlaybackRateTarget) {
       this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1) + 'x';
     }
@@ -351,11 +349,9 @@ export default class extends Controller {
   }
 
   closeAudio() {
-    if (this.hasAudioTarget) {
-      this.audioTarget.src = '';
-      this.audioTarget.pause();
-      this.enabled = false;
-    }
+    this.audioTarget.src = '';
+    this.audioTarget.pause();
+    this.enabled = false;
   }
 
   openPlayer({ mediaUrl, currentTime, metadata }) {
