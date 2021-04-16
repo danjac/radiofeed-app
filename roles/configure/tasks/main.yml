@@ -15,4 +15,6 @@
     dokku config:set --no-restart {{ app_name }} MAILGUN_API_KEY='{{ mailgun_api_key }}' && \
     dokku config:set --no-restart {{ app_name }} MAILGUN_SENDER_DOMAIN='{{ mailgun_sender_domain }}' && \
     dokku config:set --no-restart {{ app_name }} SECRET_KEY='{{ secret_key }}' && \
-    dokku config:set --no-restart {{ app_name }} SENTRY_URL='{{ sentry_url }}'
+    dokku config:set --no-restart {{ app_name }} SENTRY_URL='{{ sentry_url }}' && \
+    dokku config:set --no-restart {{ app_name }} HOST_COUNTRY='{{ host_country }}' && \
+    dokku config:set --no-restart {{ app_name }} CONTACT_EMAIL='{{ contact_email }}'
