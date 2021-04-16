@@ -113,17 +113,17 @@ def recommendations(request, podcast_id, slug=None):
 def episodes(request, podcast_id, slug=None):
 
     podcast = get_podcast_or_404(request, podcast_id)
-    ordering = request.GET.get("ordering")
+    newest_first = request.GET.get("ordering") == "asc"
 
     episodes = podcast.episode_set.select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
     else:
-        episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
+        episodes = episodes.order_by("pub_date" if newest_first else "-pub_date")
 
     context = {
-        "ordering": ordering,
+        "newest_first": newest_first,
         "cover_image": podcast.get_cover_image_thumbnail(),
     }
 

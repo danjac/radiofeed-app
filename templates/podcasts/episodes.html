@@ -74,7 +74,7 @@
     {% if search %}
     <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
        class="link">Search in all podcasts</a>
-    {% elif ordering == 'asc' %}
+    {% elif newest_first %}
     <a href="{{ request.path }}"
        class="link">Newest First</a>
     {% else %}
