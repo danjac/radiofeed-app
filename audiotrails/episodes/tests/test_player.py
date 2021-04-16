@@ -1,3 +1,5 @@
+import decimal
+
 import pytest
 
 from ..factories import AudioLogFactory
@@ -7,10 +9,9 @@ pytestmark = pytest.mark.django_db
 
 
 class TestPlayer:
-    def make_player(self, rf, user=None, session=None):
+    def make_player(self, rf, user=None):
         req = rf.get("/")
         req.user = user
-        req.session = session or {}
         return Player(req)
 
     def test_empty(self, rf, user):
@@ -26,20 +27,16 @@ class TestPlayer:
             episode=episode,
             is_playing=True,
             current_time=1000,
+            playback_rate=1.2,
         )
         player = self.make_player(
             rf,
             user=user,
-            session={
-                "player": {
-                    "playback_rate": 1.2,
-                }
-            },
         )
         assert player
         assert player.episode == episode
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
+        assert player.playback_rate == decimal.Decimal("1.2")
 
     def test_eject(self, rf, user, episode):
         log = AudioLogFactory(
@@ -47,17 +44,12 @@ class TestPlayer:
             episode=episode,
             is_playing=True,
             current_time=1000,
+            playback_rate=1.2,
         )
-        session = {
-            "player": {
-                "playback_rate": 1.2,
-            }
-        }
-
-        player = self.make_player(rf, user=user, session=session)
+        player = self.make_player(rf, user=user)
 
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
+        assert player.playback_rate == decimal.Decimal("1.2")
 
         current_episode = player.eject()
 
@@ -78,17 +70,12 @@ class TestPlayer:
             episode=episode,
             is_playing=True,
             current_time=1000,
+            playback_rate=1.2,
         )
-        session = {
-            "player": {
-                "playback_rate": 1.2,
-            }
-        }
-
-        player = self.make_player(rf, user=user, session=session)
+        player = self.make_player(rf, user=user)
 
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
+        assert player.playback_rate == decimal.Decimal("1.2")
 
         current_episode = player.eject(mark_completed=True)
 
@@ -122,15 +109,7 @@ class TestPlayer:
             is_playing=True,
             current_time=1000,
         )
-        player = self.make_player(
-            rf,
-            user=anonymous_user,
-            session={
-                "player": {
-                    "playback_rate": 1.2,
-                }
-            },
-        )
+        player = self.make_player(rf, anonymous_user)
 
         assert not player.is_playing(episode)
 
@@ -140,15 +119,7 @@ class TestPlayer:
             is_playing=False,
             current_time=1000,
         )
-        player = self.make_player(
-            rf,
-            user=user,
-            session={
-                "player": {
-                    "playback_rate": 1.2,
-                }
-            },
-        )
+        player = self.make_player(rf, user)
 
         assert not player.is_playing(episode)
 

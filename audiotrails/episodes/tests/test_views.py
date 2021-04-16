@@ -143,11 +143,8 @@ class TestStartPlayer:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 0
+        assert header["playbackRate"] == 1.0
         assert header["mediaUrl"] == episode.media_url
-
-        assert client.session["player"] == {
-            "playback_rate": 1.0,
-        }
 
     def test_play_episode_in_history(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
@@ -157,11 +154,8 @@ class TestStartPlayer:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 2000
+        assert header["playbackRate"] == "1.0"
         assert header["mediaUrl"] == episode.media_url
-
-        assert client.session["player"] == {
-            "playback_rate": 1.0,
-        }
 
 
 class TestPlayNextEpisode:
@@ -176,14 +170,11 @@ class TestPlayNextEpisode:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 0
+        assert header["playbackRate"] == 1.0
         assert header["mediaUrl"] == episode.media_url
 
-        assert client.session["player"] == {
-            "playback_rate": 1.0,
-        }
-
     def test_play_next_episode_in_history(self, client, login_user):
-        log = AudioLogFactory(user=login_user, current_time=30)
+        log = AudioLogFactory(user=login_user, current_time=30, playback_rate=1.2)
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
@@ -194,11 +185,8 @@ class TestPlayNextEpisode:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 30
+        assert header["playbackRate"] == "1.2"
         assert header["mediaUrl"] == log.episode.media_url
-
-        assert client.session["player"] == {
-            "playback_rate": 1.0,
-        }
 
     def test_queue_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
