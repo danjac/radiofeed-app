@@ -1,6 +1,5 @@
 import functools
 import http
-import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -516,27 +515,17 @@ def render_player_response(
 
     current_episode = request.player.eject(mark_completed=mark_completed)
 
-    current_time = (
-        request.player.start(next_episode).current_time if next_episode else 0
-    )
+    if next_episode:
+        request.player.start(next_episode)
 
-    has_more_items = delete_queue_item(request, next_episode) if next_episode else False
-
-    response = render_player_streams(
-        request, current_episode, next_episode, has_more_items
-    )
-
-    response["X-Media-Player"] = json.dumps(
-        {
-            "mediaUrl": next_episode.media_url,
-            "metadata": next_episode.get_media_metadata(),
-            "currentTime": current_time,
-        }
+    return render_player_streams(
+        request,
+        current_episode,
+        next_episode,
+        has_more_items=delete_queue_item(request, next_episode)
         if next_episode
-        else {}
+        else False,
     )
-
-    return response
 
 
 @turbo_stream_response
@@ -553,10 +542,6 @@ def render_player_streams(request, current_episode, next_episode, has_more_items
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
 
-    yield TurboStream("player-controls").replace.template(
-        "episodes/_player_controls.html",
-        {
-            "episode": next_episode,
-            "has_next": has_more_items,
-        },
-    ).render(request=request)
+    yield TurboStream("player").replace.template("episodes/_player.html").render(
+        request=request
+    )

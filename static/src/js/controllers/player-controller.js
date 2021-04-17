@@ -39,20 +39,6 @@ export default class extends Controller {
     }
   }
 
-  submit(event) {
-    // turbo submit:end: check for media player and start next
-    const { response } = event.detail.fetchResponse;
-    const header = response.headers && response.headers.get('X-Media-Player');
-    if (header) {
-      const { mediaUrl, metadata, currentTime } = JSON.parse(header);
-      this.pausedValue = false;
-      this.currentTimeValue = currentTime || 0;
-      this.mediaUrlValue = mediaUrl || '';
-      this.metadataValue = metadata || {};
-      this.enabled = true;
-    }
-  }
-
   ended() {
     if (this.hasPlayNextButtonTarget) {
       this.playNextButtonTarget.click();
