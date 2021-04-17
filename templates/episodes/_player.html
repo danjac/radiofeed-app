@@ -2,6 +2,7 @@
 {% if user.is_authenticated %}
 {% get_player as player %}
 {% with episode=player.episode %}
+{% spaceless %}
 <div id="player"
      data-turbo-permanent
      data-controller="player"
@@ -11,6 +12,9 @@
      data-player-csrf-token-value="{{ csrf_token }}"
      data-player-timeupdate-url-value="{% url 'episodes:player_update_current_time' %}"
      data-player-playback-rate-url-value="{% url 'episodes:player_update_playback_rate' %}"
+     {% if new_episode %}
+     data-player-new-episode-value
+     {% endif %}
      {% if episode %}
      data-player-media-url-value="{{ episode.media_url }}"
      data-player-playback-rate-value="{{ player.playback_rate|default:1.0 }}"
@@ -22,6 +26,7 @@
          data-action="canplaythrough->player#canPlay ended->player#ended loadedmetadata->player#loadedMetaData play->player#resumed playing->player#canPlay pause->player#paused suspend->player#wait stalled->player#wait waiting->player#wait error->player#wait timeupdate->player#timeUpdate">
   </audio>
   {% include "episodes/_player_controls.html" with has_next=player.has_next %}
-  {% endwith %}
+  {% endspaceless %}
 </div>
+{% endwith %}
 {% endif %}

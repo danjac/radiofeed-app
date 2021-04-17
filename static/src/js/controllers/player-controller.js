@@ -23,6 +23,7 @@ export default class extends Controller {
     duration: Number,
     mediaUrl: String,
     metadata: Object,
+    newEpisode: Boolean,
     paused: Boolean,
     playbackRate: Number,
     playbackRateUrl: String,
@@ -34,6 +35,9 @@ export default class extends Controller {
   // events
   //
   connect() {
+    if (this.newEpisodeValue) {
+      this.enabled = true;
+    }
     if (!this.enabled) {
       this.pause();
     }
