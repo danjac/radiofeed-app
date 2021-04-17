@@ -32,6 +32,20 @@ export default class extends Controller {
     waiting: Boolean,
   };
 
+  //
+  // properties
+  get enabled() {
+    return !!sessionStorage.getItem('player-enabled');
+  }
+
+  set enabled(value) {
+    if (value) {
+      sessionStorage.setItem('player-enabled', true);
+    } else {
+      sessionStorage.removeItem('player-enabled');
+    }
+  }
+
   // events
   //
   connect() {
@@ -375,19 +389,5 @@ export default class extends Controller {
 
   isInputTarget(event) {
     return /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName);
-  }
-
-  // prevent autoplay of episode unless enabled
-  //
-  get enabled() {
-    return !!sessionStorage.getItem('player-enabled');
-  }
-
-  set enabled(value) {
-    if (value) {
-      sessionStorage.setItem('player-enabled', true);
-    } else {
-      sessionStorage.removeItem('player-enabled');
-    }
   }
 }
