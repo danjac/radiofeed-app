@@ -156,10 +156,6 @@ class TestPlayNextEpisode:
     def test_play_next_episode_in_history(self, client, login_user):
         log = AudioLogFactory(user=login_user, current_time=30)
 
-        session = client.session
-        session["player_playback_rate"] = 1.2
-        session.save()
-
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
@@ -246,55 +242,6 @@ class TestPlayerUpdateCurrentTime:
 
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
         assert AudioLog.objects.count() == 0
-
-
-class TestPlayerUpdatePlaybackRate:
-    def test_anonymous(self, client, anonymous_user, episode):
-        resp = client.post(
-            reverse("episodes:player_update_playback_rate"),
-            data={"playback_rate": "1.2"},
-        )
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-
-    def test_authenticated(self, client, login_user, episode):
-
-        AudioLogFactory(user=login_user, episode=episode)
-        session = client.session
-        session["player_episode"] = episode.id
-        session.save()
-
-        resp = client.post(
-            reverse("episodes:player_update_playback_rate"),
-            data={"playback_rate": "1.2"},
-        )
-
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        assert client.session["player_playback_rate"] == 1.2
-
-    def test_player_not_running(self, client, login_user, episode):
-        resp = client.post(
-            reverse("episodes:player_update_playback_rate"),
-            data={"playback_rate": "1.2"},
-        )
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert "playback_rate" not in client.session
-
-    def test_missing_data(self, client, login_user, episode):
-        resp = client.post(
-            reverse("episodes:player_update_playback_rate"),
-        )
-
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert "playback_rate" not in client.session
-
-    def test_invalid_data(self, client, login_user, episode):
-        resp = client.post(
-            reverse("episodes:player_update_playback_rate"),
-            data={"playback_rate": "xyz"},
-        )
-
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert "playback_rate" not in client.session
 
 
 class TestHistory:

@@ -26,33 +26,19 @@ export default class extends Controller {
     newEpisode: Boolean,
     paused: Boolean,
     playbackRate: Number,
-    playbackRateUrl: String,
     timeupdateUrl: String,
     timeupdateSent: Number,
     waiting: Boolean,
   };
 
-  //
-  // properties
-  get enabled() {
-    return !!sessionStorage.getItem('player-enabled');
-  }
-
-  set enabled(value) {
-    if (value) {
-      sessionStorage.setItem('player-enabled', true);
-    } else {
-      sessionStorage.removeItem('player-enabled');
-    }
-  }
-
   // events
   //
   connect() {
     // automatically enable if new episode
-    if (!this.enabled && !this.newEpisodeValue) {
+    if (!sessionStorage.getItem('player-enabled') && !this.newEpisodeValue) {
       this.pause();
     }
+    this.playbackRateValue = parseFloat(sessionStorage.getItem('playback-rate') || 1.0);
   }
 
   ended() {
@@ -137,12 +123,12 @@ export default class extends Controller {
   resumed() {
     this.pausedValue = false;
     this.waitingValue = false;
-    this.enabled = true;
+    sessionStorage.setItem('player-enabled', true);
   }
 
   paused() {
     this.pausedValue = true;
-    this.enabled = false;
+    sessionStorage.removeItem('player-enabled');
   }
 
   wait(event) {
@@ -256,7 +242,7 @@ export default class extends Controller {
       newValue = 0.5;
     }
     this.playbackRateValue = newValue;
-    this.sendPlaybackRateUpdate();
+    sessionStorage.setItem('playback-rate', this.playbackRateValue);
   }
 
   updateProgressBar() {
@@ -348,17 +334,19 @@ export default class extends Controller {
     }
   }
 
-  sendPlaybackRateUpdate() {
-    this.sendPlayerStatusUpdate(this.playbackRateUrlValue, {
-      playback_rate: this.playbackRateValue.toFixed(1),
-    });
-  }
-
   async sendCurrentTimeUpdate() {
     if (this.shouldSendCurrentTimeUpdate()) {
-      await this.sendPlayerStatusUpdate(this.timeupdateUrlValue, {
-        current_time: this.currentTimeValue,
+      const body = new FormData();
+
+      body.append('csrfmiddlewaretoken', this.csrfTokenValue);
+      body.append('current_time', this.currentTimeValue);
+
+      await fetch(url, {
+        body,
+        method: 'POST',
+        credentials: 'same-origin',
       });
+
       this.timeupdateSentValue = new Date().getTime();
     }
   }
@@ -369,22 +357,6 @@ export default class extends Controller {
       return false;
     }
     return new Date().getTime() - this.timeupdateSentValue > 5000;
-  }
-
-  sendPlayerStatusUpdate(url, formData) {
-    const body = new FormData();
-
-    Object.keys(formData).forEach((key) => {
-      body.append(key, formData[key]);
-    });
-
-    body.append('csrfmiddlewaretoken', this.csrfTokenValue);
-
-    return fetch(url, {
-      body,
-      method: 'POST',
-      credentials: 'same-origin',
-    });
   }
 
   isInputTarget(event) {

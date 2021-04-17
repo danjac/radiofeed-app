@@ -1,4 +1,3 @@
-import functools
 import http
 
 from django.conf import settings
@@ -358,33 +357,16 @@ def play_next_episode(request):
     return render_player_response(request, next_episode, mark_completed=True)
 
 
-def handle_player_status_update(view):
-    @functools.wraps(view)
-    def wrapper(request, *args, **kwargs):
-        if request.player:
-            try:
-                return view(request, *args, **kwargs)
-            except (KeyError, ValueError):
-                pass
-        return HttpResponseBadRequest("missing or invalid data")
-
-    return wrapper
-
-
 @require_POST
-@handle_player_status_update
 def player_update_current_time(request):
     """Update current play time of episode"""
-    request.player.current_time = round(float(request.POST["current_time"]))
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-
-
-@require_POST
-@handle_player_status_update
-def player_update_playback_rate(request):
-    """Update current playback rate of episode"""
-    request.player.playback_rate = float(request.POST["playback_rate"])
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    if request.player:
+        try:
+            request.player.current_time = round(float(request.POST["current_time"]))
+            return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+        except (KeyError, ValueError):
+            pass
+    return HttpResponseBadRequest("missing or invalid data")
 
 
 def get_episode_or_404(

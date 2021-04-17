@@ -18,7 +18,6 @@ class TestPlayer:
         assert not player
         assert player.episode is None
         assert player.current_time == 0
-        assert player.playback_rate == 1.0
 
     def test_not_empty(self, rf, user, episode):
         AudioLogFactory(
@@ -26,13 +25,10 @@ class TestPlayer:
             episode=episode,
             current_time=1000,
         )
-        player = self.make_player(
-            rf, user, {"player_episode": episode.id, "player_playback_rate": 1.2}
-        )
+        player = self.make_player(rf, user, {"player_episode": episode.id})
         assert player
         assert player.episode == episode
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
 
     def test_eject(self, rf, user, episode):
         log = AudioLogFactory(
@@ -40,11 +36,10 @@ class TestPlayer:
             episode=episode,
             current_time=1000,
         )
-        session = {"player_episode": episode.id, "player_playback_rate": 1.2}
+        session = {"player_episode": episode.id}
         player = self.make_player(rf, user, session)
 
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
 
         current_episode = player.eject()
 
@@ -52,7 +47,6 @@ class TestPlayer:
 
         assert not player
         assert player.current_time == 0
-        assert player.playback_rate == 1.2
 
         log.refresh_from_db()
 
@@ -66,12 +60,11 @@ class TestPlayer:
             current_time=1000,
         )
 
-        session = {"player_episode": episode.id, "player_playback_rate": 1.2}
+        session = {"player_episode": episode.id}
 
         player = self.make_player(rf, user, session)
 
         assert player.current_time == 1000
-        assert player.playback_rate == 1.2
 
         current_episode = player.eject(mark_completed=True)
 
@@ -80,7 +73,6 @@ class TestPlayer:
         assert not player
 
         assert player.current_time == 0
-        assert player.playback_rate == 1.2
         assert player.episode is None
 
         log.refresh_from_db()

@@ -91,14 +91,6 @@ class Player:
             self.current_log.save()
 
     @property
-    def playback_rate(self):
-        return self.request.session.setdefault("player_playback_rate", 1.0)
-
-    @playback_rate.setter
-    def playback_rate(self, playback_rate):
-        self.request.session["player_playback_rate"] = playback_rate
-
-    @property
     def paused(self):
         return self.request.session.setdefault("player_paused", False)
 
@@ -113,6 +105,5 @@ class Player:
         return {
             "episode": self.episode,
             "current_time": self.current_time,
-            "playback_rate": self.playback_rate,
             "has_next": self.episode and self.has_next(),
         }

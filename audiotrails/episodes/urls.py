@@ -38,11 +38,6 @@ urlpatterns = [
         views.player_update_current_time,
         name="player_update_current_time",
     ),
-    path(
-        "player/~playbackrate/",
-        views.player_update_playback_rate,
-        name="player_update_playback_rate",
-    ),
     path("history/", views.history, name="history"),
     path(
         "history/<int:episode_id>/~remove/",
