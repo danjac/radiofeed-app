@@ -186,7 +186,6 @@ export default class extends Controller {
     } else {
       this.pause();
     }
-    this.toggleActiveMode();
   }
 
   pausedValueChanged() {
