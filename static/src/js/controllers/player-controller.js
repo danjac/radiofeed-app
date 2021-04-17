@@ -35,6 +35,7 @@ export default class extends Controller {
   // events
   //
   connect() {
+    // automatically enable if new episode
     if (this.newEpisodeValue) {
       this.enabled = true;
     }
@@ -380,6 +381,8 @@ export default class extends Controller {
     return /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName);
   }
 
+  // prevent autoplay of episode unless enabled
+  //
   get enabled() {
     return !!sessionStorage.getItem('player-enabled');
   }
