@@ -1,11 +1,9 @@
 import functools
 import http
-import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -511,32 +509,13 @@ def render_episode_list_response(
     )
 
 
+@turbo_stream_response
 def render_player_response(
     request,
     next_episode=None,
     mark_completed=False,
 ):
     current_episode = request.player.eject(mark_completed=mark_completed)
-
-    response = render_player_streams(request, current_episode, next_episode)
-
-    if next_episode:
-        header_info = {
-            "action": "start",
-            "currentTime": request.player.start(next_episode).current_time,
-            "playbackRate": request.player.playback_rate,
-            "mediaUrl": next_episode.media_url,
-            "metadata": next_episode.get_media_metadata(),
-        }
-    else:
-        header_info = {"action": "stop"}
-
-    response["X-Media-Player"] = json.dumps(header_info, cls=DjangoJSONEncoder)
-    return response
-
-
-@turbo_stream_response
-def render_player_streams(request, current_episode, next_episode):
 
     if request.POST.get("is_modal"):
         yield TurboStream("modal").replace.template("_modal.html").render()
@@ -547,18 +526,14 @@ def render_player_streams(request, current_episode, next_episode):
     has_more_items = delete_queue_item(request, next_episode) if next_episode else False
 
     if next_episode:
+        request.player.start(current_episode)
+
         yield render_remove_from_queue(request, next_episode, has_more_items)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
 
     yield (
-        TurboStream("player-controls")
-        .replace.template(
-            "episodes/_player_controls.html",
-            {
-                "episode": next_episode,
-                "has_next": has_more_items,
-            },
-        )
+        TurboStream("player")
+        .replace.template("episodes/_player.html")
         .render(request=request)
     )

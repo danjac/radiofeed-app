@@ -37,33 +37,6 @@ export default class extends Controller {
     this.pausedValue = !this.enabled;
 
     if (this.mediaUrlValue) {
-      this.audioTarget.currentTime = this.currentTimeValue;
-      this.audioTarget.src = this.mediaUrlValue;
-
-      if (this.pausedValue) {
-        this.pause();
-      } else {
-        this.play();
-      }
-    }
-  }
-
-  togglePlayer(event) {
-    // handle Turbo Stream response to toggle player on/off. Action details
-    // should be in X-Media-Player header
-    const { fetchResponse } = event.detail;
-    const headers =
-      fetchResponse && fetchResponse.response ? fetchResponse.response.headers : null;
-    if (!headers || !headers.has('X-Media-Player')) {
-      return;
-    }
-    const { action, mediaUrl, currentTime, playbackRate, metadata } = JSON.parse(
-      headers.get('X-Media-Player')
-    );
-    if (action === 'stop') {
-      this.closePlayer();
-    } else {
-      this.openPlayer({ mediaUrl, currentTime, playbackRate, playbackRate, metadata });
     }
   }
 
@@ -203,7 +176,20 @@ export default class extends Controller {
     this.skipTo(this.audioTarget.currentTime + 10);
   }
 
-  // observers
+  mediaUrlValueChanged() {
+    this.audioTarget.src = this.mediaUrlValue;
+    if (this.mediaUrlValue) {
+      if (this.pausedValue) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    } else {
+      this.audioTarget.pause();
+      this.cancelTimeUpdateTimer();
+    }
+  }
+
   pausedValueChanged() {
     if (this.hasPauseButtonTarget && this.hasPlayButtonTarget) {
       if (this.pausedValue) {
@@ -227,12 +213,14 @@ export default class extends Controller {
   }
 
   currentTimeValueChanged() {
+    this.audioTarget.currentTime = this.currentTimeValue;
     this.updateCounter(this.durationValue - this.currentTimeValue);
     this.updateProgressBar();
   }
 
   playbackRateValueChanged() {
     this.audioTarget.playbackRate = this.playbackRateValue;
+
     if (this.hasPlaybackRateTarget) {
       this.playbackRateTarget.textContent = this.playbackRateValue.toFixed(1) + 'x';
     }
@@ -348,30 +336,6 @@ export default class extends Controller {
       this.element.classList.add(this.activeClass);
       this.startTimeUpdateTimer();
     }
-  }
-
-  closeAudio() {
-    this.audioTarget.src = '';
-    this.audioTarget.pause();
-    this.enabled = false;
-  }
-
-  openPlayer({ mediaUrl, currentTime, playbackRate, metadata }) {
-    this.metadataValue = metadata || {};
-    this.playbackRateValue = playbackRate;
-
-    this.audioTarget.src = this.mediaUrlValue = mediaUrl;
-    this.audioTarget.currentTime = this.currentTimeValue = parseFloat(currentTime || 0);
-
-    this.play();
-  }
-
-  closePlayer() {
-    this.durationValue = 0;
-    this.mediaUrlValue = '';
-    this.metadataValue = {};
-    this.closeAudio();
-    this.cancelTimeUpdateTimer();
   }
 
   startTimeUpdateTimer() {
