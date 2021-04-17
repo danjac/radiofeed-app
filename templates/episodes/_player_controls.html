@@ -41,6 +41,9 @@
                   method="POST"
                   action="{% url 'episodes:stop_player' %}">
               {% csrf_token %}
+              <input type="hidden"
+                     name="mark_complete"
+                     data-player-target="markComplete">
               <button title="Stop"
                       data-player-target="stopButton"
                       class="focus:outline-none hover:text-blue-500 mr-1">

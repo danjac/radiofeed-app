@@ -333,7 +333,9 @@ def stop_player(request):
     if request.user.is_anonymous:
         return redirect_to_login(settings.HOME_URL)
 
-    return render_player_response(request)
+    return render_player_response(
+        request, mark_completed=request.POST.get("mark_complete")
+    )
 
 
 @require_POST
@@ -513,6 +515,7 @@ def render_player_response(
 ):
 
     current_episode = request.player.eject(mark_completed=mark_completed)
+
     current_time = (
         request.player.start(next_episode).current_time if next_episode else 0
     )
@@ -550,6 +553,10 @@ def render_player_streams(request, current_episode, next_episode, has_more_items
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
 
-    yield TurboStream("player").replace.template("episodes/_player.html").render(
-        request=request
-    )
+    yield TurboStream("player-controls").replace.template(
+        "episodes/_player_controls.html",
+        {
+            "episode": next_episode,
+            "has_next": has_more_items,
+        },
+    ).render(request=request)

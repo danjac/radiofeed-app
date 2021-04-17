@@ -1,23 +1,19 @@
-{% if has_next %}
 <form method="POST"
       class="flex items-center"
       id="play-next"
       action="{% url 'episodes:play_next_episode' %}">
   {% csrf_token %}
+  {% if has_next %}
   <button title="Play next episode in queue"
           data-player-target="playNextButton"
           class="focus:outline-none hover:text-blue-500">
     {% icon "fast_forward" css_class="h-8 w-8" %}
   </button>
-</form>
-{% else %}
-<div class="flex items-center"
-     id="play-next"
-     action="{% url 'episodes:play_next_episode' %}">
+  {% else %}
   <button title="No more items left in queue"
           class="focus:outline-none hover:text-blue-500 opacity-50 cursor-not-allowed"
           disabled>
     {% icon "fast_forward" css_class="h-8 w-8" %}
   </button>
-  </div>
   {% endif %}
+</form>

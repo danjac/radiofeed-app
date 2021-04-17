@@ -6,6 +6,7 @@ export default class extends Controller {
     'controls',
     'counter',
     'indicator',
+    'markComplete',
     'pauseButton',
     'playbackRate',
     'playButton',
@@ -48,6 +49,7 @@ export default class extends Controller {
     if (this.hasPlayNextButtonTarget) {
       this.playNextButtonTarget.click();
     } else {
+      this.markCompleteTarget.value = 'true';
       this.stopButtonTarget.click();
     }
   }
