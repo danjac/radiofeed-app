@@ -180,7 +180,6 @@ export default class extends Controller {
   }
 
   mediaUrlValueChanged() {
-    console.log('media url', this.mediaUrlValue);
     this.audioTarget.src = this.mediaUrlValue;
     this.audioTarget.currentTime = this.currentTimeValue;
 
