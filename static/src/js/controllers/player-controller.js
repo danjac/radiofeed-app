@@ -26,6 +26,7 @@ export default class extends Controller {
     playbackRate: Number,
     playbackRateUrl: String,
     timeupdateUrl: String,
+    timeupdateSent: Number,
     waiting: Boolean,
   };
 
@@ -170,6 +171,7 @@ export default class extends Controller {
   mediaUrlValueChanged() {
     this.audioTarget.src = this.mediaUrlValue;
     this.audioTarget.currentTime = this.currentTimeValue;
+
     if (this.mediaUrlValue) {
       if (this.pausedValue) {
         this.pause();
@@ -207,6 +209,7 @@ export default class extends Controller {
   currentTimeValueChanged() {
     this.updateCounter(this.durationValue - this.currentTimeValue);
     this.updateProgressBar();
+    this.sendCurrentTimeUpdate();
   }
 
   playbackRateValueChanged() {
@@ -321,24 +324,9 @@ export default class extends Controller {
     if (inactive) {
       this.element.classList.add(this.inactiveClass);
       this.element.classList.remove(this.activeClass);
-      this.cancelTimeUpdateTimer();
     } else {
       this.element.classList.remove(this.inactiveClass);
       this.element.classList.add(this.activeClass);
-      this.startTimeUpdateTimer();
-    }
-  }
-
-  startTimeUpdateTimer() {
-    if (!this.timeupdateTimer) {
-      this.timeupdateTimer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
-    }
-  }
-
-  cancelTimeUpdateTimer() {
-    if (this.timeupdateTimer) {
-      clearInterval(this.timeupdateTimer);
-      this.timeupdateTimer = null;
     }
   }
 
@@ -348,12 +336,21 @@ export default class extends Controller {
     });
   }
 
-  sendCurrentTimeUpdate() {
-    if (this.currentTimeValue) {
-      this.sendPlayerStatusUpdate(this.timeupdateUrlValue, {
+  async sendCurrentTimeUpdate() {
+    if (this.shouldSendCurrentTimeUpdate()) {
+      await this.sendPlayerStatusUpdate(this.timeupdateUrlValue, {
         current_time: this.currentTimeValue,
       });
+      this.timeupdateSentValue = new Date().getTime();
     }
+  }
+
+  shouldSendCurrentTimeUpdate() {
+    // send every 5s if player is running
+    if (!this.currentTimeValue || !this.mediaUrlValue || this.pausedValue) {
+      return false;
+    }
+    return new Date().getTime() - this.timeupdateSentValue > 5000;
   }
 
   sendPlayerStatusUpdate(url, formData) {
@@ -365,7 +362,7 @@ export default class extends Controller {
 
     body.append('csrfmiddlewaretoken', this.csrfTokenValue);
 
-    fetch(url, {
+    return fetch(url, {
       body,
       method: 'POST',
       credentials: 'same-origin',
