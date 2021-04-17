@@ -1,5 +1,6 @@
 import functools
 import http
+import json
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -505,7 +506,6 @@ def render_episode_list_response(
     )
 
 
-@turbo_stream_response
 def render_player_response(
     request,
     next_episode=None,
@@ -513,6 +513,32 @@ def render_player_response(
 ):
 
     current_episode = request.player.eject(mark_completed=mark_completed)
+    current_time = (
+        request.player.start(next_episode).current_time if next_episode else 0
+    )
+
+    has_more_items = delete_queue_item(request, next_episode) if next_episode else False
+
+    response = render_player_streams(
+        request, current_episode, next_episode, has_more_items
+    )
+
+    response["X-Media-Player"] = json.dumps(
+        {
+            "mediaUrl": next_episode.media_url,
+            "metadata": next_episode.get_media_metadata(),
+            "currentTime": current_time,
+        }
+        if next_episode
+        else {}
+    )
+
+    return response
+
+
+@turbo_stream_response
+def render_player_streams(request, current_episode, next_episode, has_more_items):
+
     streams = []
 
     if request.POST.get("is_modal"):
@@ -521,10 +547,7 @@ def render_player_response(
     if current_episode:
         streams += [render_player_toggle(request, current_episode, False)]
 
-    has_more_items = delete_queue_item(request, next_episode) if next_episode else False
-
     if next_episode:
-        request.player.start(next_episode)
         streams += [
             render_remove_from_queue(request, next_episode, has_more_items),
             render_queue_toggle(request, next_episode, False),

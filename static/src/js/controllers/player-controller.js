@@ -31,9 +31,20 @@ export default class extends Controller {
   };
 
   // events
+  //
+  submit(event) {
+    // turbo submit:end: check for media player and start next
+    const { response } = event.detail.fetchResponse;
+    const header = response.headers && response.headers.get('X-Media-Player');
+    if (header) {
+      const { mediaUrl, metadata, currentTime } = JSON.parse(header);
+      this.currentTimeValue = currentTime || 0;
+      this.mediaUrlValue = mediaUrl || '';
+      this.metadataValue = metadata || {};
+    }
+  }
 
   ended() {
-    this.cancelTimeUpdateTimer();
     if (this.hasPlayNextButtonTarget) {
       this.playNextButtonTarget.click();
     } else {
@@ -169,6 +180,7 @@ export default class extends Controller {
   }
 
   mediaUrlValueChanged() {
+    console.log('media url', this.mediaUrlValue);
     this.audioTarget.src = this.mediaUrlValue;
     this.audioTarget.currentTime = this.currentTimeValue;
 
