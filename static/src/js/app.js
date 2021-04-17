@@ -1,5 +1,4 @@
 import '@hotwired/turbo';
-import 'form-request-submit-polyfill';
 
 import { Application } from 'stimulus';
 
