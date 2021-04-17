@@ -36,7 +36,7 @@ export default class extends Controller {
   connect() {
     this.playbackRateValue = parseFloat(sessionStorage.getItem('playback-rate') || 1.0);
 
-    // automatically enable if new episode
+    // automatically pause unless new episode or enabled
     if (!sessionStorage.getItem('player-enabled') && !this.newEpisodeValue) {
       this.pause();
     }
