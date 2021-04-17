@@ -36,10 +36,7 @@ export default class extends Controller {
   //
   connect() {
     // automatically enable if new episode
-    if (this.newEpisodeValue) {
-      this.enabled = true;
-    }
-    if (!this.enabled) {
+    if (!this.enabled && !this.newEpisodeValue) {
       this.pause();
     }
   }
