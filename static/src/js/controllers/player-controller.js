@@ -341,7 +341,7 @@ export default class extends Controller {
       body.append('csrfmiddlewaretoken', this.csrfTokenValue);
       body.append('current_time', this.currentTimeValue);
 
-      await fetch(url, {
+      await fetch(this.timeupdateUrlValue, {
         body,
         method: 'POST',
         credentials: 'same-origin',
