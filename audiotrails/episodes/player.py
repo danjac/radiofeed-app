@@ -98,6 +98,17 @@ class Player:
     def playback_rate(self, playback_rate):
         self.request.session["player_playback_rate"] = playback_rate
 
+    @property
+    def paused(self):
+        return self.request.session.setdefault("player_paused", False)
+
+    @paused.setter
+    def paused(self, paused):
+        self.request.session["player_paused"] = paused
+
+    def toggle_pause(self):
+        self.paused = not (self.paused)
+
     def as_dict(self):
         return {
             "episode": self.episode,

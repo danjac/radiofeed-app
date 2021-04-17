@@ -33,15 +33,23 @@ export default class extends Controller {
 
   // events
   //
+  connect() {
+    if (!this.enabled) {
+      this.pause();
+    }
+  }
+
   submit(event) {
     // turbo submit:end: check for media player and start next
     const { response } = event.detail.fetchResponse;
     const header = response.headers && response.headers.get('X-Media-Player');
     if (header) {
       const { mediaUrl, metadata, currentTime } = JSON.parse(header);
+      this.pausedValue = false;
       this.currentTimeValue = currentTime || 0;
       this.mediaUrlValue = mediaUrl || '';
       this.metadataValue = metadata || {};
+      this.enabled = true;
     }
   }
 
@@ -125,14 +133,14 @@ export default class extends Controller {
   }
 
   resumed() {
-    this.enabled = true;
     this.pausedValue = false;
     this.waitingValue = false;
+    this.enabled = true;
   }
 
   paused() {
-    this.enabled = false;
     this.pausedValue = true;
+    this.enabled = false;
   }
 
   wait(event) {
@@ -185,14 +193,10 @@ export default class extends Controller {
     this.audioTarget.src = this.mediaUrlValue;
     this.audioTarget.currentTime = this.currentTimeValue;
 
-    if (this.mediaUrlValue) {
-      if (this.pausedValue) {
-        this.pause();
-      } else {
-        this.play();
-      }
+    if (this.mediaUrlValue && !this.pausedValue) {
+      this.play();
     } else {
-      this.audioTarget.pause();
+      this.pause();
     }
     this.toggleActiveMode();
   }
@@ -386,15 +390,15 @@ export default class extends Controller {
     return /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName);
   }
 
-  set enabled(enabled) {
-    if (enabled) {
-      sessionStorage.setItem('player-enabled', 'true');
+  get enabled() {
+    return !!sessionStorage.getItem('player-enabled');
+  }
+
+  set enabled(value) {
+    if (value) {
+      sessionStorage.setItem('player-enabled', true);
     } else {
       sessionStorage.removeItem('player-enabled');
     }
-  }
-
-  get enabled() {
-    return !!sessionStorage.getItem('player-enabled');
   }
 }
