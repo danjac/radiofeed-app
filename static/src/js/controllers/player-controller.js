@@ -31,15 +31,6 @@ export default class extends Controller {
 
   // events
 
-  async initialize() {
-    this.playbackRateValue = this.playbackRateValue || 1.0;
-
-    this.pausedValue = !this.enabled;
-
-    if (this.mediaUrlValue) {
-    }
-  }
-
   ended() {
     this.cancelTimeUpdateTimer();
     if (this.hasPlayNextButtonTarget) {
@@ -177,6 +168,7 @@ export default class extends Controller {
   }
 
   mediaUrlValueChanged() {
+    console.log('media url', this.mediaUrlValue);
     this.audioTarget.src = this.mediaUrlValue;
     if (this.mediaUrlValue) {
       if (this.pausedValue) {
@@ -186,8 +178,8 @@ export default class extends Controller {
       }
     } else {
       this.audioTarget.pause();
-      this.cancelTimeUpdateTimer();
     }
+    this.toggleActiveMode();
   }
 
   pausedValueChanged() {

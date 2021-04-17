@@ -1,5 +1,4 @@
 import http
-import json
 
 import pytest
 
@@ -140,22 +139,10 @@ class TestStartPlayer:
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
 
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 0
-        assert header["playbackRate"] == 1.0
-        assert header["mediaUrl"] == episode.media_url
-
     def test_play_episode_in_history(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
         assert resp.status_code == http.HTTPStatus.OK
-
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 2000
-        assert header["playbackRate"] == 1.0
-        assert header["mediaUrl"] == episode.media_url
 
 
 class TestPlayNextEpisode:
@@ -163,15 +150,8 @@ class TestPlayNextEpisode:
         QueueItem.objects.create(position=0, user=login_user, episode=episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert list(resp.streaming_content)
 
         assert QueueItem.objects.count() == 0
-
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 0
-        assert header["playbackRate"] == 1.0
-        assert header["mediaUrl"] == episode.media_url
 
     def test_play_next_episode_in_history(self, client, login_user):
         log = AudioLogFactory(user=login_user, current_time=30)
@@ -183,22 +163,12 @@ class TestPlayNextEpisode:
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert list(resp.streaming_content)
 
         assert QueueItem.objects.count() == 0
-
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "start"
-        assert header["currentTime"] == 30
-        assert header["playbackRate"] == 1.2
-        assert header["mediaUrl"] == log.episode.media_url
 
     def test_queue_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "stop"
 
 
 class TestStopPlayer:
@@ -218,9 +188,6 @@ class TestStopPlayer:
             reverse("episodes:stop_player"),
         )
         assert resp.status_code == http.HTTPStatus.OK
-
-        header = json.loads(resp["X-Media-Player"])
-        assert header["action"] == "stop"
 
 
 class TestPlayerUpdateCurrentTime:
