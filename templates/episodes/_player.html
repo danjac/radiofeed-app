@@ -19,7 +19,7 @@
      {% endif %}>
   <audio data-player-target="audio"
          preload="metadata"
-         data-action="canplaythrough->player#canPlay ended->player#ended loadedmetadata->player#loadedMetaData play->player#resumed playing->player#canPlay pause->player#paused seeking->player#wait suspend->player#wait stalled->player#wait waiting->player#wait error->player#wait timeupdate->player#timeUpdate">
+         data-action="canplaythrough->player#canPlay ended->player#ended loadedmetadata->player#loadedMetaData play->player#resumed playing->player#canPlay pause->player#paused suspend->player#wait stalled->player#wait waiting->player#wait error->player#wait timeupdate->player#timeUpdate">
   </audio>
   {% include "episodes/_player_controls.html" with has_next=player.has_next %}
   {% endwith %}

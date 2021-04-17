@@ -121,7 +121,7 @@ export default class extends Controller {
     this.pausedValue = true;
   }
 
-  wait() {
+  wait(event) {
     this.waitingValue = true;
   }
 
@@ -168,8 +168,8 @@ export default class extends Controller {
   }
 
   mediaUrlValueChanged() {
-    console.log('media url', this.mediaUrlValue);
     this.audioTarget.src = this.mediaUrlValue;
+    this.audioTarget.currentTime = this.currentTimeValue;
     if (this.mediaUrlValue) {
       if (this.pausedValue) {
         this.pause();
@@ -205,7 +205,6 @@ export default class extends Controller {
   }
 
   currentTimeValueChanged() {
-    this.audioTarget.currentTime = this.currentTimeValue;
     this.updateCounter(this.durationValue - this.currentTimeValue);
     this.updateProgressBar();
   }

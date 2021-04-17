@@ -353,11 +353,7 @@ def play_next_episode(request):
     else:
         next_episode = None
 
-    return render_player_response(
-        request,
-        next_episode=next_episode,
-        mark_completed=True,
-    )
+    return render_player_response(request, next_episode, mark_completed=True)
 
 
 def handle_player_status_update(view):
@@ -518,27 +514,21 @@ def render_player_response(
 
     current_episode = request.player.eject(mark_completed=mark_completed)
 
-    streams = []
-
     if request.POST.get("is_modal"):
-        streams += [TurboStream("modal").replace.template("_modal.html").render()]
+        yield TurboStream("modal").replace.template("_modal.html").render()
 
     if current_episode:
-        streams += [render_player_toggle(request, current_episode, False)]
+        yield render_player_toggle(request, current_episode, False)
 
     has_more_items = delete_queue_item(request, next_episode) if next_episode else False
 
     if next_episode:
         request.player.start(next_episode)
 
-        streams += [
-            render_remove_from_queue(request, next_episode, has_more_items),
-            render_queue_toggle(request, next_episode, False),
-            render_player_toggle(request, next_episode, True),
-        ]
+        yield render_remove_from_queue(request, next_episode, has_more_items),
+        yield render_queue_toggle(request, next_episode, False),
+        yield render_player_toggle(request, next_episode, True),
 
-    return streams + [
-        TurboStream("player")
-        .replace.template("episodes/_player.html")
-        .render(request=request)
-    ]
+    yield TurboStream("player").replace.template("episodes/_player.html").render(
+        request=request
+    )
