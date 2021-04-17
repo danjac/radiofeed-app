@@ -34,11 +34,12 @@ export default class extends Controller {
   // events
   //
   connect() {
+    this.playbackRateValue = parseFloat(sessionStorage.getItem('playback-rate') || 1.0);
+
     // automatically enable if new episode
     if (!sessionStorage.getItem('player-enabled') && !this.newEpisodeValue) {
       this.pause();
     }
-    this.playbackRateValue = parseFloat(sessionStorage.getItem('playback-rate') || 1.0);
   }
 
   ended() {
