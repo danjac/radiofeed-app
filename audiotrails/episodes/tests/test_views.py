@@ -1,4 +1,3 @@
-import decimal
 import http
 import json
 
@@ -155,7 +154,7 @@ class TestStartPlayer:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 2000
-        assert header["playbackRate"] == "1.0"
+        assert header["playbackRate"] == 1.0
         assert header["mediaUrl"] == episode.media_url
 
 
@@ -175,7 +174,12 @@ class TestPlayNextEpisode:
         assert header["mediaUrl"] == episode.media_url
 
     def test_play_next_episode_in_history(self, client, login_user):
-        log = AudioLogFactory(user=login_user, current_time=30, playback_rate=1.2)
+        log = AudioLogFactory(user=login_user, current_time=30)
+
+        session = client.session
+        session["player_playback_rate"] = 1.2
+        session.save()
+
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
@@ -186,7 +190,7 @@ class TestPlayNextEpisode:
         header = json.loads(resp["X-Media-Player"])
         assert header["action"] == "start"
         assert header["currentTime"] == 30
-        assert header["playbackRate"] == "1.2"
+        assert header["playbackRate"] == 1.2
         assert header["mediaUrl"] == log.episode.media_url
 
     def test_queue_empty(self, client, login_user):
@@ -228,7 +232,12 @@ class TestPlayerUpdateCurrentTime:
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
 
     def test_authenticated(self, client, login_user, episode):
-        log = AudioLogFactory(user=login_user, episode=episode, is_playing=True)
+        log = AudioLogFactory(user=login_user, episode=episode)
+
+        session = client.session
+        session["player_episode"] = episode.id
+        session.save()
+
         resp = client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
@@ -247,6 +256,10 @@ class TestPlayerUpdateCurrentTime:
         assert AudioLog.objects.count() == 0
 
     def test_missing_data(self, client, login_user, episode):
+        session = client.session
+        session["player_episode"] = episode.id
+        session.save()
+
         resp = client.post(
             reverse("episodes:player_update_current_time"),
         )
@@ -255,6 +268,10 @@ class TestPlayerUpdateCurrentTime:
         assert AudioLog.objects.count() == 0
 
     def test_invalid_data(self, client, login_user, episode):
+        session = client.session
+        session["player_episode"] = episode.id
+        session.save()
+
         resp = client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "xyz"},
@@ -273,15 +290,19 @@ class TestPlayerUpdatePlaybackRate:
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
 
     def test_authenticated(self, client, login_user, episode):
-        log = AudioLogFactory(user=login_user, episode=episode, is_playing=True)
+
+        AudioLogFactory(user=login_user, episode=episode)
+        session = client.session
+        session["player_episode"] = episode.id
+        session.save()
+
         resp = client.post(
             reverse("episodes:player_update_playback_rate"),
             data={"playback_rate": "1.2"},
         )
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
-        log.refresh_from_db()
-        assert log.playback_rate == decimal.Decimal("1.2")
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        assert client.session["player_playback_rate"] == 1.2
 
     def test_player_not_running(self, client, login_user, episode):
         resp = client.post(
@@ -289,7 +310,7 @@ class TestPlayerUpdatePlaybackRate:
             data={"playback_rate": "1.2"},
         )
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert AudioLog.objects.count() == 0
+        assert "playback_rate" not in client.session
 
     def test_missing_data(self, client, login_user, episode):
         resp = client.post(
@@ -297,7 +318,7 @@ class TestPlayerUpdatePlaybackRate:
         )
 
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert AudioLog.objects.count() == 0
+        assert "playback_rate" not in client.session
 
     def test_invalid_data(self, client, login_user, episode):
         resp = client.post(
@@ -306,7 +327,7 @@ class TestPlayerUpdatePlaybackRate:
         )
 
         assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert AudioLog.objects.count() == 0
+        assert "playback_rate" not in client.session
 
 
 class TestHistory:

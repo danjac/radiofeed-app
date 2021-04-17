@@ -521,11 +521,10 @@ def render_player_response(
     response = render_player_streams(request, current_episode, next_episode)
 
     if next_episode:
-        log = request.player.start(next_episode)
         header_info = {
             "action": "start",
-            "currentTime": log.current_time,
-            "playbackRate": log.playback_rate,
+            "currentTime": request.player.start(next_episode).current_time,
+            "playbackRate": request.player.playback_rate,
             "mediaUrl": next_episode.media_url,
             "metadata": next_episode.get_media_metadata(),
         }

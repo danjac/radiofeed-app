@@ -20,13 +20,14 @@ class Player:
         except AttributeError:
             pass
 
+        self.request.session["player_episode"] = episode.id
+
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
             user=self.request.user,
             defaults={
                 "updated": timezone.now(),
                 "completed": None,
-                "is_playing": True,
             },
         )
         return log
@@ -37,7 +38,6 @@ class Player:
             now = timezone.now()
 
             self.current_log.updated = now
-            self.current_log.is_playing = False
 
             if mark_completed:
                 self.current_log.completed = now
@@ -47,7 +47,9 @@ class Player:
 
             episode = self.current_log.episode
 
+            del self.request.session["player_episode"]
             del self.current_log
+
             return episode
 
         return None
@@ -66,8 +68,10 @@ class Player:
     def current_log(self):
         if self.request.user.is_anonymous:
             return None
+        if (episode_id := self.request.session.get("player_episode")) is None:
+            return None
         return (
-            AudioLog.objects.filter(user=self.request.user, is_playing=True)
+            AudioLog.objects.filter(user=self.request.user, episode=episode_id)
             .select_related("episode", "episode__podcast")
             .first()
         )
@@ -88,13 +92,11 @@ class Player:
 
     @property
     def playback_rate(self):
-        return self.current_log.playback_rate if self.current_log else 1.0
+        return self.request.session.setdefault("player_playback_rate", 1.0)
 
     @playback_rate.setter
     def playback_rate(self, playback_rate):
-        if self.current_log:
-            self.current_log.playback_rate = playback_rate
-            self.current_log.save()
+        self.request.session["player_playback_rate"] = playback_rate
 
     def as_dict(self):
         return {
