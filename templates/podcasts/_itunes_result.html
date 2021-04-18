@@ -9,7 +9,7 @@
   </div>
   {% endif %}
   <div class="space-y-3">
-    <div class="text-sm w-56 sm:w-96 truncate md:w-full">
+    <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
       <a {% if podcast and podcast.pub_date %}
          href="{{ podcast.get_absolute_url }}"
          {% else %}
@@ -19,7 +19,7 @@
          {% endif %}
          title="{{ result.title }}"
          class="link">{{ result.title|truncatechars:120 }}</a>
-    </div>
+    </h2>
     <div class="text-sm flex items-center space-x-2">
       <div>
         {% if podcast and podcast.pub_date %}
