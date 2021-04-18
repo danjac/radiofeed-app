@@ -281,12 +281,12 @@ def remove_from_queue(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    has_more_items = delete_queue_item(request, episode)
+    has_next = delete_queue_item(request, episode)
 
     return [
         render_queue_toggle(request, episode, is_queued=False),
-        render_remove_from_queue(request, episode, has_more_items),
-        render_play_next(request, has_more_items),
+        render_remove_from_queue(request, episode, has_next),
+        render_play_next(request, has_next),
     ]
 
 
@@ -412,10 +412,10 @@ def delete_queue_item(request, episode):
     return items.exists()
 
 
-def render_play_next(request, has_more_items):
+def render_play_next(request, has_next):
     return (
         TurboStream("play-next")
-        .replace.template("episodes/_play_next.html", {"has_next": has_more_items})
+        .replace.template("episodes/_play_next.html", {"has_next": has_next})
         .render(request=request)
     )
 
@@ -431,8 +431,8 @@ def render_queue_toggle(request, episode, is_queued):
     )
 
 
-def render_remove_from_queue(request, episode, has_more_items):
-    if not has_more_items:
+def render_remove_from_queue(request, episode, has_next):
+    if not has_next:
         return TurboStream("queue").update.render(
             "You have no more episodes in your Play Queue"
         )
@@ -504,14 +504,12 @@ def render_player_response(
         request,
         current_episode,
         next_episode,
-        has_more_items=delete_queue_item(request, next_episode)
-        if next_episode
-        else False,
+        has_next=delete_queue_item(request, next_episode) if next_episode else False,
     )
 
 
 @turbo_stream_response
-def render_player_streams(request, current_episode, next_episode, has_more_items):
+def render_player_streams(request, current_episode, next_episode, has_next):
 
     if request.POST.get("is_modal"):
         yield TurboStream("modal").replace.template("_modal.html").render()
@@ -520,7 +518,7 @@ def render_player_streams(request, current_episode, next_episode, has_more_items
         yield render_player_toggle(request, current_episode, False)
 
     if next_episode:
-        yield render_remove_from_queue(request, next_episode, has_more_items)
+        yield render_remove_from_queue(request, next_episode, has_next)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
 
@@ -528,6 +526,6 @@ def render_player_streams(request, current_episode, next_episode, has_more_items
         "episodes/_player.html",
         {
             "new_episode": next_episode,
-            "has_next": has_more_items,
+            "has_next": has_next,
         },
     ).render(request=request)
