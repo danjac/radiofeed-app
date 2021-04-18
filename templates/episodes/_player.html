@@ -32,10 +32,13 @@
 
       </div>
 
-      <div class="flex items-center">
+      <div class="flex items-center space-x-2 sm:space-x-1">
 
-        {% cover_image podcast lazy=False cover_image=cover_image data_controller="link" data_link_url_value=podcast_url data_action="click->link#visit" role="link" size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
-
+        <div>
+          <a href="{{ podcast_url }}">
+            {% cover_image podcast lazy=False cover_image=cover_image size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
+          </a>
+        </div>
         <div class="w-full space-y-1">
 
           <div class="flex justify-between items-center w-full">
