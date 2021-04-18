@@ -90,17 +90,6 @@ class Player:
             self.current_log.current_time = current_time
             self.current_log.save()
 
-    @property
-    def paused(self):
-        return self.request.session.setdefault("player_paused", False)
-
-    @paused.setter
-    def paused(self, paused):
-        self.request.session["player_paused"] = paused
-
-    def toggle_pause(self):
-        self.paused = not (self.paused)
-
     def as_dict(self):
         return {
             "episode": self.episode,
