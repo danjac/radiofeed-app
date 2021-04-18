@@ -201,7 +201,7 @@
 
 <h2 class="font-semibold mb-3 pt-3 border-t dark:border-gray-500">Children's Privacy</h2>
 
-{% with age=privacy_settings.age_of_consent %}
+{% with age=privacy_details.age_of_consent %}
 <p class="mb-3 text-sm tracking-tight leading-tight">Our Service does not address anyone under the age of {{ age }}. We do not knowingly collect personally identifiable information from anyone under the age of {{ age }}. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of {{ age }} without verification of parental consent, We take steps to remove that information from Our servers.</p>
 {% endwith %}
 
