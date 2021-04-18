@@ -1,8 +1,7 @@
 {% spaceless %}
-{% load podcasts episodes %}
+{% load podcasts %}
 {% if user.is_authenticated %}
-{% get_player as player %}
-{% with episode=player.episode %}
+{% with episode=request.player.episode %}
 {% if episode %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities %}
 <div id="player"

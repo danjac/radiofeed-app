@@ -32,7 +32,7 @@
 {% endif %}
 {% endwith %}
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
+{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url duration=episode.get_duration_in_seconds %}
 <section class="sm:p-2 sm:border dark:border-gray-500 space-y-3">
 
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
@@ -59,7 +59,6 @@
       </a>
     </div>
     <div class="space-y-2">
-      {% is_playing episode as is_playing %}
       {% include "episodes/_player_toggle.html" %}
       {% include "episodes/_download.html" %}
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
