@@ -58,7 +58,7 @@ services:
 
   watchjs:
     <<: *assets
-    command: ['watchexec', '-w', 'static/src/js', '--', 'yarn', 'watch-js']
+    command: ['watchexec', '-w', 'static/src/js', '--', 'npm', 'run', 'watch-js']
 
   watchcss:
     <<: *assets
@@ -70,7 +70,8 @@ services:
         '-w',
         'templates',
         '--',
-        'yarn',
+        'npm',
+        'run',
         'watch-css',
       ]
 

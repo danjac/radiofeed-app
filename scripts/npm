@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose run --rm assets yarn $@
+docker-compose run --rm assets npm $@
 
