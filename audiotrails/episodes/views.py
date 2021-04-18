@@ -525,6 +525,5 @@ def render_player_streams(request, current_episode, next_episode, has_more_items
         yield render_player_toggle(request, next_episode, True)
 
     yield TurboStream("player").replace.template(
-        "episodes/_player.html",
-        {"new_episode": next_episode},
+        "episodes/_player.html", {"new_episode": next_episode}
     ).render(request=request)
