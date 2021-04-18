@@ -3,7 +3,7 @@
 {% if user.is_authenticated %}
 {% with episode=request.player.episode %}
 {% if episode %}
-{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities %}
+{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=request.player.current_time %}
 <div id="player"
      data-turbo-permanent
      data-controller="player"
@@ -16,7 +16,7 @@
      data-player-new-episode-value
      {% endif %}
      data-player-media-url-value="{{ episode.media_url }}"
-     data-player-current-time-value="{{ player.current_time|default:0 }}"
+     data-player-current-time-value="{{ current_time|default:0 }}"
      data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'>
   <audio data-player-target="audio"
          preload="metadata"
