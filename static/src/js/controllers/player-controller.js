@@ -3,7 +3,6 @@ import { Controller } from 'stimulus';
 export default class extends Controller {
   static targets = [
     'audio',
-    'controls',
     'counter',
     'indicator',
     'markComplete',
@@ -69,8 +68,9 @@ export default class extends Controller {
   }
 
   shortcuts(event) {
-    // ignore if player not running or inside an input element
-    if (!this.hasControlsTarget || this.isInputTarget(event)) {
+    // ignore if inside an input element
+    //
+    if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
       return;
     }
 
@@ -336,31 +336,31 @@ export default class extends Controller {
   }
 
   async sendCurrentTimeUpdate() {
-    if (this.shouldSendCurrentTimeUpdate()) {
-      const body = new FormData();
+    // sends current time to server
+    const now = new Date().getTime();
 
-      body.append('csrfmiddlewaretoken', this.csrfTokenValue);
-      body.append('current_time', this.currentTimeValue);
-
-      await fetch(this.timeupdateUrlValue, {
-        body,
-        method: 'POST',
-        credentials: 'same-origin',
-      });
-
-      this.timeupdateSentValue = new Date().getTime();
+    // ignore if waiting/paused/empty or less than 5s since last send
+    if (
+      !this.currentTimeValue ||
+      !this.mediaUrlValue ||
+      this.waitingValue ||
+      this.pausedValue ||
+      now - this.timeupdateSentValue < 5000
+    ) {
+      return;
     }
-  }
 
-  shouldSendCurrentTimeUpdate() {
-    // send every 5s if player is running
-    if (!this.currentTimeValue || !this.mediaUrlValue || this.pausedValue) {
-      return false;
-    }
-    return new Date().getTime() - this.timeupdateSentValue > 5000;
-  }
+    const body = new FormData();
 
-  isInputTarget(event) {
-    return /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName);
+    body.append('csrfmiddlewaretoken', this.csrfTokenValue);
+    body.append('current_time', this.currentTimeValue);
+
+    await fetch(this.timeupdateUrlValue, {
+      body,
+      method: 'POST',
+      credentials: 'same-origin',
+    });
+
+    this.timeupdateSentValue = now;
   }
 }

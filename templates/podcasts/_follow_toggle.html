@@ -4,8 +4,8 @@
       action="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_following %}
-  {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" %}
+  {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" accesskey="w" %}
   {% else %}
-  {% button "Follow" icon="eye" type="primary" title="Follow this podcast" %}
+  {% button "Follow" icon="eye" type="primary" title="Follow this podcast" accesskey="w" %}
   {% endif %}
 </form>
