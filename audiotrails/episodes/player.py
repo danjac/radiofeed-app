@@ -1,5 +1,4 @@
 from django.utils import timezone
-from django.utils.functional import cached_property
 
 from .models import AudioLog, QueueItem
 
@@ -15,11 +14,6 @@ class Player:
 
     def start(self, episode):
 
-        try:
-            del self.current_log
-        except AttributeError:
-            pass
-
         self.request.session["player_episode"] = episode.id
 
         log, _ = AudioLog.objects.update_or_create(
@@ -30,6 +24,8 @@ class Player:
                 "completed": None,
             },
         )
+        self._current_log = log
+
         return log
 
     def eject(self, mark_completed=False):
@@ -48,7 +44,7 @@ class Player:
             episode = self.current_log.episode
 
             del self.request.session["player_episode"]
-            del self.current_log
+            self._current_log = None
 
             return episode
 
@@ -64,8 +60,7 @@ class Player:
             return QueueItem.objects.filter(user=self.request.user).exists()
         return False
 
-    @cached_property
-    def current_log(self):
+    def get_current_log(self):
         if self.request.user.is_anonymous:
             return None
         if (episode_id := self.request.session.get("player_episode")) is None:
@@ -75,6 +70,14 @@ class Player:
             .select_related("episode", "episode__podcast")
             .first()
         )
+
+    @property
+    def current_log(self):
+        # using this instead  of cached_property for easier resetting
+        if hasattr(self, "_current_log"):
+            return self._current_log
+        self._current_log = self.get_current_log()
+        return self._current_log
 
     @property
     def episode(self):
