@@ -92,10 +92,3 @@ class Player:
         if self.current_log:
             self.current_log.current_time = current_time
             self.current_log.save()
-
-    def as_dict(self):
-        return {
-            "episode": self.episode,
-            "current_time": self.current_time,
-            "has_next": self.episode and self.has_next(),
-        }
