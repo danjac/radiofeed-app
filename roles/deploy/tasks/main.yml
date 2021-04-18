@@ -2,7 +2,6 @@
   shell: |
     docker-compose -f {{compose_file}} run --rm \
     -e SECRET_KEY="{{secret_key}}" \
-    -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.deploy \
     -e AWS_ACCESS_KEY_ID={{aws_access_key_id}} \
     -e AWS_S3_CUSTOM_DOMAIN={{aws_s3_custom_domain}} \
     -e AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}} \
@@ -13,7 +12,6 @@
   shell: |
     docker-compose -f {{compose_file}} run --rm \
     -e SECRET_KEY="{{secret_key}}" \
-    -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.deploy \
     -e AWS_ACCESS_KEY_ID={{aws_access_key_id}} \
     -e AWS_S3_CUSTOM_DOMAIN={{aws_s3_custom_domain}} \
     -e AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}} \

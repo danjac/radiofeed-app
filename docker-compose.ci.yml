@@ -3,7 +3,7 @@ version: '3.4'
 x-env: &default-env
   DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
   REDIS_URL: redis://redis:6379/0
-  DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
+  DJANGO_SETTINGS_MODULE: audiotrails.config.settings.deploy
   SECRET_KEY: ${SECRET_KEY}
   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
   AWS_S3_CUSTOM_DOMAIN: ${AWS_S3_CUSTOM_DOMAIN}
