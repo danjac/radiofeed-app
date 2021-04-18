@@ -3,7 +3,7 @@
       id="play-next"
       action="{% url 'episodes:play_next_episode' %}">
   {% csrf_token %}
-  {% if has_next %}
+  {% if has_next|default:request.player.has_next %}
   <button title="Play next episode in queue"
           data-player-target="playNextButton"
           class="focus:outline-none hover:text-blue-500">
