@@ -81,6 +81,7 @@ class FeedParser(RssParser):
     def parse(self):
         return Feed(
             title=self.parse_text("title"),
+            language=self.parse_text("language"),
             link=self.parse_text("link"),
             categories=self.parse_attribute_list(".//itunes:category", "text"),
             creators=set(self.parse_creators()),
