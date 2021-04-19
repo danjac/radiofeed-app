@@ -316,7 +316,7 @@ export default class extends Controller {
     }
   }
 
-  async sendCurrentTimeUpdate() {
+  sendCurrentTimeUpdate() {
     // sends current time to server
     const now = new Date().getTime();
 
@@ -331,11 +331,11 @@ export default class extends Controller {
       return;
     }
 
+    this.timeupdateSentValue = now;
+
     const body = new FormData();
     body.append('current_time', this.currentTimeValue);
-
-    await this.doFetch(this.timeupdateUrlValue, { body });
-    this.timeupdateSentValue = now;
+    this.doFetch(this.timeupdateUrlValue, { body });
   }
 
   doFetch(url, options) {
