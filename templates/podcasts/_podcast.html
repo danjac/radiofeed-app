@@ -5,8 +5,7 @@
          {{ attrs|htmlattrs }}>
 
   <div>
-    <a href="{{ podcast_url }}"
-       data-turbo-frame="_top">
+    <a href="{{ podcast_url }}">
       {% cover_image podcast=podcast lazy=True %}
     </a>
   </div>
@@ -15,15 +14,14 @@
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
       <a href="{{ podcast_url }}"
          title="{{ podcast.title|stripentities }}"
-         data-turbo-frame="_top"
          class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
 
     </h2>
     <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
       <a class="link"
          href="{{ podcast.get_preview_url }}"
-         title="Preview for {{ podcast.title|stripentities }}"
-         data-turbo-frame="modal">
+         data-turbo-frame="modal"
+         title="Preview for {{ podcast.title|stripentities }}">
         {% icon "ellipsis" css_class="w-6 h-6" %}
       </a>
 

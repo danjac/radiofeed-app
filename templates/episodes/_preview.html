@@ -3,8 +3,7 @@
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
    title="{{ episode.title }}"
-   class="link"
-   data-turbo-frame="_top">
+   class="link">
   {{ episode.title|stripentities|truncatechars:100 }}
 </a>
 {% endblock %}
@@ -23,8 +22,7 @@
 
 <div class="flex items-center mb-3 space-x-3">
   <div>
-    <a href="{{ podcast_url }}"
-       data-turbo-frame="_top">
+    <a href="{{ podcast_url }}">
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>

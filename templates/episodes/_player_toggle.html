@@ -1,5 +1,4 @@
 <form method="POST"
-      data-turbo-frame="_top"
       id="{{ episode.dom.player_toggle }}"
       action="{% if is_playing %}{% url 'episodes:close_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
   {% csrf_token %}

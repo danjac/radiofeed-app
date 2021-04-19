@@ -1,6 +1,5 @@
 <form method="post"
       id="{{ episode.dom.queue_toggle }}"
-      data-turbo-frame="_top"
       class="flex items-center"
       action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}

@@ -1,6 +1,5 @@
 <form method="post"
       id="{{ episode.dom.favorite_toggle }}"
-      data-turbo-frame="_top"
       action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
   {% csrf_token %}
   {% if is_favorited %}
