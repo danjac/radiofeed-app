@@ -73,36 +73,20 @@ export default class extends Controller {
       return;
     }
 
-    switch (event.code) {
-      case 'Space':
-        event.preventDefault();
-        this.togglePause();
-        return;
-      case 'ArrowLeft':
-        event.preventDefault();
-        this.skipBack();
-        return;
-      case 'ArrowRight':
-        event.preventDefault();
-        this.skipForward();
-        return;
-      case 'Delete':
-        event.preventDefault();
-        this.closeButtonTarget.click();
-        return;
-      default:
-    }
+    const handlers = {
+      '+': this.incrementPlaybackRate,
+      '-': this.decrementPlaybackRate,
+      ArrowLeft: this.skipBack,
+      ArrowRight: this.skipForward,
+      Delete: this.closePlayer,
+      Space: this.togglePause,
+    };
 
-    switch (event.key) {
-      case '-':
-        event.preventDefault();
-        this.decrementPlaybackRate();
-        return;
+    const handler = handlers[event.code] || handlers[event.key];
 
-      case '+':
-        event.preventDefault();
-        this.incrementPlaybackRate();
-        return;
+    if (handler) {
+      event.preventDefault();
+      handler.bind(this)();
     }
   }
 
@@ -309,6 +293,10 @@ export default class extends Controller {
     return [hours, minutes, seconds]
       .map((t) => t.toString().padStart(2, '0'))
       .join(':');
+  }
+
+  closePlayer() {
+    this.closeButtonTarget.click();
   }
 
   skipTo(position) {
