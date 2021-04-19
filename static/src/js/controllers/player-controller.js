@@ -339,8 +339,8 @@ export default class extends Controller {
     body.append('current_time', this.currentTimeValue);
     try {
       await this.doFetch(this.timeupdateUrlValue, { body });
-      this.timeupdateSentValue = now;
     } finally {
+      this.timeupdateSentValue = now;
       this.timeupdateSendingValue = false;
     }
   }
