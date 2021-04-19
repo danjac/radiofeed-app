@@ -213,6 +213,51 @@ class TestFeedModel:
 
         assert feed.language == "en"
 
+    def test_language_with_spaces(self, item):
+
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            creators=[],
+            image=None,
+            link="http://reddit.com",
+            language=" en-us",
+            categories=[],
+        )
+
+        assert feed.language == "en"
+
+    def test_language_with_single_value(self, item):
+
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            creators=[],
+            image=None,
+            link="http://reddit.com",
+            language="fi",
+            categories=[],
+        )
+
+        assert feed.language == "fi"
+
+    def test_language_with_empty(self, item):
+
+        feed = Feed(
+            title="test",
+            description="test",
+            items=[item],
+            creators=[],
+            image=None,
+            link="http://reddit.com",
+            language="",
+            categories=[],
+        )
+
+        assert feed.language == "en"
+
     def test_valid_link(self, item):
         feed = Feed(
             title="test",

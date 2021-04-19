@@ -82,7 +82,7 @@ class Feed(BaseModel):
 
     @validator("language")
     def language_code(cls, value):
-        return (value[:2] if value else "en").strip().lower()
+        return (value.replace("-", "").strip()[:2] if value else "en").lower()
 
     @validator("link", pre=True)
     def prepare_link(cls, value: str):
