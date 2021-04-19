@@ -88,7 +88,7 @@ export default class extends Controller {
         return;
       case 'Delete':
         event.preventDefault();
-        this.closeButtonTargeTargett.click();
+        this.closeButtonTarget.click();
         return;
       default:
     }
