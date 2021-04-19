@@ -3,6 +3,7 @@ import { Controller } from 'stimulus';
 export default class extends Controller {
   static targets = [
     'audio',
+    'close',
     'counter',
     'indicator',
     'pauseButton',
@@ -10,7 +11,6 @@ export default class extends Controller {
     'playButton',
     'playNext',
     'progressBar',
-    'stopButton',
   ];
 
   static classes = ['active', 'inactive'];
@@ -83,7 +83,7 @@ export default class extends Controller {
         return;
       case 'Delete':
         event.preventDefault();
-        this.stopButtonTarget.click();
+        this.closeTarget.requestSubmit();
         return;
       default:
     }

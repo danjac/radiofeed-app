@@ -167,10 +167,10 @@ class TestPlayNextEpisode:
         assert resp.status_code == http.HTTPStatus.OK
 
 
-class TestStopPlayer:
+class TestClosePlayer:
     def test_anonymous(self, client):
         resp = client.post(
-            reverse("episodes:stop_player"),
+            reverse("episodes:close_player"),
         )
         assert resp.url
 
@@ -181,7 +181,7 @@ class TestStopPlayer:
 
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(
-            reverse("episodes:stop_player"),
+            reverse("episodes:close_player"),
         )
         assert resp.status_code == http.HTTPStatus.OK
 

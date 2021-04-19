@@ -325,7 +325,7 @@ def start_player(
 
 
 @require_POST
-def stop_player(request):
+def close_player(request):
     if request.user.is_anonymous:
         return redirect_to_login(settings.HOME_URL)
 

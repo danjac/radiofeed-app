@@ -24,9 +24,9 @@ urlpatterns = [
         name="start_player",
     ),
     path(
-        "player/~stop/",
-        views.stop_player,
-        name="stop_player",
+        "player/~close/",
+        views.close_player,
+        name="close_player",
     ),
     path(
         "player/~next/",
