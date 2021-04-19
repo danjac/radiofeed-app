@@ -26,6 +26,7 @@ export default class extends Controller {
     playbackRate: Number,
     playNextUrl: String,
     timeupdateUrl: String,
+    timeupdateSending: Boolean,
     timeupdateSent: Number,
     waiting: Boolean,
   };
@@ -316,7 +317,7 @@ export default class extends Controller {
     }
   }
 
-  sendCurrentTimeUpdate() {
+  async sendCurrentTimeUpdate() {
     // sends current time to server
     const now = new Date().getTime();
 
@@ -326,16 +327,20 @@ export default class extends Controller {
       !this.mediaUrlValue ||
       this.waitingValue ||
       this.pausedValue ||
+      this.timeupdateSendingValue ||
       now - this.timeupdateSentValue < 5000
     ) {
       return;
     }
 
-    this.timeupdateSentValue = now;
+    this.timeupdateSendingValue = true;
 
     const body = new FormData();
     body.append('current_time', this.currentTimeValue);
-    this.doFetch(this.timeupdateUrlValue, { body });
+    await this.doFetch(this.timeupdateUrlValue, { body });
+
+    this.timeupdateSendingValue = false;
+    this.timeupdateSentValue = now;
   }
 
   doFetch(url, options) {
