@@ -1,15 +1,15 @@
+import { renderStreamMessage } from '@hotwired/turbo';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
   static targets = [
     'audio',
-    'close',
+    'closeButton',
     'counter',
     'indicator',
     'pauseButton',
     'playbackRate',
     'playButton',
-    'playNext',
     'progressBar',
   ];
 
@@ -24,6 +24,7 @@ export default class extends Controller {
     newEpisode: Boolean,
     paused: Boolean,
     playbackRate: Number,
+    playNextUrl: String,
     timeupdateUrl: String,
     timeupdateSent: Number,
     waiting: Boolean,
@@ -40,8 +41,12 @@ export default class extends Controller {
     }
   }
 
-  ended() {
-    this.playNextTarget.requestSubmit();
+  async ended() {
+    const response = await this.doFetch(this.playNextUrlValue, {
+      headers: { Accept: 'text/vnd.turbo-stream.html' },
+    });
+    const html = await response.text();
+    renderStreamMessage(html);
   }
 
   loadedMetaData() {
@@ -83,7 +88,7 @@ export default class extends Controller {
         return;
       case 'Delete':
         event.preventDefault();
-        this.closeTarget.requestSubmit();
+        this.closeButtonTargeTargett.click();
         return;
       default:
     }
@@ -339,16 +344,20 @@ export default class extends Controller {
     }
 
     const body = new FormData();
-
-    body.append('csrfmiddlewaretoken', this.csrfTokenValue);
     body.append('current_time', this.currentTimeValue);
 
-    await fetch(this.timeupdateUrlValue, {
+    await this.doFetch(this.timeupdateUrlValue, { body });
+    this.timeupdateSentValue = now;
+  }
+
+  doFetch(url, options) {
+    const body = options.body || new FormData();
+    body.append('csrfmiddlewaretoken', this.csrfTokenValue);
+    return fetch(url, {
       body,
       method: 'POST',
       credentials: 'same-origin',
+      ...options,
     });
-
-    this.timeupdateSentValue = now;
   }
 }

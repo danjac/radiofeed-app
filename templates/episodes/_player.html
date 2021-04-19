@@ -11,6 +11,7 @@
      data-player-active-class="player--active"
      data-player-inactive-class="player--inactive"
      data-player-csrf-token-value="{{ csrf_token }}"
+     data-player-play-next-url-value="{% url 'episodes:play_next_episode' %}"
      data-player-timeupdate-url-value="{% url 'episodes:player_update_current_time' %}"
      {% if new_episode %}
      data-player-new-episode-value
@@ -63,21 +64,13 @@
 
               <form class="flex items-center"
                     method="POST"
-                    data-player-target="close"
                     action="{% url 'episodes:close_player' %}">
                 {% csrf_token %}
                 <button title="Stop"
+                        data-player-target="closeButton"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "stop" css_class="h-8 w-8" %}
                 </button>
-              </form>
-
-
-              <form method="POST"
-                    class="hidden"
-                    data-player-target="playNext"
-                    action="{% url 'episodes:play_next_episode' %}">
-                {% csrf_token %}
               </form>
 
             </div>
