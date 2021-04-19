@@ -9,6 +9,7 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.core.cache import cache
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
@@ -116,7 +117,9 @@ class Podcast(models.Model):
 
     itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
-    language = models.CharField(max_length=2, default="en")
+    language = models.CharField(
+        max_length=2, default="en", validators=[MinLengthValidator(2)]
+    )
     description = models.TextField(blank=True)
     link = models.URLField(null=True, blank=True, max_length=500)
     keywords = models.TextField(blank=True)
