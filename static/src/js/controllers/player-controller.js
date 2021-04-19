@@ -337,10 +337,12 @@ export default class extends Controller {
 
     const body = new FormData();
     body.append('current_time', this.currentTimeValue);
-    await this.doFetch(this.timeupdateUrlValue, { body });
-
-    this.timeupdateSendingValue = false;
-    this.timeupdateSentValue = now;
+    try {
+      await this.doFetch(this.timeupdateUrlValue, { body });
+      this.timeupdateSentValue = now;
+    } finally {
+      this.timeupdateSendingValue = false;
+    }
   }
 
   doFetch(url, options) {
