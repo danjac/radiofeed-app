@@ -244,7 +244,6 @@ def add_to_queue(request, episode_id):
 
     streams = [
         render_queue_toggle(request, episode, is_queued=True),
-        render_play_next(request, True),
     ]
 
     items = get_queue_items(request)
@@ -286,7 +285,6 @@ def remove_from_queue(request, episode_id):
     return [
         render_queue_toggle(request, episode, is_queued=False),
         render_remove_from_queue(request, episode, has_next),
-        render_play_next(request, has_next),
     ]
 
 
@@ -331,9 +329,7 @@ def stop_player(request):
     if request.user.is_anonymous:
         return redirect_to_login(settings.HOME_URL)
 
-    return render_player_response(
-        request, mark_completed=request.POST.get("mark_complete")
-    )
+    return render_player_response(request)
 
 
 @require_POST
@@ -410,14 +406,6 @@ def delete_queue_item(request, episode):
     items = get_queue_items(request)
     items.filter(episode=episode).delete()
     return items.exists()
-
-
-def render_play_next(request, has_next):
-    return (
-        TurboStream("play-next")
-        .replace.template("episodes/_play_next.html", {"has_next": has_next})
-        .render(request=request)
-    )
 
 
 def render_queue_toggle(request, episode, is_queued):
@@ -526,6 +514,5 @@ def render_player_streams(request, current_episode, next_episode, has_next):
         "episodes/_player.html",
         {
             "new_episode": next_episode,
-            "has_next": has_next,
         },
     ).render(request=request)

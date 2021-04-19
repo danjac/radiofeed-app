@@ -5,11 +5,10 @@ export default class extends Controller {
     'audio',
     'counter',
     'indicator',
-    'markComplete',
     'pauseButton',
     'playbackRate',
     'playButton',
-    'playNextButton',
+    'playNext',
     'progressBar',
     'stopButton',
   ];
@@ -42,12 +41,7 @@ export default class extends Controller {
   }
 
   ended() {
-    if (this.hasPlayNextButtonTarget) {
-      this.playNextButtonTarget.click();
-    } else {
-      this.markCompleteTarget.value = 'true';
-      this.stopButtonTarget.click();
-    }
+    this.playNextTarget.requestSubmit();
   }
 
   loadedMetaData() {
@@ -91,12 +85,6 @@ export default class extends Controller {
         event.preventDefault();
         this.stopButtonTarget.click();
         return;
-      case 'Tab':
-        if (event.shiftKey && this.hasPlayNextButtonTarget) {
-          event.preventDefault();
-          this.playNextButtonTarget.click();
-          return;
-        }
       default:
     }
 
