@@ -117,4 +117,4 @@ To deploy just run:
 
 ## LICENSE
 
-This project is covered by GNU Affero General Public License (AGPL).
+This project is covered by MIT license.
