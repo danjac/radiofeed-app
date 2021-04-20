@@ -15,8 +15,6 @@ from sorl.thumbnail import get_thumbnail
 from audiotrails.db import FastCountMixin
 from audiotrails.podcasts.models import Podcast
 
-from .utils import duration_in_seconds
-
 
 @dataclasses.dataclass
 class EpisodeDOM:
@@ -129,9 +127,6 @@ class Episode(models.Model):
             queue_toggle=f"queue-toggle-{self.id}",
         )
 
-    def get_duration_in_seconds(self):
-        return duration_in_seconds(self.duration or "")
-
     def get_next_episode(self):
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
@@ -153,6 +148,51 @@ class Episode(models.Model):
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
+
+    def get_duration_in_seconds(self):
+        """Returns total number of seconds given string in [h:][m:]s format.
+        Invalid formats return zero."""
+
+        if not self.duration:
+            return 0
+
+        try:
+            return sum(
+                (int(part) * multiplier)
+                for (part, multiplier) in zip(
+                    reversed(self.duration.split(":")[:3]), (1, 60, 3600)
+                )
+            )
+        except ValueError:
+            return 0
+
+    def get_pc_completed(self):
+        """Use with the `with_current_time` QuerySet method"""
+
+        try:
+            # if marked complete just assume 100% done
+            if self.completed:
+                return 100
+
+            total = self.get_duration_in_seconds()
+
+            if not self.current_time or not total:
+                return 0
+
+            if (pc := (self.current_time / total) * 100) > 100:
+                return 100
+            return pc
+
+            return
+        except AttributeError:
+            return 0
+
+    def is_completed(self):
+        """Use with the `with_current_time` QuerySet method"""
+        try:
+            return self.completed or self.get_pc_completed() >= 100
+        except AttributeError:
+            return False
 
     def get_opengraph_data(self, request):
         og_data = {

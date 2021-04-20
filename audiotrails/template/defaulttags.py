@@ -1,5 +1,6 @@
 import collections
 import json
+import math
 
 from urllib import parse
 
@@ -29,6 +30,23 @@ json_escapes = {
     ord("&"): "\\u0026",
     ord("'"): "\\u0027",
 }
+
+
+@register.filter
+def format_duration(total_seconds):
+    """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
+    if not total_seconds:
+        return ""
+
+    rv = []
+
+    if total_hours := math.floor(total_seconds / 3600):
+        rv.append(f"{total_hours}h")
+
+    if total_minutes := round((total_seconds % 3600) / 60):
+        rv.append(f"{total_minutes}min")
+
+    return " ".join(rv) if rv else "<1min"
 
 
 @register.simple_tag(takes_context=True)

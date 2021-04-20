@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load episodes podcasts %}
+{% load podcasts %}
 
 {% block subtitle %} | {{ episode.podcast.title|stripentities }} | {{ episode.title|stripentities }}{% endblock %}
 

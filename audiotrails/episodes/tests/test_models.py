@@ -52,6 +52,25 @@ class TestEpisodeManager:
 
 
 class TestEpisodeModel:
+    def test_duration_in_seconds_if_empty_or_none(self):
+        assert Episode(duration=None).get_duration_in_seconds() == 0
+        assert Episode(duration="").get_duration_in_seconds() == 0
+
+    def test_duration_in_seconds_invalid_string(self):
+        assert Episode(duration="oops").get_duration_in_seconds() == 0
+
+    def test_duration_in_seconds_hours_minutes_seconds(self):
+        assert Episode(duration="2:30:40").get_duration_in_seconds() == 9040
+
+    def test_duration_in_seconds_hours_minutes_seconds_extra_digit(self):
+        assert Episode(duration="2:30:40:2903903").get_duration_in_seconds() == 9040
+
+    def test_duration_in_seconds_minutes_seconds(self):
+        assert Episode(duration="30:40").get_duration_in_seconds() == 1840
+
+    def test_duration_in_seconds_seconds_only(self):
+        assert Episode(duration="40").get_duration_in_seconds() == 40
+
     def test_get_media_metadata(self, episode):
         data = episode.get_media_metadata()
         assert data["title"] == episode.title
@@ -102,6 +121,42 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() == next_episode
         assert episode.get_previous_episode() == previous_episode
+
+    def test_get_pc_complete_without_current_time(self, user):
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=50, updated=timezone.now(), episode=episode
+        )
+        assert Episode.objects.first().get_pc_completed() == 0
+
+    def test_get_pc_complete(self, user):
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=50, updated=timezone.now(), episode=episode
+        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 50
+
+    def test_get_pc_complete_marked_complete(self, user):
+        now = timezone.now()
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=50, updated=now, completed=now, episode=episode
+        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
+
+    def test_get_pc_complete_not_played(self, user):
+        EpisodeFactory(duration="100")
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
+
+    def test_get_pc_complete_anonymous(self, user, anonymous_user):
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=50, updated=timezone.now(), episode=episode
+        )
+        assert (
+            Episode.objects.with_current_time(anonymous_user).first().get_pc_completed()
+            == 0
+        )
 
     def is_favorited_anonymous(self, episode, anonymous_user):
         assert not episode.is_favorited(anonymous_user)
