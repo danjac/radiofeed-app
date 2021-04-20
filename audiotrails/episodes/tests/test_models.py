@@ -150,6 +150,13 @@ class TestEpisodeModel:
         )
         assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
 
+    def test_get_pc_complete_gt_100(self, user):
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=120, updated=timezone.now(), episode=episode
+        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
+
     def test_get_pc_complete_marked_complete(self, user):
         now = timezone.now()
         episode = EpisodeFactory(duration="100")
