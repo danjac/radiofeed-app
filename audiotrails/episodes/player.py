@@ -6,6 +6,8 @@ from .models import AudioLog, QueueItem
 class Player:
     """Manages session state of player"""
 
+    session_key = "player_episode"
+
     def __init__(self, request):
         self.request = request
 
@@ -14,7 +16,7 @@ class Player:
 
     def start(self, episode):
 
-        self.request.session["player_episode"] = episode.id
+        self.request.session[self.session_key] = episode.id
 
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
@@ -42,7 +44,7 @@ class Player:
 
         log.save()
 
-        del self.request.session["player_episode"]
+        del self.request.session[self.session_key]
         self._current_log = None
 
         return log.episode
@@ -58,12 +60,15 @@ class Player:
         return False
 
     def get_current_log(self):
-        if self.request.user.is_anonymous:
-            return None
-        if (episode_id := self.request.session.get("player_episode")) is None:
+        if (
+            self.request.user.is_anonymous
+            or self.session_key not in self.request.session
+        ):
             return None
         return (
-            AudioLog.objects.filter(user=self.request.user, episode=episode_id)
+            AudioLog.objects.filter(
+                user=self.request.user, episode=self.request.session[self.session_key]
+            )
             .select_related("episode", "episode__podcast")
             .first()
         )
