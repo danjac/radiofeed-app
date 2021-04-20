@@ -10,9 +10,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
-COPY ./pyproject.toml /pyproject.toml
-RUN poetry install
+COPY ./requirements.txt /requirements.txt
+RUN pip install -r requirements.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
