@@ -13,7 +13,7 @@
   roles:
     - configure
 
-- name: Deploy application to Dokku
+- name: Deploy application to Dokku and S3
   hosts: localhost
   gather_facts: no
   vars_files: vars.yml
