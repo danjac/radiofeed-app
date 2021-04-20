@@ -29,23 +29,23 @@ class Player:
         return log
 
     def eject(self, mark_completed=False):
-        if not self.current_log:
-
+        if (log := self.current_log) is None:
             return None
+
         now = timezone.now()
 
-        self.current_log.updated = now
+        log.updated = now
 
         if mark_completed:
-            self.current_log.completed = now
-            self.current_log.current_time = 0
+            log.completed = now
+            log.current_time = 0
 
-        self.current_log.save()
+        log.save()
 
         del self.request.session["player_episode"]
         self._current_log = None
 
-        return self.current_log.episode
+        return log.episode
 
     def is_playing(self, episode):
         if self.request.user.is_anonymous:
