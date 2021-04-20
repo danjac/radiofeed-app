@@ -31,22 +31,28 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
-class SyncErrorFilter(admin.SimpleListFilter):
-    title = "Blocklist (3+ sync errors)"
+class BlocklistedFilter(admin.SimpleListFilter):
+    title = "Blocklist (3+ RSS sync errors)"
     parameter_name = "blocklisted"
 
     def lookups(self, request, model_admin):
         return (
-            ("yes", "Blocklisted"),
-            ("no", "Allowed"),
+            ("blocklisted", "Blocklisted"),
+            ("allowed", "Allowed"),
+            ("danger-zone", "Danger Zone"),
+            ("no-errors", "No Errors"),
         )
 
     def queryset(self, request, queryset):
-        value = self.value()
-        if value == "yes":
-            return queryset.filter(num_retries__gte=3)
-        if value == "no":
-            return queryset.filter(num_retries=0)
+
+        if kwargs := {
+            "allowed": {"num_retries__lt": 3},
+            "blocklisted": {"num_retries__gte": 3},
+            "danger-zone": {"num_retries__gt": 0, "num_retries__lt": 3},
+            "no-errors": {"num_retries": 0},
+        }.get(self.value()):
+            queryset = queryset.filter(**kwargs)
+
         return queryset
 
 
@@ -66,7 +72,7 @@ class PromotedFilter(admin.SimpleListFilter):
 
 @admin.register(Podcast)
 class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_filter = (PubDateFilter, PromotedFilter, SyncErrorFilter)
+    list_filter = (PubDateFilter, PromotedFilter, BlocklistedFilter)
 
     ordering = ("-pub_date",)
     list_display = ("title_with_strikethru", "pub_date", "promoted")
