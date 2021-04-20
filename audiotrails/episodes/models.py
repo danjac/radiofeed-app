@@ -183,7 +183,6 @@ class Episode(models.Model):
                 return 100
             return pc
 
-            return
         except AttributeError:
             return 0
 
