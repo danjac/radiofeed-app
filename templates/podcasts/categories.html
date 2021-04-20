@@ -15,16 +15,18 @@
 
 <div class="divide-y divide-gray-300 dark:divide-gray-500">
   {% if search %}
-  {% for category in categories %}
-  <div>
-    <a href="{{ category.get_absolute_url }}"
-       class="link mb-3">{{ category.name }}</a>
+  <div class="space-y-3">
+    {% for category in categories %}
+    <div>
+      <a href="{{ category.get_absolute_url }}"
+         class="link">{{ category.name }}</a>
+    </div>
+    {% empty %}
+    <p class="text-center sm:text-left">
+      No categories have been found matching <b>{{ search }}.</b>
+    </p>
+    {% endfor %}
   </div>
-  {% empty %}
-  <p class="text-center sm:text-left">
-    No categories have been found matching <b>{{ search }}.</b>
-  </p>
-  {% endfor %}
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
