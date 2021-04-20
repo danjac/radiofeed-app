@@ -122,7 +122,7 @@ class TestEpisodeModel:
         assert episode.get_next_episode() == next_episode
         assert episode.get_previous_episode() == previous_episode
 
-    def test_get_pc_complete_without_current_time(self, user):
+    def test_get_pc_complete_without_current_time_attr(self, user):
         episode = EpisodeFactory(duration="100")
         AudioLogFactory(
             user=user, current_time=50, updated=timezone.now(), episode=episode
@@ -135,6 +135,20 @@ class TestEpisodeModel:
             user=user, current_time=50, updated=timezone.now(), episode=episode
         )
         assert Episode.objects.with_current_time(user).first().get_pc_completed() == 50
+
+    def test_get_pc_complete_zero_current_time(self, user):
+        episode = EpisodeFactory(duration="100")
+        AudioLogFactory(
+            user=user, current_time=0, updated=timezone.now(), episode=episode
+        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
+
+    def test_get_pc_complete_zero_duration(self, user):
+        episode = EpisodeFactory(duration="")
+        AudioLogFactory(
+            user=user, current_time=0, updated=timezone.now(), episode=episode
+        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
 
     def test_get_pc_complete_marked_complete(self, user):
         now = timezone.now()

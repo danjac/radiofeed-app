@@ -174,16 +174,14 @@ class Episode(models.Model):
             if self.completed:
                 return 100
 
-            total = self.get_duration_in_seconds()
-
-            if not self.current_time or not total:
+            if not self.current_time:
                 return 0
 
-            if (pc := (self.current_time / total) * 100) > 100:
-                return 100
-            return pc
+            return min(
+                ((self.current_time / self.get_duration_in_seconds()) * 100, 100)
+            )
 
-        except AttributeError:
+        except (ZeroDivisionError, AttributeError):
             return 0
 
     def is_completed(self):
