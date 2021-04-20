@@ -1,4 +1,5 @@
-{% with is_completed=episode.is_completed pc_complete=episode.get_pc_completed listened=episode.listened|date %}
+{% load humanize %}
+{% with is_completed=episode.is_completed pc_complete=episode.get_pc_completed listened=episode.listened|naturaltime %}
 <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm {{ css_class|default:'' }}">
   {% if is_completed or pc_complete >= 99.5 %}
   Completed {{ listened }}

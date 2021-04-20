@@ -1,6 +1,6 @@
 {% extends "account/settings_base.html" %}
 
-{% load %}
+{% load humanize %}
 
 {% block subtitle %} | Stats{% endblock %}
 
@@ -10,7 +10,7 @@
 
   <div class="flex justify-between pt-3">
     <div class="w-1/2">Joined</div>
-    <div class="w-1/2 font-bold text-right">{{ user.date_joined|date }}</div>
+    <div class="w-1/2 font-bold text-right">{{ user.date_joined|naturaltime }}</div>
   </div>
 
   {% if stats.follows %}

@@ -12,7 +12,7 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url podcast_url=episode.podcast.get_absolute_url duration=episode.get_duration_in_seconds %}
 <div class="flex items-center text-sm space-x-2 font-semibold text-gray-600 dark:text-gray-300 mb-3">
   <div title="Date Published">
-    {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
+    {% include "_pub_date.html" with pub_date=episode.pub_date %}
   </div>
   <div class="Duration">
     {{ duration|format_duration }}
