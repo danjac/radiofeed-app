@@ -1,2 +1,2 @@
 {% load humanize %}
-<time datetime="{{ pub_date|date:"c" }}">{{ pub_date|naturalday }}</time>
+<time datetime="{{ pub_date|date:"c" }}">{{ pub_date|naturalday|capfirst }}</time>
