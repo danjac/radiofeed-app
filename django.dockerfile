@@ -10,9 +10,12 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
+COPY ./poetry.lock /poetry.lock
 COPY ./pyproject.toml /pyproject.toml
-RUN poetry install
+
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
