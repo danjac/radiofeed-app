@@ -389,11 +389,16 @@ def get_episode_or_404(
 
 
 def get_episode_detail_context(request, episode, extra_context=None):
+
     return {
         "episode": episode,
-        "is_playing": request.player.is_playing(episode),
         "is_favorited": episode.is_favorited(request.user),
         "is_queued": episode.is_queued(request.user),
+        "is_playing": (
+            request.session.get("player_episode") == episode.id
+            if request.user.is_authenticated
+            else False
+        ),
         **(extra_context or {}),
     }
 

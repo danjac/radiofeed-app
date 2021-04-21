@@ -1,9 +1,9 @@
 {% spaceless %}
-{% load podcasts %}
-{% if user.is_authenticated %}
-{% with episode=request.player.episode %}
+{% load player podcasts %}
+{% get_player as player %}
+{% with episode=player.episode %}
 {% if episode %}
-{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=request.player.current_time %}
+{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=player.current_time %}
 <div id="player"
      data-turbo-permanent
      data-controller="player"
@@ -129,5 +129,4 @@
 <div id="player"></div>
 {% endif %}
 {% endwith %}
-{% endif %}
 {% endspaceless %}
