@@ -85,7 +85,7 @@ class Feed(BaseModel):
         return (value.replace("-", "").strip()[:2] if value else "en").lower()
 
     @validator("link", pre=True)
-    def prepare_link(cls, value: str):
+    def prepare_link(cls, value):
         if not value:
             return value
 
