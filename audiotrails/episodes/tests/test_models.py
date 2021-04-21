@@ -227,11 +227,6 @@ class TestFavoriteManager:
         assert favorite.user == user
         assert num_favorites == 1
 
-    def test_delete_favorite(self, user, episode):
-        FavoriteFactory(user=user, episode=episode)
-        num_favorites = Favorite.objects.delete_favorite(user, episode)
-        assert num_favorites == 0
-
 
 class TestAudioLogManager:
     def test_search(self):
