@@ -27,7 +27,9 @@ def index(request):
 
     if request.user.is_authenticated:
         podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
-        listened_ids = list(get_audio_logs(request).values_list("episode", flat=True))
+        listened_ids = list(
+            AudioLog.objects.filter(user=request.user).values_list("episode", flat=True)
+        )
 
     if not podcast_ids:
         podcast_ids = list(
@@ -123,7 +125,7 @@ def episode_detail(request, episode_id, slug=None):
 def history(request):
 
     logs = (
-        get_audio_logs(request)
+        AudioLog.objects.filter(user=request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )
@@ -148,7 +150,7 @@ def remove_audio_log(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    logs = get_audio_logs(request)
+    logs = AudioLog.objects.filter(user=request.user)
 
     logs.filter(episode=episode).delete()
 
@@ -160,7 +162,9 @@ def remove_audio_log(request, episode_id):
 
 @login_required
 def favorites(request):
-    favorites = get_favorites(request).select_related("episode", "episode__podcast")
+    favorites = Favorite.objects.filter(user=request.user).select_related(
+        "episode", "episode__podcast"
+    )
     if request.search:
         favorites = favorites.search(request.search).order_by("-rank", "-created")
     else:
@@ -191,7 +195,9 @@ def add_favorite(request, episode_id):
         render_favorite_toggle(request, episode, is_favorited=True),
         TurboStream("favorites")
         .action(
-            Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
+            Action.UPDATE
+            if Favorite.objects.filter(user=request.user).count() == 1
+            else Action.PREPEND
         )
         .template(
             "episodes/_episode.html",
@@ -209,7 +215,7 @@ def remove_favorite(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    favorites = get_favorites(request)
+    favorites = Favorite.objects.filter(user=request.user)
     favorites.filter(episode=episode).delete()
 
     return [
@@ -226,7 +232,7 @@ def queue(request):
         request,
         "episodes/queue.html",
         {
-            "queue_items": get_queue_items(request)
+            "queue_items": QueueItem.objects.filter(user=request.user)
             .select_related("episode", "episode__podcast")
             .order_by("position")
         },
@@ -246,7 +252,7 @@ def add_to_queue(request, episode_id):
         render_queue_toggle(request, episode, is_queued=True),
     ]
 
-    items = get_queue_items(request)
+    items = QueueItem.objects.filter(user=request.user)
 
     try:
         new_item = QueueItem.objects.create(
@@ -280,11 +286,9 @@ def remove_from_queue(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    has_next = delete_queue_item(request, episode)
-
     return [
         render_queue_toggle(request, episode, is_queued=False),
-        render_remove_from_queue(request, episode, has_next),
+        render_remove_from_queue(request, episode),
     ]
 
 
@@ -294,7 +298,7 @@ def move_queue_items(request):
     if request.user.is_anonymous:
         return HttpResponseForbidden("You must be logged in")
 
-    qs = get_queue_items(request)
+    qs = QueueItem.objects.filter(user=request.user)
     items = qs.in_bulk()
     for_update = []
 
@@ -340,7 +344,7 @@ def play_next_episode(request):
         return redirect_to_login(settings.HOME_URL)
 
     if next_item := (
-        get_queue_items(request)
+        QueueItem.objects.filter(user=request.user)
         .with_current_time(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
@@ -390,20 +394,8 @@ def get_episode_detail_context(request, episode, extra_context=None):
     }
 
 
-def get_audio_logs(request):
-    return AudioLog.objects.filter(user=request.user)
-
-
-def get_favorites(request):
-    return Favorite.objects.filter(user=request.user)
-
-
-def get_queue_items(request):
-    return QueueItem.objects.filter(user=request.user)
-
-
 def delete_queue_item(request, episode):
-    items = get_queue_items(request)
+    items = QueueItem.objects.filter(user=request.user)
     items.filter(episode=episode).delete()
     return items.exists()
 
@@ -419,8 +411,11 @@ def render_queue_toggle(request, episode, is_queued):
     )
 
 
-def render_remove_from_queue(request, episode, has_next):
-    if not has_next:
+def render_remove_from_queue(request, episode):
+    items = QueueItem.objects.filter(user=request.user)
+    items.filter(episode=episode).delete()
+
+    if not items.exists():
         return TurboStream("queue").update.render(
             "You have no more episodes in your Play Queue"
         )
@@ -488,16 +483,11 @@ def render_player_response(
     if next_episode:
         request.player.start(next_episode)
 
-    return render_player_streams(
-        request,
-        current_episode,
-        next_episode,
-        has_next=delete_queue_item(request, next_episode) if next_episode else False,
-    )
+    return render_player_streams(request, current_episode, next_episode)
 
 
 @turbo_stream_response
-def render_player_streams(request, current_episode, next_episode, has_next):
+def render_player_streams(request, current_episode, next_episode):
 
     if request.POST.get("is_modal"):
         yield TurboStream("modal").replace.template("_modal.html").render()
@@ -506,7 +496,7 @@ def render_player_streams(request, current_episode, next_episode, has_next):
         yield render_player_toggle(request, current_episode, False)
 
     if next_episode:
-        yield render_remove_from_queue(request, next_episode, has_next)
+        yield render_remove_from_queue(request, next_episode)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
 
