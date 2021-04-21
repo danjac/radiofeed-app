@@ -287,8 +287,6 @@ def remove_from_queue(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
-
     return [
         render_queue_toggle(request, episode, is_queued=False),
         render_remove_from_queue(request, episode),
@@ -354,7 +352,6 @@ def play_next_episode(request):
         .first()
     ):
         next_episode = next_item.episode
-        next_item.delete()
     else:
         next_episode = None
 
@@ -418,7 +415,10 @@ def render_queue_toggle(request, episode, is_queued):
 
 
 def render_remove_from_queue(request, episode):
-    if not QueueItem.objects.filter(user=request.user).exists():
+    qs = QueueItem.objects.filter(user=request.user)
+    qs.filter(episode=episode).delete()
+
+    if not qs.exists():
         return TurboStream("queue").update.render(
             "You have no more episodes in your Play Queue"
         )
