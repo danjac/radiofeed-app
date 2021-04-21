@@ -190,7 +190,7 @@ class TestPlayerUpdateCurrentTime:
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
         )
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
 
     def test_authenticated(self, client, login_user, episode):
         log = AudioLogFactory(user=login_user, episode=episode)

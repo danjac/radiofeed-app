@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from turbo_response import Action, TurboFrame, TurboStream
 from turbo_response.decorators import turbo_stream_response
@@ -360,12 +361,15 @@ def play_next_episode(request):
 @require_POST
 def player_update_current_time(request):
     """Update current play time of episode"""
-    if request.player:
-        try:
-            request.player.current_time = round(float(request.POST["current_time"]))
-            return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-        except (KeyError, ValueError):
-            pass
+    if request.user.is_anonymous:
+        return HttpResponseForbidden("not logged in")
+    try:
+        AudioLog.objects.filter(
+            episode=request.session["player_episode"], user=request.user
+        ).update(current_time=round(float(request.POST["current_time"])))
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    except (KeyError, ValueError):
+        pass
     return HttpResponseBadRequest("missing or invalid data")
 
 
@@ -467,24 +471,37 @@ def render_episode_list_response(
 
 
 @turbo_stream_response
-def render_player_response(
-    request,
-    next_episode=None,
-    mark_completed=False,
-):
-
-    current_episode = request.player.eject(mark_completed=mark_completed)
-
-    if next_episode:
-        request.player.start(next_episode)
+def render_player_response(request, next_episode=None, mark_completed=False):
 
     streams = []
 
+    now = timezone.now()
+
+    if (episode_id := request.session.pop("player_episode", None)) and (
+        log := AudioLog.objects.filter(user=request.user, episode=episode_id)
+        .select_related("episode")
+        .first()
+    ):
+        log.completed = log.updated = now
+        log.current_time = 0
+        log.save()
+
+        streams += [render_player_toggle(request, log.episode, False)]
+
+    if next_episode:
+        AudioLog.objects.update_or_create(
+            episode=next_episode,
+            user=request.user,
+            defaults={
+                "updated": now,
+                "completed": None,
+            },
+        )
+
+        request.session["player_episode"] = next_episode.id
+
     if request.POST.get("is_modal"):
         streams += [TurboStream("modal").replace.template("_modal.html").render()]
-
-    if current_episode:
-        streams += [render_player_toggle(request, current_episode, False)]
 
     if next_episode:
         streams += [
