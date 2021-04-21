@@ -466,6 +466,7 @@ def render_episode_list_response(
     )
 
 
+@turbo_stream_response
 def render_player_response(
     request,
     next_episode=None,
@@ -477,26 +478,28 @@ def render_player_response(
     if next_episode:
         request.player.start(next_episode)
 
-    return render_player_streams(request, current_episode, next_episode)
-
-
-@turbo_stream_response
-def render_player_streams(request, current_episode, next_episode):
+    streams = []
 
     if request.POST.get("is_modal"):
-        yield TurboStream("modal").replace.template("_modal.html").render()
+        streams += [TurboStream("modal").replace.template("_modal.html").render()]
 
     if current_episode:
-        yield render_player_toggle(request, current_episode, False)
+        streams += [render_player_toggle(request, current_episode, False)]
 
     if next_episode:
-        yield render_remove_from_queue(request, next_episode)
-        yield render_queue_toggle(request, next_episode, False)
-        yield render_player_toggle(request, next_episode, True)
+        streams += [
+            render_remove_from_queue(request, next_episode),
+            render_queue_toggle(request, next_episode, False),
+            render_player_toggle(request, next_episode, True),
+        ]
 
-    yield TurboStream("player").replace.template(
-        "episodes/_player.html",
-        {
-            "new_episode": next_episode,
-        },
-    ).render(request=request)
+    return streams + [
+        TurboStream("player")
+        .replace.template(
+            "episodes/_player.html",
+            {
+                "new_episode": next_episode,
+            },
+        )
+        .render(request=request)
+    ]

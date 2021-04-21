@@ -150,7 +150,6 @@ class TestPlayNextEpisode:
         QueueItem.objects.create(position=0, user=login_user, episode=episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(list(resp.streaming_content)) == 4
         assert QueueItem.objects.count() == 0
 
     def test_play_next_episode_in_history(self, client, login_user):
@@ -159,13 +158,11 @@ class TestPlayNextEpisode:
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(list(resp.streaming_content)) == 4
         assert QueueItem.objects.count() == 0
 
     def test_queue_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert len(list(resp.streaming_content)) == 1
 
 
 class TestClosePlayer:
