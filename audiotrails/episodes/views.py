@@ -505,10 +505,9 @@ def render_player_response(request, next_episode=None, mark_completed=False):
 
         request.session["player_episode"] = next_episode.id
 
-    if request.POST.get("is_modal"):
-        streams += [TurboStream("modal").replace.template("_modal.html").render()]
+        if request.POST.get("is_modal"):
+            streams += [TurboStream("modal").replace.template("_modal.html").render()]
 
-    if next_episode:
         streams += [
             render_remove_from_queue(request, next_episode),
             render_queue_toggle(request, next_episode, False),
