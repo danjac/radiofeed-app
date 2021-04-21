@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
-from django.db.models import OuterRef, Subquery
+from django.db.models import Max, OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -226,7 +226,7 @@ def queue(request):
         request,
         "episodes/queue.html",
         {
-            "queue_items": QueueItem.objects.for_user(request.user)
+            "queue_items": get_queue_items(request)
             .select_related("episode", "episode__podcast")
             .order_by("position")
         },
@@ -246,14 +246,20 @@ def add_to_queue(request, episode_id):
         render_queue_toggle(request, episode, is_queued=True),
     ]
 
+    items = get_queue_items(request)
+
     try:
-        new_item, num_items = QueueItem.objects.create_item(request.user, episode)
+        new_item = QueueItem.objects.create(
+            user=request.user,
+            episode=episode,
+            position=(items.aggregate(Max("position"))["position__max"] or 0) + 1,
+        )
     except IntegrityError:
         return streams
 
     return streams + [
         TurboStream("queue")
-        .action(Action.UPDATE if num_items == 1 else Action.APPEND)
+        .action(Action.UPDATE if items.count() == 1 else Action.APPEND)
         .template(
             "episodes/_queue_item.html",
             {
@@ -274,7 +280,7 @@ def remove_from_queue(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    has_next = QueueItem.objects.delete_item(request.user, episode)
+    has_next = delete_queue_item(request, episode)
 
     return [
         render_queue_toggle(request, episode, is_queued=False),
@@ -288,13 +294,19 @@ def move_queue_items(request):
     if request.user.is_anonymous:
         return HttpResponseForbidden("You must be logged in")
 
+    qs = get_queue_items(request)
+    items = qs.in_bulk()
+    for_update = []
+
     try:
-        QueueItem.objects.move_items(
-            request.user, [int(item_id) for item_id in request.POST.getlist("items")]
-        )
-    except (ValueError):
+        for position, item_id in enumerate(request.POST.getlist("items"), 1):
+            if item := items[int(item_id)]:
+                item.position = position
+                for_update.append(item)
+    except (KeyError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
+    qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
@@ -328,7 +340,7 @@ def play_next_episode(request):
         return redirect_to_login(settings.HOME_URL)
 
     if next_item := (
-        QueueItem.objects.for_user(request.user)
+        get_queue_items(request)
         .with_current_time(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("position")
@@ -384,6 +396,16 @@ def get_audio_logs(request):
 
 def get_favorites(request):
     return Favorite.objects.filter(user=request.user)
+
+
+def get_queue_items(request):
+    return QueueItem.objects.filter(user=request.user)
+
+
+def delete_queue_item(request, episode):
+    items = get_queue_items(request)
+    items.filter(episode=episode).delete()
+    return items.exists()
 
 
 def render_queue_toggle(request, episode, is_queued):
@@ -470,9 +492,7 @@ def render_player_response(
         request,
         current_episode,
         next_episode,
-        has_next=QueueItem.objects.delete_item(request.user, next_episode)
-        if next_episode
-        else False,
+        has_next=delete_queue_item(request, next_episode) if next_episode else False,
     )
 
 
