@@ -14,8 +14,8 @@ from django.views.decorators.http import require_POST
 from turbo_response import Action, TurboFrame, TurboStream
 from turbo_response.decorators import turbo_stream_response
 
-from audiotrails.pagination import render_paginated_response
 from audiotrails.podcasts.models import Podcast
+from audiotrails.shared.pagination import render_paginated_response
 
 from .models import AudioLog, Episode, Favorite, QueueItem
 

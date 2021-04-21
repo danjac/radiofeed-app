@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
 from audiotrails.episodes.views import render_episode_list_response
-from audiotrails.pagination import render_paginated_response
+from audiotrails.shared.pagination import render_paginated_response
 
 from . import itunes
 from .models import Category, Follow, Podcast, Recommendation

@@ -12,8 +12,8 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from sorl.thumbnail import get_thumbnail
 
-from audiotrails.db import FastCountMixin
 from audiotrails.podcasts.models import Podcast
+from audiotrails.shared.db import FastCountMixin
 
 
 @dataclasses.dataclass

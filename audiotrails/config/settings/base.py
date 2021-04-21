@@ -90,7 +90,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "audiotrails.middleware.SearchMiddleware",
+    "audiotrails.shared.middleware.SearchMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "turbo_response.middleware.TurboMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -211,14 +211,14 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "audiotrails.template.context_processors.is_cookies_accepted",
-                "audiotrails.template.context_processors.search",
+                "audiotrails.shared.template.context_processors.is_cookies_accepted",
+                "audiotrails.shared.template.context_processors.search",
             ],
             "builtins": [
-                "audiotrails.template.defaulttags",
+                "audiotrails.shared.template.defaulttags",
             ],
             "libraries": {
-                "pagination": "audiotrails.pagination.templatetags",
+                "pagination": "audiotrails.shared.pagination.templatetags",
             },
         },
     }

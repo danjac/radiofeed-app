@@ -20,7 +20,7 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
-from audiotrails.db import FastCountMixin
+from audiotrails.shared.db import FastCountMixin
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
