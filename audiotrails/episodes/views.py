@@ -394,12 +394,6 @@ def get_episode_detail_context(request, episode, extra_context=None):
     }
 
 
-def delete_queue_item(request, episode):
-    items = QueueItem.objects.filter(user=request.user)
-    items.filter(episode=episode).delete()
-    return items.exists()
-
-
 def render_queue_toggle(request, episode, is_queued):
     return (
         TurboStream(episode.dom.queue_toggle)
