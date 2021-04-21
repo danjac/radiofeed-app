@@ -4,8 +4,6 @@ import pytest
 
 from django.utils import timezone
 
-from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
-
 from ..factories import (
     AudioLogFactory,
     EpisodeFactory,
@@ -51,41 +49,6 @@ class TestEpisodeManager:
     def test_search(self):
         EpisodeFactory(title="testing")
         assert Episode.objects.search("testing").count() == 1
-
-    def test_latest_episodes_anonymous(self, anonymous_user):
-        EpisodeFactory.create_batch(3)
-        podcast = PodcastFactory(promoted=True)
-        episode = EpisodeFactory(podcast=podcast)
-        latest, show_promoted = Episode.objects.latest_episodes(anonymous_user)
-        assert show_promoted
-        assert latest[0] == episode
-
-    def test_latest_episodes_no_follows(self, user):
-        EpisodeFactory.create_batch(3)
-        podcast = PodcastFactory(promoted=True)
-        episode = EpisodeFactory(podcast=podcast)
-        latest, show_promoted = Episode.objects.latest_episodes(user)
-        assert show_promoted
-        assert latest[0] == episode
-
-    def test_latest_episodes_follows(self, user):
-        EpisodeFactory.create_batch(3)
-        podcast = PodcastFactory(promoted=True)
-        FollowFactory(podcast=podcast, user=user)
-        episode = EpisodeFactory(podcast=podcast)
-        latest, show_promoted = Episode.objects.latest_episodes(user)
-        assert not show_promoted
-        assert latest[0] == episode
-
-    def test_latest_episodes_follows_has_listened(self, user):
-        EpisodeFactory.create_batch(3)
-        podcast = PodcastFactory(promoted=True)
-        FollowFactory(podcast=podcast, user=user)
-        episode = EpisodeFactory(podcast=podcast)
-        AudioLogFactory(episode=episode, user=user)
-        latest, show_promoted = Episode.objects.latest_episodes(user)
-        assert not show_promoted
-        assert latest.count() == 0
 
 
 class TestEpisodeModel:
