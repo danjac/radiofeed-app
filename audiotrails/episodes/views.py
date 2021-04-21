@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
-from django.db.models import OuterRef, Subquery
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -14,48 +13,13 @@ from turbo_response import Action, TurboFrame, TurboStream
 from turbo_response.decorators import turbo_stream_response
 
 from audiotrails.pagination import render_paginated_response
-from audiotrails.podcasts.models import Podcast
 
 from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 def index(request):
 
-    podcast_ids = []
-    listened_ids = []
-    show_promotions = False
-
-    if request.user.is_authenticated:
-        podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
-        listened_ids = list(get_audio_logs(request).values_list("episode", flat=True))
-
-    if not podcast_ids:
-        podcast_ids = list(
-            Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
-        )
-        show_promotions = True
-
-    # we want a list of the *latest* episode for each podcast
-    latest_episodes = (
-        Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
-    )
-
-    if listened_ids:
-        latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
-
-    episode_ids = (
-        Podcast.objects.filter(pk__in=podcast_ids)
-        .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-        .values_list("latest_episode", flat=True)
-        .distinct()
-    )
-
-    episodes = (
-        Episode.objects.select_related("podcast")
-        .filter(pk__in=set(episode_ids))
-        .order_by("-pub_date")
-        .distinct()
-    )
+    episodes, show_promotions = Episode.objects.latest_episodes(request.user)
 
     return render_episode_list_response(
         request,
@@ -123,7 +87,7 @@ def episode_detail(request, episode_id, slug=None):
 def history(request):
 
     logs = (
-        get_audio_logs(request)
+        AudioLog.objects.for_user(request.user)
         .select_related("episode", "episode__podcast")
         .order_by("-updated")
     )
@@ -148,11 +112,7 @@ def remove_audio_log(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    logs = get_audio_logs(request)
-
-    logs.filter(episode=episode).delete()
-
-    if logs.count() == 0:
+    if AudioLog.objects.delete_log(request.user, episode) == 0:
         return TurboStream("history").replace.response("Your History is now empty.")
 
     return TurboStream(episode.dom.history).remove.response()
@@ -377,10 +337,6 @@ def get_episode_detail_context(request, episode, extra_context=None):
         "is_queued": episode.is_queued(request.user),
         **(extra_context or {}),
     }
-
-
-def get_audio_logs(request):
-    return AudioLog.objects.filter(user=request.user)
 
 
 def render_queue_toggle(request, episode, is_queued):

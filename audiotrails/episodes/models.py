@@ -29,6 +29,49 @@ class EpisodeDOM:
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
+    def latest_episodes(self, user):
+
+        if user.is_authenticated:
+            podcast_ids = list(user.follow_set.values_list("podcast", flat=True))
+            listened_ids = list(
+                AudioLog.objects.for_user(user).values_list("episode", flat=True)
+            )
+        else:
+            podcast_ids, listened_ids = [], []
+
+        if podcast_ids:
+            show_promoted = False
+
+        else:
+            podcast_ids = list(
+                Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
+            )
+            show_promoted = True
+
+        # we want a list of the *latest* episode for each podcast
+        latest_episodes = (
+            Episode.objects.filter(podcast=models.OuterRef("pk"))
+            .order_by("-pub_date")
+            .distinct()
+        )
+
+        if listened_ids:
+            latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
+
+        episode_ids = (
+            Podcast.objects.filter(pk__in=podcast_ids)
+            .annotate(latest_episode=models.Subquery(latest_episodes.values("pk")[:1]))
+            .values_list("latest_episode", flat=True)
+            .distinct()
+        )
+
+        return (
+            Episode.objects.select_related("podcast")
+            .filter(pk__in=set(episode_ids))
+            .order_by("-pub_date")
+            .distinct()
+        ), show_promoted
+
     def with_current_time(self, user):
 
         """Adds `completed`, `current_time` and `listened` annotations."""
@@ -288,6 +331,16 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
+    def for_user(self, user):
+        if user.is_anonymous:
+            return self.none()
+        return self.filter(user=user)
+
+    def delete_log(self, user, episode):
+        qs = self.for_user(user)
+        qs.filter(episode=episode).delete()
+        return qs.count()
+
     def search(self, search_term):
         if not search_term:
             return self.none()
