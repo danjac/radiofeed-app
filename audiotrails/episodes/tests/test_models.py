@@ -213,20 +213,6 @@ class TestFavoriteManager:
         FavoriteFactory(episode=episode)
         assert Favorite.objects.search("testing").count() == 1
 
-    def test_for_user_anonymous(self, anonymous_user):
-        FavoriteFactory()
-        assert Favorite.objects.for_user(anonymous_user).count() == 0
-
-    def test_for_user(self, user):
-        FavoriteFactory(user=user)
-        assert Favorite.objects.for_user(user).count() == 1
-
-    def test_create_favorite(self, user, episode):
-        favorite, num_favorites = Favorite.objects.create_favorite(user, episode)
-        assert favorite.episode == episode
-        assert favorite.user == user
-        assert num_favorites == 1
-
 
 class TestAudioLogManager:
     def test_search(self):

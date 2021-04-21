@@ -237,19 +237,6 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(models.QuerySet):
-    def for_user(self, user):
-        if user.is_anonymous:
-            return self.none()
-        return self.filter(user=user)
-
-    def create_favorite(self, user, episode):
-        return self.create(user=user, episode=episode), self.for_user(user).count()
-
-    def delete_favorite(self, user, episode):
-        qs = self.for_user(user)
-        qs.filter(episode=episode).delete()
-        return qs.count()
-
     def search(self, search_term):
         if not search_term:
             return self.none()
@@ -335,7 +322,7 @@ class QueueItemQuerySet(models.QuerySet):
 
     def create_item(self, user, episode):
         return (
-            self.create(
+            QueueItem.objects.create(
                 user=user,
                 episode=episode,
                 position=(

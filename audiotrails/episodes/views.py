@@ -160,9 +160,7 @@ def remove_audio_log(request, episode_id):
 
 @login_required
 def favorites(request):
-    favorites = Favorite.objects.for_user(request.user).select_related(
-        "episode", "episode__podcast"
-    )
+    favorites = get_favorites(request).select_related("episode", "episode__podcast")
     if request.search:
         favorites = favorites.search(request.search).order_by("-rank", "-created")
     else:
@@ -184,17 +182,17 @@ def add_favorite(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    num_favorites = 0
-
     try:
-        _, num_favorites = Favorite.objects.create_favorite(request.user, episode)
+        Favorite.objects.create(episode=episode, user=request.user)
     except IntegrityError:
         pass
 
     return [
         render_favorite_toggle(request, episode, is_favorited=True),
         TurboStream("favorites")
-        .action(Action.UPDATE if num_favorites == 1 else Action.PREPEND)
+        .action(
+            Action.UPDATE if get_favorites(request).count() == 1 else Action.PREPEND
+        )
         .template(
             "episodes/_episode.html",
             {"episode": episode, "dom_id": episode.dom.favorite},
@@ -211,12 +209,13 @@ def remove_favorite(request, episode_id):
     if request.user.is_anonymous:
         return redirect_episode_to_login(episode)
 
-    num_favorites = Favorite.objects.delete_favorite(request.user, episode)
+    favorites = get_favorites(request)
+    favorites.filter(episode=episode).delete()
 
     return [
         render_favorite_toggle(request, episode, is_favorited=False),
         TurboStream("favorites").update.render("You have no more Favorites.")
-        if num_favorites == 0
+        if favorites.count() == 0
         else TurboStream(episode.dom.favorite).remove.render(),
     ]
 
@@ -381,6 +380,10 @@ def get_episode_detail_context(request, episode, extra_context=None):
 
 def get_audio_logs(request):
     return AudioLog.objects.filter(user=request.user)
+
+
+def get_favorites(request):
+    return Favorite.objects.filter(user=request.user)
 
 
 def render_queue_toggle(request, episode, is_queued):
