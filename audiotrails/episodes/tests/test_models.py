@@ -222,6 +222,44 @@ class TestAudioLogManager:
 
 
 class TestQueueItemManager:
+    def test_for_user_anonymous(self, anonymous_user):
+        QueueItemFactory()
+        assert QueueItem.objects.for_user(anonymous_user).count() == 0
+
+    def test_for_user(self, user):
+        QueueItemFactory(user=user)
+        assert QueueItem.objects.for_user(user).count() == 1
+
+    def test_create_item(self, user):
+        episode = EpisodeFactory()
+        item, num_items = QueueItem.objects.create_item(user, episode)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 1
+        assert num_items == 1
+
+        episode = EpisodeFactory()
+        item, num_items = QueueItem.objects.create_item(user, episode)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 2
+        assert num_items == 2
+
+    def test_delete_item(self, user, episode):
+        QueueItemFactory(user=user, episode=episode)
+        assert QueueItem.objects.delete_item(user, episode) == 0
+
+    def test_move_items(self, user):
+        item_1 = QueueItemFactory(user=user, position=1)
+        item_2 = QueueItemFactory(user=user, position=2)
+        item_3 = QueueItemFactory(user=user, position=3)
+
+        QueueItem.objects.move_items(user, [item_3.id, item_1.id, item_2.id])
+        items = QueueItem.objects.for_user(user).order_by("position")
+        assert items[0] == item_3
+        assert items[1] == item_1
+        assert items[2] == item_2
+
     def test_with_current_time_if_not_played(self, user):
         QueueItemFactory(user=user)
         item = QueueItem.objects.with_current_time(user).first()
