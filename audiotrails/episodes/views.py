@@ -483,8 +483,12 @@ def render_player_response(request, next_episode=None, mark_completed=False):
         .select_related("episode")
         .first()
     ):
-        log.completed = log.updated = now
-        log.current_time = 0
+        log.updated = now
+
+        if mark_completed:
+            log.completed = now
+            log.current_time = 0
+
         log.save()
 
         streams += [render_player_toggle(request, log.episode, False)]
