@@ -149,7 +149,7 @@ def remove_audio_log(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     logs = AudioLog.objects.filter(user=request.user)
 
@@ -185,7 +185,7 @@ def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
@@ -214,7 +214,7 @@ def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     favorites = Favorite.objects.filter(user=request.user)
     favorites.filter(episode=episode).delete()
@@ -247,7 +247,7 @@ def add_to_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     streams = [
         render_queue_toggle(request, episode, is_queued=True),
@@ -285,7 +285,7 @@ def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     return [
         render_queue_toggle(request, episode, is_queued=False),
@@ -324,7 +324,7 @@ def start_player(
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     if request.user.is_anonymous:
-        return redirect_episode_to_login(episode)
+        return redirect_to_login(episode.get_absolute_url())
 
     return render_player_response(request, episode)
 
@@ -448,10 +448,6 @@ def render_player_toggle(request, episode, is_playing):
         )
         .render(request=request)
     )
-
-
-def redirect_episode_to_login(episode):
-    return redirect_to_login(episode.get_absolute_url())
 
 
 def render_episode_list_response(

@@ -260,7 +260,7 @@ def follow(request, podcast_id):
     podcast = get_podcast_or_404(request, podcast_id)
 
     if request.user.is_anonymous:
-        return redirect_podcast_to_login(podcast)
+        return redirect_to_login(podcast.get_absolute_url())
 
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
@@ -275,7 +275,7 @@ def unfollow(request, podcast_id):
     podcast = get_podcast_or_404(request, podcast_id)
 
     if request.user.is_anonymous:
-        return redirect_podcast_to_login(podcast)
+        return redirect_to_login(podcast.get_absolute_url())
 
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, False)
@@ -298,10 +298,6 @@ def get_podcast_detail_context(
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
-
-
-def redirect_podcast_to_login(podcast):
-    return redirect_to_login(podcast.get_absolute_url())
 
 
 def render_follow_response(request, podcast, is_following):
