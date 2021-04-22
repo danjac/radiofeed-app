@@ -50,3 +50,5 @@ celerybeat-schedule
 .vault_pass
 hosts
 vars.yml
+
+db/audiotrails-volume
