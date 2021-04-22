@@ -30,6 +30,4 @@ RUN chmod +x /start-celeryworker
 COPY ./scripts/docker/start-celerybeat /start-celerybeat
 RUN chmod +x /start-celerybeat
 
-EXPOSE 8000
-
 ENTRYPOINT ["/entrypoint"]
