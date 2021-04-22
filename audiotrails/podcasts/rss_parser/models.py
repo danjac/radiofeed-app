@@ -183,7 +183,13 @@ class Feed(BaseModel):
 
     def get_creators(self):
         return ", ".join(
-            {c.lower(): c for c in [c.strip() for c in self.creators]}.values()
+            {
+                c
+                for c in {
+                    c.lower(): c for c in [c.strip() for c in self.creators]
+                }.values()
+                if c
+            }
         )
 
     def get_categories(self, categories_dct):
