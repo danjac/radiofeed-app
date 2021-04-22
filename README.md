@@ -60,22 +60,15 @@ Make sure you add buildpacks for PostgreSQL and Redis:
 
 These instructions will automatically set up the environment variables **DATABASE_URL** and **REDIS_URL**.
 
-Ensure the following environment variables are set (*dokku config:set --no-restart*):
+The next step is to configure your environment variables. Copy the file *vars.yml.template* to *vars.yml* and enter the relevant values. You should encrypt this file using ansible-vault:
 
-- **ADMINS**: comma separated in form _my full name <name@mysite.com>,other name <othername@mysite.com>_
-- **ADMIN_URL**: should be something other than "admin/". Must end in forward slash.
-- **ALLOWED_HOSTS**: enter your domains, separated by comma e.g. *mysite.com, myothersite.com*. If you are using wildcard domain with subdomains for each community you just need the wildcard domain without the "*".
-- **AWS_ACCESS_KEY_ID**: see your S3 settings
-- **AWS_SECRET_ACCESS_KEY**: see your S3 settings
-- **AWS_S3_CUSTOM_DOMAIN**: your cloudfront domain e.g. *xyz123abcdefg.cloudfront.net*
-- **AWS_STORAGE_BUCKET_NAME**: see your S3 settings
-- **BUILDPACK_URL**: should be *https://github.com/heroku/heroku-buildpack-python*
-- **DISABLE_COLLECTSTATIC**: set to "1"
-- **DJANGO_SETTINGS_MODULE**: should always be *audiotrails.config.settings.production*
-- **MAILGUN_API_KEY**: see your Mailgun settings
-- **MAILGUN_SENDER_DOMAIN**: see your Mailgun settings
-- **SENTRY_URL**: see your Sentry settings
-- **SECRET_KEY**: Django secret key. Use e.g. https://miniwebtool.com/django-secret-key-generator/ to create new key.
+> ansible-vault encrypt vars.yml
+
+Note that *vars.yml* is ignored by Git, so if you want to keep the file safe outside your development machine you should use a solution like LastPass or Bitwarden.
+
+You can then run an ansible playbook to set these variables:
+
+> ansible-playbook configure.yml
 
 Next add to Git and deploy:
 
@@ -88,8 +81,6 @@ Next add to Git and deploy:
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
-
-> dokku config:set --no-restart --global DOKKU_LETSENCRYPT_EMAIL=myname@myemail.com
 
 > dokku letsencrypt myapp
 
@@ -109,7 +100,7 @@ Use the Django shell or relevant commands to set up an admin user, and set the d
 
 ## Deployment
 
-This application uses Ansible for deployment (tested on version 2.10.3). Create a file *vars.yml* with the environment variables above. You can copy the file *vars.yml.template*. You should use ansible-vault to encrypt this file.
+This application uses Ansible for deployment (tested on version 2.10.3). See instructions above for creating a secure environment secrets file.
 
 To deploy just run:
 
