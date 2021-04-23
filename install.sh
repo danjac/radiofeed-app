@@ -18,17 +18,16 @@ podman run --name redis --pod audiopod -d redis
 podman run --name mailhog --pod audiopod -d mailhog/mailhog:v1.0.0
 
 # webapp
-podman run --name webapp --pod audiopod -e DATABASE_URL="postgres://postgres:password@localhost:5432/postgres" -e REDIS_URL="redis://localhost:6379/0" -e SECRET_KEY="seekrit" -e EMAIL_HOST="localhost" -e EMAIL_PORT="8025" -v ".:/app/:z" -d danjac.dev/django.img /start-django
+podman run --name webapp --pod audiopod --env-file=.env -v ".:/app/:z" -d danjac.dev/django.img /start-django
 
 # celeryworker
-podman run --name celeryworker --pod audiopod -e DATABASE_URL="postgres://postgres:password@localhost:5432/postgres" -e REDIS_URL="redis://localhost:6379/0" -e SECRET_KEY="seekrit" -e EMAIL_HOST="localhost" -e EMAIL_PORT="8025" -v ".:/app/:z" -d danjac.dev/django.img /start-celeryworker
+podman run --name celeryworker --pod audiopod --env-file=.env -v ".:/app/:z" -d danjac.dev/django.img /start-celeryworker
 
 # celerybeat
-podman run --name celerybeat --pod audiopod -e DATABASE_URL="postgres://postgres:password@localhost:5432/postgres" -e REDIS_URL="redis://localhost:6379/0" -e SECRET_KEY="seekrit" -e EMAIL_HOST="localhost" -e EMAIL_PORT="8025" -v ".:/app/:z" -d danjac.dev/django.img /start-celerybeat
+podman run --name celerybeat --pod audiopod --env-file=.env -v ".:/app/:z" -d danjac.dev/django.img /start-celerybeat
 
 # watch js
 podman run --name watchjs --pod audiopod -v ".:/app/:z" -d danjac.dev/assets.img /start-watchjs
 
 # watch css
 podman run --name watchcss --pod audiopod -v ".:/app/:z" -d danjac.dev/assets.img /start-watchcss
-
