@@ -9,9 +9,13 @@ podman build -t $IMAGE .
 
 podman pod create --name audiopod -p 8000:8000 -p 8025:8025 -p 1025 -p 5432 -p 6379
 
+# postgres
 mkdir -p ${PWD}/db
 
-podman run --name postgresql --pod audiopod -e POSTGRES_PASSWORD=postgres -d -v "${PWD}/db:/var/lib/postgresql/data:z" postgres:11.8
+podman run --name postgresql \
+    --pod audiopod \
+    -e POSTGRES_PASSWORD=postgres \
+    -d -v "${PWD}/db:/var/lib/postgresql/data:z" postgres:11.8
 
 # redis
 podman run --name redis --pod audiopod -d redis
