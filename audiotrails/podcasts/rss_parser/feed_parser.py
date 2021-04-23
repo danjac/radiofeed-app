@@ -8,7 +8,7 @@ from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
 
-def parse_feed(raw: bytes):
+def parse_feed(raw):
 
     if (
         rss := lxml.etree.fromstring(

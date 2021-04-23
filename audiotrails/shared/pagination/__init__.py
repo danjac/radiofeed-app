@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.paginator import InvalidPage, Paginator
-from django.db.models import QuerySet
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -9,7 +8,7 @@ from turbo_response import TurboFrame
 
 def paginate(
     request,
-    queryset: QuerySet,
+    queryset,
     page_size=settings.DEFAULT_PAGE_SIZE,
     param="page",
     allow_empty=True,

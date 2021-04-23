@@ -345,7 +345,7 @@ export default class extends Controller {
     }
   }
 
-  doFetch(url, options) {
+  doFetch(url, options = {}) {
     const body = options.body || new FormData();
     body.append('csrfmiddlewaretoken', this.csrfTokenValue);
     return fetch(url, {

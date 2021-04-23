@@ -85,7 +85,7 @@ class Feed(BaseModel):
         return (value.replace("-", "").strip()[:2] if value else "en").lower()
 
     @validator("link", pre=True)
-    def prepare_link(cls, value: str):
+    def prepare_link(cls, value):
         if not value:
             return value
 
@@ -183,7 +183,13 @@ class Feed(BaseModel):
 
     def get_creators(self):
         return ", ".join(
-            {c.lower(): c for c in [c.strip() for c in self.creators]}.values()
+            {
+                c
+                for c in {
+                    c.lower(): c for c in [c.strip() for c in self.creators]
+                }.values()
+                if c
+            }
         )
 
     def get_categories(self, categories_dct):
