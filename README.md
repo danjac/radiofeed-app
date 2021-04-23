@@ -1,9 +1,3 @@
-
-![](/screenshots/light.png)
-
-![](/screenshots/dark.png)
-
-
 This is a very simple MVP podcast app. It has the following features:
 
 1. Sync podcasts with their RSS feeds
@@ -14,25 +8,33 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
-For local development just run docker-compose:
+Local development uses Podman and Buildah:
 
-> docker-compose build && docker-compose up -d
+https://podman.io/getting-started/installation
 
-To get started, first run migrate and load the categories:
+https://buildah.io/
 
-> ./scripts/manage migrate
+Run the script *./install.sh* to install dependencies.
 
-> ./scripts/manage loaddata audiotrails/podcasts/fixtures/categories.json
+To get started, load the categories:
 
-You can then import a sample list of podcasts:
+> ./scripts/manage loaddata audiotrails/podcasts/fixtures/categories.json.gz
 
-> ./scripts/manage loaddata audiotrails/podcasts/fixtures/podcasts.json
+You can optionally import a sample list of podcasts:
+
+> ./scripts/manage loaddata audiotrails/podcasts/fixtures/podcasts.json.gz
 
 Alternatively, use the Django admin to add podcasts.
 
 To sync podcasts and download episodes to the database:
 
-> ./scripts/manage sync_podcast_feeds
+> ./scripts/manage sync_podcast_feeds --use-celery
+
+You an also create a super user if you wish to access the Django admin:
+
+> ./scripts/manage createsuperuser
+
+You can access the development app in your browser at http://localhost:8000.
 
 ## Deployment
 
