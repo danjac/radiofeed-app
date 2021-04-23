@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose run --rm django pytest $@
+podman exec -i -t webapp pytest $@
 

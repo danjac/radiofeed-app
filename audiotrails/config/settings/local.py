@@ -1,4 +1,5 @@
-# Local
+import socket
+
 from .base import *  # noqa
 from .base import INSTALLED_APPS, MIDDLEWARE, TEMPLATES
 
@@ -9,3 +10,6 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 INSTALLED_APPS += ["silk"]
 
 MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
+
+# podman internal ips
+INTERNAL_IPS = socket.gethostbyname_ex(socket.gethostname())[2]
