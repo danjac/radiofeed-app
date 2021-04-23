@@ -6,6 +6,9 @@ set -o nounset
 buildah bud -f django.dockerfile -t audiotrails.dev/django .
 buildah bud -f assets.dockerfile -t audiotrails.dev/assets .
 
+# TBD: if pod exists, stop & remove
+# +remove all containers
+
 podman pod create --name audiopod -p 8000:8000 -p 5432 -p 6379 -p 8025
 
 mkdir -p ${PWD}/db

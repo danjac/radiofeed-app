@@ -1,6 +1,5 @@
 - name: Run unit tests
   shell: |
-    docker-compose -f {{compose_file}} run --rm \
-    -e SECRET_KEY="{{secret_key}}" \
+    podman exec -it \
     -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.test \
-    django pytest --reuse-db
+    webapp pytest --reuse-db
