@@ -31,3 +31,5 @@ COPY ./scripts/docker/start-celerybeat /start-celerybeat
 RUN chmod +x /start-celerybeat
 
 ENTRYPOINT ["/entrypoint"]
+
+

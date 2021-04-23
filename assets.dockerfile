@@ -20,3 +20,11 @@ RUN if [ -d /app/node_modules ]; then rm -Rf /app/node_modules/*; fi
 
 RUN npm cache clean --force
 RUN npm install
+
+COPY ./scripts/docker/start-watchjs /start-watchjs
+RUN chmod +x /start-watchjs
+
+COPY ./scripts/docker/start-watchcss /start-watchcss
+RUN chmod +x /start-watchcss
+
+
