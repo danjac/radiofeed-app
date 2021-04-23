@@ -8,15 +8,17 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
+## Local development
+
 Local development uses Podman and Buildah:
 
 https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-Run the script *./install.sh* to install dependencies.
+To get started, copy the file *.env.defaults* to *.env* and run *./install.sh*.
 
-To get started, load the categories:
+Next load the categories into the database:
 
 > ./scripts/manage loaddata audiotrails/podcasts/fixtures/categories.json.gz
 
