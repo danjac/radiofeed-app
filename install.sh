@@ -25,8 +25,8 @@ staticDistDir=${mntPoint}/static/dist
 mkdir -p ${staticDistDir}
 
 # build local images
-buildah bud -f django.dockerfile -t audiotrails.dev/django .
-buildah bud -f assets.dockerfile -t audiotrails.dev/assets .
+#buildah bud -f django.dockerfile -t audiotrails.dev/django .
+#buildah bud -f assets.dockerfile -t audiotrails.dev/assets .
 
 podman run --name postgresql --pod audiopod -e POSTGRES_PASSWORD=postgres -d -v "${dataDir}:/var/lib/postgresql/data:z" postgres:11.8
 
