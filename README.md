@@ -16,7 +16,7 @@ https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-To get started, copy the file *.env.defaults* to *.env* and run *./install.sh*.
+To get started, copy the file *.env.defaults* to *.env* and run *./install.sh -b*.
 
 Next load the categories into the database:
 
