@@ -26,6 +26,9 @@ podman run --name celeryworker --pod audiopod -e DATABASE_URL="postgres://postgr
 # celerybeat
 podman run --name celerybeat --pod audiopod -e DATABASE_URL="postgres://postgres:password@localhost:5432/postgres" -e REDIS_URL="redis://localhost:6379/0" -e SECRET_KEY="seekrit" -e EMAIL_HOST="localhost" -e EMAIL_PORT="8025" -v ".:/app/:z" -d danjac.dev/django.img /start-celerybeat
 
-# assets
+# watch js
 podman run --name watchjs --pod audiopod -v ".:/app/:z" -d danjac.dev/assets.img /start-watchjs
+
+# watch css
+podman run --name watchcss --pod audiopod -v ".:/app/:z" -d danjac.dev/assets.img /start-watchcss
 
