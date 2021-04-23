@@ -2,5 +2,4 @@
 
 set -euo pipefail
 
-docker-compose run --rm assets npm $@
-
+podman exec -i -t webapp npm $@

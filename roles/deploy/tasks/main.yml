@@ -1,6 +1,6 @@
 - name: Build and compress assets
   shell: |
-    podman exec -it watchjs npm run build
+    podman exec -it webapp npm run build
 
 - name: Push assets to S3
   shell: |
