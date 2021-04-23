@@ -6,6 +6,11 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
+def is_playing(context, episode):
+    return context["request"].session.get("player_episode") == episode.id
+
+
+@register.simple_tag(takes_context=True)
 def get_player(context):
     request = context["request"]
     if request.user.is_anonymous or "player_episode" not in request.session:

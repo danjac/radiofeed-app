@@ -1,13 +1,6 @@
 {% extends "episodes/_episode.html" %}
+{% load player %}
 {% block extra_buttons %}
-<form method="post"
-      action="{% url 'episodes:remove_audio_log' episode.id %}">
-  {% csrf_token %}
-  <button class="btn btn-secondary flex items-center p-2 border-none"
-          name="remove"
-          value="true"
-          title="Remove episode from your History">
-    {% icon "trash" css_class="btn-icon h-6 w-6" %}
-  </button>
-</form>
+{% is_playing episode as is_playing %}
+{% include "episodes/_remove_audio_log.html" %}
 {% endblock %}

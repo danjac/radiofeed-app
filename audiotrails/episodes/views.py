@@ -450,6 +450,17 @@ def render_player_toggle(request, episode, is_playing):
     )
 
 
+def render_remove_audio_log(request, episode, is_playing):
+    return (
+        TurboStream(episode.dom.remove_audio_log)
+        .replace.template(
+            "episodes/_remove_audio_log.html",
+            {"episode": episode, "is_playing": is_playing},
+        )
+        .render(request=request)
+    )
+
+
 def render_episode_list_response(
     request,
     episodes,
@@ -478,6 +489,9 @@ def render_player_response(request, next_episode=None, mark_completed=False):
 
     now = timezone.now()
 
+    if request.POST.get("is_modal"):
+        streams += [TurboStream("modal").replace.template("_modal.html").render()]
+
     if (episode_id := request.session.pop("player_episode", None)) and (
         log := AudioLog.objects.filter(user=request.user, episode=episode_id)
         .select_related("episode")
@@ -491,7 +505,10 @@ def render_player_response(request, next_episode=None, mark_completed=False):
 
         log.save()
 
-        streams += [render_player_toggle(request, log.episode, False)]
+        streams += [
+            render_player_toggle(request, log.episode, False),
+            render_remove_audio_log(request, log.episode, False),
+        ]
 
     if next_episode:
         AudioLog.objects.update_or_create(
@@ -505,13 +522,11 @@ def render_player_response(request, next_episode=None, mark_completed=False):
 
         request.session["player_episode"] = next_episode.id
 
-        if request.POST.get("is_modal"):
-            streams += [TurboStream("modal").replace.template("_modal.html").render()]
-
         streams += [
             render_remove_from_queue(request, next_episode),
             render_queue_toggle(request, next_episode, False),
             render_player_toggle(request, next_episode, True),
+            render_remove_audio_log(request, next_episode, True),
         ]
 
     return streams + [
