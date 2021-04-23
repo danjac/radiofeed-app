@@ -3,6 +3,8 @@
 set -o errexit
 set -o nounset
 
+IMAGE=docker.io/danjac2018/audiotrails
+
 podman pod create --name audiopod -p 8000:8000 -p 5432 -p 6379 -p 8025
 
 mkdir -p ${PWD}/db
@@ -20,32 +22,32 @@ podman run --name webapp \
     --pod audiopod \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
-    -d localhost/audiotrails /start-django
+    -d $IMAGE /start-django
 
 # celeryworker
 podman run --name celeryworker \
     --pod audiopod \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
-    -d localhost/audiotrails /start-celeryworker
+    -d $IMAGE /start-celeryworker
 
 # celerybeat
 podman run --name celerybeat \
     --pod audiopod \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
-    -d localhost/audiotrails /start-celerybeat
+    -d $IMAGE /start-celerybeat
 
 # watch js
 podman run --name watchjs \
     --pod audiopod \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
-    -d localhost/audiotrails /start-watchjs
+    -d $IMAGE /start-watchjs
 
 # watch css
 podman run --name watchcss \
     --pod audiopod \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
-    -d localhost/audiotrails /start-watchcss
+    -d $IMAGE /start-watchcss
