@@ -5,7 +5,7 @@ set -o nounset
 
 IMAGE=docker.io/danjac2018/audiotrails
 
-podman pod create --name audiopod -p 8000:8000 -p 5432 -p 6379 -p 8025
+podman pod create --name audiopod -p 8000:8000 -p 8025:8025 -p 1025 -p 5432 -p 6379
 
 mkdir -p ${PWD}/db
 
