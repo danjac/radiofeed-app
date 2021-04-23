@@ -5,6 +5,6 @@ set -o nounset
 
 buildah bud -t audiotrails .
 
-#buildah push docker.io/library/audiotrails-django:latest docker://danjac2018/audiotrails-django:latest
+buildah push docker.io/library/audiotrails:latest docker://danjac2018/audiotrails:latest
 
 

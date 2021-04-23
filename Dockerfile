@@ -28,7 +28,7 @@ WORKDIR /app
 COPY postcss.config.js ./postcss.config.js
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
-COPY assets.dockerfile package-lock.json* ./
+COPY package-lock.json ./package-lock.json
 
 RUN if [ -d /app/node_modules ]; then rm -Rf /app/node_modules/*; fi
 
