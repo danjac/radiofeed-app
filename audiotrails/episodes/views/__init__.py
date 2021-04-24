@@ -13,6 +13,8 @@ from ..models import AudioLog, Episode
 
 def index(request, featured=False):
 
+    # get the latest episode for each podcast
+
     latest_episodes = (
         Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
     )
@@ -21,6 +23,8 @@ def index(request, featured=False):
 
     if request.user.is_authenticated:
         follows = list(request.user.follow_set.values_list("podcast", flat=True))
+
+        # filter out any episodes the user has already listened to
         listened_ids = list(
             AudioLog.objects.filter(user=request.user).values_list("episode", flat=True)
         )
