@@ -14,7 +14,9 @@ class Player:
         Returns the current time from the log (or zero)"""
 
         if episode is None:
-            return 0
+            return None
+
+        self.request.session[self.session_key] = episode.id
 
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
@@ -25,8 +27,7 @@ class Player:
             },
         )
 
-        self.request.session[self.session_key] = episode.id
-        return log.current_time
+        return log
 
     def stop_episode(self, mark_completed=False):
         """Removes episode from session and updates log. Returns episode if any."""
@@ -45,7 +46,7 @@ class Player:
 
         log.save()
 
-        return log.episode
+        return log
 
     def update_current_time(self, current_time):
         if (
