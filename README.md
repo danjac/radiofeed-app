@@ -32,6 +32,16 @@ You an also create a super user if you wish to access the Django admin:
 
 You can access the development app in your browser at http://localhost:8000.
 
+To run unit tests:
+
+> ./scripts/runtests [--reuse-db] [-x] [....]
+
+This script takes the same arguments as pytest and pytest-django:
+
+https://pytest.org/
+
+https://pytest-django.readthedocs.io/en/latest/
+
 **Note** due to migration issues the celerybeat container is not started immediately. If you need to use celerybeat in development, just run:
 
 > podman start celerybeat
