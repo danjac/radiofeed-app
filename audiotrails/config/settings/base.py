@@ -91,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "audiotrails.shared.middleware.SearchMiddleware",
+    "audiotrails.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "turbo_response.middleware.TurboMiddleware",
     "django.middleware.common.CommonMiddleware",

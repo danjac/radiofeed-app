@@ -3,12 +3,11 @@ import http
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
-from django.utils import timezone
 from django.views.decorators.http import require_POST
 from turbo_response import TurboStream
 from turbo_response.decorators import turbo_stream_response
 
-from ..models import AudioLog, QueueItem
+from ..models import QueueItem
 from . import get_episode_or_404
 from .history import render_remove_audio_log
 from .queue import render_queue_toggle, render_remove_from_queue
@@ -62,14 +61,12 @@ def player_update_current_time(request):
     """Update current play time of episode"""
     if request.user.is_anonymous:
         return HttpResponseForbidden("not logged in")
+
     try:
-        AudioLog.objects.filter(
-            episode=request.session["player_episode"], user=request.user
-        ).update(current_time=round(float(request.POST["current_time"])))
+        request.player.update_current_time(float(request.POST["current_time"]))
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     except (KeyError, ValueError):
-        pass
-    return HttpResponseBadRequest("missing or invalid data")
+        return HttpResponseBadRequest("missing or invalid data")
 
 
 def render_player_toggle(request, episode, is_playing):
@@ -91,40 +88,17 @@ def render_player_response(request, next_episode=None, mark_completed=False):
 
     streams = []
 
-    now = timezone.now()
-
     if request.POST.get("is_modal"):
         streams += [TurboStream("modal").replace.template("_modal.html").render()]
 
-    if (episode_id := request.session.pop("player_episode", None)) and (
-        log := AudioLog.objects.filter(user=request.user, episode=episode_id)
-        .select_related("episode")
-        .first()
-    ):
-        log.updated = now
-
-        if mark_completed:
-            log.completed = now
-            log.current_time = 0
-
-        log.save()
-
+    if current_episode := request.player.stop_episode(mark_completed):
         streams += [
-            render_player_toggle(request, log.episode, False),
-            render_remove_audio_log(request, log.episode, False),
+            render_player_toggle(request, current_episode, False),
+            render_remove_audio_log(request, current_episode, False),
         ]
 
     if next_episode:
-        AudioLog.objects.update_or_create(
-            episode=next_episode,
-            user=request.user,
-            defaults={
-                "updated": now,
-                "completed": None,
-            },
-        )
-
-        request.session["player_episode"] = next_episode.id
+        request.player.start_episode(next_episode)
 
         streams += [
             render_remove_from_queue(request, next_episode),

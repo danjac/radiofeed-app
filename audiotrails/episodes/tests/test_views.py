@@ -233,7 +233,7 @@ class TestPlayerUpdateCurrentTime:
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
         )
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
+        assert resp.status_code == http.HTTPStatus.NO_CONTENT
         assert AudioLog.objects.count() == 0
 
     def test_missing_data(self, client, login_user, episode):
