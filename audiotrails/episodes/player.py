@@ -45,8 +45,19 @@ class Player:
                 episode=self.request.session[self.session_key], user=self.request.user
             ).update(current_time=round(current_time))
 
+    def get_player_info(self):
+        if log := self.get_audio_log():
+            return {
+                "current_time": log.current_time,
+                "episode": log.episode,
+            }
+        return {}
+
+    def is_playing(self, episode):
+        return self.request.session.get(self.session_key) == episode.id
+
     def get_audio_log(self):
-        if (episode_id := self.request.session.pop("player_episode", None)) is None:
+        if (episode_id := self.request.session.pop(self.session_key, None)) is None:
             return None
 
         return (
