@@ -19,7 +19,7 @@ fi
 echo "creating new pod $POD"
 podman pod create --name $POD -p 8000:8000 -p 8025:8025 -p 1025 -p 5432 -p 6379
 
-echo "staring postgresql"
+echo "starting postgresql"
 mkdir -p ${PWD}/db
 
 podman run --name postgresql \
@@ -27,34 +27,34 @@ podman run --name postgresql \
     -e POSTGRES_PASSWORD=postgres \
     -d -v "${PWD}/db:/var/lib/postgresql/data:z" postgres:11.8
 
-echo "staring redis"
+echo "starting redis"
 podman run --name redis --pod $POD -d redis
 
-echo "staring mailhog: runs test mail server on http://localhost:8025"
+echo "starting mailhog: runs test mail server on http://localhost:8025"
 podman run --name mailhog --pod $POD -d mailhog/mailhog:v1.0.0
 
-echo "staring webapp: runs Django development server on http://localhost:8000"
+echo "starting webapp: runs Django development server on http://localhost:8000"
 podman run --name webapp \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-django
 
-echo "staring celeryworker: runs celery process"
+echo "starting celeryworker: runs celery process"
 podman run --name celeryworker \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-celeryworker
 
-echo "staring watchjs: runs esbuild process"
+echo "starting watchjs: runs esbuild process"
 podman run --name watchjs \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-watchjs
 
-echo "staring watchcss: runs Tailwind JIT process"
+echo "starting watchcss: runs Tailwind JIT process"
 podman run --name watchcss \
     --pod $POD \
     --env-file=.env \
