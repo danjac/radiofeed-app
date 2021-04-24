@@ -10,6 +10,9 @@ class Player:
         self.request = request
 
     def start_episode(self, episode):
+        if episode is None:
+            return 0
+
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
             user=self.request.user,
