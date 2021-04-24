@@ -18,17 +18,11 @@ https://buildah.io/
 
 To get started, copy the file *.env.defaults* to *.env* and run *./install.sh -b*.
 
-Next load the categories into the database:
+Next load the categories and sample podcasts into the database:
 
-> ./scripts/manage loaddata audiotrails/podcasts/fixtures/categories.json.gz
+> ./scripts/manage init_podcast_data
 
-You can optionally import a sample list of podcasts:
-
-> ./scripts/manage loaddata audiotrails/podcasts/fixtures/podcasts.json.gz
-
-Alternatively, use the Django admin to add podcasts.
-
-To sync podcasts and download episodes to the database:
+To update podcast data and download episodes from their RSS feeds:
 
 > ./scripts/manage sync_podcast_feeds --use-celery
 
