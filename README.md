@@ -32,6 +32,12 @@ You an also create a super user if you wish to access the Django admin:
 
 You can access the development app in your browser at http://localhost:8000.
 
+**Note** due to migration issues the celerybeat container is not started immediately. If you need to use celerybeat in development, just run:
+
+> podman start celerybeat
+
+Issue is covered here: https://github.com/danjac/audiotrails/issues/3
+
 ## Deployment
 
 This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. You should also set up an S3 bucket with folders "static" and "media", and create a Cloudfront CDN distribution pointing to this bucket. Set up your DNS with your provider as per the Dokku instructions.
