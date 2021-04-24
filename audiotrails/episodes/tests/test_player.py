@@ -53,6 +53,72 @@ class TestPlayer:
         player = Player(req)
         assert player.stop_episode() is None
 
+    def test_stop_episode_not_in_session(self, rf, user):
+
+        AudioLogFactory(user=user)
+
+        req = rf.get("/")
+        req.session = {}
+        req.user = user
+
+        player = Player(req)
+
+        assert player.stop_episode() is None
+
+    def test_stop_episode_in_session(self, rf, user):
+
+        log = AudioLogFactory(user=user)
+
+        req = rf.get("/")
+        req.session = {"player_episode": log.episode.id}
+        req.user = user
+
+        player = Player(req)
+
+        assert player.stop_episode() == log.episode
+        assert not player.is_playing(log.episode)
+
+    def test_stop_episode_mark_complete(self, rf, user):
+
+        log = AudioLogFactory(user=user)
+
+        req = rf.get("/")
+        req.session = {"player_episode": log.episode.id}
+        req.user = user
+
+        player = Player(req)
+
+        assert player.stop_episode(mark_completed=True) == log.episode
+        assert not player.is_playing(log.episode)
+
+        log.refresh_from_db()
+        assert log.completed
+
+    def test_update_current_time_not_playing(self, rf, user):
+        req = rf.get("/")
+
+        req.session = {}
+        req.user = user
+
+        player = Player(req)
+        player.update_current_time(600)
+        assert AudioLog.objects.count() == 0
+
+    def test_update_current_time(self, rf, user):
+
+        log = AudioLogFactory(user=user, current_time=500)
+
+        req = rf.get("/")
+
+        req.session = {"player_episode": log.episode.id}
+        req.user = user
+
+        player = Player(req)
+        player.update_current_time(600)
+
+        log.refresh_from_db()
+        assert log.current_time == 600
+
     def test_get_player_info_anonymous(self, rf, anonymous_user):
 
         req = rf.get("/")
@@ -82,43 +148,3 @@ class TestPlayer:
             "current_time": 100,
             "episode": log.episode,
         }
-
-    def test_stop_episode_not_in_session(self, rf, user):
-
-        AudioLogFactory(user=user)
-
-        req = rf.get("/")
-        req.session = {}
-        req.user = user
-
-        player = Player(req)
-
-        assert player.stop_episode() is None
-
-    def test_stop_episode_in_session(self, rf, user):
-
-        log = AudioLogFactory(user=user)
-
-        req = rf.get("/")
-        req.session = {"player_episode": log.episode.id}
-        req.user = user
-
-        player = Player(req)
-
-        assert player.stop_episode() == log.episode
-        assert not player.is_playing(log.episode)
-
-    def test_update_current_time(self, rf, user):
-
-        log = AudioLogFactory(user=user, current_time=500)
-
-        req = rf.get("/")
-
-        req.session = {"player_episode": log.episode.id}
-        req.user = user
-
-        player = Player(req)
-        player.update_current_time(600)
-
-        log.refresh_from_db()
-        assert log.current_time == 600
