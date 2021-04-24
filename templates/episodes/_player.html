@@ -1,6 +1,5 @@
 {% spaceless %}
-{% load player podcasts %}
-{% get_player as player %}
+{% load podcasts %}
 {% with episode=player.episode %}
 {% if episode %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=player.current_time %}

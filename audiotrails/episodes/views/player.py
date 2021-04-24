@@ -25,7 +25,10 @@ def start_player(
         return redirect_to_login(episode.get_absolute_url())
 
     return render_player_response(
-        request, current_episode=request.player.stop_episode(), next_episode=episode
+        request,
+        next_episode=episode,
+        current_episode=request.player.stop_episode(),
+        current_time=request.player.start_episode(episode),
     )
 
 
@@ -54,13 +57,15 @@ def play_next_episode(request):
         .first()
     ):
         next_episode = next_item.episode
+
     else:
         next_episode = None
 
     return render_player_response(
         request,
-        current_episode=request.player.stop_episode(mark_completed=True),
         next_episode=next_episode,
+        current_episode=request.player.stop_episode(mark_completed=True),
+        current_time=request.player.start_episode(next_episode),
     )
 
 
@@ -92,7 +97,9 @@ def render_player_toggle(request, episode, is_playing):
 
 
 @turbo_stream_response
-def render_player_response(request, *, current_episode=None, next_episode=None):
+def render_player_response(
+    request, current_episode=None, next_episode=None, current_time=0
+):
 
     if request.POST.get("is_modal"):
         yield TurboStream("modal").replace.template("_modal.html").render()
@@ -110,6 +117,10 @@ def render_player_response(request, *, current_episode=None, next_episode=None):
     yield TurboStream("player").replace.template(
         "episodes/_player.html",
         {
-            "new_episode": next_episode,
+            "new_episode": next_episode is not None,
+            "player": {
+                "episode": next_episode,
+                "current_time": current_time,
+            },
         },
     ).render(request=request)

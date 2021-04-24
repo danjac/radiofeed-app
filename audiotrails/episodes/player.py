@@ -10,7 +10,7 @@ class Player:
         self.request = request
 
     def start_episode(self, episode):
-        AudioLog.objects.update_or_create(
+        log, _ = AudioLog.objects.update_or_create(
             episode=episode,
             user=self.request.user,
             defaults={
@@ -20,6 +20,7 @@ class Player:
         )
 
         self.request.session[self.session_key] = episode.id
+        return log.current_time
 
     def stop_episode(self, mark_completed=False):
         if (log := self.get_audio_log()) is None:

@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n player %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
@@ -65,7 +65,10 @@
 
   {% endblock layout %}
 
-  {% block player %}{% include "episodes/_player.html" %}{% endblock %}
+  {% block player %}
+  {% get_player as player %}
+  {% include "episodes/_player.html" %}
+  {% endblock %}
   {% include "_modal.html" %}
 </body>
 
