@@ -1,4 +1,4 @@
-- name: Update and upgrade apt packages
+- name: PostgreSQL vacuuming, update and upgrade apt packages, install swap memory
   become: yes
   hosts: all
   vars_files: vars.yml
