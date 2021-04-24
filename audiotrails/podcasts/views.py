@@ -27,9 +27,9 @@ def index(request, featured=False):
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    show_promotions = featured or not follows
+    featured = featured or not follows
 
-    if show_promotions:
+    if featured:
         podcasts = podcasts.filter(promoted=True)
     else:
         podcasts = podcasts.filter(pk__in=follows)
@@ -39,11 +39,11 @@ def index(request, featured=False):
         podcasts,
         "podcasts/index.html",
         {
-            "show_promotions": show_promotions,
+            "featured": featured,
             "has_follows": follows,
             "search_url": reverse("podcasts:search_podcasts"),
         },
-        cached=show_promotions,
+        cached=featured,
     )
 
 

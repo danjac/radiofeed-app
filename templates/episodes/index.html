@@ -5,14 +5,34 @@
 
 {% block content %}
 
-<div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
+<div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
   <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg">
     New Releases
   </h1>
+  {% if not has_follows %}
   <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
+    {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
+  </div>
+  {% endif %}
+</div>
+
+{% if has_follows %}
+<div class="sm:flex items-center justify-between space-y-3 sm:space-y-0 mb-3">
+  <div class="flex items-center justify-center sm:justify-start text-sm">
+    {% if featured %}
+    <a href="{% url 'episodes:index' %}"
+       class="link">My Podcasts</a>
+    {% else %}
+    <a href="{% url 'episodes:featured' %}"
+       class="link">Featured Podcasts</a>
+    {% endif %}
+  </div>
+  <div class="flex items-center justify-center sm:justify-end">
+    {% include "forms/_search_form.html" with placeholder="Search podcasts..." %}
   </div>
 </div>
+{% endif %}
+
 
 {% include pagination_template %}
 {% endblock content %}

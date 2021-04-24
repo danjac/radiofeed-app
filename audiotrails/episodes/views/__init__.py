@@ -11,23 +11,22 @@ from audiotrails.shared.pagination import render_paginated_response
 from ..models import AudioLog, Episode
 
 
-def index(request):
+def index(request, featured=False):
 
-    podcast_ids = []
     listened_ids = []
-    show_promotions = False
+    follows = []
 
     if request.user.is_authenticated:
-        podcast_ids = list(request.user.follow_set.values_list("podcast", flat=True))
+        follows = list(request.user.follow_set.values_list("podcast", flat=True))
         listened_ids = list(
             AudioLog.objects.filter(user=request.user).values_list("episode", flat=True)
         )
 
-    if not podcast_ids:
-        podcast_ids = list(
-            Podcast.objects.filter(promoted=True).values_list("pk", flat=True)
-        )
-        show_promotions = True
+    podcast_ids = (
+        list(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
+        if featured or not follows
+        else follows
+    )
 
     # we want a list of the *latest* episode for each podcast
     latest_episodes = (
@@ -56,7 +55,8 @@ def index(request):
         episodes,
         "episodes/index.html",
         {
-            "show_promotions": show_promotions,
+            "featured": featured,
+            "has_follows": follows,
             "search_url": reverse("episodes:search_episodes"),
         },
         cached=request.user.is_anonymous,

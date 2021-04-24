@@ -24,6 +24,7 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
 
     def test_user_no_subscriptions(self, client, login_user):
@@ -33,6 +34,7 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
 
     def test_user_has_subscriptions(self, client, login_user):
@@ -46,8 +48,26 @@ class TestNewEpisodes:
 
         resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
         assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["featured"]
+        assert resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
+
+    def test_user_has_subscriptions_featured(self, client, login_user):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+
+        EpisodeFactory.create_batch(3)
+
+        episode = EpisodeFactory()
+        FollowFactory(user=login_user, podcast=episode.podcast)
+
+        resp = client.get(reverse("episodes:featured"), HTTP_TURBO_FRAME="episodes")
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["featured"]
+        assert resp.context_data["has_follows"]
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0].podcast == promoted
 
 
 class TestSearchEpisodes:
