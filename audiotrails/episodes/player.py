@@ -10,6 +10,9 @@ class Player:
         self.request = request
 
     def start_episode(self, episode):
+        """Creates/updates audio log and adds episode to session.
+        Returns the current time from the log (or zero)"""
+
         if episode is None:
             return 0
 
@@ -26,6 +29,7 @@ class Player:
         return log.current_time
 
     def stop_episode(self, mark_completed=False):
+        """Removes episode from session and updates log. Returns episode if any."""
         if (log := self.get_audio_log()) is None:
             return None
 
