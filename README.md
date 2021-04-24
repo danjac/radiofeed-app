@@ -16,7 +16,7 @@ https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-To get started, copy the file *.env.defaults* to *.env* and run *./install.sh -b*.
+To get started, copy the file *.env.defaults* to *.env* and run *./install.sh*.
 
 Next load the categories and sample podcasts into the database:
 
