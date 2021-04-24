@@ -6,17 +6,20 @@ set -o nounset
 IMAGE=audiotrails:latest
 POD=audiopod
 
+echo "building image $IMAGE"
 podman build -t $IMAGE .
 
 if podman pod exists $POD
 then
+    echo "stopping and removing pod $POD"
     podman pod stop $POD
     podman pod rm $POD
 fi
 
+echo "creating new pod $POD"
 podman pod create --name $POD -p 8000:8000 -p 8025:8025 -p 1025 -p 5432 -p 6379
 
-# postgres
+echo "staring postgresql"
 mkdir -p ${PWD}/db
 
 podman run --name postgresql \
@@ -24,43 +27,43 @@ podman run --name postgresql \
     -e POSTGRES_PASSWORD=postgres \
     -d -v "${PWD}/db:/var/lib/postgresql/data:z" postgres:11.8
 
-# redis
+echo "staring redis"
 podman run --name redis --pod $POD -d redis
 
-# mailhog
+echo "staring mailhog: runs test mail server on http://localhost:8025"
 podman run --name mailhog --pod $POD -d mailhog/mailhog:v1.0.0
 
-# webapp
+echo "staring webapp: runs Django development server on http://localhost:8000"
 podman run --name webapp \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-django
 
-# celeryworker
+echo "staring celeryworker: runs celery process"
 podman run --name celeryworker \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-celeryworker
 
-# celerybeat
-podman run --name celerybeat \
-    --pod $POD \
-    --env-file=.env \
-    -v "${PWD}:/app/:z" \
-    -d $IMAGE /start-celerybeat
-
-# watch js
+echo "staring watchjs: runs esbuild process"
 podman run --name watchjs \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-watchjs
 
-# watch css
+echo "staring watchcss: runs Tailwind JIT process"
 podman run --name watchcss \
     --pod $POD \
     --env-file=.env \
     -v "${PWD}:/app/:z" \
     -d $IMAGE /start-watchcss
+
+echo "creating celerybeat: to start run 'podman start celerybeat'"
+podman create --name celerybeat \
+    --pod $POD \
+    --env-file=.env \
+    -v "${PWD}:/app/:z" \
+    $IMAGE /start-celerybeat
