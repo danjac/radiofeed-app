@@ -14,7 +14,7 @@ class TestPlayer:
         req.user = user
         req.episode = episode
         player = Player(req)
-        player.start_episode(episode)
+        assert player.start_episode(episode) == 0
 
         log = AudioLog.objects.get()
 
@@ -35,7 +35,7 @@ class TestPlayer:
         req.user = user
         req.episode = episode
         player = Player(req)
-        player.start_episode(episode)
+        assert player.start_episode(episode) == 500
 
         log.refresh_from_db()
 
