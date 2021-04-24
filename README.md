@@ -102,10 +102,6 @@ You should now be able to access the Django management commands:
 
 Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run *loaddata* and *sync_podcast_feeds* commands to add the categories and podcasts and sync the RSS feeds.
 
-## Deployment
-
-This application uses Ansible for deployment (tested on version 2.10.3). See instructions above for creating a secure environment secrets file.
-
 To deploy just run:
 
 > ansible-playbook deploy.yml
