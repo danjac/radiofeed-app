@@ -24,7 +24,9 @@ def start_player(
     if request.user.is_anonymous:
         return redirect_to_login(episode.get_absolute_url())
 
-    return render_player_response(request, episode)
+    return render_player_response(
+        request, current_episode=request.player.stop_episode(), next_episode=episode
+    )
 
 
 @require_POST
@@ -32,7 +34,9 @@ def close_player(request):
     if request.user.is_anonymous:
         return redirect_to_login(settings.HOME_URL)
 
-    return render_player_response(request)
+    return render_player_response(
+        request, current_episode=request.player.stop_episode()
+    )
 
 
 @require_POST
@@ -53,7 +57,11 @@ def play_next_episode(request):
     else:
         next_episode = None
 
-    return render_player_response(request, next_episode, mark_completed=True)
+    return render_player_response(
+        request,
+        current_episode=request.player.stop_episode(mark_completed=True),
+        next_episode=next_episode,
+    )
 
 
 @require_POST
@@ -84,36 +92,24 @@ def render_player_toggle(request, episode, is_playing):
 
 
 @turbo_stream_response
-def render_player_response(request, next_episode=None, mark_completed=False):
-
-    streams = []
+def render_player_response(request, *, current_episode=None, next_episode=None):
 
     if request.POST.get("is_modal"):
-        streams += [TurboStream("modal").replace.template("_modal.html").render()]
+        yield TurboStream("modal").replace.template("_modal.html").render()
 
-    if current_episode := request.player.stop_episode(mark_completed):
-        streams += [
-            render_player_toggle(request, current_episode, False),
-            render_remove_audio_log(request, current_episode, False),
-        ]
+    if current_episode:
+        yield render_player_toggle(request, current_episode, False)
+        yield render_remove_audio_log(request, current_episode, False)
 
     if next_episode:
-        request.player.start_episode(next_episode)
+        yield render_remove_from_queue(request, next_episode)
+        yield render_queue_toggle(request, next_episode, False)
+        yield render_player_toggle(request, next_episode, True)
+        yield render_remove_audio_log(request, next_episode, True)
 
-        streams += [
-            render_remove_from_queue(request, next_episode),
-            render_queue_toggle(request, next_episode, False),
-            render_player_toggle(request, next_episode, True),
-            render_remove_audio_log(request, next_episode, True),
-        ]
-
-    return streams + [
-        TurboStream("player")
-        .replace.template(
-            "episodes/_player.html",
-            {
-                "new_episode": next_episode,
-            },
-        )
-        .render(request=request)
-    ]
+    yield TurboStream("player").replace.template(
+        "episodes/_player.html",
+        {
+            "new_episode": next_episode,
+        },
+    ).render(request=request)

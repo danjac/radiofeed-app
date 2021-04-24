@@ -157,11 +157,13 @@ class TestStartPlayer:
 
     def test_play_from_start(self, client, login_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
 
     def test_play_episode_in_history(self, client, login_user, episode):
         AudioLogFactory(user=login_user, episode=episode, current_time=2000)
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
 
 
@@ -169,6 +171,7 @@ class TestPlayNextEpisode:
     def test_has_next_in_queue(self, client, login_user, episode):
         QueueItem.objects.create(position=0, user=login_user, episode=episode)
         resp = client.post(reverse("episodes:play_next_episode"))
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
         assert QueueItem.objects.count() == 0
 
@@ -177,11 +180,13 @@ class TestPlayNextEpisode:
 
         QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
         resp = client.post(reverse("episodes:play_next_episode"))
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
         assert QueueItem.objects.count() == 0
 
     def test_queue_empty(self, client, login_user):
         resp = client.post(reverse("episodes:play_next_episode"))
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
 
 
@@ -201,6 +206,7 @@ class TestClosePlayer:
         resp = client.post(
             reverse("episodes:close_player"),
         )
+        assert list(resp.streaming_content)
         assert resp.status_code == http.HTTPStatus.OK
 
 
