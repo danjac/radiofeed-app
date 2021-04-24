@@ -98,7 +98,7 @@ def render_player_toggle(request, episode, is_playing):
 
 @turbo_stream_response
 def render_player_response(
-    request, current_episode=None, next_episode=None, current_time=0
+    request, *, current_episode=None, next_episode=None, current_time=0
 ):
 
     if request.POST.get("is_modal"):
