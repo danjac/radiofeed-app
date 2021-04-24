@@ -8,7 +8,7 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
-## Local development
+## Running Audiotrails on your local machine
 
 Local development uses Podman and Buildah:
 
