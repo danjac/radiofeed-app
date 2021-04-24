@@ -13,7 +13,10 @@ from ..models import AudioLog, Episode
 
 def index(request, featured=False):
 
-    listened_ids = []
+    latest_episodes = (
+        Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
+    )
+
     follows = []
 
     if request.user.is_authenticated:
@@ -21,20 +24,14 @@ def index(request, featured=False):
         listened_ids = list(
             AudioLog.objects.filter(user=request.user).values_list("episode", flat=True)
         )
+        if listened_ids:
+            latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
 
     podcast_ids = (
         list(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
         if featured or not follows
         else follows
     )
-
-    # we want a list of the *latest* episode for each podcast
-    latest_episodes = (
-        Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
-    )
-
-    if listened_ids:
-        latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
 
     episode_ids = (
         Podcast.objects.filter(pk__in=podcast_ids)
