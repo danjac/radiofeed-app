@@ -217,8 +217,6 @@ spec:
       env:
         - name: container
           value: podman
-        - name: PYTHON_PIP_VERSION
-          value: 21.0.1
         - name: PYTHONHASHSEED
           value: random
         - name: DATABASE_URL
