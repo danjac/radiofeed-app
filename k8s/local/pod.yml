@@ -19,6 +19,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       name: watchcss
       resources: {}
       volumeMounts:
@@ -33,6 +34,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       name: celeryworker
       resources: {}
       volumeMounts:
@@ -72,6 +74,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       name: watchjs
       resources: {}
       volumeMounts:
@@ -86,6 +89,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       name: celerybeat
       resources: {}
       volumeMounts:
@@ -126,6 +130,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       name: webapp
       ports:
         - containerPort: 8000
