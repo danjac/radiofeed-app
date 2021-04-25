@@ -16,7 +16,7 @@ https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-To get started, copy the file *.env.defaults* to *.env* and run *./install.sh*. This will create a new pod, *audiopod* and create and run the required containers.
+To get started, copy the file *.env.defaults* to *.env* and run *./bootstrap.sh*. This will create a new pod, *audiopod* and create and run the required containers.
 
 Once this is installed, you can start your local instance again by just running
 
