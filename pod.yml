@@ -17,29 +17,12 @@ spec:
         - /start-watchcss
       command:
         - /entrypoint
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
       env:
         - name: container
           value: podman
-        - name: DATABASE_URL
-          value: postgres://postgres:password@localhost:5432/postgres
-        - name: REDIS_URL
-          value: redis://localhost:6379/0
-        - name: EMAIL_PORT
-          value: '1025'
-        - name: PYTHONUNBUFFERED
-          value: '1'
-        - name: SECRET_KEY
-          value: seekret
-        - name: PYTHONFAULTHANDLER
-          value: '1'
-        - name: PYTHONHASHSEED
-          value: random
-        - name: LANG
-          value: C.UTF-8
-        - name: PYTHONDONTWRITEBYTECODE
-          value: '1'
-        - name: EMAIL_HOST
-          value: localhost
       image: localhost/audiotrails:latest
       name: watchcss
       ports:
@@ -77,29 +60,12 @@ spec:
         - /start-celeryworker
       command:
         - /entrypoint
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
       env:
         - name: container
           value: podman
-        - name: PYTHONUNBUFFERED
-          value: '1'
-        - name: DATABASE_URL
-          value: postgres://postgres:password@localhost:5432/postgres
-        - name: EMAIL_PORT
-          value: '1025'
-        - name: PYTHONDONTWRITEBYTECODE
-          value: '1'
-        - name: PYTHONHASHSEED
-          value: random
-        - name: PYTHONFAULTHANDLER
-          value: '1'
-        - name: SECRET_KEY
-          value: seekret
-        - name: LANG
-          value: C.UTF-8
-        - name: REDIS_URL
-          value: redis://localhost:6379/0
-        - name: EMAIL_HOST
-          value: localhost
       image: localhost/audiotrails:latest
       name: celeryworker
       resources: {}
@@ -168,31 +134,12 @@ spec:
         - /start-watchjs
       command:
         - /entrypoint
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
       env:
         - name: container
           value: podman
-        - name: EMAIL_PORT
-          value: '1025'
-        - name: REDIS_URL
-          value: redis://localhost:6379/0
-        - name: SECRET_KEY
-          value: seekret
-        - name: LANG
-          value: C.UTF-8
-        - name: PYTHONFAULTHANDLER
-          value: '1'
-        - name: PYTHONUNBUFFERED
-          value: '1'
-        - name: DATABASE_URL
-          value: postgres://postgres:password@localhost:5432/postgres
-        - name: EMAIL_HOST
-          value: localhost
-        - name: PYTHON_VERSION
-          value: 3.9.2
-        - name: PYTHONHASHSEED
-          value: random
-        - name: PYTHONDONTWRITEBYTECODE
-          value: '1'
       image: localhost/audiotrails:latest
       name: watchjs
       resources: {}
@@ -214,29 +161,12 @@ spec:
         - /start-celerybeat
       command:
         - /entrypoint
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
       env:
         - name: container
           value: podman
-        - name: PYTHONHASHSEED
-          value: random
-        - name: DATABASE_URL
-          value: postgres://postgres:password@localhost:5432/postgres
-        - name: PYTHONUNBUFFERED
-          value: '1'
-        - name: SECRET_KEY
-          value: seekret
-        - name: EMAIL_HOST
-          value: localhost
-        - name: REDIS_URL
-          value: redis://localhost:6379/0
-        - name: LANG
-          value: C.UTF-8
-        - name: EMAIL_PORT
-          value: '1025'
-        - name: PYTHONDONTWRITEBYTECODE
-          value: '1'
-        - name: PYTHONFAULTHANDLER
-          value: '1'
       image: localhost/audiotrails:latest
       name: celerybeat
       resources: {}
@@ -292,29 +222,12 @@ spec:
         - /start-django
       command:
         - /entrypoint
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
       env:
         - name: container
           value: podman
-        - name: REDIS_URL
-          value: redis://localhost:6379/0
-        - name: EMAIL_HOST
-          value: localhost
-        - name: EMAIL_PORT
-          value: '1025'
-        - name: PYTHONDONTWRITEBYTECODE
-          value: '1'
-        - name: LANG
-          value: C.UTF-8
-        - name: SECRET_KEY
-          value: seekret
-        - name: PYTHONHASHSEED
-          value: random
-        - name: PYTHONFAULTHANDLER
-          value: '1'
-        - name: PYTHONUNBUFFERED
-          value: '1'
-        - name: DATABASE_URL
-          value: postgres://postgres:password@localhost:5432/postgres
       image: localhost/audiotrails:latest
       name: webapp
       resources: {}

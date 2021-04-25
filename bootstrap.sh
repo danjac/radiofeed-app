@@ -16,4 +16,4 @@ then
     podman pod rm $POD
 fi
 
-podman play kube pod.yml
+podman play kube pod.yml --configmap=./configMap.yml
