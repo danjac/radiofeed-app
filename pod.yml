@@ -20,9 +20,6 @@ spec:
       envFrom:
         - configMapRef:
             name: audiopod-configmap
-      env:
-        - name: container
-          value: podman
       image: localhost/audiotrails:latest
       name: watchcss
       resources: {}
@@ -47,9 +44,6 @@ spec:
       envFrom:
         - configMapRef:
             name: audiopod-configmap
-      env:
-        - name: container
-          value: podman
       image: localhost/audiotrails:latest
       name: celeryworker
       resources: {}
@@ -69,9 +63,6 @@ spec:
       workingDir: /app
     - command:
         - MailHog
-      env:
-        - name: container
-          value: podman
       image: docker.io/mailhog/mailhog:v1.0.0
       name: mailhog
       ports:
@@ -99,11 +90,6 @@ spec:
         - redis-server
       command:
         - docker-entrypoint.sh
-      env:
-        - name: container
-          value: podman
-        - name: REDIS_VERSION
-          value: 6.2.2
       image: docker.io/library/redis:latest
       name: redis
       ports:
@@ -129,9 +115,6 @@ spec:
       envFrom:
         - configMapRef:
             name: audiopod-configmap
-      env:
-        - name: container
-          value: podman
       image: localhost/audiotrails:latest
       name: watchjs
       resources: {}
@@ -156,9 +139,6 @@ spec:
       envFrom:
         - configMapRef:
             name: audiopod-configmap
-      env:
-        - name: container
-          value: podman
       image: localhost/audiotrails:latest
       name: celerybeat
       resources: {}
@@ -181,8 +161,6 @@ spec:
       command:
         - docker-entrypoint.sh
       env:
-        - name: container
-          value: podman
         - name: LANG
           value: en_US.utf8
         - name: PGDATA
@@ -221,9 +199,6 @@ spec:
       envFrom:
         - configMapRef:
             name: audiopod-configmap
-      env:
-        - name: container
-          value: podman
       image: localhost/audiotrails:latest
       name: webapp
       ports:
