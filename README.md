@@ -30,7 +30,7 @@ See the Podman docs for more details.
 
 Next load the categories and sample podcasts into the database:
 
-> ./scripts/manage init_podcast_data
+> ./scripts/manage seed_podcast_data
 
 To update podcast data and download episodes from their RSS feeds:
 
