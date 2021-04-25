@@ -72,7 +72,10 @@ class Player:
         return self.request.session.get(self.session_key) == episode.id
 
     def get_audio_log(self):
-        if (episode_id := self.request.session.get(self.session_key, None)) is None:
+        if (
+            self.request.user.is_anonymous
+            or (episode_id := self.request.session.get(self.session_key, None)) is None
+        ):
             return None
 
         return (

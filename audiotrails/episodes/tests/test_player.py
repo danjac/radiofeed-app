@@ -48,9 +48,10 @@ class TestPlayer:
 
         assert player.is_playing(episode)
 
-    def test_stop_episode_empty(self, rf):
+    def test_stop_episode_empty(self, rf, user):
         req = rf.get("/")
         req.session = {}
+        req.user = user
         player = Player(req)
         assert player.stop_episode() is None
 
