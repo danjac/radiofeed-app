@@ -18,10 +18,6 @@ spec:
       command:
         - /entrypoint
       env:
-        - name: PATH
-          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
         - name: DATABASE_URL
@@ -30,26 +26,16 @@ spec:
           value: redis://localhost:6379/0
         - name: EMAIL_PORT
           value: '1025'
-        - name: PYTHON_GET_PIP_SHA256
-          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
         - name: PYTHONUNBUFFERED
           value: '1'
-        - name: GPG_KEY
-          value: E3FF2839C048B25C084DEBE9B26995E310250568
         - name: SECRET_KEY
           value: seekret
-        - name: PYTHON_PIP_VERSION
-          value: 21.0.1
-        - name: PYTHON_VERSION
-          value: 3.9.2
         - name: PYTHONFAULTHANDLER
           value: '1'
         - name: PYTHONHASHSEED
           value: random
         - name: LANG
           value: C.UTF-8
-        - name: PYTHON_GET_PIP_URL
-          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
         - name: PYTHONDONTWRITEBYTECODE
           value: '1'
         - name: EMAIL_HOST
@@ -92,18 +78,8 @@ spec:
       command:
         - /entrypoint
       env:
-        - name: PATH
-          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
-        - name: GPG_KEY
-          value: E3FF2839C048B25C084DEBE9B26995E310250568
-        - name: PYTHON_GET_PIP_URL
-          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
-        - name: PYTHON_GET_PIP_SHA256
-          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
         - name: PYTHONUNBUFFERED
           value: '1'
         - name: DATABASE_URL
@@ -118,12 +94,8 @@ spec:
           value: '1'
         - name: SECRET_KEY
           value: seekret
-        - name: PYTHON_VERSION
-          value: 3.9.2
         - name: LANG
           value: C.UTF-8
-        - name: PYTHON_PIP_VERSION
-          value: 21.0.1
         - name: REDIS_URL
           value: redis://localhost:6379/0
         - name: EMAIL_HOST
@@ -148,10 +120,6 @@ spec:
     - command:
         - MailHog
       env:
-        - name: PATH
-          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
       image: docker.io/mailhog/mailhog:v1.0.0
@@ -175,20 +143,10 @@ spec:
       command:
         - docker-entrypoint.sh
       env:
-        - name: PATH
-          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
-        - name: GOSU_VERSION
-          value: '1.12'
         - name: REDIS_VERSION
           value: 6.2.2
-        - name: REDIS_DOWNLOAD_URL
-          value: http://download.redis.io/releases/redis-6.2.2.tar.gz
-        - name: REDIS_DOWNLOAD_SHA
-          value: 7a260bb74860f1b88c3d5942bf8ba60ca59f121c6dce42d3017bed6add0b9535
       image: docker.io/library/redis:latest
       name: redis
       resources: {}
@@ -211,10 +169,6 @@ spec:
       command:
         - /entrypoint
       env:
-        - name: PATH
-          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
         - name: EMAIL_PORT
@@ -225,12 +179,8 @@ spec:
           value: seekret
         - name: LANG
           value: C.UTF-8
-        - name: PYTHON_GET_PIP_SHA256
-          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
         - name: PYTHONFAULTHANDLER
           value: '1'
-        - name: GPG_KEY
-          value: E3FF2839C048B25C084DEBE9B26995E310250568
         - name: PYTHONUNBUFFERED
           value: '1'
         - name: DATABASE_URL
@@ -241,10 +191,6 @@ spec:
           value: 3.9.2
         - name: PYTHONHASHSEED
           value: random
-        - name: PYTHON_PIP_VERSION
-          value: 21.0.1
-        - name: PYTHON_GET_PIP_URL
-          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
         - name: PYTHONDONTWRITEBYTECODE
           value: '1'
       image: localhost/audiotrails:latest
@@ -269,14 +215,8 @@ spec:
       command:
         - /entrypoint
       env:
-        - name: PATH
-          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
-        - name: GPG_KEY
-          value: E3FF2839C048B25C084DEBE9B26995E310250568
         - name: PYTHON_PIP_VERSION
           value: 21.0.1
         - name: PYTHONHASHSEED
@@ -293,16 +233,10 @@ spec:
           value: redis://localhost:6379/0
         - name: LANG
           value: C.UTF-8
-        - name: PYTHON_GET_PIP_URL
-          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
         - name: EMAIL_PORT
           value: '1025'
         - name: PYTHONDONTWRITEBYTECODE
           value: '1'
-        - name: PYTHON_VERSION
-          value: 3.9.2
-        - name: PYTHON_GET_PIP_SHA256
-          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
         - name: PYTHONFAULTHANDLER
           value: '1'
       image: localhost/audiotrails:latest
@@ -327,10 +261,6 @@ spec:
       command:
         - docker-entrypoint.sh
       env:
-        - name: PATH
-          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/11/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
         - name: LANG
@@ -339,8 +269,6 @@ spec:
           value: /var/lib/postgresql/data
         - name: POSTGRES_PASSWORD
           value: postgres
-        - name: GOSU_VERSION
-          value: '1.12'
         - name: PG_MAJOR
           value: '11'
         - name: PG_VERSION
@@ -367,14 +295,8 @@ spec:
       command:
         - /entrypoint
       env:
-        - name: PATH
-          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-        - name: TERM
-          value: xterm
         - name: container
           value: podman
-        - name: PYTHON_GET_PIP_SHA256
-          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
         - name: REDIS_URL
           value: redis://localhost:6379/0
         - name: EMAIL_HOST
@@ -385,18 +307,10 @@ spec:
           value: '1'
         - name: LANG
           value: C.UTF-8
-        - name: PYTHON_VERSION
-          value: 3.9.2
-        - name: PYTHON_PIP_VERSION
-          value: 21.0.1
         - name: SECRET_KEY
           value: seekret
         - name: PYTHONHASHSEED
           value: random
-        - name: GPG_KEY
-          value: E3FF2839C048B25C084DEBE9B26995E310250568
-        - name: PYTHON_GET_PIP_URL
-          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
         - name: PYTHONFAULTHANDLER
           value: '1'
         - name: PYTHONUNBUFFERED
