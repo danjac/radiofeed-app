@@ -15,7 +15,9 @@ class TestPlayer:
         req.episode = episode
         player = Player(req)
 
-        log = player.start_episode(episode)
+        assert player.start_episode(episode) == 0
+
+        log = AudioLog.objects.get()
 
         assert log.episode == episode
         assert log.user == user
@@ -34,7 +36,7 @@ class TestPlayer:
         req.user = user
         req.episode = episode
         player = Player(req)
-        assert player.start_episode(episode).current_time == 500
+        assert player.start_episode(episode) == 500
 
         log.refresh_from_db()
 
@@ -74,7 +76,7 @@ class TestPlayer:
 
         player = Player(req)
 
-        assert player.stop_episode() == log
+        assert player.stop_episode() == log.episode
         assert not player.is_playing(log.episode)
 
     def test_stop_episode_mark_complete(self, rf, user):
@@ -87,7 +89,7 @@ class TestPlayer:
 
         player = Player(req)
 
-        assert player.stop_episode(mark_completed=True) == log
+        assert player.stop_episode(mark_completed=True) == log.episode
         assert not player.is_playing(log.episode)
 
         log.refresh_from_db()
