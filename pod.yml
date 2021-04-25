@@ -121,9 +121,6 @@ spec:
         privileged: false
         readOnlyRootFilesystem: false
         seLinuxOptions: {}
-      volumeMounts:
-        - mountPath: /data
-          name: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301-pvc
       workingDir: /data
     - args:
         - /start-watchjs
@@ -255,9 +252,6 @@ spec:
         path: .
         type: Directory
       name: audiotrails-host
-    - name: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301-pvc
-      persistentVolumeClaim:
-        claimName: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301
     - hostPath:
         path: ./db
         type: DirectoryOrCreate
