@@ -114,10 +114,10 @@ def render_player_response(
     yield TurboStream("player").replace.template(
         "episodes/_player.html",
         {
-            "new_episode": next_episode is not None,
             "player": {
                 "episode": next_episode,
                 "current_time": current_time,
+                "is_new_episode": True,
             }
             if next_episode
             else {},

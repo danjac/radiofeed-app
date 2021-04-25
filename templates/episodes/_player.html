@@ -12,7 +12,7 @@
      data-player-csrf-token-value="{{ csrf_token }}"
      data-player-play-next-url-value="{% url 'episodes:play_next_episode' %}"
      data-player-timeupdate-url-value="{% url 'episodes:player_update_current_time' %}"
-     {% if new_episode %}
+     {% if player.is_new_episode %}
      data-player-new-episode-value
      {% endif %}
      data-player-media-url-value="{{ episode.media_url }}"
