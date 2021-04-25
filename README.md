@@ -52,9 +52,9 @@ https://pytest.org/
 
 https://pytest-django.readthedocs.io/en/latest/
 
-**Note** due to migration issues the celerybeat container is not started immediately. If you need to use celerybeat in development, just run:
+**Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
 
-> podman start celerybeat
+> podman start audiopod-celerybeat
 
 Issue is covered here: https://github.com/danjac/audiotrails/issues/3
 

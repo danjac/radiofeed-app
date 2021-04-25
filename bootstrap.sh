@@ -4,6 +4,7 @@ set -o errexit
 set -o nounset
 
 IMAGE=audiotrails:latest
+POD=audiopod
 
 echo "building image $IMAGE"
 podman build -t $IMAGE .
