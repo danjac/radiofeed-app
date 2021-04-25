@@ -5,6 +5,7 @@ set -o nounset
 
 IMAGE=audiotrails:latest
 POD=audiopod
+CONFIG_DIR=k8s/local
 
 echo "building image $IMAGE"
 podman build -t $IMAGE .
@@ -16,4 +17,4 @@ then
     podman pod rm $POD
 fi
 
-podman play kube pod.yml --configmap=configMap.yml
+podman play kube $CONFIG_DIR/pod.yml --configmap=$CONFIG_DIR/configMap.yml
