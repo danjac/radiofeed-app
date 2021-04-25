@@ -14,10 +14,7 @@ from .queue import render_queue_toggle, render_remove_from_queue
 
 
 @require_POST
-def start_player(
-    request,
-    episode_id,
-):
+def start_player(request, episode_id):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
