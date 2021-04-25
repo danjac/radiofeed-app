@@ -17,7 +17,7 @@
   {% block form_fields %}
   {% for field in form %}
   {% if not field.is_hidden %}
-  <div class="mb-3">
+  <div class="mb-2">
     {% if field|widget_type == "checkboxinput" %}
     {% include "forms/_checkbox_field.html" %}
     {% else %}

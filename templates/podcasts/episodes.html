@@ -3,7 +3,7 @@
 
 {% block podcast_content %}
 {% if not search %}
-<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-3 mb-3">
+<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-2">
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
     {{ podcast.creators }}
@@ -17,7 +17,7 @@
       {% cover_image podcast lazy=False size="24" %}
     </div>
 
-    <div class="text-sm space-y-3">
+    <div class="text-sm space-y-2">
       {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-2">
         {% if podcast.link %}
@@ -68,7 +68,7 @@
 </div>
 {% endif %}
 
-<div class="sm:flex items-center mb-3 justify-between">
+<div class="sm:flex items-center mb-2 justify-between">
 
   <div class="flex justify-center sm:justify-start items-center text-sm mb-2 sm:mb-0">
     {% if search %}

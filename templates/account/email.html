@@ -6,16 +6,16 @@
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}
-<p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
+<p class="mb-2">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form class="mb-3 w-full sm:w-3/4 lg:w-1/2"
+<form class="mb-2 w-full sm:w-3/4 lg:w-1/2"
       method="post"
       id="email-addresses"
       action="{% url 'account_email' %}">
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
-  <div class="border p-2 mb-3 dark:border-gray-500">
+  <div class="border p-2 mb-2 dark:border-gray-500">
     <label for="email_radio_{{forloop.counter}}"
            class="flex items-center">
 
@@ -39,7 +39,7 @@
     </label>
   </div>
   {% endfor %}
-  <div class="flex items-center justify-evenly sm:justify-end mb-3 space-x-2">
+  <div class="flex items-center justify-evenly sm:justify-end mb-2 space-x-2">
     {% button _("Primary") icon="sparkles" name="action_primary" value="1" %}
     {% button _("Re-Verify") icon="mail" type="secondary" name="action_send" value="1" %}
     {% button _("Remove") icon="trash" type="danger" data_controller="confirm" data_confirm_text_value=_("Are you sure you want to remove this email address?") data_action="confirm#confirm" name="action_remove" value="1" %}
@@ -57,7 +57,7 @@
 {% endif %}
 
 {% if can_add_email %}
-<h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
+<h2 class="font-semibold mb-2">{% translate "Add E-mail Address" %}</h2>
 {% include "account/forms/_email.html" %}
 {% endif %}
 {% endblock %}

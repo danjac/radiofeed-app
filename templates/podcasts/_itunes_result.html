@@ -1,5 +1,5 @@
 {% with podcast=result.podcast %}
-<section class="p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 flex items-center space-x-3">
+<section class="p-1 border mb-2 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 flex items-center space-x-3">
   {% if result.image %}
   <div>
     <img src="{{ result.image }}"
@@ -8,7 +8,7 @@
          class="object-cover border dark:border-gray-500 h-16 w-16 bg-transparent" />
   </div>
   {% endif %}
-  <div class="space-y-3">
+  <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
       <a {% if podcast and podcast.pub_date %}
          href="{{ podcast.get_absolute_url }}"

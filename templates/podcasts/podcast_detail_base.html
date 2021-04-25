@@ -4,10 +4,10 @@
 
 {% block content %}
 
-<h1 class="font-bold mb-3">{{ podcast.title|stripentities }}</h1>
+<h1 class="font-bold mb-2">{{ podcast.title|stripentities }}</h1>
 
 {% if has_recommendations and not search %}
-<nav class="mb-3 flex items-center">
+<nav class="mb-2 flex items-center">
   <ul class="flex items-center text-sm pb-1 space-x-6">
     {% active_link podcast.get_episodes_url as link %}
     <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
