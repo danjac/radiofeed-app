@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -i -t webapp ./manage.py $@
+podman exec -i -t audiopod-webapp ./manage.py $@
 

@@ -1,0 +1,437 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-3.1.0
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: '2021-04-25T12:15:59Z'
+  labels:
+    app: audiopod
+  name: audiopod
+spec:
+  containers:
+    - args:
+        - /start-watchcss
+      command:
+        - /entrypoint
+      env:
+        - name: PATH
+          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: DATABASE_URL
+          value: postgres://postgres:password@localhost:5432/postgres
+        - name: REDIS_URL
+          value: redis://localhost:6379/0
+        - name: EMAIL_PORT
+          value: '1025'
+        - name: PYTHON_GET_PIP_SHA256
+          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
+        - name: PYTHONUNBUFFERED
+          value: '1'
+        - name: GPG_KEY
+          value: E3FF2839C048B25C084DEBE9B26995E310250568
+        - name: SECRET_KEY
+          value: seekret
+        - name: PYTHON_PIP_VERSION
+          value: 21.0.1
+        - name: PYTHON_VERSION
+          value: 3.9.2
+        - name: PYTHONFAULTHANDLER
+          value: '1'
+        - name: PYTHONHASHSEED
+          value: random
+        - name: LANG
+          value: C.UTF-8
+        - name: PYTHON_GET_PIP_URL
+          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        - name: EMAIL_HOST
+          value: localhost
+      image: localhost/audiotrails:latest
+      name: watchcss
+      ports:
+        - containerPort: 8000
+          hostPort: 8000
+          protocol: TCP
+        - containerPort: 8025
+          hostPort: 8025
+          protocol: TCP
+        - containerPort: 1025
+          hostPort: 42811
+          protocol: TCP
+        - containerPort: 5432
+          hostPort: 37647
+          protocol: TCP
+        - containerPort: 6379
+          hostPort: 40495
+          protocol: TCP
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+    - args:
+        - /start-celeryworker
+      command:
+        - /entrypoint
+      env:
+        - name: PATH
+          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: GPG_KEY
+          value: E3FF2839C048B25C084DEBE9B26995E310250568
+        - name: PYTHON_GET_PIP_URL
+          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
+        - name: PYTHON_GET_PIP_SHA256
+          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
+        - name: PYTHONUNBUFFERED
+          value: '1'
+        - name: DATABASE_URL
+          value: postgres://postgres:password@localhost:5432/postgres
+        - name: EMAIL_PORT
+          value: '1025'
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        - name: PYTHONHASHSEED
+          value: random
+        - name: PYTHONFAULTHANDLER
+          value: '1'
+        - name: SECRET_KEY
+          value: seekret
+        - name: PYTHON_VERSION
+          value: 3.9.2
+        - name: LANG
+          value: C.UTF-8
+        - name: PYTHON_PIP_VERSION
+          value: 21.0.1
+        - name: REDIS_URL
+          value: redis://localhost:6379/0
+        - name: EMAIL_HOST
+          value: localhost
+      image: localhost/audiotrails:latest
+      name: celeryworker
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+    - command:
+        - MailHog
+      env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+      image: docker.io/mailhog/mailhog:v1.0.0
+      name: mailhog
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        runAsGroup: 1000
+        runAsUser: 1000
+        seLinuxOptions: {}
+      workingDir: /home/mailhog
+    - args:
+        - redis-server
+      command:
+        - docker-entrypoint.sh
+      env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: GOSU_VERSION
+          value: '1.12'
+        - name: REDIS_VERSION
+          value: 6.2.2
+        - name: REDIS_DOWNLOAD_URL
+          value: http://download.redis.io/releases/redis-6.2.2.tar.gz
+        - name: REDIS_DOWNLOAD_SHA
+          value: 7a260bb74860f1b88c3d5942bf8ba60ca59f121c6dce42d3017bed6add0b9535
+      image: docker.io/library/redis:latest
+      name: redis
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /data
+          name: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301-pvc
+      workingDir: /data
+    - args:
+        - /start-watchjs
+      command:
+        - /entrypoint
+      env:
+        - name: PATH
+          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: EMAIL_PORT
+          value: '1025'
+        - name: REDIS_URL
+          value: redis://localhost:6379/0
+        - name: SECRET_KEY
+          value: seekret
+        - name: LANG
+          value: C.UTF-8
+        - name: PYTHON_GET_PIP_SHA256
+          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
+        - name: PYTHONFAULTHANDLER
+          value: '1'
+        - name: GPG_KEY
+          value: E3FF2839C048B25C084DEBE9B26995E310250568
+        - name: PYTHONUNBUFFERED
+          value: '1'
+        - name: DATABASE_URL
+          value: postgres://postgres:password@localhost:5432/postgres
+        - name: EMAIL_HOST
+          value: localhost
+        - name: PYTHON_VERSION
+          value: 3.9.2
+        - name: PYTHONHASHSEED
+          value: random
+        - name: PYTHON_PIP_VERSION
+          value: 21.0.1
+        - name: PYTHON_GET_PIP_URL
+          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+      image: localhost/audiotrails:latest
+      name: watchjs
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+    - args:
+        - /start-celerybeat
+      command:
+        - /entrypoint
+      env:
+        - name: PATH
+          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: GPG_KEY
+          value: E3FF2839C048B25C084DEBE9B26995E310250568
+        - name: PYTHON_PIP_VERSION
+          value: 21.0.1
+        - name: PYTHONHASHSEED
+          value: random
+        - name: DATABASE_URL
+          value: postgres://postgres:password@localhost:5432/postgres
+        - name: PYTHONUNBUFFERED
+          value: '1'
+        - name: SECRET_KEY
+          value: seekret
+        - name: EMAIL_HOST
+          value: localhost
+        - name: REDIS_URL
+          value: redis://localhost:6379/0
+        - name: LANG
+          value: C.UTF-8
+        - name: PYTHON_GET_PIP_URL
+          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
+        - name: EMAIL_PORT
+          value: '1025'
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        - name: PYTHON_VERSION
+          value: 3.9.2
+        - name: PYTHON_GET_PIP_SHA256
+          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
+        - name: PYTHONFAULTHANDLER
+          value: '1'
+      image: localhost/audiotrails:latest
+      name: celerybeat
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+    - args:
+        - postgres
+      command:
+        - docker-entrypoint.sh
+      env:
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/11/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: LANG
+          value: en_US.utf8
+        - name: PGDATA
+          value: /var/lib/postgresql/data
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: GOSU_VERSION
+          value: '1.12'
+        - name: PG_MAJOR
+          value: '11'
+        - name: PG_VERSION
+          value: 11.8-1.pgdg90+1
+      image: docker.io/library/postgres:11.8
+      name: postgresql
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: audiotrails-db-host
+      workingDir: /
+    - args:
+        - /start-django
+      command:
+        - /entrypoint
+      env:
+        - name: PATH
+          value: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: TERM
+          value: xterm
+        - name: container
+          value: podman
+        - name: PYTHON_GET_PIP_SHA256
+          value: c3b81e5d06371e135fb3156dc7d8fd6270735088428c4a9a5ec1f342e2024565
+        - name: REDIS_URL
+          value: redis://localhost:6379/0
+        - name: EMAIL_HOST
+          value: localhost
+        - name: EMAIL_PORT
+          value: '1025'
+        - name: PYTHONDONTWRITEBYTECODE
+          value: '1'
+        - name: LANG
+          value: C.UTF-8
+        - name: PYTHON_VERSION
+          value: 3.9.2
+        - name: PYTHON_PIP_VERSION
+          value: 21.0.1
+        - name: SECRET_KEY
+          value: seekret
+        - name: PYTHONHASHSEED
+          value: random
+        - name: GPG_KEY
+          value: E3FF2839C048B25C084DEBE9B26995E310250568
+        - name: PYTHON_GET_PIP_URL
+          value: https://github.com/pypa/get-pip/raw/b60e2320d9e8d02348525bd74e871e466afdf77c/get-pip.py
+        - name: PYTHONFAULTHANDLER
+          value: '1'
+        - name: PYTHONUNBUFFERED
+          value: '1'
+        - name: DATABASE_URL
+          value: postgres://postgres:password@localhost:5432/postgres
+      image: localhost/audiotrails:latest
+      name: webapp
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+  dnsConfig: {}
+  restartPolicy: Never
+  volumes:
+    - hostPath:
+        path: .
+        type: Directory
+      name: audiotrails-host
+    - name: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301-pvc
+      persistentVolumeClaim:
+        claimName: 87e02349528329edd5263695443cc64833a610a58eb88508a5f872739b190301
+    - hostPath:
+        path: ./db
+        type: DirectoryOrCreate
+      name: audiotrails-db-host
+status: {}

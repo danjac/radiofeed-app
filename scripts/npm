@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-podman exec -i -t webapp npm $@
+podman exec -i -t audiopod-webapp npm $@
