@@ -25,22 +25,6 @@ spec:
           value: podman
       image: localhost/audiotrails:latest
       name: watchcss
-      ports:
-        - containerPort: 8000
-          hostPort: 8000
-          protocol: TCP
-        - containerPort: 8025
-          hostPort: 8025
-          protocol: TCP
-        - containerPort: 1025
-          hostPort: 42811
-          protocol: TCP
-        - containerPort: 5432
-          hostPort: 37647
-          protocol: TCP
-        - containerPort: 6379
-          hostPort: 40495
-          protocol: TCP
       resources: {}
       securityContext:
         allowPrivilegeEscalation: true
@@ -90,6 +74,13 @@ spec:
           value: podman
       image: docker.io/mailhog/mailhog:v1.0.0
       name: mailhog
+      ports:
+        - containerPort: 8025
+          hostPort: 8025
+          protocol: TCP
+        - containerPort: 1025
+          hostPort: 42811
+          protocol: TCP
       resources: {}
       securityContext:
         allowPrivilegeEscalation: true
@@ -115,6 +106,10 @@ spec:
           value: 6.2.2
       image: docker.io/library/redis:latest
       name: redis
+      ports:
+        - containerPort: 6379
+          hostPort: 40495
+          protocol: TCP
       resources: {}
       securityContext:
         allowPrivilegeEscalation: true
@@ -203,6 +198,10 @@ spec:
           value: 11.8-1.pgdg90+1
       image: docker.io/library/postgres:11.8
       name: postgresql
+      ports:
+        - containerPort: 5432
+          hostPort: 37647
+          protocol: TCP
       resources: {}
       securityContext:
         allowPrivilegeEscalation: true
@@ -230,6 +229,10 @@ spec:
           value: podman
       image: localhost/audiotrails:latest
       name: webapp
+      ports:
+        - containerPort: 8000
+          hostPort: 8000
+          protocol: TCP
       resources: {}
       securityContext:
         allowPrivilegeEscalation: true
