@@ -6,42 +6,43 @@ metadata:
     app: audiopod
   name: audiopod
 spec:
-  securityContext:
-    allowPrivilegeEscalation: true
-    capabilities:
-      drop:
-        - CAP_MKNOD
-        - CAP_NET_RAW
-        - CAP_AUDIT_WRITE
-    privileged: false
-    readOnlyRootFilesystem: false
-    seLinuxOptions: {}
-    runAsGroup: 1000
-    runAsUser: 1000
   containers:
     - args:
         - /start-watchcss
+      name: watchcss
       command:
         - /entrypoint
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      name: watchcss
       resources: {}
       volumeMounts:
         - mountPath: /app
           name: audiotrails-host
       workingDir: /app
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
     - args:
         - /start-celeryworker
+      name: celeryworker
       command:
         - /entrypoint
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      name: celeryworker
       resources: {}
       volumeMounts:
         - mountPath: /app
@@ -60,12 +61,25 @@ spec:
           protocol: TCP
       resources: {}
       workingDir: /home/mailhog
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
     - args:
         - redis-server
+      name: redis
       command:
         - docker-entrypoint.sh
       image: docker.io/library/redis:latest
-      name: redis
       ports:
         - containerPort: 6379
           hostPort: 40495
@@ -74,34 +88,61 @@ spec:
       workingDir: /data
     - args:
         - /start-watchjs
+      name: watchjs
       command:
         - /entrypoint
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      name: watchjs
       resources: {}
       volumeMounts:
         - mountPath: /app
           name: audiotrails-host
       workingDir: /app
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
     - args:
         - /start-celerybeat
+      name: celerybeat
       command:
         - /entrypoint
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      name: celerybeat
       resources: {}
       volumeMounts:
         - mountPath: /app
           name: audiotrails-host
       workingDir: /app
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
     - args:
         - postgres
+      name: postgresql
       command:
         - docker-entrypoint.sh
       env:
@@ -116,7 +157,6 @@ spec:
         - name: PG_VERSION
           value: 11.8-1.pgdg90+1
       image: docker.io/library/postgres:11.8
-      name: postgresql
       ports:
         - containerPort: 5432
           hostPort: 37647
@@ -126,15 +166,28 @@ spec:
         - mountPath: /var/lib/postgresql/data
           name: audiotrails-db-host
       workingDir: /
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
     - args:
         - /start-django
+      name: webapp
       command:
         - /entrypoint
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      name: webapp
       ports:
         - containerPort: 8000
           hostPort: 8000
@@ -144,6 +197,19 @@ spec:
         - mountPath: /app
           name: audiotrails-host
       workingDir: /app
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities:
+          drop:
+            - CAP_MKNOD
+            - CAP_NET_RAW
+            - CAP_AUDIT_WRITE
+        privileged: false
+        readOnlyRootFilesystem: false
+        seLinuxOptions: {}
+        runAsGroup: 1000
+        runAsUser: 1000
+
   dnsConfig: {}
   restartPolicy: Never
   volumes:
