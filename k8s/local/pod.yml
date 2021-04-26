@@ -11,95 +11,11 @@ spec:
     runAsGroup: 1000
     runAsUser: 1000
   containers:
-    - args:
-        - /start-watchcss
-      command:
-        - /entrypoint
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      name: watchcss
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-    - args:
-        - /start-celeryworker
-      command:
-        - /entrypoint
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      name: celeryworker
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-    - command:
-        - MailHog
-      image: docker.io/mailhog/mailhog:v1.0.0
-      name: mailhog
-      ports:
-        - containerPort: 8025
-          hostPort: 8025
-          protocol: TCP
-        - containerPort: 1025
-          hostPort: 42811
-          protocol: TCP
-      resources: {}
-      workingDir: /home/mailhog
-    - args:
-        - redis-server
+    - name: postgresql
       command:
         - docker-entrypoint.sh
-      image: docker.io/library/redis:latest
-      name: redis
-      ports:
-        - containerPort: 6379
-          hostPort: 40495
-          protocol: TCP
-      resources: {}
-      workingDir: /data
-    - args:
-        - /start-watchjs
-      command:
-        - /entrypoint
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      name: watchjs
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-    - args:
-        - /start-celerybeat
-      command:
-        - /entrypoint
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      name: celerybeat
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-    - args:
+      args:
         - postgres
-      command:
-        - docker-entrypoint.sh
       env:
         - name: LANG
           value: en_US.utf8
@@ -112,7 +28,6 @@ spec:
         - name: PG_VERSION
           value: 11.8-1.pgdg90+1
       image: docker.io/library/postgres:11.8
-      name: postgresql
       ports:
         - containerPort: 5432
           hostPort: 37647
@@ -122,16 +37,104 @@ spec:
         - mountPath: /var/lib/postgresql/data
           name: audiotrails-db-host
       workingDir: /
-    - args:
-        - /start-django
+
+    - name: mailhog
       command:
-        - /entrypoint
+        - MailHog
+      image: docker.io/mailhog/mailhog:v1.0.0
+      ports:
+        - containerPort: 8025
+          hostPort: 8025
+          protocol: TCP
+        - containerPort: 1025
+          hostPort: 42811
+          protocol: TCP
+      resources: {}
+      workingDir: /home/mailhog
+
+    - name: redis
+      command:
+        - docker-entrypoint.sh
+      args:
+        - redis-server
+      image: docker.io/library/redis:latest
+      ports:
+        - containerPort: 6379
+          hostPort: 40495
+          protocol: TCP
+      resources: {}
+      workingDir: /data
+
+    - name: watchjs
+      command:
+        - /start-watchjs
       envFrom:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
       imagePullPolicy: Never
-      name: webapp
+      resources: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+
+    - name: watchcss
+      command:
+        - /start-watchcss
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
+      image: localhost/audiotrails:latest
+      imagePullPolicy: Never
+      resources: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+
+    - name: celeryworker
+      command:
+        - /entrypoint
+      args:
+        - /start-celeryworker
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
+      image: localhost/audiotrails:latest
+      imagePullPolicy: Never
+      resources: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+
+    - name: celerybeat
+      command:
+        - /entrypoint
+      args:
+        - /start-celerybeat
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
+      image: localhost/audiotrails:latest
+      imagePullPolicy: Never
+      resources: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+
+    - name: webapp
+      command:
+        - /entrypoint
+      args:
+        - /start-django
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
+      image: localhost/audiotrails:latest
+      imagePullPolicy: Never
       ports:
         - containerPort: 8000
           hostPort: 8000
@@ -141,6 +144,7 @@ spec:
         - mountPath: /app
           name: audiotrails-host
       workingDir: /app
+
   dnsConfig: {}
   restartPolicy: Never
   volumes:

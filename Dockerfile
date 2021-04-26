@@ -52,5 +52,3 @@ RUN chmod +x /start-watchjs
 
 COPY ./scripts/docker/start-watchcss /start-watchcss
 RUN chmod +x /start-watchcss
-
-ENTRYPOINT ["/entrypoint"]
