@@ -57,7 +57,7 @@ spec:
         - docker-entrypoint.sh
       args:
         - redis-server
-      image: docker.io/library/redis:latest
+      image: docker.io/library/redis:6.2.2-buster
       ports:
         - containerPort: 6379
           hostPort: 40495
