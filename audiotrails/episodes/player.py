@@ -4,6 +4,8 @@ from .models import AudioLog
 
 
 class Player:
+    """Tracks current playing episode in user session"""
+
     session_key = "player_episode"
 
     def __init__(self, request):
