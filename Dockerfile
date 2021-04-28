@@ -5,19 +5,27 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER=1
 ENV PYTHONHASHSEED=random
 
+# dependencies
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client-11 curl ca-certificates
+    && apt-get install --no-install-recommends -y postgresql-client-11 curl ca-certificates inotify-tools
 
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sLO https://github.com/watchexec/watchexec/releases/download/1.14.1/watchexec-1.14.1-x86_64-unknown-linux-gnu.deb \
-    && dpkg -i watchexec-1.14.1-x86_64-unknown-linux-gnu.deb \
-    && rm -f watchexec-1.14.1-x86_64-unknown-linux-gnu.deb
+# watchman
+RUN curl -sLO https://github.com/facebook/watchman/releases/download/v2021.04.26.00/watchman-v2021.04.26.00-linux.zip \
+    && unzip watchman-v2021.04.26.00-linux.zip \
+    && mkdir -p /usr/local/var/run/watchman \
+    && cd watchman-v2021.04.26.00-linux \
+    && cp bin/* /usr/local/bin \
+    && cp lib/* /usr/local/lib \
+    && chmod 755 /usr/local/bin/watchman \
+    && chmod 2777 /usr/local/var/run/watchman
 
-COPY ./requirements.txt /requirements.txt
+# python requirements
+COPY ./requirements.local.txt /requirements.txt
 RUN pip install -r requirements.txt
 
 RUN python -m nltk.downloader stopwords
@@ -25,6 +33,7 @@ RUN python -m nltk.downloader wordnet
 
 WORKDIR /app
 
+# frontend requirements
 COPY postcss.config.js ./postcss.config.js
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
@@ -35,20 +44,15 @@ RUN if [ -d /app/node_modules ]; then rm -Rf /app/node_modules/*; fi
 RUN npm cache clean --force
 RUN npm install
 
+# scripts
 COPY ./scripts/docker/entrypoint /entrypoint
 RUN chmod +x /entrypoint
 
-COPY ./scripts/docker/start-django /start-django
-RUN chmod +x /start-django
+COPY ./scripts/docker/start-webapp /start-webapp
+RUN chmod +x /start-webapp
 
 COPY ./scripts/docker/start-celeryworker /start-celeryworker
 RUN chmod +x /start-celeryworker
 
 COPY ./scripts/docker/start-celerybeat /start-celerybeat
 RUN chmod +x /start-celerybeat
-
-COPY ./scripts/docker/start-watchjs /start-watchjs
-RUN chmod +x /start-watchjs
-
-COPY ./scripts/docker/start-watchcss /start-watchcss
-RUN chmod +x /start-watchcss

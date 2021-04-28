@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -o errexit
-set -o nounset
-
-watchexec -w static/src/css -w templates -- npm run watch-css

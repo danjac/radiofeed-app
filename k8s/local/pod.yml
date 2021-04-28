@@ -65,34 +65,6 @@ spec:
       resources: {}
       workingDir: /data
 
-    - name: watchjs
-      command:
-        - /start-watchjs
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-
-    - name: watchcss
-      command:
-        - /start-watchcss
-      envFrom:
-        - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
-      imagePullPolicy: Never
-      resources: {}
-      volumeMounts:
-        - mountPath: /app
-          name: audiotrails-host
-      workingDir: /app
-
     - name: celeryworker
       command:
         - /entrypoint
@@ -129,7 +101,7 @@ spec:
       command:
         - /entrypoint
       args:
-        - /start-django
+        - /start-webapp
       envFrom:
         - configMapRef:
             name: audiopod-configmap
