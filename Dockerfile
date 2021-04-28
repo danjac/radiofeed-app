@@ -25,8 +25,9 @@ RUN curl -sLO https://github.com/facebook/watchman/releases/download/v2021.04.26
     && chmod 2777 /usr/local/var/run/watchman
 
 # python requirements
-COPY ./requirements.local.txt /requirements.txt
-RUN pip install -r requirements.txt
+COPY ./requirements.txt /requirements.txt
+COPY ./requirements.local.txt /requirements.local.txt
+RUN pip install -r requirements.txt -r requirements.local.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
