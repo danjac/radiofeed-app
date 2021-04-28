@@ -3,10 +3,6 @@
 set -o errexit
 set -o nounset
 
-# initial frontend build
-npm run watch-js
-npm run watch-css
-
 # watch frontend file changes
 watchman watch /app/static/src/js
 
