@@ -241,6 +241,10 @@ class Follow(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
+    def bulk_delete(self):
+        """More efficient quick delete"""
+        return self._raw_delete(self.db)
+
     def with_followed(self, user):
         """Marks which recommendations are followed by this user."""
         if user.is_anonymous:

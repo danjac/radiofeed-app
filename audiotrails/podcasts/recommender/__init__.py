@@ -24,12 +24,10 @@ MAX_PUB_DAYS: int = 90
 
 
 def recommend():
+
     podcasts = get_podcast_queryset()
 
-    # clear out current recommendations
-    # note: TRUNCATE appears to have issues with pending trigger events,
-    # but would be preferable for performance.
-    Recommendation.objects.all().delete()
+    Recommendation.objects.bulk_delete()
 
     categories = Category.objects.order_by("name")
 
