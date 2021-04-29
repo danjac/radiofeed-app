@@ -6,7 +6,7 @@ import statistics
 
 import pandas
 
-from django.db import connection, transaction
+from django.db import transaction
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -27,10 +27,9 @@ def recommend():
     podcasts = get_podcast_queryset()
 
     # clear out current recommendations
-    with connection.cursor() as cursor:
-        cursor.execute(
-            'TRUNCATE TABLE "{0}" CASCADE'.format(Recommendation._meta.db_table)
-        )
+    # note: TRUNCATE appears to have issues with pending trigger events,
+    # but would be preferable for performance.
+    Recommendation.objects.all().delete()
 
     categories = Category.objects.order_by("name")
 
