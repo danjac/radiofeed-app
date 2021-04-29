@@ -142,6 +142,7 @@ class Feed(BaseModel):
         podcast.save()
 
         if new_cover_image and podcast.cover_image:
+            # pre-cache thumbnail if available
             podcast.get_cover_image_thumbnail()
         podcast.categories.set(categories)
 
