@@ -1,19 +1,24 @@
 {% load static %}
 {% spaceless %}
-{% with cover_image=podcast.get_cover_image_thumbnail %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size|default:16 }} w-{{ size|default:16 }} {{ css_class|default:"hover:opacity-75" }}"
-     title="{{ podcast.title|stripentities }}"
-     alt="{{ podcast.title|stripentities }}"
-     {% if cover_image %}
-     loading="lazy"
-     src="{{ cover_image.url }}"
-     width="{{ cover_image.width }}"
-     height="{{ cover_image.height }}"
-     {% else %}
-     src="{% static 'img/podcast-icon.png' %}"
-     width="200"
-     height="200"
-     {% endif %}
-     {{ attrs|htmlattrs }} />
-{% endwith %}
+{% if lazy %}
+<turbo-frame id="{{ podcast.dom.cover_image }}"
+             loading="lazy"
+             src="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
+  {% endif %}
+  <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}{% if lazy %} filter blur-sm{% endif %}"
+       title="{{ podcast.title|stripentities }}"
+       alt="{{ podcast.title|stripentities }}"
+       {% if cover_image %}
+       src="{{ cover_image.url }}"
+       width="{{ cover_image.width }}"
+       height="{{ cover_image.height }}"
+       {% else %}
+       src="{% static 'img/podcast-icon.png' %}"
+       width="200"
+       height="200"
+       {% endif %}
+       {{ attrs|htmlattrs }} />
+  {% if lazy %}
+</turbo-frame>
+{% endif %}
 {% endspaceless %}

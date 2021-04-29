@@ -1,3 +1,4 @@
+{% load podcasts %}
 {% with podcast_url=podcast.get_absolute_url %}
 <section class="flex items-center space-x-2 p-1 border mb-2 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
          id="{{ podcast.dom.podcast }}"
@@ -5,7 +6,7 @@
 
   <div>
     <a href="{{ podcast_url }}">
-      {% include "podcasts/_cover_image.html" %}
+      {% cover_image podcast=podcast lazy=True %}
     </a>
   </div>
 

@@ -5,6 +5,7 @@ from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 from turbo_response import TurboFrame, TurboStream
 
@@ -123,6 +124,7 @@ def episodes(request, podcast_id, slug=None):
 
     context = {
         "newest_first": newest_first,
+        "cover_image": podcast.get_cover_image_thumbnail(),
     }
 
     if not request.turbo.frame:
@@ -210,6 +212,25 @@ def itunes_category(request, category_id):
             "results": results,
             "error": error,
         },
+    )
+
+
+@cache_page(60 * 60 * 24)
+def podcast_cover_image(request, podcast_id):
+    """Lazy-loaded podcast image"""
+    podcast = get_podcast_or_404(request, podcast_id)
+    return (
+        TurboFrame(request.turbo.frame)
+        .template(
+            "podcasts/_cover_image.html",
+            {
+                "podcast": podcast,
+                "lazy": False,
+                "cover_image": podcast.get_cover_image_thumbnail(),
+                "img_size": request.GET.get("size", "16"),
+            },
+        )
+        .response(request)
     )
 
 

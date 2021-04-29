@@ -19,6 +19,12 @@ from ..models import Follow
 pytestmark = pytest.mark.django_db
 
 
+class TestPodcastCoverImage:
+    def test_get(self, client, podcast):
+        resp = client.get(reverse("podcasts:podcast_cover_image", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+
+
 class TestPodcasts:
     def test_anonymous(self, client):
         PodcastFactory.create_batch(3, promoted=True)
