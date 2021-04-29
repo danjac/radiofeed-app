@@ -13,7 +13,8 @@
     {% endblock %}
 
     <!-- Add margin if you want to see some of the overlay behind the modal-->
-    <div class="modal-content py-4 text-left px-6 dark:bg-gray-800 dark:text-white">
+    <div class="modal-content py-4 text-left px-6 dark:bg-gray-800 dark:text-white"
+         data-modal-target="content">
       <!--Title-->
       <div class="flex justify-between items-center pb-3">
         <p class="w-64 sm:w-full flex flex-wrap font-bold text-sm">{% block modal_header %}{% endblock %}</p>
