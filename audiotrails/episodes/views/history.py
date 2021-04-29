@@ -48,11 +48,11 @@ def remove_audio_log(request, episode_id):
     return TurboStream(episode.dom.history).remove.response()
 
 
-def render_remove_audio_log(request, episode, is_playing):
+def render_remove_audio_log_btn(request, episode, is_playing):
     return (
-        TurboStream(episode.dom.remove_audio_log)
+        TurboStream(episode.dom.remove_audio_log_btn)
         .replace.template(
-            "episodes/_remove_audio_log.html",
+            "episodes/_remove_audio_log_btn.html",
             {"episode": episode, "is_playing": is_playing},
         )
         .render(request=request)

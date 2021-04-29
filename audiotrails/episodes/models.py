@@ -26,7 +26,7 @@ class EpisodeDOM:
     player_toggle: str
     queue: str
     queue_toggle: str
-    remove_audio_log: str
+    remove_audio_log_btn: str
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
@@ -126,7 +126,7 @@ class Episode(models.Model):
             player_toggle=f"player-toggle-{self.id}",
             queue=f"queue-{self.id}",
             queue_toggle=f"queue-toggle-{self.id}",
-            remove_audio_log=f"remove-audio-log-{self.id}",
+            remove_audio_log_btn=f"remove-audio-log-btn-{self.id}",
         )
 
     def get_next_episode(self):

@@ -9,7 +9,7 @@ from turbo_response.decorators import turbo_stream_response
 
 from ..models import QueueItem
 from . import get_episode_or_404
-from .history import render_remove_audio_log
+from .history import render_remove_audio_log_btn
 from .queue import render_queue_toggle, render_remove_from_queue
 
 
@@ -103,13 +103,13 @@ def render_player_response(
 
     if current_episode:
         yield render_player_toggle(request, current_episode, False)
-        yield render_remove_audio_log(request, current_episode, False)
+        yield render_remove_audio_log_btn(request, current_episode, False)
 
     if next_episode:
         yield render_remove_from_queue(request, next_episode)
         yield render_queue_toggle(request, next_episode, False)
         yield render_player_toggle(request, next_episode, True)
-        yield render_remove_audio_log(request, next_episode, True)
+        yield render_remove_audio_log_btn(request, next_episode, True)
 
     yield TurboStream("player").replace.template(
         "episodes/_player.html",
