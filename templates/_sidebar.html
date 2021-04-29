@@ -23,8 +23,8 @@
   <nav class="mt-1">
     <ul class="sidebar">
       <li class="py-2">
-        {% if user.is_authenticated %}
         {% active_link 'episodes:index' as new_episodes_link %}
+        {% if user.is_authenticated %}
         {% active_link 'episodes:featured' as featured_episodes_link %}
         <a href="{{ new_episodes_link.url }}"
            accesskey="1"
@@ -33,16 +33,14 @@
           New Releases
         </a>
         {% else %}
-        {% active_link 'episodes:index' as link %}
-        <a href="{{ link.url }}"
+        <a href="{{ new_episodes_link.url }}"
            accesskey="1"
-           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+           class="flex items-center link{% if new_episodes_link.exact %} sidebar--active{% endif %}">
           {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
           New Releases
         </a>
         {% endif %}
       </li>
-
       <li class="py-2">
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
