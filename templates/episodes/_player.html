@@ -1,5 +1,4 @@
 {% spaceless %}
-{% load podcasts %}
 {% with episode=player.episode %}
 {% if episode %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=player.current_time %}
@@ -36,7 +35,7 @@
 
         <div>
           <a href="{{ podcast_url }}">
-            {% cover_image podcast lazy=False cover_image=cover_image size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
+            {% include "podcasts/_cover_image.html" with size=14 css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
           </a>
         </div>
         <div class="w-full space-y-1">

@@ -1,5 +1,4 @@
 {% extends "podcasts/podcast_detail_base.html" %}
-{% load podcasts %}
 
 {% block podcast_content %}
 {% if not search %}
@@ -14,7 +13,7 @@
   <div class="flex items-center w-full space-x-3">
 
     <div>
-      {% cover_image podcast lazy=False size="24" %}
+      {% include "podcasts/_cover_image.html" with size=24 %}
     </div>
 
     <div class="text-sm space-y-2">

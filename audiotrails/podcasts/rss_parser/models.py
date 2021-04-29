@@ -133,11 +133,16 @@ class Feed(BaseModel):
         podcast.sync_error = ""
         podcast.num_retries = 0
 
-        # image
+        new_cover_image = False
+
         if not podcast.cover_image:
             podcast.cover_image = self.fetch_cover_image()
+            new_cover_image = True
 
         podcast.save()
+
+        if new_cover_image and podcast.cover_image:
+            podcast.get_cover_image_thumbnail()
         podcast.categories.set(categories)
 
         # episodes

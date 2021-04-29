@@ -1,5 +1,4 @@
 {% extends "modal_base.html" %}
-{% load podcasts %}
 
 {% block modal_header %}
 <a href="{{ podcast.get_absolute_url }}"
@@ -14,7 +13,7 @@
 <div class="flex items-center w-full space-x-3 mb-2">
   <div>
     <a href="{{ podcast_url }}">
-      {% cover_image podcast lazy=False size="20" %}
+      {% include "podcasts/_cover_image.html" with size=20 %}
     </a>
   </div>
 
