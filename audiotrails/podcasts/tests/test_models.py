@@ -21,6 +21,11 @@ pytestmark = pytest.mark.django_db
 
 
 class TestRecommendationManager:
+    def test_bulk_delete(self):
+        RecommendationFactory.create_batch(3)
+        Recommendation.objects.bulk_delete()
+        assert Recommendation.objects.count() == 0
+
     def test_for_user(self, user):
 
         following = FollowFactory(user=user).podcast
