@@ -21,7 +21,7 @@ class PlayerTests(TestCase):
         req = self.rf.get("/")
         req.session = {}
         if episode is not None:
-            req.session["player_episode"] = episode
+            req.session["player_episode"] = episode.id
         req.user = user or AnonymousUser()
         return req
 
