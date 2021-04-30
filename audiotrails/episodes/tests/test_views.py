@@ -272,62 +272,69 @@ class ClosePlayerTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class TestPlayerUpdateCurrentTime:
-    def test_anonymous(self, client, anonymous_user, episode):
-        resp = client.post(
+class PlayerUpdateCurrentTimeAnonymousTests(TestCase):
+    def test_post(self):
+        EpisodeFactory()
+        resp = self.client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
         )
-        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
 
-    def test_authenticated(self, client, login_user, episode):
-        log = AudioLogFactory(user=login_user, episode=episode)
 
-        session = client.session
-        session["player_episode"] = episode.id
+class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_is_running(self):
+        log = AudioLogFactory(user=self.user, episode=self.episode)
+
+        session = self.client.session
+        session["player_episode"] = self.episode.id
         session.save()
 
-        resp = client.post(
+        resp = self.client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
         )
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         log.refresh_from_db()
-        assert log.current_time == 1030
+        self.assertEqual(log.current_time, 1030)
 
-    def test_player_not_running(self, client, login_user, episode):
-        resp = client.post(
+    def test_player_not_running(self):
+        resp = self.client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "1030.0001"},
         )
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
-        assert AudioLog.objects.count() == 0
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
-    def test_missing_data(self, client, login_user, episode):
-        session = client.session
-        session["player_episode"] = episode.id
+    def test_missing_data(self):
+        session = self.client.session
+        session["player_episode"] = self.episode.id
         session.save()
 
-        resp = client.post(
+        resp = self.client.post(
             reverse("episodes:player_update_current_time"),
         )
 
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert AudioLog.objects.count() == 0
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
-    def test_invalid_data(self, client, login_user, episode):
-        session = client.session
-        session["player_episode"] = episode.id
+    def test_invalid_data(self):
+        session = self.client.session
+        session["player_episode"] = self.episode.id
         session.save()
 
-        resp = client.post(
+        resp = self.client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "xyz"},
         )
-
-        assert resp.status_code == http.HTTPStatus.BAD_REQUEST
-        assert AudioLog.objects.count() == 0
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
 
 class TestHistory:
