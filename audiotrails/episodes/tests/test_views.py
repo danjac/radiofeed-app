@@ -26,7 +26,7 @@ class NewEpisodesAnonymousTests(TestCase):
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
 
-class NewEpisodesTests(TestCase):
+class NewEpisodesAuthenticatedTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
