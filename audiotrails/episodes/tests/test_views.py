@@ -441,16 +441,30 @@ class AddFavoriteAuthenticatedTests(TransactionTestCase):
         )
 
 
-class TestRemoveFavorite:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert resp.url
+class RemoveFavoriteTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.episode = EpisodeFactory()
 
-    def test_post(self, client, login_user, episode):
-        FavoriteFactory(user=login_user, episode=episode)
-        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not Favorite.objects.filter(user=login_user, episode=episode).exists()
+    def test_anonymous(self):
+        self.assertRedirects(
+            self.client.post(
+                reverse("episodes:remove_favorite", args=[self.episode.id])
+            ),
+            f"{reverse('account_login')}?next={self.episode.get_absolute_url()}",
+        )
+
+    def test_post(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        FavoriteFactory(user=user, episode=self.episode)
+        resp = self.client.post(
+            reverse("episodes:remove_favorite", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(
+            Favorite.objects.filter(user=user, episode=self.episode).exists()
+        )
 
 
 class TestRemoveHistory:
