@@ -1,14 +1,14 @@
-# Third Party Libraries
-import pytest
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.sites.models import Site
+from django.test import RequestFactory, TestCase
 
-# RadioFeed
 from audiotrails.episodes.factories import (
     AudioLogFactory,
     EpisodeFactory,
     FavoriteFactory,
 )
+from audiotrails.users.factories import UserFactory
 
-# Local
 from ..factories import (
     CategoryFactory,
     FollowFactory,
@@ -17,25 +17,27 @@ from ..factories import (
 )
 from ..models import Category, Podcast, Recommendation
 
-pytestmark = pytest.mark.django_db
 
+class RecommendationManagerTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-class TestRecommendationManager:
     def test_bulk_delete(self):
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
-    def test_for_user(self, user):
+    def test_for_user(self):
 
-        following = FollowFactory(user=user).podcast
-        favorited = FavoriteFactory(user=user).episode.podcast
-        listened = AudioLogFactory(user=user).episode.podcast
+        following = FollowFactory(user=self.user).podcast
+        favorited = FavoriteFactory(user=self.user).episode.podcast
+        listened = AudioLogFactory(user=self.user).episode.podcast
 
         received = RecommendationFactory(
-            podcast=FollowFactory(user=user).podcast
+            podcast=FollowFactory(user=self.user).podcast
         ).recommended
-        user.recommended_podcasts.add(received)
+        self.user.recommended_podcasts.add(received)
 
         first = RecommendationFactory(podcast=following).recommended
         second = RecommendationFactory(podcast=favorited).recommended
@@ -51,7 +53,9 @@ class TestRecommendationManager:
         RecommendationFactory(recommended=favorited)
         RecommendationFactory(recommended=listened)
 
-        recommended = [r.recommended for r in Recommendation.objects.for_user(user)]
+        recommended = [
+            r.recommended for r in Recommendation.objects.for_user(self.user)
+        ]
 
         assert len(recommended) == 3
 
@@ -60,19 +64,19 @@ class TestRecommendationManager:
         assert third in recommended
 
 
-class TestCategoryManager:
+class CategoryManagerTests(TestCase):
     def test_search(self):
         CategoryFactory(name="testing")
         assert Category.objects.search("testing").count() == 1
 
 
-class TestCategoryModel:
+class CategoryModelTests(TestCase):
     def test_slug(self):
         category = Category(name="Testing")
         assert category.slug == "testing"
 
 
-class TestPodcastManager:
+class PodcastManagerTests(TestCase):
     def test_search(self):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -97,37 +101,42 @@ class TestPodcastManager:
         assert podcasts[2].follow_count == 0
 
 
-class TestPodcastModel:
+class PodcastModelTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.podcast = PodcastFactory()
+        cls.user = UserFactory()
+
     def test_slug(self):
         podcast = Podcast(title="Testing")
         assert podcast.slug == "testing"
 
-    def test_get_episode_count(self, podcast):
+    def test_get_episode_count(self):
         EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        assert podcast.get_episode_count() == 3
+        EpisodeFactory.create_batch(3, podcast=self.podcast)
+        assert self.podcast.get_episode_count() == 3
 
-    def test_get_cached_episode_count(self, podcast):
+    def test_get_cached_episode_count(self):
         EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        assert podcast.get_cached_episode_count() == 3
+        EpisodeFactory.create_batch(3, podcast=self.podcast)
+        assert self.podcast.get_cached_episode_count() == 3
 
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "podcast"
 
-    def is_following_anonymous(self, podcast, anonymous_user):
-        assert not podcast.is_following(anonymous_user)
+    def is_following_anonymous(self):
+        assert not self.podcast.is_following(AnonymousUser())
 
-    def is_following_false(self, podcast, user):
-        assert not podcast.is_following(user)
+    def is_following_false(self):
+        assert not self.podcast.is_following(self.user)
 
     def is_following_true(self):
         sub = FollowFactory()
         assert sub.podcast.is_following(sub.user)
 
-    def test_get_opengraph_data(self, rf, podcast, site):
-        req = rf.get("/")
-        req.site = site
-        og_data = podcast.get_opengraph_data(req)
-        assert podcast.title in og_data["title"]
-        assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
+    def test_get_opengraph_data(self):
+        req = RequestFactory().get("/")
+        req.site = Site.objects.get_current()
+        og_data = self.podcast.get_opengraph_data(req)
+        assert self.podcast.title in og_data["title"]
+        assert og_data["url"] == "http://testserver" + self.podcast.get_absolute_url()
