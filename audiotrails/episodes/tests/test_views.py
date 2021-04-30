@@ -509,56 +509,69 @@ class RemoveAudioLogAuthenticatedTests(TestCase):
         self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 0)
 
 
-class TestQueue:
-    def test_get(self, client, login_user):
-        QueueItemFactory.create_batch(3, user=login_user)
-        resp = client.get(reverse("episodes:queue"))
-        assert resp.status_code == http.HTTPStatus.OK
+class QueueTests(TestCase):
+    def test_get(self):
+        user = UserFactory()
+        self.client.force_login(user)
+
+        QueueItemFactory.create_batch(3, user=user)
+        resp = self.client.get(reverse("episodes:queue"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class TestAddToQueue:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:add_to_queue", args=[episode.id]))
-        assert resp.url
+class AddToQueueAnonymousTests(TestCase):
+    def test_post(self):
+        episode = EpisodeFactory()
+        self.assertRedirects(
+            self.client.post(reverse("episodes:add_to_queue", args=[episode.id])),
+            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
+        )
 
-    def test_post(self, client, login_user):
+
+class AddToQueueAuthenticatedTests(TransactionTestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.episode = EpisodeFactory()
+        self.client.force_login(self.user)
+
+    def test_post(self):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
 
         for episode in (first, second, third):
-            resp = client.post(
+            resp = self.client.post(
                 reverse(
                     "episodes:add_to_queue",
                     args=[episode.id],
                 ),
             )
-            assert resp.status_code == http.HTTPStatus.OK
+            self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
         items = (
-            QueueItem.objects.filter(user=login_user)
+            QueueItem.objects.filter(user=self.user)
             .select_related("episode")
             .order_by("position")
         )
 
-        assert items[0].episode == first
-        assert items[0].position == 1
+        self.assertEqual(items[0].episode, first)
+        self.assertEqual(items[0].position, 1)
 
-        assert items[1].episode == second
-        assert items[1].position == 2
+        self.assertEqual(items[1].episode, second)
+        self.assertEqual(items[1].position, 2)
 
-        assert items[2].episode == third
-        assert items[2].position == 3
+        self.assertEqual(items[2].episode, third)
+        self.assertEqual(items[2].position, 3)
 
-    def test_post_already_queued(self, client, login_user, episode):
-        QueueItemFactory(episode=episode, user=login_user)
-        resp = client.post(
+    def test_post_already_queued(self):
+        QueueItemFactory(episode=self.episode, user=self.user)
+        resp = self.client.post(
             reverse(
                 "episodes:add_to_queue",
-                args=[episode.id],
+                args=[self.episode.id],
             ),
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
 class TestRemoveFromQueue:
