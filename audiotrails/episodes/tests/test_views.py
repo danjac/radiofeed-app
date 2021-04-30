@@ -467,25 +467,46 @@ class RemoveFavoriteTests(TestCase):
         )
 
 
-class TestRemoveHistory:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
-        assert resp.url
+class RemoveAudioLogAnonymousTests(TestCase):
+    def test_anonymous(self):
+        episode = EpisodeFactory()
+        self.assertRedirects(
+            self.client.post(reverse("episodes:remove_audio_log", args=[episode.id])),
+            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
+        )
 
-    def test_post(self, client, login_user, episode):
-        AudioLogFactory(user=login_user, episode=episode)
-        AudioLogFactory(user=login_user)
-        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not AudioLog.objects.filter(user=login_user, episode=episode).exists()
-        assert AudioLog.objects.filter(user=login_user).count() == 1
 
-    def test_post_none_remaining(self, client, login_user, episode):
-        AudioLogFactory(user=login_user, episode=episode)
-        resp = client.post(reverse("episodes:remove_audio_log", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not AudioLog.objects.filter(user=login_user, episode=episode).exists()
-        assert AudioLog.objects.filter(user=login_user).count() == 0
+class RemoveAudioLogAuthenticatedTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_post(self):
+        AudioLogFactory(user=self.user, episode=self.episode)
+        AudioLogFactory(user=self.user)
+        resp = self.client.post(
+            reverse("episodes:remove_audio_log", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(
+            AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
+        )
+        self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 1)
+
+    def test_post_none_remaining(self):
+        AudioLogFactory(user=self.user, episode=self.episode)
+        resp = self.client.post(
+            reverse("episodes:remove_audio_log", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(
+            AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
+        )
+        self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 0)
 
 
 class TestQueue:
