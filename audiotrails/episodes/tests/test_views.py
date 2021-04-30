@@ -599,23 +599,25 @@ class RemoveFromQueueTests(TestCase):
 
 
 class TestMoveQueueItems:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:move_queue_items"))
-        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+    def test_anonymous(self):
+        resp = self.client.post(reverse("episodes:move_queue_items"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
 
-    def test_post(self, client, login_user):
+    def test_post(self):
+        user = UserFactory()
+        self.client.force_login(user)
 
-        first = QueueItemFactory(user=login_user)
-        second = QueueItemFactory(user=login_user)
-        third = QueueItemFactory(user=login_user)
+        first = QueueItemFactory(user=user)
+        second = QueueItemFactory(user=user)
+        third = QueueItemFactory(user=user)
 
-        items = QueueItem.objects.filter(user=login_user).order_by("position")
+        items = QueueItem.objects.filter(user=user).order_by("position")
 
-        assert items[0] == first
-        assert items[1] == second
-        assert items[2] == third
+        self.assertEqual(items[0], first)
+        self.assertEqual(items[1], second)
+        self.assertEqual(items[2], third)
 
-        resp = client.post(
+        resp = self.client.post(
             reverse("episodes:move_queue_items"),
             {
                 "items": [
@@ -626,10 +628,10 @@ class TestMoveQueueItems:
             },
         )
 
-        assert resp.status_code == http.HTTPStatus.NO_CONTENT
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
-        items = QueueItem.objects.filter(user=login_user).order_by("position")
+        items = QueueItem.objects.filter(user=user).order_by("position")
 
-        assert items[0] == third
-        assert items[1] == first
-        assert items[2] == second
+        self.assertEqual(items[0], third)
+        self.assertEqual(items[1], first)
+        self.assertEqual(items[2], second)
