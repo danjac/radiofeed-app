@@ -52,22 +52,30 @@ class UserStatsTests(TestCase):
         self.assertEqual(resp.context["stats"]["listened"], 3)
 
 
-class TestExportPodcastFeeds:
-    def test_get(self, client, login_user):
-        resp = client.get(reverse("export_podcast_feeds"))
-        assert resp.status_code == http.HTTPStatus.OK
+class ExportPodcastFeedsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.podcast = PodcastFactory()
 
-    def test_export_opml(self, client, login_user, podcast):
-        FollowFactory(podcast=podcast, user=login_user)
-        resp = client.post(reverse("export_podcast_feeds"), {"format": "opml"})
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp["Content-Type"] == "application/xml"
+    def setUp(self):
+        self.client.force_login(self.user)
 
-    def test_export_csv(self, client, login_user, podcast):
-        FollowFactory(podcast=podcast, user=login_user)
-        resp = client.post(reverse("export_podcast_feeds"), {"format": "csv"})
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp["Content-Type"] == "text/csv"
+    def test_get(self):
+        resp = self.client.get(reverse("export_podcast_feeds"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+    def test_export_opml(self):
+        FollowFactory(podcast=self.podcast, user=self.user)
+        resp = self.client.post(reverse("export_podcast_feeds"), {"format": "opml"})
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp["Content-Type"], "application/xml")
+
+    def test_export_csv(self):
+        FollowFactory(podcast=self.podcast, user=self.user)
+        resp = self.client.post(reverse("export_podcast_feeds"), {"format": "csv"})
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp["Content-Type"], "text/csv")
 
 
 class TestDeleteAccount:
