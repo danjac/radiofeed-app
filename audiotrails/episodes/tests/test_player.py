@@ -70,7 +70,7 @@ class PlayerTests(TestCase):
 
     def test_stop_episode_not_in_session(self):
 
-        AudioLogFactory(user=self.user)
+        AudioLogFactory(episode=self.episode, user=self.user)
 
         req = self.make_request(user=self.user)
 
@@ -80,7 +80,7 @@ class PlayerTests(TestCase):
 
     def test_stop_episode_in_session(self):
 
-        log = AudioLogFactory(user=self.user)
+        log = AudioLogFactory(episode=self.episode, user=self.user)
 
         req = self.make_request(episode=log.episode, user=self.user)
 
@@ -91,7 +91,7 @@ class PlayerTests(TestCase):
 
     def test_stop_episode_mark_complete(self):
 
-        log = AudioLogFactory(user=self.user)
+        log = AudioLogFactory(episode=self.episode, user=self.user)
 
         req = self.make_request(episode=log.episode, user=self.user)
         player = Player(req)
@@ -111,7 +111,7 @@ class PlayerTests(TestCase):
 
     def test_update_current_time(self):
 
-        log = AudioLogFactory(user=self.user, current_time=500)
+        log = AudioLogFactory(episode=self.episode, user=self.user, current_time=500)
 
         req = self.make_request(episode=log.episode, user=self.user)
 
@@ -137,7 +137,7 @@ class PlayerTests(TestCase):
 
     def test_get_player_info(self):
 
-        log = AudioLogFactory(user=self.user, current_time=100)
+        log = AudioLogFactory(episode=self.episode, user=self.user, current_time=100)
 
         req = self.make_request(episode=log.episode, user=self.user)
 
