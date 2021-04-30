@@ -7,6 +7,7 @@ import pytest
 import pytz
 import requests
 
+from django.test import SimpleTestCase
 from django.utils import timezone
 from pydantic import ValidationError
 
@@ -24,21 +25,6 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture(scope="function")
 def clear_categories_cache():
     get_categories_dict.cache_clear()
-
-
-@pytest.fixture
-def item():
-    return Item(
-        audio=Audio(
-            type="audio/mpeg",
-            rel="enclosure",
-            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-        ),
-        title="test",
-        guid="test",
-        pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
-        duration="2000",
-    )
 
 
 class BaseMockResponse:
@@ -197,13 +183,26 @@ class TestAudioModel:
             )
 
 
-class TestFeedModel:
-    def test_language(self, item):
+class FeedModelTests(SimpleTestCase):
+    def setUp(self):
+        self.item = Item(
+            audio=Audio(
+                type="audio/mpeg",
+                rel="enclosure",
+                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+            ),
+            title="test",
+            guid="test",
+            pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
+            duration="2000",
+        )
+
+    def test_language(self):
 
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="http://reddit.com",
@@ -211,14 +210,14 @@ class TestFeedModel:
             categories=[],
         )
 
-        assert feed.language == "en"
+        self.assertEqual(feed.language, "en")
 
-    def test_language_with_spaces(self, item):
+    def test_language_with_spaces(self):
 
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="http://reddit.com",
@@ -226,14 +225,14 @@ class TestFeedModel:
             categories=[],
         )
 
-        assert feed.language == "en"
+        self.assertEqual(feed.language, "en")
 
-    def test_language_with_single_value(self, item):
+    def test_language_with_single_value(self):
 
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="http://reddit.com",
@@ -241,14 +240,14 @@ class TestFeedModel:
             categories=[],
         )
 
-        assert feed.language == "fi"
+        self.assertEqual(feed.language, "fi")
 
-    def test_language_with_empty(self, item):
+    def test_language_with_empty(self):
 
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="http://reddit.com",
@@ -256,43 +255,43 @@ class TestFeedModel:
             categories=[],
         )
 
-        assert feed.language == "en"
+        self.assertEqual(feed.language, "en")
 
-    def test_valid_link(self, item):
+    def test_valid_link(self):
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="http://reddit.com",
             categories=[],
         )
 
-        assert feed.link == "http://reddit.com"
+        self.assertEqual(feed.link, "http://reddit.com")
 
-    def test_empty_link(self, item):
+    def test_empty_link(self):
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="",
             categories=[],
         )
 
-        assert feed.link == ""
+        self.assertEqual(feed.link, "")
 
-    def test_missing_http(self, item):
+    def test_missing_http(self):
         feed = Feed(
             title="test",
             description="test",
-            items=[item],
+            items=[self.item],
             creators=[],
             image=None,
             link="politicology.com",
             categories=[],
         )
 
-        assert feed.link == "http://politicology.com"
+        self.assertEqual(feed.link, "http://politicology.com")
