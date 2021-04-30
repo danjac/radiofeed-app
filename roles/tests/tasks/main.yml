@@ -2,4 +2,4 @@
   shell: |
     podman exec -it \
     -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.test \
-    audiopod-webapp pytest --reuse-db
+    audiopod-webapp ./manage.py test --keepdb --failfast --parallel

@@ -14,10 +14,12 @@ django-environ
 django-extensions
 django-model-utils
 django-redis
+django-silk
 django-storages
 django-turbo-allauth
 django-turbo-response
 django-widget-tweaks
+factory-boy
 future
 gunicorn
 html5lib
@@ -33,6 +35,7 @@ pydantic
 pyopenssl
 python-dateutil
 pytz
+pywatchman
 redis
 sentry_sdk
 sklearn
