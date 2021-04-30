@@ -1,152 +1,164 @@
-import pytest
+from django.contrib.auth.models import AnonymousUser
+from django.test import RequestFactory, TestCase
 
-from ..factories import AudioLogFactory
+from audiotrails.users.factories import UserFactory
+
+from ..factories import AudioLogFactory, EpisodeFactory
 from ..models import AudioLog
 from ..player import Player
 
-pytestmark = pytest.mark.django_db
 
+class PlayerTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.episode = EpisodeFactory()
+        cls.user = UserFactory()
 
-class TestPlayer:
-    def test_start_episode(self, rf, user, episode):
-        req = rf.get("/")
+    def setUp(self):
+        self.rf = RequestFactory()
+
+    def test_start_episode(self):
+        req = self.rf.get("/")
         req.session = {}
-        req.user = user
-        req.episode = episode
+        req.user = self.user
         player = Player(req)
 
-        assert player.start_episode(episode) == 0
+        self.assertEqual(player.start_episode(self.episode), 0)
 
         log = AudioLog.objects.get()
 
-        assert log.episode == episode
-        assert log.user == user
-        assert log.updated
-        assert log.current_time == 0
-        assert not log.completed
+        self.assertEqual(log.episode, self.episode)
+        self.assertEqual(log.user, self.user)
+        self.assertEqual(log.current_time, 0)
 
-        assert player.is_playing(episode)
+        self.assertFalse(log.completed)
+        self.assertTrue(log.updated)
 
-    def test_start_episode_already_played(self, rf, user, episode):
+        self.assertTrue(player.is_playing(self.episode))
 
-        log = AudioLogFactory(episode=episode, user=user, current_time=500)
+    def test_start_episode_already_played(self):
 
-        req = rf.get("/")
+        log = AudioLogFactory(episode=self.episode, user=self.user, current_time=500)
+
+        req = self.rf.get("/")
         req.session = {}
-        req.user = user
-        req.episode = episode
+        req.user = self.user
         player = Player(req)
-        assert player.start_episode(episode) == 500
+        self.assertEqual(player.start_episode(self.episode), 500)
 
         log.refresh_from_db()
 
-        assert log.episode == episode
-        assert log.user == user
-        assert log.updated
-        assert log.current_time == 500
-        assert not log.completed
+        self.assertEqual(log.episode, self.episode)
+        self.assertEqual(log.user, self.user)
+        self.assertEqual(log.current_time, 500)
 
-        assert player.is_playing(episode)
+        self.assertTrue(log.updated)
+        self.assertFalse(log.completed)
 
-    def test_stop_episode_empty(self, rf, user):
-        req = rf.get("/")
+        self.assertTrue(player.is_playing(self.episode))
+
+    def test_stop_episode_empty(self):
+        req = self.rf.get("/")
         req.session = {}
-        req.user = user
+        req.user = self.user
         player = Player(req)
-        assert player.stop_episode() is None
+        self.assertEqual(player.stop_episode(), None)
 
-    def test_stop_episode_not_in_session(self, rf, user):
+    def test_stop_episode_not_in_session(self):
 
-        AudioLogFactory(user=user)
+        AudioLogFactory(user=self.user)
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {}
-        req.user = user
+        req.user = self.user
 
         player = Player(req)
 
-        assert player.stop_episode() is None
+        self.assertEqual(player.stop_episode(), None)
 
-    def test_stop_episode_in_session(self, rf, user):
+    def test_stop_episode_in_session(self):
 
-        log = AudioLogFactory(user=user)
+        log = AudioLogFactory(user=self.user)
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {"player_episode": log.episode.id}
-        req.user = user
+        req.user = self.user
 
         player = Player(req)
 
-        assert player.stop_episode() == log.episode
-        assert not player.is_playing(log.episode)
+        self.assertEqual(player.stop_episode(), log.episode)
+        self.assertFalse(player.is_playing(log.episode))
 
-    def test_stop_episode_mark_complete(self, rf, user):
+    def test_stop_episode_mark_complete(self):
 
-        log = AudioLogFactory(user=user)
+        log = AudioLogFactory(user=self.user)
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {"player_episode": log.episode.id}
-        req.user = user
+        req.user = self.user
 
         player = Player(req)
 
-        assert player.stop_episode(mark_completed=True) == log.episode
-        assert not player.is_playing(log.episode)
+        self.assertEqual(player.stop_episode(mark_completed=True), log.episode)
+        self.assertFalse(player.is_playing(log.episode))
 
         log.refresh_from_db()
-        assert log.completed
+        self.assertTrue(log.completed)
 
-    def test_update_current_time_not_playing(self, rf, user):
-        req = rf.get("/")
+    def test_update_current_time_not_playing(self):
+        req = self.rf.get("/")
 
         req.session = {}
-        req.user = user
+        req.user = self.user
 
         player = Player(req)
         player.update_current_time(600)
-        assert AudioLog.objects.count() == 0
+        self.assertEqual(AudioLog.objects.count(), 0)
 
-    def test_update_current_time(self, rf, user):
+    def test_update_current_time(self):
 
-        log = AudioLogFactory(user=user, current_time=500)
+        log = AudioLogFactory(user=self.user, current_time=500)
 
-        req = rf.get("/")
+        req = self.rf.get("/")
 
         req.session = {"player_episode": log.episode.id}
-        req.user = user
+        req.user = self.user
 
         player = Player(req)
         player.update_current_time(600)
 
         log.refresh_from_db()
-        assert log.current_time == 600
+        self.assertEqual(log.current_time, 600)
 
-    def test_get_player_info_anonymous(self, rf, anonymous_user):
+    def test_get_player_info_anonymous(self):
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {}
-        req.user = anonymous_user
+        req.user = AnonymousUser()
         player = Player(req)
-        assert player.get_player_info() == {}
+        self.assertEqual(player.get_player_info(), {})
 
-    def test_get_player_info_user_empty(self, rf, user):
+    def test_get_player_info_user_empty(self):
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {}
-        req.user = user
+        req.user = self.user
         player = Player(req)
-        assert player.get_player_info() == {}
+        self.assertEqual(player.get_player_info(), {})
 
-    def test_get_player_info(self, rf, user):
+    def test_get_player_info(self):
 
-        log = AudioLogFactory(user=user, current_time=100)
+        log = AudioLogFactory(user=self.user, current_time=100)
 
-        req = rf.get("/")
+        req = self.rf.get("/")
         req.session = {"player_episode": log.episode.id}
-        req.user = user
+        req.user = self.user
         player = Player(req)
 
-        assert player.get_player_info() == {
-            "current_time": 100,
-            "episode": log.episode,
-        }
+        self.assertEqual(
+            player.get_player_info(),
+            {
+                "current_time": 100,
+                "episode": log.episode,
+            },
+        )
