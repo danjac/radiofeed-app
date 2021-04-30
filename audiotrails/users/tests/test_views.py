@@ -107,14 +107,14 @@ class TestDeleteAccount:
 
 
 class TestAcceptCookies:
-    def test_post(self, client):
-        resp = client.post(reverse("accept_cookies"))
-        assert resp.url == "/"
-        assert "accept-cookies" in resp.cookies
+    def test_post(self):
+        resp = self.client.post(reverse("accept_cookies"))
+        self.assertRedirects(resp, settings.HOME_URL)
+        self.assertFalse("accept-cookies" in resp.cookies)
 
     def test_post_turbo(self, client):
         resp = client.post(
             reverse("accept_cookies"), HTTP_ACCEPT=TURBO_STREAM_MIME_TYPE
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert "accept-cookies" in resp.cookies
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse("accept-cookies" in resp.cookies)
