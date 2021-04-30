@@ -135,91 +135,141 @@ class EpisodeDetailTests(TestCase):
         self.assertTrue(resp.context_data["is_favorited"])
 
 
-class TestPreview:
-    def test_not_turbo_frame(self, client, login_user, episode):
-        resp = client.get(
-            reverse("episodes:episode_preview", args=[episode.id]),
-        )
-        assert resp.url == episode.get_absolute_url()
+class PreviewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
 
-    def test_user_not_favorited(self, client, login_user, episode):
-        resp = client.get(
-            reverse("episodes:episode_preview", args=[episode.id]),
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_not_turbo_frame(self):
+        self.assertRedirects(
+            self.client.get(
+                reverse("episodes:episode_preview", args=[self.episode.id]),
+            ),
+            self.episode.get_absolute_url(),
+        )
+
+    def test_user_not_favorited(self):
+        resp = self.client.get(
+            reverse("episodes:episode_preview", args=[self.episode.id]),
             HTTP_TURBO_FRAME="modal",
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_favorited"]
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["episode"], self.episode)
+        self.assertFalse(resp.context_data["is_favorited"])
 
-    def test_user_favorited(self, client, login_user, episode):
-        FavoriteFactory(episode=episode, user=login_user)
-        resp = client.get(
-            reverse("episodes:episode_preview", args=[episode.id]),
+    def test_user_favorited(self):
+        FavoriteFactory(episode=self.episode, user=self.user)
+        resp = self.client.get(
+            reverse("episodes:episode_preview", args=[self.episode.id]),
             HTTP_TURBO_FRAME="modal",
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert resp.context_data["is_favorited"]
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["episode"], self.episode)
+        self.assertTrue(resp.context_data["is_favorited"])
 
 
-class TestStartPlayer:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert resp.url
-
-    def test_play_from_start(self, client, login_user, episode):
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
-
-    def test_play_episode_in_history(self, client, login_user, episode):
-        AudioLogFactory(user=login_user, episode=episode, current_time=2000)
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
-
-
-class TestPlayNextEpisode:
-    def test_has_next_in_queue(self, client, login_user, episode):
-        QueueItem.objects.create(position=0, user=login_user, episode=episode)
-        resp = client.post(reverse("episodes:play_next_episode"))
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert QueueItem.objects.count() == 0
-
-    def test_play_next_episode_in_history(self, client, login_user):
-        log = AudioLogFactory(user=login_user, current_time=30)
-
-        QueueItem.objects.create(position=0, user=login_user, episode=log.episode)
-        resp = client.post(reverse("episodes:play_next_episode"))
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert QueueItem.objects.count() == 0
-
-    def test_queue_empty(self, client, login_user):
-        resp = client.post(reverse("episodes:play_next_episode"))
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
-
-
-class TestClosePlayer:
-    def test_anonymous(self, client):
-        resp = client.post(
-            reverse("episodes:close_player"),
+class StartPlayerAnonymousTests(TestCase):
+    def test_get(self):
+        episode = EpisodeFactory()
+        self.assertRedirects(
+            self.client.post(reverse("episodes:start_player", args=[episode.id])),
+            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
         )
-        assert resp.url
 
-    def test_stop(self, client, login_user, episode):
-        session = client.session
+
+class StartPlayerAuthenticatedTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_play_from_start(self):
+        resp = self.client.post(
+            reverse("episodes:start_player", args=[self.episode.id])
+        )
+
+        list(resp.streaming_content)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+    def test_play_episode_in_history(self):
+        AudioLogFactory(user=self.user, episode=self.episode, current_time=2000)
+        resp = self.client.post(
+            reverse("episodes:start_player", args=[self.episode.id])
+        )
+        list(resp.streaming_content)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+
+class PlayNextEpisodeTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_has_next_in_queue(self):
+        QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
+        resp = self.client.post(reverse("episodes:play_next_episode"))
+
+        list(resp.streaming_content)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(QueueItem.objects.count(), 0)
+
+    def test_play_next_episode_in_history(self):
+        log = AudioLogFactory(user=self.user, current_time=30)
+
+        QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
+        resp = self.client.post(reverse("episodes:play_next_episode"))
+
+        list(resp.streaming_content)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(QueueItem.objects.count(), 0)
+
+    def test_queue_empty(self):
+        resp = self.client.post(reverse("episodes:play_next_episode"))
+
+        list(resp.streaming_content)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(QueueItem.objects.count(), 0)
+
+
+class ClosePlayerTests(TestCase):
+    def test_anonymous(self):
+        self.assertRedirects(
+            self.client.post(
+                reverse("episodes:close_player"),
+            ),
+            reverse("account_login") + "?next=/",
+        )
+
+    def test_stop(self):
+        episode = EpisodeFactory()
+
+        user = UserFactory()
+        self.client.force_login(user)
+
+        session = self.client.session
         session.update({"player": {"episode": episode.id, "current_time": 1000}})
         session.save()
 
-        AudioLogFactory(user=login_user, episode=episode, current_time=2000)
-        resp = client.post(
+        AudioLogFactory(user=user, episode=episode, current_time=2000)
+        resp = self.client.post(
             reverse("episodes:close_player"),
         )
-        assert list(resp.streaming_content)
-        assert resp.status_code == http.HTTPStatus.OK
+        list(resp.streaming_content)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
 class TestPlayerUpdateCurrentTime:
