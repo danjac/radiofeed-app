@@ -1,6 +1,6 @@
 import http
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
@@ -406,20 +406,39 @@ class FavoritesTests(TestCase):
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
 
-class TestAddFavorite:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.url
+class AddFavoriteAnonymousTests(TestCase):
+    def test_anonymous(self):
+        episode = EpisodeFactory()
+        self.assertRedirects(
+            self.client.post(reverse("episodes:add_favorite", args=[episode.id])),
+            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
+        )
 
-    def test_post(self, client, login_user, episode):
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
-    def test_already_favorite(self, client, login_user, episode):
-        FavoriteFactory(episode=episode, user=login_user)
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert resp.status_code == http.HTTPStatus.OK
+class AddFavoriteAuthenticatedTests(TransactionTestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.episode = EpisodeFactory()
+        self.client.force_login(self.user)
+
+    def test_post(self):
+        resp = self.client.post(
+            reverse("episodes:add_favorite", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertTrue(
+            Favorite.objects.filter(user=self.user, episode=self.episode).exists()
+        )
+
+    def test_already_favorite(self):
+        FavoriteFactory(episode=self.episode, user=self.user)
+        resp = self.client.post(
+            reverse("episodes:add_favorite", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertTrue(
+            Favorite.objects.filter(user=self.user, episode=self.episode).exists()
+        )
 
 
 class TestRemoveFavorite:
