@@ -1,10 +1,12 @@
+from django.test import RequestFactory, SimpleTestCase
+
 from ..templatetags import pagination_url
 
 
-class TestPaginationUrl:
-    def test_append_page_number_to_querystring(self, rf):
+class PaginationUrlTests(SimpleTestCase):
+    def test_append_page_number_to_querystring(self):
 
-        req = rf.get("/search/", {"q": "test"})
+        req = RequestFactory().get("/search/", {"q": "test"})
         url = pagination_url({"request": req}, 5)
         assert url.startswith("/search/?")
         assert "q=test" in url
