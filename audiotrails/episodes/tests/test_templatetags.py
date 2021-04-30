@@ -1,31 +1,46 @@
-import pytest
+from django.contrib.auth.models import AnonymousUser
+from django.test import RequestFactory, TestCase
 
-from ..factories import AudioLogFactory
+from audiotrails.users.factories import UserFactory
+
+from ..factories import AudioLogFactory, EpisodeFactory
 from ..player import Player
 from ..templatetags.player import get_player
 
-pytestmark = pytest.mark.django_db
 
+class GetPlayerTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.episode = EpisodeFactory()
+        cls.user = UserFactory()
 
-class TestGetPlayer:
-    def test_anonymous(self, rf, anonymous_user):
-        req = rf.get("/")
-        req.user = anonymous_user
+    def setUp(self):
+        self.rf = RequestFactory()
+
+    def test_anonymous(self):
+        req = self.rf.get("/")
+        req.user = AnonymousUser()
         req.session = {}
         req.player = Player(req)
-        assert get_player({"request": req}) == {}
+        self.assertEqual(get_player({"request": req}), {})
 
-    def test_player_not_loaded(self, rf, user):
-        req = rf.get("/")
-        req.user = user
+    def test_player_not_loaded(self):
+        req = self.rf.get("/")
+        req.user = self.user
         req.session = {}
         req.player = Player(req)
-        assert get_player({"request": req}) == {}
+        self.assertEqual(get_player({"request": req}), {})
 
-    def test_player_loaded(self, rf, user, episode):
-        AudioLogFactory(user=user, episode=episode, current_time=300)
-        req = rf.get("/")
-        req.user = user
-        req.session = {"player_episode": episode.id}
+    def test_player_loaded(self):
+        AudioLogFactory(user=self.user, episode=self.episode, current_time=300)
+        req = self.rf.get("/")
+        req.user = self.user
+        req.session = {"player_episode": self.episode.id}
         req.player = Player(req)
-        assert get_player({"request": req}) == {"episode": episode, "current_time": 300}
+        self.assertEqual(
+            get_player({"request": req}),
+            {
+                "episode": self.episode,
+                "current_time": 300,
+            },
+        )
