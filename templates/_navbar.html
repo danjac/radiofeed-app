@@ -1,7 +1,7 @@
 {% load cache static %}
-{% cache 600 navbar request.user.username %}
 {% url 'episodes:index' as home_page_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
+  {% cache 600 navbar request.user.username %}
   <div class="flex items-center justify-between p-2">
 
     <div class="flex items-center flex-shrink-0 mr-6 text-lg">
@@ -68,7 +68,7 @@
     </div>
     {% endif %}
   </div>
+  {% endcache %}
 
   {% include "_messages.html" %}
 </header>
-{% endcache %}
