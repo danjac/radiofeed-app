@@ -1,33 +1,34 @@
-# Third Party Libraries
-import pytest
+from django.core import mail
 
-# Local
+from audiotrails.users.factories import UserFactory
+
 from ..emails import send_recommendations_email
 from ..factories import FollowFactory, RecommendationFactory
 
-pytestmark = pytest.mark.django_db
 
+class SendRecommendationEmailTests:
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-class TestSendRecommendationEmail:
-    def test_send_if_no_recommendations(self, user, mailoutbox):
+    def test_send_if_no_recommendations(self):
         """If no recommendations, don't send."""
 
-        send_recommendations_email(user)
-        assert len(mailoutbox) == 0
+        send_recommendations_email(self.user)
+        self.assertEqual(len(mail.outbox), 0)
 
-    def test_send_if_sufficient_recommendations(self, user, mailoutbox):
+    def test_send_if_sufficient_recommendations(self):
 
-        first = FollowFactory(user=user).podcast
-        second = FollowFactory(user=user).podcast
-
-        third = FollowFactory(user=user).podcast
+        first = FollowFactory(user=self.user).podcast
+        second = FollowFactory(user=self.user).podcast
+        third = FollowFactory(user=self.user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)
         RecommendationFactory(podcast=third)
 
-        send_recommendations_email(user)
-        assert len(mailoutbox) == 1
-        assert mailoutbox[0].to == [user.email]
+        send_recommendations_email(self.user)
 
-        assert user.recommended_podcasts.count() == 3
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [self.user.email])
+        self.assertEqual(self.user.recommended_podcasts.count(), 3)
