@@ -574,18 +574,28 @@ class AddToQueueAuthenticatedTests(TransactionTestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class TestRemoveFromQueue:
-    def test_anonymous(self, client, episode):
-        resp = client.post(reverse("episodes:remove_from_queue", args=[episode.id]))
-        assert resp.url
+class RemoveFromQueueTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.episode = EpisodeFactory()
 
-    def test_post(self, client, login_user):
-        item = QueueItemFactory(user=login_user)
-        resp = client.post(
+    def test_anonymous(self):
+        self.assertRedirects(
+            self.client.post(
+                reverse("episodes:remove_from_queue", args=[self.episode.id])
+            ),
+            f"{reverse('account_login')}?next={self.episode.get_absolute_url()}",
+        )
+
+    def test_post(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        item = QueueItemFactory(user=user)
+        resp = self.client.post(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert QueueItem.objects.filter(user=login_user).count() == 0
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(QueueItem.objects.filter(user=user).count(), 0)
 
 
 class TestMoveQueueItems:
