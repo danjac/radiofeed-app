@@ -1,14 +1,20 @@
-import pytest
+import logging
+
+from django.test import SimpleTestCase, TestCase
 
 from ..factories import CategoryFactory, PodcastFactory, RecommendationFactory
 from ..models import Recommendation
 from ..recommender import recommend
 from ..recommender.text_parser import clean_text, extract_keywords
 
-pytestmark = pytest.mark.django_db
 
+class PodcastRecommenderTests(TestCase):
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
 
-class TestPodcastRecommender:
+    def tearDown(self):
+        logging.disable(logging.NOTSET)
+
     def test_handle_empty_data_frame(self):
         PodcastFactory(
             title="Cool science podcast",
@@ -17,7 +23,7 @@ class TestPodcastRecommender:
         )
 
         recommend()
-        assert Recommendation.objects.count() == 0
+        self.assertEqual(Recommendation.objects.count(), 0)
 
     def test_create_podcast_recommendations_with_no_categories(self):
         podcast_1 = PodcastFactory(
@@ -38,7 +44,7 @@ class TestPodcastRecommender:
             .order_by("similarity")
             .select_related("recommended")
         )
-        assert recommendations.count() == 0
+        self.assertEqual(recommendations.count(), 0)
 
     def test_create_podcast_recommendations(self):
 
@@ -71,22 +77,27 @@ class TestPodcastRecommender:
             .order_by("similarity")
             .select_related("recommended")
         )
-        assert recommendations.count() == 1
-        assert recommendations[0].recommended == podcast_2
+        self.assertEqual(recommendations.count(), 1)
+        self.assertEqual(recommendations[0].recommended, podcast_2)
 
 
-class TestExtractKeywords:
+class ExtractKeywordsTests(SimpleTestCase):
     def test_extract(self):
-        assert extract_keywords("en", "the cat sits on the mat") == [
-            "cat",
-            "sits",
-            "mat",
-        ]
+        self.assertEqual(
+            extract_keywords("en", "the cat sits on the mat"),
+            [
+                "cat",
+                "sits",
+                "mat",
+            ],
+        )
 
 
-class TestCleanText:
+class CleanTextTests(SimpleTestCase):
     def test_remove_html_tags(self):
-        assert clean_text("<p>test</p>") == "test"
+        self.assertEqual(clean_text("<p>test</p>"), "test")
 
     def test_remove_numbers(self):
-        assert clean_text("Tuesday, September 1st, 2020") == "Tuesday September st "
+        self.assertEqual(
+            clean_text("Tuesday, September 1st, 2020"), "Tuesday September st "
+        )
