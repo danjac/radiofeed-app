@@ -79,36 +79,28 @@ class NewEpisodesTests(TestCase):
         self.assertEqual(resp.context_data["page_obj"].object_list[0].podcast, promoted)
 
 
-class TestSearchEpisodes:
-    def test_page(self, client):
-        resp = client.get(reverse("episodes:search_episodes"), {"q": "test"})
-        assert resp.status_code == http.HTTPStatus.OK
+class SearchEpisodesTests(TestCase):
+    def test_page(self):
+        resp = self.client.get(reverse("episodes:search_episodes"), {"q": "test"})
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_search_empty_anonymous(self, client):
-        resp = client.get(
-            reverse("episodes:search_episodes"),
-            {"q": ""},
+    def test_search_empty(self):
+        self.assertRedirects(
+            self.client.get(reverse("episodes:search_episodes"), {"q": ""}),
+            reverse("episodes:index"),
         )
-        assert resp.url == reverse("episodes:index")
 
-    def test_search_empty_authenticated(self, client, login_user):
-        resp = client.get(
-            reverse("episodes:search_episodes"),
-            {"q": ""},
-        )
-        assert resp.url == reverse("episodes:index")
-
-    def test_search(self, client):
+    def test_search(self):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
-        resp = client.get(
+        resp = self.client.get(
             reverse("episodes:search_episodes"),
             {"q": "testing"},
             HTTP_TURBO_FRAME="episodes",
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
 
 
 class TestEpisodeDetail:
