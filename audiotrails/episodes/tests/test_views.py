@@ -337,29 +337,36 @@ class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
 
-class TestHistory:
-    def test_get(self, client, login_user):
-        AudioLogFactory.create_batch(3, user=login_user)
-        resp = client.get(reverse("episodes:history"), HTTP_TURBO_FRAME="episodes")
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["page_obj"].object_list) == 3
+class HistoryTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-    def test_search(self, client, login_user):
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_get(self):
+        AudioLogFactory.create_batch(3, user=self.user)
+        resp = self.client.get(reverse("episodes:history"), HTTP_TURBO_FRAME="episodes")
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
+
+    def test_search(self):
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
             AudioLogFactory(
-                user=login_user,
+                user=self.user,
                 episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
-        AudioLogFactory(user=login_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(
+        AudioLogFactory(user=self.user, episode=EpisodeFactory(title="testing"))
+        resp = self.client.get(
             reverse("episodes:history"), {"q": "testing"}, HTTP_TURBO_FRAME="episodes"
         )
-        assert resp.status_code == http.HTTPStatus.OK
-        assert len(resp.context_data["page_obj"].object_list) == 1
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
 
 class TestFavorites:
