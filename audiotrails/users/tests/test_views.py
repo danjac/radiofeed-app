@@ -1,8 +1,7 @@
 import http
 
-import pytest
-
 from django.conf import settings
+from django.test import TestCase
 from django.urls import reverse
 from turbo_response.constants import TURBO_STREAM_MIME_TYPE
 
@@ -11,35 +10,46 @@ from audiotrails.episodes.factories import (
     EpisodeFactory,
     FavoriteFactory,
 )
-from audiotrails.podcasts.factories import FollowFactory
+from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
 
-pytestmark = pytest.mark.django_db
+from ..factories import UserFactory
 
 
-class TestUserPreferences:
-    def test_get(self, client, login_user):
-        resp = client.get(reverse("user_preferences"))
-        assert resp.status_code == http.HTTPStatus.OK
+class UserPreferencesTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-    def test_post(self, client, login_user):
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_get(self):
+        resp = self.client.get(reverse("user_preferences"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+    def test_post(self):
         url = reverse("user_preferences")
-        resp = client.post(url, {"send_recommendations_email": False})
-        assert resp.url == url
-        login_user.refresh_from_db()
-        assert not login_user.send_recommendations_email
+        resp = self.client.post(url, {"send_recommendations_email": False})
+        self.assertRedirects(resp, url, status_code=http.HTTPStatus.SEE_OTHER)
+        self.user.refresh_from_db()
+        assert not self.user.send_recommendations_email
 
 
-class TestUserStats:
-    def test_stats(self, client, login_user, podcast):
-        FollowFactory(podcast=podcast, user=login_user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=login_user)
-        AudioLogFactory(user=login_user)
-        FavoriteFactory(user=login_user)
-        resp = client.get(reverse("user_stats"))
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context["stats"]["follows"] == 1
-        assert resp.context["stats"]["listened"] == 3
+class UserStatsTests(TestCase):
+    def test_stats(self):
+        podcast = PodcastFactory()
+        user = UserFactory()
+        self.client.force_login(user)
+
+        FollowFactory(podcast=podcast, user=user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=user)
+        AudioLogFactory(user=user)
+        FavoriteFactory(user=user)
+        resp = self.client.get(reverse("user_stats"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context["stats"]["follows"], 1)
+        self.assertEqual(resp.context["stats"]["listened"], 3)
 
 
 class TestExportPodcastFeeds:
