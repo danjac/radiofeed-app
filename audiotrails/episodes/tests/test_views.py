@@ -103,25 +103,36 @@ class SearchEpisodesTests(TestCase):
         self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
 
 
-class TestEpisodeDetail:
-    def test_anonymous(self, client, episode):
-        resp = client.get(episode.get_absolute_url())
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_favorited"]
+class EpisodeDetailAnonymousTests(TestCase):
+    def test_get(self):
+        episode = EpisodeFactory()
+        resp = self.client.get(episode.get_absolute_url())
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["episode"], episode)
+        self.assertFalse(resp.context_data["is_favorited"])
 
-    def test_user_not_favorited(self, client, login_user, episode):
-        resp = client.get(episode.get_absolute_url())
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert not resp.context_data["is_favorited"]
 
-    def test_user_favorited(self, client, login_user, episode):
-        FavoriteFactory(episode=episode, user=login_user)
-        resp = client.get(episode.get_absolute_url())
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["episode"] == episode
-        assert resp.context_data["is_favorited"]
+class EpisodeDetailTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.episode = EpisodeFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_user_not_favorited(self):
+        resp = self.client.get(self.episode.get_absolute_url())
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["episode"], self.episode)
+        self.assertFalse(resp.context_data["is_favorited"])
+
+    def test_user_favorited(self):
+        FavoriteFactory(episode=self.episode, user=self.user)
+        resp = self.client.get(self.episode.get_absolute_url())
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["episode"], self.episode)
+        self.assertTrue(resp.context_data["is_favorited"])
 
 
 class TestPreview:
