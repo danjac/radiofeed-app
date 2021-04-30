@@ -249,28 +249,32 @@ class EpisodeInstanceModelTests(TestCase):
         )
 
 
-class TestFavoriteManager:
+class FavoriteManagerTests(TestCase):
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         FavoriteFactory(episode=episode)
-        assert Favorite.objects.search("testing").count() == 1
+        self.assertEqual(Favorite.objects.search("testing").count(), 1)
 
 
-class TestAudioLogManager:
+class AudioLogManagerTests(TestCase):
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
-        assert AudioLog.objects.search("testing").count() == 1
+        self.assertEqual(AudioLog.objects.search("testing").count(), 1)
 
 
-class TestQueueItemManager:
-    def test_with_current_time_if_not_played(self, user):
-        QueueItemFactory(user=user)
-        item = QueueItem.objects.with_current_time(user).first()
-        assert item.current_time is None
+class QueueItemManagerTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-    def test_with_current_time_if_played(self, user):
-        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
-        QueueItemFactory(user=user, episode=log.episode)
-        item = QueueItem.objects.with_current_time(user).first()
-        assert item.current_time == 20
+    def test_with_current_time_if_not_played(self):
+        QueueItemFactory(user=self.user)
+        item = QueueItem.objects.with_current_time(self.user).first()
+        self.assertEqual(item.current_time, None)
+
+    def test_with_current_time_if_played(self):
+        log = AudioLogFactory(user=self.user, current_time=20, updated=timezone.now())
+        QueueItemFactory(user=self.user, episode=log.episode)
+        item = QueueItem.objects.with_current_time(self.user).first()
+        self.assertEqual(item.current_time, 20)
