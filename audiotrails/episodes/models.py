@@ -10,7 +10,6 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
-from sorl.thumbnail import get_thumbnail
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.db import FastCountMixin
@@ -212,30 +211,21 @@ class Episode(models.Model):
 
     def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session
-        data = {
+        thumbnail = self.podcast.get_cover_image_thumbnail()
+
+        return {
             "title": self.title,
             "album": self.podcast.title,
             "artist": self.podcast.creators,
-        }
-
-        if self.podcast.cover_image:
-            thumbnail = get_thumbnail(
-                self.podcast.cover_image, "200", format="WEBP", crop="center"
-            )
-
-            if thumbnail:
-                data |= {
-                    "artwork": [
-                        {
-                            "src": thumbnail.url,
-                            "sizes": f"{size}x{size}",
-                            "type": "image/png",
-                        }
-                        for size in [96, 128, 192, 256, 384, 512]
-                    ]
+            "artwork": [
+                {
+                    "src": thumbnail.url,
+                    "sizes": f"{size}x{size}",
+                    "type": "image/png",
                 }
-
-        return data
+                for size in [96, 128, 192, 256, 384, 512]
+            ],
+        }
 
 
 class FavoriteQuerySet(models.QuerySet):
