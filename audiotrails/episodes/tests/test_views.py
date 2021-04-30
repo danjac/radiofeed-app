@@ -1,10 +1,10 @@
 import http
 
-import pytest
-
+from django.test import TestCase
 from django.urls import reverse
 
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
+from audiotrails.users.factories import UserFactory
 
 from ..factories import (
     AudioLogFactory,
@@ -14,60 +14,69 @@ from ..factories import (
 )
 from ..models import AudioLog, Favorite, QueueItem
 
-pytestmark = pytest.mark.django_db
 
-
-class TestNewEpisodes:
-    def test_anonymous(self, client, login_user):
+class NewEpisodesAnonymousTests(TestCase):
+    def test_get(self):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
-        resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
+        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(resp.context_data["has_follows"])
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
-    def test_user_no_subscriptions(self, client, login_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
 
-        EpisodeFactory.create_batch(3)
-        resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
+class NewEpisodesTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
 
-    def test_user_has_subscriptions(self, client, login_user):
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_user_no_subscriptions(self):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
         EpisodeFactory.create_batch(3)
+        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(resp.context_data["has_follows"])
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
-        episode = EpisodeFactory()
-        FollowFactory(user=login_user, podcast=episode.podcast)
-
-        resp = client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not resp.context_data["featured"]
-        assert resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
-
-    def test_user_has_subscriptions_featured(self, client, login_user):
+    def test_user_has_subscriptions(self):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        FollowFactory(user=login_user, podcast=episode.podcast)
+        FollowFactory(user=self.user, podcast=episode.podcast)
 
-        resp = client.get(reverse("episodes:featured"), HTTP_TURBO_FRAME="episodes")
-        assert resp.status_code == http.HTTPStatus.OK
-        assert resp.context_data["featured"]
-        assert resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0].podcast == promoted
+        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(resp.context_data["featured"])
+        self.assertTrue(resp.context_data["has_follows"])
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
+
+    def test_user_has_subscriptions_featured(self):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+
+        EpisodeFactory.create_batch(3)
+
+        episode = EpisodeFactory()
+        FollowFactory(user=self.user, podcast=episode.podcast)
+
+        resp = self.client.get(
+            reverse("episodes:featured"), HTTP_TURBO_FRAME="episodes"
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertTrue(resp.context_data["featured"])
+        self.assertTrue(resp.context_data["has_follows"])
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        self.assertEqual(resp.context_data["page_obj"].object_list[0].podcast, promoted)
 
 
 class TestSearchEpisodes:
@@ -330,7 +339,6 @@ class TestAddFavorite:
         assert resp.status_code == http.HTTPStatus.OK
         assert Favorite.objects.filter(user=login_user, episode=episode).exists()
 
-    @pytest.mark.django_db(transaction=True)
     def test_already_favorite(self, client, login_user, episode):
         FavoriteFactory(episode=episode, user=login_user)
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
@@ -411,7 +419,6 @@ class TestAddToQueue:
         assert items[2].episode == third
         assert items[2].position == 3
 
-    @pytest.mark.django_db(transaction=True)
     def test_post_already_queued(self, client, login_user, episode):
         QueueItemFactory(episode=episode, user=login_user)
         resp = client.post(
