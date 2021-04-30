@@ -17,10 +17,16 @@ class PlayerTests(TestCase):
     def setUp(self):
         self.rf = RequestFactory()
 
-    def test_start_episode(self):
+    def make_request(self, episode=None, user=None):
         req = self.rf.get("/")
         req.session = {}
-        req.user = self.user
+        if episode is not None:
+            req.session["player_episode"] = episode
+        req.user = user or AnonymousUser()
+        return req
+
+    def test_start_episode(self):
+        req = self.make_request(user=self.user)
         player = Player(req)
 
         self.assertEqual(player.start_episode(self.episode), 0)
@@ -40,9 +46,8 @@ class PlayerTests(TestCase):
 
         log = AudioLogFactory(episode=self.episode, user=self.user, current_time=500)
 
-        req = self.rf.get("/")
-        req.session = {}
-        req.user = self.user
+        req = self.make_request(user=self.user)
+
         player = Player(req)
         self.assertEqual(player.start_episode(self.episode), 500)
 
@@ -58,9 +63,8 @@ class PlayerTests(TestCase):
         self.assertTrue(player.is_playing(self.episode))
 
     def test_stop_episode_empty(self):
-        req = self.rf.get("/")
-        req.session = {}
-        req.user = self.user
+        req = self.make_request(user=self.user)
+
         player = Player(req)
         self.assertEqual(player.stop_episode(), None)
 
@@ -68,9 +72,7 @@ class PlayerTests(TestCase):
 
         AudioLogFactory(user=self.user)
 
-        req = self.rf.get("/")
-        req.session = {}
-        req.user = self.user
+        req = self.make_request(user=self.user)
 
         player = Player(req)
 
@@ -80,9 +82,7 @@ class PlayerTests(TestCase):
 
         log = AudioLogFactory(user=self.user)
 
-        req = self.rf.get("/")
-        req.session = {"player_episode": log.episode.id}
-        req.user = self.user
+        req = self.make_request(episode=log.episode, user=self.user)
 
         player = Player(req)
 
@@ -93,10 +93,7 @@ class PlayerTests(TestCase):
 
         log = AudioLogFactory(user=self.user)
 
-        req = self.rf.get("/")
-        req.session = {"player_episode": log.episode.id}
-        req.user = self.user
-
+        req = self.make_request(episode=log.episode, user=self.user)
         player = Player(req)
 
         self.assertEqual(player.stop_episode(mark_completed=True), log.episode)
@@ -106,10 +103,7 @@ class PlayerTests(TestCase):
         self.assertTrue(log.completed)
 
     def test_update_current_time_not_playing(self):
-        req = self.rf.get("/")
-
-        req.session = {}
-        req.user = self.user
+        req = self.make_request(user=self.user)
 
         player = Player(req)
         player.update_current_time(600)
@@ -119,10 +113,7 @@ class PlayerTests(TestCase):
 
         log = AudioLogFactory(user=self.user, current_time=500)
 
-        req = self.rf.get("/")
-
-        req.session = {"player_episode": log.episode.id}
-        req.user = self.user
+        req = self.make_request(episode=log.episode, user=self.user)
 
         player = Player(req)
         player.update_current_time(600)
@@ -132,17 +123,15 @@ class PlayerTests(TestCase):
 
     def test_get_player_info_anonymous(self):
 
-        req = self.rf.get("/")
-        req.session = {}
-        req.user = AnonymousUser()
+        req = self.make_request()
+
         player = Player(req)
         self.assertEqual(player.get_player_info(), {})
 
     def test_get_player_info_user_empty(self):
 
-        req = self.rf.get("/")
-        req.session = {}
-        req.user = self.user
+        req = self.make_request(user=self.user)
+
         player = Player(req)
         self.assertEqual(player.get_player_info(), {})
 
@@ -150,9 +139,8 @@ class PlayerTests(TestCase):
 
         log = AudioLogFactory(user=self.user, current_time=100)
 
-        req = self.rf.get("/")
-        req.session = {"player_episode": log.episode.id}
-        req.user = self.user
+        req = self.make_request(episode=log.episode, user=self.user)
+
         player = Player(req)
 
         self.assertEqual(
