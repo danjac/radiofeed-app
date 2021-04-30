@@ -3,11 +3,12 @@ import json
 import pathlib
 import uuid
 
-import pytest
+from unittest.mock import patch
+
 import pytz
 import requests
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 from django.utils import timezone
 from pydantic import ValidationError
 
@@ -18,13 +19,6 @@ from ..factories import CategoryFactory, PodcastFactory
 from ..rss_parser import RssParserError, parse_rss
 from ..rss_parser.date_parser import parse_date
 from ..rss_parser.models import Audio, Feed, Item, get_categories_dict
-
-pytestmark = pytest.mark.django_db
-
-
-@pytest.fixture(scope="function")
-def clear_categories_cache():
-    get_categories_dict.cache_clear()
 
 
 class BaseMockResponse:
@@ -63,36 +57,19 @@ class MockResponse(BaseMockResponse):
         return json.loads(self.content)
 
 
-class TestParseDate:
-    def test_parse_date_if_valid(self):
-        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
-        assert parse_date("Fri, 19 Jun 2020 16:58:03 +0000") == dt
+class ParseRssTests(TestCase):
+    def tearDown(self):
+        get_categories_dict.cache_clear()
 
-    def test_parse_date_if_no_tz(self):
-        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
-        assert parse_date("Fri, 19 Jun 2020 16:58:03") == dt
-
-    def test_parse_date_if_invalid(self):
-        assert parse_date("Fri, 33 June 2020 16:58:03 +0000") is None
-
-
-class TestParseRss:
-    def test_parse_error(self, podcast, mocker, clear_categories_cache):
-        mocker.patch(
-            "requests.head", autospec=True, side_effect=requests.RequestException
-        )
-        with pytest.raises(RssParserError) as e:
-            parse_rss(podcast)
-            assert e.rss == podcast.rss
-
+    @patch("requests.head", autospec=True, side_effect=requests.RequestException)
+    def test_parse_error(self, *mocks):
+        podcast = PodcastFactory()
+        self.assertRaises(RssParserError, parse_rss, podcast)
         podcast.refresh_from_db()
-        assert podcast.num_retries == 1
+        self.assertEqual(podcast.num_retries, 1)
 
-    def test_parse(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-        mocker.patch(
-            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
-        )
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+    def test_parse(self, *mocks):
         [
             CategoryFactory(name=name)
             for name in (
@@ -109,26 +86,24 @@ class TestParseRss:
             last_updated=None,
             pub_date=None,
         )
-        assert parse_rss(podcast)
+        self.assertTrue(parse_rss(podcast))
         podcast.refresh_from_db()
 
-        assert podcast.last_updated
-        assert podcast.pub_date
+        self.assertTrue(podcast.last_updated)
+        self.assertTrue(podcast.pub_date)
 
-        assert podcast.title == "Mysterious Universe"
-        assert podcast.creators == "8th Kind"
-        assert podcast.etag
-        assert podcast.cover_image
-        assert podcast.extracted_text
-        assert podcast.categories.count() == 6
-        assert podcast.episode_set.count() == 20
+        self.assertTrue(podcast.etag)
+        self.assertTrue(podcast.cover_image)
+        self.assertTrue(podcast.extracted_text)
 
-    def test_parse_if_already_updated(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-        mocker.patch(
-            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
-        )
+        self.assertEqual(podcast.title, "Mysterious Universe")
+        self.assertEqual(podcast.creators, "8th Kind")
+        self.assertEqual(podcast.categories.count(), 6)
+        self.assertEqual(podcast.episode_set.count(), 20)
 
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
+    def test_parse_if_already_updated(self, *mocks):
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=timezone.now(),
@@ -136,19 +111,18 @@ class TestParseRss:
             pub_date=None,
         )
 
-        assert not parse_rss(podcast)
+        self.assertFalse(parse_rss(podcast))
         podcast.refresh_from_db()
 
-        assert podcast.pub_date is None
-        assert podcast.title != "Mysterious Universe"
-        assert podcast.episode_set.count() == 0
-        assert not podcast.cover_image
+        self.assertFalse(podcast.pub_date)
+        self.assertFalse(podcast.cover_image)
 
-    def test_parse_existing_episodes(self, mocker, clear_categories_cache):
-        mocker.patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-        mocker.patch(
-            "requests.get", autospec=True, return_value=MockResponse("rss_mock.xml")
-        )
+        self.assertNotEqual(podcast.title, "Mysterious Universe")
+        self.assertEqual(podcast.episode_set.count(), 0)
+
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
+    def test_parse_existing_episodes(self, *mocks):
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=None,
@@ -162,13 +136,14 @@ class TestParseRss:
         # check episode not present is deleted
         EpisodeFactory(podcast=podcast, guid="some-random")
 
-        assert len(parse_rss(podcast)) == 17
+        self.assertEqual(len(parse_rss(podcast)), 17)
         podcast.refresh_from_db()
-        assert podcast.episode_set.count() == 20
-        assert not Episode.objects.filter(guid="some-random").exists()
+
+        self.assertEqual(podcast.episode_set.count(), 20)
+        self.assertFalse(Episode.objects.filter(guid="some-random").exists())
 
 
-class TestAudioModel:
+class AudioModelTests(SimpleTestCase):
     def test_audio(self):
         Audio(
             type="audio/mpeg",
@@ -176,11 +151,12 @@ class TestAudioModel:
         )
 
     def test_not_audio(self):
-        with pytest.raises(ValidationError):
-            Audio(
-                type="text/xml",
-                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-            )
+        self.assertRaises(
+            ValidationError,
+            Audio,
+            type="text/xml",
+            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
+        )
 
 
 class FeedModelTests(SimpleTestCase):
@@ -295,3 +271,16 @@ class FeedModelTests(SimpleTestCase):
         )
 
         self.assertEqual(feed.link, "http://politicology.com")
+
+
+class ParseDateTests(SimpleTestCase):
+    def test_parse_date_if_valid(self):
+        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
+        self.assertEqual(parse_date("Fri, 19 Jun 2020 16:58:03 +0000"), dt)
+
+    def test_parse_date_if_no_tz(self):
+        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
+        self.assertEqual(parse_date("Fri, 19 Jun 2020 16:58:03"), dt)
+
+    def test_parse_date_if_invalid(self):
+        self.assertEqual(parse_date("Fri, 33 June 2020 16:58:03 +0000"), None)
