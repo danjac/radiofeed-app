@@ -7,7 +7,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-from audiotrails.shared.template.html import stripentities
+from audiotrails.shared.html import stripentities
 
 from .stopwords import STOPWORDS
 

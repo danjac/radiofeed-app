@@ -2,7 +2,7 @@ import http
 
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from audiotrails.episodes.factories import EpisodeFactory
@@ -213,12 +213,15 @@ class PodcastEpisodeListTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
+
+class PodcastEpisodeSearchTests(TransactionTestCase):
     def test_search(self):
-        EpisodeFactory(title="testing", podcast=self.podcast)
+        podcast = PodcastFactory()
+        EpisodeFactory(title="testing", podcast=podcast)
         resp = self.client.get(
             reverse(
                 "podcasts:podcast_episodes",
-                args=[self.podcast.id, self.podcast.slug],
+                args=[podcast.id, podcast.slug],
             ),
             {"q": "testing"},
             HTTP_TURBO_FRAME="episodes",
