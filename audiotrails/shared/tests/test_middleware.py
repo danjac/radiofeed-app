@@ -11,17 +11,16 @@ def get_response(request):
 class SearchMiddlewareTests(SimpleTestCase):
     def setUp(self):
         self.rf = RequestFactory()
+        self.mw = SearchMiddleware(get_response)
 
     def test_search(self):
-        mw = SearchMiddleware(get_response)
         req = self.rf.get("/", {"q": "testing"})
-        mw(req)
+        self.mw(req)
         assert req.search
         assert str(req.search) == "testing"
 
     def test_no_search(self):
-        mw = SearchMiddleware(get_response)
         req = self.rf.get("/")
-        mw(req)
+        self.mw(req)
         assert not req.search
         assert str(req.search) == ""
