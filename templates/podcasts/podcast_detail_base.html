@@ -8,14 +8,14 @@
 
 {% if has_recommendations and not search %}
 <nav class="mb-2 flex items-center">
-  <ul class="flex items-center text-sm pb-1 space-x-6">
+  <ul class="flex items-center text-sm space-x-6">
     {% active_link podcast.get_episodes_url as link %}
-    <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
+    <li class="{% if link.exact %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}">Episodes</a>
     </li>
     {% active_link podcast.get_recommendations_url as link %}
-    <li class="pb-1 {% if link.exact %} tab--active{% endif %}">
+    <li class="{% if link.exact %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}">Similar</a>
     </li>

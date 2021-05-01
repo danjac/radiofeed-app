@@ -7,17 +7,17 @@
 <nav class="mb-2 sm:flex justify-between">
   <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm mb-2 sm:mb-0 space-x-6">
     {% active_link 'podcasts:search_podcasts' as link %}
-    <li class="pb-1{% if link.match %} tab--active{% endif %}">
+    <li class="{% if link.match %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}?q={{ search }}">Podcasts</a>
     </li>
     {% active_link 'episodes:search_episodes' as link %}
-    <li class="pb-1{% if link.match %} tab--active{% endif %}">
+    <li class="{% if link.match %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}?q={{ search }}">Episodes</a>
     </li>
     {% active_link 'podcasts:search_itunes' as link %}
-    <li class="pb-1{% if link.match %} tab--active{% endif %}">
+    <li class="{% if link.match %} tab--active{% endif %}">
       <a class="link"
          href="{{ link.url }}?q={{ search }}">iTunes</a>
     </li>

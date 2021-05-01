@@ -2,7 +2,7 @@
 {% load podcasts %}
 
 {% block podcast_content %}
-{% if not search %}
+{% if show_podcast_detail %}
 <div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-2">
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
@@ -75,11 +75,11 @@
     <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
        class="link">Search in all podcasts</a>
     {% elif newest_first %}
-    <a href="{{ request.path }}"
-       class="link">Newest First</a>
-    {% else %}
     <a href="{{ request.path }}?ordering=asc"
        class="link">Oldest First</a>
+    {% else %}
+    <a href="{{ request.path }}?ordering=desc"
+       class="link">Newest First</a>
     {% endif %}
   </div>
 
