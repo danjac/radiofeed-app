@@ -30,7 +30,6 @@ def index(request):
 
 
 @require_POST
-@turbo_stream_response
 def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 

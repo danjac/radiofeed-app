@@ -7,7 +7,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
-from turbo_response import TurboFrame, TurboStream
 
 from audiotrails.episodes.views import render_episode_list_response
 from audiotrails.shared.pagination import render_paginated_response
@@ -237,20 +236,13 @@ def podcast_cover_image(request, podcast_id):
 def preview(request, podcast_id):
     podcast = get_podcast_or_404(request, podcast_id)
 
-    return (
-        (
-            TurboFrame(request.turbo.frame)
-            .template(
-                "podcasts/_preview.html",
-                {
-                    "podcast": podcast,
-                    "is_following": podcast.is_following(request.user),
-                },
-            )
-            .response(request)
-        )
-        if request.turbo.frame
-        else redirect(podcast.get_absolute_url())
+    return TemplateResponse(
+        request,
+        "podcasts/_preview.html",
+        {
+            "podcast": podcast,
+            "is_following": podcast.is_following(request.user),
+        },
     )
 
 
@@ -302,13 +294,10 @@ def get_podcast_detail_context(
 
 def render_follow_response(request, podcast, is_following):
 
-    return (
-        TurboStream(podcast.dom.follow_toggle)
-        .replace.template(
-            "podcasts/_follow_toggle.html",
-            {"podcast": podcast, "is_following": is_following},
-        )
-        .response(request=request)
+    return TemplateResponse(
+        request,
+        "podcasts/_follow_toggle.html",
+        {"podcast": podcast, "is_following": is_following},
     )
 
 

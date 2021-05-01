@@ -19,7 +19,6 @@ input[type='search']::-webkit-search-results-decoration {
 /* hack to handle mobile scrolling issues
   with URL bar causing resize */
 
-/*
 html {
   overflow: hidden;
 }
@@ -27,5 +26,4 @@ body {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
-*/
 @tailwind utilities;

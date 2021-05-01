@@ -2,11 +2,12 @@
 <div class="relative">
   <div class="absolute z-50 top-0 shadow-xl w-full space-y-2">
     {% for message in messages %}
-    <div data-controller="notification"
-         data-notification-timeout-value="3000"
-         class="flex justify-between items-center p-2 message {{ message.tags }}">
+    <div class="flex justify-between items-center p-2 message {{ message.tags }}"
+         x-data="{show: true}"
+         x-show="show"
+         x-init="setTimeout(() => { show = false }, 3000)">
       <div class="mx-auto text-sm md:text-base font-semibold">{{ message }}</div>
-      <button data-action="notification#remove"
+      <button @click="show=false"
               class="float-right focus:outline-none">
         {% icon "x_circle" css_class="h-6 w-6" %}
       </button>

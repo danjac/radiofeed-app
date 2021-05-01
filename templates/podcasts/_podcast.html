@@ -19,9 +19,10 @@
     </h2>
     <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
       <a class="link"
+         title="Preview for {{ podcast.title|stripentities }}"
          href="{{ podcast.get_preview_url }}"
-         data-turbo-frame="modal"
-         title="Preview for {{ podcast.title|stripentities }}">
+         hx-get="{{ podcast.get_preview_url }}"
+         hx-target="#modal">
         {% icon "ellipsis" css_class="w-6 h-6" %}
       </a>
 

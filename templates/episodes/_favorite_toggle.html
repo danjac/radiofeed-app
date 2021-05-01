@@ -1,6 +1,8 @@
 <form method="post"
       id="{{ episode.dom.favorite_toggle }}"
-      action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
+      hx-post="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}"
+      hx-target=""
+      >
   {% csrf_token %}
   {% if is_favorited %}
   {% button "Favorites" icon="trash" type="secondary" title="Remove episode from your Favorites" accesskey="v" %}

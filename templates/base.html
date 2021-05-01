@@ -30,6 +30,7 @@
 
 <body {% block bodyattrs %}
       class="h-screen container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
+      hx-boost="true"
       x-data="{sidebar: false}"
       {% endblock %}>
 
@@ -40,8 +41,7 @@
   {% block layout %}
 
   <div class="min-h-full mx-auto flex relative mt-2">
-    <aside
-           class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
+    <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
            :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
@@ -70,6 +70,11 @@
   {% include "episodes/_player.html" %}
   {% endblock %}
   {% include "_modal.html" %}
+  <script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    })
+  </script>
 </body>
 
 </html>
