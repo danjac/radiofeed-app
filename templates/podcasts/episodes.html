@@ -3,7 +3,7 @@
 
 {% block podcast_content %}
 {% if show_podcast_detail %}
-<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-2">
+<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3">
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
     {{ podcast.creators }}
@@ -68,9 +68,9 @@
 </div>
 {% endif %}
 
-<div class="sm:flex items-center mb-2 justify-between">
+<div class="sm:flex items-center mb-3 justify-between">
 
-  <div class="flex justify-center sm:justify-start items-center text-sm mb-2 sm:mb-0">
+  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0">
     {% if search %}
     <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
        class="link">Search in all podcasts</a>

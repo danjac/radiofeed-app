@@ -11,7 +11,7 @@
 {% block modal_content %}
 {% with podcast_url=podcast.get_absolute_url %}
 
-<div class="flex items-center w-full space-x-3 mb-2">
+<div class="flex items-center w-full space-x-3 mb-3">
   <div>
     <a href="{{ podcast_url }}">
       {% cover_image podcast lazy=False size="20" %}
@@ -35,7 +35,7 @@
 
 </div>
 {% if podcast.explicit %}
-<div class="text-sm font-semibold mb-2">
+<div class="text-sm font-semibold mb-3">
   This podcast may contain explicit content.
 </div>
 {% endif %}

@@ -1,6 +1,6 @@
 {% load podcasts %}
 {% with podcast_url=podcast.get_absolute_url %}
-<section class="flex items-center space-x-2 p-1 border mb-2 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
+<section class="flex items-center space-x-2 p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
          id="{{ podcast.dom.podcast }}"
          {{ attrs|htmlattrs }}>
 

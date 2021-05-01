@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="mb-2 text-sm flex justify-center sm:justify-start space-x-1">
+<div class="mb-3 text-sm flex justify-center sm:justify-start space-x-1">
   <a href="{% url 'podcasts:categories' %}"
      class="link">Discover</a>
   {% if category.parent %}
@@ -18,7 +18,7 @@
   <span class="text-gray-600 dark:text-gray-300">iTunes</span>
 </div>
 
-<h1 class="font-bold mb-2 flex justify-center sm:justify-start text-center">
+<h1 class="font-bold mb-3 flex justify-center sm:justify-start text-center">
   Top-Rated {{ category.name }} Podcasts on iTunes
 </h1>
 
