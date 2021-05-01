@@ -111,45 +111,53 @@ class EpisodePcCompleteModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
+        cls.episode = EpisodeFactory(duration="100")
 
     def test_get_pc_complete_without_current_time_attr(self):
-        episode = EpisodeFactory(duration="100")
         AudioLogFactory(
-            user=self.user, current_time=50, updated=timezone.now(), episode=episode
+            user=self.user,
+            current_time=50,
+            updated=timezone.now(),
+            episode=self.episode,
         )
         self.assertEqual(Episode.objects.first().get_pc_completed(), 0)
 
     def test_get_pc_complete(self):
-        episode = EpisodeFactory(duration="100")
         AudioLogFactory(
-            user=self.user, current_time=50, updated=timezone.now(), episode=episode
+            user=self.user,
+            current_time=50,
+            updated=timezone.now(),
+            episode=self.episode,
         )
         self.assertEqual(
             Episode.objects.with_current_time(self.user).first().get_pc_completed(), 50
         )
 
     def test_get_pc_complete_zero_current_time(self):
-        episode = EpisodeFactory(duration="100")
         AudioLogFactory(
-            user=self.user, current_time=0, updated=timezone.now(), episode=episode
+            user=self.user, current_time=0, updated=timezone.now(), episode=self.episode
         )
         self.assertEqual(
             Episode.objects.with_current_time(self.user).first().get_pc_completed(), 0
         )
 
     def test_get_pc_complete_zero_duration(self):
-        episode = EpisodeFactory(duration="")
         AudioLogFactory(
-            user=self.user, current_time=0, updated=timezone.now(), episode=episode
+            user=self.user,
+            current_time=0,
+            updated=timezone.now(),
+            episode=EpisodeFactory(duration=""),
         )
         self.assertEqual(
             Episode.objects.with_current_time(self.user).first().get_pc_completed(), 0
         )
 
     def test_get_pc_complete_gt_100(self):
-        episode = EpisodeFactory(duration="100")
         AudioLogFactory(
-            user=self.user, current_time=120, updated=timezone.now(), episode=episode
+            user=self.user,
+            current_time=120,
+            updated=timezone.now(),
+            episode=self.episode,
         )
         self.assertEqual(
             Episode.objects.with_current_time(self.user).first().get_pc_completed(), 100
@@ -157,10 +165,9 @@ class EpisodePcCompleteModelTests(TestCase):
 
     def test_get_pc_complete_marked_complete(self):
         now = timezone.now()
-        episode = EpisodeFactory(duration="100")
         user = UserFactory()
         AudioLogFactory(
-            user=user, current_time=50, updated=now, completed=now, episode=episode
+            user=user, current_time=50, updated=now, completed=now, episode=self.episode
         )
         self.assertEqual(
             Episode.objects.with_current_time(user).first().get_pc_completed(), 100
@@ -168,15 +175,16 @@ class EpisodePcCompleteModelTests(TestCase):
 
     def test_get_pc_complete_not_played(self):
         user = UserFactory()
-        EpisodeFactory(duration="100")
         self.assertEqual(
             Episode.objects.with_current_time(user).first().get_pc_completed(), 0
         )
 
     def test_get_pc_complete_anonymous(self):
-        episode = EpisodeFactory(duration="100")
         AudioLogFactory(
-            user=UserFactory(), current_time=50, updated=timezone.now(), episode=episode
+            user=UserFactory(),
+            current_time=50,
+            updated=timezone.now(),
+            episode=self.episode,
         )
         self.assertEqual(
             Episode.objects.with_current_time(AnonymousUser())
