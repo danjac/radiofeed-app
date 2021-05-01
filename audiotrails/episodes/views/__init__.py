@@ -3,7 +3,6 @@ from django.db.models import OuterRef, Subquery
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from turbo_response import TurboFrame
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.pagination import render_paginated_response
@@ -88,15 +87,10 @@ def preview(request, episode_id):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "episodes/_preview.html",
-            get_episode_detail_context(request, episode),
-        )
-        .response(request)
-        if request.turbo.frame
-        else redirect(episode.get_absolute_url())
+    return TemplateResponse(
+        request,
+        "episodes/_preview.html",
+        get_episode_detail_context(request, episode),
     )
 
 

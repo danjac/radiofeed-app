@@ -1,6 +1,6 @@
 {% load cache %}
 {% cache 600 sidebar request.user.username request.path %}
-<div class="flex justify-center sm:hidden mb-3">
+<div class="flex justify-center sm:hidden mb-3" hx-boost="true">
 
   <form method="get"
         action="{% url 'podcasts:search_podcasts' %}"

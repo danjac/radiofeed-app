@@ -222,18 +222,15 @@ def itunes_category(request, category_id):
 def podcast_cover_image(request, podcast_id):
     """Lazy-loaded podcast image"""
     podcast = get_podcast_or_404(request, podcast_id)
-    return (
-        TurboFrame(request.turbo.frame)
-        .template(
-            "podcasts/_cover_image.html",
-            {
-                "podcast": podcast,
-                "lazy": False,
-                "cover_image": podcast.get_cover_image_thumbnail(),
-                "img_size": request.GET.get("size", "16"),
-            },
-        )
-        .response(request)
+    return TemplateResponse(
+        request,
+        "podcasts/_cover_image.html",
+        {
+            "podcast": podcast,
+            "lazy": False,
+            "cover_image": podcast.get_cover_image_thumbnail(),
+            "img_size": request.GET.get("size", "16"),
+        },
     )
 
 

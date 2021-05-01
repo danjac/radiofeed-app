@@ -1,10 +1,10 @@
 {% load static pagination %}
 {% block results %}{% endblock %}
 {% if page_obj.has_next %}
-<turbo-frame id="page-{{ page_obj.next_page_number }}"
-             src="{% pagination_url page_obj.next_page_number %}"
-             target="_top"
-             loading="lazy">
+<div id="page-{{ page_obj.next_page_number }}"
+             hx-get="{% pagination_url page_obj.next_page_number %}"
+             hx-trigger="revealed"
+             hx-swap="outerHTML">
   {% include "pagination/_loader.html" %}
-</turbo-frame>
+</div>
 {% endif %}

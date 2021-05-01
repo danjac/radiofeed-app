@@ -26,9 +26,10 @@
 
               <div>
                 <a class="link"
-                   href="{{ episode.get_preview_url }}"
                    title="Preview for {{ episode.title }}"
-                   data-turbo-frame="modal">
+                   href="{{ episode.get_preview_url }}"
+                   hx-get="{{ episode.get_preview_url }}"
+                   hx-target="#modal">
                   {% icon "ellipsis" css_class="w-6 h-6" %}
                 </a>
               </div>

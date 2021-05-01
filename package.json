@@ -20,8 +20,8 @@
     "tailwindcss": "^2.1.2"
   },
   "dependencies": {
-    "@hotwired/turbo": "^7.0.0-beta.5",
-    "sortablejs": "^1.13.0",
-    "stimulus": "^2.0.0"
+    "alpinejs": "^2.8.2",
+    "htmx.org": "^1.3.3",
+    "sortablejs": "^1.13.0"
   }
 }

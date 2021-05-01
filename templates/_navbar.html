@@ -1,19 +1,19 @@
 {% load static %}
 {% url 'episodes:index' as home_page_url %}
-<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
+<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow"
+        hx-boost="true">
   <div class="flex items-center justify-between p-2">
 
     <div class="flex items-center flex-shrink-0 mr-6">
       <button class="lg:hidden mr-3"
               title="Toggle Menu"
-              data-action="toggle#toggle"
-              data-toggle-target="item">
+              x-on:click="sidebar = !sidebar">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
       <button class="hidden lg:hidden mr-3"
               data-action="toggle#toggle"
               title="Toggle Menu"
-              data-toggle-target="item">
+              x-on:click="sidebar = !sidebar">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
       <a href="{{ home_page_url }}"

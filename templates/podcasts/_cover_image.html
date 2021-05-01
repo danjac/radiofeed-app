@@ -1,9 +1,11 @@
 {% load static %}
 {% spaceless %}
 {% if lazy %}
-<turbo-frame id="{{ podcast.dom.cover_image }}"
-             loading="lazy"
-             src="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
+
+<div id="{{ podcast.dom.cover_image }}"
+     hx-trigger="revealed"
+     hx-swap="outerHTML"
+     hx-get="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}
   <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}{% if lazy %} filter blur-sm{% endif %}"
        title="{{ podcast.title|stripentities }}"
@@ -19,6 +21,6 @@
        {% endif %}
        {{ attrs|htmlattrs }} />
   {% if lazy %}
-</turbo-frame>
+</div>
 {% endif %}
 {% endspaceless %}

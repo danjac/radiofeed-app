@@ -3,7 +3,6 @@ from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
-from turbo_response import TurboFrame
 
 
 def paginate(
@@ -30,17 +29,18 @@ def render_paginated_response(
     template_name,
     pagination_template_name,
     extra_context=None,
-    **pagination_kwargs
+    **pagination_kwargs,
 ):
+    page_obj = paginate(request, queryset, **pagination_kwargs)
     context = {
-        "page_obj": paginate(request, queryset, **pagination_kwargs),
+        "page_obj": page_obj,
         "pagination_template": pagination_template_name,
         **(extra_context or {}),
     }
-    if request.turbo.frame:
-        return (
-            TurboFrame(request.turbo.frame)
-            .template(pagination_template_name, context)
-            .response(request)
-        )
+    if (
+        "HX-Request" in request.headers
+        and request.headers.get("HX-Target") == f"page-{page_obj.number}"
+    ):
+        template_name = pagination_template_name
+
     return TemplateResponse(request, template_name, context)
