@@ -1,3 +1,3 @@
 .tab--active {
-  @apply border-blue-500 border-b-2 font-bold;
+  @apply text-blue-600 font-bold dark:text-blue-400;
 }
