@@ -6,7 +6,7 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<h1 class="font-bold mb-2 text-lg flex flex-wrap">Settings for {{ user.username }}</h1>
+<h1 class="font-bold mb-2 flex flex-wrap">Settings for {{ user.username }}</h1>
 <nav class="mb-2">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
     {% active_link 'user_preferences' as link %}

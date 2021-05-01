@@ -3,22 +3,22 @@
 {% block signup_cta %}{% endblock %}
 {% block content %}
 
-<h1 class="font-bold mb-2 text-lg flex flex-wrap">About this Site</h1>
+<h1 class="font-bold mb-2 flex flex-wrap">About this Site</h1>
 
 <nav class="mb-2">
   <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
     {% active_link 'about:credits' as link %}
-    <li class="pb-1{% if link.exact %} tab--active{% endif %}">
+    <li class="{% if link.exact %}tab--active{% endif %}">
       <a class="hover:text-blue-500"
          href="{{ link.url }}">Credits</a>
     </li>
     {% active_link 'about:shortcuts' as link %}
-    <li class="pb-1{% if link.exact %} tab--active{% endif %}">
+    <li class="{% if link.exact %}tab--active{% endif %}">
       <a class="hover:text-blue-500"
          href="{{ link.url }}">Shortcuts</a>
     </li>
     {% active_link 'about:privacy' as link %}
-    <li class="pb-1{% if link.exact %} tab--active{% endif %}">
+    <li class="{% if link.exact %}tab--active{% endif %}">
       <a class="hover:text-blue-500"
          href="{{ link.url }}">Privacy</a>
     </li>

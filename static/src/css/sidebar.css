@@ -7,5 +7,5 @@
 }
 
 .sidebar .sidebar--active {
-  @apply text-blue-600 text-lg font-bold dark:text-blue-400;
+  @apply text-blue-600 font-bold dark:text-blue-400;
 }
