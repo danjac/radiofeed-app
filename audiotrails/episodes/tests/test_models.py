@@ -59,8 +59,7 @@ class EpisodeManagerTests(TestCase):
         self.assertEqual(Episode.objects.search("testing").count(), 1)
 
 
-class SimpleEpisodeModelTests(SimpleTestCase):
-    # no db required
+class EpisodeDurationTests(SimpleTestCase):
     def test_duration_in_seconds_if_empty_or_none(self):
         self.assertEqual(Episode(duration=None).get_duration_in_seconds(), 0)
         self.assertEqual(Episode(duration="").get_duration_in_seconds(), 0)
@@ -82,13 +81,6 @@ class SimpleEpisodeModelTests(SimpleTestCase):
     def test_duration_in_seconds_seconds_only(self):
         self.assertEqual(Episode(duration="40").get_duration_in_seconds(), 40)
 
-    def test_slug(self):
-        episode = Episode(title="Testing")
-        self.assertEqual(episode.slug, "testing")
-
-    def test_slug_if_title_empty(self):
-        self.assertEqual(Episode().slug, "episode")
-
     def test_get_duration_in_seconds_if_empty(self):
         self.assertEqual(Episode().get_duration_in_seconds(), 0)
         self.assertEqual(Episode(duration="").get_duration_in_seconds(), 0)
@@ -104,6 +96,15 @@ class SimpleEpisodeModelTests(SimpleTestCase):
 
     def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
         self.assertEqual(Episode(duration="2:30:30").get_duration_in_seconds(), 9030)
+
+
+class EpisodeSlugTests(SimpleTestCase):
+    def test_slug(self):
+        episode = Episode(title="Testing")
+        self.assertEqual(episode.slug, "testing")
+
+    def test_slug_if_title_empty(self):
+        self.assertEqual(Episode().slug, "episode")
 
 
 class EpisodePcCompleteModelTests(TestCase):
@@ -185,7 +186,7 @@ class EpisodePcCompleteModelTests(TestCase):
         )
 
 
-class EpisodeInstanceModelTests(TestCase):
+class EpisodeModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -196,6 +197,15 @@ class EpisodeInstanceModelTests(TestCase):
         self.assertEqual(data["title"], self.episode.title)
         self.assertEqual(data["album"], self.episode.podcast.title)
         self.assertEqual(data["artist"], self.episode.podcast.creators)
+
+    def test_get_opengraph_data(self):
+        req = RequestFactory().get("/")
+        req.site = Site.objects.get_current()
+        data = self.episode.get_opengraph_data(req)
+        self.assertTrue(self.episode.title in data["title"])
+        self.assertEqual(
+            data["url"], "http://testserver" + self.episode.get_absolute_url()
+        )
 
     def test_has_next_previous_episode(self):
         self.assertEqual(self.episode.get_next_episode(), None)
@@ -238,15 +248,6 @@ class EpisodeInstanceModelTests(TestCase):
     def is_queued_true(self):
         item = QueueItemFactory(user=self.user, episode=self.episode)
         self.assertTrue(item.episode.is_queued(item.user))
-
-    def test_get_opengraph_data(self):
-        req = RequestFactory().get("/")
-        req.site = Site.objects.get_current()
-        data = self.episode.get_opengraph_data(req)
-        self.assertTrue(self.episode.title in data["title"])
-        self.assertEqual(
-            data["url"], "http://testserver" + self.episode.get_absolute_url()
-        )
 
 
 class FavoriteManagerTests(TestCase):
