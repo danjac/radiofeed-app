@@ -1,23 +1,37 @@
 import 'alpinejs';
 import 'htmx.org';
 
-//https://github.com/bigskysoftware/htmx/issues/34
-const { htmx } = window;
+import Player from './player';
 
-htmx.defineExtension('intersect', {
-  onEvent(name, event) {
-    if (name === 'htmx:afterProcessNode') {
-      const { elt } = event.detail;
+window.App = {
+  init(htmx, { csrfToken }) {
+    this.csrfToken = csrfToken;
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            htmx.trigger(elt, 'enter');
-            observer.disconnect();
-          }
-        });
-      });
-      observer.observe(elt);
-    }
+    htmx.defineExtension('intersect', {
+      onEvent(name, event) {
+        if (name === 'htmx:afterProcessNode') {
+          const { elt } = event.detail;
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                htmx.trigger(elt, 'enter');
+                observer.disconnect();
+              }
+            });
+          });
+          observer.observe(elt);
+        }
+      },
+    });
+
+    document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = this.csrfToken;
+    });
+
+    return this;
   },
-});
+  player(options) {
+    return Player(htmx, { csrfToken: this.csrfToken, ...options });
+  },
+};

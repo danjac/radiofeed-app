@@ -1,39 +1,35 @@
 {% load player %}
 {% get_player as player %}
+{% if player %}
+{{ player|json_script:"player-info" }}
+{% endif %}
 <div id="player"
+     x-data="app.player({
+                urls: {
+                closePlayer: '{% url 'episodes:close_player' %}',
+                timeUpdate: '{% url 'episodes:player_update_current_time' %}',
+                }
+             })"
+     x-init="initialize()"
      hx-preserve="true"
-     x-data="playerData()"
-     @close-player="console.log('CLOSEPLAYER')"
-     @open-player="
-        console.log('open player', $event.detail)
-    ">
-  {% if player %}
-  {{ player|json_script:"player-info" }}
-  {% endif %}
-  <script>
-    const defaults = {
-      episode: null,
-      podcast: null,
-      currentTime: 0,
-      isPlaying: false,
-      isPaused: false,
-    };
-    function playerData() {
-      const playerInfoTag = document.getElementById('player-info');
-      if (playerInfoTag) {
-        return {
-          ...defaults,
-          ...JSON.parse(playerInfoTag.textContent)
-        };
-      }
-      return defaults;
-    }
-  </script>
+     @close-player.window="closePlayer()"
+     @open-player.window="openPlayer($event)">
   <template x-if="episode">
-    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold">
+    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
+         id="player-controls">
       <audio x-ref="audio"
              :src="episode.mediaUrl"
              :current-time="currentTime"
+             @play="resumed()"
+             @pause="paused()"
+             @error="waiting()"
+             @suspend="waiting()"
+             @stalled="waiting()"
+             @canplaythrough="active()"
+             @canplay="active()"
+             @playing="active()"
+             @ended="ended()"
+             @timeupdate="timeUpdate()"
              preload="metadata">
       </audio>
       <div class="relative space-y-1">
@@ -66,27 +62,23 @@
                 <button title="Pause"
                         data-toggle-target="item"
                         x-if="isPlaying"
-                        x-ref="pause"
+                        @click="$refs.audio.pause()"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "pause" css_class="h-8 w-8" %}
                 </button>
 
                 <button title="Play"
                         x-if="isPaused"
-                        x-ref="play"
+                        @click="$refs.audio.play()"
                         class="focus:outline-none hidden hover:text-blue-600 mr-1">
                   {% icon "play" css_class="h-8 w-8" %}
                 </button>
 
-                <form class="flex items-center"
-                      method="POST"
-                      action="{% url 'episodes:close_player' %}">
-                  {% csrf_token %}
-                  <button title="Stop"
-                          class="focus:outline-none hover:text-blue-500 mr-1">
-                    {% icon "stop" css_class="h-8 w-8" %}
-                  </button>
-                </form>
+                <button title="Stop"
+                        @click="$dispatch('close-player')"
+                        class="focus:outline-none hover:text-blue-500 mr-1">
+                  {% icon "stop" css_class="h-8 w-8" %}
+                </button>
 
               </div>
 
@@ -131,5 +123,6 @@
           </div>
         </div>
       </div>
+    </div>
   </template>
 </div>

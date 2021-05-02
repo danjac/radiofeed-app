@@ -1,14 +1,10 @@
 <div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}, csrfToken: '{{ csrf_token }}'}"
-     @close-player="isPlaying = false"
-     @open-player="isPlaying = $event.detail.episode.id === {{ episode.id }}">
+     @close-player.window="isPlaying = false"
+     @open-player.window="isPlaying = $event.detail.episode.id === {{ episode.id }}">
   <button class="btn btn-secondary flex items-center"
           title="Close Player"
           x-show="isPlaying"
           @click="
-            fetch('{% url 'episodes:close_player' %}', {
-                  method: 'POST',
-                  headers: {'X-CSRFToken': csrfToken}
-            })
             $dispatch('close-player');
             $dispatch('close-modal');">
     {% icon "stop" css_class="btn-icon mr-2" %}
