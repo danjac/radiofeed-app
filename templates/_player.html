@@ -1,23 +1,21 @@
 {% load player %}
 {% get_player as player %}
-{% if player %}
-{{ player|json_script:"player-info" }}
-{% endif %}
 <div id="player"
      x-data="app.player({
                 urls: {
-                closePlayer: '{% url 'episodes:close_player' %}',
-                timeUpdate: '{% url 'episodes:player_update_current_time' %}',
+                  closePlayer: '{% url 'episodes:close_player' %}',
+                  playNextEpisode: '{% url 'episodes:play_next_episode' %}',
+                  timeUpdate: '{% url 'episodes:player_update_current_time' %}',
                 }
              })"
      x-init="initialize()"
      hx-preserve="true"
      @close-player.window="closePlayer()"
-     @open-player.window="openPlayer($event)">
+     @play-episode.window="playEpisode($event)">
   <template x-if="episode">
     <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
          id="player-controls"
-         :class="{'player--active': isPlaying && !isWaiting, 'player--inactive': isWaiting || isPaused}">
+         :class="{'player--active': isPlaying, 'player--inactive': !isPlaying}">
       <div class="relative space-y-1">
 
         <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
@@ -114,3 +112,6 @@
     </div>
   </template>
 </div>
+{% if player %}
+{{ player|json_script:"player-info" }}
+{% endif %}

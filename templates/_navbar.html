@@ -51,7 +51,9 @@
     {% if user.is_authenticated %}
     <div class="text-sm md:text-base flex items-center space-x-3">
       <button class="text-white hover:text-blue-500"
-              hx-post="{% url 'account_logout' %}" hx-target="body">Logout</button>
+              hx-post="{% url 'account_logout' %}"
+              hx-target="body"
+              @click="$dispatch('close-player')">Logout</button>
       </form>
     </div>
     {% else %}

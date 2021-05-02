@@ -56,7 +56,6 @@ export default function (htmx, options) {
         this.startPlayer(this.episode.mediaUrl);
       }
       this.$watch('episode', (value) => {
-        console.log('episode???', value);
         this.stopPlayer();
         if (value) {
           this.startPlayer(value.mediaUrl);
@@ -69,12 +68,23 @@ export default function (htmx, options) {
         this.updateProgressBar(this.duration, value);
       });
     },
-    openPlayer(event) {
-      if (event) {
-        const { episode, podcast, currentTime } = event.detail;
+    playEpisode($event) {
+      const { url } = $event.detail;
+      doFetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          this.openPlayer(data);
+        });
+    },
+    openPlayer(data) {
+      if (data) {
+        const { episode, podcast, currentTime } = data;
         this.episode = episode;
         this.podcast = podcast;
         this.currentTime = currentTime;
+        document.dispatchEvent(
+          new CustomEvent('open-player', { detail: data, bubbles: true })
+        );
       }
       this.$nextTick(() => {
         // re-hook up any htmx events
@@ -124,10 +134,15 @@ export default function (htmx, options) {
       this.isWaiting = false;
     },
     ended() {
-      console.log('ended');
-      // tbd: fetch new episode
-      // re queueitem: open-player should disable/fadeout item if played
-      this.$dispatch('close-player');
+      doFetch(urls.playNextEpisode)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data) {
+            this.openPlayer(data);
+          } else {
+            document.dispatchEvent(new CustomEvent('close-player'), { bubbles: true });
+          }
+        });
     },
     startPlayer(mediaUrl) {
       this.audio = new Audio(mediaUrl);

@@ -14,15 +14,9 @@
           title="Open Player"
           x-show="!isPlaying"
           @click="
-                fetch('{% url 'episodes:start_player' episode.id %}', {
-                    method: 'POST',
-                    headers: {'X-CSRFToken': csrfToken}
-                })
-               .then(response => response.json())
-               .then(data => {
-                  $dispatch('open-player', data);
-                  $dispatch('close-modal')
-               });">
+            $dispatch('play-episode', { url: '{% url 'episodes:start_player' episode.id %}'});
+            $dispatch('close-modal');
+          ">
     {% icon "play" css_class="btn-icon mr-2" %}
     Play Episode
   </button>
