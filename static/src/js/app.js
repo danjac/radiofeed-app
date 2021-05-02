@@ -1,5 +1,6 @@
 import 'alpinejs';
 import 'htmx.org';
+import 'sortablejs';
 
 import Player from './player';
 

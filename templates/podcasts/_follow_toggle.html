@@ -1,8 +1,6 @@
 <form method="post"
       id="{{ podcast.dom.follow_toggle }}"
-      hx-swap="outerHTML"
-      hx-post="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}"
-      @submit="$dispatch('close-modal')">
+      hx-post="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}">
   {% csrf_token %}
   {% if is_following %}
   {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" accesskey="w" %}
