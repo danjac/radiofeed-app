@@ -9,8 +9,6 @@ from django.http import (
     JsonResponse,
 )
 from django.views.decorators.http import require_POST
-from turbo_response import TurboStream
-from turbo_response.decorators import turbo_stream_response
 
 from ..models import QueueItem
 from . import get_episode_or_404
@@ -38,10 +36,6 @@ def start_player(request, episode_id):
     if request.user.is_anonymous:
         return redirect_to_login(episode.get_absolute_url())
 
-    # fire "close-player" event with episode ID
-    # this is handled by alpine custom handler
-    # current_episode = request.player.stop_episode()
-
     return JsonResponse(request.player.start_episode(episode).to_json())
 
 
@@ -67,17 +61,9 @@ def play_next_episode(request):
         .order_by("position")
         .first()
     ):
-        next_episode = next_item.episode
+        return JsonResponse(request.player.start_episode(next_item.episode).to_json())
 
-    else:
-        next_episode = None
-
-    return render_player_response(
-        request,
-        next_episode=next_episode,
-        current_episode=request.player.stop_episode(mark_completed=True),
-        current_time=request.player.start_episode(next_episode),
-    )
+    return JsonResponse({})
 
 
 @require_POST
@@ -91,49 +77,3 @@ def player_update_current_time(request):
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     except (KeyError, ValueError):
         return HttpResponseBadRequest("missing or invalid data")
-
-
-def render_player_toggle(request, episode, is_playing):
-    return (
-        TurboStream(episode.dom.player_toggle)
-        .replace.template(
-            "episodes/_player_toggle.html",
-            {
-                "episode": episode,
-                "is_playing": is_playing,
-            },
-        )
-        .render(request=request)
-    )
-
-
-@turbo_stream_response
-def render_player_response(
-    request, *, current_episode=None, next_episode=None, current_time=0
-):
-
-    if request.POST.get("is_modal"):
-        yield TurboStream("modal").replace.template("_modal.html").render()
-
-    if current_episode:
-        yield render_player_toggle(request, current_episode, False)
-        # yield render_remove_audio_log_btn(request, current_episode, False)
-
-    if next_episode:
-        # yield render_remove_from_queue(request, next_episode)
-        # yield render_queue_toggle(request, next_episode, False)
-        yield render_player_toggle(request, next_episode, True)
-        # yield render_remove_audio_log_btn(request, next_episode, True)
-
-    yield TurboStream("player").replace.template(
-        "episodes/_player.html",
-        {
-            "player": {
-                "episode": next_episode,
-                "current_time": current_time,
-                "is_new_episode": True,
-            }
-            if next_episode
-            else {},
-        },
-    ).render(request=request)

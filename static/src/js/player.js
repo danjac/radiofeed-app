@@ -48,8 +48,6 @@ export default function (htmx, options) {
     counter: '-00:00:00',
   };
 
-  const playerInfoTag = document.getElementById('player-info');
-
   const instance = {
     ...defaults,
     initialize() {
@@ -127,6 +125,8 @@ export default function (htmx, options) {
     },
     ended() {
       console.log('ended');
+      // tbd: fetch new episode
+      // re queueitem: open-player should disable/fadeout item if played
       this.$dispatch('close-player');
     },
     startPlayer(mediaUrl) {
@@ -193,6 +193,8 @@ export default function (htmx, options) {
       return currentPosition;
     },
   };
+
+  const playerInfoTag = document.getElementById('player-info');
 
   if (playerInfoTag) {
     return {

@@ -1,5 +1,11 @@
 {% extends "episodes/_episode.html" %}
-{% block extra_attrs %}data-drag-target="draggable" data-id={{ item.id }}{% endblock %}
+{% block extra_attrs %}
+data-drag-target="draggable"
+data-id={{ item.id }}
+x-data="{show: true}"
+x-show="show"
+@open-player.window="show=$event.detail.episode.id !== {{ episode.id }}"
+{% endblock %}
 {% block extra_buttons %}
 <div class="flex items-center">
   <button class="btn btn-secondary flex items-center p-2 handle border-none"

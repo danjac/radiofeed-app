@@ -1,6 +1,6 @@
 from django.utils import timezone
 
-from .models import AudioLog
+from .models import AudioLog, QueueItem
 
 
 class Player:
@@ -20,6 +20,8 @@ class Player:
             return 0
 
         self.request.session[self.session_key] = episode.id
+
+        QueueItem.objects.filter(user=self.request.user, episode=episode).delete()
 
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
