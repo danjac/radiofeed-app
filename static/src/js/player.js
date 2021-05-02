@@ -54,14 +54,14 @@ export default function (htmx, options) {
     ...defaults,
     initialize() {
       if (this.episode) {
-        console.log('we have episode', this.episode);
-        this.startAudio();
+        console.log('we have episode', this.episode.mediaUrl);
+        this.startPlayer(this.episode.mediaUrl);
       }
       this.$watch('episode', (value) => {
         console.log('episode???', value);
-        this.stopAudio();
+        this.stopPlayer();
         if (value) {
-          this.startAudio();
+          this.startPlayer(value.mediaUrl);
         }
       });
       this.$watch('duration', (value) => {
@@ -129,16 +129,21 @@ export default function (htmx, options) {
       console.log('ended');
       this.$dispatch('close-player');
     },
-    startAudio() {
-      this.audio = new Audio(this.episode.mediaUrl);
+    startPlayer(mediaUrl) {
+      this.audio = new Audio(mediaUrl);
       this.audio.currentTime = this.currentTime;
+
       const events = this.getAudioEvents();
       Object.keys(events).forEach((name) => {
         this.audio.addEventListener(name, events[name].bind(this));
       });
-      this.audio.play().catch(() => this.audio.pause());
+
+      this.audio.play().catch((e) => {
+        console.log(e);
+        this.isPaused = true;
+      });
     },
-    stopAudio() {
+    stopPlayer() {
       if (this.audio) {
         this.audio.pause();
         const events = this.getAudioEvents();
@@ -151,7 +156,7 @@ export default function (htmx, options) {
     getAudioEvents() {
       return {
         play: this.resumed,
-        paused: this.paused,
+        pause: this.paused,
         error: this.waiting,
         suspend: this.waiting,
         stalled: this.waiting,

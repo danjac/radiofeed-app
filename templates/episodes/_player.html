@@ -45,17 +45,16 @@
               <div class="flex items-center">
 
                 <button title="Pause"
-                        data-toggle-target="item"
-                        x-show="isPlaying"
                         @click="audio.pause()"
+                        x-show="isPlaying && !isWaiting"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "pause" css_class="h-8 w-8" %}
                 </button>
 
                 <button title="Play"
-                        x-show="isPaused || isWaiting"
                         @click="audio.play()"
-                        class="focus:outline-none hidden hover:text-blue-600 mr-1">
+                        x-show="isWaiting || isPaused"
+                        class="focus:outline-none hover:text-blue-600 mr-1">
                   {% icon "play" css_class="h-8 w-8" %}
                 </button>
 
