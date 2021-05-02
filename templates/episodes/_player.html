@@ -15,23 +15,8 @@
      @close-player.window="closePlayer()"
      @open-player.window="openPlayer($event)">
   <template x-if="episode">
-    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
+    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold player--active"
          id="player-controls">
-      <audio x-ref="audio"
-             :src="episode.mediaUrl"
-             :current-time="currentTime"
-             @play="resumed()"
-             @pause="paused()"
-             @error="waiting()"
-             @suspend="waiting()"
-             @stalled="waiting()"
-             @canplaythrough="active()"
-             @canplay="active()"
-             @playing="active()"
-             @ended="ended()"
-             @timeupdate="timeUpdate()"
-             preload="metadata">
-      </audio>
       <div class="relative space-y-1">
 
         <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
@@ -61,15 +46,15 @@
 
                 <button title="Pause"
                         data-toggle-target="item"
-                        x-if="isPlaying"
-                        @click="$refs.audio.pause()"
+                        x-show="isPlaying"
+                        @click="audio.pause()"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "pause" css_class="h-8 w-8" %}
                 </button>
 
                 <button title="Play"
-                        x-if="isPaused"
-                        @click="$refs.audio.play()"
+                        x-show="isPaused || isWaiting"
+                        @click="audio.play()"
                         class="focus:outline-none hidden hover:text-blue-600 mr-1">
                   {% icon "play" css_class="h-8 w-8" %}
                 </button>
@@ -114,11 +99,14 @@
 
             <div class="flex items-center w-full mx-1">
               <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
+                   x-ref="progressBar"
                    data-action="click->player#skip mouseover->player#showPosition">
                 <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
+                     x-ref="indicator"
                      style="z-index: 12;"></div>
               </div>
-              <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter">-00.00.00</div>
+              <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter"
+                   x-text="counter"></div>
             </div>
           </div>
         </div>
