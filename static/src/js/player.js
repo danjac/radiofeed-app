@@ -1,28 +1,9 @@
-const formatDuration = (value) => {
-  if (isNaN(value) || value < 0) return '00:00:00';
-  const duration = Math.floor(value);
-
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = Math.floor(duration % 60);
-
-  return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
-};
-
-const calcPercentComplete = (duration, currentTime) => {
-  if (!currentTime || !duration) {
-    return 0;
-  }
-
-  if (currentTime > duration) {
-    return 100;
-  }
-
-  return (currentTime / duration) * 100;
-};
+import { dispatch, formatDuration, percent } from './utils';
 
 export default function (htmx, options) {
   const { csrfToken, urls } = options;
+
+  let timer;
 
   const doFetch = (url, options) => {
     options = options || {};
@@ -45,6 +26,7 @@ export default function (htmx, options) {
     isPlaying: false,
     isPaused: false,
     isWaiting: false,
+    playbackRate: 1.0,
     counter: '-00:00:00',
   };
 
@@ -52,7 +34,6 @@ export default function (htmx, options) {
     ...defaults,
     initialize() {
       if (this.episode) {
-        console.log('we have episode', this.episode.mediaUrl);
         this.startPlayer(this.episode.mediaUrl);
       }
       this.$watch('episode', (value) => {
@@ -78,13 +59,19 @@ export default function (htmx, options) {
     },
     openPlayer(data) {
       if (data) {
-        const { episode, podcast, currentTime } = data;
+        const { episode, podcast, currentTime, metadata } = data;
         this.episode = episode;
         this.podcast = podcast;
         this.currentTime = currentTime;
-        document.dispatchEvent(
-          new CustomEvent('open-player', { detail: data, bubbles: true })
-        );
+
+        if (metadata && 'mediaSession' in navigator) {
+          if (Object.keys(metadata).length > 0) {
+            navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+          } else {
+            navigator.mediaSession.metadata = null;
+          }
+        }
+        dispatch(this.$el, 'open-player', data);
       }
       this.$nextTick(() => {
         // re-hook up any htmx events
@@ -114,35 +101,104 @@ export default function (htmx, options) {
       }
     },
     resumed() {
-      console.log('resumed');
       this.isPlaying = true;
       this.isPaused = false;
       this.isWaiting = false;
     },
     paused() {
-      console.log('paused');
       this.isPlaying = false;
       this.isPaused = true;
       this.isWaiting = false;
     },
     waiting() {
-      console.log('waiting');
       this.isWaiting = true;
     },
     active() {
-      console.log('active');
       this.isWaiting = false;
     },
     ended() {
       doFetch(urls.playNextEpisode)
         .then((response) => response.json())
         .then((data) => {
-          if (data) {
-            this.openPlayer(data);
+          if (Object.keys(data).length === 0) {
+            dispatch(this.$el, 'close-player');
           } else {
-            document.dispatchEvent(new CustomEvent('close-player'), { bubbles: true });
+            this.openPlayer(data);
           }
         });
+    },
+    shortcuts(event) {
+      // ignore if inside an input element
+      if (!this.audio) {
+        return;
+      }
+
+      if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
+        return;
+      }
+      const handlers = {
+        '+': this.incrementPlaybackRate,
+        '-': this.decrementPlaybackRate,
+        ArrowLeft: this.skipBack,
+        ArrowRight: this.skipForward,
+        Space: this.togglePause,
+        //Delete: this.closePlayer,
+      };
+
+      const handler = handlers[event.code] || handlers[event.key];
+
+      if (handler) {
+        event.preventDefault();
+        handler.bind(this)();
+      }
+    },
+
+    incrementPlaybackRate() {
+      this.changePlaybackRate(0.1);
+    },
+    decrementPlaybackRate() {
+      this.changePlaybackRate(-0.1);
+    },
+
+    changePlaybackRate(increment) {
+      const value = this.playbackRate;
+      let newValue = value + increment;
+      if (newValue > 2.0) {
+        newValue = 2.0;
+      } else if (newValue < 0.5) {
+        newValue = 0.5;
+      }
+      this.audio.playbackRate = this.playbackRate = newValue;
+    },
+
+    skip({ clientX }) {
+      // user clicks on progress bar
+      const position = this.getProgressBarPosition(clientX);
+      if (!isNaN(position) && position > -1) {
+        this.skipTo(position);
+      }
+    },
+
+    skipBack() {
+      this.skipTo(this.audio.currentTime - 10);
+    },
+
+    skipForward() {
+      this.skipTo(this.audio.currentTime + 10);
+    },
+
+    skipTo(position) {
+      if (!isNaN(position) && !this.isPaused) {
+        this.audio.currentTime = position;
+      }
+    },
+
+    togglePause() {
+      if (this.isPaused) {
+        this.audio.play();
+      } else {
+        this.audio.pause();
+      }
     },
     startPlayer(mediaUrl) {
       this.audio = new Audio(mediaUrl);
@@ -157,6 +213,7 @@ export default function (htmx, options) {
         console.log(e);
         this.isPaused = true;
       });
+      timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
     },
     stopPlayer() {
       if (this.audio) {
@@ -166,6 +223,18 @@ export default function (htmx, options) {
           this.audio.removeEventListener(name, events[name].bind(this));
         });
         this.audio = null;
+      }
+      if (timer) {
+        clearInterval(timer);
+      }
+    },
+    sendCurrentTimeUpdate() {
+      if (this.audio && !this.isPaused && !this.isWaiting && this.currentTime) {
+        const body = new FormData();
+        body.append('current_time', this.currentTime);
+        doFetch(urls.timeUpdate, {
+          body,
+        });
       }
     },
     getAudioEvents() {
@@ -184,12 +253,24 @@ export default function (htmx, options) {
       };
     },
     updateProgressBar(duration, currentTime) {
-      this.counter = '-' + formatDuration(duration - currentTime);
-      const pcComplete = calcPercentComplete(duration, currentTime);
-      this.$refs.indicator.style.left =
-        this.calcCurrentIndicatorPosition(pcComplete) + 'px';
+      if (this.audio) {
+        this.counter = '-' + formatDuration(duration - currentTime);
+        const pcComplete = percent(duration, currentTime);
+        // TBD: just use a prop
+        this.$refs.indicator.style.left = this.getIndicatorPosition(pcComplete) + 'px';
+      }
     },
-    calcCurrentIndicatorPosition(pcComplete) {
+    getProgressBarPosition(clientX) {
+      if (!isNaN(clientX)) {
+        const { left } = this.$refs.progressBar.getBoundingClientRect();
+        const width = this.$refs.progressBar.clientWidth;
+        let position = clientX - left;
+        return Math.ceil(this.duration * (position / width));
+      } else {
+        return -1;
+      }
+    },
+    getIndicatorPosition(pcComplete) {
       const clientWidth = this.$refs.progressBar.clientWidth;
       let currentPosition, width;
 
