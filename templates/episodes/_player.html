@@ -1,131 +1,135 @@
-{% spaceless %}
-{% load podcasts %}
-{% with episode=player.episode %}
-{% if episode %}
-{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url cover_image=episode.podcast.get_cover_image_thumbnail episode_title=episode.title|stripentities current_time=player.current_time %}
+{% load player %}
+{% get_player as player %}
 <div id="player"
-     data-turbo-permanent
-     data-controller="player"
-     data-action="keydown@window->player#shortcuts"
-     data-player-active-class="player--active"
-     data-player-inactive-class="player--inactive"
-     data-player-csrf-token-value="{{ csrf_token }}"
-     data-player-play-next-url-value="{% url 'episodes:play_next_episode' %}"
-     data-player-timeupdate-url-value="{% url 'episodes:player_update_current_time' %}"
-     {% if player.is_new_episode %}
-     data-player-new-episode-value
-     {% endif %}
-     data-player-media-url-value="{{ episode.media_url }}"
-     data-player-current-time-value="{{ current_time|default:0 }}"
-     data-player-metadata-value='{{ episode.get_media_metadata|jsonify }}'>
-  <audio data-player-target="audio"
-         preload="metadata"
-         data-action="canplaythrough->player#canPlay ended->player#ended loadedmetadata->player#loadedMetaData play->player#resumed playing->player#canPlay pause->player#paused suspend->player#wait stalled->player#wait waiting->player#wait error->player#wait timeupdate->player#timeUpdate">
-  </audio>
-  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold">
-    <div class="relative space-y-1">
+     hx-preserve="true"
+     x-data="playerData()"
+     @close-player="console.log('CLOSEPLAYER')"
+     @open-player="
+        console.log('open player', $event.detail)
+    ">
+  {% if player %}
+  {{ player|json_script:"player-info" }}
+  {% endif %}
+  <script>
+    const defaults = {
+      episode: null,
+      podcast: null,
+      currentTime: 0,
+      isPlaying: false,
+      isPaused: false,
+    };
+    function playerData() {
+      const playerInfoTag = document.getElementById('player-info');
+      if (playerInfoTag) {
+        return {
+          ...defaults,
+          ...JSON.parse(playerInfoTag.textContent)
+        };
+      }
+      return defaults;
+    }
+  </script>
+  <template x-if="episode">
+    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold">
+      <audio x-ref="audio"
+             :src="episode.mediaUrl"
+             :current-time="currentTime"
+             preload="metadata">
+      </audio>
+      <div class="relative space-y-1">
 
-      <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
-        <a href="{{ episode.get_absolute_url }}"
-           class="player--title"
-           title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
-
-      </div>
-
-      <div class="flex items-center space-x-2 sm:space-x-1">
-
-        <div>
-          <a href="{{ podcast_url }}">
-            {% cover_image podcast lazy=False cover_image=cover_image size="14" css_class="mr-2 lg:h-18 lg:w-18 self-center hover:opacity-75 border-white cursor-pointer" %}
-          </a>
+        <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
+          <a :href="episode.url"
+             class="player--title"
+             :title="episode.title"
+             x-text="episode.title"></a>
         </div>
-        <div class="w-full space-y-1">
 
-          <div class="flex justify-between items-center w-full">
+        <div class="flex items-center space-x-2 sm:space-x-1">
 
-            <div class="flex items-center">
+          <div>
+            <a :href="podcast.url">
+              <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
+                   title="podcast.title"
+                   alt="podcast.title"
+                   :width="podcast.coverImage.width"
+                   :height="podcast.coverImage.height"
+                   :src="podcast.coverImage.url">
+            </a>
+          </div>
+          <div class="w-full space-y-1">
 
-              <button title="Pause"
-                      data-toggle-target="item"
-                      data-action="player#pause"
-                      data-player-target="pauseButton"
-                      class="focus:outline-none hover:text-blue-500 mr-1">
-                {% icon "pause" css_class="h-8 w-8" %}
-              </button>
+            <div class="flex justify-between items-center w-full">
 
-              <button title="Play"
-                      data-toggle-target="item"
-                      data-action="player#play"
-                      data-player-target="playButton"
-                      class="focus:outline-none hidden hover:text-blue-600 mr-1">
-                {% icon "play" css_class="h-8 w-8" %}
-              </button>
+              <div class="flex items-center">
 
-              <form class="flex items-center"
-                    method="POST"
-                    action="{% url 'episodes:close_player' %}">
-                {% csrf_token %}
-                <button title="Stop"
-                        data-player-target="closeButton"
+                <button title="Pause"
+                        data-toggle-target="item"
+                        x-if="isPlaying"
+                        x-ref="pause"
                         class="focus:outline-none hover:text-blue-500 mr-1">
-                  {% icon "stop" css_class="h-8 w-8" %}
+                  {% icon "pause" css_class="h-8 w-8" %}
                 </button>
-              </form>
+
+                <button title="Play"
+                        x-if="isPaused"
+                        x-ref="play"
+                        class="focus:outline-none hidden hover:text-blue-600 mr-1">
+                  {% icon "play" css_class="h-8 w-8" %}
+                </button>
+
+                <form class="flex items-center"
+                      method="POST"
+                      action="{% url 'episodes:close_player' %}">
+                  {% csrf_token %}
+                  <button title="Stop"
+                          class="focus:outline-none hover:text-blue-500 mr-1">
+                    {% icon "stop" css_class="h-8 w-8" %}
+                  </button>
+                </form>
+
+              </div>
+
+              <div class="hidden sm:block text-sm text-center sm:w-64 w-96 lg:w-full truncate">
+                <a :href="episode.url"
+                   class="player--title"
+                   title="episode.title"
+                   x-text="episode.title"></a>
+              </div>
+
+              <div class="flex items-center">
+                <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive"
+                        title="Decrease Playback Rate">-</button>
+                <span class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive text-sm"
+                      data-player-target="playbackRate"
+                      title="Playback Rate">
+                  1.0x
+                </span>
+                <button class="focus:outline-none p-1 hover:text-blue-500 mr-3 player--interactive"
+                        title="Increase Playback Rate">+</button>
+
+                <button title="Skip back 10 seconds"
+                        class="focus:outline-none hover:text-blue-500 player--interactive mr-2">
+                  {% icon "skip_back_10" css_class="h-6 w-6" %}
+                </button>
+                <button title="Skip forward 10 seconds"
+                        class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
+                  {% icon "skip_forward_10" css_class="h-6 w-6" %}
+                </button>
+              </div>
 
             </div>
 
-            <div class="hidden sm:block text-sm text-center sm:w-64 w-96 lg:w-full truncate">
-              <a href="{{ episode.get_absolute_url }}"
-                 class="player--title"
-                 title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
+            <div class="flex items-center w-full mx-1">
+              <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
+                   data-action="click->player#skip mouseover->player#showPosition">
+                <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
+                     style="z-index: 12;"></div>
+              </div>
+              <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter">-00.00.00</div>
             </div>
-
-            <div class="flex items-center">
-              <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive"
-                      data-action="player#decrementPlaybackRate"
-                      title="Decrease Playback Rate">-</button>
-              <span class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive text-sm"
-                    data-player-target="playbackRate"
-                    title="Playback Rate">
-                1.0x
-              </span>
-              <button class="focus:outline-none p-1 hover:text-blue-500 mr-3 player--interactive"
-                      data-action="player#incrementPlaybackRate"
-                      title="Increase Playback Rate">+</button>
-
-              <button title="Skip back 10 seconds"
-                      data-action="player#skipBack"
-                      class="focus:outline-none hover:text-blue-500 player--interactive mr-2">
-                {% icon "skip_back_10" css_class="h-6 w-6" %}
-              </button>
-              <button title="Skip forward 10 seconds"
-                      data-action="player#skipForward"
-                      class="player--interactive focus:outline-none hover:text-blue-500 player--interactive">
-                {% icon "skip_forward_10" css_class="h-6 w-6" %}
-              </button>
-            </div>
-
-          </div>
-
-          <div class="flex items-center w-full mx-1">
-            <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
-                 data-player-target="progressBar"
-                 data-action="click->player#skip mouseover->player#showPosition">
-              <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
-                   data-player-target="indicator"
-                   style="z-index: 12;"></div>
-            </div>
-            <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter"
-                 data-player-target="counter">-00.00.00</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+  </template>
 </div>
-{% endwith %}
-{% else %}
-<div id="player"></div>
-{% endif %}
-{% endwith %}
-{% endspaceless %}

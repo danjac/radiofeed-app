@@ -90,7 +90,9 @@ def preview(request, episode_id):
     return TemplateResponse(
         request,
         "episodes/_preview.html",
-        get_episode_detail_context(request, episode),
+        get_episode_detail_context(
+            request, episode, {"redirect_url": request.GET.get("from")}
+        ),
     )
 
 

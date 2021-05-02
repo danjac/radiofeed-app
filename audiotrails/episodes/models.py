@@ -305,6 +305,28 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["-updated"]),
         ]
 
+    def to_json(self):
+        cover_image = self.episode.podcast.get_cover_image_thumbnail()
+        return {
+            "currentTime": self.current_time,
+            "episode": {
+                "id": self.episode.id,
+                "title": self.episode.title,
+                "mediaUrl": self.episode.media_url,
+                "url": self.episode.get_absolute_url(),
+                "metadata": self.episode.get_media_metadata(),
+            },
+            "podcast": {
+                "title": self.episode.podcast.title,
+                "url": self.episode.podcast.get_absolute_url(),
+                "coverImage": {
+                    "width": cover_image.width,
+                    "height": cover_image.height,
+                    "url": cover_image.url,
+                },
+            },
+        }
+
 
 class QueueItemQuerySet(models.QuerySet):
     def with_current_time(self, user):

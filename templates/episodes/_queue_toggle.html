@@ -3,6 +3,9 @@
       class="flex items-center"
       action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
   {% csrf_token %}
+  <input type="hidden"
+         name="redirect_url"
+         value="{{ redirect_url|default:request.get_full_path }}">
   {% if is_queued %}
   {% button "Play Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" accesskey="q" %}
   {% else %}

@@ -1,0 +1,16 @@
+{% extends "episodes/_episode.html" %}
+{% block extra_buttons %}
+<form method="post"
+      action="{% url 'episodes:remove_favorite' episode.id %}">
+  {% csrf_token %}
+  <input type="hidden"
+         name="redirect_url"
+         value="{% url 'episodes:favorites' %}">
+  <button class="btn btn-secondary flex items-center p-2 border-none"
+          name="remove"
+          value="true"
+          title="Remove episode from your History">
+    {% icon "trash" css_class="btn-icon h-6 w-6" %}
+  </button>
+</form>
+{% endblock %}

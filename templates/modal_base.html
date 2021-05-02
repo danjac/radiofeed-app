@@ -1,6 +1,7 @@
 <div class="modal fixed w-full h-full top-0 left-0 flex items-center justify-center z-50"
      x-data="{show: true}"
      x-show="show"
+     @close-modal="show=false"
      @keydown.escape.window="show=false">
   <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 

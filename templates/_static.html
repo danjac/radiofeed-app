@@ -10,8 +10,6 @@
       media="screen"
       href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
 
-<script defer
-        data-turbo-track="reload"
+<script data-turbo-track="reload"
         src="{% static debug|yesno:'dev/app.js,dist/app.js' %}">
 </script>
-

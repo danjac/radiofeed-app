@@ -4,7 +4,7 @@
 <div id="favorites">
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
-  {% include "episodes/_episode.html" with dom_id=episode.dom.favorite %}
+  {% include "episodes/_favorite.html" with dom_id=episode.dom.favorite %}
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">

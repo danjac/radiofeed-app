@@ -1,6 +1,7 @@
-import 'htmx.org';
 import 'alpinejs';
+import 'htmx.org';
 
+//https://github.com/bigskysoftware/htmx/issues/34
 const { htmx } = window;
 
 htmx.defineExtension('intersect', {

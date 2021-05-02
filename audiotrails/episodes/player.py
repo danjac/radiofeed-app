@@ -30,7 +30,7 @@ class Player:
             },
         )
 
-        return log.current_time
+        return log
 
     def stop_episode(self, mark_completed=False):
         """Removes episode from session and updates log.
@@ -64,10 +64,7 @@ class Player:
 
     def get_player_info(self):
         if log := self.get_audio_log():
-            return {
-                "current_time": log.current_time,
-                "episode": log.episode,
-            }
+            return log.to_json()
         return {}
 
     def is_playing(self, episode):

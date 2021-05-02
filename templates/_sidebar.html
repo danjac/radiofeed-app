@@ -1,10 +1,11 @@
 {% load cache %}
 {% cache 600 sidebar request.user.username request.path %}
-<div class="flex justify-center sm:hidden mb-3" hx-boost="true">
+<div class="flex justify-center sm:hidden mb-3">
 
   <form method="get"
         action="{% url 'podcasts:search_podcasts' %}"
-        class="relative bg-transparent">
+        class="relative bg-transparent"
+        @submit="sidebar=false">
     <input type="search"
            name="q"
            autocomplete="off"
@@ -29,6 +30,7 @@
       {% active_link 'episodes:featured' as featured_episodes_link %}
       <a href="{{ new_episodes_link.url }}"
          accesskey="1"
+         @click="sidebar=false"
          class="flex items-center link{% if new_episodes_link.exact or featured_episodes_link.exact %} sidebar--active{% endif %}">
         {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
         New Releases
@@ -36,6 +38,7 @@
       {% else %}
       <a href="{{ new_episodes_link.url }}"
          accesskey="1"
+         @click="sidebar=false"
          class="flex items-center link{% if new_episodes_link.exact %} sidebar--active{% endif %}">
         {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
         New Releases
@@ -46,6 +49,7 @@
       {% active_link 'podcasts:index' as link %}
       <a href="{{ link.url }}"
          accesskey="2"
+         @click="sidebar=false"
          class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "rss" css_class="h-5 w-5 mr-3" %}
         Podcasts
@@ -55,6 +59,7 @@
       {% active_link 'podcasts:categories' as link %}
       <a href="{{ link.url }}"
          accesskey="3"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "search" css_class="h-5 w-5 mr-3" %}
         Discover
@@ -65,6 +70,7 @@
       {% active_link 'episodes:queue' as link %}
       <a href="{{ link.url }}"
          accesskey="4"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "collection" css_class="h-5 w-5 mr-3" %}
         Play Queue
@@ -76,6 +82,7 @@
       {% active_link 'episodes:favorites' as link %}
       <a href="{{ link.url }}"
          accesskey="5"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "star" css_class="h-5 w-5 mr-3" %}
         Favorites
@@ -86,6 +93,7 @@
       {% active_link 'episodes:history' as link %}
       <a href="{{ link.url }}"
          accesskey="6"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "database" css_class="h-5 w-5 mr-3" %}
         History
@@ -96,6 +104,7 @@
       {% active_link '/account/' as link %}
       <a href="{% url 'user_preferences' %}"
          accesskey="7"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
         {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
         Settings
@@ -108,6 +117,7 @@
       {% active_link '/about/' as link %}
       <a href="{{ link.url }}"
          accesskey="8"
+         @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "info" css_class="h-5 w-5 mr-3" %}
         About

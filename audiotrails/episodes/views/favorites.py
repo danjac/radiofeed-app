@@ -1,9 +1,11 @@
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
+from django.shortcuts import redirect
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-from turbo_response import Action, TurboStream
-from turbo_response.decorators import turbo_stream_response
 
 from audiotrails.shared.pagination import render_paginated_response
 
@@ -38,50 +40,33 @@ def add_favorite(request, episode_id):
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
+        messages.success(request, "Episode has been added to your favorites")
     except IntegrityError:
         pass
 
-    return [
-        render_favorite_toggle(request, episode, is_favorited=True),
-        TurboStream("favorites")
-        .action(
-            Action.UPDATE
-            if Favorite.objects.filter(user=request.user).count() == 1
-            else Action.PREPEND
-        )
-        .template(
-            "episodes/_episode.html",
-            {"episode": episode, "dom_id": episode.dom.favorite},
-        )
-        .render(request=request),
-    ]
+    return render_toggle_redirect(request, episode)
 
 
 @require_POST
-@turbo_stream_response
 def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     if request.user.is_anonymous:
         return redirect_to_login(episode.get_absolute_url())
 
-    favorites = Favorite.objects.filter(user=request.user)
-    favorites.filter(episode=episode).delete()
+    Favorite.objects.filter(user=request.user, episode=episode).delete()
 
-    return [
-        render_favorite_toggle(request, episode, is_favorited=False),
-        TurboStream("favorites").update.render("You have no more Favorites.")
-        if favorites.count() == 0
-        else TurboStream(episode.dom.favorite).remove.render(),
-    ]
+    messages.info(request, "Episode has been removed from your favorites")
+
+    return render_toggle_redirect(request, episode)
 
 
-def render_favorite_toggle(request, episode, is_favorited):
-    return (
-        TurboStream(episode.dom.favorite_toggle)
-        .replace.template(
-            "episodes/_favorite_toggle.html",
-            {"episode": episode, "is_favorited": is_favorited},
-        )
-        .render(request=request)
-    )
+def render_toggle_redirect(request, episode):
+    if not (
+        redirect_url := request.POST.get("redirect_url")
+    ) or not url_has_allowed_host_and_scheme(
+        redirect_url, {request.get_host()}, require_https=not settings.DEBUG
+    ):
+        redirect_url = episode.get_absolute_url()
+
+    return redirect(redirect_url)

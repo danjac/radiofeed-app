@@ -1,17 +1,33 @@
-<form method="POST"
-      id="{{ episode.dom.player_toggle }}"
-      action="{% if is_playing %}{% url 'episodes:close_player' %}{% else %}{% url 'episodes:start_player' episode.id %}{% endif %}">
-  {% csrf_token %}
-  {% if is_modal %}
-  <input type="hidden"
-         name="is_modal"
-         value="true">
-  {% endif %}
-  <div class="flex items-center">
-    {% if is_playing %}
-    {% button "Close Player" icon="stop" type="secondary" title="Close Player" %}
-    {% else %}
-    {% button "Play Episode" icon="play" type="primary" title="Open Episode in Player" accesskey="p" %}
-    {% endif %}
-  </div>
-</form>
+<div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}, csrfToken: '{{ csrf_token }}'}"
+     @close-player="isPlaying = false"
+     @open-player="isPlaying = $event.detail.episode.id === {{ episode.id }}">
+  <button class="btn btn-secondary flex items-center"
+          title="Close Player"
+          x-show="isPlaying"
+          @click="
+            fetch('{% url 'episodes:close_player' %}', {
+                  method: 'POST',
+                  headers: {'X-CSRFToken': csrfToken}
+            })
+            $dispatch('close-player');
+            $dispatch('close-modal');">
+    {% icon "stop" css_class="btn-icon mr-2" %}
+    Close Player
+  </button>
+  <button class="btn btn-primary flex items-center"
+          title="Open Player"
+          x-show="!isPlaying"
+          @click="
+                fetch('{% url 'episodes:start_player' episode.id %}', {
+                    method: 'POST',
+                    headers: {'X-CSRFToken': csrfToken}
+                })
+               .then(response => response.json())
+               .then(data => {
+                  $dispatch('open-player', data);
+                  $dispatch('close-modal')
+               });">
+    {% icon "play" css_class="btn-icon mr-2" %}
+    Play Episode
+  </button>
+</div>

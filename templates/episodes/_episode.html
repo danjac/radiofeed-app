@@ -27,8 +27,8 @@
               <div>
                 <a class="link"
                    title="Preview for {{ episode.title }}"
-                   href="{{ episode.get_preview_url }}"
-                   hx-get="{{ episode.get_preview_url }}"
+                   href="{{ episode.get_absolute_url }}"
+                   hx-get="{{ episode.get_preview_url }}?from={{ request.get_full_path }}"
                    hx-target="#modal">
                   {% icon "ellipsis" css_class="w-6 h-6" %}
                 </a>
