@@ -3,7 +3,8 @@
 {% if lazy %}
 
 <div id="{{ podcast.dom.cover_image }}"
-     hx-trigger="revealed"
+     hx-ext="intersect"
+     hx-trigger="enter once"
      hx-swap="outerHTML"
      hx-get="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}

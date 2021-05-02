@@ -2,9 +2,10 @@
 {% block results %}{% endblock %}
 {% if page_obj.has_next %}
 <div id="page-{{ page_obj.next_page_number }}"
-             hx-get="{% pagination_url page_obj.next_page_number %}"
-             hx-trigger="revealed"
-             hx-swap="outerHTML">
+     hx-get="{% pagination_url page_obj.next_page_number %}"
+     hx-ext="intersect"
+     hx-trigger="enter once"
+     hx-swap="outerHTML">
   {% include "pagination/_loader.html" %}
 </div>
 {% endif %}
