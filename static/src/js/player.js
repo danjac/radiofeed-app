@@ -91,13 +91,6 @@ export default function (htmx, options) {
     timeUpdate() {
       if (this.audio) {
         this.currentTime = this.audio.currentTime;
-        /*
-          const body = new FormData();
-          body.append('current_time', this.currentTime);
-          doFetch(urls.timeUpdate, {
-            body,
-          });
-          */
       }
     },
     resumed() {
@@ -204,10 +197,7 @@ export default function (htmx, options) {
       this.audio = new Audio(mediaUrl);
       this.audio.currentTime = this.currentTime;
 
-      const events = this.getAudioEvents();
-      Object.keys(events).forEach((name) => {
-        this.audio.addEventListener(name, events[name].bind(this));
-      });
+      this.configAudioListeners(false);
 
       this.audio.play().catch((e) => {
         console.log(e);
@@ -218,10 +208,7 @@ export default function (htmx, options) {
     stopPlayer() {
       if (this.audio) {
         this.audio.pause();
-        const events = this.getAudioEvents();
-        Object.keys(events).forEach((name) => {
-          this.audio.removeEventListener(name, events[name].bind(this));
-        });
+        this.configAudioListeners(true);
         this.audio = null;
       }
       if (timer) {
@@ -237,8 +224,8 @@ export default function (htmx, options) {
         });
       }
     },
-    getAudioEvents() {
-      return {
+    configAudioListeners(remove) {
+      const events = {
         play: this.resumed,
         pause: this.paused,
         error: this.waiting,
@@ -251,13 +238,23 @@ export default function (htmx, options) {
         ended: this.ended,
         timeupdate: this.timeUpdate,
       };
+      Object.keys(events).forEach((name) => {
+        const event = events[name].bind(this);
+        if (remove) {
+          this.audio.removeEventListener(name, event);
+        } else {
+          this.audio.addEventListener(name, event);
+        }
+      });
     },
     updateProgressBar(duration, currentTime) {
       if (this.audio) {
         this.counter = '-' + formatDuration(duration - currentTime);
         const pcComplete = percent(duration, currentTime);
-        // TBD: just use a prop
-        this.$refs.indicator.style.left = this.getIndicatorPosition(pcComplete) + 'px';
+        if (this.$refs.indicator) {
+          this.$refs.indicator.style.left =
+            this.getIndicatorPosition(pcComplete) + 'px';
+        }
       }
     },
     getProgressBarPosition(clientX) {
