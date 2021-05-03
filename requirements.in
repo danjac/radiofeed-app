@@ -16,8 +16,6 @@ django-model-utils
 django-redis
 django-silk
 django-storages
-django-turbo-allauth
-django-turbo-response
 django-widget-tweaks
 factory-boy
 future

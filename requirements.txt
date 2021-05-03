@@ -62,9 +62,7 @@ defusedxml==0.7.1
 dj-database-url==0.5.0
     # via -r requirements.in
 django-allauth==0.44.0
-    # via
-    #   -r requirements.in
-    #   django-turbo-allauth
+    # via -r requirements.in
 django-anymail[mailgun]==8.2
     # via -r requirements.in
 django-appconf==1.0.4
@@ -87,12 +85,6 @@ django-storages==1.11.1
     # via -r requirements.in
 django-timezone-field==4.1.2
     # via django-celery-beat
-django-turbo-allauth==0.0.9
-    # via -r requirements.in
-django-turbo-response==0.0.48
-    # via
-    #   -r requirements.in
-    #   django-turbo-allauth
 django-widget-tweaks==1.4.8
     # via -r requirements.in
 django==3.2
@@ -109,7 +101,6 @@ django==3.2
     #   django-silk
     #   django-storages
     #   django-timezone-field
-    #   django-turbo-allauth
 factory-boy==3.2.0
     # via -r requirements.in
 faker==8.1.2
