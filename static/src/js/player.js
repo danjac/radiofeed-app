@@ -27,6 +27,7 @@ export default function (app, options) {
       this.$watch('episode', (value) => {
         this.stopPlayer();
         if (value) {
+          // TBD: ensure currentTime is set correctly: pr
           this.startPlayer(value.mediaUrl);
         }
       });
@@ -47,8 +48,11 @@ export default function (app, options) {
         });
     },
     openPlayer(data) {
+      this.stopPlayer();
+
       if (data) {
         const { episode, podcast, currentTime, metadata } = data;
+
         this.episode = episode;
         this.podcast = podcast;
         this.currentTime = currentTime;
@@ -62,11 +66,14 @@ export default function (app, options) {
         }
         dispatch(this.$el, 'open-player', data);
         dispatch(this.$el, 'remove-queue-item', { id: this.episode.id });
+
+        this.startPlayer(this.episode.mediaUrl);
+
+        this.$nextTick(() => {
+          // re-hook up any htmx events
+          htmx.process(this.$el);
+        });
       }
-      this.$nextTick(() => {
-        // re-hook up any htmx events
-        htmx.process(this.$el);
-      });
     },
     closePlayer() {
       app.sendJSON(urls.closePlayer);

@@ -7,8 +7,12 @@
             x-show="isQueued"
             hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
             @click.once="
-          $dispatch('remove-queue-item', { id: {{ episode.id }} });
-          $dispatch('close-modal');"
+            $dispatch('message', {
+                tag: 'info',
+                message: 'Episode has been removed from your Play Queue' }
+            );
+            $dispatch('remove-queue-item', { id: {{ episode.id }} });
+            $dispatch('close-modal');"
             title="Remove from Play Queue">
       {% icon "trash" css_class="btn-icon mr-2" %}
       Play Queue
@@ -16,7 +20,13 @@
     <button class="btn btn-default flex items-center"
             x-show="!isQueued"
             hx-post="{% url 'episodes:add_to_queue' episode.id %}"
-            @click.once="$dispatch('close-modal')"
+            @click.once="
+            $dispatch('message', {
+                tag: 'success',
+                message: 'Episode has been added to your Play Queue' }
+            );
+            $dispatch('close-modal');
+            "
             title="Add to Play Queue">
       {% icon "collection" css_class="btn-icon mr-2" %}
       Play Queue

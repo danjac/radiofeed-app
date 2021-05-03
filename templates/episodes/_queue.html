@@ -15,7 +15,7 @@
     <template x-data="{show: true}"
               x-if="show"
               @remove-queue-item.window="if ($event.detail.id === {{ episode.id }}) show=false">
-      {% include "episodes/_queue_item.html" with dom_id=episode.dom.queue %}
+      {% include "episodes/_queue_item.html" %}
     </template>
     {% endwith %}
     {% empty %}
