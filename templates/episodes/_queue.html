@@ -1,62 +1,46 @@
 {% with count=queue_items|length %}
-{% if count %}
-<div x-data="{
-      counter: {{ count }},
-      ...Queue()
+<div {% if count %}x-data="{
+      counter: {{ count }}
      }"
-     x-init="initialize()"
-     @remove-queue-item.window="counter = counter-1"
-     id="queue">
-  {% else %}
-  <div>
-    {% endif %}
-    {% for item in queue_items %}
-    {% with episode=item.episode %}
-    <template x-data="{show: true}"
-              x-if="show"
-              @remove-queue-item.window="if ($event.detail.id === {{ episode.id }}) show=false">
-      {% include "episodes/_queue_item.html" %}
-    </template>
-    {% endwith %}
-    {% empty %}
-    You do not have any items in your Play Queue.
-    {% endfor %}
-    {% if count %}
-    <p x-show="counter === 0">
-      All done!
-    </p>
-    {% endif %}
-  </div>
-  {% endwith %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.js"
-          integrity="sha512-5x7t0fTAVo9dpfbp3WtE2N6bfipUwk7siViWncdDoSz2KwOqVC1N9fDxEOzk0vTThOua/mglfF8NO7uVDLRC8Q=="
-          crossorigin="anonymous"></script>
-  <script>
-    const Queue = () => {
-
-      return {
-        initialize() {
-          const update = this.update.bind(this);
-          Sortable.create(this.$el, {
-            handle: '.handle',
-            animation: 150,
-            group: 'shared',
-            onAdd: update,
-            onRemove: update,
-            onUpdate: update,
+     x-init="() => {
+      const update = () => {
+        const items = Array.from($el.querySelectorAll('[data-draggable]')).map(
+          (target) => target.dataset.id
+        );
+        if (items.length > 0) {
+          sendJSON('{% url 'episodes:move_queue_items' %}', {
+            items
           });
-        },
-
-        update() {
-          const items = Array.from(this.$el.querySelectorAll('[data-draggable]')).map(
-            (target) => target.dataset.id
-          );
-          if (items.length > 0) {
-            sendJSON("{% url 'episodes:move_queue_items' %}", {
-              items
-            });
-          }
-        },
+        }
       };
-    };
-  </script>
+
+      Sortable.create($el, {
+        handle: '.handle',
+        animation: 150,
+        group: 'shared',
+        onAdd: update,
+        onRemove: update,
+        onUpdate: update,
+      });
+      }
+    "
+     @remove-queue-item.window="counter = counter-1"
+     {% endif %}>
+  {% for item in queue_items %}
+  {% with episode=item.episode %}
+  <template x-data="{show: true}"
+            x-if="show"
+            @remove-queue-item.window="if ($event.detail.id === {{ episode.id }}) show=false">
+    {% include "episodes/_queue_item.html" %}
+  </template>
+  {% endwith %}
+  {% empty %}
+  You do not have any items in your Play Queue.
+  {% endfor %}
+  {% if count %}
+  <p x-show="counter === 0">
+    All done!
+  </p>
+  {% endif %}
+</div>
+{% endwith %}
