@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-<div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}, csrfToken: '{{ csrf_token }}'}"
+<div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}}"
      @close-player.window="isPlaying = false"
      @open-player.window="isPlaying = $event.detail.episode.id === {{ episode.id }}">
   <button class="btn btn-secondary flex items-center"

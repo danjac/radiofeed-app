@@ -30,12 +30,6 @@
           if (this.episode) {
             this.startPlayer(this.episode.mediaUrl);
           }
-          this.$watch('episode', (value) => {
-            this.stopPlayer();
-            if (value) {
-              this.startPlayer(value.mediaUrl);
-            }
-          });
           this.$watch('duration', (value) => {
             this.updateProgressBar(value, this.currentTime);
           });

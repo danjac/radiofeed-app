@@ -8,7 +8,11 @@
      {% endif %}>
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
-  {% include "episodes/_favorite.html" %}
+  <template x-data="{show:true}"
+            x-if="show"
+            @remove-favorite.window="if ($event.detail.id === {{ episode.id }}) show=false">
+    {% include "episodes/_episode.html" %}
+  </template>
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">

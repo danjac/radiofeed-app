@@ -3,18 +3,6 @@
 set -o errexit
 set -o nounset
 
-# watch frontend file changes
-watchman watch /app/static/src/js
-
-watchman -j <<-EOT
-["trigger", "/app/static/src/js", {
-   "name": "esbuild",
-   "expression": ["match", "**/*.js", "wholename"],
-   "command": ["npm", "run", "watch-js"],
-   "append_files": false
-}]
-EOT
-
 
 watchman watch /app/static/src/css
 

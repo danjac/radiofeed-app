@@ -1,6 +1,0 @@
-{% extends "episodes/_episode.html" %}
-{% block extra_attrs %}
-x-data="{show: true}"
-x-show="show"
-@remove-favorite.window="if ($event.detail.id === {{ episode.id }}) show=false"
-{% endblock %}
