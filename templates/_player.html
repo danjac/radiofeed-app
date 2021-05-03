@@ -19,7 +19,7 @@
         isPaused: false,
         isWaiting: false,
         playbackRate: 1.0,
-        counter: '-00:00:00',
+        counter: '00:00:00',
       };
 
       let timer;
@@ -75,11 +75,6 @@
             });
 
             this.startPlayer(this.episode.mediaUrl);
-
-            this.$nextTick(() => {
-              // re-hook up any htmx events
-              htmx.process(this.$el);
-            });
           }
         },
         closePlayer() {
@@ -161,7 +156,7 @@
         },
 
         changePlaybackRate(increment) {
-          const value = this.playbackRate;
+          const value = parseFloat(this.playbackRate);
           let newValue = value + increment;
           if (newValue > 2.0) {
             newValue = 2.0;
@@ -254,7 +249,7 @@
         },
         updateProgressBar(duration, currentTime) {
           if (this.audio) {
-            this.counter = '-' + formatDuration(duration - currentTime);
+            this.counter = formatDuration(duration - currentTime);
             const pcComplete = percent(duration, currentTime);
             if (this.$refs.indicator) {
               this.$refs.indicator.style.left =
@@ -337,6 +332,8 @@
 
         <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
           <a :href="episode.url"
+             @click.prevent="htmx.ajax('GET', episode.url)"
+             hx-disable
              class="player--title"
              :title="episode.title"
              x-text="episode.title"></a>
@@ -345,7 +342,9 @@
         <div class="flex items-center space-x-2 sm:space-x-1">
 
           <div>
-            <a :href="podcast.url">
+            <a :href="podcast.url"
+               @click.prevent="htmx.ajax('GET', podcast.url)"
+               hx-disable="true">
               <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
                    title="podcast.title"
                    alt="podcast.title"
@@ -385,6 +384,8 @@
               <div class="hidden sm:block text-sm text-center sm:w-64 w-96 lg:w-full truncate">
                 <a :href="episode.url"
                    class="player--title"
+                   hx-disable
+                   @click.prevent="htmx.ajax('GET', episode.url)"
                    title="episode.title"
                    x-text="episode.title"></a>
               </div>
@@ -395,7 +396,7 @@
                         title="Decrease Playback Rate">-</button>
                 <div class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive text-sm"
                      title="Playback Rate">
-                  x<span x-text="playbackRate"></span>
+                  x<span x-text="playbackRate.toFixed(1)"></span>
                 </div>
                 <button class="focus:outline-none p-1 hover:text-blue-500 mr-3 player--interactive"
                         @click="incrementPlaybackRate"
@@ -423,8 +424,9 @@
                      x-ref="indicator"
                      style="z-index: 12;"></div>
               </div>
-              <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter"
-                   x-text="counter"></div>
+              <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter">
+                -<span x-text="counter"></span>
+              </div>
             </div>
           </div>
         </div>
