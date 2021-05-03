@@ -16,15 +16,4 @@ input[type='search']::-webkit-search-results-button,
 input[type='search']::-webkit-search-results-decoration {
   display: none;
 }
-/* hack to handle mobile scrolling issues
-  with URL bar causing resize */
-
-html {
-  overflow: hidden;
-}
-body {
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
 @tailwind utilities;
