@@ -3,11 +3,17 @@ import 'htmx.org';
 import 'sortablejs';
 
 import Player from './player';
+import { JSONClient } from './utils';
 
 window.App = {
-  init(htmx, { csrfToken }) {
+  initialize({ csrfToken, htmx }) {
     this.csrfToken = csrfToken;
+    this.sendJSON = JSONClient(csrfToken);
+    this.configHtmx(htmx);
+    return this;
+  },
 
+  configHtmx(htmx) {
     htmx.defineExtension('intersect', {
       onEvent(name, event) {
         if (name === 'htmx:afterProcessNode') {
@@ -30,9 +36,9 @@ window.App = {
       event.detail.headers['X-CSRFToken'] = this.csrfToken;
     });
 
-    return this;
+    this.htmx = htmx;
   },
   player(options) {
-    return Player(htmx, { csrfToken: this.csrfToken, ...options });
+    return Player(this, options);
   },
 };

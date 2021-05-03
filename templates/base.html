@@ -71,7 +71,8 @@
 
   {% include "_modal.html" %}
   <script>
-    const app = App.init(htmx, {
+    const app = App.initialize({
+      htmx,
       csrfToken: '{{ csrf_token }}'
     })
   </script>

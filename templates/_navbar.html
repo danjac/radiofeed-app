@@ -54,7 +54,6 @@
               hx-post="{% url 'account_logout' %}"
               hx-target="body"
               @click="$dispatch('close-player')">Logout</button>
-      </form>
     </div>
     {% else %}
     <div class="text-sm md:text-base flex items-center">

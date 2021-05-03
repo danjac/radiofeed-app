@@ -1,10 +1,32 @@
-<form method="post"
-      id="{{ podcast.dom.follow_toggle }}"
-      hx-post="{% if is_following %}{% url 'podcasts:unfollow' podcast.id %}{% else %}{% url 'podcasts:follow' podcast.id %}{% endif %}">
-  {% csrf_token %}
-  {% if is_following %}
-  {% button "Unfollow" icon="eye_slash" type="secondary" title="Stop following this podcast" accesskey="w" %}
+  {% if user.is_authenticated %}
+  <div id="follow-toggle"
+       hx-target="this">
+    {% if is_following %}
+    <button class="btn btn-secondary flex items-center"
+            hx-post="{% url 'podcasts:unfollow' podcast.id %}"
+            @click.once="
+          $dispatch('close-modal');"
+            title="Stop following this podcast">
+      {% icon "eye_slash" css_class="btn-icon mr-2" %}
+      Follow
+    </button>
+    {% else %}
+    <button class="btn btn-default flex items-center"
+            hx-post="{% url 'podcasts:follow' podcast.id %}"
+            @click.once="$dispatch('close-modal')"
+            title="Follow this podcast">
+      {% icon "eye" css_class="btn-icon mr-2" %}
+      Follow
+    </button>
+    {% endif %}
+  </div>
   {% else %}
-  {% button "Follow" icon="eye" type="primary" title="Follow this podcast" accesskey="w" %}
+  <div>
+    <a class="btn btn-default flex items-center"
+       href="{{ podcast.get_absolute_url|login_url }}"
+       title="Log in">
+      {% icon "eye" css_class="btn-icon mr-2" %}
+      Follow
+    </a>
+  </div>
   {% endif %}
-</form>

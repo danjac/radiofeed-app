@@ -56,9 +56,18 @@ def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
 
+    # tbd: just raise PermissionDenied (button should be simple login page link)
     if request.user.is_anonymous:
         return redirect_to_login(episode.get_absolute_url())
 
+    # TBD: htmx should pass target, if present then re-render that section
+    # ie. queue page
+    # otherwise just re-render toggle
+
+    # play button: we keep track of individual queue items with a counter
+    # in top level queue component
+    # on @open-player() dispatch 'remove-play-queue'
+    # when counter == 0 then show "empty" section
     return render_toggle_redirect(request)
 
 

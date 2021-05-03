@@ -1,10 +1,7 @@
-from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
-from django.shortcuts import redirect
-from django.utils.http import url_has_allowed_host_and_scheme
+from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.pagination import render_paginated_response
@@ -40,11 +37,10 @@ def add_favorite(request, episode_id):
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
-        messages.success(request, "Episode has been added to your favorites")
     except IntegrityError:
         pass
 
-    return render_toggle_redirect(request, episode)
+    return render_favorite_toggle(request, episode, True)
 
 
 @require_POST
@@ -56,17 +52,15 @@ def remove_favorite(request, episode_id):
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
-    messages.info(request, "Episode has been removed from your favorites")
-
-    return render_toggle_redirect(request, episode)
+    return render_favorite_toggle(request, episode, False)
 
 
-def render_toggle_redirect(request, episode):
-    if not (
-        redirect_url := request.POST.get("redirect_url")
-    ) or not url_has_allowed_host_and_scheme(
-        redirect_url, {request.get_host()}, require_https=not settings.DEBUG
-    ):
-        redirect_url = episode.get_absolute_url()
-
-    return redirect(redirect_url)
+def render_favorite_toggle(request, episode, is_favorited):
+    return TemplateResponse(
+        request,
+        "episodes/_favorite_toggle.html",
+        {
+            "episode": episode,
+            "is_favorited": is_favorited,
+        },
+    )

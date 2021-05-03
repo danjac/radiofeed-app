@@ -1,8 +1,7 @@
-import { dispatch, formatDuration, percent, JSONSender } from './utils';
+import { dispatch, formatDuration, percent } from './utils';
 
-export default function (htmx, options) {
-  const { csrfToken, urls } = options;
-  const sendJSON = JSONSender(csrfToken);
+export default function (app, options) {
+  const { urls } = options;
 
   const defaults = {
     episode: null,
@@ -40,7 +39,8 @@ export default function (htmx, options) {
     },
     playEpisode($event) {
       const { url } = $event.detail;
-      sendJSON(url)
+      app
+        .sendJSON(url)
         .then((response) => response.json())
         .then((data) => {
           this.openPlayer(data);
@@ -68,7 +68,7 @@ export default function (htmx, options) {
       });
     },
     closePlayer() {
-      sendJSON(urls.closePlayer);
+      app.sendJSON(urls.closePlayer);
       this.episode = null;
       this.podcast = null;
       this.currentTime = 0;
@@ -99,7 +99,8 @@ export default function (htmx, options) {
       this.isWaiting = false;
     },
     ended() {
-      sendJSON(urls.playNextEpisode)
+      app
+        .sendJSON(urls.playNextEpisode)
         .then((response) => response.json())
         .then((data) => {
           if (Object.keys(data).length === 0) {
@@ -118,6 +119,7 @@ export default function (htmx, options) {
       if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
         return;
       }
+
       const handlers = {
         '+': this.incrementPlaybackRate,
         '-': this.decrementPlaybackRate,
@@ -185,9 +187,7 @@ export default function (htmx, options) {
     startPlayer(mediaUrl) {
       this.audio = new Audio(mediaUrl);
       this.audio.currentTime = this.currentTime;
-
       this.configAudioListeners(false);
-
       this.audio.play().catch((e) => {
         console.log(e);
         this.isPaused = true;
@@ -197,7 +197,7 @@ export default function (htmx, options) {
     stopPlayer() {
       if (this.audio) {
         this.audio.pause();
-        this.configAudioListeners(true);
+        this.removeAudioListeners();
         this.audio = null;
       }
       if (timer) {
@@ -206,7 +206,7 @@ export default function (htmx, options) {
     },
     sendCurrentTimeUpdate() {
       if (this.audio && !this.isPaused && !this.isWaiting && this.currentTime) {
-        sendJSON(urls.timeUpdate, {
+        app.sendJSON(urls.timeUpdate, {
           currentTime: this.currentTime,
         });
       }

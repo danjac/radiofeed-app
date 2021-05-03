@@ -1,15 +1,33 @@
-<form method="post"
-      id="{{ episode.dom.favorite_toggle }}"
-      action="{% url is_favorited|yesno:'episodes:remove_favorite,episodes:add_favorite' episode.id %}">
-  {% csrf_token %}
-  {% if redirect_url %}
-  <input type="hidden"
-         name="redirect_url"
-         value="{{ redirect_url }}">
-  {% endif %}
-  {% if is_favorited %}
-  {% button "Favorites" icon="trash" type="secondary" title="Remove episode from your Favorites" accesskey="v" %}
+  {% if user.is_authenticated %}
+  <div id="favorite-toggle"
+       hx-target="this">
+    {% if is_favorited %}
+    <button class="btn btn-secondary flex items-center"
+            hx-post="{% url 'episodes:remove_favorite' episode.id %}"
+            @click.once="
+          $dispatch('remove-favorite', { id: {{ episode.id }} });
+          $dispatch('close-modal');"
+            title="Remove from Favorites">
+      {% icon "trash" css_class="btn-icon mr-2" %}
+      Favorites
+    </button>
+    {% else %}
+    <button class="btn btn-default flex items-center"
+            hx-post="{% url 'episodes:add_favorite' episode.id %}"
+            @click.once="$dispatch('close-modal')"
+            title="Add to Favorites">
+      {% icon "star" css_class="btn-icon mr-2" %}
+      Favorites
+    </button>
+    {% endif %}
+  </div>
   {% else %}
-  {% button "Favorites" icon="star" title="Add episode to your Favorites" accesskey="v" %}
+  <div>
+    <a class="btn btn-default flex items-center"
+       href="{{ episode.get_absolute_url|login_url }}"
+       title="Log in">
+      {% icon "star" css_class="btn-icon mr-2" %}
+      Favorites
+    </a>
+  </div>
   {% endif %}
-</form>

@@ -1,4 +1,4 @@
-export const JSONSender = (csrfToken) => {
+export const JSONClient = (csrfToken) => {
   return (url, data) =>
     fetch(url, {
       method: 'POST',

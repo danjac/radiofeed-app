@@ -1,10 +1,14 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-<div id="favorites">
+{% with count=page_obj.paginator.count %}
+<div {% if count %}
+     x-data="{ counter: {{ page_obj.paginator.count }} }"
+     @remove-favorite.window="counter = counter-1"
+     {% endif %}>
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
-  {% include "episodes/_favorite.html" with dom_id=episode.dom.favorite %}
+  {% include "episodes/_favorite.html" %}
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">
@@ -15,5 +19,11 @@
     {% endif %}
   </p>
   {% endfor %}
+  {% if count %}
+  <p x-show="counter === 0">
+    All done!
+  </p>
+  {% endif %}
 </div>
+{% endwith %}
 {% endblock %}
