@@ -10,11 +10,7 @@
   </p>
   <form action="{% url 'delete_account' %}"
         method="post"
-        data-turbo="false"
         class="flex justify-end"
-        data-controller="confirm"
-        data-confirm-text-value="Are you sure you want to continue?"
-        data-action="confirm#confirm"
         novalidate>
     {% csrf_token %}
     {% button "Yes, delete my account" icon="trash" type="danger" name="confirm-delete" %}

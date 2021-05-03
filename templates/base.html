@@ -1,4 +1,4 @@
-{% load static i18n player %}
+{% load static i18n %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
@@ -14,8 +14,6 @@
         content="IE=edge" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="turbo-cache-control"
-        content="no-cache">
   <meta name="copyright"
         content="Dan Jacob {% now "Y" %}">
   {% block robots %}
@@ -70,6 +68,7 @@
   {% endblock %}
 
   {% include "_modal.html" %}
+  <script src="{% static debug|yesno:'dev/app.js,dist/app.js' %}"></script>
   <script>
     const app = App.initialize({
       htmx,

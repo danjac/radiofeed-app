@@ -8,8 +8,8 @@
 
 <form method="POST"
       action="{{ request.path }}"
-      data-turbo="false"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2">
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      hx-disable="true">
   {% csrf_token %}
   <p class="mb-3 text-sm">
     You can export the RSS feeds of the podcasts you are following in OPML or CSV format.

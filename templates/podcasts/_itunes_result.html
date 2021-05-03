@@ -24,9 +24,10 @@
       <div>
         {% if podcast and podcast.pub_date %}
         <a class="link"
-           href="{% url 'podcasts:preview' podcast.id %}"
-           title="Preview for {{ podcast.title }}"
-           data-turbo-frame="modal">
+           title="Preview for {{ podcast.title|stripentities }}"
+           href="{{ podcast.get_preview_url }}"
+           hx-get="{{ podcast.get_preview_url }}"
+           hx-target="#modal">
           {% icon "ellipsis" css_class="w-6 h-6" %}
         </a>
         {% else %}
