@@ -5,9 +5,11 @@
 <div class="space-y-2">
   {% for category in categories %}
   <div class="inline-block">
-    {% with css_class=forloop.last|yesno:",mr-2" %}
-    {% button category.name icon="tag" type="link" title=category.name href=category.get_absolute_url css_class=css_class %}
-    {% endwith %}
+    <a href="{{ category.get_absolute_url }}"
+       class="btn btn-link mr-2 flex items-center{% if forloop.last %} mr-2{% endif %}">
+      {% icon "tag" css_class="btn-icon mr-2" %}
+      {{ category.name }}
+    </a>
   </div>
   {% endfor %}
 </div>
