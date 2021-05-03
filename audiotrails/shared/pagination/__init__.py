@@ -39,7 +39,7 @@ def render_paginated_response(
     }
     if (
         "HX-Request" in request.headers
-        and request.headers.get("HX-Target") == f"page-{page_obj.number}"
+        and request.headers.get("HX-Target") == "pagination"
     ):
         template_name = pagination_template_name
 
