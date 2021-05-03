@@ -5,8 +5,12 @@
     <button class="btn btn-secondary flex items-center"
             hx-post="{% url 'episodes:remove_favorite' episode.id %}"
             @click.once="
-          $dispatch('remove-favorite', { id: {{ episode.id }} });
-          $dispatch('close-modal');"
+          $dispatch('close-modal');
+          $dispatch('message', {
+              tag: 'info',
+              message: 'Episode has been removed from your Favorites' }
+          );
+          $dispatch('remove-favorite', { id: {{ episode.id }} });"
             title="Remove from Favorites">
       {% icon "trash" css_class="btn-icon mr-2" %}
       Favorites
@@ -14,7 +18,13 @@
     {% else %}
     <button class="btn btn-default flex items-center"
             hx-post="{% url 'episodes:add_favorite' episode.id %}"
-            @click.once="$dispatch('close-modal')"
+            @click.once="
+            $dispatch('close-modal');
+            $dispatch('message', {
+                tag: 'success',
+                message: 'Episode has been added to your Favorites' }
+            );
+            "
             title="Add to Favorites">
       {% icon "star" css_class="btn-icon mr-2" %}
       Favorites

@@ -16,3 +16,22 @@
   </div>
 </div>
 {% endif %}
+
+<template x-data="{show: false, tag: null, message: null}"
+          x-if="show"
+          @message.window="
+            tag = $event.detail.tag;
+            message = $event.detail.message;
+            show = true;
+            setTimeout(() => { show = false }, 3000);
+            ">
+  <div class="flex justify-between items-center p-2 message"
+       :class="`message-${tag}`">
+    <div class="mx-auto text-sm md:text-base font-semibold"
+         x-text="message"></div>
+    <button @click="show=false"
+            class="float-right focus:outline-none">
+      {% icon "x_circle" css_class="h-6 w-6" %}
+    </button>
+  </div>
+</template>
