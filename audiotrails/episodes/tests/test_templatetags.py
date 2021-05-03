@@ -5,7 +5,7 @@ from audiotrails.users.factories import UserFactory
 
 from ..factories import AudioLogFactory, EpisodeFactory
 from ..player import Player
-from ..templatetags.player import get_player
+from ..templatetags.player import get_player_info
 
 
 class GetPlayerTests(TestCase):
@@ -22,14 +22,14 @@ class GetPlayerTests(TestCase):
         req.user = AnonymousUser()
         req.session = {}
         req.player = Player(req)
-        self.assertEqual(get_player({"request": req}), {})
+        self.assertEqual(get_player_info({"request": req}), {})
 
     def test_player_not_loaded(self):
         req = self.rf.get("/")
         req.user = self.user
         req.session = {}
         req.player = Player(req)
-        self.assertEqual(get_player({"request": req}), {})
+        self.assertEqual(get_player_info({"request": req}), {})
 
     def test_player_loaded(self):
         AudioLogFactory(user=self.user, episode=self.episode, current_time=300)
@@ -37,10 +37,6 @@ class GetPlayerTests(TestCase):
         req.user = self.user
         req.session = {"player_episode": self.episode.id}
         req.player = Player(req)
-        self.assertEqual(
-            get_player({"request": req}),
-            {
-                "episode": self.episode,
-                "current_time": 300,
-            },
-        )
+        info = get_player_info({"request": req})
+        self.assertEqual(info["currentTime"], 300)
+        self.assertEqual(info["episode"]["id"], self.episode.id)

@@ -20,7 +20,7 @@ class NewEpisodesAnonymousTests(TestCase):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
-        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        resp = self.client.get(reverse("episodes:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["has_follows"])
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -39,7 +39,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         EpisodeFactory(podcast=promoted)
 
         EpisodeFactory.create_batch(3)
-        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        resp = self.client.get(reverse("episodes:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["has_follows"])
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -53,7 +53,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         episode = EpisodeFactory()
         FollowFactory(user=self.user, podcast=episode.podcast)
 
-        resp = self.client.get(reverse("episodes:index"), HTTP_TURBO_FRAME="episodes")
+        resp = self.client.get(reverse("episodes:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["featured"])
         self.assertTrue(resp.context_data["has_follows"])
@@ -69,9 +69,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         episode = EpisodeFactory()
         FollowFactory(user=self.user, podcast=episode.podcast)
 
-        resp = self.client.get(
-            reverse("episodes:featured"), HTTP_TURBO_FRAME="episodes"
-        )
+        resp = self.client.get(reverse("episodes:featured"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertTrue(resp.context_data["featured"])
         self.assertTrue(resp.context_data["has_follows"])
@@ -96,7 +94,6 @@ class SearchEpisodesTests(TestCase):
         resp = self.client.get(
             reverse("episodes:search_episodes"),
             {"q": "testing"},
-            HTTP_TURBO_FRAME="episodes",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -112,7 +109,7 @@ class EpisodeDetailAnonymousTests(TestCase):
         self.assertFalse(resp.context_data["is_favorited"])
 
 
-class EpisodeDetailTests(TestCase):
+class EpisodeDetailAuthenticatedTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -144,18 +141,9 @@ class PreviewTests(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
-    def test_not_turbo_frame(self):
-        self.assertRedirects(
-            self.client.get(
-                reverse("episodes:episode_preview", args=[self.episode.id]),
-            ),
-            self.episode.get_absolute_url(),
-        )
-
     def test_user_not_favorited(self):
         resp = self.client.get(
             reverse("episodes:episode_preview", args=[self.episode.id]),
-            HTTP_TURBO_FRAME="modal",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
@@ -165,23 +153,13 @@ class PreviewTests(TestCase):
         FavoriteFactory(episode=self.episode, user=self.user)
         resp = self.client.get(
             reverse("episodes:episode_preview", args=[self.episode.id]),
-            HTTP_TURBO_FRAME="modal",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
         self.assertTrue(resp.context_data["is_favorited"])
 
 
-class StartPlayerAnonymousTests(TestCase):
-    def test_get(self):
-        episode = EpisodeFactory()
-        self.assertRedirects(
-            self.client.post(reverse("episodes:start_player", args=[episode.id])),
-            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
-        )
-
-
-class StartPlayerAuthenticatedTests(TestCase):
+class StartPlayerTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -195,7 +173,6 @@ class StartPlayerAuthenticatedTests(TestCase):
             reverse("episodes:start_player", args=[self.episode.id])
         )
 
-        list(resp.streaming_content)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
     def test_play_episode_in_history(self):
@@ -203,7 +180,6 @@ class StartPlayerAuthenticatedTests(TestCase):
         resp = self.client.post(
             reverse("episodes:start_player", args=[self.episode.id])
         )
-        list(resp.streaming_content)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
@@ -220,8 +196,6 @@ class PlayNextEpisodeTests(TestCase):
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
         resp = self.client.post(reverse("episodes:play_next_episode"))
 
-        list(resp.streaming_content)
-
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
@@ -231,29 +205,17 @@ class PlayNextEpisodeTests(TestCase):
         QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
         resp = self.client.post(reverse("episodes:play_next_episode"))
 
-        list(resp.streaming_content)
-
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
     def test_queue_empty(self):
         resp = self.client.post(reverse("episodes:play_next_episode"))
 
-        list(resp.streaming_content)
-
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
 
 class ClosePlayerTests(TestCase):
-    def test_anonymous(self):
-        self.assertRedirects(
-            self.client.post(
-                reverse("episodes:close_player"),
-            ),
-            reverse("account_login") + "?next=/",
-        )
-
     def test_stop(self):
         episode = EpisodeFactory()
 
@@ -268,21 +230,10 @@ class ClosePlayerTests(TestCase):
         resp = self.client.post(
             reverse("episodes:close_player"),
         )
-        list(resp.streaming_content)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class PlayerUpdateCurrentTimeAnonymousTests(TestCase):
-    def test_post(self):
-        EpisodeFactory()
-        resp = self.client.post(
-            reverse("episodes:player_update_current_time"),
-            data={"current_time": "1030.0001"},
-        )
-        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
-
-
-class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
+class PlayerUpdateCurrentTimeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -300,7 +251,8 @@ class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
 
         resp = self.client.post(
             reverse("episodes:player_update_current_time"),
-            data={"current_time": "1030.0001"},
+            data={"currentTime": "1030.0001"},
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -310,7 +262,8 @@ class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
     def test_player_not_running(self):
         resp = self.client.post(
             reverse("episodes:player_update_current_time"),
-            data={"current_time": "1030.0001"},
+            data={"currentTime": "1030.0001"},
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -333,6 +286,7 @@ class PlayerUpdateCurrentTimeAuthenticatedTests(TestCase):
         resp = self.client.post(
             reverse("episodes:player_update_current_time"),
             data={"current_time": "xyz"},
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
@@ -347,7 +301,7 @@ class HistoryTests(TestCase):
 
     def test_get(self):
         AudioLogFactory.create_batch(3, user=self.user)
-        resp = self.client.get(reverse("episodes:history"), HTTP_TURBO_FRAME="episodes")
+        resp = self.client.get(reverse("episodes:history"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -362,9 +316,7 @@ class HistoryTests(TestCase):
             )
 
         AudioLogFactory(user=self.user, episode=EpisodeFactory(title="testing"))
-        resp = self.client.get(
-            reverse("episodes:history"), {"q": "testing"}, HTTP_TURBO_FRAME="episodes"
-        )
+        resp = self.client.get(reverse("episodes:history"), {"q": "testing"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
@@ -379,9 +331,7 @@ class FavoritesTests(TestCase):
 
     def test_get(self):
         FavoriteFactory.create_batch(3, user=self.user)
-        resp = self.client.get(
-            reverse("episodes:favorites"), HTTP_TURBO_FRAME="episodes"
-        )
+        resp = self.client.get(reverse("episodes:favorites"))
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
@@ -400,22 +350,12 @@ class FavoritesTests(TestCase):
         resp = self.client.get(
             reverse("episodes:favorites"),
             {"q": "testing"},
-            HTTP_TURBO_FRAME="episodes",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
 
-class AddFavoriteAnonymousTests(TestCase):
-    def test_anonymous(self):
-        episode = EpisodeFactory()
-        self.assertRedirects(
-            self.client.post(reverse("episodes:add_favorite", args=[episode.id])),
-            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
-        )
-
-
-class AddFavoriteAuthenticatedTests(TransactionTestCase):
+class AddFavoriteTests(TransactionTestCase):
     def setUp(self):
         self.user = UserFactory()
         self.episode = EpisodeFactory()
@@ -446,14 +386,6 @@ class RemoveFavoriteTests(TestCase):
     def setUpTestData(cls):
         cls.episode = EpisodeFactory()
 
-    def test_anonymous(self):
-        self.assertRedirects(
-            self.client.post(
-                reverse("episodes:remove_favorite", args=[self.episode.id])
-            ),
-            f"{reverse('account_login')}?next={self.episode.get_absolute_url()}",
-        )
-
     def test_post(self):
         user = UserFactory()
         self.client.force_login(user)
@@ -467,16 +399,7 @@ class RemoveFavoriteTests(TestCase):
         )
 
 
-class RemoveAudioLogAnonymousTests(TestCase):
-    def test_anonymous(self):
-        episode = EpisodeFactory()
-        self.assertRedirects(
-            self.client.post(reverse("episodes:remove_audio_log", args=[episode.id])),
-            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
-        )
-
-
-class RemoveAudioLogAuthenticatedTests(TestCase):
+class RemoveAudioLogTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -491,7 +414,7 @@ class RemoveAudioLogAuthenticatedTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -502,7 +425,7 @@ class RemoveAudioLogAuthenticatedTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -519,16 +442,7 @@ class QueueTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class AddToQueueAnonymousTests(TestCase):
-    def test_post(self):
-        episode = EpisodeFactory()
-        self.assertRedirects(
-            self.client.post(reverse("episodes:add_to_queue", args=[episode.id])),
-            f"{reverse('account_login')}?next={episode.get_absolute_url()}",
-        )
-
-
-class AddToQueueAuthenticatedTests(TransactionTestCase):
+class AddToQueueTests(TransactionTestCase):
     def setUp(self):
         self.user = UserFactory()
         self.episode = EpisodeFactory()
@@ -579,14 +493,6 @@ class RemoveFromQueueTests(TestCase):
     def setUpTestData(cls):
         cls.episode = EpisodeFactory()
 
-    def test_anonymous(self):
-        self.assertRedirects(
-            self.client.post(
-                reverse("episodes:remove_from_queue", args=[self.episode.id])
-            ),
-            f"{reverse('account_login')}?next={self.episode.get_absolute_url()}",
-        )
-
     def test_post(self):
         user = UserFactory()
         self.client.force_login(user)
@@ -599,10 +505,6 @@ class RemoveFromQueueTests(TestCase):
 
 
 class TestMoveQueueItems:
-    def test_anonymous(self):
-        resp = self.client.post(reverse("episodes:move_queue_items"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.FORBIDDEN)
-
     def test_post(self):
         user = UserFactory()
         self.client.force_login(user)

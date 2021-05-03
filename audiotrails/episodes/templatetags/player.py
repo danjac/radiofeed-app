@@ -9,5 +9,5 @@ def is_playing(context, episode):
 
 
 @register.simple_tag(takes_context=True)
-def get_player(context):
+def get_player_info(context):
     return context["request"].player.get_player_info()

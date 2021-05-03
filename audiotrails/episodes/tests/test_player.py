@@ -29,7 +29,7 @@ class PlayerTests(TestCase):
         req = self.make_request(user=self.user)
         player = Player(req)
 
-        self.assertEqual(player.start_episode(self.episode), 0)
+        self.assertEqual(player.start_episode(self.episode).current_time, 0)
 
         log = AudioLog.objects.get()
 
@@ -49,7 +49,7 @@ class PlayerTests(TestCase):
         req = self.make_request(user=self.user)
 
         player = Player(req)
-        self.assertEqual(player.start_episode(self.episode), 500)
+        self.assertEqual(player.start_episode(self.episode).current_time, 500)
 
         log.refresh_from_db()
 
@@ -142,11 +142,7 @@ class PlayerTests(TestCase):
         req = self.make_request(episode=log.episode, user=self.user)
 
         player = Player(req)
-
-        self.assertEqual(
-            player.get_player_info(),
-            {
-                "current_time": 100,
-                "episode": log.episode,
-            },
-        )
+        info = player.get_player_info()
+        self.assertEqual(info["currentTime"], 100)
+        self.assertEqual(info["episode"]["id"], log.episode.id)
+        self.assertEqual(info["podcast"]["title"], log.episode.podcast.title)

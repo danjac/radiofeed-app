@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from turbo_response.constants import TURBO_STREAM_MIME_TYPE
 
 from audiotrails.episodes.factories import (
     AudioLogFactory,
@@ -33,7 +32,7 @@ class UserPreferencesTests(TestCase):
     def test_post(self):
         url = reverse("user_preferences")
         resp = self.client.post(url, {"send_recommendations_email": False})
-        self.assertRedirects(resp, url, status_code=http.HTTPStatus.SEE_OTHER)
+        self.assertRedirects(resp, url)
         self.user.refresh_from_db()
         assert not self.user.send_recommendations_email
 
@@ -110,11 +109,4 @@ class TestAcceptCookies:
     def test_post(self):
         resp = self.client.post(reverse("accept_cookies"))
         self.assertRedirects(resp, settings.HOME_URL)
-        self.assertFalse("accept-cookies" in resp.cookies)
-
-    def test_post_turbo(self, client):
-        resp = client.post(
-            reverse("accept_cookies"), HTTP_ACCEPT=TURBO_STREAM_MIME_TYPE
-        )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse("accept-cookies" in resp.cookies)

@@ -55,7 +55,7 @@ class TestPodcastCoverImage(TestCase):
 class AnonymousPodcastsTests(TestCase):
     def test_anonymous(self):
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
+        resp = self.client.get(reverse("podcasts:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -73,9 +73,7 @@ class AuthenticatedPodcastsTests(TestCase):
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=self.user).podcast
-        resp = self.client.get(
-            reverse("podcasts:featured"), HTTP_TURBO_FRAME="podcasts"
-        )
+        resp = self.client.get(reverse("podcasts:featured"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
         self.assertFalse(sub in resp.context_data["page_obj"].object_list)
@@ -84,7 +82,7 @@ class AuthenticatedPodcastsTests(TestCase):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
+        resp = self.client.get(reverse("podcasts:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -93,7 +91,7 @@ class AuthenticatedPodcastsTests(TestCase):
 
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=self.user)
-        resp = self.client.get(reverse("podcasts:index"), HTTP_TURBO_FRAME="podcasts")
+        resp = self.client.get(reverse("podcasts:index"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
         self.assertEqual(resp.context_data["page_obj"].object_list[0], sub.podcast)
@@ -105,7 +103,6 @@ class SearchPodcastsTests(TestCase):
             self.client.get(
                 reverse("podcasts:search_podcasts"),
                 {"q": ""},
-                HTTP_TURBO_FRAME="podcasts",
             ),
             reverse("podcasts:index"),
         )
@@ -116,7 +113,6 @@ class SearchPodcastsTests(TestCase):
         resp = self.client.get(
             reverse("podcasts:search_podcasts"),
             {"q": "testing"},
-            HTTP_TURBO_FRAME="podcasts",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -145,17 +141,10 @@ class PreviewTests(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
-    def test_not_turbo_frame(self):
-        self.assertRedirects(
-            self.client.get(reverse("podcasts:preview", args=[self.podcast.id])),
-            self.podcast.get_absolute_url(),
-        )
-
     def test_authenticated(self):
         EpisodeFactory.create_batch(3, podcast=self.podcast)
         resp = self.client.get(
             reverse("podcasts:preview", args=[self.podcast.id]),
-            HTTP_TURBO_FRAME="modal",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["podcast"], self.podcast)
@@ -166,7 +155,6 @@ class PreviewTests(TestCase):
         FollowFactory(podcast=self.podcast, user=self.user)
         resp = self.client.get(
             reverse("podcasts:preview", args=[self.podcast.id]),
-            HTTP_TURBO_FRAME="modal",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["podcast"], self.podcast)
@@ -208,7 +196,6 @@ class PodcastEpisodeListTests(TestCase):
                 "podcasts:podcast_episodes",
                 args=[self.podcast.id, self.podcast.slug],
             ),
-            HTTP_TURBO_FRAME="episodes",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
@@ -224,7 +211,6 @@ class PodcastEpisodeSearchTests(TransactionTestCase):
                 args=[podcast.id, podcast.slug],
             ),
             {"q": "testing"},
-            HTTP_TURBO_FRAME="episodes",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -276,7 +262,7 @@ class TestCategoryDetail:
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
-        resp = client.get(category.get_absolute_url(), HTTP_TURBO_FRAME="podcasts")
+        resp = client.get(category.get_absolute_url())
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 12)
 
@@ -288,9 +274,7 @@ class TestCategoryDetail:
         )
         PodcastFactory(title="testing", categories=[category])
 
-        resp = client.get(
-            category.get_absolute_url(), {"q": "testing"}, HTTP_TURBO_FRAME="podcasts"
-        )
+        resp = client.get(category.get_absolute_url(), {"q": "testing"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
@@ -304,12 +288,6 @@ class FollowTests(TestCase):
         user = UserFactory()
         self.client.force_login(user)
         return user
-
-    def test_anonymous(self):
-        self.assertRedirects(
-            self.client.post(reverse("podcasts:follow", args=[self.podcast.id])),
-            f"{reverse('account_login')}?next={self.podcast.get_absolute_url()}",
-        )
 
     def test_subscribe(self):
         user = self.login_user()
@@ -333,12 +311,6 @@ class UnfollowTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.podcast = PodcastFactory()
-
-    def test_anonymous(self):
-        self.assertRedirects(
-            self.client.post(reverse("podcasts:unfollow", args=[self.podcast.id])),
-            f"{reverse('account_login')}?next={self.podcast.get_absolute_url()}",
-        )
 
     def test_unsubscribe(self):
         user = UserFactory()

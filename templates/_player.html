@@ -1,5 +1,4 @@
 {% load player %}
-{% get_player as player %}
 <div id="player"
      x-data="app.player({
                 urls: {
@@ -116,6 +115,7 @@
     </div>
   </template>
 </div>
+{% get_player_info as player_info %}
 {% if player %}
-{{ player|json_script:"player-info" }}
+{{ player_info|json_script:"player-info" }}
 {% endif %}
