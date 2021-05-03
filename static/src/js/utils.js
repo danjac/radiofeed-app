@@ -1,5 +1,17 @@
+export const JSONSender = (csrfToken) => {
+  return (url, data) =>
+    fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify(data || {}),
+      headers: {
+        'X-CSRFToken': csrfToken,
+        'Content-Type': 'application/json',
+      },
+    });
+};
+
 export const dispatch = (el, event, detail = {}) => {
-  console.log('dispatch', event, detail);
   el.dispatchEvent(
     new CustomEvent(event, {
       detail,

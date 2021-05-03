@@ -1,21 +1,8 @@
-import { dispatch, formatDuration, percent } from './utils';
+import { dispatch, formatDuration, percent, JSONSender } from './utils';
 
 export default function (htmx, options) {
   const { csrfToken, urls } = options;
-
-  let timer;
-
-  const doFetch = (url, options) => {
-    options = options || {};
-    const body = options.body || new FormData();
-    body.append('csrfmiddlewaretoken', csrfToken);
-    return fetch(url, {
-      body,
-      method: 'POST',
-      credentials: 'same-origin',
-      ...options,
-    });
-  };
+  const sendJSON = JSONSender(csrfToken);
 
   const defaults = {
     episode: null,
@@ -29,6 +16,8 @@ export default function (htmx, options) {
     playbackRate: 1.0,
     counter: '-00:00:00',
   };
+
+  let timer;
 
   const instance = {
     ...defaults,
@@ -51,7 +40,7 @@ export default function (htmx, options) {
     },
     playEpisode($event) {
       const { url } = $event.detail;
-      doFetch(url)
+      sendJSON(url)
         .then((response) => response.json())
         .then((data) => {
           this.openPlayer(data);
@@ -79,7 +68,7 @@ export default function (htmx, options) {
       });
     },
     closePlayer() {
-      doFetch(urls.closePlayer);
+      sendJSON(urls.closePlayer);
       this.episode = null;
       this.podcast = null;
       this.currentTime = 0;
@@ -110,7 +99,7 @@ export default function (htmx, options) {
       this.isWaiting = false;
     },
     ended() {
-      doFetch(urls.playNextEpisode)
+      sendJSON(urls.playNextEpisode)
         .then((response) => response.json())
         .then((data) => {
           if (Object.keys(data).length === 0) {
@@ -217,10 +206,8 @@ export default function (htmx, options) {
     },
     sendCurrentTimeUpdate() {
       if (this.audio && !this.isPaused && !this.isWaiting && this.currentTime) {
-        const body = new FormData();
-        body.append('current_time', this.currentTime);
-        doFetch(urls.timeUpdate, {
-          body,
+        sendJSON(urls.timeUpdate, {
+          currentTime: this.currentTime,
         });
       }
     },
