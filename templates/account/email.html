@@ -8,11 +8,16 @@
 {% if user.emailaddress_set.all %}
 <p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
+{% url 'account_email' as email_url %}
+
 <form class="mb-3 w-full sm:w-3/4 lg:w-1/2"
       method="post"
+      x-data="{action: ''}"
       id="email-addresses"
-      hx-disable="true"
       action="{% url 'account_email' %}">
+  <input type="hidden"
+         :name="action"
+         value="1">
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
@@ -41,6 +46,7 @@
   </div>
   {% endfor %}
   <div class="flex items-center justify-evenly sm:justify-end mb-3 space-x-2">
+    <button @click="action='action_primary'">Primary</button>
     {% button _("Primary") icon="sparkles" name="action_primary" value="1" %}
     {% button _("Re-Verify") icon="mail" type="secondary" name="action_send" value="1" %}
     {% button _("Remove") icon="trash" type="danger" data_controller="confirm" data_confirm_text_value=_("Are you sure you want to remove this email address?") data_action="confirm#confirm" name="action_remove" value="1" %}
