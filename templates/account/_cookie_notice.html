@@ -1,12 +1,8 @@
 {% if not accept_cookies %}
-<form class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50"
-      id="accept-cookies"
-      method="post"
-      action="{% url 'accept_cookies' %}">
-  {% csrf_token %}
-  <input type="hidden"
-         name="redirect_url"
-         value="{{ request.get_full_path }}">
+<div class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50"
+     id="accept-cookies"
+     x-data="{show: true}"
+     x-show="show">
   <div class="px-2">
     <div class="md:flex items-center">
       <p class="mb-3 md:mb-0 md:mr-4 text-center md:text-start">
@@ -16,11 +12,13 @@
            class="font-semibold text-white">Learn more</a>
       </p>
       <div class="text-center md:text-start">
-        <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto">
+        <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto"
+                hx-post="{% url 'accept_cookies' %}"
+                @click="show=false">
           Got it!
         </button>
       </div>
     </div>
   </div>
-</form>
+</div>
 {% endif %}

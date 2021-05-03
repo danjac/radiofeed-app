@@ -10,13 +10,11 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from turbo_response import TurboStream, redirect_303, render_form_response
 
 from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
 from audiotrails.podcasts.models import Follow, Podcast
 
 from .forms import UserPreferencesForm
-from .utils import get_redirect_url
 
 
 @login_required
@@ -26,15 +24,11 @@ def user_preferences(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect_303(request.path)
+            return redirect(request.path)
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return render_form_response(
-        request,
-        form,
-        "account/preferences.html",
-    )
+    return TemplateResponse(request, "account/preferences.html", {"form": form})
 
 
 @login_required
@@ -109,11 +103,7 @@ def delete_account(request):
 
 @require_POST
 def accept_cookies(request):
-    response = (
-        TurboStream("accept-cookies").remove.response()
-        if request.turbo
-        else redirect(get_redirect_url(request))
-    )
+    response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
         value="true",
