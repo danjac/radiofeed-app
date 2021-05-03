@@ -131,24 +131,6 @@ def icon(name, css_class="", title="", **attrs):
     }
 
 
-@register.inclusion_tag("forms/_button.html")
-def button(
-    text,
-    icon="",
-    type="default",
-    css_class="",
-    **attrs,
-):
-    return {
-        "text": text,
-        "icon": icon,
-        "type": type,
-        "css_class": css_class,
-        "tag": "a" if "href" in attrs else "button",
-        "attrs": attrs,
-    }
-
-
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
 def share_buttons(context, url, subject, css_class=""):
     url = parse.quote(context["request"].build_absolute_uri(url))
