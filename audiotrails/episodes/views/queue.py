@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -63,7 +64,7 @@ def move_queue_items(request):
     for_update = []
 
     try:
-        for position, item_id in enumerate(request.POST.getlist("items"), 1):
+        for position, item_id in enumerate(json.loads(request.body)["items"], 1):
             if item := items[int(item_id)]:
                 item.position = position
                 for_update.append(item)

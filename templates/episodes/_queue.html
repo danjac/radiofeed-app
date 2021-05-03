@@ -1,10 +1,10 @@
 {% with count=queue_items|length %}
 {% if count %}
-<div data-controller="drag"
-     data-drag-handle-class="handle"
-     data-drag-group-value="queue-items"
-     data-drag-url-value="{% url 'episodes:move_queue_items'%}"
-     x-data="{ counter: {{ count }} }"
+<div x-data="{
+      counter: {{ count }},
+      ...app.queue({ url: '{% url 'episodes:move_queue_items' %}' })
+     }"
+     x-init="initialize()"
      @remove-queue-item.window="counter = counter-1"
      id="queue">
   {% else %}

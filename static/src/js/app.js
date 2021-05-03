@@ -1,8 +1,8 @@
 import 'alpinejs';
 import 'htmx.org';
-import 'sortablejs';
 
 import Player from './player';
+import Queue from './queue';
 import { JSONClient } from './utils';
 
 window.App = {
@@ -40,5 +40,8 @@ window.App = {
   },
   player(options) {
     return Player(this, options);
+  },
+  queue(options) {
+    return Queue(this, options);
   },
 };
