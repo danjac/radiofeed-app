@@ -2,9 +2,6 @@
 {% block extra_attrs %}
 data-drag-target="draggable"
 data-id={{ item.id }}
-x-data="{show: true}"
-x-show="show"
-@open-player.window="show=$event.detail.episode.id !== {{ episode.id }}"
 {% endblock %}
 {% block extra_buttons %}
 <div class="flex items-center">

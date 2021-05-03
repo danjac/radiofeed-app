@@ -3,7 +3,7 @@
 {% block results %}
 {% with count=page_obj.paginator.count %}
 <div {% if count %}
-     x-data="{ counter: {{ page_obj.paginator.count }} }"
+     x-data="{ counter: {{ count }} }"
      @remove-favorite.window="counter = counter-1"
      {% endif %}>
   {% for favorite in page_obj %}

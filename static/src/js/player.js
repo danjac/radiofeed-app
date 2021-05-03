@@ -61,6 +61,7 @@ export default function (app, options) {
           }
         }
         dispatch(this.$el, 'open-player', data);
+        dispatch(this.$el, 'remove-queue-item', { id: this.episode.id });
       }
       this.$nextTick(() => {
         // re-hook up any htmx events
@@ -75,7 +76,9 @@ export default function (app, options) {
     },
     // audio events
     loaded() {
-      this.duration = this.audio.duration;
+      if (this.audio) {
+        this.duration = this.audio.duration;
+      }
     },
     timeUpdate() {
       if (this.audio) {
@@ -197,7 +200,7 @@ export default function (app, options) {
     stopPlayer() {
       if (this.audio) {
         this.audio.pause();
-        this.removeAudioListeners();
+        this.configAudioListeners(true);
         this.audio = null;
       }
       if (timer) {

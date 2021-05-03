@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
+from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
 from ..models import Favorite
@@ -29,11 +29,9 @@ def index(request):
 
 
 @require_POST
+@ajax_login_required
 def add_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-
-    if request.user.is_anonymous:
-        return redirect_to_login(episode.get_absolute_url())
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
@@ -44,11 +42,9 @@ def add_favorite(request, episode_id):
 
 
 @require_POST
+@ajax_login_required
 def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
-
-    if request.user.is_anonymous:
-        return redirect_to_login(episode.get_absolute_url())
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 

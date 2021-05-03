@@ -1,14 +1,34 @@
-<form method="post"
-      id="{{ episode.dom.queue_toggle }}"
-      class="flex items-center"
-      action="{% url is_queued|yesno:'episodes:remove_from_queue,episodes:add_to_queue' episode.id %}">
-  {% csrf_token %}
-  <input type="hidden"
-         name="redirect_url"
-         value="{{ redirect_url|default:request.get_full_path }}">
-  {% if is_queued %}
-  {% button "Play Queue" icon="trash" type="secondary" title="Remove episode from your Play Queue" accesskey="q" %}
+  {% if user.is_authenticated %}
+  <div id="queue-toggle"
+       hx-target="this"
+       x-data="{isQueued: {{ is_queued|yesno:'true,false' }}}"
+       @remove-queue-item.window="if ($event.detail.id === {{ episode.id }}) isQueued=false">
+    <button class="btn btn-secondary flex items-center"
+            x-show="isQueued"
+            hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
+            @click.once="
+          $dispatch('remove-queue-item', { id: {{ episode.id }} });
+          $dispatch('close-modal');"
+            title="Remove from Play Queue">
+      {% icon "trash" css_class="btn-icon mr-2" %}
+      Play Queue
+    </button>
+    <button class="btn btn-default flex items-center"
+            x-show="!isQueued"
+            hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+            @click.once="$dispatch('close-modal')"
+            title="Add to Play Queue">
+      {% icon "collection" css_class="btn-icon mr-2" %}
+      Play Queue
+    </button>
+  </div>
   {% else %}
-  {% button "Play Queue" icon="collection" title="Add episode to your Play Queue" accesskey="q" %}
+  <div>
+    <a class="btn btn-default flex items-center"
+       href="{{ episode.get_absolute_url|login_url }}"
+       title="Log in">
+      {% icon "collection" css_class="btn-icon mr-2" %}
+      Play Queue
+    </a>
+  </div>
   {% endif %}
-</form>
