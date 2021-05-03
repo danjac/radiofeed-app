@@ -9,7 +9,8 @@ window.App = {
   initialize({ csrfToken, htmx }) {
     this.csrfToken = csrfToken;
     this.sendJSON = JSONClient(csrfToken);
-    this.configHtmx(htmx);
+    //this.configHtmx(htmx);
+    this.htmx = htmx;
     return this;
   },
 

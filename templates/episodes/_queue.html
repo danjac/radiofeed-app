@@ -2,7 +2,7 @@
 {% if count %}
 <div x-data="{
       counter: {{ count }},
-      ...app.queue({ url: '{% url 'episodes:move_queue_items' %}' })
+      ...Queue()
      }"
      x-init="initialize()"
      @remove-queue-item.window="counter = counter-1"
@@ -28,3 +28,35 @@
     {% endif %}
   </div>
   {% endwith %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.js"
+          integrity="sha512-5x7t0fTAVo9dpfbp3WtE2N6bfipUwk7siViWncdDoSz2KwOqVC1N9fDxEOzk0vTThOua/mglfF8NO7uVDLRC8Q=="
+          crossorigin="anonymous"></script>
+  <script>
+    const Queue = () => {
+
+      return {
+        initialize() {
+          const update = this.update.bind(this);
+          Sortable.create(this.$el, {
+            handle: '.handle',
+            animation: 150,
+            group: 'shared',
+            onAdd: update,
+            onRemove: update,
+            onUpdate: update,
+          });
+        },
+
+        update() {
+          const items = Array.from(this.$el.querySelectorAll('[data-draggable]')).map(
+            (target) => target.dataset.id
+          );
+          if (items.length > 0) {
+            sendJSON("{% url 'episodes:move_queue_items' %}", {
+              items
+            });
+          }
+        },
+      };
+    };
+  </script>
