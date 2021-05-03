@@ -21,6 +21,11 @@
     {% endif %}
   </p>
   {% endfor %}
+  {% if count and not is_paginated %}
+  <p x-show="counter === 0">
+    All done!
+  </p>
+  {% endif %}
 </div>
 {% endwith %}
 {% endblock %}

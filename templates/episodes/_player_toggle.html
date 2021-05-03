@@ -1,3 +1,4 @@
+{% if user.is_authenticated %}
 <div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}, csrfToken: '{{ csrf_token }}'}"
      @close-player.window="isPlaying = false"
      @open-player.window="isPlaying = $event.detail.episode.id === {{ episode.id }}">
@@ -21,3 +22,13 @@
     Play Episode
   </button>
 </div>
+{% else %}
+<div>
+  <a class="btn btn-primary flex items-center"
+     title="Log in"
+     href="{{ episode.get_absolute_url|login_url }}">
+    {% icon "play" css_class="btn-icon mr-2" %}
+    Play Episode
+  </a>
+</div>
+{% endif %}
