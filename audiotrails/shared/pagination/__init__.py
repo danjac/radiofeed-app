@@ -42,5 +42,6 @@ def render_paginated_response(
         and request.headers.get("HX-Target") == "pagination"
     ):
         template_name = pagination_template_name
+        context["is_paginated"] = True
 
     return TemplateResponse(request, template_name, context)

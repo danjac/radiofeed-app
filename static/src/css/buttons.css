@@ -45,6 +45,18 @@ form.submitting .btn-secondary {
   @apply border-blue-600 text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-300;
 }
 
+.btn-standalone {
+  @apply border border-none text-blue-800 dark:text-white dark:border-white;
+}
+
+.btn-standalone:hover {
+  @apply border border-none text-blue-600 dark:text-white dark:border-white;
+}
+
+.btn-standalone[disabled] {
+  @apply border border-none text-blue-600 dark:text-blue-400 dark:border-white opacity-50 cursor-not-allowed;
+}
+
 .btn-danger {
   @apply text-white bg-red-800 border border-red-800 dark:border-white;
 }

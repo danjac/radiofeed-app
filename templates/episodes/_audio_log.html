@@ -2,5 +2,14 @@
 {% load player %}
 {% block extra_buttons %}
 {% is_playing episode as is_playing %}
-{% include "episodes/_remove_audio_log_btn.html" %}
+<button class="btn btn-standalone flex items-center p-2 border-none"
+        x-data="{isPlaying:{{ is_playing|yesno:"true,false" }}}"
+        :disabled="isPlaying"
+        :title="isPlaying ? 'Episode is currently playing': 'Remove episode from your History'"
+        hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
+        @click.once="$dispatch('remove-audio-log', { id: {{ episode.id }} })"
+        @close-player.window="isPlaying=false"
+        @open-player.window="isPlaying = ($event.detail.episode.id === {{ episode.id }})">
+  {% icon "trash" css_class="btn-icon h-6 w-6" %}
+</button>
 {% endblock %}
