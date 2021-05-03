@@ -41,9 +41,20 @@
   </div>
   {% endfor %}
   <div class="flex items-center justify-evenly sm:justify-end mb-3 space-x-2">
-    {% button _("Primary") icon="sparkles" name="action_primary" value="1" %}
-    {% button _("Re-Verify") icon="mail" type="secondary" name="action_send" value="1" %}
-    {% button _("Remove") icon="trash" type="danger" data_controller="confirm" data_confirm_text_value=_("Are you sure you want to remove this email address?") data_action="confirm#confirm" name="action_remove" value="1" %}
+    <button class="flex items-center btn btn-default" name="action_primary" value="1">
+      {% icon "sparkles" css_class="btn-icon mr-2" %}
+      Primary
+    </button>
+
+    <button class="flex items-center btn btn-secondary" name="action_send" value="1">
+      {% icon "mail" css_class="btn-icon mr-2" %}
+      Re-Verify
+    </button>
+
+    <button class="flex items-center btn btn-danger" name="action_remove" value="1">
+      {% icon "trash" css_class="btn-icon mr-2" %}
+      Remove
+    </button>
   </div>
   {% endwith %}
 </form>

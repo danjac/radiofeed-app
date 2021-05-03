@@ -15,8 +15,20 @@
     You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
   </p>
   <div class="flex items-center justify-end space-x-2">
-    {% button "Export CSV" icon="table" title="Export CSV" name="format" value="csv" %}
-    {% button "Export OPML" icon="rss" title="Export OPML" name="format" value="opml" %}
+
+    <button class="flex items-center btn btn-default"
+            name="format"
+            value="csv">
+      {% icon "table" css_class="btn-icon mr-2" %}
+      Export CSV
+    </button>
+
+    <button class="flex items-center btn btn-default"
+            name="format"
+            value="opml">
+      {% icon "rss" css_class="btn-icon mr-2" %}
+      Export OPML
+    </button>
   </div>
 </form>
 

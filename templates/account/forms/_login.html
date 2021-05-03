@@ -11,7 +11,8 @@
 {% block form_buttons %}
 <a class="link text-sm mr-3"
    href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-{% button _("Sign In") icon="login" %}
+<button class="flex items-center btn btn-default">
+  {% icon "login" css_class="btn-icon mr-2" %}
+  Sign In
+</button>
 {% endblock %}
-
-
