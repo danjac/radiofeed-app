@@ -11,6 +11,7 @@
 <form class="mb-3 w-full sm:w-3/4 lg:w-1/2"
       method="post"
       id="email-addresses"
+      hx-disable="true"
       action="{% url 'account_email' %}">
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
@@ -58,6 +59,6 @@
 
 {% if can_add_email %}
 <h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
-{% include "account/forms/_email.html" %}
+{% include "account/forms/_email.html" with hx_disable=True %}
 {% endif %}
 {% endblock %}
