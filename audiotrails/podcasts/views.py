@@ -123,20 +123,19 @@ def episodes(request, podcast_id, slug=None):
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
-    context = {
-        "newest_first": newest_first,
-        "show_podcast_detail": show_podcast_detail,
-        "cover_image": podcast.get_cover_image_thumbnail(),
-    }
-
-    if not request.turbo.frame:
-        context = get_podcast_detail_context(request, podcast, context)
-
     return render_episode_list_response(
         request,
         episodes,
         "podcasts/episodes.html",
-        context,
+        get_podcast_detail_context(
+            request,
+            podcast,
+            {
+                "newest_first": newest_first,
+                "show_podcast_detail": show_podcast_detail,
+                "cover_image": podcast.get_cover_image_thumbnail(),
+            },
+        ),
         cached=True,
     )
 
