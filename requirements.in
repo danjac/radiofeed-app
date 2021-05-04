@@ -13,6 +13,7 @@ django-celery-email
 django-environ
 django-extensions
 django-model-utils
+django-permissions-policy
 django-redis
 django-silk
 django-storages
