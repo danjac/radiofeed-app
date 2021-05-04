@@ -50,10 +50,15 @@
 
     {% if user.is_authenticated %}
     <div class="text-sm md:text-base flex items-center space-x-3">
-      <button class="text-white hover:text-blue-500"
-              hx-post="{% url 'account_logout' %}"
-              hx-target="body"
-              @click="$dispatch('close-player')">Logout</button>
+      <form method="post"
+            class="inline-block"
+            action="{% url 'account_logout' %}"
+            hx-disable="true">
+        {% csrf_token %}
+        <button class="text-white hover:text-blue-500"
+                hx-disable="true"
+                @click="$dispatch('close-player')">Logout</button>
+      </form>
     </div>
     {% else %}
     <div class="text-sm md:text-base flex items-center">

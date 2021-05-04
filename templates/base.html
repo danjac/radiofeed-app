@@ -16,6 +16,8 @@
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="copyright"
         content="Dan Jacob {% now "Y" %}">
+  <meta name="htmx-config"
+        content='{"historyCacheSize": 0 }'>
   {% block robots %}
   <meta name="robots"
         content="index,follow" />
@@ -29,6 +31,7 @@
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       hx-boost="true"
+      hx-ext="morphdom-swap"
       x-data="{sidebar: false}"
       {% endblock %}>
 
@@ -62,52 +65,12 @@
   </div>
 
   {% endblock layout %}
-
   <script>
-    const csrfToken = '{{ csrf_token }}';
-    htmx.defineExtension('intersect', {
-      onEvent(name, event) {
-        if (name === 'htmx:afterProcessNode') {
-          const {
-            elt
-          } = event.detail;
-
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                htmx.trigger(elt, 'enter');
-                observer.disconnect();
-              }
-            });
-          });
-          observer.observe(elt);
-        }
-      },
-    });
-
     document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = csrfToken;
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     });
-
-    const sendJSON = (url, data) => fetch(url, {
-      method: 'POST',
-      credentials: 'same-origin',
-      body: JSON.stringify(data || {}),
-      headers: {
-        'X-CSRFToken': csrfToken,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const dispatch = (el, event, detail = {}) => {
-      el.dispatchEvent(
-        new CustomEvent(event, {
-          detail,
-          bubbles: true,
-        })
-      );
-    };
   </script>
+
   {% include "_player.html" %}
   {% include "_modal.html" %}
 </body>

@@ -19,3 +19,314 @@
 <script src="https://unpkg.com/htmx.org@1.3.3"
         integrity="sha384-QrlPmoLqMVfnV4lzjmvamY0Sv/Am8ca1W7veO++Sp6PiIGixqkD+0xZ955Nc03qO"
         crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/htmx.org/dist/ext/morphdom-swap.js"></script>
+
+{% if user.is_authenticated %}
+<script>
+  const sendJSON = (url, data) => fetch(url, {
+    method: 'POST',
+    credentials: 'same-origin',
+    body: JSON.stringify(data || {}),
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const dispatch = (el, event, detail = {}) => {
+    el.dispatchEvent(
+      new CustomEvent(event, {
+        detail,
+        bubbles: true,
+      })
+    );
+  };
+
+  const Player = () => {
+
+    const defaults = {
+      episode: null,
+      podcast: null,
+      currentTime: 0,
+      duration: 0,
+      isPlaying: false,
+      isPaused: false,
+      isWaiting: false,
+      playbackRate: 1.0,
+      counter: '00:00:00',
+    };
+
+    let timer;
+
+    const instance = {
+      ...defaults,
+      initialize() {
+        if (this.episode && this.currentTime) {
+          this.startPlayer(this.episode.mediaUrl, this.currentTime);
+        }
+        this.$watch('duration', (value) => {
+          this.updateProgressBar(value, this.currentTime);
+        });
+        this.$watch('currentTime', (value) => {
+          this.updateProgressBar(this.duration, value);
+        });
+      },
+      playEpisode($event) {
+        const {
+          url
+        } = $event.detail;
+        sendJSON(url)
+          .then((response) => response.json())
+          .then((data) => {
+            this.openPlayer(data);
+          });
+      },
+      openPlayer(data) {
+        this.stopPlayer();
+
+        if (data) {
+          const {
+            episode,
+            podcast,
+            currentTime,
+            metadata
+          } = data;
+
+          this.episode = episode;
+          this.podcast = podcast;
+
+          if (metadata && 'mediaSession' in navigator) {
+            if (Object.keys(metadata).length > 0) {
+              navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+            } else {
+              navigator.mediaSession.metadata = null;
+            }
+          }
+          dispatch(this.$el, 'open-player', data);
+          dispatch(this.$el, 'remove-queue-item', {
+            id: this.episode.id
+          });
+
+          this.$nextTick(() => {
+            this.startPlayer(this.episode.mediaUrl, currentTime);
+          })
+        }
+      },
+      closePlayer() {
+        sendJSON("{% url 'episodes:close_player' %}");
+        this.episode = null;
+        this.podcast = null;
+        this.currentTime = 0;
+        this.stopPlayer();
+      },
+      // audio events
+      loaded() {
+        this.duration = this.$refs.audio.duration;
+      },
+      timeUpdate() {
+        this.currentTime = this.$refs.audio.currentTime;
+      },
+      resumed() {
+        this.isPlaying = true;
+        this.isPaused = false;
+        this.isWaiting = false;
+      },
+      paused() {
+        this.isPlaying = false;
+        this.isPaused = true;
+        this.isWaiting = false;
+      },
+      waiting() {
+        this.isWaiting = true;
+      },
+      active() {
+        this.isWaiting = false;
+      },
+      ended() {
+        sendJSON("{% url 'episodes:play_next_episode' %}")
+          .then((response) => response.json())
+          .then((data) => {
+            if (Object.keys(data).length === 0) {
+              dispatch(this.$el, 'close-player');
+            } else {
+              this.openPlayer(data);
+            }
+          });
+      },
+      shortcuts(event) {
+        // ignore if inside an input element
+        if (!this.episode) {
+          return;
+        }
+
+        if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
+          return;
+        }
+
+        const handlers = {
+          '+': this.incrementPlaybackRate,
+          '-': this.decrementPlaybackRate,
+          ArrowLeft: this.skipBack,
+          ArrowRight: this.skipForward,
+          Space: this.togglePause,
+          //Delete: this.closePlayer,
+        };
+
+        const handler = handlers[event.code] || handlers[event.key];
+
+        if (handler) {
+          event.preventDefault();
+          handler.bind(this)();
+        }
+      },
+
+      incrementPlaybackRate() {
+        this.changePlaybackRate(0.1);
+      },
+      decrementPlaybackRate() {
+        this.changePlaybackRate(-0.1);
+      },
+
+      changePlaybackRate(increment) {
+        const value = parseFloat(this.playbackRate);
+        let newValue = value + increment;
+        if (newValue > 2.0) {
+          newValue = 2.0;
+        } else if (newValue < 0.5) {
+          newValue = 0.5;
+        }
+        this.$refs.audio.playbackRate = this.playbackRate = newValue;
+      },
+
+      skip({
+        clientX
+      }) {
+        // user clicks on progress bar
+        const position = this.getProgressBarPosition(clientX);
+        if (!isNaN(position) && position > -1) {
+          this.skipTo(position);
+        }
+      },
+
+      skipBack() {
+        this.skipTo(this.$refs.audio.currentTime - 10);
+      },
+
+      skipForward() {
+        this.skipTo(this.$refs.audio.currentTime + 10);
+      },
+
+      skipTo(position) {
+        if (!isNaN(position) && !this.isPaused) {
+          this.$refs.audio.currentTime = position;
+        }
+      },
+
+      togglePause() {
+        if (this.isPaused) {
+          this.$refs.audio.play();
+        } else {
+          this.$refs.audio.pause();
+        }
+      },
+      startPlayer(mediaUrl, currentTime) {
+        this.$refs.audio.currentTime = currentTime;
+        this.$refs.audio.play().catch((e) => {
+          console.log(e);
+          this.isPaused = true;
+        });
+        timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
+      },
+      stopPlayer() {
+        this.$refs.audio.pause();
+        this.$refs.audio = null;
+        if (timer) {
+          clearInterval(timer);
+        }
+      },
+      sendCurrentTimeUpdate() {
+        if (this.episode && !this.isPaused && !this.isWaiting && this.currentTime) {
+          sendJSON("{% url 'episodes:player_update_current_time' %}", {
+            currentTime: this.currentTime,
+          });
+        }
+      },
+      updateProgressBar(duration, currentTime) {
+        if (this.$refs.indicator && this.$refs.progressBar) {
+          this.counter = formatDuration(duration - currentTime);
+          const pcComplete = percent(duration, currentTime);
+          if (this.$refs.indicator) {
+            this.$refs.indicator.style.left =
+              this.getIndicatorPosition(pcComplete) + 'px';
+          }
+        }
+      },
+      getProgressBarPosition(clientX) {
+        if (!isNaN(clientX)) {
+          const {
+            left
+          } = this.$refs.progressBar.getBoundingClientRect();
+          const width = this.$refs.progressBar.clientWidth;
+          let position = clientX - left;
+          return Math.ceil(this.duration * (position / width));
+        } else {
+          return -1;
+        }
+      },
+      getIndicatorPosition(pcComplete) {
+        const clientWidth = this.$refs.progressBar.clientWidth;
+        let currentPosition, width;
+
+        currentPosition = this.$refs.progressBar.getBoundingClientRect().left - 24;
+
+        if (clientWidth === 0) {
+          width = 0;
+        } else {
+          // min 1rem to accomodate indicator
+          const minWidth = (16 / clientWidth) * 100;
+          width = pcComplete > minWidth ? pcComplete : minWidth;
+        }
+        if (width) {
+          currentPosition += clientWidth * (width / 100);
+        }
+        return currentPosition;
+      },
+    };
+
+    const playerInfoTag = document.getElementById('player-info');
+
+    if (playerInfoTag) {
+      return {
+        ...instance,
+        ...JSON.parse(playerInfoTag.textContent),
+      };
+    }
+
+    return instance;
+  };
+
+  const formatDuration = (value) => {
+    if (isNaN(value) || value < 0) return '00:00:00';
+    const duration = Math.floor(value);
+
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = Math.floor(duration % 60);
+
+    return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
+  };
+
+  const percent = (nominator, denominator) => {
+    if (!denominator || !nominator) {
+      return 0;
+    }
+
+    if (denominator > nominator) {
+      return 100;
+    }
+
+    return (denominator / nominator) * 100;
+  };
+</script>
+{% endif %}

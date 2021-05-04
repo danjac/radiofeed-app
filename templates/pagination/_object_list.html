@@ -3,8 +3,7 @@
 {% if page_obj.has_next %}
 <div id="pagination"
      hx-get="{% pagination_url page_obj.next_page_number %}"
-     hx-ext="intersect"
-     hx-trigger="enter once"
+     hx-trigger="revealed"
      hx-swap="outerHTML">
   {% include "pagination/_loader.html" %}
 </div>
