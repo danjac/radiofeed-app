@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.test import RequestFactory, SimpleTestCase, TestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
 
 from audiotrails.users.factories import UserFactory
@@ -54,6 +54,8 @@ class EpisodeManagerTests(TestCase):
         self.assertTrue(episode.completed)
         self.assertEqual(episode.listened, log.updated)
 
+
+class EpisodeManagerSearchTests(TransactionTestCase):
     def test_search(self):
         EpisodeFactory(title="testing")
         self.assertEqual(Episode.objects.search("testing").count(), 1)
