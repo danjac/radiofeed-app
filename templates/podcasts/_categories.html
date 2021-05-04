@@ -1,12 +1,15 @@
 {% load cache %}
-{% cache 3600 podcast-categories podcast.id %}
+{# cache 3600 podcast-categories podcast.id #}
 {% with categories=podcast.categories.all %}
 {% if categories %}
-<div class="space-y-2">
+<div class="space-y-2"
+     hx-select="#content"
+     hx-target="#content">
   {% for category in categories %}
   <div class="inline-block">
-    <a href="{{ category.get_absolute_url }}"
-       class="btn btn-link mr-2 flex items-center{% if forloop.last %} mr-2{% endif %}">
+    <a hx-get="{{ category.get_absolute_url }}"
+       class="btn btn-link mr-2 flex items-center{% if forloop.last %} mr-2{% endif %}"
+       href="#">
       {% icon "tag" css_class="btn-icon mr-2" %}
       {{ category.name }}
     </a>
@@ -15,4 +18,4 @@
 </div>
 {% endif %}
 {% endwith %}
-{% endcache %}
+{# endcache #}

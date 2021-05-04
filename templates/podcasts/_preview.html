@@ -2,7 +2,9 @@
 {% load podcasts %}
 
 {% block modal_header %}
-<a href="{{ podcast.get_absolute_url }}"
+<a hx-get="{{ podcast.get_absolute_url }}"
+   hx-target="body"
+   href="#"
    class="font-semibold hover:text-blue-500">
   {{ podcast.title|stripentities|truncatechars:120 }}
 </a>
@@ -13,7 +15,10 @@
 
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
-    <a href="{{ podcast_url }}">
+    <a hx-get="{{ podcast_url }}"
+       hx-target="body"
+       href="#">
+
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
@@ -23,7 +28,7 @@
     {% with num_episodes=podcast.get_cached_episode_count %}
     {% if num_episodes %}
     <div>
-      <a href="{{ podcast_url }}"
+      <a hx-get="{{ podcast_url }}"
          class="link text-sm">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </a>

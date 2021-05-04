@@ -6,22 +6,27 @@
 
 <h1 class="font-bold mb-3">{{ podcast.title|stripentities }}</h1>
 
-{% if has_recommendations and not search %}
-<nav class="mb-3 flex items-center">
-  <ul class="flex items-center text-sm space-x-6">
-    {% active_link podcast.get_episodes_url as link %}
-    <li class="{% if link.exact %} tab--active{% endif %}">
-      <a class="link"
-         href="{{ link.url }}">Episodes</a>
-    </li>
-    {% active_link podcast.get_recommendations_url as link %}
-    <li class="{% if link.exact %} tab--active{% endif %}">
-      <a class="link"
-         href="{{ link.url }}">Similar</a>
-    </li>
-  </ul>
-</nav>
-{% endif %}
-
-{% block podcast_content %}{% endblock %}
+<div id="podcast-content">
+  {% if has_recommendations and not search %}
+  <nav class="mb-3 flex items-center"
+       hx-select="#podcast-content"
+       hx-target="#podcast-content">
+    <ul class="flex items-center text-sm space-x-6">
+      {% active_link podcast.get_episodes_url as link %}
+      <li class="{% if link.exact %} tab--active{% endif %}">
+        <a class="link"
+           href="#"
+           hx-get="{{ link.url }}">Episodes</a>
+      </li>
+      {% active_link podcast.get_recommendations_url as link %}
+      <li class="{% if link.exact %} tab--active{% endif %}">
+        <a class="link"
+           href="#"
+           hx-get="{{ link.url }}">Similar</a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+  {% block podcast_content %}{% endblock %}
+</div>
 {% endblock %}

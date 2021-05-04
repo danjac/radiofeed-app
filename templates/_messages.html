@@ -1,5 +1,6 @@
 {% if messages %}
-<div class="relative">
+<div class="relative"
+     id="messages">
   <div class="absolute z-50 top-0 shadow-xl w-full space-y-2">
     {% for message in messages %}
     <div class="flex justify-between items-center p-2 message {{ message.tags }}"

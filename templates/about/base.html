@@ -5,24 +5,31 @@
 
 <h1 class="font-bold mb-3 flex flex-wrap">About this Site</h1>
 
-<nav class="mb-3">
-  <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
-    {% active_link 'about:credits' as link %}
-    <li class="{% if link.exact %}tab--active{% endif %}">
-      <a class="hover:text-blue-500"
-         href="{{ link.url }}">Credits</a>
-    </li>
-    {% active_link 'about:shortcuts' as link %}
-    <li class="{% if link.exact %}tab--active{% endif %}">
-      <a class="hover:text-blue-500"
-         href="{{ link.url }}">Shortcuts</a>
-    </li>
-    {% active_link 'about:privacy' as link %}
-    <li class="{% if link.exact %}tab--active{% endif %}">
-      <a class="hover:text-blue-500"
-         href="{{ link.url }}">Privacy</a>
-    </li>
-  </ul>
-</nav>
-{% block about_content %}{% endblock %}
+<div id="about-content">
+  <nav class="mb-3"
+       hx-target="#about-content"
+       hx-select="#about-content">
+    <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
+      {% active_link 'about:credits' as link %}
+      <li class="{% if link.exact %}tab--active{% endif %}">
+        <a class="hover:text-blue-500"
+           href="#"
+           hx-get="{{ link.url }}">Credits</a>
+      </li>
+      {% active_link 'about:shortcuts' as link %}
+      <li class="{% if link.exact %}tab--active{% endif %}">
+        <a class="hover:text-blue-500"
+           href="#"
+           hx-get="{{ link.url }}">Shortcuts</a>
+      </li>
+      {% active_link 'about:privacy' as link %}
+      <li class="{% if link.exact %}tab--active{% endif %}">
+        <a class="hover:text-blue-500"
+           href="#"
+           hx-get="{{ link.url }}">Privacy</a>
+      </li>
+    </ul>
+  </nav>
+  {% block about_content %}{% endblock %}
+</div>
 {% endblock content %}

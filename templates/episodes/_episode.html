@@ -1,12 +1,15 @@
 {% load podcasts %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|stripentities episode_title_trunc=episode.title|stripentities|truncatechars:120 %}
 <section class="mb-3 p-1 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
-         {% block extra_attrs %}{% endblock %}>
+         {% block extra_attrs %}{% endblock %}
+         hx-select="#layout"
+         hx-target="#layout">
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-2">
 
       <div>
-        <a href="{{ podcast.get_absolute_url }}">
+        <a hx-get="{{ podcast.get_absolute_url }}"
+           href="#">
           {% cover_image podcast lazy=True cover_image=cover_image %}
         </a>
       </div>
@@ -15,7 +18,8 @@
         <div class="flex items-center space-x-2">
           <div class="space-y-2">
             <h2 class="w-56 sm:w-96 md:w-full text-sm truncate">
-              <a href="{{ episode_url }}"
+              <a hx-get="{{ episode_url }}"
+                 href="#"
                  class="link"
                  title="{{ episode_title }}">
                 {{ episode_title_trunc }}
@@ -25,9 +29,11 @@
 
               <div>
                 <a class="link"
+                   role="button"
                    title="Preview for {{ episode.title }}"
-                   href="{{ episode.get_absolute_url }}"
-                   hx-get="{{ episode.get_preview_url }}?from={{ request.get_full_path }}"
+                   hx-get="{{ episode.get_preview_url }}"
+                   hx-push-url="false"
+                   hx-select=".modal"
                    hx-target="#modal">
                   {% icon "ellipsis" css_class="w-6 h-6" %}
                 </a>

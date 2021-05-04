@@ -1,9 +1,8 @@
 {% load cache %}
-{% cache 600 sidebar request.user.username request.path %}
+{# cache 600 sidebar request.user.username request.path #}
 <div class="flex justify-center sm:hidden mb-3">
 
-  <form method="get"
-        action="{% url 'podcasts:search_podcasts' %}"
+  <form hx-get="{% url 'podcasts:search_podcasts' %}"
         class="relative bg-transparent"
         @submit="sidebar=false">
     <input type="search"
@@ -28,7 +27,8 @@
       {% active_link 'episodes:index' as new_episodes_link %}
       {% if user.is_authenticated %}
       {% active_link 'episodes:featured' as featured_episodes_link %}
-      <a href="{{ new_episodes_link.url }}"
+      <a hx-get="{{ new_episodes_link.url }}"
+         href="#"
          accesskey="1"
          @click="sidebar=false"
          class="flex items-center link{% if new_episodes_link.exact or featured_episodes_link.exact %} sidebar--active{% endif %}">
@@ -36,7 +36,8 @@
         New Releases
       </a>
       {% else %}
-      <a href="{{ new_episodes_link.url }}"
+      <a hx-get="{{ new_episodes_link.url }}"
+         href="#"
          accesskey="1"
          @click="sidebar=false"
          class="flex items-center link{% if new_episodes_link.exact %} sidebar--active{% endif %}">
@@ -47,7 +48,8 @@
     </li>
     <li class="py-2">
       {% active_link 'podcasts:index' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="2"
          @click="sidebar=false"
          class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -57,7 +59,8 @@
     </li>
     <li class="py-2">
       {% active_link 'podcasts:categories' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="3"
          @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -68,7 +71,8 @@
     {% if user.is_authenticated %}
     <li class="py-2">
       {% active_link 'episodes:queue' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="4"
          @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -80,7 +84,8 @@
 
     <li class="py-2">
       {% active_link 'episodes:favorites' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="5"
          @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -91,7 +96,8 @@
 
     <li class="py-2">
       {% active_link 'episodes:history' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="6"
          @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -102,7 +108,8 @@
 
     <li class="py-2">
       {% active_link '/account/' as link %}
-      <a href="{% url 'user_preferences' %}"
+      <a hx-get="{% url 'user_preferences' %}"
+         href="#"
          accesskey="7"
          @click="sidebar=false"
          class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
@@ -115,7 +122,8 @@
 
     <li class="py-2">
       {% active_link '/about/' as link %}
-      <a href="{{ link.url }}"
+      <a hx-get="{{ link.url }}"
+         href="#"
          accesskey="8"
          @click="sidebar=false"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -126,4 +134,4 @@
 
   </ul>
 </nav>
-{% endcache %}
+{# endcache #}

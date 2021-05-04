@@ -3,7 +3,9 @@
 
 {% block podcast_content %}
 {% if show_podcast_detail %}
-<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3">
+<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3"
+     hx-select="#content"
+     hx-target="#content">
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
     {{ podcast.creators }}
@@ -70,15 +72,20 @@
 
 <div class="sm:flex items-center mb-3 justify-between">
 
-  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0">
+  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0"
+       hx-target="#podcast-content"
+       hx-select="#podcast-content">
     {% if search %}
-    <a href="{% url 'episodes:search_episodes' %}?q={{ search }}"
+    <a hx-get="{% url 'episodes:search_episodes' %}?q={{ search }}"
+       href="#"
        class="link">Search in all podcasts</a>
     {% elif newest_first %}
-    <a href="{{ request.path }}?ordering=asc"
+    <a hx-get="{{ request.path }}?ordering=asc"
+       href="#"
        class="link">Oldest First</a>
     {% else %}
-    <a href="{{ request.path }}?ordering=desc"
+    <a hx-get="{{ request.path }}?ordering=desc"
+       href="#"
        class="link">Newest First</a>
     {% endif %}
   </div>

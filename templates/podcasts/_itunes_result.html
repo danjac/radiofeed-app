@@ -25,8 +25,9 @@
         {% if podcast and podcast.pub_date %}
         <a class="link"
            title="Preview for {{ podcast.title|stripentities }}"
-           href="{{ podcast.get_preview_url }}"
+           href="#"
            hx-get="{{ podcast.get_preview_url }}"
+           hx-select=".modal"
            hx-target="#modal">
           {% icon "ellipsis" css_class="w-6 h-6" %}
         </a>

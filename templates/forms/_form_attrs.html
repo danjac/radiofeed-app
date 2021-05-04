@@ -3,7 +3,13 @@
 class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 {% if form.errors %}border-red-800 dark:border-red-500{% endif %}{% if css_class %} {{ css_class }}{% endif %}"
 method="post"
 novalidate
-action="{{ action_url|default:request.get_full_path }}"
-{% if hx_disable %}hx-disable="true"{% endif %}
+{% with action_url=action_url|default:request.get_full_path %}
+{% if hx_post %}
+hx-post="{{ action_url }}"
+{% else %}
+action="{{ action_url }}"
+hx-disable="true"
+{% endif %}
+{% endwith %}
 {{ attrs|htmlattrs }}
 {% endspaceless %}

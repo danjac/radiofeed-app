@@ -11,9 +11,13 @@
   </div>
 </div>
 
-{% cache 3600 categories search %}
+{# cache 3600 categories search #}
 
-<div class="divide-y divide-gray-300 dark:divide-gray-500">
+<div class="divide-y divide-gray-300 dark:divide-gray-500"
+     id="categories"
+     hx-boost="true"
+     hx-target="#content"
+     hx-select="#content">
   {% if search %}
   <div class="space-y-2">
     {% for category in categories %}
@@ -50,5 +54,5 @@
 
   {% endif %}
 </div>
-{% endcache %}
+{# endcache #}
 {% endblock %}

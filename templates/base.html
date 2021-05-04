@@ -31,6 +31,7 @@
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
+      hx-push-url="true"
       {% endblock %}>
 
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
@@ -39,12 +40,13 @@
 
   {% block layout %}
 
-  <div class="min-h-full mx-auto flex relative mt-2">
+  <div class="min-h-full mx-auto flex relative mt-2"
+       id="layout">
     <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
            :class="{'hidden lg:block': !sidebar}"
-           hx-boost="true"
-           hx-select="#content"
-           hx-target="#content">
+           hx-select="#layout"
+           hx-target="#layout"
+           hx-swap="outerHTML">
       {% include "_sidebar.html" %}
     </aside>
 

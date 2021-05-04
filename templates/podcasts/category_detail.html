@@ -5,7 +5,10 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm flex justify-center sm:justify-start items-center space-x-1">
+<div class="mb-3 text-sm flex justify-center sm:justify-start items-center space-x-1"
+     hx-boost="true"
+     hx-select="#content"
+     hx-target="#content">
   <div>
     <a href="{% url 'podcasts:categories' %}"
        class="link">Discover</a>
@@ -36,7 +39,10 @@
 {% else %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
-<nav class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start space-x-2">
+<nav class="mb-3 text-sm flex flex-wrap justify-center sm:justify-start space-x-2"
+     hx-boost="true"
+     hx-select="#content"
+     hx-target="#content">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      class="link">{{ child.name }}</a>

@@ -1,7 +1,9 @@
 {% extends "modal_base.html" %}
 {% load podcasts %}
 {% block modal_header %}
-<a href="{{ episode.get_absolute_url }}"
+<a hx-get="{{ episode.get_absolute_url }}"
+   hx-target="body"
+   href="#"
    title="{{ episode.title }}"
    class="link">
   {{ episode.title|stripentities|truncatechars:100 }}
