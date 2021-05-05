@@ -1,0 +1,23 @@
+  <script>
+    const sendJSON = (url, data) => fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify(data || {}),
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const dispatch = (el, event, detail = {}) => {
+      el.dispatchEvent(
+        new CustomEvent(event, {
+          detail,
+          bubbles: true,
+        })
+      );
+    };
+    document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+  </script>

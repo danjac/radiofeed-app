@@ -76,35 +76,12 @@
   </div>
 
   {% endblock layout %}
-  <script>
-    document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-    });
-  </script>
+
+  {% include "_common_js.html" %}
 
   {% if user.is_authenticated %}
   {% include "_player.html" %}
   {% include "_player_js.html" %}
-  <script>
-    const sendJSON = (url, data) => fetch(url, {
-      method: 'POST',
-      credentials: 'same-origin',
-      body: JSON.stringify(data || {}),
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}',
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const dispatch = (el, event, detail = {}) => {
-      el.dispatchEvent(
-        new CustomEvent(event, {
-          detail,
-          bubbles: true,
-        })
-      );
-    };
-  </script>
   {% endif %}
 
   {% include "_modal.html" %}

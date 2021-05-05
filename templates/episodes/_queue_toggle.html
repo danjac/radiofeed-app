@@ -2,9 +2,10 @@
   <div id="queue-toggle"
        hx-target="this"
        hx-swap="outerHTML"
+       hx-push-url="false"
        hx-select="#queue-toggle"
        x-data="{isQueued: {{ is_queued|yesno:'true,false' }}}"
-       @remove-queue-item.window="if ($event.detail.id === {{ episode.id }}) isQueued=false">
+       @remove-queue-item.window="if ($event.detail.episode === {{ episode.id }}) isQueued=false">
     <button class="btn btn-secondary flex items-center"
             x-show="isQueued"
             hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
@@ -13,7 +14,7 @@
                 tag: 'info',
                 message: 'Episode has been removed from your Play Queue' }
             );
-            $dispatch('remove-queue-item', { id: {{ episode.id }} });
+            $dispatch('remove-queue-item', { episode: {{ episode.id }} });
             $dispatch('close-modal');"
             title="Remove from Play Queue">
       {% icon "trash" css_class="btn-icon mr-2" %}
