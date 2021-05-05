@@ -24,7 +24,9 @@
 
 <div class="flex items-center mb-3 space-x-3">
   <div>
-    <a href="{{ podcast_url }}">
+    <a hx-get="{{ podcast_url }}"
+       @click="$dispatch('close-modal')"
+       href="#">
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>

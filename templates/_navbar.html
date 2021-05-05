@@ -34,8 +34,11 @@
     </div>
 
     <form hx-get="{% url 'podcasts:search_podcasts' %}"
+          x-data="{}"
+          @submit="$refs.input.blur()"
           class="relative bg-transparent hidden sm:block">
       <input type="search"
+             x-ref="input"
              name="q"
              autocomplete="off"
              accesskey="k"
