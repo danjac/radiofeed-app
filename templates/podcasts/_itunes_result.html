@@ -11,8 +11,7 @@
   <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
       <a {% if podcast and podcast.pub_date %}
-         hx-get="{{ podcast.get_absolute_url }}"
-         href="#"
+         {% hx_link podcast %}
          {% else %}
          href="{{ result.itunes }}"
          rel="noopener"
