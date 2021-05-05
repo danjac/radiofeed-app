@@ -72,16 +72,14 @@
 
   <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0">
     {% if search %}
-    <a hx-get="{% url 'episodes:search_episodes' %}?q={{ search }}"
-       href="#"
+    {% url 'episodes:search_episodes' as search_url %}
+    <a {% hx_link search_url|add:'?q='|add:search %}
        class="link">Search in all podcasts</a>
     {% elif newest_first %}
-    <a hx-get="{{ request.path }}?ordering=asc"
-       href="#"
+    <a {% hx_link request.path|add:'?ordering=asc' %}
        class="link">Oldest First</a>
     {% else %}
-    <a hx-get="{{ request.path }}?ordering=desc"
-       href="#"
+    <a {% hx_link request.path|add:'?ordering=desc' %}
        class="link">Newest First</a>
     {% endif %}
   </div>
