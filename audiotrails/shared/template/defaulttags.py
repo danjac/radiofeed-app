@@ -32,6 +32,10 @@ json_escapes = {
 }
 
 
+def hx_link_attrs(url):
+    return htmlattrs({"href": url, "hx-get": url})
+
+
 @register.simple_tag
 def hx_link(to, *args, **kwargs):
     """Example:
@@ -41,11 +45,10 @@ def hx_link(to, *args, **kwargs):
     <a href="/link-to-podcast/" hx-get="/link-to-podcast">
     ...
     </a>
-
     Use this when you need to replace a regular href with an hx-get,
     but still retain the href for a11y/UX.
     """
-    return _hx_link_attrs(resolve_url(to, *args, **kwargs))
+    return hx_link_attrs(resolve_url(to, *args, **kwargs))
 
 
 @register.filter
@@ -68,7 +71,7 @@ def format_duration(total_seconds):
 @register.simple_tag(takes_context=True)
 def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
-    hx = _hx_link_attrs(url)
+    hx = hx_link_attrs(url)
     if context["request"].path == url:
         return ActiveLink(url, hx, True, True)
     elif context["request"].path.startswith(url):
@@ -162,7 +165,3 @@ def share_buttons(context, url, subject, css_class=""):
             "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
         },
     }
-
-
-def _hx_link_attrs(url):
-    return htmlattrs({"href": url, "hx-get": url})
