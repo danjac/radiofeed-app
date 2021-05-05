@@ -1,19 +1,16 @@
 {% load podcasts %}
-{% with podcast_url=podcast.get_absolute_url %}
 <section class="flex items-center space-x-2 p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
          {{ attrs|htmlattrs }}>
 
   <div>
-    <a hx-get="{{ podcast_url }}"
-       href="#">
+    <a {% hx_link podcast %}>
       {% cover_image podcast=podcast lazy=True %}
     </a>
   </div>
 
   <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
-      <a hx-get="{{ podcast_url }}"
-         href="#"
+      <a {% hx_link podcast %}
          title="{{ podcast.title|stripentities }}"
          class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
 
@@ -37,4 +34,3 @@
     </div>
   </div>
 </section>
-{% endwith %}
