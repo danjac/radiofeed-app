@@ -9,7 +9,8 @@
 {% if user.is_authenticated %}
 <h1 class="font-bold mb-3 flex flex-wrap">Settings for {{ user.username }}</h1>
 <div id="settings-content"
-     hx-target="body">
+     hx-target="#settings-content"
+     hx-select="#settings-content">
   <nav class="mb-3">
     <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
       {% active_link 'user_preferences' as link %}

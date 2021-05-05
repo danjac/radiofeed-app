@@ -9,14 +9,17 @@
     Please confirm that you want to delete your account. You will not be able to undo this action!
   </p>
   <div class="flex justify-end">
-    <button class="btn btn-danger flex items-center"
-            hx-vals='{"confirm-delete": "true"}'
-            hx-confirm="Are you sure?"
-            hx-target="body"
-            hx-post="{% url 'delete_account' %}">
-      {% icon "star" css_class="btn-icon mr-2" %}
-      Yes, delete my account
-    </button>
+    <form method="POST"
+          hx-disable="true"
+          action="{% url 'delete_account' %}">
+      {% csrf_token %}
+      <button class="btn btn-danger flex items-center"
+              name="confirm-delete"
+              value="true"
+              @click="return confirm('Are you sure?')">
+        {% icon "star" css_class="btn-icon mr-2" %}
+        Yes, delete my account
+      </button>
   </div>
 </div>
 {% endblock settings_content %}
