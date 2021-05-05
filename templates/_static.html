@@ -9,19 +9,8 @@
       media="screen"
       href="{% static debug|yesno:'dev/app.css,dist/app.css' %}">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.js"
-        integrity="sha512-5x7t0fTAVo9dpfbp3WtE2N6bfipUwk7siViWncdDoSz2KwOqVC1N9fDxEOzk0vTThOua/mglfF8NO7uVDLRC8Q=="
-        crossorigin="anonymous"></script>
-
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.8.2/dist/alpine.min.js"
-        defer></script>
-
-<script src="https://unpkg.com/htmx.org@1.3.3"
-        integrity="sha384-QrlPmoLqMVfnV4lzjmvamY0Sv/Am8ca1W7veO++Sp6PiIGixqkD+0xZ955Nc03qO"
-        crossorigin="anonymous"></script>
-
-{% if debug %}
-<script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script>
-{% endif %}
-
-
+<script type="module">
+  import 'https://cdn.skypack.dev/htmx.org';
+  import 'https://cdn.skypack.dev/alpinejs';
+  import 'https://cdn.skypack.dev/sortablejs';
+</script>

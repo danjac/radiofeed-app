@@ -1,11 +1,15 @@
 {% load static pagination %}
-{% block results %}{% endblock %}
-{% if page_obj.has_next %}
-<div id="pagination"
-     hx-get="{% pagination_url page_obj.next_page_number %}"
-     hx-trigger="revealed"
-     hx-push-url="false"
-     hx-swap="outerHTML">
-  {% include "pagination/_loader.html" %}
+<div id="page-items-{{ page_obj.number }}">
+  {% block results %}{% endblock %}
+  {% if page_obj.has_next %}
+  <div id="page-{{ page_obj.next_page_number }}"
+       hx-get="{% pagination_url page_obj.next_page_number %}"
+       hx-trigger="revealed"
+       hx-push-url="false"
+       hx-select="#page-items-{{ page_obj.next_page_number }}"
+       hx-target="#page-{{ page_obj.next_page_number }}"
+       hx-swap="outerHTML">
+    {% include "pagination/_loader.html" %}
+  </div>
+  {% endif %}
 </div>
-{% endif %}

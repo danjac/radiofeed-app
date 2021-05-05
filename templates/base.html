@@ -32,11 +32,6 @@
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
       hx-push-url="true"
-      {% comment %}
-      {% if debug %}
-      hx-ext="debug"
-      {% endif %}
-      {% endcomment %}
       {% endblock %}>
 
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
