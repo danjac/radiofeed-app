@@ -38,7 +38,8 @@
   {% else %}
   <div>
     <a class="btn btn-default flex items-center"
-       href="{{ episode.get_absolute_url|login_url }}"
+       hx-get="{{ episode.get_absolute_url|login_url }}"
+       href="#"
        title="Log in">
       {% icon "collection" css_class="btn-icon mr-2" %}
       Play Queue

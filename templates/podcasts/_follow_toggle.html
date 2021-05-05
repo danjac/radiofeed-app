@@ -34,9 +34,10 @@
     {% endif %}
   </div>
   {% else %}
-  <div>
+  <div class="flex items-center">
     <a class="btn btn-default flex items-center"
-       href="{{ podcast.get_absolute_url|login_url }}"
+       hx-get="{{ podcast.get_absolute_url|login_url }}"
+       href="#"
        title="Log in">
       {% icon "eye" css_class="btn-icon mr-2" %}
       Follow
