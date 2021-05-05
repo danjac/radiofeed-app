@@ -72,14 +72,18 @@
 
   {% endblock layout %}
 
-  {% include "_common_js.html" %}
-
   {% if user.is_authenticated %}
   {% include "_player.html" %}
-  {% include "_player_js.html" %}
   {% endif %}
 
   {% include "_modal.html" %}
+
+  {% block extra_js %}
+  {% include "_common_js.html" %}
+  {% if user.is_authenticated %}
+  {% include "_player_js.html" %}
+  {% endif %}
+  {% endblock %}
 
 </body>
 
