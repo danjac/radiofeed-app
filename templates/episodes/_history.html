@@ -1,6 +1,7 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
+<!-- tbd: move this surrounding code to parent template -->
 {% with count=page_obj.paginator.count %}
 <div {% if count and not is_paginated %}
      x-data="{ counter: {{ count }} }"
@@ -9,7 +10,7 @@
   {% for log in page_obj %}
   <template x-data="{show:true}"
             x-if="show"
-            @remove-audio-log.window="if ($event.detail.id === {{ log.episode.id }}) show=false">
+            @remove-audio-log.window="if ($event.detail.episode === {{ log.episode.id }}) show=false">
     {% include "episodes/_audio_log.html" with episode=log.episode %}
   </template>
   {% empty %}
