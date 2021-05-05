@@ -140,7 +140,7 @@
           ArrowLeft: this.skipBack,
           ArrowRight: this.skipForward,
           Space: this.togglePause,
-          //Delete: this.closePlayer,
+          Delete: () => this.$refs.stop.click(),
         };
 
         const handler = handlers[event.code] || handlers[event.key];

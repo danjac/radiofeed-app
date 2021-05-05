@@ -120,29 +120,3 @@ class PlayerTests(TestCase):
 
         log.refresh_from_db()
         self.assertEqual(log.current_time, 600)
-
-    def test_get_player_info_anonymous(self):
-
-        req = self.make_request()
-
-        player = Player(req)
-        self.assertEqual(player.get_player_info(), {})
-
-    def test_get_player_info_user_empty(self):
-
-        req = self.make_request(user=self.user)
-
-        player = Player(req)
-        self.assertEqual(player.get_player_info(), {})
-
-    def test_get_player_info(self):
-
-        log = AudioLogFactory(episode=self.episode, user=self.user, current_time=100)
-
-        req = self.make_request(episode=log.episode, user=self.user)
-
-        player = Player(req)
-        info = player.get_player_info()
-        self.assertEqual(info["currentTime"], 100)
-        self.assertEqual(info["episode"]["id"], log.episode.id)
-        self.assertEqual(info["podcast"]["title"], log.episode.podcast.title)
