@@ -165,4 +165,4 @@ def share_buttons(context, url, subject, css_class=""):
 
 
 def _hx_link_attrs(url):
-    return mark_safe(f' href="{url}" hx-get="{url}"')
+    return htmlattrs({"href": url, "hx-get": url})
