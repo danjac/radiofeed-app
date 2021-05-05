@@ -37,10 +37,7 @@ def render_paginated_response(
         "pagination_template": pagination_template_name,
         **(extra_context or {}),
     }
-    if (
-        "HX-Request" in request.headers
-        and request.headers.get("HX-Target") == "pagination"
-    ):
+    if request.htmx and request.htmx.target == "pagination":
         template_name = pagination_template_name
         context["is_paginated"] = True
 
