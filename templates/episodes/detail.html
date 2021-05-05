@@ -10,8 +10,7 @@
 <nav class="text-sm flex justify-between mb-3 border-b dark:border-gray-500 sm:border-0 pb-3 sm:pb-0">
   {% if prev_episode %}
   <a class="link"
-     hx-get="{{ prev_episode.get_absolute_url }}"
-     href="#"
+     {% hx_link prev_episode %}
      title="{{ prev_episode.title|stripentities }}">
     Previous
   </a>
@@ -21,8 +20,7 @@
   {% endif %}
   {% if next_episode %}
   <a class="link"
-     hx-get="{{ next_episode.get_absolute_url }}"
-     href="#"
+     {% hx_link next_episode %}
      title="{{ next_episode.title|stripentities }}">
     Next
   </a>
@@ -34,13 +32,12 @@
 {% endif %}
 {% endwith %}
 
-{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url duration=episode.get_duration_in_seconds %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 <section class="sm:p-2 sm:border dark:border-gray-500 space-y-2">
 
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
-    <a hx-get="{{ podcast_url }}"
-       href="#"
+    <a {% hx_link podcast %}
        class="link text-sm">
       {{ podcast.title|stripentities }}
     </a>
@@ -57,8 +54,7 @@
 
   <div class="flex items-center space-x-3">
     <div>
-      <a hx-get="{{ podcast_url }}"
-         href="#">
+      <a {% hx_link podcast %}>
         {% cover_image podcast lazy=False size="24" %}
       </a>
     </div>

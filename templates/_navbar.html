@@ -1,5 +1,5 @@
 {% load static %}
-{% url 'episodes:index' as home_page_url %}
+{% url 'episodes:index' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow"
         hx-target="#layout"
         hx-select="#layout"
@@ -18,8 +18,7 @@
               x-on:click="sidebar = !sidebar">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
-      <a hx-get="{{ home_page_url }}"
-         href="#"
+      <a {% hx_link home_url %}
          title="{{ request.site.name }}"
          class="mr-4 hidden lg:inline-block">
         <img src="{% static 'img/wave.png' %}"
@@ -29,8 +28,7 @@
       </a>
 
       <a class="font-bold"
-         href="#"
-         hx-get="{{ home_page_url }}">{{ request.site.name }}</a>
+         {% hx_link 'episodes:index' %}>{{ request.site.name }}</a>
     </div>
 
     <form hx-get="{% url 'podcasts:search_podcasts' %}"
@@ -65,11 +63,9 @@
     </form>
     {% else %}
     <div class="text-sm md:text-base flex items-center">
-      <a hx-get="{{ request.get_full_path|login_url }}"
-         href="#"
+      <a {% hx_link home_url|login_url %}
          class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
-      <a hx-get="{{ request.get_full_path|signup_url }}"
-         href="#"
+      <a {% hx_link home_url|signup_url %}
          class="inline-block text-white hover:text-blue-500">Signup</a>
     </div>
     {% endif %}

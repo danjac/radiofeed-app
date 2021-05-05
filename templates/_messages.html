@@ -7,10 +7,6 @@
          x-show="show"
          x-init="setTimeout(() => { show = false }, 3000)">
       <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap">{{ message }}</div>
-      <button @click="show=false"
-              class="float-right focus:outline-none">
-        {% icon "x_circle" css_class="h-6 w-6" %}
-      </button>
     </div>
     {% endfor %}
   </div>
@@ -31,10 +27,6 @@
            :class="`message-${tag}`">
         <div class="mx-auto text-sm md:text-base font-semibold"
              x-text="message"></div>
-        <button @click="show=false"
-                class="float-right focus:outline-none">
-          {% icon "x_circle" css_class="h-6 w-6" %}
-        </button>
       </div>
     </div>
   </div>
