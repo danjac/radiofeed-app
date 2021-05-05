@@ -6,6 +6,7 @@
        episode: {{ episode.id }},
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {{ log.current_time }},
+       runImmediately: {{ run_immediately|yesno:'true,false' }}
     })"
      x-init="initialize()"
      @keydown.window="shortcuts($event)"

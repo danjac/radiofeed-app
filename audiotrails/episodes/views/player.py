@@ -57,4 +57,4 @@ def player_update_current_time(request):
 
 
 def render_player(request):
-    return TemplateResponse(request, "_player.html")
+    return TemplateResponse(request, "_player.html", {"run_immediately": True})
