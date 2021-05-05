@@ -1,5 +1,5 @@
 def search(request):
-    return {"search": request.search}
+    return {"search": str(request.search)}
 
 
 def is_cookies_accepted(request):

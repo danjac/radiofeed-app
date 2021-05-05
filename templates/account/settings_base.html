@@ -14,44 +14,37 @@
       {% active_link 'user_preferences' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Preferences</a>
+           {{ link.hx }}>Preferences</a>
       </li>
       {% active_link 'export_podcast_feeds' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Export</a>
+           {{ link.hx }}>Export</a>
       </li>
       {% active_link 'user_stats' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Statistics</a>
+           {{ link.hx }}>Statistics</a>
       </li>
       {% active_link 'account_email' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Email Addresses</a>
+           {{ link.hx }}>Email Addresses</a>
       </li>
       {% active_link 'account_change_password' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Change Password</a>
+           {{ link.hx }}>Change Password</a>
       </li>
       {% active_link 'socialaccount_connections' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Social Logins</a>
+           {{ link.hx }}>Social Logins</a>
       </li>
       {% active_link 'delete_account' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           href="#"
-           hx-get="{{ link.url }}">Delete Account</a>
+           {{ link.hx }}>Delete Account</a>
       </li>
     </ul>
   </nav>

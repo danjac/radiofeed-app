@@ -41,6 +41,9 @@ def hx_link(to, *args, **kwargs):
     <a href="/link-to-podcast/" hx-get="/link-to-podcast">
     ...
     </a>
+
+    Use this when you need to replace a regular href with an hx-get,
+    but still retain the href for a11y/UX.
     """
     return _hx_link_attrs(resolve_url(to, *args, **kwargs))
 

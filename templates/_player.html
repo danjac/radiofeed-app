@@ -1,6 +1,6 @@
 {% with log=request.player.get_audio_log %}
 {% if log %}
-{% with episode=log.episode podcast=log.episode.podcast episode_url=log.episode.get_absolute_url %}
+{% with episode=log.episode podcast=log.episode.podcast %}
 <div id="player"
      x-data="Player({
        episode: {{ episode.id }},
@@ -35,9 +35,8 @@
     <div class="relative space-y-1">
 
       <div class="sm:hidden pr-1 text-sm w-84 text-center truncate">
-        <a href="#"
-           hx-get="{{ episode_url }}"
-           class="player--title"
+        <a class="player--title"
+           {% hx_link episode %}
            title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
       </div>
 
@@ -45,8 +44,7 @@
 
         <div>
           {% with cover_image=podcast.get_cover_image_thumbnail %}
-          <a href="#"
-             hx-get="{{ podcast.get_absolute_url }}">
+          <a {% hx_link podcast %}>
             <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast.title }}"
                  alt="{{ podcast.title }}"
@@ -91,9 +89,8 @@
             </div>
 
             <div class="hidden sm:block text-sm text-center sm:w-64 w-96 lg:w-full truncate">
-              <a href="#"
-                 hx-get="{{ episode_url }}"
-                 class="player--title"
+              <a class="player--title"
+                 {% hx_link episode %}
                  title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
             </div>
 

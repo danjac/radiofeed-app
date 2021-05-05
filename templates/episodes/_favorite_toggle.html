@@ -37,8 +37,7 @@
   {% else %}
   <div>
     <a class="btn btn-default flex items-center"
-       hx-get="{{ episode.get_absolute_url|login_url }}"
-       href="#"
+       {% hx_link episode.get_absolute_url|login_url %}
        title="Log in">
       {% icon "star" css_class="btn-icon mr-2" %}
       Favorites
