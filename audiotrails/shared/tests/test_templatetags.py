@@ -6,7 +6,6 @@ from audiotrails.podcasts.models import Category
 from ..pagination.templatetags import pagination_url
 from ..template.defaulttags import (
     active_link,
-    button,
     format_duration,
     htmlattrs,
     jsonify,
@@ -116,16 +115,6 @@ class KeepspacesTests(SimpleTestCase):
         self.assertEqual(
             keepspaces("test<br />this<ul><li>hello</li></ul>"), "test this hello"
         )
-
-
-class ButtonComponentTests(SimpleTestCase):
-    def test_context_is_button(self):
-        ctx = button("test")
-        self.assertEqual(ctx["tag"], "button")
-
-    def test_context_is_link(self):
-        ctx = button("test", href="/")
-        self.assertEqual(ctx["tag"], "a")
 
 
 class ShareButtonsTests(SimpleTestCase):

@@ -86,7 +86,7 @@ class PlayerTests(TestCase):
 
         player = Player(req)
 
-        self.assertEqual(player.stop_episode(), log.episode)
+        self.assertEqual(player.stop_episode(), log)
         self.assertFalse(player.is_playing(log.episode))
 
     def test_stop_episode_mark_complete(self):
@@ -96,7 +96,7 @@ class PlayerTests(TestCase):
         req = self.make_request(episode=log.episode, user=self.user)
         player = Player(req)
 
-        self.assertEqual(player.stop_episode(mark_completed=True), log.episode)
+        self.assertEqual(player.stop_episode(mark_completed=True), log)
         self.assertFalse(player.is_playing(log.episode))
 
         log.refresh_from_db()
