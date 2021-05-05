@@ -32,6 +32,8 @@ class Player:
             },
         )
 
+        self.current_log = log
+
         return log
 
     def stop_episode(self, mark_completed=False):
@@ -43,6 +45,8 @@ class Player:
 
         del self.request.session[self.session_key]
 
+        self.current_log = None
+
         now = timezone.now()
 
         log.updated = now
@@ -53,7 +57,7 @@ class Player:
 
         log.save()
 
-        return log.episode
+        return log
 
     def update_current_time(self, current_time):
         if (
@@ -64,23 +68,21 @@ class Player:
                 episode=self.request.session[self.session_key], user=self.request.user
             ).update(current_time=round(current_time))
 
-    def get_player_info(self):
-        if log := self.get_audio_log():
-            return log.to_json()
-        return {}
-
     def is_playing(self, episode):
         return self.request.session.get(self.session_key) == episode.id
 
     def get_audio_log(self):
+        if hasattr(self, "current_log"):
+            return self.current_log
         if (
             self.request.user.is_anonymous
             or (episode_id := self.request.session.get(self.session_key, None)) is None
         ):
-            return None
+            self.current_log = None
 
-        return (
+        self.current_log = (
             AudioLog.objects.filter(user=self.request.user, episode=episode_id)
             .select_related("episode", "episode__podcast")
             .first()
         )
+        return self.current_log

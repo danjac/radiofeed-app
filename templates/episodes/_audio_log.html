@@ -7,9 +7,9 @@
         :disabled="isPlaying"
         :title="isPlaying ? 'Episode is currently playing': 'Remove episode from your History'"
         hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
-        @click.once="$dispatch('remove-audio-log', { id: {{ episode.id }} })"
+        @click.once="$dispatch('remove-audio-log', { episode: {{ episode.id }} })"
         @close-player.window="isPlaying=false"
-        @open-player.window="isPlaying = ($event.detail.episode.id === {{ episode.id }})">
+        @open-player.window="isPlaying = ($event.detail.episode === {{ episode.id }})">
   {% icon "trash" css_class="btn-icon h-6 w-6" %}
 </button>
 {% endblock %}

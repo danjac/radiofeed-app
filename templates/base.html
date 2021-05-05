@@ -32,6 +32,7 @@
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
       hx-push-url="true"
+      hx-ext="morphdom debug"
       {% endblock %}>
 
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
@@ -67,6 +68,7 @@
       {% endblock %}
       {% block content %}{% endblock %}
     </main>
+
   </div>
 
   {% endblock layout %}
@@ -76,8 +78,13 @@
     });
   </script>
 
+  {% if user.is_authenticated %}
   {% include "_player.html" %}
+  {% include "_player_js.html" %}
+  {% endif %}
+
   {% include "_modal.html" %}
+
 </body>
 
 </html>

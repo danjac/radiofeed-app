@@ -1,23 +1,31 @@
 {% if user.is_authenticated %}
 <div x-data="{isPlaying:{{ is_playing|yesno:'true,false' }}}"
      @close-player.window="isPlaying = false"
-     @open-player.window="isPlaying = $event.detail.episode.id === {{ episode.id }}">
+     @open-player.window="isPlaying = $event.detail.episode === {{ episode.id }}">
   <button class="btn btn-secondary flex items-center"
           title="Close Player"
           x-show="isPlaying"
+          hx-post="{% url 'episodes:close_player' %}"
+          hx-push-url="false"
+          hx-target="#player"
+          hx-select="#player"
+          hx-swap="outerHTML"
           @click="
-            $dispatch('close-player');
-            $dispatch('close-modal');">
+          $dispatch('close-player');
+          $dispatch('close-modal');
+          ">
     {% icon "stop" css_class="btn-icon mr-2" %}
     Close Player
   </button>
   <button class="btn btn-primary flex items-center"
           title="Open Player"
           x-show="!isPlaying"
-          @click="
-            $dispatch('play-episode', { url: '{% url 'episodes:start_player' episode.id %}'});
-            $dispatch('close-modal');
-          ">
+          hx-post="{% url 'episodes:start_player' episode.id %}"
+          hx-push-url="false"
+          hx-target="#player"
+          hx-select="#player"
+          hx-swap="outerHTML"
+          @click="$dispatch('close-modal');">
     {% icon "play" css_class="btn-icon mr-2" %}
     Play Episode
   </button>

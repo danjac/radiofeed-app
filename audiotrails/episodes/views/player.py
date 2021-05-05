@@ -1,7 +1,8 @@
 import http
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -14,14 +15,15 @@ from . import get_episode_or_404
 @ajax_login_required
 def start_player(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    return JsonResponse(request.player.start_episode(episode).to_json())
+    request.player.start_episode(episode)
+    return render_player(request)
 
 
 @require_POST
 @ajax_login_required
 def close_player(request):
     request.player.stop_episode()
-    return JsonResponse({})
+    return render_player(request)
 
 
 @require_POST
@@ -36,9 +38,9 @@ def play_next_episode(request):
         .order_by("position")
         .first()
     ):
-        return JsonResponse(request.player.start_episode(next_item.episode).to_json())
+        request.player.start_episode(next_item.episode)
 
-    return JsonResponse({})
+    return render_player(request)
 
 
 @require_POST
@@ -52,3 +54,7 @@ def player_update_current_time(request):
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     except (KeyError, ValueError):
         return HttpResponseBadRequest("missing or invalid data")
+
+
+def render_player(request):
+    return TemplateResponse(request, "_player.html")
