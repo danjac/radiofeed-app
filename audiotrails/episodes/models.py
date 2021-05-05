@@ -1,5 +1,3 @@
-import dataclasses
-
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
@@ -7,25 +5,11 @@ from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils.encoding import force_str
-from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.db import FastCountMixin
-
-
-@dataclasses.dataclass
-class EpisodeDOM:
-
-    episode: str
-    favorite: str
-    favorite_toggle: str
-    history: str
-    player_toggle: str
-    queue: str
-    queue_toggle: str
-    remove_audio_log_btn: str
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
@@ -114,19 +98,6 @@ class Episode(models.Model):
 
     def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
-
-    @cached_property
-    def dom(self):
-        return EpisodeDOM(
-            favorite=f"favorite-{self.id}",
-            favorite_toggle=f"favorite-toggle-{self.id}",
-            history=f"history-{self.id}",
-            episode=f"episode-{self.id}",
-            player_toggle=f"player-toggle-{self.id}",
-            queue=f"queue-{self.id}",
-            queue_toggle=f"queue-toggle-{self.id}",
-            remove_audio_log_btn=f"remove-audio-log-btn-{self.id}",
-        )
 
     def get_next_episode(self):
         try:

@@ -14,7 +14,6 @@ from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
-from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
@@ -32,13 +31,6 @@ class PlaceholderImage:
     url: str
     width: int
     height: int
-
-
-@dataclasses.dataclass
-class PodcastDOM:
-    podcast: str
-    cover_image: str
-    follow_toggle: str
 
 
 _cover_image_placeholder = PlaceholderImage(
@@ -172,14 +164,6 @@ class Podcast(models.Model):
     @property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "podcast"
-
-    @cached_property
-    def dom(self):
-        return PodcastDOM(
-            podcast=f"podcast-{self.id}",
-            cover_image=f"podcast-cover-image-{self.id}",
-            follow_toggle=f"follow-toggle-{self.id}",
-        )
 
     def is_following(self, user):
         if user.is_anonymous:

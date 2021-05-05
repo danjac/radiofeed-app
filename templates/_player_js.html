@@ -67,15 +67,18 @@
       openPlayer() {
         this.stopPlayer();
 
-        /*
-        if (metadata && 'mediaSession' in navigator) {
-          if (Object.keys(metadata).length > 0) {
-            navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
-          } else {
-            navigator.mediaSession.metadata = null;
+        const dataTag = document.getElementById('player-metadata');
+
+        if (dataTag && dataTag.textContent) {
+          const metadata = JSON.parse(dataTag.textContent)
+          if (metadata && 'mediaSession' in navigator) {
+            if (Object.keys(metadata).length > 0) {
+              navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
+            } else {
+              navigator.mediaSession.metadata = null;
+            }
           }
         }
-        */
 
         dispatch(this.$el, 'open-player', {
           episode
