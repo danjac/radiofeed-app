@@ -11,7 +11,7 @@
   </div>
 </div>
 
-{# cache 3600 categories search #}
+{% cache 3600 categories search %}
 
 <div class="divide-y divide-gray-300 dark:divide-gray-500"
      id="categories">
@@ -19,8 +19,7 @@
   <div class="space-y-2">
     {% for category in categories %}
     <div>
-      <a hx-get="{{ category.get_absolute_url }}"
-         href="#"
+      <a {% hx_link category %}
          class="link">{{ category.name }}</a>
     </div>
     {% empty %}
@@ -34,16 +33,14 @@
   {% with children=category.children.all %}
   <section class="py-3 space-y-2">
     <div>
-      <a hx-get="{{ category.get_absolute_url }}"
-         href="#"
+      <a {% hx_link category %}
          class="link">{{ category.name }}</a>
     </div>
     {% if children %}
     <nav class="flex flex-wrap items-center">
       {% for child in children %}
       <a class="link text-sm{% if not forloop.last %} mr-3{% endif %}"
-         href="#"
-         hx-get="{{ child.get_absolute_url }}">{{ child.name }}</a>
+         {% hx_link child %}>{{ child.name }}</a>
       {% endfor %}
     </nav>
     {% endif %}
@@ -54,5 +51,5 @@
 
   {% endif %}
 </div>
-{# endcache #}
+{% endcache %}
 {% endblock %}

@@ -13,14 +13,12 @@
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
-           href="#"
-           hx-get="{{ link.url }}">Episodes</a>
+           {{ link.hx }}>Episodes</a>
       </li>
       {% active_link podcast.get_recommendations_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
-           href="#"
-           hx-get="{{ link.url }}">Similar</a>
+           {{ link.hx }}>Similar</a>
       </li>
     </ul>
   </nav>
