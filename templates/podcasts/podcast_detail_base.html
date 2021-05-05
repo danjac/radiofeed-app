@@ -8,9 +8,7 @@
 
 <div id="podcast-content">
   {% if has_recommendations and not search %}
-  <nav class="mb-3 flex items-center"
-       hx-select="#podcast-content"
-       hx-target="#podcast-content">
+  <nav class="mb-3 flex items-center">
     <ul class="flex items-center text-sm space-x-6">
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">

@@ -14,15 +14,13 @@
 {# cache 3600 categories search #}
 
 <div class="divide-y divide-gray-300 dark:divide-gray-500"
-     id="categories"
-     hx-boost="true"
-     hx-target="#content"
-     hx-select="#content">
+     id="categories">
   {% if search %}
   <div class="space-y-2">
     {% for category in categories %}
     <div>
-      <a href="{{ category.get_absolute_url }}"
+      <a hx-get="{{ category.get_absolute_url }}"
+         href="#"
          class="link">{{ category.name }}</a>
     </div>
     {% empty %}
@@ -36,14 +34,16 @@
   {% with children=category.children.all %}
   <section class="py-3 space-y-2">
     <div>
-      <a href="{{ category.get_absolute_url }}"
+      <a hx-get="{{ category.get_absolute_url }}"
+         href="#"
          class="link">{{ category.name }}</a>
     </div>
     {% if children %}
     <nav class="flex flex-wrap items-center">
       {% for child in children %}
       <a class="link text-sm{% if not forloop.last %} mr-3{% endif %}"
-         href="{{ child.get_absolute_url }}">{{ child.name }}</a>
+         href="#"
+         hx-get="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endfor %}
     </nav>
     {% endif %}

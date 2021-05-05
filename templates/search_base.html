@@ -6,9 +6,7 @@
 
 <div id="search-results">
   <nav class="mb-3 sm:flex justify-between">
-    <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm mb-3 sm:mb-0 space-x-6"
-        hx-select="#search-results"
-        hx-target="#search-results">
+    <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm mb-3 sm:mb-0 space-x-6">
       {% active_link 'podcasts:search_podcasts' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"

@@ -1,6 +1,4 @@
 <form hx-get="{{ search_url|default:request.path }}"
-      hx-select="#content"
-      hx-target="#content"
       class="relative bg-transparent {{ css_class|default:'' }}"
       {{ attrs|htmlattrs }}>
   <input type="search"

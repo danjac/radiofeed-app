@@ -1,9 +1,7 @@
 {% load podcasts %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|stripentities episode_title_trunc=episode.title|stripentities|truncatechars:120 %}
 <section class="mb-3 p-1 border dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 {{ css_class|default:'' }}"
-         {% block extra_attrs %}{% endblock %}
-         hx-select="#layout"
-         hx-target="#layout">
+         {% block extra_attrs %}{% endblock %}>
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-2">
 

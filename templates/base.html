@@ -46,21 +46,19 @@
   {% block layout %}
 
   <div class="min-h-full mx-auto flex relative mt-2"
-       id="layout">
-
+       id="layout"
+       hx-select="#layout"
+       hx-target="#layout"
+       hx-swap="outerHTML">
 
     <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
-           :class="{'hidden lg:block': !sidebar}"
-           hx-select="#layout"
-           hx-target="#layout"
-           hx-swap="outerHTML">
+           :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
 
     <main class="w-full p-2 lg:block"
           :class="{'hidden lg:block': sidebar}"
-          id="content"
-          hx-swap="outerHTML">
+          id="content">
       <noscript>
         <p class="p-2 bg-gray-200 dark:bg-gray-800 rounded mb-3 text-center">
           This site works best with JavaScript enabled.
@@ -73,14 +71,11 @@
       {% endif %}
       {% endblock %}
       {% block content %}{% endblock %}
-
     </main>
-
     {% include "_messages.html" %}
   </div>
 
   {% endblock layout %}
-
 
   {% include "_common_js.html" %}
 

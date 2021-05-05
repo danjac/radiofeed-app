@@ -3,15 +3,13 @@
 
 {% block podcast_content %}
 {% if show_podcast_detail %}
-<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3"
-     hx-select="#content"
-     hx-target="#content">
+<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3">
+
   {% if podcast.creators %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
     {{ podcast.creators }}
   </div>
   {% endif %}
-
 
   <div class="flex items-center w-full space-x-3">
 
@@ -72,9 +70,7 @@
 
 <div class="sm:flex items-center mb-3 justify-between">
 
-  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0"
-       hx-target="#podcast-content"
-       hx-select="#podcast-content">
+  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0">
     {% if search %}
     <a hx-get="{% url 'episodes:search_episodes' %}?q={{ search }}"
        href="#"

@@ -5,10 +5,9 @@ method="post"
 novalidate
 {% with action_url=action_url|default:request.get_full_path %}
 {% if hx_post %}
+{% block hx_attrs %}
 hx-post="{{ action_url }}"
-hx-target="#layout"
-hx-select="#layout"
-hx-swap="outerHTML"
+{% endblock %}
 {% else %}
 action="{{ action_url }}"
 hx-disable="true"
