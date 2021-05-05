@@ -27,6 +27,7 @@
          href="#"
          hx-get="{{ podcast.get_preview_url }}"
          hx-push-url="false"
+         hx-swap="innerHTML"
          hx-select=".modal"
          hx-target="#modal">
         {% icon "ellipsis" css_class="w-6 h-6" %}

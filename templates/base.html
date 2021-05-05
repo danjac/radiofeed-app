@@ -32,7 +32,11 @@
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
       hx-push-url="true"
-      hx-ext="morphdom debug"
+      {% comment %}
+      {% if debug %}
+      hx-ext="debug"
+      {% endif %}
+      {% endcomment %}
       {% endblock %}>
 
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
@@ -81,6 +85,26 @@
   {% if user.is_authenticated %}
   {% include "_player.html" %}
   {% include "_player_js.html" %}
+  <script>
+    const sendJSON = (url, data) => fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify(data || {}),
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const dispatch = (el, event, detail = {}) => {
+      el.dispatchEvent(
+        new CustomEvent(event, {
+          detail,
+          bubbles: true,
+        })
+      );
+    };
+  </script>
   {% endif %}
 
   {% include "_modal.html" %}

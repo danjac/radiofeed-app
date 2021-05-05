@@ -20,27 +20,8 @@
         integrity="sha384-QrlPmoLqMVfnV4lzjmvamY0Sv/Am8ca1W7veO++Sp6PiIGixqkD+0xZ955Nc03qO"
         crossorigin="anonymous"></script>
 
+{% if debug %}
 <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script>
+{% endif %}
 
-<script src="https://unpkg.com/htmx.org/dist/ext/morphdom-swap.js"></script>
-<script>
-  const sendJSON = (url, data) => fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',
-    body: JSON.stringify(data || {}),
-    headers: {
-      'X-CSRFToken': '{{ csrf_token }}',
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const dispatch = (el, event, detail = {}) => {
-    el.dispatchEvent(
-      new CustomEvent(event, {
-        detail,
-        bubbles: true,
-      })
-    );
-  };
-</script>
 
