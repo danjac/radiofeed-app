@@ -6,6 +6,9 @@ novalidate
 {% with action_url=action_url|default:request.get_full_path %}
 {% if hx_post %}
 hx-post="{{ action_url }}"
+hx-target="#content"
+hx-select="#content"
+hx-swap="outerHTML"
 {% else %}
 action="{{ action_url }}"
 hx-disable="true"
