@@ -6,7 +6,8 @@
     const {
       mediaSrc,
       currentTime,
-      episode
+      episode,
+      runImmediately
     } = options;
 
     const defaults = {
@@ -53,7 +54,7 @@
       return (denominator / nominator) * 100;
     };
 
-    const instance = {
+    return {
       ...defaults,
       initialize() {
         this.$watch('duration', (value) => {
@@ -88,18 +89,21 @@
         });
 
         this.$nextTick(() => {
-          this.startPlayer(mediaSrc, currentTime);
+          this.startPlayer(currentTime);
         });
       },
       // audio events
       loaded() {
-        this.$refs.audio.play().then(() => {
-          console.log('starting timer...')
-          timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
-        }).catch(e => {
-          console.log(e);
+        if (runImmediately || sessionStorage.getItem('player-enabled')) {
+          this.$refs.audio.play().then(() => {
+            timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
+          }).catch(e => {
+            console.log(e);
+            this.isPaused = true;
+          });
+        } else {
           this.isPaused = true;
-        });
+        }
         this.duration = this.$refs.audio.duration;
       },
       timeUpdate() {
@@ -109,6 +113,7 @@
         this.isPlaying = true;
         this.isPaused = false;
         this.isWaiting = false;
+        sessionStorage.setItem('player-enabled', true);
       },
       paused() {
         this.isPlaying = false;
@@ -200,7 +205,7 @@
           this.$refs.audio.pause();
         }
       },
-      startPlayer(mediaUrl, currentTime) {
+      startPlayer(currentTime) {
         this.$refs.audio.currentTime = currentTime;
         this.$refs.audio.load();
       },
@@ -260,6 +265,5 @@
       },
     };
 
-    return instance;
   };
 </script>

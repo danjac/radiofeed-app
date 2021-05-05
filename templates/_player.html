@@ -59,7 +59,8 @@
 
           <div class="flex justify-between items-center w-full">
 
-            <div class="flex items-center">
+            <div class="flex items-center"
+                 x-cloak>
 
               <button title="Pause"
                       @click="$refs.audio.pause()"
@@ -77,6 +78,7 @@
 
               <button title="Stop"
                       x-ref="stop"
+                      x-show="isPlaying || isPaused"
                       hx-post="{% url 'episodes:close_player' %}"
                       hx-target="#player"
                       hx-select="#player"
@@ -94,7 +96,9 @@
                  title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
             </div>
 
-            <div class="flex items-center">
+            <div class="flex items-center"
+                 x-cloak
+                 x-show="isPlaying || isPaused">
               <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive"
                       @click="decrementPlaybackRate"
                       title="Decrease Playback Rate">-</button>
@@ -120,7 +124,9 @@
 
           </div>
 
-          <div class="flex items-center w-full mx-1">
+          <div class="flex items-center w-full mx-1"
+               x-show="isPlaying || isPaused"
+               x-cloak>
             <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
                  x-ref="progressBar"
                  @click="skip($event)">

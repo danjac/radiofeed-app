@@ -16,4 +16,7 @@ input[type='search']::-webkit-search-results-button,
 input[type='search']::-webkit-search-results-decoration {
   display: none;
 }
+[x-cloak] {
+  display: none !important;
+}
 @tailwind utilities;
