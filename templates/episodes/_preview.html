@@ -2,7 +2,7 @@
 {% load podcasts %}
 {% block modal_header %}
 <a hx-get="{{ episode.get_absolute_url }}"
-   hx-target="body"
+   @click="$dispatch('close-modal')"
    href="#"
    title="{{ episode.title }}"
    class="link">

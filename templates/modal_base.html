@@ -2,7 +2,10 @@
      x-data="{show: true}"
      x-show="show"
      @close-modal="show=false"
-     @keydown.escape.window="show=false">
+     @keydown.escape.window="show=false"
+     hx-target="#layout"
+     hx-select="#layout"
+     hx-swap="outerHTML">
   <template x-if="show">
     <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 

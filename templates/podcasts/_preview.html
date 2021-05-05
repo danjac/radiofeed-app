@@ -3,7 +3,7 @@
 
 {% block modal_header %}
 <a hx-get="{{ podcast.get_absolute_url }}"
-   hx-target="body"
+   @click="$dispatch('close-modal')"
    href="#"
    class="font-semibold hover:text-blue-500">
   {{ podcast.title|stripentities|truncatechars:120 }}
@@ -16,9 +16,8 @@
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
     <a hx-get="{{ podcast_url }}"
-       hx-target="body"
+       @click="$dispatch('close-modal')"
        href="#">
-
       {% cover_image podcast lazy=False size="20" %}
     </a>
   </div>
@@ -29,6 +28,7 @@
     {% if num_episodes %}
     <div>
       <a hx-get="{{ podcast_url }}"
+         @click="$dispatch('close-modal')"
          class="link text-sm">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </a>
