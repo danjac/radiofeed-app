@@ -1,11 +1,12 @@
 {% load cache %}
-{# cache 600 sidebar request.user.username request.path #}
 <div class="flex justify-center sm:hidden mb-3">
 
   <form hx-get="{% url 'podcasts:search_podcasts' %}"
+        x-data="{}"
         class="relative bg-transparent"
-        @submit="sidebar=false">
+        @submit="sidebar=false; $refs.input.blur();">
     <input type="search"
+           x-ref="input"
            name="q"
            autocomplete="off"
            aria-label="{{ placeholder|default:'Search' }}"
@@ -134,4 +135,3 @@
 
   </ul>
 </nav>
-{# endcache #}
