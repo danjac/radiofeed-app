@@ -28,6 +28,7 @@
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
        id="player-controls"
        :class="{'player--active': isPlaying, 'player--inactive': !isPlaying}"
+       hx-swap="outerHTML"
        hx-target="#layout"
        hx-select="#layout">
     <div class="relative space-y-1">
