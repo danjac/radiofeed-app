@@ -48,7 +48,6 @@
   <div class="min-h-full mx-auto flex relative mt-2"
        id="layout">
 
-    {% include "_messages.html" %}
 
     <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
            :class="{'hidden lg:block': !sidebar}"
@@ -74,6 +73,8 @@
       {% endif %}
       {% endblock %}
       {% block content %}{% endblock %}
+
+      {% include "_messages.html" %}
     </main>
 
   </div>

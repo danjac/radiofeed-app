@@ -1,7 +1,7 @@
 {% if messages %}
 <div class="relative"
      id="server-messages">
-  <div class="fixed z-50 top-10 w-full space-y-2">
+  <div class="fixed z-50 bottom-20 w-full space-y-2">
     <div class="flex justify-center">
       {% for message in messages %}
       <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl {{ message.tags }}"
@@ -29,7 +29,7 @@
             setTimeout(() => { show = false }, 3000);
             ">
   <div class="relative">
-    <div class="fixed z-50 top-10 w-full">
+    <div class="fixed z-50 bottom-20 w-full">
       <div class="flex justify-center">
         <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl"
              :class="`message-${tag}`">
