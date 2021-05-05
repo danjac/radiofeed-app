@@ -58,6 +58,7 @@
       // audio events
       loaded() {
         this.$refs.audio.play().then(() => {
+          console.log('starting timer...')
           timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
         }).catch(e => {
           console.log(e);
@@ -175,7 +176,7 @@
         }
       },
       sendCurrentTimeUpdate() {
-        if (!this.isPaused && !this.isWaiting && this.currentTime) {
+        if (!this.isPaused && this.currentTime) {
           sendJSON("{% url 'episodes:player_update_current_time' %}", {
             currentTime: this.currentTime,
           });
