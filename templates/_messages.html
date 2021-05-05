@@ -1,21 +1,18 @@
 {% if messages %}
-<div class="relative"
-     id="server-messages">
-  <div class="fixed z-50 bottom-20 w-full space-y-2">
-    <div class="flex justify-center">
-      {% for message in messages %}
-      <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl {{ message.tags }}"
-           x-data="{show: true}"
-           x-show="show"
-           x-init="setTimeout(() => { show = false }, 3000)">
-        <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap">{{ message }}</div>
-        <button @click="show=false"
-                class="float-right focus:outline-none">
-          {% icon "x_circle" css_class="h-6 w-6" %}
-        </button>
-      </div>
-      {% endfor %}
+<div class="fixed z-50 bottom-20 w-full space-y-2">
+  <div class="flex justify-center">
+    {% for message in messages %}
+    <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl {{ message.tags }}"
+         x-data="{show: true}"
+         x-show="show"
+         x-init="setTimeout(() => { show = false }, 3000)">
+      <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap">{{ message }}</div>
+      <button @click="show=false"
+              class="float-right focus:outline-none">
+        {% icon "x_circle" css_class="h-6 w-6" %}
+      </button>
     </div>
+    {% endfor %}
   </div>
 </div>
 {% endif %}
@@ -28,18 +25,16 @@
             show = true;
             setTimeout(() => { show = false }, 3000);
             ">
-  <div class="relative">
-    <div class="fixed z-50 bottom-20 w-full">
-      <div class="flex justify-center">
-        <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl"
-             :class="`message-${tag}`">
-          <div class="mx-auto text-sm md:text-base font-semibold"
-               x-text="message"></div>
-          <button @click="show=false"
-                  class="float-right focus:outline-none">
-            {% icon "x_circle" css_class="h-6 w-6" %}
-          </button>
-        </div>
+  <div class="fixed z-50 bottom-20 w-full">
+    <div class="flex justify-center">
+      <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl"
+           :class="`message-${tag}`">
+        <div class="mx-auto text-sm md:text-base font-semibold"
+             x-text="message"></div>
+        <button @click="show=false"
+                class="float-right focus:outline-none">
+          {% icon "x_circle" css_class="h-6 w-6" %}
+        </button>
       </div>
     </div>
   </div>
