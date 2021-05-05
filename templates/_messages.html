@@ -1,19 +1,21 @@
 {% if messages %}
 <div class="relative"
-     id="messages">
-  <div class="absolute z-50 top-0 shadow-xl w-full space-y-2">
-    {% for message in messages %}
-    <div class="flex justify-between items-center p-2 message {{ message.tags }}"
-         x-data="{show: true}"
-         x-show="show"
-         x-init="setTimeout(() => { show = false }, 3000)">
-      <div class="mx-auto text-sm md:text-base font-semibold">{{ message }}</div>
-      <button @click="show=false"
-              class="float-right focus:outline-none">
-        {% icon "x_circle" css_class="h-6 w-6" %}
-      </button>
+     id="server-messages">
+  <div class="fixed z-50 top-10 w-full space-y-2">
+    <div class="flex justify-center">
+      {% for message in messages %}
+      <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl {{ message.tags }}"
+           x-data="{show: true}"
+           x-show="show"
+           x-init="setTimeout(() => { show = false }, 3000)">
+        <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap">{{ message }}</div>
+        <button @click="show=false"
+                class="float-right focus:outline-none">
+          {% icon "x_circle" css_class="h-6 w-6" %}
+        </button>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 </div>
 {% endif %}
@@ -26,13 +28,19 @@
             show = true;
             setTimeout(() => { show = false }, 3000);
             ">
-  <div class="flex justify-between items-center p-2 message"
-       :class="`message-${tag}`">
-    <div class="mx-auto text-sm md:text-base font-semibold"
-         x-text="message"></div>
-    <button @click="show=false"
-            class="float-right focus:outline-none">
-      {% icon "x_circle" css_class="h-6 w-6" %}
-    </button>
+  <div class="relative">
+    <div class="fixed z-50 top-10 w-full">
+      <div class="flex justify-center">
+        <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl"
+             :class="`message-${tag}`">
+          <div class="mx-auto text-sm md:text-base font-semibold"
+               x-text="message"></div>
+          <button @click="show=false"
+                  class="float-right focus:outline-none">
+            {% icon "x_circle" css_class="h-6 w-6" %}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
