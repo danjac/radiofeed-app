@@ -2,20 +2,22 @@
 {% load podcasts %}
 
 {% block modal_header %}
+{% with podcast_title=podcast.title|stripentities %}
 <a @click="$dispatch('close-modal')"
    {% hx_link podcast %}
-   title="{{ podcast.title|stripentities }}"
+   title="{{ podcast_title }}"
    class="font-semibold hover:text-blue-500">
-  {{ podcast.title|stripentities|truncatechars:120 }}
+  {{ podcast_title|truncatechars:120 }}
 </a>
+{% endwith %}
 {% endblock %}
 
 {% block modal_content %}
-
+{% with podcast_title=podcast.title|stripentities %}
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
     <a @click="$dispatch('close-modal')"
-       title="{{ podcast.title|stripentities }}"
+       title="{{ podcast_title }}"
        {% hx_link podcast %}>
       {% cover_image podcast lazy=False size="20" %}
     </a>
@@ -28,7 +30,7 @@
     <div>
       <a {% hx_link podcast %}
          @click="$dispatch('close-modal')"
-         title="{{ podcast.title|stripentities }}"
+         title="{{ podcast_title }}"
          class="link text-sm">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </a>
@@ -48,4 +50,5 @@
 <blockquote class="text-sm markdown">
   {{ podcast.description|keepspaces|stripentities|truncatewords:60 }}
 </blockquote>
+{% endwith %}
 {% endblock %}
