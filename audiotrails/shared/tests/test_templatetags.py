@@ -159,8 +159,8 @@ class HxLinkTests(SimpleTestCase):
     def test_with_model(self):
         c = Category(id=1000, name="Test Category")
         url = c.get_absolute_url()
-        self.assertEqual(hx_link(c), f' href="{url}" hx-get="{url}"')
+        self.assertEqual(hx_link(c), f'href="{url}" hx-get="{url}"')
 
     def test_with_simple_url(self):
         url = "/discover/"
-        self.assertEqual(hx_link(url), f' href="{url}" hx-get="{url}"')
+        self.assertEqual(hx_link(url), f'href="{url}" hx-get="{url}"')

@@ -39,6 +39,5 @@ redis
 sentry_sdk
 sklearn
 sorl-thumbnail
-tblib
 unidecode
 werkzeug
