@@ -1,3 +1,5 @@
+import urllib
+
 from django.utils.functional import SimpleLazyObject, cached_property
 
 
@@ -24,6 +26,14 @@ class Search:
     @cached_property
     def value(self):
         return self.request.GET.get(self.search_param, "").strip()
+
+    @cached_property
+    def qs(self):
+        return (
+            urllib.parse.urlencode({self.search_param: self.value})
+            if self.value
+            else ""
+        )
 
 
 class SearchMiddleware(BaseMiddleware):

@@ -10,17 +10,17 @@
       {% active_link 'podcasts:search_podcasts' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
-           {% hx_link link.url|add:'?q='|add:search %}>Podcasts</a>
+           {% hx_link link.url|add:search_qs %}>Podcasts</a>
       </li>
       {% active_link 'episodes:search_episodes' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
-           {% hx_link link.url|add:'?q='|add:search %}>Episodes</a>
+           {% hx_link link.url|add:search_qs %}>Episodes</a>
       </li>
       {% active_link 'podcasts:search_itunes' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
-           {% hx_link link.url|add:'?q='|add:search %}>iTunes</a>
+           {% hx_link link.url|add:search_qs %}>iTunes</a>
       </li>
     </ul>
     <div class="flex items-center justify-center sm:justify-end">

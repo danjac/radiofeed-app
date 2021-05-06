@@ -31,7 +31,7 @@
 {% if search %}
 <div class="mb-3 flex items-center justify-center sm:justify-start text-sm">
   {% url 'podcasts:search_podcasts' as search_url %}
-  <a {% hx_link search_url|add:'?q='|add:search %}
+  <a {% hx_link search_url|add:search_qs %}
      class="link">Search All Podcasts</a>
 </div>
 {% else %}

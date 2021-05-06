@@ -46,7 +46,7 @@ def hx_link(to, *args, **kwargs):
     ...
     </a>
     Use this when you need to replace a regular href with an hx-get,
-    but still retain the href for a11y/UX.
+    but still retain the href with identical URL for a11y/UX.
     """
     return hx_link_attrs(resolve_url(to, *args, **kwargs))
 

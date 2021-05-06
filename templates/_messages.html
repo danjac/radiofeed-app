@@ -1,8 +1,8 @@
 {% if messages %}
-<div class="fixed z-50 top-20 w-full space-y-2">
-  <div class="flex justify-center">
+<div class="fixed z-50 top-20 w-full">
+  <div class="flex justify-center space-y-3">
     {% for message in messages %}
-    <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 message shadow-xl {{ message.tags }}"
+    <div class="flex justify-between rounded items-center py-2 px-3 message shadow-xl {{ message.tags }}"
          x-data="{show: true}"
          x-show="show"
          x-init="setTimeout(() => { show = false }, 3000)">
@@ -13,21 +13,25 @@
 </div>
 {% endif %}
 
-<template x-data="{show: false, tag: null, message: null}"
-          x-if="show"
+<template x-data="{messages: []}"
+          x-if="messages.length > 0"
           @message.window="
-            tag = $event.detail.tag;
-            message = $event.detail.message;
-            show = true;
-            setTimeout(() => { show = false }, 3000);
+            messages = messages.concat({
+                tag: $event.detail.tag,
+                message: $event.detail.message
+            });
+            setTimeout(() => { messages.shift() }, 3000);
             ">
   <div class="fixed z-50 top-20 w-full">
-    <div class="flex justify-center">
-      <div class="flex justify-between rounded items-center py-2 px-3 space-x-3 shadow-xl message"
-           :class="`message-${tag}`">
-        <div class="mx-auto text-sm md:text-base font-semibold"
-             x-text="message"></div>
-      </div>
+    <div class="flex justify-center space-y-3">
+      <template x-for="(message, index) in messages"
+                :key="index">
+        <div class="flex justify-between rounded items-center py-2 px-3 shadow-xl message"
+             :class="`message-${message.tag}`">
+          <div class="mx-auto text-sm md:text-base font-semibold"
+               x-text="message.message"></div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
