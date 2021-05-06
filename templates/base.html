@@ -46,6 +46,8 @@
        hx-target="#layout"
        hx-swap="outerHTML">
 
+    {% include "_messages.html" %}
+
     <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
            :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
@@ -67,7 +69,6 @@
       {% endblock %}
       {% block content %}{% endblock %}
     </main>
-    {% include "_messages.html" %}
   </div>
 
   {% endblock layout %}
