@@ -8,11 +8,11 @@
      @remove-audio-log.window="counter = counter-1"
      {% endif %}>
   {% for log in page_obj %}
-  <template x-data="{show:true}"
-            x-if="show"
+  <div x-data="{show:true}"
+            x-show="show"
             @remove-audio-log.window="if ($event.detail.episode === {{ log.episode.id }}) show=false">
     {% include "episodes/_audio_log.html" with episode=log.episode %}
-  </template>
+  </div>
   {% empty %}
   <p class="text-center sm:text-left">
     {% if search %}

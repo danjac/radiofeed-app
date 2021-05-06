@@ -28,11 +28,11 @@
      {% endif %}>
   {% for item in queue_items %}
   {% with episode=item.episode %}
-  <template x-data="{show: true}"
-            x-if="show"
-            @remove-queue-item.window="if ($event.detail.episode === {{ episode.id }}) show=false">
+  <div x-data="{show: true}"
+       x-show="show"
+       @remove-queue-item.window="if ($event.detail.episode === {{ episode.id }}) show=false">
     {% include "episodes/_queue_item.html" %}
-  </template>
+  </div>
   {% endwith %}
   {% empty %}
   You do not have any items in your Play Queue.
