@@ -1,4 +1,5 @@
-{% extends request.htmx|yesno:"layout.html,base.html" %}
+{% extends "base.html" %}
+
 {% block signup_cta %}{% endblock %}
 {% block content %}
 <h1 class="font-bold mb-3 flex flex-wrap">About this Site</h1>
@@ -8,16 +9,19 @@
       {% active_link 'about:credits' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Credits"
            {{ link.hx }}>Credits</a>
       </li>
       {% active_link 'about:shortcuts' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Shortcuts"
            {{ link.hx }}>Shortcuts</a>
       </li>
       {% active_link 'about:privacy' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Privacy"
            {{ link.hx }}>Privacy</a>
       </li>
     </ul>

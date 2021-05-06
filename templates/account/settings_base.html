@@ -1,4 +1,4 @@
-{% extends request.htmx|yesno:"layout.html,base.html" %}
+{% extends "base.html" %}
 
 {% block robots %}
 <meta name="robots"
@@ -14,36 +14,43 @@
       {% active_link 'user_preferences' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Preferences"
            {{ link.hx }}>Preferences</a>
       </li>
       {% active_link 'export_podcast_feeds' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Export"
            {{ link.hx }}>Export</a>
       </li>
       {% active_link 'user_stats' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Statistics"
            {{ link.hx }}>Statistics</a>
       </li>
       {% active_link 'account_email' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Email Addresses"
            {{ link.hx }}>Email Addresses</a>
       </li>
       {% active_link 'account_change_password' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Change Password"
            {{ link.hx }}>Change Password</a>
       </li>
       {% active_link 'socialaccount_connections' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Social Logins"
            {{ link.hx }}>Social Logins</a>
       </li>
       {% active_link 'delete_account' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
+           title="Delete Account"
            {{ link.hx }}>Delete Account</a>
       </li>
     </ul>

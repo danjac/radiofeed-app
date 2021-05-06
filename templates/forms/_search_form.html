@@ -1,5 +1,6 @@
 <form hx-get="{{ search_url|default:request.path }}"
       class="relative bg-transparent {{ css_class|default:'' }}"
+      {% if title %}hx-page-title="{{ title }}"{% endif %}
       {{ attrs|htmlattrs }}>
   <input type="search"
          name="{{ search_param|default:'q' }}"

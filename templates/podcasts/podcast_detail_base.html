@@ -13,11 +13,13 @@
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
+           title="{{ podcast.title|stripentities }}"
            {{ link.hx }}>Episodes</a>
       </li>
       {% active_link podcast.get_recommendations_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
+           title="{{ podcast.title|stripentities }} | Similar"
            {{ link.hx }}>Similar</a>
       </li>
     </ul>

@@ -74,6 +74,7 @@
     {% if search %}
     {% url 'episodes:search_episodes' as search_url %}
     <a {% hx_link search_url|add:search_qs %}
+       title="Search Episodes"
        class="link">Search in all podcasts</a>
     {% elif newest_first %}
     <a {% hx_link request.path|add:'?ordering=asc' %}

@@ -1,9 +1,9 @@
 {% load static i18n %}
-{% block page_header %}
 {% block header_tags %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
+
 <head>
   {% block head %}
   <title>
@@ -28,6 +28,7 @@
   {% include "_static.html" %}
   {% endblock head %}
 </head>
+
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
@@ -36,7 +37,6 @@
   {% endblock header_tags %}
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
   {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
-  {% endblock page_header %}
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2"
@@ -71,7 +71,7 @@
   </div>
 
   {% endblock layout %}
-  {% block page_footer %}
+
   {% block player %}
   {% if user.is_authenticated %}
   {% include "_player.html" %}
@@ -88,8 +88,8 @@
   {% include "_player_js.html" %}
   {% endif %}
   {% endblock extra_js %}
-{% block footer_tags %}
+  {% block footer_tags %}
 </body>
+
 </html>
 {% endblock footer_tags %}
-{% endblock page_footer %}

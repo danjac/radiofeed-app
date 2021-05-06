@@ -29,11 +29,13 @@
       </a>
 
       <a class="font-bold"
+         title="{{ request.site.name }}"
          {% hx_link 'episodes:index' %}>{{ request.site.name }}</a>
     </div>
 
     <form hx-get="{% url 'podcasts:search_podcasts' %}"
           x-data="{}"
+          hx-page-title="Search Podcasts"
           @submit="$refs.input.blur()"
           class="relative bg-transparent hidden sm:block">
       <input type="search"

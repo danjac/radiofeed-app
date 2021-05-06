@@ -1,4 +1,4 @@
-{% extends request.htmx|yesno:"layout.html,base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <h1 class="font-bold flex items-center justify-center sm:justify-start mb-3">
@@ -11,16 +11,19 @@
       {% active_link 'podcasts:search_podcasts' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
+           title="Search Podcasts"
            {% hx_link link.url|add:search_qs %}>Podcasts</a>
       </li>
       {% active_link 'episodes:search_episodes' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
+           title="Search Episodes"
            {% hx_link link.url|add:search_qs %}>Episodes</a>
       </li>
       {% active_link 'podcasts:search_itunes' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
+           title="Search iTunes"
            {% hx_link link.url|add:search_qs %}>iTunes</a>
       </li>
     </ul>

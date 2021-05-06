@@ -89,9 +89,17 @@
                 {% icon "stop" css_class="h-8 w-8" %}
               </button>
 
+              <button class="hidden"
+                      hx-post="{% url 'episodes:play_next_episode' %}"
+                      hx-target="#player"
+                      hx-select="#player"
+                      hx-push-url="false"
+                      x-ref="playNext">
+              </button>
             </div>
 
-            <div class="hidden sm:block text-sm text-center sm:w-64 w-96 lg:w-full truncate">
+            <div class="hidden sm:block text-sm sm:w-64 w-96 lg:w-full truncate"
+                 :class="{'text-center': isPlaying || isPaused}">
               <a class="player--title"
                  {% hx_link episode %}
                  title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>

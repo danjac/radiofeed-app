@@ -4,6 +4,7 @@
 {% block modal_header %}
 <a @click="$dispatch('close-modal')"
    {% hx_link podcast %}
+   title="{{ podcast.title|stripentities }}"
    class="font-semibold hover:text-blue-500">
   {{ podcast.title|stripentities|truncatechars:120 }}
 </a>
@@ -14,6 +15,7 @@
 <div class="flex items-center w-full space-x-3 mb-3">
   <div>
     <a @click="$dispatch('close-modal')"
+       title="{{ podcast.title|stripentities }}"
        {% hx_link podcast %}>
       {% cover_image podcast lazy=False size="20" %}
     </a>
@@ -26,6 +28,7 @@
     <div>
       <a {% hx_link podcast %}
          @click="$dispatch('close-modal')"
+         title="{{ podcast.title|stripentities }}"
          class="link text-sm">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </a>

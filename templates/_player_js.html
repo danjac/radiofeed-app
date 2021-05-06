@@ -129,10 +129,7 @@
       ended() {
         this.stopPlayer();
         dispatch(this.$el, 'close-player');
-        htmx.ajax('POST', "{% url 'episodes:play_next_episode' %}", {
-          target: "#player",
-          swap: "outerHTML"
-        });
+        $refs.playNext.click();
       },
       shortcuts(event) {
         if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {

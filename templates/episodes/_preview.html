@@ -3,7 +3,7 @@
 {% block modal_header %}
 <a @click="$dispatch('close-modal')"
    {% hx_link episode %}
-   title="{{ episode.title }}"
+   title="{{ episode.title|stripentities }}"
    class="link">
   {{ episode.title|stripentities|truncatechars:100 }}
 </a>
@@ -24,6 +24,7 @@
 <div class="flex items-center mb-3 space-x-3">
   <div>
     <a {% hx_link podcast %}
+       title="{{ podcast.title|stripentities }}"
        @click="$dispatch('close-modal')">
       {% cover_image podcast lazy=False size="20" %}
     </a>
