@@ -39,6 +39,8 @@ def play_next_episode(request):
         .first()
     ):
         request.player.start_episode(next_item.episode)
+    else:
+        request.player.stop_episode(mark_completed=True)
 
     return render_player(request)
 

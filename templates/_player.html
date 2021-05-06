@@ -5,7 +5,7 @@
      x-data="Player({
        episode: {{ episode.id }},
        mediaSrc: '{{ episode.media_url }}',
-       currentTime: {{ log.current_time }},
+       currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        runImmediately: {{ run_immediately|yesno:'true,false' }}
     })"
      x-init="initialize()"
