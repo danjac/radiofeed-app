@@ -16,6 +16,7 @@
       duration: 0,
       isPlaying: false,
       isPaused: false,
+      isLoaded: false,
       isWaiting: false,
       playbackRate: 1.0,
       counter: '00:00:00',
@@ -105,6 +106,7 @@
           this.isPaused = true;
         }
         this.duration = this.$refs.audio.duration;
+        this.isLoaded = true;
       },
       timeUpdate() {
         this.currentTime = this.$refs.audio.currentTime;
@@ -129,7 +131,7 @@
       ended() {
         this.stopPlayer();
         dispatch(this.$el, 'close-player');
-        $refs.playNext.click();
+        this.$refs.playNext.click();
       },
       shortcuts(event) {
         if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
