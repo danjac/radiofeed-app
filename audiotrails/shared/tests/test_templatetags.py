@@ -8,6 +8,7 @@ from ..template.defaulttags import (
     active_link,
     format_duration,
     htmlattrs,
+    hx_link,
     jsonify,
     keepspaces,
     login_url,
@@ -149,6 +150,17 @@ class PaginationUrlTests(SimpleTestCase):
 
         req = RequestFactory().get("/search/", {"q": "test"})
         url = pagination_url({"request": req}, 5)
-        assert url.startswith("/search/?")
-        assert "q=test" in url
-        assert "page=5" in url
+        self.assertTrue(url.startswith("/search/?"))
+        self.assertIn("q=test", url)
+        self.assertIn("page=5", url)
+
+
+class HxLinkTests(SimpleTestCase):
+    def test_with_model(self):
+        c = Category(id=1000, name="Test Category")
+        url = c.get_absolute_url()
+        self.assertEqual(hx_link(c), f' href="{url}" hx-get="{url}"')
+
+    def test_with_simple_url(self):
+        url = "/discover/"
+        self.assertEqual(hx_link(url), f' href="{url}" hx-get="{url}"')
