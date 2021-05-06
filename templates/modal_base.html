@@ -6,8 +6,9 @@
      hx-target="#layout"
      hx-select="#layout"
      hx-swap="outerHTML">
+  <div x-show="show"
+       class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
   <template x-if="show">
-    <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
 
     <div class="modal-container w-full bg-white dark:bg-gray-800 h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto">
 
@@ -39,6 +40,5 @@
         {% block modal_content %}{% endblock %}
         <!--Footer-->
       </div>
-    </div>
   </template>
 </div>
