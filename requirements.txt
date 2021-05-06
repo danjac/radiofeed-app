@@ -18,9 +18,9 @@ billiard==3.6.4.0
     # via celery
 bleach==3.3.0
     # via -r requirements.in
-boto3==1.17.64
+boto3==1.17.67
     # via -r requirements.in
-botocore==1.20.64
+botocore==1.20.67
     # via
     #   boto3
     #   s3transfer
@@ -89,7 +89,7 @@ django-timezone-field==4.1.2
     # via django-celery-beat
 django-widget-tweaks==1.4.8
     # via -r requirements.in
-django==3.2.1
+django==3.2.2
     # via
     #   -r requirements.in
     #   django-allauth
@@ -122,7 +122,7 @@ idna==2.10
     # via requests
 ipython-genutils==0.2.0
     # via traitlets
-ipython==7.23.0
+ipython==7.23.1
     # via -r requirements.in
 jedi==0.17.2
     # via
@@ -235,7 +235,7 @@ scipy==1.6.3
     # via scikit-learn
 sentry-sdk==1.0.0
     # via -r requirements.in
-six==1.15.0
+six==1.16.0
     # via
     #   bleach
     #   click-repl
