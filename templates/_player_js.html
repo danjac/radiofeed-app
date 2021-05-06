@@ -1,10 +1,6 @@
 <script>
   const Player = (options) => {
 
-    const sessionKey = 'player-enabled';
-
-    let timer;
-
     const {
       mediaSrc,
       currentTime,
@@ -57,6 +53,10 @@
       return (denominator / nominator) * 100;
     };
 
+    const sessionKey = 'player-enabled';
+
+    let timer;
+
     return {
       ...defaults,
       initialize() {
@@ -92,11 +92,12 @@
         });
 
         this.$nextTick(() => {
-          this.startPlayer(currentTime);
+          this.$refs.audio.load();
         });
       },
       // audio events
       loaded() {
+        this.$refs.audio.currentTime = currentTime;
         if (runImmediately || sessionStorage.getItem(sessionKey)) {
           this.$refs.audio.play().then(() => {
             timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
@@ -206,10 +207,6 @@
         } else {
           this.$refs.audio.pause();
         }
-      },
-      startPlayer(currentTime) {
-        this.$refs.audio.currentTime = currentTime;
-        this.$refs.audio.load();
       },
       stopPlayer() {
         this.$refs.audio.pause();
