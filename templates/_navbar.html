@@ -1,4 +1,5 @@
-{% load static %}
+{% load cache static %}
+{% cache 3600 navbar request.user.username request.get_full_path %}
 {% url 'episodes:index' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow"
         hx-target="#layout"
@@ -71,3 +72,4 @@
     {% endif %}
   </div>
 </header>
+{% endcache %}

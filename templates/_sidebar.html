@@ -1,4 +1,5 @@
 {% load cache %}
+{% cache 3600 sidebar request.user.username request.get_full_path %}
 <div class="flex justify-center sm:hidden mb-3">
 
   <form hx-get="{% url 'podcasts:search_podcasts' %}"
@@ -127,3 +128,4 @@
 
   </ul>
 </nav>
+{% endcache %}
