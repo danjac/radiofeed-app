@@ -24,8 +24,6 @@ botocore==1.20.67
     # via
     #   boto3
     #   s3transfer
-brotli==1.0.9
-    # via whitenoise
 celery==5.0.5
     # via
     #   -r requirements.in
@@ -295,8 +293,6 @@ webencodings==0.5.1
     #   bleach
     #   html5lib
 werkzeug==1.0.1
-    # via -r requirements.in
-whitenoise[brotli]==5.2.0
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
