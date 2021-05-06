@@ -13,16 +13,16 @@
 </div>
 {% endif %}
 
-<template x-data="{messages: []}"
-          x-if="messages.length > 0"
-          @message.window="
+<div x-data="{messages: []}"
+     @message.window="
             messages = messages.concat({
                 tag: $event.detail.tag,
                 message: $event.detail.message
             });
             setTimeout(() => { messages.shift() }, 3000);
             ">
-  <div class="fixed z-50 top-20 w-full">
+  <div class="fixed z-50 top-20 w-full"
+       x-if="messages.length > 0">
     <div class="flex justify-center space-y-3">
       <template x-for="(message, index) in messages"
                 :key="index">
@@ -34,4 +34,4 @@
       </template>
     </div>
   </div>
-</template>
+</div>
