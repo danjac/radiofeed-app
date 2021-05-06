@@ -1,6 +1,8 @@
 <script>
   const Player = (options) => {
 
+    const sessionKey = 'player-enabled';
+
     let timer;
 
     const {
@@ -95,7 +97,7 @@
       },
       // audio events
       loaded() {
-        if (runImmediately || sessionStorage.getItem('player-enabled')) {
+        if (runImmediately || sessionStorage.getItem(sessionKey)) {
           this.$refs.audio.play().then(() => {
             timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
           }).catch(e => {
@@ -115,12 +117,13 @@
         this.isPlaying = true;
         this.isPaused = false;
         this.isWaiting = false;
-        sessionStorage.setItem('player-enabled', true);
+        sessionStorage.setItem(sessionKey, true);
       },
       paused() {
         this.isPlaying = false;
         this.isPaused = true;
         this.isWaiting = false;
+        sessionStorage.removeItem(sessionKey);
       },
       waiting() {
         this.isWaiting = true;
