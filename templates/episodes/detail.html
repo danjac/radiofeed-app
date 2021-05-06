@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends request.htmx|yesno:"layout.html,base.html" %}
 {% load podcasts %}
 
 {% block subtitle %} | {{ episode.podcast.title|stripentities }} | {{ episode.title|stripentities }}{% endblock %}

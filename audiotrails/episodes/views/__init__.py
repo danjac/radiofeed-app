@@ -101,11 +101,18 @@ def episode_detail(request, episode_id, slug=None):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
+    # note : optional middleware could insert "base_template"
+    # if request.htmx.target
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
         get_episode_detail_context(
-            request, episode, {"og_data": episode.get_opengraph_data(request)}
+            request,
+            episode,
+            {
+                "og_data": episode.get_opengraph_data(request),
+            },
         ),
     )
 

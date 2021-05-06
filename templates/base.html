@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% block html_header %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
@@ -27,19 +28,19 @@
   {% include "_static.html" %}
   {% endblock head %}
 </head>
+{% endblock html_header %}
 
+{% block page_header %}
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
       hx-push-url="true"
       {% endblock %}>
-
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-
-  {% include "_cookie_notice.html" %}
+  {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
+  {% endblock page_header %}
 
   {% block layout %}
-
   <div class="min-h-full mx-auto flex relative mt-2"
        id="layout"
        hx-select="#layout"
@@ -73,19 +74,26 @@
 
   {% endblock layout %}
 
+  {% block page_footer %}
+
+  {% block player %}
   {% if user.is_authenticated %}
   {% include "_player.html" %}
   {% endif %}
+  {% endblock player %}
 
+  {% block modal %}
   {% include "_modal.html" %}
+  {% endblock modal %}
 
   {% block extra_js %}
   {% include "_common_js.html" %}
   {% if user.is_authenticated %}
   {% include "_player_js.html" %}
   {% endif %}
-  {% endblock %}
-
+  {% endblock extra_js %}
 </body>
-
+{% endblock page_footer %}
+{% block html_footer %}
 </html>
+{% endblock html_footer %}
