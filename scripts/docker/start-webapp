@@ -3,6 +3,16 @@
 set -o errexit
 set -o nounset
 
+watchman watch /app/static/js
+
+watchman -j <<-EOT
+["trigger", "/app/static/js", {
+   "name": "js",
+   "expression": ["match", "**/*.js", "wholename"],
+   "command": ["npm", "run", "watch-js"],
+   "append_files": false
+}]
+EOT
 
 watchman watch /app/static/css
 

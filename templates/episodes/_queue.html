@@ -2,28 +2,7 @@
 <div {% if count %}x-data="{
       counter: {{ count }}
      }"
-     x-init="() => {
-      const update = () => {
-        const items = Array.from($el.querySelectorAll('[data-draggable]')).map(
-          (target) => target.dataset.id
-        );
-        if (items.length > 0) {
-          sendJSON('{% url 'episodes:move_queue_items' %}', {
-            items
-          });
-        }
-      };
-
-      Sortable.create($el, {
-        handle: '.handle',
-        animation: 150,
-        group: 'shared',
-        onAdd: update,
-        onRemove: update,
-        onUpdate: update,
-      });
-      }
-    "
+     x-init="dragDrop($el, '{% url 'episodes:move_queue_items' %}', '{{ csrf_token }}')"
      @remove-queue-item.window="counter = counter-1"
      {% endif %}>
   {% for item in queue_items %}

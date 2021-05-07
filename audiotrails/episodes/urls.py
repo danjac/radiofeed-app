@@ -45,8 +45,8 @@ urlpatterns = [
     ),
     path(
         "player/~timeupdate/",
-        player.player_update_current_time,
-        name="player_update_current_time",
+        player.player_time_update,
+        name="player_time_update",
     ),
     path("history/", history.index, name="history"),
     path(

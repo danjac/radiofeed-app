@@ -47,7 +47,7 @@ def play_next_episode(request):
 
 @require_POST
 @ajax_login_required
-def player_update_current_time(request):
+def player_time_update(request):
     """Update current play time of episode"""
     try:
         request.player.update_current_time(
