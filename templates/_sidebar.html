@@ -1,11 +1,9 @@
 {% load cache %}
-{% cache 3600 sidebar request.user.username request.get_full_path %}
 <div class="flex justify-center sm:hidden mb-3">
 
   <form hx-get="{% url 'podcasts:search_podcasts' %}"
         x-data="{}"
         class="relative bg-transparent"
-        hx-push-title="Search Episodes"
         @submit="sidebar=false; $refs.input.blur();">
     <input type="search"
            x-ref="input"
@@ -27,55 +25,38 @@
 <nav class="mt-1">
   <ul class="sidebar">
     <li class="py-2">
-      {% active_link 'episodes:index' as new_episodes_link %}
-      {% if user.is_authenticated %}
-      {% active_link 'episodes:featured' as featured_episodes_link %}
-      <a {{ new_episodes_link.hx }}
+      <a {% hx_link 'episodes:index' %}
          accesskey="1"
          title="New Releases"
          @click="sidebar=false"
-         class="flex items-center link{% if new_episodes_link.exact or featured_episodes_link.exact %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
         New Releases
       </a>
-      {% else %}
-      <a {{ new_episodes_link.hx }}
-         accesskey="1"
-         title="New Releases"
-         @click="sidebar=false"
-         class="flex items-center link{% if new_episodes_link.exact %} sidebar--active{% endif %}">
-        {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
-        New Releases
-      </a>
-      {% endif %}
     </li>
     <li class="py-2">
-      {% active_link 'podcasts:index' as link %}
-      <a {{ link.hx }}
+      <a {% hx_link 'podcasts:index' %}
          accesskey="2"
          title="Podcasts"
          @click="sidebar=false"
-         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "rss" css_class="h-5 w-5 mr-3" %}
         Podcasts
       </a>
     </li>
     <li class="py-2">
-      {% active_link 'podcasts:categories' as link %}
-      <a {{ link.hx }}
+      <a {% hx_link 'podcasts:categories' %}
          accesskey="3"
          title="Discover"
          @click="sidebar=false"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "search" css_class="h-5 w-5 mr-3" %}
         Discover
       </a>
     </li>
     {% if user.is_authenticated %}
     <li class="py-2">
-      {% active_link 'episodes:queue' as link %}
-      <a h
-         {{ link.hx }}
+      <a {% hx_link 'episodes:queue' %}
          accesskey="4"
          title="Play Queue"
          @click="sidebar=false"
@@ -99,38 +80,34 @@
     </li>
 
     <li class="py-2">
-      {% active_link 'episodes:history' as link %}
-      <a {{ link.hx }}
+      <a {% hx_link 'episodes:history' %}
          accesskey="6"
          title="History"
          @click="sidebar=false"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "database" css_class="h-5 w-5 mr-3" %}
         History
       </a>
     </li>
 
     <li class="py-2">
-      {% active_link '/account/' as link %}
       <a {% hx_link 'user_preferences' %}
          accesskey="7"
          title="Settings"
          @click="sidebar=false"
-         class="flex items-center link{% if link.match and user.is_authenticated %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
         Settings
       </a>
     </li>
-
     {% endif %}
 
     <li class="py-2">
-      {% active_link '/about/' as link %}
       <a {% hx_link 'about:credits' %}
          accesskey="8"
          title="About"
          @click="sidebar=false"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         class="flex items-center link">
         {% icon "info" css_class="h-5 w-5 mr-3" %}
         About
       </a>
@@ -138,4 +115,3 @@
 
   </ul>
 </nav>
-{% endcache %}
