@@ -31,6 +31,9 @@ def close_player(request):
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
+
+    request.player.stop_episode(mark_completed=True)
+
     if next_item := (
         QueueItem.objects.filter(user=request.user)
         .with_current_time(request.user)
@@ -39,8 +42,6 @@ def play_next_episode(request):
         .first()
     ):
         request.player.start_episode(next_item.episode)
-    else:
-        request.player.stop_episode(mark_completed=True)
 
     return render_player(request)
 
