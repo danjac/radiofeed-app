@@ -11,8 +11,7 @@
   <template x-if="show">
     <div class="modal-container w-full bg-white dark:bg-gray-800 h-full md:h-auto md:max-w-xl mx-auto md:rounded shadow-lg z-50 md:overflow-y-auto"
          hx-target="#layout"
-         hx-swap="outerHTML"
-         hx-select="#layout">
+         hx-swap="outerHTML">
 
       {% block close_button %}
       <button class="modal-close absolute top-0 text-black md:text-white dark:text-white right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-sm z-50 focus:outline-none"

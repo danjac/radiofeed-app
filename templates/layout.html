@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block header_tags %}{% endblock %}
+{% block page_header %}{% endblock %}
+
+{% block layout %}
+{% block title_tag %}
+<title>
+  {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+</title>
+{% endblock title_tag %}
+{{ block.super }}
+{% endblock layout %}
+
+{% block page_footer %}{% endblock %}
+{% block footer_tags %}{% endblock %}

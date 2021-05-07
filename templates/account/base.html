@@ -1,4 +1,5 @@
-{% extends "base.html" %}
+{% extends request.htmx|yesno:"layout.html,base.html" %}
+
 {% block robots %}
 <meta name="robots" content="noindex" />
 {% endblock %}

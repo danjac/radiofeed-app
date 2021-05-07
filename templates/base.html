@@ -6,10 +6,12 @@
 
 <head>
   {% block head %}
+  {% block title_tag %}
   <title>
     {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
   </title>
-  {% block meta %}
+  {% endblock title_tag %}
+  {% block meta_tags %}
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible"
         content="IE=edge" />
@@ -24,7 +26,7 @@
         content="index,follow" />
   {% endblock robots %}
   {% include "_og_data.html" %}
-  {% endblock meta %}
+  {% endblock meta_tags %}
   {% include "_static.html" %}
   {% endblock head %}
 </head>
@@ -35,13 +37,14 @@
       hx-push-url="true"
       {% endblock %}>
   {% endblock header_tags %}
+  {% block page_header %}
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
   {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
+  {% endblock page_header %}
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2"
        id="layout"
-       hx-select="#layout"
        hx-target="#layout"
        hx-swap="outerHTML">
 
@@ -71,6 +74,7 @@
   </div>
 
   {% endblock layout %}
+  {% block page_footer %}
 
   {% block player %}
   {% if user.is_authenticated %}
@@ -81,6 +85,8 @@
   {% block modal %}
   {% include "_modal.html" %}
   {% endblock modal %}
+
+  {% endblock page_footer %}
 
   {% block extra_js %}
   {% include "_common_js.html" %}
