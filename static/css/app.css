@@ -19,4 +19,10 @@ input[type='search']::-webkit-search-results-decoration {
 [x-cloak] {
   display: none !important;
 }
+body {
+  scroll-behavior: smooth;
+}
+#content {
+  scroll-margin-top: 175px;
+}
 @tailwind utilities;

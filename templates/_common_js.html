@@ -9,6 +9,7 @@
       },
     });
 
+    // dispatch any custom event
     const dispatch = (el, event, detail = {}) => {
       el.dispatchEvent(
         new CustomEvent(event, {
@@ -18,7 +19,15 @@
       );
     };
 
+    // HTMX events
     document.body.addEventListener('htmx:configRequest', (event) => {
       event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+
+    document.addEventListener("htmx:afterSwap", (event) => {
+      // workaround for https://github.com/bigskysoftware/htmx/issues/456
+      if (event.target.id === 'content') {
+        window.scrollTo(0, event.target.offsetTop - 160);
+      }
     });
   </script>
