@@ -6,7 +6,6 @@
        episode: {{ episode.id }},
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
-       csrfToken: '{{ csrf_token }}',
        timeUpdateUrl: '{% url 'episodes:player_time_update' %}',
        runImmediately: {{ run_immediately|yesno:'true,false' }}
     })"

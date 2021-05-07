@@ -1,10 +1,13 @@
-export const sendJSON = (url, csrfToken, data, options) =>
+export const getCsrfToken = () =>
+  document.head.querySelector('meta[name="csrf-token"]').content;
+
+export const sendJSON = (url, data, options) =>
   fetch(url, {
     method: 'POST',
     credentials: 'same-origin',
     body: JSON.stringify(data || {}),
     headers: {
-      'X-CSRFToken': csrfToken,
+      'X-CSRFToken': getCsrfToken(),
       'Content-Type': 'application/json',
     },
     ...options,

@@ -2,14 +2,7 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
 
 (function () {
   const Player = (options) => {
-    const {
-      mediaSrc,
-      currentTime,
-      episode,
-      runImmediately,
-      csrfToken,
-      timeUpdateUrl,
-    } = options;
+    const { mediaSrc, currentTime, episode, runImmediately, timeUpdateUrl } = options;
 
     const sessionKey = 'player-enabled';
 
@@ -194,7 +187,7 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
 
       sendCurrentTimeUpdate() {
         if (!this.isPaused && this.currentTime) {
-          sendJSON(timeUpdateUrl, csrfToken, {
+          sendJSON(timeUpdateUrl, {
             currentTime: this.currentTime,
           });
         }

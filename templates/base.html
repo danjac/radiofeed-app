@@ -21,6 +21,8 @@
         content="Dan Jacob {% now "Y" %}">
   <meta name="htmx-config"
         content='{"historyCacheSize": 0 }'>
+  <meta name="csrf-token"
+        content="{{ csrf_token }}">
   {% block robots %}
   <meta name="robots"
         content="index,follow" />
@@ -94,16 +96,6 @@
   {% endblock page_footer %}
   {% block footer_tags %}
   <script>
-    // htmx events
-    document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-    });
-    document.addEventListener('htmx:afterSwap', (event) => {
-      // workaround for https://github.com/bigskysoftware/htmx/issues/456
-      if (event.target.id === 'content') {
-        window.scrollTo(0, event.target.offsetTop - 160);
-      }
-    });
   </script>
 </body>
 

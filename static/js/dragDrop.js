@@ -2,13 +2,13 @@ import Sortable from 'sortablejs';
 import { sendJSON } from './utils';
 
 (function () {
-  const dragDrop = (elt, url, csrfToken) => {
+  const dragDrop = (elt, url) => {
     const update = () => {
       const items = Array.from(elt.querySelectorAll('[data-draggable]')).map(
         (target) => target.dataset.id
       );
       if (items.length > 0) {
-        sendJSON(url, csrfToken, {
+        sendJSON(url, {
           items,
         });
       }
