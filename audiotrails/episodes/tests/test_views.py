@@ -233,11 +233,12 @@ class ClosePlayerTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
 
-class PlayerUpdateCurrentTimeTests(TestCase):
+class PlayerTimeUpdateTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
+        cls.url = reverse("episodes:player_time_update")
 
     def setUp(self):
         self.client.force_login(self.user)
@@ -250,7 +251,7 @@ class PlayerUpdateCurrentTimeTests(TestCase):
         session.save()
 
         resp = self.client.post(
-            reverse("episodes:player_update_current_time"),
+            self.url,
             data={"currentTime": "1030.0001"},
             content_type="application/json",
         )
@@ -261,7 +262,7 @@ class PlayerUpdateCurrentTimeTests(TestCase):
 
     def test_player_not_running(self):
         resp = self.client.post(
-            reverse("episodes:player_update_current_time"),
+            self.url,
             data={"currentTime": "1030.0001"},
             content_type="application/json",
         )
@@ -272,9 +273,7 @@ class PlayerUpdateCurrentTimeTests(TestCase):
         session["player_episode"] = self.episode.id
         session.save()
 
-        resp = self.client.post(
-            reverse("episodes:player_update_current_time"),
-        )
+        resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
@@ -284,7 +283,7 @@ class PlayerUpdateCurrentTimeTests(TestCase):
         session.save()
 
         resp = self.client.post(
-            reverse("episodes:player_update_current_time"),
+            self.url,
             data={"current_time": "xyz"},
             content_type="application/json",
         )
