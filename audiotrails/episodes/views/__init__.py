@@ -101,9 +101,6 @@ def episode_detail(request, episode_id, slug=None):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    # note : optional middleware could insert "base_template"
-    # if request.htmx.target
-
     return TemplateResponse(
         request,
         "episodes/detail.html",
