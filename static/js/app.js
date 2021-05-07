@@ -1,5 +1,5 @@
-import 'htmx.org';
 import 'alpinejs';
+import 'htmx.org';
 
 import './dragDrop';
 import './player';
