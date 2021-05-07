@@ -22,13 +22,15 @@
   </form>
 </div>
 
-<nav class="mt-1">
+<nav class="mt-1"
+     x-data="{active: '{% if request.resolver_match.app_name %}{{ request.resolver_match.app_name }}:{% endif %}{{ request.resolver_match.url_name }}'}">
   <ul class="sidebar">
     <li class="py-2">
       <a {% hx_link 'episodes:index' %}
          accesskey="1"
          title="New Releases"
-         @click="sidebar=false"
+         @click="sidebar=false; active='episodes:index'"
+         :class="{'sidebar--active': active === 'episodes:index'}"
          class="flex items-center link">
         {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
         New Releases
@@ -38,7 +40,8 @@
       <a {% hx_link 'podcasts:index' %}
          accesskey="2"
          title="Podcasts"
-         @click="sidebar=false"
+         @click="sidebar=false; active='podcasts:index'"
+         :class="{'sidebar--active': active === 'podcasts:index'}"
          class="flex items-center link">
         {% icon "rss" css_class="h-5 w-5 mr-3" %}
         Podcasts
@@ -48,7 +51,8 @@
       <a {% hx_link 'podcasts:categories' %}
          accesskey="3"
          title="Discover"
-         @click="sidebar=false"
+         @click="sidebar=false; active='podcasts:categories'"
+         :class="{'sidebar--active': active === 'podcasts:categories'}"
          class="flex items-center link">
         {% icon "search" css_class="h-5 w-5 mr-3" %}
         Discover
@@ -59,8 +63,9 @@
       <a {% hx_link 'episodes:queue' %}
          accesskey="4"
          title="Play Queue"
-         @click="sidebar=false"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         @click="sidebar=false; active='episodes:queue'"
+         :class="{'sidebar--active': active === 'episodes:queue'}"
+         class="flex items-center link">
         {% icon "collection" css_class="h-5 w-5 mr-3" %}
         Play Queue
       </a>
@@ -72,8 +77,9 @@
       <a {{ link.hx }}
          accesskey="5"
          title="Favorites"
-         @click="sidebar=false"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         @click="sidebar=false; active='episodes:favorites'"
+         :class="{'sidebar--active': active === 'episodes:favorites'}"
+         class="flex items-center link">
         {% icon "star" css_class="h-5 w-5 mr-3" %}
         Favorites
       </a>
@@ -83,7 +89,8 @@
       <a {% hx_link 'episodes:history' %}
          accesskey="6"
          title="History"
-         @click="sidebar=false"
+         @click="sidebar=false; active='episodes:history'"
+         :class="{'sidebar--active': active === 'episodes:history'}"
          class="flex items-center link">
         {% icon "database" css_class="h-5 w-5 mr-3" %}
         History
@@ -94,7 +101,8 @@
       <a {% hx_link 'user_preferences' %}
          accesskey="7"
          title="Settings"
-         @click="sidebar=false"
+         @click="sidebar=false; active='user_preferences'"
+         :class="{'sidebar--active': active === 'user_preferences'}"
          class="flex items-center link">
         {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
         Settings
@@ -106,7 +114,8 @@
       <a {% hx_link 'about:credits' %}
          accesskey="8"
          title="About"
-         @click="sidebar=false"
+         @click="sidebar=false; active='about'"
+         :class="{'sidebar--active': active === 'about'}"
          class="flex items-center link">
         {% icon "info" css_class="h-5 w-5 mr-3" %}
         About
