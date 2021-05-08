@@ -14,6 +14,7 @@ from django.db import models
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 from PIL import ImageFile
@@ -28,14 +29,16 @@ THUMBNAIL_SIZE = 200
 
 @dataclasses.dataclass
 class PlaceholderImage:
-    url: str
     width: int
     height: int
 
+    @cached_property
+    def url(self):
+        # fetch lazy so we don't have issue finding staticfiles
+        return static("img/podcast-icon.png")
 
-_cover_image_placeholder = PlaceholderImage(
-    url=static("img/podcast-icon.png"), width=THUMBNAIL_SIZE, height=THUMBNAIL_SIZE
-)
+
+_cover_image_placeholder = PlaceholderImage(width=THUMBNAIL_SIZE, height=THUMBNAIL_SIZE)
 
 
 class CategoryQuerySet(models.QuerySet):
