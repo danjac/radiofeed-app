@@ -36,6 +36,7 @@
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
+      @close-sidebar.window="sidebar=false"
       hx-push-url="true"
       {% endblock %}>
   {% endblock header_tags %}
