@@ -20,8 +20,6 @@
     "tailwindcss": "^2.1.2"
   },
   "dependencies": {
-    "alpinejs": "^2.8.2",
-    "htmx.org": "^1.3.3",
     "sortablejs": "^1.13.0"
   }
 }
