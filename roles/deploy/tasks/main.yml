@@ -2,6 +2,13 @@
   shell: |
     podman exec -it audiopod-webapp npm run build-css
 
+# dokku plugin:install https://github.com/dokku/dokku-copy-files-to-image.git  copy-files-to-image
+# mkdir -p /home/dokku/{{app_name}}/DOKKU_FILES
+# chown -R dokku:dokku /home/dokku/{{ app_name }}/DOKKU_FILES
+# chmod -R +r /home/dokku/{{ app_name }}/DOKKU_FILES
+# collectstatic locally to staticfiles
+# ansible push files to DOKKU_FILES on server
+
 - name: Push assets to S3
   shell: |
     podman exec -it \
