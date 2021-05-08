@@ -34,7 +34,7 @@
        hx-target="#content">
     <div class="relative space-y-1">
 
-      <div class="sm:hidden pr-1 text-sm w-84 truncate">
+      <div class="sm:hidden pr-1 text-sm w-84 truncate text-center">
         <a class="player--title"
            {% hx_link episode %}
            title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
@@ -130,13 +130,12 @@
 
           </div>
 
-          <div class="flex items-center w-full mx-1">
+          <div class="flex items-center w-full mx-1" x-show="isLoaded">
             <div class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress"
                  x-ref="progressBar"
                  @click="skip($event)">
               <div class="w-4 h-4 rounded-full absolute border shadow-xl player--indicator"
                    x-ref="indicator"
-                   x-show="isLoaded"
                    style="z-index: 12;"></div>
             </div>
             <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter">
