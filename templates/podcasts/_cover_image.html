@@ -9,9 +9,10 @@
      hx-target="this"
      hx-get="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}
+  {% with podcast_title=podcast.title|stripentities %}
   <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ img_size }} w-{{ img_size }} {{ css_class|default:"hover:opacity-75" }}{% if lazy %} filter blur-sm{% endif %}"
-       title="{{ podcast.title|stripentities }}"
-       alt="{{ podcast.title|stripentities }}"
+       title="{{ podcast_title }}"
+       alt="{{ podcast_title }}"
        {% if cover_image %}
        src="{{ cover_image.url }}"
        width="{{ cover_image.width }}"
@@ -22,6 +23,7 @@
        height="200"
        {% endif %}
        {{ attrs|htmlattrs }} />
+  {% endwith %}
   {% if lazy %}
 </div>
 {% endif %}

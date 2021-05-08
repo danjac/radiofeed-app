@@ -44,13 +44,21 @@
   {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
   {% endblock page_header %}
 
+  <div class="relative">
+    <div id="loader"
+         class="hx-indicator">loading...</div>
+  </div>
+
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2"
        id="layout"
        hx-target="#content"
+       hx-indicator="#loader"
        hx-swap="outerHTML">
 
+
     {% include "_messages.html" %}
+
 
     {% block sidebar %}
     <aside class="w-full lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
@@ -58,6 +66,7 @@
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
+
 
     {% block main %}
     <main class="w-full p-2 lg:block"

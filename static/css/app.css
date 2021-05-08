@@ -25,4 +25,18 @@ body {
 #content {
   scroll-margin-top: 175px;
 }
+.hx-indicator {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 9999;
+  transition: width 300ms ease-out, opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
+}
+.htmx-request {
+  display: block !important;
+}
 @tailwind utilities;
