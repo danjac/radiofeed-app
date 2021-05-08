@@ -1,0 +1,34 @@
+<script>
+  (function() {
+    window.sendJSON = (url, data, options) =>
+      fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: JSON.stringify(data || {}),
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json',
+        },
+        ...options,
+      });
+
+    window.dispatch = (el, event, detail = {}) => {
+      el.dispatchEvent(
+        new CustomEvent(event, {
+          detail,
+          bubbles: true,
+        })
+      );
+    };
+
+    document.body.addEventListener('htmx:configRequest', (event) => {
+      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+    document.addEventListener('htmx:afterSwap', (event) => {
+      // workaround for https://github.com/bigskysoftware/htmx/issues/456
+      if (event.target.id === 'content') {
+        window.scrollTo(0, event.target.offsetTop - 160);
+      }
+    });
+  })();
+</script>

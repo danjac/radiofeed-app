@@ -21,8 +21,6 @@
         content="Dan Jacob {% now "Y" %}">
   <meta name="htmx-config"
         content='{"historyCacheSize": 0 }'>
-  <meta name="csrf-token"
-        content="{{ csrf_token }}">
   {% block robots %}
   <meta name="robots"
         content="index,follow" />
@@ -111,10 +109,15 @@
   {% include "_modal.html" %}
   {% endblock modal %}
 
+  {% include "_common_js.html" %}
+
+  {% if user.is_authenticated %}
+  {% include "_dragdrop_js.html" %}
+  {% include "_player_js.html" %}
+  {% endif %}
+
   {% endblock page_footer %}
   {% block footer_tags %}
-  <script>
-  </script>
 </body>
 
 </html>

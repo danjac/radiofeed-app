@@ -1,8 +1,11 @@
-import { sendJSON, dispatch, formatDuration, percent } from './utils';
-
-(function () {
+<script>
   const Player = (options) => {
-    const { mediaSrc, currentTime, episode, runImmediately } = options;
+    const {
+      mediaSrc,
+      currentTime,
+      episode,
+      runImmediately
+    } = options;
 
     const sessionKey = 'player-enabled';
 
@@ -16,6 +19,27 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
       isWaiting: false,
       playbackRate: 1.0,
       counter: '00:00:00',
+    };
+
+    const formatDuration = (value) => {
+      if (isNaN(value) || value < 0) return '00:00:00';
+      const duration = Math.floor(value);
+      const hours = Math.floor(duration / 3600);
+      const minutes = Math.floor((duration % 3600) / 60);
+      const seconds = Math.floor(duration % 60);
+      return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
+    };
+
+    const percent = (nominator, denominator) => {
+      if (!denominator || !nominator) {
+        return 0;
+      }
+
+      if (denominator > nominator) {
+        return 100;
+      }
+
+      return (denominator / nominator) * 100;
     };
 
     let timer;
@@ -148,7 +172,9 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
         this.$refs.audio.playbackRate = this.playbackRate = newValue;
       },
 
-      skip({ clientX }) {
+      skip({
+        clientX
+      }) {
         const position = this.getProgressBarPosition(clientX);
         if (!isNaN(position) && position > -1) {
           this.skipTo(position);
@@ -206,7 +232,9 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
 
       getProgressBarPosition(clientX) {
         if (!isNaN(clientX)) {
-          const { left } = this.$refs.progressBar.getBoundingClientRect();
+          const {
+            left
+          } = this.$refs.progressBar.getBoundingClientRect();
           const width = this.$refs.progressBar.clientWidth;
           let position = clientX - left;
           return Math.ceil(this.duration * (position / width));
@@ -235,5 +263,4 @@ import { sendJSON, dispatch, formatDuration, percent } from './utils';
       },
     };
   };
-  window.Player = Player;
-})();
+</script>
