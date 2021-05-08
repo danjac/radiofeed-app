@@ -5,7 +5,8 @@
     "watch-css": "TAILWIND_MODE=build postcss ./static/css/app.css -o ./static/dev/bundle.css",
     "build-css": "NODE_ENV=production postcss ./static/css/app.css -o ./static/dist/bundle.css"
   },
-  "devDependencies": {
+  "devDependencies": {},
+  "dependencies": {
     "@tailwindcss/forms": "^0.3.2",
     "autoprefixer": "^10.2.5",
     "cssnano": "^5.0.2",
@@ -15,6 +16,5 @@
     "postcss-cli": "^8.3.1",
     "postcss-import": "^14.0.1",
     "tailwindcss": "^2.1.2"
-  },
-  "dependencies": {}
+  }
 }
