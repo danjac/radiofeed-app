@@ -4,15 +4,15 @@
 {% block content %}
 
 <div class="mb-3 text-sm flex justify-center sm:justify-start space-x-1">
-  <a href="{% url 'podcasts:categories' %}"
+  <a {% hx_link 'podcasts:categories' %}
      class="link">Discover</a>
   {% if category.parent %}
   <span class="text-gray-600 dark:text-gray-300">&gt;</span>
-  <a href="{{ category.parent.get_absolute_url }}"
+  <a {% hx_link category.parent %}
      class="link">{{ category.parent.name }}</a>
   {% endif %}
   <span class="text-gray-600 dark:text-gray-300">&gt;</span>
-  <a href="{{ category.get_absolute_url }}"
+  <a {% hx_link category %}
      class="link">{{ category.name }}</a>
   <span class="text-gray-600 dark:text-gray-300">&gt;</span>
   <span class="text-gray-600 dark:text-gray-300">iTunes</span>
