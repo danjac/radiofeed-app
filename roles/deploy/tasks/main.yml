@@ -1,6 +1,2 @@
-- name: Push static files to Dokku
-  copy:
-    src: ./staticfiles
-    dest: /home/dokku/{{ app_name }}/DOKKU_FILES
-#- name: Push to Dokku
-#  shell: git push dokku main
+- name: Push to Dokku
+  shell: git push dokku main

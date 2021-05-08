@@ -13,16 +13,9 @@
   roles:
     - configure
 
-- name: Build static assets
+- name: Deploy to Dokku
   hosts: localhost
   gather_facts: no
-  vars_files: vars.yml
-  roles:
-    - build_assets
-
-- name: Push static assets to Dokku and deploy
-  hosts: all
-  gather_facts: yes
   vars_files: vars.yml
   roles:
     - deploy
