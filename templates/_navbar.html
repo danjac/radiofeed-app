@@ -28,6 +28,7 @@
 
       <a class="font-bold"
          title="{{ request.site.name }}"
+         @click="sidebar=false"
          {% hx_link 'episodes:index' %}>{{ request.site.name }}</a>
     </div>
 
@@ -64,8 +65,10 @@
     {% else %}
     <div class="text-sm md:text-base flex items-center">
       <a {% hx_link home_url|login_url %}
+         @click="sidebar=false"
          class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
       <a {% hx_link home_url|signup_url %}
+         @click="sidebar=false"
          class="inline-block text-white hover:text-blue-500">Signup</a>
     </div>
     {% endif %}

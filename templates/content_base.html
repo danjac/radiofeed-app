@@ -3,6 +3,11 @@
   {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
 </title>
 {% endblock title_tag %}
-<div id="content" style="">
+
+<div id="content"
+     style="">
+  {% block signup_cta %}
+  {% include "_signup_cta.html" %}
+  {% endblock %}
   {% block content %}{% endblock %}
 </div>
