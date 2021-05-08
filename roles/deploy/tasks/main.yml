@@ -1,6 +1,6 @@
 - name: Build and compress assets
   shell: |
-    podman exec -it audiopod-webapp npm run build-css
+    podman exec -it audiopod-webapp npm run build
 
 - name: Push assets to S3
   shell: |
@@ -11,7 +11,7 @@
     -e AWS_S3_CUSTOM_DOMAIN={{aws_s3_custom_domain}} \
     -e AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}} \
     -e AWS_STORAGE_BUCKET_NAME={{aws_storage_bucket_name}} \
-    audiopod-webapp ./manage.py collectstatic --noinput -v 3 -i dev -i css
+    audiopod-webapp ./manage.py collectstatic --noinput -v 3 -i js -i css -i dev
 
 - name: Push to Dokku
   shell: git push dokku main
