@@ -34,6 +34,7 @@ npm-debug.log*
 media/
 static/dist/
 static/dev/
+staticfiles
 
 .ipython/
 .env
