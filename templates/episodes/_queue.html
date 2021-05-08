@@ -2,7 +2,7 @@
 <div {% if count %}x-data="{
       counter: {{ count }}
      }"
-     x-init="dragDrop($el, '{% url 'episodes:move_queue_items' %}')"
+     x-init="dragDrop($el)"
      @remove-queue-item.window="counter = counter-1"
      {% endif %}>
   {% for item in queue_items %}
