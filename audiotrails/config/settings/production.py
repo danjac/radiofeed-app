@@ -1,5 +1,4 @@
 from .base import *  # noqa
-from .base import MIDDLEWARE
 from .mixins.aws import *  # noqa
 from .mixins.aws import AWS_CLOUDFRONT_STATIC_DOMAIN, AWS_STATIC_LOCATION
 from .mixins.mailgun import *  # noqa
@@ -25,11 +24,5 @@ PERMISSIONS_POLICY = {
     "payment": [],
     "usb": [],
 }
-
-# insert after security middleware
-MIDDLEWARE[1:1] = [
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "django_permissions_policy.PermissionsPolicyMiddleware",
-]
 
 STATIC_URL = AWS_CLOUDFRONT_STATIC_DOMAIN + "/" + AWS_STATIC_LOCATION
