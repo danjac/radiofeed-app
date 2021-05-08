@@ -1,4 +1,5 @@
 <form hx-get="{{ search_url|default:request.path }}"
+      hx-push-url="true"
       class="relative bg-transparent {{ css_class|default:'' }}"
       {% if title %}hx-page-title="{{ title }}"{% endif %}
       {{ attrs|htmlattrs }}>

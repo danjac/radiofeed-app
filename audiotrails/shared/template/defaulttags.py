@@ -33,7 +33,7 @@ json_escapes = {
 
 
 def hx_link_attrs(url):
-    return htmlattrs({"href": url, "hx-get": url})
+    return htmlattrs({"href": url, "hx-get": url, "hx-push-url": "true"})
 
 
 @register.simple_tag

@@ -1,7 +1,6 @@
   {% if user.is_authenticated %}
   <div id="favorite-toggle"
        hx-target="this"
-       hx-push-url="false"
        hx-swap="outerHTML"
        hx-select="#favorite-toggle">
     {% if is_favorited %}

@@ -27,7 +27,6 @@
            title="Preview for {{ podcast.title|stripentities }}"
            href="#"
            hx-get="{{ podcast.get_preview_url }}"
-           hx-push-url="false"
            hx-swap="innerHTML"
            hx-select=".modal"
            hx-target="#modal">

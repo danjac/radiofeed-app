@@ -5,7 +5,6 @@
   <div id="page-{{ page_obj.next_page_number }}"
        hx-get="{% pagination_url page_obj.next_page_number %}"
        hx-trigger="revealed"
-       hx-push-url="false"
        hx-target="#page-{{ page_obj.next_page_number }}"
        hx-swap="outerHTML">
     {% include "pagination/_loader.html" %}

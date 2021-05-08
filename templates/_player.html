@@ -81,7 +81,6 @@
                       hx-post="{% url 'episodes:close_player' %}"
                       hx-target="#player"
                       hx-select="#player"
-                      hx-push-url="false"
                       @click="$dispatch('close-player')"
                       class="focus:outline-none hover:text-blue-500 mr-1">
                 {% icon "stop" css_class="h-8 w-8" %}
@@ -91,7 +90,6 @@
                       hx-post="{% url 'episodes:play_next_episode' %}"
                       hx-target="#player"
                       hx-select="#player"
-                      hx-push-url="false"
                       x-ref="playNext">
               </button>
             </div>

@@ -7,6 +7,7 @@ novalidate
 {% if hx_post %}
 {% block hx_attrs %}
 hx-post="{{ action_url }}"
+hx-push-url="true"
 {% endblock %}
 {% else %}
 action="{{ action_url }}"

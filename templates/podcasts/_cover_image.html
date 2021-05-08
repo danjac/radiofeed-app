@@ -4,8 +4,8 @@
 <div id="cover-image-{{ podcast.id }}"
      hx-trigger="revealed"
      hx-swap="outerHTML"
-     hx-push-url="false"
      hx-select="img"
+     hx-push-url="false"
      hx-target="this"
      hx-get="{% url 'podcasts:podcast_cover_image' podcast.id %}?size={{ img_size }}">
   {% endif %}

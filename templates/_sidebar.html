@@ -2,6 +2,7 @@
 <div class="flex justify-center sm:hidden mb-3">
 
   <form hx-get="{% url 'podcasts:search_podcasts' %}"
+        hx-push-url="true"
         class="relative bg-transparent"
         @submit="$dispatch('close-sidebar');">
     <input type="search"
