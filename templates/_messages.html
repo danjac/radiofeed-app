@@ -1,5 +1,10 @@
 {% if messages %}
-<div class="fixed z-50 bottom-20 w-full">
+<div class="fixed z-50 bottom-20 w-full"
+     id="messages"
+     {% if hx_oob %}
+     hx-swap-oob="outerHTML"
+     {% endif %}
+     id="messages">
   <div class="space-y-3">
     {% for message in messages %}
     <div class="flex justify-center">
@@ -13,27 +18,6 @@
     {% endfor %}
   </div>
 </div>
+{% else %}
+<div id="messages" class="hidden"></div>
 {% endif %}
-
-<div x-data="{messages: []}"
-     @message.window="
-            messages = messages.concat({
-                tag: $event.detail.tag,
-                message: $event.detail.message
-            });
-            setTimeout(() => { messages.shift() }, 3000);
-            ">
-  <div class="fixed z-50 bottom-20 w-full space-y-3"
-       x-show="messages.length > 0">
-    <template x-for="(message, index) in messages"
-              :key="index">
-      <div class="flex justify-center">
-        <div class="flex justify-between rounded items-center py-2 px-3 shadow-xl message"
-             :class="`message-${message.tag}`">
-          <div class="mx-auto text-sm md:text-base font-semibold"
-               x-text="message.message"></div>
-        </div>
-      </div>
-    </template>
-  </div>
-</div>
