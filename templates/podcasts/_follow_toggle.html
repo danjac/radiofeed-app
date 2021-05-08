@@ -37,6 +37,10 @@
   {% else %}
   <div class="flex items-center">
     <a class="btn btn-default flex items-center"
+       @click="
+       $dispatch('close-modal');
+       $dispatch('message', {tag: 'info', message: 'You must log in or sign up to follow podcasts'});
+       "
        {% hx_link podcast.get_absolute_url|login_url %}
        title="Log in">
       {% icon "eye" css_class="btn-icon mr-2" %}

@@ -37,6 +37,10 @@
   {% else %}
   <div>
     <a class="btn btn-default flex items-center"
+       @click="
+       $dispatch('close-modal');
+       $dispatch('message', {tag: 'info', message: 'You must log in or sign up to add episodes to your Favorites'});
+       "
        {% hx_link episode.get_absolute_url|login_url %}
        title="Log in">
       {% icon "star" css_class="btn-icon mr-2" %}
