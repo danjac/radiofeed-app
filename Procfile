@@ -1,5 +1,6 @@
 release:
-  npm run build-css \
+  npm install \
+  && npm run build-css \
   && python manage.py collectstatic --noinput -v 3 -i css -i dev -i silk \
   && python manage.py migrate \
   && python manage.py clear_cache -a
