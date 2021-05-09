@@ -1,7 +1,4 @@
 {% extends "episodes/base.html" %}
-
-{% load podcasts %}
-
 {% block subtitle %} | {{ episode.podcast.title|stripentities }} | {{ episode.title|stripentities }}{% endblock %}
 
 {% block content %}
@@ -57,7 +54,7 @@
   <div class="flex items-center space-x-3">
     <div>
       <a {% hx_link podcast %}>
-        {% cover_image podcast lazy=False size="24" %}
+        {% include "podcasts/_cover_image.html" with size=24 %}
       </a>
     </div>
     <div class="space-y-2">

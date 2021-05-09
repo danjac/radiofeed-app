@@ -67,9 +67,11 @@
     <div class="text-sm md:text-base flex items-center">
       <a {% hx_link home_url|login_url %}
          @click="sidebar=false"
+         hx-disable="true"
          class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
       <a {% hx_link home_url|signup_url %}
          @click="sidebar=false"
+         hx-disable="true"
          class="inline-block text-white hover:text-blue-500">Signup</a>
     </div>
     {% endif %}

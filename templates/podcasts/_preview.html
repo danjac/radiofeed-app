@@ -1,5 +1,4 @@
 {% extends "modal_base.html" %}
-{% load podcasts %}
 
 {% block modal_header %}
 {% with podcast_title=podcast.title|stripentities %}
@@ -19,7 +18,7 @@
     <a @click="$dispatch('close-modal')"
        title="{{ podcast_title }}"
        {% hx_link podcast %}>
-      {% cover_image podcast lazy=False size="20" %}
+      {% include "podcasts/_cover_image.html" with size=20 %}
     </a>
   </div>
 

@@ -1,10 +1,9 @@
-{% load podcasts %}
 <section class="flex items-center space-x-2 p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
          {{ attrs|htmlattrs }}>
 
   <div>
     <a {% hx_link podcast %}>
-      {% cover_image podcast=podcast lazy=True %}
+      {% include "podcasts/_cover_image.html" with size=16 %}
     </a>
   </div>
 
