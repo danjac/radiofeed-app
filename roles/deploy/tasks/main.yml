@@ -1,7 +1,3 @@
-- name: Build and compress assets
-  shell: |
-    podman exec -it audiopod-webapp npm run build-css
-
 - name: Push assets to S3
   shell: |
     podman exec -it \
