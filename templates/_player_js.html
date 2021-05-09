@@ -8,7 +8,7 @@
         runImmediately
       } = options;
 
-      const sessionKey = 'player-enabled';
+      const storageKey = 'player-enabled';
 
       const defaults = {
         mediaSrc,
@@ -87,7 +87,7 @@
         // audio events
         loaded() {
           this.$refs.audio.currentTime = currentTime;
-          if (runImmediately || sessionStorage.getItem(sessionKey)) {
+          if (runImmediately || sessionStorage.getItem(storageKey)) {
             this.$refs.audio
               .play()
               .then(() => {
@@ -110,13 +110,15 @@
           this.isPlaying = true;
           this.isPaused = false;
           this.isWaiting = false;
-          sessionStorage.setItem(sessionKey, true);
+          sessionStorage.setItem(storageKey, true);
         },
         paused() {
           this.isPlaying = false;
           this.isPaused = true;
           this.isWaiting = false;
-          sessionStorage.removeItem(sessionKey);
+          // BUG: paused() will be called when hitting back button,
+          // removing the storage key.
+          sessionStorage.removeItem(storageKey);
         },
 
         waiting() {
