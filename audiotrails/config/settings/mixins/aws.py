@@ -17,3 +17,5 @@ AWS_IS_GZIPPED = True
 AWS_DEFAULT_ACL = "public-read"
 
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=600"}
+
+AWS_STATIC_CLOUDFRONT_DOMAIN = env("AWS_STATIC_CLOUDFRONT_DOMAIN", default=None)
