@@ -7,7 +7,7 @@ DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATES[0]["OPTIONS"]["debug"] = True
 
-INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS + ["silk"]
+INSTALLED_APPS += ["silk"]
 
 MIDDLEWARE = ["silk.middleware.SilkyMiddleware"] + MIDDLEWARE
 
