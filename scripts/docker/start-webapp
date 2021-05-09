@@ -9,7 +9,7 @@ watchman -j <<-EOT
 ["trigger", "/app/static/css", {
    "name": "tailwind-css",
    "expression": ["match", "**/*.css", "wholename"],
-   "command": ["npm", "run", "watch-css"],
+   "command": ["npm", "run", "build-css"],
    "append_files": false
 }]
 EOT
@@ -21,7 +21,7 @@ watchman -j <<-EOT
 ["trigger", "/app/templates", {
    "name": "tailwind-html",
    "expression": ["match", "**/*.html", "wholename"],
-   "command": ["npm", "run", "watch-css"],
+   "command": ["npm", "run", "build-css"],
    "append_files": false
 }]
 EOT

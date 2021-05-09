@@ -11,7 +11,7 @@
     -e AWS_S3_CUSTOM_DOMAIN={{aws_s3_custom_domain}} \
     -e AWS_SECRET_ACCESS_KEY={{aws_secret_access_key}} \
     -e AWS_STORAGE_BUCKET_NAME={{aws_storage_bucket_name}} \
-    audiopod-webapp ./manage.py collectstatic --noinput -v 3 -i css -i dev
+    audiopod-webapp ./manage.py collectstatic --noinput -v 3
 
 - name: Push to Dokku
   shell: git push dokku main
