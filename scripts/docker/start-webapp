@@ -3,10 +3,10 @@
 set -o errexit
 set -o nounset
 
-watchman watch /app/static/css
+watchman watch /app/assets/css
 
 watchman -j <<-EOT
-["trigger", "/app/static/css", {
+["trigger", "/app/assets/css", {
    "name": "tailwind-css",
    "expression": ["match", "**/*.css", "wholename"],
    "command": ["npm", "run", "build-css"],
