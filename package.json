@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "check-updates": "ncu -u",
-    "build-css": "NODE_ENV=production postcss ./static/css/app.css -o ./static/css/bundle.css"
+    "build-css": "NODE_ENV=production postcss ./static/css/app.css -o ./static/bundle.css"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.2",
