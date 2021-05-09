@@ -41,6 +41,17 @@ def mock_search_itunes(search_term, num_results=12):
     ], []
 
 
+class TestPodcastCoverImage(TestCase):
+    def test_get(self):
+        podcast = PodcastFactory()
+        self.assertEqual(
+            self.client.get(
+                reverse("podcasts:podcast_cover_image", args=[podcast.id])
+            ).status_code,
+            http.HTTPStatus.OK,
+        )
+
+
 class AnonymousPodcastsTests(TestCase):
     def test_anonymous(self):
         PodcastFactory.create_batch(3, promoted=True)

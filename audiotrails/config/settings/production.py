@@ -30,7 +30,3 @@ STATIC_URL = "https://" + AWS_STATIC_CLOUDFRONT_DOMAIN + "/" + AWS_STATIC_LOCATI
 DEFAULT_FILE_STORAGE = "audiotrails.shared.storages.MediaStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# https://github.com/jazzband/sorl-thumbnail#is-so-slow-in-amazon-s3
-
-THUMBNAIL_FORCE_OVERWRITE = True
