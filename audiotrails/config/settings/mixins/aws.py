@@ -1,8 +1,5 @@
 from ..base import env
 
-DEFAULT_FILE_STORAGE = "audiotrails.config.storages.MediaStorage"
-STATICFILES_STORAGE = "audiotrails.config.storages.StaticStorage"
-
 AWS_MEDIA_LOCATION = env("AWS_MEDIA_LOCATION", default="media")
 AWS_STATIC_LOCATION = env("AWS_STATIC_LOCATION", default="static")
 

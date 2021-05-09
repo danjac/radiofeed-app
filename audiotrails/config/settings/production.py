@@ -1,4 +1,5 @@
 from .base import *  # noqa
+from .base import BASE_DIR
 from .mixins.aws import *  # noqa
 from .mixins.aws import AWS_STATIC_CLOUDFRONT_DOMAIN, AWS_STATIC_LOCATION
 from .mixins.mailgun import *  # noqa
@@ -27,3 +28,7 @@ PERMISSIONS_POLICY = {
 
 STATIC_URL = AWS_STATIC_CLOUDFRONT_DOMAIN + AWS_STATIC_LOCATION + "/"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+DEFAULT_FILE_STORAGE = "audiotrails.shared.storages.MediaStorage"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
