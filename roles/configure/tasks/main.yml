@@ -8,7 +8,7 @@
     dokku config:set --no-restart {{ app_name }} AWS_SECRET_ACCESS_KEY='{{ aws_secret_access_key }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_STORAGE_BUCKET_NAME='{{ aws_storage_bucket_name }}' && \
     dokku config:set --no-restart {{ app_name }} AWS_S3_CUSTOM_DOMAIN='{{ aws_s3_custom_domain }}' && \
-    dokku config:set --no-restart {{ app_name }} AWS_CLOUDFRONT_STATIC_DOMAIN='{{ aws_cloudfront_static_domain }}' && \
+    dokku config:set --no-restart {{ app_name }} AWS_STATIC_CLOUDFRONT_DOMAIN='{{ aws_cloudfront_static_domain }}' && \
     dokku config:set --no-restart {{ app_name }} ALLOWED_HOSTS='{{ domain_name }}' && \
     dokku config:set --no-restart {{ app_name }} DOKKU_LETSENCRYPT_EMAIL='{{ letsencrypt_email }}' && \
     dokku config:set --no-restart {{ app_name }} GOOGLE_TRACKING_ID='{{ google_tracking_id }}' && \
