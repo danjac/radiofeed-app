@@ -1,7 +1,5 @@
 from .base import *  # noqa
-from .base import BASE_DIR
 from .mixins.aws import *  # noqa
-from .mixins.aws import AWS_CLOUDFRONT_STATIC_DOMAIN, AWS_STATIC_LOCATION
 from .mixins.mailgun import *  # noqa
 from .mixins.secure import *  # noqa
 from .mixins.sentry import *  # noqa
@@ -25,6 +23,3 @@ PERMISSIONS_POLICY = {
     "payment": [],
     "usb": [],
 }
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = AWS_CLOUDFRONT_STATIC_DOMAIN + "/" + AWS_STATIC_LOCATION + "/"

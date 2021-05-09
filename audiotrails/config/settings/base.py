@@ -195,6 +195,7 @@ STATIC_URL = env("STATIC_URL", default="/static/")
 
 MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 TEMPLATES = [
     {

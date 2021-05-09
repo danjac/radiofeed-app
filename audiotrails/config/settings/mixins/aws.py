@@ -1,13 +1,7 @@
 from ..base import env
 
 DEFAULT_FILE_STORAGE = "audiotrails.config.storages.MediaStorage"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-AWS_CLOUDFRONT_MEDIA_DOMAIN = AWS_S3_CUSTOM_DOMAIN = env(
-    "AWS_CLOUDFRONT_MEDIA_DOMAIN", default=None
-)
-
-AWS_CLOUDFRONT_STATIC_DOMAIN = env("AWS_CLOUDFRONT_STATIC_DOMAIN", default=None)
+STATICFILES_STORAGE = "audiotrails.config.storages.StaticStorage"
 
 AWS_MEDIA_LOCATION = env("AWS_MEDIA_LOCATION", default="media")
 AWS_STATIC_LOCATION = env("AWS_STATIC_LOCATION", default="static")
