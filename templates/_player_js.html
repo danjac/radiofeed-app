@@ -116,9 +116,6 @@
           this.isPlaying = false;
           this.isPaused = true;
           this.isWaiting = false;
-          // BUG: paused() will be called when hitting back button,
-          // removing the storage key.
-          sessionStorage.removeItem(storageKey);
         },
 
         waiting() {
@@ -198,11 +195,20 @@
           }
         },
 
+        play() {
+          this.$refs.audio.play();
+        },
+
+        pause() {
+          this.$refs.audio.pause();
+          sessionStorage.removeItem(storageKey);
+        },
+
         togglePause() {
           if (this.isPaused) {
-            this.$refs.audio.play();
+            this.play();
           } else {
-            this.$refs.audio.pause();
+            this.pause();
           }
         },
 
