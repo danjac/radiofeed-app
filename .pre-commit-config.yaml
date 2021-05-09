@@ -17,4 +17,4 @@ repos:
     rev: ''
     hooks:
       - id: prettier
-        exclude: 'static/dev|static/dist|templates/|mockups/|node_modules/|README.md'
+        exclude: 'bundle.css|templates/|mockups/|node_modules/|README.md'
