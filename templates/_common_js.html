@@ -1,12 +1,14 @@
 <script>
-  (function() {
+  (function () {
+    const csrfToken = '{{ csrf_token }}';
+
     window.sendJSON = (url, data, options) =>
       fetch(url, {
         method: 'POST',
         credentials: 'same-origin',
         body: JSON.stringify(data || {}),
         headers: {
-          'X-CSRFToken': '{{ csrf_token }}',
+          'X-CSRFToken': csrfToken,
           'Content-Type': 'application/json',
         },
         ...options,
@@ -22,7 +24,7 @@
     };
 
     document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      event.detail.headers['X-CSRFToken'] = csrfToken;
     });
     document.addEventListener('htmx:afterSwap', (event) => {
       // workaround for https://github.com/bigskysoftware/htmx/issues/456
@@ -31,4 +33,5 @@
       }
     });
   })();
+
 </script>
