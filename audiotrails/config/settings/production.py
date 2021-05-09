@@ -26,9 +26,7 @@ PERMISSIONS_POLICY = {
     "usb": [],
 }
 
-STATIC_URL = AWS_STATIC_CLOUDFRONT_DOMAIN + AWS_STATIC_LOCATION + "/"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
+STATIC_URL = "https://" + AWS_STATIC_CLOUDFRONT_DOMAIN + "/" + AWS_STATIC_LOCATION + "/"
 DEFAULT_FILE_STORAGE = "audiotrails.shared.storages.MediaStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
