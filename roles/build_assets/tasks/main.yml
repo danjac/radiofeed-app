@@ -1,9 +1,0 @@
-- name: Build and compress assets
-  shell: |
-    podman exec -it audiopod-webapp npm run build-css
-
-- name: Collect static files
-  shell: |
-    podman exec -it \
-    audiopod-webapp ./manage.py \
-    collectstatic --noinput -v 3 -i css -i dev -i silk
