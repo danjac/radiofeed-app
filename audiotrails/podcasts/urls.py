@@ -17,11 +17,6 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
-        "podcasts/preview/<int:podcast_id>/",
-        views.preview,
-        name="preview",
-    ),
-    path(
         "podcasts/cover-image/<int:podcast_id>/",
         views.podcast_cover_image,
         name="podcast_cover_image",

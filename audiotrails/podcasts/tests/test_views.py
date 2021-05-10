@@ -132,35 +132,6 @@ class PodcastRecommendationsTests(TestCase):
         self.assertEqual(len(resp.context_data["recommendations"]), 3)
 
 
-class PreviewTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = UserFactory()
-        cls.podcast = PodcastFactory()
-
-    def setUp(self):
-        self.client.force_login(self.user)
-
-    def test_authenticated(self):
-        EpisodeFactory.create_batch(3, podcast=self.podcast)
-        resp = self.client.get(
-            reverse("podcasts:preview", args=[self.podcast.id]),
-        )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["podcast"], self.podcast)
-        self.assertFalse(resp.context_data["is_following"])
-
-    def test_following(self):
-        EpisodeFactory.create_batch(3, podcast=self.podcast)
-        FollowFactory(podcast=self.podcast, user=self.user)
-        resp = self.client.get(
-            reverse("podcasts:preview", args=[self.podcast.id]),
-        )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["podcast"], self.podcast)
-        self.assertTrue(resp.context_data["is_following"])
-
-
 class PodcastEpisodeListTests(TestCase):
     @classmethod
     def setUpTestData(cls):

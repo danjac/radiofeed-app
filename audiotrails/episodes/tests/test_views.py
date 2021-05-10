@@ -100,50 +100,29 @@ class SearchEpisodesTests(TestCase):
         self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
 
 
-class EpisodeDetailAnonymousTests(TestCase):
-    def test_get(self):
-        episode = EpisodeFactory()
-        resp = self.client.get(episode.get_absolute_url())
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["episode"], episode)
-        self.assertFalse(resp.context_data["is_favorited"])
-
-
-class EpisodeDetailAuthenticatedTests(TestCase):
+class EpisodeDetailTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory()
         cls.episode = EpisodeFactory()
 
-    def setUp(self):
-        self.client.force_login(self.user)
-
-    def test_user_not_favorited(self):
+    def test_detail(self):
         resp = self.client.get(self.episode.get_absolute_url())
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
-        self.assertFalse(resp.context_data["is_favorited"])
-
-    def test_user_favorited(self):
-        FavoriteFactory(episode=self.episode, user=self.user)
-        resp = self.client.get(self.episode.get_absolute_url())
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["episode"], self.episode)
-        self.assertTrue(resp.context_data["is_favorited"])
 
 
-class PreviewTests(TestCase):
+class ActionsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory()
         cls.episode = EpisodeFactory()
+        cls.user = UserFactory()
 
     def setUp(self):
         self.client.force_login(self.user)
 
     def test_user_not_favorited(self):
         resp = self.client.get(
-            reverse("episodes:episode_preview", args=[self.episode.id]),
+            reverse("episodes:actions", args=[self.episode.id]),
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
@@ -152,7 +131,7 @@ class PreviewTests(TestCase):
     def test_user_favorited(self):
         FavoriteFactory(episode=self.episode, user=self.user)
         resp = self.client.get(
-            reverse("episodes:episode_preview", args=[self.episode.id]),
+            reverse("episodes:actions", args=[self.episode.id]),
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
@@ -361,7 +340,7 @@ class AddFavoriteTests(TransactionTestCase):
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertTrue(
             Favorite.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -371,7 +350,7 @@ class AddFavoriteTests(TransactionTestCase):
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertTrue(
             Favorite.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -389,23 +368,7 @@ class RemoveFavoriteTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertFalse(
-            Favorite.objects.filter(user=user, episode=self.episode).exists()
-        )
-
-    def test_post_redirect(self):
-        user = UserFactory()
-        self.client.force_login(user)
-        FavoriteFactory(user=user, episode=self.episode)
-        resp = self.client.post(
-            reverse(
-                "episodes:remove_favorite",
-                args=[self.episode.id],
-            ),
-            {"redirect": "true"},
-        )
-        self.assertRedirects(resp, reverse("episodes:favorites"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             Favorite.objects.filter(user=user, episode=self.episode).exists()
         )
@@ -426,7 +389,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertRedirects(resp, reverse("episodes:history"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -453,7 +416,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertRedirects(resp, reverse("episodes:history"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -488,7 +451,7 @@ class AddToQueueTests(TransactionTestCase):
                     args=[episode.id],
                 ),
             )
-            self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+            self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         items = (
             QueueItem.objects.filter(user=self.user)
@@ -513,7 +476,7 @@ class AddToQueueTests(TransactionTestCase):
                 args=[self.episode.id],
             ),
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
 
 class RemoveFromQueueTests(TestCase):
@@ -528,7 +491,7 @@ class RemoveFromQueueTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertEqual(QueueItem.objects.filter(user=user).count(), 0)
 
 

@@ -2,7 +2,6 @@ import http
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -40,9 +39,8 @@ def remove_audio_log(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     # you shouldn't be able to remove history if episode currently playing
-    if request.player.is_playing(episode):
-        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-
-    AudioLog.objects.filter(user=request.user, episode=episode).delete()
-
-    return redirect("episodes:history")
+    if not request.player.is_playing(episode):
+        AudioLog.objects.filter(user=request.user, episode=episode).delete()
+    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    response["HX-Trigger"] = "reload-history"
+    return response

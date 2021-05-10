@@ -17,9 +17,7 @@ from . import get_episode_or_404
 def index(request, mode="move"):
     return TemplateResponse(
         request,
-        "episodes/_queue.html"
-        if request.htmx.trigger == "reload-queue"
-        else "episodes/queue.html",
+        "episodes/queue.html",
         {
             "queue_items": QueueItem.objects.filter(user=request.user)
             .select_related("episode", "episode__podcast")
@@ -46,7 +44,7 @@ def add_to_queue(request, episode_id):
     except IntegrityError:
         pass
 
-    return render_queue_toggle(request, episode, True)
+    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 
 @require_POST
@@ -54,9 +52,9 @@ def add_to_queue(request, episode_id):
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    if request.htmx.target == "queue":
-        return index(request, mode="remove")
-    return render_queue_toggle(request, episode, False)
+    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    response["HX-Trigger"] = "reload-queue"
+    return response
 
 
 @require_POST
@@ -77,11 +75,3 @@ def move_queue_items(request):
 
     qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-
-
-def render_queue_toggle(request, episode, is_queued):
-    return TemplateResponse(
-        request,
-        "episodes/_queue_toggle.html",
-        {"episode": episode, "is_queued": is_queued},
-    )

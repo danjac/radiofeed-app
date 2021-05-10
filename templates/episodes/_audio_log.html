@@ -1,8 +1,1 @@
 {% extends "episodes/_episode.html" %}
-{% block extra_buttons %}
-<button class="btn btn-standalone flex items-center p-2 border-none"
-        title="Remove episode from history"
-        hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
-  {% icon "trash" css_class="btn-icon h-6 w-6" %}
-</button>
-{% endblock %}

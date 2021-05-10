@@ -38,7 +38,6 @@
          hx-get="{{ episode.get_absolute_url }}"
          hx-trigger="reload-episode from:body">
 
-
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
     <a {% hx_link podcast %}
@@ -64,20 +63,15 @@
       </a>
     </div>
     <div class="space-y-2">
-      {% include "episodes/_player_toggle.html" %}
       {% include "episodes/_download.html" %}
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
+      {% include "episodes/_action_toggle.html" %}
     </div>
   </div>
 
   {% if episode.listened %}
   {% include "episodes/_listened.html" %}
   {% endif %}
-  <div class="flex items-center space-x-3">
-    {% include "episodes/_queue_toggle.html" %}
-    {% include "episodes/_favorite_toggle.html" %}
-  </div>
-
   {% if episode.explicit or podcast.explicit %}
   <div class="text-sm font-semibold">
     This episode may contain explicit content.

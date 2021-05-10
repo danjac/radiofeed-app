@@ -232,19 +232,6 @@ def podcast_cover_image(request, podcast_id):
     )
 
 
-def preview(request, podcast_id):
-    podcast = get_podcast_or_404(request, podcast_id)
-
-    return TemplateResponse(
-        request,
-        "podcasts/_preview.html",
-        {
-            "podcast": podcast,
-            "is_following": podcast.is_following(request.user),
-        },
-    )
-
-
 @require_POST
 def follow(request, podcast_id):
 

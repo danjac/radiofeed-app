@@ -8,31 +8,22 @@
 {% endblock %}
 
 {% block content %}
-<div x-data="{ mode: '{{ mode|default:'move' }}' }"
-     id="queue"
-     x-init="dragDrop($el.querySelector('#queue-items'))">
+<div id="queue"
+     hx-get="{% url 'episodes:queue' %}"
+     hx-trigger="reload-queue from:body">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start">Play Queue</h1>
-    {% if queue_items.count %}
-    <div class="flex items-center justify-center sm:justify-end">
-      <button class="btn btn-default flex items-center"
-              x-show="mode === 'move'"
-              title="Remove items from the queue"
-              @click="mode='remove'">
-        {% icon "adjustments" css_class="btn-icon mr-2" %}
-        Remove Items
-      </button>
-      <button class="btn btn-secondary flex items-center"
-              x-show="mode === 'remove'"
-              title="All done"
-              @click="mode='move'">
-        {% icon "x" css_class="btn-icon mr-2" %}
-        Remove Items
-      </button>
-    </div>
-    {% endif %}
   </div>
-  {% include "episodes/_queue.html" %}
+  <div x-data="{}"
+       x-init="dragDrop($el)">
+    {% for item in queue_items %}
+    {% with episode=item.episode %}
+    {% include "episodes/_queue_item.html" %}
+    {% endwith %}
+    {% empty %}
+    You do not have any items in your Play Queue.
+    {% endfor %}
+  </div>
 </div>
 
 {% endblock content %}

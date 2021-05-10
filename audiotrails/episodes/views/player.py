@@ -68,5 +68,4 @@ def render_player(request, episode=None):
     if episode:
         events["reload-queue"] = ""
     response["HX-Trigger"] = json.dumps(events)
-    response["HX-Trigger-After-Settle"] = "close-modal"
     return response

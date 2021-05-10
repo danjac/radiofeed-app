@@ -16,16 +16,6 @@
 
     </h2>
     <div class="font-semibold text-sm flex flex-wrap items-center space-x-2">
-      <a class="link"
-         title="Preview for {{ podcast.title|stripentities }}"
-         href="#"
-         hx-get="{{ podcast.get_preview_url }}"
-         hx-swap="innerHTML"
-         hx-select=".modal"
-         hx-target="#modal">
-        {% icon "ellipsis" css_class="w-6 h-6" %}
-      </a>
-
       <div title="Date last published"
            class="font-semibold inline-block text-gray-600 dark:text-gray-300">
         {% include "_pub_date.html" with pub_date=podcast.pub_date %}

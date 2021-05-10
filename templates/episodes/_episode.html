@@ -22,19 +22,7 @@
               </a>
             </h2>
             <div class="space-x-2 flex items-center">
-
-              <div>
-                <a class="link"
-                   role="button"
-                   title="Preview for {{ episode.title }}"
-                   hx-get="{{ preview_url|default:episode.get_preview_url }}"
-                   hx-swap="innerHTML"
-                   hx-select=".modal"
-                   hx-target="#modal">
-                  {% icon "ellipsis" css_class="w-6 h-6" %}
-                </a>
-              </div>
-
+              {% include "episodes/_action_toggle.html" %}
               <div title="Date Published"
                    class="text-sm font-semibold text-gray-600 dark:text-gray-300">
                 {% include "_pub_date.html" with pub_date=episode.pub_date %}

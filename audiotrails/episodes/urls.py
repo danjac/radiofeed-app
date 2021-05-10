@@ -1,12 +1,12 @@
 from django.urls import path
 
 from .views import (
+    actions,
     episode_detail,
     favorites,
     history,
     index,
     player,
-    preview,
     queue,
     search_episodes,
 )
@@ -19,9 +19,9 @@ urlpatterns = [
     path("featured/", index, name="featured", kwargs={"featured": True}),
     path("search/episodes/", search_episodes, name="search_episodes"),
     path(
-        "episodes/preview/<int:episode_id>/",
-        preview,
-        name="episode_preview",
+        "episodes/actions/<int:episode_id>/",
+        actions,
+        name="actions",
     ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
@@ -56,14 +56,6 @@ urlpatterns = [
     ),
     path("favorites/", favorites.index, name="favorites"),
     path(
-        "favorites/preview/<int:episode_id>/",
-        preview,
-        name="favorite_preview",
-        kwargs={
-            "has_favorite_toggle": False,
-        },
-    ),
-    path(
         "favorites/<int:episode_id>/~add/",
         favorites.add_favorite,
         name="add_favorite",
@@ -75,14 +67,6 @@ urlpatterns = [
     ),
     path("queue/", queue.index, name="queue"),
     path("queue/~move/", queue.move_queue_items, name="move_queue_items"),
-    path(
-        "queue/preview/<int:episode_id>/",
-        preview,
-        name="queue_preview",
-        kwargs={
-            "has_queue_toggle": False,
-        },
-    ),
     path("queue/<int:episode_id>/~add/", queue.add_to_queue, name="add_to_queue"),
     path(
         "queue/<int:episode_id>/~remove/",
