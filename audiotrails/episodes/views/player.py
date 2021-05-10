@@ -1,5 +1,4 @@
 import http
-import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -64,8 +63,6 @@ def render_player(request, episode=None):
     response = TemplateResponse(
         request, "_player.html", {"run_immediately": episode is not None}
     )
-    events = {"reload-episode": ""}
     if episode:
-        events["reload-queue"] = ""
-    response["HX-Trigger"] = json.dumps(events)
+        response["HX-Trigger"] = "reload-queue"
     return response
