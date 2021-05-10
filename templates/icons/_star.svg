@@ -3,9 +3,6 @@
      viewBox="0 0 24 24"
      class="{{ css_class|default:'' }}"
      stroke="currentColor">
-  {% if title %}
-  <title>{{ title }}</title>
-  {% endif %}
   <path stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="2"
