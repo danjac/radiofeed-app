@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-<div class="flex items-center">
+<div class="flex items-center relative">
   <button title="Actions for {{ episode.title }}"
           class="focus:outline-none"
           hx-get="{% url 'episodes:actions' episode.id %}"
@@ -7,9 +7,7 @@
           hx-target="#actions-{{ episode.id }}">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>
-  <div class="relative">
-    <div id="actions-{{ episode.id }}"
-         class="absolute left-0"></div>
-  </div>
+  <div id="actions-{{ episode.id }}"
+       class="absolute left-0 top-0"></div>
 </div>
 {% endif %}
