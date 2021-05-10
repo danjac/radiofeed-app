@@ -1,10 +1,10 @@
-@import 'buttons';
-@import 'links';
-@import 'markdown';
-@import 'messages';
-@import 'player';
-@import 'sidebar';
-@import 'tabs';
+@import 'buttons.css';
+@import 'links.css';
+@import 'markdown.css';
+@import 'messages.css';
+@import 'player.css';
+@import 'sidebar.css';
+@import 'tabs.css';
 
 @tailwind base;
 
