@@ -10,41 +10,21 @@
   {% endif %}
   <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
-      <a {% if podcast and podcast.pub_date %}
-         {% hx_link podcast %}
-         {% else %}
-         href="{{ result.itunes }}"
-         rel="noopener"
-         target="_blank"
-         {% endif %}
+      {% if podcast and podcast.pub_date %}
+      <a {% hx_link podcast %}
          title="{{ result.title }}"
          class="link">{{ result.title|truncatechars:120 }}</a>
+      {% else %}
+      <span class="text-muted text-semibold">
+        {{ result.title }}
+      </span>
+      {% endif %}
     </h2>
-    <div class="text-sm flex items-center space-x-2">
-      <div>
-        {% if podcast and podcast.pub_date %}
-        <a class="link"
-           title="Preview for {{ podcast.title|stripentities }}"
-           href="#"
-           hx-get="{{ podcast.get_preview_url }}"
-           hx-swap="innerHTML"
-           hx-select=".modal"
-           hx-target="#modal">
-          {% icon "ellipsis" css_class="w-6 h-6" %}
-        </a>
-        {% else %}
-        <span class="inactive-link"
-              title="Podcast not available">
-          {% icon "ellipsis" css_class="w-6 h-6" %}
-        </span>
-        {% endif %}
-      </div>
-      <div>
-        <a href="{{ result.itunes }}"
-           class="link"
-           target="_blank"
-           rel="noopener">iTunes</a>
-      </div>
+    <div class="text-sm flex items-center">
+      <a href="{{ result.itunes }}"
+         class="link"
+         target="_blank"
+         rel="noopener">iTunes</a>
     </div>
   </div>
 </section>
