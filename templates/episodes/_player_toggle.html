@@ -6,8 +6,7 @@
           hx-post="{% url 'episodes:close_player' %}"
           hx-target="#player"
           hx-select="#player"
-          hx-swap="outerHTML"
-          @click="$dispatch('close-player')">
+          hx-swap="outerHTML">
     {% icon "stop" css_class="btn-icon mr-2" %}
     Close Player
   </button>

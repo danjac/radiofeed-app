@@ -9,8 +9,7 @@
        runImmediately: {{ run_immediately|yesno:'true,false' }}
     })"
      x-init="initialize()"
-     @keydown.window="shortcuts($event)"
-     @close-player.window="stopPlayer()">
+     @keydown.window="shortcuts($event)">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
          preload="metadata"

@@ -7,8 +7,10 @@
           (target) => target.dataset.id
         );
         if (items.length > 0) {
-          sendJSON('/queue/~move/', {
-            items,
+          htmx.ajax('POST', "{% url 'episodes:move_queue_items' %}", {
+            values: {
+              items
+            }
           });
         }
       };

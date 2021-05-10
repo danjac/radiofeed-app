@@ -2,23 +2,22 @@
   <div id="queue-toggle"
        hx-target="this"
        hx-swap="outerHTML"
-       hx-select="#queue-toggle"
-       x-data="{isQueued: {{ is_queued|yesno:'true,false' }}}"
-       @remove-queue-item.window="if ($event.detail.episode === {{ episode.id }}) isQueued=false">
+       hx-select="#queue-toggle">
+    {% if is_queued %}
     <button class="btn btn-secondary flex items-center"
-            x-show="isQueued"
             hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
             title="Remove from Play Queue">
       {% icon "trash" css_class="btn-icon mr-2" %}
       Play Queue
     </button>
+    {% else %}
     <button class="btn btn-default flex items-center"
-            x-show="!isQueued"
             hx-post="{% url 'episodes:add_to_queue' episode.id %}"
             title="Add to Play Queue">
       {% icon "collection" css_class="btn-icon mr-2" %}
       Play Queue
     </button>
+    {% endif %}
   </div>
   {% else %}
   <div>

@@ -73,13 +73,6 @@
             }
           }
 
-          dispatch(this.$el, 'open-player', {
-            episode,
-          });
-          dispatch(this.$el, 'remove-queue-item', {
-            episode,
-          });
-
           this.$nextTick(() => {
             this.$refs.audio.load();
           });
@@ -128,7 +121,6 @@
 
         ended() {
           this.stopPlayer();
-          dispatch(this.$el, 'close-player');
           this.$refs.playNext.click();
         },
 
@@ -222,8 +214,10 @@
 
         sendCurrentTimeUpdate() {
           if (!this.isPaused && this.currentTime) {
-            sendJSON('/player/~timeupdate/', {
-              currentTime: this.currentTime,
+            htmx.ajax("POST", "{% url 'episodes:player_time_update' %}", {
+              values: {
+                current_time: this.currentTime,
+              }
             });
           }
         },

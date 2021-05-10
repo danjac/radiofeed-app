@@ -252,8 +252,7 @@ class PlayerTimeUpdateTests(TestCase):
 
         resp = self.client.post(
             self.url,
-            data={"currentTime": "1030.0001"},
-            content_type="application/json",
+            {"current_time": "1030.0001"},
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -263,8 +262,7 @@ class PlayerTimeUpdateTests(TestCase):
     def test_player_not_running(self):
         resp = self.client.post(
             self.url,
-            data={"currentTime": "1030.0001"},
-            content_type="application/json",
+            {"current_time": "1030.0001"},
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -285,7 +283,6 @@ class PlayerTimeUpdateTests(TestCase):
         resp = self.client.post(
             self.url,
             data={"current_time": "xyz"},
-            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 

@@ -35,6 +35,7 @@
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       x-data="{sidebar: false}"
       @close-sidebar.window="sidebar=false"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
       {% endblock %}>
   {% endblock header_tags %}
   {% block page_header %}
