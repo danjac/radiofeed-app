@@ -16,7 +16,7 @@ from . import get_episode_or_404
 def start_player(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
-    return render_player(request)
+    return render_player(request, episode)
 
 
 @require_POST
@@ -42,8 +42,11 @@ def play_next_episode(request):
         .first()
     ):
         request.player.start_episode(next_item.episode)
+        episode = next_item.episode
+    else:
+        episode = None
 
-    return render_player(request)
+    return render_player(request, episode)
 
 
 @require_POST
@@ -59,5 +62,13 @@ def player_time_update(request):
         return HttpResponseBadRequest("missing or invalid data")
 
 
-def render_player(request):
-    return TemplateResponse(request, "_player.html", {"run_immediately": True})
+def render_player(request, episode=None):
+    response = TemplateResponse(
+        request, "_player.html", {"run_immediately": episode is not None}
+    )
+    events = {"reload-episode": ""}
+    if episode:
+        events["reload-queue"] = ""
+    response["HX-Trigger"] = json.dumps(events)
+    response["HX-Trigger-After-Settle"] = "close-modal"
+    return response

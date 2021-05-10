@@ -1,25 +1,16 @@
-{% with count=queue_items|length %}
-<div {% if count %}x-data="{
-      counter: {{ count }}
-     }"
+<div x-data="{}"
      x-init="dragDrop($el)"
-     @remove-queue-item.window="counter = counter-1"
-     {% endif %}>
+     id="queue"
+     hx-get="{% url 'episodes:queue' %}"
+     hx-trigger="reload-queue from:body"
+     hx-swap="outerHTML">
   {% for item in queue_items %}
   {% with episode=item.episode %}
-  <div x-data="{show: true}"
-       x-show="show"
-       @remove-queue-item.window="if ($event.detail.episode === {{ episode.id }}) show=false">
+  <div>
     {% include "episodes/_queue_item.html" %}
   </div>
   {% endwith %}
   {% empty %}
   You do not have any items in your Play Queue.
   {% endfor %}
-  {% if count %}
-  <p x-show="counter === 0">
-    All done!
-  </p>
-  {% endif %}
 </div>
-{% endwith %}

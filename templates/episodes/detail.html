@@ -34,7 +34,10 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<section class="sm:p-2 sm:border dark:border-gray-500 space-y-2">
+<section class="sm:p-2 sm:border dark:border-gray-500 space-y-2"
+         hx-get="{{ episode.get_absolute_url }}"
+         hx-trigger="reload-episode from:body">
+
 
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
