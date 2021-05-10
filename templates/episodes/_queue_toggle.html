@@ -23,11 +23,8 @@
   {% else %}
   <div>
     <a class="btn btn-default flex items-center"
-       @click="
-       $dispatch('close-modal');
-       $dispatch('message', {tag: 'info', message: 'You must log in or sign up to add episodes to your Play Queue'});
-       "
-       {% hx_link episode.get_absolute_url|login_url %}
+       href="{{ episode.get_absolute_url|login_url }}"
+       hx-disable="true"
        title="Log in">
       {% icon "collection" css_class="btn-icon mr-2" %}
       Play Queue

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
@@ -48,6 +49,8 @@ def remove_favorite(request, episode_id):
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
+    if request.POST.get("redirect"):
+        return redirect("episodes:favorites")
     return render_favorite_toggle(request, episode, False)
 
 

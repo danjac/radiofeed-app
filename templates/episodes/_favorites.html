@@ -1,18 +1,11 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-{% with count=page_obj.paginator.count %}
-<div {% if count and not is_paginated %}
-     x-data="{ counter: {{ count }} }"
-     @remove-favorite.window="counter = counter-1"
-     {% endif %}>
+<div>
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
-  <div x-data="{show:true}"
-       x-show="show"
-       @remove-favorite.window="if ($event.detail.id === {{ episode.id }}) show=false">
-    {% include "episodes/_episode.html" %}
-  </div>
+  {% url 'episodes:favorite_preview' episode.id as preview_url %}
+  {% include "episodes/_favorite.html" %}
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">
@@ -23,11 +16,5 @@
     {% endif %}
   </p>
   {% endfor %}
-  {% if count and not is_paginated %}
-  <p x-show="counter === 0">
-    All done!
-  </p>
-  {% endif %}
 </div>
-{% endwith %}
 {% endblock %}

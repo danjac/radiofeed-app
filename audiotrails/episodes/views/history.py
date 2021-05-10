@@ -1,7 +1,5 @@
-import http
-
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -37,5 +35,7 @@ def index(request):
 @ajax_login_required
 def remove_audio_log(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
+
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+
+    return redirect("episodes:history")

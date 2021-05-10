@@ -1,18 +1,11 @@
   {% if user.is_authenticated %}
   <div id="favorite-toggle"
-       hx-target="this"
+       hx-target="{{ favorite_toggle_target|default:'this' }}"
        hx-swap="outerHTML"
        hx-select="#favorite-toggle">
     {% if is_favorited %}
     <button class="btn btn-secondary flex items-center"
             hx-post="{% url 'episodes:remove_favorite' episode.id %}"
-            @click.once="
-          $dispatch('close-modal');
-          $dispatch('message', {
-              tag: 'info',
-              message: 'Episode has been removed from your Favorites' }
-          );
-          $dispatch('remove-favorite', { id: {{ episode.id }} });"
             title="Remove from Favorites">
       {% icon "trash" css_class="btn-icon mr-2" %}
       Favorites
@@ -20,13 +13,6 @@
     {% else %}
     <button class="btn btn-default flex items-center"
             hx-post="{% url 'episodes:add_favorite' episode.id %}"
-            @click.once="
-            $dispatch('close-modal');
-            $dispatch('message', {
-                tag: 'success',
-                message: 'Episode has been added to your Favorites' }
-            );
-            "
             title="Add to Favorites">
       {% icon "star" css_class="btn-icon mr-2" %}
       Favorites
@@ -36,11 +22,8 @@
   {% else %}
   <div>
     <a class="btn btn-default flex items-center"
-       @click="
-       $dispatch('close-modal');
-       $dispatch('message', {tag: 'info', message: 'You must log in or sign up to add episodes to your Favorites'});
-       "
-       {% hx_link episode.get_absolute_url|login_url %}
+       href="{{ episode.get_absolute_url|login_url }}"
+       hx-disable="true"
        title="Log in">
       {% icon "star" css_class="btn-icon mr-2" %}
       Favorites

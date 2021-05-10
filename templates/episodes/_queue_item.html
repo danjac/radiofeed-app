@@ -5,7 +5,15 @@ data-id={{ item.id }}
 {% endblock %}
 {% block extra_buttons %}
 <button class="flex items-center handle"
+        x-show="mode==='move'"
         title="Move">
   {% icon "view_list" css_class="btn-icon h-6 w-6" %}
+</button>
+<button class="flex items-center"
+        x-show="mode==='remove'"
+        hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
+        hx-target="#queue"
+        title="Remove">
+  {% icon "trash" css_class="btn-icon h-6 w-6" %}
 </button>
 {% endblock %}

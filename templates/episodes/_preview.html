@@ -41,12 +41,12 @@
 {% endif %}
 
 <div class="flex items-center space-x-3 mb-3">
-  {% block queue_toggle %}
+  {% if has_queue_toggle %}
   {% include "episodes/_queue_toggle.html" %}
-  {% endblock %}
-  {% block favorites_toggle %}
+  {% endif %}
+  {% if has_favorite_toggle %}
   {% include "episodes/_favorite_toggle.html" %}
-  {% endblock %}
+  {% endif %}
 </div>
 
 {% if episode.explicit or podcast.explicit %}

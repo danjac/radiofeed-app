@@ -3,15 +3,36 @@
 {% block subtitle %} | Play Queue{% endblock %}
 
 {% block robots %}
-<meta name="robots" content="noindex" />
+<meta name="robots"
+      content="noindex" />
 {% endblock %}
 
 {% block content %}
-<h1 class="font-bold mb-3 flex items-center justify-center sm:justify-start">
-  Play Queue
-</h1>
-
-{% include "episodes/_queue.html" %}
+<div x-data="{ mode: '{{ mode|default:'move' }}' }"
+     id="queue"
+     x-init="dragDrop($el)">
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
+    <h1 class="font-bold flex justify-center sm:justify-start">Play Queue</h1>
+    {% if queue_items.count %}
+    <div class="flex items-center justify-center sm:justify-end">
+      <button class="btn btn-secondary flex items-center"
+              x-show="mode === 'move'"
+              title=""
+              @click="mode='remove'">
+        {% icon "trash" css_class="btn-icon mr-2" %}
+        Remove Items
+      </button>
+      <button class="btn btn-secondary flex items-center"
+              x-show="mode === 'remove'"
+              title=""
+              @click="mode='move'">
+        {% icon "view_list" css_class="btn-icon mr-2" %}
+        Move Items
+      </button>
+    </div>
+    {% endif %}
+  </div>
+  {% include "episodes/_queue.html" %}
+</div>
 
 {% endblock content %}
-

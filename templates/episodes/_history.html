@@ -1,18 +1,13 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-<!-- tbd: move this surrounding code to parent template -->
-{% with count=page_obj.paginator.count %}
-<div {% if count and not is_paginated %}
-     x-data="{ counter: {{ count }} }"
-     @remove-audio-log.window="counter = counter-1"
-     {% endif %}>
+<div>
   {% for log in page_obj %}
-  <div x-data="{show:true}"
-            x-show="show"
-            @remove-audio-log.window="if ($event.detail.episode === {{ log.episode.id }}) show=false">
-    {% include "episodes/_audio_log.html" with episode=log.episode %}
+  {% with episode=log.episode %}
+  <div id="audio-log-{{ episode.id }}">
+    {% include "episodes/_audio_log.html" %}
   </div>
+  {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">
     {% if search %}
@@ -22,11 +17,5 @@
     {% endif %}
   </p>
   {% endfor %}
-  {% if count and not is_paginated %}
-  <p x-show="counter === 0">
-    All done!
-  </p>
-  {% endif %}
 </div>
-{% endwith %}
 {% endblock %}

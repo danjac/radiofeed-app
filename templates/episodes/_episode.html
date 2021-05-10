@@ -27,7 +27,7 @@
                 <a class="link"
                    role="button"
                    title="Preview for {{ episode.title }}"
-                   hx-get="{{ episode.get_preview_url }}"
+                   hx-get="{{ preview_url|default:episode.get_preview_url }}"
                    hx-swap="innerHTML"
                    hx-select=".modal"
                    hx-target="#modal">

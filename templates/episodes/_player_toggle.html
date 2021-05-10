@@ -26,12 +26,8 @@
 {% else %}
 <div>
   <a class="btn btn-primary flex items-center"
-     title="Log in"
-     @click="
-      $dispatch('close-modal');
-      $dispatch('message', {tag: 'info', message: 'You must log in or sign up to play episodes'});
-     "
-     {% hx_link episode.get_absolute_url|login_url %}>
+     href="{{ episode.get_absolute_url|login_url }}"
+     hx-disable="true">
     {% icon "play" css_class="btn-icon mr-2" %}
     Play Episode
   </a>

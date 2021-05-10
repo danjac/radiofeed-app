@@ -82,7 +82,12 @@ def search_episodes(request):
     )
 
 
-def preview(request, episode_id):
+def preview(
+    request,
+    episode_id,
+    has_favorite_toggle=True,
+    has_queue_toggle=True,
+):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -91,7 +96,12 @@ def preview(request, episode_id):
         request,
         "episodes/_preview.html",
         get_episode_detail_context(
-            request, episode, {"redirect_url": request.GET.get("from")}
+            request,
+            episode,
+            {
+                "has_favorite_toggle": has_favorite_toggle,
+                "has_queue_toggle": has_queue_toggle,
+            },
         ),
     )
 
