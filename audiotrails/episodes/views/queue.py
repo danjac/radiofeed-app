@@ -18,7 +18,9 @@ from . import get_episode_or_404
 def index(request, mode="move"):
     return TemplateResponse(
         request,
-        "episodes/queue.html",
+        "episodes/_queue.html"
+        if request.htmx.trigger == "reload-queue"
+        else "episodes/queue.html",
         {
             "queue_items": QueueItem.objects.filter(user=request.user)
             .select_related("episode", "episode__podcast")
@@ -79,10 +81,8 @@ def move_queue_items(request):
 
 
 def render_queue_toggle(request, episode, is_queued):
-    response = TemplateResponse(
+    return TemplateResponse(
         request,
         "episodes/_queue_toggle.html",
         {"episode": episode, "is_queued": is_queued},
     )
-    response["HX-Trigger"] = "reload-queue"
-    return response

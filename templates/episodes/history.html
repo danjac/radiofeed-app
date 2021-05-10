@@ -3,15 +3,20 @@
 {% block subtitle %} | History{% endblock %}
 
 {% block robots %}
-<meta name="robots" content="noindex" />
+<meta name="robots"
+      content="noindex" />
 {% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-  <h1 class="font-bold flex justify-center sm:justify-start">History</h1>
-  <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search History..." %}
+<div id="history">
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
+    <h1 class="font-bold flex justify-center sm:justify-start">History</h1>
+    {% if page_obj.paginator.count %}
+    <div class="flex items-center justify-center sm:justify-end">
+      {% include "forms/_search_form.html" with placeholder="Search History..." %}
+    </div>
+    {% endif %}
   </div>
+  {% include pagination_template %}
 </div>
-{% include pagination_template %}
 {% endblock content %}

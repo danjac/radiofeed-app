@@ -51,6 +51,7 @@ def remove_favorite(request, episode_id):
 
     if request.POST.get("redirect"):
         return redirect("episodes:favorites")
+
     return render_favorite_toggle(request, episode, False)
 
 

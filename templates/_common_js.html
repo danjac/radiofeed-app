@@ -26,6 +26,7 @@
     document.body.addEventListener('htmx:configRequest', (event) => {
       event.detail.headers['X-CSRFToken'] = csrfToken;
     });
+
     document.body.addEventListener('htmx:afterSwap', (event) => {
       // workaround for https://github.com/bigskysoftware/htmx/issues/456
       if (event.target.id === 'content') {

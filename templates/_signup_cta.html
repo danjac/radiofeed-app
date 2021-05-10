@@ -1,6 +1,7 @@
 {% if user.is_anonymous %}
 <p class="text-center mb-3 p-3 bg-gray-200 dark:bg-gray-800 rounded">
   <a class="underline link"
+     hx-disable="true"
      href="{{ request.get_full_path|signup_url }}">Sign up</a> to follow your favorite podcasts and listen to episodes!
 </p>
 {% endif %}

@@ -397,6 +397,22 @@ class RemoveFavoriteTests(TestCase):
             Favorite.objects.filter(user=user, episode=self.episode).exists()
         )
 
+    def test_post_redirect(self):
+        user = UserFactory()
+        self.client.force_login(user)
+        FavoriteFactory(user=user, episode=self.episode)
+        resp = self.client.post(
+            reverse(
+                "episodes:remove_favorite",
+                args=[self.episode.id],
+            ),
+            {"redirect": "true"},
+        )
+        self.assertRedirects(resp, reverse("episodes:favorites"))
+        self.assertFalse(
+            Favorite.objects.filter(user=user, episode=self.episode).exists()
+        )
+
 
 class RemoveAudioLogTests(TestCase):
     @classmethod
@@ -413,18 +429,34 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertRedirects(resp, reverse("episodes:history"))
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
         self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 1)
+
+    def test_post_is_playing(self):
+        """Do not remove log if episode is currently playing"""
+        AudioLogFactory(user=self.user, episode=self.episode)
+
+        session = self.client.session
+        session["player_episode"] = self.episode.id
+        session.save()
+
+        resp = self.client.post(
+            reverse("episodes:remove_audio_log", args=[self.episode.id])
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertTrue(
+            AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
+        )
 
     def test_post_none_remaining(self):
         AudioLogFactory(user=self.user, episode=self.episode)
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertRedirects(resp, reverse("episodes:history"))
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
