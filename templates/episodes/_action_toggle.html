@@ -1,14 +1,14 @@
 {% if user.is_authenticated %}
-<div>
+<div class="flex items-center">
   <button title="Actions for {{ episode.title }}"
           class="focus:outline-none"
           hx-get="{% url 'episodes:actions' episode.id %}"
           hx-swap="outerHTML"
-          hx-target="#dropdown-menu-{{ episode.id }}">
+          hx-target="#actions-{{ episode.id }}">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>
   <div class="relative">
-    <div id="dropdown-menu-{{ episode.id }}"
+    <div id="actions-{{ episode.id }}"
          class="absolute left-0"></div>
   </div>
 </div>
