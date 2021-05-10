@@ -58,7 +58,7 @@
 
           <div class="flex justify-between items-center w-full">
 
-            <div class="flex items-center" x-show="isLoaded">
+            <div class="flex items-center">
 
               <button title="Pause"
                       @click="pause()"
@@ -133,7 +133,7 @@
                    x-show="isLoaded"
                    style="z-index: 12;"></div>
             </div>
-            <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter" x-show="isLoaded">
+            <div class="w-20 mr-2 text-right tracking-tighter text-sm md:text-base player--counter">
               -<span x-text="counter"></span>
             </div>
           </div>
