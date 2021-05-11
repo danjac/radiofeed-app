@@ -5,7 +5,6 @@ from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST
 
 from audiotrails.episodes.views import render_episode_list_response
@@ -212,22 +211,6 @@ def itunes_category(request, category_id):
             "category": category,
             "results": results,
             "error": error,
-        },
-    )
-
-
-@cache_page(60 * 60 * 24)
-def podcast_cover_image(request, podcast_id):
-    """Lazy-loaded podcast image"""
-    podcast = get_podcast_or_404(request, podcast_id)
-    return TemplateResponse(
-        request,
-        "podcasts/_cover_image.html",
-        {
-            "podcast": podcast,
-            "lazy": False,
-            "cover_image": podcast.get_cover_image_thumbnail(),
-            "img_size": request.GET.get("size", "16"),
         },
     )
 

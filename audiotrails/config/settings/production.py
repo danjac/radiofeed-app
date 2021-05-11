@@ -33,4 +33,6 @@ DEFAULT_FILE_STORAGE = "audiotrails.shared.storages.MediaStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# https://github.com/jazzband/sorl-thumbnail#frequently-asked-questions
+
 THUMBNAIL_FORCE_OVERWRITE = True
