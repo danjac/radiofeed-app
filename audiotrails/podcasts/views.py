@@ -112,6 +112,7 @@ def episodes(request, podcast_id, slug=None):
 
     podcast = get_podcast_or_404(request, podcast_id)
     newest_first = request.GET.get("ordering", "desc") == "desc"
+    oldest_first = not (newest_first)
     show_podcast_detail = newest_first
 
     episodes = podcast.episode_set.select_related("podcast")
@@ -131,6 +132,7 @@ def episodes(request, podcast_id, slug=None):
             podcast,
             {
                 "newest_first": newest_first,
+                "oldest_first": oldest_first,
                 "show_podcast_detail": show_podcast_detail,
                 "cover_image": podcast.get_cover_image_thumbnail(),
             },

@@ -4,10 +4,10 @@
 
 {% block content %}
 
-<h1 class="font-bold mb-3">{{ podcast.title|stripentities }}</h1>
+<h1 class="font-bold mb-3{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast.title|stripentities }}</h1>
 
 <div id="podcast-content">
-  {% if has_recommendations and not search %}
+  {% if has_recommendations and not search and not oldest_first %}
   <nav class="mb-3 flex items-center">
     <ul class="flex items-center text-sm space-x-6">
       {% active_link podcast.get_episodes_url as link %}
