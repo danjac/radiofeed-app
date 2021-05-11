@@ -121,7 +121,10 @@
 
         ended() {
           this.stopPlayer();
-          this.$refs.playNext.click();
+          htmx.ajax('POST', "{% url 'episodes:play_next_episode' %}", {
+            target: '#player',
+            select: '#player'
+          });
         },
 
         shortcuts(event) {

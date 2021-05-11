@@ -41,11 +41,8 @@ def play_next_episode(request):
         .first()
     ):
         request.player.start_episode(next_item.episode)
-        episode = next_item.episode
-    else:
-        episode = None
 
-    return render_player(request, episode)
+    return render_player(request, next_item.episode if next_item else None)
 
 
 @require_POST

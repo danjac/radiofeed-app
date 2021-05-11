@@ -84,12 +84,6 @@
                 {% icon "stop" css_class="h-8 w-8" %}
               </button>
 
-              <button class="hidden"
-                      hx-post="{% url 'episodes:play_next_episode' %}"
-                      hx-target="#player"
-                      hx-select="#player"
-                      x-ref="playNext">
-              </button>
             </div>
 
             <div class="hidden sm:block text-sm sm:w-64 w-96 lg:w-full truncate text-center">
