@@ -28,14 +28,14 @@
           </a>
         </h3>
       </div>
-      <div class="markdown text-muted text-sm">
+      <div class="break-words text-gray-800 dark:text-gray-200 leading-snug tracking-tight text-sm">
         {{ podcast.description|keepspaces|striptags|stripentities|truncatechars:300 }}
-      </div>
-      <div>
-        <a {{ podcast_link }}
-           class="link text-sm">
-          More...
-        </a>
+        <div class="float-right p-1">
+          <a {{ podcast_link }}
+             class="link text-sm no-underline">
+            More...
+          </a>
+        </div>
       </div>
     </div>
   </div>
