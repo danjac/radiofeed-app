@@ -28,14 +28,14 @@
           </a>
         </h3>
       </div>
-      <div class="break-words text-gray-800 dark:text-gray-200 leading-snug tracking-tight text-sm">
+      <div class="markdown text-muted text-sm">
         {{ episode.description|keepspaces|striptags|stripentities|truncatechars:300 }}
-        <div class="float-right p-1">
-          <a {{ episode_link }}
-             class="link text-sm no-underline">
-            More...
-          </a>
-        </div>
+      </div>
+      <div>
+        <a {{ episode_link }}
+           class="link text-sm">
+          More...
+        </a>
       </div>
     </div>
   </div>
