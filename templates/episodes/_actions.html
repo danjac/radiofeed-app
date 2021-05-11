@@ -54,7 +54,7 @@
       {% if is_queued %}Remove from Queue{% else %}Add to Queue{% endif %}
     </button>
 
-    {% if episode.current_time and not is_playing %}
+    {% if episode.listened and not is_playing %}
     <button @click="show=false; $dispatch('message',{ tag: 'info', message: 'Episode has been removed from your History' })"
             class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
             hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
