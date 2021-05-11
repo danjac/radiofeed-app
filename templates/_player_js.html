@@ -231,11 +231,17 @@
         },
 
         sendCurrentTimeUpdate() {
-          if (!this.isPaused && this.currentTime) {
-            htmx.ajax("POST", "{% url 'episodes:player_time_update' %}", {
-              values: {
-                current_time: this.currentTime,
-              }
+          if (this.isLoaded && !this.isPaused && this.currentTime) {
+            fetch("{% url 'episodes:player_time_update' %}", {
+              body: JSON.stringify({
+                currentTime: this.currentTime,
+              }),
+              credentials: 'same-origin',
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
             });
           }
         },

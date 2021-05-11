@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
@@ -231,7 +232,8 @@ class PlayerTimeUpdateTests(TestCase):
 
         resp = self.client.post(
             self.url,
-            {"current_time": "1030.0001"},
+            json.dumps({"currentTime": "1030.0001"}),
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -241,7 +243,8 @@ class PlayerTimeUpdateTests(TestCase):
     def test_player_not_running(self):
         resp = self.client.post(
             self.url,
-            {"current_time": "1030.0001"},
+            json.dumps({"currentTime": "1030.0001"}),
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -261,7 +264,8 @@ class PlayerTimeUpdateTests(TestCase):
 
         resp = self.client.post(
             self.url,
-            data={"current_time": "xyz"},
+            json.dumps({"currentTime": "xyz"}),
+            content_type="application/json",
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 

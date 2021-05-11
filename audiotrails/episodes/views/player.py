@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -50,7 +51,9 @@ def play_next_episode(request):
 def player_time_update(request):
     """Update current play time of episode"""
     try:
-        request.player.update_current_time(float(request.POST["current_time"]))
+        request.player.update_current_time(
+            float(json.loads(request.body)["currentTime"])
+        )
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     except (KeyError, ValueError):
         return HttpResponseBadRequest("missing or invalid data")
