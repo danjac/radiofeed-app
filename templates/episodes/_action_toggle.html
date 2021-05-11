@@ -3,7 +3,7 @@
      x-data="{show: false}">
   <button title="Actions for {{ episode.title }}"
           class="focus:outline-none"
-          @click="
+          @click.debounce="
             if (show) {
               show=false;
             } else {
