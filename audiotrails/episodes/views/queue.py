@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -14,7 +15,7 @@ from . import get_episode_or_404
 
 
 @login_required
-def index(request, mode="move"):
+def index(request):
     return TemplateResponse(
         request,
         "episodes/queue.html",
@@ -22,7 +23,6 @@ def index(request, mode="move"):
             "queue_items": QueueItem.objects.filter(user=request.user)
             .select_related("episode", "episode__podcast")
             .order_by("position"),
-            "mode": mode,
         },
     )
 
@@ -66,11 +66,11 @@ def move_queue_items(request):
     for_update = []
 
     try:
-        for position, item_id in enumerate(request.POST.getlist("items"), 1):
+        for position, item_id in enumerate(json.loads(request.body)["items"], 1):
             if item := items[int(item_id)]:
                 item.position = position
                 for_update.append(item)
-    except (KeyError, ValueError):
+    except (KeyError, TypeError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
     qs.bulk_update(for_update, ["position"])

@@ -516,13 +516,16 @@ class TestMoveQueueItems:
 
         resp = self.client.post(
             reverse("episodes:move_queue_items"),
-            {
-                "items": [
-                    third.id,
-                    first.id,
-                    second.id,
-                ]
-            },
+            json.dumps(
+                {
+                    "items": [
+                        third.id,
+                        first.id,
+                        second.id,
+                    ]
+                }
+            ),
+            content_type="application/json",
         )
 
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
