@@ -42,4 +42,8 @@ body {
   display: block !important;
 }
 
+img.lazy {
+  @apply filter blur-sm;
+}
+
 @tailwind utilities;

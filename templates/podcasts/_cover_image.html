@@ -1,13 +1,13 @@
-{% load cache %}
+{% load cache static %}
 {% cache 36400 podcast-cover-image podcast.id size %}
 {% with podcast_title=podcast.title|stripentities cover_image=podcast.get_cover_image_thumbnail %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75"
+<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 lazy"
      title="{{ podcast_title }}"
      alt="{{ podcast_title }}"
-     src="{{ cover_image.url }}"
+     src="{% static 'img/podcast-icon.png' %}"
+     data-src="{{ cover_image.url }}"
      width="{{ cover_image.width }}"
      height="{{ cover_image.height }}"
-     loading="lazy"
      width="200"
      height="200"
      {{ attrs|htmlattrs }} />

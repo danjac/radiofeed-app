@@ -1,10 +1,43 @@
 <script>
   (function() {
-   document.body.addEventListener('htmx:afterSwap', (event) => {
+    function lazyLoadImages() {
+      const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+
+      if ("IntersectionObserver" in window) {
+        const lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              const {
+                target
+              } = entry;
+              console.log("loading", target.dataset.src)
+              target.src = target.dataset.src;
+              target.classList.remove("lazy");
+              lazyImageObserver.unobserve(target);
+            }
+          });
+        });
+
+        lazyImages.forEach(function(img) {
+          lazyImageObserver.observe(img);
+        });
+
+      } else {
+        lazyImages.forEach(function(img) {
+          img.src = img.dataset.src;
+          img.classList.remove("lazy");
+        });
+      }
+
+    }
+    document.body.addEventListener('htmx:afterSwap', (event) => {
       // workaround for https://github.com/bigskysoftware/htmx/issues/456
       if (event.target.id === 'content') {
         window.scrollTo(0, event.target.offsetTop - 160);
       }
+      lazyLoadImages();
     });
+
+    document.addEventListener("DOMContentLoaded", lazyLoadImages);
   })();
 </script>
