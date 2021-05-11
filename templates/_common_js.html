@@ -10,7 +10,6 @@
               const {
                 target
               } = entry;
-              console.log("loading", target.dataset.src)
               target.src = target.dataset.src;
               target.classList.remove("lazy");
               lazyImageObserver.unobserve(target);
