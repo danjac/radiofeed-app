@@ -6,12 +6,12 @@
   <div class="flex items-center justify-between p-2">
 
     <div class="flex items-center flex-shrink-0 mr-6">
-      <button class="lg:hidden mr-3"
+      <button class="lg:hidden mr-3 focus:outline-none"
               title="Toggle Menu"
               x-on:click="sidebar = !sidebar">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="hidden lg:hidden mr-3"
+      <button class="hidden lg:hidden mr-3 focus:outline-none"
               data-action="toggle#toggle"
               title="Toggle Menu"
               x-on:click="sidebar = !sidebar">
