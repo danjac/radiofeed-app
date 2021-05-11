@@ -1,42 +1,43 @@
-  <div @click.away="show=false"
-       @click="show=false"
-       @keydown.escape.window="show=false"
-       x-show.transition="show"
-       id="actions-{{ episode.id }}"
-       class="absolute top-0 left-0 mt-3 w-56 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white">
+<div x-data="{show:true}"
+     x-show.transition="show"
+     @click.away="show=false"
+     @click="show=false"
+     @keydown.escape.window="show=false"
+     id="actions-{{ episode.id }}"
+     class="absolute top-0 left-0 mt-3 w-56 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white">
 
-    <button @click="show=false"
-            class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:bg-gray-200 hover:dark:bg-gray-800 w-full"
-            {% if is_playing %}
-            hx-post="{% url 'episodes:close_player' %}"
-            {% else %}
-            hx-post="{% url 'episodes:start_player' episode.id %}"
-            {% endif %}
-            hx-target="#player"
-            hx-select="#player"
-            hx-swap="outerHTML">
-      {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
-      {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
-    </button>
+  <button @click="show=false"
+          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:bg-gray-200 hover:dark:bg-gray-800 w-full"
+          {% if is_playing %}
+          hx-post="{% url 'episodes:close_player' %}"
+          {% else %}
+          hx-post="{% url 'episodes:start_player' episode.id %}"
+          {% endif %}
+          hx-target="#player"
+          hx-select="#player"
+          hx-swap="outerHTML">
+    {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
+    {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
+  </button>
 
-    <button @click="
+  <button @click="
             show=false;
             {% if is_favorited %}
             $dispatch('message',{ tag: 'info', message: 'Episode has been removed from your Favorites' })
             {% else %}
             $dispatch('message',{ tag: 'success', message: 'Episode has been added to your Favorites' })
             {% endif %}"
-            class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
-            {% if is_favorited %}
-            hx-post="{% url 'episodes:remove_favorite' episode.id %}"
-            {% else %}
-            hx-post="{% url 'episodes:add_favorite' episode.id %}"
-            {% endif %}>
-      {% icon 'star' css_class="btn-icon mr-2" %}
-      {% if is_favorited %}Remove from Favorites{% else %}Add to Favorites{% endif %}
-    </button>
+          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
+          {% if is_favorited %}
+          hx-post="{% url 'episodes:remove_favorite' episode.id %}"
+          {% else %}
+          hx-post="{% url 'episodes:add_favorite' episode.id %}"
+          {% endif %}>
+    {% icon 'star' css_class="btn-icon mr-2" %}
+    {% if is_favorited %}Remove from Favorites{% else %}Add to Favorites{% endif %}
+  </button>
 
-    <button @click="
+  <button @click="
              show=false;
             {% if is_queued %}
             $dispatch('message',{ tag: 'info', message: 'Episode has been removed from your Queue' })
@@ -44,22 +45,22 @@
             $dispatch('message',{ tag: 'success', message: 'Episode has been added to your Queue' })
             {% endif %}
             "
-            class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
-            {% if is_queued %}
-            hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
-            {% else %}
-            hx-post="{% url 'episodes:add_to_queue' episode.id %}"
-            {% endif %}>
-      {% icon 'collection' css_class="btn-icon mr-2" %}
-      {% if is_queued %}Remove from Queue{% else %}Add to Queue{% endif %}
-    </button>
+          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
+          {% if is_queued %}
+          hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
+          {% else %}
+          hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+          {% endif %}>
+    {% icon 'collection' css_class="btn-icon mr-2" %}
+    {% if is_queued %}Remove from Queue{% else %}Add to Queue{% endif %}
+  </button>
 
-    {% if episode.listened and not is_playing %}
-    <button @click="show=false; $dispatch('message',{ tag: 'info', message: 'Episode has been removed from your History' })"
-            class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
-            hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
-      {% icon 'trash' css_class="btn-icon mr-2" %}
-      Remove from History
-    </button>
-    {% endif %}
-  </div>
+  {% if episode.listened and not is_playing %}
+  <button @click="show=false; $dispatch('message',{ tag: 'info', message: 'Episode has been removed from your History' })"
+          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
+          hx-post="{% url 'episodes:remove_audio_log' episode.id %}">
+    {% icon 'trash' css_class="btn-icon mr-2" %}
+    Remove from History
+  </button>
+  {% endif %}
+</div>

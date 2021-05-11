@@ -1,22 +1,13 @@
 {% if user.is_authenticated %}
-<div class="flex items-center relative"
-     x-data="{show: false}">
+<div class="flex items-center relative">
   <button title="Actions for {{ episode.title }}"
           class="focus:outline-none"
-          @click.debounce="
-            if (show) {
-              show=false;
-            } else {
-              htmx.ajax('GET', '{% url 'episodes:actions' episode.id %}', {
-                  swap: 'outerHTML',
-                  target: '#actions-{{ episode.id }}'
-              });
-              show=true;
-            }
-            ">
+          hx-get="{% url 'episodes:actions' episode.id %}"
+          hx-target="#actions-{{ episode.id }}"
+          hx-trigger="click delay:500ms">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>
   <div id="actions-{{ episode.id }}"
-       class="absolute left-0 top-0 mt-2"></div>
+       class="absolute left-0 top-0 mt-3"></div>
 </div>
 {% endif %}
