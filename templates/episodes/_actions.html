@@ -1,8 +1,7 @@
-  <div x-data="{show: true}"
-       @click.away="show=false"
+  <div @click.away="show=false"
        @click="show=false"
        @keydown.escape.window="show=false"
-       x-show="show"
+       x-show.transition="show"
        id="actions-{{ episode.id }}"
        class="absolute top-0 left-0 mt-2 w-56 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white">
 
