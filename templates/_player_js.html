@@ -9,6 +9,7 @@
       } = options;
 
       const storageKey = 'player-enabled';
+      const handlers = {};
 
       const defaults = {
         mediaSrc,
@@ -17,7 +18,6 @@
         isPlaying: false,
         isPaused: false,
         isLoaded: false,
-        isWaiting: false,
         playbackRate: 1.0,
         counter: '00:00:00',
       };
@@ -102,29 +102,11 @@
         resumed() {
           this.isPlaying = true;
           this.isPaused = false;
-          this.isWaiting = false;
           sessionStorage.setItem(storageKey, true);
         },
         paused() {
           this.isPlaying = false;
           this.isPaused = true;
-          this.isWaiting = false;
-        },
-
-        waiting() {
-          this.isWaiting = true;
-        },
-
-        active() {
-          this.isWaiting = false;
-        },
-
-        ended() {
-          this.stopPlayer();
-          htmx.ajax('POST', "{% url 'episodes:play_next_episode' %}", {
-            target: '#player',
-            select: '#player'
-          });
         },
 
         shortcuts(event) {
@@ -132,20 +114,33 @@
             return;
           }
 
-          const handlers = {
-            '+': this.incrementPlaybackRate,
-            '-': this.decrementPlaybackRate,
-            ArrowLeft: this.skipBack,
-            ArrowRight: this.skipForward,
-            Space: this.togglePause,
-            Delete: () => this.$refs.stop.click(),
-          };
+          switch (event.key) {
+            case '+':
+              event.preventDefault();
+              this.incrementPlaybackRate();
+              return;
+            case '-':
+              event.preventDefault();
+              this.decrementPlaybackRate();
+              return;
+          }
 
-          const handler = handlers[event.code] || handlers[event.key];
-
-          if (handler) {
-            event.preventDefault();
-            handler.bind(this)();
+          switch (event.code) {
+            case 'ArrowLeft':
+              event.preventDefault();
+              this.skipBack();
+              return;
+            case 'ArrowRight':
+              event.preventDefault();
+              this.skipForward();
+              return;
+            case 'Space':
+              event.preventDefault();
+              this.togglePause();
+              return;
+            case 'Delete':
+              event.preventDefault();
+              this.close();
           }
         },
 
@@ -177,11 +172,11 @@
         },
 
         skipBack() {
-          this.skipTo(this.$refs.audio.currentTime - 10);
+          this.$refs.audio && this.skipTo(this.$refs.audio.currentTime - 10);
         },
 
         skipForward() {
-          this.skipTo(this.$refs.audio.currentTime + 10);
+          this.$refs.audio && this.skipTo(this.$refs.audio.currentTime + 10);
         },
 
         skipTo(position) {
@@ -191,13 +186,30 @@
         },
 
         play() {
-          this.$refs.audio.play();
+          this.$refs.audio && this.$refs.audio.play();
         },
 
         pause() {
-          this.$refs.audio.pause();
+          this.$refs.audio && this.$refs.audio.pause();
           sessionStorage.removeItem(storageKey);
         },
+
+        ended() {
+          this.stopPlayer();
+          htmx.ajax('POST', "{% url 'episodes:play_next_episode' %}", {
+            target: '#player',
+            select: '#player'
+          });
+        },
+
+        close() {
+          this.stopPlayer();
+          htmx.ajax('POST', "{% url 'episodes:close_player' %}", {
+            target: '#player',
+            select: '#player'
+          });
+        },
+
 
         togglePause() {
           if (this.isPaused) {
@@ -208,10 +220,13 @@
         },
 
         stopPlayer() {
-          this.$refs.audio.pause();
-          this.$refs.audio = null;
+          if (this.$refs.audio) {
+            this.$refs.audio.pause();
+            this.$refs.audio = null;
+          }
           if (timer) {
             clearInterval(timer);
+            timer = null;
           }
         },
 
