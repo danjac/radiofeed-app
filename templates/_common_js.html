@@ -1,7 +1,7 @@
 <script>
   (function() {
-    function lazyLoadImages() {
-      const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+    function lazyLoadImages(elt) {
+      const lazyImages = [].slice.call(elt.querySelectorAll("img.lazy"));
 
       if ("IntersectionObserver" in window) {
         const lazyImageObserver = new IntersectionObserver(function(entries, observer) {
@@ -35,9 +35,8 @@
       if (event.target.id === 'content') {
         window.scrollTo(0, event.target.offsetTop - 160);
       }
-      lazyLoadImages();
     });
-
-    document.addEventListener("DOMContentLoaded", lazyLoadImages);
+    document.addEventListener("htmx:load", event => lazyLoadImages(event.detail.elt));
+    document.addEventListener("DOMContentLoaded", lazyLoadImages(document));
   })();
 </script>
