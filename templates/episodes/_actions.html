@@ -63,4 +63,9 @@
     Remove from History
   </button>
   {% endif %}
+  <button class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:dark:bg-gray-800 hover:bg-gray-200 w-full"
+          @click="show=false">
+    {% icon 'x' css_class="btn-icon mr-2" %}
+    Close
+  </button>
 </div>
