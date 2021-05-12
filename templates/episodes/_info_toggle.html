@@ -12,7 +12,6 @@
        @keydown.escape.window="show=false"
        x-show.transition="show">
     <div class="space-y-2">
-      {% hx_link episode as episode_link %}
       <div>
         <div class="float-right">
           <button title="Close"
@@ -22,7 +21,7 @@
           </button>
         </div>
         <h3 class="font-semibold text-sm">
-          <a {{ episode_link }}
+          <a href="{{ episode.get_absolute_url }}"
              class="link text-sm">
             {{ episode.title }}
           </a>

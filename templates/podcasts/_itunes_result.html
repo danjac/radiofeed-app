@@ -11,7 +11,7 @@
   <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
       {% if podcast and podcast.pub_date %}
-      <a {% hx_link podcast %}
+      <a href="{{ podcast.get_absolute_url }}"
          title="{{ result.title }}"
          class="link">{{ result.title|truncatechars:120 }}</a>
       {% else %}

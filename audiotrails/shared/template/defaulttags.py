@@ -21,7 +21,7 @@ from ..html import stripentities as _stripentities
 register = template.Library()
 
 
-ActiveLink = collections.namedtuple("ActiveLink", "url hx match exact")
+ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
 
 
 json_escapes = {
@@ -30,25 +30,6 @@ json_escapes = {
     ord("&"): "\\u0026",
     ord("'"): "\\u0027",
 }
-
-
-def hx_link_attrs(url):
-    return htmlattrs({"href": url, "hx-get": url, "hx-push-url": "true"})
-
-
-@register.simple_tag
-def hx_link(to, *args, **kwargs):
-    """Example:
-    <a{% hx_link podcast %}>
-        ...
-    </a>
-    <a href="/link-to-podcast/" hx-get="/link-to-podcast">
-    ...
-    </a>
-    Use this when you need to replace a regular href with an hx-get,
-    but still retain the href with identical URL for a11y/UX.
-    """
-    return hx_link_attrs(resolve_url(to, *args, **kwargs))
 
 
 @register.filter
@@ -71,12 +52,11 @@ def format_duration(total_seconds):
 @register.simple_tag(takes_context=True)
 def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
-    hx = hx_link_attrs(url)
     if context["request"].path == url:
-        return ActiveLink(url, hx, True, True)
+        return ActiveLink(url, True, True)
     elif context["request"].path.startswith(url):
-        return ActiveLink(url, hx, True, False)
-    return ActiveLink(url, hx, False, False)
+        return ActiveLink(url, True, False)
+    return ActiveLink(url, False, False)
 
 
 @register.filter

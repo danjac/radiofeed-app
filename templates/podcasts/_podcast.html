@@ -1,17 +1,16 @@
-<section class="flex items-center space-x-2 p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 {{ css_class|default:'' }}"
-         {{ attrs|htmlattrs }}>
-
+{% with podcast_url=podcast.get_absolute_url podcast_title=podcast.title|stripentities %}
+<section class="flex items-center space-x-2 p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500">
   <div>
-    <a {% hx_link podcast %}>
+    <a href="{{ podcast_url }}">
       {% include "podcasts/_cover_image.html" with size=16 %}
     </a>
   </div>
 
   <div class="space-y-2">
     <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
-      <a {% hx_link podcast %}
-         title="{{ podcast.title|stripentities }}"
-         class="link">{{ podcast.title|stripentities|truncatechars:120 }}</a>
+      <a href="{{ podcast_url }}"
+         title="{{ podcast_title }}"
+         class="link">{{ podcast_title|truncatechars:120 }}</a>
     </h2>
     <div class="text-sm flex flex-wrap items-center space-x-2">
       {% include "podcasts/_info_toggle.html" %}
@@ -22,3 +21,4 @@
     </div>
   </div>
 </section>
+{% endwith %}

@@ -60,9 +60,10 @@
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2"
        id="layout"
+       hx-boost="true"
        hx-target="#content"
-       hx-indicator="#loader"
-       hx-swap="outerHTML">
+       hx-swap="outerHTML"
+       hx-indicator="#loader">
 
     {% include "_messages.html" %}
     {% include "_messages_js.html" %}

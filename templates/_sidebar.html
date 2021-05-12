@@ -1,8 +1,8 @@
 {% load cache %}
 <div class="flex justify-center sm:hidden mb-3">
 
-  <form hx-get="{% url 'podcasts:search_podcasts' %}"
-        hx-push-url="true"
+  <form action="{% url 'podcasts:search_podcasts' %}"
+        method="get"
         class="relative bg-transparent"
         @submit="$dispatch('close-sidebar');">
     <input type="search"
@@ -24,7 +24,7 @@
 <nav class="mt-1">
   <ul class="sidebar">
     <li class="py-2">
-      <a {% hx_link 'episodes:index' %}
+      <a href="{% url 'episodes:index' %}"
          accesskey="1"
          title="New Releases"
          @click="$dispatch('close-sidebar')"
@@ -34,7 +34,7 @@
       </a>
     </li>
     <li class="py-2">
-      <a {% hx_link 'podcasts:index' %}
+      <a href="{% url 'podcasts:index' %}"
          accesskey="2"
          title="Podcasts"
          @click="$dispatch('close-sidebar')"
@@ -44,7 +44,7 @@
       </a>
     </li>
     <li class="py-2">
-      <a {% hx_link 'podcasts:categories' %}
+      <a href="{% url 'podcasts:categories' %}"
          accesskey="3"
          title="Discover"
          @click="$dispatch('close-sidebar')"
@@ -55,7 +55,7 @@
     </li>
     {% if user.is_authenticated %}
     <li class="py-2">
-      <a {% hx_link 'episodes:queue' %}
+      <a href="{% url 'episodes:queue' %}"
          accesskey="4"
          title="Play Queue"
          @click="$dispatch('close-sidebar')"
@@ -67,8 +67,7 @@
 
 
     <li class="py-2">
-      {% active_link 'episodes:favorites' as link %}
-      <a {{ link.hx }}
+      <a href="{% url 'episodes:favorites' %}"
          accesskey="5"
          title="Favorites"
          @click="$dispatch('close-sidebar')"
@@ -79,7 +78,7 @@
     </li>
 
     <li class="py-2">
-      <a {% hx_link 'episodes:history' %}
+      <a href="{% url 'episodes:history' %}"
          accesskey="6"
          title="History"
          @click="$dispatch('close-sidebar')"
@@ -90,7 +89,7 @@
     </li>
 
     <li class="py-2">
-      <a {% hx_link 'user_preferences' %}
+      <a href="{% url 'user_preferences' %}"
          accesskey="7"
          title="Settings"
          @click="$dispatch('close-sidebar')"
@@ -102,7 +101,7 @@
     {% endif %}
 
     <li class="py-2">
-      <a {% hx_link 'about:credits' %}
+      <a href="{% url 'about:credits' %}"
          accesskey="8"
          title="About"
          @click="$dispatch('close-sidebar')"

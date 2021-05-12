@@ -23,13 +23,14 @@
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
        id="player-controls"
        :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}"
+       hx-boost="true"
        hx-swap="outerHTML"
        hx-target="#content">
     <div class="relative space-y-1">
 
       <div class="sm:hidden pr-1 text-sm w-84 truncate text-center">
         <a class="player--title"
-           {% hx_link episode %}
+           href="{{ episode.get_absolute_url }}"
            title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
       </div>
 
@@ -37,7 +38,7 @@
 
         <div>
           {% with cover_image=podcast.get_cover_image_thumbnail %}
-          <a {% hx_link podcast %}>
+          <a href="{{ podcast.get_absolute_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast.title }}"
                  alt="{{ podcast.title }}"
@@ -79,7 +80,7 @@
 
             <div class="hidden sm:block text-sm sm:w-64 w-96 lg:w-full truncate text-center">
               <a class="player--title"
-                 {% hx_link episode %}
+                 href="{{ episode.get_absolute_url }}"
                  title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
             </div>
 

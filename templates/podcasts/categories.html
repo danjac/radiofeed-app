@@ -18,7 +18,7 @@
   <div class="space-y-2">
     {% for category in categories %}
     <div>
-      <a {% hx_link category %}
+      <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
          class="link">{{ category.name }}</a>
     </div>
@@ -33,7 +33,7 @@
   {% with children=category.children.all %}
   <section class="py-3 space-y-2">
     <div>
-      <a {% hx_link category %}
+      <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
          class="link">{{ category.name }}</a>
     </div>
@@ -42,7 +42,7 @@
       {% for child in children %}
       <a class="link text-sm"
          title="{{ child.name }}"
-         {% hx_link child %}>{{ child.name }}</a>
+         href="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endfor %}
     </nav>
     {% endif %}

@@ -19,10 +19,10 @@
 <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3">
   <div class="flex items-center justify-center sm:justify-start text-sm">
     {% if featured %}
-    <a {% hx_link 'episodes:index' %}
+    <a href="{% url 'episodes:index' %}"
        class="link">My Podcasts</a>
     {% else %}
-    <a {% hx_link 'episodes:featured' %}
+    <a href="{% url 'episodes:featured' %}"
        class="link">Featured Podcasts</a>
     {% endif %}
   </div>

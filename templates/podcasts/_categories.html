@@ -7,7 +7,7 @@
   <div class="inline-block">
     <a class="btn btn-link mr-2 flex items-center{% if forloop.last %} mr-2{% endif %}"
        title="{{ category.name }}"
-       {% hx_link category %}>
+       href="{{ category.get_absolute_url }}">
       {% icon "tag" css_class="btn-icon mr-2" %}
       {{ category.name }}
     </a>

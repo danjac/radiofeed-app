@@ -9,7 +9,7 @@
 <nav class="text-sm flex justify-between mb-3 border-b dark:border-gray-500 sm:border-0 pb-3 sm:pb-0">
   {% if prev_episode %}
   <a class="link"
-     {% hx_link prev_episode %}
+     href="{{ prev_episode.get_absolute_url }}"
      title="{{ prev_episode.title|stripentities }}">
     Previous
   </a>
@@ -19,7 +19,7 @@
   {% endif %}
   {% if next_episode %}
   <a class="link"
-     {% hx_link next_episode %}
+     href="{{ next_episode.get_absolute_url }}"
      title="{{ next_episode.title|stripentities }}">
     Next
   </a>
@@ -36,7 +36,7 @@
 
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
-    <a {% hx_link podcast %}
+    <a href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title|stripentities }}"
        class="link text-sm">
       {{ podcast.title|stripentities }}
@@ -54,8 +54,8 @@
 
   <div class="flex items-center space-x-3">
     <div>
-      <a {% hx_link podcast %}>
-      {% include "podcasts/_cover_image.html" with size=24 %}
+      <a href="{{ podcast.get_absolute_url }}">
+        {% include "podcasts/_cover_image.html" with size=24 %}
       </a>
     </div>
     <div class="space-y-2">
