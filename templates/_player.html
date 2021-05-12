@@ -2,6 +2,7 @@
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
 <div id="player"
+     hx-preserve="true"
      x-data="Player({
        episode: {{ episode.id }},
        mediaSrc: '{{ episode.media_url }}',
