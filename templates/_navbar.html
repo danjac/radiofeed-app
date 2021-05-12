@@ -9,16 +9,16 @@
     <div class="flex items-center flex-shrink-0 mr-6">
       <button class="lg:hidden mr-3 focus:outline-none"
               title="Toggle Menu"
-              @click="sidebar = !sidebar">
+              @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
       <button class="hidden lg:hidden mr-3 focus:outline-none"
               title="Toggle Menu"
-              @click="sidebar = !sidebar">
+              @click="$dispatch('toggle-sidebar')">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
       <a href="{{ home_url }}"
-         @click="sidebar=false"
+         @click="$dispatch('close-sidebar')"
          title="{{ request.site.name }}"
          class="mr-4 hidden lg:inline-block">
         <img src="{% static 'img/wave.png' %}"
@@ -29,7 +29,7 @@
 
       <a class="font-bold"
          title="{{ request.site.name }}"
-         @click="sidebar=false"
+         @click="$dispatch('close-sidebar')"
          href="{{ home_url }}">{{ request.site.name }}</a>
     </div>
 
@@ -66,13 +66,13 @@
     </form>
     {% else %}
     <div class="text-sm md:text-base flex items-center">
-      <a href="{{ home_url|signup_url }}"
+      <a href="{{ home_url|login_url }}"
          hx-disable="true"
-         @click="sidebar=false"
+         @click="$dispatch('close-sidebar')"
          class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
       <a href="{{ home_url|signup_url }}"
          hx-disable="true"
-         @click="sidebar=false"
+         @click="$dispatch('close-sidebar')"
          class="inline-block text-white hover:text-blue-500">Signup</a>
     </div>
     {% endif %}

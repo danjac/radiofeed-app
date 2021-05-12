@@ -15,6 +15,7 @@ hx-disable="true"
 {% block form_buttons %}
 <a class="link text-sm mr-3"
    title="Recover Your Password"
+   hx-disable="true"
    href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
 <button class="flex items-center btn btn-default">
   {% icon "login" css_class="btn-icon mr-2" %}
