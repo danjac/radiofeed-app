@@ -4,15 +4,10 @@ class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 {% if form.error
 method="post"
 novalidate
 {% with action_url=action_url|default:request.get_full_path %}
-{% if hx_post %}
-{% block hx_attrs %}
-hx-post="{{ action_url }}"
-hx-push-url="true"
-{% endblock %}
-{% else %}
 action="{{ action_url }}"
+{% endwith %}
+{% if hx_disable %}
 hx-disable="true"
 {% endif %}
-{% endwith %}
 {{ attrs|htmlattrs }}
 {% endspaceless %}
