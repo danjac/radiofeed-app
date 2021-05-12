@@ -18,7 +18,11 @@
        x-init="dragDrop($el)">
     {% for item in queue_items %}
     {% with episode=item.episode %}
-    {% include "episodes/_queue_item.html" %}
+    <div data-draggable="true"
+         data-id={{ item.id }}>
+      {% include "episodes/_queue_item.html" %}
+    </div>
+
     {% endwith %}
     {% empty %}
     You do not have any items in your Play Queue.
