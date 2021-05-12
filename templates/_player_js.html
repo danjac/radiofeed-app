@@ -193,22 +193,16 @@
           sessionStorage.removeItem(storageKey);
         },
 
+        close(url) {
+          this.stopPlayer();
+          htmx.ajax('POST', url || "{% url 'episodes:close_player' %}", {
+            target: '#player',
+          });
+        },
+
         ended() {
-          this.stopPlayer();
-          htmx.ajax('POST', "{% url 'episodes:play_next_episode' %}", {
-            target: '#player',
-            select: '#player'
-          });
+          this.close("{% url 'episodes:play_next_episode' %}")
         },
-
-        close() {
-          this.stopPlayer();
-          htmx.ajax('POST', "{% url 'episodes:close_player' %}", {
-            target: '#player',
-            select: '#player'
-          });
-        },
-
 
         togglePause() {
           if (this.isPaused) {
