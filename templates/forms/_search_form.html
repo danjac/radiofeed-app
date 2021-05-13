@@ -1,7 +1,8 @@
-<form action="{{ search_url|default:request.path }}"
-      method="get"
+<form hx-get="{{ search_url|default:request.path }}"
+      hx-push-url="true"
+      hx-target="#content"
       class="relative bg-transparent {{ css_class|default:'' }}"
-      {% if title %}hx-page-title="{{ title }}"{% endif %}
+      {% endif %}
       {{ attrs|htmlattrs }}>
   <input type="search"
          name="{{ search_param|default:'q' }}"
@@ -14,8 +15,7 @@
   <div class="absolute inset-y-0 right-0 flex items-center pr-3">
     <div class="flex items-center">
       {% if search %}
-      <a hx-get="{{ clear_search_url|default:request.path }}"
-         href="#"
+      <a href="{{ clear_search_url|default:request.path }}"
          title="Clear Search"
          class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100 mr-2">
         {% icon "x" css_class="h-4 w-4" %}
