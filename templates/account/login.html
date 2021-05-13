@@ -9,6 +9,22 @@
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}</p>
 
-{% include "account/forms/_login.html" with hx_disable=True %}
+<form method="post"
+      action="{{ request.path }}"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      hx-disable="true"
+      novalidate>
+  {% csrf_token %}
+  {% include "forms/_fields.html" %}
+  <div class="flex items-center justify-end">
+    <a class="link text-sm mr-3"
+       title="Recover Your Password"
+       href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+    <button class="flex items-center btn btn-default">
+      {% icon "login" css_class="btn-icon mr-2" %}
+      Sign In
+    </button>
+  </div>
+</form>
 {% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
 {% endblock %}

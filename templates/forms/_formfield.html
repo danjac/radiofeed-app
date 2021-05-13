@@ -1,0 +1,8 @@
+{% load widget_tweaks %}
+<div class="mb-3">
+  {% if field|widget_type == "checkboxinput" %}
+  {% include "forms/_checkbox_field.html" %}
+  {% else %}
+  {% include "forms/_field.html" %}
+  {% endif %}
+</div>

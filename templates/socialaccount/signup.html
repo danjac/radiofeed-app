@@ -10,5 +10,19 @@
 <p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to
   use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
-{% include "account/forms/_signup.html" %}
+
+<form method="post"
+      action="{{ request.path }}"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      hx-disable="true"
+      novalidate>
+  {% csrf_token %}
+  {% include "forms/_fields.html" %}
+  <div class="flex items-center justify-end">
+    <button class="flex items-center btn btn-default">
+      {% icon "plus" css_class="btn-icon mr-2" %}
+      Sign Up
+    </button>
+  </div>
+</form>
 {% endblock %}

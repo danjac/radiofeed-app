@@ -1,9 +1,21 @@
 {% extends "account/settings_base.html" %}
 
-{% load i18n %}
+{% load %}
 
 {% block subtitle %} | Preferences{% endblock %}
 
 {% block settings_content %}
-{% include "forms/_form.html" with submit=_("Save Changes") %}
+<form method="post"
+      action="{{ request.path }}"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      novalidate>
+  {% csrf_token %}
+  {% include "forms/_fields.html" %}
+  <div class="flex items-center justify-end">
+    <button class="flex items-center btn btn-default">
+      {% icon "check" css_class="btn-icon mr-2" %}
+      Save Changes
+    </button>
+  </div>
+</form>
 {% endblock %}
