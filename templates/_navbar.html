@@ -33,8 +33,9 @@
          href="{{ home_url }}">{{ request.site.name }}</a>
     </div>
 
-    <form action="{% url 'podcasts:search_podcasts' %}"
-          method="get"
+    <form hx-get="{% url 'podcasts:search_podcasts' %}"
+          hx-push-url="true"
+          hx-target="#content"
           x-data="{}"
           @submit="$refs.input.blur()"
           class="relative bg-transparent hidden sm:block">
