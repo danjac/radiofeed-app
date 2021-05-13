@@ -2,6 +2,8 @@
      x-data="{show: false}">
   <button title="About this episode"
           class="focus:outline-none"
+          @mouseover="show=true"
+          @mouseleave="show=false"
           @click="show=!show">
     {% icon "info" css_class="w-6 h-6" %}
   </button>
