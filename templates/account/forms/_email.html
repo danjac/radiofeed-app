@@ -1,7 +1,9 @@
 {% extends "forms/_form.html" %}
 {% load i18n %}
 {% block form_buttons %}
-<button class="flex items-center btn btn-default">
+<button class="flex items-center btn btn-default"
+        name="action_add"
+        value="true">
   {% icon "plus" css_class="btn-icon mr-2" %}
   Add E-Mail
 </button>
