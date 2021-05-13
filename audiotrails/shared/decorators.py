@@ -13,11 +13,9 @@ def accepts_json(view):
                 request.json = json.loads(request.body)
                 return view(request, *args, **kwargs)
             except json.JSONDecodeError:
-                error_msg = "Invalid JSON payload"
+                return HttpResponseBadRequest("Invalid JSON payload")
 
-        else:
-            error_msg = "Content-Type not application/json"
-        return HttpResponseBadRequest(error_msg)
+        return HttpResponseBadRequest("Content-Type not application/json")
 
     return wrapper
 
