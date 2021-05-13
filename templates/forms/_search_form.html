@@ -2,7 +2,6 @@
       hx-push-url="true"
       hx-target="#content"
       class="relative bg-transparent {{ css_class|default:'' }}"
-      {% endif %}
       {{ attrs|htmlattrs }}>
   <input type="search"
          name="{{ search_param|default:'q' }}"
