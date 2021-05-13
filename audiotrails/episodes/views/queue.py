@@ -1,5 +1,4 @@
 import http
-import json
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -8,7 +7,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-from audiotrails.shared.decorators import ajax_login_required
+from audiotrails.shared.decorators import accepts_json, ajax_login_required
 
 from ..models import QueueItem
 from . import get_episode_or_404
@@ -58,6 +57,7 @@ def remove_from_queue(request, episode_id):
 
 
 @require_POST
+@accepts_json
 @ajax_login_required
 def move_queue_items(request):
 
@@ -66,7 +66,7 @@ def move_queue_items(request):
     for_update = []
 
     try:
-        for position, item_id in enumerate(json.loads(request.body)["items"], 1):
+        for position, item_id in enumerate(request.json["items"], 1):
             if item := items[int(item_id)]:
                 item.position = position
                 for_update.append(item)

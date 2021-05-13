@@ -1,11 +1,10 @@
 import http
-import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
-from audiotrails.shared.decorators import ajax_login_required
+from audiotrails.shared.decorators import accepts_json, ajax_login_required
 
 from ..models import QueueItem
 from . import get_episode_or_404
@@ -47,13 +46,12 @@ def play_next_episode(request):
 
 
 @require_POST
+@accepts_json
 @ajax_login_required
 def player_time_update(request):
     """Update current play time of episode"""
     try:
-        request.player.update_current_time(
-            float(json.loads(request.body)["currentTime"])
-        )
+        request.player.update_current_time(float(request.json["currentTime"]))
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     except (KeyError, ValueError):
         return HttpResponseBadRequest("missing or invalid data")
