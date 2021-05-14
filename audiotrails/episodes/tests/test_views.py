@@ -121,22 +121,12 @@ class ActionsTests(TestCase):
     def setUp(self):
         self.client.force_login(self.user)
 
-    def test_user_not_favorited(self):
+    def test_actions(self):
         resp = self.client.get(
             reverse("episodes:actions", args=[self.episode.id]),
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
-        self.assertFalse(resp.context_data["is_favorited"])
-
-    def test_user_favorited(self):
-        FavoriteFactory(episode=self.episode, user=self.user)
-        resp = self.client.get(
-            reverse("episodes:actions", args=[self.episode.id]),
-        )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["episode"], self.episode)
-        self.assertTrue(resp.context_data["is_favorited"])
 
 
 class StartPlayerTests(TestCase):

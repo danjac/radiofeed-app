@@ -13,9 +13,13 @@
   <div title="Date Published">
     {% include "_pub_date.html" with pub_date=episode.pub_date %}
   </div>
+  {% with duration=episode.get_duration_in_seconds %}
+  {% if duration %}
   <div title="Duration">
     {{ duration|format_duration }}
   </div>
+  {% endif %}
+  {% endwith %%}
 </div>
 
 <div class="flex items-center space-x-3 mb-3">
@@ -32,6 +36,10 @@
     {% include "episodes/_download.html" %}
   </div>
 </div>
+
+{% if episode.listened %}
+{% include "episodes/_listened.html" with css_class="mb-3" %}
+{% endif %}
 
 {% if episode.explicit or podcast.explicit %}
 <div class="text-sm font-semibold mb-3">
