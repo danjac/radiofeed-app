@@ -6,7 +6,7 @@
             });
             setTimeout(() => { messages.shift() }, 3000);
             ">
-  <div class="fixed z-50 top-20 w-full space-y-3"
+  <div class="fixed z-50 bottom-20 w-full space-y-3"
        x-show="messages.length > 0">
     <template x-for="(message, index) in messages"
               :key="index">
