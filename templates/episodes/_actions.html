@@ -2,6 +2,7 @@
 
 {% block modal_header %}
 <a href="{{ episode.get_absolute_url }}"
+   @click="$dispatch('close-modal')"
    class="link text-sm">
   {{ episode.title }}
 </a>
@@ -20,7 +21,8 @@
 <div class="flex items-center space-x-3 mb-3">
   {% with podcast=episode.podcast %}
   <div>
-    <a href="{{ podcast.get_absolute_url }}">
+    <a href="{{ podcast.get_absolute_url }}"
+       @click="$dispatch('close-modal')">
       {% include "podcasts/_cover_image.html" with size=20 %}
     </a>
   </div>

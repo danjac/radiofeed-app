@@ -2,6 +2,7 @@
 
 {% block modal_header %}
 <a href="{{ podcast.get_absolute_url }}"
+   @click="$dispatch('close-modal')"
    class="link text-sm">
   {{ podcast.title }}
 </a>
@@ -20,6 +21,7 @@
     {% if num_episodes %}
     <div>
       <a href="{{ podcast.get_absolute_url }}"
+         @click="$dispatch('close-modal')"
          class="link text-sm">
         {{ num_episodes }} episode{{ num_episodes|pluralize }}
       </a>
