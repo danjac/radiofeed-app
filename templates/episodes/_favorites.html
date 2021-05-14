@@ -5,7 +5,7 @@
   {% for favorite in page_obj %}
   {% with episode=favorite.episode %}
   {% url 'episodes:favorite_preview' episode.id as preview_url %}
-  {% include "episodes/_favorite.html" %}
+  {% include "episodes/_episode.html" %}
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">

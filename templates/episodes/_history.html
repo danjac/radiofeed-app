@@ -5,7 +5,7 @@
   {% for log in page_obj %}
   {% with episode=log.episode %}
   <div id="audio-log-{{ episode.id }}">
-    {% include "episodes/_audio_log.html" %}
+    {% include "episodes/_episode.html" %}
   </div>
   {% endwith %}
   {% empty %}
