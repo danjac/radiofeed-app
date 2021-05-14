@@ -20,7 +20,18 @@
               </a>
             </h2>
             <div class="space-x-2 flex items-center">
-              {% include "episodes/_action_toggle.html" %}
+
+              <div class="flex items-center">
+                <button title="Actions for {{ episode_title }}"
+                        class="focus:outline-none"
+                        hx-get="{% url 'episodes:actions' episode.id %}"
+                        hx-target="#modal"
+                        hx-swap="outerHTML"
+                        hx-trigger="click delay:200ms">
+                  {% icon "ellipsis" css_class="w-6 h-6" %}
+                </button>
+              </div>
+
               <div title="Date Published"
                    class="text-xs font-semibold text-gray-600 dark:text-gray-300">
                 {% include "_pub_date.html" with pub_date=episode.pub_date %}
