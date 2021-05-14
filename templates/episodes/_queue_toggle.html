@@ -1,6 +1,7 @@
 <div id="queue-toggle"
      hx-target="this"
-     hx-swap="outerHTML">
+     hx-swap="outerHTML"
+     hx-trigger="click delay:200ms">
   {% if is_queued %}
   <button class="btn btn-secondary flex items-center"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}">

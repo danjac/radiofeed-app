@@ -11,6 +11,8 @@
           hx-swap="outerHTML"
           {% if is_modal %}
           @click="$dispatch('close-modal')"
+          {% else %}
+          hx-trigger="click delay:200ms"
           {% endif %}>
     {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
     {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
