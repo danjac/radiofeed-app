@@ -6,20 +6,6 @@
      id="actions-{{ episode.id }}"
      class="absolute top-0 left-0 mt-3 w-56 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white">
 
-  <button @click="show=false"
-          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:bg-gray-200 hover:dark:bg-gray-800 w-full"
-          {% if is_playing %}
-          hx-post="{% url 'episodes:close_player' %}"
-          {% else %}
-          hx-post="{% url 'episodes:start_player' episode.id %}"
-          {% endif %}
-          hx-target="#player"
-          hx-select="#player"
-          hx-swap="outerHTML">
-    {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
-    {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
-  </button>
-
   <button @click="
             show=false;
             {% if is_favorited %}
@@ -53,6 +39,20 @@
           {% endif %}>
     {% icon 'collection' css_class="btn-icon mr-2" %}
     {% if is_queued %}Remove from Queue{% else %}Add to Queue{% endif %}
+  </button>
+
+  <button @click="show=false"
+          class="flex items-center px-4 py-2 border-b dark:border-gray-500 hover:bg-gray-200 hover:dark:bg-gray-800 w-full"
+          {% if is_playing %}
+          hx-post="{% url 'episodes:close_player' %}"
+          {% else %}
+          hx-post="{% url 'episodes:start_player' episode.id %}"
+          {% endif %}
+          hx-target="#player"
+          hx-select="#player"
+          hx-swap="outerHTML">
+    {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
+    {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
   </button>
 
   {% if episode.listened and not is_playing %}
