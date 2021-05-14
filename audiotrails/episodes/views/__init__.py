@@ -5,7 +5,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
 from ..models import AudioLog, Episode
@@ -83,7 +82,6 @@ def search_episodes(request):
     )
 
 
-@ajax_login_required
 def actions(
     request,
     episode_id,
@@ -95,12 +93,7 @@ def actions(
     return TemplateResponse(
         request,
         "episodes/_actions.html",
-        {
-            "episode": episode,
-            "is_favorited": episode.is_favorited(request.user),
-            "is_queued": episode.is_queued(request.user),
-            "is_playing": request.player.is_playing(episode),
-        },
+        get_episode_detail_context(request, episode),
     )
 
 
@@ -112,10 +105,9 @@ def episode_detail(request, episode_id, slug=None):
     return TemplateResponse(
         request,
         "episodes/detail.html",
-        {
-            "episode": episode,
-            "og_data": episode.get_opengraph_data(request),
-        },
+        get_episode_detail_context(
+            request, episode, {"og_data": episode.get_opengraph_data(request)}
+        ),
     )
 
 
@@ -132,6 +124,16 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
+
+
+def get_episode_detail_context(request, episode, extra_context=None):
+    return {
+        "episode": episode,
+        "is_favorited": episode.is_favorited(request.user),
+        "is_queued": episode.is_queued(request.user),
+        "is_playing": request.player.is_playing(episode),
+        **(extra_context or {}),
+    }
 
 
 def render_episode_list_response(

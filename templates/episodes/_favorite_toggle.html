@@ -1,0 +1,21 @@
+<div id="favorite-toggle"
+     hx-target="this"
+     hx-swap="outerHTML">
+  {% if is_favorited %}
+  <button class="btn btn-secondary flex items-center"
+          hx-post="{% url 'episodes:remove_favorite' episode.id %}">
+    {% icon 'trash' css_class="btn-icon mr-2" %}
+    Favorites
+  </button>
+  {% else %}
+  <button class="btn btn-default flex items-center"
+          hx-post="{% url 'episodes:add_favorite' episode.id %}">
+    {% icon 'star' css_class="btn-icon mr-2" %}
+    Favorites
+  </button>
+  {% endif %}
+</div>
+
+{% if action %}
+{% include "_messages.html" with hx_oob=True %}
+{% endif %}

@@ -1,8 +1,7 @@
-import http
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -40,7 +39,9 @@ def add_favorite(request, episode_id):
     except IntegrityError:
         pass
 
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    messages.success(request, "Episode has been added to your Favorites")
+
+    return render_favorite_toggle(request, episode, True)
 
 
 @require_POST
@@ -50,6 +51,14 @@ def remove_favorite(request, episode_id):
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
-    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-    response["HX-Trigger"] = "reload-favorites"
-    return response
+    messages.info(request, "Episode has removed from your Favorites")
+
+    return render_favorite_toggle(request, episode, False)
+
+
+def render_favorite_toggle(request, episode, is_favorited):
+    return TemplateResponse(
+        request,
+        "episodes/_favorite_toggle.html",
+        {"episode": episode, "is_favorited": is_favorited, "action": True},
+    )

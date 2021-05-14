@@ -2,6 +2,8 @@ type
 cursor-not-allowed
 opacity-50
 animate-pulse
+top-0
+bottom-20
 h-8
 w-8
 h-10

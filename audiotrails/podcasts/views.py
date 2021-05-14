@@ -89,6 +89,17 @@ def search_itunes(request):
     )
 
 
+def actions(request, podcast_id):
+
+    podcast = get_podcast_or_404(request, podcast_id)
+
+    return TemplateResponse(
+        request,
+        "podcasts/_actions.html",
+        get_podcast_detail_context(request, podcast),
+    )
+
+
 def recommendations(request, podcast_id, slug=None):
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -134,7 +145,6 @@ def episodes(request, podcast_id, slug=None):
                 "newest_first": newest_first,
                 "oldest_first": oldest_first,
                 "show_podcast_detail": show_podcast_detail,
-                "cover_image": podcast.get_cover_image_thumbnail(),
             },
         ),
         cached=True,

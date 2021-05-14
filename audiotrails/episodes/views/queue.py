@@ -1,5 +1,6 @@
 import http
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max
@@ -43,7 +44,8 @@ def add_to_queue(request, episode_id):
     except IntegrityError:
         pass
 
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    messages.success(request, "Episode has added to your Play Queue")
+    return render_queue_toggle(request, episode, True)
 
 
 @require_POST
@@ -51,9 +53,8 @@ def add_to_queue(request, episode_id):
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
-    response["HX-Trigger"] = "reload-queue"
-    return response
+    messages.info(request, "Episode has been removed from your Play Queue")
+    return render_queue_toggle(request, episode, False)
 
 
 @require_POST
@@ -75,3 +76,11 @@ def move_queue_items(request):
 
     qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+
+
+def render_queue_toggle(request, episode, is_queued):
+    return TemplateResponse(
+        request,
+        "episodes/_queue_toggle.html",
+        {"episode": episode, "is_queued": is_queued, "action": True},
+    )

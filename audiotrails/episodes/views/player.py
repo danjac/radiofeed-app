@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -15,14 +16,17 @@ from . import get_episode_or_404
 def start_player(request, episode_id):
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
-    return render_player(request, episode)
+    return render_player(request, next_episode=episode)
 
 
 @require_POST
 @ajax_login_required
 def close_player(request):
-    request.player.stop_episode()
-    return render_player(request)
+    if log := request.player.stop_episode():
+        current_episode = log.episode
+    else:
+        current_episode = None
+    return render_player(request, current_episode=current_episode)
 
 
 @require_POST
@@ -31,7 +35,10 @@ def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    request.player.stop_episode(mark_completed=True)
+    if log := request.player.stop_episode(mark_completed=True):
+        current_episode = log.episode
+    else:
+        current_episode = None
 
     if next_item := (
         QueueItem.objects.filter(user=request.user)
@@ -40,9 +47,16 @@ def play_next_episode(request):
         .order_by("position")
         .first()
     ):
-        request.player.start_episode(next_item.episode)
+        next_episode = next_item.episode
+        request.player.start_episode(next_episode)
+    else:
+        next_episode = None
 
-    return render_player(request, next_item.episode if next_item else None)
+    return render_player(
+        request,
+        next_episode=next_episode,
+        current_episode=current_episode,
+    )
 
 
 @require_POST
@@ -57,10 +71,22 @@ def player_time_update(request):
         return HttpResponseBadRequest("missing or invalid data")
 
 
-def render_player(request, episode=None):
+def render_player(request, current_episode=None, next_episode=None):
     response = TemplateResponse(
-        request, "_player.html", {"run_immediately": episode is not None}
+        request, "_player.html", {"run_immediately": next_episode is not None}
     )
-    if episode:
-        response["HX-Trigger"] = "reload-queue"
+
+    events = []
+
+    if next_episode:
+        events += [f"reload-episode-{next_episode.id}", "reload-queue"]
+
+    if current_episode:
+        events += [
+            f"reload-episode-{current_episode.id}",
+        ]
+
+    if events:
+        response["HX-Trigger"] = json.dumps({event: "" for event in events})
+
     return response

@@ -69,6 +69,7 @@ class ParseRssTests(TestCase):
         self.assertEqual(podcast.num_retries, 1)
 
     @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
+    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
     def test_parse(self, *mocks):
         [
             CategoryFactory(name=name)

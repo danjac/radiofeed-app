@@ -75,7 +75,6 @@
     </aside>
     {% endblock %}
 
-
     {% block main %}
     <main class="w-full p-2 lg:block"
           :class="{'hidden lg:block': sidebar}">
@@ -114,6 +113,8 @@
   {% include "_dragdrop_js.html" %}
   {% include "_player_js.html" %}
   {% endif %}
+
+  <div id="modal"></div>
 
   {% endblock page_footer %}
   {% block footer_tags %}

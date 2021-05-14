@@ -6,10 +6,11 @@
     {% icon "info" css_class="w-6 h-6" %}
   </button>
 
-  <div class="absolute top-0 w-64 sm:w-96 left-0 mt-3 w-96 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white p-2"
+  <div class="absolute top-0 left-0 mt-3 w-64 sm:w-96 bg-white dark:bg-black dark:text-white rounded-md overflow-hidden shadow-xl z-20 border dark:border-gray-500 text-sm text-gray-800 dark:text-white p-2"
        x-cloak
        @click.away="show=false"
        @keydown.escape.window="show=false"
+       x-transition:enter-start="transition ease-in duration-3000"
        x-show.transition="show">
     <div class="space-y-2">
       <div>

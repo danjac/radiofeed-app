@@ -32,7 +32,10 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<section class="sm:p-2 sm:border dark:border-gray-500 space-y-2">
+<section class="sm:p-2 sm:border dark:border-gray-500 space-y-2"
+         hx-get="{{ episode.get_absolute_url }}"
+         hx-target="#content"
+         hx-trigger="reload-episode-{{ episode.id }} from:body">
 
   <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
   <h2>
@@ -59,20 +62,51 @@
       </a>
     </div>
     <div class="space-y-2">
+      {% if user.is_authenticated %}
+      <button class="btn flex items-center {{ is_playing|yesno:'btn-secondary,btn-primary' }}"
+              {% if is_playing %}
+              hx-post="{% url 'episodes:close_player' %}"
+              {% else %}
+              hx-post="{% url 'episodes:start_player' episode.id %}"
+              {% endif %}
+              hx-target="#player"
+              hx-select="#player"
+              hx-swap="outerHTML">
+        {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
+        {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
+      </button>
+      {% else %}
+      <a href="{{ episode.get_absolute_url|login_url }}"
+         hx-disable="true"
+         title="Login or sign up to play this episode"
+         class="btn btn-primary flex items-center">
+        {% icon 'play' css_class="btn-icon mr-2" %}
+        Play Episode
+      </a>
+      {% endif %}
       {% include "episodes/_download.html" %}
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
-      {% include "episodes/_action_toggle.html" %}
     </div>
+  </div>
+
+  <div class="space-x-3 flex items-center mb-3">
+    {% include "episodes/_queue_toggle.html" %}
+    {% include "episodes/_favorite_toggle.html" %}
+    {% if episode.listened and not is_playing %}
+    {% include "episodes/_remove_audio_log.html" %}
+    {% endif %}
   </div>
 
   {% if episode.listened %}
   {% include "episodes/_listened.html" %}
   {% endif %}
+
   {% if episode.explicit or podcast.explicit %}
   <div class="text-sm font-semibold">
     This episode may contain explicit content.
   </div>
   {% endif %}
+
 
   <blockquote class="markdown text-sm max-w-sm sm:max-w-full">
     {{ episode.description|clean_html }}
