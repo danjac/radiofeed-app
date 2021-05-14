@@ -67,7 +67,6 @@
        hx-indicator="#loader">
 
     {% include "_messages.html" %}
-    {% include "_messages_js.html" %}
 
     {% block sidebar %}
     <aside class="w-full hidden lg-block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
@@ -100,6 +99,8 @@
 
   {% endblock layout %}
   {% block page_footer %}
+
+  {% include "_messages_js.html" %}
 
   {% block player %}
   {% if user.is_authenticated %}
