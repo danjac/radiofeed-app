@@ -62,30 +62,7 @@
       </a>
     </div>
     <div class="space-y-2">
-
-      {% if user.is_authenticated %}
-      <button class="btn flex items-center {{ is_playing|yesno:'btn-secondary,btn-primary' }}"
-              {% if is_playing %}
-              hx-post="{% url 'episodes:close_player' %}"
-              {% else %}
-              hx-post="{% url 'episodes:start_player' episode.id %}"
-              {% endif %}
-              hx-target="#player"
-              hx-select="#player"
-              hx-swap="outerHTML">
-        {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
-        {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
-      </button>
-      {% else %}
-      <a href="{{ episode.get_absolute_url|login_url }}"
-         hx-disable="true"
-         title="Login or sign up to play this episode"
-         class="btn btn-primary flex items-center">
-        {% icon 'play' css_class="btn-icon mr-2" %}
-        Play Episode
-      </a>
-      {% endif %}
-
+      {% include "episodes/_player_toggle.html" %}
       {% include "episodes/_download.html" %}
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
     </div>
