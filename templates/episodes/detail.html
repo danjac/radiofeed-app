@@ -62,6 +62,7 @@
       </a>
     </div>
     <div class="space-y-2">
+
       {% if user.is_authenticated %}
       <button class="btn flex items-center {{ is_playing|yesno:'btn-secondary,btn-primary' }}"
               {% if is_playing %}
@@ -84,11 +85,13 @@
         Play Episode
       </a>
       {% endif %}
+
       {% include "episodes/_download.html" %}
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
     </div>
   </div>
 
+  {% if user.is_authenticated %}
   <div class="space-x-3 flex items-center mb-3">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
@@ -96,9 +99,9 @@
     {% include "episodes/_remove_audio_log.html" %}
     {% endif %}
   </div>
-
   {% if episode.listened %}
   {% include "episodes/_listened.html" %}
+  {% endif %}
   {% endif %}
 
   {% if episode.explicit or podcast.explicit %}
