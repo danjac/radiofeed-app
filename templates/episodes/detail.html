@@ -32,7 +32,7 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<section class="sm:p-2 sm:border dark:border-gray-500 space-y-2"
+<section class="sm:p-2 sm:border dark:border-gray-500 space-y-3"
          hx-get="{{ episode.get_absolute_url }}"
          hx-target="#content"
          hx-trigger="reload-episode-{{ episode.id }} from:body">
@@ -69,7 +69,7 @@
   </div>
 
   {% if user.is_authenticated %}
-  <div class="space-x-3 flex items-center mb-3">
+  <div class="space-x-3 flex items-center">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
     {% if episode.listened and not is_playing %}

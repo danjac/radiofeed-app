@@ -33,15 +33,9 @@
               </div>
 
               <div title="Date Published"
-                   class="text-xs font-semibold text-gray-600 dark:text-gray-300">
+                   class="text-sm font-semibold text-gray-600 dark:text-gray-300">
                 {% include "_pub_date.html" with pub_date=episode.pub_date %}
               </div>
-              {% with duration=episode.get_duration_in_seconds %}
-              <div title="Duration"
-                   class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                {{ duration|format_duration }}
-              </div>
-              {% endwith %}
             </div>
           </div>
         </div>
