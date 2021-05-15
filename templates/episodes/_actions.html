@@ -9,62 +9,40 @@
 {% endblock %}
 
 {% block modal_content %}
-<div @reload-episode-{{ episode.id }}.window="$dispatch('close-modal')">
-  <div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
-    <div title="Date Published">
-      {% include "_pub_date.html" with pub_date=episode.pub_date %}
-    </div>
-    {% with duration=episode.get_duration_in_seconds %}
-    {% if duration %}
-    <div title="Duration">
-      {{ duration|format_duration }}
-    </div>
-    {% endif %}
-    {% endwith %%}
+<div class="flex items-center space-x-3 mb-3">
+  {% with podcast=episode.podcast %}
+  <div>
+    <a href="{{ podcast.get_absolute_url }}"
+       @click="$dispatch('close-modal')">
+      {% include "podcasts/_cover_image.html" with size=20 %}
+    </a>
   </div>
-
-  <div class="flex items-center space-x-3 mb-3">
-    {% with podcast=episode.podcast %}
-    <div>
-      <a href="{{ podcast.get_absolute_url }}"
-         @click="$dispatch('close-modal')">
-        {% include "podcasts/_cover_image.html" with size=20 %}
-      </a>
+  {% endwith %}
+  <div class="space-y-3">
+    <div class="text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-2 flex items-center">
+      {% include "_pub_date.html" with pub_date=episode.pub_date %}
+      {% with duration=episode.get_duration_in_seconds %}
+      {% if duration %}
+      <div title="Duration"
+           class="text-sm font-semibold text-gray-600 dark:text-gray-300">
+        {{ duration|format_duration }}
+      </div>
+      {% endif %}
     </div>
     {% endwith %}
-    <div class="space-y-3">
-      {% include "episodes/_player_toggle.html" %}
-      {% include "episodes/_download.html" %}
-    </div>
+
+    {% include "episodes/_download.html" %}
   </div>
+</div>
 
-  {% if user.is_authenticated %}
-  <div class="space-x-3 flex items-center mb-3">
-    {% include "episodes/_queue_toggle.html" %}
-    {% include "episodes/_favorite_toggle.html" %}
-  </div>
+{% if episode.explicit or podcast.explicit %}
+<div class="text-sm font-semibold mb-3">
+  This episode may contain explicit content.
+</div>
+{% endif %}
 
-  {% if episode.listened %}
-  <div class="flex items-center space-x-3 border-t pt-3 dark:border-gray-500 mb-3">
-    {% include "episodes/_listened.html" %}
-
-    {% if not is_playing %}
-    {% include "episodes/_remove_audio_log.html" %}
-    {% endif %}
-  </div>
-  {% endif %}
-  {% endif %}
-
-
-  {% if episode.explicit or podcast.explicit %}
-  <div class="text-sm font-semibold mb-3">
-    This episode may contain explicit content.
-  </div>
-  {% endif %}
-
-  <div class="markdown text-muted text-sm mb-3">
-    {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
-  </div>
+<div class="markdown text-muted text-sm mb-3">
+  {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
 </div>
 
 {% endblock modal_content %}

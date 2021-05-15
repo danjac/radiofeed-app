@@ -1,6 +1,4 @@
-  <div id="remove-audio-log"
-       hx-target="this"
-       hx-swap="outerHTML">
+  <div id="remove-audio-log">
     <button class="btn btn-secondary flex items-center text-xs"
             title="Remove this episode from your History"
             hx-post="{% url 'episodes:remove_audio_log' episode.id %}"

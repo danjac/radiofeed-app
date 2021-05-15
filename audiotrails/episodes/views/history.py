@@ -1,10 +1,9 @@
 import http
-import json
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.template.response import TemplateResponse
+from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -49,9 +48,4 @@ def remove_audio_log(request, episode_id):
 
     messages.info(request, "Episode has been removed from your History")
 
-    response = TemplateResponse(request, "_messages.html", {"hx_oob": True})
-
-    response["HX-Trigger"] = json.dumps(
-        {f"reload-episode-{episode.id}": "", "reload-history": ""}
-    )
-    return response
+    return redirect(episode)

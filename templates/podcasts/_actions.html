@@ -9,12 +9,6 @@
 {% endblock %}
 
 {% block modal_content %}
-<div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
-  <div title="Latest Episode Published">
-    {% include "_pub_date.html" with pub_date=podcast.pub_date %}
-  </div>
-</div>
-
 <div class="flex items-center space-x-3 mb-3">
   <div>
     <a href="{{ podcast.get_absolute_url }}">
@@ -22,7 +16,10 @@
     </a>
   </div>
   <div class="space-y-2">
-    {% include "podcasts/_follow_toggle.html" %}
+    <div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3"
+         title="Date Last Published">
+      {% include "_pub_date.html" with pub_date=podcast.pub_date %}
+    </div>
     {% with num_episodes=podcast.get_cached_episode_count %}
     {% if num_episodes %}
     <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
@@ -30,8 +27,6 @@
     </div>
     {% endif %}
     {% endwith %}
-
-
   </div>
 
 </div>
