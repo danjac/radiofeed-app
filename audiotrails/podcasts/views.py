@@ -89,16 +89,15 @@ def search_itunes(request):
     )
 
 
-def actions(request, podcast_id):
+def preview(request, podcast_id):
 
     podcast = get_podcast_or_404(request, podcast_id)
 
     return TemplateResponse(
         request,
-        "podcasts/_actions.html",
+        "podcasts/_preview.html",
         {
             "podcast": podcast,
-            "is_following": podcast.is_following(request.user),
         },
     )
 

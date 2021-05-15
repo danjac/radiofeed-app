@@ -112,6 +112,18 @@ class EpisodeDetailTests(TestCase):
         self.assertEqual(resp.context_data["episode"], self.episode)
 
 
+class PreviewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.episode = EpisodeFactory()
+
+    def test_preview(self):
+        resp = self.client.get(
+            reverse("episodes:preview", args=[self.episode.id]),
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+
 class ActionsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -334,7 +346,7 @@ class AddFavoriteTests(TransactionTestCase):
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertTrue(
             Favorite.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -344,7 +356,7 @@ class AddFavoriteTests(TransactionTestCase):
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertTrue(
             Favorite.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -362,7 +374,7 @@ class RemoveFavoriteTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_favorite", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             Favorite.objects.filter(user=user, episode=self.episode).exists()
         )
@@ -383,7 +395,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertRedirects(resp, self.episode.get_absolute_url())
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
@@ -411,7 +423,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertRedirects(resp, self.episode.get_absolute_url())
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
@@ -446,7 +458,7 @@ class AddToQueueTests(TransactionTestCase):
                     args=[episode.id],
                 ),
             )
-            self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+            self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         items = (
             QueueItem.objects.filter(user=self.user)
@@ -471,7 +483,7 @@ class AddToQueueTests(TransactionTestCase):
                 args=[self.episode.id],
             ),
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
 
 class RemoveFromQueueTests(TestCase):
@@ -486,7 +498,7 @@ class RemoveFromQueueTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertEqual(QueueItem.objects.filter(user=user).count(), 0)
 
 

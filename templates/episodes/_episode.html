@@ -21,15 +21,16 @@
             </h2>
             <div class="space-x-2 flex items-center">
 
-              <div class="flex items-center">
-                <button title="Actions for {{ episode_title }}"
+              <div class="flex items-center space-x-2">
+                <button title="Preview for {{ episode_title }}"
                         class="focus:outline-none"
-                        hx-get="{% url 'episodes:actions' episode.id %}"
+                        hx-get="{% url 'episodes:preview' episode.id %}"
                         hx-target="#modal"
                         hx-swap="outerHTML"
                         hx-trigger="click delay:200ms">
-                  {% icon "ellipsis" css_class="w-6 h-6" %}
+                  {% icon "info" css_class="w-6 h-6" %}
                 </button>
+                {% include "episodes/_actions_toggle.html" %}
               </div>
 
               <div title="Date Published"

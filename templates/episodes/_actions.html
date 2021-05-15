@@ -1,54 +1,91 @@
-{% extends "modal_base.html" %}
+<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 border shadow-xl rounded-lg z-20"
+     :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
+     x-data="{show: true, position: 'dropdown'}"
+     x-show="show"
+     @click.away="show=false"
+     @keydown.escape.window="show=false"
+     x-init="() => {
+        const rect = $el.getBoundingClientRect();
+        const vh = document.documentElement.clientHeight;
+        position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
+    }">
+  <template x-if="show">
+    <div class="text-sm">
 
-{% block modal_header %}
-<a href="{{ episode.get_absolute_url }}"
-   @click="$dispatch('close-modal')"
-   class="link text-sm">
-  {{ episode.title }}
-</a>
-{% endblock %}
-
-{% block modal_content %}
-<div class="flex items-center space-x-3 mb-3">
-  {% with podcast=episode.podcast %}
-  <div>
-    <a href="{{ podcast.get_absolute_url }}"
-       @click="$dispatch('close-modal')">
-      {% include "podcasts/_cover_image.html" with size=20 %}
-    </a>
-  </div>
-  {% endwith %}
-  <div class="space-y-3">
-    <div class="text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-2 flex items-center">
-      {% include "_pub_date.html" with pub_date=episode.pub_date %}
-      {% with duration=episode.get_duration_in_seconds %}
-      {% if duration %}
-      <div title="Duration"
-           class="text-sm font-semibold text-gray-600 dark:text-gray-300">
-        {{ duration|format_duration }}
-      </div>
+      {% if is_playing %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:close_player' %}"
+              hx-target="#player"
+              hx-swap="outerHTML"
+              @click="show=false">
+        {% icon "stop" css_class="h-4 w-4 mr-2" %}
+        Close Player
+      </button>
+      {% else %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:start_player' episode.id %}"
+              hx-target="#player"
+              hx-swap="outerHTML"
+              @click="show=false">
+        {% icon "play" css_class="h-4 w-4 mr-2" %}
+        Play Episode
+      </button>
       {% endif %}
+
+      {% if is_queued %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
+              @reload-queue.window="show=false">
+        {% icon "trash" css_class="h-4 w-4 mr-2" %}
+        Remove from Play Queue
+      </button>
+      {% else %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+              @click="show=false">
+        {% icon "collection" css_class="h-4 w-4 mr-2" %}
+        Add to Play Queue
+      </button>
+      {% endif %}
+
+      {% if is_favorited %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:remove_favorite' episode.id %}"
+              @reload-favorites.window="show=false">
+        {% icon "trash" css_class="h-4 w-4 mr-2" %}
+        Remove from Favorites
+      </button>
+      {% else %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:add_favorite' episode.id %}"
+              @click="show=false">
+        {% icon "star" css_class="h-4 w-4 mr-2" %}
+        Add to Favorites
+      </button>
+      {% endif %}
+
+      {% if episode.listened and not is_playing %}
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
+              @reload-history.window="show=false">
+        {% icon "trash" css_class="h-4 w-4 mr-2" %}
+        Remove from History
+      </button>
+      {% endif %}
+
+      <a class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+         title="Download episode"
+         href="{{ episode.media_url }}">
+        <div class="mr-2">
+          {% icon "download" css_class="h-4 w-4" %}
+        </div>
+        Download
+      </a>
+      <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+              @click="show=false">
+        {% icon "x" css_class="h-4 w-4 mr-2" %}
+        Close
+      </button>
     </div>
-    {% endwith %}
-
-    {% include "episodes/_download.html" %}
-  </div>
+  </template>
 </div>
-
-{% if episode.explicit or podcast.explicit %}
-<div class="text-sm font-semibold mb-3">
-  This episode may contain explicit content.
-</div>
-{% endif %}
-
-{% if episode.listened %}
-<div class="flex items-center mb-3">
-  {% include "episodes/_listened.html" %}
-</div>
-{% endif %}
-
-<div class="markdown text-muted text-sm mb-3">
-  {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
-</div>
-
-{% endblock modal_content %}

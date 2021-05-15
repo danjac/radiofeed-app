@@ -5,6 +5,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from audiotrails.podcasts.models import Podcast
+from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
 from ..models import AudioLog, Episode
@@ -82,10 +83,24 @@ def search_episodes(request):
     )
 
 
-def actions(
-    request,
-    episode_id,
-):
+def preview(request, episode_id):
+
+    episode = get_episode_or_404(
+        request, episode_id, with_podcast=True, with_current_time=True
+    )
+
+    return TemplateResponse(
+        request,
+        "episodes/_preview.html",
+        {
+            "episode": episode,
+        },
+    )
+
+
+@ajax_login_required
+def actions(request, episode_id):
+
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -95,7 +110,9 @@ def actions(
         "episodes/_actions.html",
         {
             "episode": episode,
-            "is_modal": True,
+            "is_favorited": episode.is_favorited(request.user),
+            "is_queued": episode.is_queued(request.user),
+            "is_playing": request.player.is_playing(episode),
         },
     )
 
@@ -110,9 +127,6 @@ def episode_detail(request, episode_id, slug=None):
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_favorited": episode.is_favorited(request.user),
-            "is_queued": episode.is_queued(request.user),
-            "is_playing": request.player.is_playing(episode),
             "og_data": episode.get_opengraph_data(request),
         },
     )

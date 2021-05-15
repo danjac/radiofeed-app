@@ -15,13 +15,13 @@
     <div class="text-sm flex flex-wrap items-center space-x-2">
 
       <div class="flex items-center">
-        <button title="Actions for {{ podcast_title }}"
+        <button title="Preview for {{ podcast_title }}"
                 class="focus:outline-none"
-                hx-get="{% url 'podcasts:actions' podcast.id %}"
+                hx-get="{% url 'podcasts:preview' podcast.id %}"
                 hx-target="#modal"
                 hx-swap="outerHTML"
                 hx-trigger="click delay:200ms">
-          {% icon "ellipsis" css_class="w-6 h-6" %}
+          {% icon "info" css_class="w-6 h-6" %}
         </button>
       </div>
       <div title="Date last published"
