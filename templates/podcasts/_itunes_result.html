@@ -23,9 +23,16 @@
     </h2>
     <div class="text-sm flex items-center space-x-3">
       {% if podcast and podcast.pub_date %}
-      {% include "podcasts/_info_toggle.html" %}
+      <button title="Actions for {{ result.title }}"
+              class="focus:outline-none"
+              hx-get="{% url 'podcasts:actions' podcast.id %}"
+              hx-target="#modal"
+              hx-swap="outerHTML"
+              hx-trigger="click delay:200ms">
+        {% icon "ellipsis" css_class="w-6 h-6" %}
+      </button>
       {% else %}
-      {% icon "info" css_class="h-6 w-6 opacity-50 cursor-not-allowed" %}
+      {% icon "ellipsis" css_class="h-6 w-6 opacity-50 cursor-not-allowed" %}
       {% endif %}
       <a href="{{ result.itunes }}"
          class="link"
