@@ -21,6 +21,7 @@
     <div class="truncate w-48 sm:w-96">
       <a href="{{ podcast_url }}"
          title="{{ podcast.title }}"
+         @click="$dispatch('close-modal')"
          class="link text-sm">
         {{ podcast.title }}
       </a>

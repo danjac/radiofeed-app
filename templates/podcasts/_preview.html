@@ -11,7 +11,8 @@
 {% block modal_content %}
 <div class="flex items-center space-x-3 mb-3">
   <div>
-    <a href="{{ podcast.get_absolute_url }}">
+    <a href="{{ podcast.get_absolute_url }}"
+       @click="$dispatch('close_modal')">
       {% include "podcasts/_cover_image.html" with size=20 %}
     </a>
   </div>
