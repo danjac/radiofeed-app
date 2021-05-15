@@ -96,7 +96,10 @@ def actions(request, podcast_id):
     return TemplateResponse(
         request,
         "podcasts/_actions.html",
-        get_podcast_detail_context(request, podcast),
+        {
+            "podcast": podcast,
+            "is_following": podcast.is_following(request.user),
+        },
     )
 
 
