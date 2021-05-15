@@ -2,8 +2,10 @@
   {% if user.is_authenticated %}
   <button class="btn flex items-center {{ is_playing|yesno:'btn-secondary,btn-primary' }}"
           {% if is_playing %}
+          title="Close Player"
           hx-post="{% url 'episodes:close_player' %}"
           {% else %}
+          title="Play this episode"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           {% endif %}
           hx-target="#player"

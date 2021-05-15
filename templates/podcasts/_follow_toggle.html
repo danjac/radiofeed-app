@@ -5,6 +5,7 @@
        hx-select="#follow-toggle">
     {% if is_following %}
     <button class="btn btn-secondary flex items-center"
+            title="Stop following this podcast"
             hx-trigger="click delay:200ms"
             hx-post="{% url 'podcasts:unfollow' podcast.id %}"
             title="Stop following this podcast">
@@ -13,6 +14,7 @@
     </button>
     {% else %}
     <button class="btn btn-default flex items-center"
+            title="Follow this podcast"
             hx-trigger="click delay:200ms"
             hx-post="{% url 'podcasts:follow' podcast.id %}"
             title="Follow this podcast">
