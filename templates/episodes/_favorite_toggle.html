@@ -1,9 +1,10 @@
 <div id="favorite-toggle"
      hx-target="this"
      hx-swap="outerHTML"
+     class="flex-shrink-0 h-8"
      x-data="{loading: false}">
   {% if is_favorited %}
-  <button class="btn btn-secondary flex items-center"
+  <button class="btn btn-secondary flex items-center
           title="Remove this episode from your Favorites"
           :disabled="loading"
           @click="loading=true"
