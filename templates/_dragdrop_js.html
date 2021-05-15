@@ -7,16 +7,9 @@
           (target) => target.dataset.id
         );
         if (items.length > 0) {
-          fetch("{% url 'episodes:move_queue_items' %}", {
-            body: JSON.stringify({
-              items
-            }),
-            method: 'POST',
-            headers: {
-              'X-CSRFToken': '{{ csrf_token }}',
-              'Content-Type': 'application/json'
-            }
-          });
+          fetchJSON("{% url 'episodes:move_queue_items' %}", {
+            items
+          })
         }
       };
 

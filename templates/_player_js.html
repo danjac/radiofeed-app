@@ -225,16 +225,8 @@
 
         sendCurrentTimeUpdate() {
           if (this.isLoaded && !this.isPaused && this.currentTime) {
-            fetch("{% url 'episodes:player_time_update' %}", {
-              body: JSON.stringify({
-                currentTime: this.currentTime,
-              }),
-              credentials: 'same-origin',
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-              },
+            fetchJSON("{% url 'episodes:player_time_update' %}", {
+              currentTime: this.currentTime,
             });
           }
         },

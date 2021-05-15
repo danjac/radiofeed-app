@@ -37,5 +37,21 @@
     });
     document.addEventListener("htmx:load", event => lazyLoadImages(event.detail.elt));
     document.addEventListener("DOMContentLoaded", lazyLoadImages(document));
+
+    window.fetchJSON = (url, data, options) => {
+      options = {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        ...options
+      };
+      if (data) {
+        options.body = JSON.stringify(data);
+      }
+      return fetch(url, options);
+    };;
   })();
 </script>
