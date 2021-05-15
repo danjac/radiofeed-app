@@ -41,6 +41,12 @@
 </div>
 {% endif %}
 
+{% if episode.listened %}
+<div class="flex items-center mb-3">
+  {% include "episodes/_listened.html" %}
+</div>
+{% endif %}
+
 <div class="markdown text-muted text-sm mb-3">
   {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
 </div>

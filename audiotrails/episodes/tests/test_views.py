@@ -383,7 +383,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertRedirects(resp, self.episode.get_absolute_url())
 
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
@@ -411,7 +411,7 @@ class RemoveAudioLogTests(TestCase):
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertRedirects(resp, self.episode.get_absolute_url())
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
