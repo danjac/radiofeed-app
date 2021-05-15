@@ -1,6 +1,9 @@
 <div>
   {% if user.is_authenticated %}
   <button class="btn flex items-center {{ is_playing|yesno:'btn-secondary,btn-primary' }}"
+          x-data="{loading: false}"
+          @click="loading=true"
+          :disabled="loading"
           {% if is_playing %}
           title="Close Player"
           hx-post="{% url 'episodes:close_player' %}"
