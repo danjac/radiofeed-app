@@ -72,13 +72,17 @@
   <div class="space-x-3 flex items-center">
     {% include "episodes/_queue_toggle.html" %}
     {% include "episodes/_favorite_toggle.html" %}
-    {% if episode.listened and not is_playing %}
-    {% include "episodes/_remove_audio_log.html" %}
-    {% endif %}
   </div>
 
   {% if episode.listened %}
-  {% include "episodes/_listened.html" %}
+  <div class="flex items-center space-x-3 border-t pt-3 dark:border-gray-500">
+    {% include "episodes/_listened.html" %}
+
+    {% if not is_playing %}
+    {% include "episodes/_remove_audio_log.html" %}
+    {% endif %}
+
+  </div>
   {% endif %}
   {% endif %}
 

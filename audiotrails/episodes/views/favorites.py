@@ -1,4 +1,3 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.template.response import TemplateResponse
@@ -39,8 +38,6 @@ def add_favorite(request, episode_id):
     except IntegrityError:
         pass
 
-    messages.success(request, "Episode has been added to your Favorites")
-
     return render_favorite_toggle(request, episode, True)
 
 
@@ -50,8 +47,6 @@ def remove_favorite(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
-
-    messages.info(request, "Episode has removed from your Favorites")
 
     return render_favorite_toggle(request, episode, False)
 

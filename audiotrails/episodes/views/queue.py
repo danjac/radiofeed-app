@@ -1,6 +1,5 @@
 import http
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Max
@@ -44,7 +43,6 @@ def add_to_queue(request, episode_id):
     except IntegrityError:
         pass
 
-    messages.success(request, "Episode has added to your Play Queue")
     return render_queue_toggle(request, episode, True)
 
 
@@ -53,7 +51,6 @@ def add_to_queue(request, episode_id):
 def remove_from_queue(request, episode_id):
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    messages.info(request, "Episode has been removed from your Play Queue")
     return render_queue_toggle(request, episode, False)
 
 
