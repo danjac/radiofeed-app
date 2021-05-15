@@ -76,8 +76,10 @@ def move_queue_items(request):
 
 
 def render_queue_toggle(request, episode, is_queued):
-    return TemplateResponse(
+    response = TemplateResponse(
         request,
         "episodes/_queue_toggle.html",
         {"episode": episode, "is_queued": is_queued},
     )
+    response["HX-Trigger"] = "reload-queue"
+    return response

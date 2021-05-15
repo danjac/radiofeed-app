@@ -52,8 +52,10 @@ def remove_favorite(request, episode_id):
 
 
 def render_favorite_toggle(request, episode, is_favorited):
-    return TemplateResponse(
+    response = TemplateResponse(
         request,
         "episodes/_favorite_toggle.html",
         {"episode": episode, "is_favorited": is_favorited},
     )
+    response["HX-Trigger"] = "reload-favorites"
+    return response

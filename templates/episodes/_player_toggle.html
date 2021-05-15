@@ -7,13 +7,8 @@
           hx-post="{% url 'episodes:start_player' episode.id %}"
           {% endif %}
           hx-target="#player"
-          hx-select="#player"
           hx-swap="outerHTML"
-          {% if is_modal %}
-          @click="$dispatch('close-modal')"
-          {% else %}
-          hx-trigger="click delay:200ms"
-          {% endif %}>
+          hx-trigger="click delay:200ms">
     {% icon is_playing|yesno:'stop,play' css_class="btn-icon mr-2" %}
     {% if is_playing %}Close Player{% else %}Play Episode{% endif %}
   </button>

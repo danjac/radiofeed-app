@@ -79,7 +79,11 @@ def render_player(request, current_episode=None, next_episode=None):
     events = []
 
     if next_episode:
-        events += [f"reload-episode-{next_episode.id}", "reload-queue"]
+        events += [
+            "reload-queue",
+            f"reload-episode-{next_episode.id}",
+            f"start-player-{next_episode.id}",
+        ]
 
     if current_episode:
         events += [

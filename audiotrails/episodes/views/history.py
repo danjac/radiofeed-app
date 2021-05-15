@@ -1,4 +1,5 @@
 import http
+import json
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -45,5 +46,7 @@ def remove_audio_log(request, episode_id):
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
     response = HttpResponse()
-    response["HX-Trigger"] = f"reload-episode-{episode.id}"
+    response["HX-Trigger"] = json.dumps(
+        {f"reload-episode-{episode.id}": "", "reload-history": ""}
+    )
     return response

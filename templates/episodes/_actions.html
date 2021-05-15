@@ -9,46 +9,65 @@
 {% endblock %}
 
 {% block modal_content %}
-<div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
-  <div title="Date Published">
-    {% include "_pub_date.html" with pub_date=episode.pub_date %}
+<div hx-get="{{ request.path }}"
+     hx-trigger="reload-episode-{{ episode.id }} from:body"
+     hx-target="#modal"
+     @start-player-{{ episode.id }}.window="$dispatch('close-modal')">
+  <div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
+    <div title="Date Published">
+      {% include "_pub_date.html" with pub_date=episode.pub_date %}
+    </div>
+    {% with duration=episode.get_duration_in_seconds %}
+    {% if duration %}
+    <div title="Duration">
+      {{ duration|format_duration }}
+    </div>
+    {% endif %}
+    {% endwith %%}
   </div>
-  {% with duration=episode.get_duration_in_seconds %}
-  {% if duration %}
-  <div title="Duration">
-    {{ duration|format_duration }}
+
+  <div class="flex items-center space-x-3 mb-3">
+    {% with podcast=episode.podcast %}
+    <div>
+      <a href="{{ podcast.get_absolute_url }}"
+         @click="$dispatch('close-modal')">
+        {% include "podcasts/_cover_image.html" with size=20 %}
+      </a>
+    </div>
+    {% endwith %}
+    <div class="space-y-3">
+      {% include "episodes/_player_toggle.html" %}
+      {% include "episodes/_download.html" %}
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+  <div class="space-x-3 flex items-center mb-3">
+    {% include "episodes/_queue_toggle.html" %}
+    {% include "episodes/_favorite_toggle.html" %}
+  </div>
+
+  {% if episode.listened %}
+  <div class="flex items-center space-x-3 border-t pt-3 dark:border-gray-500 mb-3">
+    {% include "episodes/_listened.html" %}
+
+    {% if not is_playing %}
+    {% include "episodes/_remove_audio_log.html" %}
+    {% endif %}
   </div>
   {% endif %}
-  {% endwith %%}
-</div>
+  {% endif %}
 
-<div class="flex items-center space-x-3 mb-3">
-  {% with podcast=episode.podcast %}
-  <div>
-    <a href="{{ podcast.get_absolute_url }}"
-       @click="$dispatch('close-modal')">
-      {% include "podcasts/_cover_image.html" with size=20 %}
-    </a>
+
+  {% if episode.explicit or podcast.explicit %}
+  <div class="text-sm font-semibold mb-3">
+    This episode may contain explicit content.
   </div>
-  {% endwith %}
-  <div class="space-y-3">
-    {% include "episodes/_player_toggle.html" %}
-    {% include "episodes/_download.html" %}
+  {% endif %}
+
+  <div class="markdown text-muted text-sm mb-3">
+    {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
   </div>
-</div>
-
-{% if episode.listened %}
-{% include "episodes/_listened.html" with css_class="mb-3" %}
-{% endif %}
-
-{% if episode.explicit or podcast.explicit %}
-<div class="text-sm font-semibold mb-3">
-  This episode may contain explicit content.
-</div>
-{% endif %}
-
-<div class="markdown text-muted text-sm mb-3">
-  {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
 </div>
 
 {% endblock modal_content %}
