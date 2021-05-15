@@ -12,7 +12,8 @@
 <div hx-get="{{ request.path }}"
      hx-trigger="reload-episode-{{ episode.id }} from:body"
      hx-target="#modal"
-     @start-player-{{ episode.id }}.window="$dispatch('close-modal')">
+     @start-player-{{ episode.id }}.window="$dispatch('close-modal')"
+     @stop-player-{{ episode.id }}.window="$dispatch('close-modal')">
   <div class="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-300 space-x-3 mb-3">
     <div title="Date Published">
       {% include "_pub_date.html" with pub_date=episode.pub_date %}

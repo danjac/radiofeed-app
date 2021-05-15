@@ -88,6 +88,7 @@ def render_player(request, current_episode=None, next_episode=None):
     if current_episode:
         events += [
             f"reload-episode-{current_episode.id}",
+            f"stop-player-{current_episode.id}",
         ]
 
     if events:
