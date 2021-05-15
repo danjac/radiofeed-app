@@ -79,5 +79,5 @@ def render_queue_toggle(request, episode, is_queued):
     return TemplateResponse(
         request,
         "episodes/_queue_toggle.html",
-        {"episode": episode, "is_queued": is_queued, "action": True},
+        {"episode": episode, "is_queued": is_queued},
     )

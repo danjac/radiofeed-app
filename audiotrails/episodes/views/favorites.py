@@ -55,5 +55,5 @@ def render_favorite_toggle(request, episode, is_favorited):
     return TemplateResponse(
         request,
         "episodes/_favorite_toggle.html",
-        {"episode": episode, "is_favorited": is_favorited, "action": True},
+        {"episode": episode, "is_favorited": is_favorited},
     )
