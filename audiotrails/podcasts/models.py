@@ -115,6 +115,9 @@ class PodcastQuerySet(FastCountMixin, models.QuerySet):
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 
+# test commit
+
+
 class Podcast(models.Model):
 
     rss: str = models.URLField(unique=True, max_length=500)
@@ -141,7 +144,9 @@ class Podcast(models.Model):
     explicit: bool = models.BooleanField(default=False)
     promoted: bool = models.BooleanField(default=False)
 
-    categories: List[Category] = models.ManyToManyField(Category, blank=True)
+    categories: models.RelatedModelManager = models.ManyToManyField(
+        Category, blank=True
+    )
 
     # received recommendation email
     recipients: List[settings.AUTH_USER_MODEL] = models.ManyToManyField(

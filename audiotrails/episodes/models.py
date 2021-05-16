@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -167,8 +167,8 @@ class Episode(models.Model):
         except AttributeError:
             return False
 
-    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
-        og_data: Dict[str, str] = {
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, Union[str, int]]:
+        og_data: Dict[str, Union[str, int]] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,

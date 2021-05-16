@@ -140,8 +140,8 @@ class Feed(BaseModel):
             podcast.cover_image = self.fetch_cover_image()
 
         podcast.save()
-        # tbd: set correct type for M2M manager
-        podcast.categories.set(categories)  # type: ignore
+
+        podcast.categories.set(categories)
 
         # episodes
         return self.create_episodes(podcast)
