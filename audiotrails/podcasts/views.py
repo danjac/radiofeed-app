@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.views import redirect_to_login
+from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from audiotrails.episodes.views import render_episode_list_response
+from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
 from . import itunes
@@ -230,28 +231,26 @@ def itunes_category(request, category_id):
 
 
 @require_POST
+@ajax_login_required
 def follow(request, podcast_id):
 
     podcast = get_podcast_or_404(request, podcast_id)
 
-    if request.user.is_anonymous:
-        return redirect_to_login(podcast.get_absolute_url())
-
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
+        messages.success(request, "You are now following this podcast")
     except IntegrityError:
         pass
     return render_follow_response(request, podcast, True)
 
 
 @require_POST
+@ajax_login_required
 def unfollow(request, podcast_id):
 
     podcast = get_podcast_or_404(request, podcast_id)
 
-    if request.user.is_anonymous:
-        return redirect_to_login(podcast.get_absolute_url())
-
+    messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, False)
 
@@ -280,7 +279,7 @@ def render_follow_response(request, podcast, is_following):
     return TemplateResponse(
         request,
         "podcasts/_follow_toggle.html",
-        {"podcast": podcast, "is_following": is_following},
+        {"podcast": podcast, "is_following": is_following, "action": True},
     )
 
 
