@@ -1,7 +1,10 @@
+from datetime import datetime
+from typing import Dict, Optional
+
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
-TZ_INFOS = {
+TZ_INFOS: Dict[str, float] = {
     k: v * 3600
     for k, v in (
         ("A", 1),
@@ -235,7 +238,7 @@ TZ_INFOS = {
 }
 
 
-def parse_date(value):
+def parse_date(value: Optional[str]) -> Optional[datetime]:
     if not value:
         return None
     try:
