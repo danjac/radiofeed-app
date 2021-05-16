@@ -1,7 +1,7 @@
 import datetime
 
 from functools import lru_cache
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -18,7 +18,7 @@ from .image import fetch_image_from_url
 
 
 @lru_cache
-def get_categories_dict():
+def get_categories_dict() -> Dict[str, Category]:
     return {c.name: c for c in Category.objects.all()}
 
 
