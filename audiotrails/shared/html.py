@@ -1,5 +1,7 @@
 import html
 
+from typing import Optional
+
 import bleach
 
 from html5lib.filters import optionaltags, whitespace
@@ -89,9 +91,9 @@ def linkify_callback(attrs, new=False):
     return attrs
 
 
-def clean_html_content(value):
+def clean_html_content(value: Optional[str]) -> str:
     try:
-        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
+        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""
     except (ValueError, TypeError):
         return ""
 

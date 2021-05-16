@@ -1,3 +1,5 @@
+from typing import Dict
+
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
@@ -164,7 +166,7 @@ class Episode(models.Model):
             return False
 
     def get_opengraph_data(self, request):
-        og_data = {
+        og_data: Dict[str, str] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,
@@ -172,7 +174,8 @@ class Episode(models.Model):
         }
 
         if self.podcast.cover_image:
-            og_data |= {
+            og_data = {
+                **og_data,
                 "image": self.podcast.cover_image.url,
                 "image_height": self.podcast.cover_image.height,
                 "image_width": self.podcast.cover_image.width,

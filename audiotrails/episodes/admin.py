@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.db.models import Model
 from django.template.defaultfilters import truncatechars
+
+from audiotrails.shared.types import admin_action
 
 from .models import Episode
 
@@ -11,12 +14,14 @@ class EpisodeAdmin(admin.ModelAdmin):
     raw_id_fields = ("podcast",)
     search_fields = ("search_document",)
 
-    def episode_title(self, obj):
+    @admin_action
+    def episode_title(self, obj: Model) -> str:
         return truncatechars(obj.title, 30)
 
     episode_title.short_description = "Title"
 
-    def podcast_title(self, obj):
+    @admin_action
+    def podcast_title(self, obj: Model) -> str:
         return truncatechars(obj.title, 30)
 
     podcast_title.short_description = "Podcast"

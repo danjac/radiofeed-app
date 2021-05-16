@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from sorl.thumbnail.admin import AdminImageMixin
 
+from audiotrails.shared.types import admin_action
+
 from .models import Category, Podcast
 
 
@@ -80,6 +82,7 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
 
+    @admin_action
     def title_with_strikethru(self, obj):
         if obj.num_retries >= 3:
             return mark_safe(f"<s>{obj.title}</s>")

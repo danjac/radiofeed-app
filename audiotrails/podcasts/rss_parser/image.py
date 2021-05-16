@@ -20,7 +20,7 @@ IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
 def fetch_image_from_url(image_url):
-    """Get an ImageFile object from a URL. """
+    """Get an ImageFile object from a URL."""
     try:
         if not image_url:
             raise ValueError("image_url is empty")
@@ -71,7 +71,7 @@ def get_image_file(raw):
     return fp
 
 
-def get_image_filename(image_url, content_type):
+def get_image_filename(image_url: str, content_type: str) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
@@ -81,6 +81,8 @@ def get_image_filename(image_url, content_type):
     # check path first
     ext: Optional[str] = None
     _, ext = os.path.splitext(urlparse(image_url).path)
+    if ext is None:
+        raise ValueError("Missing ext:" + image_url)
     ext = ext.lower()
     if ext not in IMAGE_EXTENSIONS:
         ext = mimetypes.guess_extension(content_type)

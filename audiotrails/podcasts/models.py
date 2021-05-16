@@ -1,5 +1,7 @@
 import dataclasses
 
+from typing import Dict
+
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import (
@@ -185,7 +187,7 @@ class Podcast(models.Model):
 
     def get_opengraph_data(self, request):
 
-        og_data = {
+        og_data: Dict[str, str] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.title}",
             "description": self.description,
@@ -193,7 +195,8 @@ class Podcast(models.Model):
         }
 
         if self.cover_image:
-            og_data |= {
+            og_data = {
+                **og_data,
                 "image": self.cover_image.url,
                 "image_height": self.cover_image.height,
                 "image_width": self.cover_image.width,

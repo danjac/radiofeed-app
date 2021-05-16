@@ -1,7 +1,15 @@
+from typing import TYPE_CHECKING
+
 from django.db import connections
+from django.db.models import QuerySet
+
+if TYPE_CHECKING:
+    Base: QuerySet = QuerySet
+else:
+    Base = object
 
 
-class FastCountMixin:
+class FastCountMixin(Base):
     def count(self):
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()

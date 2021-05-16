@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from .base import *  # noqa
 from .base import BASE_DIR
 from .mixins.aws import *  # noqa
@@ -10,7 +12,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # https://pypi.org/project/django-permissions-policy/
 
-PERMISSIONS_POLICY = {
+PERMISSIONS_POLICY: Dict[str, List] = {
     "accelerometer": [],
     "ambient-light-sensor": [],
     "camera": [],
