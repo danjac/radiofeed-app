@@ -1,9 +1,13 @@
-from typing import Dict
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any, Dict, Optional
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
 from django.db import models
+from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
 from django.utils.encoding import force_str
@@ -95,35 +99,35 @@ class Episode(models.Model):
         return reverse("episodes:episode_preview", args=[self.id])
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "episode"
 
-    def get_file_size(self):
+    def get_file_size(self) -> Optional[str]:
         return filesizeformat(self.length) if self.length else None
 
-    def get_next_episode(self):
+    def get_next_episode(self) -> Optional[Episode]:
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self):
+    def get_previous_episode(self) -> Optional[Episode]:
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def is_queued(self, user):
+    def is_queued(self, user: settings.AUTH_USER_MODEL) -> bool:
         if user.is_anonymous:
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user):
+    def is_favorited(self, user: settings.AUTH_USER_MODEL) -> bool:
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_duration_in_seconds(self):
+    def get_duration_in_seconds(self) -> int:
         """Returns total number of seconds given string in [h:][m:]s format.
         Invalid formats return zero."""
 
@@ -140,7 +144,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def get_pc_completed(self):
+    def get_pc_completed(self) -> int:
         """Use with the `with_current_time` QuerySet method"""
 
         try:
@@ -158,14 +162,14 @@ class Episode(models.Model):
         except (ZeroDivisionError, AttributeError):
             return 0
 
-    def is_completed(self):
+    def is_completed(self) -> bool:
         """Use with the `with_current_time` QuerySet method"""
         try:
             return self.completed or self.get_pc_completed() >= 100
         except AttributeError:
             return False
 
-    def get_opengraph_data(self, request):
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, str]:
         og_data: Dict[str, str] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
@@ -183,7 +187,7 @@ class Episode(models.Model):
 
         return og_data
 
-    def get_media_metadata(self):
+    def get_media_metadata(self) -> Dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session
         thumbnail = self.podcast.get_cover_image_thumbnail()
 
@@ -203,7 +207,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -225,8 +229,10 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 class Favorite(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
 
@@ -241,7 +247,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -263,11 +269,13 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    updated = models.DateTimeField()
-    completed = models.DateTimeField(null=True, blank=True)
-    current_time = models.IntegerField(default=0)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated: datetime = models.DateTimeField()
+    completed: Optional[datetime] = models.DateTimeField(null=True, blank=True)
+    current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
@@ -279,7 +287,7 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["-updated"]),
         ]
 
-    def to_json(self):
+    def to_json(self) -> Dict[str, Any]:
         cover_image = self.episode.podcast.get_cover_image_thumbnail()
         return {
             "currentTime": self.current_time,
@@ -303,7 +311,7 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def with_current_time(self, user):
+    def with_current_time(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
         """Adds current_time annotation."""
         return self.annotate(
             current_time=models.Subquery(
