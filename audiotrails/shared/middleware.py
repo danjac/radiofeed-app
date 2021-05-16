@@ -1,4 +1,4 @@
-import urllib
+from urllib.parse import urlencode
 
 from django.utils.functional import SimpleLazyObject, cached_property
 
@@ -29,11 +29,7 @@ class Search:
 
     @cached_property
     def qs(self):
-        return (
-            urllib.parse.urlencode({self.search_param: self.value})
-            if self.value
-            else ""
-        )
+        return urlencode({self.search_param: self.value}) if self.value else ""
 
 
 class SearchMiddleware(BaseMiddleware):
