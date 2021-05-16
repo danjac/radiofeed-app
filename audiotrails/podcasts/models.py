@@ -17,6 +17,7 @@ from django.contrib.postgres.search import (
 from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
@@ -183,17 +184,17 @@ class Podcast(models.Model):
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
 
-    def get_episode_count(self):
+    def get_episode_count(self) -> int:
         return self.episode_set.distinct().count()
 
-    def get_cached_episode_count(self):
+    def get_cached_episode_count(self) -> int:
         return cache.get_or_set(
             f"podcast-episode-count-{self.id}",
             self.get_episode_count,
             timeout=settings.DEFAULT_CACHE_TIMEOUT,
         )
 
-    def get_opengraph_data(self, request):
+    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, Union[str, int]]:
 
         og_data: Dict[str, Union[str, int]] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
@@ -211,7 +212,7 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_cover_image_thumbnail(self):
+    def get_cover_image_thumbnail(self) -> Union[Image, PlaceholderImage]:
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
@@ -228,8 +229,10 @@ class Podcast(models.Model):
 
 class Follow(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -239,11 +242,11 @@ class Follow(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def bulk_delete(self):
+    def bulk_delete(self) -> int:
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def with_followed(self, user):
+    def with_followed(self, user: AnyUser) -> models.QuerySet:
         """Marks which recommendations are followed by this user."""
         if user.is_anonymous:
             return self.annotate(
@@ -255,7 +258,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user):
+    def for_user(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
         podcast_ids = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(
