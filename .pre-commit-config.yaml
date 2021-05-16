@@ -22,3 +22,4 @@ repos:
     rev: 'v0.812'
     hooks:
       - id: mypy
+        additional_dependencies: [django-stubs==1.8.0]
