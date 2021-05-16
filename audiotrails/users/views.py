@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -18,7 +18,7 @@ from .forms import UserPreferencesForm
 
 
 @login_required
-def user_preferences(request):
+def user_preferences(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -32,7 +32,7 @@ def user_preferences(request):
 
 
 @login_required
-def export_podcast_feeds(request):
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return TemplateResponse(request, "account/export_podcast_feeds.html")
     # set a max limit of 500 for now to prevent a DOS attack
@@ -71,7 +71,7 @@ def export_podcast_feeds(request):
 
 
 @login_required
-def user_stats(request):
+def user_stats(request: HttpRequest) -> HttpResponse:
 
     logs = AudioLog.objects.filter(user=request.user)
 
@@ -92,7 +92,7 @@ def user_stats(request):
 
 
 @login_required
-def delete_account(request):
+def delete_account(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()
         logout(request)
@@ -102,7 +102,7 @@ def delete_account(request):
 
 
 @require_POST
-def accept_cookies(request):
+def accept_cookies(request: HttpRequest) -> HttpResponse:
     response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
