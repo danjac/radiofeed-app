@@ -265,7 +265,7 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return render_follow_response(request, podcast, False)
 
 
-def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
     return get_object_or_404(Podcast, pk=podcast_id)
 
 
@@ -273,7 +273,7 @@ def get_podcast_detail_context(
     request: HttpRequest,
     podcast: Podcast,
     extra_context: Optional[Dict[str, Any]] = None,
-):
+) -> Dict[str, Any]:
 
     return {
         "podcast": podcast,
