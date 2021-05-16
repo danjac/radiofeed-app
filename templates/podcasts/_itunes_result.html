@@ -25,7 +25,11 @@
       {% if podcast and podcast.pub_date %}
       {% include "podcasts/_preview_toggle.html" %}
       {% else %}
-      {% icon "ellipsis" css_class="h-6 w-6 opacity-50 cursor-not-allowed" %}
+      <button class="opacity-50 cursor-not-allowed"
+              disabled
+              title="Podcast not in database">
+        {% icon "info" css_class="h-6 w-6" %}
+      </button>
       {% endif %}
       <a href="{{ result.itunes }}"
          class="link"
