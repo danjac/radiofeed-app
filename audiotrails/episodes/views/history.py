@@ -1,7 +1,7 @@
 import http
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
@@ -12,7 +12,7 @@ from . import get_episode_or_404
 
 
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
 
     logs = (
         AudioLog.objects.filter(user=request.user)
@@ -35,7 +35,7 @@ def index(request):
 
 @require_POST
 @ajax_login_required
-def remove_audio_log(request, episode_id):
+def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
 
     response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
