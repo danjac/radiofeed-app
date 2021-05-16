@@ -8,7 +8,7 @@ from django.http import HttpRequest
 class ActionProtocol(Protocol):
     def __call__(
         modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet
-    ) -> None:
+    ) -> str:
         ...
 
     short_description: str
