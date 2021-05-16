@@ -85,7 +85,7 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs, new=False):
+def linkify_callback(attrs: Dict, new: bool = False) -> Dict:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
@@ -93,7 +93,7 @@ def linkify_callback(attrs, new=False):
 
 def clean_html_content(value: Optional[str]) -> str:
     try:
-        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""
+        return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
     except (ValueError, TypeError):
         return ""
 
