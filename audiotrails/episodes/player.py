@@ -1,23 +1,21 @@
+from typing import Optional
+
+from django.http import HttpRequest
 from django.utils import timezone
 
-from .models import AudioLog, QueueItem
+from .models import AudioLog, Episode, QueueItem
 
 
 class Player:
     """Tracks current playing episode in user session"""
 
-    session_key = "player_episode"
+    session_key: str = "player_episode"
 
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
-    def start_episode(self, episode):
-        """Creates/updates audio log and adds episode to session.
-        Returns current time of episode
-        """
-
-        if episode is None:
-            return 0
+    def start_episode(self, episode: Episode) -> AudioLog:
+        """Creates/updates audio log and adds episode to session."""
 
         self.request.session[self.session_key] = episode.id
 
@@ -36,7 +34,7 @@ class Player:
 
         return log
 
-    def stop_episode(self, mark_completed=False):
+    def stop_episode(self, mark_completed: bool = False) -> Optional[AudioLog]:
         """Removes episode from session and updates log.
         Returns episode.
         """
@@ -59,7 +57,7 @@ class Player:
 
         return log
 
-    def update_current_time(self, current_time):
+    def update_current_time(self, current_time: float) -> None:
         if (
             self.request.user.is_authenticated
             and self.session_key in self.request.session
@@ -68,10 +66,10 @@ class Player:
                 episode=self.request.session[self.session_key], user=self.request.user
             ).update(current_time=round(current_time))
 
-    def is_playing(self, episode):
+    def is_playing(self, episode: Episode) -> bool:
         return self.request.session.get(self.session_key) == episode.id
 
-    def get_audio_log(self):
+    def get_audio_log(self) -> Optional[AudioLog]:
         if hasattr(self, "current_log"):
             return self.current_log
         if (
