@@ -1,39 +1,42 @@
+from typing import Callable, Optional
 from urllib.parse import urlencode
 
+from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject, cached_property
 
 
 class BaseMiddleware:
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         return self.get_response(request)
 
 
 class Search:
-    search_param = "q"
+    search_param: str = "q"
+    request: HttpRequest
 
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.value)
 
     @cached_property
-    def value(self):
+    def value(self) -> str:
         return self.request.GET.get(self.search_param, "").strip()
 
     @cached_property
-    def qs(self):
+    def qs(self) -> str:
         return urlencode({self.search_param: self.value}) if self.value else ""
 
 
 class SearchMiddleware(BaseMiddleware):
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         request.search = SimpleLazyObject(lambda: Search(request))
         return self.get_response(request)
 
@@ -43,41 +46,38 @@ class SearchMiddleware(BaseMiddleware):
 
 
 class HtmxDetails:
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.is_htmx_request
 
     @cached_property
-    def is_htmx_request(self):
+    def is_htmx_request(self) -> bool:
         return self.request.headers.get("HX-Request", "") == "true"
 
     @cached_property
-    def current_url(self):
+    def current_url(self) -> Optional[str]:
         return self.request.headers.get("HX-Current-URL") or None
 
     @cached_property
-    def prompt(self):
+    def prompt(self) -> Optional[str]:
         return self.request.headers.get("HX-Prompt") or None
 
     @cached_property
-    def target(self):
+    def target(self) -> Optional[str]:
         return self.request.headers.get("HX-Target") or None
 
     @cached_property
-    def trigger(self):
+    def trigger(self) -> Optional[str]:
         return self.request.headers.get("HX-Trigger") or None
 
     @cached_property
-    def trigger_name(self):
+    def trigger_name(self) -> Optional[str]:
         return self.request.headers.get("HX-Trigger-Name") or None
 
 
 class HtmxMiddleware(BaseMiddleware):
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         request.htmx = SimpleLazyObject(lambda: HtmxDetails(request))
         return self.get_response(request)
