@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 
-from typing import Dict
+from datetime import datetime
+from typing import Dict, Optional, Protocol, Union
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -29,6 +30,12 @@ from audiotrails.shared.db import FastCountMixin
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 THUMBNAIL_SIZE = 200
+
+
+class Image(Protocol):
+    width: int
+    height: int
+    url: str
 
 
 @dataclasses.dataclass
@@ -108,11 +115,11 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 class Podcast(models.Model):
 
     rss: str = models.URLField(unique=True, max_length=500)
-    etag = models.TextField(blank=True)
-    title = models.TextField()
-    pub_date = models.DateTimeField(null=True, blank=True)
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
+    pub_date: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
-    cover_image = ImageField(null=True, blank=True)
+    cover_image: Optional[Image] = ImageField(null=True, blank=True)
 
     itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
@@ -189,7 +196,7 @@ class Podcast(models.Model):
 
     def get_opengraph_data(self, request):
 
-        og_data: Dict[str, str] = {
+        og_data: Dict[str, Union[str, int]] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.title}",
             "description": self.description,
