@@ -4,11 +4,11 @@ from factory.django import DjangoModelFactory
 
 
 class UserFactory(DjangoModelFactory):
-    username = Faker("user_name")
-    email = Faker("email")
+    username: str = Faker("user_name")
+    email: str = Faker("email")
 
     @post_generation
-    def password(self, *args, **kwargs):
+    def password(self, *args, **kwargs) -> None:
         self.set_password("testpass1")
 
     class Meta:
