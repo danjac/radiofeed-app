@@ -134,19 +134,6 @@ class PodcastEpisodeListTests(TestCase):
         cls.podcast = PodcastFactory()
         EpisodeFactory.create_batch(3, podcast=cls.podcast)
 
-    def test_legacy_redirect(self):
-        resp = self.client.get(
-            f"/podcasts/{self.podcast.id}/{self.podcast.slug}/episodes/"
-        )
-        self.assertRedirects(
-            resp,
-            reverse(
-                "podcasts:podcast_episodes",
-                args=[self.podcast.id, self.podcast.slug],
-            ),
-            status_code=http.HTTPStatus.MOVED_PERMANENTLY,
-        )
-
     def test_get_podcast(self):
         resp = self.client.get(
             reverse(

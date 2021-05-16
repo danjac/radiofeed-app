@@ -2,7 +2,7 @@ from typing import Any, Protocol, Union
 
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth import AnonymousUser
+from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 from django.http import HttpRequest
 

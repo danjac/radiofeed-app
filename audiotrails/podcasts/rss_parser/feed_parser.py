@@ -4,6 +4,7 @@ from typing import Generator, List, Optional
 
 import lxml
 
+from lxml.etree import ElementBase
 from pydantic import ValidationError
 
 from .exceptions import InvalidFeedError
@@ -43,13 +44,13 @@ class RssParser:
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
-    def __init__(self, tag: lxml.ElementBase):
+    def __init__(self, tag: ElementBase):
         self.tag = tag
 
-    def parse_tag(self, xpath: str) -> Optional[lxml.ElementBase]:
+    def parse_tag(self, xpath: str) -> Optional[ElementBase]:
         return self.tag.find(xpath, self.NAMESPACES)
 
-    def parse_tags(self, xpath: str) -> List[lxml.ElementBase]:
+    def parse_tags(self, xpath: str) -> List[ElementBase]:
         return self.tag.findall(xpath, self.NAMESPACES)
 
     def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
