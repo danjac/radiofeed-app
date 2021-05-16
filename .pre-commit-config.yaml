@@ -23,4 +23,4 @@ repos:
     hooks:
       - id: mypy
         language_version: python3.9
-        # additional_dependencies: [django-stubs==1.8.0]
+        additional_dependencies: [django-stubs==1.8.0]
