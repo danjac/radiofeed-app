@@ -16,10 +16,11 @@ from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.db import FastCountMixin
+from audiotrails.shared.types import AnyUser
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
-    def with_current_time(self, user: settings.AUTH_USER_MODEL) -> models.Queryset:
+    def with_current_time(self, user: AnyUser) -> models.Queryset:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -114,12 +115,12 @@ class Episode(models.Model):
         except self.DoesNotExist:
             return None
 
-    def is_queued(self, user: settings.AUTH_USER_MODEL) -> bool:
+    def is_queued(self, user: AnyUser) -> bool:
         if user.is_anonymous:
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user: settings.AUTH_USER_MODEL) -> bool:
+    def is_favorited(self, user: AnyUser) -> bool:
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
