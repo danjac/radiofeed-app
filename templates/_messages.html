@@ -1,23 +1,48 @@
-{% if messages %}
-<div class="fixed z-50 top-20 w-full"
+<div class="fixed z-50 bottom-20 inset-x-0 mx-auto max-w-lg sm:max-w-sm"
      id="messages"
-     {% if hx_oob %}
-     hx-swap-oob="outerHTML"
-     {% endif %}
-     id="messages">
+     x-data="Messages()"
+     @add-message.window="addMessage($event.detail)"
+     {% if messages %}
+     x-init="() => {
+        {% for message in messages %}
+        addMessage({ text: '{{ message }}', tags: '{{ message.tags }}' })
+        {% endfor %}
+    }"
+     {% endif %}>
   <div class="space-y-3">
-    {% for message in messages %}
-    <div class="flex justify-center">
-      <div class="flex justify-between rounded items-center py-2 px-3 message shadow-xl {{ message.tags }}"
-           x-data="{show: true}"
-           x-show="show"
-           x-init="setTimeout(() => { show = false }, 3000)">
-        <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap">{{ message }}</div>
+    <template x-for="(message, index) in messages"
+              :key="index">
+      <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl max-w-lg sm:max-w-sm"
+           :class="message.tags"
+           @click="message.show=false"
+           x-show="message.show"
+           x-transition:enter="transition ease-in duration-200"
+           x-transition:enter-start="transform opacity-0 translate-y-0"
+           x-transition:enter-end="transform opacity-100"
+           x-transition:leave="transition ease-out duration-500"
+           x-transition:leave-start="transform translate-y-0 opacity-100"
+           x-transition:leave-end="transform translate-y-full opacity-0">
+        <div class="mx-auto text-sm md:text-base font-semibold flex flex-wrap"
+             x-text="message.text"></div>
       </div>
-    </div>
-    {% endfor %}
+    </template>
   </div>
 </div>
-{% else %}
-<div id="messages" class="hidden"></div>
-{% endif %}
+<script>
+  (function() {
+    window.Messages = () => {
+      return {
+        messages: [],
+        addMessage(message) {
+          this.messages.push({
+            ...message,
+            show: true
+          });
+          setTimeout(() => {
+            this.messages[this.messages.length - 1].show = false;
+          }, 1500);
+        }
+      };
+    };
+  })();
+</script>

@@ -33,14 +33,15 @@
   {% if is_queued %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
-          @click="show=false">
+          @click="show=false; $dispatch('add-message', { text: 'Removed from Play Queue!', tags: 'message-info' });"
+          >
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from Play Queue
   </button>
   {% else %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:add_to_queue' episode.id %}"
-          @click="show=false">
+          @click="show=false; $dispatch('add-message', { text: 'Added to Play Queue!', tags: 'message-success' });">
     {% icon "collection" css_class="h-4 w-4 mr-2" %}
     Add to Play Queue
   </button>
@@ -49,14 +50,14 @@
   {% if is_favorited %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_favorite' episode.id %}"
-          @click="show=false">
+          @click="show=false; $dispatch('add-message', { text: 'Removed from Favorites!', tags: 'message-info' });">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from Favorites
   </button>
   {% else %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:add_favorite' episode.id %}"
-          @click="show=false">
+          @click="show=false; $dispatch('add-message', { text: 'Added to Favorites!', tags: 'message-success' });">
     {% icon "star" css_class="h-4 w-4 mr-2" %}
     Add to Favorites
   </button>
@@ -65,7 +66,7 @@
   {% if episode.listened and not is_playing %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
-          @click="show=false">
+          @click="show=false; $dispatch('add-message', { text: 'Removed from History!', tags: 'message-info' });">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from History
   </button>

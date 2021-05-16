@@ -78,6 +78,9 @@
         },
         // audio events
         loaded() {
+          if (!this.$refs.audio) {
+            return;
+          }
           this.$refs.audio.currentTime = currentTime;
           if (runImmediately || sessionStorage.getItem(storageKey)) {
             this.$refs.audio

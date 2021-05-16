@@ -66,8 +66,6 @@
        hx-swap="outerHTML"
        hx-indicator="#loader">
 
-    {% include "_messages.html" %}
-
     {% block sidebar %}
     <aside class="w-full hidden lg:block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
            :class="{'hidden lg:block': !sidebar}">
@@ -98,6 +96,8 @@
 
   {% endblock layout %}
   {% block page_footer %}
+
+  {% include "_messages.html" %}
 
   {% block player %}
   {% if user.is_authenticated %}
