@@ -1,5 +1,7 @@
 import mimetypes
 
+from typing import Optional
+
 import lxml
 
 from pydantic import ValidationError
@@ -8,7 +10,7 @@ from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
 
-def parse_feed(raw):
+def parse_feed(raw: bytes):
 
     if (
         rss := lxml.etree.fromstring(
@@ -41,10 +43,10 @@ class RssParser:
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     }
 
-    def __init__(self, tag):
+    def __init__(self, tag: lxml.ElementBase):
         self.tag = tag
 
-    def parse_tag(self, xpath):
+    def parse_tag(self, xpath: str) -> Optional[lxml.ElementBase]:
         return self.tag.find(xpath, self.NAMESPACES)
 
     def parse_tags(self, xpath):
@@ -152,7 +154,7 @@ class ItemParser(RssParser):
         if not (media_type := enclosure.attrib.get("type")):
             media_type, _ = mimetypes.guess_type(url)
 
-        if (length := enclosure.attrib.get("length")) :
+        if length := enclosure.attrib.get("length"):
             length = length.replace(",", "")
 
         return Audio(
@@ -177,6 +179,6 @@ class ItemParser(RssParser):
 
     def parse_keywords(self):
         rv = self.parse_text_list("category")
-        if (keywords := self.parse_text("itunes:keywords")) :
+        if keywords := self.parse_text("itunes:keywords"):
             rv.append(keywords)
         return " ".join(rv)

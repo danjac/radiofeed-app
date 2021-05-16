@@ -1,15 +1,19 @@
+from datetime import datetime
+from typing import Optional
+
 import requests
 
 from lxml.etree import XMLSyntaxError
 from pydantic import ValidationError
 
+from ..models import Podcast
 from .date_parser import parse_date
 from .exceptions import InvalidFeedError, RssParserError
 from .feed_parser import parse_feed
 from .headers import get_headers
 
 
-def parse_rss(podcast, force_update=False):
+def parse_rss(podcast: Podcast, force_update: bool = False):
     """Fetches RSS and generates Feed. Checks etag header if we need to do an update.
     If any errors occur (e.g. RSS unavailable or invalid RSS) the error is saved in database
     and RssParserError raised.
@@ -43,15 +47,17 @@ def parse_rss(podcast, force_update=False):
         raise RssParserError(podcast.sync_error) from e
 
 
-def get_last_modified_date(headers):
+def get_last_modified_date(headers) -> Optional[datetime]:
     for header in ("Last-Modified", "Date"):
         if value := parse_date(headers.get(header, None)):
             return value
     return None
 
 
-def should_update(podcast, etag, last_modified, force_update):
-    return (
+def should_update(
+    podcast: Podcast, etag: str, last_modified: Optional[datetime], force_update: bool
+) -> bool:
+    return bool(
         force_update
         or podcast.pub_date is None
         or (etag and etag != podcast.etag)
