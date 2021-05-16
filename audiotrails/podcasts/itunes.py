@@ -1,7 +1,7 @@
 import dataclasses
 import json
 
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import requests
 
@@ -38,11 +38,13 @@ class SearchResult:
             "podcast": self.podcast,
         }
 
-    def as_json(self):
+    def as_json(self) -> str:
         return json.dumps(self.as_dict())
 
 
-def fetch_itunes_genre(genre_id, num_results=20):
+def fetch_itunes_genre(
+    genre_id: int, num_results: int = 20
+) -> Tuple[List[SearchResult], List[Podcast]]:
     """Fetch top rated results for genre"""
     return _get_or_create_podcasts(
         _get_search_results(
@@ -56,7 +58,9 @@ def fetch_itunes_genre(genre_id, num_results=20):
     )
 
 
-def search_itunes(search_term, num_results=12):
+def search_itunes(
+    search_term, num_results=12
+) -> Tuple[List[SearchResult], List[Podcast]]:
     """Does a search query on the iTunes API."""
 
     return _get_or_create_podcasts(
@@ -71,12 +75,12 @@ def search_itunes(search_term, num_results=12):
     )
 
 
-def crawl_itunes(limit):
+def crawl_itunes(limit: int) -> int:
     categories = Category.objects.filter(itunes_genre_id__isnull=False).order_by("name")
     new_podcasts = 0
 
     for category in categories:
-        podcasts = []
+        podcasts: List[Podcast] = []
 
         try:
             results, podcasts = fetch_itunes_genre(
@@ -89,7 +93,9 @@ def crawl_itunes(limit):
     return new_podcasts
 
 
-def _get_or_create_podcasts(results):
+def _get_or_create_podcasts(
+    results: List[SearchResult],
+) -> Tuple[List[SearchResult], List[Podcast]]:
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
@@ -109,11 +115,11 @@ def _get_or_create_podcasts(results):
 
 
 def _get_search_results(
-    params,
-    cache_key,
-    cache_timeout=86400,
-    requests_timeout=3,
-):
+    params: Dict[str, Union[str, int]],
+    cache_key: str,
+    cache_timeout: int = 86400,
+    requests_timeout: int = 3,
+) -> List[SearchResult]:
 
     results = cache.get(cache_key)
     if results is None:
