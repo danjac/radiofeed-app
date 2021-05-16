@@ -19,7 +19,7 @@ from audiotrails.shared.db import FastCountMixin
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
-    def with_current_time(self, user):
+    def with_current_time(self, user: settings.AUTH_USER_MODEL) -> models.Queryset:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -38,7 +38,7 @@ class EpisodeQuerySet(FastCountMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -53,25 +53,25 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid = models.TextField()
+    guid: str = models.TextField()
 
-    pub_date = models.DateTimeField()
-    link = models.URLField(null=True, blank=True, max_length=500)
+    pub_date: datetime = models.DateTimeField()
+    link: str = models.URLField(null=True, blank=True, max_length=500)
 
-    title = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    media_url = models.URLField(max_length=1000)
-    media_type = models.CharField(max_length=60)
-    length = models.BigIntegerField(null=True, blank=True)
+    media_url: str = models.URLField(max_length=1000)
+    media_type: str = models.CharField(max_length=60)
+    length: int = models.BigIntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=30, blank=True)
-    explicit = models.BooleanField(default=False)
+    duration: str = models.CharField(max_length=30, blank=True)
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -89,14 +89,11 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.guid
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("episodes:episode_detail", args=[self.id, self.slug])
-
-    def get_preview_url(self):
-        return reverse("episodes:episode_preview", args=[self.id])
 
     @property
     def slug(self) -> str:
