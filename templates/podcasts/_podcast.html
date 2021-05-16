@@ -15,14 +15,7 @@
     <div class="text-sm flex flex-wrap items-center space-x-2">
 
       <div class="flex items-center">
-        <button title="Preview for {{ podcast_title }}"
-                class="focus:outline-none"
-                hx-get="{% url 'podcasts:preview' podcast.id %}"
-                hx-target="#modal"
-                hx-swap="outerHTML"
-                hx-trigger="click delay:200ms">
-          {% icon "info" css_class="w-6 h-6" %}
-        </button>
+        {% include "podcasts/_preview_toggle.html" %}
       </div>
       <div title="Date last published"
            class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300">

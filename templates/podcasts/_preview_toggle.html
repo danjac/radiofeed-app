@@ -1,0 +1,8 @@
+<button title="Preview for {{ podcast.title|stripentities }}"
+        class="focus:outline-none"
+        hx-get="{% url 'podcasts:preview' podcast.id %}"
+        hx-target="#modal"
+        hx-swap="outerHTML"
+        hx-trigger="click delay:200ms">
+  {% icon "info" css_class="w-6 h-6" %}
+</button>
