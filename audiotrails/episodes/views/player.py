@@ -1,19 +1,21 @@
 import http
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from typing import Optional
+
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import accepts_json, ajax_login_required
 
-from ..models import QueueItem
+from ..models import Episode, QueueItem
 from . import get_episode_or_404
 
 
 @require_POST
 @ajax_login_required
-def start_player(request, episode_id):
+def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
     return render_player(request, next_episode=episode)
@@ -21,7 +23,7 @@ def start_player(request, episode_id):
 
 @require_POST
 @ajax_login_required
-def close_player(request):
+def close_player(request: HttpRequest) -> HttpResponse:
     if log := request.player.stop_episode():
         current_episode = log.episode
     else:
@@ -31,7 +33,7 @@ def close_player(request):
 
 @require_POST
 @ajax_login_required
-def play_next_episode(request):
+def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
@@ -62,7 +64,7 @@ def play_next_episode(request):
 @require_POST
 @accepts_json
 @ajax_login_required
-def player_time_update(request):
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
         request.player.update_current_time(float(request.json["currentTime"]))
@@ -71,7 +73,11 @@ def player_time_update(request):
         return HttpResponseBadRequest("missing or invalid data")
 
 
-def render_player(request, current_episode=None, next_episode=None):
+def render_player(
+    request: HttpRequest,
+    current_episode: Optional[Episode] = None,
+    next_episode: Optional[Episode] = None,
+) -> HttpResponse:
     response = TemplateResponse(
         request, "_player.html", {"run_immediately": next_episode is not None}
     )
