@@ -35,7 +35,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 THUMBNAIL_SIZE = 200
 
 
-class Image(Protocol):
+class CoverImage(Protocol):
     width: int
     height: int
     url: str
@@ -122,7 +122,7 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
-    cover_image: Optional[Image] = ImageField(null=True, blank=True)
+    cover_image: Optional[CoverImage] = ImageField(null=True, blank=True)
 
     itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
@@ -212,7 +212,7 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_cover_image_thumbnail(self) -> Union[Image, PlaceholderImage]:
+    def get_cover_image_thumbnail(self) -> Union[CoverImage, PlaceholderImage]:
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 

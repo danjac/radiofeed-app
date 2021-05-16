@@ -1,7 +1,7 @@
 import dataclasses
 import json
 
-from typing import Optional
+from typing import Dict, Optional, Union
 
 import requests
 
@@ -29,7 +29,7 @@ class SearchResult:
     image: str
     podcast: Optional[Podcast] = None
 
-    def as_dict(self):
+    def as_dict(self) -> Dict[str, Union[str, Podcast, None]]:
         return {
             "rss": self.rss,
             "title": self.title,
