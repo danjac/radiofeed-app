@@ -1,6 +1,6 @@
 import mimetypes
 
-from typing import Optional
+from typing import Generator, List, Optional
 
 import lxml
 
@@ -10,7 +10,7 @@ from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
 
 
-def parse_feed(raw: bytes):
+def parse_feed(raw: bytes) -> Feed:
 
     if (
         rss := lxml.etree.fromstring(
@@ -49,10 +49,10 @@ class RssParser:
     def parse_tag(self, xpath: str) -> Optional[lxml.ElementBase]:
         return self.tag.find(xpath, self.NAMESPACES)
 
-    def parse_tags(self, xpath):
+    def parse_tags(self, xpath: str) -> List[lxml.ElementBase]:
         return self.tag.findall(xpath, self.NAMESPACES)
 
-    def parse_attribute(self, xpath, attr):
+    def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
         if (tag := self.parse_tag(xpath)) is None:
             return None
         try:
@@ -60,7 +60,7 @@ class RssParser:
         except KeyError:
             return None
 
-    def parse_attribute_list(self, xpath, attr):
+    def parse_attribute_list(self, xpath: str, attr: str) -> List[str]:
         return [
             (tag.attrib[attr] or "")
             for tag in self.parse_tags(xpath)
@@ -80,7 +80,7 @@ class RssParser:
 
 
 class FeedParser(RssParser):
-    def parse(self):
+    def parse(self) -> Feed:
         return Feed(
             title=self.parse_text("title"),
             language=self.parse_text("language"),
@@ -93,14 +93,14 @@ class FeedParser(RssParser):
             items=list(self.parse_items()),
         )
 
-    def parse_image(self):
+    def parse_image(self) -> Optional[str]:
         return (
             self.parse_attribute("itunes:image", "href")
             or self.parse_text("image/url")
             or self.parse_attribute("googleplay:image", "href")
         )
 
-    def parse_description(self):
+    def parse_description(self) -> Optional[str]:
         return (
             self.parse_text("description")
             or self.parse_text("googleplay:description")
@@ -108,12 +108,12 @@ class FeedParser(RssParser):
             or self.parse_text("itunes:subtitle")
         )
 
-    def parse_creators(self):
+    def parse_creators(self) -> List[str]:
         return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
             "itunes:author"
         )
 
-    def parse_items(self):
+    def parse_items(self) -> Generator[Item, None, None]:
 
         guids = set()
 
@@ -128,7 +128,7 @@ class FeedParser(RssParser):
 
 
 class ItemParser(RssParser):
-    def parse(self):
+    def parse(self) -> Item:
         return Item(
             guid=self.parse_guid(),
             title=self.parse_text("title"),
@@ -141,10 +141,10 @@ class ItemParser(RssParser):
             keywords=self.parse_keywords(),
         )
 
-    def parse_guid(self):
+    def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
-    def parse_audio(self):
+    def parse_audio(self) -> Optional[Audio]:
 
         if (enclosure := self.parse_tag("enclosure")) is None:
             return None
@@ -163,7 +163,7 @@ class ItemParser(RssParser):
             url=url,
         )
 
-    def parse_description(self):
+    def parse_description(self) -> str:
 
         for tagname in (
             "content:encoded",
@@ -177,7 +177,7 @@ class ItemParser(RssParser):
 
         return ""
 
-    def parse_keywords(self):
+    def parse_keywords(self) -> str:
         rv = self.parse_text_list("category")
         if keywords := self.parse_text("itunes:keywords"):
             rv.append(keywords)
