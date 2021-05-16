@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+podman exec -it -e audiopod-webapp mypy audiotrails $@
+
