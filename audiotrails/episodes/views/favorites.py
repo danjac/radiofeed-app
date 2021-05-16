@@ -2,18 +2,18 @@ import http
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST
 
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
-from ..models import Favorite
+from ..models import Episode, Favorite
 from . import get_episode_or_404
 
 
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     favorites = Favorite.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
@@ -32,7 +32,7 @@ def index(request):
 
 @require_POST
 @ajax_login_required
-def add_favorite(request, episode_id):
+def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     try:
@@ -45,7 +45,7 @@ def add_favorite(request, episode_id):
 
 @require_POST
 @ajax_login_required
-def remove_favorite(request, episode_id):
+def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
@@ -53,7 +53,9 @@ def remove_favorite(request, episode_id):
     return render_favorite_toggle(request, episode, False)
 
 
-def render_favorite_toggle(request, episode, is_favorited):
+def render_favorite_toggle(
+    request: HttpRequest, episode: Episode, is_favorited: bool
+) -> HttpResponse:
     response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
     response["HX-Trigger"] = "reload-favorites"
     return response
