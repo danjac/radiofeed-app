@@ -11,6 +11,7 @@ import requests
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
+from requests.structures import CaseInsensitiveDict
 
 from .exceptions import InvalidImageURL
 from .headers import get_headers
@@ -19,7 +20,7 @@ MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
-def fetch_image_from_url(image_url):
+def fetch_image_from_url(image_url: str) -> ImageFile:
     """Get an ImageFile object from a URL."""
     try:
         if not image_url:
@@ -44,7 +45,7 @@ def fetch_image_from_url(image_url):
         raise InvalidImageURL from e
 
 
-def get_content_type(image_url, headers):
+def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> Optional[str]:
     content_type: Optional[str] = None
 
     try:
@@ -55,7 +56,7 @@ def get_content_type(image_url, headers):
     return content_type
 
 
-def get_image_file(raw):
+def get_image_file(raw: bytes) -> io.BytesIO:
     img = Image.open(io.BytesIO(raw))
 
     if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
