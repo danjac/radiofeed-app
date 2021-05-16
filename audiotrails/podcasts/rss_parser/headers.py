@@ -1,6 +1,8 @@
 import random
 
-USER_AGENTS = [
+from typing import Dict, List
+
+USER_AGENTS: List[str] = [
     (
         "Mozilla/5.0 (X11; Linux x86_64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -39,7 +41,7 @@ USER_AGENTS = [
 ]
 
 
-def get_headers():
+def get_headers() -> Dict[str, str]:
     """Return randomized user agent in case only browser clients allowed."""
     return {
         "User-Agent": random.choice(USER_AGENTS),
