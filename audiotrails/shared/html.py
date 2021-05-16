@@ -1,12 +1,12 @@
 import html
 
-from typing import Optional
+from typing import Any, Dict, Generator, List, Optional
 
 import bleach
 
 from html5lib.filters import optionaltags, whitespace
 
-ALLOWED_TAGS = [
+ALLOWED_TAGS: List[str] = [
     "a",
     "abbr",
     "acronym",
@@ -59,7 +59,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
 
     elements = frozenset(["p"])
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[Dict[str, Any], None, None]:
         remove = False
         for _, token, next in self.slider():
             if token["type"] == "StartTag" and token["name"] in self.elements:
@@ -98,7 +98,7 @@ def clean_html_content(value: Optional[str]) -> str:
         return ""
 
 
-def stripentities(value):
+def stripentities(value: Optional[str]) -> str:
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
     return html.unescape(value) if value else ""
