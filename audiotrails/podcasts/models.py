@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 
 from datetime import datetime
-from typing import Dict, Optional, Protocol, Union
+from typing import Dict, List, Optional, Protocol, Union
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -26,6 +26,7 @@ from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.shared.db import FastCountMixin
+from audiotrails.shared.types import AnyUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -121,34 +122,34 @@ class Podcast(models.Model):
 
     cover_image: Optional[Image] = ImageField(null=True, blank=True)
 
-    itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
+    itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
-    language = models.CharField(
+    language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
-    description = models.TextField(blank=True)
-    link = models.URLField(null=True, blank=True, max_length=500)
-    keywords = models.TextField(blank=True)
-    extracted_text = models.TextField(blank=True)
-    creators = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    link: str = models.URLField(null=True, blank=True, max_length=500)
+    keywords: str = models.TextField(blank=True)
+    extracted_text: str = models.TextField(blank=True)
+    creators: str = models.TextField(blank=True)
 
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(null=True, blank=True)
+    created: datetime = models.DateTimeField(auto_now_add=True)
+    last_updated: Optional[datetime] = models.DateTimeField(null=True, blank=True)
 
-    explicit = models.BooleanField(default=False)
-    promoted = models.BooleanField(default=False)
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
-    categories = models.ManyToManyField(Category, blank=True)
+    categories: List[Category] = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
-    recipients = models.ManyToManyField(
+    recipients: List[settings.AUTH_USER_MODEL] = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    sync_error = models.TextField(blank=True)
-    num_retries = models.PositiveIntegerField(default=0)
+    sync_error: str = models.TextField(blank=True)
+    num_retries: int = models.PositiveIntegerField(default=0)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
 
@@ -160,26 +161,23 @@ class Podcast(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.rss
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return self.get_episodes_url()
 
-    def get_preview_url(self):
-        return reverse("podcasts:preview", args=[self.id])
-
-    def get_episodes_url(self):
+    def get_episodes_url(self) -> str:
         return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])
 
-    def get_recommendations_url(self):
+    def get_recommendations_url(self) -> str:
         return reverse("podcasts:podcast_recommendations", args=[self.id, self.slug])
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "podcast"
 
-    def is_following(self, user):
+    def is_following(self, user: AnyUser) -> bool:
         if user.is_anonymous:
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
