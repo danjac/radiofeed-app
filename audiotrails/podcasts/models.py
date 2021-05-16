@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import dataclasses
 
 from typing import Dict
@@ -35,7 +37,7 @@ class PlaceholderImage:
     height: int
 
     @cached_property
-    def url(self):
+    def url(self) -> str:
         # fetch lazy so we don't have issue finding staticfiles
         return static("img/podcast-icon.png")
 
@@ -44,7 +46,7 @@ _cover_image_placeholder = PlaceholderImage(width=THUMBNAIL_SIZE, height=THUMBNA
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.2):
+    def search(self, search_term: int, base_similarity: float = 0.2) -> models.QuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -55,8 +57,8 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 
 class Category(models.Model):
 
-    name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
+    name: str = models.CharField(max_length=100, unique=True)
+    parent: Category = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -65,7 +67,7 @@ class Category(models.Model):
     )
 
     # https://itunes.apple.com/search?term=podcast&genreId=1402&limit=20
-    itunes_genre_id = models.IntegerField(
+    itunes_genre_id: int = models.IntegerField(
         verbose_name="iTunes Genre ID", null=True, blank=True, unique=True
     )
 
@@ -75,19 +77,19 @@ class Category(models.Model):
         verbose_name_plural = "categories"
         ordering = ("name",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("podcasts:category_detail", args=[self.id, self.slug])
 
 
 class PodcastQuerySet(FastCountMixin, models.QuerySet):
-    def search(self, search_term):
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -96,7 +98,7 @@ class PodcastQuerySet(FastCountMixin, models.QuerySet):
             rank=SearchRank(models.F("search_vector"), query=query)
         ).filter(search_vector=query)
 
-    def with_follow_count(self):
+    def with_follow_count(self) -> models.QuerySet:
         return self.annotate(follow_count=models.Count("follow"))
 
 
@@ -105,7 +107,7 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    rss = models.URLField(unique=True, max_length=500)
+    rss: str = models.URLField(unique=True, max_length=500)
     etag = models.TextField(blank=True)
     title = models.TextField()
     pub_date = models.DateTimeField(null=True, blank=True)
