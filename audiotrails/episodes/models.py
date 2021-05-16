@@ -318,9 +318,11 @@ QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position = models.IntegerField(default=0)
+    user: settings.AUTH_USER_MODEL = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position: int = models.IntegerField(default=0)
 
     objects = QueueItemManager()
 
