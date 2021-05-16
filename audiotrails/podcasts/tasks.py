@@ -1,5 +1,7 @@
 import datetime
 
+from typing import Tuple
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
@@ -7,7 +9,7 @@ from django.utils import timezone
 
 from . import itunes
 from .emails import send_recommendations_email
-from .models import Podcast
+from .models import Podcast, PodcastQuerySet
 from .recommender import recommend
 from .rss_parser import parse_rss
 from .rss_parser.exceptions import RssParserError
@@ -16,12 +18,12 @@ logger = get_task_logger(__name__)
 
 
 @shared_task(name="audiotrails.podcasts.crawl_itunes")
-def crawl_itunes(limit=300):
+def crawl_itunes(limit: int = 300) -> None:
     itunes.crawl_itunes(limit)
 
 
 @shared_task(name="audiotrails.podcasts.send_recommendation_emails")
-def send_recommendation_emails():
+def send_recommendation_emails() -> None:
     for user in get_user_model().objects.filter(
         send_recommendations_email=True, is_active=True
     ):
@@ -29,10 +31,10 @@ def send_recommendation_emails():
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds():
+def sync_podcast_feeds() -> None:
     podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
 
-    querysets = (
+    querysets: Tuple[PodcastQuerySet, PodcastQuerySet] = (
         # new podcasts
         podcasts.filter(last_updated__isnull=True),
         # podcasts updated > 12 hours ago
@@ -48,12 +50,12 @@ def sync_podcast_feeds():
 
 
 @shared_task(name="audiotrails.podcasts.create_podcast_recommendations")
-def create_podcast_recommendations():
+def create_podcast_recommendations() -> None:
     recommend()
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss, *, force_update=False):
+def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
