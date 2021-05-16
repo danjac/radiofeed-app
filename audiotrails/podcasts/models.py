@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import decimal
 
 from datetime import datetime
 from typing import Dict, List, Optional, Protocol, Union
@@ -285,12 +286,16 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 
 class Recommendation(models.Model):
 
-    podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
-    recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
+    recommended: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
 
-    frequency = models.PositiveIntegerField(default=0)
+    frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
+    similarity: decimal.Decimal = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
