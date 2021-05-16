@@ -1,4 +1,4 @@
-<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 border shadow-xl rounded-lg z-20 text-sm"
+<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 border shadow-xl rounded-lg z-20 text-sm dark:border-gray-500"
      :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
      x-data="{show: true, position: 'dropdown'}"
      x-show="show"
@@ -11,7 +11,7 @@
     }">
 
   {% if is_playing %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:close_player' %}"
           hx-target="#player"
           hx-swap="outerHTML"
@@ -20,7 +20,7 @@
     Close Player
   </button>
   {% else %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-target="#player"
           hx-swap="outerHTML"
@@ -31,14 +31,14 @@
   {% endif %}
 
   {% if is_queued %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
           @click="show=false">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from Play Queue
   </button>
   {% else %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:add_to_queue' episode.id %}"
           @click="show=false">
     {% icon "collection" css_class="h-4 w-4 mr-2" %}
@@ -47,14 +47,14 @@
   {% endif %}
 
   {% if is_favorited %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_favorite' episode.id %}"
           @click="show=false">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from Favorites
   </button>
   {% else %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:add_favorite' episode.id %}"
           @click="show=false">
     {% icon "star" css_class="h-4 w-4 mr-2" %}
@@ -63,7 +63,7 @@
   {% endif %}
 
   {% if episode.listened and not is_playing %}
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
           @click="show=false">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
@@ -71,7 +71,7 @@
   </button>
   {% endif %}
 
-  <a class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <a class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
      title="Download episode"
      href="{{ episode.media_url }}">
     <div class="mr-2">
@@ -79,7 +79,7 @@
     </div>
     Download
   </a>
-  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b"
+  <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           @click="show=false">
     {% icon "x" css_class="h-4 w-4 mr-2" %}
     Close

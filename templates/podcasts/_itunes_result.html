@@ -23,9 +23,9 @@
     </h2>
     <div class="text-sm flex items-center space-x-3">
       {% if podcast and podcast.pub_date %}
-      <button title="Actions for {{ result.title }}"
+      <button title="Preview for {{ result.title }}"
               class="focus:outline-none"
-              hx-get="{% url 'podcasts:actions' podcast.id %}"
+              hx-get="{% url 'podcasts:preview' podcast.id %}"
               hx-target="#modal"
               hx-swap="outerHTML"
               hx-trigger="click delay:200ms">
