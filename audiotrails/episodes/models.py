@@ -56,23 +56,23 @@ class Episode(models.Model):
 
     podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid: str = models.TextField()
+    guid = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
-    link: str = models.URLField(null=True, blank=True, max_length=500)
+    link = models.URLField(null=True, blank=True, max_length=500)
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    keywords = models.TextField(blank=True)
 
-    media_url: str = models.URLField(max_length=1000)
-    media_type: str = models.CharField(max_length=60)
-    length: int = models.BigIntegerField(null=True, blank=True)
+    media_url = models.URLField(max_length=1000)
+    media_type = models.CharField(max_length=60)
+    length = models.BigIntegerField(null=True, blank=True)
 
-    duration: str = models.CharField(max_length=30, blank=True)
-    explicit: bool = models.BooleanField(default=False)
+    duration = models.CharField(max_length=30, blank=True)
+    explicit = models.BooleanField(default=False)
 
-    search_vector: str = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -227,10 +227,8 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 class Favorite(TimeStampedModel):
 
-    user: settings.AUTH_USER_MODEL = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
 
@@ -267,13 +265,11 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user: settings.AUTH_USER_MODEL = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    updated: datetime = models.DateTimeField()
-    completed: Optional[datetime] = models.DateTimeField(null=True, blank=True)
-    current_time: int = models.IntegerField(default=0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated = models.DateTimeField()
+    completed = models.DateTimeField(null=True, blank=True)
+    current_time = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
@@ -324,11 +320,9 @@ QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
-    user: settings.AUTH_USER_MODEL = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position: int = models.IntegerField(default=0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)
 
     objects = QueueItemManager()
 
