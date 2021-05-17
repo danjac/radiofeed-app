@@ -13,6 +13,7 @@ else:
 
 ContextDict = dict[str, Any]
 
+
 AnyUser = Union[AuthenticatedUser, AnonymousUser]
 
 

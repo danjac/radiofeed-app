@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from typing import Dict, Protocol, Union
+from typing import Protocol
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -192,9 +192,9 @@ class Podcast(models.Model):
             timeout=settings.DEFAULT_CACHE_TIMEOUT,
         )
 
-    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, Union[str, int]]:
+    def get_opengraph_data(self, request: HttpRequest) -> dict[str, str | int]:
 
-        og_data: Dict[str, Union[str, int]] = {
+        og_data: dict[str, str | int] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.title}",
             "description": self.description,
@@ -210,7 +210,7 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_cover_image_thumbnail(self) -> Union[CoverImage, PlaceholderImage]:
+    def get_cover_image_thumbnail(self) -> CoverImage | PlaceholderImage:
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
