@@ -20,7 +20,7 @@ from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
-    def with_current_time(self, user: AnyUser) -> models.Queryset:
+    def with_current_time(self, user: AnyUser) -> EpisodeQuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -39,7 +39,7 @@ class EpisodeQuerySet(FastCountMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term: str) -> EpisodeQuerySet:
         if not search_term:
             return self.none()
 
@@ -205,7 +205,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term: str) -> FavoriteQuerySet:
         if not search_term:
             return self.none()
 
@@ -243,7 +243,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term: str) -> AudioLogQuerySet:
         if not search_term:
             return self.none()
 
@@ -305,7 +305,7 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def with_current_time(self, user: AuthenticatedUser) -> models.QuerySet:
+    def with_current_time(self, user: AuthenticatedUser) -> QueueItemQuerySet:
         """Adds current_time annotation."""
         return self.annotate(
             current_time=models.Subquery(

@@ -54,7 +54,9 @@ _cover_image_placeholder = PlaceholderImage()
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
+    def search(
+        self, search_term: str, base_similarity: float = 0.2
+    ) -> CategoryQuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -97,7 +99,7 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
+    def search(self, search_term: str) -> PodcastQuerySet:
         if not search_term:
             return self.none()
 
@@ -242,7 +244,7 @@ class RecommendationQuerySet(models.QuerySet):
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def with_followed(self, user: AnyUser) -> models.QuerySet:
+    def with_followed(self, user: AnyUser) -> RecommendationQuerySet:
         """Marks which recommendations are followed by this user."""
         if user.is_anonymous:
             return self.annotate(
@@ -254,7 +256,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user: AuthenticatedUser) -> models.QuerySet:
+    def for_user(self, user: AuthenticatedUser) -> RecommendationQuerySet:
         podcast_ids = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(

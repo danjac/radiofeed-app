@@ -5,7 +5,7 @@ from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
-    def for_email(self, email: str) -> models.QuerySet:
+    def for_email(self, email: str) -> UserQuerySet:
         """Returns users matching this email address, including both
         primary and secondary email addresses
         """
@@ -13,7 +13,7 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names: list[str]) -> models.QuerySet:
+    def matches_usernames(self, names: list[str]) -> UserQuerySet:
         """Returns users matching the (case insensitive) username."""
         if not names:
             return self.none()
