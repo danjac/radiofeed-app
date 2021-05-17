@@ -1,7 +1,5 @@
 import datetime
 
-from typing import Tuple
-
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
@@ -34,7 +32,7 @@ def send_recommendation_emails() -> None:
 def sync_podcast_feeds() -> None:
     podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
 
-    querysets: Tuple[PodcastQuerySet, PodcastQuerySet] = (
+    querysets: tuple[PodcastQuerySet, PodcastQuerySet] = (
         # new podcasts
         podcasts.filter(last_updated__isnull=True),
         # podcasts updated > 12 hours ago

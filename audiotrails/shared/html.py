@@ -1,12 +1,12 @@
 import html
 
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any, Generator, Optional
 
 import bleach
 
 from html5lib.filters import optionaltags, whitespace
 
-ALLOWED_TAGS: List[str] = [
+ALLOWED_TAGS: list[str] = [
     "a",
     "abbr",
     "acronym",
@@ -59,7 +59,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
 
     elements = frozenset(["p"])
 
-    def __iter__(self) -> Generator[Dict[str, Any], None, None]:
+    def __iter__(self) -> Generator[dict[str, Any], None, None]:
         remove = False
         for _, token, next in self.slider():
             if token["type"] == "StartTag" and token["name"] in self.elements:
@@ -85,7 +85,7 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs: Dict, new: bool = False) -> Dict:
+def linkify_callback(attrs: dict, new: bool = False) -> dict:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs

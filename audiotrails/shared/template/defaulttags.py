@@ -2,7 +2,7 @@ import collections
 import json
 import math
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 from urllib import parse
 
 import bs4
@@ -101,7 +101,7 @@ def keepspaces(text: Optional[str]) -> str:
 
 
 @register.filter
-def htmlattrs(attrs: Dict[str, str]) -> str:
+def htmlattrs(attrs: dict[str, str]) -> str:
     if not attrs:
         return ""
     return mark_safe(" ".join(f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()))
@@ -118,7 +118,7 @@ def signup_url(url: str) -> str:
 
 
 @register.simple_tag
-def get_privacy_details() -> Dict[str, str]:
+def get_privacy_details() -> dict[str, str]:
     return settings.PRIVACY_DETAILS
 
 
