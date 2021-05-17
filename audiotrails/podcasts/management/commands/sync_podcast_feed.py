@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.rss_parser import RssParserError, parse_rss
@@ -7,7 +7,7 @@ from audiotrails.podcasts.rss_parser import RssParserError, parse_rss
 class Command(BaseCommand):
     help = "Updates single podcast feed"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
 
         parser.add_argument("podcast_id", type=int)
 
@@ -17,7 +17,7 @@ class Command(BaseCommand):
             help="Force update",
         )
 
-    def handle(self, **options):
+    def handle(self, **options) -> None:
         try:
             podcast = Podcast.objects.get(pk=options["podcast_id"])
             new_episodes = parse_rss(podcast, force_update=options["force_update"])
