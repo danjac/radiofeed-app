@@ -6,7 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-Context = Dict[str, Any]
+ContextDict = Dict[str, Any]
 
 AnyUser = Union[settings.AUTH_USER_MODEL, AnonymousUser]
 

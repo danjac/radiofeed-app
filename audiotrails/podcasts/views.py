@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from django.conf import settings
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.views.decorators.http import require_POST
 from audiotrails.episodes.views import render_episode_list_response
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
+from audiotrails.shared.types import ContextDict
 
 from . import itunes
 from .models import Category, Follow, Podcast, Recommendation
@@ -272,8 +273,8 @@ def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
 def get_podcast_detail_context(
     request: HttpRequest,
     podcast: Podcast,
-    extra_context: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    extra_context: Optional[ContextDict] = None,
+) -> ContextDict:
 
     return {
         "podcast": podcast,
@@ -299,7 +300,7 @@ def render_podcast_list_response(
     request: HttpRequest,
     podcasts: List[Podcast],
     template_name: str,
-    extra_context: Optional[Dict[str, Any]] = None,
+    extra_context: Optional[ContextDict] = None,
     cached: bool = False,
 ):
 

@@ -18,7 +18,7 @@ from django.utils.safestring import mark_safe
 
 from ..html import clean_html_content
 from ..html import stripentities as _stripentities
-from ..types import Context
+from ..types import ContextDict
 
 register = template.Library()
 
@@ -52,7 +52,7 @@ def format_duration(total_seconds: Optional[int]) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: Context, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if context["request"].path == url:
         return ActiveLink(url, True, True)
@@ -123,7 +123,7 @@ def get_privacy_details() -> Dict[str, str]:
 
 
 @register.inclusion_tag("icons/_svg.html")
-def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> Context:
+def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> ContextDict:
     return {
         "name": name,
         "css_class": css_class,
@@ -135,8 +135,8 @@ def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> Conte
 
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
 def share_buttons(
-    context: Context, url: str, subject: str, css_class: str = ""
-) -> Context:
+    context: ContextDict, url: str, subject: str, css_class: str = ""
+) -> ContextDict:
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 

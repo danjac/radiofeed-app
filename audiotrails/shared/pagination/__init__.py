@@ -7,7 +7,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 
-from ..types import Context
+from ..types import ContextDict
 
 
 def paginate(
@@ -33,7 +33,7 @@ def render_paginated_response(
     object_list: List[Model],
     template_name: str,
     pagination_template_name: str,
-    extra_context: Optional[Context] = None,
+    extra_context: Optional[ContextDict] = None,
     **pagination_kwargs,
 ) -> HttpResponse:
     page_obj = paginate(request, object_list, **pagination_kwargs)

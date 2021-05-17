@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from django.conf import settings
 from django.db.models import OuterRef, Subquery
@@ -10,6 +10,7 @@ from django.urls import reverse
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
+from audiotrails.shared.types import ContextDict
 
 from ..models import AudioLog, Episode
 
@@ -156,7 +157,7 @@ def render_episode_list_response(
     request: HttpRequest,
     episodes: List[Episode],
     template_name: str,
-    extra_context: Optional[Dict[str, Any]] = None,
+    extra_context: Optional[ContextDict] = None,
     cached: bool = False,
 ):
     return render_paginated_response(
