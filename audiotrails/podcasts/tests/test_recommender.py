@@ -9,13 +9,13 @@ from ..recommender.text_parser import clean_text, extract_keywords
 
 
 class PodcastRecommenderTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         logging.disable(logging.CRITICAL)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         logging.disable(logging.NOTSET)
 
-    def test_handle_empty_data_frame(self):
+    def test_handle_empty_data_frame(self) -> None:
         PodcastFactory(
             title="Cool science podcast",
             keywords="science physics astronomy",
@@ -25,7 +25,7 @@ class PodcastRecommenderTests(TestCase):
         recommend()
         self.assertEqual(Recommendation.objects.count(), 0)
 
-    def test_create_podcast_recommendations_with_no_categories(self):
+    def test_create_podcast_recommendations_with_no_categories(self) -> None:
         podcast_1 = PodcastFactory(
             title="Cool science podcast",
             keywords="science physics astronomy",
@@ -82,7 +82,7 @@ class PodcastRecommenderTests(TestCase):
 
 
 class ExtractKeywordsTests(SimpleTestCase):
-    def test_extract(self):
+    def test_extract(self) -> None:
         self.assertEqual(
             extract_keywords("en", "the cat sits on the mat"),
             [
@@ -94,10 +94,10 @@ class ExtractKeywordsTests(SimpleTestCase):
 
 
 class CleanTextTests(SimpleTestCase):
-    def test_remove_html_tags(self):
+    def test_remove_html_tags(self) -> None:
         self.assertEqual(clean_text("<p>test</p>"), "test")
 
-    def test_remove_numbers(self):
+    def test_remove_numbers(self) -> None:
         self.assertEqual(
             clean_text("Tuesday, September 1st, 2020"), "Tuesday September st "
         )
