@@ -1,5 +1,6 @@
 import http
 
+from typing import List, Tuple
 from unittest.mock import patch
 
 from django.test import TestCase, TransactionTestCase
@@ -16,10 +17,12 @@ from ..factories import (
     RecommendationFactory,
 )
 from ..itunes import SearchResult
-from ..models import Follow
+from ..models import Follow, Podcast
 
 
-def mock_fetch_itunes_genre(genre_id, num_results=20):
+def mock_fetch_itunes_genre(
+    genre_id: int, num_results: int = 20
+) -> Tuple[List[SearchResult], List[Podcast]]:
     return [
         SearchResult(
             rss="http://example.com/test.xml",
@@ -30,7 +33,9 @@ def mock_fetch_itunes_genre(genre_id, num_results=20):
     ], []
 
 
-def mock_search_itunes(search_term, num_results=12):
+def mock_search_itunes(
+    search_term: str, num_results: int = 12
+) -> Tuple[List[SearchResult], List[Podcast]]:
     return [
         SearchResult(
             rss="http://example.com/test.xml",
