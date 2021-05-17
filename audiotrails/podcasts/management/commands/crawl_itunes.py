@@ -14,7 +14,7 @@ class Command(BaseCommand):
             help="Max results from iTunes API",
         )
 
-    def handle(self, **options) -> None:
+    def handle(self, *args, **options) -> None:
         new_podcasts = itunes.crawl_itunes(options["limit"])
 
         if new_podcasts:

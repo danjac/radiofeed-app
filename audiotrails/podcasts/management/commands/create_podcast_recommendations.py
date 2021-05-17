@@ -6,5 +6,5 @@ from audiotrails.podcasts.recommender import recommend
 class Command(BaseCommand):
     help = "Creates new podcast recommendations."
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **kwargs) -> None:
         recommend()

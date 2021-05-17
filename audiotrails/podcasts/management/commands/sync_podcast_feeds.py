@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.tasks import sync_podcast_feed, sync_podcast_feeds
@@ -7,7 +7,7 @@ from audiotrails.podcasts.tasks import sync_podcast_feed, sync_podcast_feeds
 class Command(BaseCommand):
     help = "Updates all podcasts from their RSS feeds."
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
 
         parser.add_argument(
             "--run-job",
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             help="Force update",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
 
         if options["run_job"]:
             sync_podcast_feeds.delay()
