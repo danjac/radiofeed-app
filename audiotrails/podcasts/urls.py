@@ -1,5 +1,3 @@
-from typing import List
-
 from django.urls import path
 
 from . import views
@@ -7,7 +5,7 @@ from . import views
 app_name = "podcasts"
 
 
-urlpatterns: List[str] = [
+urlpatterns = [
     path("podcasts/", views.index, name="index"),
     path("podcasts/featured/", views.index, name="featured", kwargs={"featured": True}),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),

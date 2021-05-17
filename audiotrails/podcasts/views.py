@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
 from django.conf import settings
 from django.contrib import messages
@@ -298,7 +298,7 @@ def render_follow_response(
 
 def render_podcast_list_response(
     request: HttpRequest,
-    podcasts: List[Podcast],
+    podcasts: Sequence[Podcast],
     template_name: str,
     extra_context: Optional[ContextDict] = None,
     cached: bool = False,

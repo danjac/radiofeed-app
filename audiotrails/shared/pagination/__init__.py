@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
@@ -12,7 +12,7 @@ from ..types import ContextDict
 
 def paginate(
     request: HttpRequest,
-    object_list: List[Model],
+    object_list: Sequence[Model],
     page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
     allow_empty: bool = True,
@@ -30,7 +30,7 @@ def paginate(
 
 def render_paginated_response(
     request: HttpRequest,
-    object_list: List[Model],
+    object_list: Sequence[Model],
     template_name: str,
     pagination_template_name: str,
     extra_context: Optional[ContextDict] = None,

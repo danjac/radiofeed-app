@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from django.conf import settings
 from django.db.models import OuterRef, Subquery
@@ -155,7 +155,7 @@ def get_episode_or_404(
 
 def render_episode_list_response(
     request: HttpRequest,
-    episodes: List[Episode],
+    episodes: Sequence[Episode],
     template_name: str,
     extra_context: Optional[ContextDict] = None,
     cached: bool = False,
