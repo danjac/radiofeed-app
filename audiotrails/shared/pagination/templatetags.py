@@ -1,10 +1,12 @@
 from django import template
 
+from ..types import Context
+
 register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context, page_number, param="page"):
+def pagination_url(context: Context, page_number: int, param: str = "page") -> str:
     """
     Inserts the "page" query string parameter with the
     provided page number into the template, preserving the original

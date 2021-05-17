@@ -1,10 +1,12 @@
-from typing import Any, Protocol, Union
+from typing import Any, Dict, Protocol, Union
 
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 from django.http import HttpRequest
+
+Context = Dict[str, Any]
 
 AnyUser = Union[settings.AUTH_USER_MODEL, AnonymousUser]
 
