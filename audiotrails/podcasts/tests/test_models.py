@@ -59,19 +59,19 @@ class RecommendationManagerTests(TestCase):
 
 
 class CategoryManagerTests(TestCase):
-    def test_search(self):
+    def test_search(self) -> None:
         CategoryFactory(name="testing")
         self.assertEqual(Category.objects.search("testing").count(), 1)
 
 
 class CategoryModelTests(SimpleTestCase):
-    def test_slug(self):
+    def test_slug(self) -> None:
         category = Category(name="Testing")
         self.assertEqual(category.slug, "testing")
 
 
 class PodcastManagerTests(TestCase):
-    def test_search(self):
+    def test_search(self) -> None:
         PodcastFactory(title="testing")
         self.assertEqual(Podcast.objects.search("testing").count(), 1)
 
@@ -97,37 +97,37 @@ class PodcastManagerTests(TestCase):
 
 class PodcastModelTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.podcast = PodcastFactory(title="Testing")
         cls.user = UserFactory()
 
-    def test_slug(self):
+    def test_slug(self) -> None:
         self.assertEqual(self.podcast.slug, "testing")
 
-    def test_get_episode_count(self):
+    def test_get_episode_count(self) -> None:
         EpisodeFactory.create_batch(3)
         EpisodeFactory.create_batch(3, podcast=self.podcast)
         self.assertEqual(self.podcast.get_episode_count(), 3)
 
-    def test_get_cached_episode_count(self):
+    def test_get_cached_episode_count(self) -> None:
         EpisodeFactory.create_batch(3)
         EpisodeFactory.create_batch(3, podcast=self.podcast)
         self.assertEqual(self.podcast.get_cached_episode_count(), 3)
 
-    def test_slug_if_title_empty(self):
+    def test_slug_if_title_empty(self) -> None:
         self.assertEqual(Podcast().slug, "podcast")
 
-    def is_following_anonymous(self):
+    def is_following_anonymous(self) -> None:
         self.assertFalse(self.podcast.is_following(AnonymousUser()))
 
-    def is_following_false(self):
+    def is_following_false(self) -> None:
         self.assertFalse(self.podcast.is_following(UserFactory()))
 
-    def is_following_true(self):
+    def is_following_true(self) -> None:
         sub = FollowFactory(podcast=self.podcast)
         self.assertTrue(self.podcast.is_following(sub.user))
 
-    def test_get_opengraph_data(self):
+    def test_get_opengraph_data(self) -> None:
         req = RequestFactory().get("/")
         req.site = Site.objects.get_current()
         og_data = self.podcast.get_opengraph_data(req)
