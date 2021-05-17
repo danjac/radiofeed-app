@@ -1,23 +1,29 @@
+from typing import Optional
+
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
+from audiotrails.shared.types import AnyUser
 from audiotrails.users.factories import UserFactory
 
 from ..factories import AudioLogFactory, EpisodeFactory
-from ..models import AudioLog
+from ..models import AudioLog, Episode
 from ..player import Player
 
 
 class PlayerTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.rf = RequestFactory()
 
-    def make_request(self, episode=None, user=None):
+    def make_request(
+        self, episode: Optional[Episode] = None, user: Optional[AnyUser] = None
+    ) -> HttpRequest:
         req = self.rf.get("/")
         req.session = {}
         if episode is not None:
@@ -25,7 +31,7 @@ class PlayerTests(TestCase):
         req.user = user or AnonymousUser()
         return req
 
-    def test_start_episode(self):
+    def test_start_episode(self) -> None:
         req = self.make_request(user=self.user)
         player = Player(req)
 
@@ -42,7 +48,7 @@ class PlayerTests(TestCase):
 
         self.assertTrue(player.is_playing(self.episode))
 
-    def test_start_episode_already_played(self):
+    def test_start_episode_already_played(self) -> None:
 
         log = AudioLogFactory(episode=self.episode, user=self.user, current_time=500)
 
@@ -62,13 +68,13 @@ class PlayerTests(TestCase):
 
         self.assertTrue(player.is_playing(self.episode))
 
-    def test_stop_episode_empty(self):
+    def test_stop_episode_empty(self) -> None:
         req = self.make_request(user=self.user)
 
         player = Player(req)
         self.assertEqual(player.stop_episode(), None)
 
-    def test_stop_episode_not_in_session(self):
+    def test_stop_episode_not_in_session(self) -> None:
 
         AudioLogFactory(episode=self.episode, user=self.user)
 
@@ -78,7 +84,7 @@ class PlayerTests(TestCase):
 
         self.assertEqual(player.stop_episode(), None)
 
-    def test_stop_episode_in_session(self):
+    def test_stop_episode_in_session(self) -> None:
 
         log = AudioLogFactory(episode=self.episode, user=self.user)
 
@@ -89,7 +95,7 @@ class PlayerTests(TestCase):
         self.assertEqual(player.stop_episode(), log)
         self.assertFalse(player.is_playing(log.episode))
 
-    def test_stop_episode_mark_complete(self):
+    def test_stop_episode_mark_complete(self) -> None:
 
         log = AudioLogFactory(episode=self.episode, user=self.user)
 
@@ -102,14 +108,14 @@ class PlayerTests(TestCase):
         log.refresh_from_db()
         self.assertTrue(log.completed)
 
-    def test_update_current_time_not_playing(self):
+    def test_update_current_time_not_playing(self) -> None:
         req = self.make_request(user=self.user)
 
         player = Player(req)
         player.update_current_time(600)
         self.assertEqual(AudioLog.objects.count(), 0)
 
-    def test_update_current_time(self):
+    def test_update_current_time(self) -> None:
 
         log = AudioLogFactory(episode=self.episode, user=self.user, current_time=500)
 
