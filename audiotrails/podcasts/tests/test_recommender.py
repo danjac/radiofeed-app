@@ -1,5 +1,3 @@
-import logging
-
 from django.test import SimpleTestCase, TestCase
 
 from ..factories import CategoryFactory, PodcastFactory, RecommendationFactory
@@ -9,12 +7,6 @@ from ..recommender.text_parser import clean_text, extract_keywords
 
 
 class PodcastRecommenderTests(TestCase):
-    def setUp(self) -> None:
-        logging.disable(logging.CRITICAL)
-
-    def tearDown(self) -> None:
-        logging.disable(logging.NOTSET)
-
     def test_handle_empty_data_frame(self) -> None:
         PodcastFactory(
             title="Cool science podcast",
