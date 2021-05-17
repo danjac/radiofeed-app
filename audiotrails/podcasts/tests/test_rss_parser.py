@@ -3,7 +3,7 @@ import json
 import pathlib
 import uuid
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytz
 import requests
@@ -22,10 +22,10 @@ from ..rss_parser.models import Audio, Feed, Item, get_categories_dict
 
 
 class BaseMockResponse:
-    def __init__(self, raises=False):
+    def __init__(self, raises: bool = False):
         self.raises = raises
 
-    def raise_for_status(self):
+    def raise_for_status(self) -> None:
         if self.raises:
             raise requests.exceptions.HTTPError()
 
@@ -40,7 +40,7 @@ class MockHeaderResponse(BaseMockResponse):
 
 
 class MockResponse(BaseMockResponse):
-    def __init__(self, mock_file=None, raises=False):
+    def __init__(self, mock_file: str = None, raises: bool = False):
         super().__init__(raises)
         self.headers = {
             "ETag": uuid.uuid4().hex,
@@ -53,16 +53,16 @@ class MockResponse(BaseMockResponse):
             ).read()
         self.raises = raises
 
-    def json(self):
+    def json(self) -> str:
         return json.loads(self.content)
 
 
 class ParseRssTests(TestCase):
-    def tearDown(self):
+    def tearDown(self) -> None:
         get_categories_dict.cache_clear()
 
     @patch("requests.head", autospec=True, side_effect=requests.RequestException)
-    def test_parse_error(self, *mocks):
+    def test_parse_error(self, *mocks: Mock) -> None:
         podcast = PodcastFactory()
         self.assertRaises(RssParserError, parse_rss, podcast)
         podcast.refresh_from_db()
@@ -70,7 +70,7 @@ class ParseRssTests(TestCase):
 
     @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
     @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
-    def test_parse(self, *mocks):
+    def test_parse(self, *mocks: Mock) -> None:
         [
             CategoryFactory(name=name)
             for name in (
@@ -104,7 +104,7 @@ class ParseRssTests(TestCase):
 
     @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
     @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
-    def test_parse_if_already_updated(self, *mocks):
+    def test_parse_if_already_updated(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=timezone.now(),
@@ -123,7 +123,7 @@ class ParseRssTests(TestCase):
 
     @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
     @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
-    def test_parse_existing_episodes(self, *mocks):
+    def test_parse_existing_episodes(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             last_updated=None,
@@ -145,13 +145,13 @@ class ParseRssTests(TestCase):
 
 
 class AudioModelTests(SimpleTestCase):
-    def test_audio(self):
+    def test_audio(self) -> None:
         Audio(
             type="audio/mpeg",
             url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
         )
 
-    def test_not_audio(self):
+    def test_not_audio(self) -> None:
         self.assertRaises(
             ValidationError,
             Audio,
@@ -161,7 +161,7 @@ class AudioModelTests(SimpleTestCase):
 
 
 class FeedModelTests(SimpleTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.item = Item(
             audio=Audio(
                 type="audio/mpeg",
@@ -174,7 +174,7 @@ class FeedModelTests(SimpleTestCase):
             duration="2000",
         )
 
-    def test_language(self):
+    def test_language(self) -> None:
 
         feed = Feed(
             title="test",
@@ -189,7 +189,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.language, "en")
 
-    def test_language_with_spaces(self):
+    def test_language_with_spaces(self) -> None:
 
         feed = Feed(
             title="test",
@@ -204,7 +204,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.language, "en")
 
-    def test_language_with_single_value(self):
+    def test_language_with_single_value(self) -> None:
 
         feed = Feed(
             title="test",
@@ -219,7 +219,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.language, "fi")
 
-    def test_language_with_empty(self):
+    def test_language_with_empty(self) -> None:
 
         feed = Feed(
             title="test",
@@ -234,7 +234,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.language, "en")
 
-    def test_valid_link(self):
+    def test_valid_link(self) -> None:
         feed = Feed(
             title="test",
             description="test",
@@ -247,7 +247,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.link, "http://reddit.com")
 
-    def test_empty_link(self):
+    def test_empty_link(self) -> None:
         feed = Feed(
             title="test",
             description="test",
@@ -260,7 +260,7 @@ class FeedModelTests(SimpleTestCase):
 
         self.assertEqual(feed.link, "")
 
-    def test_missing_http(self):
+    def test_missing_http(self) -> None:
         feed = Feed(
             title="test",
             description="test",
@@ -275,13 +275,13 @@ class FeedModelTests(SimpleTestCase):
 
 
 class ParseDateTests(SimpleTestCase):
-    def test_parse_date_if_valid(self):
+    def test_parse_date_if_valid(self) -> None:
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
         self.assertEqual(parse_date("Fri, 19 Jun 2020 16:58:03 +0000"), dt)
 
-    def test_parse_date_if_no_tz(self):
+    def test_parse_date_if_no_tz(self) -> None:
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
         self.assertEqual(parse_date("Fri, 19 Jun 2020 16:58:03"), dt)
 
-    def test_parse_date_if_invalid(self):
+    def test_parse_date_if_invalid(self) -> None:
         self.assertEqual(parse_date("Fri, 33 June 2020 16:58:03 +0000"), None)
