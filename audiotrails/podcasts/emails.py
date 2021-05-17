@@ -3,10 +3,12 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
+from audiotrails.shared.types import AuthenticatedUser
+
 from .models import Podcast, Recommendation
 
 
-def send_recommendations_email(user: settings.AUTH_USER_MODEL) -> None:
+def send_recommendations_email(user: AuthenticatedUser) -> None:
     """Sends email with 2 or 3 recommended podcasts, based on:
     - favorites
     - follows

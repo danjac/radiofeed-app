@@ -1,29 +1,26 @@
-from datetime import datetime
-
 import factory
 
-from django.conf import settings
 from django.utils import timezone
 from factory.django import DjangoModelFactory
 
 from audiotrails.users.factories import UserFactory
 
-from .models import Category, CoverImage, Follow, Podcast, Recommendation
+from .models import Category, Follow, Podcast, Recommendation
 
 
 class CategoryFactory(DjangoModelFactory):
-    name: str = factory.Sequence(lambda i: f"category-{i}")
+    name = factory.Sequence(lambda i: f"category-{i}")
 
     class Meta:
         model = Category
 
 
 class PodcastFactory(DjangoModelFactory):
-    rss: str = factory.Sequence(lambda i: f"https://example.com/{i}.xml")
-    title: str = factory.Faker("text")
-    description: str = factory.Faker("text")
-    pub_date: datetime = factory.LazyFunction(timezone.now)
-    cover_image: CoverImage = factory.django.ImageField()
+    rss = factory.Sequence(lambda i: f"https://example.com/{i}.xml")
+    title = factory.Faker("text")
+    description = factory.Faker("text")
+    pub_date = factory.LazyFunction(timezone.now)
+    cover_image = factory.django.ImageField()
 
     class Meta:
         model = Podcast
@@ -38,8 +35,8 @@ class PodcastFactory(DjangoModelFactory):
 
 
 class RecommendationFactory(DjangoModelFactory):
-    podcast: Podcast = factory.SubFactory(PodcastFactory)
-    recommended: Podcast = factory.SubFactory(PodcastFactory)
+    podcast = factory.SubFactory(PodcastFactory)
+    recommended = factory.SubFactory(PodcastFactory)
 
     frequency = 3
     similarity = 5.0
@@ -49,8 +46,8 @@ class RecommendationFactory(DjangoModelFactory):
 
 
 class FollowFactory(DjangoModelFactory):
-    user: settings.AUTH_USER_MODEL = factory.SubFactory(UserFactory)
-    podcast: Podcast = factory.SubFactory(PodcastFactory)
+    user = factory.SubFactory(UserFactory)
+    podcast = factory.SubFactory(PodcastFactory)
 
     class Meta:
         model = Follow
