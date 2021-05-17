@@ -16,7 +16,7 @@ from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.db import FastCountMixin
-from audiotrails.shared.types import AnyUser
+from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
@@ -305,7 +305,7 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def with_current_time(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
+    def with_current_time(self, user: AuthenticatedUser) -> models.QuerySet:
         """Adds current_time annotation."""
         return self.annotate(
             current_time=models.Subquery(

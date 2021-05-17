@@ -7,13 +7,13 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 if TYPE_CHECKING:
-    from django.contrib.auth.models import AbstractBaseUser as User
+    from django.contrib.auth.models import AbstractUser as AuthenticatedUser
 else:
-    User = get_user_model()
+    AuthenticatedUser = get_user_model()
 
 ContextDict = Dict[str, Any]
 
-AnyUser = Union[User, AnonymousUser]
+AnyUser = Union[AuthenticatedUser, AnonymousUser]
 
 
 class ActionProtocol(Protocol):

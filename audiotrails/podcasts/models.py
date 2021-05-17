@@ -26,7 +26,7 @@ from PIL import ImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.shared.db import FastCountMixin
-from audiotrails.shared.types import AnyUser
+from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -254,7 +254,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user: settings.AUTH_USER_MODEL) -> models.QuerySet:
+    def for_user(self, user: AuthenticatedUser) -> models.QuerySet:
         podcast_ids = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(
