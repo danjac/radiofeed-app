@@ -65,7 +65,7 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 
 class Category(models.Model):
 
-    nam = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     parent = models.ForeignKey(
         "self",
         null=True,
