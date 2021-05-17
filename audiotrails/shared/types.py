@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Protocol, Union
+from typing import TYPE_CHECKING, Any, Protocol
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -13,7 +13,7 @@ else:
 
 ContextDict = dict[str, Any]
 
-AnyUser = Union[AuthenticatedUser, AnonymousUser]
+AnyUser = [AuthenticatedUser | AnonymousUser]
 
 
 class ActionProtocol(Protocol):
