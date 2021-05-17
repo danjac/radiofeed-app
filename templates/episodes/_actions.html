@@ -26,15 +26,20 @@
           hx-swap="outerHTML"
           @click="show=false">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
+    {% if episode.is_completed %}
+    Re-Play Episode
+    {% elif episode.listened %}
+    Resume Play
+    {% else %}
     Play Episode
+    {% endif %}
   </button>
   {% endif %}
 
   {% if is_queued %}
   <button class="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
-          @click="show=false; $dispatch('add-message', { text: 'Removed from Play Queue!', tags: 'message-info' });"
-          >
+          @click="show=false; $dispatch('add-message', { text: 'Removed from Play Queue!', tags: 'message-info' });">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from Play Queue
   </button>
