@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Iterable, Optional, Set
-
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -15,7 +13,7 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names: Iterable[str]) -> models.QuerySet:
+    def matches_usernames(self, names: list[str]) -> models.QuerySet:
         """Returns users matching the (case insensitive) username."""
         if not names:
             return self.none()
@@ -24,7 +22,7 @@ class UserQuerySet(models.QuerySet):
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(
-        self, username: str, email: str, password: Optional[str] = None, **kwargs
+        self, username: str, email: str, password: str | None = None, **kwargs
     ) -> User:
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
@@ -51,12 +49,10 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_email_addresses(self) -> Set[str]:
+    def get_email_addresses(self) -> set[str]:
         """Get set of emails belonging to user.
 
         Returns:
             set: set of email addresses
         """
-        return set([self.email]) | set(
-            self.emailaddress_set.values_list("email", flat=True)
-        )
+        return {self.email} | set(self.emailaddress_set.values_list("email", flat=True))

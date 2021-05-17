@@ -1,7 +1,6 @@
 import re
 
 from functools import lru_cache
-from typing import Dict, List
 
 from django.template.defaultfilters import striptags
 from nltk.corpus import stopwords
@@ -12,7 +11,7 @@ from audiotrails.shared.html import stripentities
 
 from .stopwords import STOPWORDS
 
-NLTK_LANGUAGES: Dict[str, str] = {
+NLTK_LANGUAGES: dict[str, str] = {
     "ar": "arabic",
     "az": "azerbaijani",
     "da": "danish",
@@ -43,7 +42,7 @@ lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
-def get_stopwords(language: str) -> List[str]:
+def get_stopwords(language: str) -> list[str]:
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except KeyError:
@@ -58,7 +57,7 @@ def clean_text(text: str) -> str:
     return text
 
 
-def extract_keywords(language: str, text: str) -> List[str]:
+def extract_keywords(language: str, text: str) -> list[str]:
 
     if not (text := clean_text(text).lower()):
         return []
@@ -68,5 +67,5 @@ def extract_keywords(language: str, text: str) -> List[str]:
     return [token for token in tokenize(text) if token and token not in stopwords]
 
 
-def tokenize(text: str) -> List[str]:
+def tokenize(text: str) -> list[str]:
     return [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]
