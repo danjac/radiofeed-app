@@ -54,7 +54,7 @@ _cover_image_placeholder = PlaceholderImage(width=THUMBNAIL_SIZE, height=THUMBNA
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term: int, base_similarity: float = 0.2) -> models.QuerySet:
+    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
