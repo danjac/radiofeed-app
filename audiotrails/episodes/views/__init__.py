@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from django.conf import settings
 from django.db.models import OuterRef, Subquery
@@ -11,7 +11,7 @@ from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
-from ..models import AudioLog, Episode, EpisodeQuerySet
+from ..models import AudioLog, Episode
 
 
 def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
@@ -154,7 +154,7 @@ def get_episode_or_404(
 
 def render_episode_list_response(
     request: HttpRequest,
-    episodes: EpisodeQuerySet,
+    episodes: List[Episode],
     template_name: str,
     extra_context: Optional[Dict[str, Any]] = None,
     cached: bool = False,

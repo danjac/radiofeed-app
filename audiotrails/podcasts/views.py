@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from django.conf import settings
 from django.contrib import messages
@@ -15,7 +15,7 @@ from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 
 from . import itunes
-from .models import Category, Follow, Podcast, PodcastQuerySet, Recommendation
+from .models import Category, Follow, Podcast, Recommendation
 from .tasks import sync_podcast_feed
 
 
@@ -69,9 +69,9 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
-    error = False
-    results = []
-    new_podcasts = []
+    error: bool = False
+    results: List[itunes.SearchResult] = []
+    new_podcasts: List[Podcast] = []
 
     if request.search:
         try:
@@ -212,9 +212,9 @@ def category_detail(
 
 
 def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
-    error = False
-    results = []
-    new_podcasts = []
+    error: bool = False
+    results: List[itunes.SearchResult] = []
+    new_podcasts: List[Podcast] = []
 
     category = get_object_or_404(
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
@@ -297,7 +297,7 @@ def render_follow_response(
 
 def render_podcast_list_response(
     request: HttpRequest,
-    podcasts: PodcastQuerySet,
+    podcasts: List[Podcast],
     template_name: str,
     extra_context: Optional[Dict[str, Any]] = None,
     cached: bool = False,

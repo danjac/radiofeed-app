@@ -17,7 +17,6 @@ django-permissions-policy
 django-redis
 django-silk
 django-storages
-django-stubs
 django-widget-tweaks
 factory-boy
 future
