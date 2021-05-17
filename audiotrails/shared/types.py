@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Protocol, Union
+from typing import TYPE_CHECKING, Any, Protocol
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -11,11 +11,10 @@ if TYPE_CHECKING:
 else:
     AuthenticatedUser = get_user_model()
 
+
+AnyUser = AuthenticatedUser | AnonymousUser
+
 ContextDict = dict[str, Any]
-
-
-# test commit
-AnyUser = Union[AuthenticatedUser, AnonymousUser]
 
 
 class ActionProtocol(Protocol):
