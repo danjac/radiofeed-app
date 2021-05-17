@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
@@ -6,6 +6,8 @@ from django.db.models import Model
 from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
+
+from ..types import Context
 
 
 def paginate(
@@ -31,7 +33,7 @@ def render_paginated_response(
     object_list: List[Model],
     template_name: str,
     pagination_template_name: str,
-    extra_context: Optional[Dict[str, Any]] = None,
+    extra_context: Optional[Context] = None,
     **pagination_kwargs,
 ) -> HttpResponse:
     page_obj = paginate(request, object_list, **pagination_kwargs)
