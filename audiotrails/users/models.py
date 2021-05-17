@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Set
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
@@ -51,7 +51,7 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_email_addresses(self) -> set[str]:
+    def get_email_addresses(self) -> Set[str]:
         """Get set of emails belonging to user.
 
         Returns:
