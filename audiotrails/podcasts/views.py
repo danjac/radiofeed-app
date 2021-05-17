@@ -302,7 +302,7 @@ def render_podcast_list_response(
     template_name: str,
     extra_context: Optional[ContextDict] = None,
     cached: bool = False,
-):
+) -> HttpResponse:
 
     return render_paginated_response(
         request,
