@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.sitemaps import Sitemap
-from django.db import QuerySet
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from .models import Category, Podcast
