@@ -2,7 +2,7 @@
 from .base import *  # noqa
 from .base import ALLOWED_HOSTS
 
-LOGGING_CONFIG = None
+LOGGING = None
 
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 

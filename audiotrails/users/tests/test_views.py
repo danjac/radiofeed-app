@@ -19,17 +19,17 @@ User = get_user_model()
 
 class UserPreferencesTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_get(self):
+    def test_get(self) -> None:
         resp = self.client.get(reverse("user_preferences"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_post(self):
+    def test_post(self) -> None:
         url = reverse("user_preferences")
         resp = self.client.post(url, {"send_recommendations_email": False})
         self.assertRedirects(resp, url)
@@ -38,7 +38,7 @@ class UserPreferencesTests(TestCase):
 
 
 class UserStatsTests(TestCase):
-    def test_stats(self):
+    def test_stats(self) -> None:
         podcast = PodcastFactory()
         user = UserFactory()
         self.client.force_login(user)
@@ -56,57 +56,57 @@ class UserStatsTests(TestCase):
 
 class ExportPodcastFeedsTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
         cls.podcast = PodcastFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_get(self):
+    def test_get(self) -> None:
         resp = self.client.get(reverse("export_podcast_feeds"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_export_opml(self):
+    def test_export_opml(self) -> None:
         FollowFactory(podcast=self.podcast, user=self.user)
         resp = self.client.post(reverse("export_podcast_feeds"), {"format": "opml"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp["Content-Type"], "application/xml")
 
-    def test_export_csv(self):
+    def test_export_csv(self) -> None:
         FollowFactory(podcast=self.podcast, user=self.user)
         resp = self.client.post(reverse("export_podcast_feeds"), {"format": "csv"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp["Content-Type"], "text/csv")
 
 
-class TestDeleteAccount:
+class DeleteAccountTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_get(self):
+    def test_get(self) -> None:
         # make sure we don't accidentally delete account on get request
         resp = self.client.get(reverse("delete_account"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertTrue(User.objects.exists())
 
-    def test_post_unconfirmed(self, client):
+    def test_post_unconfirmed(self) -> None:
         resp = self.client.post(reverse("delete_account"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertTrue(User.objects.exists())
 
-    def test_post_confirmed(self):
+    def test_post_confirmed(self) -> None:
         resp = self.client.post(reverse("delete_account"), {"confirm-delete": True})
         self.assertRedirects(resp, settings.HOME_URL)
         self.assertFalse(User.objects.exists())
 
 
-class TestAcceptCookies:
-    def test_post(self):
+class AcceptCookiesTests(TestCase):
+    def test_post(self) -> None:
         resp = self.client.post(reverse("accept_cookies"))
-        self.assertRedirects(resp, settings.HOME_URL)
-        self.assertFalse("accept-cookies" in resp.cookies)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertIn("accept-cookies", resp.cookies)
