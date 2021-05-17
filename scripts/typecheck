@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -it -e audiopod-webapp mypy audiotrails $@
+podman exec -it audiopod-webapp mypy audiotrails $@
 
