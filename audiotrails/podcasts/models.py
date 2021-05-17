@@ -41,8 +41,8 @@ class CoverImage(Protocol):
 
 @dataclasses.dataclass
 class PlaceholderImage:
-    width: int
-    height: int
+    width: int = THUMBNAIL_SIZE
+    height: int = THUMBNAIL_SIZE
 
     @cached_property
     def url(self) -> str:
@@ -50,7 +50,7 @@ class PlaceholderImage:
         return static("img/podcast-icon.png")
 
 
-_cover_image_placeholder = PlaceholderImage(width=THUMBNAIL_SIZE, height=THUMBNAIL_SIZE)
+_cover_image_placeholder = PlaceholderImage()
 
 
 class CategoryQuerySet(models.QuerySet):
