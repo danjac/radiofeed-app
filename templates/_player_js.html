@@ -78,7 +78,7 @@
         },
         // audio events
         loaded() {
-          if (!this.$refs.audio) {
+          if (!this.$refs.audio || this.isLoaded) {
             return;
           }
           this.$refs.audio.currentTime = currentTime;
