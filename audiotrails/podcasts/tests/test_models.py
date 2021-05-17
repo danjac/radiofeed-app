@@ -19,12 +19,12 @@ from ..models import Category, Podcast, Recommendation
 
 
 class RecommendationManagerTests(TestCase):
-    def test_bulk_delete(self):
+    def test_bulk_delete(self) -> None:
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
         self.assertEqual(Recommendation.objects.count(), 0)
 
-    def test_for_user(self):
+    def test_for_user(self) -> None:
 
         user = UserFactory()
         following = FollowFactory(user=user).podcast
