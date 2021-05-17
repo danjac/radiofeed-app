@@ -1,7 +1,7 @@
 import dataclasses
 import json
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import requests
 
@@ -29,7 +29,7 @@ class SearchResult:
     image: str
     podcast: Optional[Podcast] = None
 
-    def as_dict(self) -> Dict[str, Union[str, Podcast, None]]:
+    def as_dict(self) -> dict[str, Union[str, Podcast, None]]:
         return {
             "rss": self.rss,
             "title": self.title,
@@ -44,7 +44,7 @@ class SearchResult:
 
 def fetch_itunes_genre(
     genre_id: int, num_results: int = 20
-) -> Tuple[List[SearchResult], List[Podcast]]:
+) -> tuple[list[SearchResult], list[Podcast]]:
     """Fetch top rated results for genre"""
     return _get_or_create_podcasts(
         _get_search_results(
@@ -60,7 +60,7 @@ def fetch_itunes_genre(
 
 def search_itunes(
     search_term, num_results=12
-) -> Tuple[List[SearchResult], List[Podcast]]:
+) -> tuple[list[SearchResult], list[Podcast]]:
     """Does a search query on the iTunes API."""
 
     return _get_or_create_podcasts(
@@ -80,7 +80,7 @@ def crawl_itunes(limit: int) -> int:
     new_podcasts = 0
 
     for category in categories:
-        podcasts: List[Podcast] = []
+        podcasts: list[Podcast] = []
 
         try:
             results, podcasts = fetch_itunes_genre(
@@ -94,8 +94,8 @@ def crawl_itunes(limit: int) -> int:
 
 
 def _get_or_create_podcasts(
-    results: List[SearchResult],
-) -> Tuple[List[SearchResult], List[Podcast]]:
+    results: list[SearchResult],
+) -> tuple[list[SearchResult], list[Podcast]]:
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
     podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
         field_name="itunes"
@@ -115,11 +115,11 @@ def _get_or_create_podcasts(
 
 
 def _get_search_results(
-    params: Dict[str, Union[str, int]],
+    params: dict[str, Union[str, int]],
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,
-) -> List[SearchResult]:
+) -> list[SearchResult]:
 
     results = cache.get(cache_key)
     if results is None:
