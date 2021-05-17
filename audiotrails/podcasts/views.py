@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence
+from typing import Optional
 
 from django.conf import settings
 from django.contrib import messages
@@ -71,8 +71,8 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False
-    results: List[itunes.SearchResult] = []
-    new_podcasts: List[Podcast] = []
+    results: list[itunes.SearchResult] = []
+    new_podcasts: list[Podcast] = []
 
     if request.search:
         try:
@@ -214,8 +214,8 @@ def category_detail(
 
 def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     error: bool = False
-    results: List[itunes.SearchResult] = []
-    new_podcasts: List[Podcast] = []
+    results: list[itunes.SearchResult] = []
+    new_podcasts: list[Podcast] = []
 
     category = get_object_or_404(
         Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
@@ -298,7 +298,7 @@ def render_follow_response(
 
 def render_podcast_list_response(
     request: HttpRequest,
-    podcasts: Sequence[Podcast],
+    podcasts: list[Podcast],
     template_name: str,
     extra_context: Optional[ContextDict] = None,
     cached: bool = False,
