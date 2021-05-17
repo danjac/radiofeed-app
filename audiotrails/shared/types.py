@@ -1,14 +1,19 @@
-from typing import Any, Dict, Protocol, Union
+from typing import TYPE_CHECKING, Any, Dict, Protocol, Union
 
-from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
+if TYPE_CHECKING:
+    from django.contrib.auth.models import AbstractBaseUser as User
+else:
+    User = get_user_model()
+
 ContextDict = Dict[str, Any]
 
-AnyUser = Union[settings.AUTH_USER_MODEL, AnonymousUser]
+AnyUser = Union[User, AnonymousUser]
 
 
 class ActionProtocol(Protocol):
