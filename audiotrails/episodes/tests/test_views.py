@@ -17,7 +17,7 @@ from ..models import AudioLog, Favorite, QueueItem
 
 
 class NewEpisodesAnonymousTests(TestCase):
-    def test_get(self):
+    def test_get(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
@@ -29,13 +29,13 @@ class NewEpisodesAnonymousTests(TestCase):
 
 class NewEpisodesAuthenticatedTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_user_no_subscriptions(self):
+    def test_user_no_subscriptions(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -45,7 +45,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         self.assertFalse(resp.context_data["has_follows"])
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
 
-    def test_user_has_subscriptions(self):
+    def test_user_has_subscriptions(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -61,7 +61,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
         self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
 
-    def test_user_has_subscriptions_featured(self):
+    def test_user_has_subscriptions_featured(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -79,17 +79,17 @@ class NewEpisodesAuthenticatedTests(TestCase):
 
 
 class SearchEpisodesTests(TestCase):
-    def test_page(self):
+    def test_page(self) -> None:
         resp = self.client.get(reverse("episodes:search_episodes"), {"q": "test"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_search_empty(self):
+    def test_search_empty(self) -> None:
         self.assertRedirects(
             self.client.get(reverse("episodes:search_episodes"), {"q": ""}),
             reverse("episodes:index"),
         )
 
-    def test_search(self):
+    def test_search(self) -> None:
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
         resp = self.client.get(
@@ -103,10 +103,10 @@ class SearchEpisodesTests(TestCase):
 
 class EpisodeDetailTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
 
-    def test_detail(self):
+    def test_detail(self) -> None:
         resp = self.client.get(self.episode.get_absolute_url())
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(resp.context_data["episode"], self.episode)
@@ -114,10 +114,10 @@ class EpisodeDetailTests(TestCase):
 
 class PreviewTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
 
-    def test_preview(self):
+    def test_preview(self) -> None:
         resp = self.client.get(
             reverse("episodes:preview", args=[self.episode.id]),
         )
@@ -126,14 +126,14 @@ class PreviewTests(TestCase):
 
 class ActionsTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_actions(self):
+    def test_actions(self) -> None:
         resp = self.client.get(
             reverse("episodes:actions", args=[self.episode.id]),
         )
@@ -143,21 +143,21 @@ class ActionsTests(TestCase):
 
 class StartPlayerTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_play_from_start(self):
+    def test_play_from_start(self) -> None:
         resp = self.client.post(
             reverse("episodes:start_player", args=[self.episode.id])
         )
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
-    def test_play_episode_in_history(self):
+    def test_play_episode_in_history(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode, current_time=2000)
         resp = self.client.post(
             reverse("episodes:start_player", args=[self.episode.id])
@@ -167,11 +167,11 @@ class StartPlayerTests(TestCase):
 
 class PlayNextEpisodeTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
     def test_has_next_in_queue(self):
@@ -181,7 +181,7 @@ class PlayNextEpisodeTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
-    def test_play_next_episode_in_history(self):
+    def test_play_next_episode_in_history(self) -> None:
         log = AudioLogFactory(user=self.user, current_time=30)
 
         QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
@@ -190,7 +190,7 @@ class PlayNextEpisodeTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
-    def test_queue_empty(self):
+    def test_queue_empty(self) -> None:
         resp = self.client.post(reverse("episodes:play_next_episode"))
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
@@ -198,7 +198,7 @@ class PlayNextEpisodeTests(TestCase):
 
 
 class ClosePlayerTests(TestCase):
-    def test_stop(self):
+    def test_stop(self) -> None:
         episode = EpisodeFactory()
 
         user = UserFactory()
@@ -217,15 +217,15 @@ class ClosePlayerTests(TestCase):
 
 class PlayerTimeUpdateTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
         cls.url = reverse("episodes:player_time_update")
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_is_running(self):
+    def test_is_running(self) -> None:
         log = AudioLogFactory(user=self.user, episode=self.episode)
 
         session = self.client.session
@@ -242,7 +242,7 @@ class PlayerTimeUpdateTests(TestCase):
         log.refresh_from_db()
         self.assertEqual(log.current_time, 1030)
 
-    def test_player_not_running(self):
+    def test_player_not_running(self) -> None:
         resp = self.client.post(
             self.url,
             json.dumps({"currentTime": "1030.0001"}),
@@ -250,7 +250,7 @@ class PlayerTimeUpdateTests(TestCase):
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
-    def test_missing_data(self):
+    def test_missing_data(self) -> None:
         session = self.client.session
         session["player_episode"] = self.episode.id
         session.save()
@@ -259,7 +259,7 @@ class PlayerTimeUpdateTests(TestCase):
 
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
-    def test_invalid_data(self):
+    def test_invalid_data(self) -> None:
         session = self.client.session
         session["player_episode"] = self.episode.id
         session.save()
@@ -274,19 +274,19 @@ class PlayerTimeUpdateTests(TestCase):
 
 class HistoryTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_get(self):
+    def test_get(self) -> None:
         AudioLogFactory.create_batch(3, user=self.user)
         resp = self.client.get(reverse("episodes:history"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
-    def test_search(self):
+    def test_search(self) -> None:
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
@@ -304,20 +304,20 @@ class HistoryTests(TestCase):
 
 class FavoritesTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_get(self):
+    def test_get(self) -> None:
         FavoriteFactory.create_batch(3, user=self.user)
         resp = self.client.get(reverse("episodes:favorites"))
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
-    def test_search(self):
+    def test_search(self) -> None:
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
@@ -337,12 +337,12 @@ class FavoritesTests(TestCase):
 
 
 class AddFavoriteTests(TransactionTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = UserFactory()
         self.episode = EpisodeFactory()
         self.client.force_login(self.user)
 
-    def test_post(self):
+    def test_post(self) -> None:
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
         )
@@ -351,7 +351,7 @@ class AddFavoriteTests(TransactionTestCase):
             Favorite.objects.filter(user=self.user, episode=self.episode).exists()
         )
 
-    def test_already_favorite(self):
+    def test_already_favorite(self) -> None:
         FavoriteFactory(episode=self.episode, user=self.user)
         resp = self.client.post(
             reverse("episodes:add_favorite", args=[self.episode.id])
@@ -364,10 +364,10 @@ class AddFavoriteTests(TransactionTestCase):
 
 class RemoveFavoriteTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
 
-    def test_post(self):
+    def test_post(self) -> None:
         user = UserFactory()
         self.client.force_login(user)
         FavoriteFactory(user=user, episode=self.episode)
@@ -382,14 +382,14 @@ class RemoveFavoriteTests(TestCase):
 
 class RemoveAudioLogTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_post(self):
+    def test_post(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
         AudioLogFactory(user=self.user)
         resp = self.client.post(
@@ -402,7 +402,7 @@ class RemoveAudioLogTests(TestCase):
         )
         self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 1)
 
-    def test_post_is_playing(self):
+    def test_post_is_playing(self) -> None:
         """Do not remove log if episode is currently playing"""
         AudioLogFactory(user=self.user, episode=self.episode)
 
@@ -418,7 +418,7 @@ class RemoveAudioLogTests(TestCase):
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
 
-    def test_post_none_remaining(self):
+    def test_post_none_remaining(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
         resp = self.client.post(
             reverse("episodes:remove_audio_log", args=[self.episode.id])
@@ -431,7 +431,7 @@ class RemoveAudioLogTests(TestCase):
 
 
 class QueueTests(TestCase):
-    def test_get(self):
+    def test_get(self) -> None:
         user = UserFactory()
         self.client.force_login(user)
 
@@ -441,12 +441,12 @@ class QueueTests(TestCase):
 
 
 class AddToQueueTests(TransactionTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = UserFactory()
         self.episode = EpisodeFactory()
         self.client.force_login(self.user)
 
-    def test_post(self):
+    def test_post(self) -> None:
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
@@ -475,7 +475,7 @@ class AddToQueueTests(TransactionTestCase):
         self.assertEqual(items[2].episode, third)
         self.assertEqual(items[2].position, 3)
 
-    def test_post_already_queued(self):
+    def test_post_already_queued(self) -> None:
         QueueItemFactory(episode=self.episode, user=self.user)
         resp = self.client.post(
             reverse(
@@ -488,10 +488,10 @@ class AddToQueueTests(TransactionTestCase):
 
 class RemoveFromQueueTests(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         cls.episode = EpisodeFactory()
 
-    def test_post(self):
+    def test_post(self) -> None:
         user = UserFactory()
         self.client.force_login(user)
         item = QueueItemFactory(user=user)
@@ -502,8 +502,8 @@ class RemoveFromQueueTests(TestCase):
         self.assertEqual(QueueItem.objects.filter(user=user).count(), 0)
 
 
-class TestMoveQueueItems:
-    def test_post(self):
+class TestMoveQueueItems(TestCase):
+    def test_post(self) -> None:
         user = UserFactory()
         self.client.force_login(user)
 
