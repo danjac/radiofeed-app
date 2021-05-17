@@ -78,7 +78,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         self.assertEqual(resp.context_data["page_obj"].object_list[0].podcast, promoted)
 
 
-class SearchEpisodesTests(TestCase):
+class SearchEpisodesTests(TransactionTestCase):
     def test_page(self) -> None:
         resp = self.client.get(reverse("episodes:search_episodes"), {"q": "test"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)

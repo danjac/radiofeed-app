@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.test import RequestFactory, SimpleTestCase, TestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 
 from audiotrails.episodes.factories import (
     AudioLogFactory,
@@ -70,11 +70,13 @@ class CategoryModelTests(SimpleTestCase):
         self.assertEqual(category.slug, "testing")
 
 
-class PodcastManagerTests(TestCase):
+class PodcastManagerSearchTests(TransactionTestCase):
     def test_search(self) -> None:
         PodcastFactory(title="testing")
         self.assertEqual(Podcast.objects.search("testing").count(), 1)
 
+
+class PodcastManagerTests(TestCase):
     def test_with_follow_count(self):
         following_1 = PodcastFactory()
         following_2 = PodcastFactory()

@@ -109,11 +109,10 @@ class EpisodeSlugTests(SimpleTestCase):
         self.assertEqual(Episode().slug, "episode")
 
 
-class EpisodePcCompleteModelTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-        cls.episode = EpisodeFactory(duration="100")
+class EpisodePcCompleteModelTests(TransactionTestCase):
+    def setUp(self) -> None:
+        self.user = UserFactory()
+        self.episode = EpisodeFactory(duration="100")
 
     def test_get_pc_complete_without_current_time_attr(self) -> None:
         AudioLogFactory(
