@@ -2,7 +2,6 @@ import pathlib
 import socket
 
 from email.utils import getaddresses
-from typing import Dict, List
 
 import environ
 
@@ -197,7 +196,7 @@ STATIC_URL = env("STATIC_URL", default="/static/")
 MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [BASE_DIR / "assets"]
 
-TEMPLATES: List[Dict] = [
+TEMPLATES: list[dict] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],

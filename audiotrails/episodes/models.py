@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -100,16 +100,16 @@ class Episode(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "episode"
 
-    def get_file_size(self) -> Optional[str]:
+    def get_file_size(self) -> str | None:
         return filesizeformat(self.length) if self.length else None
 
-    def get_next_episode(self) -> Optional[Episode]:
+    def get_next_episode(self) -> Episode | None:
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self) -> Optional[Episode]:
+    def get_previous_episode(self) -> Episode | None:
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
@@ -167,8 +167,8 @@ class Episode(models.Model):
         except AttributeError:
             return False
 
-    def get_opengraph_data(self, request: HttpRequest) -> Dict[str, Union[str, int]]:
-        og_data: Dict[str, Union[str, int]] = {
+    def get_opengraph_data(self, request: HttpRequest) -> dict[str, str | int]:
+        og_data: dict[str, str | int] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,
@@ -185,7 +185,7 @@ class Episode(models.Model):
 
         return og_data
 
-    def get_media_metadata(self) -> Dict[str, Any]:
+    def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session
         thumbnail = self.podcast.get_cover_image_thumbnail()
 
@@ -281,7 +281,7 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["-updated"]),
         ]
 
-    def to_json(self) -> Dict[str, Any]:
+    def to_json(self) -> dict[str, Any]:
         cover_image = self.episode.podcast.get_cover_image_thumbnail()
         return {
             "currentTime": self.current_time,
