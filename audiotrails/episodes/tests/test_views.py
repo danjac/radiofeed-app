@@ -174,7 +174,7 @@ class PlayNextEpisodeTests(TestCase):
     def setUp(self) -> None:
         self.client.force_login(self.user)
 
-    def test_has_next_in_queue(self):
+    def test_has_next_in_queue(self) -> None:
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
         resp = self.client.post(reverse("episodes:play_next_episode"))
 
