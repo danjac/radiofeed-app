@@ -58,6 +58,9 @@ class MockResponse(BaseMockResponse):
 
 
 class ParseRssTests(TestCase):
+
+    rss = "https://mysteriousuniverse.org/feed/podcast/"
+
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
 
@@ -83,7 +86,7 @@ class ParseRssTests(TestCase):
             )
         ]
         podcast = PodcastFactory(
-            rss="https://mysteriousuniverse.org/feed/podcast/",
+            rss=self.rss,
             last_updated=None,
             pub_date=None,
         )
@@ -106,7 +109,7 @@ class ParseRssTests(TestCase):
     @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
     def test_parse_if_already_updated(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
-            rss="https://mysteriousuniverse.org/feed/podcast/",
+            rss=self.rss,
             last_updated=timezone.now(),
             cover_image=None,
             pub_date=None,
@@ -125,7 +128,7 @@ class ParseRssTests(TestCase):
     @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
     def test_parse_existing_episodes(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
-            rss="https://mysteriousuniverse.org/feed/podcast/",
+            rss=self.rss,
             last_updated=None,
             pub_date=None,
         )
@@ -145,19 +148,13 @@ class ParseRssTests(TestCase):
 
 
 class AudioModelTests(SimpleTestCase):
+    url = "https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3"
+
     def test_audio(self) -> None:
-        Audio(
-            type="audio/mpeg",
-            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-        )
+        Audio(type="audio/mpeg", url=self.url)
 
     def test_not_audio(self) -> None:
-        self.assertRaises(
-            ValidationError,
-            Audio,
-            type="text/xml",
-            url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-        )
+        self.assertRaises(ValidationError, Audio, type="text/xml", url=self.url)
 
 
 class FeedModelTests(SimpleTestCase):
