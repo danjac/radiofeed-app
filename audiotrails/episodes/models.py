@@ -20,7 +20,7 @@ from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, models.QuerySet):
-    def with_current_time(self, user: AnyUser) -> EpisodeQuerySet:
+    def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -39,7 +39,7 @@ class EpisodeQuerySet(FastCountMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def search(self, search_term: str) -> EpisodeQuerySet:
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -56,23 +56,23 @@ class Episode(models.Model):
 
     podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid = models.TextField()
+    guid: str = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
-    link = models.URLField(null=True, blank=True, max_length=500)
+    link: str | None = models.URLField(null=True, blank=True, max_length=500)
 
-    title = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    media_url = models.URLField(max_length=1000)
-    media_type = models.CharField(max_length=60)
-    length = models.BigIntegerField(null=True, blank=True)
+    media_url: str = models.URLField(max_length=1000)
+    media_type: str = models.CharField(max_length=60)
+    length: int | None = models.BigIntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=30, blank=True)
-    explicit = models.BooleanField(default=False)
+    duration: str = models.CharField(max_length=30, blank=True)
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -94,7 +94,7 @@ class Episode(models.Model):
         return self.title or self.guid
 
     def get_absolute_url(self) -> str:
-        return reverse("episodes:episode_detail", args=[self.id, self.slug])
+        return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
     @property
     def slug(self) -> str:
@@ -205,7 +205,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> FavoriteQuerySet:
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -227,8 +227,10 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 class Favorite(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: AuthenticatedUser = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
 
@@ -243,7 +245,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> AudioLogQuerySet:
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -265,11 +267,13 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    updated = models.DateTimeField()
-    completed = models.DateTimeField(null=True, blank=True)
-    current_time = models.IntegerField(default=0)
+    user: AuthenticatedUser = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    updated: datetime = models.DateTimeField()
+    completed: datetime | None = models.DateTimeField(null=True, blank=True)
+    current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
@@ -305,7 +309,7 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def with_current_time(self, user: AuthenticatedUser) -> QueueItemQuerySet:
+    def with_current_time(self, user: AuthenticatedUser) -> models.QuerySet:
         """Adds current_time annotation."""
         return self.annotate(
             current_time=models.Subquery(
@@ -320,9 +324,11 @@ QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position = models.IntegerField(default=0)
+    user: AuthenticatedUser = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position: int = models.IntegerField(default=0)
 
     objects = QueueItemManager()
 
