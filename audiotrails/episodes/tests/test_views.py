@@ -79,13 +79,16 @@ class NewEpisodesAuthenticatedTests(TestCase):
 
 
 class SearchEpisodesTests(TransactionTestCase):
+    def setUp(self):
+        self.url = reverse("episodes:search_episodes")
+
     def test_page(self) -> None:
-        resp = self.client.get(reverse("episodes:search_episodes"), {"q": "test"})
+        resp = self.client.get(self.url, {"q": "test"})
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
 
     def test_search_empty(self) -> None:
         self.assertRedirects(
-            self.client.get(reverse("episodes:search_episodes"), {"q": ""}),
+            self.client.get(self.url, {"q": ""}),
             reverse("episodes:index"),
         )
 
@@ -93,7 +96,7 @@ class SearchEpisodesTests(TransactionTestCase):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
         resp = self.client.get(
-            reverse("episodes:search_episodes"),
+            self.url,
             {"q": "testing"},
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
@@ -172,11 +175,12 @@ class PlayNextEpisodeTests(TestCase):
         cls.episode = EpisodeFactory()
 
     def setUp(self) -> None:
+        self.url = reverse("episodes:play_next_episode")
         self.client.force_login(self.user)
 
     def test_has_next_in_queue(self) -> None:
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
-        resp = self.client.post(reverse("episodes:play_next_episode"))
+        resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
@@ -185,13 +189,13 @@ class PlayNextEpisodeTests(TestCase):
         log = AudioLogFactory(user=self.user, current_time=30)
 
         QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
-        resp = self.client.post(reverse("episodes:play_next_episode"))
+        resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
     def test_queue_empty(self) -> None:
-        resp = self.client.post(reverse("episodes:play_next_episode"))
+        resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
@@ -216,6 +220,8 @@ class ClosePlayerTests(TestCase):
 
 
 class PlayerTimeUpdateTests(TestCase):
+    content_type = "application/json"
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = UserFactory()
@@ -235,7 +241,7 @@ class PlayerTimeUpdateTests(TestCase):
         resp = self.client.post(
             self.url,
             json.dumps({"currentTime": "1030.0001"}),
-            content_type="application/json",
+            content_type=self.content_type,
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -246,7 +252,7 @@ class PlayerTimeUpdateTests(TestCase):
         resp = self.client.post(
             self.url,
             json.dumps({"currentTime": "1030.0001"}),
-            content_type="application/json",
+            content_type=self.content_type,
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -265,9 +271,7 @@ class PlayerTimeUpdateTests(TestCase):
         session.save()
 
         resp = self.client.post(
-            self.url,
-            json.dumps({"currentTime": "xyz"}),
-            content_type="application/json",
+            self.url, json.dumps({"currentTime": "xyz"}), self.content_type
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
@@ -387,14 +391,13 @@ class RemoveAudioLogTests(TestCase):
         cls.episode = EpisodeFactory()
 
     def setUp(self) -> None:
+        self.url = reverse("episodes:remove_audio_log", args=[self.episode.id])
         self.client.force_login(self.user)
 
     def test_post(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
         AudioLogFactory(user=self.user)
-        resp = self.client.post(
-            reverse("episodes:remove_audio_log", args=[self.episode.id])
-        )
+        resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         self.assertFalse(
@@ -410,9 +413,7 @@ class RemoveAudioLogTests(TestCase):
         session["player_episode"] = self.episode.id
         session.save()
 
-        resp = self.client.post(
-            reverse("episodes:remove_audio_log", args=[self.episode.id])
-        )
+        resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertTrue(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
@@ -420,9 +421,7 @@ class RemoveAudioLogTests(TestCase):
 
     def test_post_none_remaining(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
-        resp = self.client.post(
-            reverse("episodes:remove_audio_log", args=[self.episode.id])
-        )
+        resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
         self.assertFalse(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
