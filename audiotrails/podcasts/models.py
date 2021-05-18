@@ -240,7 +240,7 @@ class RecommendationQuerySet(models.QuerySet):
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def with_followed(self, user: AnyUser) -> RecommendationQuerySet:
+    def with_followed(self, user: AnyUser) -> models.QuerySet:
         """Marks which recommendations are followed by this user."""
         if user.is_anonymous:
             return self.annotate(
@@ -252,7 +252,7 @@ class RecommendationQuerySet(models.QuerySet):
             )
         )
 
-    def for_user(self, user: AuthenticatedUser) -> RecommendationQuerySet:
+    def for_user(self, user: AuthenticatedUser) -> models.QuerySet:
         podcast_ids = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(
