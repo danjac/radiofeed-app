@@ -5,6 +5,7 @@
     <img src="{{ result.image }}"
          height="16"
          width="16"
+         alt="{{ result.title }}"
          class="object-cover border dark:border-gray-500 h-16 w-16 bg-transparent" />
   </div>
   {% endif %}
@@ -32,6 +33,7 @@
       </button>
       {% endif %}
       <a href="{{ result.itunes }}"
+         title="See {{ result.title }} in iTunes"
          class="link"
          target="_blank"
          rel="noopener">iTunes</a>
