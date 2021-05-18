@@ -301,7 +301,9 @@ class ITunesCategoryTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["error"])
         self.assertEqual(len(resp.context_data["results"]), 1)
-        self.assertEqual(resp.context_data["results"][0].title, "test title")
+        self.assertEqual(
+            resp.context_data["results"][0].title, mock_search_result.title
+        )
 
     @patch.object(
         itunes, "fetch_itunes_genre", side_effect=itunes.Invalid, autospec=True
@@ -335,7 +337,9 @@ class SearchITunesTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["error"])
         self.assertEqual(len(resp.context_data["results"]), 1)
-        self.assertEqual(resp.context_data["results"][0].title, "test title")
+        self.assertEqual(
+            resp.context_data["results"][0].title, mock_search_result.title
+        )
 
     @patch.object(itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True)
     def test_invalid_results(self, mock: Mock) -> None:
