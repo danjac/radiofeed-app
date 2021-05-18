@@ -5,21 +5,20 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
+from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.urls import reverse
-from django.utils.encoding import force_str
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.shared.db import FastCountMixin
+from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
-class EpisodeQuerySet(FastCountMixin, models.QuerySet):
+class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
@@ -38,15 +37,6 @@ class EpisodeQuerySet(FastCountMixin, models.QuerySet):
             current_time=models.Subquery(logs.values("current_time")),
             listened=models.Subquery(logs.values("updated")),
         )
-
-    def search(self, search_term: str) -> models.QuerySet:
-        if not search_term:
-            return self.none()
-
-        query = SearchQuery(force_str(search_term), search_type="websearch")
-        return self.annotate(
-            rank=SearchRank(models.F("search_vector"), query=query)
-        ).filter(search_vector=query)
 
 
 EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
@@ -204,22 +194,11 @@ class Episode(models.Model):
         }
 
 
-class FavoriteQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
-        if not search_term:
-            return self.none()
-
-        query = SearchQuery(force_str(search_term), search_type="websearch")
-        return self.annotate(
-            episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
-            podcast_rank=SearchRank(
-                models.F("episode__podcast__search_vector"), query=query
-            ),
-            rank=models.F("episode_rank") + models.F("podcast_rank"),
-        ).filter(
-            models.Q(episode__search_vector=query)
-            | models.Q(episode__podcast__search_vector=query)
-        )
+class FavoriteQuerySet(SearchMixin, models.QuerySet):
+    search_vectors: list[tuple[str, str]] = [
+        ("episode__search_vector", "episode_rank"),
+        ("episode__podcast__search_vector", "podcast_rank"),
+    ]
 
 
 FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
@@ -244,22 +223,11 @@ class Favorite(TimeStampedModel):
         ]
 
 
-class AudioLogQuerySet(models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
-        if not search_term:
-            return self.none()
-
-        query = SearchQuery(force_str(search_term), search_type="websearch")
-        return self.annotate(
-            episode_rank=SearchRank(models.F("episode__search_vector"), query=query),
-            podcast_rank=SearchRank(
-                models.F("episode__podcast__search_vector"), query=query
-            ),
-            rank=models.F("episode_rank") + models.F("podcast_rank"),
-        ).filter(
-            models.Q(episode__search_vector=query)
-            | models.Q(episode__podcast__search_vector=query)
-        )
+class AudioLogQuerySet(SearchMixin, models.QuerySet):
+    search_vectors: list[tuple[str, str]] = [
+        ("episode__search_vector", "episode_rank"),
+        ("episode__podcast__search_vector", "podcast_rank"),
+    ]
 
 
 AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)

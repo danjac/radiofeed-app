@@ -7,12 +7,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import (
-    SearchQuery,
-    SearchRank,
-    SearchVectorField,
-    TrigramSimilarity,
-)
+from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.cache import cache
 from django.core.files.images import ImageFile
 from django.core.validators import MinLengthValidator
@@ -27,7 +22,7 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
-from audiotrails.shared.db import FastCountMixin
+from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -92,16 +87,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
-class PodcastQuerySet(FastCountMixin, models.QuerySet):
-    def search(self, search_term: str) -> models.QuerySet:
-        if not search_term:
-            return self.none()
-
-        query = SearchQuery(force_str(search_term), search_type="websearch")
-        return self.annotate(
-            rank=SearchRank(models.F("search_vector"), query=query)
-        ).filter(search_vector=query)
-
+class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_follow_count(self) -> models.QuerySet:
         return self.annotate(follow_count=models.Count("follow"))
 
