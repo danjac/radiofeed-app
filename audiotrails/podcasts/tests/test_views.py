@@ -19,31 +19,24 @@ from ..factories import (
 from ..itunes import SearchResult
 from ..models import Follow, Podcast
 
+mock_search_result = SearchResult(
+    rss="http://example.com/test.xml",
+    itunes="https://apple.com/some-link",
+    image="test.jpg",
+    title="test title",
+)
+
 
 def mock_fetch_itunes_genre(
     genre_id: int, num_results: int = 20
 ) -> Tuple[List[SearchResult], List[Podcast]]:
-    return [
-        SearchResult(
-            rss="http://example.com/test.xml",
-            itunes="https://apple.com/some-link",
-            image="test.jpg",
-            title="test title",
-        )
-    ], []
+    return [mock_search_result], []
 
 
 def mock_search_itunes(
     search_term: str, num_results: int = 12
 ) -> Tuple[List[SearchResult], List[Podcast]]:
-    return [
-        SearchResult(
-            rss="http://example.com/test.xml",
-            itunes="https://apple.com/some-link",
-            image="test.jpg",
-            title="test title",
-        )
-    ], []
+    return [mock_search_result], []
 
 
 class PreviewTests(TestCase):
