@@ -19,7 +19,7 @@ ContextDict = dict[str, Any]
 
 class ActionProtocol(Protocol):
     def __call__(
-        modeladmin: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet
+        self: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet
     ) -> str:
         ...
 
