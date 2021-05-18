@@ -8,31 +8,37 @@ User = get_user_model()
 
 
 class UserManagerTests(TestCase):
+    email = "tester@gmail.com"
+
     def test_create_user(self) -> None:
 
+        password = User.objects.make_random_password()
+
         user = User.objects.create_user(
-            username="tester", email="tester@gmail.com", password="t3ZtP4s31"
+            username="tester1", email=self.email, password=password
         )
-        self.assertTrue(user.check_password("t3ZtP4s31"))
+        self.assertTrue(user.check_password(password))
 
     def test_create_superuser(self) -> None:
 
+        password = User.objects.make_random_password()
+
         user = User.objects.create_superuser(
-            username="tester", email="tester@gmail.com", password="t3ZtP4s31"
+            username="tester2", email=self.email, password=password
         )
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
     def test_for_email_matching_email_field(self) -> None:
 
-        user = UserFactory(email="test@gmail.com")
-        self.assertEqual(User.objects.for_email("test@gmail.com").first(), user)
+        user = UserFactory(email=self.email)
+        self.assertEqual(User.objects.for_email(self.email).first(), user)
 
     def test_for_email_matching_email_address_instance(self) -> None:
 
         user = UserFactory()
-        EmailAddress.objects.create(user=user, email="test@gmail.com")
-        self.assertEqual(User.objects.for_email("test@gmail.com").first(), user)
+        EmailAddress.objects.create(user=user, email=self.email)
+        self.assertEqual(User.objects.for_email(self.email).first(), user)
 
     def test_matches_usernames(self) -> None:
         user_1 = UserFactory(username="first")
@@ -54,7 +60,8 @@ class UserManagerTests(TestCase):
 class UserModelTests(TestCase):
     def test_get_email_addresses(self) -> None:
         user = UserFactory()
-        user.emailaddress_set.create(email="test1@gmail.com")
+        email = "test1@gmail.com"
+        user.emailaddress_set.create(email=email)
         emails = user.get_email_addresses()
         self.assertIn(user.email, emails)
-        self.assertIn("test1@gmail.com", emails)
+        self.assertIn(email, emails)
