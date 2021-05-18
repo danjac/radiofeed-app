@@ -4,10 +4,12 @@
   <form hx-get="{% url 'podcasts:search_podcasts' %}"
         hx-push-url="true"
         hx-target="#content"
+        x-data="{search: ''}"
         class="relative bg-transparent"
-        @submit="$dispatch('close-sidebar');">
+        @submit="$dispatch('close-sidebar'); search=''">
     <input type="search"
            name="q"
+           x-model="search"
            autocomplete="off"
            aria-label="{{ placeholder|default:'Search' }}"
            placeholder="Find a podcast..."
