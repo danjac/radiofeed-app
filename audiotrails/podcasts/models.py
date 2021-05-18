@@ -4,7 +4,6 @@ import dataclasses
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Protocol
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -15,6 +14,7 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.core.cache import cache
+from django.core.files.images import ImageFile
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
@@ -24,21 +24,15 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
-from PIL import ImageFile
+from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.shared.db import FastCountMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+PILImageFile.LOAD_TRUNCATED_IMAGES = True
 
 THUMBNAIL_SIZE = 200
-
-
-class CoverImage(Protocol):
-    width: int
-    height: int
-    url: str
 
 
 @dataclasses.dataclass
@@ -122,7 +116,7 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
-    cover_image: CoverImage | None = ImageField(null=True, blank=True)
+    cover_image: ImageFile | None = ImageField(null=True, blank=True)
 
     itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
@@ -212,7 +206,7 @@ class Podcast(models.Model):
             }
         return og_data
 
-    def get_cover_image_thumbnail(self) -> CoverImage | PlaceholderImage:
+    def get_cover_image_thumbnail(self) -> ImageFile | PlaceholderImage:
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
