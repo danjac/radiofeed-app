@@ -4,7 +4,7 @@ from typing import List, Tuple
 from unittest.mock import Mock, patch
 
 from django.test import TestCase, TransactionTestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.users.factories import UserFactory
@@ -18,6 +18,8 @@ from ..factories import (
 )
 from ..itunes import SearchResult
 from ..models import Follow, Podcast
+
+podcasts_url = reverse_lazy("podcasts:index")
 
 mock_search_result = SearchResult(
     rss="http://example.com/test.xml",
@@ -49,7 +51,7 @@ class PreviewTests(TestCase):
 class AnonymousPodcastsTests(TestCase):
     def test_anonymous(self) -> None:
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(reverse("podcasts:index"))
+        resp = self.client.get(podcasts_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -76,7 +78,7 @@ class AuthenticatedPodcastsTests(TestCase):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(reverse("podcasts:index"))
+        resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -85,7 +87,7 @@ class AuthenticatedPodcastsTests(TestCase):
 
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=self.user)
-        resp = self.client.get(reverse("podcasts:index"))
+        resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
         self.assertEqual(resp.context_data["page_obj"].object_list[0], sub.podcast)
@@ -98,7 +100,7 @@ class SearchPodcastsTests(TestCase):
                 reverse("podcasts:search_podcasts"),
                 {"q": ""},
             ),
-            reverse("podcasts:index"),
+            podcasts_url,
         )
 
     def test_search(self) -> None:
