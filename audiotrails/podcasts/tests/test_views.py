@@ -78,7 +78,7 @@ class AuthenticatedPodcastsTests(TestCase):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(self.url)
+        resp = self.client.get(podcasts_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
 
@@ -87,7 +87,7 @@ class AuthenticatedPodcastsTests(TestCase):
 
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=self.user)
-        resp = self.client.get(self.url)
+        resp = self.client.get(podcasts_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
         self.assertEqual(resp.context_data["page_obj"].object_list[0], sub.podcast)

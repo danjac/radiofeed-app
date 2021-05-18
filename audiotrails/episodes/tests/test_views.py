@@ -2,7 +2,7 @@ import http
 import json
 
 from django.test import TestCase, TransactionTestCase
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
 from audiotrails.users.factories import UserFactory
@@ -15,13 +15,15 @@ from ..factories import (
 )
 from ..models import AudioLog, Favorite, QueueItem
 
+episodes_url = reverse_lazy("episodes:index")
+
 
 class NewEpisodesAnonymousTests(TestCase):
     def test_get(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
-        resp = self.client.get(reverse("episodes:index"))
+        resp = self.client.get(episodes_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["has_follows"])
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -34,14 +36,13 @@ class NewEpisodesAuthenticatedTests(TestCase):
 
     def setUp(self) -> None:
         self.client.force_login(self.user)
-        self.url = reverse("episodes:index")
 
     def test_user_no_subscriptions(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
         EpisodeFactory.create_batch(3)
-        resp = self.client.get(self.url)
+        resp = self.client.get(episodes_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["has_follows"])
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
@@ -55,7 +56,7 @@ class NewEpisodesAuthenticatedTests(TestCase):
         episode = EpisodeFactory()
         FollowFactory(user=self.user, podcast=episode.podcast)
 
-        resp = self.client.get(self.url)
+        resp = self.client.get(episodes_url)
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertFalse(resp.context_data["featured"])
         self.assertTrue(resp.context_data["has_follows"])
