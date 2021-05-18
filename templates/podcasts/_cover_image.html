@@ -7,7 +7,6 @@
      src="{% static 'img/podcast-icon.png' %}"
      data-src="{{ cover_image.url }}"
      width="{{ cover_image.width }}"
-     height="{{ cover_image.height }}"
-     {{ attrs|htmlattrs }} />
+     height="{{ cover_image.height }}">
 {% endwith %}
 {% endcache %}

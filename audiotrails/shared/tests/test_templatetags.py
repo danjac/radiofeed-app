@@ -7,7 +7,6 @@ from ..pagination.templatetags import pagination_url
 from ..template.defaulttags import (
     active_link,
     format_duration,
-    htmlattrs,
     jsonify,
     keepspaces,
     login_url,
@@ -43,19 +42,6 @@ class LoginUrlTests(SimpleTestCase):
         url = "/podcasts/1234/test?ok=true"
         self.assertEqual(
             login_url(url), "/account/login/?next=/podcasts/1234/test%3Fok%3Dtrue"
-        )
-
-
-class HtmlAttrsTests(SimpleTestCase):
-    def test_empty_dict(self) -> None:
-        self.assertEqual(htmlattrs(None), "")
-        self.assertEqual(htmlattrs(""), "")
-        self.assertEqual(htmlattrs({}), "")
-
-    def test_attrs(self) -> None:
-        self.assertEqual(
-            htmlattrs({"data_action": "submit", "type": "button"}),
-            'data-action="submit" type="button"',
         )
 
 

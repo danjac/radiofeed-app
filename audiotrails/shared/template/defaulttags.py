@@ -101,13 +101,6 @@ def keepspaces(text: Optional[str]) -> str:
 
 
 @register.filter
-def htmlattrs(attrs: dict[str, str]) -> str:
-    if not attrs:
-        return ""
-    return mark_safe(" ".join(f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items()))
-
-
-@register.filter
 def login_url(url: str) -> str:
     return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
