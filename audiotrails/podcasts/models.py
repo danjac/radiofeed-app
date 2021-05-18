@@ -210,13 +210,16 @@ class Podcast(models.Model):
         """Returns cover image or placeholder. This is an expensive op,
         so use with caution."""
 
-        if self.cover_image:
-            if (
+        if (
+            self.cover_image
+            and (
                 img := get_thumbnail(
                     self.cover_image, str(THUMBNAIL_SIZE), format="WEBP", crop="center"
                 )
-            ) and img.size is not None:
-                return img
+            )
+            and img.size is not None
+        ):
+            return img
 
         return _cover_image_placeholder
 
