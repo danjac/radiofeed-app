@@ -158,6 +158,8 @@ class AudioModelTests(SimpleTestCase):
 
 
 class FeedModelTests(SimpleTestCase):
+    website = "http://reddit.com"
+
     def setUp(self) -> None:
         self.item = Item(
             audio=Audio(
@@ -179,7 +181,7 @@ class FeedModelTests(SimpleTestCase):
             items=[self.item],
             creators=[],
             image=None,
-            link="http://reddit.com",
+            link=self.website,
             language="en-gb",
             categories=[],
         )
@@ -194,7 +196,7 @@ class FeedModelTests(SimpleTestCase):
             items=[self.item],
             creators=[],
             image=None,
-            link="http://reddit.com",
+            link=self.website,
             language=" en-us",
             categories=[],
         )
@@ -209,7 +211,7 @@ class FeedModelTests(SimpleTestCase):
             items=[self.item],
             creators=[],
             image=None,
-            link="http://reddit.com",
+            link=self.website,
             language="fi",
             categories=[],
         )
@@ -224,7 +226,7 @@ class FeedModelTests(SimpleTestCase):
             items=[self.item],
             creators=[],
             image=None,
-            link="http://reddit.com",
+            link=self.website,
             language="",
             categories=[],
         )
@@ -238,11 +240,11 @@ class FeedModelTests(SimpleTestCase):
             items=[self.item],
             creators=[],
             image=None,
-            link="http://reddit.com",
+            link=self.website,
             categories=[],
         )
 
-        self.assertEqual(feed.link, "http://reddit.com")
+        self.assertEqual(feed.link, self.website)
 
     def test_empty_link(self) -> None:
         feed = Feed(
