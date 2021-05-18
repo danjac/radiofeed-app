@@ -5,7 +5,7 @@ from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
-    def for_email(self, email: str) -> UserQuerySet:
+    def for_email(self, email: str) -> models.QuerySet:
         """Returns users matching this email address, including both
         primary and secondary email addresses
         """
@@ -13,7 +13,7 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names: list[str]) -> UserQuerySet:
+    def matches_usernames(self, names: list[str]) -> models.QuerySet:
         """Returns users matching the (case insensitive) username."""
         if not names:
             return self.none()
@@ -45,7 +45,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
 
 class User(AbstractUser):
-    send_recommendations_email = models.BooleanField(default=True)
+    send_recommendations_email: bool = models.BooleanField(default=True)
 
     objects = UserManager()
 
