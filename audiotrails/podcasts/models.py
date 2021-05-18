@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 
+from datetime import datetime
+from decimal import Decimal
 from typing import Protocol
 
 from django.conf import settings
@@ -54,9 +56,7 @@ _cover_image_placeholder = PlaceholderImage()
 
 
 class CategoryQuerySet(models.QuerySet):
-    def search(
-        self, search_term: str, base_similarity: float = 0.2
-    ) -> CategoryQuerySet:
+    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -67,8 +67,8 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 
 class Category(models.Model):
 
-    name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
+    name: str = models.CharField(max_length=100, unique=True)
+    parent: Category = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -77,7 +77,7 @@ class Category(models.Model):
     )
 
     # https://itunes.apple.com/search?term=podcast&genreId=1402&limit=20
-    itunes_genre_id = models.IntegerField(
+    itunes_genre_id: int = models.IntegerField(
         verbose_name="iTunes Genre ID", null=True, blank=True, unique=True
     )
 
@@ -95,11 +95,11 @@ class Category(models.Model):
         return slugify(self.name, allow_unicode=False)
 
     def get_absolute_url(self) -> str:
-        return reverse("podcasts:category_detail", args=[self.id, self.slug])
+        return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
 class PodcastQuerySet(FastCountMixin, models.QuerySet):
-    def search(self, search_term: str) -> PodcastQuerySet:
+    def search(self, search_term: str) -> models.QuerySet:
         if not search_term:
             return self.none()
 
@@ -117,41 +117,41 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    rss = models.URLField(unique=True, max_length=500)
-    etag = models.TextField(blank=True)
-    title = models.TextField()
-    pub_date = models.DateTimeField(null=True, blank=True)
+    rss: str = models.URLField(unique=True, max_length=500)
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
+    pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
-    cover_image = ImageField(null=True, blank=True)
+    cover_image: CoverImage | None = ImageField(null=True, blank=True)
 
-    itunes = models.URLField(max_length=500, null=True, blank=True, unique=True)
+    itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
-    language = models.CharField(
+    language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
-    description = models.TextField(blank=True)
-    link = models.URLField(null=True, blank=True, max_length=500)
-    keywords = models.TextField(blank=True)
-    extracted_text = models.TextField(blank=True)
-    creators = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    link: str = models.URLField(null=True, blank=True, max_length=500)
+    keywords: str = models.TextField(blank=True)
+    extracted_text: str = models.TextField(blank=True)
+    creators: str = models.TextField(blank=True)
 
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(null=True, blank=True)
+    created: datetime = models.DateTimeField(auto_now_add=True)
+    last_updated: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    explicit = models.BooleanField(default=False)
-    promoted = models.BooleanField(default=False)
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
-    categories = models.ManyToManyField(Category, blank=True)
+    categories: list[Category] = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
-    recipients = models.ManyToManyField(
+    recipients: list[AuthenticatedUser] = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    sync_error = models.TextField(blank=True)
-    num_retries = models.PositiveIntegerField(default=0)
+    sync_error: str = models.TextField(blank=True)
+    num_retries: int = models.PositiveIntegerField(default=0)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
 
@@ -170,10 +170,10 @@ class Podcast(models.Model):
         return self.get_episodes_url()
 
     def get_episodes_url(self) -> str:
-        return reverse("podcasts:podcast_episodes", args=[self.id, self.slug])
+        return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
 
     def get_recommendations_url(self) -> str:
-        return reverse("podcasts:podcast_recommendations", args=[self.id, self.slug])
+        return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
 
     @property
     def slug(self) -> str:
@@ -189,7 +189,7 @@ class Podcast(models.Model):
 
     def get_cached_episode_count(self) -> int:
         return cache.get_or_set(
-            f"podcast-episode-count-{self.id}",
+            f"podcast-episode-count-{self.pk}",
             self.get_episode_count,
             timeout=settings.DEFAULT_CACHE_TIMEOUT,
         )
@@ -229,8 +229,10 @@ class Podcast(models.Model):
 
 class Follow(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    user: AuthenticatedUser = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+    )
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -287,12 +289,16 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 
 class Recommendation(models.Model):
 
-    podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
-    recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
+    recommended: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
 
-    frequency = models.PositiveIntegerField(default=0)
+    frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
+    similarity: Decimal | None = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 
