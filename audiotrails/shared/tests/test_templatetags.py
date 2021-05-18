@@ -62,30 +62,33 @@ class PercentTests(SimpleTestCase):
 
 
 class ActiveLinkTests(SimpleTestCase):
+    podcasts_url = "podcasts:index"
+    categories_url = "podcasts:categories"
+
     def setUp(self) -> None:
         self.rf = RequestFactory()
 
     def test_active_link_no_match(self) -> None:
         url = reverse("account_login")
         req = self.rf.get(url)
-        route = active_link({"request": req}, "podcasts:index")
-        self.assertEqual(route.url, reverse("podcasts:index"))
+        route = active_link({"request": req}, self.podcasts_url)
+        self.assertEqual(route.url, reverse(self.podcasts_url))
         self.assertFalse(route.match)
         self.assertFalse(route.exact)
 
     def test_active_link_non_exact_match(self) -> None:
         url = Category(id=1234, name="test").get_absolute_url()
         req = self.rf.get(url)
-        route = active_link({"request": req}, "podcasts:categories")
-        self.assertEqual(route.url, reverse("podcasts:categories"))
+        route = active_link({"request": req}, self.categories_url)
+        self.assertEqual(route.url, reverse(self.categories_url))
         self.assertTrue(route.match)
         self.assertFalse(route.exact)
 
     def test_active_link_exact_match(self) -> None:
-        url = reverse("podcasts:index")
+        url = reverse(self.podcasts_url)
         req = self.rf.get(url)
-        route = active_link({"request": req}, "podcasts:index")
-        self.assertEqual(route.url, reverse("podcasts:index"))
+        route = active_link({"request": req}, self.podcasts_url)
+        self.assertEqual(route.url, reverse(self.podcasts_url))
         self.assertTrue(route.match)
         self.assertTrue(route.exact)
 
