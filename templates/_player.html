@@ -1,6 +1,7 @@
 {% with log=request.player.get_audio_log %}
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
+{% with episode_url=episode.get_absolute_url episode_title=episode.title|stripentities podcast_url=podcast.get_absolute_url podcast_title=podcast.title|stripentities %}
 <div id="player"
      x-data="Player({
        episode: {{ episode.id }},
@@ -17,6 +18,7 @@
          @play="resumed()"
          @pause="paused()"
          @ended="ended()"
+         @error="error()"
          @loadedmetadata="loaded()"
          @timeupdate="timeUpdate()">
   </audio>
@@ -30,18 +32,18 @@
 
       <div class="sm:hidden pr-1 text-sm w-84 truncate text-center">
         <a class="player--title"
-           href="{{ episode.get_absolute_url }}"
-           title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
+           href="{{ episode_url }}"
+           title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
       </div>
 
       <div class="flex items-center space-x-2 sm:space-x-1">
 
         <div>
           {% with cover_image=podcast.get_cover_image_thumbnail %}
-          <a href="{{ podcast.get_absolute_url }}">
+          <a href="{{ podcast_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
-                 title="{{ podcast.title }}"
-                 alt="{{ podcast.title }}"
+                 title="{{ podcast_title }}"
+                 alt="{{ podcast_title }}"
                  width="{{ cover_image.width }}"
                  height="{{ cover_image.height }}"
                  src="{{ cover_image.url }}">
@@ -80,8 +82,8 @@
 
             <div class="hidden sm:block text-sm sm:w-64 w-96 lg:w-full truncate text-center">
               <a class="player--title"
-                 href="{{ episode.get_absolute_url }}"
-                 title="{{ episode.title }}">{{ episode.title|truncatechars:120 }}</a>
+                 href="{{ episode_url }}"
+                 title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center">
@@ -128,6 +130,7 @@
     </div>
   </div>
 </div>
+{% endwith %}
 {% endwith %}
 {% else %}
 <div id="player"></div>

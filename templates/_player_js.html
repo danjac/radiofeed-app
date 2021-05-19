@@ -196,6 +196,10 @@
           sessionStorage.removeItem(storageKey);
         },
 
+        error() {
+          console.error('Playback Error:', this.$refs.audio.error)
+        },
+
         close(url) {
           this.stopPlayer();
           htmx.ajax('POST', url || "{% url 'episodes:close_player' %}", {
