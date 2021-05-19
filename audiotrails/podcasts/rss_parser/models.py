@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
 from functools import lru_cache
-from typing import Dict, List, Optional, Set
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
@@ -18,14 +19,14 @@ from .image import fetch_image_from_url
 
 
 @lru_cache
-def get_categories_dict() -> Dict[str, Category]:
+def get_categories_dict() -> dict[str, Category]:
     return {c.name: c for c in Category.objects.all()}
 
 
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
-    length: Optional[int]
+    length: int | None
 
     @validator("type")
     def is_audio(cls, value: str) -> str:
@@ -76,9 +77,9 @@ class Feed(BaseModel):
     language: str = "en"
     link: constr(max_length=500) = ""  # type: ignore
     items: conlist(Item, min_items=1)  # type: ignore
-    creators: Set[str]
-    image: Optional[str]
-    categories: List[str]
+    creators: set[str]
+    image: str | None
+    categories: list[str]
 
     @validator("language")
     def language_code(cls, value: str) -> str:
@@ -103,7 +104,7 @@ class Feed(BaseModel):
 
     def sync_podcast(
         self, podcast: Podcast, etag: str, force_update: bool
-    ) -> List[Episode]:
+    ) -> list[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
 
         pub_date = self.get_pub_date()
@@ -141,7 +142,7 @@ class Feed(BaseModel):
 
         podcast.save()
 
-        podcast.categories.set(categories)
+        podcast.categories.set(categories)  # type: ignore
 
         # episodes
         return self.create_episodes(podcast)
@@ -149,7 +150,7 @@ class Feed(BaseModel):
     def do_update(
         self,
         podcast: Podcast,
-        pub_date: Optional[datetime],
+        pub_date: datetime | None,
         force_update: bool,
     ) -> bool:
 
@@ -164,7 +165,7 @@ class Feed(BaseModel):
             )
         )
 
-    def create_episodes(self, podcast: Podcast) -> List[Episode]:
+    def create_episodes(self, podcast: Podcast) -> list[Episode]:
         """Parses new episodes from podcast feed. Remove any episodes
         no longer in the feed."""
 
@@ -195,15 +196,15 @@ class Feed(BaseModel):
             }
         )
 
-    def get_categories(self, categories_dct: Dict[str, Category]) -> List[Category]:
+    def get_categories(self, categories_dct: dict[str, Category]) -> list[Category]:
         return [
             categories_dct[name] for name in self.categories if name in categories_dct
         ]
 
-    def get_keywords(self, categories_dct: Dict[str, Category]) -> str:
+    def get_keywords(self, categories_dct: dict[str, Category]) -> str:
         return " ".join(name for name in self.categories if name not in categories_dct)
 
-    def extract_text(self, podcast: Podcast, categories: List[Category]) -> str:
+    def extract_text(self, podcast: Podcast, categories: list[Category]) -> str:
         """Extract keywords from text content for recommender"""
         text = " ".join(
             [
@@ -217,14 +218,14 @@ class Feed(BaseModel):
         )
         return " ".join(extract_keywords(podcast.language, text))
 
-    def get_pub_date(self) -> Optional[datetime]:
+    def get_pub_date(self) -> datetime | None:
         now = timezone.now()
         try:
             return max(item.pub_date for item in self.items if item.pub_date < now)
         except ValueError:
             return None
 
-    def fetch_cover_image(self) -> Optional[ImageFile]:
+    def fetch_cover_image(self) -> ImageFile | None:
         if not self.image:
             return None
 
