@@ -27,7 +27,7 @@ class Audio(BaseModel):
     url: HttpUrl
     length: Optional[int]
 
-    @validator("type", allow_reuse=True)
+    @validator("type")
     def is_audio(cls, value: str) -> str:
         if not value.startswith("audio/"):
             raise ValueError("not a valid audio media")
