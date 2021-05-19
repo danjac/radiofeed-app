@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.http import require_safe
 
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.pagination import render_paginated_response
@@ -14,6 +15,7 @@ from audiotrails.shared.types import ContextDict
 from ..models import AudioLog, Episode
 
 
+@require_safe
 def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
 
     # get the latest episode for each podcast
@@ -67,6 +69,7 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
     )
 
 
+@require_safe
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
@@ -86,6 +89,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_safe
 def preview(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
@@ -101,6 +105,7 @@ def preview(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
+@require_safe
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
@@ -119,6 +124,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
+@require_safe
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: Optional[str] = None
 ) -> HttpResponse:

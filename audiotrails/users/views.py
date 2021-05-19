@@ -8,7 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import (
+    require_http_methods,
+    require_POST,
+    require_safe,
+)
 
 from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
 from audiotrails.podcasts.models import Follow, Podcast
@@ -16,6 +20,7 @@ from audiotrails.podcasts.models import Follow, Podcast
 from .forms import UserPreferencesForm
 
 
+@require_http_methods(["GET", "POST"])
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
@@ -30,6 +35,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "account/preferences.html", {"form": form})
 
 
+@require_http_methods(["GET", "POST"])
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
@@ -69,6 +75,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     return response
 
 
+@require_safe
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
 
@@ -90,6 +97,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_http_methods(["GET", "POST"])
 @login_required
 def delete_account(request: HttpRequest) -> HttpResponse:
     if request.method == "POST" and "confirm-delete" in request.POST:

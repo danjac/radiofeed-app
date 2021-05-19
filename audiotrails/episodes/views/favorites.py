@@ -3,7 +3,7 @@ import http
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
@@ -12,6 +12,7 @@ from ..models import Episode, Favorite
 from . import get_episode_or_404
 
 
+@require_safe
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     favorites = Favorite.objects.filter(user=request.user).select_related(

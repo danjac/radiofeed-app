@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.episodes.views import render_episode_list_response
 from audiotrails.shared.decorators import ajax_login_required
@@ -20,6 +20,7 @@ from .models import Category, Follow, Podcast, Recommendation
 from .tasks import sync_podcast_feed
 
 
+@require_safe
 def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
     follows = (
         list(request.user.follow_set.values_list("podcast", flat=True))
@@ -50,6 +51,7 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
     )
 
 
+@require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
@@ -68,6 +70,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_safe
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
     error: bool = False
@@ -94,6 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_safe
 def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -107,6 +111,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
     )
 
 
+@require_safe
 def recommendations(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -128,6 +133,7 @@ def recommendations(
     )
 
 
+@require_safe
 def episodes(
     request: HttpRequest, podcast_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -162,6 +168,7 @@ def episodes(
     )
 
 
+@require_safe
 def categories(request: HttpRequest) -> HttpResponse:
 
     categories = Category.objects.all()
@@ -186,6 +193,7 @@ def categories(request: HttpRequest) -> HttpResponse:
     )
 
 
+@require_safe
 def category_detail(
     request: HttpRequest, category_id: int, slug: Optional[str] = None
 ) -> HttpResponse:
@@ -212,6 +220,7 @@ def category_detail(
     )
 
 
+@require_safe
 def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     error: bool = False
     results: list[itunes.SearchResult] = []
@@ -241,8 +250,8 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
-@require_POST
 @ajax_login_required
+@require_POST
 def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -255,8 +264,8 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     return render_follow_response(request, podcast, True)
 
 
-@require_POST
 @ajax_login_required
+@require_POST
 def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)

@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.db.models import Max
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.shared.decorators import accepts_json, ajax_login_required
 
@@ -13,6 +13,7 @@ from ..models import Episode, QueueItem
 from . import get_episode_or_404
 
 
+@require_safe
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
