@@ -38,7 +38,7 @@
     document.addEventListener("htmx:load", event => lazyLoadImages(event.detail.elt));
     document.addEventListener("DOMContentLoaded", lazyLoadImages(document));
 
-    window.fetchJSON = (url, data, options) => {
+    window.sendJSON = (url, data, options) => {
       options = {
         method: 'POST',
         headers: {

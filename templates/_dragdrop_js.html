@@ -9,7 +9,7 @@
           (target) => target.dataset.id
         );
         if (items.length > 0) {
-          fetchJSON("{% url 'episodes:move_queue_items' %}", {
+          sendJSON("{% url 'episodes:move_queue_items' %}", {
             items
           })
         }

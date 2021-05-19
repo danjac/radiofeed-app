@@ -228,7 +228,7 @@
 
         sendCurrentTimeUpdate() {
           if (this.isLoaded && !this.isPaused && this.currentTime) {
-            fetchJSON("{% url 'episodes:player_time_update' %}", {
+            sendJSON("{% url 'episodes:player_time_update' %}", {
               currentTime: this.currentTime,
             });
           }
