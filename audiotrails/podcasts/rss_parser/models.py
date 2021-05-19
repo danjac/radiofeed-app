@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 from datetime import datetime
 from functools import lru_cache
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
@@ -26,7 +25,7 @@ def get_categories_dict() -> dict[str, Category]:
 class Audio(BaseModel):
     type: constr(max_length=60)  # type: ignore
     url: HttpUrl
-    length: int | None
+    length: Optional[int]
 
     @validator("type", allow_reuse=True)
     def is_audio(cls, value: str) -> str:
@@ -78,7 +77,7 @@ class Feed(BaseModel):
     link: constr(max_length=500) = ""  # type: ignore
     items: conlist(Item, min_items=1)  # type: ignore
     creators: set[str]
-    image: str | None
+    image: Optional[str]
     categories: list[str]
 
     @validator("language")
@@ -150,7 +149,7 @@ class Feed(BaseModel):
     def do_update(
         self,
         podcast: Podcast,
-        pub_date: datetime | None,
+        pub_date: Optional[datetime],
         force_update: bool,
     ) -> bool:
 
@@ -218,14 +217,14 @@ class Feed(BaseModel):
         )
         return " ".join(extract_keywords(podcast.language, text))
 
-    def get_pub_date(self) -> datetime | None:
+    def get_pub_date(self) -> Optional[datetime]:
         now = timezone.now()
         try:
             return max(item.pub_date for item in self.items if item.pub_date < now)
         except ValueError:
             return None
 
-    def fetch_cover_image(self) -> ImageFile | None:
+    def fetch_cover_image(self) -> Optional[ImageFile]:
         if not self.image:
             return None
 
