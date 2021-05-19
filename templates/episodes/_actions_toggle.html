@@ -1,4 +1,3 @@
-{% if user.is_authenticated %}
 <div class="relative flex items-center">
   <button title="Actions for {{ episode.title|stripentities }}"
           class="focus:outline-none"
@@ -10,4 +9,3 @@
   </button>
   <div id="actions-{{ episode.id }}"></div>
 </div>
-{% endif %}

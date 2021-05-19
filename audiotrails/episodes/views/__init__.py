@@ -8,7 +8,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.pagination import render_paginated_response
 from audiotrails.shared.types import ContextDict
 
@@ -102,7 +101,6 @@ def preview(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
-@ajax_login_required
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(

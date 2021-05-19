@@ -10,6 +10,7 @@
         position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
     }">
   {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" %}
+  {% if user.is_authenticated %}
 
   {% if is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
@@ -76,6 +77,18 @@
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
     Remove from History
   </button>
+  {% endif %}
+
+  {% else %}
+  <a class="{{ BUTTON_CSS_CLASS }}"
+     hx-disable="true"
+     title="Log in or sign up to play this episode"
+     href="{{ episode.get_absolute_url|login_url }}">
+    <div class="mr-2">
+      {% icon "login" css_class="h-4 w-4" %}
+    </div>
+    Log in or Sign up
+  </a>
   {% endif %}
 
   <a class="{{ BUTTON_CSS_CLASS }}"
