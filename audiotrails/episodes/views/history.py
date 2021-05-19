@@ -11,8 +11,8 @@ from ..models import AudioLog
 from . import get_episode_or_404
 
 
-@login_required
 @require_safe
+@login_required
 def index(request: HttpRequest) -> HttpResponse:
 
     logs = (
