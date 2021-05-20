@@ -298,7 +298,7 @@ class QueueItemQuerySet(models.QuerySet):
             + 1,
         )
 
-    def move_items(self, user: AuthenticatedUser, item_ids: list[int]):
+    def move_items(self, user: AuthenticatedUser, item_ids: list[int]) -> None:
         qs = self.filter(user=user, pk__in=item_ids)
 
         items = qs.in_bulk()
