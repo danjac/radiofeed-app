@@ -442,9 +442,13 @@ class QueueTests(TestCase):
 
 
 class AddToQueueTests(TransactionTestCase):
+    add_to_start_url = "episodes:add_to_queue_start"
+    add_to_end_url = "episodes:add_to_queue_end"
+
     def setUp(self) -> None:
         self.user = UserFactory()
         self.episode = EpisodeFactory()
+
         self.client.force_login(self.user)
 
     def test_add_to_queue_end(self) -> None:
@@ -453,12 +457,7 @@ class AddToQueueTests(TransactionTestCase):
         third = EpisodeFactory()
 
         for episode in (first, second, third):
-            resp = self.client.post(
-                reverse(
-                    "episodes:add_to_queue_end",
-                    args=[episode.id],
-                ),
-            )
+            resp = self.client.post(reverse(self.add_to_end_url, args=[episode.id]))
             self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
         items = (
@@ -484,7 +483,7 @@ class AddToQueueTests(TransactionTestCase):
         for episode in (first, second, third):
             resp = self.client.post(
                 reverse(
-                    "episodes:add_to_queue_start",
+                    self.add_to_start_url,
                     args=[episode.id],
                 ),
             )
@@ -511,7 +510,7 @@ class AddToQueueTests(TransactionTestCase):
         session.save()
         resp = self.client.post(
             reverse(
-                "episodes:add_to_queue_start",
+                self.add_to_start_url,
                 args=[self.episode.id],
             ),
         )
@@ -522,7 +521,7 @@ class AddToQueueTests(TransactionTestCase):
         QueueItemFactory(episode=self.episode, user=self.user)
         resp = self.client.post(
             reverse(
-                "episodes:add_to_queue_start",
+                self.add_to_start_url,
                 args=[self.episode.id],
             ),
         )
