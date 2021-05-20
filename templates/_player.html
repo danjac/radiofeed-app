@@ -4,7 +4,6 @@
 {% with episode_url=episode.get_absolute_url episode_title=episode.title|stripentities podcast_url=podcast.get_absolute_url podcast_title=podcast.title|stripentities %}
 <div id="player"
      x-data="Player({
-       episode: {{ episode.id }},
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        runImmediately: {{ run_immediately|yesno:'true,false' }}
