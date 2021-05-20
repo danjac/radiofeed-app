@@ -288,3 +288,59 @@ class QueueItemManagerTests(TestCase):
         QueueItemFactory(user=self.user, episode=log.episode)
         item = QueueItem.objects.with_current_time(self.user).first()
         self.assertEqual(item.current_time, 20)
+
+    def test_move_items(self) -> None:
+        first = QueueItemFactory(user=self.user)
+        second = QueueItemFactory(user=self.user)
+        third = QueueItemFactory(user=self.user)
+
+        items = QueueItem.objects.filter(user=self.user).order_by("position")
+
+        self.assertEqual(items[0], first)
+        self.assertEqual(items[1], second)
+        self.assertEqual(items[2], third)
+
+        QueueItem.objects.move_items(self.user, [third.id, first.id, second.id])
+
+        items = QueueItem.objects.filter(user=self.user).order_by("position")
+
+        self.assertEqual(items[0], third)
+        self.assertEqual(items[1], first)
+        self.assertEqual(items[2], second)
+
+    def test_add_item_to_start_empty(self) -> None:
+        episode = EpisodeFactory()
+        item = QueueItem.objects.add_item_to_start(self.user, episode)
+        self.assertEqual(item.episode, episode)
+        self.assertEqual(item.user, self.user)
+        self.assertEqual(item.position, 1)
+
+    def test_add_item_to_start_other_items(self) -> None:
+        other = QueueItemFactory(user=self.user, position=1)
+
+        episode = EpisodeFactory()
+        item = QueueItem.objects.add_item_to_start(self.user, episode)
+
+        self.assertEqual(item.episode, episode)
+        self.assertEqual(item.user, self.user)
+        self.assertEqual(item.position, 1)
+
+        other.refresh_from_db()
+        self.assertEqual(other.position, 2)
+
+    def test_add_item_to_end_empty(self) -> None:
+        episode = EpisodeFactory()
+        item = QueueItem.objects.add_item_to_end(self.user, episode)
+        self.assertEqual(item.episode, episode)
+        self.assertEqual(item.user, self.user)
+        self.assertEqual(item.position, 1)
+
+    def test_add_item_to_end_other_items(self) -> None:
+        QueueItemFactory(user=self.user, position=1)
+
+        episode = EpisodeFactory()
+        item = QueueItem.objects.add_item_to_end(self.user, episode)
+
+        self.assertEqual(item.episode, episode)
+        self.assertEqual(item.user, self.user)
+        self.assertEqual(item.position, 2)

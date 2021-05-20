@@ -4,7 +4,6 @@ from typing import Literal
 
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import F, Max
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_safe
@@ -41,22 +40,11 @@ def add_to_queue(
     if request.player.is_playing(episode):
         return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
-    items = QueueItem.objects.filter(user=request.user)
-
-    position: int = 1
-
-    if items.exists():
-        if to == "start":
-            items.update(position=F("position") + 1)
-        else:
-            position = items.aggregate(Max("position"))["position__max"] + 1
-
     try:
-        QueueItem.objects.create(
-            user=request.user,
-            episode=episode,
-            position=position,
-        )
+        if to == "start":
+            QueueItem.objects.add_item_to_start(request.user, episode)
+        else:
+            QueueItem.objects.add_item_to_end(request.user, episode)
     except IntegrityError:
         pass
 
@@ -76,19 +64,11 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 @ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
-    qs = QueueItem.objects.filter(user=request.user)
-    items = qs.in_bulk()
-    for_update = []
-
     try:
-        for position, item_id in enumerate(request.json["items"], 1):
-            if item := items[int(item_id)]:
-                item.position = position
-                for_update.append(item)
+        QueueItem.objects.move_items(request.user, request.json["items"])
     except (KeyError, TypeError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
-    qs.bulk_update(for_update, ["position"])
     return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
 
 

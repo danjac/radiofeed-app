@@ -277,6 +277,41 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
+    def add_item_to_start(
+        self,
+        user: AuthenticatedUser,
+        episode: Episode,
+    ) -> QueueItem:
+        self.filter(user=user).update(position=models.F("position") + 1)
+        return self.create(episode=episode, user=user, position=1)
+
+    def add_item_to_end(self, user: AuthenticatedUser, episode: Episode) -> QueueItem:
+        return self.create(
+            episode=episode,
+            user=user,
+            position=(
+                self.filter(user=user).aggregate(models.Max("position"))[
+                    "position__max"
+                ]
+                or 0
+            )
+            + 1,
+        )
+
+    def move_items(self, user: AuthenticatedUser, item_ids: list[int]):
+        qs = self.filter(user=user, pk__in=item_ids)
+
+        items = qs.in_bulk()
+
+        for_update = []
+
+        for position, item_id in enumerate(item_ids, 1):
+            item = items[item_id]
+            item.position = position
+            for_update.append(item)
+
+        return qs.bulk_update(for_update, ["position"])
+
     def with_current_time(self, user: AuthenticatedUser) -> models.QuerySet:
         """Adds current_time annotation."""
         return self.annotate(
