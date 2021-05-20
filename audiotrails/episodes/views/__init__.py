@@ -114,7 +114,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     num_queue_items: int = (
         0
-        if request.user.is_anonymous
+        if request.user.is_anonymous or request.player.is_playing(episode)
         else QueueItem.objects.filter(user=request.user).count()
     )
 

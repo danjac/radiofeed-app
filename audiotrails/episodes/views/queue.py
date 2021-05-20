@@ -37,6 +37,10 @@ def add_to_queue(
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
+    # can't add to queue if currently playing
+    if request.player.is_playing(episode):
+        return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+
     items = QueueItem.objects.filter(user=request.user)
 
     position: int = 1

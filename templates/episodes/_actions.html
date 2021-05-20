@@ -38,6 +38,7 @@
   </button>
   {% endif %}
 
+  {% if not is_playing %}
   {% if is_queued %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
@@ -65,6 +66,7 @@
     {% icon "collection" css_class="h-4 w-4 mr-2" %}
     Add to Play Queue
   </button>
+  {% endif %}
   {% endif %}
 
   {% if is_favorited %}

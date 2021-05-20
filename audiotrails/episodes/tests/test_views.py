@@ -505,6 +505,19 @@ class AddToQueueTests(TransactionTestCase):
         self.assertEqual(items[2].episode, first)
         self.assertEqual(items[2].position, 3)
 
+    def test_is_playing(self) -> None:
+        session = self.client.session
+        session["player_episode"] = self.episode.id
+        session.save()
+        resp = self.client.post(
+            reverse(
+                "episodes:add_to_queue_start",
+                args=[self.episode.id],
+            ),
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertEqual(QueueItem.objects.count(), 0)
+
     def test_already_queued(self) -> None:
         QueueItemFactory(episode=self.episode, user=self.user)
         resp = self.client.post(
