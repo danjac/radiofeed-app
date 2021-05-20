@@ -12,7 +12,7 @@ from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.pagination import render_paginated_response
 from audiotrails.shared.types import ContextDict
 
-from ..models import AudioLog, Episode
+from ..models import AudioLog, Episode, QueueItem
 
 
 @require_safe
@@ -112,6 +112,12 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
+    num_queue_items: int = (
+        0
+        if request.user.is_anonymous
+        else QueueItem.objects.filter(user=request.user).count()
+    )
+
     return TemplateResponse(
         request,
         "episodes/_actions.html",
@@ -120,6 +126,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
             "is_playing": request.player.is_playing(episode),
+            "num_queue_items": num_queue_items,
         },
     )
 

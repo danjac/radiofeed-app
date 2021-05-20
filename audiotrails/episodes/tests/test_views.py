@@ -447,7 +447,7 @@ class AddToQueueTests(TransactionTestCase):
         self.episode = EpisodeFactory()
         self.client.force_login(self.user)
 
-    def test_post(self) -> None:
+    def test_add_to_queue_end(self) -> None:
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
@@ -455,7 +455,7 @@ class AddToQueueTests(TransactionTestCase):
         for episode in (first, second, third):
             resp = self.client.post(
                 reverse(
-                    "episodes:add_to_queue",
+                    "episodes:add_to_queue_end",
                     args=[episode.id],
                 ),
             )
@@ -476,11 +476,40 @@ class AddToQueueTests(TransactionTestCase):
         self.assertEqual(items[2].episode, third)
         self.assertEqual(items[2].position, 3)
 
-    def test_post_already_queued(self) -> None:
+    def test_add_to_queue_start(self) -> None:
+        first = EpisodeFactory()
+        second = EpisodeFactory()
+        third = EpisodeFactory()
+
+        for episode in (first, second, third):
+            resp = self.client.post(
+                reverse(
+                    "episodes:add_to_queue_start",
+                    args=[episode.id],
+                ),
+            )
+            self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+
+        items = (
+            QueueItem.objects.filter(user=self.user)
+            .select_related("episode")
+            .order_by("position")
+        )
+
+        self.assertEqual(items[0].episode, third)
+        self.assertEqual(items[0].position, 1)
+
+        self.assertEqual(items[1].episode, second)
+        self.assertEqual(items[1].position, 2)
+
+        self.assertEqual(items[2].episode, first)
+        self.assertEqual(items[2].position, 3)
+
+    def test_already_queued(self) -> None:
         QueueItemFactory(episode=self.episode, user=self.user)
         resp = self.client.post(
             reverse(
-                "episodes:add_to_queue",
+                "episodes:add_to_queue_start",
                 args=[self.episode.id],
             ),
         )

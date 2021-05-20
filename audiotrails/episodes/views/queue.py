@@ -1,8 +1,10 @@
 import http
 
+from typing import Literal
+
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Max
+from django.db.models import F, Max
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_safe
@@ -29,17 +31,27 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_to_queue(
+    request: HttpRequest, episode_id: int, to=Literal["start", "end"]
+) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     items = QueueItem.objects.filter(user=request.user)
 
+    position: int = 1
+
+    if items.exists():
+        if to == "start":
+            items.update(position=F("position") + 1)
+        else:
+            position = items.aggregate(Max("position"))["position__max"] + 1
+
     try:
         QueueItem.objects.create(
             user=request.user,
             episode=episode,
-            position=(items.aggregate(Max("position"))["position__max"] or 0) + 1,
+            position=position,
         )
     except IntegrityError:
         pass

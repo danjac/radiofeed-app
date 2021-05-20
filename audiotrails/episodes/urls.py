@@ -73,7 +73,18 @@ urlpatterns = [
     ),
     path("queue/", queue.index, name="queue"),
     path("queue/~move/", queue.move_queue_items, name="move_queue_items"),
-    path("queue/<int:episode_id>/~add/", queue.add_to_queue, name="add_to_queue"),
+    path(
+        "queue/<int:episode_id>/~add-start/",
+        queue.add_to_queue,
+        name="add_to_queue_start",
+        kwargs={"to": "start"},
+    ),
+    path(
+        "queue/<int:episode_id>/~add-end/",
+        queue.add_to_queue,
+        name="add_to_queue_end",
+        kwargs={"to": "end"},
+    ),
     path(
         "queue/<int:episode_id>/~remove/",
         queue.remove_from_queue,
