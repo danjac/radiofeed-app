@@ -1,5 +1,3 @@
-import http
-
 from typing import Literal
 
 from django.contrib.auth.decorators import login_required
@@ -9,6 +7,7 @@ from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.shared.decorators import accepts_json, ajax_login_required
+from audiotrails.shared.response import HttpResponseNoContent
 
 from ..models import QueueItem
 from . import get_episode_or_404
@@ -35,7 +34,7 @@ def add_to_queue(
 ) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    response = HttpResponseNoContent()
 
     # can't add to queue if currently playing
     if request.player.is_playing(episode):
@@ -57,7 +56,7 @@ def add_to_queue(
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
-    response = HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    response = HttpResponseNoContent()
     response["HX-Trigger"] = "reload-queue"
     return response
 
@@ -74,4 +73,4 @@ def move_queue_items(request: HttpRequest) -> HttpResponse:
     except (KeyError, TypeError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
-    return HttpResponse(status=http.HTTPStatus.NO_CONTENT)
+    return HttpResponseNoContent()
