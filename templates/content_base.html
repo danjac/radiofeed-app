@@ -4,6 +4,15 @@
 </title>
 {% endblock title_tag %}
 
+<script>
+  (function() {
+    // workaround for browser reload from cache
+    if (!window.preventPageReload) {
+      location.reload();
+    }
+  })();
+</script>
+
 <div id="content">
   {% block signup_cta %}
   {% include "_signup_cta.html" %}
