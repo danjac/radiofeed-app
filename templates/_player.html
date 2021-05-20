@@ -64,7 +64,7 @@
 
                 <button title="Playback stalled: reload this page"
                         @click="location.reload()"
-                        x-show="isStalled || isLoading"
+                        x-show="isStalled || !isLoaded"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "refresh" css_class="h-6 w-6" %}
                 </button>
