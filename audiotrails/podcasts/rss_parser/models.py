@@ -16,9 +16,11 @@ from .date_parser import parse_date
 from .exceptions import InvalidImageURL
 from .image import fetch_image_from_url
 
+CategoryDict = dict[str, Category]
+
 
 @lru_cache
-def get_categories_dict() -> dict[str, Category]:
+def get_categories_dict() -> CategoryDict:
     return {c.name: c for c in Category.objects.all()}
 
 
@@ -195,12 +197,12 @@ class Feed(BaseModel):
             }
         )
 
-    def get_categories(self, categories_dct: dict[str, Category]) -> list[Category]:
+    def get_categories(self, categories_dct: CategoryDict) -> list[Category]:
         return [
             categories_dct[name] for name in self.categories if name in categories_dct
         ]
 
-    def get_keywords(self, categories_dct: dict[str, Category]) -> str:
+    def get_keywords(self, categories_dct: CategoryDict) -> str:
         return " ".join(name for name in self.categories if name not in categories_dct)
 
     def extract_text(self, podcast: Podcast, categories: list[Category]) -> str:
