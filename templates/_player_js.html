@@ -17,6 +17,7 @@
         isPlaying: false,
         isPaused: false,
         isLoaded: false,
+        isStalled: false,
         playbackRate: 1.0,
         counter: '00:00:00',
       };
@@ -104,12 +105,14 @@
         resumed() {
           this.isPlaying = true;
           this.isPaused = false;
+          this.isStalled = false;
           sessionStorage.setItem(storageKey, true);
         },
 
         paused() {
           this.isPlaying = false;
           this.isPaused = true;
+          this.isStalled = false;
         },
 
         shortcuts(event) {
@@ -183,7 +186,7 @@
         },
 
         skipTo(position) {
-          if (!isNaN(position) && !this.isPaused) {
+            if (!isNaN(position) && !this.isPaused && !this.isStalled) {
             this.$refs.audio.currentTime = position;
           }
         },
@@ -203,7 +206,7 @@
 
         stalled() {
           console.log('Playback Stalled');
-          this.paused();
+          this.isStalled = true;
         },
 
         close(url) {
@@ -218,10 +221,12 @@
         },
 
         togglePause() {
-          if (this.isPaused) {
-            this.play();
-          } else {
-            this.pause();
+          if (!this.isStalled) {
+            if (this.isPaused) {
+              this.play();
+            } else {
+              this.pause();
+            }
           }
         },
 

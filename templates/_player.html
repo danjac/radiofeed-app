@@ -29,7 +29,7 @@
   <template x-if="mediaSrc">
     <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
          id="player-controls"
-         :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}"
+         :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}"
          hx-boost="true"
          hx-swap="outerHTML"
          hx-target="#content">
@@ -62,16 +62,23 @@
 
               <div class="flex items-center">
 
+                <button title="Playback stalled: reload this page"
+                        @click="location.reload()"
+                        x-show="isStalled"
+                        class="focus:outline-none hover:text-blue-500 mr-1">
+                  {% icon "refresh" css_class="h-6 w-6" %}
+                </button>
+
                 <button title="Pause"
                         @click="pause()"
-                        x-show="isPlaying"
+                        x-show="isPlaying && !isStalled"
                         class="focus:outline-none hover:text-blue-500 mr-1">
                   {% icon "pause" css_class="h-8 w-8" %}
                 </button>
 
                 <button title="Play"
                         @click="play()"
-                        x-show="isPaused"
+                        x-show="isPaused && !isStalled"
                         class="focus:outline-none hover:text-blue-600 mr-1">
                   {% icon "play" css_class="h-8 w-8" %}
                 </button>
