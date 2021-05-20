@@ -65,6 +65,7 @@
        id="layout"
        hx-boost="true"
        hx-target="#content"
+       hx-select="#content"
        hx-swap="outerHTML"
        hx-indicator="#loader">
 
@@ -91,6 +92,10 @@
         {% endblock %}
 
         {% block content %}{% endblock %}
+        {% if request.htmx %}
+        {% include "_oob_messages_js.html" %}
+        {% endif %}
+
       </div>
     </main>
     {% endblock %}

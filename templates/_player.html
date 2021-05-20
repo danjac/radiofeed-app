@@ -30,6 +30,7 @@
          :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}"
          hx-boost="true"
          hx-swap="outerHTML"
+         hx-select="#content"
          hx-target="#content">
       <div class="relative space-y-1">
 

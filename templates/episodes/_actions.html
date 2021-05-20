@@ -1,4 +1,5 @@
 <div class="absolute left-0 bg-white dark:bg-gray-800 w-56 border shadow-xl z-20 text-sm dark:border-gray-500"
+     id="actions-response-{{ episode.id }}"
      :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
      x-data="{show: true, position: 'dropdown'}"
      x-show="show"
@@ -16,6 +17,7 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:close_player' %}"
           hx-target="#player"
+          hx-select="#player"
           hx-swap="outerHTML"
           @click="show=false">
     {% icon "stop" css_class="h-4 w-4 mr-2" %}
@@ -25,6 +27,7 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-target="#player"
+          hx-select="#player"
           hx-swap="outerHTML"
           @click="show=false">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
