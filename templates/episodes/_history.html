@@ -4,9 +4,7 @@
 <div>
   {% for log in page_obj %}
   {% with episode=log.episode %}
-  <div id="audio-log-{{ episode.id }}">
-    {% include "episodes/_episode.html" %}
-  </div>
+  {% include "episodes/_episode.html" %}
   {% endwith %}
   {% empty %}
   <p class="text-center sm:text-left">
