@@ -186,7 +186,7 @@
         },
 
         skipTo(position) {
-            if (!isNaN(position) && !this.isPaused && !this.isStalled) {
+          if (!isNaN(position) && !this.isPaused && !this.isStalled) {
             this.$refs.audio.currentTime = position;
           }
         },
@@ -202,6 +202,12 @@
 
         error() {
           console.error('Playback Error:', this.$refs.audio.error)
+          this.isStalled = true;
+        },
+
+        suspend() {
+          console.log('Playback Suspended');
+          this.isStalled = true;
         },
 
         stalled() {
