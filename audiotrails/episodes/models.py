@@ -306,9 +306,9 @@ class QueueItemQuerySet(models.QuerySet):
         for_update = []
 
         for position, item_id in enumerate(item_ids, 1):
-            item = items[item_id]
-            item.position = position
-            for_update.append(item)
+            if item := items.get(item_id):
+                item.position = position
+                for_update.append(item)
 
         return qs.bulk_update(for_update, ["position"])
 

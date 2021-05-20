@@ -65,7 +65,9 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
     try:
-        QueueItem.objects.move_items(request.user, request.json["items"])
+        QueueItem.objects.move_items(
+            request.user, [int(item) for item in request.json["items"]]
+        )
     except (KeyError, TypeError, ValueError):
         return HttpResponseBadRequest("Invalid payload")
 
