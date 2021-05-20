@@ -6,7 +6,7 @@
         currentTime,
         episode,
         runImmediately
-      } = options;
+      } = (options || {});
 
       const storageKey = 'player-enabled';
 
@@ -106,13 +106,14 @@
           this.isPaused = false;
           sessionStorage.setItem(storageKey, true);
         },
+
         paused() {
           this.isPlaying = false;
           this.isPaused = true;
         },
 
         shortcuts(event) {
-          if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)) {
+          if (/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) || event.ctrlKey || event.altKey) {
             return;
           }
 
@@ -198,6 +199,11 @@
 
         error() {
           console.error('Playback Error:', this.$refs.audio.error)
+        },
+
+        stalled() {
+          console.log('Playback Stalled');
+          this.paused();
         },
 
         close(url) {
