@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
+from django.db import IntegrityError, transaction
 from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
 
@@ -131,15 +132,20 @@ class EpisodePcCompleteModelTests(TransactionTestCase):
             episode=self.episode,
         )
         self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(), 50
+            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
+            50,
         )
 
     def test_get_pc_complete_zero_current_time(self) -> None:
         AudioLogFactory(
-            user=self.user, current_time=0, updated=timezone.now(), episode=self.episode
+            user=self.user,
+            current_time=0,
+            updated=timezone.now(),
+            episode=self.episode,
         )
         self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(), 0
+            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
+            0,
         )
 
     def test_get_pc_complete_zero_duration(self) -> None:
@@ -150,7 +156,8 @@ class EpisodePcCompleteModelTests(TransactionTestCase):
             episode=EpisodeFactory(duration=""),
         )
         self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(), 0
+            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
+            0,
         )
 
     def test_get_pc_complete_gt_100(self) -> None:
@@ -161,23 +168,30 @@ class EpisodePcCompleteModelTests(TransactionTestCase):
             episode=self.episode,
         )
         self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(), 100
+            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
+            100,
         )
 
     def test_get_pc_complete_marked_complete(self) -> None:
         now = timezone.now()
         user = UserFactory()
         AudioLogFactory(
-            user=user, current_time=50, updated=now, completed=now, episode=self.episode
+            user=user,
+            current_time=50,
+            updated=now,
+            completed=now,
+            episode=self.episode,
         )
         self.assertEqual(
-            Episode.objects.with_current_time(user).first().get_pc_completed(), 100
+            Episode.objects.with_current_time(user).first().get_pc_completed(),
+            100,
         )
 
     def test_get_pc_complete_not_played(self) -> None:
         user = UserFactory()
         self.assertEqual(
-            Episode.objects.with_current_time(user).first().get_pc_completed(), 0
+            Episode.objects.with_current_time(user).first().get_pc_completed(),
+            0,
         )
 
     def test_get_pc_complete_anonymous(self) -> None:
@@ -328,6 +342,21 @@ class QueueItemManagerTests(TestCase):
         other.refresh_from_db()
         self.assertEqual(other.position, 2)
 
+    def test_add_item_to_start_already_exists(self) -> None:
+        other = QueueItemFactory(user=self.user, position=1)
+
+        with transaction.atomic():
+            self.assertRaises(
+                IntegrityError,
+                QueueItem.objects.add_item_to_start,
+                self.user,
+                other.episode,
+            )
+        self.assertEqual(QueueItem.objects.count(), 1)
+
+        other.refresh_from_db()
+        self.assertEqual(other.position, 1)
+
     def test_add_item_to_end_empty(self) -> None:
         episode = EpisodeFactory()
         item = QueueItem.objects.add_item_to_end(self.user, episode)
@@ -344,3 +373,18 @@ class QueueItemManagerTests(TestCase):
         self.assertEqual(item.episode, episode)
         self.assertEqual(item.user, self.user)
         self.assertEqual(item.position, 2)
+
+    def test_add_item_to_end_already_exists(self) -> None:
+        other = QueueItemFactory(user=self.user, position=1)
+
+        with transaction.atomic():
+            self.assertRaises(
+                IntegrityError,
+                QueueItem.objects.add_item_to_end,
+                self.user,
+                other.episode,
+            )
+        self.assertEqual(QueueItem.objects.count(), 1)
+
+        other.refresh_from_db()
+        self.assertEqual(other.position, 1)
