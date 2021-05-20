@@ -396,7 +396,7 @@ class RemoveAudioLogTests(TestCase):
         self.url = reverse("episodes:remove_audio_log", args=[self.episode.id])
         self.client.force_login(self.user)
 
-    def test_post(self) -> None:
+    def test_ok(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
         AudioLogFactory(user=self.user)
         resp = self.client.post(self.url)
@@ -407,7 +407,7 @@ class RemoveAudioLogTests(TestCase):
         )
         self.assertEqual(AudioLog.objects.filter(user=self.user).count(), 1)
 
-    def test_post_is_playing(self) -> None:
+    def test_is_playing(self) -> None:
         """Do not remove log if episode is currently playing"""
         AudioLogFactory(user=self.user, episode=self.episode)
 
@@ -416,12 +416,12 @@ class RemoveAudioLogTests(TestCase):
         session.save()
 
         resp = self.client.post(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
         self.assertTrue(
             AudioLog.objects.filter(user=self.user, episode=self.episode).exists()
         )
 
-    def test_post_none_remaining(self) -> None:
+    def test_none_remaining(self) -> None:
         AudioLogFactory(user=self.user, episode=self.episode)
         resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
@@ -514,7 +514,7 @@ class AddToQueueTests(TransactionTestCase):
                 args=[self.episode.id],
             ),
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
         self.assertEqual(QueueItem.objects.count(), 0)
 
     def test_already_queued(self) -> None:

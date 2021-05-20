@@ -34,11 +34,10 @@ def add_to_queue(
 ) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
-    response = HttpResponseNoContent()
 
     # can't add to queue if currently playing
     if request.player.is_playing(episode):
-        return response
+        return HttpResponseBadRequest("Episode is currently playing")
 
     try:
         if to == "start":
@@ -48,7 +47,7 @@ def add_to_queue(
     except IntegrityError:
         pass
 
-    return response
+    return HttpResponseNoContent()
 
 
 @require_POST
