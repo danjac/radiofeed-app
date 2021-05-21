@@ -1,6 +1,6 @@
-import json
+from __future__ import annotations
 
-from typing import Optional
+import json
 
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -75,8 +75,8 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 def render_player(
     request: HttpRequest,
-    current_episode: Optional[Episode] = None,
-    next_episode: Optional[Episode] = None,
+    current_episode: Episode | None = None,
+    next_episode: Episode | None = None,
 ) -> HttpResponse:
     response = TemplateResponse(
         request, "_player.html", {"run_immediately": next_episode is not None}

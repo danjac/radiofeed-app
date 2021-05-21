@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.conf import settings
 from django.contrib import messages
@@ -113,7 +113,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_safe
 def recommendations(
-    request: HttpRequest, podcast_id: int, slug: Optional[str] = None
+    request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -135,7 +135,7 @@ def recommendations(
 
 @require_safe
 def episodes(
-    request: HttpRequest, podcast_id: int, slug: Optional[str] = None
+    request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -195,7 +195,7 @@ def categories(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 def category_detail(
-    request: HttpRequest, category_id: int, slug: Optional[str] = None
+    request: HttpRequest, category_id: int, slug: str | None = None
 ) -> HttpResponse:
     category: Category = get_object_or_404(
         Category.objects.select_related("parent"), pk=category_id
@@ -282,7 +282,7 @@ def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
 def get_podcast_detail_context(
     request: HttpRequest,
     podcast: Podcast,
-    extra_context: Optional[ContextDict] = None,
+    extra_context: ContextDict | None = None,
 ) -> ContextDict:
 
     return {
@@ -309,7 +309,7 @@ def render_podcast_list_response(
     request: HttpRequest,
     podcasts: list[Podcast],
     template_name: str,
-    extra_context: Optional[ContextDict] = None,
+    extra_context: ContextDict | None = None,
     cached: bool = False,
 ) -> HttpResponse:
 

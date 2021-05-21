@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.conf import settings
 from django.db.models import OuterRef, Subquery
@@ -133,7 +133,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_safe
 def episode_detail(
-    request: HttpRequest, episode_id: int, slug: Optional[str] = None
+    request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
@@ -168,7 +168,7 @@ def render_episode_list_response(
     request: HttpRequest,
     episodes: list[Episode],
     template_name: str,
-    extra_context: Optional[ContextDict] = None,
+    extra_context: ContextDict | None = None,
     cached: bool = False,
 ) -> HttpResponse:
     return render_paginated_response(
