@@ -22,11 +22,11 @@ CategoryDict = dict[str, Category]
 
 # validators
 
-_url_validator = URLValidator(schemes=["http", "https"])
-_url_length_validator = MaxLengthValidator(500)
-_duration_validator = MaxLengthValidator(30)
-_audio_type_validator = RegexValidator(r"^audio/*")
 _audio_type_length_validator = MaxLengthValidator(60)
+_audio_type_validator = RegexValidator(r"^audio/*")
+_duration_validator = MaxLengthValidator(30)
+_url_length_validator = MaxLengthValidator(500)
+_url_validator = URLValidator(schemes=["http", "https"])
 
 
 @lru_cache
