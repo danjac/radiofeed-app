@@ -36,245 +36,247 @@ function getMediaMetadata() {
   return null;
 }
 
-(function () {
-  window.Player = (options) => {
-    const { mediaSrc, currentTime, runImmediately, csrfToken, urls } = options || {};
+function Player(options) {
+  const { mediaSrc, currentTime, runImmediately, csrfToken, urls } = options || {};
 
-    let timer;
+  let timer;
 
-    const isLocked = !runImmediately && !sessionStorage.getItem(storageKey);
+  const isLocked = !runImmediately && !sessionStorage.getItem(storageKey);
 
-    return {
-      mediaSrc,
-      ...defaults,
+  return {
+    mediaSrc,
+    ...defaults,
 
-      initialize() {
-        this.$watch('duration', (value) => {
-          this.updateProgressBar(value, this.currentTime);
-        });
-        this.$watch('currentTime', (value) => {
-          this.updateProgressBar(this.duration, value);
-        });
-        this.openPlayer();
-      },
+    initialize() {
+      this.$watch('duration', (value) => {
+        this.updateProgressBar(value, this.currentTime);
+      });
+      this.$watch('currentTime', (value) => {
+        this.updateProgressBar(this.duration, value);
+      });
+      this.openPlayer();
+    },
 
-      openPlayer() {
-        this.stopPlayer();
+    openPlayer() {
+      this.stopPlayer();
 
-        if ('mediaSession' in navigator) {
-          navigator.mediaSession.metadata = getMediaMetadata();
-        }
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = getMediaMetadata();
+      }
 
-        this.$nextTick(() => this.$refs.audio.load());
-      },
+      this.$nextTick(() => this.$refs.audio.load());
+    },
 
-      // audio events
-      loaded() {
-        if (!this.$refs.audio || this.isLoaded) {
-          return;
-        }
-        this.$refs.audio.currentTime = currentTime;
+    // audio events
+    loaded() {
+      if (!this.$refs.audio || this.isLoaded) {
+        return;
+      }
+      this.$refs.audio.currentTime = currentTime;
 
-        if (isLocked) {
-          this.isPaused = true;
-        } else {
-          this.startPlayer();
-        }
-
-        this.duration = this.$refs.audio.duration;
-        this.isLoaded = true;
-      },
-
-      timeUpdate() {
-        this.currentTime = this.$refs.audio.currentTime;
-      },
-      resumed() {
-        this.isPlaying = true;
-        this.isPaused = false;
-        this.isStalled = false;
-        sessionStorage.setItem(storageKey, true);
-      },
-
-      paused() {
-        this.isPlaying = false;
+      if (isLocked) {
         this.isPaused = true;
-        this.isStalled = false;
-      },
+      } else {
+        this.startPlayer();
+      }
 
-      shortcuts(event) {
-        if (
-          event.ctrlKey ||
-          event.altKey ||
-          /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
-        ) {
-          return;
-        }
+      this.duration = this.$refs.audio.duration;
+      this.isLoaded = true;
+    },
 
-        const handlers = {
-          '+': this.incrementPlaybackRate,
-          '-': this.decrementPlaybackRate,
-          ArrowLeft: this.skipBack,
-          ArrowRight: this.skipForward,
-          Space: this.togglePause,
-          Delete: this.close,
-        };
+    timeUpdate() {
+      this.currentTime = this.$refs.audio.currentTime;
+    },
+    resumed() {
+      this.isPlaying = true;
+      this.isPaused = false;
+      this.isStalled = false;
+      sessionStorage.setItem(storageKey, true);
+    },
 
-        const handler = handlers[event.key] || handlers[event.code];
+    paused() {
+      this.isPlaying = false;
+      this.isPaused = true;
+      this.isStalled = false;
+    },
 
-        if (handler) {
-          event.preventDefault();
-          handler.bind(this)();
-        }
-      },
+    shortcuts(event) {
+      if (
+        event.ctrlKey ||
+        event.altKey ||
+        /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
+      ) {
+        return;
+      }
 
-      incrementPlaybackRate() {
-        this.changePlaybackRate(0.1);
-      },
-      decrementPlaybackRate() {
-        this.changePlaybackRate(-0.1);
-      },
+      const handlers = {
+        '+': this.incrementPlaybackRate,
+        '-': this.decrementPlaybackRate,
+        ArrowLeft: this.skipBack,
+        ArrowRight: this.skipForward,
+        Space: this.togglePause,
+        Delete: this.close,
+      };
 
-      changePlaybackRate(increment) {
-        const newValue = Math.max(
-          0.5,
-          Math.min(2.0, parseFloat(this.playbackRate) + increment)
-        );
-        this.$refs.audio.playbackRate = this.playbackRate = newValue;
-      },
+      const handler = handlers[event.key] || handlers[event.code];
 
-      skip({ clientX }) {
-        const position = this.getProgressBarPosition(clientX);
-        if (!isNaN(position) && position > -1) {
-          this.skipTo(position);
-        }
-      },
+      if (handler) {
+        event.preventDefault();
+        handler.bind(this)();
+      }
+    },
 
-      skipBack() {
-        this.$refs.audio && this.skipTo(this.$refs.audio.currentTime - 10);
-      },
+    incrementPlaybackRate() {
+      this.changePlaybackRate(0.1);
+    },
 
-      skipForward() {
-        this.$refs.audio && this.skipTo(this.$refs.audio.currentTime + 10);
-      },
+    decrementPlaybackRate() {
+      this.changePlaybackRate(-0.1);
+    },
 
-      skipTo(time) {
-        if (!isNaN(time) && !this.isPaused && !this.isStalled) {
-          this.$refs.audio.currentTime = time;
-        }
-      },
+    changePlaybackRate(increment) {
+      const newValue = Math.max(
+        0.5,
+        Math.min(2.0, parseFloat(this.playbackRate) + increment)
+      );
+      this.$refs.audio.playbackRate = this.playbackRate = newValue;
+    },
 
-      play() {
-        this.$refs.audio && this.$refs.audio.play();
-      },
+    skip({ clientX }) {
+      const position = this.getProgressBarPosition(clientX);
+      if (!isNaN(position) && position > -1) {
+        this.skipTo(position);
+      }
+    },
 
-      pause() {
-        this.$refs.audio && this.$refs.audio.pause();
-        sessionStorage.removeItem(storageKey);
-      },
+    skipBack() {
+      this.$refs.audio && this.skipTo(this.$refs.audio.currentTime - 10);
+    },
 
-      error() {
-        console.error('Playback Error:', this.$refs.audio.error);
-        this.isStalled = true;
-      },
+    skipForward() {
+      this.$refs.audio && this.skipTo(this.$refs.audio.currentTime + 10);
+    },
 
-      stalled() {
-        console.log('Playback Stalled');
-        this.isStalled = true;
-      },
+    skipTo(time) {
+      if (!isNaN(time) && !this.isPaused && !this.isStalled) {
+        this.$refs.audio.currentTime = time;
+      }
+    },
 
-      close(url) {
-        this.stopPlayer();
+    play() {
+      this.$refs.audio && this.$refs.audio.play();
+    },
 
-        window.htmx.ajax('POST', url || urls.closePlayer, {
-          target: '#player',
+    pause() {
+      this.$refs.audio && this.$refs.audio.pause();
+      sessionStorage.removeItem(storageKey);
+    },
+
+    error() {
+      console.error('Playback Error:', this.$refs.audio.error);
+      this.isStalled = true;
+    },
+
+    stalled() {
+      console.log('Playback Stalled');
+      this.isStalled = true;
+    },
+
+    close(url) {
+      this.stopPlayer();
+
+      window.htmx.ajax('POST', url || urls.closePlayer, {
+        target: '#player',
+      });
+    },
+
+    ended() {
+      this.close(urls.playNextEpisode);
+    },
+
+    togglePause() {
+      if (this.isStalled) {
+        return;
+      }
+      return this.isPaused ? this.play() : this.pause();
+    },
+
+    startPlayer() {
+      return this.$refs.audio
+        .play()
+        .then(() => this.startTimer())
+        .catch((e) => {
+          console.log(e);
+          this.isPaused = true;
         });
-      },
+    },
 
-      ended() {
-        this.close(urls.playNextEpisode);
-      },
+    stopPlayer() {
+      if (this.$refs.audio) {
+        this.$refs.audio.pause();
+        this.$refs.audio = null;
+      }
+      this.clearTimer();
+    },
 
-      togglePause() {
-        if (this.isStalled) {
-          return;
-        }
-        return this.isPaused ? this.play() : this.pause();
-      },
+    startTimer() {
+      timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
+    },
 
-      startPlayer() {
-        return this.$refs.audio
-          .play()
-          .then(() => this.startTimer())
-          .catch((e) => {
-            console.log(e);
-            this.isPaused = true;
-          });
-      },
+    clearTimer() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    },
 
-      stopPlayer() {
-        if (this.$refs.audio) {
-          this.$refs.audio.pause();
-          this.$refs.audio = null;
-        }
-        this.clearTimer();
-      },
+    canSendTimeUpdate() {
+      return this.isLoaded && !this.isPaused && !this.isStalled && !!this.currentTime;
+    },
 
-      startTimer() {
-        timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
-      },
+    sendTimeUpdate() {
+      this.canSendTimeUpdate() &&
+        sendJSON(urls.timeUpdate, csrfToken, {
+          currentTime: this.currentTime,
+        });
+    },
 
-      clearTimer() {
-        if (timer) {
-          clearInterval(timer);
-          timer = null;
-        }
-      },
+    updateProgressBar(duration, time) {
+      if (this.$refs.indicator && this.$refs.progressBar) {
+        this.counter = formatDuration(duration - time);
+        this.$refs.indicator.style.left =
+          this.getIndicatorPosition(percent(duration, time)) + 'px';
+      }
+    },
 
-      canSendTimeUpdate() {
-        return this.isLoaded && !this.isPaused && !this.isStalled && !!this.currentTime;
-      },
+    getProgressBarPosition(clientX) {
+      return isNaN(clientX)
+        ? -1
+        : Math.ceil(
+            this.duration *
+              ((clientX - this.$refs.progressBar.getBoundingClientRect().left) /
+                this.$refs.progressBar.clientWidth)
+          );
+    },
 
-      sendTimeUpdate() {
-        this.canSendTimeUpdate() &&
-          sendJSON(urls.timeUpdate, csrfToken, {
-            currentTime: this.currentTime,
-          });
-      },
+    getIndicatorPosition(pcComplete) {
+      const { clientWidth } = this.$refs.progressBar;
+      const currentPosition = this.$refs.progressBar.getBoundingClientRect().left - 24;
 
-      updateProgressBar(duration, time) {
-        if (this.$refs.indicator && this.$refs.progressBar) {
-          this.counter = formatDuration(duration - time);
-          this.$refs.indicator.style.left =
-            this.getIndicatorPosition(percent(duration, time)) + 'px';
-        }
-      },
+      let width;
 
-      getProgressBarPosition(clientX) {
-        return isNaN(clientX)
-          ? -1
-          : Math.ceil(
-              this.duration *
-                ((clientX - this.$refs.progressBar.getBoundingClientRect().left) /
-                  this.$refs.progressBar.clientWidth)
-            );
-      },
+      if (clientWidth === 0) {
+        width = 0;
+      } else {
+        const minWidth = (16 / clientWidth) * 100;
+        width = pcComplete > minWidth ? pcComplete : minWidth;
+      }
 
-      getIndicatorPosition(pcComplete) {
-        const { clientWidth } = this.$refs.progressBar;
-        const currentPosition =
-          this.$refs.progressBar.getBoundingClientRect().left - 24;
-
-        let width;
-
-        if (clientWidth === 0) {
-          width = 0;
-        } else {
-          const minWidth = (16 / clientWidth) * 100;
-          width = pcComplete > minWidth ? pcComplete : minWidth;
-        }
-
-        return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
-      },
-    };
+      return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
+    },
   };
+}
+
+(function () {
+  window.Player = Player;
 })();
