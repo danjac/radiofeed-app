@@ -36,7 +36,7 @@ function getMediaMetadata() {
   return null;
 }
 
-function Player(options) {
+export default function Player(options) {
   const { mediaSrc, currentTime, runImmediately, csrfToken, urls } = options || {};
 
   let timer;
@@ -276,7 +276,3 @@ function Player(options) {
     },
   };
 }
-
-(function () {
-  window.Player = Player;
-})();
