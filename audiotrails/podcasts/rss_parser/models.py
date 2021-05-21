@@ -35,9 +35,9 @@ class Audio:
     rel: str = ""
 
     def __post_init__(self) -> None:
-        _url_validator(self.url)
-        _audio_type_validator(self.type)
-        _audio_type_length_validator(self.type)
+        _validate_url(self.url)
+        _validate_audio_type(self.type)
+        _validate_audio_type_length(self.type)
 
 
 @dataclasses.dataclass
@@ -65,7 +65,7 @@ class Item:
         if self.audio is None:
             raise ValidationError("missing audio")
 
-        _duration_validator(self.duration)
+        _validate_duration_length(self.duration)
 
         self.pub_date = pub_date
         self.link = _clean_url(self.link)
@@ -257,8 +257,8 @@ def _clean_url(url: str | None) -> str:
 
     # if not a valid URL, just make empty string
     try:
-        _url_validator(url)
-        _url_length_validator(url)
+        _validate_url(url)
+        _validate_url_length(url)
     except ValidationError:
         return ""
 
@@ -267,8 +267,8 @@ def _clean_url(url: str | None) -> str:
 
 # validators
 
-_audio_type_length_validator = MaxLengthValidator(60)
-_audio_type_validator = RegexValidator(r"^audio/*")
-_duration_validator = MaxLengthValidator(30)
-_url_length_validator = MaxLengthValidator(500)
-_url_validator = URLValidator(schemes=["http", "https"])
+_validate_audio_type_length = MaxLengthValidator(60)
+_validate_audio_type = RegexValidator(r"^audio/*")
+_validate_duration_length = MaxLengthValidator(30)
+_validate_url_length = MaxLengthValidator(500)
+_validate_url = URLValidator(schemes=["http", "https"])
