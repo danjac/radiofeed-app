@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import List, Optional
 
 import requests
 
@@ -15,7 +16,7 @@ from .feed_parser import parse_feed
 from .headers import get_headers
 
 
-def parse_rss(podcast: Podcast, force_update: bool = False) -> List[Episode]:
+def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
     """Fetches RSS and generates Feed. Checks etag header if we need to do an update.
     If any errors occur (e.g. RSS unavailable or invalid RSS) the error is saved in database
     and RssParserError raised.
@@ -49,7 +50,7 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> List[Episode]:
         raise RssParserError(podcast.sync_error) from e
 
 
-def get_last_modified_date(headers) -> Optional[datetime]:
+def get_last_modified_date(headers) -> datetime | None:
     for header in ("Last-Modified", "Date"):
         if value := parse_date(headers.get(header, None)):
             return value
@@ -57,7 +58,7 @@ def get_last_modified_date(headers) -> Optional[datetime]:
 
 
 def should_update(
-    podcast: Podcast, etag: str, last_modified: Optional[datetime], force_update: bool
+    podcast: Podcast, etag: str, last_modified: datetime | None, force_update: bool
 ) -> bool:
     return bool(
         force_update
