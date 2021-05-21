@@ -1,8 +1,6 @@
 <script>
   (function() {
 
-    window.preventPageReload = true;
-
     function lazyLoadImages(elt) {
       const lazyImages = [].slice.call(elt.querySelectorAll("img.lazy"));
 
@@ -55,6 +53,6 @@
         options.body = JSON.stringify(data);
       }
       return fetch(url, options);
-    };;
+    };
   })();
 </script>
