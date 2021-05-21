@@ -1,4 +1,4 @@
-export const sendJSON = (url, csrfToken, data, options) => {
+export function sendJSON(url, csrfToken, data, options) {
   options = {
     method: 'POST',
     headers: {
@@ -12,9 +12,9 @@ export const sendJSON = (url, csrfToken, data, options) => {
     options.body = JSON.stringify(data);
   }
   return fetch(url, options);
-};
+}
 
-export const lazyLoadImages = (elt) => {
+export function lazyLoadImages(elt) {
   const lazyImages = [].slice.call(elt.querySelectorAll('img.lazy'));
 
   if ('IntersectionObserver' in window) {
@@ -38,9 +38,9 @@ export const lazyLoadImages = (elt) => {
       img.classList.remove('lazy');
     });
   }
-};
+}
 
-export const percent = (nominator, denominator) => {
+export function percent(nominator, denominator) {
   if (!denominator || !nominator) {
     return 0;
   }
@@ -50,4 +50,4 @@ export const percent = (nominator, denominator) => {
   }
 
   return (denominator / nominator) * 100;
-};
+}
