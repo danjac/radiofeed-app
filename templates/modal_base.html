@@ -3,12 +3,7 @@
      x-show="show"
      @close-modal="show=false"
      @keydown.escape.window="show=false"
-     id="modal"
-     hx-boost="true"
-     hx-target="#content"
-     hx-select="#content"
-     hx-swap="outerHTML">
-
+     id="modal">
   <template x-if="show">
     <div class="modal-overlay absolute w-full h-full bg-black opacity-90"></div>
   </template>

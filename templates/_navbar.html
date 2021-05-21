@@ -1,10 +1,6 @@
 {% load static %}
 {% url 'episodes:index' as home_url %}
-<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow"
-        hx-boost="true"
-        hx-target="#content"
-        hx-select="#content"
-        hx-swap="outerHTML">
+<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
   <div class="flex items-center justify-between p-2">
 
     <div class="flex items-center flex-shrink-0 mr-6">
@@ -34,10 +30,8 @@
          href="{{ home_url }}">{{ request.site.name }}</a>
     </div>
 
-    <form hx-get="{% url 'podcasts:search_podcasts' %}"
-          hx-push-url="true"
-          hx-target="#content"
-          hx-select="#content"
+    <form action="{% url 'podcasts:search_podcasts' %}"
+          method="get"
           x-data="{search: ''}"
           @submit="$refs.input.blur(); search=''"
           class="relative bg-transparent hidden sm:block">

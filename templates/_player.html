@@ -27,11 +27,7 @@
   <template x-if="mediaSrc">
     <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
          id="player-controls"
-         :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}"
-         hx-boost="true"
-         hx-swap="outerHTML"
-         hx-select="#content"
-         hx-target="#content">
+         :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}">
       <div class="relative space-y-1">
 
         <div class="sm:hidden pr-1 text-sm w-84 truncate text-center">

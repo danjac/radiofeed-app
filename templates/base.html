@@ -12,22 +12,7 @@
   </title>
   {% endblock title_tag %}
   {% block meta_tags %}
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible"
-        content="IE=edge" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="copyright"
-        content="Dan Jacob {% now "Y" %}">
-  <meta name="htmx-config"
-        content='{"historyCacheSize": 0, "historyRefreshOnHistoryMiss": true}'>
-  <meta name="Cache-Control"
-        content="no-cache">
-  {% block robots %}
-  <meta name="robots"
-        content="index,follow" />
-  {% endblock robots %}
-  {% include "_og_data.html" %}
+  {% include "_meta.html" %}
   {% endblock meta_tags %}
   {% include "_static.html" %}
   {% endblock head %}
@@ -35,6 +20,11 @@
 
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
+      hx-boost="true"
+      hx-target="#content"
+      hx-select="#content"
+      hx-swap="outerHTML"
+      hx-indicator="#loader"
       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
       x-data="{sidebar: false}"
       @close-sidebar.window="sidebar=false"
@@ -62,12 +52,7 @@
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative mt-2"
-       id="layout"
-       hx-boost="true"
-       hx-target="#content"
-       hx-select="#content"
-       hx-swap="outerHTML"
-       hx-indicator="#loader">
+       id="layout">
 
     {% block sidebar %}
     <aside class="w-full hidden lg:block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
