@@ -20,14 +20,6 @@ from .image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
 
-# validators
-
-_audio_type_length_validator = MaxLengthValidator(60)
-_audio_type_validator = RegexValidator(r"^audio/*")
-_duration_validator = MaxLengthValidator(30)
-_url_length_validator = MaxLengthValidator(500)
-_url_validator = URLValidator(schemes=["http", "https"])
-
 
 @lru_cache
 def get_categories_dict() -> CategoryDict:
@@ -267,3 +259,12 @@ def _clean_url(url: str | None) -> str:
         return ""
 
     return url
+
+
+# validators
+
+_audio_type_length_validator = MaxLengthValidator(60)
+_audio_type_validator = RegexValidator(r"^audio/*")
+_duration_validator = MaxLengthValidator(30)
+_url_length_validator = MaxLengthValidator(500)
+_url_validator = URLValidator(schemes=["http", "https"])
