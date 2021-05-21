@@ -1,10 +1,16 @@
-      <div id="content">
+  {% block title_tag %}
+  <title>
+    {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+  </title>
+  {% endblock title_tag %}
 
-        {% block signup_cta %}
-        {% include "_signup_cta.html" %}
-        {% endblock %}
+  <div id="content">
 
-        {% block content %}{% endblock %}
-        {% include "_oob_messages_js.html" %}
+    {% block signup_cta %}
+    {% include "_signup_cta.html" %}
+    {% endblock %}
 
-      </div>
+    {% block content %}{% endblock %}
+    {% include "_oob_messages_js.html" %}
+
+  </div>
