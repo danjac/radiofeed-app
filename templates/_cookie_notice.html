@@ -14,6 +14,7 @@
       <div class="text-center md:text-start">
         <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto"
                 hx-post="{% url 'accept_cookies' %}"
+                hx-target="#accept-cookies"
                 @click="show=false">
           Got it!
         </button>
