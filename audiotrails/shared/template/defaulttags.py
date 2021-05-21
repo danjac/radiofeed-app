@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import collections
 import json
 import math
 
-from typing import Any, Optional
+from typing import Any
 from urllib import parse
 
 import bs4
@@ -35,7 +37,7 @@ json_escapes = {
 
 
 @register.filter
-def format_duration(total_seconds: Optional[int]) -> str:
+def format_duration(total_seconds: int | None) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
     if not total_seconds:
         return ""
@@ -89,7 +91,7 @@ def jsonify(value: Any) -> str:
 
 
 @register.filter
-def keepspaces(text: Optional[str]) -> str:
+def keepspaces(text: str | None) -> str:
     # changes any <br /> <p> <li> etc to spaces
     if text is None:
         return ""
