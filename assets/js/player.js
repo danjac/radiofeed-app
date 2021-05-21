@@ -63,6 +63,7 @@ const getMediaMetadata = () => {
         }
         this.$nextTick(() => this.$refs.audio.load());
       },
+
       // audio events
       loaded() {
         if (!this.$refs.audio || this.isLoaded) {
@@ -85,6 +86,7 @@ const getMediaMetadata = () => {
         this.duration = this.$refs.audio.duration;
         this.isLoaded = true;
       },
+
       timeUpdate() {
         this.currentTime = this.$refs.audio.currentTime;
       },
@@ -148,13 +150,10 @@ const getMediaMetadata = () => {
       },
 
       changePlaybackRate(increment) {
-        const value = parseFloat(this.playbackRate);
-        let newValue = value + increment;
-        if (newValue > 2.0) {
-          newValue = 2.0;
-        } else if (newValue < 0.5) {
-          newValue = 0.5;
-        }
+        const newValue = Math.max(
+          0.5,
+          Math.min(2.0, parseFloat(this.playbackRate) + increment)
+        );
         this.$refs.audio.playbackRate = this.playbackRate = newValue;
       },
 
