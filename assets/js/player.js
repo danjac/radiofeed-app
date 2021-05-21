@@ -197,13 +197,10 @@ const getMediaMetadata = () => {
       },
 
       togglePause() {
-        if (!this.isStalled) {
-          if (this.isPaused) {
-            this.play();
-          } else {
-            this.pause();
-          }
+        if (this.isStalled) {
+          return;
         }
+        return this.isPaused ? this.play() : this.pause();
       },
 
       stopPlayer() {
