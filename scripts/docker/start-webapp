@@ -26,6 +26,18 @@ watchman -j <<-EOT
 }]
 EOT
 
+watchman watch /app/assets/js
+
+watchman -j <<-EOT
+["trigger", "/app/assets/js", {
+   "name": "esbuild",
+   "expression": ["match", "**/*.js", "wholename"],
+   "command": ["npm", "run", "build-js-development"],
+   "append_files": false
+}]
+EOT
+
+
 # start django
 ./manage.py migrate
 ./manage.py runserver 0.0.0.0:8000

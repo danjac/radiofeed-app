@@ -7,11 +7,7 @@ IMAGE=audiotrails:latest
 POD=audiopod
 CONFIG_DIR=k8s/local
 
-echo "building image $IMAGE"
-if ! podman image exists $IMAGE
-then
-    podman build -t $IMAGE .
-fi
+podman build -t $IMAGE .
 
 if podman pod exists $POD
 then

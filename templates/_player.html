@@ -6,7 +6,13 @@
      x-data="Player({
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
-       runImmediately: {{ run_immediately|yesno:'true,false' }}
+       runImmediately: {{ run_immediately|yesno:'true,false' }},
+       csrfToken: '{{ csrf_token }}',
+       urls: {
+         closePlayer: '{% url "episodes:close_player" %}',
+         playNextEpisode: '{% url "episodes:play_next_episode" %}',
+         timeUpdate: '{% url "episodes:player_time_update" %}'
+       }
     })"
      x-init="initialize()"
      @keydown.window="shortcuts($event)">

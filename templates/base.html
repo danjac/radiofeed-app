@@ -96,13 +96,6 @@
   {% endif %}
   {% endblock player %}
 
-  {% include "_common_js.html" %}
-
-  {% if user.is_authenticated %}
-  {% include "_dragdrop_js.html" %}
-  {% include "_player_js.html" %}
-  {% endif %}
-
   <div id="modal"></div>
 
   {% endblock page_footer %}

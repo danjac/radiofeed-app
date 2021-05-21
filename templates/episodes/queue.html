@@ -15,7 +15,11 @@
     <h1 class="font-bold flex justify-center sm:justify-start">Play Queue</h1>
   </div>
   <div x-data="{}"
-       x-init="dragDrop($el)">
+       x-init="
+        dragDrop($el, {
+         csrfToken: '{{ csrf_token }}',
+         url: '{% url "episodes:move_queue_items" %}',
+       })">
     {% for item in queue_items %}
     {% with episode=item.episode %}
     <div data-draggable="true"
