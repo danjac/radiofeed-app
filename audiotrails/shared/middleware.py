@@ -1,4 +1,6 @@
-from typing import Callable, Optional
+from __future__ import annotations
+
+from typing import Callable
 from urllib.parse import urlencode
 
 from django.http import HttpRequest, HttpResponse
@@ -57,23 +59,23 @@ class HtmxDetails:
         return self.request.headers.get("HX-Request", "") == "true"
 
     @cached_property
-    def current_url(self) -> Optional[str]:
+    def current_url(self) -> str | None:
         return self.request.headers.get("HX-Current-URL") or None
 
     @cached_property
-    def prompt(self) -> Optional[str]:
+    def prompt(self) -> str | None:
         return self.request.headers.get("HX-Prompt") or None
 
     @cached_property
-    def target(self) -> Optional[str]:
+    def target(self) -> str | None:
         return self.request.headers.get("HX-Target") or None
 
     @cached_property
-    def trigger(self) -> Optional[str]:
+    def trigger(self) -> str | None:
         return self.request.headers.get("HX-Trigger") or None
 
     @cached_property
-    def trigger_name(self) -> Optional[str]:
+    def trigger_name(self) -> str | None:
         return self.request.headers.get("HX-Trigger-Name") or None
 
 
