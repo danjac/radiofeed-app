@@ -34,6 +34,20 @@ const percent = (nominator, denominator) => {
   return (denominator / nominator) * 100;
 };
 
+const getMediaMetadata = () => {
+  const dataTag = document.getElementById('player-metadata');
+  if (!dataTag) {
+    return null;
+  }
+
+  const metadata = JSON.parse(dataTag.textContent);
+
+  if (metadata && Object.keys(metadata).length > 0) {
+    return new window.MediaMetadata(metadata);
+  }
+  return null;
+};
+
 (function () {
   window.Player = (options) => {
     const { mediaSrc, currentTime, runImmediately, csrfToken, urls } = options || {};
@@ -57,17 +71,8 @@ const percent = (nominator, denominator) => {
       openPlayer() {
         this.stopPlayer();
 
-        const dataTag = document.getElementById('player-metadata');
-
-        if (dataTag && dataTag.textContent) {
-          const metadata = JSON.parse(dataTag.textContent);
-          if (metadata && 'mediaSession' in navigator) {
-            if (Object.keys(metadata).length > 0) {
-              navigator.mediaSession.metadata = new window.MediaMetadata(metadata);
-            } else {
-              navigator.mediaSession.metadata = null;
-            }
-          }
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = getMediaMetadata();
         }
 
         this.$nextTick(() => {
