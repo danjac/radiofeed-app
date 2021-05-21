@@ -32,7 +32,7 @@ watchman -j <<-EOT
 ["trigger", "/app/assets/js", {
    "name": "esbuild",
    "expression": ["match", "**/*.js", "wholename"],
-   "command": ["npm", "run", "build-js-development"],
+   "command": ["npm", "run", "build-js"],
    "append_files": false
 }]
 EOT

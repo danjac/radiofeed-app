@@ -3,7 +3,7 @@
   "scripts": {
     "check-updates": "ncu -u",
     "build-css": "NODE_ENV=production postcss ./assets/css/app.css -o ./assets/bundle.css",
-    "build-js-development": "esbuild ./assets/js/app.js --bundle --outfile=./assets/bundle.js --minify-whitespace --minify-syntax"
+    "build-js": "esbuild ./assets/js/app.js --bundle --minify-whitespace --minify-syntax --outfile=./assets/bundle.js"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.2",
