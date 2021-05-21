@@ -74,7 +74,7 @@ const getMediaMetadata = () => {
           this.$refs.audio
             .play()
             .then(() => {
-              timer = setInterval(this.sendCurrentTimeUpdate.bind(this), 5000);
+              timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
             })
             .catch((e) => {
               console.log(e);
@@ -208,18 +208,25 @@ const getMediaMetadata = () => {
           this.$refs.audio.pause();
           this.$refs.audio = null;
         }
+        this.clearTimer();
+      },
+
+      clearTimer() {
         if (timer) {
           clearInterval(timer);
           timer = null;
         }
       },
 
-      sendCurrentTimeUpdate() {
-        if (this.isLoaded && !this.isPaused && this.currentTime) {
+      canSendTimeUpdate() {
+        return this.isLoaded && !this.isPaused && !this.isStalled && !!this.currentTime;
+      },
+
+      sendTimeUpdate() {
+        this.canSendTimeUpdate() &&
           sendJSON(urls.timeUpdate, csrfToken, {
             currentTime: this.currentTime,
           });
-        }
       },
 
       updateProgressBar(duration, currentTime) {
