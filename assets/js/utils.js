@@ -39,3 +39,15 @@ export const lazyLoadImages = (elt) => {
     });
   }
 };
+
+export const percent = (nominator, denominator) => {
+  if (!denominator || !nominator) {
+    return 0;
+  }
+
+  if (denominator > nominator) {
+    return 100;
+  }
+
+  return (denominator / nominator) * 100;
+};

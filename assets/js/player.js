@@ -1,4 +1,4 @@
-import { sendJSON } from './utils';
+import { sendJSON, percent } from './utils';
 
 const storageKey = 'player-enabled';
 
@@ -20,18 +20,6 @@ const formatDuration = (value) => {
   const minutes = Math.floor((duration % 3600) / 60);
   const seconds = Math.floor(duration % 60);
   return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
-};
-
-const percent = (nominator, denominator) => {
-  if (!denominator || !nominator) {
-    return 0;
-  }
-
-  if (denominator > nominator) {
-    return 100;
-  }
-
-  return (denominator / nominator) * 100;
 };
 
 const getMediaMetadata = () => {
@@ -70,14 +58,10 @@ const getMediaMetadata = () => {
 
       openPlayer() {
         this.stopPlayer();
-
         if ('mediaSession' in navigator) {
           navigator.mediaSession.metadata = getMediaMetadata();
         }
-
-        this.$nextTick(() => {
-          this.$refs.audio.load();
-        });
+        this.$nextTick(this.$refs.audio.load);
       },
       // audio events
       loaded() {
