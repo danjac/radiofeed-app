@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.http import HttpRequest
 from django.utils import timezone
@@ -34,7 +34,7 @@ class Player:
 
         return log
 
-    def stop_episode(self, mark_completed: bool = False) -> Optional[AudioLog]:
+    def stop_episode(self, mark_completed: bool = False) -> AudioLog | None:
         """Removes episode from session and updates log.
         Returns episode.
         """
@@ -69,7 +69,7 @@ class Player:
     def is_playing(self, episode: Episode) -> bool:
         return self.request.session.get(self.session_key) == episode.id
 
-    def get_audio_log(self) -> Optional[AudioLog]:
+    def get_audio_log(self) -> AudioLog | None:
         if hasattr(self, "current_log"):
             return self.current_log
         if (

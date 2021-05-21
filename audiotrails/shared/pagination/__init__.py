@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
@@ -33,7 +33,7 @@ def render_paginated_response(
     object_list: list[Model],
     template_name: str,
     pagination_template_name: str,
-    extra_context: Optional[ContextDict] = None,
+    extra_context: ContextDict | None = None,
     **pagination_kwargs,
 ) -> HttpResponse:
     page_obj = paginate(request, object_list, **pagination_kwargs)

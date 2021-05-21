@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import io
 import mimetypes
 import os
 import uuid
 
-from typing import Optional
 from urllib.parse import urlparse
 
 import requests
@@ -45,8 +46,8 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         raise InvalidImageURL from e
 
 
-def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> Optional[str]:
-    content_type: Optional[str] = None
+def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str | None:
+    content_type: str | None = None
 
     try:
         content_type = headers["Content-Type"].split(";")[0]
@@ -80,7 +81,7 @@ def get_image_filename(image_url: str, content_type: str) -> str:
         raise ValueError("No image_url provided")
 
     # check path first
-    ext: Optional[str] = None
+    ext: str | None = None
     _, ext = os.path.splitext(urlparse(image_url).path)
     if ext is None:
         raise ValueError("Missing ext:" + image_url)

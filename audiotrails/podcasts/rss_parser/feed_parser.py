@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import mimetypes
 
-from typing import Generator, List, Optional
+from typing import Generator
 
 import lxml
 
@@ -47,13 +49,13 @@ class RssParser:
     def __init__(self, tag: ElementBase):
         self.tag = tag
 
-    def parse_tag(self, xpath: str) -> Optional[ElementBase]:
+    def parse_tag(self, xpath: str) -> ElementBase | None:
         return self.tag.find(xpath, self.NAMESPACES)
 
-    def parse_tags(self, xpath: str) -> List[ElementBase]:
+    def parse_tags(self, xpath: str) -> list[ElementBase]:
         return self.tag.findall(xpath, self.NAMESPACES)
 
-    def parse_attribute(self, xpath: str, attr: str) -> Optional[str]:
+    def parse_attribute(self, xpath: str, attr: str) -> str | None:
         if (tag := self.parse_tag(xpath)) is None:
             return None
         try:
@@ -61,7 +63,7 @@ class RssParser:
         except KeyError:
             return None
 
-    def parse_attribute_list(self, xpath: str, attr: str) -> List[str]:
+    def parse_attribute_list(self, xpath: str, attr: str) -> list[str]:
         return [
             (tag.attrib[attr] or "")
             for tag in self.parse_tags(xpath)
@@ -94,14 +96,14 @@ class FeedParser(RssParser):
             items=list(self.parse_items()),
         )
 
-    def parse_image(self) -> Optional[str]:
+    def parse_image(self) -> str | None:
         return (
             self.parse_attribute("itunes:image", "href")
             or self.parse_text("image/url")
             or self.parse_attribute("googleplay:image", "href")
         )
 
-    def parse_description(self) -> Optional[str]:
+    def parse_description(self) -> str | None:
         return (
             self.parse_text("description")
             or self.parse_text("googleplay:description")
@@ -109,7 +111,7 @@ class FeedParser(RssParser):
             or self.parse_text("itunes:subtitle")
         )
 
-    def parse_creators(self) -> List[str]:
+    def parse_creators(self) -> list[str]:
         return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
             "itunes:author"
         )
@@ -145,7 +147,7 @@ class ItemParser(RssParser):
     def parse_guid(self) -> str:
         return self.parse_text("guid") or self.parse_text("itunes:episode")
 
-    def parse_audio(self) -> Optional[Audio]:
+    def parse_audio(self) -> Audio | None:
 
         if (enclosure := self.parse_tag("enclosure")) is None:
             return None

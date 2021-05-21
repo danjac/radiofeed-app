@@ -1,7 +1,7 @@
+from __future__ import annotations
+
 import dataclasses
 import json
-
-from typing import Optional, Union
 
 import requests
 
@@ -27,9 +27,9 @@ class SearchResult:
     itunes: str
     title: str
     image: str
-    podcast: Optional[Podcast] = None
+    podcast: Podcast | None = None
 
-    def as_dict(self) -> dict[str, Union[str, Podcast, None]]:
+    def as_dict(self) -> dict[str, str | Podcast | None]:
         return {
             "rss": self.rss,
             "title": self.title,
@@ -115,7 +115,7 @@ def _get_or_create_podcasts(
 
 
 def _get_search_results(
-    params: dict[str, Union[str, int]],
+    params: dict[str, str | int],
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,

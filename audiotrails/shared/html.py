@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import html
 
-from typing import Any, Generator, Optional
+from typing import Any, Generator
 
 import bleach
 
@@ -91,14 +93,14 @@ def linkify_callback(attrs: dict, new: bool = False) -> dict:
     return attrs
 
 
-def clean_html_content(value: Optional[str]) -> str:
+def clean_html_content(value: str | None) -> str:
     try:
         return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
     except (ValueError, TypeError):
         return ""
 
 
-def stripentities(value: Optional[str]) -> str:
+def stripentities(value: str | None) -> str:
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
     return html.unescape(value) if value else ""

@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
@@ -22,7 +22,7 @@ class PlayerTests(TestCase):
         self.rf = RequestFactory()
 
     def make_request(
-        self, episode: Optional[Episode] = None, user: Optional[AnyUser] = None
+        self, episode: Episode | None = None, user: AnyUser | None = None
     ) -> HttpRequest:
         req = self.rf.get("/")
         req.session = {}
