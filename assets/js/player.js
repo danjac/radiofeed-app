@@ -42,6 +42,8 @@ const getMediaMetadata = () => {
 
     let timer;
 
+    const isLocked = !runImmediately && !sessionStorage.getItem(storageKey);
+
     return {
       mediaSrc,
       ...defaults,
@@ -58,9 +60,11 @@ const getMediaMetadata = () => {
 
       openPlayer() {
         this.stopPlayer();
+
         if ('mediaSession' in navigator) {
           navigator.mediaSession.metadata = getMediaMetadata();
         }
+
         this.$nextTick(() => this.$refs.audio.load());
       },
 
@@ -70,19 +74,13 @@ const getMediaMetadata = () => {
           return;
         }
         this.$refs.audio.currentTime = currentTime;
-        if (runImmediately || sessionStorage.getItem(storageKey)) {
-          this.$refs.audio
-            .play()
-            .then(() => {
-              timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
-            })
-            .catch((e) => {
-              console.log(e);
-              this.isPaused = true;
-            });
-        } else {
+
+        if (isLocked) {
           this.isPaused = true;
+        } else {
+          this.startPlayer();
         }
+
         this.duration = this.$refs.audio.duration;
         this.isLoaded = true;
       },
@@ -159,9 +157,9 @@ const getMediaMetadata = () => {
         this.$refs.audio && this.skipTo(this.$refs.audio.currentTime + 10);
       },
 
-      skipTo(position) {
-        if (!isNaN(position) && !this.isPaused && !this.isStalled) {
-          this.$refs.audio.currentTime = position;
+      skipTo(time) {
+        if (!isNaN(time) && !this.isPaused && !this.isStalled) {
+          this.$refs.audio.currentTime = time;
         }
       },
 
@@ -203,12 +201,26 @@ const getMediaMetadata = () => {
         return this.isPaused ? this.play() : this.pause();
       },
 
+      startPlayer() {
+        return this.$refs.audio
+          .play()
+          .then(() => this.startTimer())
+          .catch((e) => {
+            console.log(e);
+            this.isPaused = true;
+          });
+      },
+
       stopPlayer() {
         if (this.$refs.audio) {
           this.$refs.audio.pause();
           this.$refs.audio = null;
         }
         this.clearTimer();
+      },
+
+      startTimer() {
+        timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
       },
 
       clearTimer() {
@@ -229,45 +241,34 @@ const getMediaMetadata = () => {
           });
       },
 
-      updateProgressBar(duration, currentTime) {
+      updateProgressBar(duration, time) {
         if (this.$refs.indicator && this.$refs.progressBar) {
-          this.counter = formatDuration(duration - currentTime);
-          const pcComplete = percent(duration, currentTime);
-          if (this.$refs.indicator) {
-            this.$refs.indicator.style.left =
-              this.getIndicatorPosition(pcComplete) + 'px';
-          }
+          this.counter = formatDuration(duration - time);
+          this.$refs.indicator.style.left =
+            this.getIndicatorPosition(percent(duration, time)) + 'px';
         }
       },
 
       getProgressBarPosition(clientX) {
-        if (!isNaN(clientX)) {
-          const { left } = this.$refs.progressBar.getBoundingClientRect();
-          const width = this.$refs.progressBar.clientWidth;
-          let position = clientX - left;
-          return Math.ceil(this.duration * (position / width));
-        } else {
-          return -1;
-        }
+        return isNaN(clientX)
+          ? -1
+          : Math.ceil(
+              this.duration *
+                ((clientX - this.$refs.progressBar.getBoundingClientRect().left) /
+                  this.$refs.progressBar.clientWidth)
+            );
       },
 
       getIndicatorPosition(pcComplete) {
-        const clientWidth = this.$refs.progressBar.clientWidth;
-        let currentPosition, width;
+        const { clientWidth } = this.$refs.progressBar;
+        const currentPosition =
+          this.$refs.progressBar.getBoundingClientRect().left - 24;
 
-        currentPosition = this.$refs.progressBar.getBoundingClientRect().left - 24;
+        const minWidth = (16 / clientWidth) * 100;
+        const width =
+          clientWidth === 0 ? 0 : pcComplete > minWidth ? pcComplete : minWidth;
 
-        if (clientWidth === 0) {
-          width = 0;
-        } else {
-          // min 1rem to accomodate indicator
-          const minWidth = (16 / clientWidth) * 100;
-          width = pcComplete > minWidth ? pcComplete : minWidth;
-        }
-        if (width) {
-          currentPosition += clientWidth * (width / 100);
-        }
-        return currentPosition;
+        return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
       },
     };
   };
