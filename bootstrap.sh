@@ -8,7 +8,10 @@ POD=audiopod
 CONFIG_DIR=k8s/local
 
 echo "building image $IMAGE"
-podman build -t $IMAGE .
+if ! podman image exists $IMAGE
+then
+    podman build -t $IMAGE .
+fi
 
 if podman pod exists $POD
 then
