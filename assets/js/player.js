@@ -105,40 +105,27 @@ const getMediaMetadata = () => {
 
       shortcuts(event) {
         if (
-          /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName) ||
           event.ctrlKey ||
-          event.altKey
+          event.altKey ||
+          /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
         ) {
           return;
         }
 
-        switch (event.key) {
-          case '+':
-            event.preventDefault();
-            this.incrementPlaybackRate();
-            return;
-          case '-':
-            event.preventDefault();
-            this.decrementPlaybackRate();
-            return;
-        }
+        const handlers = {
+          '+': this.incrementPlaybackRate,
+          '-': this.decrementPlaybackRate,
+          ArrowLeft: this.skipBack,
+          ArrowRight: this.skipForward,
+          Space: this.togglePause,
+          Delete: this.close,
+        };
 
-        switch (event.code) {
-          case 'ArrowLeft':
-            event.preventDefault();
-            this.skipBack();
-            return;
-          case 'ArrowRight':
-            event.preventDefault();
-            this.skipForward();
-            return;
-          case 'Space':
-            event.preventDefault();
-            this.togglePause();
-            return;
-          case 'Delete':
-            event.preventDefault();
-            this.close();
+        const handler = handlers[event.key] || handlers[event.code];
+
+        if (handler) {
+          event.preventDefault();
+          handler.bind(this)();
         }
       },
 
