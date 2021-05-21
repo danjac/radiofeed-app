@@ -61,7 +61,7 @@ const getMediaMetadata = () => {
         if ('mediaSession' in navigator) {
           navigator.mediaSession.metadata = getMediaMetadata();
         }
-        this.$nextTick(this.$refs.audio.load);
+        this.$nextTick(() => this.$refs.audio.load());
       },
       // audio events
       loaded() {
