@@ -42,7 +42,8 @@ class Audio:
 
 @dataclasses.dataclass
 class Item:
-    audio: Audio
+    audio: Audio | None
+
     title: str
     guid: str
     duration: str
@@ -60,6 +61,9 @@ class Item:
     def __post_init__(self) -> None:
         if (pub_date := parse_date(self.raw_pub_date)) is None:
             raise ValidationError("missing or invalid date")
+
+        if self.audio is None:
+            raise ValidationError("missing audio")
 
         _duration_validator(self.duration)
 
