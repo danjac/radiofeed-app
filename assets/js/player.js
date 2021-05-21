@@ -13,16 +13,16 @@ const defaults = {
   counter: '00:00:00',
 };
 
-const formatDuration = (value) => {
+function formatDuration(value) {
   if (isNaN(value) || value < 0) return '00:00:00';
   const duration = Math.floor(value);
   const hours = Math.floor(duration / 3600);
   const minutes = Math.floor((duration % 3600) / 60);
   const seconds = Math.floor(duration % 60);
   return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
-};
+}
 
-const getMediaMetadata = () => {
+function getMediaMetadata() {
   const dataTag = document.getElementById('player-metadata');
   if (!dataTag) {
     return null;
@@ -34,7 +34,7 @@ const getMediaMetadata = () => {
     return new window.MediaMetadata(metadata);
   }
   return null;
-};
+}
 
 (function () {
   window.Player = (options) => {
@@ -264,9 +264,14 @@ const getMediaMetadata = () => {
         const currentPosition =
           this.$refs.progressBar.getBoundingClientRect().left - 24;
 
-        const minWidth = (16 / clientWidth) * 100;
-        const width =
-          clientWidth === 0 ? 0 : pcComplete > minWidth ? pcComplete : minWidth;
+        let width;
+
+        if (clientWidth === 0) {
+          width = 0;
+        } else {
+          const minWidth = (16 / clientWidth) * 100;
+          width = pcComplete > minWidth ? pcComplete : minWidth;
+        }
 
         return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
       },
