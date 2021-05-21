@@ -30,7 +30,6 @@ lxml
 nltk
 pandas
 psycopg2-binary
-pydantic
 pyopenssl
 python-dateutil
 pytz

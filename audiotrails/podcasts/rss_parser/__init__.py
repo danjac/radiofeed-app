@@ -4,8 +4,8 @@ from datetime import datetime
 
 import requests
 
+from django.core.validators import ValidationError
 from lxml.etree import XMLSyntaxError
-from pydantic import ValidationError
 
 from audiotrails.episodes.models import Episode
 

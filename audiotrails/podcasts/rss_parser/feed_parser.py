@@ -6,8 +6,8 @@ from typing import Generator
 
 import lxml
 
+from django.core.validators import ValidationError
 from lxml.etree import ElementBase
-from pydantic import ValidationError
 
 from .exceptions import InvalidFeedError
 from .models import Audio, Feed, Item
@@ -137,7 +137,7 @@ class ItemParser(RssParser):
             title=self.parse_text("title"),
             duration=self.parse_text("itunes:duration"),
             link=self.parse_text("link"),
-            pub_date=self.parse_text("pubDate"),
+            raw_pub_date=self.parse_text("pubDate"),
             explicit=self.parse_explicit(),
             audio=self.parse_audio(),
             description=self.parse_description(),

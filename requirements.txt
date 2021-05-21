@@ -181,8 +181,6 @@ pycodestyle==2.7.0
     # via autopep8
 pycparser==2.20
     # via cffi
-pydantic==1.8.2
-    # via -r requirements.in
 pygments==2.9.0
     # via
     #   django-silk
@@ -266,8 +264,6 @@ traitlets==5.0.5
     # via
     #   ipython
     #   matplotlib-inline
-typing-extensions==3.10.0.0
-    # via pydantic
 unidecode==1.2.0
     # via -r requirements.in
 urllib3==1.26.4

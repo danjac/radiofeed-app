@@ -8,9 +8,9 @@ from unittest.mock import Mock, patch
 import pytz
 import requests
 
+from django.core.validators import ValidationError
 from django.test import SimpleTestCase, TestCase
 from django.utils import timezone
-from pydantic import ValidationError
 
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
@@ -169,7 +169,7 @@ class FeedModelTests(SimpleTestCase):
             ),
             title="test",
             guid="test",
-            pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
+            raw_pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
             duration="2000",
         )
 
@@ -179,7 +179,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link=self.website,
             language="en-gb",
@@ -194,7 +194,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link=self.website,
             language=" en-us",
@@ -209,7 +209,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link=self.website,
             language="fi",
@@ -224,7 +224,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link=self.website,
             language="",
@@ -238,7 +238,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link=self.website,
             categories=[],
@@ -251,7 +251,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link="",
             categories=[],
@@ -264,7 +264,7 @@ class FeedModelTests(SimpleTestCase):
             title="test",
             description="test",
             items=[self.item],
-            creators=[],
+            creators=set(),
             image=None,
             link="politicology.com",
             categories=[],

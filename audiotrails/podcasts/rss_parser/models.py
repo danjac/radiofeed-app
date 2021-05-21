@@ -1,12 +1,14 @@
+from __future__ import annotations
+
+import dataclasses
+
 from datetime import datetime
 from functools import lru_cache
-from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
-from django.core.validators import URLValidator
+from django.core.validators import MaxLengthValidator, RegexValidator, URLValidator
 from django.utils import timezone
-from pydantic import BaseModel, HttpUrl, conlist, constr, validator
 
 from audiotrails.episodes.models import Episode
 
@@ -18,41 +20,59 @@ from .image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
 
+# validators
+
+_url_validator = URLValidator(schemes=["http", "https"])
+_url_length_validator = MaxLengthValidator(500)
+_duration_validator = MaxLengthValidator(30)
+_audio_type_validator = RegexValidator(r"^audio/*")
+_audio_type_length_validator = MaxLengthValidator(60)
+
 
 @lru_cache
 def get_categories_dict() -> CategoryDict:
     return {c.name: c for c in Category.objects.all()}
 
 
-class Audio(BaseModel):
-    type: constr(max_length=60)  # type: ignore
-    url: HttpUrl
-    length: Optional[int]
+@dataclasses.dataclass
+class Audio:
 
-    @validator("type")
-    def is_audio(cls, value: str) -> str:
-        if not value.startswith("audio/"):
-            raise ValueError("not a valid audio media")
+    type: str
+    url: str
+    length: int | None = None
+    rel: str = ""
 
-        return value
+    def __post_init__(self) -> None:
+        _url_validator(self.url)
+        _audio_type_validator(self.type)
+        _audio_type_length_validator(self.type)
 
 
-class Item(BaseModel):
+@dataclasses.dataclass
+class Item:
     audio: Audio
     title: str
     guid: str
+    duration: str
+
+    raw_pub_date: str
+
     explicit: bool = False
     description: str = ""
-    keywords: str = ""
-    link: constr(max_length=500) = ""  # type: ignore
-    pub_date: datetime
-    duration: constr(max_length=30)  # type: ignore
 
-    @validator("pub_date", pre=True)
-    def parse_date(cls, value: str) -> datetime:
-        if (pub_date := parse_date(value)) is None:
-            raise ValueError("missing or invalid date")
-        return pub_date
+    link: str = ""
+    keywords: str = ""
+
+    pub_date: datetime | None = None
+
+    def __post_init__(self) -> None:
+        if (pub_date := parse_date(self.raw_pub_date)) is None:
+            raise ValidationError("missing or invalid date")
+
+        _duration_validator(self.duration)
+
+        self.pub_date = pub_date
+        self.link = _clean_url(self.link)
 
     def make_episode(self, **kwargs) -> Episode:
         return Episode(
@@ -71,37 +91,29 @@ class Item(BaseModel):
         )
 
 
-class Feed(BaseModel):
+@dataclasses.dataclass
+class Feed:
     title: str
     description: str
-    explicit: bool = False
-    language: str = "en"
-    link: constr(max_length=500) = ""  # type: ignore
-    items: conlist(Item, min_items=1)  # type: ignore
     creators: set[str]
-    image: Optional[str]
+    image: str | None
     categories: list[str]
+    items: list[Item]
 
-    @validator("language")
-    def language_code(cls, value: str) -> str:
-        return (value.replace("-", "").strip()[:2] if value else "en").lower()
+    explicit: bool = False
 
-    @validator("link", pre=True)
-    def prepare_link(cls, value: str) -> str:
-        if not value:
-            return value
+    language: str = "en"
+    link: str = ""
 
-        # links often just consist of domain: try prefixing http://
-        if not value.startswith("http"):
-            value = "http://" + value
+    def __post_init__(self) -> None:
+        if len(self.items) == 0:
+            raise ValidationError("Must be at least one item")
 
-        # if not a valid URL, just return empty string
-        try:
-            URLValidator(value)
-        except ValidationError:
-            return ""
+        self.link = _clean_url(self.link)
 
-        return value
+        self.language = (
+            self.language.replace("-", "").strip()[:2] if self.language else "en"
+        ).lower()
 
     def sync_podcast(
         self, podcast: Podcast, etag: str, force_update: bool
@@ -151,7 +163,7 @@ class Feed(BaseModel):
     def do_update(
         self,
         podcast: Podcast,
-        pub_date: Optional[datetime],
+        pub_date: datetime | None,
         force_update: bool,
     ) -> bool:
 
@@ -219,14 +231,14 @@ class Feed(BaseModel):
         )
         return " ".join(extract_keywords(podcast.language, text))
 
-    def get_pub_date(self) -> Optional[datetime]:
+    def get_pub_date(self) -> datetime | None:
         now = timezone.now()
         try:
             return max(item.pub_date for item in self.items if item.pub_date < now)
         except ValueError:
             return None
 
-    def fetch_cover_image(self) -> Optional[ImageFile]:
+    def fetch_cover_image(self) -> ImageFile | None:
         if not self.image:
             return None
 
@@ -236,3 +248,22 @@ class Feed(BaseModel):
             pass
 
         return None
+
+
+def _clean_url(url: str | None) -> str:
+
+    if not url:
+        return ""
+
+    # links often just consist of domain: try prefixing http://
+    if not url.startswith("http"):
+        url = "http://" + url
+
+    # if not a valid URL, just make empty string
+    try:
+        _url_validator(url)
+        _url_length_validator(url)
+    except ValidationError:
+        return ""
+
+    return url
