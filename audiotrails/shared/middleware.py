@@ -80,4 +80,7 @@ class HtmxDetails:
 class HtmxMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         request.htmx = SimpleLazyObject(lambda: HtmxDetails(request))
-        return self.get_response(request)
+        response = self.get_response(request)
+        if request.htmx:
+            response["Cache-Control"] = "no-store, max-age=0"
+        return response

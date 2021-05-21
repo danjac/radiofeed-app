@@ -1,1 +1,1 @@
-{% extends "base.html" %}
+{% extends request.htmx|yesno:"content_base.html,base.html" %}
