@@ -1,11 +1,11 @@
 {% load cache %}
 <div class="flex justify-center sm:hidden mb-3">
 
-  <form hx-get="{% url 'podcasts:search_podcasts' %}"
-        hx-push-url="true"
-        hx-target="#content"
-        x-data="{search: ''}"
+  <form action="{% url 'podcasts:search_podcasts' %}"
+        method="get"
         class="relative bg-transparent"
+        hx-push-url="true"
+        x-data="{search: ''}"
         @submit="$dispatch('close-sidebar'); search=''">
     <input type="search"
            name="q"
