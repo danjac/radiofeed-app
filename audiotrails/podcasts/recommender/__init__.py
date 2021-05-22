@@ -11,18 +11,13 @@ from typing import Generator
 import pandas
 
 from django.db import transaction
+from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from audiotrails.podcasts.models import (
-    Category,
-    CategoryQuerySet,
-    Podcast,
-    PodcastQuerySet,
-    Recommendation,
-)
+from audiotrails.podcasts.models import Category, Podcast, Recommendation
 from audiotrails.podcasts.recommender.text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
@@ -52,15 +47,15 @@ def recommend() -> None:
         create_recommendations_for_language(podcasts, categories, language)
 
 
-def get_podcast_queryset() -> PodcastQuerySet:
+def get_podcast_queryset() -> QuerySet:
     return Podcast.objects.filter(
         pub_date__gt=timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
     ).exclude(extracted_text="")
 
 
 def create_recommendations_for_language(
-    podcasts: PodcastQuerySet,
-    categories: CategoryQuerySet,
+    podcasts: QuerySet,
+    categories: QuerySet,
     language: str,
 ) -> None:
     logger.info("Recommendations for %s", language)
@@ -83,8 +78,8 @@ def create_recommendations_for_language(
 
 
 def build_matches_dict(
-    podcasts: PodcastQuerySet,
-    categories: CategoryQuerySet,
+    podcasts: QuerySet,
+    categories: QuerySet,
     language: str,
 ) -> dict[tuple[int, int], list]:
 
@@ -116,7 +111,7 @@ def recommendations_from_matches(matches) -> Generator[Recommendation, None, Non
 
 
 def find_similarities_for_podcasts(
-    podcasts: PodcastQuerySet, language: str
+    podcasts: QuerySet, language: str
 ) -> Generator[tuple[int, int, float], None, None]:
 
     if not podcasts.exists():
@@ -130,7 +125,7 @@ def find_similarities_for_podcasts(
 
 
 def find_similarities(
-    podcasts: PodcastQuerySet, language: str
+    podcasts: QuerySet, language: str
 ) -> Generator[tuple[int, list[tuple[int, float]]], None, None]:
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
