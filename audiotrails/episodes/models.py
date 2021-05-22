@@ -150,6 +150,14 @@ class Episode(models.Model):
         except (ZeroDivisionError, AttributeError):
             return 0
 
+    def get_time_remaining(self) -> int:
+        duration = self.get_duration_in_seconds()
+
+        try:
+            return duration - self.current_time
+        except (AttributeError, TypeError):
+            return duration
+
     def is_completed(self) -> bool:
         """Use with the `with_current_time` QuerySet method"""
         try:

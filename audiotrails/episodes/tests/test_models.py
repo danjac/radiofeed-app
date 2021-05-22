@@ -62,6 +62,20 @@ class EpisodeManagerSearchTests(TransactionTestCase):
 
 
 class EpisodeDurationTests(SimpleTestCase):
+    def test_time_remaining(self) -> None:
+        episode = Episode(duration="1:00:00")
+        episode.current_time = 1200
+        self.assertEqual(episode.get_time_remaining(), 2400)
+
+    def test_time_remaining_current_time_none(self) -> None:
+        episode = Episode(duration="1:00:00")
+        episode.current_time = None
+        self.assertEqual(episode.get_time_remaining(), 3600)
+
+    def test_time_remaining_current_time_not_set(self) -> None:
+        episode = Episode(duration="1:00:00")
+        self.assertEqual(episode.get_time_remaining(), 3600)
+
     def test_duration_in_seconds_if_empty_or_none(self) -> None:
         self.assertEqual(Episode(duration=None).get_duration_in_seconds(), 0)
         self.assertEqual(Episode(duration="").get_duration_in_seconds(), 0)
