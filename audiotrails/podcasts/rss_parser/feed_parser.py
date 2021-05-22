@@ -158,7 +158,10 @@ class ItemParser(RssParser):
             media_type, _ = mimetypes.guess_type(url)
 
         if length := enclosure.attrib.get("length"):
-            length = length.replace(",", "")
+            try:
+                length = round(float(length.replace(",", "")))
+            except ValueError:
+                length = None
 
         return Audio(
             length=length,

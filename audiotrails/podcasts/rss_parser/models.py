@@ -81,7 +81,7 @@ class Item:
             link=self.link,
             media_url=self.audio.url,
             media_type=self.audio.type,
-            length=self.audio.length,
+            length=self.audio.length or None,
             **kwargs,
         )
 
