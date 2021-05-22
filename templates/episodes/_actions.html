@@ -30,13 +30,8 @@
           hx-swap="outerHTML"
           @click="show=false">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
-    {% if episode.is_completed %}
-    Re-Play (~{{ time_remaining }})
-    {% elif episode.listened %}
-    Resume (~{{ time_remaining }})
-    {% else %}
-    Play (~{{ time_remaining }})
-    {% endif %}
+    {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
+    {% if time_remaining %}(~{{ time_remaining }}){% endif %}
   </button>
   {% endif %}
   {% endwith %}
