@@ -1,8 +1,8 @@
-from typing import Dict, List
+from __future__ import annotations
 
 """Additional language-specific stopwords"""
 
-ENGLISH_DAYS: List[str] = [
+ENGLISH_DAYS: list[str] = [
     "monday",
     "tuesday",
     "wednesday",
@@ -19,7 +19,7 @@ ENGLISH_DAYS: List[str] = [
     "sun",
 ]
 
-ENGLISH_NUMBERS: List[str] = [
+ENGLISH_NUMBERS: list[str] = [
     "one",
     "two",
     "three",
@@ -32,7 +32,7 @@ ENGLISH_NUMBERS: List[str] = [
     "ten",
 ]
 
-ENGLISH_MONTHS: List[str] = [
+ENGLISH_MONTHS: list[str] = [
     "january",
     "february",
     "march",
@@ -59,7 +59,7 @@ ENGLISH_MONTHS: List[str] = [
     "dec",
 ]
 
-ENGLISH_MISC_WORDS: List[str] = [
+ENGLISH_MISC_WORDS: list[str] = [
     "across",
     "advice",
     "along",
@@ -270,7 +270,7 @@ ENGLISH_MISC_WORDS: List[str] = [
     "youre",
 ]
 
-CORPORATES: List[str] = [
+CORPORATES: list[str] = [
     "apple",
     "patreon",
     "spotify",
@@ -278,7 +278,7 @@ CORPORATES: List[str] = [
     "itunes",
 ]
 
-STOPWORDS: Dict[str, List[str]] = {
+STOPWORDS: dict[str, list[str]] = {
     "en": ENGLISH_DAYS
     + ENGLISH_MONTHS
     + ENGLISH_NUMBERS
