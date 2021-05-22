@@ -186,7 +186,8 @@ export default function Player(options) {
       this.stopPlayer();
 
       window.htmx.ajax('POST', url || urls.closePlayer, {
-        target: '#player',
+        target: this.$el,
+        source: this.$el,
       });
     },
 
@@ -237,6 +238,7 @@ export default function Player(options) {
     sendTimeUpdate() {
       this.canSendTimeUpdate() &&
         window.htmx.ajax('POST', urls.timeUpdate, {
+          source: this.$el,
           values: { current_time: this.currentTime },
         });
     },

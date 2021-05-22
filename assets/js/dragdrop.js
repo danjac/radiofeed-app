@@ -7,7 +7,7 @@ export default function dragDrop(elt, url) {
     );
 
     if (items.length > 0) {
-      window.htmx.ajax('POST', url, { values: { items } });
+      window.htmx.ajax('POST', url, { source: elt, values: { items } });
     }
   };
 
