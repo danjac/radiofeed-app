@@ -1,5 +1,5 @@
 # Local
-from ..base import INSTALLED_APPS, env
+from audiotrails.config.settings.base import INSTALLED_APPS, env
 
 CELERY_EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 

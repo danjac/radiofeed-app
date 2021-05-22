@@ -2,9 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from sorl.thumbnail.admin import AdminImageMixin
 
+from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.shared.types import admin_action
-
-from .models import Category, Podcast
 
 
 @admin.register(Category)

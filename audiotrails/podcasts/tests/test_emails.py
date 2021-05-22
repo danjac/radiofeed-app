@@ -1,10 +1,9 @@
 from django.core import mail
 from django.test import TestCase
 
+from audiotrails.podcasts.emails import send_recommendations_email
+from audiotrails.podcasts.factories import FollowFactory, RecommendationFactory
 from audiotrails.users.factories import UserFactory
-
-from ..emails import send_recommendations_email
-from ..factories import FollowFactory, RecommendationFactory
 
 
 class SendRecommendationEmailTests(TestCase):

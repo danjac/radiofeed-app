@@ -3,9 +3,8 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
+from audiotrails.podcasts.models import Podcast, Recommendation
 from audiotrails.shared.types import AuthenticatedUser
-
-from .models import Podcast, Recommendation
 
 
 def send_recommendations_email(user: AuthenticatedUser) -> None:

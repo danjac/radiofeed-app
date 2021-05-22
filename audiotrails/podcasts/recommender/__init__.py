@@ -14,14 +14,14 @@ from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from ..models import (
+from audiotrails.podcasts.models import (
     Category,
     CategoryQuerySet,
     Podcast,
     PodcastQuerySet,
     Recommendation,
 )
-from .text_parser import get_stopwords
+from audiotrails.podcasts.recommender.text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 

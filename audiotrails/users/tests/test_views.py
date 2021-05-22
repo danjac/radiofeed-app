@@ -11,8 +11,7 @@ from audiotrails.episodes.factories import (
     FavoriteFactory,
 )
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
-
-from ..factories import UserFactory
+from audiotrails.users.factories import UserFactory
 
 User = get_user_model()
 

@@ -18,9 +18,9 @@ from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from ..html import clean_html_content
-from ..html import stripentities as _stripentities
-from ..types import ContextDict
+from audiotrails.shared.html import clean_html_content
+from audiotrails.shared.html import stripentities as _stripentities
+from audiotrails.shared.types import ContextDict
 
 register = template.Library()
 

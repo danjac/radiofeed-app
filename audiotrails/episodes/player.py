@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.http import HttpRequest
 from django.utils import timezone
 
-from .models import AudioLog, Episode, QueueItem
+from audiotrails.episodes.models import AudioLog, Episode, QueueItem
 
 
 class Player:

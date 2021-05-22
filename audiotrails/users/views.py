@@ -16,8 +16,7 @@ from django.views.decorators.http import (
 
 from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
 from audiotrails.podcasts.models import Follow, Podcast
-
-from .forms import UserPreferencesForm
+from audiotrails.users.forms import UserPreferencesForm
 
 
 @require_http_methods(["GET", "POST"])

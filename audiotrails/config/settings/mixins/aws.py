@@ -1,4 +1,4 @@
-from ..base import env
+from audiotrails.config.settings.base import env
 
 AWS_MEDIA_LOCATION = env("AWS_MEDIA_LOCATION", default="media")
 AWS_STATIC_LOCATION = env("AWS_STATIC_LOCATION", default="static")

@@ -1,11 +1,14 @@
-from .base import *  # noqa
-from .base import BASE_DIR
-from .mixins.aws import *  # noqa
-from .mixins.aws import AWS_STATIC_CLOUDFRONT_DOMAIN, AWS_STATIC_LOCATION
-from .mixins.mailgun import *  # noqa
-from .mixins.permissions import *  # noqa
-from .mixins.secure import *  # noqa
-from .mixins.sentry import *  # noqa
+from audiotrails.config.settings.base import *  # noqa
+from audiotrails.config.settings.base import BASE_DIR
+from audiotrails.config.settings.mixins.aws import *  # noqa
+from audiotrails.config.settings.mixins.aws import (
+    AWS_STATIC_CLOUDFRONT_DOMAIN,
+    AWS_STATIC_LOCATION,
+)
+from audiotrails.config.settings.mixins.mailgun import *  # noqa
+from audiotrails.config.settings.mixins.permissions import *  # noqa
+from audiotrails.config.settings.mixins.secure import *  # noqa
+from audiotrails.config.settings.mixins.sentry import *  # noqa
 
 STATIC_URL = "https://" + AWS_STATIC_CLOUDFRONT_DOMAIN + "/" + AWS_STATIC_LOCATION + "/"
 

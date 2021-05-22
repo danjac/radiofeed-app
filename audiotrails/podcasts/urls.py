@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from audiotrails.podcasts import views
 
 app_name = "podcasts"
 

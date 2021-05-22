@@ -8,7 +8,7 @@ import requests
 from django.core.cache import cache
 from django.utils.encoding import force_str
 
-from .models import Category, Podcast
+from audiotrails.podcasts.models import Category, Podcast
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
 

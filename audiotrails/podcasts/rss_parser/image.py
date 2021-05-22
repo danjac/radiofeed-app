@@ -14,8 +14,8 @@ from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
 from requests.structures import CaseInsensitiveDict
 
-from .exceptions import InvalidImageURL
-from .headers import get_headers
+from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
+from audiotrails.podcasts.rss_parser.headers import get_headers
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")

@@ -1,6 +1,6 @@
 # Local
-from .base import *  # noqa
-from .base import ALLOWED_HOSTS
+from audiotrails.config.settings.base import *  # noqa
+from audiotrails.config.settings.base import ALLOWED_HOSTS
 
 LOGGING = None
 

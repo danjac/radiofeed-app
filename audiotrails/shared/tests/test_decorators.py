@@ -5,9 +5,8 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
 from django.test import RequestFactory, TestCase
 
+from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.users.factories import UserFactory
-
-from ..decorators import ajax_login_required
 
 
 @ajax_login_required

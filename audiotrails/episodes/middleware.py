@@ -1,9 +1,8 @@
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
+from audiotrails.episodes.player import Player
 from audiotrails.shared.middleware import BaseMiddleware
-
-from .player import Player
 
 
 class PlayerMiddleware(BaseMiddleware):

@@ -3,7 +3,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-from ..base import env
+from audiotrails.config.settings.base import env
 
 ignore_logger("django.security.DisallowedHost")
 

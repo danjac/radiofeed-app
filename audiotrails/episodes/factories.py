@@ -4,10 +4,9 @@ from django.utils import timezone
 from factory import Faker, LazyFunction, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 
+from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from audiotrails.podcasts.factories import PodcastFactory
 from audiotrails.users.factories import UserFactory
-
-from .models import AudioLog, Episode, Favorite, QueueItem
 
 
 class EpisodeFactory(DjangoModelFactory):

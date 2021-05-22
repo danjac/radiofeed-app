@@ -14,11 +14,15 @@ from django.utils import timezone
 
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
-
-from ..factories import CategoryFactory, PodcastFactory
-from ..rss_parser import RssParserError, parse_rss
-from ..rss_parser.date_parser import parse_date
-from ..rss_parser.models import Audio, Feed, Item, get_categories_dict
+from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
+from audiotrails.podcasts.rss_parser import RssParserError, parse_rss
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.models import (
+    Audio,
+    Feed,
+    Item,
+    get_categories_dict,
+)
 
 
 class BaseMockResponse:

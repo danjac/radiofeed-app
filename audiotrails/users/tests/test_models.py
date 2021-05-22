@@ -2,7 +2,7 @@ from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from ..factories import UserFactory
+from audiotrails.users.factories import UserFactory
 
 User = get_user_model()
 

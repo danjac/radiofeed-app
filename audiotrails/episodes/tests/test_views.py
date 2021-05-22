@@ -3,16 +3,15 @@ import http
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse, reverse_lazy
 
-from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
-from audiotrails.users.factories import UserFactory
-
-from ..factories import (
+from audiotrails.episodes.factories import (
     AudioLogFactory,
     EpisodeFactory,
     FavoriteFactory,
     QueueItemFactory,
 )
-from ..models import AudioLog, Favorite, QueueItem
+from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
+from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
+from audiotrails.users.factories import UserFactory
 
 episodes_url = reverse_lazy("episodes:index")
 

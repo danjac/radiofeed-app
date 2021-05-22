@@ -4,7 +4,7 @@ from django.contrib.sitemaps import Sitemap
 from django.db.models import QuerySet
 from django.utils import timezone
 
-from .models import Category, Podcast
+from audiotrails.podcasts.models import Category, Podcast
 
 
 class CategorySitemap(Sitemap):

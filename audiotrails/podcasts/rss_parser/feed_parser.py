@@ -9,8 +9,8 @@ import lxml
 from django.core.validators import ValidationError
 from lxml.etree import ElementBase
 
-from .exceptions import InvalidFeedError
-from .models import Audio, Feed, Item
+from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError
+from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 
 def parse_feed(raw: bytes) -> Feed:

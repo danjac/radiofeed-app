@@ -1,7 +1,7 @@
 import socket
 
-from .base import *  # noqa
-from .base import INSTALLED_APPS, MIDDLEWARE, TEMPLATES
+from audiotrails.config.settings.base import *  # noqa
+from audiotrails.config.settings.base import INSTALLED_APPS, MIDDLEWARE, TEMPLATES
 
 DEBUG = True
 THUMBNAIL_DEBUG = True

@@ -3,9 +3,8 @@ import factory
 from django.utils import timezone
 from factory.django import DjangoModelFactory
 
+from audiotrails.podcasts.models import Category, Follow, Podcast, Recommendation
 from audiotrails.users.factories import UserFactory
-
-from .models import Category, Follow, Podcast, Recommendation
 
 
 class CategoryFactory(DjangoModelFactory):

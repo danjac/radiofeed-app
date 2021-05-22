@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from . import views
+from audiotrails.users import views
 
 urlpatterns = [
     path("preferences/", views.user_preferences, name="user_preferences"),

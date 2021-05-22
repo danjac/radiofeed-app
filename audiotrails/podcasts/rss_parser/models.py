@@ -11,12 +11,11 @@ from django.core.validators import MaxLengthValidator, RegexValidator, URLValida
 from django.utils import timezone
 
 from audiotrails.episodes.models import Episode
-
-from ..models import Category, Podcast
-from ..recommender.text_parser import extract_keywords
-from .date_parser import parse_date
-from .exceptions import InvalidImageURL
-from .image import fetch_image_from_url
+from audiotrails.podcasts.models import Category, Podcast
+from audiotrails.podcasts.recommender.text_parser import extract_keywords
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
+from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
 

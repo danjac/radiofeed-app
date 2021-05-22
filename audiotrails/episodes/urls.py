@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from audiotrails.episodes.views import (
     actions,
     episode_detail,
     favorites,

@@ -5,12 +5,12 @@ from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from . import itunes
-from .emails import send_recommendations_email
-from .models import Podcast, PodcastQuerySet
-from .recommender import recommend
-from .rss_parser import parse_rss
-from .rss_parser.exceptions import RssParserError
+from audiotrails.podcasts import itunes
+from audiotrails.podcasts.emails import send_recommendations_email
+from audiotrails.podcasts.models import Podcast, PodcastQuerySet
+from audiotrails.podcasts.recommender import recommend
+from audiotrails.podcasts.rss_parser import parse_rss
+from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 
 logger = get_task_logger(__name__)
 

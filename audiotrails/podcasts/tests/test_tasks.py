@@ -5,11 +5,10 @@ from unittest.mock import Mock, patch
 from django.test import TestCase
 from django.utils import timezone
 
+from audiotrails.podcasts import tasks
+from audiotrails.podcasts.factories import PodcastFactory
+from audiotrails.podcasts.rss_parser import RssParserError
 from audiotrails.users.factories import UserFactory
-
-from .. import tasks
-from ..factories import PodcastFactory
-from ..rss_parser import RssParserError
 
 
 class SendRecommendationEmailsTests(TestCase):

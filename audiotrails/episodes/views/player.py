@@ -6,11 +6,10 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 
+from audiotrails.episodes.models import Episode, QueueItem
+from audiotrails.episodes.views import get_episode_or_404
 from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.response import HttpResponseNoContent
-
-from ..models import Episode, QueueItem
-from . import get_episode_or_404
 
 
 @require_POST

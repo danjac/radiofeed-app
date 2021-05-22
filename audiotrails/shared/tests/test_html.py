@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 
-from ..html import clean_html_content, stripentities
+from audiotrails.shared.html import clean_html_content, stripentities
 
 
 class TestCleanHtmlContent(SimpleTestCase):

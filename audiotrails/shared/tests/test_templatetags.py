@@ -2,9 +2,8 @@ from django.test import RequestFactory, SimpleTestCase
 from django.urls import reverse
 
 from audiotrails.podcasts.models import Category
-
-from ..pagination.templatetags import pagination_url
-from ..template.defaulttags import (
+from audiotrails.shared.pagination.templatetags import pagination_url
+from audiotrails.shared.template.defaulttags import (
     active_link,
     format_duration,
     jsonify,

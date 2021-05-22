@@ -8,11 +8,10 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
 
+from audiotrails.episodes.models import AudioLog, Episode, QueueItem
 from audiotrails.podcasts.models import Podcast
 from audiotrails.shared.pagination import render_paginated_response
 from audiotrails.shared.types import ContextDict
-
-from ..models import AudioLog, Episode, QueueItem
 
 
 @require_safe

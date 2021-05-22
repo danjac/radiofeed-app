@@ -6,15 +6,14 @@ from django.db import IntegrityError, transaction
 from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
 
-from audiotrails.users.factories import UserFactory
-
-from ..factories import (
+from audiotrails.episodes.factories import (
     AudioLogFactory,
     EpisodeFactory,
     FavoriteFactory,
     QueueItemFactory,
 )
-from ..models import AudioLog, Episode, Favorite, QueueItem
+from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from audiotrails.users.factories import UserFactory
 
 
 class EpisodeManagerTests(TestCase):

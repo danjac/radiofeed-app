@@ -7,15 +7,14 @@ from audiotrails.episodes.factories import (
     EpisodeFactory,
     FavoriteFactory,
 )
-from audiotrails.users.factories import UserFactory
-
-from ..factories import (
+from audiotrails.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
     PodcastFactory,
     RecommendationFactory,
 )
-from ..models import Category, Podcast, Recommendation
+from audiotrails.podcasts.models import Category, Podcast, Recommendation
+from audiotrails.users.factories import UserFactory
 
 
 class RecommendationManagerTests(TestCase):

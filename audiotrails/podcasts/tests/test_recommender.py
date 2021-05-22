@@ -1,9 +1,13 @@
 from django.test import SimpleTestCase, TestCase
 
-from ..factories import CategoryFactory, PodcastFactory, RecommendationFactory
-from ..models import Recommendation
-from ..recommender import recommend
-from ..recommender.text_parser import clean_text, extract_keywords
+from audiotrails.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+)
+from audiotrails.podcasts.models import Recommendation
+from audiotrails.podcasts.recommender import recommend
+from audiotrails.podcasts.recommender.text_parser import clean_text, extract_keywords
 
 
 class PodcastRecommenderTests(TestCase):
