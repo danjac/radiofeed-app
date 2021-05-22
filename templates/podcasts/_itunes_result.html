@@ -16,10 +16,10 @@
          title="{{ result.title }}"
          class="link">{{ result.title|truncatechars:120 }}</a>
       {% else %}
-      <span class="font-semibold opacity-50 cursor-not-allowed"
-            title="Podcast not in database">
-        {{ result.title }}
-      </span>
+      <a href="{{ result.itunes }}"
+         title="See {{ result.title }} in iTunes"
+         target="_blank"
+         class="link">{{ result.title|truncatechars:120 }}</a>
       {% endif %}
     </h2>
     <div class="text-sm flex items-center space-x-3">
