@@ -1,4 +1,4 @@
-<div class="absolute left-0 bg-white dark:bg-gray-800 w-64 border shadow-xl z-20 text-sm dark:border-gray-500"
+<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 text-sm dark:border-gray-500"
      :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
      x-data="{show: true, position: 'dropdown'}"
      x-show="show"
@@ -33,7 +33,7 @@
     {% if episode.is_completed %}
     Re-Play (~{{ time_remaining }})
     {% elif episode.listened %}
-    Resume Play (~{{ time_remaining }})
+    Resume (~{{ time_remaining }})
     {% else %}
     Play (~{{ time_remaining }})
     {% endif %}
