@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import http
 
-from typing import List, Tuple
 from unittest.mock import Mock, patch
 
 from django.test import TestCase, TransactionTestCase
@@ -30,13 +31,13 @@ mock_search_result = SearchResult(
 
 def mock_fetch_itunes_genre(
     genre_id: int, num_results: int = 20
-) -> Tuple[List[SearchResult], List[Podcast]]:
+) -> tuple[list[SearchResult], list[Podcast]]:
     return [mock_search_result], []
 
 
 def mock_search_itunes(
     search_term: str, num_results: int = 12
-) -> Tuple[List[SearchResult], List[Podcast]]:
+) -> tuple[list[SearchResult], list[Podcast]]:
     return [mock_search_result], []
 
 
