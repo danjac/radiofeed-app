@@ -32,15 +32,15 @@
   {% for category in categories %}
   {% with children=category.children.all %}
   <section class="py-3 space-y-2">
-    <div>
+    <div class="flex items-center justify-center sm:justify-start">
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
          class="link">{{ category.name }}</a>
     </div>
     {% if children %}
-    <nav class="flex flex-wrap items-center space-x-3">
+    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start">
       {% for child in children %}
-      <a class="link text-sm"
+      <a class="link text-sm inline-block"
          title="{{ child.name }}"
          href="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endfor %}
