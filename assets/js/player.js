@@ -37,7 +37,7 @@ function getMediaMetadata() {
 }
 
 export default function Player(options) {
-  const { mediaSrc, currentTime, runImmediately, csrfToken, urls } = options || {};
+  const { mediaSrc, currentTime, runImmediately, urls } = options || {};
 
   let timer;
 
