@@ -1,7 +1,10 @@
 import socket
 
-from audiotrails.config.settings.base import *  # noqa
+from split_settings.tools import include
+
 from audiotrails.config.settings.base import INSTALLED_APPS, MIDDLEWARE, TEMPLATES
+
+include("base.py")
 
 DEBUG = True
 THUMBNAIL_DEBUG = True

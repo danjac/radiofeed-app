@@ -1,6 +1,8 @@
-# Local
-from audiotrails.config.settings.base import *  # noqa
+from split_settings.tools import include
+
 from audiotrails.config.settings.base import ALLOWED_HOSTS
+
+include("base.py")
 
 LOGGING = None
 

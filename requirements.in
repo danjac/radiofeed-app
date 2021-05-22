@@ -16,6 +16,7 @@ django-model-utils
 django-permissions-policy
 django-redis
 django-silk
+django-split-settings
 django-storages
 django-widget-tweaks
 factory-boy

@@ -85,6 +85,8 @@ django-redis==4.12.1
     # via -r requirements.in
 django-silk==4.1.0
     # via -r requirements.in
+django-split-settings==1.0.1
+    # via -r requirements.in
 django-storages==1.11.1
     # via -r requirements.in
 django-timezone-field==4.1.2
