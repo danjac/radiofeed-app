@@ -62,7 +62,7 @@ class RemoveEmptyFilter(optionaltags.Filter):
     elements = frozenset(["p"])
 
     def __iter__(self) -> Generator[dict[str, Any], None, None]:
-        remove = False
+        remove: bool = False
         for _, token, next in self.slider():
             if token["type"] == "StartTag" and token["name"] in self.elements:
                 if (
