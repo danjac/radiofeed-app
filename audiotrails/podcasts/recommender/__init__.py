@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import collections
 import datetime
 import logging
 import operator
 import statistics
 
-from typing import Dict, Generator, List, Tuple
+from typing import Generator
 
 import pandas
 
@@ -84,7 +86,7 @@ def build_matches_dict(
     podcasts: PodcastQuerySet,
     categories: CategoryQuerySet,
     language: str,
-) -> Dict[Tuple[int, int], List]:
+) -> dict[tuple[int, int], list]:
 
     matches = collections.defaultdict(list)
     podcasts = podcasts.filter(language__iexact=language)
@@ -115,7 +117,7 @@ def recommendations_from_matches(matches) -> Generator[Recommendation, None, Non
 
 def find_similarities_for_podcasts(
     podcasts: PodcastQuerySet, language: str
-) -> Generator[Tuple[int, int, float], None, None]:
+) -> Generator[tuple[int, int, float], None, None]:
 
     if not podcasts.exists():
         return
@@ -129,7 +131,7 @@ def find_similarities_for_podcasts(
 
 def find_similarities(
     podcasts: PodcastQuerySet, language: str
-) -> Generator[Tuple[int, List[Tuple[int, float]]], None, None]:
+) -> Generator[tuple[int, list[tuple[int, float]]], None, None]:
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
     """
