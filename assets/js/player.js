@@ -1,5 +1,3 @@
-import { percent } from './utils';
-
 const storageKey = 'player-enabled';
 
 const defaults = {
@@ -12,6 +10,18 @@ const defaults = {
   playbackRate: 1.0,
   counter: '00:00:00',
 };
+
+export function percent(nominator, denominator) {
+  if (!denominator || !nominator) {
+    return 0;
+  }
+
+  if (denominator > nominator) {
+    return 100;
+  }
+
+  return (denominator / nominator) * 100;
+}
 
 function formatDuration(value) {
   if (isNaN(value) || value < 0) return '00:00:00';
