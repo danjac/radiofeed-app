@@ -1,4 +1,4 @@
-import { sendJSON, percent } from './utils';
+import { percent } from './utils';
 
 const storageKey = 'player-enabled';
 
@@ -236,8 +236,8 @@ export default function Player(options) {
 
     sendTimeUpdate() {
       this.canSendTimeUpdate() &&
-        sendJSON(urls.timeUpdate, csrfToken, {
-          currentTime: this.currentTime,
+        window.htmx.ajax('POST', urls.timeUpdate, {
+          values: { current_time: this.currentTime },
         });
     },
 

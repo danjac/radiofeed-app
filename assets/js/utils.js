@@ -1,19 +1,3 @@
-export function sendJSON(url, csrfToken, data, options) {
-  options = {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrfToken,
-      'Content-Type': 'application/json',
-    },
-    credentials: 'same-origin',
-    ...options,
-  };
-  if (data) {
-    options.body = JSON.stringify(data);
-  }
-  return fetch(url, options);
-}
-
 export function lazyLoadImages(elt) {
   const lazyImages = [].slice.call(elt.querySelectorAll('img.lazy'));
 

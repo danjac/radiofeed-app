@@ -8,7 +8,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_safe
 
-from audiotrails.shared.decorators import accepts_json, ajax_login_required
+from audiotrails.shared.decorators import ajax_login_required
 from audiotrails.shared.response import HttpResponseNoContent
 
 from ..models import QueueItem
@@ -63,15 +63,14 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_POST
-@accepts_json
 @ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
     try:
         QueueItem.objects.move_items(
-            request.user, [int(item) for item in request.json["items"]]
+            request.user, [int(item) for item in request.POST.getlist("items")]
         )
-    except (KeyError, TypeError, ValueError):
+    except ValueError:
         return HttpResponseBadRequest("Invalid payload")
 
     return HttpResponseNoContent()

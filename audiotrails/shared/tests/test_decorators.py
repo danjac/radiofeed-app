@@ -1,5 +1,4 @@
 import http
-import json
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
@@ -8,16 +7,11 @@ from django.test import RequestFactory, TestCase
 
 from audiotrails.users.factories import UserFactory
 
-from ..decorators import accepts_json, ajax_login_required
+from ..decorators import ajax_login_required
 
 
 @ajax_login_required
 def my_ajax_view(request: HttpRequest) -> HttpResponse:
-    return HttpResponse()
-
-
-@accepts_json
-def my_json_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse()
 
 
@@ -34,27 +28,3 @@ class AjaxLoginRequiredTests(TestCase):
         req = self.rf.get("/")
         req.user = UserFactory()
         self.assertEqual(my_ajax_view(req).status_code, http.HTTPStatus.OK)
-
-
-class AcceptJsonTests(TestCase):
-    def setUp(self) -> None:
-        self.rf = RequestFactory()
-
-    def test_invalid_content_type(self) -> None:
-        req = self.rf.post(
-            "/", content_type="text/html", data=json.dumps({"testing": "ok"})
-        )
-        self.assertEqual(my_json_view(req).status_code, http.HTTPStatus.BAD_REQUEST)
-        self.assertFalse(hasattr(req, "json"))
-
-    def test_invalid_json(self) -> None:
-        req = self.rf.post("/", content_type="application/json", data="testing")
-        self.assertEqual(my_json_view(req).status_code, http.HTTPStatus.BAD_REQUEST)
-        self.assertFalse(hasattr(req, "json"))
-
-    def test_valid_json(self) -> None:
-        req = self.rf.post(
-            "/", content_type="application/json", data=json.dumps({"testing": "ok"})
-        )
-        self.assertEqual(my_json_view(req).status_code, http.HTTPStatus.OK)
-        self.assertEqual(req.json, {"testing": "ok"})

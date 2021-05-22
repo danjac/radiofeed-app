@@ -1,5 +1,4 @@
 import http
-import json
 
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse, reverse_lazy
@@ -222,8 +221,6 @@ class ClosePlayerTests(TestCase):
 
 
 class PlayerTimeUpdateTests(TestCase):
-    content_type = "application/json"
-
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = UserFactory()
@@ -242,8 +239,7 @@ class PlayerTimeUpdateTests(TestCase):
 
         resp = self.client.post(
             self.url,
-            json.dumps({"currentTime": "1030.0001"}),
-            content_type=self.content_type,
+            {"current_time": "1030.0001"},
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -253,8 +249,7 @@ class PlayerTimeUpdateTests(TestCase):
     def test_player_not_running(self) -> None:
         resp = self.client.post(
             self.url,
-            json.dumps({"currentTime": "1030.0001"}),
-            content_type=self.content_type,
+            {"current_time": "1030.0001"},
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
@@ -272,9 +267,7 @@ class PlayerTimeUpdateTests(TestCase):
         session["player_episode"] = self.episode.id
         session.save()
 
-        resp = self.client.post(
-            self.url, json.dumps({"currentTime": "xyz"}), self.content_type
-        )
+        resp = self.client.post(self.url, {"current_time": "xyz"})
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
 
@@ -561,16 +554,13 @@ class TestMoveQueueItems(TestCase):
 
         resp = self.client.post(
             reverse("episodes:move_queue_items"),
-            json.dumps(
-                {
-                    "items": [
-                        third.id,
-                        first.id,
-                        second.id,
-                    ]
-                }
-            ),
-            content_type="application/json",
+            {
+                "items": [
+                    third.id,
+                    first.id,
+                    second.id,
+                ]
+            },
         )
 
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)

@@ -1,18 +1,13 @@
 import Sortable from 'sortablejs';
 
-import { sendJSON } from './utils';
-
-export default function dragDrop(elt, options) {
-  const { url, csrfToken } = options;
-
+export default function dragDrop(elt, url) {
   const update = () => {
     const items = Array.from(elt.querySelectorAll('[data-draggable]')).map(
       (target) => target.dataset.id
     );
+
     if (items.length > 0) {
-      sendJSON(url, csrfToken, {
-        items,
-      });
+      window.htmx.ajax('POST', url, { values: { items } });
     }
   };
 
