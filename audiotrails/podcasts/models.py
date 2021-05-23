@@ -103,6 +103,8 @@ class Podcast(models.Model):
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
     cover_image: ImageFile | None = ImageField(null=True, blank=True)
+    cover_image_date: datetime = models.DateTimeField(null=True, blank=True)
+    cover_image_etag: str = models.TextField(blank=True)
 
     itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
