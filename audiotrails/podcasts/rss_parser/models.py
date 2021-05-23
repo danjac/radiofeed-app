@@ -151,7 +151,9 @@ class Feed:
         podcast.num_retries = 0
 
         # image
-        if self.should_update_image(podcast) and (image := self.fetch_cover_image()):
+        if self.should_update_image(podcast, force_update) and (
+            image := self.fetch_cover_image()
+        ):
             podcast.cover_image = image
             podcast.cover_image_date = timezone.now()
 
@@ -162,9 +164,12 @@ class Feed:
         # episodes
         return self.create_episodes(podcast)
 
-    def should_update_image(self, podcast: Podcast) -> bool:
+    def should_update_image(self, podcast: Podcast, force_update: bool) -> bool:
         if not self.image:
             return False
+
+        if force_update:
+            return True
 
         if not podcast.cover_image or not podcast.cover_image_date:
             return True
