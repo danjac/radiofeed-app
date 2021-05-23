@@ -40,7 +40,7 @@ export function lazyLoadImages(elt) {
   });
 
   document.addEventListener('htmx:load', (event) => lazyLoadImages(event.detail.elt));
-  document.addEventListener('DOMContentLoaded', lazyLoadImages(document));
+  document.addEventListener('DOMContentLoaded', () => lazyLoadImages(document));
 
   // globals
   //
