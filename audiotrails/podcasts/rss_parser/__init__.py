@@ -59,7 +59,9 @@ def get_last_modified_date(headers) -> datetime | None:
 def should_update(
     podcast: Podcast, etag: str, last_modified: datetime | None, force_update: bool
 ) -> bool:
-    # TBD: we have some duplication of logic here with Feed.should_update
+    """Does preliminary check based on headers to determine whether to update this podcast.
+    We also check the feed date info, but this is an optimization so we don't have to parse
+    the RSS first."""
     return bool(
         force_update
         or podcast.pub_date is None
