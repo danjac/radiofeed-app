@@ -15,7 +15,10 @@ from django.utils import timezone
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
-from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.date_parser import (
+    get_last_modified_date,
+    parse_date,
+)
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
 from audiotrails.podcasts.rss_parser.headers import get_headers
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
@@ -172,12 +175,8 @@ class Feed:
         except requests.RequestException:
             return False
 
-        for header in ("Last-Modified", "Date"):
-            if (
-                value := parse_date(response.headers.get(header, None))
-            ) and value > podcast.cover_image_date:
-
-                return True
+        if date := get_last_modified_date(response.headers):
+            return date > podcast.cover_image_date
 
         return False
 

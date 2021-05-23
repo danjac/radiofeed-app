@@ -249,3 +249,11 @@ def parse_date(value: str | None) -> datetime | None:
         return dt
     except date_parser.ParserError:
         return None
+
+
+def get_last_modified_date(headers) -> datetime | None:
+    """Finds suitable date header"""
+    for header in ("Last-Modified", "Date"):
+        if value := parse_date(headers.get(header, None)):
+            return value
+    return None
