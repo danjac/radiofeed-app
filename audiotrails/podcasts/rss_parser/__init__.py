@@ -59,6 +59,7 @@ def get_last_modified_date(headers) -> datetime | None:
 def should_update(
     podcast: Podcast, etag: str, last_modified: datetime | None, force_update: bool
 ) -> bool:
+    # TBD: we have some duplication of logic here with Feed.should_update
     return bool(
         force_update
         or podcast.pub_date is None
