@@ -148,8 +148,8 @@ class Feed:
         podcast.num_retries = 0
 
         # image
-        if self.should_update_image(podcast):
-            podcast.cover_image = self.fetch_cover_image()
+        if self.should_update_image(podcast) and (image := self.fetch_cover_image()):
+            podcast.cover_image = image
             podcast.cover_image_date = timezone.now()
 
         podcast.save()
