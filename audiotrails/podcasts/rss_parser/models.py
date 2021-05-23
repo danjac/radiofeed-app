@@ -5,6 +5,8 @@ import dataclasses
 from datetime import datetime
 from functools import lru_cache
 
+import requests
+
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
 from django.core.validators import MaxLengthValidator, RegexValidator, URLValidator
@@ -15,6 +17,7 @@ from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
+from audiotrails.podcasts.rss_parser.headers import get_headers
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
@@ -117,7 +120,7 @@ class Feed:
 
         pub_date = self.get_pub_date()
 
-        if not self.do_update(podcast, pub_date, force_update):
+        if not self.should_update(podcast, pub_date, force_update):
             return []
 
         # timestamps
@@ -145,8 +148,9 @@ class Feed:
         podcast.num_retries = 0
 
         # image
-        if not podcast.cover_image:
+        if self.should_update_image(podcast):
             podcast.cover_image = self.fetch_cover_image()
+            podcast.cover_image_date = timezone.now()
 
         podcast.save()
 
@@ -155,7 +159,29 @@ class Feed:
         # episodes
         return self.create_episodes(podcast)
 
-    def do_update(
+    def should_update_image(self, podcast: Podcast) -> bool:
+        if not self.image:
+            return False
+
+        if not podcast.cover_image or not podcast.cover_image_date:
+            return True
+
+        try:
+            response = requests.head(self.image, headers=get_headers(), timeout=5)
+            response.raise_for_status()
+        except requests.RequestException:
+            return False
+
+        for header in ("Last-Modified", "Date"):
+            if (
+                value := parse_date(response.headers.get(header, None))
+            ) and value > podcast.cover_image_date:
+
+                return True
+
+        return False
+
+    def should_update(
         self,
         podcast: Podcast,
         pub_date: datetime | None,
