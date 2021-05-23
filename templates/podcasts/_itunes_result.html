@@ -18,6 +18,7 @@
       {% else %}
       <a href="{{ result.itunes }}"
          title="See {{ result.title }} in iTunes"
+         rel="noopener"
          target="_blank"
          class="link">{{ result.title|truncatechars:120 }}</a>
       {% endif %}
@@ -34,6 +35,7 @@
       {% endif %}
       <a href="{{ result.itunes }}"
          title="See {{ result.title }} in iTunes"
+         rel="noopener"
          class="link"
          target="_blank"
          rel="noopener">iTunes</a>
