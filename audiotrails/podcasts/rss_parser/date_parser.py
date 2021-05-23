@@ -251,7 +251,7 @@ def parse_date(value: str | None) -> datetime | None:
         return None
 
 
-def get_last_modified_date(headers) -> datetime | None:
+def get_last_modified_date(headers: dict[str, str]) -> datetime | None:
     """Finds suitable date header"""
     for header in ("Last-Modified", "Date"):
         if value := parse_date(headers.get(header, None)):
