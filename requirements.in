@@ -10,6 +10,7 @@ django-allauth
 django-anymail[mailgun]
 django-celery-beat
 django-celery-email
+django-cleanup
 django-environ
 django-extensions
 django-model-utils

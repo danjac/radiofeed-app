@@ -73,6 +73,8 @@ django-celery-beat==2.2.0
     # via -r requirements.in
 django-celery-email==3.0.0
     # via -r requirements.in
+django-cleanup==5.2.0
+    # via -r requirements.in
 django-environ==0.4.5
     # via -r requirements.in
 django-extensions==3.1.3
