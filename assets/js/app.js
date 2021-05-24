@@ -2,12 +2,23 @@ import 'alpinejs';
 import 'htmx.org';
 
 import dragDrop from './dragdrop';
-import lazyLoadImages from './lazyload';
 import Player from './player';
 
+function lazyLoadImages(elt) {
+  elt.querySelectorAll('img.lazy').forEach((img) => {
+    const observer = new IntersectionObserver((entries, observer) => {
+      if (entries[0].isIntersecting) {
+        window.htmx.trigger(img, 'lazyload');
+        observer.disconnect();
+      }
+    });
+    observer.observe(img);
+  });
+}
+
 (function () {
-  document.addEventListener('htmx:load', (event) => lazyLoadImages(event.detail.elt));
   document.addEventListener('DOMContentLoaded', () => lazyLoadImages(document));
+  document.addEventListener('htmx:load', (event) => lazyLoadImages(event.detail.elt));
 
   document.addEventListener('htmx:afterSwap', (event) => {
     // workaround for https://github.com/bigskysoftware/htmx/issues/456

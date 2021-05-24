@@ -22,6 +22,7 @@
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       hx-boost="true"
       hx-target="#content"
+      hx-ext="intersect"
       hx-swap="outerHTML"
       hx-indicator="#loader"
       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
