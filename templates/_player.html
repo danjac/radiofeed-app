@@ -16,19 +16,17 @@
      x-init="initialize()"
      @keydown.window="shortcuts($event)">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
-  <template x-if="mediaSrc">
-    <audio x-ref="audio"
-           preload="metadata"
-           :src="mediaSrc"
-           @play="resumed()"
-           @pause="paused()"
-           @ended="ended()"
-           @error="error()"
-           @stalled="stalled()"
-           @loadedmetadata="loaded()"
-           @timeupdate="timeUpdate()">
-    </audio>
-  </template>
+  <audio x-ref="audio"
+         preload="metadata"
+         :src="mediaSrc"
+         @play="resumed()"
+         @pause="paused()"
+         @ended="ended()"
+         @error="error()"
+         @stalled="stalled()"
+         @loadedmetadata="loaded()"
+         @timeupdate="timeUpdate()">
+  </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-2 py-1 font-semibold"
        id="player-controls"
        x-show="mediaSrc"
