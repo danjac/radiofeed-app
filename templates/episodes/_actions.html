@@ -17,7 +17,7 @@
           hx-post="{% url 'episodes:close_player' %}"
           hx-target="#player"
           hx-select="#player"
-          hx-swap="outerHTML"
+          hx-swap="morphdom"
           @click="show=false">
     {% icon "stop" css_class="h-4 w-4 mr-2" %}
     Close Player
@@ -27,7 +27,7 @@
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-target="#player"
           hx-select="#player"
-          hx-swap="outerHTML"
+          hx-swap="morphdom"
           @click="show=false">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
     {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
