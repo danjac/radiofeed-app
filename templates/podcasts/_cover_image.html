@@ -1,14 +1,25 @@
 {% load static %}
-{% with podcast_title=podcast.title|stripentities %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if not cover_image %} filter blur-sm lazy{% endif %}"
-     title="{{ podcast_title }}"
-     alt="{{ podcast_title }}"
+{% static 'img/podcast-icon.png' as placeholder %}
+<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if not cover_image %} lazy{% endif %}"
+     alt="{{ podcast.title|stripentities }}"
      {% if cover_image %}
-     src="{{ cover_image.url }}"
      width="{{ cover_image.width }}"
      height="{{ cover_image.height }}"
+     x-data="{
+          src: '{{ cover_image.url  }}',
+          isLoaded: false,
+     }"
+     x-init="() => {
+         src = '{{ placeholder }}';
+     }"
+     @load="
+        src='{{ cover_image.url }}';
+        isLoaded=true;
+     "
+     :src="src"
+     :class="{'filter blur-sm': !isLoaded}"
      {% else %}
-     src="{% static 'img/podcast-icon.png' %}"
+     src="{{ placeholder }}"
      height="200"
      width="200"
      hx-get="{% url 'podcasts:cover_image' podcast.id size %}"
@@ -16,4 +27,3 @@
      hx-swap="outerHTML"
      hx-target="this"
      {% endif %}>
-{% endwith %}
