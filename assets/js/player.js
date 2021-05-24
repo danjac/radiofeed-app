@@ -74,7 +74,11 @@ export default function Player(options) {
         navigator.mediaSession.metadata = getMediaMetadata();
       }
 
-      this.$nextTick(() => this.$refs.audio.load());
+      if (this.$refs.audio) {
+        this.$refs.audio.load();
+      } else {
+        this.$nextTick(() => this.$refs.audio.load());
+      }
     },
 
     // audio events
