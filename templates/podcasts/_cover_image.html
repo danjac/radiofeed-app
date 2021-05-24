@@ -1,12 +1,19 @@
-{% load cache static %}
-{% cache 36400 podcast-cover-image podcast.id size %}
-{% with podcast_title=podcast.title|stripentities cover_image=podcast.get_cover_image_thumbnail %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 lazy"
+{% load static %}
+{% with podcast_title=podcast.title|stripentities %}
+<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if not cover_image %} filter blur-sm lazy{% endif %}"
      title="{{ podcast_title }}"
      alt="{{ podcast_title }}"
-     src="{% static 'img/podcast-icon.png' %}"
-     data-src="{{ cover_image.url }}"
+     {% if cover_image %}
+     src="{{ cover_image.url }}"
      width="{{ cover_image.width }}"
-     height="{{ cover_image.height }}">
+     height="{{ cover_image.height }}"
+     {% else %}
+     src="{% static 'img/podcast-icon.png' %}"
+     height="200"
+     width="200"
+     hx-get="{% url 'podcasts:cover_image' podcast.id size %}"
+     hx-trigger="lazyload"
+     hx-swap="outerHTML"
+     hx-target="this"
+     {% endif %}>
 {% endwith %}
-{% endcache %}

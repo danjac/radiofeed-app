@@ -4,7 +4,9 @@ import 'htmx.org';
 import dragDrop from './dragdrop';
 import Player from './player';
 
-export function lazyLoadImages(elt) {
+// "revealed" trigger has some buggy behavior around scrolling to top that randomly breaks
+// this can probably be removed with htmx 1.4+ as we can just use IntersectionObserver directly
+function lazyLoadImages(elt) {
   const lazyImages = [].slice.call(elt.querySelectorAll('img.lazy'));
 
   if ('IntersectionObserver' in window) {
@@ -12,8 +14,10 @@ export function lazyLoadImages(elt) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           const { target } = entry;
-          target.src = target.dataset.src;
           target.classList.remove('lazy');
+          target.dispatchEvent(
+            new CustomEvent('lazyload', { detail: { elt: target } })
+          );
           lazyImageObserver.unobserve(target);
         }
       });
@@ -22,25 +26,19 @@ export function lazyLoadImages(elt) {
     lazyImages.forEach(function (img) {
       lazyImageObserver.observe(img);
     });
-  } else {
-    lazyImages.forEach(function (img) {
-      img.src = img.dataset.src;
-      img.classList.remove('lazy');
-    });
   }
 }
 
 (function () {
-  // events
+  document.addEventListener('htmx:load', (event) => lazyLoadImages(event.detail.elt));
+  document.addEventListener('DOMContentLoaded', () => lazyLoadImages(document));
+
   document.addEventListener('htmx:afterSwap', (event) => {
     // workaround for https://github.com/bigskysoftware/htmx/issues/456
     if (event.target.id === 'content') {
       window.scrollTo(0, event.target.offsetTop - 160);
     }
   });
-
-  document.addEventListener('htmx:load', (event) => lazyLoadImages(event.detail.elt));
-  document.addEventListener('DOMContentLoaded', () => lazyLoadImages(document));
 
   // globals
   //

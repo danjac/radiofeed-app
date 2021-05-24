@@ -143,6 +143,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
+            "cover_image": episode.podcast.get_cover_image_thumbnail(),
             "og_data": episode.get_opengraph_data(request),
         },
     )

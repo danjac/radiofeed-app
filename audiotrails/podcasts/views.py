@@ -8,6 +8,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.episodes.views import render_episode_list_response
@@ -97,6 +98,23 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@cache_page(60 * 60 * 24)
+def cover_image(request: HttpRequest, podcast_id: int, size: int) -> HttpResponse:
+
+    podcast = get_podcast_or_404(request, podcast_id)
+
+    return TemplateResponse(
+        request,
+        "podcasts/_cover_image.html",
+        {
+            "podcast": podcast,
+            "size": size,
+            "cover_image": podcast.get_cover_image_thumbnail(),
+        },
+    )
+
+
+@require_safe
 def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -106,6 +124,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
         "podcasts/_preview.html",
         {
             "podcast": podcast,
+            "cover_image": podcast.get_cover_image_thumbnail(),
         },
     )
 
@@ -160,6 +179,7 @@ def episodes(
             {
                 "newest_first": newest_first,
                 "oldest_first": oldest_first,
+                "cover_image": podcast.get_cover_image_thumbnail(),
                 "show_podcast_detail": show_podcast_detail,
             },
         ),
