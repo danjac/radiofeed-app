@@ -2,6 +2,7 @@ import 'alpinejs';
 import 'htmx.org';
 
 import dragDrop from './dragdrop';
+import lazyLoadImages from './lazyload';
 import Player from './player';
 
 // "revealed" trigger has some buggy behavior around scrolling to top that randomly breaks
