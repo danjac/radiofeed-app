@@ -21,9 +21,8 @@
 <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       hx-boost="true"
-      hx-ext="morpdom-swap"
       hx-target="#content"
-      hx-swap="morphdom"
+      hx-swap="outerHTML"
       hx-indicator="#loader"
       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
       x-data="{sidebar: false}"

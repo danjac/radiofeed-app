@@ -3,7 +3,7 @@
           class="focus:outline-none"
           hx-get="{% url 'episodes:actions' episode.id %}"
           hx-target="#actions-{{ episode.id }}"
-          hx-swap="morphdom"
+          hx-swap="outerHTML"
           hx-trigger="click delay:200ms">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>
