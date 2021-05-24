@@ -100,6 +100,7 @@ def preview(request: HttpRequest, episode_id: int) -> HttpResponse:
         "episodes/_preview.html",
         {
             "episode": episode,
+            "cover_image": episode.podcast.get_cover_image_thumbnail(),
         },
     )
 
