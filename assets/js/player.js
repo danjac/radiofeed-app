@@ -184,7 +184,6 @@ export default function Player(options) {
 
     error() {
       console.error('Playback Error:', this.$refs.audio.error);
-      //this.isStalled = true;
     },
 
     stalled() {
