@@ -151,9 +151,7 @@ class Feed:
         podcast.num_retries = 0
 
         # image
-        if self.should_update_image(podcast, force_update) and (
-            image := self.fetch_cover_image()
-        ):
+        if image := self.fetch_cover_image(podcast, force_update):
             podcast.cover_image = image
             podcast.cover_image_date = timezone.now()
 
@@ -167,36 +165,6 @@ class Feed:
 
         # episodes
         return self.create_episodes(podcast)
-
-    def should_update_image(self, podcast: Podcast, force_update: bool) -> bool:
-        if not self.image:
-            return False
-
-        if force_update:
-            return True
-
-        if not podcast.cover_image or not podcast.cover_image_date:
-            return True
-
-        try:
-            headers = get_http_headers(self.image)
-        except requests.RequestException:
-            return False
-
-        if (
-            last_modified := parse_date(headers.get("Last-Modified", None))
-        ) and last_modified > podcast.cover_image_date:
-            return True
-
-        # a lot of CDNs just return Date as current date/time so not very useful.
-        # in this case only update if older than 30 days.
-
-        if (date := parse_date(headers.get("Date", None))) and (
-            date - podcast.cover_image_date
-        ).days > 30:
-            return True
-
-        return False
 
     def should_update(
         self,
@@ -276,8 +244,10 @@ class Feed:
         except ValueError:
             return None
 
-    def fetch_cover_image(self) -> ImageFile | None:
-        if not self.image:
+    def fetch_cover_image(
+        self, podcast: Podcast, force_update: bool
+    ) -> ImageFile | None:
+        if not self.should_update_image(podcast, force_update):
             return None
 
         try:
@@ -286,6 +256,36 @@ class Feed:
             pass
 
         return None
+
+    def should_update_image(self, podcast: Podcast, force_update: bool) -> bool:
+        if not self.image:
+            return False
+
+        if force_update:
+            return True
+
+        if not podcast.cover_image or not podcast.cover_image_date:
+            return True
+
+        try:
+            headers = get_http_headers(self.image)
+        except requests.RequestException:
+            return False
+
+        if (
+            last_modified := parse_date(headers.get("Last-Modified", None))
+        ) and last_modified > podcast.cover_image_date:
+            return True
+
+        # a lot of CDNs just return Date as current date/time so not very useful.
+        # in this case only update if older than 30 days.
+
+        if (date := parse_date(headers.get("Date", None))) and (
+            date - podcast.cover_image_date
+        ).days > 30:
+            return True
+
+        return False
 
 
 def _clean_url(url: str | None) -> str:
