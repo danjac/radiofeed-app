@@ -63,5 +63,5 @@ def fake_user_agent_headers() -> dict[str, str]:
     """Return randomized user agent in case only browser clients allowed."""
     return {
         "User-Agent": random.choice(USER_AGENTS),
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'}",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     }
