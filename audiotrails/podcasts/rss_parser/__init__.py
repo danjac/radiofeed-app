@@ -11,7 +11,7 @@ from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.rss_parser.date_parser import get_last_modified_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError, RssParserError
-from audiotrails.podcasts.rss_parser.feed_parser import parse_feed
+from audiotrails.podcasts.rss_parser.feed_parser import parse_feed_from_url
 from audiotrails.podcasts.rss_parser.headers import get_headers
 
 
@@ -31,11 +31,9 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
         if not should_update(podcast, etag, last_modified, force_update):
             return []
 
-        response = requests.get(
-            podcast.rss, headers=get_headers(), stream=True, timeout=5
+        return parse_feed_from_url(podcast.rss).sync_podcast(
+            podcast, etag, force_update
         )
-        response.raise_for_status()
-        return parse_feed(response.content).sync_podcast(podcast, etag, force_update)
     except (
         InvalidFeedError,
         ValidationError,

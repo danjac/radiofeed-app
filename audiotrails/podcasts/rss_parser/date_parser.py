@@ -4,6 +4,7 @@ from datetime import datetime
 
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
+from requests.structures import CaseInsensitiveDict
 
 TZ_INFOS: dict[str, float] = {
     k: v * 3600
@@ -251,7 +252,7 @@ def parse_date(value: str | None) -> datetime | None:
         return None
 
 
-def get_last_modified_date(headers: dict[str, str]) -> datetime | None:
+def get_last_modified_date(headers: CaseInsensitiveDict) -> datetime | None:
     """Finds suitable date header"""
     for header in ("Last-Modified", "Date"):
         if value := parse_date(headers.get(header, None)):
