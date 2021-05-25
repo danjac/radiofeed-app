@@ -6,10 +6,11 @@ import requests
 
 from django.core.validators import ValidationError
 from lxml.etree import XMLSyntaxError
+from requests.structures import CaseInsensitiveDict
 
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Podcast
-from audiotrails.podcasts.rss_parser.date_parser import get_last_modified_date
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError, RssParserError
 from audiotrails.podcasts.rss_parser.feed_parser import parse_feed_from_url
 from audiotrails.podcasts.rss_parser.headers import get_headers
@@ -45,6 +46,14 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
         podcast.save()
 
         raise RssParserError(podcast.sync_error) from e
+
+
+def get_last_modified_date(headers: CaseInsensitiveDict) -> datetime | None:
+    """Finds suitable date header"""
+    for header in ("Last-Modified", "Date"):
+        if value := parse_date(headers.get(header, None)):
+            return value
+    return None
 
 
 def should_update(

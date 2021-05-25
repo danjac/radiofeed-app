@@ -5,8 +5,6 @@ import dataclasses
 from datetime import datetime
 from functools import lru_cache
 
-import requests
-
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
 from django.core.validators import MaxLengthValidator, RegexValidator, URLValidator
@@ -15,12 +13,8 @@ from django.utils import timezone
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
-from audiotrails.podcasts.rss_parser.date_parser import (
-    get_last_modified_date,
-    parse_date,
-)
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
-from audiotrails.podcasts.rss_parser.headers import get_headers
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
@@ -165,6 +159,8 @@ class Feed:
         return self.create_episodes(podcast)
 
     def should_update_image(self, podcast: Podcast, force_update: bool) -> bool:
+        # should only update image if explicitly required: expensive to do this all
+        # the time!
         if not self.image:
             return False
 
@@ -173,15 +169,6 @@ class Feed:
 
         if not podcast.cover_image or not podcast.cover_image_date:
             return True
-
-        try:
-            response = requests.head(self.image, headers=get_headers(), timeout=5)
-            response.raise_for_status()
-        except requests.RequestException:
-            return False
-
-        if date := get_last_modified_date(response.headers):
-            return date > podcast.cover_image_date
 
         return False
 
