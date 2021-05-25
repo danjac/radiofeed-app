@@ -45,15 +45,12 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         raise InvalidImageURL from e
 
 
-def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str | None:
-    content_type: str | None = None
+def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str:
 
     try:
-        content_type = headers["Content-Type"].split(";")[0]
+        return headers["Content-Type"].split(";")[0]
     except KeyError:
-        content_type, _ = mimetypes.guess_type(image_url)
-
-    return content_type
+        return mimetypes.guess_type(image_url)[0]
 
 
 def get_image_file(raw: bytes) -> io.BytesIO:
