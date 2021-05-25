@@ -6,14 +6,12 @@ import Player from './player';
 
 function lazyLoadImages(elt) {
   elt.querySelectorAll('img.lazy').forEach((img) => {
-    let observer;
-    observer = new IntersectionObserver((entries, observer) => {
+    new IntersectionObserver((entries, observer) => {
       if (entries[0].isIntersecting) {
         window.htmx.trigger(img, 'lazyload');
         observer.disconnect();
       }
-    });
-    observer.observe(img);
+    }).observe(img);
   });
 }
 
