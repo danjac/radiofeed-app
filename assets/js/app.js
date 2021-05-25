@@ -6,7 +6,8 @@ import Player from './player';
 
 function lazyLoadImages(elt) {
   elt.querySelectorAll('img.lazy').forEach((img) => {
-    const observer = new IntersectionObserver((entries, observer) => {
+    let observer;
+    observer = new IntersectionObserver((entries, observer) => {
       if (entries[0].isIntersecting) {
         window.htmx.trigger(img, 'lazyload');
         observer.disconnect();
