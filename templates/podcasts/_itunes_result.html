@@ -1,11 +1,22 @@
+{% load static %}
 {% with podcast=result.podcast %}
 <section class="p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 flex items-center space-x-3">
   {% if result.image %}
   <div>
-    <img src="{{ result.image }}"
-         height="16"
+    <img height="16"
          width="16"
+         loading="lazy"
          alt="{{ result.title }}"
+         x-data="{
+          isLoaded: false,
+          src: '{{ result.image }}',
+          placeholder: '{% static 'img/podcast-icon.png' %}',
+          original: null
+         }"
+         x-init="original=src;src=placeholder;"
+         @load="src=original;isLoaded=true;"
+         :class="{'filter blur-sm': !isLoaded}"
+         :src="src"
          class="object-cover border dark:border-gray-500 h-16 w-16 bg-transparent" />
   </div>
   {% endif %}
