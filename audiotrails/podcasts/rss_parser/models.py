@@ -4,6 +4,9 @@ import dataclasses
 
 from datetime import datetime
 from functools import lru_cache
+from typing import Any
+
+import requests
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
@@ -15,6 +18,7 @@ from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
+from audiotrails.podcasts.rss_parser.http import get_http_headers
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
@@ -111,7 +115,10 @@ class Feed:
         ).lower()
 
     def sync_podcast(
-        self, podcast: Podcast, etag: str, force_update: bool
+        self,
+        podcast: Podcast,
+        force_update: bool,
+        extra_kwargs: dict[str, Any] | None = None,
     ) -> list[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
 
@@ -121,7 +128,6 @@ class Feed:
             return []
 
         # timestamps
-        podcast.etag = etag
         podcast.pub_date = pub_date
         podcast.last_updated = timezone.now()
 
@@ -151,6 +157,10 @@ class Feed:
             podcast.cover_image = image
             podcast.cover_image_date = timezone.now()
 
+        # any other attrs
+        for k, v in (extra_kwargs or {}).items():
+            setattr(podcast, k, v)
+
         podcast.save()
 
         podcast.categories.set(categories)  # type: ignore
@@ -159,8 +169,6 @@ class Feed:
         return self.create_episodes(podcast)
 
     def should_update_image(self, podcast: Podcast, force_update: bool) -> bool:
-        # should only update image if explicitly required: expensive to do this all
-        # the time!
         if not self.image:
             return False
 
@@ -168,6 +176,24 @@ class Feed:
             return True
 
         if not podcast.cover_image or not podcast.cover_image_date:
+            return True
+
+        try:
+            headers = get_http_headers(self.image)
+        except requests.RequestException:
+            return False
+
+        if (
+            last_modified := parse_date(headers.get("Last-Modified", None))
+        ) and last_modified > podcast.cover_image_date:
+            return True
+
+        # a lot of CDNs just return Date as current date/time so not very useful.
+        # in this case only update if older than 30 days.
+
+        if (date := parse_date(headers.get("Date", None))) and (
+            date - podcast.cover_image_date
+        ).days > 30:
             return True
 
         return False

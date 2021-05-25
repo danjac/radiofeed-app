@@ -15,7 +15,7 @@ from PIL.Image import DecompressionBombError
 from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
-from audiotrails.podcasts.rss_parser.headers import get_headers
+from audiotrails.podcasts.rss_parser.http import get_http_response
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
@@ -27,8 +27,7 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         if not image_url:
             raise ValueError("image_url is empty")
 
-        response = requests.get(image_url, headers=get_headers(), stream=True)
-        response.raise_for_status()
+        response = get_http_response(image_url)
 
         if (content_type := get_content_type(image_url, response.headers)) is None:
             raise ValueError("Content type not provided")

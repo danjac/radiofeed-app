@@ -5,13 +5,12 @@ import mimetypes
 from typing import Generator
 
 import lxml
-import requests
 
 from django.core.validators import ValidationError
 from lxml.etree import ElementBase
 
 from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError
-from audiotrails.podcasts.rss_parser.headers import get_headers
+from audiotrails.podcasts.rss_parser.http import get_http_response
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 
@@ -37,9 +36,7 @@ def parse_feed(raw: bytes) -> Feed:
 
 
 def parse_feed_from_url(url: str) -> Feed:
-    response = requests.get(url, headers=get_headers(), stream=True, timeout=5)
-    response.raise_for_status()
-    return parse_feed(response.content)
+    return parse_feed(get_http_response(url).content)
 
 
 class RssParser:
