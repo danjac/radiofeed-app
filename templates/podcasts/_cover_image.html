@@ -3,9 +3,19 @@
 <img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if not cover_image %}lazy filter blur-sm{% endif %}"
      alt="{{ podcast.title|stripentities }}"
      {% if cover_image %}
+     loading="lazy"
      width="{{ cover_image.width }}"
      height="{{ cover_image.height }}"
-     src="{{ cover_image.url }}"
+     x-data="{
+        isLoaded: false,
+        src: '{{ cover_image.url }}',
+        placeholder: '{{ placeholder }}',
+        original: null
+     }"
+     x-init="original=src;src=placeholder;"
+     @load="src=original;isLoaded=true;"
+     :class="{'filter blur-sm': !isLoaded}"
+     :src="src"
      {% else %}
      src="{{ placeholder }}"
      height="200"
