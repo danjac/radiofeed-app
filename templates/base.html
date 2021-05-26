@@ -39,16 +39,16 @@
     <div class="hx-indicator"
          id="loader"
          x-data="{width: 0}"
-         x-init="() => {
-        setInterval(() => {
+         x-init="
+         setInterval(() => {
            if ($el.classList.contains('htmx-request')) {
              width = width + (Math.random() / 100);
              $el.style.width = `${10 + (width * 90)}%`;
            } else {
              width = 0;
            }
-        }, 300);
-       }"></div>
+         }, 300);
+         "></div>
 
     {% block layout %}
     <div class="min-h-full mx-auto flex relative mt-2"
