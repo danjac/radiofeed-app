@@ -21,7 +21,7 @@
      height="200"
      width="200"
      hx-get="{% url 'podcasts:cover_image' podcast.id size %}"
-     hx-trigger="intersect once"
+     hx-trigger="intersect threshold:.5 once"
      hx-swap="outerHTML"
      hx-target="this"
      {% endif %}>
