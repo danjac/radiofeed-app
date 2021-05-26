@@ -4,21 +4,21 @@
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
 
-<head>
-  {% block head %}
-  {% block title_tag %}
-  <title>
-    {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
-  </title>
-  {% endblock title_tag %}
-  {% block meta_tags %}
-  {% include "_meta.html" %}
-  {% endblock meta_tags %}
-  {% include "_static.html" %}
-  {% endblock head %}
-</head>
+  <head>
+    {% block head %}
+    {% block title_tag %}
+    <title>
+      {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+    </title>
+    {% endblock title_tag %}
+    {% block meta_tags %}
+    {% include "_meta.html" %}
+    {% endblock meta_tags %}
+    {% include "_static.html" %}
+    {% endblock head %}
+  </head>
 
-<body {% block bodyattrs %}
+  <body {% block bodyattrs %}
       class="container-lg mx-auto antialiased font-sans dark:bg-black dark:text-white"
       hx-boost="true"
       hx-target="#layout"
@@ -30,78 +30,78 @@
       @close-sidebar.window="sidebar=false"
       @toggle-sidebar.window="sidebar=!sidebar"
       {% endblock %}>
-  {% endblock header_tags %}
-  {% block page_header %}
-  {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-  {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
-  {% endblock page_header %}
+    {% endblock header_tags %}
+    {% block page_header %}
+    {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+    {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
+    {% endblock page_header %}
 
-  <div class="hx-indicator"
-       id="loader"
-       x-data="{width: 0}"
-       x-init="() => {
-      setInterval(() => {
-        if ($el.classList.contains('htmx-request')) {
-          width = width + (Math.random() / 100);
-          $el.style.width = `${10 + (width * 90)}%`;
-        } else {
-          width = 0;
-        }
-    }, 300);
-  }"></div>
+    <div class="hx-indicator"
+         id="loader"
+         x-data="{width: 0}"
+         x-init="() => {
+        setInterval(() => {
+           if ($el.classList.contains('htmx-request')) {
+             width = width + (Math.random() / 100);
+             $el.style.width = `${10 + (width * 90)}%`;
+           } else {
+             width = 0;
+           }
+        }, 300);
+       }"></div>
 
-  {% block layout %}
-  <div class="min-h-full mx-auto flex relative mt-2"
-       id="layout">
+    {% block layout %}
+    <div class="min-h-full mx-auto flex relative mt-2"
+         id="layout">
 
-    {% block sidebar %}
-    <aside class="w-full hidden lg:block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
-           :class="{'hidden lg:block': !sidebar}">
-      {% include "_sidebar.html" %}
-    </aside>
-    {% endblock %}
+      {% block sidebar %}
+      <aside class="w-full hidden lg:block lg:w-64 p-2 lg:sticky lg:top-20 lg:h-screen"
+             :class="{'hidden lg:block': !sidebar}">
+        {% include "_sidebar.html" %}
+      </aside>
+      {% endblock %}
 
-    {% block main %}
-    <main class="w-full p-2 lg:block"
-          :class="{'hidden lg:block': sidebar}">
-      <noscript>
-        <p class="p-2 bg-gray-200 dark:bg-gray-800 rounded mb-3 text-center">
+      {% block main %}
+      <main class="w-full p-2 lg:block"
+            :class="{'hidden lg:block': sidebar}">
+        <noscript>
+          <p class="p-2 bg-gray-200 dark:bg-gray-800 rounded mb-3 text-center">
           This site works best with JavaScript enabled.
-        </p>
-      </noscript>
+          </p>
+        </noscript>
 
-      <div id="content">
+        <div id="content">
 
-        {% block signup_cta %}
-        {% include "_signup_cta.html" %}
-        {% endblock %}
+          {% block signup_cta %}
+          {% include "_signup_cta.html" %}
+          {% endblock %}
 
-        {% block content %}{% endblock %}
-        {% if request.htmx %}
-        {% include "_oob_messages.html" %}
-        {% endif %}
+          {% block content %}{% endblock %}
+          {% if request.htmx %}
+          {% include "_oob_messages.html" %}
+          {% endif %}
 
-      </div>
-    </main>
-    {% endblock %}
-  </div>
+        </div>
+      </main>
+      {% endblock %}
+    </div>
 
-  {% endblock layout %}
-  {% block page_footer %}
+    {% endblock layout %}
+    {% block page_footer %}
 
-  {% include "_messages.html" %}
+    {% include "_messages.html" %}
 
-  {% block player %}
-  {% if user.is_authenticated %}
-  {% include "_player.html" %}
-  {% endif %}
-  {% endblock player %}
+    {% block player %}
+    {% if user.is_authenticated %}
+    {% include "_player.html" %}
+    {% endif %}
+    {% endblock player %}
 
-  <div id="modal"></div>
+    <div id="modal"></div>
 
-  {% endblock page_footer %}
-  {% block footer_tags %}
-</body>
+    {% endblock page_footer %}
+    {% block footer_tags %}
+  </body>
 
 </html>
 {% endblock footer_tags %}
