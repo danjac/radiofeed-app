@@ -3,6 +3,7 @@ from __future__ import annotations
 import collections
 import json
 import math
+import re
 
 from typing import Any
 from urllib import parse
@@ -56,10 +57,24 @@ def format_duration(total_seconds: int | None) -> str:
 @register.simple_tag(takes_context=True)
 def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
+
     if context["request"].path == url:
         return ActiveLink(url, True, True)
-    elif context["request"].path.startswith(url):
+
+    if context["request"].path.startswith(url):
         return ActiveLink(url, True, False)
+
+    return ActiveLink(url, False, False)
+
+
+@register.simple_tag(takes_context=True)
+def re_active_link(
+    context: ContextDict, url_name: str, pattern: str, *args, **kwargs
+) -> ActiveLink:
+    url = resolve_url(url_name, *args, **kwargs)
+    if re.match(pattern, context["request"].path):
+        return ActiveLink(url, True, False)
+
     return ActiveLink(url, False, False)
 
 

@@ -10,6 +10,7 @@ from audiotrails.shared.template.defaulttags import (
     keepspaces,
     login_url,
     percent,
+    re_active_link,
     share_buttons,
 )
 
@@ -90,6 +91,29 @@ class ActiveLinkTests(SimpleTestCase):
         self.assertEqual(route.url, reverse(self.podcasts_url))
         self.assertTrue(route.match)
         self.assertTrue(route.exact)
+
+
+class ReActiveLinkTests(SimpleTestCase):
+    categories_url = "podcasts:categories"
+
+    def setUp(self) -> None:
+        self.rf = RequestFactory()
+
+    def test_re_active_link_no_match(self) -> None:
+        url = reverse("account_login")
+        req = self.rf.get(url)
+        route = re_active_link({"request": req}, self.categories_url, "/discover/*")
+        self.assertEqual(route.url, reverse(self.categories_url))
+        self.assertFalse(route.match)
+        self.assertFalse(route.exact)
+
+    def test_active_link_non_exact_match(self) -> None:
+        url = Category(id=1234, name="test").get_absolute_url()
+        req = self.rf.get(url)
+        route = re_active_link({"request": req}, self.categories_url, "/discover/*")
+        self.assertEqual(route.url, reverse(self.categories_url))
+        self.assertTrue(route.match)
+        self.assertFalse(route.exact)
 
 
 class KeepspacesTests(SimpleTestCase):

@@ -1,4 +1,3 @@
-{% load cache %}
 <div class="flex justify-center sm:hidden mb-6">
 
   <form action="{% url 'podcasts:search_podcasts' %}"
@@ -27,76 +26,82 @@
 <nav class="sm:mt-6">
   <ul class="sidebar space-y-6">
     <li>
-      <a href="{% url 'episodes:index' %}"
+      {% active_link 'episodes:index' as link %}
+      <a href="{{ link.url }}"
          accesskey="1"
          title="New Releases"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "lightning_bolt" css_class="h-5 w-5 mr-3" %}
         New Releases
       </a>
     </li>
     <li>
-      <a href="{% url 'podcasts:index' %}"
+      {% active_link 'podcasts:index' as link %}
+      <a href="{{ link.url }}"
          accesskey="2"
          title="Podcasts"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "rss" css_class="h-5 w-5 mr-3" %}
         Podcasts
       </a>
     </li>
     <li>
-      <a href="{% url 'podcasts:categories' %}"
+      {% active_link 'podcasts:categories' as link %}
+      <a href="{{ link.url }}"
          accesskey="3"
          title="Discover"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "search" css_class="h-5 w-5 mr-3" %}
         Discover
       </a>
     </li>
     {% if user.is_authenticated %}
     <li>
-      <a href="{% url 'episodes:queue' %}"
+      {% active_link 'episodes:queue' as link %}
+      <a href="{{ link.url }}"
          accesskey="4"
          title="Play Queue"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "collection" css_class="h-5 w-5 mr-3" %}
         Play Queue
       </a>
     </li>
 
-
     <li>
-      <a href="{% url 'episodes:favorites' %}"
+      {% active_link 'episodes:favorites' as link %}
+      <a href="{{ link.url }}"
          accesskey="5"
          title="Favorites"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "star" css_class="h-5 w-5 mr-3" %}
         Favorites
       </a>
     </li>
 
     <li>
-      <a href="{% url 'episodes:history' %}"
+      {% active_link 'episodes:history' as link %}
+      <a href="{{ link.url }}"
          accesskey="6"
          title="History"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "database" css_class="h-5 w-5 mr-3" %}
         History
       </a>
     </li>
 
     <li>
-      <a href="{% url 'user_preferences' %}"
+      {% re_active_link 'user_preferences' '/account/*' as link %}
+      <a href="{{ link.url }}"
          accesskey="7"
          title="Settings"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
         Settings
       </a>
@@ -104,11 +109,12 @@
     {% endif %}
 
     <li>
-      <a href="{% url 'about:credits' %}"
+      {% re_active_link 'about:credits' '/about/*' as link %}
+      <a href="{{ link.url }}"
          accesskey="8"
          title="About"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link">
+         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
         {% icon "info" css_class="h-5 w-5 mr-3" %}
         About
       </a>

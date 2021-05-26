@@ -1,13 +1,11 @@
-{% extends request.htmx|yesno:"content_base.html,base.html" %}
+{% extends request.htmx|yesno:"layout_base.html,base.html" %}
 
 {% block signup_cta %}{% endblock %}
 {% block content %}
 <h1 class="font-bold mb-3 flex flex-wrap">About this Site</h1>
 <div id="about-content">
   <nav class="mb-6">
-    <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6"
-        hx-target="#about-content"
-        hx-select="#about-content">
+    <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight text-sm space-x-6">
       {% active_link 'about:credits' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">
         <a class="hover:text-blue-500"

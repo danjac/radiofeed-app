@@ -22,7 +22,7 @@ input[type='search']::-webkit-search-results-decoration {
 body {
   scroll-behavior: smooth;
 }
-#content {
+#layout {
   scroll-margin-top: 175px;
 }
 
