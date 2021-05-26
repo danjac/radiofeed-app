@@ -34,7 +34,7 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
         return parse_feed_from_url(podcast.rss).sync_podcast(
             podcast,
             force_update,
-            extra_kwargs={"etag": etag},
+            etag=etag,
         )
     except (
         InvalidFeedError,

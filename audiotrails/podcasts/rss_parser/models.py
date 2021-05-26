@@ -4,7 +4,6 @@ import dataclasses
 
 from datetime import datetime
 from functools import lru_cache
-from typing import Any
 
 import requests
 
@@ -115,10 +114,7 @@ class Feed:
         ).lower()
 
     def sync_podcast(
-        self,
-        podcast: Podcast,
-        force_update: bool,
-        extra_kwargs: dict[str, Any] | None = None,
+        self, podcast: Podcast, force_update: bool, **kwargs
     ) -> list[Episode]:
         """Sync podcast data with feed. Returns list of new episodes."""
 
@@ -156,7 +152,7 @@ class Feed:
             podcast.cover_image_date = timezone.now()
 
         # any other attrs
-        for k, v in (extra_kwargs or {}).items():
+        for k, v in kwargs.items():
             setattr(podcast, k, v)
 
         podcast.save()
