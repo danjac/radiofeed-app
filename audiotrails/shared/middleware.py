@@ -89,8 +89,8 @@ class CacheControlMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         # workaround for https://github.com/bigskysoftware/htmx/issues/497
         # place after HtmxMiddleware
-        # TBD: have a "force cache" decorator!
         response = self.get_response(request)
         if request.htmx:
-            response["Cache-Control"] = "no-store, max-age=0"
+            # don't override if cache explicitly set
+            response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
