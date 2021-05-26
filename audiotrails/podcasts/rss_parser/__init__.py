@@ -10,10 +10,10 @@ from requests.structures import CaseInsensitiveDict
 
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Podcast
+from audiotrails.podcasts.rss_parser import http
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError, RssParserError
 from audiotrails.podcasts.rss_parser.feed_parser import parse_feed_from_url
-from audiotrails.podcasts.rss_parser.http import get_http_headers
 
 
 def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
@@ -23,7 +23,7 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
     """
 
     try:
-        headers = get_http_headers(podcast.rss)
+        headers = http.get_headers(podcast.rss)
 
         etag = headers.get("ETag", "")
         last_modified = get_last_modified_date(headers)

@@ -16,9 +16,9 @@ from django.utils import timezone
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
+from audiotrails.podcasts.rss_parser import http
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
-from audiotrails.podcasts.rss_parser.http import get_http_headers
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 
 CategoryDict = dict[str, Category]
@@ -268,7 +268,7 @@ class Feed:
             return True
 
         try:
-            headers = get_http_headers(self.image)
+            headers = http.get_headers(self.image)
         except requests.RequestException:
             return False
 

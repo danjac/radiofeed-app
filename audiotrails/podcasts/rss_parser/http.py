@@ -45,13 +45,13 @@ USER_AGENTS: list[str] = [
 ]
 
 
-def get_http_headers(url: str) -> CaseInsensitiveDict:
+def get_headers(url: str) -> CaseInsensitiveDict:
     response = requests.head(url, headers=fake_user_agent_headers(), timeout=5)
     response.raise_for_status()
     return response.headers
 
 
-def get_http_response(url: str) -> requests.Response:
+def get_response(url: str) -> requests.Response:
     response = requests.get(
         url, headers=fake_user_agent_headers(), stream=True, timeout=5
     )
