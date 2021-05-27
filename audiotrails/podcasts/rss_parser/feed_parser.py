@@ -13,7 +13,10 @@ from lxml.etree import ElementBase, XMLSyntaxError
 from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
-from audiotrails.podcasts.rss_parser.exceptions import RssParserError
+from audiotrails.podcasts.rss_parser.exceptions import (
+    HeadersNotFoundError,
+    RssParserError,
+)
 from audiotrails.podcasts.rss_parser.http import Headers, get_headers, get_response
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
@@ -55,7 +58,7 @@ def parse_headers_from_url(url: str) -> Headers:
     try:
         return get_headers(url)
     except requests.RequestException as e:
-        raise RssParserError from e
+        raise HeadersNotFoundError from e
 
 
 class RssParser:

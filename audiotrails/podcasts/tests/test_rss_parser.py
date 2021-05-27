@@ -18,7 +18,7 @@ from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.models import get_categories_dict
 from audiotrails.podcasts.rss_parser.api import parse_rss
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
-from audiotrails.podcasts.rss_parser.exceptions import RssParserError
+from audiotrails.podcasts.rss_parser.exceptions import HeadersNotFoundError
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 
@@ -68,7 +68,7 @@ class ParseRssTests(TestCase):
     @patch("requests.head", autospec=True, side_effect=requests.RequestException)
     def test_parse_error(self, *mocks: Mock) -> None:
         podcast = PodcastFactory()
-        self.assertRaises(RssParserError, parse_rss, podcast)
+        self.assertRaises(HeadersNotFoundError, parse_rss, podcast)
         podcast.refresh_from_db()
         self.assertEqual(podcast.num_retries, 1)
 

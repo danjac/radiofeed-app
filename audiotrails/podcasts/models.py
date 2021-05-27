@@ -25,7 +25,11 @@ from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
-from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError, RssParserError
+from audiotrails.podcasts.rss_parser.exceptions import (
+    HeadersNotFoundError,
+    InvalidImageError,
+    RssParserError,
+)
 from audiotrails.podcasts.rss_parser.feed_parser import (
     parse_feed_from_url,
     parse_headers_from_url,
@@ -229,7 +233,7 @@ class Podcast(models.Model):
                 return None
             feed = parse_feed_from_url(self.rss)
 
-        except RssParserError as e:
+        except (RssParserError, HeadersNotFoundError) as e:
             self.sync_error = str(e)
             self.num_retries += 1
             self.save()
@@ -344,7 +348,7 @@ class Podcast(models.Model):
 
         try:
             headers = parse_headers_from_url(image_url)
-        except InvalidImageError:
+        except HeadersNotFoundError:
             return False
 
         if headers.last_modified and headers.last_modified > self.cover_image_date:
