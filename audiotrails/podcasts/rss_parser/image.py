@@ -22,8 +22,7 @@ IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
 def fetch_image_from_url(image_url: str) -> ImageFile | None:
-    """Get an ImageFile object from a URL. Checks if image should be updated, returns
-    None if no image or invalid."""
+    """Get an ImageFile object from a URL. """
     try:
         response = get_response(image_url)
 
