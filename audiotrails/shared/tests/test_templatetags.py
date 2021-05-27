@@ -6,7 +6,6 @@ from audiotrails.shared.pagination.templatetags import pagination_url
 from audiotrails.shared.template.defaulttags import (
     active_link,
     format_duration,
-    jsonify,
     keepspaces,
     login_url,
     percent,
@@ -43,11 +42,6 @@ class LoginUrlTests(SimpleTestCase):
         self.assertEqual(
             login_url(url), "/account/login/?next=/podcasts/1234/test%3Fok%3Dtrue"
         )
-
-
-class JsonifyTests(SimpleTestCase):
-    def test_jsonify(self) -> None:
-        self.assertEqual(jsonify({"title": "test"}), '{"title": "test"}')
 
 
 class PercentTests(SimpleTestCase):

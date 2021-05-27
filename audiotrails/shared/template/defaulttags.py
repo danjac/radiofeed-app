@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import collections
-import json
 import math
 import re
 
-from typing import Any
 from urllib import parse
 
 import bs4
@@ -13,11 +11,10 @@ import bs4
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from audiotrails.shared.html import clean_html_content
 from audiotrails.shared.html import stripentities as _stripentities
@@ -27,14 +24,6 @@ register = template.Library()
 
 
 ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
-
-
-json_escapes = {
-    ord(">"): "\\u003E",
-    ord("<"): "\\u003C",
-    ord("&"): "\\u0026",
-    ord("'"): "\\u0027",
-}
 
 
 @register.filter
@@ -81,7 +70,7 @@ def re_active_link(
 @register.filter
 @stringfilter
 def clean_html(value: str) -> str:
-    return mark_safe(_stripentities(clean_html_content(value or "")))
+    return format_html(_stripentities(clean_html_content(value or "")))
 
 
 @register.filter
@@ -98,11 +87,6 @@ def percent(value: int, total: int) -> float:
     if (pc := (value / total) * 100) > 100:
         return 100
     return pc
-
-
-@register.filter
-def jsonify(value: Any) -> str:
-    return mark_safe(json.dumps(value, cls=DjangoJSONEncoder).translate(json_escapes))
 
 
 @register.filter
