@@ -1,11 +1,10 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ podcast.title }}{% endblock %}
+{% block subtitle %} | {{ podcast.title|stripentities }}{% endblock %}
 
 {% block content %}
-
-<h1 class="font-bold mb-3{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast.title|stripentities }}</h1>
-
+{% with podcast_title=podcast.title|stripentities %}
+<h1 class="font-bold mb-3{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast_title }}</h1>
 <div id="podcast-content">
   {% if has_recommendations and not search and not oldest_first %}
   <nav class="mb-3 flex items-center">
@@ -14,17 +13,18 @@
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast.title|stripentities }}">Episodes</a>
+           title="{{ podcast_title }} | Episodes">Episodes</a>
       </li>
       {% active_link podcast.get_recommendations_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast.title|stripentities }} | Similar">Similar</a>
+           title="{{ podcast_title }} | Similar">Similar</a>
       </li>
     </ul>
   </nav>
   {% endif %}
   {% block podcast_content %}{% endblock %}
 </div>
+{% endwith %}
 {% endblock %}
