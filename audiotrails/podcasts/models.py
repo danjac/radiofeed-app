@@ -35,7 +35,7 @@ from audiotrails.podcasts.rss_parser.feed_parser import (
     parse_headers_from_url,
 )
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
-from audiotrails.podcasts.rss_parser.models import Feed
+from audiotrails.podcasts.rss_parser.models import Feed, Headers
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
@@ -227,9 +227,7 @@ class Podcast(models.Model):
     def sync_rss_feed(self, force_update: bool = False) -> int:
         try:
             headers = parse_headers_from_url(self.rss)
-            if not self.should_parse_rss_feed(
-                headers.etag, headers.last_modified, force_update=force_update
-            ):
+            if not self.should_parse_rss_feed(headers, force_update=force_update):
                 return 0
             feed = parse_feed_from_url(self.rss)
 
@@ -301,17 +299,15 @@ class Podcast(models.Model):
 
         return None
 
-    def should_parse_rss_feed(
-        self, etag: str, last_modified: datetime | None, force_update: bool
-    ) -> bool:
+    def should_parse_rss_feed(self, headers: Headers, force_update: bool) -> bool:
         """Does preliminary check based on headers to determine whether to update this podcast.
         We also check the feed date info, but this is an optimization so we don't have to fetch and parse
         the RSS first."""
         return bool(
             force_update
             or self.pub_date is None
-            or (etag and etag != self.etag)
-            or (last_modified and last_modified > self.pub_date),
+            or (headers.etag and headers.etag != self.etag)
+            or (headers.last_modified and headers.last_modified > self.pub_date),
         )
 
     def should_sync_rss_feed(
