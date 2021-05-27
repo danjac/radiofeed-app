@@ -277,7 +277,7 @@ class Podcast(models.Model):
         self.num_retries = 0
 
         # image
-        if image := self.fetch_cover_image_from_url(feed.image, force_update):
+        if image := self.fetch_cover_image(feed.image, force_update):
             self.cover_image = image
             self.cover_image_date = now
 
@@ -293,12 +293,10 @@ class Podcast(models.Model):
             or parse_date(headers.get("Date", None)),
         )
 
-    def fetch_cover_image_from_url(
-        self, url: str, force_update: bool
-    ) -> ImageFile | None:
+    def fetch_cover_image(self, url: str, force_update: bool) -> ImageFile | None:
 
         try:
-            if self.should_fetch_cover_image_from_url(url, force_update):
+            if self.should_fetch_cover_image(url, force_update):
                 return fetch_image_file_from_url(url)
 
         except InvalidImageError:
@@ -336,7 +334,7 @@ class Podcast(models.Model):
             )
         )
 
-    def should_fetch_cover_image_from_url(self, url: str, force_update: bool) -> bool:
+    def should_fetch_cover_image(self, url: str, force_update: bool) -> bool:
         """Check if cover image should be updated."""
         if not url:
             return False
