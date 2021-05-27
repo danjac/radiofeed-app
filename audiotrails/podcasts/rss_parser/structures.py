@@ -119,7 +119,7 @@ def _clean_url(url: str | None) -> str:
     try:
         _validate_url(url)
         _validate_url_length(url)
-    except ValidationError:
+    except (TypeError, ValidationError):
         return ""
 
     return url
