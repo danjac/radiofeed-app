@@ -9,7 +9,7 @@ from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
 from audiotrails.podcasts.models import Podcast, PodcastQuerySet
 from audiotrails.podcasts.recommender.api import recommend
-from audiotrails.podcasts.rss_parser.exceptions import RssParserError
+from audiotrails.shared.feed_parser import RssParserError
 
 logger = get_task_logger(__name__)
 

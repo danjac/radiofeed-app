@@ -26,10 +26,10 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
-from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 from audiotrails.shared.date_parser import parse_date
 from audiotrails.shared.db import FastCountMixin, SearchMixin
+from audiotrails.shared.feed_parser import Feed, RssParserError, parse_feed
 from audiotrails.shared.http import get_headers, get_response
 from audiotrails.shared.image import InvalidImageError, fetch_image_file_from_url
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
