@@ -458,9 +458,6 @@ class Recommendation(models.Model):
         ]
 
 
-CategoryDict = dict[str, Category]
-
-
 @lru_cache
-def get_categories_dict() -> CategoryDict:
-    return {c.name: c for c in Category.objects.all()}
+def get_categories_dict() -> dict[str, Category]:
+    return Category.objects.in_bulk(field_name="name")
