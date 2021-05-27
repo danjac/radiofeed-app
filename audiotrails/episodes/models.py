@@ -14,11 +14,63 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
+from audiotrails.podcasts.rss_parser.models import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+    def sync_rss_feed(
+        self,
+        podcast: Podcast,
+        feed: Feed,
+    ) -> list[Episode]:
+        ...
+        episodes = self.filter(podcast=podcast)
+
+        # remove any episodes that may have been deleted on the podcast
+        episodes.exclude(guid__in=[item.guid for item in feed.items]).delete()
+
+        guids = episodes.values_list("guid", flat=True)
+
+        return self.bulk_create(
+            [
+                self.model(
+                    podcast=podcast,
+                    pub_date=item.pub_date,
+                    guid=item.guid,
+                    title=item.title,
+                    duration=item.duration,
+                    explicit=item.explicit,
+                    description=item.description,
+                    keywords=item.keywords,
+                    link=item.link,
+                    media_url=item.audio.url,
+                    media_type=item.audio.type,
+                    length=item.audio.length or None,
+                )
+                for item in feed.items
+                if item.guid not in guids
+            ],
+            ignore_conflicts=True,
+        )
+
+    def make_episode(self, **kwargs) -> Episode:
+        return Episode(
+            pub_date=self.pub_date,
+            guid=self.guid,
+            title=self.title,
+            duration=self.duration,
+            explicit=self.explicit,
+            description=self.description,
+            keywords=self.keywords,
+            link=self.link,
+            media_url=self.audio.url,
+            media_type=self.audio.type,
+            length=self.audio.length or None,
+            **kwargs,
+        )
+
     def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""

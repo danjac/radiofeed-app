@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand, CommandParser
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.podcasts.rss_parser import RssParserError, parse_rss
+from audiotrails.podcasts.rss_parser.api import parse_rss
+from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 
 
 class Command(BaseCommand):

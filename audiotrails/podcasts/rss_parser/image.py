@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import io
+import logging
 import mimetypes
 import os
 import uuid
 
+from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
@@ -15,17 +17,22 @@ from PIL.Image import DecompressionBombError
 from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser import http
-from audiotrails.podcasts.rss_parser.exceptions import InvalidImageURL
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
+logger = logging.getLogger(__name__)
 
-def fetch_image_from_url(image_url: str) -> ImageFile:
-    """Get an ImageFile object from a URL."""
+
+def fetch_image_from_url(
+    image_url: str, last_modified: datetime | None, force_update: bool = False
+) -> ImageFile | None:
+    """Get an ImageFile object from a URL. Checks if image should be updated, returns
+    None if no image or invalid."""
     try:
-        if not image_url:
-            raise ValueError("image_url is empty")
+        if not should_fetch_image(image_url, last_modified, force_update):
+            return None
 
         response = http.get_response(image_url)
 
@@ -42,7 +49,8 @@ def fetch_image_from_url(image_url: str) -> ImageFile:
         UnidentifiedImageError,
         ValueError,
     ) as e:
-        raise InvalidImageURL from e
+        logging.error(e)
+        return None
 
 
 def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str:
@@ -51,6 +59,36 @@ def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str:
         return headers["Content-Type"].split(";")[0]
     except KeyError:
         return mimetypes.guess_type(image_url)[0]
+
+
+def should_fetch_image(
+    image_url: str, last_modified: datetime | None, force_update: bool
+) -> bool:
+    if not image_url:
+        return False
+
+    if force_update or last_modified is None:
+        return True
+
+    try:
+        headers = http.get_headers(image_url)
+    except requests.RequestException:
+        return False
+
+    if (
+        date := parse_date(headers.get("Last-Modified", None))
+    ) and date > last_modified:
+        return True
+
+    # a lot of CDNs just return Date as current date/time so not very useful.
+    # in this case only update if older than 30 days.
+
+    if (date := parse_date(headers.get("Date", None))) and (
+        date - last_modified
+    ).days > 30:
+        return True
+
+    return False
 
 
 def get_image_file(raw: bytes) -> io.BytesIO:

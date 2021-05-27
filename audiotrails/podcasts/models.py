@@ -4,6 +4,7 @@ import dataclasses
 
 from datetime import datetime
 from decimal import Decimal
+from functools import lru_cache
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -15,6 +16,7 @@ from django.db import models
 from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -22,6 +24,9 @@ from model_utils.models import TimeStampedModel
 from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
+from audiotrails.podcasts.recommender.text_parser import extract_keywords
+from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
+from audiotrails.podcasts.rss_parser.models import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
@@ -210,6 +215,99 @@ class Podcast(models.Model):
 
         return _cover_image_placeholder
 
+    def sync_rss_feed(self, feed: Feed, force_update: bool = False) -> bool:
+
+        pub_date = feed.get_pub_date()
+
+        if not self.should_sync_rss_feed(pub_date, force_update):
+            return False
+
+        # timestamps
+        self.pub_date = pub_date
+        self.last_updated = timezone.now()
+
+        # description
+        self.title = feed.title
+        self.description = feed.description
+        self.link = feed.link
+        self.language = feed.language
+        self.explicit = feed.explicit
+
+        self.creators = feed.get_creators()
+
+        # categories/keywords
+        categories_dct = get_categories_dict()
+
+        categories = [
+            categories_dct[name] for name in feed.categories if name in categories_dct
+        ]
+
+        self.keywords = " ".join(
+            name for name in feed.categories if name not in categories_dct
+        )
+
+        self.extracted_text = self.extract_keywords(feed, categories)
+
+        self.categories.set(categories)  # type: ignore
+
+        # reset errors
+        self.sync_error = ""
+        self.num_retries = 0
+
+        # image
+        if image := fetch_image_from_url(
+            feed.image, self.cover_image_date, force_update
+        ):
+            self.cover_image = image
+            self.cover_image_date = timezone.now()
+        return True
+
+    def should_parse_rss_feed(
+        self, etag: str, last_modified: datetime | None, force_update: bool
+    ) -> bool:
+        """Does preliminary check based on headers to determine whether to update this podcast.
+        We also check the feed date info, but this is an optimization so we don't have to fetch and parse
+        the RSS first."""
+        return bool(
+            force_update
+            or self.pub_date is None
+            or (etag and etag != self.etag)
+            or (last_modified and last_modified > self.pub_date),
+        )
+
+    def should_sync_rss_feed(
+        self,
+        pub_date: datetime | None,
+        force_update: bool,
+    ) -> bool:
+        """Check if we should sync the RSS feed. This is called when we have already parsed the
+        feed."""
+
+        if pub_date is None:
+            return False
+
+        return any(
+            (
+                force_update,
+                self.last_updated is None,
+                self.last_updated and self.last_updated < pub_date,
+            )
+        )
+
+    def extract_keywords(self, feed: Feed, categories: list[Category]) -> str:
+        """Extract keywords from text content for recommender"""
+        text = " ".join(
+            [
+                self.title,
+                self.description,
+                self.keywords,
+                self.creators,
+            ]
+            + [c.name for c in categories]
+            + [item.title for item in feed.items][:6]
+        )
+        return " ".join(extract_keywords(self.language, text))
+
 
 class Follow(TimeStampedModel):
 
@@ -299,3 +397,11 @@ class Recommendation(models.Model):
                 fields=["podcast", "recommended"], name="unique_recommendation"
             ),
         ]
+
+
+CategoryDict = dict[str, Category]
+
+
+@lru_cache
+def get_categories_dict() -> CategoryDict:
+    return {c.name: c for c in Category.objects.all()}
