@@ -8,14 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, RegexValidator, URLValidator
 from django.utils import timezone
 
-from audiotrails.podcasts.rss_parser.date_parser import parse_date
-
-
-@dataclasses.dataclass
-class Headers:
-    etag: str = ""
-    last_modified: datetime | None = None
-    date: datetime | None = None
+from audiotrails.shared.date_parser import parse_date
 
 
 @dataclasses.dataclass

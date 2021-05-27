@@ -13,23 +13,23 @@ from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
 
-from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError
-from audiotrails.podcasts.rss_parser.http import get_content_type, get_response
+from audiotrails.shared.http import get_response
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
+
+
+class InvalidImageError(ValueError):
+    ...
 
 
 def fetch_image_file_from_url(url: str) -> ImageFile | None:
 
     try:
         response = get_response(url)
-
         return ImageFile(
             create_image_obj(response.content),
-            name=create_random_image_filename(
-                url, get_content_type(url, response.headers)
-            ),
+            name=create_random_image_filename(url, get_content_type(url, response)),
         )
     except (
         requests.RequestException,
@@ -38,6 +38,13 @@ def fetch_image_file_from_url(url: str) -> ImageFile | None:
         ValueError,
     ) as e:
         raise InvalidImageError from e
+
+
+def get_content_type(url: str, response: requests.Response) -> str:
+    try:
+        return response.headers["Content-Type"].split(";")[0]
+    except KeyError:
+        return mimetypes.guess_type(url)[0] or ""
 
 
 def create_image_obj(raw: bytes) -> io.BytesIO:
@@ -56,7 +63,7 @@ def create_image_obj(raw: bytes) -> io.BytesIO:
     return fp
 
 
-def create_random_image_filename(url: str, content_type: str | None) -> str:
+def create_random_image_filename(url: str, content_type: str) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
@@ -70,7 +77,7 @@ def create_random_image_filename(url: str, content_type: str | None) -> str:
 
     # try to guess extension from content type
     if ext not in IMAGE_EXTENSIONS:
-        ext = mimetypes.guess_extension(content_type or "")
+        ext = mimetypes.guess_extension(content_type)
 
     if ext is None:
         raise ValueError("Missing ext:" + url)

@@ -6,6 +6,8 @@ from datetime import datetime
 from decimal import Decimal
 from functools import lru_cache
 
+import requests
+
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
@@ -25,18 +27,11 @@ from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
-from audiotrails.podcasts.rss_parser.exceptions import (
-    HeadersNotFoundError,
-    InvalidImageError,
-    RssParserError,
-)
-from audiotrails.podcasts.rss_parser.feed_parser import (
-    parse_feed_from_url,
-    parse_headers_from_url,
-)
-from audiotrails.podcasts.rss_parser.image import fetch_image_file_from_url
-from audiotrails.podcasts.rss_parser.structures import Feed, Headers
+from audiotrails.shared.date_parser import parse_date
 from audiotrails.shared.db import FastCountMixin, SearchMixin
+from audiotrails.shared.feed_parser import Feed, RssParserError, parse_feed
+from audiotrails.shared.http import get_headers, get_response
+from audiotrails.shared.image import InvalidImageError, fetch_image_file_from_url
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -226,12 +221,16 @@ class Podcast(models.Model):
 
     def sync_rss_feed(self, force_update: bool = False) -> int:
         try:
-            headers = parse_headers_from_url(self.rss)
-            if not self.should_parse_rss_feed(headers, force_update=force_update):
-                return 0
-            feed = parse_feed_from_url(self.rss)
+            etag, last_modified = self.fetch_rss_feed_headers()
 
-        except (RssParserError, HeadersNotFoundError) as e:
+            if not self.should_parse_rss_feed(
+                etag, last_modified, force_update=force_update
+            ):
+                return 0
+
+            feed = parse_feed(get_response(self.rss).content)
+
+        except (RssParserError, requests.RequestException) as e:
             self.sync_error = str(e)
             self.num_retries += 1
             self.save()
@@ -245,7 +244,7 @@ class Podcast(models.Model):
         now = timezone.now()
 
         # timestamps
-        self.etag = headers.etag
+        self.etag = etag
         self.pub_date = pub_date
         self.last_updated = now
 
@@ -286,6 +285,14 @@ class Podcast(models.Model):
 
         return len(self.episode_set.sync_rss_feed(self, feed))
 
+    def fetch_rss_feed_headers(self) -> tuple[str, datetime | None]:
+        headers = get_headers(self.rss)
+        return (
+            headers.get("ETag", ""),
+            parse_date(headers.get("Last-Modified", None))
+            or parse_date(headers.get("Date", None)),
+        )
+
     def fetch_cover_image_from_url(
         self, url: str, force_update: bool
     ) -> ImageFile | None:
@@ -299,15 +306,17 @@ class Podcast(models.Model):
 
         return None
 
-    def should_parse_rss_feed(self, headers: Headers, force_update: bool) -> bool:
+    def should_parse_rss_feed(
+        self, etag: str, last_modified: datetime | None, force_update: bool
+    ) -> bool:
         """Does preliminary check based on headers to determine whether to update this podcast.
         We also check the feed date info, but this is an optimization so we don't have to fetch and parse
         the RSS first."""
         return bool(
             force_update
             or self.pub_date is None
-            or (headers.etag and headers.etag != self.etag)
-            or (headers.last_modified and headers.last_modified > self.pub_date),
+            or (etag and etag != self.etag)
+            or (last_modified and last_modified > self.pub_date),
         )
 
     def should_sync_rss_feed(
@@ -339,16 +348,21 @@ class Podcast(models.Model):
         # refetch if absolutely necessary
 
         try:
-            headers = parse_headers_from_url(url)
-        except HeadersNotFoundError:
+            headers = get_headers(url)
+        except requests.RequestException:
             return False
 
-        if headers.last_modified and headers.last_modified > self.cover_image_date:
+        if (
+            last_modified := parse_date(headers.get("Last-Modified", None))
+        ) and last_modified > self.cover_image_date:
             return True
 
         # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
 
-        if headers.date and (headers.date - self.cover_image_date).days > 30:
+        if (date := parse_date(headers.get("Date", None))) and (
+            date - self.cover_image_date
+        ).days > 30:
+
             return True
 
         return False
