@@ -13,7 +13,7 @@ from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
 
-from audiotrails.shared.http import get_response
+from audiotrails.common.utils.http import get_response
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")

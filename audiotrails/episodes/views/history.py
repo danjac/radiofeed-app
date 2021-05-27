@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST, require_safe
 
+from audiotrails.common.decorators import ajax_login_required
+from audiotrails.common.pagination import render_paginated_response
+from audiotrails.common.response import HttpResponseNoContent
 from audiotrails.episodes.models import AudioLog
 from audiotrails.episodes.views import get_episode_or_404
-from audiotrails.shared.decorators import ajax_login_required
-from audiotrails.shared.pagination import render_paginated_response
-from audiotrails.shared.response import HttpResponseNoContent
 
 
 @require_safe

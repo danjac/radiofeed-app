@@ -29,7 +29,7 @@ AWS_STATIC_CLOUDFRONT_DOMAIN = env("AWS_STATIC_CLOUDFRONT_DOMAIN", default=None)
 STATIC_URL = "https://" + AWS_STATIC_CLOUDFRONT_DOMAIN + "/" + AWS_STATIC_LOCATION + "/"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-DEFAULT_FILE_STORAGE = "audiotrails.shared.storages.MediaStorage"
+DEFAULT_FILE_STORAGE = "audiotrails.common.storages.MediaStorage"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 

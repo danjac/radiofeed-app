@@ -13,10 +13,10 @@ from django.urls import reverse
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
+from audiotrails.common.db import FastCountMixin, SearchMixin
+from audiotrails.common.types import AnyUser, AuthenticatedUser
 from audiotrails.podcasts.feed_parser import Feed
 from audiotrails.podcasts.models import Podcast
-from audiotrails.shared.db import FastCountMixin, SearchMixin
-from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):

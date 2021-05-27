@@ -17,7 +17,7 @@ from django.core.validators import (
 from django.utils import timezone
 from lxml.etree import ElementBase, XMLSyntaxError
 
-from audiotrails.shared.date_parser import parse_date
+from audiotrails.common.utils.date_parser import parse_date
 
 
 @dataclasses.dataclass

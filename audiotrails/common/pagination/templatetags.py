@@ -1,6 +1,6 @@
 from django import template
 
-from audiotrails.shared.types import ContextDict
+from audiotrails.common.types import ContextDict
 
 register = template.Library()
 

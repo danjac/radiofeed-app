@@ -1,9 +1,8 @@
 from django.test import RequestFactory, SimpleTestCase
 from django.urls import reverse
 
-from audiotrails.podcasts.models import Category
-from audiotrails.shared.pagination.templatetags import pagination_url
-from audiotrails.shared.template.defaulttags import (
+from audiotrails.common.pagination.templatetags import pagination_url
+from audiotrails.common.template.defaulttags import (
     active_link,
     format_duration,
     keepspaces,
@@ -12,6 +11,7 @@ from audiotrails.shared.template.defaulttags import (
     re_active_link,
     share_buttons,
 )
+from audiotrails.podcasts.models import Category
 
 
 class FormatDurationTests(SimpleTestCase):

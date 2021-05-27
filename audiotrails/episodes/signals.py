@@ -4,7 +4,7 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
 from django.http import HttpRequest
 
-from audiotrails.shared.types import AnyUser
+from audiotrails.common.types import AnyUser
 
 
 def close_player(sender: Any, user: AnyUser, request: HttpRequest, **kwargs) -> None:

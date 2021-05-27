@@ -9,8 +9,8 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
+from audiotrails.common.utils.html import stripentities
 from audiotrails.podcasts.recommender.stopwords import STOPWORDS
-from audiotrails.shared.html import stripentities
 
 NLTK_LANGUAGES: dict[str, str] = {
     "ar": "arabic",

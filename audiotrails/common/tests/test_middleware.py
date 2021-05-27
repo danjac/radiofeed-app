@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.test import RequestFactory, SimpleTestCase
 
-from audiotrails.shared.middleware import SearchMiddleware
+from audiotrails.common.middleware import SearchMiddleware
 
 
 def get_response(request: HttpRequest) -> HttpResponse:

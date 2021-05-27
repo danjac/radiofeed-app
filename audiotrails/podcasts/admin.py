@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from sorl.thumbnail.admin import AdminImageMixin
 
+from audiotrails.common.types import admin_action
 from audiotrails.podcasts.models import Category, Podcast
-from audiotrails.shared.types import admin_action
 
 
 @admin.register(Category)
