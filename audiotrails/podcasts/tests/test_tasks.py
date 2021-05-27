@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from audiotrails.podcasts import tasks
 from audiotrails.podcasts.factories import PodcastFactory
-from audiotrails.shared.feed_parser import RssParserError
+from audiotrails.podcasts.feed_parser import RssParserError
 from audiotrails.users.factories import UserFactory
 
 

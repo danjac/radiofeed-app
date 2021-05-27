@@ -7,9 +7,9 @@ from django.utils import timezone
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
+from audiotrails.podcasts.feed_parser import RssParserError
 from audiotrails.podcasts.models import Podcast, PodcastQuerySet
 from audiotrails.podcasts.recommender.api import recommend
-from audiotrails.shared.feed_parser import RssParserError
 
 logger = get_task_logger(__name__)
 
