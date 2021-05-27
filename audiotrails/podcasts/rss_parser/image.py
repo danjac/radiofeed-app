@@ -67,13 +67,15 @@ def create_random_image_filename(image_url: str, content_type: str | None) -> st
     ext: str | None = None
 
     _, ext = os.path.splitext(urlparse(image_url).path)
+
+    # try to guess extension from content type
+    if ext not in IMAGE_EXTENSIONS:
+        ext = mimetypes.guess_extension(content_type or "")
+
     if ext is None:
         raise ValueError("Missing ext:" + image_url)
 
     if ext not in IMAGE_EXTENSIONS:
-        # try to guess extension from content type
-        ext = mimetypes.guess_extension(content_type or "")
-
-    if ext is None or ext not in IMAGE_EXTENSIONS:
         raise ValueError("Invalid file extension:" + image_url)
+
     return uuid.uuid4().hex + ext
