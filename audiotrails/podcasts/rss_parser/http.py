@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import dataclasses
 import random
+
+from datetime import datetime
 
 import requests
 
-from requests.structures import CaseInsensitiveDict
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
 
 USER_AGENTS: list[str] = [
     (
@@ -45,10 +48,23 @@ USER_AGENTS: list[str] = [
 ]
 
 
-def get_headers(url: str) -> CaseInsensitiveDict:
+@dataclasses.dataclass
+class Headers:
+    etag: str = ""
+    last_modified: datetime | None = None
+    date: datetime | None = None
+
+
+def get_headers(url: str) -> Headers:
+    """Returns common timestamp headers from HEAD"""
     response = requests.head(url, headers=fake_user_agent_headers(), timeout=5)
     response.raise_for_status()
-    return response.headers
+
+    return Headers(
+        etag=response.headers.get("Etag", ""),
+        last_modified=parse_date(response.headers.get("Last-Modified", None)),
+        date=parse_date(response.headers.get("Date", None)),
+    )
 
 
 def get_response(url: str) -> requests.Response:

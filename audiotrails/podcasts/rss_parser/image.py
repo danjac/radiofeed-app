@@ -5,7 +5,6 @@ import mimetypes
 import os
 import uuid
 
-from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
@@ -16,7 +15,6 @@ from PIL.Image import DecompressionBombError
 from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser import http
-from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError
 
 MAX_IMAGE_SIZE = 1000
@@ -51,21 +49,6 @@ def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str:
         return headers["Content-Type"].split(";")[0]
     except KeyError:
         return mimetypes.guess_type(image_url)[0]
-
-
-def get_image_headers(image_url: str) -> tuple[datetime | None, datetime | None]:
-    if not image_url:
-        return (None, None)
-
-    try:
-        headers = http.get_headers(image_url)
-    except requests.RequestException as e:
-        raise InvalidImageError from e
-
-    return (
-        parse_date(headers.get("Last-Modified")),
-        parse_date(headers.get("Date")),
-    )
 
 
 def get_image_file(raw: bytes) -> io.BytesIO:

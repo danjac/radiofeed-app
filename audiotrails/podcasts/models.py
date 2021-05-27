@@ -26,14 +26,9 @@ from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError, RssParserError
-from audiotrails.podcasts.rss_parser.feed_parser import (
-    parse_feed_from_url,
-    parse_feed_headers,
-)
-from audiotrails.podcasts.rss_parser.image import (
-    fetch_image_from_url,
-    get_image_headers,
-)
+from audiotrails.podcasts.rss_parser.feed_parser import parse_feed_from_url
+from audiotrails.podcasts.rss_parser.http import get_headers
+from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 from audiotrails.podcasts.rss_parser.models import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
@@ -225,9 +220,9 @@ class Podcast(models.Model):
 
     def sync_rss_feed(self, force_update: bool = False) -> Feed | None:
         try:
-            etag, last_modified = parse_feed_headers(self.rss)
+            headers = get_headers(self.rss)
             if not self.should_parse_rss_feed(
-                etag, last_modified, force_update=force_update
+                headers.etag, headers.last_modified, force_update=force_update
             ):
                 return None
             feed = parse_feed_from_url(self.rss)
@@ -246,7 +241,7 @@ class Podcast(models.Model):
         now = timezone.now()
 
         # timestamps
-        self.etag = etag
+        self.etag = headers.etag
         self.pub_date = pub_date
         self.last_updated = now
 
@@ -346,16 +341,16 @@ class Podcast(models.Model):
         # refetch if absolutely necessary
 
         try:
-            last_modified, date = get_image_headers(image_url)
+            headers = get_headers(image_url)
         except InvalidImageError:
             return False
 
-        if last_modified and last_modified > self.cover_image_date:
+        if headers.last_modified and headers.last_modified > self.cover_image_date:
             return True
 
         # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
 
-        if date and (date - self.cover_image_date).days > 30:
+        if headers.date and (headers.date - self.cover_image_date).days > 30:
             return True
 
         return False

@@ -51,18 +51,6 @@ def parse_feed_from_url(url: str) -> Feed:
         raise RssParserError from e
 
 
-def parse_feed_headers(url: str) -> tuple[str, datetime | None]:
-    try:
-
-        headers = http.get_headers(url)
-        etag = headers.get("ETag", "")
-        last_modified = get_last_modified_date(headers)
-        return (etag, last_modified)
-
-    except requests.RequestException as e:
-        raise RssParserError from e
-
-
 class RssParser:
     NAMESPACES = {
         "atom": "http://www.w3.org/2005/Atom",
