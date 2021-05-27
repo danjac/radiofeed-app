@@ -14,8 +14,8 @@ from audiotrails.podcasts.rss_parser.exceptions import (
     HeadersNotFoundError,
     RssParserError,
 )
-from audiotrails.podcasts.rss_parser.http import Headers, get_headers, get_response
-from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
+from audiotrails.podcasts.rss_parser.http import get_headers, get_response
+from audiotrails.podcasts.rss_parser.structures import Audio, Feed, Headers, Item
 
 
 def parse_feed(raw: bytes) -> Feed:

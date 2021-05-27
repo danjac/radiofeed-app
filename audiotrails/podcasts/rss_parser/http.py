@@ -5,7 +5,7 @@ import random
 import requests
 
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
-from audiotrails.podcasts.rss_parser.models import Headers
+from audiotrails.podcasts.rss_parser.structures import Headers
 
 USER_AGENTS: list[str] = [
     (

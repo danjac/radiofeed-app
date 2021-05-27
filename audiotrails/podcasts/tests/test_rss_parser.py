@@ -18,7 +18,7 @@ from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.models import get_categories_dict
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import HeadersNotFoundError
-from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
+from audiotrails.podcasts.rss_parser.structures import Audio, Feed, Item
 
 
 class BaseMockResponse:

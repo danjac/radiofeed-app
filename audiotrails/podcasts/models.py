@@ -35,7 +35,7 @@ from audiotrails.podcasts.rss_parser.feed_parser import (
     parse_headers_from_url,
 )
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
-from audiotrails.podcasts.rss_parser.models import Feed, Headers
+from audiotrails.podcasts.rss_parser.structures import Feed, Headers
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 

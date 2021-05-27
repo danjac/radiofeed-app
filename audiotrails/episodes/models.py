@@ -14,7 +14,7 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.podcasts.rss_parser.models import Feed
+from audiotrails.podcasts.rss_parser.structures import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
 
