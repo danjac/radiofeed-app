@@ -28,7 +28,7 @@ def parse_rss(podcast: Podcast, force_update: bool = False) -> list[Episode]:
         etag = headers.get("ETag", "")
         last_modified = get_last_modified_date(headers)
 
-        if not podcast.should_parse_rss(etag, last_modified, force_update):
+        if not podcast.should_parse_rss_feed(etag, last_modified, force_update):
             return []
 
         feed = parse_feed_from_url(podcast.rss)

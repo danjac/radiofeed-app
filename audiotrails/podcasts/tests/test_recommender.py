@@ -6,7 +6,7 @@ from audiotrails.podcasts.factories import (
     RecommendationFactory,
 )
 from audiotrails.podcasts.models import Recommendation
-from audiotrails.podcasts.recommender import recommend
+from audiotrails.podcasts.recommender.api import recommend
 from audiotrails.podcasts.recommender.text_parser import clean_text, extract_keywords
 
 
