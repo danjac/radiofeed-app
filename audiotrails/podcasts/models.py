@@ -311,9 +311,7 @@ class Podcast(models.Model):
         )
 
     def should_sync_rss_feed(
-        self,
-        pub_date: datetime | None,
-        force_update: bool,
+        self, pub_date: datetime | None, force_update: bool
     ) -> bool:
         """Check if we should sync the RSS feed. This is called when we have already parsed the
         feed."""
