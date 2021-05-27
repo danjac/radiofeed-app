@@ -14,7 +14,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from audiotrails.shared.html import clean_html_content
 from audiotrails.shared.html import stripentities as _stripentities
@@ -70,7 +70,7 @@ def re_active_link(
 @register.filter
 @stringfilter
 def clean_html(value: str) -> str:
-    return format_html(_stripentities(clean_html_content(value or "")))
+    return mark_safe(_stripentities(clean_html_content(value or "")))
 
 
 @register.filter
