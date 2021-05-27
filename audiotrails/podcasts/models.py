@@ -26,8 +26,10 @@ from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError, RssParserError
-from audiotrails.podcasts.rss_parser.feed_parser import parse_feed_from_url
-from audiotrails.podcasts.rss_parser.http import get_headers
+from audiotrails.podcasts.rss_parser.feed_parser import (
+    parse_feed_from_url,
+    parse_headers_from_url,
+)
 from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
 from audiotrails.podcasts.rss_parser.models import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
@@ -220,7 +222,7 @@ class Podcast(models.Model):
 
     def sync_rss_feed(self, force_update: bool = False) -> Feed | None:
         try:
-            headers = get_headers(self.rss)
+            headers = parse_headers_from_url(self.rss)
             if not self.should_parse_rss_feed(
                 headers.etag, headers.last_modified, force_update=force_update
             ):
@@ -341,7 +343,7 @@ class Podcast(models.Model):
         # refetch if absolutely necessary
 
         try:
-            headers = get_headers(image_url)
+            headers = parse_headers_from_url(image_url)
         except InvalidImageError:
             return False
 

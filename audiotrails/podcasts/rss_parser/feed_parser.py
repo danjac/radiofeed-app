@@ -12,9 +12,9 @@ from django.core.validators import ValidationError
 from lxml.etree import ElementBase, XMLSyntaxError
 from requests.structures import CaseInsensitiveDict
 
-from audiotrails.podcasts.rss_parser import http
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import RssParserError
+from audiotrails.podcasts.rss_parser.http import Headers, get_headers, get_response
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 
@@ -46,7 +46,14 @@ def parse_feed(raw: bytes) -> Feed:
 
 def parse_feed_from_url(url: str) -> Feed:
     try:
-        return parse_feed(http.get_response(url).content)
+        return parse_feed(get_response(url).content)
+    except requests.RequestException as e:
+        raise RssParserError from e
+
+
+def parse_headers_from_url(url: str) -> Headers:
+    try:
+        return get_headers(url)
     except requests.RequestException as e:
         raise RssParserError from e
 

@@ -57,11 +57,12 @@ class Headers:
 
 def get_headers(url: str) -> Headers:
     """Returns common timestamp headers from HEAD"""
+
     response = requests.head(url, headers=fake_user_agent_headers(), timeout=5)
     response.raise_for_status()
 
     return Headers(
-        etag=response.headers.get("Etag", ""),
+        etag=response.headers.get("ETag", ""),
         last_modified=parse_date(response.headers.get("Last-Modified", None)),
         date=parse_date(response.headers.get("Date", None)),
     )
