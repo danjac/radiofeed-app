@@ -20,15 +20,15 @@ MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
-def fetch_image_file_from_url(image_url: str) -> ImageFile | None:
+def fetch_image_file_from_url(url: str) -> ImageFile | None:
 
     try:
-        response = get_response(image_url)
+        response = get_response(url)
 
         return ImageFile(
             create_image_obj(response.content),
             name=create_random_image_filename(
-                image_url, get_content_type(image_url, response.headers)
+                url, get_content_type(url, response.headers)
             ),
         )
     except (
@@ -56,26 +56,26 @@ def create_image_obj(raw: bytes) -> io.BytesIO:
     return fp
 
 
-def create_random_image_filename(image_url: str, content_type: str | None) -> str:
+def create_random_image_filename(url: str, content_type: str | None) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
-    if not image_url:
-        raise ValueError("No image_url provided")
+    if not url:
+        raise ValueError("No url provided")
 
     # check path first
     ext: str | None = None
 
-    _, ext = os.path.splitext(urlparse(image_url).path)
+    _, ext = os.path.splitext(urlparse(url).path)
 
     # try to guess extension from content type
     if ext not in IMAGE_EXTENSIONS:
         ext = mimetypes.guess_extension(content_type or "")
 
     if ext is None:
-        raise ValueError("Missing ext:" + image_url)
+        raise ValueError("Missing ext:" + url)
 
     if ext not in IMAGE_EXTENSIONS:
-        raise ValueError("Invalid file extension:" + image_url)
+        raise ValueError("Invalid file extension:" + url)
 
     return uuid.uuid4().hex + ext
