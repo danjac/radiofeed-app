@@ -299,7 +299,7 @@ class Podcast(models.Model):
             if self.should_fetch_cover_image(url, force_update):
                 return fetch_image_file_from_url(url)
 
-        except InvalidImageError:
+        except (InvalidImageError, requests.RequestException):
             pass
 
         return None
@@ -345,10 +345,7 @@ class Podcast(models.Model):
         # conservative estimate: image generation/fetching is expensive so only
         # refetch if absolutely necessary
 
-        try:
-            headers = get_headers(url)
-        except requests.RequestException:
-            return False
+        headers = get_headers(url)
 
         if (
             last_modified := parse_date(headers.get("Last-Modified", None))

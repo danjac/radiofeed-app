@@ -32,7 +32,6 @@ def fetch_image_file_from_url(url: str) -> ImageFile | None:
             name=create_random_image_filename(url, get_content_type(url, response)),
         )
     except (
-        requests.RequestException,
         DecompressionBombError,
         UnidentifiedImageError,
         ValueError,
