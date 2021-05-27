@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import mimetypes
 import random
 
 import requests
+
+from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.structures import Headers
@@ -57,6 +60,14 @@ def get_headers(url: str) -> Headers:
         last_modified=parse_date(response.headers.get("Last-Modified", None)),
         date=parse_date(response.headers.get("Date", None)),
     )
+
+
+def get_content_type(url: str, headers: CaseInsensitiveDict) -> str:
+
+    try:
+        return headers["Content-Type"].split(";")[0]
+    except KeyError:
+        return mimetypes.guess_type(url)[0]
 
 
 def get_response(url: str) -> requests.Response:

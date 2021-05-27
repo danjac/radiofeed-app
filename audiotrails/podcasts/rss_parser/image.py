@@ -12,27 +12,25 @@ import requests
 from django.core.files.images import ImageFile
 from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
-from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError
-from audiotrails.podcasts.rss_parser.http import get_response
+from audiotrails.podcasts.rss_parser.http import get_content_type, get_response
 
 MAX_IMAGE_SIZE = 1000
 IMAGE_EXTENSIONS = (".jpg", ".png", ".jpeg")
 
 
-def fetch_image_from_url(image_url: str) -> ImageFile | None:
-    """Get an ImageFile object from a URL. """
+def fetch_image_file_from_url(image_url: str) -> ImageFile | None:
+
     try:
         response = get_response(image_url)
 
-        if (content_type := get_content_type(image_url, response.headers)) is None:
-            raise ValueError("Content type not provided")
-
-        filename = get_image_filename(image_url, content_type)
-
-        return ImageFile(get_image_file(response.content), name=filename)
-
+        return ImageFile(
+            create_image_obj(response.content),
+            name=create_random_image_filename(
+                image_url, get_content_type(image_url, response.headers)
+            ),
+        )
     except (
         requests.RequestException,
         DecompressionBombError,
@@ -42,15 +40,7 @@ def fetch_image_from_url(image_url: str) -> ImageFile | None:
         raise InvalidImageError from e
 
 
-def get_content_type(image_url: str, headers: CaseInsensitiveDict) -> str:
-
-    try:
-        return headers["Content-Type"].split(";")[0]
-    except KeyError:
-        return mimetypes.guess_type(image_url)[0]
-
-
-def get_image_file(raw: bytes) -> io.BytesIO:
+def create_image_obj(raw: bytes) -> io.BytesIO:
     img = Image.open(io.BytesIO(raw))
 
     if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
@@ -66,12 +56,15 @@ def get_image_file(raw: bytes) -> io.BytesIO:
     return fp
 
 
-def get_image_filename(image_url: str, content_type: str) -> str:
+def create_random_image_filename(image_url: str, content_type: str | None) -> str:
     """Generate a random filename with correct extension. Raises ValueError
     if invalid"""
 
     if not image_url:
         raise ValueError("No image_url provided")
+
+    if not content_type:
+        raise ValueError("No content_type provided")
 
     # check path first
     ext: str | None = None

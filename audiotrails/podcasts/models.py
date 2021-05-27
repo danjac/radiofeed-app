@@ -34,7 +34,7 @@ from audiotrails.podcasts.rss_parser.feed_parser import (
     parse_feed_from_url,
     parse_headers_from_url,
 )
-from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
+from audiotrails.podcasts.rss_parser.image import fetch_image_file_from_url
 from audiotrails.podcasts.rss_parser.structures import Feed, Headers
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
@@ -292,7 +292,7 @@ class Podcast(models.Model):
 
         try:
             if self.should_fetch_cover_image_from_url(image_url, force_update):
-                return fetch_image_from_url(image_url)
+                return fetch_image_file_from_url(image_url)
 
         except InvalidImageError:
             pass
