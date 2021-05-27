@@ -287,12 +287,12 @@ class Podcast(models.Model):
         return len(self.episode_set.sync_rss_feed(self, feed))
 
     def fetch_cover_image_from_url(
-        self, image_url: str, force_update: bool
+        self, url: str, force_update: bool
     ) -> ImageFile | None:
 
         try:
-            if self.should_fetch_cover_image_from_url(image_url, force_update):
-                return fetch_image_file_from_url(image_url)
+            if self.should_fetch_cover_image_from_url(url, force_update):
+                return fetch_image_file_from_url(url)
 
         except InvalidImageError:
             pass
@@ -329,11 +329,9 @@ class Podcast(models.Model):
             )
         )
 
-    def should_fetch_cover_image_from_url(
-        self, image_url: str, force_update: bool
-    ) -> bool:
+    def should_fetch_cover_image_from_url(self, url: str, force_update: bool) -> bool:
         """Check if cover image should be updated."""
-        if not image_url:
+        if not url:
             return False
 
         if force_update or not self.cover_image or not self.cover_image_date:
@@ -343,7 +341,7 @@ class Podcast(models.Model):
         # refetch if absolutely necessary
 
         try:
-            headers = parse_headers_from_url(image_url)
+            headers = parse_headers_from_url(url)
         except HeadersNotFoundError:
             return False
 
