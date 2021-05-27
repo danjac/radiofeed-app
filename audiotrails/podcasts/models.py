@@ -224,13 +224,13 @@ class Podcast(models.Model):
 
         return _cover_image_placeholder
 
-    def sync_rss_feed(self, force_update: bool = False) -> Feed | None:
+    def sync_rss_feed(self, force_update: bool = False) -> int:
         try:
             headers = parse_headers_from_url(self.rss)
             if not self.should_parse_rss_feed(
                 headers.etag, headers.last_modified, force_update=force_update
             ):
-                return None
+                return 0
             feed = parse_feed_from_url(self.rss)
 
         except (RssParserError, HeadersNotFoundError) as e:
@@ -242,7 +242,7 @@ class Podcast(models.Model):
         pub_date = feed.get_pub_date()
 
         if not self.should_sync_rss_feed(pub_date, force_update):
-            return None
+            return 0
 
         now = timezone.now()
 
@@ -286,7 +286,7 @@ class Podcast(models.Model):
 
         self.save()
 
-        return feed
+        return len(self.episode_set.sync_rss_feed(self, feed))
 
     def fetch_cover_image_from_url(
         self, image_url: str, force_update: bool

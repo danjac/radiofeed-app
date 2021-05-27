@@ -25,7 +25,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         podcast: Podcast,
         feed: Feed,
     ) -> list[Episode]:
-        ...
         episodes = self.filter(podcast=podcast)
 
         # remove any episodes that may have been deleted on the podcast

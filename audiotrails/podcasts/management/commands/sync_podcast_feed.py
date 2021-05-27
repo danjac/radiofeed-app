@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandParser
 
 from audiotrails.podcasts.models import Podcast
-from audiotrails.podcasts.rss_parser.api import parse_rss
 from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 
 
@@ -21,11 +20,11 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
         try:
             podcast = Podcast.objects.get(pk=options["podcast_id"])
-            new_episodes = parse_rss(podcast, force_update=options["force_update"])
+            new_episodes = podcast.sync_rss_feed(force_update=options["force_update"])
             if new_episodes:
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"{len(new_episodes)} new episodes for podcast {podcast.title}"
+                        f"{new_episodes} new episodes for podcast {podcast.title}"
                     )
                 )
             else:

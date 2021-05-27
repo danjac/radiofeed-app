@@ -82,7 +82,7 @@ class SyncPodcastFeedsTests(TestCase):
 
 class TestSyncPodcastFeed(TestCase):
     @patch(
-        "audiotrails.podcasts.tasks.parse_rss",
+        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
         autospec=True,
     )
     def test_no_podcast_found(self, mock_parse_rss: Mock) -> None:
@@ -90,7 +90,7 @@ class TestSyncPodcastFeed(TestCase):
         mock_parse_rss.assert_not_called()
 
     @patch(
-        "audiotrails.podcasts.tasks.parse_rss",
+        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
         autospec=True,
     )
     def test_parser_exception(self, mock_parse_rss: Mock) -> None:
@@ -99,7 +99,7 @@ class TestSyncPodcastFeed(TestCase):
         tasks.sync_podcast_feed(podcast.rss)
 
     @patch(
-        "audiotrails.podcasts.tasks.parse_rss",
+        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
         autospec=True,
     )
     def test_ok(self, mock_parse_rss: Mock) -> None:

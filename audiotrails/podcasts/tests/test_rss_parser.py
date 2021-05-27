@@ -16,7 +16,6 @@ from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.models import get_categories_dict
-from audiotrails.podcasts.rss_parser.api import parse_rss
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import HeadersNotFoundError
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
@@ -68,7 +67,7 @@ class ParseRssTests(TestCase):
     @patch("requests.head", autospec=True, side_effect=requests.RequestException)
     def test_parse_error(self, *mocks: Mock) -> None:
         podcast = PodcastFactory()
-        self.assertRaises(HeadersNotFoundError, parse_rss, podcast)
+        self.assertRaises(HeadersNotFoundError, podcast.sync_rss_feed)
         podcast.refresh_from_db()
         self.assertEqual(podcast.num_retries, 1)
 
@@ -91,7 +90,7 @@ class ParseRssTests(TestCase):
             last_updated=None,
             pub_date=None,
         )
-        self.assertTrue(parse_rss(podcast))
+        self.assertTrue(podcast.sync_rss_feed())
         podcast.refresh_from_db()
 
         self.assertTrue(podcast.last_updated)
@@ -116,7 +115,7 @@ class ParseRssTests(TestCase):
             pub_date=None,
         )
 
-        self.assertFalse(parse_rss(podcast))
+        self.assertEqual(podcast.sync_rss_feed(), 0)
         podcast.refresh_from_db()
 
         self.assertFalse(podcast.pub_date)
@@ -141,7 +140,7 @@ class ParseRssTests(TestCase):
         # check episode not present is deleted
         EpisodeFactory(podcast=podcast, guid="some-random")
 
-        self.assertEqual(len(parse_rss(podcast)), 17)
+        self.assertEqual(podcast.sync_rss_feed(), 17)
         podcast.refresh_from_db()
 
         self.assertEqual(podcast.episode_set.count(), 20)

@@ -9,7 +9,6 @@ from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
 from audiotrails.podcasts.models import Podcast, PodcastQuerySet
 from audiotrails.podcasts.recommender.api import recommend
-from audiotrails.podcasts.rss_parser.api import parse_rss
 from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 
 logger = get_task_logger(__name__)
@@ -57,8 +56,8 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        if episodes := parse_rss(podcast, force_update=force_update):
-            logger.info(f"Podcast {podcast} has {len(episodes)} new episode(s)")
+        if new_episodes := podcast.sync_rss_feed(force_update=force_update):
+            logger.info(f"Podcast {podcast} has {new_episodes} new episode(s)")
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
     except RssParserError as e:
