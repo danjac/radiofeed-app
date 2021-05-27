@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import mimetypes
 
-from datetime import datetime
 from typing import Generator
 
 import lxml
@@ -10,9 +9,7 @@ import requests
 
 from django.core.validators import ValidationError
 from lxml.etree import ElementBase, XMLSyntaxError
-from requests.structures import CaseInsensitiveDict
 
-from audiotrails.podcasts.rss_parser.date_parser import parse_date
 from audiotrails.podcasts.rss_parser.exceptions import (
     HeadersNotFoundError,
     RssParserError,
@@ -190,11 +187,7 @@ class ItemParser(RssParser):
             except ValueError:
                 length = None
 
-        return Audio(
-            length=length,
-            type=media_type,
-            url=url,
-        )
+        return Audio(length=length, type=media_type, url=url)
 
     def parse_description(self) -> str:
 
@@ -215,11 +208,3 @@ class ItemParser(RssParser):
         if keywords := self.parse_text("itunes:keywords"):
             rv.append(keywords)
         return " ".join(rv)
-
-
-def get_last_modified_date(headers: CaseInsensitiveDict) -> datetime | None:
-    """Finds suitable date header"""
-    for header in ("Last-Modified", "Date"):
-        if value := parse_date(headers.get(header, None)):
-            return value
-    return None
