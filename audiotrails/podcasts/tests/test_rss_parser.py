@@ -16,8 +16,9 @@ from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.models import get_categories_dict
-from audiotrails.podcasts.rss_parser.api import RssParserError, parse_rss
+from audiotrails.podcasts.rss_parser.api import parse_rss
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 

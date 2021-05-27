@@ -25,7 +25,15 @@ from PIL import ImageFile as PILImageFile
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
-from audiotrails.podcasts.rss_parser.image import fetch_image_from_url
+from audiotrails.podcasts.rss_parser.exceptions import InvalidImageError, RssParserError
+from audiotrails.podcasts.rss_parser.feed_parser import (
+    parse_feed_from_url,
+    parse_feed_headers,
+)
+from audiotrails.podcasts.rss_parser.image import (
+    fetch_image_from_url,
+    get_image_headers,
+)
 from audiotrails.podcasts.rss_parser.models import Feed
 from audiotrails.shared.db import FastCountMixin, SearchMixin
 from audiotrails.shared.types import AnyUser, AuthenticatedUser
@@ -215,16 +223,32 @@ class Podcast(models.Model):
 
         return _cover_image_placeholder
 
-    def sync_rss_feed(self, feed: Feed, force_update: bool = False) -> bool:
+    def sync_rss_feed(self, force_update: bool = False) -> Feed | None:
+        try:
+            etag, last_modified = parse_feed_headers(self.rss)
+            if not self.should_parse_rss_feed(
+                etag, last_modified, force_update=force_update
+            ):
+                return None
+            feed = parse_feed_from_url(self.rss)
+
+        except RssParserError as e:
+            self.sync_error = str(e)
+            self.num_retries += 1
+            self.save()
+            raise
 
         pub_date = feed.get_pub_date()
 
         if not self.should_sync_rss_feed(pub_date, force_update):
-            return False
+            return None
+
+        now = timezone.now()
 
         # timestamps
+        self.etag = etag
         self.pub_date = pub_date
-        self.last_updated = timezone.now()
+        self.last_updated = now
 
         # description
         self.title = feed.title
@@ -255,12 +279,26 @@ class Podcast(models.Model):
         self.num_retries = 0
 
         # image
-        if image := fetch_image_from_url(
-            feed.image, self.cover_image_date, force_update
-        ):
+        if image := self.fetch_image_from_url(feed.image, force_update):
             self.cover_image = image
-            self.cover_image_date = timezone.now()
-        return True
+            self.cover_image_date = now
+
+        self.save()
+
+        return feed
+
+    def fetch_image_from_url(
+        self, image_url: str, force_update: bool
+    ) -> ImageFile | None:
+
+        try:
+            if self.should_fetch_image_from_url(image_url, force_update):
+                return fetch_image_from_url(image_url)
+
+        except InvalidImageError:
+            pass
+
+        return None
 
     def should_parse_rss_feed(
         self, etag: str, last_modified: datetime | None, force_update: bool
@@ -293,6 +331,31 @@ class Podcast(models.Model):
                 self.last_updated and self.last_updated < pub_date,
             )
         )
+
+    def should_fetch_image_from_url(self, image_url: str, force_update: bool) -> bool:
+        if not image_url:
+            return False
+
+        if force_update or not self.cover_image or not self.cover_image_date:
+            return True
+
+        # conservative estimate: image generation/fetching is expensive so only
+        # refetch if absolutely necessary
+
+        try:
+            last_modified, date = get_image_headers(image_url)
+        except InvalidImageError:
+            return False
+
+        if last_modified and last_modified > self.cover_image_date:
+            return True
+
+        # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
+
+        if date and (date - self.cover_image_date).days > 30:
+            return True
+
+        return False
 
     def extract_keywords(self, feed: Feed, categories: list[Category]) -> str:
         """Extract keywords from text content for recommender"""

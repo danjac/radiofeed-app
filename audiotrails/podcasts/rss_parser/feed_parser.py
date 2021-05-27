@@ -2,41 +2,65 @@ from __future__ import annotations
 
 import mimetypes
 
+from datetime import datetime
 from typing import Generator
 
 import lxml
+import requests
 
 from django.core.validators import ValidationError
-from lxml.etree import ElementBase
+from lxml.etree import ElementBase, XMLSyntaxError
+from requests.structures import CaseInsensitiveDict
 
 from audiotrails.podcasts.rss_parser import http
-from audiotrails.podcasts.rss_parser.exceptions import InvalidFeedError
+from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.exceptions import RssParserError
 from audiotrails.podcasts.rss_parser.models import Audio, Feed, Item
 
 
 def parse_feed(raw: bytes) -> Feed:
 
-    if (
-        rss := lxml.etree.fromstring(
-            raw,
-            parser=lxml.etree.XMLParser(
-                strip_cdata=False,
-                ns_clean=True,
-                recover=True,
-                encoding="utf-8",
-            ),
-        )
-    ) is None:
-        raise InvalidFeedError("No RSS content found")
+    try:
+        if (
+            rss := lxml.etree.fromstring(
+                raw,
+                parser=lxml.etree.XMLParser(
+                    strip_cdata=False,
+                    ns_clean=True,
+                    recover=True,
+                    encoding="utf-8",
+                ),
+            )
+        ) is None:
+            raise RssParserError("No RSS content found")
+        if (channel := rss.find("channel")) is None:
+            raise RssParserError("RSS does not contain <channel />")
 
-    if (channel := rss.find("channel")) is None:
-        raise InvalidFeedError("RSS does not contain <channel />")
-
-    return FeedParser(channel).parse()
+        return FeedParser(channel).parse()
+    except (
+        ValidationError,
+        XMLSyntaxError,
+    ) as e:
+        raise RssParserError from e
 
 
 def parse_feed_from_url(url: str) -> Feed:
-    return parse_feed(http.get_response(url).content)
+    try:
+        return parse_feed(http.get_response(url).content)
+    except requests.RequestException as e:
+        raise RssParserError from e
+
+
+def parse_feed_headers(url: str) -> tuple[str, datetime | None]:
+    try:
+
+        headers = http.get_headers(url)
+        etag = headers.get("ETag", "")
+        last_modified = get_last_modified_date(headers)
+        return (etag, last_modified)
+
+    except requests.RequestException as e:
+        raise RssParserError from e
 
 
 class RssParser:
@@ -193,3 +217,11 @@ class ItemParser(RssParser):
         if keywords := self.parse_text("itunes:keywords"):
             rv.append(keywords)
         return " ".join(rv)
+
+
+def get_last_modified_date(headers: CaseInsensitiveDict) -> datetime | None:
+    """Finds suitable date header"""
+    for header in ("Last-Modified", "Date"):
+        if value := parse_date(headers.get(header, None)):
+            return value
+    return None
