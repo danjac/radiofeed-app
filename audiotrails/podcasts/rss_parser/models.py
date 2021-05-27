@@ -12,6 +12,13 @@ from audiotrails.podcasts.rss_parser.date_parser import parse_date
 
 
 @dataclasses.dataclass
+class Headers:
+    etag: str = ""
+    last_modified: datetime | None = None
+    date: datetime | None = None
+
+
+@dataclasses.dataclass
 class Audio:
 
     type: str

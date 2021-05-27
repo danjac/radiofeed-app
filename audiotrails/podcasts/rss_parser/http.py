@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import dataclasses
 import random
-
-from datetime import datetime
 
 import requests
 
 from audiotrails.podcasts.rss_parser.date_parser import parse_date
+from audiotrails.podcasts.rss_parser.models import Headers
 
 USER_AGENTS: list[str] = [
     (
@@ -46,13 +44,6 @@ USER_AGENTS: list[str] = [
         "Safari/537.36"
     ),
 ]
-
-
-@dataclasses.dataclass
-class Headers:
-    etag: str = ""
-    last_modified: datetime | None = None
-    date: datetime | None = None
 
 
 def get_headers(url: str) -> Headers:
