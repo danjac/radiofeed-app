@@ -54,22 +54,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             ignore_conflicts=True,
         )
 
-    def make_episode(self, **kwargs) -> Episode:
-        return Episode(
-            pub_date=self.pub_date,
-            guid=self.guid,
-            title=self.title,
-            duration=self.duration,
-            explicit=self.explicit,
-            description=self.description,
-            keywords=self.keywords,
-            link=self.link,
-            media_url=self.audio.url,
-            media_type=self.audio.type,
-            length=self.audio.length or None,
-            **kwargs,
-        )
-
     def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
