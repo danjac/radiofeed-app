@@ -45,13 +45,19 @@ class Command(BaseCommand):
             podcasts = podcasts.filter(pub_date__isnull=True)
 
         force_update = options["force_update"]
+        use_celery = options["use_celery"]
 
         for podcast in podcasts:
-            if options["use_celery"]:
-                self.stdout.write(f"Create sync task for {podcast}")
-                sync_podcast_feed.delay(rss=podcast.rss, force_update=force_update)
-            else:
-                try:
-                    sync_podcast_feed(rss=podcast.rss, force_update=force_update)
-                except Exception as e:
-                    self.stdout.write(self.style.ERROR(str(e)))
+            self.sync_podcast(podcast, force_update, use_celery)
+
+    def sync_podcast(
+        self, podcast: Podcast, force_update: bool, use_celery: bool
+    ) -> None:
+        if use_celery:
+            self.stdout.write(f"Create sync task for {podcast}")
+            sync_podcast_feed.delay(rss=podcast.rss, force_update=force_update)
+        else:
+            try:
+                sync_podcast_feed(rss=podcast.rss, force_update=force_update)
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(str(e)))
