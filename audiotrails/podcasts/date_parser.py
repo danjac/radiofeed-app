@@ -239,7 +239,11 @@ TZ_INFOS: dict[str, float] = {
 }
 
 
-def parse_date(value: str | None) -> datetime | None:
+def parse_date(value: str | datetime | None) -> datetime | None:
+
+    if isinstance(value, datetime):
+        return value
+
     if not value:
         return None
     try:

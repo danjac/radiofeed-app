@@ -54,7 +54,7 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     pub_date = conv_date(
         result.feed.published,
         result.feed.updated,
-        *[item.published for item in items],
+        *[item.pub_date for item in items],
     )
 
     if pub_date is None:
@@ -147,6 +147,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         podcast=podcast,
         guid=item.id,
         title=item.title,
+        pub_date=item.pub_date,
         media_url=item.audio.href,
         media_type=item.audio.type,
         explicit=bool(item.itunes_explicit),
@@ -154,7 +155,6 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         link=conv_str(item.link)[:500],
         description=conv_str(item.description, item.summary),
         duration=conv_str(item.itunes_duration)[:30],
-        pub_date=parse_date(item.published),
         keywords=" ".join(parse_tags(item)),
     )
 
@@ -234,7 +234,7 @@ def create_image_obj(raw: bytes) -> Image:
 def parse_items(result: box.Box) -> list[box.Box]:
     return [
         item
-        for item in [with_audio(item) for item in result.entries]
+        for item in [with_pub_date(with_audio(item)) for item in result.entries]
         if is_episode(item)
     ]
 
@@ -243,13 +243,15 @@ def parse_creators(feed: box.Box) -> str:
     return " ".join({author.name for author in conv_list(feed.authors) if author.name})
 
 
-def with_audio(
-    item: box.Box,
-) -> box.Box:
+def with_audio(item: box.Box) -> box.Box:
     for link in conv_list(item.links) + conv_list(item.enclosures):
         if is_audio(link):
             return item + box.Box(audio=link)
     return item
+
+
+def with_pub_date(item: box.Box) -> box.Box:
+    return item + box.Box(pub_date=parse_date(item.published))
 
 
 def is_audio(link: box.Box) -> bool:
@@ -262,7 +264,7 @@ def is_audio(link: box.Box) -> bool:
 
 def is_episode(item: box.Box) -> bool:
     return bool(
-        item.audio and item.id and parse_date(item.published),
+        item.audio and item.id and item.pub_date,
     )
 
 
