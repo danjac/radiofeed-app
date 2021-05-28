@@ -240,13 +240,13 @@ def parse_items(result: box.Box) -> list[box.Box]:
 
 
 def parse_creators(feed: box.Box) -> str:
-    return " ".join({author.name for author in feed.authors if author.name})
+    return " ".join({author.name for author in conv_list(feed.authors) if author.name})
 
 
 def with_audio(
     item: box.Box,
 ) -> box.Box:
-    for link in (item.links or []) + (item.enclosures or []):
+    for link in conv_list(item.links) + conv_list(item.enclosures):
         if is_audio(link):
             return item + box.Box(audio=link)
     return item
@@ -274,9 +274,13 @@ def conv(*values: Any, convert: Callable, default=None) -> Any:
                 return convert(value)
             except ValueError:
                 pass
+
+    if callable(default):
+        return default()
     return default
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
 conv_date = functools.partial(conv, convert=parse_date, default=None)
 conv_int = functools.partial(conv, convert=int, default=None)
+conv_list = functools.partial(conv, convert=list, default=list)
