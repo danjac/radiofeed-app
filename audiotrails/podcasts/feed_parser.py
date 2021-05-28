@@ -43,7 +43,6 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
             modified=podcast.pub_date,
         ),
         default_box=True,
-        default_box_none_transform=True,
     )
 
     items = [
@@ -62,15 +61,15 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         return []
 
     # timestamps
-    podcast.etag = result.get("etag", "")
+    podcast.etag = result.etag or ""
     podcast.last_updated = now
     podcast.pub_date = pub_date
 
     # description
     podcast.title = feed.title
-    podcast.description = feed.description
     podcast.link = feed.link
     podcast.language = (feed.language or "en")[:2]
+    podcast.description = feed.content or feed.summary or ""
     podcast.explicit = feed.itunes_explicit or False
     podcast.creators = " ".join({author.name for author in feed.authors if author.name})
 
@@ -125,12 +124,12 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
                 podcast=podcast,
                 guid=item.id,
                 title=item.title,
-                description=item.description,
                 link=item.link,
                 media_url=item.audio.href,
                 media_type=item.audio.type,
                 length=item.audio.length or None,
-                pub_date=parse_date(item.published),
+                description=item.description or item.summary or "",
+                pub_date=parse_date(item.published or None),
                 duration=item.itunes_duration or "",
                 explicit=item.itunes_explicit or False,
                 keywords=" ".join([tag.term for tag in (item.tags or [])]),
@@ -211,13 +210,17 @@ def create_image_obj(raw: bytes) -> Image:
 
 
 def parse_pub_date(feed: box.Box, items: list[box.Box]) -> datetime | None:
+
     if feed.published:
         return parse_date(feed.published)
     if feed.updated:
         return parse_date(feed.updated)
+
     pub_dates = [dt for dt in [parse_date(item.published) for item in items] if dt]
+
     if pub_dates:
         return max(pub_dates)
+
     return None
 
 
