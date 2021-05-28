@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 from functools import lru_cache
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
@@ -43,9 +44,10 @@ from audiotrails.podcasts.recommender.text_parser import extract_keywords
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
 MAX_IMAGE_SIZE = 1000
-
-
 THUMBNAIL_SIZE = 200
+
+if TYPE_CHECKING:
+    from audiotrails.episodes.models import Episode
 
 
 @dataclasses.dataclass
@@ -228,14 +230,14 @@ class Podcast(models.Model):
 
         return _cover_image_placeholder
 
-    def sync_rss_feed(self, force_update: bool = False) -> int:
+    def sync_rss_feed(self, force_update: bool = False) -> list[Episode]:
         try:
             etag, last_modified = self.fetch_rss_feed_headers()
 
             if not self.should_parse_rss_feed(
                 etag, last_modified, force_update=force_update
             ):
-                return 0
+                return []
 
             response = requests.get(self.rss, verify=True, stream=True, timeout=5)
             feed = parse_feed(response.content)
@@ -249,7 +251,7 @@ class Podcast(models.Model):
         pub_date = feed.get_pub_date()
 
         if not self.should_sync_rss_feed(pub_date, force_update):
-            return 0
+            return []
 
         now = timezone.now()
 
@@ -293,7 +295,7 @@ class Podcast(models.Model):
 
         self.save()
 
-        return len(self.episode_set.sync_rss_feed(self, feed))
+        return self.episode_set.sync_rss_feed(self, feed)
 
     def fetch_rss_feed_headers(self) -> tuple[str, datetime | None]:
         headers = requests.head(self.rss, timeout=5).headers

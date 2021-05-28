@@ -247,7 +247,7 @@ class PodcastsRssSyncTests(TestCase):
             pub_date=None,
         )
 
-        self.assertEqual(podcast.sync_rss_feed(), 0)
+        self.assertEqual(podcast.sync_rss_feed(), [])
         podcast.refresh_from_db()
 
         self.assertFalse(podcast.pub_date)
@@ -272,7 +272,7 @@ class PodcastsRssSyncTests(TestCase):
         # check episode not present is deleted
         EpisodeFactory(podcast=podcast, guid="some-random")
 
-        self.assertEqual(podcast.sync_rss_feed(), 17)
+        self.assertEqual(len(podcast.sync_rss_feed()), 17)
         podcast.refresh_from_db()
 
         self.assertEqual(podcast.episode_set.count(), 20)
