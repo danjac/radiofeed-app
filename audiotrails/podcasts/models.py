@@ -232,7 +232,12 @@ class Podcast(models.Model):
 
     def sync_rss_feed(self, force_update: bool = False) -> list[Episode]:
         try:
-            etag, last_modified = self.fetch_rss_feed_headers()
+            headers = requests.head(self.rss, timeout=5).headers
+            etag = headers.get("ETag", "")
+
+            last_modified = parse_date(
+                headers.get("Last-Modified", None)
+            ) or parse_date(headers.get("Date", None))
 
             if not self.should_parse_rss_feed(
                 etag, last_modified, force_update=force_update
@@ -296,14 +301,6 @@ class Podcast(models.Model):
         self.save()
 
         return self.episode_set.sync_rss_feed(self, feed)
-
-    def fetch_rss_feed_headers(self) -> tuple[str, datetime | None]:
-        headers = requests.head(self.rss, timeout=5).headers
-        return (
-            headers.get("ETag", ""),
-            parse_date(headers.get("Last-Modified", None))
-            or parse_date(headers.get("Date", None)),
-        )
 
     def fetch_cover_image(self, url: str, force_update: bool) -> ImageFile | None:
 
