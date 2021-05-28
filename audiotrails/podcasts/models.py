@@ -38,7 +38,6 @@ from sorl.thumbnail import ImageField, get_thumbnail
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
 from audiotrails.common.utils.date_parser import parse_date
-from audiotrails.common.utils.http import get_headers, get_response
 from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 
@@ -238,7 +237,8 @@ class Podcast(models.Model):
             ):
                 return 0
 
-            feed = parse_feed(get_response(self.rss).content)
+            response = requests.get(self.rss, verify=True, stream=True, timeout=5)
+            feed = parse_feed(response.content)
 
         except (RssParserError, requests.RequestException) as e:
             self.sync_error = str(e)
@@ -296,7 +296,7 @@ class Podcast(models.Model):
         return len(self.episode_set.sync_rss_feed(self, feed))
 
     def fetch_rss_feed_headers(self) -> tuple[str, datetime | None]:
-        headers = get_headers(self.rss)
+        headers = requests.head(self.rss, timeout=5).headers
         return (
             headers.get("ETag", ""),
             parse_date(headers.get("Last-Modified", None))
@@ -309,7 +309,7 @@ class Podcast(models.Model):
             return None
 
         try:
-            response = get_response(url)
+            response = requests.get(url, timeout=5, stream=True)
         except requests.RequestException:
             return None
 
@@ -322,12 +322,10 @@ class Podcast(models.Model):
                 content_type = mimetypes.guess_type(url)[0] or ""
             ext = mimetypes.guess_extension(content_type)
 
-        filename = uuid.uuid4().hex + ext
-
-        try:
-            validate_image_file_extension(filename)
-        except ValidationError:
+        if not ext:
             return None
+
+        filename = uuid.uuid4().hex + ext
 
         try:
             img = Image.open(io.BytesIO(response.content))
@@ -347,7 +345,14 @@ class Podcast(models.Model):
         ):
             return None
 
-        return ImageFile(fp, name=filename)
+        image_file = ImageFile(fp, name=filename)
+
+        try:
+            validate_image_file_extension(image_file)
+        except ValidationError:
+            return None
+
+        return image_file
 
     def should_parse_rss_feed(
         self, etag: str, last_modified: datetime | None, force_update: bool
@@ -391,7 +396,7 @@ class Podcast(models.Model):
         # refetch if absolutely necessary
 
         try:
-            headers = get_headers(url)
+            headers = requests.head(url, timeout=5).headers
         except requests.RequestException:
             return False
 
