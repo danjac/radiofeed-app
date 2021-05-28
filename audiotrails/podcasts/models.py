@@ -232,9 +232,9 @@ class Podcast(models.Model):
 
     def sync_rss_feed(self, force_update: bool = False) -> list[Episode]:
 
-        etag, feed = self.parse_rss_feed(force_update)
+        etag, feed, do_sync = self.parse_rss_feed(force_update)
 
-        if feed is None:
+        if not do_sync:
             return []
 
         now = timezone.now()
@@ -264,7 +264,7 @@ class Podcast(models.Model):
 
         return self.episode_set.sync_rss_feed(self, feed)
 
-    def parse_rss_feed(self, force_update: bool) -> tuple[str, Feed | None]:
+    def parse_rss_feed(self, force_update: bool) -> tuple[str, Feed | None, bool]:
 
         try:
             headers = requests.head(self.rss, timeout=5).headers
@@ -278,10 +278,11 @@ class Podcast(models.Model):
             if not self.should_parse_rss_feed(
                 etag, last_modified, force_update=force_update
             ):
-                return etag, None
+                return etag, None, False
 
             response = requests.get(self.rss, verify=True, stream=True, timeout=5)
-            return etag, parse_feed(response.content)
+            feed = parse_feed(response.content)
+            return etag, feed, self.should_sync_rss_feed(feed, force_update)
 
         except (RssParserError, requests.RequestException) as e:
             self.sync_error = str(e)
@@ -327,28 +328,18 @@ class Podcast(models.Model):
 
         return self.is_etag_changed(etag) or self.is_modified_since(last_modified)
 
-    def is_etag_changed(self, etag: str) -> bool:
-        return etag != self.etag if etag else False
-
-    def is_modified_since(self, last_modified: datetime | None) -> bool:
-        if None in (last_modified, self.pub_date):
-            return False
-        return last_modified > self.pub_date
-
-    def should_sync_rss_feed(
-        self, pub_date: datetime | None, force_update: bool
-    ) -> bool:
+    def should_sync_rss_feed(self, feed: Feed | None, force_update: bool) -> bool:
         """Check if we should sync the RSS feed. This is called when we have already parsed the
         feed."""
 
-        if pub_date is None:
+        if feed.pub_date is None:
             return False
 
         return any(
             (
                 force_update,
                 self.last_updated is None,
-                self.last_updated and self.last_updated < pub_date,
+                self.last_updated and self.last_updated < feed.pub_date,
             )
         )
 
@@ -361,6 +352,14 @@ class Podcast(models.Model):
             return True
 
         return self.is_image_modified_since(url)
+
+    def is_etag_changed(self, etag: str) -> bool:
+        return etag != self.etag if etag else False
+
+    def is_modified_since(self, last_modified: datetime | None) -> bool:
+        if None in (last_modified, self.pub_date):
+            return False
+        return last_modified > self.pub_date
 
     def is_image_modified_since(self, url: str) -> bool:
         # conservative estimate: image generation/fetching is expensive so only
