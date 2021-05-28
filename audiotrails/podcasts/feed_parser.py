@@ -253,7 +253,11 @@ def with_audio(
 
 
 def is_audio(link: box.Box) -> bool:
-    return link.type.startswith("audio/") and link.href and link.rel == "enclosure"
+    return (
+        first_str(link.type).startswith("audio/")
+        and link.href
+        and link.rel == "enclosure"
+    )
 
 
 def is_episode(item: box.Box) -> bool:
