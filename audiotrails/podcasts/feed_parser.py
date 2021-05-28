@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
 from django.core.validators import validate_image_file_extension
 from django.utils import timezone
+from django.utils.encoding import force_str
 from PIL import Image, UnidentifiedImageError
 from PIL.Image import DecompressionBombError
 
@@ -45,46 +46,15 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
         default_box=True,
     )
 
-    items = [
-        item for item in [with_audio(item) for item in result.entries] if item.audio
-    ]
-
-    if not items:
+    if not (items := parse_items(result)):
         return []
 
-    feed = result.feed
-
-    now = timezone.now()
-    pub_date = parse_pub_date(feed, items)
+    pub_date = parse_pub_date(result.feed, items)
 
     if pub_date is None:
         return []
 
-    # timestamps
-    podcast.etag = result.etag or ""
-    podcast.last_updated = now
-    podcast.pub_date = pub_date
-
-    # description
-    podcast.title = feed.title
-    podcast.link = feed.link
-    podcast.language = (feed.language or "en")[:2]
-    podcast.description = feed.content or feed.summary or ""
-    podcast.explicit = feed.itunes_explicit or False
-    podcast.creators = " ".join({author.name for author in feed.authors if author.name})
-
-    parse_categories(podcast, feed, items)
-
-    # reset errors
-    podcast.sync_error = ""
-    podcast.num_retries = 0
-
-    if image := fetch_cover_image(podcast, feed):
-        podcast.cover_image = image
-        podcast.cover_image_date = now
-
-    podcast.save()
-
+    sync_podcast(podcast, pub_date, result, items)
     return sync_episodes(podcast, items)
 
 
@@ -94,9 +64,14 @@ def fetch_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
         return None
 
     try:
-        response = requests.get(feed.image.href, timeout=5, stream=True)
+        return create_image_file(requests.get(feed.image.href, timeout=5, stream=True))
     except requests.RequestException:
-        return None
+        pass
+
+    return None
+
+
+def create_image_file(response: requests.Response) -> ImageFile | None:
 
     if (img := create_image_obj(response.content)) is None:
         return None
@@ -111,6 +86,43 @@ def fetch_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
     return image_file
 
 
+def sync_podcast(
+    podcast: Podcast,
+    pub_date: datetime,
+    result: box.Box,
+    items: list[box.Box],
+) -> None:
+
+    now = timezone.now()
+
+    # timestamps
+    podcast.last_updated = now
+    podcast.pub_date = pub_date
+    podcast.etag = make_str(result.etag)
+
+    # description
+
+    podcast.title = result.feed.title
+    podcast.link = result.feed.link
+    podcast.language = make_str(result.feed.language, "en")[:2]
+    podcast.description = make_str(result.feed.content, result.feed.summary)
+
+    podcast.explicit = result.feed.itunes_explicit or False
+    podcast.creators = parse_creators(result.feed)
+
+    parse_categories(podcast, result.feed, items)
+
+    # reset errors
+    podcast.sync_error = ""
+    podcast.num_retries = 0
+
+    if image := fetch_cover_image(podcast, result.feed):
+        podcast.cover_image = image
+        podcast.cover_image_date = now
+
+    podcast.save()
+
+
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     episodes = Episode.objects.filter(podcast=podcast)
 
@@ -119,34 +131,38 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     guids = episodes.values_list("guid", flat=True)
 
     return Episode.objects.bulk_create(
-        [
-            Episode(
-                podcast=podcast,
-                guid=item.id,
-                title=item.title,
-                link=item.link,
-                media_url=item.audio.href,
-                media_type=item.audio.type,
-                length=item.audio.length or None,
-                description=item.description or item.summary or "",
-                pub_date=parse_date(item.published or None),
-                duration=item.itunes_duration or "",
-                explicit=item.itunes_explicit or False,
-                keywords=" ".join([tag.term for tag in (item.tags or [])]),
-            )
-            for item in items
-            if item.id not in guids
-        ],
+        [make_episode(podcast, item) for item in items if item.id not in guids],
         ignore_conflicts=True,
     )
+
+
+def make_episode(podcast: Podcast, item: box.Box) -> Episode:
+    return Episode(
+        podcast=podcast,
+        guid=item.id,
+        title=item.title,
+        link=item.link,
+        media_url=item.audio.href,
+        media_type=item.audio.type,
+        length=item.audio.length or None,
+        explicit=item.itunes_explicit or False,
+        description=make_str(item.description, item.summary),
+        duration=make_str(item.itunes_duration),
+        pub_date=parse_date(item.published),
+        keywords=" ".join(parse_tags(item)),
+    )
+
+
+def parse_tags(item: box.Box) -> list[str]:
+    return [tag.term for tag in item.tags or []]
 
 
 def parse_categories(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
     """Extract keywords from text content for recommender
     and map to categories"""
     categories_dct = get_categories_dict()
+    tags = parse_tags(feed)
 
-    tags = [tag.term for tag in feed.tags]
     categories = [categories_dct[name] for name in tags if name in categories_dct]
 
     podcast.keywords = " ".join(name for name in tags if name not in categories_dct)
@@ -211,10 +227,14 @@ def create_image_obj(raw: bytes) -> Image:
 
 def parse_pub_date(feed: box.Box, items: list[box.Box]) -> datetime | None:
 
-    if feed.published:
-        return parse_date(feed.published)
-    if feed.updated:
-        return parse_date(feed.updated)
+    return (
+        parse_date(feed.published)
+        or parse_date(feed.updated)
+        or get_latest_item_pub_date(items)
+    )
+
+
+def get_latest_item_pub_date(items: list[box.Box]) -> datetime | None:
 
     pub_dates = [dt for dt in [parse_date(item.published) for item in items] if dt]
 
@@ -224,10 +244,31 @@ def parse_pub_date(feed: box.Box, items: list[box.Box]) -> datetime | None:
     return None
 
 
+def parse_items(result: box.Box) -> list[box.Box]:
+    return [
+        item for item in [with_audio(item) for item in result.entries] if item.audio
+    ]
+
+
+def parse_creators(feed: box.Box) -> str:
+    return " ".join({author.name for author in feed.authors if author.name})
+
+
 def with_audio(
     item: box.Box,
 ) -> box.Box:
     for link in (item.links or []) + (item.enclosures or []):
-        if link.type.startswith("audio/") and link.href and link.rel == "enclosure":
+        if is_audio(link):
             return item + box.Box(audio=link)
     return item
+
+
+def is_audio(link: box.Box) -> bool:
+    return link.type.startswith("audio/") and link.href and link.rel == "enclosure"
+
+
+def make_str(*values: str | None | box.Box) -> str:
+    for value in values:
+        if value:
+            return force_str(value)
+    return ""
