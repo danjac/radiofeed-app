@@ -384,9 +384,6 @@ class Podcast(models.Model):
         # conservative estimate: image generation/fetching is expensive so only
         # refetch if absolutely necessary
 
-        if self.cover_image_date is None:
-            return True
-
         try:
             headers = requests.head(url, timeout=5).headers
         except requests.RequestException:
