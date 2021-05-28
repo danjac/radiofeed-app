@@ -73,7 +73,7 @@ class Item:
 class Feed:
     title: str
     description: str
-    creators: set[str]
+    creators_set: set[str]
     cover_url: str | None
     categories: list[str]
     items: list[Item]
@@ -82,6 +82,9 @@ class Feed:
 
     language: str = "en"
     link: str = ""
+    creators: str = ""
+
+    pub_date: datetime | None = None
 
     def __post_init__(self) -> None:
         if len(self.items) == 0:
@@ -93,12 +96,15 @@ class Feed:
             self.language.replace("-", "").strip()[:2] if self.language else "en"
         ).lower()
 
+        self.pub_date = self.get_pub_date()
+        self.creators = self.get_creators()
+
     def get_creators(self) -> str:
         return ", ".join(
             {
                 c
                 for c in {
-                    c.lower(): c for c in [c.strip() for c in self.creators]
+                    c.lower(): c for c in [c.strip() for c in self.creators_set]
                 }.values()
                 if c
             }
@@ -193,7 +199,7 @@ class FeedParser(RssParser):
             language=self.parse_text("language"),
             link=self.parse_text("link"),
             categories=self.parse_attribute_list(".//itunes:category", "text"),
-            creators=set(self.parse_creators()),
+            creators_set=set(self.parse_creators()),
             cover_url=self.parse_cover_url(),
             description=self.parse_description(),
             explicit=self.parse_explicit(),

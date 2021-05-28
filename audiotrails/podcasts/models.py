@@ -237,16 +237,11 @@ class Podcast(models.Model):
         if feed is None:
             return []
 
-        pub_date = feed.get_pub_date()
-
-        if not self.should_sync_rss_feed(pub_date, force_update):
-            return []
-
         now = timezone.now()
 
         # timestamps
         self.etag = etag
-        self.pub_date = pub_date
+        self.pub_date = feed.pub_date
         self.last_updated = now
 
         # description
@@ -255,38 +250,22 @@ class Podcast(models.Model):
         self.link = feed.link
         self.language = feed.language
         self.explicit = feed.explicit
+        self.creators = feed.creators
 
-        self.creators = feed.get_creators()
-
-        # categories/keywords
-        categories_dct = get_categories_dict()
-
-        categories = [
-            categories_dct[name] for name in feed.categories if name in categories_dct
-        ]
-
-        self.keywords = " ".join(
-            name for name in feed.categories if name not in categories_dct
-        )
-
-        self.extracted_text = self.extract_keywords(feed, categories)
-
-        self.categories.set(categories)  # type: ignore
+        self.parse_categories(feed)
 
         # reset errors
         self.sync_error = ""
         self.num_retries = 0
 
-        # image
-        if image := self.fetch_cover_image(feed.cover_url, force_update):
-            self.cover_image = image
-            self.cover_image_date = now
+        self.fetch_cover_image(feed, force_update)
 
         self.save()
 
         return self.episode_set.sync_rss_feed(self, feed)
 
     def parse_rss_feed(self, force_update: bool) -> tuple[str, Feed | None]:
+
         try:
             headers = requests.head(self.rss, timeout=5).headers
 
@@ -310,18 +289,18 @@ class Podcast(models.Model):
             self.save()
             raise
 
-    def fetch_cover_image(self, url: str, force_update: bool) -> ImageFile | None:
+    def fetch_cover_image(self, feed: Feed, force_update: bool) -> bool:
 
-        if not self.should_fetch_cover_image(url, force_update):
-            return None
+        if not self.should_fetch_cover_image(feed.cover_url, force_update):
+            return False
 
         try:
-            response = requests.get(url, timeout=5, stream=True)
+            response = requests.get(feed.cover_url, timeout=5, stream=True)
         except requests.RequestException:
-            return None
+            return False
 
         if (img := _create_image_obj(response.content)) is None:
-            return None
+            return False
 
         filename = _create_random_filename_from_response(response)
 
@@ -330,9 +309,12 @@ class Podcast(models.Model):
         try:
             validate_image_file_extension(image_file)
         except ValidationError:
-            return None
+            return False
 
-        return image_file
+        self.cover_image = image_file
+        self.cover_image_date = timezone.now()
+
+        return True
 
     def should_parse_rss_feed(
         self, etag: str, last_modified: datetime | None, force_update: bool
@@ -401,8 +383,24 @@ class Podcast(models.Model):
 
         return False
 
-    def extract_keywords(self, feed: Feed, categories: list[Category]) -> str:
-        """Extract keywords from text content for recommender"""
+    def parse_categories(self, feed: Feed) -> None:
+        """Extract keywords from text content for recommender
+        and map to categories"""
+        categories_dct = get_categories_dict()
+
+        categories = [
+            categories_dct[name] for name in feed.categories if name in categories_dct
+        ]
+
+        self.keywords = " ".join(
+            name for name in feed.categories if name not in categories_dct
+        )
+
+        self.extracted_text = self.extract_text(feed, categories)
+
+        self.categories.set(categories)  # type: ignore
+
+    def extract_text(self, feed: Feed, categories: list[Category]) -> str:
         text = " ".join(
             [
                 self.title,
