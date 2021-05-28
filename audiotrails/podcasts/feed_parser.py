@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import io
 import mimetypes
 import os
@@ -7,6 +8,7 @@ import uuid
 
 from datetime import datetime
 from functools import lru_cache
+from typing import Any, Callable
 from urllib.parse import urlparse
 
 import box
@@ -98,14 +100,14 @@ def sync_podcast(
     # timestamps
     podcast.last_updated = now
     podcast.pub_date = pub_date
-    podcast.etag = make_str(result.etag)
+    podcast.etag = first_str(result.etag)
 
     # description
 
     podcast.title = result.feed.title
     podcast.link = result.feed.link
-    podcast.language = make_str(result.feed.language, "en")[:2]
-    podcast.description = make_str(result.feed.content, result.feed.summary)
+    podcast.language = first_str(result.feed.language, "en")[:2]
+    podcast.description = first_str(result.feed.content, result.feed.summary)
 
     podcast.explicit = result.feed.itunes_explicit or False
     podcast.creators = parse_creators(result.feed)
@@ -146,8 +148,8 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         media_type=item.audio.type,
         length=item.audio.length or None,
         explicit=item.itunes_explicit or False,
-        description=make_str(item.description, item.summary),
-        duration=make_str(item.itunes_duration),
+        description=first_str(item.description, item.summary),
+        duration=first_str(item.itunes_duration),
         pub_date=parse_date(item.published),
         keywords=" ".join(parse_tags(item)),
     )
@@ -267,8 +269,12 @@ def is_audio(link: box.Box) -> bool:
     return link.type.startswith("audio/") and link.href and link.rel == "enclosure"
 
 
-def make_str(*values: str | None | box.Box) -> str:
+def first(*values: Any, convert: Callable, default=None) -> Any:
     for value in values:
         if value:
-            return force_str(value)
-    return ""
+            return convert(value)
+    return default
+
+
+first_str = functools.partial(first, convert=force_str, default="")
+first_date = functools.partial(first, convert=parse_date, default=None)
