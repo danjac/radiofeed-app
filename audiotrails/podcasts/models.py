@@ -231,27 +231,11 @@ class Podcast(models.Model):
         return _cover_image_placeholder
 
     def sync_rss_feed(self, force_update: bool = False) -> list[Episode]:
-        try:
-            headers = requests.head(self.rss, timeout=5).headers
-            etag = headers.get("ETag", "")
 
-            last_modified = parse_date(
-                headers.get("Last-Modified", None)
-            ) or parse_date(headers.get("Date", None))
+        etag, feed = self.parse_rss_feed(force_update)
 
-            if not self.should_parse_rss_feed(
-                etag, last_modified, force_update=force_update
-            ):
-                return []
-
-            response = requests.get(self.rss, verify=True, stream=True, timeout=5)
-            feed = parse_feed(response.content)
-
-        except (RssParserError, requests.RequestException) as e:
-            self.sync_error = str(e)
-            self.num_retries += 1
-            self.save()
-            raise
+        if feed is None:
+            return []
 
         pub_date = feed.get_pub_date()
 
@@ -301,6 +285,30 @@ class Podcast(models.Model):
         self.save()
 
         return self.episode_set.sync_rss_feed(self, feed)
+
+    def parse_rss_feed(self, force_update: bool) -> tuple[str, Feed | None]:
+        try:
+            headers = requests.head(self.rss, timeout=5).headers
+
+            etag = headers.get("ETag", "")
+
+            last_modified = parse_date(
+                headers.get("Last-Modified", None)
+            ) or parse_date(headers.get("Date", None))
+
+            if not self.should_parse_rss_feed(
+                etag, last_modified, force_update=force_update
+            ):
+                return etag, None
+
+            response = requests.get(self.rss, verify=True, stream=True, timeout=5)
+            return etag, parse_feed(response.content)
+
+        except (RssParserError, requests.RequestException) as e:
+            self.sync_error = str(e)
+            self.num_retries += 1
+            self.save()
+            raise
 
     def fetch_cover_image(self, url: str, force_update: bool) -> ImageFile | None:
 
