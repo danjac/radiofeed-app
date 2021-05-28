@@ -121,24 +121,23 @@ def _get_search_results(
     requests_timeout: int = 3,
 ) -> list[SearchResult]:
 
-    results = cache.get(cache_key)
-    if results is None:
-        try:
-            response = requests.get(
-                ITUNES_SEARCH_URL,
-                params,
-                timeout=requests_timeout,
-                verify=True,
-            )
-            response.raise_for_status()
-            results = response.json()["results"]
-            cache.set(cache_key, results, timeout=cache_timeout)
-        except KeyError as e:
-            raise Invalid from e
-        except requests.exceptions.Timeout as e:
-            raise Timeout from e
-        except requests.RequestException as e:
-            raise Invalid from e
+    if results := cache.get(cache_key):
+        return results
+
+    try:
+        response = requests.get(
+            ITUNES_SEARCH_URL,
+            params,
+            timeout=requests_timeout,
+            verify=True,
+        )
+        response.raise_for_status()
+        results = response.json()["results"]
+        cache.set(cache_key, results, timeout=cache_timeout)
+    except (KeyError, requests.RequestException) as e:
+        raise Invalid from e
+    except requests.exceptions.Timeout as e:
+        raise Timeout from e
 
     return [
         SearchResult(
