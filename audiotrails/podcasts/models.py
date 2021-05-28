@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import dataclasses
+import io
+import mimetypes
+import os
+import uuid
 
 from datetime import datetime
 from decimal import Decimal
 from functools import lru_cache
+from urllib.parse import urlparse
 
 import requests
 
@@ -12,8 +17,9 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, validate_image_file_extension
 from django.db import models
 from django.http import HttpRequest
 from django.templatetags.static import static
@@ -23,18 +29,22 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
+from PIL import Image
 from PIL import ImageFile as PILImageFile
+from PIL import UnidentifiedImageError
+from PIL.Image import DecompressionBombError
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
 from audiotrails.common.utils.date_parser import parse_date
 from audiotrails.common.utils.http import get_headers, get_response
-from audiotrails.common.utils.image import InvalidImageError, fetch_image_file_from_url
 from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
+MAX_IMAGE_SIZE = 1000
+
 
 THUMBNAIL_SIZE = 200
 
@@ -295,14 +305,49 @@ class Podcast(models.Model):
 
     def fetch_cover_image(self, url: str, force_update: bool) -> ImageFile | None:
 
+        if not self.should_fetch_cover_image(url, force_update):
+            return None
+
         try:
-            if self.should_fetch_cover_image(url, force_update):
-                return fetch_image_file_from_url(url)
+            response = get_response(url)
+        except requests.RequestException:
+            return None
 
-        except (InvalidImageError, requests.RequestException):
-            pass
+        _, ext = os.path.splitext(urlparse(url).path)
 
-        return None
+        if ext is None:
+            try:
+                content_type = response.headers["Content-Type"].split(";")[0]
+            except KeyError:
+                content_type = mimetypes.guess_type(url)[0] or ""
+            ext = mimetypes.guess_extension(content_type)
+
+        filename = uuid.uuid4().hex + ext
+
+        try:
+            validate_image_file_extension(filename)
+        except ValidationError:
+            return None
+
+        try:
+            img = Image.open(io.BytesIO(response.content))
+
+            if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
+                img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
+
+            # remove Alpha channel
+            img = img.convert("RGB")
+
+            fp = io.BytesIO()
+            img.seek(0)
+            img.save(fp, "PNG")
+        except (
+            DecompressionBombError,
+            UnidentifiedImageError,
+        ):
+            return None
+
+        return ImageFile(fp, name=filename)
 
     def should_parse_rss_feed(
         self, etag: str, last_modified: datetime | None, force_update: bool
@@ -345,7 +390,10 @@ class Podcast(models.Model):
         # conservative estimate: image generation/fetching is expensive so only
         # refetch if absolutely necessary
 
-        headers = get_headers(url)
+        try:
+            headers = get_headers(url)
+        except requests.RequestException:
+            return False
 
         if (
             last_modified := parse_date(headers.get("Last-Modified", None))
