@@ -312,39 +312,10 @@ class Podcast(models.Model):
         except requests.RequestException:
             return None
 
-        _, ext = os.path.splitext(urlparse(url).path)
-
-        if ext is None:
-            try:
-                content_type = response.headers["Content-Type"].split(";")[0]
-            except KeyError:
-                content_type = mimetypes.guess_type(url)[0] or ""
-            ext = mimetypes.guess_extension(content_type)
-
-        if not ext:
-            return None
-
-        filename = uuid.uuid4().hex + ext
-
-        try:
-            img = Image.open(io.BytesIO(response.content))
-
-            if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
-                img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
-
-            # remove Alpha channel
-            img = img.convert("RGB")
-
-            fp = io.BytesIO()
-            img.seek(0)
-            img.save(fp, "PNG")
-        except (
-            DecompressionBombError,
-            UnidentifiedImageError,
-        ):
-            return None
-
-        image_file = ImageFile(fp, name=filename)
+        image_file = ImageFile(
+            _create_image_obj(response.content),
+            name=_create_random_filename_from_response(response),
+        )
 
         try:
             validate_image_file_extension(image_file)
@@ -522,3 +493,39 @@ class Recommendation(models.Model):
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
+
+
+def _create_random_filename_from_response(response: requests.Response) -> str:
+    _, ext = os.path.splitext(urlparse(response.url).path)
+
+    if ext is None:
+        try:
+            content_type = response.headers["Content-Type"].split(";")[0]
+        except KeyError:
+            content_type = mimetypes.guess_type(response.url)[0] or ""
+
+        ext = mimetypes.guess_extension(content_type) or ""
+
+    return uuid.uuid4().hex + ext
+
+
+def _create_image_obj(raw: bytes) -> Image:
+    try:
+        img = Image.open(io.BytesIO(raw))
+
+        if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
+            img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
+
+        # remove Alpha channel
+        img = img.convert("RGB")
+
+        fp = io.BytesIO()
+        img.seek(0)
+        img.save(fp, "PNG")
+        return img
+
+    except (
+        DecompressionBombError,
+        UnidentifiedImageError,
+    ):
+        return None
