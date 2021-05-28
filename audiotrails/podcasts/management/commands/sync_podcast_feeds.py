@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandParser
 
+from audiotrails.podcasts.feed_parser import parse_feed
 from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.tasks import sync_podcast_feed, sync_podcast_feeds
 
@@ -49,6 +50,7 @@ class Command(BaseCommand):
             sync_podcast_feed.delay(rss=podcast.rss)
         else:
             try:
-                sync_podcast_feed(rss=podcast.rss)
+                self.stdout.write(f"Syncing podcast {podcast}")
+                parse_feed(podcast)
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e)))
