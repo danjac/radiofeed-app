@@ -65,7 +65,7 @@ class Feed:
     title: str
     description: str
     creators: set[str]
-    image: str | None
+    cover_url: str | None
     categories: list[str]
     items: list[Item]
 

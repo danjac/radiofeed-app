@@ -98,13 +98,13 @@ class FeedParser(RssParser):
             link=self.parse_text("link"),
             categories=self.parse_attribute_list(".//itunes:category", "text"),
             creators=set(self.parse_creators()),
-            image=self.parse_image(),
+            cover_url=self.parse_cover_url(),
             description=self.parse_description(),
             explicit=self.parse_explicit(),
             items=list(self.parse_items()),
         )
 
-    def parse_image(self) -> str | None:
+    def parse_cover_url(self) -> str | None:
         return (
             self.parse_attribute("itunes:image", "href")
             or self.parse_text("image/url")

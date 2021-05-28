@@ -294,7 +294,7 @@ class Podcast(models.Model):
         self.num_retries = 0
 
         # image
-        if image := self.fetch_cover_image(feed.image, force_update):
+        if image := self.fetch_cover_image(feed.cover_url, force_update):
             self.cover_image = image
             self.cover_image_date = now
 
