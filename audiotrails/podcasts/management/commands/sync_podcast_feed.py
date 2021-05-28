@@ -24,7 +24,7 @@ class Command(BaseCommand):
             if new_episodes:
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"{new_episodes} new episodes for podcast {podcast.title}"
+                        f"{len(new_episodes)} new episodes for podcast {podcast.title}"
                     )
                 )
             else:
