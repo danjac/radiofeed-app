@@ -150,17 +150,25 @@ def find_similarities(
     cosine_sim = cosine_similarity(count_matrix)
 
     for index in df.index:
-        current_id = df.loc[index, "id"]
         try:
-            similar = list(enumerate(cosine_sim[index]))
+            yield find_similarity(
+                df, similar=cosine_sim[index], current_id=df.loc[index, "id"]
+            )
         except IndexError:
-            continue
-        sorted_similar = sorted(similar, key=operator.itemgetter(1), reverse=True)[
-            :NUM_MATCHES
-        ]
-        matches = [
-            (df.loc[row, "id"], similarity)
-            for row, similarity in sorted_similar
-            if df.loc[row, "id"] != current_id
-        ]
-        yield (current_id, matches)
+            pass
+
+
+def find_similarity(
+    df: pandas.DataFrame, similar: list[int], current_id: int
+) -> tuple[int, list[tuple[int, float]]]:
+
+    sorted_similar = sorted(
+        list(enumerate(similar)), key=operator.itemgetter(1), reverse=True
+    )[:NUM_MATCHES]
+
+    matches: list[tuple[int, float]] = [
+        (df.loc[row, "id"], similarity)
+        for row, similarity in sorted_similar
+        if df.loc[row, "id"] != current_id
+    ]
+    return (current_id, matches)
