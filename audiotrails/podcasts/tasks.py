@@ -3,12 +3,13 @@ import datetime
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
-from audiotrails.podcasts.feed_parser import RssParserError
-from audiotrails.podcasts.models import Podcast, PodcastQuerySet
+from audiotrails.podcasts.feed_parser import parse_feed
+from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.recommender import recommend
 
 logger = get_task_logger(__name__)
@@ -31,7 +32,7 @@ def send_recommendation_emails() -> None:
 def sync_podcast_feeds() -> None:
     podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
 
-    querysets: tuple[PodcastQuerySet, PodcastQuerySet] = (
+    querysets: tuple[QuerySet, QuerySet] = (
         # new podcasts
         podcasts.filter(last_updated__isnull=True),
         # podcasts updated > 12 hours ago
@@ -52,13 +53,11 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
+def sync_podcast_feed(rss: str) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        if new_episodes := podcast.sync_rss_feed(force_update=force_update):
+        if new_episodes := parse_feed(podcast):
             logger.info(f"Podcast {podcast} has {len(new_episodes)} new episode(s)")
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
-    except RssParserError as e:
-        logger.debug(f"Error fetching {rss}: {e}")

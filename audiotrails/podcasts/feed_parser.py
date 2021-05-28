@@ -1,324 +1,223 @@
 from __future__ import annotations
 
-import dataclasses
+import io
 import mimetypes
+import os
+import uuid
 
-from datetime import datetime
-from typing import Generator
+from functools import lru_cache
+from urllib.parse import urlparse
 
-import lxml
+import feedparser
+import requests
 
-from django.core.validators import (
-    MaxLengthValidator,
-    RegexValidator,
-    URLValidator,
-    ValidationError,
-)
+from django.core.exceptions import ValidationError
+from django.core.files.images import ImageFile
+from django.core.validators import validate_image_file_extension
 from django.utils import timezone
-from lxml.etree import ElementBase, XMLSyntaxError
+from PIL import Image, UnidentifiedImageError
+from PIL.Image import DecompressionBombError
 
+from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.date_parser import parse_date
+from audiotrails.podcasts.models import Category, Podcast
+from audiotrails.podcasts.text_parser import extract_keywords
+
+MAX_IMAGE_SIZE = 1000
+THUMBNAIL_SIZE = 200
 
 
-class RssParserError(ValueError):
-    ...
+@lru_cache
+def get_categories_dict() -> dict[str, Category]:
+    return Category.objects.in_bulk(field_name="name")
 
 
-@dataclasses.dataclass
-class Audio:
+def parse_feed(podcast: Podcast) -> list[Episode]:
 
-    type: str
-    url: str
-    length: int | None = None
-    rel: str = ""
+    result = feedparser.parse(podcast.rss, etag=podcast.etag, modified=podcast.pub_date)
 
-    def __post_init__(self) -> None:
-        _validate_url(self.url)
-        _validate_audio_type(self.type)
-        _validate_audio_type_length(self.type)
+    # append an "audio" item for easier lookup
 
-
-@dataclasses.dataclass
-class Item:
-    audio: Audio | None
-
-    title: str
-    guid: str
-    duration: str
-
-    raw_pub_date: str
-
-    explicit: bool = False
-    description: str = ""
-
-    link: str = ""
-    keywords: str = ""
-
-    pub_date: datetime | None = None
-
-    def __post_init__(self) -> None:
-        if (pub_date := parse_date(self.raw_pub_date)) is None:
-            raise ValidationError("missing or invalid date")
-
-        if self.audio is None:
-            raise ValidationError("missing audio")
-
-        _validate_duration_length(self.duration)
-
-        self.pub_date = pub_date
-        self.link = _clean_url(self.link)
-
-
-@dataclasses.dataclass
-class Feed:
-    title: str
-    description: str
-    creators_set: set[str]
-    cover_url: str | None
-    categories: list[str]
-    items: list[Item]
-
-    explicit: bool = False
-
-    language: str = "en"
-    link: str = ""
-    creators: str = ""
-
-    pub_date: datetime | None = None
-
-    def __post_init__(self) -> None:
-        if len(self.items) == 0:
-            raise ValidationError("Must be at least one item")
-
-        self.link = _clean_url(self.link)
-
-        self.language = (
-            self.language.replace("-", "").strip()[:2] if self.language else "en"
-        ).lower()
-
-        self.pub_date = self.get_pub_date()
-        self.creators = self.get_creators()
-
-    def get_creators(self) -> str:
-        return ", ".join(
-            {
-                c
-                for c in {
-                    c.lower(): c for c in [c.strip() for c in self.creators_set]
-                }.values()
-                if c
-            }
-        )
-
-    def get_pub_date(self) -> datetime | None:
-        now = timezone.now()
-        try:
-            return max(item.pub_date for item in self.items if item.pub_date < now)
-        except ValueError:
-            return None
-
-
-def parse_feed(raw: bytes) -> Feed:
-
-    try:
-        if (
-            rss := lxml.etree.fromstring(
-                raw,
-                parser=lxml.etree.XMLParser(
-                    strip_cdata=False,
-                    ns_clean=True,
-                    recover=True,
-                    encoding="utf-8",
-                ),
-            )
-        ) is None:
-            raise RssParserError("No RSS content found")
-        if (channel := rss.find("channel")) is None:
-            raise RssParserError("RSS does not contain <channel />")
-
-        return FeedParser(channel).parse()
-    except (
-        ValidationError,
-        XMLSyntaxError,
-    ) as e:
-        raise RssParserError from e
-
-
-class RssParser:
-    NAMESPACES = {
-        "atom": "http://www.w3.org/2005/Atom",  # NOSONAR
-        "content": "http://purl.org/rss/1.0/modules/content/",  # NOSONAR
-        "dc": "http://purl.org/dc/elements/1.1/",  # NOSONAR
-        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",  # NOSONAR
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",  # NOSONAR
-        "media": "http://search.yahoo.com/mrss/",  # NOSONAR
-        "podcast": "https://podcastindex.org/namespace/1.0",  # NOSONAR
-        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",  # NOSONAR
-    }
-
-    def __init__(self, tag: ElementBase):
-        self.tag = tag
-
-    def parse_tag(self, xpath: str) -> ElementBase | None:
-        return self.tag.find(xpath, self.NAMESPACES)
-
-    def parse_tags(self, xpath: str) -> list[ElementBase]:
-        return self.tag.findall(xpath, self.NAMESPACES)
-
-    def parse_attribute(self, xpath: str, attr: str) -> str | None:
-        if (tag := self.parse_tag(xpath)) is None:
-            return None
-        try:
-            return tag.attrib[attr]
-        except KeyError:
-            return None
-
-    def parse_attribute_list(self, xpath: str, attr: str) -> list[str]:
-        return [
-            (tag.attrib[attr] or "")
-            for tag in self.parse_tags(xpath)
-            if attr in tag.attrib
+    items = [
+        item
+        for item in [
+            feedparser.FeedParserDict({**item, "audio": get_audio_enclosure(item)})
+            for item in result.entries
         ]
+        if item.audio
+    ]
 
-    def parse_text(self, xpath):
-        if (tag := self.parse_tag(xpath)) is None:
-            return ""
-        return tag.text or ""
+    if not items:
+        return []
 
-    def parse_text_list(self, xpath):
-        return [(item.text or "") for item in self.parse_tags(xpath)]
+    feed = result.feed
 
-    def parse_explicit(self):
-        return self.parse_text("itunes:explicit").lower() == "yes"
+    now = timezone.now()
 
+    # timestamps
+    podcast.etag = result.get("etag", "")
+    podcast.pub_date = parse_date(result.feed.published)
+    podcast.last_updated = now
 
-class FeedParser(RssParser):
-    def parse(self) -> Feed:
-        return Feed(
-            title=self.parse_text("title"),
-            language=self.parse_text("language"),
-            link=self.parse_text("link"),
-            categories=self.parse_attribute_list(".//itunes:category", "text"),
-            creators_set=set(self.parse_creators()),
-            cover_url=self.parse_cover_url(),
-            description=self.parse_description(),
-            explicit=self.parse_explicit(),
-            items=list(self.parse_items()),
-        )
+    # description
+    podcast.title = feed.title
+    podcast.description = feed.description
+    podcast.link = feed.link
+    podcast.language = feed.language
+    podcast.explicit = feed.itunes_explicit
+    podcast.creators = " ".join({author.name for author in feed.authors})
 
-    def parse_cover_url(self) -> str | None:
-        return (
-            self.parse_attribute("itunes:image", "href")
-            or self.parse_text("image/url")
-            or self.parse_attribute("googleplay:image", "href")
-        )
+    parse_categories(podcast, feed, items)
 
-    def parse_description(self) -> str | None:
-        return (
-            self.parse_text("description")
-            or self.parse_text("googleplay:description")
-            or self.parse_text("itunes:summary")
-            or self.parse_text("itunes:subtitle")
-        )
+    # reset errors
+    podcast.sync_error = ""
+    podcast.num_retries = 0
 
-    def parse_creators(self) -> list[str]:
-        return self.parse_text_list("itunes:owner/itunes:name") + self.parse_text_list(
-            "itunes:author"
-        )
+    if image := fetch_cover_image(podcast, feed):
+        podcast.cover_image = image
+        podcast.cover_image_date = now
 
-    def parse_items(self) -> Generator[Item, None, None]:
+    podcast.save()
 
-        guids = set()
-
-        for parser in [ItemParser(tag) for tag in self.parse_tags("item")]:
-            try:
-                item = parser.parse()
-                if item.guid not in guids:
-                    yield item
-                guids.add(item.guid)
-            except ValidationError:
-                pass
+    return sync_episodes(podcast, items)
 
 
-class ItemParser(RssParser):
-    def parse(self) -> Item:
-        return Item(
-            guid=self.parse_guid(),
-            title=self.parse_text("title"),
-            duration=self.parse_text("itunes:duration"),
-            link=self.parse_text("link"),
-            raw_pub_date=self.parse_text("pubDate"),
-            explicit=self.parse_explicit(),
-            audio=self.parse_audio(),
-            description=self.parse_description(),
-            keywords=self.parse_keywords(),
-        )
+def fetch_cover_image(
+    podcast: Podcast, feed: feedparser.FeedParserDict
+) -> ImageFile | None:
 
-    def parse_guid(self) -> str:
-        return self.parse_text("guid") or self.parse_text("itunes:episode")
+    if podcast.cover_image:
+        return None
 
-    def parse_audio(self) -> Audio | None:
-
-        if (enclosure := self.parse_tag("enclosure")) is None:
-            return None
-
-        url = enclosure.attrib.get("url")
-
-        if not (media_type := enclosure.attrib.get("type")):
-            media_type, _ = mimetypes.guess_type(url)
-
-        if length := enclosure.attrib.get("length"):
-            try:
-                length = round(float(length.replace(",", "")))
-            except ValueError:
-                length = None
-
-        return Audio(length=length, type=media_type, url=url)
-
-    def parse_description(self) -> str:
-
-        for tagname in (
-            "content:encoded",
-            "description",
-            "googleplay:description",
-            "itunes:summary",
-            "itunes:subtitle",
-        ):
-            if value := self.parse_text(tagname).strip():
-                return value
-
-        return ""
-
-    def parse_keywords(self) -> str:
-        rv = self.parse_text_list("category")
-        if keywords := self.parse_text("itunes:keywords"):
-            rv.append(keywords)
-        return " ".join(rv)
-
-
-def _clean_url(url: str | None) -> str:
-
-    if not url:
-        return ""
-
-    # links often just consist of domain: try prefixing http://
-    if not url.startswith("http"):
-        url = "http://" + url  # NOSONAR
-
-    # if not a valid URL, just make empty string
     try:
-        _validate_url(url)
-        _validate_url_length(url)
-    except (TypeError, ValidationError):
-        return ""
+        response = requests.get(feed.image.href, timeout=5, stream=True)
+    except (AttributeError, requests.RequestException):
+        return None
 
-    return url
+    if (img := create_image_obj(response.content)) is None:
+        return None
+
+    image_file = ImageFile(img, name=make_filename(response))
+
+    try:
+        validate_image_file_extension(image_file)
+    except ValidationError:
+        return None
+
+    return image_file
 
 
-# validators
+def sync_episodes(
+    podcast: Podcast, items: list[feedparser.FeedParserDict]
+) -> list[Episode]:
+    episodes = Episode.objects.filter(podcast=podcast)
 
-_validate_audio_type_length = MaxLengthValidator(60)
-_validate_audio_type = RegexValidator(r"^audio/*")
-_validate_duration_length = MaxLengthValidator(30)
-_validate_url_length = MaxLengthValidator(500)
-_validate_url = URLValidator(schemes=["http", "https"])
+    # remove any episodes that may have been deleted on the podcast
+    episodes.exclude(guid__in=[item.id for item in items]).delete()
+    guids = episodes.values_list("guid", flat=True)
+
+    return Episode.objects.bulk_create(
+        [
+            Episode(
+                podcast=podcast,
+                guid=item.id,
+                title=item.title,
+                description=item.description,
+                link=item.link,
+                media_url=item.audio.href,
+                media_type=item.audio.type,
+                length=item.audio.length or None,
+                pub_date=parse_date(item.published),
+                duration=item.get("itunes_duration", ""),
+                explicit=item.get("itunes_explicit", False),
+                keywords=" ".join([tag.term for tag in item.get("tags", [])]),
+            )
+            for item in items
+            if item.id not in guids
+        ],
+        ignore_conflicts=True,
+    )
+
+
+def parse_categories(
+    podcast: Podcast,
+    feed: feedparser.FeedParserDict,
+    items: list[feedparser.FeedParserDict],
+) -> None:
+    """Extract keywords from text content for recommender
+    and map to categories"""
+    categories_dct = get_categories_dict()
+
+    tags = [tag.term for tag in feed.tags]
+
+    categories = [categories_dct[name] for name in tags if name in categories_dct]
+
+    podcast.keywords = " ".join(name for name in tags if name not in categories_dct)
+    podcast.extracted_text = extract_text(podcast, categories, items)
+    podcast.categories.set(categories)  # type: ignore
+
+
+def extract_text(
+    podcast: Podcast,
+    categories: list[Category],
+    items: list[feedparser.FeedParserDict],
+) -> str:
+    text = " ".join(
+        [
+            podcast.title,
+            podcast.description,
+            podcast.keywords,
+            podcast.creators,
+        ]
+        + [c.name for c in categories]
+        + [item.title for item in items][:6]
+    )
+    return " ".join(extract_keywords(podcast.language, text))
+
+
+def make_filename(response: requests.Response) -> str:
+    _, ext = os.path.splitext(urlparse(response.url).path)
+
+    if ext is None:
+        try:
+            content_type = response.headers["Content-Type"].split(";")[0]
+        except KeyError:
+            content_type = mimetypes.guess_type(response.url)[0] or ""
+
+        ext = mimetypes.guess_extension(content_type) or ""
+
+    return uuid.uuid4().hex + ext
+
+
+def create_image_obj(raw: bytes) -> Image:
+    try:
+        img = Image.open(io.BytesIO(raw))
+
+        if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
+            img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
+
+        # remove Alpha channel
+        img = img.convert("RGB")
+
+        fp = io.BytesIO()
+        img.seek(0)
+        img.save(fp, "PNG")
+
+        return fp
+
+    except (
+        DecompressionBombError,
+        UnidentifiedImageError,
+    ):
+        return None
+
+
+def get_audio_enclosure(
+    item: feedparser.FeedParserDict,
+) -> feedparser.FeedParserDict | None:
+    if not item.enclosures:
+        return None
+    for enc in item.enclosures:
+        if enc.type.startswith("audio/") and enc.href:
+            return enc
+    return None

@@ -15,45 +15,10 @@ from model_utils.models import TimeStampedModel
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
-from audiotrails.podcasts.feed_parser import Feed
 from audiotrails.podcasts.models import Podcast
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def sync_rss_feed(
-        self,
-        podcast: Podcast,
-        feed: Feed,
-    ) -> list[Episode]:
-        episodes = self.filter(podcast=podcast)
-
-        # remove any episodes that may have been deleted on the podcast
-        episodes.exclude(guid__in=[item.guid for item in feed.items]).delete()
-
-        guids = episodes.values_list("guid", flat=True)
-
-        return self.bulk_create(
-            [
-                self.model(
-                    podcast=podcast,
-                    pub_date=item.pub_date,
-                    guid=item.guid,
-                    title=item.title,
-                    duration=item.duration,
-                    explicit=item.explicit,
-                    description=item.description,
-                    keywords=item.keywords,
-                    link=item.link,
-                    media_url=item.audio.url,
-                    media_type=item.audio.type,
-                    length=item.audio.length or None,
-                )
-                for item in feed.items
-                if item.guid not in guids
-            ],
-            ignore_conflicts=True,
-        )
-
     def with_current_time(self, user: AnyUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""

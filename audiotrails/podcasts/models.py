@@ -1,54 +1,32 @@
 from __future__ import annotations
 
 import dataclasses
-import io
-import mimetypes
-import os
-import uuid
 
 from datetime import datetime
 from decimal import Decimal
-from functools import lru_cache
-from typing import TYPE_CHECKING
-from urllib.parse import urlparse
-
-import requests
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
-from django.core.validators import MinLengthValidator, validate_image_file_extension
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
-from PIL import Image
 from PIL import ImageFile as PILImageFile
-from PIL import UnidentifiedImageError
-from PIL.Image import DecompressionBombError
-from requests.structures import CaseInsensitiveDict
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
-from audiotrails.podcasts.date_parser import parse_date
-from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
-from audiotrails.podcasts.text_parser import extract_keywords
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
-MAX_IMAGE_SIZE = 1000
 THUMBNAIL_SIZE = 200
-
-if TYPE_CHECKING:
-    from audiotrails.episodes.models import Episode
 
 
 @dataclasses.dataclass
@@ -231,185 +209,6 @@ class Podcast(models.Model):
 
         return _cover_image_placeholder
 
-    def sync_rss_feed(self, force_update: bool = False) -> list[Episode]:
-
-        etag, feed, do_sync = self.parse_rss_feed(force_update)
-
-        if not do_sync:
-            return []
-
-        now = timezone.now()
-
-        # timestamps
-        self.etag = etag
-        self.pub_date = feed.pub_date
-        self.last_updated = now
-
-        # description
-        self.title = feed.title
-        self.description = feed.description
-        self.link = feed.link
-        self.language = feed.language
-        self.explicit = feed.explicit
-        self.creators = feed.creators
-
-        self.parse_categories(feed)
-
-        # reset errors
-        self.sync_error = ""
-        self.num_retries = 0
-
-        self.fetch_cover_image(feed, force_update)
-
-        self.save()
-
-        return self.episode_set.sync_rss_feed(self, feed)
-
-    def parse_rss_feed(self, force_update: bool) -> tuple[str, Feed | None, bool]:
-
-        try:
-            headers = requests.head(self.rss, timeout=5).headers
-
-            etag = headers.get("ETag", "")
-            last_modified = _parse_date_header(headers, "Last-Modified", "Date")
-
-            if not self.should_parse_rss_feed(
-                etag, last_modified, force_update=force_update
-            ):
-                return etag, None, False
-
-            response = requests.get(self.rss, verify=True, stream=True, timeout=5)
-            feed = parse_feed(response.content)
-            return etag, feed, self.should_sync_rss_feed(feed, force_update)
-
-        except (RssParserError, requests.RequestException) as e:
-            self.sync_error = str(e)
-            self.num_retries += 1
-            self.save()
-            raise
-
-    def fetch_cover_image(self, feed: Feed, force_update: bool) -> bool:
-
-        if not self.should_fetch_cover_image(feed.cover_url, force_update):
-            return False
-
-        try:
-            response = requests.get(feed.cover_url, timeout=5, stream=True)
-        except requests.RequestException:
-            return False
-
-        if (img := _create_image_obj(response.content)) is None:
-            return False
-
-        filename = _create_random_filename_from_response(response)
-
-        image_file = ImageFile(img, name=filename)
-
-        try:
-            validate_image_file_extension(image_file)
-        except ValidationError:
-            return False
-
-        self.cover_image = image_file
-        self.cover_image_date = timezone.now()
-
-        return True
-
-    def should_parse_rss_feed(
-        self, etag: str, last_modified: datetime | None, force_update: bool
-    ) -> bool:
-        """Does preliminary check based on headers to determine whether to update this podcast.
-        We also check the feed date info, but this is an optimization so we don't have to fetch and parse
-        the RSS first."""
-        if force_update or self.pub_date is None:
-            return True
-
-        return self.is_etag_changed(etag) or self.is_modified_since(last_modified)
-
-    def should_sync_rss_feed(self, feed: Feed | None, force_update: bool) -> bool:
-        """Check if we should sync the RSS feed. This is called when we have already parsed the
-        feed."""
-
-        if feed.pub_date is None:
-            return False
-
-        return any(
-            (
-                force_update,
-                self.last_updated is None,
-                self.last_updated and self.last_updated < feed.pub_date,
-            )
-        )
-
-    def should_fetch_cover_image(self, url: str, force_update: bool) -> bool:
-        """Check if cover image should be updated."""
-        if not url:
-            return False
-
-        if force_update or not self.cover_image or not self.cover_image_date:
-            return True
-
-        return self.is_image_modified_since(url)
-
-    def is_etag_changed(self, etag: str) -> bool:
-        return etag != self.etag if etag else False
-
-    def is_modified_since(self, last_modified: datetime | None) -> bool:
-        if None in (last_modified, self.pub_date):
-            return False
-        return last_modified > self.pub_date
-
-    def is_image_modified_since(self, url: str) -> bool:
-        # conservative estimate: image generation/fetching is expensive so only
-        # refetch if absolutely necessary
-
-        try:
-            headers = requests.head(url, timeout=5).headers
-        except requests.RequestException:
-            return False
-
-        if (
-            last_modified := _parse_date_header(headers, "Last-Modified")
-        ) and last_modified > self.cover_image_date:
-            return True
-
-        # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
-
-        if date := _parse_date_header(headers, "Date"):
-            return (date - self.cover_image_date).days > 30
-
-        return False
-
-    def parse_categories(self, feed: Feed) -> None:
-        """Extract keywords from text content for recommender
-        and map to categories"""
-        categories_dct = get_categories_dict()
-
-        categories = [
-            categories_dct[name] for name in feed.categories if name in categories_dct
-        ]
-
-        self.keywords = " ".join(
-            name for name in feed.categories if name not in categories_dct
-        )
-
-        self.extracted_text = self.extract_text(feed, categories)
-
-        self.categories.set(categories)  # type: ignore
-
-    def extract_text(self, feed: Feed, categories: list[Category]) -> str:
-        text = " ".join(
-            [
-                self.title,
-                self.description,
-                self.keywords,
-                self.creators,
-            ]
-            + [c.name for c in categories]
-            + [item.title for item in feed.items][:6]
-        )
-        return " ".join(extract_keywords(self.language, text))
-
 
 class Follow(TimeStampedModel):
 
@@ -499,52 +298,3 @@ class Recommendation(models.Model):
                 fields=["podcast", "recommended"], name="unique_recommendation"
             ),
         ]
-
-
-@lru_cache
-def get_categories_dict() -> dict[str, Category]:
-    return Category.objects.in_bulk(field_name="name")
-
-
-def _create_random_filename_from_response(response: requests.Response) -> str:
-    _, ext = os.path.splitext(urlparse(response.url).path)
-
-    if ext is None:
-        try:
-            content_type = response.headers["Content-Type"].split(";")[0]
-        except KeyError:
-            content_type = mimetypes.guess_type(response.url)[0] or ""
-
-        ext = mimetypes.guess_extension(content_type) or ""
-
-    return uuid.uuid4().hex + ext
-
-
-def _create_image_obj(raw: bytes) -> Image:
-    try:
-        img = Image.open(io.BytesIO(raw))
-
-        if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
-            img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
-
-        # remove Alpha channel
-        img = img.convert("RGB")
-
-        fp = io.BytesIO()
-        img.seek(0)
-        img.save(fp, "PNG")
-
-        return fp
-
-    except (
-        DecompressionBombError,
-        UnidentifiedImageError,
-    ):
-        return None
-
-
-def _parse_date_header(headers: CaseInsensitiveDict, *names: str) -> datetime | None:
-    for name in names:
-        if dt := parse_date(headers.get(name, None)):
-            return dt
-    return None
