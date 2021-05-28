@@ -312,10 +312,12 @@ class Podcast(models.Model):
         except requests.RequestException:
             return None
 
-        image_file = ImageFile(
-            _create_image_obj(response.content),
-            name=_create_random_filename_from_response(response),
-        )
+        if (img := _create_image_obj(response.content)) is None:
+            return None
+
+        filename = _create_random_filename_from_response(response)
+
+        image_file = ImageFile(img, name=filename)
 
         try:
             validate_image_file_extension(image_file)
@@ -522,7 +524,8 @@ def _create_image_obj(raw: bytes) -> Image:
         fp = io.BytesIO()
         img.seek(0)
         img.save(fp, "PNG")
-        return img
+
+        return fp
 
     except (
         DecompressionBombError,
