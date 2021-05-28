@@ -27,12 +27,6 @@ class Command(BaseCommand):
             help="Sync each podcast using celery task",
         )
 
-        parser.add_argument(
-            "--force-update",
-            action="store_true",
-            help="Force update",
-        )
-
     def handle(self, *args, **options) -> None:
 
         if options["run_job"]:
@@ -44,20 +38,17 @@ class Command(BaseCommand):
         if options["no_pub_date"]:
             podcasts = podcasts.filter(pub_date__isnull=True)
 
-        force_update = options["force_update"]
         use_celery = options["use_celery"]
 
         for podcast in podcasts:
-            self.sync_podcast(podcast, force_update, use_celery)
+            self.sync_podcast(podcast, use_celery)
 
-    def sync_podcast(
-        self, podcast: Podcast, force_update: bool, use_celery: bool
-    ) -> None:
+    def sync_podcast(self, podcast: Podcast, use_celery: bool) -> None:
         if use_celery:
             self.stdout.write(f"Create sync task for {podcast}")
-            sync_podcast_feed.delay(rss=podcast.rss, force_update=force_update)
+            sync_podcast_feed.delay(rss=podcast.rss)
         else:
             try:
-                sync_podcast_feed(rss=podcast.rss, force_update=force_update)
+                sync_podcast_feed(rss=podcast.rss)
             except Exception as e:
                 self.stdout.write(self.style.ERROR(str(e)))
