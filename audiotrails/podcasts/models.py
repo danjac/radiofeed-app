@@ -40,7 +40,7 @@ from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
-from audiotrails.podcasts.recommender.text_parser import extract_keywords
+from audiotrails.podcasts.text_parser import extract_keywords
 
 PILImageFile.LOAD_TRUNCATED_IMAGES = True
 MAX_IMAGE_SIZE = 1000

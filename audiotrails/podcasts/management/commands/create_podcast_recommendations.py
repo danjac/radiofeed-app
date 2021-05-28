@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from audiotrails.podcasts.recommender.api import recommend
+from audiotrails.podcasts.recommender import recommend
 
 
 class Command(BaseCommand):

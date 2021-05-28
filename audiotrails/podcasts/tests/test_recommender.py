@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 
 from audiotrails.podcasts.factories import (
     CategoryFactory,
@@ -6,8 +6,7 @@ from audiotrails.podcasts.factories import (
     RecommendationFactory,
 )
 from audiotrails.podcasts.models import Recommendation
-from audiotrails.podcasts.recommender.api import recommend
-from audiotrails.podcasts.recommender.text_parser import clean_text, extract_keywords
+from audiotrails.podcasts.recommender import recommend
 
 
 class PodcastRecommenderTests(TestCase):
@@ -75,25 +74,3 @@ class PodcastRecommenderTests(TestCase):
         )
         self.assertEqual(recommendations.count(), 1)
         self.assertEqual(recommendations[0].recommended, podcast_2)
-
-
-class ExtractKeywordsTests(SimpleTestCase):
-    def test_extract(self) -> None:
-        self.assertEqual(
-            extract_keywords("en", "the cat sits on the mat"),
-            [
-                "cat",
-                "sits",
-                "mat",
-            ],
-        )
-
-
-class CleanTextTests(SimpleTestCase):
-    def test_remove_html_tags(self) -> None:
-        self.assertEqual(clean_text("<p>test</p>"), "test")
-
-    def test_remove_numbers(self) -> None:
-        self.assertEqual(
-            clean_text("Tuesday, September 1st, 2020"), "Tuesday September st "
-        )

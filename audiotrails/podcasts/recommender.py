@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from audiotrails.podcasts.models import Category, Podcast, Recommendation
-from audiotrails.podcasts.recommender.text_parser import get_stopwords
+from audiotrails.podcasts.text_parser import get_stopwords
 
 logger = logging.getLogger(__name__)
 
