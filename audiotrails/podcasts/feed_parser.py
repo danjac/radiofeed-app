@@ -108,8 +108,8 @@ def sync_podcast(
 
     # description
 
-    podcast.title = result.feed.title
-    podcast.link = result.feed.link
+    podcast.title = first_str(result.feed.title)
+    podcast.link = first_str(result.feed.link)
     podcast.language = first_str(result.feed.language, "en")[:2]
     podcast.description = first_str(result.feed.content, result.feed.summary)
 
@@ -147,10 +147,10 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         podcast=podcast,
         guid=item.id,
         title=item.title,
-        link=item.link,
         media_url=item.audio.href,
         media_type=item.audio.type,
-        length=item.audio.length or None,
+        length=first_int(item.audio.length),
+        link=first_str(item.link),
         explicit=first_bool(item.itunes_explicit),
         description=first_str(item.description, item.summary),
         duration=first_str(item.itunes_duration),
@@ -233,7 +233,9 @@ def create_image_obj(raw: bytes) -> Image:
 
 def parse_items(result: box.Box) -> list[box.Box]:
     return [
-        item for item in [with_audio(item) for item in result.entries] if item.audio
+        item
+        for item in [with_audio(item) for item in result.entries]
+        if item.audio and item.id
     ]
 
 
@@ -265,3 +267,4 @@ def first(*values: Any, convert: Callable, default=None) -> Any:
 first_str = functools.partial(first, convert=force_str, default="")
 first_date = functools.partial(first, convert=parse_date, default=None)
 first_bool = functools.partial(first, convert=bool, default=False)
+first_int = functools.partial(first, convert=int, default=None)
