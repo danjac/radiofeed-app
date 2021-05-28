@@ -340,12 +340,18 @@ class Podcast(models.Model):
         """Does preliminary check based on headers to determine whether to update this podcast.
         We also check the feed date info, but this is an optimization so we don't have to fetch and parse
         the RSS first."""
-        return bool(
-            force_update
-            or self.pub_date is None
-            or (etag and etag != self.etag)
-            or (last_modified and last_modified > self.pub_date),
-        )
+        if force_update or self.pub_date is None:
+            return True
+
+        return self.is_etag_changed(etag) or self.is_modified_since(last_modified)
+
+    def is_etag_changed(self, etag: str) -> bool:
+        return etag != self.etag if etag else False
+
+    def is_modified_since(self, last_modified: datetime | None) -> bool:
+        if None in (last_modified, self.pub_date):
+            return False
+        return last_modified > self.pub_date
 
     def should_sync_rss_feed(
         self, pub_date: datetime | None, force_update: bool
@@ -372,8 +378,14 @@ class Podcast(models.Model):
         if force_update or not self.cover_image or not self.cover_image_date:
             return True
 
+        return self.is_image_modified_since(url)
+
+    def is_image_modified_since(self, url: str) -> bool:
         # conservative estimate: image generation/fetching is expensive so only
         # refetch if absolutely necessary
+
+        if self.cover_image_date is None:
+            return True
 
         try:
             headers = requests.head(url, timeout=5).headers
@@ -387,11 +399,8 @@ class Podcast(models.Model):
 
         # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
 
-        if (date := parse_date(headers.get("Date", None))) and (
-            date - self.cover_image_date
-        ).days > 30:
-
-            return True
+        if date := parse_date(headers.get("Date", None)):
+            return (date - self.cover_image_date).days > 30
 
         return False
 
