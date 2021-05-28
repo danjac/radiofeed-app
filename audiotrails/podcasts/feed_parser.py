@@ -51,7 +51,7 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     if not (items := parse_items(result)):
         return []
 
-    pub_date = first_date(
+    pub_date = conv_date(
         result.feed.published,
         result.feed.updated,
         *[item.published for item in items],
@@ -104,14 +104,14 @@ def sync_podcast(
     # timestamps
     podcast.last_updated = now
     podcast.pub_date = pub_date
-    podcast.etag = first_str(result.etag)
+    podcast.etag = conv_str(result.etag)
 
     # description
 
-    podcast.title = first_str(result.feed.title)
-    podcast.link = first_str(result.feed.link)
-    podcast.language = first_str(result.feed.language, "en")[:2]
-    podcast.description = first_str(result.feed.content, result.feed.summary)
+    podcast.title = conv_str(result.feed.title)
+    podcast.link = conv_str(result.feed.link)[:500]
+    podcast.language = conv_str(result.feed.language, "en")[:2]
+    podcast.description = conv_str(result.feed.content, result.feed.summary)
 
     podcast.explicit = bool(result.explicit)
     podcast.creators = parse_creators(result.feed)
@@ -150,10 +150,10 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         media_url=item.audio.href,
         media_type=item.audio.type,
         explicit=bool(item.itunes_explicit),
-        length=first_int(item.audio.length),
-        link=first_str(item.link),
-        description=first_str(item.description, item.summary),
-        duration=first_str(item.itunes_duration),
+        length=conv_int(item.audio.length),
+        link=conv_str(item.link)[:500],
+        description=conv_str(item.description, item.summary),
+        duration=conv_str(item.itunes_duration)[:30],
         pub_date=parse_date(item.published),
         keywords=" ".join(parse_tags(item)),
     )
@@ -254,24 +254,29 @@ def with_audio(
 
 def is_audio(link: box.Box) -> bool:
     return (
-        first_str(link.type).startswith("audio/")
+        conv_str(link.type).startswith("audio/")
         and link.href
         and link.rel == "enclosure"
     )
 
 
 def is_episode(item: box.Box) -> bool:
-    return item.audio and item.id and item.published
+    return bool(
+        item.audio and item.id and parse_date(item.published),
+    )
 
 
-def first(*values: Any, convert: Callable, default=None) -> Any:
+def conv(*values: Any, convert: Callable, default=None) -> Any:
     """Returns first non-falsy value, converting the item."""
     for value in values:
         if value:
-            return convert(value)
+            try:
+                return convert(value)
+            except ValueError:
+                pass
     return default
 
 
-first_str = functools.partial(first, convert=force_str, default="")
-first_date = functools.partial(first, convert=parse_date, default=None)
-first_int = functools.partial(first, convert=int, default=None)
+conv_str = functools.partial(conv, convert=force_str, default="")
+conv_date = functools.partial(conv, convert=parse_date, default=None)
+conv_int = functools.partial(conv, convert=int, default=None)
