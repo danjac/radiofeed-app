@@ -21,6 +21,7 @@ django-split-settings
 django-storages
 django-widget-tweaks
 factory-boy
+feedparser
 future
 gunicorn
 html5lib
@@ -33,6 +34,7 @@ nltk
 pandas
 psycopg2-binary
 pyopenssl
+python-box
 python-dateutil
 pytz
 pywatchman

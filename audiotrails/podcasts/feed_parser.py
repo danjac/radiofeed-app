@@ -5,9 +5,11 @@ import mimetypes
 import os
 import uuid
 
+from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse
 
+import box
 import feedparser
 import requests
 
@@ -34,17 +36,18 @@ def get_categories_dict() -> dict[str, Category]:
 
 def parse_feed(podcast: Podcast) -> list[Episode]:
 
-    result = feedparser.parse(podcast.rss, etag=podcast.etag, modified=podcast.pub_date)
-
-    # append an "audio" item for easier lookup
+    result = box.Box(
+        feedparser.parse(
+            podcast.rss,
+            etag=podcast.etag,
+            modified=podcast.pub_date,
+        ),
+        default_box=True,
+        default_box_none_transform=True,
+    )
 
     items = [
-        item
-        for item in [
-            feedparser.FeedParserDict({**item, "audio": get_audio_enclosure(item)})
-            for item in result.entries
-        ]
-        if item.audio
+        item for item in [with_audio(item) for item in result.entries] if item.audio
     ]
 
     if not items:
@@ -53,19 +56,23 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     feed = result.feed
 
     now = timezone.now()
+    pub_date = parse_pub_date(feed, items)
+
+    if pub_date is None:
+        return []
 
     # timestamps
     podcast.etag = result.get("etag", "")
-    podcast.pub_date = parse_date(result.feed.published)
     podcast.last_updated = now
+    podcast.pub_date = pub_date
 
     # description
     podcast.title = feed.title
     podcast.description = feed.description
     podcast.link = feed.link
-    podcast.language = feed.language
-    podcast.explicit = feed.itunes_explicit
-    podcast.creators = " ".join({author.name for author in feed.authors})
+    podcast.language = (feed.language or "en")[:2]
+    podcast.explicit = feed.itunes_explicit or False
+    podcast.creators = " ".join({author.name for author in feed.authors if author.name})
 
     parse_categories(podcast, feed, items)
 
@@ -82,9 +89,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     return sync_episodes(podcast, items)
 
 
-def fetch_cover_image(
-    podcast: Podcast, feed: feedparser.FeedParserDict
-) -> ImageFile | None:
+def fetch_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
 
     if podcast.cover_image:
         return None
@@ -107,9 +112,7 @@ def fetch_cover_image(
     return image_file
 
 
-def sync_episodes(
-    podcast: Podcast, items: list[feedparser.FeedParserDict]
-) -> list[Episode]:
+def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     episodes = Episode.objects.filter(podcast=podcast)
 
     # remove any episodes that may have been deleted on the podcast
@@ -128,9 +131,9 @@ def sync_episodes(
                 media_type=item.audio.type,
                 length=item.audio.length or None,
                 pub_date=parse_date(item.published),
-                duration=item.get("itunes_duration", ""),
-                explicit=item.get("itunes_explicit", False),
-                keywords=" ".join([tag.term for tag in item.get("tags", [])]),
+                duration=item.itunes_duration or "",
+                explicit=item.itunes_explicit or False,
+                keywords=" ".join([tag.term for tag in (item.tags or [])]),
             )
             for item in items
             if item.id not in guids
@@ -139,17 +142,12 @@ def sync_episodes(
     )
 
 
-def parse_categories(
-    podcast: Podcast,
-    feed: feedparser.FeedParserDict,
-    items: list[feedparser.FeedParserDict],
-) -> None:
+def parse_categories(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
     """Extract keywords from text content for recommender
     and map to categories"""
     categories_dct = get_categories_dict()
 
     tags = [tag.term for tag in feed.tags]
-
     categories = [categories_dct[name] for name in tags if name in categories_dct]
 
     podcast.keywords = " ".join(name for name in tags if name not in categories_dct)
@@ -160,7 +158,7 @@ def parse_categories(
 def extract_text(
     podcast: Podcast,
     categories: list[Category],
-    items: list[feedparser.FeedParserDict],
+    items: list[box.Box],
 ) -> str:
     text = " ".join(
         [
@@ -212,12 +210,21 @@ def create_image_obj(raw: bytes) -> Image:
         return None
 
 
-def get_audio_enclosure(
-    item: feedparser.FeedParserDict,
-) -> feedparser.FeedParserDict | None:
-    if not item.enclosures:
-        return None
-    for enc in item.enclosures:
-        if enc.type.startswith("audio/") and enc.href:
-            return enc
+def parse_pub_date(feed: box.Box, items: list[box.Box]) -> datetime | None:
+    if feed.published:
+        return parse_date(feed.published)
+    if feed.updated:
+        return parse_date(feed.updated)
+    pub_dates = [dt for dt in [parse_date(item.published) for item in items] if dt]
+    if pub_dates:
+        return max(pub_dates)
     return None
+
+
+def with_audio(
+    item: box.Box,
+) -> box.Box:
+    for link in (item.links or []) + (item.enclosures or []):
+        if link.type.startswith("audio/") and link.href and link.rel == "enclosure":
+            return item + box.Box(audio=link)
+    return item
