@@ -51,7 +51,9 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     if not (items := parse_items(result)):
         return []
 
-    pub_date = parse_pub_date(result.feed, items)
+    pub_date = first_date(
+        result.feed.published, result.feed.updated, get_latest_item_pub_date(items)
+    )
 
     if pub_date is None:
         return []
@@ -109,7 +111,7 @@ def sync_podcast(
     podcast.language = first_str(result.feed.language, "en")[:2]
     podcast.description = first_str(result.feed.content, result.feed.summary)
 
-    podcast.explicit = result.feed.itunes_explicit or False
+    podcast.explicit = first_bool(result.explicit)
     podcast.creators = parse_creators(result.feed)
 
     parse_categories(podcast, result.feed, items)
@@ -147,7 +149,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         media_url=item.audio.href,
         media_type=item.audio.type,
         length=item.audio.length or None,
-        explicit=item.itunes_explicit or False,
+        explicit=first_bool(item.itunes_explicit),
         description=first_str(item.description, item.summary),
         duration=first_str(item.itunes_duration),
         pub_date=parse_date(item.published),
@@ -227,15 +229,6 @@ def create_image_obj(raw: bytes) -> Image:
         return None
 
 
-def parse_pub_date(feed: box.Box, items: list[box.Box]) -> datetime | None:
-
-    return (
-        parse_date(feed.published)
-        or parse_date(feed.updated)
-        or get_latest_item_pub_date(items)
-    )
-
-
 def get_latest_item_pub_date(items: list[box.Box]) -> datetime | None:
 
     pub_dates = [dt for dt in [parse_date(item.published) for item in items] if dt]
@@ -278,3 +271,4 @@ def first(*values: Any, convert: Callable, default=None) -> Any:
 
 first_str = functools.partial(first, convert=force_str, default="")
 first_date = functools.partial(first, convert=parse_date, default=None)
+first_bool = functools.partial(first, convert=bool, default=False)
