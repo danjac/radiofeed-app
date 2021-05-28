@@ -154,7 +154,8 @@ class PodcastModelTests(TestCase):
 
 
 class BaseMockResponse:
-    def __init__(self, raises: bool = False):
+    def __init__(self, url: str, raises: bool = False):
+        self.url = url
         self.raises = raises
 
     def raise_for_status(self) -> None:
@@ -163,8 +164,8 @@ class BaseMockResponse:
 
 
 class MockHeaderResponse(BaseMockResponse):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, url: str, raises: bool = False):
+        super().__init__(url, raises)
         self.headers = {
             "ETag": uuid.uuid4().hex,
             "Last-Modified": "Sun, 05 Jul 2020 19:21:33 GMT",
@@ -172,8 +173,8 @@ class MockHeaderResponse(BaseMockResponse):
 
 
 class MockResponse(BaseMockResponse):
-    def __init__(self, mock_file: str = None, raises: bool = False):
-        super().__init__(raises)
+    def __init__(self, url: str, mock_file: str = None, raises: bool = False):
+        super().__init__(url, raises)
         self.headers = {
             "ETag": uuid.uuid4().hex,
             "Last-Modified": "Sun, 05 Jul 2020 19:21:33 GMT",
@@ -203,8 +204,12 @@ class PodcastsRssSyncTests(TestCase):
         podcast.refresh_from_db()
         self.assertEqual(podcast.num_retries, 1)
 
-    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse(rss))
+    @patch(
+        "requests.get",
+        autospec=True,
+        return_value=MockResponse(rss, "rss_mock.xml"),
+    )
     def test_parse(self, *mocks: Mock) -> None:
         [
             CategoryFactory(name=name)
@@ -237,8 +242,12 @@ class PodcastsRssSyncTests(TestCase):
         self.assertEqual(podcast.categories.count(), 6)
         self.assertEqual(podcast.episode_set.count(), 20)
 
-    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse(rss))
+    @patch(
+        "requests.get",
+        autospec=True,
+        return_value=MockResponse(rss, "rss_mock.xml"),
+    )
     def test_parse_if_already_updated(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
             rss=self.rss,
@@ -256,8 +265,12 @@ class PodcastsRssSyncTests(TestCase):
         self.assertNotEqual(podcast.title, "Mysterious Universe")
         self.assertEqual(podcast.episode_set.count(), 0)
 
-    @patch("requests.head", autospec=True, return_value=MockHeaderResponse())
-    @patch("requests.get", autospec=True, return_value=MockResponse("rss_mock.xml"))
+    @patch("requests.head", autospec=True, return_value=MockHeaderResponse(rss))
+    @patch(
+        "requests.get",
+        autospec=True,
+        return_value=MockResponse(rss, "rss_mock.xml"),
+    )
     def test_parse_existing_episodes(self, *mocks: Mock) -> None:
         podcast = PodcastFactory(
             rss=self.rss,
