@@ -7,7 +7,6 @@ from django.utils import timezone
 
 from audiotrails.podcasts import tasks
 from audiotrails.podcasts.factories import PodcastFactory
-from audiotrails.podcasts.feed_parser import RssParserError
 from audiotrails.users.factories import UserFactory
 
 
@@ -82,27 +81,18 @@ class SyncPodcastFeedsTests(TestCase):
 
 class TestSyncPodcastFeed(TestCase):
     @patch(
-        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
+        "audiotrails.podcasts.tasks.parse_feed",
         autospec=True,
     )
-    def test_no_podcast_found(self, mock_parse_rss: Mock) -> None:
+    def test_no_podcast_found(self, mock_parse_feed: Mock) -> None:
         tasks.sync_podcast_feed(12345)
-        mock_parse_rss.assert_not_called()
+        mock_parse_feed.assert_not_called()
 
     @patch(
-        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
+        "audiotrails.podcasts.tasks.parse_feed",
         autospec=True,
     )
-    def test_parser_exception(self, mock_parse_rss: Mock) -> None:
-        podcast = PodcastFactory()
-        mock_parse_rss.side_effect = RssParserError("Boom")
-        tasks.sync_podcast_feed(podcast.rss)
-
-    @patch(
-        "audiotrails.podcasts.models.Podcast.sync_rss_feed",
-        autospec=True,
-    )
-    def test_ok(self, mock_parse_rss: Mock) -> None:
+    def test_ok(self, mock_parse_feed: Mock) -> None:
         podcast = PodcastFactory()
         tasks.sync_podcast_feed(podcast.rss)
-        mock_parse_rss.assert_called()
+        mock_parse_feed.assert_called()

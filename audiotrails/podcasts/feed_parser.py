@@ -34,11 +34,11 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast) -> list[Episode]:
+def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
 
     result = box.Box(
         feedparser.parse(
-            podcast.rss,
+            src or podcast.rss,
             etag=podcast.etag,
             modified=podcast.pub_date,
         ),
@@ -90,12 +90,12 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
 def fetch_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
 
-    if podcast.cover_image:
+    if podcast.cover_image or not feed.image.href:
         return None
 
     try:
         response = requests.get(feed.image.href, timeout=5, stream=True)
-    except (AttributeError, requests.RequestException):
+    except requests.RequestException:
         return None
 
     if (img := create_image_obj(response.content)) is None:

@@ -1,130 +1,50 @@
-from django.core.exceptions import ValidationError
-from django.test import SimpleTestCase
+import pathlib
 
-from audiotrails.podcasts.feed_parser import Audio, Feed, Item
+from django.test import TestCase
 
-
-class AudioModelTests(SimpleTestCase):
-    url = "https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3"
-
-    def test_audio(self) -> None:
-        Audio(type="audio/mpeg", url=self.url)
-
-    def test_not_audio(self) -> None:
-        self.assertRaises(ValidationError, Audio, type="text/xml", url=self.url)
+from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
+from audiotrails.podcasts.feed_parser import get_categories_dict, parse_feed
 
 
-class FeedModelTests(SimpleTestCase):
-    website = "http://reddit.com"
+class FeedParserTests(TestCase):
 
-    def setUp(self) -> None:
-        self.item = Item(
-            audio=Audio(
-                type="audio/mpeg",
-                rel="enclosure",
-                url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/TSK8060512733.mp3",
-            ),
-            title="test",
-            guid="test",
-            raw_pub_date="Fri, 12 Jun 2020 17:33:46 +0000",
-            duration="2000",
-        )
+    mock_file = "rss_mock.xml"
+    rss = "https://mysteriousuniverse.org/feed/podcast/"
 
-    def test_language(self) -> None:
+    @classmethod
+    def setUpTestData(cls) -> None:
 
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link=self.website,
-            language="en-gb",
-            categories=[],
-        )
+        [
+            CategoryFactory(name=name)
+            for name in (
+                "Philosophy",
+                "Science",
+                "Social Sciences",
+                "Society & Culture",
+                "Spirituality",
+                "Religion & Spirituality",
+            )
+        ]
 
-        self.assertEqual(feed.language, "en")
+        cls.podcast = PodcastFactory(cover_image=None, pub_date=None)
 
-    def test_language_with_spaces(self) -> None:
+    def setUp(self):
+        self.content = open(
+            pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
+        ).read()
 
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link=self.website,
-            language=" en-us",
-            categories=[],
-        )
+    def tearDown(self) -> None:
+        get_categories_dict.cache_clear()
 
-        self.assertEqual(feed.language, "en")
+    def test_parse_feed(self, *mocks):
 
-    def test_language_with_single_value(self) -> None:
+        episodes = parse_feed(self.podcast, src=self.content)
 
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link=self.website,
-            language="fi",
-            categories=[],
-        )
+        self.assertEqual(len(episodes), 20)
 
-        self.assertEqual(feed.language, "fi")
+        self.podcast.refresh_from_db()
 
-    def test_language_with_empty(self) -> None:
-
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link=self.website,
-            language="",
-            categories=[],
-        )
-
-        self.assertEqual(feed.language, "en")
-
-    def test_valid_link(self) -> None:
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link=self.website,
-            categories=[],
-        )
-
-        self.assertEqual(feed.link, self.website)
-
-    def test_empty_link(self) -> None:
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link="",
-            categories=[],
-        )
-
-        self.assertEqual(feed.link, "")
-
-    def test_missing_http(self) -> None:
-        feed = Feed(
-            title="test",
-            description="test",
-            items=[self.item],
-            creators_set=set(),
-            cover_url=None,
-            link="politicology.com",
-            categories=[],
-        )
-
-        self.assertEqual(feed.link, "http://politicology.com")
+        self.assertTrue(self.podcast.title)
+        self.assertTrue(self.podcast.description)
+        self.assertTrue(self.podcast.pub_date)
+        self.assertTrue(self.podcast.last_updated)
