@@ -34,6 +34,7 @@ from PIL import Image
 from PIL import ImageFile as PILImageFile
 from PIL import UnidentifiedImageError
 from PIL.Image import DecompressionBombError
+from requests.structures import CaseInsensitiveDict
 from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
@@ -270,10 +271,7 @@ class Podcast(models.Model):
             headers = requests.head(self.rss, timeout=5).headers
 
             etag = headers.get("ETag", "")
-
-            last_modified = parse_date(
-                headers.get("Last-Modified", None)
-            ) or parse_date(headers.get("Date", None))
+            last_modified = _parse_date_header(headers, "Last-Modified", "Date")
 
             if not self.should_parse_rss_feed(
                 etag, last_modified, force_update=force_update
@@ -371,13 +369,13 @@ class Podcast(models.Model):
             return False
 
         if (
-            last_modified := parse_date(headers.get("Last-Modified", None))
+            last_modified := _parse_date_header(headers, "Last-Modified")
         ) and last_modified > self.cover_image_date:
             return True
 
         # Date from CDNs tends to just be current timestamp, so ignore unless > 30 days old
 
-        if date := parse_date(headers.get("Date", None)):
+        if date := _parse_date_header(headers, "Date"):
             return (date - self.cover_image_date).days > 30
 
         return False
@@ -543,3 +541,10 @@ def _create_image_obj(raw: bytes) -> Image:
         UnidentifiedImageError,
     ):
         return None
+
+
+def _parse_date_header(headers: CaseInsensitiveDict, *names: str) -> datetime | None:
+    for name in names:
+        if dt := parse_date(headers.get(name, None)):
+            return dt
+    return None
