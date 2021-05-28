@@ -132,13 +132,17 @@ def _get_search_results(
             verify=True,
         )
         response.raise_for_status()
-        results = response.json()["results"]
+        results = _make_search_results(response.json()["results"])
         cache.set(cache_key, results, timeout=cache_timeout)
+        return results
+
     except (KeyError, requests.RequestException) as e:
         raise Invalid from e
     except requests.exceptions.Timeout as e:
         raise Timeout from e
 
+
+def _make_search_results(results: list[dict[str, str]]) -> list[SearchResult]:
     return [
         SearchResult(
             item["feedUrl"],
