@@ -140,14 +140,14 @@ def parse_feed(raw: bytes) -> Feed:
 
 class RssParser:
     NAMESPACES = {
-        "atom": "http://www.w3.org/2005/Atom",
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "dc": "http://purl.org/dc/elements/1.1/",
-        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-        "media": "http://search.yahoo.com/mrss/",
-        "podcast": "https://podcastindex.org/namespace/1.0",
-        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "atom": "http://www.w3.org/2005/Atom",  # NOSONAR
+        "content": "http://purl.org/rss/1.0/modules/content/",  # NOSONAR
+        "dc": "http://purl.org/dc/elements/1.1/",  # NOSONAR
+        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",  # NOSONAR
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",  # NOSONAR
+        "media": "http://search.yahoo.com/mrss/",  # NOSONAR
+        "podcast": "https://podcastindex.org/namespace/1.0",  # NOSONAR
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",  # NOSONAR
     }
 
     def __init__(self, tag: ElementBase):
@@ -297,7 +297,7 @@ def _clean_url(url: str | None) -> str:
 
     # links often just consist of domain: try prefixing http://
     if not url.startswith("http"):
-        url = "http://" + url
+        url = "http://" + url  # NOSONAR
 
     # if not a valid URL, just make empty string
     try:
