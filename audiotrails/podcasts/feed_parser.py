@@ -52,7 +52,9 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
         return []
 
     pub_date = first_date(
-        result.feed.published, result.feed.updated, get_latest_item_pub_date(items)
+        result.feed.published,
+        result.feed.updated,
+        *[item.published for item in items],
     )
 
     if pub_date is None:
@@ -229,16 +231,6 @@ def create_image_obj(raw: bytes) -> Image:
         return None
 
 
-def get_latest_item_pub_date(items: list[box.Box]) -> datetime | None:
-
-    pub_dates = [dt for dt in [parse_date(item.published) for item in items] if dt]
-
-    if pub_dates:
-        return max(pub_dates)
-
-    return None
-
-
 def parse_items(result: box.Box) -> list[box.Box]:
     return [
         item for item in [with_audio(item) for item in result.entries] if item.audio
@@ -263,6 +255,7 @@ def is_audio(link: box.Box) -> bool:
 
 
 def first(*values: Any, convert: Callable, default=None) -> Any:
+    """Returns first non-falsy value, converting the item."""
     for value in values:
         if value:
             return convert(value)
