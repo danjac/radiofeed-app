@@ -2,10 +2,10 @@
 {% cache 3600 podcast-categories podcast.id %}
 {% with categories=podcast.categories.all %}
 {% if categories %}
-<div class="space-y-2">
+<div class="space-y-2 space-x-2 text-center sm:text-left">
   {% for category in categories %}
   <div class="inline-block">
-    <a class="btn btn-link mr-2 flex items-center{% if forloop.last %} mr-2{% endif %}"
+    <a class="btn btn-link mr-2 flex items-center"
        title="{{ category.name }}"
        href="{{ category.get_absolute_url }}">
       {% icon "tag" css_class="btn-icon mr-2" %}
