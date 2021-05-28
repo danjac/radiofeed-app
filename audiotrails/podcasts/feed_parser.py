@@ -113,7 +113,7 @@ def sync_podcast(
     podcast.language = first_str(result.feed.language, "en")[:2]
     podcast.description = first_str(result.feed.content, result.feed.summary)
 
-    podcast.explicit = first_bool(result.explicit)
+    podcast.explicit = bool(result.explicit)
     podcast.creators = parse_creators(result.feed)
 
     parse_categories(podcast, result.feed, items)
@@ -151,7 +151,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         media_type=item.audio.type,
         length=first_int(item.audio.length),
         link=first_str(item.link),
-        explicit=first_bool(item.itunes_explicit),
+        explicit=bool(item.itunes_explicit),
         description=first_str(item.description, item.summary),
         duration=first_str(item.itunes_duration),
         pub_date=parse_date(item.published),
@@ -235,7 +235,7 @@ def parse_items(result: box.Box) -> list[box.Box]:
     return [
         item
         for item in [with_audio(item) for item in result.entries]
-        if item.audio and item.id
+        if is_episode(item)
     ]
 
 
@@ -256,6 +256,10 @@ def is_audio(link: box.Box) -> bool:
     return link.type.startswith("audio/") and link.href and link.rel == "enclosure"
 
 
+def is_episode(item: box.Box) -> bool:
+    return item.audio and item.id and item.published
+
+
 def first(*values: Any, convert: Callable, default=None) -> Any:
     """Returns first non-falsy value, converting the item."""
     for value in values:
@@ -266,5 +270,4 @@ def first(*values: Any, convert: Callable, default=None) -> Any:
 
 first_str = functools.partial(first, convert=force_str, default="")
 first_date = functools.partial(first, convert=parse_date, default=None)
-first_bool = functools.partial(first, convert=bool, default=False)
 first_int = functools.partial(first, convert=int, default=None)
