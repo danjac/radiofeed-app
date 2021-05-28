@@ -37,7 +37,7 @@ from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
-from audiotrails.common.utils.date_parser import parse_date
+from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.feed_parser import Feed, RssParserError, parse_feed
 from audiotrails.podcasts.recommender.text_parser import extract_keywords
 
