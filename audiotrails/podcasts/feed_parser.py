@@ -87,11 +87,7 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
-
-    podcast.cover_image = parse_cover_image(
-        podcast,
-        conv_url(result.feed.image.href),
-    )
+    podcast.cover_image = parse_cover_image(podcast, result.feed)
 
     parse_taxonomy(podcast, result.feed, items)
 
@@ -111,9 +107,9 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     )
 
 
-def parse_cover_image(podcast: Podcast, cover_url: str) -> ImageFile | None:
+def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
 
-    if podcast.cover_image or not cover_url:
+    if podcast.cover_image or not (cover_url := conv_url(feed.image.href)):
         return None
 
     try:
