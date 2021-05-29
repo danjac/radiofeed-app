@@ -53,11 +53,11 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str, force_update: bool = False) -> None:
+def sync_podcast_feed(rss: str) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
         logger.info(f"Syncing podcast {podcast}")
-        if new_episodes := parse_feed(podcast, force_update=force_update):
+        if new_episodes := parse_feed(podcast):
             logger.info(f"Podcast {podcast} has {len(new_episodes)} new episode(s)")
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
