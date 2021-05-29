@@ -263,21 +263,28 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def conv(*values: Any, convert: Callable, default=None, validator=None) -> Any:
-    """Returns first non-falsy/valid value, converting the item."""
+def conv(
+    *values: Any, convert: Callable, default=None, validator: Callable | None = None
+) -> Any:
+    """Returns first non-None value, converting the item."""
     for value in values:
-        if value:
-            try:
-                converted = convert(value)
-                if validator:
-                    validator(converted)
-                return converted
-            except (ValidationError, TypeError, ValueError):
-                pass
+
+        if (converted := _conv(value, convert, validator)) is not None:
+            return converted
 
     if callable(default):
         return default()
     return default
+
+
+def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> Any:
+    try:
+        converted = convert(value)
+        if validator:
+            validator(converted)
+        return converted
+    except (ValidationError, TypeError, ValueError):
+        return None
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
