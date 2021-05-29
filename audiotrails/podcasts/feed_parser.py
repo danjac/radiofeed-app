@@ -258,8 +258,12 @@ def is_audio(link: box.Box) -> bool:
 
 
 def is_episode(item: box.Box) -> bool:
-    return bool(
-        item.audio and item.id and item.pub_date,
+    return all(
+        (
+            item.id,
+            item.audio,
+            item.pub_date,
+        )
     )
 
 
