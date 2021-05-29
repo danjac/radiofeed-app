@@ -44,15 +44,6 @@ class SyncPodcastFeedsTests(TestCase):
         "audiotrails.podcasts.tasks.sync_podcast_feed.delay",
         autospec=True,
     )
-    def test_podcast_has_too_many_retries(self, mock_sync_podcast_feed: Mock) -> None:
-        PodcastFactory(num_retries=3)
-        tasks.sync_podcast_feeds()
-        mock_sync_podcast_feed.assert_not_called()
-
-    @patch(
-        "audiotrails.podcasts.tasks.sync_podcast_feed.delay",
-        autospec=True,
-    )
     def test_podcast_just_updated(self, mock_sync_podcast_feed: Mock) -> None:
         PodcastFactory(last_updated=timezone.now())
         tasks.sync_podcast_feeds()

@@ -30,7 +30,7 @@ def send_recommendation_emails() -> None:
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds() -> None:
-    podcasts = Podcast.objects.filter(num_retries__lt=3).distinct()
+    podcasts = Podcast.objects.all()
 
     querysets: tuple[QuerySet, QuerySet] = (
         # new podcasts
