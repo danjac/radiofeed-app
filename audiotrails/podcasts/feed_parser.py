@@ -277,7 +277,7 @@ def conv(
 
 def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> Any:
     try:
-        if converted := convert(value):
+        if value and (converted := convert(value)):
             if validator:
                 validator(converted)
             return converted

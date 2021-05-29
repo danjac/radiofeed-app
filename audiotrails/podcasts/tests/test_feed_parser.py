@@ -44,7 +44,19 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
 
-        self.assertTrue(self.podcast.title)
-        self.assertTrue(self.podcast.description)
+        self.assertEqual(self.podcast.title, "Mysterious Universe")
+        self.assertEqual(
+            self.podcast.description,
+            "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.",
+        )
+        self.assertEqual(self.podcast.creators, "8th Kind")
         self.assertTrue(self.podcast.pub_date)
+
+        categories = [c.name for c in self.podcast.categories.all()]
+
+        self.assertIn("Science", categories)
+        self.assertIn("Religion & Spirituality", categories)
+        self.assertIn("Society & Culture", categories)
+        self.assertIn("Philosophy", categories)
+
         self.assertTrue(self.podcast.last_updated)
