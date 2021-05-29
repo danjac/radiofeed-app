@@ -64,16 +64,16 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     return sync_episodes(podcast, items)
 
 
-def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
+def parse_cover_image(podcast: Podcast, cover_url: str) -> ImageFile | None:
 
-    if podcast.cover_image or not feed.image.href:
+    if podcast.cover_image or not cover_url:
         return None
 
     try:
         # use feedparser headers
         return create_image_file(
             requests.get(
-                feed.image.href,
+                cover_url,
                 timeout=5,
                 stream=True,
                 headers={
@@ -125,7 +125,11 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
-    podcast.cover_image = parse_cover_image(podcast, result.feed)
+
+    podcast.cover_image = parse_cover_image(
+        podcast,
+        conv_url(result.feed.image.href),
+    )
 
     parse_taxonomy(podcast, result.feed, items)
 
