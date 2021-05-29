@@ -93,8 +93,8 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
-    podcast.cover_image = parse_cover_image(podcast, result.feed)
 
+    parse_cover_image(podcast, result.feed)
     parse_taxonomy(podcast, result.feed, items)
 
     podcast.save()
@@ -113,14 +113,14 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     )
 
 
-def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
+def parse_cover_image(podcast: Podcast, feed: box.Box) -> None:
 
     if podcast.cover_image or not (cover_url := conv_url(feed.image.href)):
-        return None
+        return
 
     try:
         # use feedparser headers
-        return create_image_file(
+        podcast.cover_image = create_image_file(
             requests.get(
                 cover_url,
                 timeout=5,
@@ -132,8 +132,7 @@ def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
             )
         )
     except requests.RequestException:
-
-        return None
+        pass
 
 
 def create_image_file(response: requests.Response) -> ImageFile | None:
