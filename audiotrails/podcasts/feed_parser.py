@@ -64,44 +64,6 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     return sync_episodes(podcast, items)
 
 
-def parse_cover_image(podcast: Podcast, cover_url: str) -> ImageFile | None:
-
-    if podcast.cover_image or not cover_url:
-        return None
-
-    try:
-        # use feedparser headers
-        return create_image_file(
-            requests.get(
-                cover_url,
-                timeout=5,
-                stream=True,
-                headers={
-                    "Accept": feedparser.http.ACCEPT_HEADER,
-                    "User-Agent": feedparser.USER_AGENT,
-                },
-            )
-        )
-    except requests.RequestException:
-
-        return None
-
-
-def create_image_file(response: requests.Response) -> ImageFile | None:
-
-    if (img := create_image_obj(response.content)) is None:
-        return None
-
-    image_file = ImageFile(img, name=make_filename(response))
-
-    try:
-        validate_image_file_extension(image_file)
-    except ValidationError:
-        return None
-
-    return image_file
-
-
 def sync_podcast(
     podcast: Podcast,
     pub_date: datetime,
@@ -147,6 +109,44 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
         [make_episode(podcast, item) for item in items if item.id not in guids],
         ignore_conflicts=True,
     )
+
+
+def parse_cover_image(podcast: Podcast, cover_url: str) -> ImageFile | None:
+
+    if podcast.cover_image or not cover_url:
+        return None
+
+    try:
+        # use feedparser headers
+        return create_image_file(
+            requests.get(
+                cover_url,
+                timeout=5,
+                stream=True,
+                headers={
+                    "Accept": feedparser.http.ACCEPT_HEADER,
+                    "User-Agent": feedparser.USER_AGENT,
+                },
+            )
+        )
+    except requests.RequestException:
+
+        return None
+
+
+def create_image_file(response: requests.Response) -> ImageFile | None:
+
+    if (img := create_image_obj(response.content)) is None:
+        return None
+
+    image_file = ImageFile(img, name=make_filename(response))
+
+    try:
+        validate_image_file_extension(image_file)
+    except ValidationError:
+        return None
+
+    return image_file
 
 
 def make_episode(podcast: Podcast, item: box.Box) -> Episode:
