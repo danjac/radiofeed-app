@@ -64,17 +64,16 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     return sync_episodes(podcast, items)
 
 
-def parse_cover_image(podcast: Podcast, feed: box.Box) -> None:
+def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
 
     if podcast.cover_image or not feed.image.href:
-        return
+        return None
 
     try:
-        podcast.cover_image = create_image_file(
-            requests.get(feed.image.href, timeout=5, stream=True)
-        )
+        return create_image_file(requests.get(feed.image.href, timeout=5, stream=True))
     except requests.RequestException:
-        pass
+
+        return None
 
 
 def create_image_file(response: requests.Response) -> ImageFile | None:
@@ -114,8 +113,9 @@ def sync_podcast(
     podcast.description = conv_str(result.feed.content, result.feed.summary)
     podcast.explicit = bool(result.feed.explicit)
 
-    parse_creators(podcast, result.feed)
-    parse_cover_image(podcast, result.feed)
+    podcast.creators = parse_creators(result.feed)
+    podcast.cover_image = parse_cover_image(podcast, result.feed)
+
     parse_categories(podcast, result.feed, items)
 
     podcast.save()
@@ -231,10 +231,8 @@ def parse_items(result: box.Box) -> list[box.Box]:
     ]
 
 
-def parse_creators(podcast: Podcast, feed: box.Box) -> None:
-    podcast.creators = " ".join(
-        {author.name for author in conv_list(feed.authors) if author.name}
-    )
+def parse_creators(feed: box.Box) -> str:
+    return " ".join({author.name for author in conv_list(feed.authors) if author.name})
 
 
 def with_audio(item: box.Box) -> box.Box:
