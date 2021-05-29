@@ -116,7 +116,7 @@ def sync_podcast(
     podcast.creators = parse_creators(result.feed)
     podcast.cover_image = parse_cover_image(podcast, result.feed)
 
-    parse_categories(podcast, result.feed, items)
+    parse_taxonomy(podcast, result.feed, items)
 
     podcast.save()
 
@@ -155,7 +155,7 @@ def parse_tags(item: box.Box) -> list[str]:
     return [tag.term for tag in conv_list(item.tags) if tag.term]
 
 
-def parse_categories(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
+def parse_taxonomy(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
     """Extract keywords from text content for recommender
     and map to categories"""
     categories_dct = get_categories_dict()
