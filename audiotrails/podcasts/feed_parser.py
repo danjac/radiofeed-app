@@ -266,15 +266,11 @@ def is_episode(item: box.Box) -> bool:
 def conv(
     *values: Any, convert: Callable, default=None, validator: Callable | None = None
 ) -> Any:
-    """Returns first non-None value, converting the item."""
+    """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
-
-        if (converted := _conv(value, convert, validator)) is not None:
+        if converted := _conv(value, convert, validator):
             return converted
-
-    if callable(default):
-        return default()
-    return default
+    return default() if callable(default) else default
 
 
 def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> Any:
@@ -288,12 +284,13 @@ def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> A
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
+conv_date = functools.partial(conv, convert=parse_date, default=None)
+conv_int = functools.partial(conv, convert=int, default=None)
+conv_list = functools.partial(conv, convert=list, default=list)
+
 conv_url = functools.partial(
     conv,
     convert=force_str,
     default="",
     validator=URLValidator(schemes=["http", "https"]),
 )
-conv_date = functools.partial(conv, convert=parse_date, default=None)
-conv_int = functools.partial(conv, convert=int, default=None)
-conv_list = functools.partial(conv, convert=list, default=list)
