@@ -46,6 +46,7 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
             modified=podcast.pub_date,
         ),
         default_box=True,
+        default_box_attr=None,
     )
 
     if not (items := parse_items(result)):
@@ -289,7 +290,9 @@ def is_episode(item: box.Box) -> bool:
 def conv(
     *values: Any, convert: Callable, default=None, validator: Callable | None = None
 ) -> Any:
-    """Returns first non-falsy value, converting the item. Otherwise returns default value"""
+    """Returns first non-falsy value, converting the item. Otherwise returns default value.
+    If validator is provided the value is only returned if valid.
+    """
     for value in values:
         if converted := _conv(value, convert, validator):
             return converted
