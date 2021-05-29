@@ -157,7 +157,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         title=item.title,
         pub_date=item.pub_date,
         media_url=item.audio.href,
-        media_type=item.audio.type,
+        media_type=item.audio.type[:60],
         explicit=parse_explicit(item),
         length=conv_int(item.audio.length),
         link=conv_url(item.link)[:500],
