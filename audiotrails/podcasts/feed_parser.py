@@ -60,10 +60,8 @@ def sync_podcast(
     items: list[box.Box],
 ) -> None:
 
-    now = timezone.now()
-
     # timestamps
-    podcast.last_updated = now
+    podcast.last_updated = timezone.now()
     podcast.pub_date = max(item.pub_date for item in items)
     podcast.etag = conv_str(result.etag)
 
