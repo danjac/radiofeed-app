@@ -50,6 +50,7 @@ class FeedParserTests(TestCase):
             "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.",
         )
         self.assertEqual(self.podcast.creators, "8th Kind")
+
         self.assertTrue(self.podcast.pub_date)
         self.assertTrue(self.podcast.explicit)
 

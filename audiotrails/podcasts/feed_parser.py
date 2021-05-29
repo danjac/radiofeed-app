@@ -6,7 +6,6 @@ import mimetypes
 import os
 import uuid
 
-from datetime import datetime
 from functools import lru_cache
 from typing import Any, Callable
 from urllib.parse import urlparse
@@ -51,22 +50,12 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
     if not (items := parse_items(result)):
         return []
 
-    pub_date = conv_date(
-        result.feed.published,
-        result.feed.updated,
-        *[item.pub_date for item in items],
-    )
-
-    if pub_date is None:
-        return []
-
-    sync_podcast(podcast, pub_date, result, items)
+    sync_podcast(podcast, result, items)
     return sync_episodes(podcast, items)
 
 
 def sync_podcast(
     podcast: Podcast,
-    pub_date: datetime,
     result: box.Box,
     items: list[box.Box],
 ) -> None:
@@ -75,7 +64,7 @@ def sync_podcast(
 
     # timestamps
     podcast.last_updated = now
-    podcast.pub_date = pub_date
+    podcast.pub_date = max(item.pub_date for item in items)
     podcast.etag = conv_str(result.etag)
 
     # description
@@ -308,7 +297,6 @@ def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> A
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
-conv_date = functools.partial(conv, convert=parse_date, default=None)
 conv_int = functools.partial(conv, convert=int, default=None)
 conv_list = functools.partial(conv, convert=list, default=list)
 
