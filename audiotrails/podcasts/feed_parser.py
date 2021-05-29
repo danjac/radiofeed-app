@@ -70,7 +70,17 @@ def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
         return None
 
     try:
-        return create_image_file(requests.get(feed.image.href, timeout=5, stream=True))
+        return create_image_file(
+            requests.get(
+                feed.image.href,
+                timeout=5,
+                stream=True,
+                headers={
+                    "Accept": feedparser.http.ACCEPT_HEADER,
+                    "User-Agent": feedparser.USER_AGENT,
+                },
+            )
+        )
     except requests.RequestException:
 
         return None
