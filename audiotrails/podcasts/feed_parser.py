@@ -111,8 +111,8 @@ def sync_podcast(
     podcast.link = conv_url(result.feed.link)[:500]
     podcast.language = conv_str(result.feed.language, "en")[:2]
     podcast.description = conv_str(result.feed.content, result.feed.summary)
-    podcast.explicit = bool(result.feed.explicit)
 
+    podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
     podcast.cover_image = parse_cover_image(podcast, result.feed)
 
@@ -142,7 +142,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         pub_date=item.pub_date,
         media_url=item.audio.href,
         media_type=item.audio.type,
-        explicit=bool(item.itunes_explicit),
+        explicit=parse_explicit(item),
         length=conv_int(item.audio.length),
         link=conv_url(item.link)[:500],
         description=conv_str(item.description, item.summary),
@@ -153,6 +153,10 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
 
 def parse_tags(item: box.Box) -> list[str]:
     return [tag.term for tag in conv_list(item.tags) if tag.term]
+
+
+def parse_explicit(item: box.Box) -> bool:
+    return bool(item.itunes_explicit)
 
 
 def parse_taxonomy(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
