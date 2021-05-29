@@ -257,7 +257,7 @@ def parse_creators(feed: box.Box) -> str:
 
 
 def with_audio(item: box.Box) -> box.Box:
-    for link in conv_list(item.enclosures, item.links):
+    for link in conv_list(item.enclosures) + conv_list(item.links):
         if is_audio(link):
             return item + box.Box(audio=link)
     return item
