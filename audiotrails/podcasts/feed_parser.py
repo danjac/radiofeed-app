@@ -43,7 +43,7 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
         feedparser.parse(
             src or podcast.rss,
             etag=podcast.etag,
-            modified=podcast.pub_date,
+            modified=podcast.last_updated,
         ),
         default_box=True,
     )
