@@ -160,7 +160,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
 
 
 def parse_tags(item: box.Box) -> list[str]:
-    return [tag.term for tag in item.tags or []]
+    return [tag.term for tag in item.tags or [] if tag.term]
 
 
 def parse_categories(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
@@ -256,7 +256,8 @@ def with_pub_date(item: box.Box) -> box.Box:
 
 def is_audio(link: box.Box) -> bool:
     return (
-        conv_str(link.type).startswith("audio/")
+        link.type
+        and link.type.startswith("audio/")
         and link.href
         and link.rel == "enclosure"
     )
