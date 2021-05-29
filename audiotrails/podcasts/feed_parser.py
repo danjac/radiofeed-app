@@ -70,6 +70,7 @@ def parse_cover_image(podcast: Podcast, feed: box.Box) -> ImageFile | None:
         return None
 
     try:
+        # use feedparser headers
         return create_image_file(
             requests.get(
                 feed.image.href,
