@@ -65,7 +65,6 @@ def sync_podcast(
     podcast.etag = conv_str(result.etag)
 
     # description
-
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
     podcast.language = conv_str(result.feed.language, "en")[:2]
@@ -105,7 +104,6 @@ def parse_cover_image(podcast: Podcast, feed: box.Box) -> None:
         return
 
     try:
-        # use feedparser headers
         podcast.cover_image = create_image_file(
             requests.get(
                 cover_url,
