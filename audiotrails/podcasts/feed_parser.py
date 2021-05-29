@@ -113,7 +113,7 @@ def sync_podcast(
     podcast.language = conv_str(result.feed.language, "en")[:2]
     podcast.description = conv_str(result.feed.content, result.feed.summary)
 
-    podcast.explicit = bool(result.explicit)
+    podcast.explicit = bool(result.feed.explicit)
     podcast.creators = parse_creators(result.feed)
 
     parse_categories(podcast, result.feed, items)
