@@ -102,7 +102,6 @@ class Podcast(models.Model):
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
     cover_image: ImageFile | None = ImageField(null=True, blank=True)
-    cover_image_date: datetime = models.DateTimeField(null=True, blank=True)
 
     itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
@@ -127,9 +126,6 @@ class Podcast(models.Model):
     recipients: list[AuthenticatedUser] = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
-
-    sync_error: str = models.TextField(blank=True)
-    num_retries: int = models.PositiveIntegerField(default=0)
 
     search_vector: str = SearchVectorField(null=True, editable=False)
 

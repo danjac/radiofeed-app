@@ -17,7 +17,7 @@ import requests
 
 from django.core.exceptions import ValidationError
 from django.core.files.images import ImageFile
-from django.core.validators import validate_image_file_extension
+from django.core.validators import URLValidator, validate_image_file_extension
 from django.utils import timezone
 from django.utils.encoding import force_str
 from PIL import Image, UnidentifiedImageError
@@ -109,7 +109,7 @@ def sync_podcast(
     # description
 
     podcast.title = conv_str(result.feed.title)
-    podcast.link = conv_str(result.feed.link)[:500]
+    podcast.link = conv_url(result.feed.link)[:500]
     podcast.language = conv_str(result.feed.language, "en")[:2]
     podcast.description = conv_str(result.feed.content, result.feed.summary)
     podcast.explicit = bool(result.feed.explicit)
@@ -144,7 +144,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         media_type=item.audio.type,
         explicit=bool(item.itunes_explicit),
         length=conv_int(item.audio.length),
-        link=conv_str(item.link)[:500],
+        link=conv_url(item.link)[:500],
         description=conv_str(item.description, item.summary),
         duration=conv_str(item.itunes_duration)[:30],
         keywords=" ".join(parse_tags(item)),
@@ -152,7 +152,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
 
 
 def parse_tags(item: box.Box) -> list[str]:
-    return [tag.term for tag in item.tags or [] if tag.term]
+    return [tag.term for tag in conv_list(item.tags) if tag.term]
 
 
 def parse_categories(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
@@ -238,7 +238,7 @@ def parse_creators(podcast: Podcast, feed: box.Box) -> None:
 
 
 def with_audio(item: box.Box) -> box.Box:
-    for link in conv_list(item.links) + conv_list(item.enclosures):
+    for link in conv_list(item.enclosures, item.links):
         if is_audio(link):
             return item + box.Box(audio=link)
     return item
@@ -263,13 +263,16 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def conv(*values: Any, convert: Callable, default=None) -> Any:
-    """Returns first non-falsy value, converting the item."""
+def conv(*values: Any, convert: Callable, default=None, validator=None) -> Any:
+    """Returns first non-falsy/valid value, converting the item."""
     for value in values:
         if value:
             try:
-                return convert(value)
-            except ValueError:
+                converted = convert(value)
+                if validator:
+                    validator(converted)
+                return converted
+            except (ValidationError, TypeError, ValueError):
                 pass
 
     if callable(default):
@@ -278,6 +281,12 @@ def conv(*values: Any, convert: Callable, default=None) -> Any:
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
+conv_url = functools.partial(
+    conv,
+    convert=force_str,
+    default=None,
+    validator=URLValidator(schemes=["http", "https"]),
+)
 conv_date = functools.partial(conv, convert=parse_date, default=None)
 conv_int = functools.partial(conv, convert=int, default=None)
 conv_list = functools.partial(conv, convert=list, default=list)

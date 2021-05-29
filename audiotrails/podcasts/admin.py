@@ -1,8 +1,6 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from sorl.thumbnail.admin import AdminImageMixin
 
-from audiotrails.common.types import admin_action
 from audiotrails.podcasts.models import Category, Podcast
 
 
@@ -32,31 +30,6 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
-class BlocklistedFilter(admin.SimpleListFilter):
-    title = "Blocklist (3+ RSS sync errors)"
-    parameter_name = "blocklisted"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("blocklisted", "Blocklisted"),
-            ("allowed", "Allowed"),
-            ("danger-zone", "Danger Zone"),
-            ("no-errors", "No Errors"),
-        )
-
-    def queryset(self, request, queryset):
-
-        if kwargs := {
-            "allowed": {"num_retries__lt": 3},
-            "blocklisted": {"num_retries__gte": 3},
-            "danger-zone": {"num_retries__gt": 0, "num_retries__lt": 3},
-            "no-errors": {"num_retries": 0},
-        }.get(self.value()):
-            queryset = queryset.filter(**kwargs)
-
-        return queryset
-
-
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -73,21 +46,13 @@ class PromotedFilter(admin.SimpleListFilter):
 
 @admin.register(Podcast)
 class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_filter = (PubDateFilter, PromotedFilter, BlocklistedFilter)
+    list_filter = (PubDateFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("title_with_strikethru", "pub_date", "promoted")
+    list_display = ("title", "pub_date", "promoted")
     list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
-
-    @admin_action
-    def title_with_strikethru(self, obj):
-        if obj.num_retries >= 3:
-            return format_html(f"<s>{obj.title}</s>")
-        return obj.title
-
-    title_with_strikethru.short_description = "Title"
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
