@@ -41,7 +41,12 @@ def parse_feed(
     podcast: Podcast, src: str = "", force_update: bool = False
 ) -> list[Episode]:
 
-    result = parse_rss_feed(podcast, src, force_update)
+    result = box.Box(
+        feedparser.parse(
+            src or podcast.rss, **get_parser_kwargs(podcast, force_update)
+        ),
+        default_box=True,
+    )
 
     if not (items := parse_items(result)):
         return []
@@ -59,15 +64,14 @@ def parse_feed(
     return sync_episodes(podcast, items)
 
 
-def parse_rss_feed(
-    podcast: Podcast, src: str = "", force_update: bool = False
-) -> box.Box:
-    kwargs = (
-        {} if force_update else {"etag": podcast.etag, "modified": podcast.last_updated}
-    )
-    return box.Box(
-        feedparser.parse(src or podcast.rss, **kwargs),
-        default_box=True,
+def get_parser_kwargs(podcast: Podcast, force_update: bool) -> dict:
+    return (
+        {}
+        if force_update
+        else {
+            "etag": podcast.etag,
+            "modified": podcast.last_updated,
+        }
     )
 
 
@@ -216,7 +220,7 @@ def extract_text(
 def make_filename(response: requests.Response) -> str:
     _, ext = os.path.splitext(urlparse(response.url).path)
 
-    if ext is None:
+    if not ext:
         try:
             content_type = response.headers["Content-Type"].split(";")[0]
         except KeyError:
