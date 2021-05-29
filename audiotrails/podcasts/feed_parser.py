@@ -284,7 +284,7 @@ conv_str = functools.partial(conv, convert=force_str, default="")
 conv_url = functools.partial(
     conv,
     convert=force_str,
-    default=None,
+    default="",
     validator=URLValidator(schemes=["http", "https"]),
 )
 conv_date = functools.partial(conv, convert=parse_date, default=None)
