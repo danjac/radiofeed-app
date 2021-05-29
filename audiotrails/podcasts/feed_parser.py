@@ -275,12 +275,14 @@ def conv(
 
 def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> Any:
     try:
-        converted = convert(value)
-        if validator:
-            validator(converted)
-        return converted
+        if converted := convert(value):
+            if validator:
+                validator(converted)
+            return converted
     except (ValidationError, TypeError, ValueError):
-        return None
+        pass
+
+    return None
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
