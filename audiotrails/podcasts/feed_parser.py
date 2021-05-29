@@ -37,16 +37,11 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
+def parse_feed(
+    podcast: Podcast, src: str = "", force_update: bool = False
+) -> list[Episode]:
 
-    result = box.Box(
-        feedparser.parse(
-            src or podcast.rss,
-            etag=podcast.etag,
-            modified=podcast.last_updated,
-        ),
-        default_box=True,
-    )
+    result = parse_rss_feed(podcast, src, force_update)
 
     if not (items := parse_items(result)):
         return []
@@ -62,6 +57,18 @@ def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
 
     sync_podcast(podcast, pub_date, result, items)
     return sync_episodes(podcast, items)
+
+
+def parse_rss_feed(
+    podcast: Podcast, src: str = "", force_update: bool = False
+) -> box.Box:
+    kwargs = (
+        {} if force_update else {"etag": podcast.etag, "modified": podcast.last_updated}
+    )
+    return box.Box(
+        feedparser.parse(src or podcast.rss, **kwargs),
+        default_box=True,
+    )
 
 
 def sync_podcast(
