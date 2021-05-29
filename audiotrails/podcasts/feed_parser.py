@@ -64,7 +64,7 @@ def parse_feed(
     return sync_episodes(podcast, items)
 
 
-def get_parser_kwargs(podcast: Podcast, force_update: bool) -> dict:
+def get_parser_kwargs(podcast: Podcast, force_update: bool) -> dict[str, Any]:
     return (
         {}
         if force_update
