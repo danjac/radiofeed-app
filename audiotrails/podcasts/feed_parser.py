@@ -28,7 +28,6 @@ from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.text_parser import extract_keywords
 
 MAX_IMAGE_SIZE = 1000
-THUMBNAIL_SIZE = 200
 
 
 @lru_cache
