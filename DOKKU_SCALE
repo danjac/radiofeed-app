@@ -1,0 +1,3 @@
+web=1
+beat=1
+worker=4
