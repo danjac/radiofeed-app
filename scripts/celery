@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+podman exec -i -t audiopod-celeryworker celery $@
+
