@@ -47,6 +47,7 @@ def sync_podcast_feeds() -> None:
     )
 
     for qs in querysets:
+        # keep runnning total
         total = qs.count()
         logger.info(f"Syncing {total} podcasts")
         for counter, rss in enumerate(qs.values_list("rss", flat=True).iterator(), 1):
