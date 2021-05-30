@@ -49,10 +49,10 @@ def sync_podcast_feeds() -> None:
     )
     total = qs.count()
 
-    for rss in qs:
-        logger.info(f"Syncing {total} podcasts")
-        for counter, rss in enumerate(qs.iterator(), 1):
-            sync_podcast_feed.delay(rss, counter, total)
+    logger.info(f"Syncing {total} podcasts")
+
+    for counter, rss in enumerate(qs.iterator(), 1):
+        sync_podcast_feed.delay(rss, counter, total)
 
 
 @shared_task(name="audiotrails.podcasts.create_podcast_recommendations")
