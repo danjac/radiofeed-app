@@ -44,6 +44,7 @@ def sync_podcast_feeds() -> None:
             | Q(last_updated__isnull=True)
         )
         .distinct()
+        .order_by("-last_updated", "-pub_date")
         .values_list("rss", flat=True)
     )
     total = qs.count()
@@ -65,13 +66,30 @@ def sync_podcast_feed(
 ) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
-        msg = f"Syncing podcast {podcast}"
-        if counter is not None and total is not None:
-            msg += f":{counter}/{total}"
-        logger.info(msg)
-        if new_episodes := parse_feed(podcast):
-            logger.info(f"Podcast {podcast} has {len(new_episodes)} new episode(s)")
+        new_episodes = parse_feed(podcast)
+        logger.info(
+            get_podcast_sync_message(
+                podcast,
+                new_episodes=len(new_episodes),
+                counter=counter,
+                total=total,
+            )
+        )
+
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
     except URLError as e:
         logger.debug(f"Error syncing podcast RSS {rss} {e}")
+
+
+def get_podcast_sync_message(
+    podcast: Podcast,
+    new_episodes: int,
+    counter: int | None = None,
+    total: int | None = None,
+) -> str:
+
+    msg = f"Podcast {podcast} synced with RSS: {new_episodes} new episodes"
+    if total and counter:
+        msg += f" ({counter}/{total})"
+    return msg
