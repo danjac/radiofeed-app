@@ -66,7 +66,7 @@ def sync_podcast_feed(
         podcast = Podcast.objects.get(rss=rss)
         msg = f"Syncing podcast {podcast}"
         if counter is not None and total is not None:
-            msg += ":{counter}/{total}"
+            msg += f":{counter}/{total}"
         logger.info(msg)
         if new_episodes := parse_feed(podcast):
             logger.info(f"Podcast {podcast} has {len(new_episodes)} new episode(s)")
