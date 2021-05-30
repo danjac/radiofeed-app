@@ -51,6 +51,7 @@ class FeedParserTests(TestCase):
         )
         self.assertEqual(self.podcast.creators, "8th Kind")
 
+        self.assertTrue(self.podcast.last_updated)
         self.assertTrue(self.podcast.pub_date)
         self.assertTrue(self.podcast.explicit)
 

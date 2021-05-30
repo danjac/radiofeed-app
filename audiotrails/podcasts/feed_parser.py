@@ -264,7 +264,7 @@ def is_episode(item: box.Box) -> bool:
         (
             item.id,
             item.audio,
-            item.pub_date,
+            item.pub_date and item.pub_date < timezone.now(),
         )
     )
 
