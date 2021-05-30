@@ -33,8 +33,8 @@ class Command(BaseCommand):
         self.stdout.write(f"{num_podcasts} dead podcasts found")
 
         if options["interactive"]:
-            answer: str | None = None
-            while answer is not None and answer not in "yn":
+            answer: str = ""
+            while answer not in "yn":
                 answer = input("Do you wish to proceed? [yN] ")
                 if not answer:
                     answer = "n"
