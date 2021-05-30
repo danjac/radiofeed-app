@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
 
         podcasts = Podcast.objects.annotate(num_episodes=Count("episode")).filter(
-            num_episodes=0
+            pub_date__isnull=True
         )
 
         num_podcasts = podcasts.count()
@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
         if options["interactive"]:
             answer: str | None = None
-            while answer not in "yn":
+            while answer is not None and answer not in "yn":
                 answer = input("Do you wish to proceed? [yN] ")
                 if not answer:
                     answer = "n"
