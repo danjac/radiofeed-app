@@ -7,7 +7,7 @@ from urllib.error import URLError
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
+from django.db.models import Q
 from django.utils import timezone
 
 from audiotrails.podcasts import itunes
@@ -34,23 +34,23 @@ def send_recommendation_emails() -> None:
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds() -> None:
-    podcasts = Podcast.objects.all()
-
-    querysets: tuple[QuerySet, QuerySet] = (
-        # new podcasts
-        podcasts.filter(last_updated__isnull=True),
-        # podcasts updated > 12 hours ago
-        podcasts.filter(
-            last_updated__isnull=False,
-            last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
-        ),
+    "Update any podcasts not updated in last 12 hours."
+    qs = (
+        Podcast.objects.filter(
+            Q(
+                last_updated__isnull=False,
+                last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
+            )
+            | Q(last_updated__isnull=True)
+        )
+        .distinct()
+        .values_list("rss", flat=True)
     )
+    total = qs.count()
 
-    for qs in querysets:
-        # test commit
-        total = qs.count()
+    for rss in qs:
         logger.info(f"Syncing {total} podcasts")
-        for counter, rss in enumerate(qs.values_list("rss", flat=True).iterator(), 1):
+        for counter, rss in enumerate(qs.iterator(), 1):
             sync_podcast_feed.delay(rss, counter, total)
 
 
