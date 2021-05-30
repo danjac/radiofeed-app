@@ -73,4 +73,4 @@ def sync_podcast_feed(
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
     except URLError as e:
-        logger.exception(e)
+        logger.debug(f"Error syncing podcast RSS {rss} {e}")
