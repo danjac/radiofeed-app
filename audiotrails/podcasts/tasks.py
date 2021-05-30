@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 import datetime
+
+from urllib.error import URLError
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -43,8 +47,10 @@ def sync_podcast_feeds() -> None:
     )
 
     for qs in querysets:
-        for rss in qs.values_list("rss", flat=True).iterator():
-            sync_podcast_feed.delay(rss)
+        total = qs.count()
+        logger.info(f"Syncing {total} podcasts")
+        for counter, rss in enumerate(qs.values_list("rss", flat=True).iterator(), 1):
+            sync_podcast_feed.delay(rss, counter, total)
 
 
 @shared_task(name="audiotrails.podcasts.create_podcast_recommendations")
@@ -53,11 +59,18 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str) -> None:
+def sync_podcast_feed(
+    rss: str, counter: int | None = None, total: int | None = None
+) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss)
-        logger.info(f"Syncing podcast {podcast}")
+        msg = f"Syncing podcast {podcast}"
+        if counter is not None and total is not None:
+            msg += ":{counter}/{total}"
+        logger.info(msg)
         if new_episodes := parse_feed(podcast):
             logger.info(f"Podcast {podcast} has {len(new_episodes)} new episode(s)")
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
+    except URLError as e:
+        logger.exception(e)
