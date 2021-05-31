@@ -19,8 +19,6 @@ from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.text_parser import extract_keywords
 
-MAX_IMAGE_SIZE = 1000
-
 
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
