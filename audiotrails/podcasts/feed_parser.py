@@ -39,7 +39,8 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     for_update = sync_podcast_status(podcast, result)
 
     if not (items := parse_items(result)):
-        podcast.save(update_fields=for_update)
+        podcast.last_updated = timezone.now()
+        podcast.save(update_fields=for_update + ["last_updated"])
         return []
 
     sync_podcast(podcast, result, items)
@@ -62,6 +63,10 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
         # permanent redirect: update URL for next time
         podcast.rss = result.href
         return ["rss"]
+
+    if result.etag != podcast.etag:
+        podcast.etag = result.etag
+        return ["etag"]
 
     return []
 
