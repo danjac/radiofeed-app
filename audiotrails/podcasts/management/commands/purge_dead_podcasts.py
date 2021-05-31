@@ -31,17 +31,13 @@ class Command(BaseCommand):
             return
 
         self.stdout.write(f"{num_podcasts} dead podcasts found")
+        if self.handle_interactive(options["interactive"]):
+            podcasts.delete()
 
-        if options["interactive"]:
-            answer: str | None = None
-            while answer is None or answer not in "yn":
-                answer = input("Do you wish to proceed? [yN] ")
-                if not answer:
-                    answer = "n"
-                    break
-                else:
-                    answer = answer[0].lower()
-            if answer != "y":
-                return
-
-        podcasts.delete()
+    def handle_interactive(self, interactive: bool) -> bool:
+        if not interactive:
+            return True
+        answer: str | None = None
+        while answer is None or answer not in "yn":
+            answer = (input("Do you wish to proceed? [yN] ") or "n")[:1].lower()
+        return answer == "y"

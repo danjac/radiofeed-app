@@ -38,11 +38,12 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
+    podcast.last_updated = timezone.now()
+    podcast.etag = conv_str(result.etag)
+
     if result.status == http.HTTPStatus.GONE:
         # HTTP gone: podcast is dead
         podcast.active = False
-        podcast.save()
-        return []
 
     if (
         result.status == http.HTTPStatus.PERMANENT_REDIRECT
@@ -52,39 +53,38 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         podcast.rss = result.href
 
     if not (items := parse_items(result)):
+        podcast.save()
         return []
 
-    sync_podcast(podcast, result, items)
+    sync_podcast(podcast, result.feed, items)
     return sync_episodes(podcast, items)
 
 
 def sync_podcast(
     podcast: Podcast,
-    result: box.Box,
+    feed: box.Box,
     items: list[box.Box],
 ) -> None:
 
     # timestamps
-    podcast.last_updated = timezone.now()
     podcast.pub_date = max(item.pub_date for item in items)
-    podcast.etag = conv_str(result.etag)
 
     # description
-    podcast.title = conv_str(result.feed.title)
-    podcast.link = conv_url(result.feed.link)[:500]
-    podcast.cover_url = conv_url(result.feed.image.href)
-    podcast.language = conv_str(result.feed.language, "en")[:2]
+    podcast.title = conv_str(feed.title)
+    podcast.link = conv_url(feed.link)[:500]
+    podcast.cover_url = conv_url(feed.image.href)
+    podcast.language = conv_str(feed.language, "en")[:2]
 
     podcast.description = conv_str(
-        result.feed.content,
-        result.feed.summary,
-        result.feed.description,
-        result.feed.subtitle,
+        feed.content,
+        feed.summary,
+        feed.description,
+        feed.subtitle,
     )
 
-    podcast.explicit = parse_explicit(result.feed)
-    podcast.creators = parse_creators(result.feed)
-    parse_taxonomy(podcast, result.feed, items)
+    podcast.explicit = parse_explicit(feed)
+    podcast.creators = parse_creators(feed)
+    parse_taxonomy(podcast, feed, items)
 
     podcast.save()
 
