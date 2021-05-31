@@ -1,26 +1,17 @@
 from __future__ import annotations
 
 import functools
-import io
-import mimetypes
-import os
-import uuid
 
 from functools import lru_cache
 from typing import Any, Callable
-from urllib.parse import urlparse
 
 import box
 import feedparser
-import requests
 
 from django.core.exceptions import ValidationError
-from django.core.files.images import ImageFile
-from django.core.validators import URLValidator, validate_image_file_extension
+from django.core.validators import URLValidator
 from django.utils import timezone
 from django.utils.encoding import force_str
-from PIL import Image, UnidentifiedImageError
-from PIL.Image import DecompressionBombError
 
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.date_parser import parse_date
@@ -67,6 +58,7 @@ def sync_podcast(
     # description
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
+    podcast.cover_url = conv_url(result.feed.image.href)
     podcast.language = conv_str(result.feed.language, "en")[:2]
 
     podcast.description = conv_str(
@@ -78,8 +70,6 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
-
-    parse_cover_image(podcast, result.feed)
     parse_taxonomy(podcast, result.feed, items)
 
     podcast.save()
@@ -96,42 +86,6 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
         [make_episode(podcast, item) for item in items if item.id not in guids],
         ignore_conflicts=True,
     )
-
-
-def parse_cover_image(podcast: Podcast, feed: box.Box) -> None:
-
-    if podcast.cover_image or not (cover_url := conv_url(feed.image.href)):
-        return
-
-    try:
-        podcast.cover_image = create_image_file(
-            requests.get(
-                cover_url,
-                timeout=5,
-                stream=True,
-                headers={
-                    "Accept": feedparser.http.ACCEPT_HEADER,
-                    "User-Agent": feedparser.USER_AGENT,
-                },
-            )
-        )
-    except requests.RequestException:
-        pass
-
-
-def create_image_file(response: requests.Response) -> ImageFile | None:
-
-    if (img := create_image_obj(response.content)) is None:
-        return None
-
-    image_file = ImageFile(img, name=make_filename(response))
-
-    try:
-        validate_image_file_extension(image_file)
-    except ValidationError:
-        return None
-
-    return image_file
 
 
 def make_episode(podcast: Podcast, item: box.Box) -> Episode:
@@ -188,43 +142,6 @@ def extract_text(
         + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
-
-
-def make_filename(response: requests.Response) -> str:
-    _, ext = os.path.splitext(urlparse(response.url).path)
-
-    if not ext:
-        try:
-            content_type = response.headers["Content-Type"].split(";")[0]
-        except KeyError:
-            content_type = mimetypes.guess_type(response.url)[0] or ""
-
-        ext = mimetypes.guess_extension(content_type) or ""
-
-    return uuid.uuid4().hex + ext
-
-
-def create_image_obj(raw: bytes) -> Image:
-    try:
-        img = Image.open(io.BytesIO(raw))
-
-        if img.height > MAX_IMAGE_SIZE or img.width > MAX_IMAGE_SIZE:
-            img = img.resize((MAX_IMAGE_SIZE, MAX_IMAGE_SIZE), Image.ANTIALIAS)
-
-        # remove Alpha channel
-        img = img.convert("RGB")
-
-        fp = io.BytesIO()
-        img.seek(0)
-        img.save(fp, "PNG")
-
-        return fp
-
-    except (
-        DecompressionBombError,
-        UnidentifiedImageError,
-    ):
-        return None
 
 
 def parse_items(result: box.Box) -> list[box.Box]:

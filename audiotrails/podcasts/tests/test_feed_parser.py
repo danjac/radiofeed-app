@@ -26,7 +26,7 @@ class FeedParserTests(TestCase):
             )
         ]
 
-        cls.podcast = PodcastFactory(cover_image=None, pub_date=None)
+        cls.podcast = PodcastFactory(cover_url=None, pub_date=None)
 
     def setUp(self):
         self.content = open(
@@ -54,6 +54,7 @@ class FeedParserTests(TestCase):
         self.assertTrue(self.podcast.last_updated)
         self.assertTrue(self.podcast.pub_date)
         self.assertTrue(self.podcast.explicit)
+        self.assertTrue(self.podcast.cover_url)
 
         categories = [c.name for c in self.podcast.categories.all()]
 

@@ -1,3 +1,4 @@
+{% load static %}
 {% with log=request.player.get_audio_log %}
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
@@ -42,14 +43,14 @@
       <div class="flex items-center space-x-2 sm:space-x-1">
 
         <div>
-          {% with cover_image=podcast.get_cover_image_thumbnail %}
+          {% with cover_url=podcast.cover_url %}
           <a href="{{ podcast_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-14 w-14 lg:h-18 lg:w-18 mr-2 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast_title }}"
                  alt="{{ podcast_title }}"
-                 width="{{ cover_image.width }}"
-                 height="{{ cover_image.height }}"
-                 src="{{ cover_image.url }}">
+                 width="200"
+                 height="200"
+                 src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
           </a>
           {% endwith %}
         </div>

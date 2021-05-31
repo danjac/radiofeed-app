@@ -4,6 +4,8 @@ import datetime
 
 from urllib.error import URLError
 
+import feedparser
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
@@ -12,7 +14,7 @@ from django.utils import timezone
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
-from audiotrails.podcasts.feed_parser import parse_feed
+from audiotrails.podcasts.feed_parser import conv_url, parse_feed
 from audiotrails.podcasts.models import Podcast
 from audiotrails.podcasts.recommender import recommend
 
@@ -30,6 +32,16 @@ def send_recommendation_emails() -> None:
         send_recommendations_email=True, is_active=True
     ):
         send_recommendations_email(user)
+
+
+@shared_task(name="audiotrails.podcasts.sync_podcast_cover_url")
+def sync_podcast_cover_url(podcast_id: int) -> None:
+    """Temp task to map all cover URLs. We can remove once bulk are done."""
+    podcast = Podcast.objects.get(pk=podcast_id)
+    result = feedparser.parse(podcast.rss)
+    if cover_url := conv_url(result.feed.image.href):
+        podcast.cover_url = cover_url
+        podcast.save()
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")

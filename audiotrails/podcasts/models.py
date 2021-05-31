@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
-
 from datetime import datetime
 from decimal import Decimal
 
@@ -9,38 +7,16 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.cache import cache
-from django.core.files.images import ImageFile
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_str
-from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
-from PIL import ImageFile as PILImageFile
-from sorl.thumbnail import ImageField, get_thumbnail
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
 from audiotrails.common.types import AnyUser, AuthenticatedUser
-
-PILImageFile.LOAD_TRUNCATED_IMAGES = True
-THUMBNAIL_SIZE = 200
-
-
-@dataclasses.dataclass
-class PlaceholderImage:
-    width: int = THUMBNAIL_SIZE
-    height: int = THUMBNAIL_SIZE
-
-    @cached_property
-    def url(self) -> str:
-        # fetch lazy so we don't have issue finding staticfiles
-        return static("img/podcast-icon.png")
-
-
-_cover_image_placeholder = PlaceholderImage()
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -101,7 +77,7 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
-    cover_image: ImageFile | None = ImageField(null=True, blank=True)
+    cover_url: str | None = models.URLField(null=True, blank=True, max_length=500)
 
     itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
 
@@ -179,31 +155,14 @@ class Podcast(models.Model):
             "keywords": self.keywords,
         }
 
-        if self.cover_image:
+        if self.cover_url:
             og_data = {
                 **og_data,
-                "image": self.cover_image.url,
-                "image_height": self.cover_image.height,
-                "image_width": self.cover_image.width,
+                "image": self.cover_url,
+                "image_height": 200,
+                "image_width": 200,
             }
         return og_data
-
-    def get_cover_image_thumbnail(self) -> ImageFile | PlaceholderImage:
-        """Returns cover image or placeholder. This is an expensive op,
-        so use with caution."""
-
-        if (
-            self.cover_image
-            and (
-                img := get_thumbnail(
-                    self.cover_image, str(THUMBNAIL_SIZE), format="WEBP", crop="center"
-                )
-            )
-            and img.size is not None
-        ):
-            return img
-
-        return _cover_image_placeholder
 
 
 class Follow(TimeStampedModel):

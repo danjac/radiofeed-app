@@ -16,11 +16,6 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/cover/<int:podcast_id>/<int:size>/",
-        views.cover_image,
-        name="cover_image",
-    ),
-    path(
         "podcasts/<int:podcast_id>/",
         views.preview,
         name="preview",

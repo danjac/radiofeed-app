@@ -41,13 +41,6 @@ def mock_search_itunes(
     return [mock_search_result], []
 
 
-class CoverImageTests(TestCase):
-    def test_cover_image(self) -> None:
-        podcast = PodcastFactory()
-        resp = self.client.get(reverse("podcasts:cover_image", args=[podcast.id, 16]))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-
-
 class PreviewTests(TestCase):
     def test_preview(self) -> None:
         podcast = PodcastFactory()

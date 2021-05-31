@@ -9,6 +9,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
@@ -173,19 +174,19 @@ class Episode(models.Model):
             "keywords": self.keywords,
         }
 
-        if self.podcast.cover_image:
+        if self.podcast.cover_url:
             og_data = {
                 **og_data,
-                "image": self.podcast.cover_image.url,
-                "image_height": self.podcast.cover_image.height,
-                "image_width": self.podcast.cover_image.width,
+                "image": self.podcast.cover_url,
+                "image_height": 200,
+                "image_width": 200,
             }
 
         return og_data
 
     def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session
-        thumbnail = self.podcast.get_cover_image_thumbnail()
+        cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
 
         return {
             "title": self.title,
@@ -193,7 +194,7 @@ class Episode(models.Model):
             "artist": self.podcast.creators,
             "artwork": [
                 {
-                    "src": thumbnail.url,
+                    "src": cover_url,
                     "sizes": f"{size}x{size}",
                     "type": "image/png",
                 }
@@ -262,7 +263,7 @@ class AudioLog(TimeStampedModel):
         ]
 
     def to_json(self) -> dict[str, Any]:
-        cover_image = self.episode.podcast.get_cover_image_thumbnail()
+        cover_url = self.episode.podcast.cover_url or static("img/podcast-icon.png")
         return {
             "currentTime": self.current_time,
             "episode": {
@@ -276,9 +277,9 @@ class AudioLog(TimeStampedModel):
                 "title": self.episode.podcast.title,
                 "url": self.episode.podcast.get_absolute_url(),
                 "coverImage": {
-                    "width": cover_image.width,
-                    "height": cover_image.height,
-                    "url": cover_image.url,
+                    "width": 200,
+                    "height": 200,
+                    "url": cover_url,
                 },
             },
         }

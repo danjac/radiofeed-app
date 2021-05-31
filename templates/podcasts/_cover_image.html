@@ -1,14 +1,15 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if not cover_image %}lazy filter blur-sm{% endif %}"
+{% with cover_url=podcast.cover_url %}
+<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if cover_url %}lazy filter blur-sm{% endif %}"
      alt="{{ podcast.title|stripentities }}"
-     {% if cover_image %}
      loading="lazy"
-     width="{{ cover_image.width }}"
-     height="{{ cover_image.height }}"
+     width="200"
+     height="200"
+     {% if cover_url %}
      x-data="{
         isLoaded: false,
-        src: '{{ cover_image.url }}',
+        src: '{{ cover_url }}',
         placeholder: '{{ placeholder }}',
         original: null
      }"
@@ -18,10 +19,5 @@
      :src="src"
      {% else %}
      src="{{ placeholder }}"
-     height="200"
-     width="200"
-     hx-get="{% url 'podcasts:cover_image' podcast.id size %}"
-     hx-trigger="intersect threshold:.5 once"
-     hx-swap="outerHTML"
-     hx-target="this"
      {% endif %}>
+{% endwith %}

@@ -19,7 +19,7 @@ class PodcastFactory(DjangoModelFactory):
     title = factory.Faker("text")
     description = factory.Faker("text")
     pub_date = factory.LazyFunction(timezone.now)
-    cover_image = factory.django.ImageField()
+    cover_url = "https://example.com/cover.jpg"
 
     class Meta:
         model = Podcast
