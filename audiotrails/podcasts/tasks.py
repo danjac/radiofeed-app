@@ -40,6 +40,7 @@ def sync_podcast_cover_url(podcast_id: int) -> None:
     podcast = Podcast.objects.get(pk=podcast_id)
     result = feedparser.parse(podcast.rss)
     if cover_url := conv_url(result.feed.image.href):
+        logger.debug(f"Cover URL found for podcast {podcast}")
         podcast.cover_url = cover_url
         podcast.save()
 
