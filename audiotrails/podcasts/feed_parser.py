@@ -61,6 +61,7 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
         and result.href != podcast.rss
     ):
         # permanent redirect: update URL for next time
+        # problem: another podcast has same RSS feed?
         podcast.rss = result.href
         return ["rss"]
 
