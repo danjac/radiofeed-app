@@ -64,10 +64,7 @@ export default function Player(options) {
       this.$watch('currentTime', (value) => {
         this.updateProgressBar(this.duration, value);
       });
-      this.openPlayer();
-    },
 
-    openPlayer() {
       this.stopPlayer();
 
       if ('mediaSession' in navigator) {
@@ -87,7 +84,13 @@ export default function Player(options) {
       if (isLocked) {
         this.isPaused = true;
       } else {
-        this.startPlayer();
+        this.$refs.audio
+          .play()
+          .then(() => this.startTimer())
+          .catch((e) => {
+            console.log(e);
+            this.isPaused = true;
+          });
       }
 
       this.duration = this.$refs.audio.duration;
@@ -209,16 +212,6 @@ export default function Player(options) {
         return;
       }
       return this.isPaused ? this.play() : this.pause();
-    },
-
-    startPlayer() {
-      return this.$refs.audio
-        .play()
-        .then(() => this.startTimer())
-        .catch((e) => {
-          console.log(e);
-          this.isPaused = true;
-        });
     },
 
     stopPlayer() {
