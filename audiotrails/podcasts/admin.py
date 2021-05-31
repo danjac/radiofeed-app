@@ -44,12 +44,31 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ActiveFilter(admin.SimpleListFilter):
+    title = "Active"
+    parameter_name = "active"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", "Active"),
+            ("no", "Inactive"),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == "yes":
+            return queryset.filter(active=True)
+        if value == "no":
+            return queryset.filter(active=False)
+        return queryset
+
+
 @admin.register(Podcast)
 class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
-    list_filter = (PubDateFilter, PromotedFilter)
+    list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("__str__", "pub_date", "promoted")
+    list_display = ("__str__", "pub_date", "active", "promoted")
     list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
