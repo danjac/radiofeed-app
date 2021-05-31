@@ -190,12 +190,11 @@ MESSAGE_TAGS = {
 }
 
 # https://celery.readthedocs.io/en/latest/userguide/configuration.html
+
 result_backend = CELERY_BROKER_URL = REDIS_URL
 result_serializer = "json"
 task_acks_late = True
 task_track_started = True
-# broker_transport_options = {"visibility_timeout": 43200}
-# task_soft_time_limit = 60
 
 # https://django-taggit.readthedocs.io/en/latest/getting_started.html
 
