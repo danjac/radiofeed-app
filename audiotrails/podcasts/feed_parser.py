@@ -79,7 +79,6 @@ def sync_podcast(
 
     # timestamps
     podcast.last_updated = timezone.now()
-    podcast.etag = conv_str(result.etag)
     podcast.pub_date = max(item.pub_date for item in items)
 
     # description

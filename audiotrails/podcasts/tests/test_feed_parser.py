@@ -51,7 +51,10 @@ class FeedParserTests(TestCase):
 
     def test_parse_feed(self):
 
-        with mock.patch(self.mock_parse, return_value=self.get_feedparser_content()):
+        with mock.patch(
+            self.mock_parse,
+            return_value={"etag": "abc123", **self.get_feedparser_content()},
+        ):
             episodes = parse_feed(self.podcast)
 
         self.assertEqual(len(episodes), 20)
@@ -66,6 +69,7 @@ class FeedParserTests(TestCase):
         self.assertEqual(self.podcast.creators, "8th Kind")
 
         self.assertTrue(self.podcast.last_updated)
+        self.assertTrue(self.podcast.etag)
         self.assertTrue(self.podcast.pub_date)
         self.assertTrue(self.podcast.explicit)
         self.assertTrue(self.podcast.cover_url)
