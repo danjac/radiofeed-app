@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.core.management.base import BaseCommand, CommandParser
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from audiotrails.podcasts.models import Podcast
 
@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, **options) -> None:
 
         podcasts = Podcast.objects.annotate(num_episodes=Count("episode")).filter(
-            pub_date__isnull=True
+            Q(pub_date__isnull=True) | Q(active=False)
         )
 
         num_podcasts = podcasts.count()
