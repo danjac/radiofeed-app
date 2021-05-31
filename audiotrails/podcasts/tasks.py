@@ -78,7 +78,7 @@ def sync_podcast_feed(
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
-    except URLError as e:
+    except (ValueError, URLError) as e:
         logger.debug(f"Error syncing podcast RSS {rss} {e}")
 
 
@@ -89,7 +89,7 @@ def get_podcast_sync_message(
     total: int | None = None,
 ) -> str:
 
-    msg = f"Podcast {podcast} synced with RSS: {new_episodes} new episodes"
+    msg = f"Podcast {podcast} synced with feed: {new_episodes} new episodes"
     if total and counter:
         msg += f" ({counter}/{total})"
     return msg
