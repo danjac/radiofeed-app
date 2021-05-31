@@ -16,7 +16,7 @@ https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-To get started, run *./bootstrap.sh*. This will create a new pod, *audiopod* and create and run the required containers.
+To get started, run _./bootstrap.sh_. This will create a new pod, _audiopod_ and create and run the required containers.
 
 Once this is installed, you can start your local instance again by just running
 
@@ -44,7 +44,7 @@ You can access the development app in your browser at http://localhost:8000.
 
 To run unit tests:
 
-> ./scripts/runtests [--reuse-db] [-x] [....]
+> ./scripts/runtests [--reuse-db][-x] [....]
 
 This script takes the same arguments as pytest and pytest-django:
 
@@ -60,7 +60,7 @@ Issue is covered here: https://github.com/danjac/audiotrails/issues/3
 
 ## Deployment
 
-This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. You should also set up an S3 bucket with folders "static" and "media", and create a Cloudfront CDN distribution pointing to this bucket. Set up your DNS with your provider as per the Dokku instructions.
+This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
 
 SSH into your Dokku server and create the app and add the domain (assuming "myapp" is your app name, and "myapp.com" your domain):
 
@@ -84,11 +84,11 @@ Make sure you add buildpacks for PostgreSQL and Redis:
 
 These instructions will automatically set up the environment variables **DATABASE_URL** and **REDIS_URL**.
 
-The next step is to configure your environment variables. Copy the file *vars.yml.template* to *vars.yml* and enter the relevant values. You should encrypt this file using ansible-vault:
+The next step is to configure your environment variables. Copy the file _vars.yml.template_ to _vars.yml_ and enter the relevant values. You should encrypt this file using ansible-vault:
 
 > ansible-vault encrypt vars.yml
 
-Note that *vars.yml* is ignored by Git, so if you want to keep the file safe outside your development machine you should use a solution like LastPass or Bitwarden.
+Note that _vars.yml_ is ignored by Git, so if you want to keep the file safe outside your development machine you should use a solution like LastPass or Bitwarden.
 
 You can then run an ansible playbook to set these variables:
 
@@ -118,9 +118,9 @@ Next set up celery and celerybeat workers:
 
 You should now be able to access the Django management commands:
 
-> dokku run python manage.py [command] [...options]
+> dokku run python manage.py [command][...options]
 
-Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run *loaddata* and *sync_podcast_feeds* commands to add the categories and podcasts and sync the RSS feeds.
+Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run _loaddata_ and _sync_podcast_feeds_ commands to add the categories and podcasts and sync the RSS feeds.
 
 To deploy just run:
 

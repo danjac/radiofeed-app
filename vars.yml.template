@@ -1,10 +1,6 @@
 admin_url:
 admins:
 app_name:
-aws_access_key_id:
-aws_s3_custom_domain:
-aws_secret_access_key:
-aws_storage_bucket_name:
 domain_name:
 google_tracking_id:
 letsencrypt_email:
@@ -13,4 +9,3 @@ mailgun_sender_domain:
 secret_key:
 sentry_url:
 app_db_name:
-aws_backups_bucket_name:
