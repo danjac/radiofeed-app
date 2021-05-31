@@ -202,7 +202,7 @@ def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> A
             if validator:
                 validator(converted)
             return converted
-    except (ValidationError, TypeError, ValueError, AttributeError):
+    except (ValidationError, TypeError, ValueError):
         pass
 
     return None
