@@ -1,3 +1,4 @@
+import http
 import pathlib
 
 from unittest import mock
@@ -13,6 +14,7 @@ from audiotrails.podcasts.feed_parser import get_categories_dict, parse_feed
 class FeedParserTests(TestCase):
 
     mock_file = "rss_mock.xml"
+    mock_parse = "feedparser.parse"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
 
     @classmethod
@@ -47,9 +49,9 @@ class FeedParserTests(TestCase):
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
 
-    def test_parse_feed(self, *mocks):
+    def test_parse_feed(self):
 
-        with mock.patch("feedparser.parse", return_value=self.get_feedparser_content()):
+        with mock.patch(self.mock_parse, return_value=self.get_feedparser_content()):
             episodes = parse_feed(self.podcast)
 
         self.assertEqual(len(episodes), 20)
@@ -77,11 +79,11 @@ class FeedParserTests(TestCase):
 
         self.assertTrue(self.podcast.last_updated)
 
-    def test_parse_feed_permanent_redirect(self, *mocks):
+    def test_parse_feed_permanent_redirect(self):
         with mock.patch(
-            "feedparser.parse",
+            self.mock_parse,
             return_value={
-                "status": 301,
+                "status": http.HTTPStatus.PERMANENT_REDIRECT,
                 "href": "https://example.com/test.xml",
                 **self.get_feedparser_content(),
             },
@@ -91,13 +93,14 @@ class FeedParserTests(TestCase):
         self.assertEqual(len(episodes), 20)
 
         self.podcast.refresh_from_db()
-        self.podcast.rss == "https://example.com/test.xml"
 
-    def test_parse_feed_gone(self, *mocks):
+        self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
+
+    def test_parse_feed_gone(self):
         with mock.patch(
-            "feedparser.parse",
+            self.mock_parse,
             return_value={
-                "status": 410,
+                "status": http.HTTPStatus.GONE,
             },
         ):
             episodes = parse_feed(self.podcast)
