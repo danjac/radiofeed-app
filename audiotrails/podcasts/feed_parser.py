@@ -64,8 +64,8 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
         podcast.rss = result.href
         return ["rss"]
 
-    if result.etag != podcast.etag:
-        podcast.etag = result.etag
+    if (etag := conv_str(result.etag)) != podcast.etag:
+        podcast.etag = etag
         return ["etag"]
 
     return []
