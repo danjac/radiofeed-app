@@ -36,25 +36,24 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
-    save_podcast: bool = sync_podcast_status(podcast, result)
+    for_update = sync_podcast_status(podcast, result)
 
     if not (items := parse_items(result)):
-        if save_podcast:
-            podcast.save()
+        podcast.save(update_fields=for_update)
         return []
 
     sync_podcast(podcast, result, items)
     return sync_episodes(podcast, items)
 
 
-def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
-    """Checks result HTTP status: returns True if
+def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
+    """Checks result HTTP status: returns any fields if
     any required changes made to podcast."""
 
     if result.status == http.HTTPStatus.GONE:
         # HTTP gone: podcast is dead
         podcast.active = False
-        return True
+        return ["active"]
 
     if (
         result.status == http.HTTPStatus.PERMANENT_REDIRECT
@@ -62,9 +61,9 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
     ):
         # permanent redirect: update URL for next time
         podcast.rss = result.href
-        return True
+        return ["rss"]
 
-    return False
+    return []
 
 
 def sync_podcast(
@@ -210,7 +209,10 @@ def is_episode(item: box.Box) -> bool:
 
 
 def conv(
-    *values: Any, convert: Callable, default=None, validator: Callable | None = None
+    *values: Any,
+    convert: Callable,
+    default=None,
+    validator: Callable | None = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
