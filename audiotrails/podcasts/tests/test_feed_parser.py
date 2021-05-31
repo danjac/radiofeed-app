@@ -1,5 +1,9 @@
 import pathlib
 
+from unittest import mock
+
+import feedparser
+
 from django.test import TestCase
 
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
@@ -33,12 +37,20 @@ class FeedParserTests(TestCase):
             pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
         ).read()
 
+    def get_feedparser_content(self, *args, **kwargs) -> dict:
+        content = open(
+            pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
+        ).read()
+
+        return feedparser.parse(content)
+
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
 
     def test_parse_feed(self, *mocks):
 
-        episodes = parse_feed(self.podcast, src=self.content)
+        with mock.patch("feedparser.parse", return_value=self.get_feedparser_content()):
+            episodes = parse_feed(self.podcast)
 
         self.assertEqual(len(episodes), 20)
 
@@ -64,3 +76,33 @@ class FeedParserTests(TestCase):
         self.assertIn("Philosophy", categories)
 
         self.assertTrue(self.podcast.last_updated)
+
+    def test_parse_feed_permanent_redirect(self, *mocks):
+        with mock.patch(
+            "feedparser.parse",
+            return_value={
+                "status": 301,
+                "href": "https://example.com/test.xml",
+                **self.get_feedparser_content(),
+            },
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 20)
+
+        self.podcast.refresh_from_db()
+        self.podcast.rss == "https://example.com/test.xml"
+
+    def test_parse_feed_gone(self, *mocks):
+        with mock.patch(
+            "feedparser.parse",
+            return_value={
+                "status": 410,
+            },
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(episodes, [])
+
+        self.podcast.refresh_from_db()
+        self.assertFalse(self.podcast.active)

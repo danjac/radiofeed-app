@@ -73,6 +73,8 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 class Podcast(models.Model):
 
     rss: str = models.URLField(unique=True, max_length=500)
+    active: bool = models.BooleanField(default=True)
+
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)

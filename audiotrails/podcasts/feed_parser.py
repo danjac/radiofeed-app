@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import http
 
 from functools import lru_cache
 from typing import Any, Callable
@@ -26,16 +27,29 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast, src: str = "") -> list[Episode]:
+def parse_feed(podcast: Podcast) -> list[Episode]:
 
     result = box.Box(
         feedparser.parse(
-            src or podcast.rss,
+            podcast.rss,
             etag=podcast.etag,
             modified=podcast.last_updated,
         ),
         default_box=True,
     )
+
+    if result.status == http.HTTPStatus.GONE:
+        # HTTP gone: podcast is dead
+        podcast.active = False
+        podcast.save()
+        return []
+
+    if (
+        result.status == http.HTTPStatus.PERMANENT_REDIRECT
+        and result.href != podcast.rss
+    ):
+        # permanent redirect: update URL for next time
+        podcast.rss = result.href
 
     if not (items := parse_items(result)):
         return []

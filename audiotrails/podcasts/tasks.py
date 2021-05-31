@@ -41,7 +41,8 @@ def sync_podcast_feeds() -> None:
                 last_updated__isnull=False,
                 last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
             )
-            | Q(last_updated__isnull=True)
+            | Q(last_updated__isnull=True),
+            active=True,
         )
         .distinct()
         .order_by("-last_updated", "-pub_date")
@@ -65,7 +66,7 @@ def sync_podcast_feed(
     rss: str, counter: int | None = None, total: int | None = None
 ) -> None:
     try:
-        podcast = Podcast.objects.get(rss=rss)
+        podcast = Podcast.objects.get(rss=rss, active=True)
         new_episodes = parse_feed(podcast)
         logger.info(
             get_podcast_sync_message(
