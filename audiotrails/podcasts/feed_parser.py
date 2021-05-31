@@ -43,7 +43,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         podcast.save(update_fields=for_update + ["last_updated"])
         return []
 
-    sync_podcast(podcast, result, items)
+    sync_podcast(podcast, result.feed, items)
     return sync_episodes(podcast, items)
 
 
@@ -73,7 +73,7 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
 
 def sync_podcast(
     podcast: Podcast,
-    result: box.Box,
+    feed: box.Box,
     items: list[box.Box],
 ) -> None:
 
@@ -82,21 +82,21 @@ def sync_podcast(
     podcast.pub_date = max(item.pub_date for item in items)
 
     # description
-    podcast.title = conv_str(result.feed.title)
-    podcast.link = conv_url(result.feed.link)[:500]
-    podcast.cover_url = conv_url(result.feed.image.href)
-    podcast.language = conv_str(result.feed.language, "en")[:2]
+    podcast.title = conv_str(feed.title)
+    podcast.link = conv_url(feed.link)[:500]
+    podcast.cover_url = conv_url(feed.image.href)
+    podcast.language = conv_str(feed.language, "en")[:2]
 
     podcast.description = conv_str(
-        result.feed.content,
-        result.feed.summary,
-        result.feed.description,
-        result.feed.subtitle,
+        feed.content,
+        feed.summary,
+        feed.description,
+        feed.subtitle,
     )
 
-    podcast.explicit = parse_explicit(result.feed)
-    podcast.creators = parse_creators(result.feed)
-    parse_taxonomy(podcast, result.feed, items)
+    podcast.explicit = parse_explicit(feed)
+    podcast.creators = parse_creators(feed)
+    parse_taxonomy(podcast, feed, items)
 
     podcast.save()
 
