@@ -14,8 +14,8 @@
         original: null
      }"
      x-init="original=src;src=placeholder;"
-     @load="src=original;isLoaded=true;"
-     @error="src=placeholder;isLoaded=true;"
+     @load.once="src=original;isLoaded=true;"
+     @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
      {% else %}
