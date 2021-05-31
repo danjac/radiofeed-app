@@ -39,7 +39,7 @@ def send_recommendation_emails() -> None:
 def sync_podcast_cover_url(podcast_id: int) -> None:
     """Temp task to map all cover URLs. We can remove once bulk are done."""
     podcast = Podcast.objects.get(pk=podcast_id)
-    result = box.Box(feedparser.parse(podcast.rss))
+    result = box.Box(feedparser.parse(podcast.rss), default_box=True)
     if cover_url := conv_url(result.feed.image.href):
         logger.debug(f"Cover URL found for podcast {podcast}")
         podcast.cover_url = cover_url
