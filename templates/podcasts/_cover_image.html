@@ -1,7 +1,7 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
 {% with cover_url=podcast.cover_url %}
-<img class="object-cover border dark:border-gray-500 bg-transparent h-{{ size }} w-{{ size }} hover:opacity-75 {% if cover_url %}lazy filter blur-sm{% endif %}"
+<img class="object-cover border dark:border-gray-500 bg-transparent hover:opacity-75 h-{{ size }} w-{{ size }}"
      alt="{{ podcast.title|stripentities }}"
      loading="lazy"
      width="200"
