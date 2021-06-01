@@ -114,6 +114,7 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
         self.assertTrue(self.podcast.active)
+        self.assertFalse(self.podcast.last_updated)
 
     def test_parse_feed_gone(self):
         with mock.patch(
