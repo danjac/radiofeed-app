@@ -98,10 +98,7 @@ def sync_podcast(
 
     podcast.categories.set(categories)  # type: ignore
 
-    now = timezone.now()
-
-    podcast.last_checked = now
-    podcast.last_updated = now
+    podcast.last_updated = timezone.now()
 
     podcast.save()
 
