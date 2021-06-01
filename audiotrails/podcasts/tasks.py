@@ -38,10 +38,10 @@ def sync_podcast_feeds() -> None:
     qs = (
         Podcast.objects.filter(
             Q(
-                last_checked__isnull=False,
-                last_checked__lt=timezone.now() - datetime.timedelta(hours=12),
+                last_updated__isnull=False,
+                last_updated__lt=timezone.now() - datetime.timedelta(hours=12),
             )
-            | Q(last_checked__isnull=True),
+            | Q(last_updated__isnull=True),
             active=True,
         )
         .distinct()

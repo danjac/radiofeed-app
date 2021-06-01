@@ -36,33 +36,32 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
-    if not check_podcast_status(podcast, result):
+    if not check_feed_status(podcast, result):
         return []
 
     items = parse_items(result)
-
     sync_podcast(podcast, result, items)
-
     return sync_episodes(podcast, items)
 
 
-def check_podcast_status(podcast: Podcast, result: box.Box) -> bool:
+def check_feed_status(podcast: Podcast, result: box.Box) -> bool:
+    "Check feed status. Returns True if we can continue parsing the feed."
+    if result.status == http.HTTPStatus.NOT_MODIFIED:
+        # no change, do nothing
+        return False
+
     if result.status == http.HTTPStatus.GONE:
         # podcast is dead: deactivate so it won't be parsed again
         podcast.active = False
-        podcast.save()
+        podcast.save(update_fields=["active"])
         return False
 
-    if result.status == http.HTTPStatus.NOT_MODIFIED:
-        # no change, do nothing
-        podcast.last_checked = timezone.now()
-        podcast.save()
-        return False
-
-    if result.status == http.HTTPStatus.PERMANENT_REDIRECT:
+    if result.status == http.HTTPStatus.PERMANENT_REDIRECT and (
+        rss := conv_url(result.href)
+    ):
         # permanent redirect: update URL for next time
         # problem: another podcast has same RSS feed?
-        podcast.rss = result.href
+        podcast.rss = rss
 
     return True
 

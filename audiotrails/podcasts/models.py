@@ -93,7 +93,6 @@ class Podcast(models.Model):
     creators: str = models.TextField(blank=True)
 
     created: datetime = models.DateTimeField(auto_now_add=True)
-    last_checked: datetime | None = models.DateTimeField(null=True, blank=True)
     last_updated: datetime | None = models.DateTimeField(null=True, blank=True)
 
     explicit: bool = models.BooleanField(default=False)
