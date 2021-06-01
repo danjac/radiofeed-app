@@ -101,6 +101,20 @@ class FeedParserTests(TestCase):
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
         self.assertTrue(self.podcast.last_updated)
 
+    def test_parse_feed_not_modified(self):
+        with mock.patch(
+            self.mock_parse,
+            return_value={
+                "status": http.HTTPStatus.NOT_MODIFIED,
+            },
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(episodes, [])
+
+        self.podcast.refresh_from_db()
+        self.assertTrue(self.podcast.active)
+
     def test_parse_feed_gone(self):
         with mock.patch(
             self.mock_parse,
