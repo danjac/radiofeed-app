@@ -36,6 +36,21 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
+    if result.status == http.HTTPStatus.NOT_MODIFIED:
+        # no change, do nothing
+        return []
+
+    if result.status == http.HTTPStatus.GONE:
+        # podcast is dead: deactivate so it won't be parsed again
+        podcast.active = False
+        podcast.save()
+        return []
+
+    if result.status == http.HTTPStatus.PERMANENT_REDIRECT:
+        # permanent redirect: update URL for next time
+        # problem: another podcast has same RSS feed?
+        podcast.rss = result.href
+
     items = parse_items(result)
 
     sync_podcast(podcast, result, items)
@@ -47,34 +62,13 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     return sync_episodes(podcast, items)
 
 
-def sync_podcast_status(podcast: Podcast, result: box.Box):
-    """Checks result HTTP status and headers"""
-
-    if result.status == http.HTTPStatus.GONE:
-        # HTTP gone: podcast is dead
-        podcast.active = False
-
-    if (
-        result.status == http.HTTPStatus.PERMANENT_REDIRECT
-        and result.href != podcast.rss
-    ):
-        # permanent redirect: update URL for next time
-        # problem: another podcast has same RSS feed?
-        podcast.rss = result.href
-
-    if (etag := conv_str(result.etag)) != podcast.etag:
-        podcast.etag = etag
-
-
 def sync_podcast(
     podcast: Podcast,
     result: box.Box,
     items: list[box.Box],
 ) -> None:
 
-    sync_podcast_status(podcast, result)
-
-    # description
+    podcast.etag = conv_str(result.etag)
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
     podcast.cover_url = conv_url(result.feed.image.href)
@@ -89,6 +83,7 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(result.feed)
     podcast.creators = parse_creators(result.feed)
+
     keywords, categories = parse_taxonomy(result.feed)
 
     podcast.keywords = " ".join(keywords)
