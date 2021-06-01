@@ -49,8 +49,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
 
 def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
-    """Checks result HTTP status: returns any fields if
-    any required changes made to podcast."""
+    """Checks result HTTP status: return True if any required changes made to podcast."""
 
     if result.status == http.HTTPStatus.GONE:
         # HTTP gone: podcast is dead
