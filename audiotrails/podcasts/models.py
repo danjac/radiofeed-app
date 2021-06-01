@@ -13,6 +13,7 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.text import slugify
+from model_utils import FieldTracker
 from model_utils.models import TimeStampedModel
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
@@ -108,6 +109,7 @@ class Podcast(models.Model):
     search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
+    tracker = FieldTracker()
 
     class Meta:
         indexes = [

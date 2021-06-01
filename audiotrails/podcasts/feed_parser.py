@@ -36,25 +36,25 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
-    for_update = sync_podcast_status(podcast, result)
+    sync_podcast_status(podcast, result)
 
     if items := parse_items(result):
-        sync_podcast(podcast, result.feed, items)
-        return sync_episodes(podcast, items)
+        sync_podcast_details(podcast, result.feed, items)
 
-    if for_update:
+    if podcast.tracker.changed():
         podcast.last_updated = timezone.now()
         podcast.save()
-    return []
+
+    return sync_episodes(podcast, items) if items else []
 
 
-def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
-    """Checks result HTTP status: return True if any required changes made to podcast."""
+def sync_podcast_status(podcast: Podcast, result: box.Box):
+    """Checks result HTTP status and headers: return True
+    if any required changes made to podcast."""
 
     if result.status == http.HTTPStatus.GONE:
         # HTTP gone: podcast is dead
         podcast.active = False
-        return True
 
     if (
         result.status == http.HTTPStatus.PERMANENT_REDIRECT
@@ -63,23 +63,18 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
         # permanent redirect: update URL for next time
         # problem: another podcast has same RSS feed?
         podcast.rss = result.href
-        return True
 
     if (etag := conv_str(result.etag)) != podcast.etag:
         podcast.etag = etag
-        return True
-
-    return False
 
 
-def sync_podcast(
+def sync_podcast_details(
     podcast: Podcast,
     feed: box.Box,
     items: list[box.Box],
 ) -> None:
 
     # timestamps
-    podcast.last_updated = timezone.now()
     podcast.pub_date = max(item.pub_date for item in items)
 
     # description
@@ -97,9 +92,8 @@ def sync_podcast(
 
     podcast.explicit = parse_explicit(feed)
     podcast.creators = parse_creators(feed)
-    parse_taxonomy(podcast, feed, items)
 
-    podcast.save()
+    parse_taxonomy(podcast, feed, items)
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
