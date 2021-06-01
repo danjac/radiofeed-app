@@ -9,15 +9,16 @@
      {% if cover_url %}
      x-data="{
         isLoaded: false,
-        src: '{{ cover_url }}',
+        src: '{{ coverUrl }}',
         placeholder: '{{ placeholder }}',
-        original: null
+        coverUrl: '{{ cover_url }}'
      }"
-     x-init="original=src;src=placeholder;"
-     @load.once="src=original;isLoaded=true;"
+     x-init="src=placeholder;"
+     @load.once="src=coverUrl;isLoaded=true;"
      @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
+     src="{{ placeholder }}"
      {% else %}
      src="{{ placeholder }}"
      {% endif %}>

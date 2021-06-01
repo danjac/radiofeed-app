@@ -1,5 +1,6 @@
 {% load static %}
 {% with podcast=result.podcast %}
+{% static 'img/podcast-icon.png' as placeholder %}
 <section class="p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 flex items-center space-x-3">
   {% if result.image %}
   <div>
@@ -7,14 +8,16 @@
          width="16"
          loading="lazy"
          alt="{{ result.title }}"
+         src="{{ placeholder }}"
          x-data="{
           isLoaded: false,
           src: '{{ result.image }}',
-          placeholder: '{% static 'img/podcast-icon.png' %}',
-          original: null
+          placeholder: '{{ placeholder }}',
+          coverUrl: '{{ result.image }}'
          }"
-         x-init="original=src;src=placeholder;"
-         @load="src=original;isLoaded=true;"
+         x-init="src=placeholder;"
+         @load.once="src=coverUrl;isLoaded=true;"
+         @error.once="src=placeholder;isLoaded=true;"
          :class="{'filter blur-sm': !isLoaded}"
          :src="src"
          class="object-cover border dark:border-gray-500 h-16 w-16 bg-transparent" />
