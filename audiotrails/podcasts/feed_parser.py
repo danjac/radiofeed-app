@@ -39,8 +39,9 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     for_update = sync_podcast_status(podcast, result)
 
     if not (items := parse_items(result)):
-        podcast.last_updated = timezone.now()
-        podcast.save(update_fields=for_update + ["last_updated"])
+        if for_update:
+            podcast.last_updated = timezone.now()
+            podcast.save(update_fields=[*for_update, "last_updated"])
         return []
 
     sync_podcast(podcast, result.feed, items)
