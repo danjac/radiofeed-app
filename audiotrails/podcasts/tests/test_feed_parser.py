@@ -99,6 +99,7 @@ class FeedParserTests(TestCase):
         self.podcast.refresh_from_db()
 
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
+        self.assertTrue(self.podcast.last_checked)
         self.assertTrue(self.podcast.last_updated)
 
     def test_parse_feed_not_modified(self):
@@ -114,6 +115,7 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
         self.assertTrue(self.podcast.active)
+        self.assertTrue(self.podcast.last_checked)
         self.assertFalse(self.podcast.last_updated)
 
     def test_parse_feed_gone(self):
