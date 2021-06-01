@@ -45,7 +45,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
 
 def check_feed_status(podcast: Podcast, result: box.Box) -> bool:
-    "Check feed status. Returns True if we can continue parsing the feed."
+    "Check feed HTTP status. Returns True if we can continue parsing the feed."
     if result.status == http.HTTPStatus.NOT_MODIFIED:
         # no change, do nothing
         return False
