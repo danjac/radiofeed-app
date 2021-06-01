@@ -36,16 +36,15 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
-    sync_podcast_status(podcast, result)
+    items = parse_items(result)
 
-    if items := parse_items(result):
-        sync_podcast_details(podcast, result.feed, items)
+    sync_podcast(podcast, result, items)
 
     if podcast.tracker.changed():
         podcast.last_updated = timezone.now()
         podcast.save()
 
-    return sync_episodes(podcast, items) if items else []
+    return sync_episodes(podcast, items)
 
 
 def sync_podcast_status(podcast: Podcast, result: box.Box):
@@ -68,35 +67,44 @@ def sync_podcast_status(podcast: Podcast, result: box.Box):
         podcast.etag = etag
 
 
-def sync_podcast_details(
+def sync_podcast(
     podcast: Podcast,
-    feed: box.Box,
+    result: box.Box,
     items: list[box.Box],
 ) -> None:
 
-    # timestamps
-    podcast.pub_date = max(item.pub_date for item in items)
+    sync_podcast_status(podcast, result)
 
     # description
-    podcast.title = conv_str(feed.title)
-    podcast.link = conv_url(feed.link)[:500]
-    podcast.cover_url = conv_url(feed.image.href)
-    podcast.language = conv_str(feed.language, "en")[:2]
+    podcast.title = conv_str(result.feed.title)
+    podcast.link = conv_url(result.feed.link)[:500]
+    podcast.cover_url = conv_url(result.feed.image.href)
+    podcast.language = conv_str(result.feed.language, "en")[:2]
 
     podcast.description = conv_str(
-        feed.content,
-        feed.summary,
-        feed.description,
-        feed.subtitle,
+        result.feed.content,
+        result.feed.summary,
+        result.feed.description,
+        result.feed.subtitle,
     )
 
-    podcast.explicit = parse_explicit(feed)
-    podcast.creators = parse_creators(feed)
+    podcast.explicit = parse_explicit(result.feed)
+    podcast.creators = parse_creators(result.feed)
+    keywords, categories = parse_taxonomy(result.feed)
 
-    parse_taxonomy(podcast, feed, items)
+    podcast.keywords = " ".join(keywords)
+
+    if items:
+        podcast.pub_date = max(item.pub_date for item in items)
+        podcast.extracted_text = extract_text(podcast, categories, items)
+
+    podcast.categories.set(categories)  # type: ignore
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
+    if not items:
+        return []
+
     episodes = Episode.objects.filter(podcast=podcast)
 
     # remove any episodes that may have been deleted on the podcast
@@ -134,17 +142,13 @@ def parse_explicit(item: box.Box) -> bool:
     return bool(item.itunes_explicit)
 
 
-def parse_taxonomy(podcast: Podcast, feed: box.Box, items: list[box.Box]) -> None:
-    """Extract keywords from text content for recommender
-    and map to categories"""
+def parse_taxonomy(feed: box.Box) -> tuple[list[str], list[Category]]:
     categories_dct = get_categories_dict()
     tags = parse_tags(feed)
-
-    categories = [categories_dct[name] for name in tags if name in categories_dct]
-
-    podcast.keywords = " ".join(name for name in tags if name not in categories_dct)
-    podcast.extracted_text = extract_text(podcast, categories, items)
-    podcast.categories.set(categories)  # type: ignore
+    return (
+        [name for name in tags if name not in categories_dct],
+        [categories_dct[name] for name in tags if name in categories_dct],
+    )
 
 
 def extract_text(
