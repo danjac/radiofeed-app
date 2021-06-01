@@ -38,24 +38,24 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
     for_update = sync_podcast_status(podcast, result)
 
-    if not (items := parse_items(result)):
-        if for_update:
-            podcast.last_updated = timezone.now()
-            podcast.save(update_fields=[*for_update, "last_updated"])
-        return []
+    if items := parse_items(result):
+        sync_podcast(podcast, result.feed, items)
+        return sync_episodes(podcast, items)
 
-    sync_podcast(podcast, result.feed, items)
-    return sync_episodes(podcast, items)
+    if for_update:
+        podcast.last_updated = timezone.now()
+        podcast.save()
+    return []
 
 
-def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
+def sync_podcast_status(podcast: Podcast, result: box.Box) -> bool:
     """Checks result HTTP status: returns any fields if
     any required changes made to podcast."""
 
     if result.status == http.HTTPStatus.GONE:
         # HTTP gone: podcast is dead
         podcast.active = False
-        return ["active"]
+        return True
 
     if (
         result.status == http.HTTPStatus.PERMANENT_REDIRECT
@@ -64,13 +64,13 @@ def sync_podcast_status(podcast: Podcast, result: box.Box) -> list[str]:
         # permanent redirect: update URL for next time
         # problem: another podcast has same RSS feed?
         podcast.rss = result.href
-        return ["rss"]
+        return True
 
     if (etag := conv_str(result.etag)) != podcast.etag:
         podcast.etag = etag
-        return ["etag"]
+        return True
 
-    return []
+    return False
 
 
 def sync_podcast(
