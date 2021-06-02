@@ -40,22 +40,22 @@
            title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
       </div>
 
-      <div class="flex items-center space-x-1">
+      <div class="flex items-center space-x-1 lg:space-x-2">
+        {% with cover_url=podcast.cover_url %}
+        <div class="w-20 sm:w-24">
+          <a href="{{ podcast_url }}">
+            <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 sm:w-20 sm:h-20 self-center hover:opacity-75 border-white cursor-pointer"
+                 title="{{ podcast_title }}"
+                 alt="{{ podcast_title }}"
+                 width="20"
+                 height="20"
+                 src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
+          </a>
+        </div>
+        {% endwith %}
+
 
         <div class="w-full space-y-3">
-          {% with cover_url=podcast.cover_url %}
-          <div>
-            <a href="{{ podcast_url }}">
-              <img class="object-cover border dark:border-gray-500 bg-transparent h-20 w-20 self-center hover:opacity-75 border-white cursor-pointer"
-                   title="{{ podcast_title }}"
-                   alt="{{ podcast_title }}"
-                   width="20"
-                   height="20"
-                   src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
-            </a>
-          </div>
-          {% endwith %}
-
 
           <div class="flex justify-between items-center w-full">
 
