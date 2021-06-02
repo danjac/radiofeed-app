@@ -100,7 +100,7 @@ def clean_html_content(value: str | None) -> str:
         return ""
 
 
-def stripentities(value: str | None) -> str:
+def unescape(value: str | None) -> str:
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
     return html.unescape(value) if value else ""

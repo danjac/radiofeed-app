@@ -14,7 +14,7 @@
   <div>
     <a href="{{ podcast_url }}"
        @click="$dispatch('close-modal')">
-      {% include "podcasts/_cover_image.html" with size=20 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
     </a>
   </div>
   <div class="space-y-2">
@@ -37,7 +37,7 @@
       {% endif %}
     </div>
     {% endwith %}
-    {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
+    {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|unescape %}
   </div>
 </div>
 
@@ -50,7 +50,7 @@
 {% endif %}
 
 <div class="markdown text-muted text-sm mb-3">
-  {{ episode.description|keepspaces|striptags|stripentities|truncatechars:600 }}
+  {{ episode.description|keepspaces|striptags|unescape|truncatechars:600 }}
 </div>
 
 {% endwith %}

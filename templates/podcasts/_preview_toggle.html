@@ -1,4 +1,4 @@
-<button title="Preview for {{ podcast.title|stripentities }}"
+<button title="Preview for {{ podcast.title|unescape }}"
         class="focus:outline-none"
         hx-get="{% url 'podcasts:preview' podcast.id %}"
         hx-target="#modal"

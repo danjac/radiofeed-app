@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from audiotrails.common.html import clean_html_content
-from audiotrails.common.html import stripentities as _stripentities
+from audiotrails.common.html import unescape as _unescape
 from audiotrails.common.types import ContextDict
 
 register = template.Library()
@@ -70,13 +70,13 @@ def re_active_link(
 @register.filter
 @stringfilter
 def clean_html(value: str) -> str:
-    return mark_safe(_stripentities(clean_html_content(value or "")))
+    return mark_safe(_unescape(clean_html_content(value or "")))
 
 
 @register.filter
 @stringfilter
-def stripentities(value: str) -> str:
-    return _stripentities(value or "")
+def unescape(value: str) -> str:
+    return _unescape(value or "")
 
 
 @register.filter

@@ -1,6 +1,6 @@
 {% extends "episodes/base.html" %}
 
-{% block subtitle %} | {{ episode.podcast.title|stripentities }} | {{ episode.title|stripentities }}{% endblock %}
+{% block subtitle %} | {{ episode.podcast.title|unescape }} | {{ episode.title|unescape }}{% endblock %}
 
 {% block content %}
 
@@ -10,7 +10,7 @@
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.title|stripentities }}">
+     title="{{ prev_episode.title|unescape }}">
     Previous
   </a>
 
@@ -20,7 +20,7 @@
   {% if next_episode %}
   <a class="link"
      href="{{ next_episode.get_absolute_url }}"
-     title="{{ next_episode.title|stripentities }}">
+     title="{{ next_episode.title|unescape }}">
     Next
   </a>
   {% else %}
@@ -34,19 +34,19 @@
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 <section class="sm:p-2 sm:border dark:border-gray-500 space-y-3">
 
-  <h1 class="font-bold">{{ episode.title|stripentities }}</h1>
+  <h1 class="font-bold">{{ episode.title|unescape }}</h1>
   <h2>
     <a href="{{ podcast.get_absolute_url }}"
-       title="{{ podcast.title|stripentities }}"
+       title="{{ podcast.title|unescape }}"
        class="link text-sm">
-      {{ podcast.title|stripentities }}
+      {{ podcast.title|unescape }}
     </a>
   </h2>
 
   <div class="flex items-center space-x-3">
     <div>
       <a href="{{ podcast.get_absolute_url }}">
-        {% include "podcasts/_cover_image.html" with size=20 %}
+        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
       </a>
     </div>
     <div class="space-y-2">
@@ -58,7 +58,7 @@
           {{ duration|format_duration }}
         </div>
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|stripentities %}
+      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|unescape %}
       {% include "episodes/_actions_toggle.html" %}
     </div>
   </div>

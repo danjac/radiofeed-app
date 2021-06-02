@@ -1,12 +1,10 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
-{% with cover_url=podcast.cover_url %}
 <img class="object-cover border dark:border-gray-500 bg-transparent hover:opacity-75 h-{{ size }} w-{{ size }}"
-     alt="{{ podcast.title|stripentities }}"
+     alt="{{ alt }}"
      loading="lazy"
-     width="200"
-     height="200"
-     src="{{ placeholder }}"
+     width="{{ size }}"
+     height="{{ size }}"
      {% if cover_url %}
      x-data="{
         isLoaded: false,
@@ -19,5 +17,6 @@
      @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
+     {% else %}
+     src="{{ placeholder }}"
      {% endif %}>
-{% endwith %}

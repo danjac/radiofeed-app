@@ -1,9 +1,9 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ podcast.title|stripentities }}{% endblock %}
+{% block subtitle %} | {{ podcast.title|unescape }}{% endblock %}
 
 {% block content %}
-{% with podcast_title=podcast.title|stripentities %}
+{% with podcast_title=podcast.title|unescape %}
 <h1 class="font-bold mb-3{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast_title }}</h1>
 <div id="podcast-content">
   {% if has_recommendations and not search and not oldest_first %}

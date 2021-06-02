@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 
-from audiotrails.common.html import clean_html_content, stripentities
+from audiotrails.common.html import clean_html_content, unescape
 
 
 class TestCleanHtmlContent(SimpleTestCase):
@@ -12,10 +12,10 @@ class TestCleanHtmlContent(SimpleTestCase):
         text = "<script>alert('xss ahoy!')</script>"
         self.assertEqual(clean_html_content(text), "alert('xss ahoy!')")
 
-    def test_named_stripentities(self) -> None:
+    def test_named_unescape(self) -> None:
         text = "this &amp; that"
-        self.assertEqual(stripentities(text), "this & that")
+        self.assertEqual(unescape(text), "this & that")
 
-    def test_numeric_stripentities(self) -> None:
+    def test_numeric_unescape(self) -> None:
         text = "gov&#8217;t"
-        self.assertEqual(stripentities(text), "gov’t")
+        self.assertEqual(unescape(text), "gov’t")

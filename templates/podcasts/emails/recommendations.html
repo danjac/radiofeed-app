@@ -19,7 +19,7 @@
   </p>
 
   <p>
-    {{ podcast.description|striptags|stripentities|urlize|truncatewords:60 }}
+    {{ podcast.description|striptags|unescape|urlize|truncatewords:60 }}
   </p>
   <hr />
   {% endfor %}
