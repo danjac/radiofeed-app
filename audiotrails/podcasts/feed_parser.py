@@ -52,16 +52,13 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         # permanent redirect: update URL for next time
         podcast.rss = rss
 
-    items = parse_items(result)
-    sync_podcast(podcast, result, items)
-    return sync_episodes(podcast, items)
+    return sync_podcast(podcast, result)
 
 
-def sync_podcast(
-    podcast: Podcast,
-    result: box.Box,
-    items: list[box.Box],
-) -> None:
+def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
+
+    if not (items := parse_items(result)):
+        return []
 
     podcast.etag = conv_str(result.etag)
     podcast.title = conv_str(result.feed.title)
@@ -83,9 +80,8 @@ def sync_podcast(
 
     podcast.keywords = " ".join(keywords)
 
-    if items:
-        podcast.pub_date = max(item.pub_date for item in items)
-        podcast.extracted_text = extract_text(podcast, categories, items)
+    podcast.pub_date = max(item.pub_date for item in items)
+    podcast.extracted_text = extract_text(podcast, categories, items)
 
     podcast.categories.set(categories)  # type: ignore
 
@@ -93,11 +89,10 @@ def sync_podcast(
 
     podcast.save()
 
+    return sync_episodes(podcast, items)
+
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
-    if not items:
-        return []
-
     episodes = Episode.objects.filter(podcast=podcast)
 
     # remove any episodes that may have been deleted on the podcast
