@@ -1,12 +1,12 @@
 {% with podcast=result.podcast %}
-<section class="p-1 border mb-3 hover:bg-gray-100 dark:hover:bg-gray-900 dark:border-gray-500 flex items-center space-x-3">
+<section class="p-1 py-3 flex items-center space-x-3">
   {% if result.image %}
   <div>
     {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.title size=16 %}
   </div>
   {% endif %}
   <div class="space-y-2">
-    <h2 class="w-64 sm:w-96 md:w-full text-sm truncate">
+    <h2 class="w-64 sm:w-96 md:w-full truncate">
       {% if podcast and podcast.pub_date %}
       <a href="{{ podcast.get_absolute_url }}"
          title="{{ result.title }}"

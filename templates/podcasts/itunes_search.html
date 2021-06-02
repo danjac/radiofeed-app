@@ -4,13 +4,16 @@
 
 {% block search_content %}
 
-{% for result in results %}
-{% include "podcasts/_itunes_result.html" %}
-{% empty %}
-{% if error %}
-<p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
-{% elif search %}
-<p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
-{% endif %}
-{% endfor %}
+
+<div class="divide-y divide-gray-300 dark:divide-gray-500">
+  {% for result in results %}
+  {% include "podcasts/_itunes_result.html" %}
+  {% empty %}
+  {% if error %}
+  <p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
+  {% elif search %}
+  <p class="text-center sm:text-left">No results found for <span class="font-bold">{{ search }}</span>.</p>
+  {% endif %}
+  {% endfor %}
+</div>
 {% endblock %}

@@ -2,10 +2,10 @@
 
 {% block podcast_content %}
 {% if show_podcast_detail %}
-<div class="border-b border-t py-2 sm:px-2 sm:border dark:border-gray-500 space-y-2 mb-3">
+<div class="border-b dark:border-gray-500 space-y-6 mb-6 pb-6">
 
   {% if podcast.creators %}
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+  <div class="font-semibold text-gray-600 dark:text-gray-300">
     {{ podcast.creators }}
   </div>
   {% endif %}
@@ -13,12 +13,12 @@
   <div class="flex items-center w-full space-x-3">
 
     <div>
-      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=24 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=28 %}
     </div>
 
-    <div class="text-sm space-y-2">
+    <div class="space-y-3">
       {% include "podcasts/_follow_toggle.html" %}
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-3">
         {% if podcast.link %}
         <div>
           <a href="{{ podcast.link }}"
@@ -45,19 +45,19 @@
 
   {% with num_episodes=podcast.get_cached_episode_count %}
   {% if num_episodes %}
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+  <div class="font-semibold text-gray-600 dark:text-gray-300">
     {{ num_episodes }} episode{{ num_episodes|pluralize }}
   </div>
   {% endif %}
   {% endwith %}
 
   {% if podcast.explicit %}
-  <div class="text-sm font-semibold">
+  <div class="font-semibold">
     This podcast may contain explicit content.
   </div>
   {% endif %}
 
-  <blockquote class="markdown text-sm max-w-sm sm:max-w-full">
+  <blockquote class="markdown max-w-sm sm:max-w-full">
     {{ podcast.description|clean_html }}
   </blockquote>
 
@@ -67,9 +67,9 @@
 </div>
 {% endif %}
 
-<div class="sm:flex items-center mb-3 justify-between">
+<div class="sm:flex items-center mb-6 justify-between pb-6 border-b dark:border-gray-500">
 
-  <div class="flex justify-center sm:justify-start items-center text-sm mb-3 sm:mb-0">
+  <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
     {% if search %}
     <a href="{% url 'episodes:search_episodes' %}{{ search_qs }}"
        title="Search Episodes"

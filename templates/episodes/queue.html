@@ -11,11 +11,12 @@
 <div id="queue"
      hx-get="{{ request.path }}"
      hx-trigger="reload-queue from:body">
-  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-    <h1 class="font-bold flex justify-center sm:justify-start">Play Queue</h1>
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-6 pb-6 border-b dark:border-gray-500">
+    <h1 class="font-bold flex justify-center sm:justify-start text-2xl">Play Queue</h1>
   </div>
   <div x-data="{}"
-       x-init="dragDrop($el, '{% url "episodes:move_queue_items" %}')">
+       x-init="dragDrop($el, '{% url "episodes:move_queue_items" %}')"
+       class="divide-y divide-gray-300 dark:divide-gray-500">
     {% for item in queue_items %}
     {% with episode=item.episode %}
     <div data-draggable="true"

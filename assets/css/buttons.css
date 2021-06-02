@@ -1,5 +1,5 @@
 .btn {
-  @apply text-sm px-2 py-1 rounded font-semibold;
+  @apply px-2 py-1 rounded font-semibold;
 }
 
 .btn[disabled],
@@ -74,5 +74,5 @@ form.submitting .btn-secondary {
 }
 
 .btn-icon {
-  @apply h-4 w-4;
+  @apply h-5 w-5;
 }

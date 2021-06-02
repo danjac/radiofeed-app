@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="mb-3 text-sm flex justify-center sm:justify-start space-x-1">
+<div class="mb-6 flex justify-center sm:justify-start space-x-1">
   <a href="{% url 'podcasts:categories' %}"
      class="link">Discover</a>
   {% if category.parent %}
@@ -18,15 +18,17 @@
   <span class="text-gray-600 dark:text-gray-300">iTunes</span>
 </div>
 
-<h1 class="font-bold mb-3 flex justify-center sm:justify-start text-center">
+<h1 class="font-bold mb-6 flex justify-center sm:justify-start text-center text-2xl pb-6 border-b dark:border-gray-500">
   Top-Rated {{ category.name }} Podcasts on iTunes
 </h1>
 
-{% for result in results %}
-{% include "podcasts/_itunes_result.html" %}
-{% empty %}
-{% if error %}
-<p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
-{% endif %}
-{% endfor %}
+<div class="divide-y divide-gray-300 dark:divide-gray-500">
+  {% for result in results %}
+  {% include "podcasts/_itunes_result.html" %}
+  {% empty %}
+  {% if error %}
+  <p class="text-center sm:text-left">Unable to connect to the ITunes API at the moment.</p>
+  {% endif %}
+  {% endfor %}
+</div>
 {% endblock content %}

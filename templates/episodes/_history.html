@@ -1,7 +1,7 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-<div>
+<div class="divide-y divide-gray-300 dark:divide-gray-500">
   {% for log in page_obj %}
   {% with episode=log.episode %}
   {% include "episodes/_episode.html" %}
