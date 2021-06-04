@@ -18,9 +18,9 @@ billiard==3.6.4.0
     # via celery
 bleach==3.3.0
     # via -r requirements.in
-boto3==1.17.85
+boto3==1.17.87
     # via -r requirements.in
-botocore==1.20.85
+botocore==1.20.87
     # via
     #   boto3
     #   s3transfer
@@ -81,7 +81,7 @@ django-extensions==3.1.3
     # via -r requirements.in
 django-model-utils==4.1.1
     # via -r requirements.in
-django-permissions-policy==4.0.1
+django-permissions-policy==4.1.0
     # via -r requirements.in
 django-redis==5.0.0
     # via -r requirements.in
@@ -95,7 +95,7 @@ django-timezone-field==4.1.2
     # via django-celery-beat
 django-widget-tweaks==1.4.8
     # via -r requirements.in
-django==3.2.3
+django==3.2.4
     # via
     #   -r requirements.in
     #   django-allauth
@@ -112,7 +112,7 @@ django==3.2.3
     #   django-timezone-field
 factory-boy==3.2.0
     # via -r requirements.in
-faker==8.4.0
+faker==8.5.1
     # via factory-boy
 feedparser==6.0.2
     # via -r requirements.in
@@ -130,7 +130,7 @@ idna==2.10
     # via requests
 ipython-genutils==0.2.0
     # via traitlets
-ipython==7.24.0
+ipython==7.24.1
     # via -r requirements.in
 jedi==0.17.2
     # via
