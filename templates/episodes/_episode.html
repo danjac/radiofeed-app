@@ -1,11 +1,11 @@
 {% with podcast=episode.podcast episode_title=episode.title|unescape %}
 <section class="px-1 py-3 hover:bg-gray-100 dark:hover:bg-gray-900">
   <div class="flex justify-between items-center">
-    <div class="flex items-center w-full space-x-2">
+    <div class="flex items-center w-full space-x-2 sm:space-x-3">
 
       <div>
         <a href="{{ podcast.get_absolute_url }}">
-          {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=16 %}
+          {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 css_class="h-16 w-16 sm:h-20 sm:w-20" %}
         </a>
       </div>
 
@@ -21,13 +21,13 @@
             </h2>
             <div class="space-x-2 flex items-center">
 
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-2 sm:space-x-3">
                 {% include "episodes/_preview_toggle.html" %}
                 {% include "episodes/_actions_toggle.html" %}
               </div>
 
               <div title="Date Published"
-                   class="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                   class="text-sm sm:text-base font-semibold text-gray-600 dark:text-gray-300">
                 {% include "_pub_date.html" with pub_date=episode.pub_date %}
               </div>
             </div>
