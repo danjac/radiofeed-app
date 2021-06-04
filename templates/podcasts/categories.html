@@ -20,7 +20,7 @@
     <div>
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
-         class="link">{{ category.name }}</a>
+         class="link text-lg">{{ category.name }}</a>
     </div>
     {% empty %}
     <p class="text-center sm:text-left">
@@ -32,7 +32,7 @@
   {% for category in categories %}
   {% with children=category.children.all %}
   <section class="py-3 space-y-3">
-    <div class="flex items-center justify-center sm:justify-start">
+    <div class="flex items-center justify-center sm:justify-start text-lg">
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
          class="link">{{ category.name }}</a>
@@ -40,7 +40,7 @@
     {% if children %}
     <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start">
       {% for child in children %}
-      <a class="link text-sm inline-block"
+      <a class="link inline-block"
          title="{{ child.name }}"
          href="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endfor %}

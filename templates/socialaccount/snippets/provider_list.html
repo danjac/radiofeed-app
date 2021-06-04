@@ -3,7 +3,7 @@
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
-<div class="text-sm space-x-2">
+<div class="space-x-2">
   {% for provider in socialaccount_providers %}
   <a class="font-semibold underline hover:text-blue-500"
      hx-disable="true"
