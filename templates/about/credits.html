@@ -1,13 +1,13 @@
 {% extends base_template|default:"about/base.html" %}
 
 {% block about_content %}
-<p class="mb-3">
+<p class="mb-6">
   <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your favorite podcasts.
 </p>
-<p class="mb-3">
+<p class="mb-6">
   This is an open-source project covered by the MIT license.
 </p>
-<div class="mb-3 flex items-center space-x-3">
+<div class="mb-6 sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0">
   <div>
     <a class="underline hover:text-blue-500"
        target="_blank"
@@ -25,16 +25,16 @@
 </div>
 <h2 class="font-semibold mb-6 pt-6 border-t dark:border-gray-500 text-lg">Additional Credits</h2>
 
-<ul class="mb-3">
+<ul class="mb-6">
 
-  <li class="mb-3">
+  <li class="mb-6">
     Share icons from <a target="_blank"
        href="https://fontawesome.com"
        class="underline hover:text-blue-500"
        rel="noopener">Font Awesome</a>
   </li>
 
-  <li class="mb-3">
+  <li class="mb-6">
     Loader icon from <a target="_blank"
        href="https://github.com/SamHerbert/SVG-Loaders"
        class="underline hover:text-blue-500"
@@ -58,7 +58,7 @@
 
 <h2 class="font-semibold pt-6 mb-6 border-t dark:border-gray-500 text-lg">General Disclaimer</h2>
 
-<p class="mb-3">
+<p class="mb-6">
   All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with nor ensorsed by {{ request.site.name }}. All audio files are played directly from the source.
 </p>
 
