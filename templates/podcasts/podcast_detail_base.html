@@ -4,7 +4,7 @@
 
 {% block content %}
 {% with podcast_title=podcast.title|unescape %}
-<h1 class="font-bold text-2xl mb-6{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast_title }}</h1>
+<h1 class="font-bold text-2xl mb-6{% if search or oldest_first %} text-center sm:text-left{% endif %}{% if not has_recommendations and not search and not oldest_first %} border-b dark:border-gray-500 pb-6{% endif %}">{{ podcast_title }}</h1>
 <div id="podcast-content">
   {% if has_recommendations and not search and not oldest_first %}
   <nav class="flex items-center border-b dark:border-gray-500 mb-6 pb-6">
