@@ -39,7 +39,7 @@ def sync_podcast_feeds() -> None:
         Podcast.objects.filter(
             Q(
                 last_updated__isnull=False,
-                last_updated__lt=timezone.now() - datetime.timedelta(hours=6),
+                last_updated__lt=timezone.now() - datetime.timedelta(hours=24),
             )
             | Q(last_updated__isnull=True),
             active=True,
