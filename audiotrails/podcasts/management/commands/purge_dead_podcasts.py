@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from django.core.management.base import BaseCommand, CommandParser
-from django.db.models import Count, Q
 
 from audiotrails.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
     help = "Removes all podcasts with no episodes or pub date"
+    require_system_checks = False
 
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
@@ -20,9 +20,7 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
 
-        podcasts = Podcast.objects.annotate(num_episodes=Count("episode")).filter(
-            Q(pub_date__isnull=True) | Q(active=False)
-        )
+        podcasts = Podcast.objects.filter(pub_date__isnull=True)
 
         num_podcasts = podcasts.count()
 
