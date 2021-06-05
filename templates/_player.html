@@ -40,24 +40,30 @@
            title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
       </div>
 
-      <div class="flex items-center space-x-1 lg:space-x-2">
+      <div class="flex items-center space-x-1 sm:space-x-2">
+
         {% with cover_url=podcast.cover_url %}
-        <div class="w-20 sm:w-24">
+        <div class="w-20 sm:w-28">
           <a href="{{ podcast_url }}">
-            <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 sm:w-20 sm:h-20 self-center hover:opacity-75 border-white cursor-pointer"
+            <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 sm:w-24 sm:h-24 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast_title }}"
                  alt="{{ podcast_title }}"
-                 width="20"
-                 height="20"
+                 width="24"
+                 height="24"
                  src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
           </a>
         </div>
         {% endwith %}
 
+        <div class="w-full space-y-2">
 
-        <div class="w-full">
+          <div class="hidden sm:block w-96 lg:w-full truncate">
+            <a class="player--title"
+               href="{{ episode_url }}"
+               title="{{ episode_title }}">{{ episode_title|truncatechars:140 }}</a>
+          </div>
 
-          <div class="flex justify-between items-center w-full mb-3 sm:mb-5">
+          <div class="flex justify-between items-center w-full">
 
             <div class="flex items-center">
 
@@ -89,12 +95,6 @@
                 {% icon "stop" css_class="h-8 w-8 md:h-10 w-10" %}
               </button>
 
-            </div>
-
-            <div class="hidden sm:block sm sm:w-64 w-96 lg:w-full truncate text-center">
-              <a class="player--title"
-                 href="{{ episode_url }}"
-                 title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center">
