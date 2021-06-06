@@ -1,8 +1,8 @@
-<div class="flex items-center {{ css_class|default:'' }}">
+<div class="flex items-center space-x-3 {{ css_class|default:'' }}">
   <a href="{{ share_urls.email }}"
      target="_blank"
      rel="noopener"
-     class="link mr-2 focus:outline-none"
+     class="link focus:outline-none"
      title="Share with email">
     {% icon "mail" css_class="btn-icon" %}
   </a>
@@ -11,14 +11,14 @@
      title="Share on Facebook"
      target="_blank"
      rel="noopener"
-     class="link mr-2 focus:outline-none">
+     class="link focus:outline-none">
     {% icon "facebook" css_class="btn-icon" %}
   </a>
 
   <a href="{{ share_urls.twitter }}"
      target="_blank"
      rel="noopener"
-     class="link mr-2 focus:outline-none"
+     class="link focus:outline-none"
      title="Share on Twitter">
     {% icon "twitter" css_class="btn-icon" %}
   </a>
