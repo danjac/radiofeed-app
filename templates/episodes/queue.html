@@ -12,7 +12,7 @@
      hx-get="{{ request.path }}"
      hx-trigger="reload-queue from:body">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-6 pb-6 border-b dark:border-gray-500">
-    <h1 class="font-bold flex justify-center sm:justify-start text-2xl">Play Queue</h1>
+    <h1 class="font-bold flex justify-center sm:justify-start text-xl md:text-2xl">Play Queue</h1>
   </div>
   <div x-data="{}"
        x-init="dragDrop($el, '{% url "episodes:move_queue_items" %}')"

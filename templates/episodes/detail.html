@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1 class="font-bold text-2xl mb-6">{{ episode.title|unescape }}</h1>
+<h1 class="font-bold text-xl md:text-2xl mb-6">{{ episode.title|unescape }}</h1>
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
