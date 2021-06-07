@@ -36,6 +36,7 @@
 
       <div class="pr-1 w-72 truncate sm:hidden">
         <a class="player--title"
+           @click="$dispatch('close-sidebar')"
            href="{{ episode_url }}"
            title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
       </div>
@@ -44,7 +45,8 @@
 
         {% with cover_url=podcast.cover_url %}
         <div class="w-20 sm:w-28">
-          <a href="{{ podcast_url }}">
+          <a href="{{ podcast_url }}"
+             @click="$dispatch('close-sidebar')">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 sm:w-24 sm:h-24 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast_title }}"
                  alt="{{ podcast_title }}"
@@ -60,6 +62,7 @@
           <div class="hidden sm:block w-96 lg:w-full truncate">
             <a class="player--title"
                href="{{ episode_url }}"
+               @click="$dispatch('close-sidebar')"
                title="{{ episode_title }}">{{ episode_title|truncatechars:140 }}</a>
           </div>
 
