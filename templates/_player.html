@@ -5,6 +5,7 @@
 {% with episode_url=episode.get_absolute_url episode_title=episode.title|unescape podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape %}
 <div id="player"
      x-data="Player({
+       showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        runImmediately: {{ run_immediately|yesno:'true,false' }},
@@ -15,6 +16,8 @@
        }
     })"
      x-init="initialize()"
+     @toggle-sidebar.window="showPlayer = !showPlayer"
+     @close-sidebar.window="showPlayer = true"
      @keydown.window="shortcuts($event)">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
@@ -30,13 +33,12 @@
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
        id="player-controls"
-       x-show="mediaSrc"
+       x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}">
     <div class="relative space-y-3 sm:space-y-0">
 
       <div class="pr-1 w-72 truncate sm:hidden">
         <a class="player--title"
-           @click="$dispatch('close-sidebar')"
            href="{{ episode_url }}"
            title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
       </div>
@@ -45,8 +47,7 @@
 
         {% with cover_url=podcast.cover_url %}
         <div class="w-20 sm:w-28">
-          <a href="{{ podcast_url }}"
-             @click="$dispatch('close-sidebar')">
+          <a href="{{ podcast_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 sm:w-24 sm:h-24 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast_title }}"
                  alt="{{ podcast_title }}"
@@ -62,7 +63,6 @@
           <div class="hidden sm:block w-96 lg:w-full truncate">
             <a class="player--title"
                href="{{ episode_url }}"
-               @click="$dispatch('close-sidebar')"
                title="{{ episode_title }}">{{ episode_title|truncatechars:140 }}</a>
           </div>
 

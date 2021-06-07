@@ -7,6 +7,7 @@ const defaults = {
   isPaused: false,
   isLoaded: false,
   isStalled: false,
+  showPlayer: true,
   playbackRate: 1.0,
   counter: '00:00:00',
 };
