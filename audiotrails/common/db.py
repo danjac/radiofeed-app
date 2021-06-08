@@ -23,9 +23,8 @@ class FastCountMixin(Base):
             "SELECT reltuples FROM pg_class WHERE relname = %s",
             [self.model._meta.db_table],
         )
-        n = int(cursor.fetchone()[0])
-        if n >= 1000:
-            return n  # exact count for small tables
+        if (count := int(cursor.fetchone()[0])) >= 1000:
+            return count  # exact count for small tables
         return super().count()
 
 

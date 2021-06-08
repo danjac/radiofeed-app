@@ -29,10 +29,10 @@ class Command(BaseCommand):
             return
 
         self.stdout.write(f"{num_podcasts} dead podcasts found")
-        if self.handle_interactive(options["interactive"]):
+        if self.proceed(options["interactive"]):
             podcasts.delete()
 
-    def handle_interactive(self, interactive: bool) -> bool:
+    def proceed(self, interactive: bool) -> bool:
         if not interactive:
             return True
         answer: str | None = None
