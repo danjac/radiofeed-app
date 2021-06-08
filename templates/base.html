@@ -32,24 +32,12 @@
       {% endblock %}>
 
   {% endblock header_tags %}
+
   {% block page_header %}
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-  {% block cookie_notice %} {% include "_cookie_notice.html" %}{% endblock %}
+  {% block cookie_notice %}{% include "_cookie_notice.html" %}{% endblock %}
+  {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
   {% endblock page_header %}
-
-  <div class="hx-indicator"
-       id="loader"
-       x-data="{width: 0}"
-       x-init="
-         setInterval(() => {
-           if ($el.classList.contains('htmx-request')) {
-             width = width + (Math.random() / 100);
-             $el.style.width = `${10 + (width * 90)}%`;
-           } else {
-             width = 0;
-           }
-         }, 300);
-         "></div>
 
   {% block layout %}
   <div class="min-h-full mx-auto flex relative pt-6 lg:pt-12"
@@ -83,16 +71,16 @@
   {% endblock layout %}
 
   {% block page_footer %}
-
   {% include "_messages.html" %}
-
   {% block player %}
   {% if user.is_authenticated %}
   {% include "_player.html" %}
   {% endif %}
   {% endblock player %}
 
+  {% block modal_container %}
   <div id="modal"></div>
+  {% endblock modal_container %}
 
   {% endblock page_footer %}
   {% block footer_tags %}
