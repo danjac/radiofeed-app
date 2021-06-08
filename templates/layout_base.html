@@ -1,42 +1,7 @@
+{% extends "base.html" %}
 {% block header_tags %}
-{% block title_tag %}
-<title>
-  {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
-</title>
-{% endblock title_tag %}
+{% block title_tag %}{{ block.super }}{% endblock %}
 {% endblock header_tags %}
 {% block page_header %}{% endblock %}
-
-{% block layout %}
-<div class="min-h-full mx-auto flex relative pt-6 lg:pt-12"
-     id="layout">
-
-  {% block sidebar %}
-  <aside class="w-full hidden lg:block lg:w-80 p-2 lg:sticky lg:top-20 lg:h-screen"
-         :class="{'hidden lg:block': !sidebar}">
-    {% include "_sidebar.html" %}
-  </aside>
-  {% endblock %}
-
-  {% block main %}
-  <main class="w-full p-2 lg:block"
-        :class="{'hidden lg:block': sidebar}">
-    <div id="content">
-
-      {% block signup_cta %}
-      {% include "_signup_cta.html" %}
-      {% endblock %}
-
-      {% block content %}{% endblock %}
-      {% if request.htmx %}
-      {% include "_oob_messages.html" %}
-      {% endif %}
-
-    </div>
-  </main>
-  {% endblock main %}
-</div>
-{% endblock layout %}
-
 {% block page_footer %}{% endblock %}
 {% block footer_tags %}{% endblock %}
