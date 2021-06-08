@@ -27,7 +27,6 @@ ALLOWED_TAGS: list[str] = [
     "h6",
     "hr",
     "i",
-    "img",
     "li",
     "ol",
     "p",
@@ -54,7 +53,6 @@ ALLOWED_TAGS: list[str] = [
 
 ALLOWED_ATTRS = {
     "a": ["href", "target", "title"],
-    "img": ["src", "alt", "height", "width"],
 }
 
 
