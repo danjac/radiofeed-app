@@ -3,6 +3,7 @@ beautifulsoup4
 bleach
 boto3
 celery
+coverage
 cryptography>=3.2
 dj-database-url
 django

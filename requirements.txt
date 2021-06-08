@@ -52,6 +52,8 @@ click==7.1.2
     #   click-plugins
     #   click-repl
     #   nltk
+coverage==5.5
+    # via -r requirements.in
 cryptography==3.4.7
     # via
     #   -r requirements.in
