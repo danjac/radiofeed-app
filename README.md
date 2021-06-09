@@ -44,13 +44,11 @@ You can access the development app in your browser at http://localhost:8000.
 
 To run unit tests:
 
-> ./scripts/runtests [--reuse-db][-x] [....]
+> ./scripts/runtests [...]
 
-This script takes the same arguments as pytest and pytest-django:
+This script takes the same arguments as Django _./manage.py.test_:
 
-https://pytest.org/
-
-https://pytest-django.readthedocs.io/en/latest/
+> ./scripts/runtests --keepdb --failfast --parallel
 
 **Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
 
@@ -62,25 +60,25 @@ Issue is covered here: https://github.com/danjac/audiotrails/issues/3
 
 This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
 
-SSH into your Dokku server and create the app and add the domain (assuming "myapp" is your app name, and "myapp.com" your domain):
+SSH into your Dokku server and create the app and add the domain (assuming "audiotrails" is your app name, and "audiotrails-domain.com" your domain):
 
-> dokku apps:create myapp
+> dokku apps:create audiotrails
 
-> dokku domains:add myapp myapp.com
+> dokku domains:add audiotrails audiotrails-domain.com
 
 Make sure you add buildpacks for PostgreSQL and Redis:
 
 > dokku plugin:install https://github.com/dokku/dokku-postgres.git
 
-> dokku postgres:create myapp_db
+> dokku postgres:create audiotrails_db
 
-> dokku postgres:link myapp_db myapp
+> dokku postgres:link audiotrails_db audiotrails
 
 > dokku plugin:install https://github.com/dokku/dokku-redis.git
 
-> dokku redis:create myapp_redis
+> dokku redis:create audiotrails_redis
 
-> dokku redis:link myapp_redis myapp
+> dokku redis:link audiotrails_redis audiotrails
 
 These instructions will automatically set up the environment variables **DATABASE_URL** and **REDIS_URL**.
 
@@ -100,21 +98,21 @@ Next add to Git and deploy:
 
 > dokku ssh:add deploy-ssh /path/to/my_pub
 
-> git remote add dokku dokku@my-domain-or-ip-address:myapp
+> git remote add dokku dokku@my-domain-or-ip-address:audiotrails
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 
-> dokku letsencrypt myapp
+> dokku letsencrypt audiotrails
 
 > dokku letsencrypt:cron-job --add
 
 Next set up celery and celerybeat workers:
 
-> dokku ps:scale myapp worker=1
+> dokku ps:scale audiotrails worker=1
 
-> dokku ps:scale myapp beat=1
+> dokku ps:scale audiotrails beat=1
 
 You should now be able to access the Django management commands:
 
