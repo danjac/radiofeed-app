@@ -38,7 +38,7 @@
 {% else %}
 {% cache 3600 category category.id %}
 {% if children or category.itunes_genre_id %}
-<nav class="mb-6 flex flex-wrap justify-center sm:justify-start space-x-2 border-b dark:border-gray-500 pb-6">
+<nav class="mb-6 flex flex-wrap justify-center sm:justify-start space-x-2">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      title="{{ child.name }}"
