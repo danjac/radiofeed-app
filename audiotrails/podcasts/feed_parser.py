@@ -66,7 +66,6 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
     # try to get last build date
 
     podcast.last_updated = conv_date(
-        result.updated,
         result.feed.updated,
         result.feed.published,
         result.headers.date,

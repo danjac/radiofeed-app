@@ -74,7 +74,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      imagePullPolicy: Never
+      # imagePullPolicy: Never
       resources: {}
       volumeMounts:
         - mountPath: /app
@@ -90,7 +90,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      imagePullPolicy: Never
+      #imagePullPolicy: Never
       resources: {}
       volumeMounts:
         - mountPath: /app
@@ -106,7 +106,7 @@ spec:
         - configMapRef:
             name: audiopod-configmap
       image: localhost/audiotrails:latest
-      imagePullPolicy: Never
+      # imagePullPolicy: Never
       ports:
         - containerPort: 8000
           hostPort: 8000
