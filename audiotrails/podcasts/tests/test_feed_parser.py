@@ -17,6 +17,7 @@ class FeedParserTests(TestCase):
     mock_file = "rss_mock.xml"
     mock_parse = "feedparser.parse"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
+    updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -57,7 +58,7 @@ class FeedParserTests(TestCase):
             return_value={
                 "status": 200,
                 "etag": "abc123",
-                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "updated": self.updated,
                 **self.get_feedparser_content(),
             },
         ):
@@ -104,7 +105,7 @@ class FeedParserTests(TestCase):
             return_value={
                 "status": http.HTTPStatus.PERMANENT_REDIRECT,
                 "href": "https://example.com/test.xml",
-                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "updated": self.updated,
                 **self.get_feedparser_content(),
             },
         ):
@@ -124,7 +125,7 @@ class FeedParserTests(TestCase):
             return_value={
                 "status": 500,
                 "etag": "abc123",
-                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "updated": self.updated,
                 **self.get_feedparser_content(),
             },
         ):
