@@ -61,12 +61,6 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
     if not (items := parse_items(result)):
         return []
 
-    # check if any new items based on latest pub date
-    if (pub_date := max(item.pub_date for item in items)) == podcast.pub_date:
-        return []
-
-    podcast.pub_date = pub_date
-
     podcast.etag = conv_str(result.etag)
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
@@ -86,16 +80,20 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
     keywords, categories = parse_taxonomy(result.feed)
 
     podcast.keywords = " ".join(keywords)
-
     podcast.extracted_text = extract_text(podcast, categories, items)
-
     podcast.categories.set(categories)  # type: ignore
 
-    podcast.last_updated = timezone.now()
+    podcast.pub_date = max(item.pub_date for item in items)
+
+    # we only want to set the last_updated timestamp if we actually have new
+    # episodes
+
+    if episodes := sync_episodes(podcast, items):
+        podcast.last_updated = timezone.now()
 
     podcast.save()
 
-    return sync_episodes(podcast, items)
+    return episodes
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
@@ -183,7 +181,7 @@ def with_audio(item: box.Box) -> box.Box:
 
 
 def with_pub_date(item: box.Box) -> box.Box:
-    return item + box.Box(pub_date=parse_date(item.published))
+    return item + box.Box(pub_date=conv_date(item.published))
 
 
 def is_audio(link: box.Box) -> bool:
@@ -233,6 +231,7 @@ def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> A
 conv_str = functools.partial(conv, convert=force_str, default="")
 conv_int = functools.partial(conv, convert=int, default=None)
 conv_list = functools.partial(conv, convert=list, default=list)
+conv_date = functools.partial(conv, convert=parse_date, default=None)
 
 conv_url = functools.partial(
     conv,

@@ -88,7 +88,7 @@ class FeedParserTests(TestCase):
         self.assertTrue(self.podcast.last_updated)
 
     def test_parse_feed_no_new_items(self):
-        "If latest pub date is same as current pub date, do nothing"
+        "Only set last_updated if new episodes"
 
         self.podcast.pub_date = parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
@@ -96,10 +96,19 @@ class FeedParserTests(TestCase):
             self.mock_parse,
             return_value={"etag": "abc123", **self.get_feedparser_content()},
         ):
+            parse_feed(self.podcast)
+            last_updated = self.podcast.last_updated
+
+        with mock.patch(
+            self.mock_parse,
+            return_value={"etag": "xyz456", **self.get_feedparser_content()},
+        ):
             episodes = parse_feed(self.podcast)
 
+        self.podcast.refresh_from_db()
+
         self.assertEqual(len(episodes), 0)
-        self.assertFalse(self.podcast.last_updated)
+        self.assertEqual(self.podcast.last_updated, last_updated)
 
     def test_parse_feed_permanent_redirect(self):
         with mock.patch(
