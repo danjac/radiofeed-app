@@ -54,7 +54,11 @@ class FeedParserTests(TestCase):
 
         with mock.patch(
             self.mock_parse,
-            return_value={"etag": "abc123", **self.get_feedparser_content()},
+            return_value={
+                "etag": "abc123",
+                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                **self.get_feedparser_content(),
+            },
         ):
             episodes = parse_feed(self.podcast)
 
@@ -70,6 +74,10 @@ class FeedParserTests(TestCase):
         self.assertEqual(self.podcast.creators, "8th Kind")
 
         self.assertTrue(self.podcast.last_updated)
+        self.assertEqual(self.podcast.last_updated.day, 1)
+        self.assertEqual(self.podcast.last_updated.month, 7)
+        self.assertEqual(self.podcast.last_updated.year, 2020)
+
         self.assertTrue(self.podcast.etag)
         self.assertTrue(self.podcast.explicit)
         self.assertTrue(self.podcast.cover_url)
@@ -87,35 +95,13 @@ class FeedParserTests(TestCase):
 
         self.assertTrue(self.podcast.last_updated)
 
-    def test_parse_feed_no_new_items(self):
-        "Only set last_updated if new episodes"
-
-        self.podcast.pub_date = parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-
-        with mock.patch(
-            self.mock_parse,
-            return_value={"etag": "abc123", **self.get_feedparser_content()},
-        ):
-            parse_feed(self.podcast)
-            last_updated = self.podcast.last_updated
-
-        with mock.patch(
-            self.mock_parse,
-            return_value={"etag": "xyz456", **self.get_feedparser_content()},
-        ):
-            episodes = parse_feed(self.podcast)
-
-        self.podcast.refresh_from_db()
-
-        self.assertEqual(len(episodes), 0)
-        self.assertEqual(self.podcast.last_updated, last_updated)
-
     def test_parse_feed_permanent_redirect(self):
         with mock.patch(
             self.mock_parse,
             return_value={
                 "status": http.HTTPStatus.PERMANENT_REDIRECT,
                 "href": "https://example.com/test.xml",
+                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
             },
         ):

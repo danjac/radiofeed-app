@@ -33,7 +33,7 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_updated_hours: int = 24) -> None:
+def sync_podcast_feeds(last_updated_hours: int = 6) -> None:
     "Sync podcasts with RSS feeds"
     qs = (
         Podcast.objects.filter(

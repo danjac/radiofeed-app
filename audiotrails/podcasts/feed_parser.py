@@ -62,6 +62,8 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
         return []
 
     podcast.etag = conv_str(result.etag)
+    podcast.last_updated = conv_date(result.updated)
+    podcast.pub_date = max(item.pub_date for item in items)
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
     podcast.cover_url = conv_url(result.feed.image.href)
@@ -83,17 +85,9 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
     podcast.extracted_text = extract_text(podcast, categories, items)
     podcast.categories.set(categories)  # type: ignore
 
-    podcast.pub_date = max(item.pub_date for item in items)
-
-    # we only want to set the last_updated timestamp if we actually have new
-    # episodes
-
-    if episodes := sync_episodes(podcast, items):
-        podcast.last_updated = timezone.now()
-
     podcast.save()
 
-    return episodes
+    return sync_episodes(podcast, items)
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
