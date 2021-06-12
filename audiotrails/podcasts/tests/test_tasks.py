@@ -45,7 +45,7 @@ class SyncPodcastFeedsTests(TestCase):
         autospec=True,
     )
     def test_podcast_just_updated(self, mock_sync_podcast_feed: Mock) -> None:
-        PodcastFactory(last_updated=timezone.now())
+        PodcastFactory(modified=timezone.now())
         tasks.sync_podcast_feeds()
         mock_sync_podcast_feed.assert_not_called()
 
@@ -54,7 +54,7 @@ class SyncPodcastFeedsTests(TestCase):
         autospec=True,
     )
     def test_podcast_never_updated(self, mock_sync_podcast_feed: Mock) -> None:
-        PodcastFactory(last_updated=None)
+        PodcastFactory(modified=None)
         tasks.sync_podcast_feeds()
         mock_sync_podcast_feed.assert_called()
 
@@ -65,7 +65,7 @@ class SyncPodcastFeedsTests(TestCase):
     def test_podcast_updated_more_than_12_hours_ago(
         self, mock_sync_podcast_feed: Mock
     ) -> None:
-        PodcastFactory(last_updated=timezone.now() - datetime.timedelta(hours=24))
+        PodcastFactory(modified=timezone.now() - datetime.timedelta(hours=24))
         tasks.sync_podcast_feeds()
         mock_sync_podcast_feed.assert_called()
 

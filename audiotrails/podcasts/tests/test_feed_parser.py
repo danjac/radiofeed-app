@@ -56,7 +56,7 @@ class FeedParserTests(TestCase):
             self.mock_parse,
             return_value={
                 "etag": "abc123",
-                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "modified": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
             },
         ):
@@ -73,10 +73,10 @@ class FeedParserTests(TestCase):
         )
         self.assertEqual(self.podcast.creators, "8th Kind")
 
-        self.assertTrue(self.podcast.last_updated)
-        self.assertEqual(self.podcast.last_updated.day, 1)
-        self.assertEqual(self.podcast.last_updated.month, 7)
-        self.assertEqual(self.podcast.last_updated.year, 2020)
+        self.assertTrue(self.podcast.modified)
+        self.assertEqual(self.podcast.modified.day, 1)
+        self.assertEqual(self.podcast.modified.month, 7)
+        self.assertEqual(self.podcast.modified.year, 2020)
 
         self.assertTrue(self.podcast.etag)
         self.assertTrue(self.podcast.explicit)
@@ -93,7 +93,7 @@ class FeedParserTests(TestCase):
         self.assertIn("Society & Culture", categories)
         self.assertIn("Philosophy", categories)
 
-        self.assertTrue(self.podcast.last_updated)
+        self.assertTrue(self.podcast.modified)
 
     def test_parse_feed_permanent_redirect(self):
         with mock.patch(
@@ -101,7 +101,7 @@ class FeedParserTests(TestCase):
             return_value={
                 "status": http.HTTPStatus.PERMANENT_REDIRECT,
                 "href": "https://example.com/test.xml",
-                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "modified": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
             },
         ):
@@ -112,7 +112,7 @@ class FeedParserTests(TestCase):
         self.podcast.refresh_from_db()
 
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
-        self.assertTrue(self.podcast.last_updated)
+        self.assertTrue(self.podcast.modified)
 
     def test_parse_feed_not_modified(self):
         with mock.patch(
@@ -127,7 +127,7 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
         self.assertTrue(self.podcast.active)
-        self.assertFalse(self.podcast.last_updated)
+        self.assertFalse(self.podcast.modified)
 
     def test_parse_feed_gone(self):
         with mock.patch(

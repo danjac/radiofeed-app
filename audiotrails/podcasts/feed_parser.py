@@ -31,7 +31,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         feedparser.parse(
             podcast.rss,
             etag=podcast.etag,
-            modified=podcast.last_updated,
+            modified=podcast.modified,
         ),
         default_box=True,
     )
@@ -62,16 +62,9 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
         return []
 
     podcast.etag = conv_str(result.etag)
-
-    # try to get last build date
-
-    podcast.last_updated = conv_date(
-        result.feed.updated,
-        result.feed.published,
-        result.headers.date,
-    )
-
+    podcast.modified = conv_date(result.modified)
     podcast.pub_date = max(item.pub_date for item in items)
+
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
     podcast.cover_url = conv_url(result.feed.image.href)
