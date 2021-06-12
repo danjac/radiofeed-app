@@ -107,6 +107,9 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
+    # error fetching RSS
+    exception = models.TextField(blank=True)
+
     search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()

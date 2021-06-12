@@ -170,3 +170,4 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
         self.assertFalse(self.podcast.active)
+        self.assertTrue(self.podcast.exception)

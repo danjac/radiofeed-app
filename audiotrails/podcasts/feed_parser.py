@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import functools
 import http
+import traceback
 
 from functools import lru_cache
 from typing import Any, Callable
@@ -34,6 +35,7 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     except requests.RequestException:
         # dead feed, don't request again
         podcast.active = False
+        podcast.exception = traceback.format_exc()
         podcast.save()
         return []
 
