@@ -8,11 +8,13 @@ from typing import Any, Callable
 
 import box
 import feedparser
+import requests
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.utils import timezone
 from django.utils.encoding import force_str
+from django.utils.http import http_date, quote_etag
 
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.date_parser import parse_date
@@ -27,42 +29,54 @@ def get_categories_dict() -> dict[str, Category]:
 
 def parse_feed(podcast: Podcast) -> list[Episode]:
 
-    result = box.Box(
-        feedparser.parse(
-            podcast.rss,
-            etag=podcast.etag,
-            modified=podcast.modified,
-        ),
-        default_box=True,
-    )
-
-    if result.status == http.HTTPStatus.NOT_MODIFIED:
-        # no change, ignore
-        return []
-
-    if result.status in range(http.HTTPStatus.OK, http.HTTPStatus.BAD_REQUEST):
-        return sync_podcast(podcast, result)
-
-    if result.status == http.HTTPStatus.GONE:
+    try:
+        response = fetch_feed(podcast)
+    except requests.RequestException:
         # dead feed, don't request again
         podcast.active = False
         podcast.save()
+        return []
 
-    # any 4xx or 5xx ignore
+    if response.status_code == http.HTTPStatus.NOT_MODIFIED:
+        # no change, ignore
+        return []
 
-    return []
+    return sync_podcast(podcast, response)
 
 
-def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
+def fetch_feed(podcast: Podcast) -> requests.Response:
+
+    headers: dict[str, str] = {}
+
+    if podcast.etag:
+        headers["If-None-Match"] = quote_etag(podcast.etag)
+    if podcast.modified:
+        headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
+
+    response = requests.get(
+        podcast.rss,
+        headers=headers,
+        allow_redirects=True,
+        timeout=10,
+    )
+
+    response.raise_for_status()
+
+    return response
+
+
+def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]:
+
+    result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
         return []
 
-    podcast.etag = conv_str(result.etag)
-    podcast.modified = conv_date(result.updated)
+    podcast.rss = response.url
+    podcast.etag = response.headers.get("ETag", "")
+    podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.pub_date = max(item.pub_date for item in items)
-    podcast.rss = conv_url(result.href, podcast.rss)
 
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]

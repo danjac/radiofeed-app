@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import http
 import pathlib
 
 from unittest import mock
 
-import feedparser
+import requests
 
 from django.test import TestCase
 
@@ -12,10 +14,32 @@ from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.feed_parser import get_categories_dict, parse_feed
 
 
+class MockResponse:
+    def __init__(
+        self,
+        url: str,
+        status: int = http.HTTPStatus.OK,
+        content: bytes = b"",
+        headers: None | dict = None,
+    ):
+        self.url = url
+        self.content = content
+        self.headers = headers or {}
+        self.status_code = status
+
+    def raise_for_status(self) -> None:
+        ...
+
+
+class BadMockResponse(MockResponse):
+    def raise_for_status(self) -> None:
+        raise requests.RequestException()
+
+
 class FeedParserTests(TestCase):
 
     mock_file = "rss_mock.xml"
-    mock_parse = "feedparser.parse"
+    mock_http_get = "requests.get"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
     updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
@@ -41,12 +65,10 @@ class FeedParserTests(TestCase):
             pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
         ).read()
 
-    def get_feedparser_content(self, *args, **kwargs) -> dict:
-        content = open(
+    def get_feedparser_content(self, *args, **kwargs) -> bytes:
+        return open(
             pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
         ).read()
-
-        return feedparser.parse(content)
 
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
@@ -54,13 +76,15 @@ class FeedParserTests(TestCase):
     def test_parse_feed(self):
 
         with mock.patch(
-            self.mock_parse,
-            return_value={
-                "status": 200,
-                "etag": "abc123",
-                "updated": self.updated,
-                **self.get_feedparser_content(),
-            },
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=self.podcast.rss,
+                content=self.get_feedparser_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
         ):
             episodes = parse_feed(self.podcast)
 
@@ -101,13 +125,16 @@ class FeedParserTests(TestCase):
 
     def test_parse_feed_permanent_redirect(self):
         with mock.patch(
-            self.mock_parse,
-            return_value={
-                "status": http.HTTPStatus.PERMANENT_REDIRECT,
-                "href": "https://example.com/test.xml",
-                "updated": self.updated,
-                **self.get_feedparser_content(),
-            },
+            self.mock_http_get,
+            return_value=MockResponse(
+                url="https://example.com/test.xml",
+                status=http.HTTPStatus.PERMANENT_REDIRECT,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                content=self.get_feedparser_content(),
+            ),
         ):
             episodes = parse_feed(self.podcast)
 
@@ -118,27 +145,12 @@ class FeedParserTests(TestCase):
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
         self.assertTrue(self.podcast.modified)
 
-    def test_parse_feed_broken(self):
-
-        with mock.patch(
-            self.mock_parse,
-            return_value={
-                "status": 500,
-                "etag": "abc123",
-                "updated": self.updated,
-                **self.get_feedparser_content(),
-            },
-        ):
-            episodes = parse_feed(self.podcast)
-
-        self.assertEqual(len(episodes), 0)
-
     def test_parse_feed_not_modified(self):
         with mock.patch(
-            self.mock_parse,
-            return_value={
-                "status": http.HTTPStatus.NOT_MODIFIED,
-            },
+            self.mock_http_get,
+            return_value=MockResponse(
+                self.podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
+            ),
         ):
             episodes = parse_feed(self.podcast)
 
@@ -150,10 +162,7 @@ class FeedParserTests(TestCase):
 
     def test_parse_feed_gone(self):
         with mock.patch(
-            self.mock_parse,
-            return_value={
-                "status": http.HTTPStatus.GONE,
-            },
+            self.mock_http_get, return_value=BadMockResponse(self.podcast.rss)
         ):
             episodes = parse_feed(self.podcast)
 
