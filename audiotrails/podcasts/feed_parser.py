@@ -43,6 +43,15 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         # no change, ignore
         return []
 
+    if (
+        response.url != podcast.rss
+        and Podcast.objects.filter(rss=response.url).exclude(pk=podcast.id).exists()
+    ):
+        # permanent redirect to URL already taken by another podcast
+        podcast.active = False
+        podcast.save()
+        return []
+
     return sync_podcast(podcast, response)
 
 
@@ -76,6 +85,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
         return []
 
     podcast.rss = response.url
+
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.pub_date = max(item.pub_date for item in items)

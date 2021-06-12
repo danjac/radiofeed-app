@@ -145,6 +145,31 @@ class FeedParserTests(TestCase):
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
         self.assertTrue(self.podcast.modified)
 
+    def test_parse_feed_permanent_redirect_url_taken(self):
+        other = PodcastFactory(rss="https://example.com/test.xml")
+        current_rss = self.podcast.rss
+
+        with mock.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=other.rss,
+                status=http.HTTPStatus.PERMANENT_REDIRECT,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                content=self.get_feedparser_content(),
+            ),
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 0)
+
+        self.podcast.refresh_from_db()
+
+        self.assertEqual(self.podcast.rss, current_rss)
+        self.assertFalse(self.podcast.active)
+
     def test_parse_feed_not_modified(self):
         with mock.patch(
             self.mock_http_get,
