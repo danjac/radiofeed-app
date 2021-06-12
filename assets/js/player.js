@@ -202,6 +202,8 @@ export default function Player(options) {
         target: this.$el,
         source: this.$el,
       });
+
+      this.showPlayer = false;
     },
 
     ended() {
