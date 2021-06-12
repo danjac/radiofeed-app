@@ -77,7 +77,7 @@ export default function Player(options) {
 
     // audio events
     loaded() {
-      if (!this.$refs.audio || this.isLoaded) {
+      if (this.isLoaded) {
         return;
       }
       this.$refs.audio.currentTime = currentTime;
@@ -164,11 +164,11 @@ export default function Player(options) {
     },
 
     skipBack() {
-      this.$refs.audio && this.skipTo(this.$refs.audio.currentTime - 10);
+      this.skipTo(this.$refs.audio.currentTime - 10);
     },
 
     skipForward() {
-      this.$refs.audio && this.skipTo(this.$refs.audio.currentTime + 10);
+      this.skipTo(this.$refs.audio.currentTime + 10);
     },
 
     skipTo(time) {
@@ -178,11 +178,11 @@ export default function Player(options) {
     },
 
     play() {
-      this.$refs.audio && this.$refs.audio.play();
+      this.$refs.audio.play();
     },
 
     pause() {
-      this.$refs.audio && this.$refs.audio.pause();
+      this.$refs.audio.pause();
       sessionStorage.removeItem(storageKey);
     },
 
@@ -216,9 +216,7 @@ export default function Player(options) {
     },
 
     stopPlayer() {
-      if (this.$refs.audio) {
-        this.$refs.audio.pause();
-      }
+      this.$refs.audio.pause();
       this.clearTimer();
     },
 
