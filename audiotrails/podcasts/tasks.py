@@ -7,7 +7,6 @@ from urllib.error import URLError
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
-from django.db.models import Q
 from django.utils import timezone
 
 from audiotrails.podcasts import itunes
@@ -37,12 +36,7 @@ def sync_podcast_feeds(last_updated_hours: int = 6) -> None:
     "Sync podcasts with RSS feeds"
     qs = (
         Podcast.objects.filter(
-            Q(
-                updated__isnull=False,
-                updated__lt=timezone.now()
-                - datetime.timedelta(hours=last_updated_hours),
-            )
-            | Q(updated__isnull=True),
+            updated__lt=timezone.now() - datetime.timedelta(hours=last_updated_hours),
             active=True,
         )
         .distinct()

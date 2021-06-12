@@ -59,6 +59,8 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
 
     # check if any items
     if not (items := parse_items(result)):
+        # save to ensure we have an updated timestamp plus any header changes
+        podcast.save()
         return []
 
     podcast.etag = conv_str(result.etag)
