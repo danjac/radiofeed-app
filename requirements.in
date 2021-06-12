@@ -23,7 +23,6 @@ django-storages
 django-widget-tweaks
 factory-boy
 feedparser
-freezegun
 future
 gunicorn
 html5lib
