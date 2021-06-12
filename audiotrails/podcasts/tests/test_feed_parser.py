@@ -55,6 +55,7 @@ class FeedParserTests(TestCase):
         with mock.patch(
             self.mock_parse,
             return_value={
+                "status": 200,
                 "etag": "abc123",
                 "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
@@ -113,6 +114,21 @@ class FeedParserTests(TestCase):
 
         self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
         self.assertTrue(self.podcast.modified)
+
+    def test_parse_feed_broken(self):
+
+        with mock.patch(
+            self.mock_parse,
+            return_value={
+                "status": 500,
+                "etag": "abc123",
+                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
+                **self.get_feedparser_content(),
+            },
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 0)
 
     def test_parse_feed_not_modified(self):
         with mock.patch(

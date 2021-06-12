@@ -36,31 +36,27 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
-    for_update: list[str] = []
-
     if result.status == http.HTTPStatus.NOT_MODIFIED:
-        # no change, nothing to do
+        # no change, ignore
         return []
+
+    if result.status in range(http.HTTPStatus.OK, http.HTTPStatus.BAD_REQUEST):
+        return sync_podcast(podcast, result)
 
     if result.status == http.HTTPStatus.GONE:
         # dead feed, don't request again
         podcast.active = False
         podcast.save()
-        return []
 
-    return sync_podcast(podcast, result, for_update)
+    # any 4xx or 5xx ignore
+
+    return []
 
 
-def sync_podcast(
-    podcast: Podcast,
-    result: box.Box,
-    for_update: list[str],
-) -> list[Episode]:
+def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
 
     # check if any items
     if not (items := parse_items(result)):
-        if for_update:
-            podcast.save(update_fields=for_update)
         return []
 
     podcast.etag = conv_str(result.etag)
