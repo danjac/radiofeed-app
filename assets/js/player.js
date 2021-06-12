@@ -12,41 +12,6 @@ const defaults = {
   counter: '00:00:00',
 };
 
-export function percent(nominator, denominator) {
-  if (!denominator || !nominator) {
-    return 0;
-  }
-
-  if (denominator > nominator) {
-    return 100;
-  }
-
-  return (denominator / nominator) * 100;
-}
-
-function formatDuration(value) {
-  if (isNaN(value) || value < 0) return '00:00:00';
-  const duration = Math.floor(value);
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = Math.floor(duration % 60);
-  return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
-}
-
-function getMediaMetadata() {
-  const dataTag = document.getElementById('player-metadata');
-  if (!dataTag) {
-    return null;
-  }
-
-  const metadata = JSON.parse(dataTag.textContent);
-
-  if (metadata && Object.keys(metadata).length > 0) {
-    return new window.MediaMetadata(metadata);
-  }
-  return null;
-}
-
 export default function Player(options) {
   const { mediaSrc, currentTime, runImmediately, urls } = options || {};
 
@@ -279,4 +244,39 @@ export default function Player(options) {
       return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
     },
   };
+}
+
+function percent(nominator, denominator) {
+  if (!denominator || !nominator) {
+    return 0;
+  }
+
+  if (denominator > nominator) {
+    return 100;
+  }
+
+  return (denominator / nominator) * 100;
+}
+
+function formatDuration(value) {
+  if (isNaN(value) || value < 0) return '00:00:00';
+  const duration = Math.floor(value);
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
+  const seconds = Math.floor(duration % 60);
+  return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
+}
+
+function getMediaMetadata() {
+  const dataTag = document.getElementById('player-metadata');
+  if (!dataTag) {
+    return null;
+  }
+
+  const metadata = JSON.parse(dataTag.textContent);
+
+  if (metadata && Object.keys(metadata).length > 0) {
+    return new window.MediaMetadata(metadata);
+  }
+  return null;
 }
