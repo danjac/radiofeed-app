@@ -57,8 +57,15 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
 def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
 
+    # check if any items
     if not (items := parse_items(result)):
         return []
+
+    # check if any new items based on latest pub date
+    if (pub_date := max(item.pub_date for item in items)) == podcast.pub_date:
+        return []
+
+    podcast.pub_date = pub_date
 
     podcast.etag = conv_str(result.etag)
     podcast.title = conv_str(result.feed.title)
@@ -80,7 +87,6 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
 
     podcast.keywords = " ".join(keywords)
 
-    podcast.pub_date = max(item.pub_date for item in items)
     podcast.extracted_text = extract_text(podcast, categories, items)
 
     podcast.categories.set(categories)  # type: ignore

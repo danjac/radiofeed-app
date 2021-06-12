@@ -7,6 +7,7 @@ import feedparser
 
 from django.test import TestCase
 
+from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.feed_parser import get_categories_dict, parse_feed
 
@@ -70,11 +71,14 @@ class FeedParserTests(TestCase):
 
         self.assertTrue(self.podcast.last_updated)
         self.assertTrue(self.podcast.etag)
-        self.assertTrue(self.podcast.pub_date)
         self.assertTrue(self.podcast.explicit)
         self.assertTrue(self.podcast.cover_url)
 
         categories = [c.name for c in self.podcast.categories.all()]
+
+        self.assertEqual(
+            self.podcast.pub_date, parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        )
 
         self.assertIn("Science", categories)
         self.assertIn("Religion & Spirituality", categories)
@@ -82,6 +86,20 @@ class FeedParserTests(TestCase):
         self.assertIn("Philosophy", categories)
 
         self.assertTrue(self.podcast.last_updated)
+
+    def test_parse_feed_no_new_items(self):
+        "If latest pub date is same as current pub date, do nothing"
+
+        self.podcast.pub_date = parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        with mock.patch(
+            self.mock_parse,
+            return_value={"etag": "abc123", **self.get_feedparser_content()},
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 0)
+        self.assertFalse(self.podcast.last_updated)
 
     def test_parse_feed_permanent_redirect(self):
         with mock.patch(
