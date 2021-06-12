@@ -62,7 +62,7 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
     podcast.etag = conv_str(result.etag)
     podcast.modified = conv_date(result.updated)
     podcast.pub_date = max(item.pub_date for item in items)
-    podcast.rss = conv_url(result.href)
+    podcast.rss = conv_url(result.href, podcast.rss)
 
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]

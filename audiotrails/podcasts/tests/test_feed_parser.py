@@ -68,6 +68,8 @@ class FeedParserTests(TestCase):
         self.podcast.refresh_from_db()
 
         self.assertEqual(self.podcast.title, "Mysterious Universe")
+        self.assertTrue(self.podcast.rss)
+
         self.assertEqual(
             self.podcast.description,
             "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.",
