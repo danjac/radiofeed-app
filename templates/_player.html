@@ -67,28 +67,28 @@
               <button title="Playback stalled: reload this page"
                       @click="location.reload()"
                       x-show="isStalled || !isLoaded"
-                      class="focus:outline-none hover:text-blue-500 mr-2 md:mr-3">
+                      class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "refresh" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 
               <button title="Pause"
                       @click="pause()"
                       x-show="isPlaying && !isStalled"
-                      class="focus:outline-none hover:text-blue-500 mr-2 md:mr-3">
+                      class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "pause" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 
               <button title="Play"
                       @click="play()"
                       x-show="isPaused && !isStalled"
-                      class="focus:outline-none hover:text-blue-600 mr-2 md:mr-3">
+                      class="focus:outline-none hover:text-blue-600 mr-2">
                 {% icon "play" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 
               <button title="Stop"
                       x-ref="stop"
                       @click="close()"
-                      class="focus:outline-none hover:text-blue-500 mr-2 md:mr-3">
+                      class="focus:outline-none hover:text-blue-500">
                 {% icon "stop" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 

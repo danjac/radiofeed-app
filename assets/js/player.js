@@ -168,6 +168,7 @@ export default function Player(options) {
         source: this.$el,
       });
 
+      this.$refs.audio.remove();
       this.$refs.controls.remove();
     },
 
