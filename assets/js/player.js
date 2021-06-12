@@ -218,7 +218,6 @@ export default function Player(options) {
     stopPlayer() {
       if (this.$refs.audio) {
         this.$refs.audio.pause();
-        this.$refs.audio = null;
       }
       this.clearTimer();
     },
