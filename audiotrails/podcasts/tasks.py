@@ -33,13 +33,14 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds() -> None:
-    "Update any podcasts not updated in last 6 hours."
+def sync_podcast_feeds(last_updated_hours=6) -> None:
+    "Sync podcasts with RSS feeds"
     qs = (
         Podcast.objects.filter(
             Q(
                 last_updated__isnull=False,
-                last_updated__lt=timezone.now() - datetime.timedelta(hours=24),
+                last_updated__lt=timezone.now()
+                - datetime.timedelta(hours=last_updated_hours),
             )
             | Q(last_updated__isnull=True),
             active=True,
