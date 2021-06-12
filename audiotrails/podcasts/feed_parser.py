@@ -45,14 +45,8 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     if result.status == http.HTTPStatus.GONE:
         # dead feed, don't request again
         podcast.active = False
-        for_update = ["active"]
-
-    if result.status == http.HTTPStatus.PERMANENT_REDIRECT and (
-        rss := conv_url(result.href)
-    ):
-        # permanent redirect: update URL for next time
-        podcast.rss = rss
-        for_update = ["rss"]
+        podcast.save()
+        return []
 
     return sync_podcast(podcast, result, for_update)
 
@@ -70,8 +64,9 @@ def sync_podcast(
         return []
 
     podcast.etag = conv_str(result.etag)
-    podcast.modified = conv_date(result.modified)
+    podcast.modified = conv_date(result.updated)
     podcast.pub_date = max(item.pub_date for item in items)
+    podcast.rss = conv_url(result.href)
 
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]

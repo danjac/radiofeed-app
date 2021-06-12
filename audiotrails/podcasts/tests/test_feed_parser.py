@@ -56,7 +56,7 @@ class FeedParserTests(TestCase):
             self.mock_parse,
             return_value={
                 "etag": "abc123",
-                "modified": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
             },
         ):
@@ -101,7 +101,7 @@ class FeedParserTests(TestCase):
             return_value={
                 "status": http.HTTPStatus.PERMANENT_REDIRECT,
                 "href": "https://example.com/test.xml",
-                "modified": "Wed, 01 Jul 2020 15:25:26 +0000",
+                "updated": "Wed, 01 Jul 2020 15:25:26 +0000",
                 **self.get_feedparser_content(),
             },
         ):
