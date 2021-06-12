@@ -32,7 +32,7 @@
          @timeupdate="timeUpdate()">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
-       id="player-controls"
+       x-ref="controls"
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}">
     <div class="relative space-y-3 sm:space-y-0">

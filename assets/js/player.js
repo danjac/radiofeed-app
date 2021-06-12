@@ -168,7 +168,7 @@ export default function Player(options) {
         source: this.$el,
       });
 
-      this.showPlayer = false;
+      this.$refs.controls.remove();
     },
 
     ended() {
