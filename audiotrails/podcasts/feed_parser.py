@@ -16,6 +16,7 @@ from django.core.validators import URLValidator
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import http_date, quote_etag
+from feedparser.http import ACCEPT_HEADER
 
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.date_parser import parse_date
@@ -57,7 +58,10 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
 def fetch_feed(podcast: Podcast) -> requests.Response:
 
-    headers: dict[str, str] = {}
+    headers: dict[str, str] = {
+        "User-Agent": feedparser.USER_AGENT,
+        "Accept": ACCEPT_HEADER,
+    }
 
     if podcast.etag:
         headers["If-None-Match"] = quote_etag(podcast.etag)
