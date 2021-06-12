@@ -36,6 +36,8 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         default_box=True,
     )
 
+    force_update: bool = False
+
     if result.status == http.HTTPStatus.NOT_MODIFIED:
         # no change, nothing to do
         return []
@@ -51,16 +53,19 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
     ):
         # permanent redirect: update URL for next time
         podcast.rss = rss
+        force_update = True
 
-    return sync_podcast(podcast, result)
+    return sync_podcast(podcast, result, force_update)
 
 
-def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
+def sync_podcast(
+    podcast: Podcast, result: box.Box, force_update: bool = False
+) -> list[Episode]:
 
     # check if any items
     if not (items := parse_items(result)):
-        # save to ensure we have an updated timestamp plus any header changes
-        podcast.save()
+        if force_update:
+            podcast.save()
         return []
 
     podcast.etag = conv_str(result.etag)
