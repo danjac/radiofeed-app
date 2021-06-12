@@ -62,7 +62,16 @@ def sync_podcast(podcast: Podcast, result: box.Box) -> list[Episode]:
         return []
 
     podcast.etag = conv_str(result.etag)
-    podcast.last_updated = conv_date(result.updated)
+
+    # try to get last build date
+
+    podcast.last_updated = conv_date(
+        result.updated,
+        result.feed.updated,
+        result.feed.published,
+        result.headers.date,
+    )
+
     podcast.pub_date = max(item.pub_date for item in items)
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
@@ -225,6 +234,7 @@ def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> A
 conv_str = functools.partial(conv, convert=force_str, default="")
 conv_int = functools.partial(conv, convert=int, default=None)
 conv_list = functools.partial(conv, convert=list, default=list)
+
 conv_date = functools.partial(conv, convert=parse_date, default=None)
 
 conv_url = functools.partial(
