@@ -72,6 +72,10 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     list_editable = ("promoted",)
     search_fields = ("search_document",)
     raw_id_fields = ("recipients",)
+    readonly_fields = (
+        "created",
+        "updated",
+    )
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:

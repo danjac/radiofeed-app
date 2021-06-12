@@ -33,20 +33,20 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_modified_hours: int = 6) -> None:
+def sync_podcast_feeds(last_updated_hours: int = 6) -> None:
     "Sync podcasts with RSS feeds"
     qs = (
         Podcast.objects.filter(
             Q(
-                modified__isnull=False,
-                modified__lt=timezone.now()
-                - datetime.timedelta(hours=last_modified_hours),
+                updated__isnull=False,
+                updated__lt=timezone.now()
+                - datetime.timedelta(hours=last_updated_hours),
             )
-            | Q(modified__isnull=True),
+            | Q(updated__isnull=True),
             active=True,
         )
         .distinct()
-        .order_by("-modified", "-pub_date")
+        .order_by("-pub_date")
         .values_list("rss", flat=True)
     )
     total = qs.count()
