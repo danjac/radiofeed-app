@@ -71,7 +71,12 @@ class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display = ("__str__", "pub_date", "active", "promoted")
     list_editable = ("promoted",)
     search_fields = ("search_document",)
-    raw_id_fields = ("recipients",)
+
+    raw_id_fields = (
+        "recipients",
+        "redirect_to",
+    )
+
     readonly_fields = (
         "created",
         "updated",
