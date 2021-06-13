@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import functools
 import http
+import random
 import traceback
 
 from functools import lru_cache
@@ -23,7 +24,13 @@ from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.text_parser import extract_keywords
 
-USER_AGENT = "audiotrails/v1"
+USER_AGENTS = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+]
 
 
 @lru_cache
@@ -221,8 +228,8 @@ def is_episode(item: box.Box) -> bool:
 
 def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers: dict[str, str] = {
-        "User-Agent": USER_AGENT,
         "Accept": ACCEPT_HEADER,
+        "User-Agent": get_user_agent(),
     }
 
     if podcast.etag:
@@ -230,6 +237,11 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
+
+
+def get_user_agent() -> str:
+
+    return random.choice(USER_AGENTS)
 
 
 def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | None:
