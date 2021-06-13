@@ -42,30 +42,24 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
-        podcast.active = False
-        podcast.error_status = response.status_code
-        podcast.save()
-        return []
+        return handle_empty_result(
+            podcast, error_status=response.status_code, active=False
+        )
 
     except requests.RequestException:
-        # temp issue, maybe network error
-        podcast.exception = traceback.format_exc()
-        podcast.save()
-        return []
+        # temp issue, maybe network error, log & try again later
+        return handle_empty_result(podcast, exception=traceback.format_exc())
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
         # no change, ignore
-        return []
+        return handle_empty_result(podcast)
 
     if (redirect_url := get_redirect_url(podcast, response)) and (
         other := Podcast.objects.filter(rss=redirect_url).first()
     ):
 
         # permanent redirect to URL already taken by another podcast
-        podcast.active = False
-        podcast.redirect_to = other
-        podcast.save()
-        return []
+        return handle_empty_result(podcast, redirect_to=other, active=False)
 
     return sync_podcast(podcast, response, redirect_url)
 
@@ -80,7 +74,7 @@ def sync_podcast(
 
     # check if any items
     if not (items := parse_items(result)):
-        return []
+        return handle_empty_result(podcast, active=False)
 
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
@@ -240,6 +234,14 @@ def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | Non
     ):
         return response.url
     return None
+
+
+def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
+    if fields:
+        for k, v in fields.items():
+            setattr(podcast, k, v)
+        podcast.save(update_fields=fields.keys())
+    return []
 
 
 def conv(
