@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import datetime
 
-from urllib.error import URLError
-
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
@@ -33,8 +31,10 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_updated_hours: int = 6) -> None:
-    "Sync podcasts with RSS feeds"
+def sync_podcast_feeds(last_updated_hours: int = 24) -> None:
+    """Sync podcasts with RSS feeds. Fetch any without a pub date or
+    pub_date > given period."""
+
     qs = (
         Podcast.objects.filter(
             Q(
@@ -81,8 +81,6 @@ def sync_podcast_feed(
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
-    except (ValueError, URLError) as e:
-        logger.debug(f"Error syncing podcast RSS {rss} {e}")
 
 
 def get_podcast_sync_message(
