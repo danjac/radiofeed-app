@@ -74,7 +74,7 @@ def sync_podcast(
 
     # check if any items
     if not (items := parse_items(result)):
-        return handle_empty_result(podcast, active=False)
+        return handle_empty_result(podcast)
 
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
