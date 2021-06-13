@@ -68,17 +68,21 @@ def sync_podcast(
     podcast: Podcast, response: requests.Response, redirect_url: str | None
 ) -> list[Episode]:
 
-    podcast.rss = redirect_url or podcast.rss
-
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
-        return handle_empty_result(podcast)
+        return (
+            handle_empty_result(podcast, rss=redirect_url)
+            if redirect_url
+            else handle_empty_result(podcast)
+        )
 
+    podcast.rss = redirect_url or podcast.rss
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.pub_date = max(item.pub_date for item in items)
+    podcast.exception = ""
 
     podcast.title = conv_str(result.feed.title)
     podcast.link = conv_url(result.feed.link)[:500]
