@@ -33,7 +33,7 @@ class MockResponse:
 
 class BadMockResponse(MockResponse):
     def raise_for_status(self) -> None:
-        raise requests.RequestException()
+        raise requests.HTTPError()
 
 
 class FeedParserTests(TestCase):
@@ -169,6 +169,7 @@ class FeedParserTests(TestCase):
 
         self.assertEqual(self.podcast.rss, current_rss)
         self.assertFalse(self.podcast.active)
+        self.assertEqual(self.podcast.redirect_to, other)
 
     def test_parse_feed_not_modified(self):
         with mock.patch(
@@ -185,9 +186,18 @@ class FeedParserTests(TestCase):
         self.assertTrue(self.podcast.active)
         self.assertFalse(self.podcast.modified)
 
+    def test_parse_feed_error(self):
+        with mock.patch(self.mock_http_get, side_effect=requests.RequestException):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(episodes, [])
+        self.assertTrue(self.podcast.active)
+        self.assertTrue(self.podcast.exception)
+
     def test_parse_feed_gone(self):
         with mock.patch(
-            self.mock_http_get, return_value=BadMockResponse(self.podcast.rss)
+            self.mock_http_get,
+            return_value=BadMockResponse(self.podcast.rss, status=http.HTTPStatus.GONE),
         ):
             episodes = parse_feed(self.podcast)
 
@@ -195,4 +205,5 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
         self.assertFalse(self.podcast.active)
-        self.assertTrue(self.podcast.exception)
+        self.assertFalse(self.podcast.exception)
+        self.assertEqual(self.podcast.error_status, http.HTTPStatus.GONE)

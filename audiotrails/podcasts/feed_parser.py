@@ -33,9 +33,16 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
     try:
         response = fetch_feed(podcast)
-    except requests.RequestException:
+        response.raise_for_status()
+    except requests.HTTPError:
         # dead feed, don't request again
         podcast.active = False
+        podcast.error_status = response.status_code
+        podcast.save()
+        return []
+
+    except requests.RequestException:
+        # temp issue, maybe network error
         podcast.exception = traceback.format_exc()
         podcast.save()
         return []
@@ -44,13 +51,12 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         # no change, ignore
         return []
 
-    if (
-        response.url != podcast.rss
-        and Podcast.objects.filter(rss=response.url).exists()
+    if response.url != podcast.rss and (
+        other := Podcast.objects.filter(rss=response.url).first()
     ):
         # permanent redirect to URL already taken by another podcast
         podcast.active = False
-        podcast.exception = "Unable to redirect to {response.url}: feed already taken"
+        podcast.redirect_to = other
         podcast.save()
         return []
 
@@ -69,16 +75,12 @@ def fetch_feed(podcast: Podcast) -> requests.Response:
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
 
-    response = requests.get(
+    return requests.get(
         podcast.rss,
         headers=headers,
         allow_redirects=True,
         timeout=10,
     )
-
-    response.raise_for_status()
-
-    return response
 
 
 def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]:

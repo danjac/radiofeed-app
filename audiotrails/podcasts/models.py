@@ -107,8 +107,19 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
+    # HTTP error status
+    error_status: int | None = models.PositiveSmallIntegerField(null=True, blank=True)
+
     # error fetching RSS
-    exception = models.TextField(blank=True)
+    exception: str = models.TextField(blank=True)
+
+    # if permanent redirect to feed that already exists
+    redirect_to: Podcast | None = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     search_vector: str = SearchVectorField(null=True, editable=False)
 
