@@ -229,7 +229,7 @@ def is_episode(item: box.Box) -> bool:
 def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
-        "User-Agent": get_user_agent(),
+        "User-Agent": random.choice(USER_AGENTS),
     }
 
     if podcast.etag:
@@ -237,11 +237,6 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
-
-
-def get_user_agent() -> str:
-
-    return random.choice(USER_AGENTS)
 
 
 def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | None:
