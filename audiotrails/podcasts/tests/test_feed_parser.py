@@ -41,6 +41,7 @@ class FeedParserTests(TestCase):
     mock_file = "rss_mock.xml"
     mock_http_get = "requests.get"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
+    redirect_rss = "https://example.com/test.xml"
     updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
     @classmethod
@@ -127,7 +128,7 @@ class FeedParserTests(TestCase):
         with mock.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url="https://example.com/test.xml",
+                url=self.redirect_rss,
                 status=http.HTTPStatus.PERMANENT_REDIRECT,
                 headers={
                     "ETag": "abc123",
@@ -142,11 +143,11 @@ class FeedParserTests(TestCase):
 
         self.podcast.refresh_from_db()
 
-        self.assertEqual(self.podcast.rss, "https://example.com/test.xml")
+        self.assertEqual(self.podcast.rss, self.redirect_rss)
         self.assertTrue(self.podcast.modified)
 
     def test_parse_feed_permanent_redirect_url_taken(self):
-        other = PodcastFactory(rss="https://example.com/test.xml")
+        other = PodcastFactory(rss=self.redirect_rss)
         current_rss = self.podcast.rss
 
         with mock.patch(
