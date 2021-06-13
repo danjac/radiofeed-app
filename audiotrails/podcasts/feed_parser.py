@@ -32,7 +32,13 @@ def get_categories_dict() -> dict[str, Category]:
 def parse_feed(podcast: Podcast) -> list[Episode]:
 
     try:
-        response = fetch_feed(podcast)
+        response = requests.get(
+            podcast.rss,
+            headers=get_feed_headers(podcast),
+            allow_redirects=True,
+            timeout=10,
+        )
+
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
@@ -51,47 +57,30 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         # no change, ignore
         return []
 
-    if response.url != podcast.rss and (
-        other := Podcast.objects.filter(rss=response.url).first()
+    if (redirect_url := get_redirect_url(podcast, response)) and (
+        other := Podcast.objects.filter(rss=redirect_url).first()
     ):
+
         # permanent redirect to URL already taken by another podcast
         podcast.active = False
         podcast.redirect_to = other
         podcast.save()
         return []
 
-    return sync_podcast(podcast, response)
+    return sync_podcast(podcast, response, redirect_url)
 
 
-def fetch_feed(podcast: Podcast) -> requests.Response:
+def sync_podcast(
+    podcast: Podcast, response: requests.Response, redirect_url: str | None
+) -> list[Episode]:
 
-    headers: dict[str, str] = {
-        "User-Agent": feedparser.USER_AGENT,
-        "Accept": ACCEPT_HEADER,
-    }
-
-    if podcast.etag:
-        headers["If-None-Match"] = quote_etag(podcast.etag)
-    if podcast.modified:
-        headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
-
-    return requests.get(
-        podcast.rss,
-        headers=headers,
-        allow_redirects=True,
-        timeout=10,
-    )
-
-
-def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]:
+    podcast.rss = redirect_url or podcast.rss
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
         return []
-
-    podcast.rss = response.url
 
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
@@ -228,6 +217,29 @@ def is_episode(item: box.Box) -> bool:
             item.pub_date and item.pub_date < timezone.now(),
         )
     )
+
+
+def get_feed_headers(podcast: Podcast) -> dict[str, str]:
+    headers: dict[str, str] = {
+        "User-Agent": feedparser.USER_AGENT,
+        "Accept": ACCEPT_HEADER,
+    }
+
+    if podcast.etag:
+        headers["If-None-Match"] = quote_etag(podcast.etag)
+    if podcast.modified:
+        headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
+    return headers
+
+
+def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | None:
+
+    if (
+        response.status_code == http.HTTPStatus.PERMANENT_REDIRECT
+        and response.url != podcast.rss
+    ):
+        return response.url
+    return None
 
 
 def conv(
