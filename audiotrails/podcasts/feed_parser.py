@@ -46,10 +46,11 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
 
     if (
         response.url != podcast.rss
-        and Podcast.objects.filter(rss=response.url).exclude(pk=podcast.id).exists()
+        and Podcast.objects.filter(rss=response.url).exists()
     ):
         # permanent redirect to URL already taken by another podcast
         podcast.active = False
+        podcast.exception = "Unable to redirect to {response.url}: feed already taken"
         podcast.save()
         return []
 
