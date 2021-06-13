@@ -23,6 +23,8 @@ from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.text_parser import extract_keywords
 
+USER_AGENT = "audiotrails/v1"
+
 
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
@@ -219,7 +221,7 @@ def is_episode(item: box.Box) -> bool:
 
 def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers: dict[str, str] = {
-        "User-Agent": feedparser.USER_AGENT,
+        "User-Agent": USER_AGENT,
         "Accept": ACCEPT_HEADER,
     }
 
