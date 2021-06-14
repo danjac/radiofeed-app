@@ -42,20 +42,20 @@
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
           @click="show=false; $dispatch('add-message', { text: 'Removed from Play Queue!', tags: 'message-info' });">
     {% icon "trash" css_class="h-4 w-4 mr-2" %}
-    Remove from Play Queue
+    Remove from Queue
   </button>
   {% elif num_queue_items %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
           @click="show=false; $dispatch('add-message', { text: 'Added to Play Queue!', tags: 'message-success' });">
     {% icon "arrow_up" css_class="h-4 w-4 mr-2" %}
-    Add to Start of Play Queue
+    Add to Start of Queue
   </button>
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
           @click="show=false; $dispatch('add-message', { text: 'Added to Play Queue!', tags: 'message-success' });">
     {% icon "arrow_down" css_class="h-4 w-4 mr-2" %}
-    Add to End of Play Queue
+    Add to End of Queue
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
