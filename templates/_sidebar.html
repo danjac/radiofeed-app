@@ -4,7 +4,7 @@
         class="relative bg-transparent"
         hx-push-url="true"
         x-data="{search: ''}"
-        @submit="$dispatch('close-sidebar'); search=''">
+        @submit="$dispatch('close-sidebar');">
     <input type="search"
            name="q"
            x-model="search"
