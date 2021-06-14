@@ -23,7 +23,7 @@ export default function Player(options) {
     mediaSrc,
     ...defaults,
 
-    initialize() {
+    init() {
       this.$watch('duration', (value) => {
         this.updateProgressBar(value, this.currentTime);
       });
