@@ -4,11 +4,16 @@
 
 {% block content %}
 {% with podcast_title=podcast.title|unescape %}
-<h1 class="font-bold text-xl md:text-2xl mb-6{% if search or oldest_first %} text-center sm:text-left{% endif %}">{{ podcast_title }}</h1>
+<h1 class="font-bold text-xl md:text-2xl mb-6 text-center sm:text-left">{{ podcast_title }}</h1>
 <div id="podcast-content">
-  {% if has_recommendations and not search and not oldest_first %}
   <nav class="flex items-center mb-6">
     <ul class="flex items-center space-x-6">
+      {% active_link podcast.get_detail_url as link %}
+      <li class="{% if link.exact %} tab--active{% endif %}">
+        <a class="link"
+           href="{{ link.url }}"
+           title="{{ podcast_title }} | About">About</a>
+      </li>
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
@@ -23,7 +28,6 @@
       </li>
     </ul>
   </nav>
-  {% endif %}
   {% block podcast_content %}{% endblock %}
 </div>
 {% endwith %}

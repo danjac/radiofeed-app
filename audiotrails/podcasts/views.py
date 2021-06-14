@@ -133,6 +133,21 @@ def recommendations(
 
 
 @require_safe
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponse:
+
+    return TemplateResponse(
+        request,
+        "podcasts/detail.html",
+        get_podcast_detail_context(
+            request,
+            get_podcast_or_404(request, podcast_id),
+        ),
+    )
+
+
+@require_safe
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -140,13 +155,11 @@ def episodes(
     podcast = get_podcast_or_404(request, podcast_id)
     newest_first = request.GET.get("ordering", "desc") == "desc"
     oldest_first = not (newest_first)
-    show_podcast_detail = newest_first
 
     episodes = podcast.episode_set.select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
-        show_podcast_detail = False
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
@@ -160,7 +173,6 @@ def episodes(
             {
                 "newest_first": newest_first,
                 "oldest_first": oldest_first,
-                "show_podcast_detail": show_podcast_detail,
             },
         ),
         cached=True,

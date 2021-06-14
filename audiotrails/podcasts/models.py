@@ -137,7 +137,10 @@ class Podcast(models.Model):
         return self.title or self.rss
 
     def get_absolute_url(self) -> str:
-        return self.get_episodes_url()
+        return self.get_detail_url()
+
+    def get_detail_url(self) -> str:
+        return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
 
     def get_episodes_url(self) -> str:
         return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])

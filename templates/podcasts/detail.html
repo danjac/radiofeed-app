@@ -1,0 +1,69 @@
+{% extends "podcasts/podcast_detail_base.html" %}
+
+{% block podcast_content %}
+<div class="border-t border-b dark:border-gray-500 space-y-6 mb-6 py-6">
+
+  {% if podcast.creators %}
+  <div class="font-semibold text-gray-600 dark:text-gray-300">
+    {{ podcast.creators }}
+  </div>
+  {% endif %}
+
+  <div class="flex items-center w-full space-x-6">
+
+    <div>
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=28 %}
+    </div>
+
+    <div class="space-y-3">
+      {% include "podcasts/_follow_toggle.html" %}
+      <div class="flex items-center space-x-3">
+        {% if podcast.link %}
+        <div>
+          <a href="{{ podcast.link }}"
+             class="link"
+             target="_blank"
+             rel="noopener">Website</a>
+        </div>
+        {% endif %}
+        <div>
+          <a href="{{ podcast.rss }}"
+             class="link"
+             download>RSS</a>
+        </div>
+        <div>
+          <a href="{{ podcast.itunes }}"
+             class="link"
+             target="_blank"
+             rel="noopener">iTunes</a>
+        </div>
+      </div>
+      {% share_buttons podcast.get_absolute_url podcast.title|unescape %}
+    </div>
+  </div>
+
+  {% with num_episodes=podcast.get_cached_episode_count %}
+  {% if num_episodes %}
+  <div class="font-semibold text-gray-600 dark:text-gray-300">
+    <a href="{{ podcast.get_episodes_url }}" class="link">
+      {{ num_episodes }} episode{{ num_episodes|pluralize }}
+    </a>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  {% if podcast.explicit %}
+  <div class="font-semibold">
+    This podcast may contain explicit content.
+  </div>
+  {% endif %}
+
+  <blockquote class="markdown max-w-sm sm:max-w-full">
+    {{ podcast.description|clean_html }}
+  </blockquote>
+
+  {% include "podcasts/_disclaimer.html" %}
+  {% include "podcasts/_categories.html" %}
+
+</div>
+{% endblock podcast_content %}

@@ -11,19 +11,24 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
+        "podcasts/<int:podcast_id>/preview/",
+        views.preview,
+        name="preview",
+    ),
+    path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
         views.recommendations,
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/<int:podcast_id>/",
-        views.preview,
-        name="preview",
+        "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
+        views.episodes,
+        name="podcast_episodes",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
-        views.episodes,
-        name="podcast_episodes",
+        views.podcast_detail,
+        name="podcast_detail",
     ),
     path(
         "podcasts/<int:podcast_id>/~follow/",

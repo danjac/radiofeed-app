@@ -128,7 +128,24 @@ class PodcastRecommendationsTests(TestCase):
         self.assertEqual(len(resp.context_data["recommendations"]), 3)
 
 
-class PodcastEpisodeListTests(TestCase):
+class PodcastDetailTests(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.podcast = PodcastFactory()
+
+    def setUp(self) -> None:
+        self.url = reverse(
+            "podcasts:podcast_detail",
+            args=[self.podcast.id, self.podcast.slug],
+        )
+
+    def test_get_podcast(self) -> None:
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(resp.context_data["podcast"], self.podcast)
+
+
+class PodcastEpisodesTests(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.podcast = PodcastFactory()
