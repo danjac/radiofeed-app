@@ -35,7 +35,7 @@
           class="relative bg-transparent hidden sm:block"
           hx-push-url="true"
           x-data="{search: ''}"
-          @submit="$refs.input.blur(); search=''">
+          @submit="$refs.input.blur(); search='';$dispatch('close-sidebar');">
       <input type="search"
              x-ref="input"
              x-model="search"
