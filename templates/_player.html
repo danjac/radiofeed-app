@@ -34,7 +34,7 @@
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
-       :class="{'player--active': isPlaying && isLoaded && !isStalled, 'player--inactive': !isPlaying || !isLoaded || isStalled}">
+       :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}">
     <div class="relative space-y-3 sm:space-y-0">
 
       <div class="w-72 sm:hidden truncate">
@@ -64,23 +64,23 @@
 
             <div class="flex items-center">
 
-              <button title="Playback stalled: reload this page"
+              <button title="Reload to start player"
                       @click="location.reload()"
-                      x-show="isStalled || !isLoaded"
+                      x-show="!isLoaded"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "refresh" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 
               <button title="Pause"
                       @click="pause()"
-                      x-show="isPlaying && !isStalled"
+                      x-show="isPlaying"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "pause" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>
 
               <button title="Play"
                       @click="play()"
-                      x-show="isPaused && !isStalled"
+                      x-show="isPaused"
                       class="focus:outline-none hover:text-blue-600 mr-2">
                 {% icon "play" css_class="h-7 w-7 md:h-9 md:w-9" %}
               </button>

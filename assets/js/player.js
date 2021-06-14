@@ -6,7 +6,6 @@ const defaults = {
   isPlaying: false,
   isPaused: false,
   isLoaded: false,
-  isStalled: false,
   showPlayer: true,
   playbackRate: 1.0,
   counter: '00:00:00',
@@ -69,14 +68,12 @@ export default function Player(options) {
     resumed() {
       this.isPlaying = true;
       this.isPaused = false;
-      this.isStalled = false;
       sessionStorage.setItem(storageKey, true);
     },
 
     paused() {
       this.isPlaying = false;
       this.isPaused = true;
-      this.isStalled = false;
     },
 
     shortcuts(event) {
@@ -137,7 +134,7 @@ export default function Player(options) {
     },
 
     skipTo(time) {
-      if (!isNaN(time) && !this.isPaused && !this.isStalled) {
+      if (!isNaN(time) && !this.isPaused) {
         this.$refs.audio.currentTime = time;
       }
     },
@@ -157,7 +154,6 @@ export default function Player(options) {
 
     stalled() {
       console.log('Playback Stalled');
-      this.isStalled = true;
     },
 
     close(url) {
@@ -176,9 +172,6 @@ export default function Player(options) {
     },
 
     togglePause() {
-      if (this.isStalled) {
-        return;
-      }
       return this.isPaused ? this.play() : this.pause();
     },
 
@@ -199,7 +192,7 @@ export default function Player(options) {
     },
 
     canSendTimeUpdate() {
-      return this.isLoaded && !this.isPaused && !this.isStalled && !!this.currentTime;
+      return this.isLoaded && !this.isPaused && !!this.currentTime;
     },
 
     sendTimeUpdate() {
