@@ -1,9 +1,0 @@
-<button title="Preview for {{ episode.title|unescape }}"
-        class="focus:outline-none"
-        hx-get="{% url 'episodes:preview' episode.id %}"
-        hx-target="#modal"
-        hx-select="#modal"
-        hx-swap="outerHTML"
-        hx-trigger="click delay:200ms">
-  {% icon "info" css_class="w-6 h-6" %}
-</button>

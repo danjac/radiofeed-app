@@ -3,18 +3,18 @@
 
 {% block content %}
 
-<h1 class="font-bold flex items-center justify-center sm:justify-start text-xl md:text-2xl mb-3">
+<h1 class="font-bold flex items-center justify-center sm:justify-start text-lg mb-3">
   Sign In
 </h1>
 
-<p class="mb-3">{% blocktranslate %}If you have not created an account yet, then please
+<p class="mb-3 text-sm">{% blocktranslate %}If you have not created an account yet, then please
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}
 </p>
 
 <form method="post"
       action="{{ request.path }}"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 text-sm"
       hx-disable="true"
       novalidate>
   {% csrf_token %}

@@ -6,9 +6,9 @@
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}
-<p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
+<p class="mb-3 text-sm">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form class="mb-3 w-full sm:w-3/4 lg:w-1/2"
+<form class="mb-3 w-full sm:w-3/4 lg:w-1/2 text-sm"
       hx-disable="true"
       method="post"
       id="email-addresses"
@@ -67,17 +67,17 @@
 
 {% else %}
 
-<p><strong>{% translate 'Warning:'%}</strong>
+<p class="text-sm"><strong>{% translate 'Warning:'%}</strong>
   {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
 </p>
 
 {% endif %}
 
 {% if can_add_email %}
-<h2 class="font-semibold mb-3">{% translate "Add E-mail Address" %}</h2>
+<h2 class="font-semibold mb-3 text-sm">{% translate "Add E-mail Address" %}</h2>
 <form method="post"
       action="{{ request.path }}"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2"
+      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 text-sm"
       hx-disable="true"
       novalidate>
   {% csrf_token %}

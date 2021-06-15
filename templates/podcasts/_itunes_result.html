@@ -2,10 +2,10 @@
 <section class="p-1 py-3 flex items-center space-x-3 border-t dark:border-gray-500">
   {% if result.image %}
   <div>
-    {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.title size=16 %}
+    {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.title size=14 %}
   </div>
   {% endif %}
-  <div class="space-y-2">
+  <div class="space-y-2 text-sm">
     <h2 class="w-64 sm:w-96 lg:w-full truncate">
       {% if podcast and podcast.pub_date %}
       <a href="{{ podcast.get_absolute_url }}"
@@ -20,20 +20,11 @@
       {% endif %}
     </h2>
     <div class="text-sm flex items-center space-x-3">
-      {% if podcast and podcast.pub_date %}
-      {% include "podcasts/_preview_toggle.html" %}
-      {% else %}
-      <button class="opacity-50 cursor-not-allowed"
-              disabled
-              title="Podcast not in database">
-        {% icon "info" css_class="h-6 w-6" %}
-      </button>
+      {% if podcast %}
+      <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs">
+        Added {{ podcast.created|timesince }} ago
+      </div>
       {% endif %}
-      <a href="{{ result.itunes }}"
-         title="See {{ result.title }} in iTunes"
-         class="link"
-         target="_blank"
-         rel="noopener">iTunes</a>
     </div>
   </div>
 </section>

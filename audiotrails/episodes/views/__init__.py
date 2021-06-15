@@ -125,6 +125,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
             "is_playing": request.player.is_playing(episode),
+            "is_detail": request.GET.get("detail", False),
             "num_queue_items": num_queue_items,
         },
     )

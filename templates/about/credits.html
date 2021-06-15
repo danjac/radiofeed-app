@@ -1,13 +1,13 @@
 {% extends base_template|default:"about/base.html" %}
 
 {% block about_content %}
-<p class="mb-6">
+<p class="mb-3 text-sm">
   <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your favorite podcasts.
 </p>
-<p class="mb-6">
+<p class="mb-3 text-sm">
   This is an open-source project covered by the MIT license.
 </p>
-<div class="mb-6 sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0">
+<div class="mb-3 sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0 text-sm">
   <div>
     <a class="underline hover:text-blue-500"
        target="_blank"
@@ -23,18 +23,18 @@
   <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
        href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
 </div>
-<h2 class="font-semibold mb-6 pt-6 border-t dark:border-gray-500 text-lg">Additional Credits</h2>
+<h2 class="font-semibold mb-3 pt-6 border-t dark:border-gray-500">Additional Credits</h2>
 
-<ul class="mb-6">
+<ul class="mb-3 text-sm">
 
-  <li class="mb-6">
+  <li class="mb-3">
     Share icons from <a target="_blank"
        href="https://fontawesome.com"
        class="underline hover:text-blue-500"
        rel="noopener">Font Awesome</a>
   </li>
 
-  <li class="mb-6">
+  <li class="mb-3">
     Loader icon from <a target="_blank"
        href="https://github.com/SamHerbert/SVG-Loaders"
        class="underline hover:text-blue-500"
@@ -56,9 +56,9 @@
 </ul>
 
 
-<h2 class="font-semibold pt-6 mb-6 border-t dark:border-gray-500 text-lg">General Disclaimer</h2>
+<h2 class="font-semibold pt-6 mb-3 border-t dark:border-gray-500">General Disclaimer</h2>
 
-<p class="mb-6">
+<p class="mb-3 text-sm">
   All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with nor ensorsed by {{ request.site.name }}. All audio files are played directly from the source.
 </p>
 

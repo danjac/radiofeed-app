@@ -1,4 +1,4 @@
-<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm md:text-base"
+<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm"
      :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
      x-data="{show: true, position: 'dropdown'}"
      x-show="show"
@@ -112,6 +112,17 @@
     </div>
     Download
   </a>
+  {% if not is_detail %}
+  <a class="{{ BUTTON_CSS_CLASS }}"
+     title="View episode details"
+     href="{{ episode.get_absolute_url }}">
+    <div class="mr-2">
+      {% icon "link" css_class="h-4 w-4" %}
+    </div>
+    View Details
+  </a>
+  {% endif %}
+
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
     {% icon "x" css_class="h-4 w-4 mr-2" %}

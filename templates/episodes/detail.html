@@ -4,11 +4,11 @@
 
 {% block content %}
 
-<h1 class="font-bold text-xl md:text-2xl mb-6">{{ episode.title|unescape }}</h1>
+<h1 class="font-bold text-lg mb-3">{{ episode.title|unescape }}</h1>
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
-<nav class="flex justify-between mb-6 border-b dark:border-gray-500 pb-6">
+<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3 text-sm">
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
@@ -34,9 +34,9 @@
 {% endwith %}
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
-<section class="space-y-6 pb-6 mb-6">
+<section class="space-y-3 pb-3 mb-3">
 
-  <h2 class="text-lg">
+  <h2>
     <a href="{{ podcast.get_absolute_url }}"
        title="{{ podcast.title|unescape }}"
        class="link">
@@ -47,10 +47,10 @@
   <div class="flex items-center space-x-6">
     <div>
       <a href="{{ podcast.get_absolute_url }}">
-        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=24 %}
+        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
       </a>
     </div>
-    <div class="space-y-3">
+    <div class="space-y-2 text-sm">
       <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
         <div title="Date Published">
           {% include "_pub_date.html" with pub_date=episode.pub_date %}
@@ -60,7 +60,7 @@
         </div>
       </div>
       {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|unescape %}
-      {% include "episodes/_actions_toggle.html" %}
+      {% include "episodes/_actions_toggle.html" with is_detail=True %}
     </div>
   </div>
 
@@ -75,7 +75,7 @@
   {% endif %}
 
 
-  <blockquote class="markdown max-w-sm sm:max-w-full">
+  <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
     {{ episode.description|clean_html }}
   </blockquote>
 

@@ -3,20 +3,20 @@
 {% block modal_header %}
 <a href="{{ podcast.get_absolute_url }}"
    @click="$dispatch('close-modal')"
-   class="link text-lg">
+   class="link">
   {{ podcast.title }}
 </a>
 {% endblock %}
 
 {% block modal_content %}
-<div class="flex items-center space-x-6 mb-6">
+<div class="flex items-center space-x-6 mb-3">
   <div>
     <a href="{{ podcast.get_absolute_url }}"
        @click="$dispatch('close-modal')">
       {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=24 %}
     </a>
   </div>
-  <div class="space-y-2">
+  <div class="space-y-2 text-sm">
     <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3"
          title="Date Last Published">
       {% include "_pub_date.html" with pub_date=podcast.pub_date %}
@@ -24,7 +24,9 @@
     {% with num_episodes=podcast.get_cached_episode_count %}
     {% if num_episodes %}
     <div class="font-semibold text-gray-600 dark:text-gray-300">
-      {{ num_episodes }} episode{{ num_episodes|pluralize }}
+      <a href="{{ podcast.get_episodes_url }}" class="link" @click="$dispatch('close-modal')">
+        {{ num_episodes }} episode{{ num_episodes|pluralize }}
+      </a>
     </div>
     {% endif %}
     {% endwith %}
@@ -34,13 +36,26 @@
 </div>
 
 {% if podcast.explicit %}
-<div class="text-sm font-semibold mb-3">
+<div class="text-sm font-semibold mb-3 text-sm">
   This podcast may contain explicit content.
 </div>
 {% endif %}
 
-<div class="markdown text-muted text-sm mb-3">
-  {{ podcast.description|keepspaces|striptags|unescape|truncatechars:600 }}
+{% with description=podcast.description|keepspaces|striptags|unescape %}
+{% if description %}
+<div class="markdown text-muted text-sm">
+  {{ description|truncatechars:600 }}
+  {% if description|length > 600 %}
+  <p>
+    <a href="{{ podcast.get_absolute_url }}"
+       @click="$dispatch('close-modal')"
+       class="link text-sm">
+      More details...
+    </a>
+  </p>
+  {% endif %}
 </div>
+{% endif %}
+{% endwith %}
 
 {% endblock modal_content %}
