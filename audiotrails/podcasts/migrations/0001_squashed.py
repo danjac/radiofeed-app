@@ -7,7 +7,6 @@ import django.core.validators
 import django.db.models.deletion
 import django.utils.timezone
 import model_utils.fields
-import sorl.thumbnail.fields
 
 from django.conf import settings
 from django.db import migrations, models
@@ -99,9 +98,7 @@ class Migration(migrations.Migration):
                 ("pub_date", models.DateTimeField(blank=True, null=True)),
                 (
                     "cover_image",
-                    sorl.thumbnail.fields.ImageField(
-                        blank=True, null=True, upload_to=""
-                    ),
+                    models.ImageField(blank=True, null=True, upload_to=""),
                 ),
                 ("itunes", models.URLField(blank=True, max_length=500, null=True)),
                 ("language", models.CharField(default="en", max_length=2)),

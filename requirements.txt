@@ -133,6 +133,8 @@ joblib==1.0.1
     #   scikit-learn
 kombu==5.1.0
     # via celery
+lxml==4.6.3
+    # via -r requirements.in
 markupsafe==2.0.1
     # via jinja2
 matplotlib-inline==0.1.2

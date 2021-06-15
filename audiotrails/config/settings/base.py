@@ -62,31 +62,26 @@ LOCAL_APPS = [
 ]
 
 
-INSTALLED_APPS = (
-    [
-        "django.forms",
-        "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.sites",
-        "django.contrib.messages",
-        "django.contrib.postgres",
-        "django.contrib.sitemaps",
-        "django.contrib.staticfiles",
-        "allauth",
-        "allauth.account",
-        "allauth.socialaccount",
-        "allauth.socialaccount.providers.google",
-        "django_extensions",
-        "django_celery_beat",
-        "djcelery_email",
-        "widget_tweaks",
-        "sorl.thumbnail",
-    ]
-    + LOCAL_APPS
-    + ["django_cleanup"]
-)
+INSTALLED_APPS = [
+    "django.forms",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
+    "django.contrib.postgres",
+    "django.contrib.sitemaps",
+    "django.contrib.staticfiles",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "django_extensions",
+    "django_celery_beat",
+    "djcelery_email",
+    "widget_tweaks",
+] + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -1,5 +1,4 @@
 from django.contrib import admin
-from sorl.thumbnail.admin import AdminImageMixin
 
 from audiotrails.podcasts.models import Category, Podcast
 
@@ -64,7 +63,7 @@ class ActiveFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(AdminImageMixin, admin.ModelAdmin):
+class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
     ordering = ("-pub_date",)

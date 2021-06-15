@@ -25,6 +25,7 @@ gunicorn
 html5lib
 httptools
 ipython
+lxml
 nltk
 pandas
 psycopg2-binary

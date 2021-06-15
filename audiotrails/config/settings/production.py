@@ -28,10 +28,6 @@ SERVER_EMAIL = f"errors@{MAILGUN_SENDER_DOMAIN}"
 DEFAULT_FROM_EMAIL = f"support@{MAILGUN_SENDER_DOMAIN}"
 
 
-# https://github.com/jazzband/sorl-thumbnail#frequently-asked-questions
-
-THUMBNAIL_FORCE_OVERWRITE = True
-
 # https://pypi.org/project/django-permissions-policy/
 
 PERMISSIONS_POLICY: dict[str, list] = {
