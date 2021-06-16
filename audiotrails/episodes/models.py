@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -204,7 +204,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: list[tuple[str, str]] = [
+    search_vectors: ClassVar[list[tuple[str, str]]] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -233,7 +233,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: list[tuple[str, str]] = [
+    search_vectors: ClassVar[list[tuple[str, str]]] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
