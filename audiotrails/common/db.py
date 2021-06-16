@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import functools
 import operator
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, ClassVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
@@ -15,7 +17,7 @@ else:
 
 
 class FastCountMixin(Base):
-    def count(self):
+    def count(self) -> int:
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
         cursor = connections[self.db].cursor()
@@ -29,16 +31,16 @@ class FastCountMixin(Base):
 
 
 class SearchMixin(Base):
-    search_vectors: list[tuple[str, str]] = []
-    search_vector_field: str = "search_vector"
-    search_rank: str = "rank"
+    search_vectors: ClassVar[list[tuple[str, str]]] = []
+    search_vector_field: ClassVar[str] = "search_vector"
+    search_rank: ClassVar[str] = "rank"
 
     def search(self, search_term: str) -> QuerySet:
         if not search_term:
             return self.none()
 
         query = SearchQuery(force_str(search_term), search_type="websearch")
-        ranks: dict[str, Union[SearchRank, list[F]]] = {}
+        ranks: dict[str, SearchRank | list[F]] = {}
         filters: list[Q] = []
 
         if self.search_vectors:
