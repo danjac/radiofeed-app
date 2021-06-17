@@ -11,7 +11,7 @@
 {% block modal_content %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url %}
 
-<div class="flex items-center space-x-6 mb-3">
+<div class="flex items-center space-x-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
        @click="$dispatch('close-modal')">

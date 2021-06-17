@@ -11,10 +11,10 @@
     "cssnano": "^5.0.6",
     "esbuild": "^0.12.9",
     "npm-check-updates": "^11.6.0",
-    "postcss": "^8.3.4",
+    "postcss": "^8.3.5",
     "postcss-cli": "^8.3.1",
     "postcss-import": "^14.0.2",
-    "tailwindcss": "^2.1.4"
+    "tailwindcss": "^2.2.0"
   },
   "dependencies": {
     "alpinejs": "^3.0.6",
