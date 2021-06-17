@@ -7,7 +7,7 @@
 <h1 class="font-bold text-lg mb-3 text-center sm:text-left">{{ podcast_title }}</h1>
 <div id="podcast-content">
   <nav class="flex items-center mb-3 justify-center sm:justify-start text-sm">
-    <ul class="flex items-center space-x-6">
+    <ul class="flex items-center space-x-3">
       {% active_link podcast.get_detail_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
