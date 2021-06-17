@@ -10,23 +10,24 @@
 
 {% block modal_content %}
 {% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url %}
-<div class="mb-3">
-  <a href="{{ podcast_url }}"
-     title="{{ podcast.title }}"
-     @click="$dispatch('close-modal')"
-     class="link text-sm">
-    {{ podcast.title }}
-  </a>
-</div>
 
 <div class="flex items-center space-x-6 mb-3">
   <div>
     <a href="{{ podcast_url }}"
        @click="$dispatch('close-modal')">
-      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=16 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
     </a>
   </div>
-  <div class="space-y-3 text-sm">
+  <div class="space-y-2 text-sm">
+    <div class="w-48 sm:w-96 truncate">
+      <a href="{{ podcast_url }}"
+         title="{{ podcast.title }}"
+         @click="$dispatch('close-modal')"
+         class="link">
+        {{ podcast.title }}
+      </a>
+    </div>
+
     <div class="font-semibold text-gray-600 dark:text-gray-300 space-x-2 flex items-center">
       {% include "_pub_date.html" with pub_date=episode.pub_date %}
       {% with duration=episode.get_duration_in_seconds %}
