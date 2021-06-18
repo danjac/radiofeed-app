@@ -45,15 +45,6 @@
 {% if description %}
 <div class="markdown text-muted text-sm">
   {{ description|truncatechars:600 }}
-  {% if description|length > 600 %}
-  <p>
-    <a href="{{ podcast.get_absolute_url }}"
-       @click="$dispatch('close-modal')"
-       class="link text-sm">
-      More details...
-    </a>
-  </p>
-  {% endif %}
 </div>
 {% endif %}
 {% endwith %}
