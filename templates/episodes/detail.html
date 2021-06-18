@@ -35,14 +35,13 @@
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 <section class="space-y-3 pb-3 mb-3">
-
-  <h2>
-    <a href="{{ podcast.get_absolute_url }}"
-       title="{{ podcast.title|unescape }}"
-       class="link">
-      {{ podcast.title|unescape }}
+  <div>
+    <a href="{{ podcast_url }}"
+       title="{{ podcast.title }}"
+       class="link text-sm">
+      {{ podcast.title }}
     </a>
-  </h2>
+  </div>
 
   <div class="flex items-center space-x-3">
     <div>
