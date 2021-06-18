@@ -5,6 +5,7 @@
      loading="lazy"
      width="{{ size }}"
      height="{{ size }}"
+     src="{{ placeholder }}"
      {% if cover_url %}
      x-data="{
         isLoaded: false,
@@ -17,6 +18,4 @@
      @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
-     {% else %}
-     src="{{ placeholder }}"
      {% endif %}>
