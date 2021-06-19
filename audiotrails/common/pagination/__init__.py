@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
-from django.db.models import Model
 from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -12,7 +11,7 @@ from audiotrails.common.typedefs import ContextDict
 
 def paginate(
     request: HttpRequest,
-    object_list: list[Model],
+    object_list: list,
     page_size: int = settings.DEFAULT_PAGE_SIZE,
     param: str = "page",
     allow_empty: bool = True,
@@ -30,7 +29,7 @@ def paginate(
 
 def render_paginated_response(
     request: HttpRequest,
-    object_list: list[Model],
+    object_list: list,
     template_name: str,
     pagination_template_name: str,
     extra_context: ContextDict | None = None,
