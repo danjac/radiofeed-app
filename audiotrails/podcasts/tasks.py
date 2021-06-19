@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-import datetime
-
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
-from django.db.models import Q
-from django.utils import timezone
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.emails import send_recommendations_email
@@ -31,25 +27,16 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_updated_hours: int = 24) -> None:
+def sync_podcast_feeds(last_updated: int = 24) -> None:
     """Sync podcasts with RSS feeds. Fetch any without a pub date or
     pub_date > given period."""
 
     qs = (
-        Podcast.objects.filter(
-            Q(
-                pub_date__isnull=True,
-            )
-            | Q(
-                pub_date__lt=timezone.now()
-                - datetime.timedelta(hours=last_updated_hours),
-            ),
-            active=True,
-        )
-        .distinct()
+        Podcast.objects.for_feed_sync(last_updated)
         .order_by("-pub_date")
         .values_list("rss", flat=True)
     )
+
     total = qs.count()
 
     logger.info(f"Syncing {total} podcasts")

@@ -507,6 +507,17 @@ python-versions = ">=3.6"
 sgmllib3k = "*"
 
 [[package]]
+name = "freezegun"
+version = "1.1.0"
+description = "Let your Python tests travel through time"
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+python-dateutil = ">=2.7"
+
+[[package]]
 name = "future"
 version = "0.18.2"
 description = "Clean single-source support for Python 3 and 2"
@@ -1254,7 +1265,7 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e8c1516fbc6a8d8affe8fa3e0bfc9ebc998aae9a6cfd9e0aaa16d93507110b87"
+content-hash = "89aa95ad84910ede0b54a4be9abe969fc306b2bd554f9d2be79ba0d7bec3d0ba"
 
 [metadata.files]
 amqp = [
@@ -1555,6 +1566,10 @@ faker = [
 feedparser = [
     {file = "feedparser-6.0.6-py3-none-any.whl", hash = "sha256:1c35e9ef43d8f95959cf8cfa337b68a2cb0888cab7cd982868d23850bb1e08ae"},
     {file = "feedparser-6.0.6.tar.gz", hash = "sha256:78f62a5b872fdef451502bb96e64a8fd4180535eb749954f1ad528604809cdeb"},
+]
+freezegun = [
+    {file = "freezegun-1.1.0-py2.py3-none-any.whl", hash = "sha256:2ae695f7eb96c62529f03a038461afe3c692db3465e215355e1bb4b0ab408712"},
+    {file = "freezegun-1.1.0.tar.gz", hash = "sha256:177f9dd59861d871e27a484c3332f35a6e3f5d14626f2bf91be37891f18927f3"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},

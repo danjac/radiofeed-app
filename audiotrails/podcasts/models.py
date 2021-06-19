@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -12,6 +12,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
@@ -66,6 +67,57 @@ class Category(models.Model):
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_follow_count(self) -> models.QuerySet:
         return self.annotate(follow_count=models.Count("follow"))
+
+    def for_feed_sync(self, last_updated: int = 6) -> models.QuerySet:
+        """Podcasts due to be updated with their RSS feeds.
+
+        1) Ignore any inactive podcasts
+        2) Update any podcasts with pub date NULL
+        3) Update any podcasts with pub date < 90 days
+        4) Update any podcasts updated in last 90-120 days if pub date weekday
+            falls on alternate (odd or even) day depending on current
+            weekday
+        5) Update any podcasts updated > 120 days if pub date weekday
+            is same as current weekday
+        6) Do not update any podcasts if pub date is more recent than `last_updated`
+            hours ago.
+        """
+
+        now = timezone.now()
+        weekday = now.isoweekday()
+
+        first_tier = now - timedelta(days=90)
+        second_tier = now - timedelta(days=120)
+
+        weekdays = (
+            (2, 4, 6),
+            (1, 3, 5, 7),
+        )
+
+        tiered_q = (
+            models.Q(pub_date__gt=first_tier)
+            | models.Q(
+                pub_date__range=(second_tier, first_tier),
+                pub_date__iso_week_day__in=weekdays[weekday % 2],
+            )
+            | models.Q(
+                pub_date__lt=second_tier,
+                pub_date__iso_week_day=weekday,
+            )
+        )
+
+        return self.filter(
+            models.Q(
+                pub_date__isnull=True,
+            )
+            | models.Q(
+                models.Q(
+                    pub_date__lt=now - timedelta(hours=last_updated),
+                )
+                & tiered_q
+            ),
+            active=True,
+        ).distinct()
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)

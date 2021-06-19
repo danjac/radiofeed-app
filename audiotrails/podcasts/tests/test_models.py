@@ -1,6 +1,10 @@
+import datetime
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
+from django.utils import timezone
+from freezegun import freeze_time
 
 from audiotrails.episodes.factories import (
     AudioLogFactory,
@@ -80,6 +84,82 @@ class PodcastManagerSearchTests(TransactionTestCase):
 
 
 class PodcastManagerTests(TestCase):
+    @freeze_time("2021-06-19")
+    def test_for_feed_sync_even_weekday(self):
+        now = timezone.now()
+
+        # no pub date yet
+        podcast_a = PodcastFactory(pub_date=None)
+
+        # yesterday: first tier
+        podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=1))
+
+        # 100 days ago: even day
+        podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))
+
+        # 203 days ago: Saturday
+        podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
+
+        # not included:
+
+        # 200 days ago: Tuesday
+        PodcastFactory(pub_date=now - datetime.timedelta(days=200))
+
+        # 99 days ago: odd day
+        PodcastFactory(pub_date=now - datetime.timedelta(days=99))
+
+        # inactive: never include
+        PodcastFactory(active=False)
+
+        # just updated
+        PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
+
+        qs = Podcast.objects.for_feed_sync()
+
+        self.assertEqual(qs.count(), 4)
+        self.assertIn(podcast_a, qs)
+        self.assertIn(podcast_b, qs)
+        self.assertIn(podcast_c, qs)
+        self.assertIn(podcast_d, qs)
+
+    @freeze_time("2021-06-18")
+    def test_for_feed_sync_odd_weekday(self):
+        now = timezone.now()
+
+        # no pub date yet
+        podcast_a = PodcastFactory(pub_date=None)
+
+        # yesterday: first tier
+        podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=1))
+
+        # 100 days ago: even day
+        podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))
+
+        # 203 days ago: Friday
+        podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
+
+        # not included:
+
+        # 200 days ago: Monday
+        PodcastFactory(pub_date=now - datetime.timedelta(days=200))
+
+        # 99 days ago: even day
+        PodcastFactory(pub_date=now - datetime.timedelta(days=99))
+
+        # inactive: never include
+        PodcastFactory(active=False)
+
+        # just updated
+        PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
+
+        qs = Podcast.objects.for_feed_sync()
+
+        self.assertEqual(qs.count(), 4)
+        self.assertIn(podcast_a, qs)
+        self.assertIn(podcast_b, qs)
+        self.assertIn(podcast_c, qs)
+        self.assertIn(podcast_d, qs)
+
     def test_with_follow_count(self):
         following_1 = PodcastFactory()
         following_2 = PodcastFactory()
