@@ -11,7 +11,7 @@ from django.db.models import F, Q, QuerySet
 from django.utils.encoding import force_str
 
 if TYPE_CHECKING:
-    Base: QuerySet = QuerySet
+    Base: QuerySet = QuerySet  # pragma: no cover
 else:
     Base = object
 
@@ -20,13 +20,9 @@ class FastCountMixin(Base):
     def count(self) -> int:
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
-        cursor = connections[self.db].cursor()
-        cursor.execute(
-            "SELECT reltuples FROM pg_class WHERE relname = %s",
-            [self.model._meta.db_table],
-        )
-        if (count := int(cursor.fetchone()[0])) >= 1000:
-            return count  # exact count for small tables
+        if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
+            return count
+        # exact count for small tables
         return super().count()
 
 
@@ -61,3 +57,9 @@ class SearchMixin(Base):
             filters.append(Q(**{self.search_vector_field: query}))
 
         return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))
+
+
+def get_reltuple_count(db: str, table: str) -> int:
+    cursor = connections[db].cursor()
+    cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s", [table])
+    return int(cursor.fetchone()[0])

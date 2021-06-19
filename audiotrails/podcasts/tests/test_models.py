@@ -1,5 +1,7 @@
 import datetime
 
+from unittest import mock
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
@@ -81,6 +83,24 @@ class PodcastManagerSearchTests(TransactionTestCase):
     def test_search(self) -> None:
         PodcastFactory(title="testing")
         self.assertEqual(Podcast.objects.search("testing").count(), 1)
+
+    def test_search_if_empty(self) -> None:
+        PodcastFactory(title="testing")
+        self.assertEqual(Podcast.objects.search("").count(), 0)
+
+    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+    def test_count_if_gt_1000(self, mock) -> None:
+        self.assertEqual(Podcast.objects.count(), 2000)
+
+    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=100)
+    def test_count_if_lt_1000(self, mock) -> None:
+        PodcastFactory()
+        self.assertEqual(Podcast.objects.count(), 1)
+
+    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+    def test_count_if_filter(self, mock) -> None:
+        PodcastFactory(title="test")
+        self.assertEqual(Podcast.objects.filter(title="test").count(), 1)
 
 
 class PodcastManagerTests(TestCase):
