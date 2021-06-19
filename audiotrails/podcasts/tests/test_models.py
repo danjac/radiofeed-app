@@ -68,6 +68,10 @@ class CategoryModelTests(SimpleTestCase):
         category = Category(name="Testing")
         self.assertEqual(category.slug, "testing")
 
+    def test_str(self) -> None:
+        category = Category(name="Testing")
+        self.assertEqual(str(category), "testing")
+
 
 class PodcastManagerSearchTests(TransactionTestCase):
     def test_search(self) -> None:
@@ -118,15 +122,15 @@ class PodcastModelTests(TestCase):
     def test_slug_if_title_empty(self) -> None:
         self.assertEqual(Podcast().slug, "podcast")
 
-    def is_following_anonymous(self) -> None:
+    def test_is_following_anonymous(self) -> None:
         self.assertFalse(self.podcast.is_following(AnonymousUser()))
 
-    def is_following_false(self) -> None:
+    def test_is_following_false(self) -> None:
         self.assertFalse(self.podcast.is_following(UserFactory()))
 
-    def is_following_true(self) -> None:
-        sub = FollowFactory(podcast=self.podcast)
-        self.assertTrue(self.podcast.is_following(sub.user))
+    def test_is_following_true(self) -> None:
+        follow = FollowFactory(podcast=self.podcast)
+        self.assertTrue(self.podcast.is_following(follow.user))
 
     def test_get_domain(self) -> None:
         self.assertEqual(self.podcast.get_domain(), "example.com")

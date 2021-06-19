@@ -209,18 +209,6 @@ class RecommendationQuerySet(models.QuerySet):
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def with_followed(self, user: AnyUser) -> models.QuerySet:
-        """Marks which recommendations are followed by this user."""
-        if user.is_anonymous:
-            return self.annotate(
-                is_followed=models.Value(False, output_field=models.BooleanField())
-            )
-        return self.annotate(
-            is_followed=models.Exists(
-                Follow.objects.filter(user=user, podcast=models.OuterRef("recommended"))
-            )
-        )
-
     def for_user(self, user: AuthenticatedUser) -> models.QuerySet:
         podcast_ids = (
             set(
