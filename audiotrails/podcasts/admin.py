@@ -1,4 +1,8 @@
+from typing import Iterable
+
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from audiotrails.podcasts.models import Category, Podcast
 
@@ -14,13 +18,15 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub date"
     parameter_name = "pub_date"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> Iterable[tuple[str, str]]:
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
         )
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.filter(pub_date__isnull=False)
@@ -33,10 +39,12 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> Iterable[tuple[str, str]]:
         return (("yes", "Promoted"),)
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.filter(promoted=True)
@@ -47,13 +55,15 @@ class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> Iterable[tuple[str, str]]:
         return (
             ("yes", "Active"),
             ("no", "Inactive"),
         )
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.filter(active=True)
@@ -67,7 +77,7 @@ class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("__str__", "pub_date", "active", "promoted")
+    list_display = ("__str__", "source", "pub_date", "active", "promoted")
     list_editable = ("promoted",)
     search_fields = ("search_document",)
 
@@ -81,7 +91,12 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
     )
 
-    def get_search_results(self, request, queryset, search_term):
+    def source(self, obj: Podcast) -> str:
+        return obj.get_domain()
+
+    def get_search_results(
+        self, request: HttpRequest, queryset: QuerySet, search_term: str
+    ) -> QuerySet:
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False

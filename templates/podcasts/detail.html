@@ -3,11 +3,13 @@
 {% block podcast_content %}
 <div class="space-y-3 border-t dark:border-gray-500 pt-6">
 
-  {% if podcast.creators %}
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm flex-wrap">
     {{ podcast.creators }}
   </div>
-  {% endif %}
+
+  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+    {{ podcast.get_domain }}
+  </div>
 
   <div class="flex items-center w-full space-x-3">
 
@@ -18,14 +20,12 @@
     <div class="space-y-2 text-sm">
       {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-3">
-        {% if podcast.link %}
         <div>
           <a href="{{ podcast.link }}"
              class="link"
              target="_blank"
              rel="noopener">Website</a>
         </div>
-        {% endif %}
         <div>
           <a href="{{ podcast.rss }}"
              class="link"

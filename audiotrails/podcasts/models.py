@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -147,6 +148,9 @@ class Podcast(models.Model):
 
     def get_recommendations_url(self) -> str:
         return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
+
+    def get_domain(self) -> str:
+        return ".".join(urlparse(self.rss).netloc.split(".")[-2:])
 
     @property
     def slug(self) -> str:

@@ -128,6 +128,9 @@ class PodcastModelTests(TestCase):
         sub = FollowFactory(podcast=self.podcast)
         self.assertTrue(self.podcast.is_following(sub.user))
 
+    def test_get_domain(self) -> None:
+        self.assertEqual(self.podcast.get_domain(), "example.com")
+
     def test_get_opengraph_data(self) -> None:
         req = RequestFactory().get("/")
         req.site = Site.objects.get_current()
