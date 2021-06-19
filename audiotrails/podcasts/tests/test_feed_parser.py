@@ -52,7 +52,7 @@ class FeedHeaderTests(TestCase):
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
         headers = get_feed_headers(podcast)
-        self.assertEqual(headers["If-None-Match"], podcast.etag)
+        self.assertEqual(headers["If-None-Match"], f'"{podcast.etag}"')
 
     def test_is_modified(self):
         podcast = Podcast(modified=timezone.now())
