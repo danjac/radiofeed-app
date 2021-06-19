@@ -123,10 +123,47 @@ class EpisodeSlugTests(SimpleTestCase):
         self.assertEqual(Episode().slug, "episode")
 
 
-class EpisodePcCompleteModelTests(TransactionTestCase):
+class EpisodeCompleteModelTests(TransactionTestCase):
     def setUp(self) -> None:
         self.user = UserFactory()
         self.episode = EpisodeFactory(duration="100")
+
+    def test_is_completed_if_not_set(self) -> None:
+        self.assertFalse(self.episode.is_completed())
+
+    def test_is_completed_if_marked_complete(self) -> None:
+        AudioLogFactory(
+            user=self.user,
+            current_time=50,
+            updated=timezone.now(),
+            completed=timezone.now(),
+            episode=self.episode,
+        )
+        self.assertTrue(
+            Episode.objects.with_current_time(self.user).first().is_completed()
+        )
+
+    def test_is_completed_if_pc_complete_under_100(self) -> None:
+        AudioLogFactory(
+            user=self.user,
+            current_time=50,
+            updated=timezone.now(),
+            episode=self.episode,
+        )
+        self.assertFalse(
+            Episode.objects.with_current_time(self.user).first().is_completed()
+        )
+
+    def test_is_completed_if_pc_complete_over_100(self) -> None:
+        AudioLogFactory(
+            user=self.user,
+            current_time=100,
+            updated=timezone.now(),
+            episode=self.episode,
+        )
+        self.assertTrue(
+            Episode.objects.with_current_time(self.user).first().is_completed()
+        )
 
     def test_get_pc_complete_without_current_time_attr(self) -> None:
         AudioLogFactory(
@@ -298,6 +335,16 @@ class AudioLogManagerTests(TestCase):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
         self.assertEqual(AudioLog.objects.search("testing").count(), 1)
+
+
+class AudioLogModelTests(TestCase):
+    def test_to_json(self):
+        log = AudioLogFactory()
+        data = log.to_json()
+        self.assertEqual(data["episode"]["id"], log.episode.id)
+        self.assertEqual(data["episode"]["url"], log.episode.get_absolute_url())
+        self.assertEqual(data["podcast"]["title"], log.episode.podcast.title)
+        self.assertEqual(data["podcast"]["url"], log.episode.podcast.get_absolute_url())
 
 
 class QueueItemManagerTests(TestCase):
