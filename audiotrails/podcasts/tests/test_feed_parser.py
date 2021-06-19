@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import http
 import pathlib
 
@@ -7,11 +8,19 @@ from unittest import mock
 
 import requests
 
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
-from audiotrails.podcasts.feed_parser import get_categories_dict, parse_feed
+from audiotrails.podcasts.feed_parser import (
+    conv_date,
+    conv_int,
+    conv_list,
+    conv_str,
+    conv_url,
+    get_categories_dict,
+    parse_feed,
+)
 
 
 class MockResponse:
@@ -208,3 +217,46 @@ class FeedParserTests(TestCase):
         self.assertFalse(self.podcast.active)
         self.assertFalse(self.podcast.exception)
         self.assertEqual(self.podcast.error_status, http.HTTPStatus.GONE)
+
+
+class ConvTests(SimpleTestCase):
+    def test_conv_str(self):
+        self.assertEqual(conv_str("testing"), "testing")
+
+    def test_conv_str_is_none(self):
+        self.assertEqual(conv_str(None), "")
+
+    def test_conv_int(self):
+        self.assertEqual(conv_int("123"), 123)
+
+    def test_conv_int_is_none(self):
+        self.assertEqual(conv_int(None), None)
+
+    def test_conv_int_invalid(self):
+        self.assertEqual(conv_int("fubar"), None)
+
+    def test_conv_url(self):
+        self.assertEqual(conv_url("http://example.com"), "http://example.com")
+
+    def test_conv_url_invalid(self):
+        self.assertEqual(conv_url("ftp://example.com"), "")
+
+    def test_conv_url_none(self):
+        self.assertEqual(conv_url(None), "")
+
+    def test_conv_date(self):
+        self.assertTrue(
+            isinstance(conv_date("Fri, 19 Jun 2020 16:58:03"), datetime.datetime)
+        )
+
+    def test_conv_date_invalid(self):
+        self.assertEqual(conv_date("fubar"), None)
+
+    def test_conv_date_none(self):
+        self.assertEqual(conv_date(None), None)
+
+    def test_conv_list(self):
+        self.assertEqual(conv_list(["test"]), ["test"])
+
+    def test_conv_list_none(self):
+        self.assertEqual(conv_list(None), [])

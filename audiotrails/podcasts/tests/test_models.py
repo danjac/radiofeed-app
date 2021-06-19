@@ -70,7 +70,7 @@ class CategoryModelTests(SimpleTestCase):
 
     def test_str(self) -> None:
         category = Category(name="Testing")
-        self.assertEqual(str(category), "testing")
+        self.assertEqual(str(category), "Testing")
 
 
 class PodcastManagerSearchTests(TransactionTestCase):
