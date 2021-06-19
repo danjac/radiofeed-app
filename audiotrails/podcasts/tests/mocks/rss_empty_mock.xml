@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+>
+<channel>
+	<title>Mysterious Universe</title>
+	<atom:link href="https://mysteriousuniverse.org/feed/podcast/" rel="self" type="application/rss+xml" />
+	<link>https://mysteriousuniverse.org</link>
+	<description>Blog and Podcast specializing in offbeat news</description>
+	<lastBuildDate>Wed, 01 Jul 2020 15:25:26 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+
+<!-- podcast_generator="Blubrry PowerPress/8.3.3" mode="advanced" feedslug="podcast" Blubrry PowerPress Podcasting plugin for WordPress (https://www.blubrry.com/powerpress/) -->
+	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+	<itunes:summary>Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.</itunes:summary>
+	<itunes:author>8th Kind</itunes:author>
+	<itunes:explicit>yes</itunes:explicit>
+	<itunes:image href="https://mysteriousuniverse.org/wp-content/uploads/2018/11/itunes_14k.jpg" />
+	<itunes:owner>
+		<itunes:name>8th Kind</itunes:name>
+		<itunes:email>sales@mysteriousuniverse.org</itunes:email>
+	</itunes:owner>
+	<managingEditor>sales@mysteriousuniverse.org (8th Kind)</managingEditor>
+	<copyright>8th Kind</copyright>
+	<itunes:subtitle>The latest news from the other side</itunes:subtitle>
+	<image>
+		<title>Mysterious Universe</title>
+		<url>https://mysteriousuniverse.org/wp-content/uploads/2018/11/itunes_14k.jpg</url>
+		<link>https://mysteriousuniverse.org</link>
+	</image>
+	<itunes:category text="Science">
+		<itunes:category text="Social Sciences" />
+	</itunes:category>
+	<googleplay:category text="Science &amp; Medicine"/>
+	<itunes:category text="Religion &amp; Spirituality">
+		<itunes:category text="Spirituality" />
+	</itunes:category>
+	<itunes:category text="Society &amp; Culture">
+		<itunes:category text="Philosophy" />
+	</itunes:category>
+	<rawvoice:subscribe feed="https://mysteriousuniverse.org/feed/podcast/" itunes="https://mysteriousuniverse.org/feed/podcast/"></rawvoice:subscribe>
+</channel>
+</rss>
