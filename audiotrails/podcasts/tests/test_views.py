@@ -32,13 +32,13 @@ mock_search_result = SearchResult(
 def mock_fetch_itunes_genre(
     genre_id: int, num_results: int = 20
 ) -> tuple[list[SearchResult], list[Podcast]]:
-    return [mock_search_result], []
+    return [mock_search_result], [PodcastFactory()]
 
 
 def mock_search_itunes(
     search_term: str, num_results: int = 12
 ) -> tuple[list[SearchResult], list[Podcast]]:
-    return [mock_search_result], []
+    return [mock_search_result], [PodcastFactory()]
 
 
 class PreviewTests(TestCase):
@@ -359,6 +359,7 @@ class SearchITunesTests(TestCase):
         self.assertEqual(
             resp.context_data["results"][0].title, mock_search_result.title
         )
+        mock.assert_called()
 
     @patch.object(itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True)
     def test_invalid_results(self, mock: Mock) -> None:
