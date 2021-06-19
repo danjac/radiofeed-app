@@ -537,15 +537,20 @@ class RemoveFromQueueTests(TestCase):
 
 
 class TestMoveQueueItems(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
     def test_post(self) -> None:
-        user = UserFactory()
-        self.client.force_login(user)
 
-        first = QueueItemFactory(user=user)
-        second = QueueItemFactory(user=user)
-        third = QueueItemFactory(user=user)
+        first = QueueItemFactory(user=self.user)
+        second = QueueItemFactory(user=self.user)
+        third = QueueItemFactory(user=self.user)
 
-        items = QueueItem.objects.filter(user=user).order_by("position")
+        items = QueueItem.objects.filter(user=self.user).order_by("position")
 
         self.assertEqual(items[0], first)
         self.assertEqual(items[1], second)
@@ -564,8 +569,14 @@ class TestMoveQueueItems(TestCase):
 
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
-        items = QueueItem.objects.filter(user=user).order_by("position")
+        items = QueueItem.objects.filter(user=self.user).order_by("position")
 
         self.assertEqual(items[0], third)
         self.assertEqual(items[1], first)
         self.assertEqual(items[2], second)
+
+    def test_invalid(self) -> None:
+        resp = self.client.post(
+            reverse("episodes:move_queue_items"), {"items": "incorrect"}
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
