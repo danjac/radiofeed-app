@@ -265,6 +265,19 @@ class EpisodeModelTests(TestCase):
         cls.user = UserFactory()
         cls.episode = EpisodeFactory()
 
+    def test_str(self):
+        self.assertEqual(str(self.episode), self.episode.title)
+
+    def test_str_no_title(self):
+        episode = EpisodeFactory(title="")
+        self.assertEqual(str(episode), episode.guid)
+
+    def test_get_file_size(self):
+        self.assertEqual(Episode(length=500).get_file_size(), "500\xa0bytes")
+
+    def test_get_file_size_if_none(self):
+        self.assertEqual(Episode(length=None).get_file_size(), None)
+
     def test_get_media_metadata(self) -> None:
         data = self.episode.get_media_metadata()
         self.assertEqual(data["title"], self.episode.title)
@@ -302,23 +315,23 @@ class EpisodeModelTests(TestCase):
         self.assertEqual(self.episode.get_next_episode(), next_episode)
         self.assertEqual(self.episode.get_previous_episode(), previous_episode)
 
-    def is_favorited_anonymous(self) -> None:
+    def test_is_favorited_anonymous(self) -> None:
         self.assertFalse(self.episode.is_favorited(AnonymousUser()))
 
-    def is_favorited_false(self) -> None:
+    def test_is_favorited_false(self) -> None:
         self.assertFalse(self.episode.is_favorited(self.user))
 
-    def is_favorited_true(self) -> None:
+    def test_is_favorited_true(self) -> None:
         fave = FavoriteFactory(user=self.user, episode=self.episode)
         self.assertTrue(fave.episode.is_favorited(fave.user))
 
-    def is_queued_anonymous(self) -> None:
+    def test_is_queued_anonymous(self) -> None:
         self.assertFalse(self.episode.is_queued(AnonymousUser()))
 
-    def is_queued_false(self) -> None:
+    def test_is_queued_false(self) -> None:
         self.assertFalse(self.episode.is_queued(self.user))
 
-    def is_queued_true(self) -> None:
+    def test_is_queued_true(self) -> None:
         item = QueueItemFactory(user=self.user, episode=self.episode)
         self.assertTrue(item.episode.is_queued(item.user))
 
