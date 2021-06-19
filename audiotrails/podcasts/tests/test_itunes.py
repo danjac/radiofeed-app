@@ -2,10 +2,18 @@ from __future__ import annotations
 
 from unittest import mock
 
+import requests
+
 from django.test import TestCase
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
+from audiotrails.podcasts.models import Podcast
+
+
+class MockBadHttpResponse:
+    def raise_for_status(self):
+        raise requests.HTTPError()
 
 
 class MockResponse:
@@ -26,6 +34,16 @@ class MockResponse:
 
 
 class SearchItunesTests(TestCase):
+    @mock.patch("requests.get", return_value=MockBadHttpResponse())
+    def test_bad_http_response(self, mock):
+        self.assertRaises(itunes.Invalid, itunes.search_itunes, "testing")
+        self.assertEqual(Podcast.objects.count(), 0)
+
+    @mock.patch("requests.get", side_effect=requests.Timeout)
+    def test_timeout(self, mock):
+        self.assertRaises(itunes.Invalid, itunes.search_itunes, "testing")
+        self.assertEqual(Podcast.objects.count(), 0)
+
     @mock.patch("requests.get", return_value=MockResponse())
     def test_no_new_podcasts(self, mock):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
