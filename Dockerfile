@@ -25,10 +25,11 @@ RUN curl -sLO https://github.com/facebook/watchman/releases/download/v2021.04.26
     && chmod 2777 /usr/local/var/run/watchman
 
 # python requirements
+RUN pip install poetry
+
 COPY ./pyproject.toml /pyproject.toml
 COPY ./poetry.lock /poetry.lock
 
-RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
