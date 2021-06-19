@@ -25,8 +25,12 @@ RUN curl -sLO https://github.com/facebook/watchman/releases/download/v2021.04.26
     && chmod 2777 /usr/local/var/run/watchman
 
 # python requirements
-COPY ./requirements.txt /requirements.txt
-RUN pip install -r requirements.txt
+COPY ./pyproject.toml /pyproject.toml
+COPY ./poetry.lock /poetry.lock
+
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet

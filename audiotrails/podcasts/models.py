@@ -150,7 +150,7 @@ class Podcast(models.Model):
         return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
 
     def get_domain(self) -> str:
-        return ".".join(urlparse(self.rss).netloc.split(".")[-2:])
+        return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
     @property
     def slug(self) -> str:

@@ -135,6 +135,10 @@ class PodcastModelTests(TestCase):
     def test_get_domain(self) -> None:
         self.assertEqual(self.podcast.get_domain(), "example.com")
 
+    def test_get_domain_if_www(self) -> None:
+        self.podcast.rss = "http://www.example.com/test.rss"
+        self.assertEqual(self.podcast.get_domain(), "example.com")
+
     def test_get_opengraph_data(self) -> None:
         req = RequestFactory().get("/")
         req.site = Site.objects.get_current()
