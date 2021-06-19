@@ -39,6 +39,20 @@ class SendRecommendationEmailsTests(TestCase):
         mock_send_email.assert_called()
 
 
+class CreatePodcastRecommendationsTests(TestCase):
+    @patch("audiotrails.podcasts.tasks.recommend", autospec=True)
+    def test_create_podcast_recommendations(self, mock_recommend) -> None:
+        tasks.create_podcast_recommendations()
+        mock_recommend.assert_called()
+
+
+class CrawlItunesTests(TestCase):
+    @patch("audiotrails.podcasts.tasks.itunes.crawl_itunes", autospec=True)
+    def test_crawl_itunes(self, mock_crawl_itunes) -> None:
+        tasks.crawl_itunes()
+        mock_crawl_itunes.assert_called()
+
+
 class SyncPodcastFeedsTests(TestCase):
     @patch(
         "audiotrails.podcasts.tasks.sync_podcast_feed.delay",

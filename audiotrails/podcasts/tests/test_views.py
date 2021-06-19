@@ -306,14 +306,8 @@ class ITunesCategoryTests(TestCase):
     def setUp(self) -> None:
         self.url = reverse("podcasts:itunes_category", args=[self.category.id])
 
-    @patch(
-        "audiotrails.podcasts.views.sync_podcast_feed.delay",
-    )
-    @patch.object(
-        itunes,
-        "fetch_itunes_genre",
-        mock_fetch_itunes_genre,
-    )
+    @patch("audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True)
+    @patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
     def test_get(self, mock: Mock) -> None:
         resp = self.client.get(self.url)
 
@@ -346,9 +340,7 @@ class SearchITunesTests(TestCase):
         self.assertFalse(resp.context_data["error"])
         self.assertEqual(len(resp.context_data["results"]), 0)
 
-    @patch(
-        "audiotrails.podcasts.views.sync_podcast_feed.delay",
-    )
+    @patch("audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True)
     @patch.object(itunes, "search_itunes", mock_search_itunes)
     def test_search(self, mock: Mock) -> None:
         resp = self.client.get(self.url, {"q": "test"})
