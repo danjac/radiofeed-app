@@ -90,5 +90,5 @@ class TestSyncPodcastFeed(TestCase):
     )
     def test_ok(self, mock_parse_feed: Mock) -> None:
         podcast = PodcastFactory()
-        tasks.sync_podcast_feed(podcast.rss)
+        tasks.sync_podcast_feed(podcast.rss, counter=10, total=100)
         mock_parse_feed.assert_called()
