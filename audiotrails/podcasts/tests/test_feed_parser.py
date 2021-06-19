@@ -90,13 +90,30 @@ class FeedParserTests(TestCase):
             pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
         ).read()
 
-    def get_feedparser_content(self, *args, **kwargs) -> bytes:
+    def get_feedparser_content(self, filename: str = "") -> bytes:
         return open(
-            pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
+            pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file), "rb"
         ).read()
 
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
+
+    def test_parse_empty_feed(self):
+
+        with mock.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=self.podcast.rss,
+                content=self.get_feedparser_content("rss_empty_mock.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 0)
 
     def test_parse_feed(self):
 

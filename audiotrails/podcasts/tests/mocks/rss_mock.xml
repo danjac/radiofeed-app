@@ -19,7 +19,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 	<language>en-US</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
-		
+
 <!-- podcast_generator="Blubrry PowerPress/8.3.3" mode="advanced" feedslug="podcast" Blubrry PowerPress Podcasting plugin for WordPress (https://www.blubrry.com/powerpress/) -->
 	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
 	<itunes:summary>Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.</itunes:summary>
