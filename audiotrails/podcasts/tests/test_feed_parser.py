@@ -9,6 +9,7 @@ from unittest import mock
 import requests
 
 from django.test import SimpleTestCase, TestCase
+from django.utils import timezone
 
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
@@ -19,8 +20,10 @@ from audiotrails.podcasts.feed_parser import (
     conv_str,
     conv_url,
     get_categories_dict,
+    get_feed_headers,
     parse_feed,
 )
+from audiotrails.podcasts.models import Podcast
 
 
 class MockResponse:
@@ -43,6 +46,18 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self) -> None:
         raise requests.HTTPError()
+
+
+class FeedHeaderTests(TestCase):
+    def test_has_etag(self):
+        podcast = Podcast(etag="abc123")
+        headers = get_feed_headers(podcast)
+        self.assertEqual(headers["If-None-Match"], podcast.etag)
+
+    def test_is_modified(self):
+        podcast = Podcast(modified=timezone.now())
+        headers = get_feed_headers(podcast)
+        self.assertTrue(headers["If-Modified-Since"])
 
 
 class FeedParserTests(TestCase):
