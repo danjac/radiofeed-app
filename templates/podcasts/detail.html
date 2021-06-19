@@ -3,13 +3,7 @@
 {% block podcast_content %}
 <div class="space-y-3 border-t dark:border-gray-500 pt-6">
 
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm flex-wrap">
-    {{ podcast.creators }}
-  </div>
-
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
-    {{ podcast.get_domain }}
-  </div>
+  {% include "podcasts/_credits.html" %}
 
   <div class="flex items-center w-full space-x-3">
 
