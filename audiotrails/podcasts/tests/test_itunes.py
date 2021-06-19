@@ -5,7 +5,7 @@ from unittest import mock
 from django.test import TestCase
 
 from audiotrails.podcasts import itunes
-from audiotrails.podcasts.factories import PodcastFactory
+from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 
 
 class MockResponse:
@@ -42,6 +42,14 @@ class SearchItunesTests(TestCase):
         self.assertEqual(
             new_podcasts[0].rss, "https://feeds.fireside.fm/testandcode/rss"
         )
+
+
+class CrawlItunesTests(TestCase):
+    @mock.patch("requests.get", return_value=MockResponse())
+    def test_add_new_podcasts(self, mock):
+        CategoryFactory.create_batch(6)
+        num_podcasts = itunes.crawl_itunes(limit=100)
+        self.assertEqual(num_podcasts, 1)
 
 
 class FetchItunesGenreTests(TestCase):

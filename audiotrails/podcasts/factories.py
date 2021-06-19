@@ -9,6 +9,7 @@ from audiotrails.users.factories import UserFactory
 
 class CategoryFactory(DjangoModelFactory):
     name = factory.Sequence(lambda i: f"category-{i}")
+    itunes_genre_id = factory.Sequence(lambda i: i)
 
     class Meta:
         model = Category
