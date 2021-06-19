@@ -61,6 +61,28 @@ class NewEpisodesAuthenticatedTests(TestCase):
         self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
         self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
 
+    def test_user_has_listened_items(self) -> None:
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+
+        EpisodeFactory.create_batch(3)
+
+        log = AudioLogFactory(user=self.user)
+        FollowFactory(user=self.user, podcast=log.episode.podcast)
+
+        episode = EpisodeFactory()
+        FollowFactory(user=self.user, podcast=episode.podcast)
+
+        resp = self.client.get(episodes_url)
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertFalse(resp.context_data["featured"])
+        self.assertTrue(resp.context_data["has_follows"])
+        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        self.assertEqual(resp.context_data["page_obj"].object_list[0], episode)
+
+        episode_ids = [obj.id for obj in resp.context_data["page_obj"].object_list]
+        self.assertNotIn(log.episode.id, episode_ids)
+
     def test_user_has_subscriptions_featured(self) -> None:
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
@@ -185,6 +207,17 @@ class PlayNextEpisodeTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
+    def test_has_episode_in_player(self) -> None:
+
+        log = AudioLogFactory(user=self.user, current_time=2000)
+
+        session = self.client.session
+        session.update({"player": {"episode": log.episode.id, "current_time": 1000}})
+        session.save()
+
+        resp = self.client.post(reverse("episodes:play_next_episode"))
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
     def test_play_next_episode_in_history(self) -> None:
         log = AudioLogFactory(user=self.user, current_time=30)
 
@@ -202,17 +235,28 @@ class PlayNextEpisodeTests(TestCase):
 
 
 class ClosePlayerTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+
+    def setUp(self):
+
+        self.client.force_login(self.user)
+
+    def test_stop_if_player_empty(self) -> None:
+        resp = self.client.post(
+            reverse("episodes:close_player"),
+        )
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
     def test_stop(self) -> None:
         episode = EpisodeFactory()
-
-        user = UserFactory()
-        self.client.force_login(user)
 
         session = self.client.session
         session.update({"player": {"episode": episode.id, "current_time": 1000}})
         session.save()
 
-        AudioLogFactory(user=user, episode=episode, current_time=2000)
+        AudioLogFactory(user=self.user, episode=episode, current_time=2000)
         resp = self.client.post(
             reverse("episodes:close_player"),
         )
