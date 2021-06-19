@@ -239,17 +239,20 @@ TZ_INFOS: dict[str, float] = {
 }
 
 
+def force_tz_aware(dt: datetime) -> datetime:
+    if not is_aware(dt):
+        dt = make_aware(dt)
+    return dt
+
+
 def parse_date(value: str | datetime | None) -> datetime | None:
-
-    if isinstance(value, datetime):
-        return value
-
     if not value:
         return None
+
+    if isinstance(value, datetime):
+        return force_tz_aware(value)
+
     try:
-        dt = date_parser.parse(value, tzinfos=TZ_INFOS)
-        if not is_aware(dt):
-            dt = make_aware(dt)
-        return dt
+        return force_tz_aware(date_parser.parse(value, tzinfos=TZ_INFOS))
     except date_parser.ParserError:
         return None
