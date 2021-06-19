@@ -41,7 +41,7 @@ class SearchItunesTests(TestCase):
 
     @mock.patch("requests.get", side_effect=requests.Timeout)
     def test_timeout(self, mock):
-        self.assertRaises(itunes.Invalid, itunes.search_itunes, "testing")
+        self.assertRaises(itunes.Timeout, itunes.search_itunes, "testing")
         self.assertEqual(Podcast.objects.count(), 0)
 
     @mock.patch("requests.get", return_value=MockResponse())
@@ -63,6 +63,12 @@ class SearchItunesTests(TestCase):
 
 
 class CrawlItunesTests(TestCase):
+    @mock.patch("requests.get", return_value=MockBadHttpResponse())
+    def test_bad_http_response(self, mock):
+        CategoryFactory.create_batch(6)
+        num_podcasts = itunes.crawl_itunes(limit=100)
+        self.assertEqual(num_podcasts, 0)
+
     @mock.patch("requests.get", return_value=MockResponse())
     def test_add_new_podcasts(self, mock):
         CategoryFactory.create_batch(6)

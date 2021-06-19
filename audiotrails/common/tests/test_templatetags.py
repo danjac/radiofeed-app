@@ -5,6 +5,7 @@ from audiotrails.common.pagination.templatetags import pagination_url
 from audiotrails.common.template.defaulttags import (
     active_link,
     format_duration,
+    get_privacy_details,
     keepspaces,
     login_url,
     percent,
@@ -111,6 +112,9 @@ class ReActiveLinkTests(SimpleTestCase):
 
 
 class KeepspacesTests(SimpleTestCase):
+    def test_value_is_empty(self) -> None:
+        self.assertEqual(keepspaces(""), "")
+
     def test_value_is_none(self) -> None:
         self.assertEqual(keepspaces(None), "")
 
@@ -121,6 +125,14 @@ class KeepspacesTests(SimpleTestCase):
         self.assertEqual(
             keepspaces("test<br />this<ul><li>hello</li></ul>"), "test this hello"
         )
+
+    def test_value_has_no_body(self) -> None:
+        self.assertEqual(keepspaces("<div>"), "")
+
+
+class PrivacyDetailsTests(SimpleTestCase):
+    def test_get_privacy_details(self) -> None:
+        self.assertTrue(get_privacy_details())
 
 
 class ShareButtonsTests(SimpleTestCase):
