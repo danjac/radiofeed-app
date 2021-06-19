@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Protocol, Union
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
-from django.db.models import QuerySet
 from django.http import HttpRequest
 
 if TYPE_CHECKING:
@@ -19,7 +20,7 @@ ContextDict = dict[str, Any]
 
 class ActionProtocol(Protocol):
     def __call__(
-        self: admin.ModelAdmin, request: HttpRequest, queryset: QuerySet
+        self: admin.ModelAdmin, request: HttpRequest, obj: Any | None = None
     ) -> str:
         ...
 
