@@ -6,6 +6,7 @@ import json
 import requests
 
 from django.core.cache import cache
+from django.db.models import Q
 from django.utils.encoding import force_str
 
 from audiotrails.podcasts.models import Category, Podcast
@@ -97,12 +98,14 @@ def _get_or_create_podcasts(
     results: list[SearchResult],
 ) -> tuple[list[SearchResult], list[Podcast]]:
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
-    podcasts = Podcast.objects.filter(itunes__in=[r.itunes for r in results]).in_bulk(
-        field_name="itunes"
-    )
+
+    podcasts = Podcast.objects.filter(
+        Q(itunes__in=[r.itunes for r in results]) | Q(rss__in=[r.rss for r in results])
+    ).in_bulk(field_name="rss")
+
     new_podcasts = []
     for result in results:
-        result.podcast = podcasts.get(result.itunes, None)
+        result.podcast = podcasts.get(result.rss, None)
         if result.podcast is None:
             new_podcasts.append(
                 Podcast(title=result.title, rss=result.rss, itunes=result.itunes)

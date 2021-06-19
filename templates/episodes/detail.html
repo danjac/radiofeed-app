@@ -33,7 +33,7 @@
 {% endif %}
 {% endwith %}
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 <section class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
@@ -45,7 +45,7 @@
 
   <div class="flex items-center space-x-3">
     <div>
-      <a href="{{ podcast.get_absolute_url }}">
+      <a href="{{ podcast_url }}" title="{{ podcast.title }}">
         {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
       </a>
     </div>
