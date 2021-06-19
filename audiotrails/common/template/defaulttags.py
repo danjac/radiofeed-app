@@ -80,15 +80,6 @@ def unescape(value: str) -> str:
 
 
 @register.filter
-def percent(value: int, total: int) -> float:
-    if not value or not total:
-        return 0
-
-    if (pc := (value / total) * 100) > 100:
-        return 100
-    return pc
-
-
 @register.filter
 def keepspaces(text: str | None) -> str:
     # changes any <br /> <p> <li> etc to spaces
@@ -96,9 +87,8 @@ def keepspaces(text: str | None) -> str:
         return ""
     if not (text := text.strip()):
         return ""
-    if (tag := bs4.BeautifulSoup(text, features="lxml").find("body")) is None:
-        return ""
-    return tag.get_text(separator=" ").strip()
+    tag = bs4.BeautifulSoup(text, features="lxml").find("body")
+    return tag.get_text(separator=" ").strip() if tag else text
 
 
 @register.filter

@@ -8,7 +8,6 @@ from audiotrails.common.template.defaulttags import (
     get_privacy_details,
     keepspaces,
     login_url,
-    percent,
     re_active_link,
     share_buttons,
 )
@@ -43,17 +42,6 @@ class LoginUrlTests(SimpleTestCase):
         self.assertEqual(
             login_url(url), "/account/login/?next=/podcasts/1234/test%3Fok%3Dtrue"
         )
-
-
-class PercentTests(SimpleTestCase):
-    def test_if_either_none(self) -> None:
-        self.assertEqual(percent(10, 0), 0)
-        self.assertEqual(percent(0, 10), 0)
-        self.assertEqual(percent(0, 0), 0)
-        self.assertEqual(percent(None, None), 0)
-
-    def test_percent(self) -> None:
-        self.assertEqual(percent(30, 60), 50)
 
 
 class ActiveLinkTests(SimpleTestCase):
@@ -126,8 +114,8 @@ class KeepspacesTests(SimpleTestCase):
             keepspaces("test<br />this<ul><li>hello</li></ul>"), "test this hello"
         )
 
-    def test_value_has_no_body(self) -> None:
-        self.assertEqual(keepspaces("<div>"), "")
+    def test_value_has_no_html_content(self) -> None:
+        self.assertEqual(keepspaces("test"), "test")
 
 
 class PrivacyDetailsTests(SimpleTestCase):
