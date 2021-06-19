@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
 
-from audiotrails.common.types import AuthenticatedUser
+from audiotrails.common.typedefs import AuthenticatedUser
 from audiotrails.podcasts.models import Podcast, Recommendation
 
 

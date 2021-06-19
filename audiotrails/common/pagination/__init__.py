@@ -7,7 +7,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 
-from audiotrails.common.types import ContextDict
+from audiotrails.common.typedefs import ContextDict
 
 
 def paginate(

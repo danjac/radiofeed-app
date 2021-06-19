@@ -18,7 +18,7 @@ from django.utils.safestring import mark_safe
 
 from audiotrails.common.html import clean_html_content
 from audiotrails.common.html import unescape as _unescape
-from audiotrails.common.types import ContextDict
+from audiotrails.common.typedefs import ContextDict
 
 register = template.Library()
 

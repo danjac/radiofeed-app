@@ -4,7 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
-from audiotrails.common.types import AnyUser
+from audiotrails.common.typedefs import AnyUser
 from audiotrails.episodes.factories import AudioLogFactory, EpisodeFactory
 from audiotrails.episodes.models import AudioLog, Episode
 from audiotrails.episodes.player import Player

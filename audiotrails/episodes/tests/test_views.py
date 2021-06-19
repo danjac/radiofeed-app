@@ -212,11 +212,14 @@ class PlayNextEpisodeTests(TestCase):
         log = AudioLogFactory(user=self.user, current_time=2000)
 
         session = self.client.session
-        session.update({"player": {"episode": log.episode.id, "current_time": 1000}})
+        session.update({"player_episode": log.episode.id})
         session.save()
 
         resp = self.client.post(reverse("episodes:play_next_episode"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        log.refresh_from_db()
+        self.assertTrue(log.completed)
 
     def test_play_next_episode_in_history(self) -> None:
         log = AudioLogFactory(user=self.user, current_time=30)
@@ -253,14 +256,18 @@ class ClosePlayerTests(TestCase):
         episode = EpisodeFactory()
 
         session = self.client.session
-        session.update({"player": {"episode": episode.id, "current_time": 1000}})
+        session.update({"player_episode": episode.id})
         session.save()
 
-        AudioLogFactory(user=self.user, episode=episode, current_time=2000)
+        log = AudioLogFactory(user=self.user, episode=episode, current_time=2000)
         resp = self.client.post(
             reverse("episodes:close_player"),
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+
+        # do not mark complete
+        log.refresh_from_db()
+        self.assertFalse(log.completed)
 
 
 class PlayerTimeUpdateTests(TestCase):

@@ -15,7 +15,7 @@ from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
-from audiotrails.common.types import AnyUser, AuthenticatedUser
+from audiotrails.common.typedefs import AnyUser, AuthenticatedUser
 from audiotrails.podcasts.models import Podcast
 
 

@@ -78,9 +78,10 @@ class Player:
         ):
             self.current_log = None
 
-        self.current_log = (
-            AudioLog.objects.filter(user=self.request.user, episode=episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
+        else:
+            self.current_log = (
+                AudioLog.objects.filter(user=self.request.user, episode=episode_id)
+                .select_related("episode", "episode__podcast")
+                .first()
+            )
         return self.current_log

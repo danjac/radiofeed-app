@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from audiotrails.common.decorators import ajax_login_required
 from audiotrails.common.pagination import render_paginated_response
-from audiotrails.common.types import ContextDict
+from audiotrails.common.typedefs import ContextDict
 from audiotrails.episodes.views import render_episode_list_response
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.models import Category, Follow, Podcast, Recommendation
