@@ -110,8 +110,8 @@ class PodcastManagerTests(TestCase):
         # no pub date yet
         podcast_a = PodcastFactory(pub_date=None)
 
-        # yesterday: first tier
-        podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=1))
+        # 3 days ago: first tier
+        podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=3))
 
         # 100 days ago: even/odd day
         podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))

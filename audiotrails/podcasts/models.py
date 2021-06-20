@@ -68,16 +68,16 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def with_follow_count(self) -> models.QuerySet:
         return self.annotate(follow_count=models.Count("follow"))
 
-    def for_feed_sync(self, last_updated: int = 6) -> models.QuerySet:
+    def for_feed_sync(self, last_updated: int = 24) -> models.QuerySet:
         """Podcasts due to be updated with their RSS feeds.
 
         1) Ignore any inactive podcasts
         2) Update any podcasts with pub date NULL
         3) Update any podcasts with pub date < 90 days
-        4) Update any podcasts updated in last 90-120 days if pub date weekday
+        4) Update any podcasts updated in last 90-180 days if pub date weekday
             falls on alternate (odd or even) day depending on current
             weekday
-        5) Update any podcasts updated > 120 days if pub date weekday
+        5) Update any podcasts updated > 180 days if pub date weekday
             is same as current weekday
         6) Do not update any podcasts if pub date is more recent than `last_updated`
             hours ago.
@@ -87,7 +87,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         weekday = now.isoweekday()
 
         first_tier = now - timedelta(days=90)
-        second_tier = now - timedelta(days=120)
+        second_tier = now - timedelta(days=180)
 
         weekdays = (
             (2, 4, 6),
