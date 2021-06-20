@@ -30,8 +30,6 @@ export default function Player(options) {
         this.counter = formatDuration(this.duration - value);
       });
 
-      this.stopPlayer();
-
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = getMediaMetadata();
       }
@@ -140,17 +138,7 @@ export default function Player(options) {
       sessionStorage.removeItem(storageKey);
     },
 
-    error() {
-      console.error('Playback Error:', this.$refs.audio.error);
-    },
-
-    stalled() {
-      console.log('Playback Stalled');
-    },
-
     close(url) {
-      this.stopPlayer();
-
       window.htmx.ajax('POST', url || urls.closePlayer, {
         target: this.$el,
         source: this.$el,
@@ -165,11 +153,6 @@ export default function Player(options) {
 
     togglePause() {
       return this.isPaused ? this.play() : this.pause();
-    },
-
-    stopPlayer() {
-      this.$refs.audio.pause();
-      this.clearTimer();
     },
 
     startTimer() {

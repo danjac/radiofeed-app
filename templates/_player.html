@@ -24,11 +24,9 @@
          preload="metadata"
          :src="mediaSrc"
          @ended="ended()"
-         @error="error()"
          @loadedmetadata="loaded()"
          @pause="paused()"
          @play="resumed()"
-         @stalled="stalled()"
          @timeupdate="timeUpdate()">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
