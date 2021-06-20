@@ -24,10 +24,10 @@ export default function Player(options) {
 
     init() {
       this.$watch('duration', (value) => {
-        this.updateProgressBar(value, this.currentTime);
+        this.counter = formatDuration(value - this.currentTime);
       });
       this.$watch('currentTime', (value) => {
-        this.updateProgressBar(this.duration, value);
+        this.counter = formatDuration(this.duration - value);
       });
 
       this.stopPlayer();
@@ -118,25 +118,16 @@ export default function Player(options) {
       this.$refs.audio.playbackRate = this.playbackRate = newValue;
     },
 
-    skip({ clientX }) {
-      const position = this.getProgressBarPosition(clientX);
-      if (!isNaN(position) && position > -1) {
-        this.skipTo(position);
-      }
+    skip() {
+      this.$refs.audio.currentTime = this.currentTime;
     },
 
     skipBack() {
-      this.skipTo(this.$refs.audio.currentTime - 10);
+      this.$refs.audio.currentTime -= 10;
     },
 
     skipForward() {
-      this.skipTo(this.$refs.audio.currentTime + 10);
-    },
-
-    skipTo(time) {
-      if (!isNaN(time) && !this.isPaused) {
-        this.$refs.audio.currentTime = time;
-      }
+      this.$refs.audio.currentTime += 10;
     },
 
     play() {
@@ -202,53 +193,7 @@ export default function Player(options) {
           values: { current_time: this.currentTime },
         });
     },
-
-    updateProgressBar(duration, time) {
-      if (this.$refs.indicator && this.$refs.progressBar) {
-        this.counter = formatDuration(duration - time);
-        this.$refs.indicator.style.left =
-          this.getIndicatorPosition(percent(duration, time)) + 'px';
-      }
-    },
-
-    getProgressBarPosition(clientX) {
-      return isNaN(clientX)
-        ? -1
-        : Math.ceil(
-            this.duration *
-              ((clientX - this.$refs.progressBar.getBoundingClientRect().left) /
-                this.$refs.progressBar.clientWidth)
-          );
-    },
-
-    getIndicatorPosition(pcComplete) {
-      const { clientWidth } = this.$refs.progressBar;
-      const currentPosition = this.$refs.progressBar.getBoundingClientRect().left - 24;
-
-      let width;
-
-      if (clientWidth === 0) {
-        width = 0;
-      } else {
-        const minWidth = (16 / clientWidth) * 100;
-        width = pcComplete > minWidth ? pcComplete : minWidth;
-      }
-
-      return width ? currentPosition + clientWidth * (width / 100) : currentPosition;
-    },
   };
-}
-
-function percent(nominator, denominator) {
-  if (!denominator || !nominator) {
-    return 0;
-  }
-
-  if (denominator > nominator) {
-    return 100;
-  }
-
-  return (denominator / nominator) * 100;
 }
 
 function formatDuration(value) {

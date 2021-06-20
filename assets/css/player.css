@@ -38,3 +38,17 @@
 .player--inactive .player--indicator {
   @apply bg-gray-800 dark:bg-gray-600;
 }
+
+input[type='range']::-webkit-slider-thumb {
+  pointer-events: all;
+  width: 24px;
+  height: 24px;
+  -webkit-appearance: none;
+
+  @apply w-6 h-6 appearance-none pointer-events-auto;
+}
+
+input[type='range']::-moz-range-thumb {
+  pointer-events: all;
+  @apply w-4 h-4 rounded-full appearance-none pointer-events-auto bg-blue-800;
+}
