@@ -9,6 +9,9 @@ from audiotrails.podcasts.factories import PodcastFactory
 
 
 class RenderPaginationResponseTests(TestCase):
+    main_template = "podcasts/index.html"
+    pagination_template = "podcasts/_podcasts.html"
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.podcasts = PodcastFactory.create_batch(30)
@@ -22,12 +25,12 @@ class RenderPaginationResponseTests(TestCase):
         resp = render_paginated_response(
             req,
             self.podcasts,
-            "podcasts/index.html",
-            "podcasts/_podcasts.html",
+            self.main_template,
+            self.pagination_template,
             page_size=10,
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.template_name, "podcasts/index.html")
+        self.assertEqual(resp.template_name, self.main_template)
         self.assertNotIn("is_paginated", resp.context_data)
 
     def test_is_htmx(self) -> None:
@@ -41,12 +44,12 @@ class RenderPaginationResponseTests(TestCase):
         resp = render_paginated_response(
             req,
             self.podcasts,
-            "podcasts/index.html",
-            "podcasts/_podcasts.html",
+            self.main_template,
+            self.pagination_template,
             page_size=10,
         )
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.template_name, "podcasts/_podcasts.html")
+        self.assertEqual(resp.template_name, self.pagination_template)
         self.assertTrue(resp.context_data["is_paginated"])
 
 
