@@ -114,7 +114,7 @@ def find_similarities_for_podcasts(
     podcasts: QuerySet, language: str
 ) -> Generator[tuple[int, int, float], None, None]:
 
-    if not podcasts.exists():
+    if not podcasts.exists():  # pragma: no cover
         return
 
     for podcast_id, recommended in find_similarities(podcasts, language):
@@ -143,8 +143,7 @@ def find_similarities(
 
     try:
         count_matrix = vec.fit_transform(df["extracted_text"])
-    except ValueError:
-        # empty set
+    except ValueError:  # pragma: no cover
         return
 
     cosine_sim = cosine_similarity(count_matrix)
@@ -154,7 +153,7 @@ def find_similarities(
             yield find_similarity(
                 df, similar=cosine_sim[index], current_id=df.loc[index, "id"]
             )
-        except IndexError:
+        except IndexError:  # pragma: no cover
             pass
 
 
