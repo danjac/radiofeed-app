@@ -25,11 +25,11 @@
          :src="mediaSrc"
          @play="resumed()"
          @pause="paused()"
-         @ended="ended()"
          @error="error()"
          @stalled="stalled()"
-         @loadedmetadata="loaded()"
-         @timeupdate="timeUpdate()">
+         @timeupdate="timeUpdate()"
+         @ended.once="ended()"
+         @loadedmetadata.once="loaded()">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
        x-ref="controls"
