@@ -98,6 +98,18 @@ class FeedParserTests(TestCase):
     def tearDown(self) -> None:
         get_categories_dict.cache_clear()
 
+    def test_parse_no_podcasts(self):
+        with mock.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=self.podcast.rss,
+                content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
+            ),
+        ):
+            episodes = parse_feed(self.podcast)
+
+        self.assertEqual(len(episodes), 19)
+
     def test_parse_empty_feed(self):
 
         with mock.patch(
@@ -105,10 +117,6 @@ class FeedParserTests(TestCase):
             return_value=MockResponse(
                 url=self.podcast.rss,
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
             ),
         ):
             episodes = parse_feed(self.podcast)
