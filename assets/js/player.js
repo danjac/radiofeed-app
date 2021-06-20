@@ -63,7 +63,7 @@ export default function Player(options) {
     },
 
     timeUpdate() {
-      this.currentTime = this.$refs.audio.currentTime;
+      this.currentTime = Math.floor(this.$refs.audio.currentTime);
     },
     resumed() {
       this.isPlaying = true;
