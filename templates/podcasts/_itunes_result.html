@@ -19,11 +19,11 @@
          class="link">{{ result.title|truncatechars:120 }}</a>
       {% endif %}
     </h2>
-    <div class="text-sm flex items-center space-x-3">
+    <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs{% if not podcast %} animate-pulse{% endif %}">
       {% if podcast %}
-      <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs">
-        Added {{ podcast.created|timesince }} ago
-      </div>
+      Added {{ podcast.created|timesince }} ago
+      {% else %}
+      Adding podcast to database...
       {% endif %}
     </div>
   </div>
