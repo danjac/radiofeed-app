@@ -65,6 +65,7 @@ export default function Player(options) {
     timeUpdate() {
       this.currentTime = Math.floor(this.$refs.audio.currentTime);
     },
+
     resumed() {
       this.isPlaying = true;
       this.isPaused = false;
