@@ -40,48 +40,6 @@ class SearchMiddleware(BaseMiddleware):
         return self.get_response(request)
 
 
-# adapted from https://raw.githubusercontent.com/adamchainz/django-htmx/main/src/django_htmx/middleware.py
-# when django-htmx gets a release, this can be removed.
-
-
-class HtmxDetails:
-    def __init__(self, request: HttpRequest):
-        self.request = request
-
-    def __bool__(self) -> bool:
-        return self.is_htmx_request
-
-    @cached_property
-    def is_htmx_request(self) -> bool:
-        return self.request.headers.get("HX-Request", "") == "true"
-
-    @cached_property
-    def current_url(self) -> str | None:
-        return self.request.headers.get("HX-Current-URL") or None
-
-    @cached_property
-    def prompt(self) -> str | None:
-        return self.request.headers.get("HX-Prompt") or None
-
-    @cached_property
-    def target(self) -> str | None:
-        return self.request.headers.get("HX-Target") or None
-
-    @cached_property
-    def trigger(self) -> str | None:
-        return self.request.headers.get("HX-Trigger") or None
-
-    @cached_property
-    def trigger_name(self) -> str | None:
-        return self.request.headers.get("HX-Trigger-Name") or None
-
-
-class HtmxMiddleware(BaseMiddleware):
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        request.htmx = SimpleLazyObject(lambda: HtmxDetails(request))
-        return self.get_response(request)
-
-
 class CacheControlMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         # workaround for https://github.com/bigskysoftware/htmx/issues/497

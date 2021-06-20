@@ -2,8 +2,8 @@ import http
 
 from django.http import Http404
 from django.test import RequestFactory, TestCase
+from django_htmx.middleware import HtmxDetails
 
-from audiotrails.common.middleware import HtmxDetails
 from audiotrails.common.pagination import paginate, render_paginated_response
 from audiotrails.podcasts.factories import PodcastFactory
 

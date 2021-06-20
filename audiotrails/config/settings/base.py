@@ -89,7 +89,7 @@ MIDDLEWARE = [
     "django_permissions_policy.PermissionsPolicyMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "audiotrails.common.middleware.HtmxMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "audiotrails.common.middleware.CacheControlMiddleware",
     "audiotrails.common.middleware.SearchMiddleware",
     "audiotrails.episodes.middleware.PlayerMiddleware",
