@@ -4,8 +4,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Prefetch
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
@@ -53,7 +53,7 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
 @require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
-        return HttpResponseRedirect(reverse("podcasts:index"))
+        return redirect("podcasts:index")
 
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)

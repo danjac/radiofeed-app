@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.db.models import OuterRef, Subquery
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
@@ -72,7 +72,7 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
-        return HttpResponseRedirect(reverse("episodes:index"))
+        return redirect("episodes:index")
 
     episodes = (
         Episode.objects.select_related("podcast")
