@@ -131,6 +131,8 @@ export default function Player(options) {
     },
 
     close(url) {
+      this.$refs.audio.pause();
+
       window.htmx.ajax('POST', url || urls.closePlayer, {
         target: this.$el,
         source: this.$el,
