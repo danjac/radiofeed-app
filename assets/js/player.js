@@ -131,6 +131,8 @@ export default function Player(options) {
     },
 
     close(url) {
+      this.mediaSrc = null;
+
       this.$refs.audio.pause();
 
       window.htmx.ajax('POST', url || urls.closePlayer, {
@@ -138,7 +140,10 @@ export default function Player(options) {
         source: this.$el,
       });
 
-      this.mediaSrc = null;
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
     },
 
     ended() {
