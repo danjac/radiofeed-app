@@ -73,6 +73,7 @@ export default function Player(options) {
     paused() {
       this.isPlaying = false;
       this.isPaused = true;
+      sessionStorage.removeItem(storageKey);
     },
 
     shortcuts(event) {
@@ -89,7 +90,7 @@ export default function Player(options) {
         '-': this.decrementPlaybackRate,
         ArrowLeft: this.skipBack,
         ArrowRight: this.skipForward,
-        Space: this.togglePause,
+        Space: this.togglePlay,
         Delete: this.close,
       };
 
@@ -129,15 +130,6 @@ export default function Player(options) {
       this.$refs.audio.currentTime += 10;
     },
 
-    play() {
-      this.$refs.audio.play();
-    },
-
-    pause() {
-      this.$refs.audio.pause();
-      sessionStorage.removeItem(storageKey);
-    },
-
     close(url) {
       window.htmx.ajax('POST', url || urls.closePlayer, {
         target: this.$el,
@@ -151,19 +143,16 @@ export default function Player(options) {
       this.close(urls.playNextEpisode);
     },
 
-    togglePause() {
-      return this.isPaused ? this.play() : this.pause();
+    togglePlay() {
+      if (this.isPaused) {
+        this.$refs.audio.play();
+      } else {
+        this.$refs.audio.pause();
+      }
     },
 
     startTimer() {
       timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
-    },
-
-    clearTimer() {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
     },
 
     canSendTimeUpdate() {
