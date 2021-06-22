@@ -242,7 +242,11 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
 def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | None:
 
     if (
-        response.status_code == http.HTTPStatus.PERMANENT_REDIRECT
+        response.status_code
+        in (
+            http.HTTPStatus.MOVED_PERMANENTLY,
+            http.HTTPStatus.PERMANENT_REDIRECT,
+        )
         and response.url != podcast.rss
     ):
         return response.url

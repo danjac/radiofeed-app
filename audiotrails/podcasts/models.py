@@ -74,10 +74,13 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         1) Ignore any inactive podcasts
         2) Update any podcasts with pub date NULL
         3) Update any podcasts with pub date < 90 days
-        4) Update any podcasts updated in last 90-180 days if pub date weekday
+        4) update any podcasts updated in last 90-180 days if pub date weekday
             falls on alternate (odd or even) day depending on current
             weekday
-        5) Update any podcasts updated > 180 days if pub date weekday
+        5) update any podcasts updated in last 180-365 days if pub date weekday
+            falls on every third day depending on current
+            weekday
+        5) Update any podcasts updated > 365 days if pub date weekday
             is same as current weekday
         6) Do not update any podcasts if pub date is more recent than `last_updated`
             hours ago.
@@ -88,20 +91,26 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
         first_tier = now - timedelta(days=90)
         second_tier = now - timedelta(days=180)
+        third_tier = now - timedelta(days=365)
 
-        weekdays = (
-            (2, 4, 6),
-            (1, 3, 5, 7),
-        )
+        weekdays = range(1, 8)
 
         tiered_q = (
             models.Q(pub_date__gt=first_tier)
             | models.Q(
                 pub_date__range=(second_tier, first_tier),
-                pub_date__iso_week_day__in=weekdays[weekday % 2],
+                pub_date__iso_week_day__in=[
+                    w for w in weekdays if w % 2 == weekday % 2
+                ],
             )
             | models.Q(
-                pub_date__lt=second_tier,
+                pub_date__range=(third_tier, second_tier),
+                pub_date__iso_week_day__in=[
+                    w for w in weekdays if w % 3 == weekday % 3
+                ],
+            )
+            | models.Q(
+                pub_date__lt=third_tier,
                 pub_date__iso_week_day=weekday,
             )
         )
