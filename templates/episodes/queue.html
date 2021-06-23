@@ -14,8 +14,7 @@
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-lg">Play Queue</h1>
   </div>
-  <div x-data
-       x-init="dragDrop($el, '{% url "episodes:move_queue_items" %}')">
+  <div x-data="DragDrop({ url: '{% url "episodes:move_queue_items" %}' })">
     {% for item in queue_items %}
     {% with episode=item.episode %}
     <div data-draggable="true"
