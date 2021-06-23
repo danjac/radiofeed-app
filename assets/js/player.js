@@ -30,10 +30,6 @@ export default function Player(options) {
         this.counter = formatDuration(this.duration - value);
       });
 
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = getMediaMetadata();
-      }
-
       this.$refs.audio.load();
     },
 
@@ -58,6 +54,10 @@ export default function Player(options) {
 
       this.duration = this.$refs.audio.duration;
       this.isLoaded = true;
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = getMediaMetadata();
+      }
     },
 
     timeUpdate() {
@@ -133,17 +133,21 @@ export default function Player(options) {
     close(url) {
       this.mediaSrc = null;
 
-      this.$refs.audio.pause();
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = null;
+      }
 
-      window.htmx.ajax('POST', url || urls.closePlayer, {
-        target: this.$el,
-        source: this.$el,
-      });
+      this.$refs.audio.pause();
 
       if (timer) {
         clearInterval(timer);
         timer = null;
       }
+
+      window.htmx.ajax('POST', url || urls.closePlayer, {
+        target: this.$el,
+        source: this.$el,
+      });
     },
 
     ended() {
