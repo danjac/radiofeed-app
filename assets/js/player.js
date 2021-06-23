@@ -76,32 +76,6 @@ export default function Player(options) {
       sessionStorage.removeItem(storageKey);
     },
 
-    shortcuts(event) {
-      if (
-        event.ctrlKey ||
-        event.altKey ||
-        /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
-      ) {
-        return;
-      }
-
-      const handlers = {
-        '+': this.incrementPlaybackRate,
-        '-': this.decrementPlaybackRate,
-        ArrowLeft: this.skipBack,
-        ArrowRight: this.skipForward,
-        Space: this.togglePlay,
-        Delete: this.close,
-      };
-
-      const handler = handlers[event.key] || handlers[event.code];
-
-      if (handler) {
-        event.preventDefault();
-        handler.bind(this)();
-      }
-    },
-
     incrementPlaybackRate() {
       this.changePlaybackRate(0.1);
     },
