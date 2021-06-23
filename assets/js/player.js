@@ -85,8 +85,6 @@ export default function Player(options) {
         return;
       }
 
-      console.log('shortcuts', this);
-
       const handlers = {
         '+': this.incrementPlaybackRate,
         '-': this.decrementPlaybackRate,
