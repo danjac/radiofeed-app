@@ -57,6 +57,7 @@ export default function Player(options) {
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = getMediaMetadata();
+        navigator.mediaSession.setActionHandler('stop', this.close.bind(this));
       }
     },
 
@@ -135,6 +136,7 @@ export default function Player(options) {
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = null;
+        navigator.mediaSession.playbackState = 'paused';
       }
 
       this.$refs.audio.pause();
