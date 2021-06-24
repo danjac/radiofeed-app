@@ -80,7 +80,7 @@ def render_player(
         request, "_player.html", {"run_immediately": next_episode is not None}
     )
 
-    events = ["player-action"]
+    events: list[str] = []
 
     if next_episode:
         events += [
@@ -93,6 +93,7 @@ def render_player(
             f"reload-episode-{current_episode.id}",
         ]
 
-    response["HX-Trigger"] = json.dumps({event: "" for event in events})
+    if events:
+        response["HX-Trigger"] = json.dumps({event: "" for event in events})
 
     return response

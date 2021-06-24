@@ -3,8 +3,7 @@
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
 {% with episode_url=episode.get_absolute_url episode_title=episode.title|unescape podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape %}
-<div id="player"
-     x-data="Player({
+<div x-data="Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
@@ -17,7 +16,6 @@
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
      @close-sidebar.window="showPlayer = true"
-     @player-action.window="kbShortcuts=null"
      @keydown.window="handleKbShortcut">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
@@ -142,7 +140,5 @@
 </div>
 {% endwith %}
 {% endwith %}
-{% else %}
-<div id="player"></div>
 {% endif %}
 {% endwith %}

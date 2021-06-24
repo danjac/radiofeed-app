@@ -74,7 +74,9 @@
   {% include "_messages.html" %}
   {% block player %}
   {% if user.is_authenticated %}
-  {% include "_player.html" %}
+  <div id="player">
+    {% include "_player.html" %}
+  </div>
   {% endif %}
   {% endblock player %}
 
