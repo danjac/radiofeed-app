@@ -11,9 +11,7 @@ const defaults = {
   counter: '00:00:00',
 };
 
-export default function Player(options) {
-  const { mediaSrc, currentTime, runImmediately, urls } = options || {};
-
+export default function Player({ mediaSrc, currentTime, runImmediately, urls }) {
   let timer;
 
   const isLocked = !runImmediately && !sessionStorage.getItem(storageKey);
