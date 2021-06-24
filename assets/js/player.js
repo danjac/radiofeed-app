@@ -43,6 +43,10 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
       };
 
       this.$refs.audio.load();
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = getMediaMetadata();
+      }
     },
 
     shortcut(event) {
@@ -78,12 +82,7 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
       } else {
         this.$refs.audio
           .play()
-          .then(() => {
-            if ('mediaSession' in navigator) {
-              navigator.mediaSession.metadata = getMediaMetadata();
-            }
-            this.startTimer();
-          })
+          .then(() => this.startTimer())
           .catch((e) => {
             console.log(e);
             this.isPaused = true;
