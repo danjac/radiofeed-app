@@ -30,7 +30,31 @@ export default function Player(options) {
         this.counter = formatDuration(this.duration - value);
       });
 
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = getMediaMetadata();
+      }
+
+      this.kbShortcuts = {
+        '+': this.incrementPlaybackRate,
+        '-': this.decrementPlaybackRate,
+        ArrowLeft: this.skipBack,
+        ArrowRight: this.skipForward,
+        Delete: this.close,
+        Space: this.togglePlay,
+      };
+
       this.$refs.audio.load();
+    },
+
+    handleKbShortcut(event) {
+      if (!this.kbShortcuts) {
+        return;
+      }
+      const handler = this.kbShortcuts[event.key] || this.kbShortcuts[event.code];
+
+      if (handler) {
+        handler.bind(this)();
+      }
     },
 
     // audio events
@@ -54,10 +78,6 @@ export default function Player(options) {
 
       this.duration = this.$refs.audio.duration;
       this.isLoaded = true;
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = getMediaMetadata();
-      }
     },
 
     timeUpdate() {
@@ -93,19 +113,26 @@ export default function Player(options) {
     },
 
     skip() {
-      this.$refs.audio.currentTime = this.currentTime;
+      if (!this.isPaused) {
+        this.$refs.audio.currentTime = this.currentTime;
+      }
     },
 
     skipBack() {
-      this.$refs.audio.currentTime -= 10;
+      if (!this.isPaused) {
+        this.$refs.audio.currentTime -= 10;
+      }
     },
 
     skipForward() {
-      this.$refs.audio.currentTime += 10;
+      if (!this.isPaused) {
+        this.$refs.audio.currentTime += 10;
+      }
     },
 
     close(url) {
       this.mediaSrc = null;
+      this.kbShortcuts = null;
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = null;

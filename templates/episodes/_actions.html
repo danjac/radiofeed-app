@@ -28,7 +28,7 @@
           hx-target="#player"
           hx-select="#player"
           hx-swap="outerHTML"
-          @click="show=false">
+          @click="show=false; $dispatch('start-player')">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
     {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
     {% if time_remaining %}(~{{ time_remaining }}){% endif %}
