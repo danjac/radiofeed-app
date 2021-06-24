@@ -28,13 +28,14 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
         this.counter = formatDuration(this.duration - value);
       });
 
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = getMediaMetadata();
-      }
+      this.$watch('playbackRate', (value) => {
+        this.$refs.audio.playbackRate = value;
+      });
 
       this.shortcuts = {
         '+': this.incrementPlaybackRate,
         '-': this.decrementPlaybackRate,
+        Digit0: this.resetPlaybackRate,
         ArrowLeft: this.skipBack,
         ArrowRight: this.skipForward,
         Delete: this.close,
@@ -77,7 +78,12 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
       } else {
         this.$refs.audio
           .play()
-          .then(() => this.startTimer())
+          .then(() => {
+            if ('mediaSession' in navigator) {
+              navigator.mediaSession.metadata = getMediaMetadata();
+            }
+            this.startTimer();
+          })
           .catch((e) => {
             console.log(e);
             this.isPaused = true;
@@ -116,12 +122,16 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
       this.changePlaybackRate(-0.1);
     },
 
+    resetPlaybackRate() {
+      this.playbackRate = 1.0;
+    },
+
     changePlaybackRate(increment) {
       const newValue = Math.max(
         0.5,
         Math.min(2.0, parseFloat(this.playbackRate) + increment)
       );
-      this.$refs.audio.playbackRate = this.playbackRate = newValue;
+      this.playbackRate = newValue;
     },
 
     skip() {
@@ -145,10 +155,6 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
     close(url) {
       this.mediaSrc = null;
       this.shortcuts = null;
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = null;
-      }
 
       this.$refs.audio.pause();
 
