@@ -34,7 +34,7 @@ export default function Player(options) {
         navigator.mediaSession.metadata = getMediaMetadata();
       }
 
-      this.kbShortcuts = {
+      this.shortcuts = {
         '+': this.incrementPlaybackRate,
         '-': this.decrementPlaybackRate,
         ArrowLeft: this.skipBack,
@@ -46,8 +46,8 @@ export default function Player(options) {
       this.$refs.audio.load();
     },
 
-    handleKbShortcut(event) {
-      if (!this.kbShortcuts) {
+    shortcut(event) {
+      if (!this.shortcuts) {
         return;
       }
 
@@ -59,7 +59,7 @@ export default function Player(options) {
         return;
       }
 
-      const handler = this.kbShortcuts[event.key] || this.kbShortcuts[event.code];
+      const handler = this.shortcuts[event.key] || this.shortcuts[event.code];
 
       if (handler) {
         event.preventDefault();
@@ -88,6 +88,10 @@ export default function Player(options) {
 
       this.duration = this.$refs.audio.duration;
       this.isLoaded = true;
+    },
+
+    error() {
+      console.log(this.$refs.audio.error);
     },
 
     timeUpdate() {
@@ -142,7 +146,7 @@ export default function Player(options) {
 
     close(url) {
       this.mediaSrc = null;
-      this.kbShortcuts = null;
+      this.shortcuts = null;
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = null;
