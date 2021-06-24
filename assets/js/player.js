@@ -50,9 +50,19 @@ export default function Player(options) {
       if (!this.kbShortcuts) {
         return;
       }
+
+      if (
+        event.ctrlKey ||
+        event.altKey ||
+        /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
+      ) {
+        return;
+      }
+
       const handler = this.kbShortcuts[event.key] || this.kbShortcuts[event.code];
 
       if (handler) {
+        event.preventDefault();
         handler.bind(this)();
       }
     },
