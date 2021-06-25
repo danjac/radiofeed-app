@@ -3,7 +3,7 @@
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-2 sm:space-x-3">
 
-      <div>
+      <div class="w-16">
         <a href="{{ episode.get_absolute_url }}">
           {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=episode.cleaned_title size=14 %}
         </a>
