@@ -1,28 +1,28 @@
-{% with podcast=result.podcast result_title=result.title|unescape|striptags %}
+{% with podcast=result.podcast %}
 <section class="p-1 flex items-center space-x-3 border-t dark:border-gray-500">
   {% if result.image %}
   <div>
-    {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result_title size=14 %}
+    {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
   </div>
   {% endif %}
   <div class="space-y-2 text-sm">
     <h2 class="w-64 sm:w-96 lg:w-full truncate">
       {% if podcast and podcast.pub_date %}
       <a href="{{ podcast_url }}"
-         title="{{ result_title }}"
+         title="{{ result.cleaned_title }}"
          class="link"
          hx-get="{% url 'podcasts:preview' podcast.id %}"
          hx-target="#modal"
          hx-select="#modal"
          hx-swap="outerHTML"
          hx-trigger="click delay:200ms">
-        {{ result_title|truncatechars:120 }}</a>
+        {{ result.cleaned_title|truncatechars:120 }}</a>
       {% else %}
       <a href="{{ result.itunes }}"
-         title="See {{ result.title }} in iTunes"
+         title="See {{ result.cleaned_title }} in iTunes"
          rel="noopener"
          target="_blank"
-         class="link">{{ result_title|truncatechars:120 }}</a>
+         class="link">{{ result.cleaned_title|truncatechars:120 }}</a>
       {% endif %}
     </h2>
     <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs{% if not podcast %} animate-pulse{% endif %}">

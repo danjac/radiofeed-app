@@ -1,22 +1,22 @@
-{% with podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape|striptags %}
+{% with podcast_url=podcast.get_absolute_url %}
 <section class="flex items-center space-x-2 sm:space-x-3 p-1 hover:bg-gray-100 dark:hover:bg-gray-900 border-t dark:border-gray-500">
   <div>
     <a href="{{ podcast_url }}">
-      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast_title size=14 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
     </a>
   </div>
 
   <div class="space-y-3">
     <h2 class="w-64 sm:w-96 lg:w-full truncate text-sm">
       <a href="{{ podcast_url }}"
-         title="{{ podcast_title }}"
+         title="{{ podcast.cleaned_title }}"
          class="link"
          hx-get="{% url 'podcasts:preview' podcast.id %}"
          hx-target="#modal"
          hx-select="#modal"
          hx-swap="outerHTML"
          hx-trigger="click delay:200ms">
-        {{ podcast_title|truncatechars:120 }}</a>
+        {{ podcast.cleaned_title|truncatechars:120 }}</a>
     </h2>
     <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs">
       {% include "_pub_date.html" with pub_date=podcast.pub_date %}

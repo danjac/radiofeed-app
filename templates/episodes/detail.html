@@ -1,12 +1,12 @@
 {% extends "episodes/base.html" %}
 
-{% block subtitle %} | {{ episode.podcast.title|unescape|striptags }} | {{ episode.title|unescape|striptags }}{% endblock %}
+{% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
 {% block content %}
 
-<h1 class="font-bold text-lg mb-3">{{ episode.title|unescape|striptags }}</h1>
+<h1 class="font-bold text-lg mb-3">{{ episode.cleaned_title }}</h1>
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url episode_title=episode.title|unescape|striptags podcast_title=episode.podcast.title|unescape|striptags %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
@@ -14,7 +14,7 @@
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.title|unescape|striptags }}">
+     title="{{ prev_episode.cleaned_title }}">
     Previous
   </a>
 
@@ -24,7 +24,7 @@
   {% if next_episode %}
   <a class="link"
      href="{{ next_episode.get_absolute_url }}"
-     title="{{ next_episode.title|unescape|striptags }}">
+     title="{{ next_episode.cleaned_title }}">
     Next
   </a>
   {% else %}
@@ -38,16 +38,16 @@
 <section class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
-       title="{{ podcast_title }}"
+       title="{{ podcast.cleaned_title }}"
        class="link text-sm">
-      {{ podcast_title }}
+      {{ podcast.cleaned_title }}
     </a>
   </div>
 
   <div class="flex items-center space-x-3">
     <div>
       <a href="{{ podcast_url }}" title="{{ podcast.title }}">
-        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast_title size=20 %}
+        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 %}
       </a>
     </div>
     <div class="space-y-2 text-sm">
@@ -59,7 +59,7 @@
           {{ duration|format_duration }}
         </div>
       </div>
-      {% share_buttons episode.get_absolute_url podcast_title|add:" | "|add:episode_title %}
+      {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
       {% include "episodes/_actions_toggle.html" with is_detail=True %}
     </div>
   </div>

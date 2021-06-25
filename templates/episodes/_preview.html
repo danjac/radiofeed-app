@@ -4,27 +4,27 @@
 <a href="{{ episode.get_absolute_url }}"
    @click="$dispatch('close-modal')"
    class="link">
-  {{ episode.title|unescape|striptags }}
+  {{ episode.cleaned_title }}
 </a>
 {% endblock %}
 
 {% block modal_content %}
-{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url episode_title=episode|unescape|striptags podcast_title=episode.podcast.title|unescape|striptags %}
+{% with podcast=episode.podcast podcast_url=episode.podcast.get_absolute_url %}
 
 <div class="flex items-center space-x-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
        @click="$dispatch('close-modal')">
-      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast_title size=20 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 %}
     </a>
   </div>
   <div class="space-y-2 text-sm">
     <div class="w-48 sm:w-96 truncate">
       <a href="{{ podcast_url }}"
-         title="{{ podcast_title }}"
+         title="{{ podcast.cleaned_title }}"
          @click="$dispatch('close-modal')"
          class="link">
-        {{ podcast_title }}
+        {{ podcast.cleaned_title }}
       </a>
     </div>
 
@@ -39,7 +39,7 @@
       {% endif %}
     </div>
     {% endwith %}
-    {% share_buttons episode.get_absolute_url podcast_title|add:" | "|add:episode_title %}
+    {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
   </div>
 </div>
 

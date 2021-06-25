@@ -2,7 +2,7 @@
 {% with log=request.player.get_audio_log %}
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
-{% with episode_url=episode.get_absolute_url episode_title=episode.title|unescape|striptags podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape|striptags %}
+{% with episode_url=episode.get_absolute_url podcast_url=podcast.get_absolute_url %}
 <div x-data="Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
@@ -37,7 +37,7 @@
       <div class="w-72 sm:hidden truncate text-sm">
         <a class="player--title"
            href="{{ episode_url }}"
-           title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
+           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
       </div>
 
       <div class="flex items-center space-x-1 sm:space-x-2">
@@ -46,8 +46,8 @@
         <div class="w-20">
           <a href="{{ podcast_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 self-center hover:opacity-75 border-white cursor-pointer"
-                 title="{{ podcast_title }}"
-                 alt="{{ podcast_title }}"
+                 title="{{ podcast.cleaned_title }}"
+                 alt="{{ podcast.cleaned_title }}"
                  width="20"
                  height="20"
                  src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
@@ -93,7 +93,7 @@
             <div class="hidden sm:block w-96 lg:w-full text-center truncate text-sm">
               <a class="player--title"
                  href="{{ episode_url }}"
-                 title="{{ episode_title }}">{{ episode_title|truncatechars:100 }}</a>
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
             </div>
 
             <div class="flex items-center">

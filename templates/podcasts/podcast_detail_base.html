@@ -1,10 +1,9 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ podcast.title|unescape|striptags }}{% endblock %}
+{% block subtitle %} | {{ podcast.cleaned_title }}{% endblock %}
 
 {% block content %}
-{% with podcast_title=podcast.title|unescape|striptags %}
-<h1 class="font-bold text-lg mb-3 text-center sm:text-left">{{ podcast_title }}</h1>
+<h1 class="font-bold text-lg mb-3 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
 <div id="podcast-content">
   <nav class="flex items-center mb-3 justify-center sm:justify-start text-sm">
     <ul class="flex items-center space-x-6">
@@ -12,25 +11,24 @@
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast_title }} | About">About</a>
+           title="{{ podcast.cleaned_title }} | About">About</a>
       </li>
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast_title }} | Episodes">Episodes</a>
+           title="{{ podcast.cleaned_title }} | Episodes">Episodes</a>
       </li>
       {% if has_recommendations %}
       {% active_link podcast.get_recommendations_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast_title }} | Similar">Similar</a>
+           title="{{ podcast.cleaned_title }} | Similar">Similar</a>
       </li>
       {% endif %}
     </ul>
   </nav>
   {% block podcast_content %}{% endblock %}
 </div>
-{% endwith %}
 {% endblock %}
