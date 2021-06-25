@@ -11,13 +11,16 @@ from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
+from django.template.defaultfilters import striptags
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
+from audiotrails.common.template.defaulttags import unescape
 from audiotrails.common.typedefs import AnyUser, AuthenticatedUser
 
 
@@ -197,6 +200,10 @@ class Podcast(models.Model):
 
     def __str__(self) -> str:
         return self.title or self.rss
+
+    @cached_property
+    def cleaned_title(self) -> str:
+        return striptags(unescape(self.title))
 
     def get_absolute_url(self) -> str:
         return self.get_detail_url()

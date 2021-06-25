@@ -8,13 +8,15 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.http import HttpRequest
-from django.template.defaultfilters import filesizeformat
+from django.template.defaultfilters import filesizeformat, striptags
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from audiotrails.common.db import FastCountMixin, SearchMixin
+from audiotrails.common.template.defaulttags import unescape
 from audiotrails.common.typedefs import AnyUser, AuthenticatedUser
 from audiotrails.podcasts.models import Podcast
 
@@ -90,6 +92,10 @@ class Episode(models.Model):
     @property
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "episode"
+
+    @cached_property
+    def cleaned_title(self) -> str:
+        return striptags(unescape(self.title))
 
     def get_file_size(self) -> str | None:
         return filesizeformat(self.length) if self.length else None

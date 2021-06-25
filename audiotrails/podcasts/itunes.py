@@ -6,8 +6,11 @@ import requests
 
 from django.core.cache import cache
 from django.db.models import Q
+from django.template.defaultfilters import striptags
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 
+from audiotrails.common.template.defaulttags import unescape
 from audiotrails.podcasts.models import Category, Podcast
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
@@ -28,6 +31,10 @@ class SearchResult:
     title: str
     image: str
     podcast: Podcast | None = None
+
+    @cached_property
+    def cleaned_title(self) -> str:
+        return striptags(unescape(self.title))
 
 
 def fetch_itunes_genre(

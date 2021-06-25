@@ -178,6 +178,10 @@ class PodcastModelTests(TestCase):
     def test_slug(self) -> None:
         self.assertEqual(self.podcast.slug, "testing")
 
+    def test_cleaned_title(self):
+        podcast = Podcast(title="<b>a &amp; b</b>")
+        assert podcast.cleaned_title == "a & b"
+
     def test_get_episode_count(self) -> None:
         EpisodeFactory.create_batch(3)
         EpisodeFactory.create_batch(3, podcast=self.podcast)

@@ -38,6 +38,17 @@ class MockResponse:
         return {"results": MOCK_ITUNES_RESPONSE}
 
 
+class SearchResultTests(TestCase):
+    def test_cleaned_title(self):
+        result = itunes.SearchResult(
+            title="<b>test</b>",
+            rss="",
+            image="",
+            itunes="",
+        )
+        self.assertEqual(result.cleaned_title, "test")
+
+
 class SearchItunesTests(TestCase):
     @mock.patch("requests.get", autospec=True)
     @mock.patch("django.core.cache.cache.get", return_value=MOCK_ITUNES_RESULTS)
