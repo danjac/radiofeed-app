@@ -8,7 +8,7 @@
   <div class="flex items-center w-full space-x-3">
 
     <div>
-      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=24 %}
+      {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title|unescape|striptags size=24 %}
     </div>
 
     <div class="space-y-2 text-sm">

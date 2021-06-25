@@ -1,10 +1,12 @@
 {% extends "episodes/base.html" %}
 
-{% block subtitle %} | {{ episode.podcast.title|unescape }} | {{ episode.title|unescape }}{% endblock %}
+{% block subtitle %} | {{ episode.podcast.title|unescape|striptags }} | {{ episode.title|unescape|striptags }}{% endblock %}
 
 {% block content %}
 
-<h1 class="font-bold text-lg mb-3">{{ episode.title|unescape }}</h1>
+<h1 class="font-bold text-lg mb-3">{{ episode.title|unescape|striptags }}</h1>
+
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url episode_title=episode.title|unescape|striptags podcast_title=episode.podcast.title|unescape|striptags %}
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
@@ -12,7 +14,7 @@
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.title|unescape }}">
+     title="{{ prev_episode.title|unescape|striptags }}">
     Previous
   </a>
 
@@ -22,7 +24,7 @@
   {% if next_episode %}
   <a class="link"
      href="{{ next_episode.get_absolute_url }}"
-     title="{{ next_episode.title|unescape }}">
+     title="{{ next_episode.title|unescape|striptags }}">
     Next
   </a>
   {% else %}
@@ -33,20 +35,19 @@
 {% endif %}
 {% endwith %}
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 <section class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
-       title="{{ podcast.title }}"
+       title="{{ podcast_title }}"
        class="link text-sm">
-      {{ podcast.title }}
+      {{ podcast_title }}
     </a>
   </div>
 
   <div class="flex items-center space-x-3">
     <div>
       <a href="{{ podcast_url }}" title="{{ podcast.title }}">
-        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.title size=20 %}
+        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast_title size=20 %}
       </a>
     </div>
     <div class="space-y-2 text-sm">
@@ -58,7 +59,7 @@
           {{ duration|format_duration }}
         </div>
       </div>
-      {% share_buttons episode.get_absolute_url podcast.title|add:" | "|add:episode.title|unescape %}
+      {% share_buttons episode.get_absolute_url podcast_title|add:" | "|add:episode_title %}
       {% include "episodes/_actions_toggle.html" with is_detail=True %}
     </div>
   </div>

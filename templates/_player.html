@@ -2,7 +2,7 @@
 {% with log=request.player.get_audio_log %}
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
-{% with episode_url=episode.get_absolute_url episode_title=episode.title|unescape podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape %}
+{% with episode_url=episode.get_absolute_url episode_title=episode.title|unescape|striptags podcast_url=podcast.get_absolute_url podcast_title=podcast.title|unescape|striptags %}
 <div x-data="Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
