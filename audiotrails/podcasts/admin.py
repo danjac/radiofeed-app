@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
@@ -92,6 +92,19 @@ class PodcastAdmin(admin.ModelAdmin):
         "created",
         "updated",
     )
+
+    actions = ["reactivate"]
+
+    @admin.action(description="Re-activate podcasts")
+    def reactivate(self, request: HttpRequest, queryset: QuerySet):
+        num_updated = queryset.filter(active=False).update(
+            active=True, error_status=None
+        )
+        self.message_user(
+            request,
+            f"{num_updated} podcasts re-activated",
+            messages.SUCCESS,
+        )
 
     def source(self, obj: Podcast) -> str:
         return obj.get_domain()

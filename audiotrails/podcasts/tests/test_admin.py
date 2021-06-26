@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.contrib.admin.sites import AdminSite
 from django.test import RequestFactory, TestCase
 
@@ -20,6 +22,7 @@ class PodcastAdminTests(TestCase):
         self.rf = RequestFactory()
         self.admin = PodcastAdmin(Podcast, AdminSite())
         self.request = self.rf.get("/")
+        self.request._messages = mock.Mock()
 
     def test_source(self) -> None:
         podcast = self.podcasts[0]
@@ -36,6 +39,13 @@ class PodcastAdminTests(TestCase):
     def test_get_search_results_no_search_term(self) -> None:
         qs, _ = self.admin.get_search_results(self.request, Podcast.objects.all(), "")
         self.assertEqual(qs.count(), 3)
+
+    def test_reactivate(self) -> None:
+        PodcastFactory(active=False, error_status=404)
+        self.admin.reactivate(self.request, Podcast.objects.all())
+        self.assertEqual(
+            Podcast.objects.filter(error_status=None, active=True).count(), 4
+        )
 
     def test_pub_date_filter_none(self) -> None:
         PodcastFactory(pub_date=None)
