@@ -39,16 +39,6 @@
   <div class="font-semibold flex items-center text-gray-600 dark:text-gray-300 text-sm">
     Last updated {{ podcast.pub_date|timesince }} ago
   </div>
-  {% with num_episodes=podcast.get_cached_episode_count %}
-  {% if num_episodes %}
-  <div class="font-semibold flex items-center text-gray-600 dark:text-gray-300 text-sm">
-    <a href="{{ podcast.get_episodes_url }}" class="link">
-      {{ num_episodes }} episode{{ num_episodes|pluralize }}
-    </a>
-  </div>
-  {% endif %}
-
-  {% endwith %}
 
   {% if podcast.explicit %}
   <div class="font-semibold text-sm">
