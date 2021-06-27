@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 import http
-import random
+import secrets
 import traceback
 
 from functools import lru_cache
@@ -229,7 +229,7 @@ def is_episode(item: box.Box) -> bool:
 def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
-        "User-Agent": random.choice(USER_AGENTS),
+        "User-Agent": secrets.choice(USER_AGENTS),
     }
 
     if podcast.etag:
