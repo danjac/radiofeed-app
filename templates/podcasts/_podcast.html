@@ -18,8 +18,12 @@
          hx-trigger="click delay:200ms">
         {{ podcast.cleaned_title|truncatechars:120 }}</a>
     </h2>
-    <div class="font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs flex items-center space-x-2">
-      {% include "_pub_date.html" with pub_date=podcast.pub_date %}
+    <div class="flex items-center">
+      <a href="{{ podcast.get_episodes_url }}"
+         title="Last Published"
+         class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
+        {% include "_pub_date.html" with pub_date=podcast.pub_date %}
+      </a>
     </div>
   </div>
 </section>
