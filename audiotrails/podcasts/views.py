@@ -27,10 +27,7 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
         else []
     )
     podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
-        .with_episode_count()
-        .order_by("-pub_date")
-        .distinct()
+        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
     featured = featured or not follows
@@ -60,7 +57,6 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)
-        .with_episode_count()
         .search(request.search)
         .order_by("-rank", "-pub_date")
     )
@@ -123,7 +119,6 @@ def recommendations(
 
     recommendations = (
         Recommendation.objects.filter(podcast=podcast)
-        .with_episode_count()
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
     )[:12]
@@ -217,7 +212,7 @@ def category_detail(
         Category.objects.select_related("parent"), pk=category_id
     )
 
-    podcasts = category.podcast_set.filter(pub_date__isnull=False).with_episode_count()
+    podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
         podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")

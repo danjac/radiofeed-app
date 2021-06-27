@@ -68,9 +68,6 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_episode_count(self):
-        return self.annotate(num_episodes=models.Count("episode"))
-
     def for_feed_sync(self, last_updated: int = 24) -> models.QuerySet:
         """Podcasts due to be updated with their RSS feeds.
 
@@ -276,9 +273,6 @@ class RecommendationQuerySet(models.QuerySet):
     def bulk_delete(self) -> int:
         """More efficient quick delete"""
         return self._raw_delete(self.db)
-
-    def with_episode_count(self):
-        return self.annotate(num_episodes=models.Count("recommended__episode"))
 
     def for_user(self, user: AuthenticatedUser) -> models.QuerySet:
         podcast_ids = (

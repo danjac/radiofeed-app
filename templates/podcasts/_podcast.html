@@ -20,13 +20,6 @@
     </h2>
     <div class="font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs flex items-center space-x-2">
       {% include "_pub_date.html" with pub_date=podcast.pub_date %}
-      {% if num_episodes %}
-      <div>
-        <a href="{{ podcast.get_episodes_url }}" class="link" @click="$dispatch('close-modal')">
-          {{ num_episodes }} episode{{ num_episodes|pluralize }}
-        </a>
-      </div>
-      {% endif %}
     </div>
   </div>
 </section>
