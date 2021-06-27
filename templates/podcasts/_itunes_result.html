@@ -1,7 +1,7 @@
 {% with podcast=result.podcast %}
 <section class="py-1 flex items-center space-x-3 border-t dark:border-gray-500">
   {% if result.image %}
-  <div class="w-15">
+  <div>
     {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
   </div>
   {% endif %}
