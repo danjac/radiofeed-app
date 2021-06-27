@@ -13,12 +13,15 @@
            href="{{ link.url }}"
            title="{{ podcast.cleaned_title }} | About">About</a>
       </li>
+
+      {% with num_episodes=podcast.get_cached_episode_count %}
       {% active_link podcast.get_episodes_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="link"
            href="{{ link.url }}"
-           title="{{ podcast.cleaned_title }} | Episodes">Episodes</a>
+           title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ num_episodes }})</a>
       </li>
+      {% endwith %}
       {% if has_recommendations %}
       {% active_link podcast.get_recommendations_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">

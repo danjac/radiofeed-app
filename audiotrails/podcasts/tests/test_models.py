@@ -29,6 +29,13 @@ class RecommendationManagerTests(TestCase):
         Recommendation.objects.bulk_delete()
         self.assertEqual(Recommendation.objects.count(), 0)
 
+    def test_with_episode_count(self):
+        podcast = PodcastFactory()
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        RecommendationFactory(recommended=podcast)
+        result = Recommendation.objects.with_episode_count().first()
+        self.assertEqual(result.num_episodes, 3)
+
     def test_for_user(self) -> None:
 
         user = UserFactory()
@@ -148,6 +155,12 @@ class PodcastManagerTests(TestCase):
     @freeze_time("2021-06-18")
     def test_for_feed_sync_odd_weekday(self):
         self._test_for_feed_sync()
+
+    def test_with_episode_count(self):
+        podcast = PodcastFactory()
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        result = Podcast.objects.with_episode_count().first()
+        self.assertEqual(result.num_episodes, 3)
 
 
 class PodcastModelTests(TestCase):
