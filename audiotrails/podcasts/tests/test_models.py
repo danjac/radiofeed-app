@@ -149,25 +149,6 @@ class PodcastManagerTests(TestCase):
     def test_for_feed_sync_odd_weekday(self):
         self._test_for_feed_sync()
 
-    def test_with_follow_count(self):
-        following_1 = PodcastFactory()
-        following_2 = PodcastFactory()
-        not_following = PodcastFactory()
-
-        FollowFactory(podcast=following_1)
-        FollowFactory(podcast=following_1)
-        FollowFactory(podcast=following_2)
-
-        podcasts = Podcast.objects.with_follow_count().order_by("-follow_count")
-
-        self.assertEqual(podcasts[0].id, following_1.id)
-        self.assertEqual(podcasts[1].id, following_2.id)
-        self.assertEqual(podcasts[2].id, not_following.id)
-
-        self.assertEqual(podcasts[0].follow_count, 2)
-        self.assertEqual(podcasts[1].follow_count, 1)
-        self.assertEqual(podcasts[2].follow_count, 0)
-
 
 class PodcastModelTests(TestCase):
     @classmethod

@@ -68,9 +68,6 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_follow_count(self) -> models.QuerySet:
-        return self.annotate(follow_count=models.Count("follow"))
-
     def for_feed_sync(self, last_updated: int = 24) -> models.QuerySet:
         """Podcasts due to be updated with their RSS feeds.
 
