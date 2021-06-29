@@ -1,19 +1,13 @@
 {# Add any messages after hx swap #}
 {% if messages %}
-  <script>
-    (function() {
-      const addMessage = (message) => {
-        const event = new CustomEvent('add-message', {
-          detail: message
-        });
-        window.dispatchEvent(event);
-      };
-      {% for message in messages %}
-      addMessage({
-        text: "{{ message }}",
-        tags: "{{ message.tags }}"
-      });
-      {% endfor %}
-    })();
-  </script>
-  {% endif %}
+<script>
+  (function () {
+    {% for message in messages %}
+    dispatchMessage({
+      text: "{{ message }}",
+      tags: "{{ message.tags }}"
+    });
+    {% endfor %}
+  })();
+</script>
+{% endif %}

@@ -28,21 +28,3 @@
     </template>
   </div>
 </div>
-<script>
-  (function() {
-    window.Messages = () => {
-      return {
-        messages: [],
-        addMessage(message) {
-          this.messages.push({
-            ...message,
-            show: true
-          });
-          setTimeout(() => {
-            this.messages[this.messages.length - 1].show = false;
-          }, 1500);
-        }
-      };
-    };
-  })();
-</script>
