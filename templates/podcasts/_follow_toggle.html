@@ -10,8 +10,7 @@
     <button class="btn btn-secondary flex items-center"
             title="Stop following this podcast"
             hx-trigger="click delay:200ms"
-            hx-post="{% url 'podcasts:unfollow' podcast.id %}"
-            title="Stop following this podcast">
+            hx-post="{% url 'podcasts:unfollow' podcast.id %}">
       {% icon "eye_slash" css_class="btn-icon mr-2" %}
       Follow
     </button>
@@ -19,8 +18,7 @@
     <button class="btn btn-default flex items-center"
             title="Follow this podcast"
             hx-trigger="click delay:200ms"
-            hx-post="{% url 'podcasts:follow' podcast.id %}"
-            title="Follow this podcast">
+            hx-post="{% url 'podcasts:follow' podcast.id %}">
       {% icon "eye" css_class="btn-icon mr-2" %}
       Follow
     </button>
