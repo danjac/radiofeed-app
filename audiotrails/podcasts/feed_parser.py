@@ -63,31 +63,26 @@ def parse_feed(podcast: Podcast) -> list[Episode]:
         # no change, ignore
         return handle_empty_result(podcast)
 
-    if (redirect_url := get_redirect_url(podcast, response)) and (
-        other := Podcast.objects.filter(rss=redirect_url).first()
-    ):
+    return sync_podcast(podcast, response)
 
+
+def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]:
+
+    rss, is_changed = resolve_podcast_rss(podcast, response)
+
+    if is_changed and (
+        other := Podcast.objects.filter(rss=rss).exclude(pk=podcast.pk).first()
+    ):
         # permanent redirect to URL already taken by another podcast
         return handle_empty_result(podcast, redirect_to=other, active=False)
-
-    return sync_podcast(podcast, response, redirect_url)
-
-
-def sync_podcast(
-    podcast: Podcast, response: requests.Response, redirect_url: str | None
-) -> list[Episode]:
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
-        return (
-            handle_empty_result(podcast, rss=redirect_url)
-            if redirect_url
-            else handle_empty_result(podcast)
-        )
+        return handle_empty_result(podcast, rss=rss)
 
-    podcast.rss = redirect_url or podcast.rss
+    podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.pub_date = max(item.pub_date for item in items)
@@ -239,7 +234,9 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     return headers
 
 
-def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | None:
+def resolve_podcast_rss(
+    podcast: Podcast, response: requests.Response
+) -> tuple[str, bool]:
 
     if (
         response.status_code
@@ -249,8 +246,8 @@ def get_redirect_url(podcast: Podcast, response: requests.Response) -> str | Non
         )
         and response.url != podcast.rss
     ):
-        return response.url
-    return None
+        return response.url, True
+    return response.url, False
 
 
 def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
