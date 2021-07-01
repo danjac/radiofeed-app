@@ -9,7 +9,7 @@
     "@tailwindcss/forms": "^0.3.3",
     "autoprefixer": "^10.2.6",
     "cssnano": "^5.0.6",
-    "esbuild": "^0.12.9",
+    "esbuild": "^0.12.13",
     "npm-check-updates": "^11.7.1",
     "postcss": "^8.3.5",
     "postcss-cli": "^8.3.1",
@@ -17,7 +17,7 @@
     "tailwindcss": "^2.2.4"
   },
   "dependencies": {
-    "alpinejs": "^3.1.1",
+    "alpinejs": "^3.2.1",
     "htmx.org": "^1.4.1",
     "sortablejs": "^1.13.0"
   }
