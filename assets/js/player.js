@@ -63,6 +63,7 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
       };
 
       this.$refs.audio.load();
+      this.startTimer();
 
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = getMediaMetadata();
@@ -100,13 +101,7 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
       if (lock.isLocked) {
         this.isPaused = true;
       } else {
-        this.$refs.audio
-          .play()
-          .then(() => this.startTimer())
-          .catch((e) => {
-            console.log(e);
-            this.isPaused = true;
-          });
+        this.$refs.audio.play();
       }
 
       this.duration = this.$refs.audio.duration;
@@ -209,7 +204,6 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
     },
 
     sendTimeUpdate() {
-      console.log('sendTimeUpdate', this.canSendTimeUpdate());
       this.canSendTimeUpdate() &&
         window.htmx.ajax('POST', urls.timeUpdate, {
           source: this.$el,
