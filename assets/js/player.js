@@ -1,5 +1,3 @@
-const storageKey = 'player-enabled';
-
 const defaults = {
   currentTime: 0,
   duration: 0,
@@ -11,10 +9,32 @@ const defaults = {
   counter: '00:00:00',
 };
 
-export default function Player({ mediaSrc, currentTime, runImmediately, urls }) {
-  let timer;
+class PlayerLock {
+  // prevent player automatically starting in new tab
+  constructor(storageKey) {
+    this.storageKey = storageKey;
+  }
+  unlock() {
+    sessionStorage.setItem(this.storageKey, true);
+  }
 
-  const isLocked = !runImmediately && !sessionStorage.getItem(storageKey);
+  lock() {
+    sessionStorage.removeItem(this.storageKey);
+  }
+
+  get isLocked() {
+    return !sessionStorage.getItem(this.storageKey);
+  }
+}
+
+export default function Player({ mediaSrc, currentTime, unlock, urls }) {
+  const lock = new PlayerLock('player-enabled');
+
+  if (unlock) {
+    lock.unlock();
+  }
+
+  let timer;
 
   return {
     mediaSrc,
@@ -77,7 +97,7 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
       }
       this.$refs.audio.currentTime = currentTime;
 
-      if (isLocked) {
+      if (lock.isLocked) {
         this.isPaused = true;
       } else {
         this.$refs.audio
@@ -104,13 +124,13 @@ export default function Player({ mediaSrc, currentTime, runImmediately, urls }) 
     resumed() {
       this.isPlaying = true;
       this.isPaused = false;
-      sessionStorage.setItem(storageKey, true);
+      lock.unlock();
     },
 
     paused() {
       this.isPlaying = false;
       this.isPaused = true;
-      sessionStorage.removeItem(storageKey);
+      lock.lock();
     },
 
     incrementPlaybackRate() {

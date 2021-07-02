@@ -76,9 +76,8 @@ def render_player(
     current_episode: Episode | None = None,
     next_episode: Episode | None = None,
 ) -> HttpResponse:
-    response = TemplateResponse(
-        request, "_player.html", {"run_immediately": next_episode is not None}
-    )
+
+    response = TemplateResponse(request, "_player.html", {"unlock": True})
 
     events: list[str] = []
 
