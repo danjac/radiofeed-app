@@ -1,6 +1,6 @@
 import http
 
-from django.test import TestCase, TransactionTestCase
+from django.test import Client, TestCase, TransactionTestCase
 from django.urls import reverse, reverse_lazy
 
 from audiotrails.episodes.factories import (
@@ -9,11 +9,17 @@ from audiotrails.episodes.factories import (
     FavoriteFactory,
     QueueItemFactory,
 )
-from audiotrails.episodes.models import AudioLog, Favorite, QueueItem
+from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
 from audiotrails.users.factories import UserFactory
 
 episodes_url = reverse_lazy("episodes:index")
+
+
+def add_episode_to_player(client: Client, episode: Episode, is_queued: bool = False):
+    session = client.session
+    session["player"] = {"episode": episode.id, "is_queued": is_queued}
+    session.save()
 
 
 class NewEpisodesAnonymousTests(TestCase):
@@ -201,19 +207,28 @@ class PlayNextEpisodeTests(TestCase):
         self.client.force_login(self.user)
 
     def test_has_next_in_queue(self) -> None:
+        add_episode_to_player(self.client, self.episode, is_queued=True)
+
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
         resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
+    def test_has_next_in_queue_if_current_not_queued(self) -> None:
+        add_episode_to_player(self.client, self.episode, is_queued=False)
+
+        QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
+        resp = self.client.post(self.url)
+
+        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+        self.assertEqual(QueueItem.objects.count(), 1)
+
     def test_has_episode_in_player(self) -> None:
 
         log = AudioLogFactory(user=self.user, current_time=2000)
 
-        session = self.client.session
-        session.update({"player_episode": log.episode.id})
-        session.save()
+        add_episode_to_player(self.client, log.episode)
 
         resp = self.client.post(reverse("episodes:play_next_episode"))
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
@@ -223,6 +238,8 @@ class PlayNextEpisodeTests(TestCase):
 
     def test_play_next_episode_in_history(self) -> None:
         log = AudioLogFactory(user=self.user, current_time=30)
+
+        add_episode_to_player(self.client, log.episode, is_queued=True)
 
         QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
         resp = self.client.post(self.url)
@@ -255,9 +272,7 @@ class ClosePlayerTests(TestCase):
     def test_stop(self) -> None:
         episode = EpisodeFactory()
 
-        session = self.client.session
-        session.update({"player_episode": episode.id})
-        session.save()
+        add_episode_to_player(self.client, episode)
 
         log = AudioLogFactory(user=self.user, episode=episode, current_time=2000)
         resp = self.client.post(
@@ -283,9 +298,7 @@ class PlayerTimeUpdateTests(TestCase):
     def test_is_running(self) -> None:
         log = AudioLogFactory(user=self.user, episode=self.episode)
 
-        session = self.client.session
-        session["player_episode"] = self.episode.id
-        session.save()
+        add_episode_to_player(self.client, self.episode)
 
         resp = self.client.post(
             self.url,
@@ -304,18 +317,15 @@ class PlayerTimeUpdateTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.NO_CONTENT)
 
     def test_missing_data(self) -> None:
-        session = self.client.session
-        session["player_episode"] = self.episode.id
-        session.save()
+
+        add_episode_to_player(self.client, self.episode)
 
         resp = self.client.post(self.url)
 
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
 
     def test_invalid_data(self) -> None:
-        session = self.client.session
-        session["player_episode"] = self.episode.id
-        session.save()
+        add_episode_to_player(self.client, self.episode)
 
         resp = self.client.post(self.url, {"current_time": "xyz"})
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
@@ -454,9 +464,7 @@ class RemoveAudioLogTests(TestCase):
         """Do not remove log if episode is currently playing"""
         AudioLogFactory(user=self.user, episode=self.episode)
 
-        session = self.client.session
-        session["player_episode"] = self.episode.id
-        session.save()
+        add_episode_to_player(self.client, self.episode)
 
         resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, http.HTTPStatus.BAD_REQUEST)
@@ -548,9 +556,7 @@ class AddToQueueTests(TransactionTestCase):
         self.assertEqual(items[2].position, 3)
 
     def test_is_playing(self) -> None:
-        session = self.client.session
-        session["player_episode"] = self.episode.id
-        session.save()
+        add_episode_to_player(self.client, self.episode)
         resp = self.client.post(
             reverse(
                 self.add_to_start_url,

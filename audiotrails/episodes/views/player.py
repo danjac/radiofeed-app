@@ -36,17 +36,21 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
+    queued = request.player.is_queued()
+
     if log := request.player.stop_episode(mark_completed=True):
         current_episode = log.episode
     else:
         current_episode = None
 
-    if next_item := (
-        QueueItem.objects.filter(user=request.user)
-        .with_current_time(request.user)
-        .select_related("episode", "episode__podcast")
-        .order_by("position")
-        .first()
+    if queued and (
+        next_item := (
+            QueueItem.objects.filter(user=request.user)
+            .with_current_time(request.user)
+            .select_related("episode", "episode__podcast")
+            .order_by("position")
+            .first()
+        )
     ):
         next_episode = next_item.episode
         request.player.start_episode(next_episode)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from django.http import HttpRequest
 from django.utils import timezone
 
@@ -9,7 +11,7 @@ from audiotrails.episodes.models import AudioLog, Episode, QueueItem
 class Player:
     """Tracks current playing episode in user session"""
 
-    session_key: str = "player_episode"
+    session_key: ClassVar[str] = "player"
 
     def __init__(self, request: HttpRequest):
         self.request = request
@@ -17,9 +19,20 @@ class Player:
     def start_episode(self, episode: Episode) -> AudioLog:
         """Creates/updates audio log and adds episode to session."""
 
-        self.request.session[self.session_key] = episode.id
+        session_data = {
+            "episode": episode.id,
+            "is_queued": False,
+        }
 
-        QueueItem.objects.filter(user=self.request.user, episode=episode).delete()
+        deleted, _ = QueueItem.objects.filter(
+            user=self.request.user,
+            episode=episode,
+        ).delete()
+
+        if deleted:
+            session_data["is_queued"] = True
+
+        self.request.session[self.session_key] = session_data
 
         log, _ = AudioLog.objects.update_or_create(
             episode=episode,
@@ -58,23 +71,32 @@ class Player:
         return log
 
     def update_current_time(self, current_time: float) -> None:
-        if (
-            self.request.user.is_authenticated
-            and self.session_key in self.request.session
+        if self.request.user.is_authenticated and (
+            episode_id := self.get_current_episode_id()
         ):
             AudioLog.objects.filter(
-                episode=self.request.session[self.session_key], user=self.request.user
+                episode=episode_id,
+                user=self.request.user,
             ).update(current_time=round(current_time))
 
     def is_playing(self, episode: Episode) -> bool:
-        return self.request.session.get(self.session_key) == episode.id
+        return self.get_current_episode_id() == episode.id
+
+    def get_current_episode_id(self) -> int | None:
+        return self.get_session_data().get("episode", None)
+
+    def is_queued(self) -> bool:
+        return self.get_session_data().get("is_queued", False)
+
+    def get_session_data(self) -> dict:
+        return self.request.session.get(self.session_key, {})
 
     def get_audio_log(self) -> AudioLog | None:
         if hasattr(self, "current_log"):
             return self.current_log
-        if (
-            self.request.user.is_anonymous
-            or (episode_id := self.request.session.get(self.session_key, None)) is None
+
+        if self.request.user.is_anonymous or (
+            (episode_id := self.get_current_episode_id()) is None
         ):
             self.current_log = None
 

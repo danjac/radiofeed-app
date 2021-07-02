@@ -5,8 +5,12 @@ from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
 from audiotrails.common.typedefs import AnyUser
-from audiotrails.episodes.factories import AudioLogFactory, EpisodeFactory
-from audiotrails.episodes.models import AudioLog, Episode
+from audiotrails.episodes.factories import (
+    AudioLogFactory,
+    EpisodeFactory,
+    QueueItemFactory,
+)
+from audiotrails.episodes.models import AudioLog, Episode, QueueItem
 from audiotrails.episodes.player import Player
 from audiotrails.users.factories import UserFactory
 
@@ -21,12 +25,18 @@ class PlayerTests(TestCase):
         self.rf = RequestFactory()
 
     def make_request(
-        self, episode: Episode | None = None, user: AnyUser | None = None
+        self,
+        episode: Episode | None = None,
+        user: AnyUser | None = None,
+        is_queued: bool = False,
     ) -> HttpRequest:
         req = self.rf.get("/")
         req.session = {}
         if episode is not None:
-            req.session["player_episode"] = episode.id
+            req.session[Player.session_key] = {
+                "episode": episode.id,
+                "is_queued": is_queued,
+            }
         req.user = user or AnonymousUser()
         return req
 
@@ -46,6 +56,28 @@ class PlayerTests(TestCase):
         self.assertTrue(log.updated)
 
         self.assertTrue(player.is_playing(self.episode))
+        self.assertFalse(player.is_queued())
+
+    def test_start_episode_from_queue(self) -> None:
+        req = self.make_request(user=self.user)
+        player = Player(req)
+
+        QueueItemFactory(episode=self.episode, user=self.user)
+
+        self.assertEqual(player.start_episode(self.episode).current_time, 0)
+
+        log = AudioLog.objects.get()
+
+        self.assertEqual(log.episode, self.episode)
+        self.assertEqual(log.user, self.user)
+        self.assertEqual(log.current_time, 0)
+
+        self.assertFalse(log.completed)
+        self.assertTrue(log.updated)
+
+        self.assertTrue(player.is_playing(self.episode))
+        self.assertTrue(player.is_queued())
+        self.assertFalse(QueueItem.objects.exists())
 
     def test_start_episode_already_played(self) -> None:
 
