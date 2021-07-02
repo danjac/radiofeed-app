@@ -209,6 +209,7 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
     },
 
     sendTimeUpdate() {
+      console.log('sendTimeUpdate', this.canSendTimeUpdate());
       this.canSendTimeUpdate() &&
         window.htmx.ajax('POST', urls.timeUpdate, {
           source: this.$el,
