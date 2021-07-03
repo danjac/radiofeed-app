@@ -52,6 +52,10 @@ factory-boy = "^3.2.0"
 pywatchman = "^1.4.1"
 Werkzeug = "^2.0.1"
 freezegun = "^1.1.0"
+pytest = "^6.2.4"
+pytest-django = "^4.4.0"
+pytest-xdist = "^2.3.0"
+pytest-cov = "^2.12.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

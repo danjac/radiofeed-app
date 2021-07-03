@@ -1,13 +1,17 @@
+from __future__ import annotations
+
+import pytest
+
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 
 from audiotrails.users.factories import UserFactory
 
 User = get_user_model()
 
 
-class UserManagerTests(TestCase):
+@pytest.mark.django_db
+class TestUserManager:
     email = "tester@gmail.com"
 
     def test_create_user(self) -> None:
@@ -17,7 +21,7 @@ class UserManagerTests(TestCase):
         user = User.objects.create_user(
             username="tester1", email=self.email, password=password
         )
-        self.assertTrue(user.check_password(password))
+        assert user.check_password(password)
 
     def test_create_superuser(self) -> None:
 
@@ -26,19 +30,19 @@ class UserManagerTests(TestCase):
         user = User.objects.create_superuser(
             username="tester2", email=self.email, password=password
         )
-        self.assertTrue(user.is_superuser)
-        self.assertTrue(user.is_staff)
+        assert user.is_superuser
+        assert user.is_staff
 
     def test_for_email_matching_email_field(self) -> None:
 
         user = UserFactory(email=self.email)
-        self.assertEqual(User.objects.for_email(self.email).first(), user)
+        assert User.objects.for_email(self.email).first() == user
 
     def test_for_email_matching_email_address_instance(self) -> None:
 
         user = UserFactory()
         EmailAddress.objects.create(user=user, email=self.email)
-        self.assertEqual(User.objects.for_email(self.email).first(), user)
+        assert User.objects.for_email(self.email).first() == user
 
     def test_matches_usernames(self) -> None:
         user_1 = UserFactory(username="first")
@@ -48,30 +52,39 @@ class UserManagerTests(TestCase):
         names = ["second", "FIRST", "SEconD"]  # duplicate
 
         users = User.objects.matches_usernames(names)
-        self.assertEqual(len(users), 2)
-        self.assertIn(user_1, users)
-        self.assertIn(user_2, users)
-        self.assertNotIn(user_3, users)
+
+        assert len(users) == 2
+        assert user_1 in users
+        assert user_2 in users
+        assert user_3 not in users
 
         # check empty set returns no results
-        self.assertEqual(User.objects.matches_usernames([]).count(), 0)
+        assert User.objects.matches_usernames([]).count() == 0
 
 
-class UserModelTests(TestCase):
+class TestUserModel:
+    @pytest.mark.django_db
     def test_get_email_addresses(self) -> None:
         user = UserFactory()
         email = "test1@gmail.com"
         user.emailaddress_set.create(email=email)
         emails = user.get_email_addresses()
-        self.assertIn(user.email, emails)
-        self.assertIn(email, emails)
+        assert user.email in emails
+        assert email in emails
 
-    def test_get_gravatar_url_with_defaults(self):
+    @pytest.mark.parametrize(
+        "expected,params",
+        [
+            (
+                "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=30&d=retro&r=g",
+                {},
+            ),
+            (
+                "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=retro&r=g",
+                {"size": 100},
+            ),
+        ],
+    )
+    def test_get_gravatar_url(self, expected: str, params: dict):
         user = User(email="email@example.com")
-        expected = "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=30&d=retro&r=g"
-        self.assertEqual(user.get_gravatar_url(), expected)
-
-    def test_get_gravatar_url_with_params(self):
-        user = User(email="email@example.com")
-        expected = "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=retro&r=g"
-        self.assertEqual(user.get_gravatar_url(size=100), expected)
+        assert user.get_gravatar_url(**params) == expected
