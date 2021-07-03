@@ -10,11 +10,10 @@ from audiotrails.users.factories import UserFactory
 User = get_user_model()
 
 
-@pytest.mark.django_db
 class TestUserManager:
     email = "tester@gmail.com"
 
-    def test_create_user(self) -> None:
+    def test_create_user(self, db) -> None:
 
         password = User.objects.make_random_password()
 
@@ -23,7 +22,7 @@ class TestUserManager:
         )
         assert user.check_password(password)
 
-    def test_create_superuser(self) -> None:
+    def test_create_superuser(self, db) -> None:
 
         password = User.objects.make_random_password()
 
@@ -33,18 +32,17 @@ class TestUserManager:
         assert user.is_superuser
         assert user.is_staff
 
-    def test_for_email_matching_email_field(self) -> None:
+    def test_for_email_matching_email_field(self, db) -> None:
 
         user = UserFactory(email=self.email)
         assert User.objects.for_email(self.email).first() == user
 
-    def test_for_email_matching_email_address_instance(self) -> None:
+    def test_for_email_matching_email_address_instance(self, user) -> None:
 
-        user = UserFactory()
         EmailAddress.objects.create(user=user, email=self.email)
         assert User.objects.for_email(self.email).first() == user
 
-    def test_matches_usernames(self) -> None:
+    def test_matches_usernames(self, db) -> None:
         user_1 = UserFactory(username="first")
         user_2 = UserFactory(username="second")
         user_3 = UserFactory(username="third")
@@ -63,9 +61,7 @@ class TestUserManager:
 
 
 class TestUserModel:
-    @pytest.mark.django_db
-    def test_get_email_addresses(self) -> None:
-        user = UserFactory()
+    def test_get_email_addresses(self, user) -> None:
         email = "test1@gmail.com"
         user.emailaddress_set.create(email=email)
         emails = user.get_email_addresses()
