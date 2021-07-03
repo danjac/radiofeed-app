@@ -55,25 +55,23 @@
       </div>
     </form>
 
-    {% if user.is_authenticated %}
-    <form class="flex items-center space-x-3"
-          hx-disable="true"
-          action="{% url 'account_logout' %}"
-          method="post">
-      {% csrf_token %}
-      <button class="text-white hover:text-blue-500">Logout</button>
-    </form>
-    {% else %}
-    <div class="flex items-center">
+    <div class="flex items-center space-x-3">
+      {% if user.is_authenticated %}
+      <a href="{% url 'user_preferences' %}"
+         @click="$dispatch('close-sidebar')"
+         title="My Settings">
+        <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="Logged in as {{ user.username }}">
+      </a>
+      {% else %}
       <a href="{{ home_url|login_url }}"
          hx-disable="true"
          @click="$dispatch('close-sidebar')"
-         class="inline-block text-white hover:text-blue-500 mr-3">Login</a>
+         class="inline-block text-white hover:text-blue-500">Login</a>
       <a href="{{ home_url|signup_url }}"
          hx-disable="true"
          @click="$dispatch('close-sidebar')"
          class="inline-block text-white hover:text-blue-500">Signup</a>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 </header>

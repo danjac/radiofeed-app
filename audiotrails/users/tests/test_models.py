@@ -65,3 +65,13 @@ class UserModelTests(TestCase):
         emails = user.get_email_addresses()
         self.assertIn(user.email, emails)
         self.assertIn(email, emails)
+
+    def test_get_gravatar_url_with_defaults(self):
+        user = User(email="email@example.com")
+        expected = "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=30&d=retro&r=g"
+        self.assertEqual(user.get_gravatar_url(), expected)
+
+    def test_get_gravatar_url_with_params(self):
+        user = User(email="email@example.com")
+        expected = "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=retro&r=g"
+        self.assertEqual(user.get_gravatar_url(size=100), expected)

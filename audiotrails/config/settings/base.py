@@ -248,3 +248,7 @@ PRIVACY_DETAILS = {
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env("AGE_OF_CONSENT", default=18),
 }
+
+GRAVATAR_DEFAULT_SIZE = 30
+GRAVATAR_DEFAULT_IMAGE = env("GRAVATAR_DEFAULT_IMAGE", default="retro")
+GRAVATAR_DEFAULT_RATING = env("GRAVATAR_DEFAULT_RATING", default="g")
