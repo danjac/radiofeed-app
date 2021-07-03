@@ -19,7 +19,7 @@ class UserCreationForm(BaseUserCreationForm):
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
-        fields: tuple[str, str] = (
+        fields: tuple[str, ...] = (
             "autoplay",
             "send_recommendations_email",
         )
