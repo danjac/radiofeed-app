@@ -7,14 +7,17 @@
   {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %}
   {% if field|widget_type == "checkboxinput" %}
   {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
-  <label class="flex items-center mb-3 w-full">
+  <label class="flex items-center w-full">
     {% render_field field class=css_class %}
     {{ field.label }}
   </label>
   {% endwith %}
   {% else %}
+  <label class="flex items-center w-full font-semibold" for="{{ field.id_for_label }}">
+    {{ field.label }}
+  </label>
   {% with css_class=css_class|default:'p-1 w-full dark:bg-gray-900 dark:text-white' %}
-  {% render_field field aria-label=field.label placeholder=field.label class=css_class %}
+  {% render_field field aria-label=field.label class=css_class %}
   {% endwith %}
   {% endif %}
   {% endwith %}

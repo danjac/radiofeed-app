@@ -2,13 +2,11 @@
      id="messages"
      x-data="Messages()"
      @add-message.window="addMessage($event.detail)"
-     {% if messages %}
      x-init="() => {
         {% for message in messages %}
-        addMessage({ text: '{{ message }}', tags: '{{ message.tags }}' })
+        addMessage({ text: '{{ message }}', tags: '{{ message.tags }}' });
         {% endfor %}
-    }"
-     {% endif %}>
+    }">
   <div class="space-y-3">
     <template x-for="(message, index) in messages"
               :key="index">
