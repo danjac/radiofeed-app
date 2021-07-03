@@ -1,3 +1,5 @@
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm flex-wrap">
-    {% if podcast.creators %}{{ podcast.creators }} | {% endif %} {{ podcast.get_domain }}
-  </div>
+{% if podcast.creators %}
+<div class="font-semibold text-gray-600 dark:text-gray-300 text-sm flex-wrap">
+  {{ podcast.creators }}
+</div>
+{% endif %}
