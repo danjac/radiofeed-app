@@ -204,11 +204,15 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
     },
 
     sendTimeUpdate() {
-      this.canSendTimeUpdate() &&
-        window.htmx.ajax('POST', urls.timeUpdate, {
-          source: this.$el,
-          values: { current_time: this.currentTime },
-        });
+      try {
+        this.canSendTimeUpdate() &&
+          window.htmx.ajax('POST', urls.timeUpdate, {
+            source: this.$el,
+            values: { current_time: this.currentTime },
+          });
+      } catch (e) {
+        console.error(e);
+      }
     },
   };
 }
