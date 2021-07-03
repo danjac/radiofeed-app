@@ -1,13 +1,19 @@
-{% with podcast=result.podcast %}
-<section class="p-1 flex items-center space-x-3 border-t dark:border-gray-500">
+{% with podcast=result.podcast is_podcast=result.podcast.pub_date podcast_url=result.podcast.get_absolute_url %}
+<section class="px-1 py-2 flex items-center space-x-3 border-t dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 ">
   {% if result.image %}
   <div>
-    {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
+    {% if is_podcast %}
+    <a href="{{ podcast_url }}">
+      {% endif %}
+      {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
+      {% if podcast and podcast.pub_date %}
+    </a>
+    {% endif %}
   </div>
   {% endif %}
   <div class="space-y-2 text-sm">
     <h2 class="w-64 sm:w-96 lg:w-full truncate">
-      {% if podcast and podcast.pub_date %}
+      {% if is_podcast %}
       <a href="{{ podcast_url }}"
          title="{{ result.cleaned_title }}"
          class="link"
@@ -26,7 +32,7 @@
       {% endif %}
     </h2>
     <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs{% if not podcast %} animate-pulse{% endif %}">
-      {% if podcast %}
+      {% if is_podcast %}
       Added {{ podcast.created|timesince }} ago
       {% else %}
       Adding podcast to database...

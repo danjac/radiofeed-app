@@ -1,5 +1,5 @@
 {% with podcast_url=podcast.get_absolute_url %}
-<section class="flex items-center space-x-2 sm:space-x-3 p-1 hover:bg-gray-100 dark:hover:bg-gray-900 border-t dark:border-gray-500">
+<section class="flex items-center space-x-2 sm:space-x-3 px-1 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 border-t dark:border-gray-500">
   <div>
     <a href="{{ podcast_url }}">
       {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
