@@ -1,8 +1,6 @@
 import http
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.test import TestCase
 from django.urls import reverse
 
 from audiotrails.episodes.factories import (
@@ -10,109 +8,82 @@ from audiotrails.episodes.factories import (
     EpisodeFactory,
     FavoriteFactory,
 )
-from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
-from audiotrails.users.factories import UserFactory
-
-User = get_user_model()
+from audiotrails.podcasts.factories import FollowFactory
 
 
-class UserPreferencesTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
+class TestUserPreferences:
+    def test_get(self, client, auth_user):
+        resp = client.get(reverse("user_preferences"))
+        assert resp.status_code == http.HTTPStatus.OK
 
-    def setUp(self) -> None:
-        self.client.force_login(self.user)
-
-    def test_get(self) -> None:
-        resp = self.client.get(reverse("user_preferences"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-
-    def test_post(self) -> None:
+    def test_post(self, client, auth_user):
         url = reverse("user_preferences")
-        resp = self.client.post(
+        resp = client.post(
             url,
             {
                 "send_recommendations_email": False,
                 "autoplay": True,
             },
         )
-        self.assertRedirects(resp, url)
-        self.user.refresh_from_db()
-        assert self.user.autoplay
-        assert not self.user.send_recommendations_email
+        assert resp.url == url
+
+        auth_user.refresh_from_db()
+
+        assert auth_user.autoplay
+        assert not auth_user.send_recommendations_email
 
 
-class UserStatsTests(TestCase):
-    def test_stats(self) -> None:
-        podcast = PodcastFactory()
-        user = UserFactory()
-        self.client.force_login(user)
+class TestUserStats:
+    def test_stats(self, client, auth_user, podcast):
 
-        FollowFactory(podcast=podcast, user=user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=user)
-        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=user)
-        AudioLogFactory(user=user)
-        FavoriteFactory(user=user)
-        resp = self.client.get(reverse("user_stats"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context["stats"]["follows"], 1)
-        self.assertEqual(resp.context["stats"]["listened"], 3)
+        FollowFactory(podcast=podcast, user=auth_user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
+        AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
+        AudioLogFactory(user=auth_user)
+        FavoriteFactory(user=auth_user)
+
+        resp = client.get(reverse("user_stats"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context["stats"]["follows"] == 1
+        assert resp.context["stats"]["listened"] == 3
 
 
-class ExportPodcastFeedsTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-        cls.podcast = PodcastFactory()
+class TestExportPodcastFeeds:
+    def test_get(self, client, auth_user):
+        resp = client.get(reverse("export_podcast_feeds"))
+        assert resp.status_code == http.HTTPStatus.OK
 
-    def setUp(self) -> None:
-        self.client.force_login(self.user)
+    def test_export_opml(self, client, follow):
+        resp = client.post(reverse("export_podcast_feeds"), {"format": "opml"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "application/xml"
 
-    def test_get(self) -> None:
-        resp = self.client.get(reverse("export_podcast_feeds"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-
-    def test_export_opml(self) -> None:
-        FollowFactory(podcast=self.podcast, user=self.user)
-        resp = self.client.post(reverse("export_podcast_feeds"), {"format": "opml"})
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp["Content-Type"], "application/xml")
-
-    def test_export_csv(self) -> None:
-        FollowFactory(podcast=self.podcast, user=self.user)
-        resp = self.client.post(reverse("export_podcast_feeds"), {"format": "csv"})
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp["Content-Type"], "text/csv")
+    def test_export_csv(self, client, follow):
+        resp = client.post(reverse("export_podcast_feeds"), {"format": "csv"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "text/csv"
 
 
-class DeleteAccountTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-
-    def setUp(self) -> None:
-        self.client.force_login(self.user)
-
-    def test_get(self) -> None:
+class TestDeleteAccount:
+    def test_get(self, client, auth_user, user_model):
         # make sure we don't accidentally delete account on get request
-        resp = self.client.get(reverse("delete_account"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue(User.objects.exists())
+        resp = client.get(reverse("delete_account"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert user_model.objects.exists()
 
-    def test_post_unconfirmed(self) -> None:
-        resp = self.client.post(reverse("delete_account"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue(User.objects.exists())
+    def test_post_unconfirmed(self, client, auth_user, user_model):
+        resp = client.post(reverse("delete_account"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert user_model.objects.exists()
 
-    def test_post_confirmed(self) -> None:
-        resp = self.client.post(reverse("delete_account"), {"confirm-delete": True})
-        self.assertRedirects(resp, settings.HOME_URL)
-        self.assertFalse(User.objects.exists())
+    def test_post_confirmed(self, client, auth_user, user_model):
+        resp = client.post(reverse("delete_account"), {"confirm-delete": True})
+        assert resp.url == settings.HOME_URL
+        assert not user_model.objects.exists()
 
 
-class AcceptCookiesTests(TestCase):
-    def test_post(self) -> None:
-        resp = self.client.post(reverse("accept_cookies"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertIn("accept-cookies", resp.cookies)
+class TestAcceptCookies:
+    def test_post(self, client):
+        resp = client.post(reverse("accept_cookies"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert "accept-cookies" in resp.cookies
