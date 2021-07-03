@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 
-export default function ({ url }) {
+export default function ({ csrfToken, url }) {
   return {
     init() {
       const update = () => {
@@ -9,7 +9,13 @@ export default function ({ url }) {
         );
 
         if (items.length > 0) {
-          window.htmx.ajax('POST', url, { source: this.$el, values: { items } });
+          const body = new URLSearchParams();
+          items.forEach((item) => body.append('items', item));
+          fetch(url, {
+            body,
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+          }).catch((err) => console.error(err));
         }
       };
       Sortable.create(this.$el, {

@@ -27,7 +27,7 @@ class PlayerLock {
   }
 }
 
-export default function Player({ mediaSrc, currentTime, unlock, urls }) {
+export default function Player({ mediaSrc, csrfToken, currentTime, unlock, urls }) {
   const lock = new PlayerLock('player-enabled');
 
   if (unlock) {
@@ -204,14 +204,12 @@ export default function Player({ mediaSrc, currentTime, unlock, urls }) {
     },
 
     sendTimeUpdate() {
-      try {
-        this.canSendTimeUpdate() &&
-          window.htmx.ajax('POST', urls.timeUpdate, {
-            source: this.$el,
-            values: { current_time: this.currentTime },
-          });
-      } catch (e) {
-        console.error(e);
+      if (this.canSendTimeUpdate()) {
+        fetch(urls.timeUpdate, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken },
+          body: new URLSearchParams({ current_time: this.currentTime }),
+        }).catch((err) => console.error(err));
       }
     },
   };
