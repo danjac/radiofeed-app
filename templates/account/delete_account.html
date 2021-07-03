@@ -4,11 +4,11 @@
 
 {% block settings_content %}
 
-<div class="w-full md:w-3/4 lg:w-1/2 border p-3 dark:border-gray-500 text-sm">
-  <p class="mb-3">
+<div class="w-full md:w-3/4 lg:w-1/2 text-sm space-y-3">
+  <p>
     Please confirm that you want to delete your account. You will not be able to undo this action!
   </p>
-  <div class="flex justify-end">
+  <div>
     <form method="POST"
           hx-disable="true"
           action="{% url 'delete_account' %}">

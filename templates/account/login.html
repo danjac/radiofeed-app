@@ -14,7 +14,7 @@
 
 <form method="post"
       action="{{ request.path }}"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 text-sm"
+      class="w-full sm:w-3/4 lg:w-1/2 text-sm space-y-3"
       hx-disable="true"
       novalidate>
   {% csrf_token %}
@@ -24,7 +24,7 @@
          value="{{ redirect_field_value }}" />
   {% endif %}
   {% include "forms/_fields.html" %}
-  <div class="flex items-center justify-end">
+  <div class="flex items-center">
     <a class="link mr-3"
        title="Recover Your Password"
        href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
@@ -34,5 +34,5 @@
     </button>
   </div>
 </form>
-{% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
+{% include "account/_social_logins.html" %}
 {% endblock %}

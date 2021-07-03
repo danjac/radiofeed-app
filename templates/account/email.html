@@ -8,7 +8,7 @@
 {% if user.emailaddress_set.all %}
 <p class="mb-3 text-sm">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form class="mb-3 w-full sm:w-3/4 lg:w-1/2 text-sm"
+<form class="space-y-3 text-sm border-b dark:border-gray-500 pb-3 mb-3"
       hx-disable="true"
       method="post"
       id="email-addresses"
@@ -16,7 +16,7 @@
   {% csrf_token %}
   {% with num_addresses=user.emailaddress_set.count %}
   {% for emailaddress in user.emailaddress_set.all %}
-  <div class="border p-2 mb-3 dark:border-gray-500">
+  <div>
     <label for="email_radio_{{forloop.counter}}"
            class="flex items-center">
 
@@ -40,7 +40,7 @@
     </label>
   </div>
   {% endfor %}
-  <div class="flex items-center justify-evenly sm:justify-end mb-3 space-x-2">
+  <div class="flex items-center space-x-2">
     <button class="flex items-center btn btn-default"
             name="action_primary"
             value="1">
@@ -67,22 +67,22 @@
 
 {% else %}
 
-<p class="text-sm"><strong>{% translate 'Warning:'%}</strong>
+<p class="text-sm border-b dark:border-gray-500 pb-3 mb-3"><strong>{% translate 'Warning:'%}</strong>
   {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
 </p>
 
 {% endif %}
 
 {% if can_add_email %}
-<h2 class="font-semibold mb-3 text-sm">{% translate "Add E-mail Address" %}</h2>
+<h2 class="font-semibold mb-3 text-sm">{% translate "Add New E-mail Address" %}</h2>
 <form method="post"
       action="{{ request.path }}"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 text-sm"
+      class="w-full sm:w-3/4 lg:w-1/2 text-sm space-y-3"
       hx-disable="true"
       novalidate>
   {% csrf_token %}
   {% include "forms/_fields.html" %}
-  <div class="flex items-center justify-end">
+  <div class="flex items-center">
     <button class="flex items-center btn btn-default"
             name="action_add"
             value="true">

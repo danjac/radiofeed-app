@@ -17,7 +17,7 @@
 
 <form method="post"
       action="{{ request.path }}"
-      class="p-3 border dark:border-gray-500 w-full sm:w-3/4 lg:w-1/2 text-sm"
+      class="w-full sm:w-3/4 lg:w-1/2 text-sm space-y-3"
       hx-disable="true"
       novalidate>
   {% csrf_token %}
@@ -27,7 +27,7 @@
          value="{{ redirect_field_value }}" />
   {% endif %}
   {% include "forms/_fields.html" %}
-  <div class="flex items-center justify-end">
+  <div class="flex items-center">
     <button class="flex items-center btn btn-default">
       {% icon "plus" css_class="btn-icon mr-2" %}
       Sign Up
@@ -35,9 +35,9 @@
   </div>
 </form>
 
-{% include "account/_social_logins.html" with css_class="mt-3 flex items-center" %}
+{% include "account/_social_logins.html" %}
 
-<p class="mt-3">
+<p class="mt-3 text-sm">
   Please review our <a class="underline link"
      href="{% url 'about:privacy' %}">Privacy Policy</a> before you join.
 </p>

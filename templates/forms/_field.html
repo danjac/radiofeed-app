@@ -3,7 +3,7 @@
 {% if field.is_hidden %}
 {{ field }}
 {% else %}
-<div class="mb-3 text-sm">
+<div class="text-sm space-y-2">
   {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %}
   {% if field|widget_type == "checkboxinput" %}
   {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
