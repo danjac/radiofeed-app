@@ -7,7 +7,7 @@
   {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %}
   {% if field|widget_type == "checkboxinput" %}
   {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
-  <label class="flex items-center w-full">
+  <label class="flex items-center w-full font-semibold">
     {% render_field field class=css_class %}
     {{ field.label }}
   </label>
