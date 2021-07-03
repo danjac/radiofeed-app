@@ -21,16 +21,12 @@ class Player:
 
         session_data = {
             "episode": episode.id,
-            "is_queued": False,
         }
 
-        deleted, _ = QueueItem.objects.filter(
+        QueueItem.objects.filter(
             user=self.request.user,
             episode=episode,
         ).delete()
-
-        if deleted:
-            session_data["is_queued"] = True
 
         self.request.session[self.session_key] = session_data
 
@@ -84,9 +80,6 @@ class Player:
 
     def get_current_episode_id(self) -> int | None:
         return self.get_session_data().get("episode", None)
-
-    def is_queued(self) -> bool:
-        return self.get_session_data().get("is_queued", False)
 
     def get_session_data(self) -> dict:
         return self.request.session.get(self.session_key, {})

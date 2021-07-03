@@ -30,9 +30,16 @@ class UserPreferencesTests(TestCase):
 
     def test_post(self) -> None:
         url = reverse("user_preferences")
-        resp = self.client.post(url, {"send_recommendations_email": False})
+        resp = self.client.post(
+            url,
+            {
+                "send_recommendations_email": False,
+                "autoplay": True,
+            },
+        )
         self.assertRedirects(resp, url)
         self.user.refresh_from_db()
+        assert self.user.autoplay
         assert not self.user.send_recommendations_email
 
 

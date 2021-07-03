@@ -10,15 +10,16 @@ from audiotrails.episodes.factories import (
     QueueItemFactory,
 )
 from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from audiotrails.episodes.player import Player
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
 from audiotrails.users.factories import UserFactory
 
 episodes_url = reverse_lazy("episodes:index")
 
 
-def add_episode_to_player(client: Client, episode: Episode, is_queued: bool = False):
+def add_episode_to_player(client: Client, episode: Episode):
     session = client.session
-    session["player"] = {"episode": episode.id, "is_queued": is_queued}
+    session[Player.session_key] = {"episode": episode.id}
     session.save()
 
 
@@ -207,7 +208,7 @@ class PlayNextEpisodeTests(TestCase):
         self.client.force_login(self.user)
 
     def test_has_next_in_queue(self) -> None:
-        add_episode_to_player(self.client, self.episode, is_queued=True)
+        add_episode_to_player(self.client, self.episode)
 
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
         resp = self.client.post(self.url)
@@ -215,8 +216,12 @@ class PlayNextEpisodeTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 0)
 
-    def test_has_next_in_queue_if_current_not_queued(self) -> None:
-        add_episode_to_player(self.client, self.episode, is_queued=False)
+    def test_has_next_in_queue_if_autoplay_disabled(self) -> None:
+
+        self.user.autoplay = False
+        self.user.save()
+
+        add_episode_to_player(self.client, self.episode)
 
         QueueItem.objects.create(position=0, user=self.user, episode=self.episode)
         resp = self.client.post(self.url)
@@ -224,7 +229,7 @@ class PlayNextEpisodeTests(TestCase):
         self.assertEqual(resp.status_code, http.HTTPStatus.OK)
         self.assertEqual(QueueItem.objects.count(), 1)
 
-    def test_has_episode_in_player(self) -> None:
+    def test_has_next_in_queue_if_autoplay_enabled(self) -> None:
 
         log = AudioLogFactory(user=self.user, current_time=2000)
 
@@ -239,7 +244,7 @@ class PlayNextEpisodeTests(TestCase):
     def test_play_next_episode_in_history(self) -> None:
         log = AudioLogFactory(user=self.user, current_time=30)
 
-        add_episode_to_player(self.client, log.episode, is_queued=True)
+        add_episode_to_player(self.client, log.episode)
 
         QueueItem.objects.create(position=0, user=self.user, episode=log.episode)
         resp = self.client.post(self.url)

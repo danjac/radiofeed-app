@@ -46,6 +46,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
 class User(AbstractUser):
     send_recommendations_email: bool = models.BooleanField(default=True)
+    autoplay: bool = models.BooleanField(default=True)
 
     objects = UserManager()
 

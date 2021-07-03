@@ -36,14 +36,12 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    queued = request.player.is_queued()
-
     if log := request.player.stop_episode(mark_completed=True):
         current_episode = log.episode
     else:
         current_episode = None
 
-    if queued and (
+    if request.user.autoplay and (
         next_item := (
             QueueItem.objects.filter(user=request.user)
             .with_current_time(request.user)

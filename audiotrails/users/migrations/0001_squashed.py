@@ -8,15 +8,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("users", "0001_initial"),
-        ("users", "0002_user_autoplay"),
-        ("users", "0003_auto_20201222_1039"),
-        ("users", "0004_remove_user_autoplay"),
-        ("users", "0005_auto_20210219_1521"),
-        ("users", "0006_alter_user_id"),
-    ]
-
     initial = True
 
     dependencies = [

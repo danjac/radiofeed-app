@@ -19,7 +19,11 @@ class UserCreationForm(BaseUserCreationForm):
 class UserPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
-        fields: tuple[str] = ("send_recommendations_email",)
+        fields: tuple[str, str] = (
+            "autoplay",
+            "send_recommendations_email",
+        )
         help_texts: dict[str, str] = {
+            "autoplay": "Automatically play the next episode in your Play Queue when the current playing episode ends",
             "send_recommendations_email": "We will send you recommendations for new podcasts every week",
         }

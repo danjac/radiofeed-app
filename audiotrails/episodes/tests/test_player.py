@@ -35,7 +35,6 @@ class PlayerTests(TestCase):
         if episode is not None:
             req.session[Player.session_key] = {
                 "episode": episode.id,
-                "is_queued": is_queued,
             }
         req.user = user or AnonymousUser()
         return req
@@ -56,7 +55,6 @@ class PlayerTests(TestCase):
         self.assertTrue(log.updated)
 
         self.assertTrue(player.is_playing(self.episode))
-        self.assertFalse(player.is_queued())
 
     def test_start_episode_from_queue(self) -> None:
         req = self.make_request(user=self.user)
@@ -76,7 +74,6 @@ class PlayerTests(TestCase):
         self.assertTrue(log.updated)
 
         self.assertTrue(player.is_playing(self.episode))
-        self.assertTrue(player.is_queued())
         self.assertFalse(QueueItem.objects.exists())
 
     def test_start_episode_already_played(self) -> None:
