@@ -1,5 +1,5 @@
 {% with podcast=result.podcast is_podcast=result.podcast.pub_date podcast_url=result.podcast.get_absolute_url %}
-<section class="px-1 py-2 flex items-center space-x-3 border-t dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 ">
+<section class="py-2 flex items-center space-x-3 border-t dark:border-gray-500">
   {% if result.image %}
   <div>
     {% if is_podcast %}
