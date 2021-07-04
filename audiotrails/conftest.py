@@ -29,7 +29,7 @@ def user(db) -> AuthenticatedUser:
 
 @pytest.fixture
 def anonymous_user() -> AnonymousUser:
-    return AnonymousUser
+    return AnonymousUser()
 
 
 @pytest.fixture

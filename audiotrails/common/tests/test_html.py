@@ -1,29 +1,27 @@
-from django.test import SimpleTestCase
-
 from audiotrails.common.html import clean_html_content, unescape
 
 
-class CleanHtmlContentTests(SimpleTestCase):
-    def test_clean_html_content_if_safe(self) -> None:
+class TestCleanHtmlContent:
+    def test_clean_html_content_if_safe(self):
         text = "<p>testing with paras</p>"
-        self.assertEqual(clean_html_content(text), text)
+        assert clean_html_content(text) == text
 
-    def test_clean_html_content_if_link(self) -> None:
+    def test_clean_html_content_if_link(self):
         text = '<a href="http://reddit.com">Reddit</a>'
         clean = clean_html_content(text)
-        self.assertIn('target="_blank"', clean)
-        self.assertIn('rel="noopener noreferrer nofollow"', clean)
+        assert 'target="_blank"' in clean
+        assert 'rel="noopener noreferrer nofollow"' in clean
 
-    def test_clean_html_content_if_unsafe(self) -> None:
+    def test_clean_html_content_if_unsafe(self):
         text = "<script>alert('xss ahoy!')</script>"
-        self.assertEqual(clean_html_content(text), "alert('xss ahoy!')")
+        assert clean_html_content(text) == "alert('xss ahoy!')"
 
 
-class UnescapeTests(SimpleTestCase):
-    def test_named_unescape(self) -> None:
+class TestUnescape:
+    def test_named_unescape(self):
         text = "this &amp; that"
-        self.assertEqual(unescape(text), "this & that")
+        assert unescape(text) == "this & that"
 
-    def test_numeric_unescape(self) -> None:
+    def test_numeric_unescape(self):
         text = "gov&#8217;t"
-        self.assertEqual(unescape(text), "gov’t")
+        assert unescape(text) == "gov’t"
