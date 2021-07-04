@@ -1,5 +1,3 @@
-from django.test import TestCase
-
 from audiotrails.podcasts.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -9,8 +7,8 @@ from audiotrails.podcasts.models import Recommendation
 from audiotrails.podcasts.recommender import recommend
 
 
-class PodcastRecommenderTests(TestCase):
-    def test_handle_empty_data_frame(self) -> None:
+class TestPodcastRecommender:
+    def test_handle_empty_data_frame(self, db):
         PodcastFactory(
             title="Cool science podcast",
             keywords="science physics astronomy",
@@ -18,9 +16,9 @@ class PodcastRecommenderTests(TestCase):
         )
 
         recommend()
-        self.assertEqual(Recommendation.objects.count(), 0)
+        assert Recommendation.objects.count() == 0
 
-    def test_create_podcast_recommendations_with_no_categories(self) -> None:
+    def test_create_podcast_recommendations_with_no_categories(self, db):
         podcast_1 = PodcastFactory(
             title="Cool science podcast",
             keywords="science physics astronomy",
@@ -39,9 +37,9 @@ class PodcastRecommenderTests(TestCase):
             .order_by("similarity")
             .select_related("recommended")
         )
-        self.assertEqual(recommendations.count(), 0)
+        assert recommendations.count() == 0
 
-    def test_create_podcast_recommendations(self):
+    def test_create_podcast_recommendations(self, db):
 
         cat_1 = CategoryFactory(name="Science")
         cat_2 = CategoryFactory(name="Philosophy")
@@ -72,5 +70,5 @@ class PodcastRecommenderTests(TestCase):
             .order_by("similarity")
             .select_related("recommended")
         )
-        self.assertEqual(recommendations.count(), 1)
-        self.assertEqual(recommendations[0].recommended, podcast_2)
+        assert recommendations.count() == 1
+        assert recommendations[0].recommended == podcast_2

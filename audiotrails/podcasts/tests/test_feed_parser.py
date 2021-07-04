@@ -4,11 +4,9 @@ import datetime
 import http
 import pathlib
 
-from unittest import mock
-
+import pytest
 import requests
 
-from django.test import SimpleTestCase, TestCase
 from django.utils import timezone
 
 from audiotrails.podcasts.date_parser import parse_date
@@ -48,19 +46,19 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError()
 
 
-class FeedHeaderTests(TestCase):
+class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
         headers = get_feed_headers(podcast)
-        self.assertEqual(headers["If-None-Match"], f'"{podcast.etag}"')
+        assert headers["If-None-Match"] == f'"{podcast.etag}"'
 
     def test_is_modified(self):
         podcast = Podcast(modified=timezone.now())
         headers = get_feed_headers(podcast)
-        self.assertTrue(headers["If-Modified-Since"])
+        assert headers["If-Modified-Since"]
 
 
-class FeedParserTests(TestCase):
+class TestFeedParser:
 
     mock_file = "rss_mock.xml"
     mock_http_get = "requests.get"
@@ -68,10 +66,13 @@ class FeedParserTests(TestCase):
     redirect_rss = "https://example.com/test.xml"
     updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
-    @classmethod
-    def setUpTestData(cls) -> None:
+    @pytest.fixture
+    def new_podcast(self, db):
+        return PodcastFactory(cover_url=None, pub_date=None)
 
-        [
+    @pytest.fixture
+    def categories(self, db):
+        yield [
             CategoryFactory(name=name)
             for name in (
                 "Philosophy",
@@ -83,98 +84,85 @@ class FeedParserTests(TestCase):
             )
         ]
 
-        cls.podcast = PodcastFactory(cover_url=None, pub_date=None)
-
-    def setUp(self):
-        self.content = open(
-            pathlib.Path(__file__).parent / "mocks" / self.mock_file, "rb"
-        ).read()
+        get_categories_dict.cache_clear()
 
     def get_feedparser_content(self, filename: str = "") -> bytes:
         return open(
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file), "rb"
         ).read()
 
-    def tearDown(self) -> None:
-        get_categories_dict.cache_clear()
-
-    def test_parse_no_podcasts(self):
-        with mock.patch(
+    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=self.podcast.rss,
+                url=new_podcast.rss,
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
-        ):
-            episodes = parse_feed(self.podcast)
+        )
+        episodes = parse_feed(new_podcast)
+        assert len(episodes), 19
 
-        self.assertEqual(len(episodes), 19)
+    def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
-    def test_parse_empty_feed(self):
-
-        with mock.patch(
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=self.podcast.rss,
+                url=new_podcast.rss,
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
-        ):
-            episodes = parse_feed(self.podcast)
+        )
+        episodes = parse_feed(new_podcast)
+        assert len(episodes) == 0
 
-        self.assertEqual(len(episodes), 0)
+    def test_parse_feed(self, mocker, new_podcast, categories):
 
-    def test_parse_feed(self):
-
-        with mock.patch(
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                url=self.podcast.rss,
+                url=new_podcast.rss,
                 content=self.get_feedparser_content(),
                 headers={
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
                 },
             ),
-        ):
-            episodes = parse_feed(self.podcast)
-
-        self.assertEqual(len(episodes), 20)
-
-        self.podcast.refresh_from_db()
-
-        self.assertEqual(self.podcast.title, "Mysterious Universe")
-        self.assertTrue(self.podcast.rss)
-
-        self.assertEqual(
-            self.podcast.description,
-            "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity.",
         )
-        self.assertEqual(self.podcast.creators, "8th Kind")
+        episodes = parse_feed(new_podcast)
 
-        self.assertTrue(self.podcast.modified)
-        self.assertEqual(self.podcast.modified.day, 1)
-        self.assertEqual(self.podcast.modified.month, 7)
-        self.assertEqual(self.podcast.modified.year, 2020)
+        assert len(episodes) == 20
 
-        self.assertTrue(self.podcast.etag)
-        self.assertTrue(self.podcast.explicit)
-        self.assertTrue(self.podcast.cover_url)
+        new_podcast.refresh_from_db()
 
-        categories = [c.name for c in self.podcast.categories.all()]
+        assert new_podcast.rss
+        assert new_podcast.title == "Mysterious Universe"
 
-        self.assertEqual(
-            self.podcast.pub_date, parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert (
+            new_podcast.description
+            == "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity."
         )
 
-        self.assertIn("Science", categories)
-        self.assertIn("Religion & Spirituality", categories)
-        self.assertIn("Society & Culture", categories)
-        self.assertIn("Philosophy", categories)
+        assert new_podcast.creators == "8th Kind"
 
-        self.assertTrue(self.podcast.modified)
+        assert new_podcast.modified
+        assert new_podcast.modified.day == 1
+        assert new_podcast.modified.month == 7
+        assert new_podcast.modified.year == 2020
 
-    def test_parse_feed_permanent_redirect(self):
-        with mock.patch(
+        assert new_podcast.etag
+        assert new_podcast.explicit
+        assert new_podcast.cover_url
+
+        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        categories = [c.name for c in new_podcast.categories.all()]
+
+        assert "Science" in categories
+        assert "Religion & Spirituality" in categories
+        assert "Society & Culture" in categories
+        assert "Philosophy" in categories
+
+    def test_parse_feed_permanent_redirect(self, mocker, new_podcast, categories):
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
                 url=self.redirect_rss,
@@ -185,21 +173,23 @@ class FeedParserTests(TestCase):
                 },
                 content=self.get_feedparser_content(),
             ),
-        ):
-            episodes = parse_feed(self.podcast)
+        )
+        episodes = parse_feed(new_podcast)
 
-        self.assertEqual(len(episodes), 20)
+        assert len(episodes) == 20
 
-        self.podcast.refresh_from_db()
+        new_podcast.refresh_from_db()
 
-        self.assertEqual(self.podcast.rss, self.redirect_rss)
-        self.assertTrue(self.podcast.modified)
+        assert new_podcast.rss == self.redirect_rss
+        assert new_podcast.modified
 
-    def test_parse_feed_permanent_redirect_url_taken(self):
+    def test_parse_feed_permanent_redirect_url_taken(
+        self, mocker, new_podcast, categories
+    ):
         other = PodcastFactory(rss=self.redirect_rss)
-        current_rss = self.podcast.rss
+        current_rss = new_podcast.rss
 
-        with mock.patch(
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
                 url=other.rss,
@@ -210,93 +200,92 @@ class FeedParserTests(TestCase):
                 },
                 content=self.get_feedparser_content(),
             ),
-        ):
-            episodes = parse_feed(self.podcast)
+        )
+        episodes = parse_feed(new_podcast)
 
-        self.assertEqual(len(episodes), 0)
+        assert len(episodes) == 0
 
-        self.podcast.refresh_from_db()
+        new_podcast.refresh_from_db()
 
-        self.assertEqual(self.podcast.rss, current_rss)
-        self.assertFalse(self.podcast.active)
-        self.assertEqual(self.podcast.redirect_to, other)
+        assert new_podcast.rss == current_rss
+        assert not new_podcast.active
+        assert new_podcast.redirect_to == other
 
-    def test_parse_feed_not_modified(self):
-        with mock.patch(
+    def test_parse_feed_not_modified(self, mocker, new_podcast, categories):
+        mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
-                self.podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
+                new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
-        ):
-            episodes = parse_feed(self.podcast)
+        )
+        episodes = parse_feed(new_podcast)
 
-        self.assertEqual(episodes, [])
+        assert episodes == []
 
-        self.podcast.refresh_from_db()
-        self.assertTrue(self.podcast.active)
-        self.assertFalse(self.podcast.modified)
+        new_podcast.refresh_from_db()
+        assert new_podcast.active
+        assert not new_podcast.modified
 
-    def test_parse_feed_error(self):
-        with mock.patch(self.mock_http_get, side_effect=requests.RequestException):
-            episodes = parse_feed(self.podcast)
+    def test_parse_feed_error(self, mocker, new_podcast, categories):
+        mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
+        episodes = parse_feed(new_podcast)
 
-        self.assertEqual(episodes, [])
-        self.assertTrue(self.podcast.active)
-        self.assertTrue(self.podcast.exception)
+        assert episodes == []
+        assert new_podcast.active
+        assert new_podcast.exception
 
-    def test_parse_feed_gone(self):
-        with mock.patch(
+    def test_parse_feed_gone(self, mocker, new_podcast, categories):
+        mocker.patch(
             self.mock_http_get,
-            return_value=BadMockResponse(self.podcast.rss, status=http.HTTPStatus.GONE),
-        ):
-            episodes = parse_feed(self.podcast)
+            return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
+        )
+        episodes = parse_feed(new_podcast)
 
-        self.assertEqual(episodes, [])
+        assert episodes == []
 
-        self.podcast.refresh_from_db()
-        self.assertFalse(self.podcast.active)
-        self.assertFalse(self.podcast.exception)
-        self.assertEqual(self.podcast.error_status, http.HTTPStatus.GONE)
+        new_podcast.refresh_from_db()
+
+        assert not new_podcast.active
+        assert not new_podcast.exception
+        assert new_podcast.error_status == http.HTTPStatus.GONE
 
 
-class ConvTests(SimpleTestCase):
+class TestConvertors:
     def test_conv_str(self):
-        self.assertEqual(conv_str("testing"), "testing")
+        assert conv_str("testing") == "testing"
 
     def test_conv_str_is_none(self):
-        self.assertEqual(conv_str(None), "")
+        assert conv_str(None) == ""
 
     def test_conv_int(self):
-        self.assertEqual(conv_int("123"), 123)
+        assert conv_int("123") == 123
 
     def test_conv_int_is_none(self):
-        self.assertEqual(conv_int(None), None)
+        assert conv_int(None) is None
 
     def test_conv_int_invalid(self):
-        self.assertEqual(conv_int("fubar"), None)
+        assert conv_int("fubar") is None
 
     def test_conv_url(self):
-        self.assertEqual(conv_url("http://example.com"), "http://example.com")
+        assert conv_url("http://example.com") == "http://example.com"
 
     def test_conv_url_invalid(self):
-        self.assertEqual(conv_url("ftp://example.com"), "")
+        assert conv_url("ftp://example.com") == ""
 
     def test_conv_url_none(self):
-        self.assertEqual(conv_url(None), "")
+        assert conv_url(None) == ""
 
     def test_conv_date(self):
-        self.assertTrue(
-            isinstance(conv_date("Fri, 19 Jun 2020 16:58:03"), datetime.datetime)
-        )
+        assert isinstance(conv_date("Fri, 19 Jun 2020 16:58:03"), datetime.datetime)
 
     def test_conv_date_invalid(self):
-        self.assertEqual(conv_date("fubar"), None)
+        assert conv_date("fubar") is None
 
     def test_conv_date_none(self):
-        self.assertEqual(conv_date(None), None)
+        assert conv_date(None) is None
 
     def test_conv_list(self):
-        self.assertEqual(conv_list(["test"]), ["test"])
+        assert conv_list(["test"]) == ["test"]
 
     def test_conv_list_none(self):
-        self.assertEqual(conv_list(None), [])
+        assert conv_list(None) == []
