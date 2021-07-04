@@ -75,6 +75,8 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
+    reltuple_count = "audiotrails.common.db.get_reltuple_count"
+
     def _test_for_feed_sync(self):
         now = timezone.now()
 
@@ -120,15 +122,15 @@ class TestPodcastManager:
         assert Podcast.objects.search("").count() == 0
 
     def test_count_if_gt_1000(self, db, mocker):
-        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+        mocker.patch(self.reltuple_count, return_value=2000)
         assert Podcast.objects.count() == 2000
 
     def test_count_if_lt_1000(self, db, mocker, podcast):
-        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=100)
+        mocker.patch(self.reltuple_count, return_value=100)
         assert Podcast.objects.count() == 1
 
     def test_count_if_filter(self, db, mocker):
-        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+        mocker.patch(self.reltuple_count, return_value=2000)
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
 
