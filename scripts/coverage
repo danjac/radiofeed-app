@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-podman exec -it -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.test audiopod-webapp coverage $@
-
