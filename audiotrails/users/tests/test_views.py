@@ -65,25 +65,25 @@ class TestExportPodcastFeeds:
 
 
 class TestDeleteAccount:
-    def test_get(self, client, auth_user, user_model):
+    def test_get(self, client, auth_user, django_user_model):
         # make sure we don't accidentally delete account on get request
         resp = client.get(reverse("delete_account"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert user_model.objects.exists()
+        assert django_user_model.objects.exists()
 
-    def test_post_unconfirmed(self, client, auth_user, user_model):
+    def test_post_unconfirmed(self, client, auth_user, django_user_model):
         resp = client.post(reverse("delete_account"))
         assert resp.status_code == http.HTTPStatus.OK
-        assert user_model.objects.exists()
+        assert django_user_model.objects.exists()
 
-    def test_post_confirmed(self, client, auth_user, user_model):
+    def test_post_confirmed(self, client, auth_user, django_user_model):
         resp = client.post(reverse("delete_account"), {"confirm-delete": True})
         assert resp.url == settings.HOME_URL
-        assert not user_model.objects.exists()
+        assert not django_user_model.objects.exists()
 
 
 class TestAcceptCookies:
-    def test_post(self, client):
+    def test_post(self, client, db):
         resp = client.post(reverse("accept_cookies"))
         assert resp.status_code == http.HTTPStatus.OK
         assert "accept-cookies" in resp.cookies

@@ -1,25 +1,23 @@
-from typing import Callable, Type
+from typing import Callable
 
 import freezegun
 import pytest
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 
 from audiotrails.common.typedefs import AuthenticatedUser
-from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
-from audiotrails.podcasts.models import Follow, Podcast
+from audiotrails.podcasts.factories import (
+    CategoryFactory,
+    FollowFactory,
+    PodcastFactory,
+)
+from audiotrails.podcasts.models import Category, Follow, Podcast
 from audiotrails.users.factories import UserFactory
 
 
 @pytest.fixture
 def freeze_time() -> Callable:
     return freezegun.freeze_time
-
-
-@pytest.fixture
-def user_model() -> Type[AuthenticatedUser]:
-    return get_user_model()
 
 
 @pytest.fixture
@@ -39,15 +37,13 @@ def auth_user(client, user) -> AuthenticatedUser:
 
 
 @pytest.fixture
-def admin_user(client, db) -> AuthenticatedUser:
-    user = UserFactory(is_staff=True, is_superuser=True)
-    client.force_login(user)
-    return user
+def podcast(db) -> Podcast:
+    return PodcastFactory()
 
 
 @pytest.fixture
-def podcast(db) -> Podcast:
-    return PodcastFactory()
+def category(db) -> Category:
+    return CategoryFactory()
 
 
 @pytest.fixture

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import http
 
-from unittest.mock import Mock, patch
+import pytest
 
-from django.test import TestCase, TransactionTestCase
 from django.urls import reverse, reverse_lazy
 
 from audiotrails.episodes.factories import EpisodeFactory
@@ -17,7 +16,6 @@ from audiotrails.podcasts.factories import (
 )
 from audiotrails.podcasts.itunes import SearchResult
 from audiotrails.podcasts.models import Follow, Podcast
-from audiotrails.users.factories import UserFactory
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -41,173 +39,143 @@ def mock_search_itunes(
     return [mock_search_result], [PodcastFactory()]
 
 
-class PreviewTests(TestCase):
-    def test_preview(self) -> None:
-        podcast = PodcastFactory()
-        resp = self.client.get(reverse("podcasts:preview", args=[podcast.id]))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
+class TestPreview:
+    def test_preview(self, client, podcast):
+        resp = client.get(reverse("podcasts:preview", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
 
 
-class AnonymousPodcastsTests(TestCase):
-    def test_anonymous(self) -> None:
+class TestPodcasts:
+    def test_anonymous(self, client, db):
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(podcasts_url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
+        resp = client.get(podcasts_url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
-
-class AuthenticatedPodcastsTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-
-    def setUp(self) -> None:
-        self.client.force_login(self.user)
-
-    def test_user_is_following_featured(self) -> None:
+    def test_user_is_following_featured(self, client, auth_user):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        sub = FollowFactory(user=self.user).podcast
-        resp = self.client.get(reverse("podcasts:featured"))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
-        self.assertFalse(sub in resp.context_data["page_obj"].object_list)
+        sub = FollowFactory(user=auth_user).podcast
+        resp = client.get(reverse("podcasts:featured"))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 3
+        assert sub not in resp.context_data["page_obj"].object_list
 
-    def test_user_is_not_following(self) -> None:
+    def test_user_is_not_following(self, client, auth_user):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        resp = self.client.get(podcasts_url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
+        resp = client.get(podcasts_url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following(self) -> None:
-        """If user following any podcasts, show only own feed with these pdocasts"""
+    def test_user_is_following(self, client, auth_user):
+        """If user following any podcasts, show only own feed with these podcasts"""
 
         PodcastFactory.create_batch(3)
-        sub = FollowFactory(user=self.user)
-        resp = self.client.get(podcasts_url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
-        self.assertEqual(resp.context_data["page_obj"].object_list[0], sub.podcast)
+        sub = FollowFactory(user=auth_user)
+        resp = client.get(podcasts_url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == sub.podcast
 
 
-class SearchPodcastsTests(TestCase):
-    def test_search_empty(self) -> None:
-        self.assertRedirects(
-            self.client.get(
+class TestSearchPodcasts:
+    def test_search_empty(self, client, db):
+        assert (
+            client.get(
                 reverse("podcasts:search_podcasts"),
                 {"q": ""},
-            ),
-            podcasts_url,
+            ).url
+            == podcasts_url
         )
 
-    def test_search(self) -> None:
+    def test_search(self, client, transactional_db):
         podcast = PodcastFactory(title="testing")
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        resp = self.client.get(
+        resp = client.get(
             reverse("podcasts:search_podcasts"),
             {"q": "testing"},
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
-        self.assertEqual(resp.context_data["page_obj"].object_list[0], podcast)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 1
+        assert resp.context_data["page_obj"].object_list[0] == podcast
 
 
-class PodcastRecommendationsTests(TestCase):
-    def test_get(self) -> None:
+class TestPodcastRecommendations:
+    def test_get(self, client, db):
         podcast = PodcastFactory()
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        resp = self.client.get(
+        resp = client.get(
             reverse("podcasts:podcast_recommendations", args=[podcast.id, podcast.slug])
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["podcast"], podcast)
-        self.assertEqual(len(resp.context_data["recommendations"]), 3)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["podcast"] == podcast
+        assert len(resp.context_data["recommendations"]) == 3
 
 
-class PodcastDetailTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.podcast = PodcastFactory()
-
-    def setUp(self) -> None:
-        self.url = reverse(
-            "podcasts:podcast_detail",
-            args=[self.podcast.id, self.podcast.slug],
+class TestPodcastDetail:
+    def test_get_podcast(self, client, podcast):
+        resp = client.get(
+            reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
-
-    def test_get_podcast(self) -> None:
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["podcast"], self.podcast)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["podcast"] == podcast
 
 
-class PodcastEpisodesTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.podcast = PodcastFactory()
-        EpisodeFactory.create_batch(3, podcast=cls.podcast)
+class TestPodcastEpisodes:
+    def test_get_episodes(self, client, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
 
-    def setUp(self) -> None:
-        self.url = reverse(
-            "podcasts:podcast_episodes",
-            args=[self.podcast.id, self.podcast.slug],
+        resp = client.get(
+            reverse(
+                "podcasts:podcast_episodes",
+                args=[podcast.id, podcast.slug],
+            )
         )
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_get_podcast(self) -> None:
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["podcast"], self.podcast)
-
-    def test_get_episodes(self) -> None:
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 3)
-
-
-class PodcastEpisodeSearchTests(TransactionTestCase):
-    def test_search(self) -> None:
-        podcast = PodcastFactory()
+    def test_search(self, client, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
         EpisodeFactory(title="testing", podcast=podcast)
-        resp = self.client.get(
+        resp = client.get(
             reverse(
                 "podcasts:podcast_episodes",
                 args=[podcast.id, podcast.slug],
             ),
             {"q": "testing"},
         )
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class CategoryListTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.parents = CategoryFactory.create_batch(3, parent=None)
+class TestDiscover:
+    url = reverse_lazy("podcasts:categories")
 
-    def setUp(self) -> None:
-        self.url = reverse("podcasts:categories")
+    @pytest.fixture
+    def parents(self, db):
+        return CategoryFactory.create_batch(3, parent=None)
 
-    def test_get(self) -> None:
-        c1 = CategoryFactory(parent=self.parents[0])
-        c2 = CategoryFactory(parent=self.parents[1])
-        c3 = CategoryFactory(parent=self.parents[2])
+    def test_get(self, client, parents):
+        c1 = CategoryFactory(parent=parents[0])
+        c2 = CategoryFactory(parent=parents[1])
+        c3 = CategoryFactory(parent=parents[2])
 
-        PodcastFactory(categories=[c1, self.parents[0]])
-        PodcastFactory(categories=[c2, self.parents[1]])
-        PodcastFactory(categories=[c3, self.parents[2]])
+        PodcastFactory(categories=[c1, parents[0]])
+        PodcastFactory(categories=[c2, parents[1]])
+        PodcastFactory(categories=[c3, parents[2]])
 
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["categories"]), 3)
+        resp = client.get(self.url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["categories"]) == 3
 
-    def test_search(self) -> None:
-        c1 = CategoryFactory(parent=self.parents[0])
-        c2 = CategoryFactory(parent=self.parents[1])
-        c3 = CategoryFactory(parent=self.parents[2], name="testing child")
+    def test_search(self, client, parents):
+        c1 = CategoryFactory(parent=parents[0])
+        c2 = CategoryFactory(parent=parents[1])
+        c3 = CategoryFactory(parent=parents[2], name="testing child")
 
         c4 = CategoryFactory(name="testing parent")
 
@@ -216,146 +184,133 @@ class CategoryListTests(TestCase):
         PodcastFactory(categories=[c3])
         PodcastFactory(categories=[c4])
 
-        resp = self.client.get(self.url, {"q": "testing"})
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["categories"]), 2)
+        resp = client.get(self.url, {"q": "testing"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["categories"]) == 2
 
 
-class CategoryDetailTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.category = CategoryFactory()
+class TestCategoryDetail:
+    def test_get(self, client, category):
+        CategoryFactory.create_batch(3, parent=category)
+        PodcastFactory.create_batch(12, categories=[category])
+        resp = client.get(category.get_absolute_url())
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["category"] == category
 
-    def test_get(self) -> None:
+    def test_get_episodes(self, client, category):
 
-        CategoryFactory.create_batch(3, parent=self.category)
-        PodcastFactory.create_batch(12, categories=[self.category])
-        resp = self.client.get(self.category.get_absolute_url())
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp.context_data["category"], self.category)
+        CategoryFactory.create_batch(3, parent=category)
+        PodcastFactory.create_batch(12, categories=[category])
+        resp = client.get(category.get_absolute_url())
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 12
 
-    def test_get_episodes(self) -> None:
+    def test_search(self, client, category):
 
-        CategoryFactory.create_batch(3, parent=self.category)
-        PodcastFactory.create_batch(12, categories=[self.category])
-        resp = self.client.get(self.category.get_absolute_url())
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 12)
-
-    def test_search(self) -> None:
-
-        CategoryFactory.create_batch(3, parent=self.category)
+        CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
-            12, title="zzzz", keywords="zzzz", categories=[self.category]
+            12, title="zzzz", keywords="zzzz", categories=[category]
         )
-        PodcastFactory(title="testing", categories=[self.category])
+        PodcastFactory(title="testing", categories=[category])
 
-        resp = self.client.get(self.category.get_absolute_url(), {"q": "testing"})
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(len(resp.context_data["page_obj"].object_list), 1)
+        resp = client.get(category.get_absolute_url(), {"q": "testing"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class FollowTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.podcast = PodcastFactory()
-        cls.user = UserFactory()
+class TestFollow:
+    @pytest.fixture
+    def url(self, podcast):
+        return reverse("podcasts:follow", args=[podcast.id])
 
-    def setUp(self) -> None:
-        self.url = reverse("podcasts:follow", args=[self.podcast.id])
-        self.client.force_login(self.user)
+    def test_subscribe(self, client, podcast, auth_user, url):
+        resp = client.post(url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
-    def test_subscribe(self) -> None:
-        resp = self.client.post(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue(
-            Follow.objects.filter(podcast=self.podcast, user=self.user).exists()
+    @pytest.mark.django_db(transaction=True)
+    def test_already_following(self, client, podcast, auth_user, url):
+        FollowFactory(user=auth_user, podcast=podcast)
+        resp = client.post(url)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+
+class TestUnfollow:
+    def test_unsubscribe(self, client, auth_user, podcast):
+        FollowFactory(user=auth_user, podcast=podcast)
+        resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+
+class TestITunesCategory:
+    @pytest.fixture
+    def category_with_itunes(self, db):
+        return CategoryFactory(itunes_genre_id=1200)
+
+    @pytest.fixture
+    def url(self, category_with_itunes):
+        return reverse("podcasts:itunes_category", args=[category_with_itunes.id])
+
+    def test_get(self, client, mocker, category_with_itunes, url):
+
+        mocker.patch(
+            "audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True
         )
+        mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
 
-    def test_already_following(self) -> None:
-        FollowFactory(user=self.user, podcast=self.podcast)
-        self.assertEqual(
-            self.client.post(self.url).status_code,
-            http.HTTPStatus.OK,
-        )
+        resp = client.get(url)
 
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 1
+        assert resp.context_data["results"][0].title == mock_search_result.title
 
-class UnfollowTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.podcast = PodcastFactory()
-        cls.user = UserFactory()
+    def test_invalid_results(self, client, mocker, category_with_itunes, url):
 
-    def setUp(self) -> None:
-        self.client.force_login(self.user)
-
-    def test_unsubscribe(self) -> None:
-        FollowFactory(user=self.user, podcast=self.podcast)
-        resp = self.client.post(reverse("podcasts:unfollow", args=[self.podcast.id]))
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertFalse(
-            Follow.objects.filter(podcast=self.podcast, user=self.user).exists()
-        )
-
-
-class ITunesCategoryTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.category = CategoryFactory(itunes_genre_id=1200)
-
-    def setUp(self) -> None:
-        self.url = reverse("podcasts:itunes_category", args=[self.category.id])
-
-    @patch("audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True)
-    @patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
-    def test_get(self, mock: Mock) -> None:
-        resp = self.client.get(self.url)
-
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertFalse(resp.context_data["error"])
-        self.assertEqual(len(resp.context_data["results"]), 1)
-        self.assertEqual(
-            resp.context_data["results"][0].title, mock_search_result.title
+        mocker.patch.object(
+            itunes, "fetch_itunes_genre", side_effect=itunes.Invalid, autospec=True
         )
 
-    @patch.object(
-        itunes, "fetch_itunes_genre", side_effect=itunes.Invalid, autospec=True
-    )
-    def test_invalid_results(self, mock: Mock) -> None:
+        resp = client.get(url)
 
-        resp = self.client.get(self.url)
-
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue(resp.context_data["error"])
-        self.assertEqual(len(resp.context_data["results"]), 0)
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0
 
 
-class SearchITunesTests(TestCase):
-    def setUp(self) -> None:
-        self.url = reverse("podcasts:search_itunes")
+class TestSearchITunes:
+    url = reverse_lazy("podcasts:search_itunes")
 
-    def test_search_is_empty(self) -> None:
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertFalse(resp.context_data["error"])
-        self.assertEqual(len(resp.context_data["results"]), 0)
+    def test_search_is_empty(self, client, db):
+        resp = client.get(self.url)
+        assert resp.status_code == http.HTTPStatus.OK
 
-    @patch("audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True)
-    @patch.object(itunes, "search_itunes", mock_search_itunes)
-    def test_search(self, mock: Mock) -> None:
-        resp = self.client.get(self.url, {"q": "test"})
+        assert not resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0
 
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertFalse(resp.context_data["error"])
-        self.assertEqual(len(resp.context_data["results"]), 1)
-        self.assertEqual(
-            resp.context_data["results"][0].title, mock_search_result.title
+    def test_search(self, client, mocker, db):
+        mock_sync = mocker.patch(
+            "audiotrails.podcasts.views.sync_podcast_feed.delay", autospec=True
         )
-        mock.assert_called()
+        mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
 
-    @patch.object(itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True)
-    def test_invalid_results(self, mock: Mock) -> None:
-        resp = self.client.get(self.url, {"q": "testing"})
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertTrue(resp.context_data["error"])
-        self.assertEqual(len(resp.context_data["results"]), 0)
+        resp = client.get(self.url, {"q": "test"})
+
+        assert resp.status_code == http.HTTPStatus.OK
+        assert not resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 1
+
+        assert resp.context_data["results"][0].title == mock_search_result.title
+
+        mock_sync.assert_called()
+
+    def test_invalid_results(self, client, mocker, db):
+        mocker.patch.object(
+            itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True
+        )
+        resp = client.get(self.url, {"q": "testing"})
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp.context_data["error"]
+        assert len(resp.context_data["results"]) == 0

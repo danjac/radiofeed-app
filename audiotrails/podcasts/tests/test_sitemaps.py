@@ -1,21 +1,19 @@
 import http
 
-from django.test import TestCase
-
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 
 
-class CategorySitemapTests(TestCase):
-    def test_get(self) -> None:
+class TestCategorySitemap:
+    def test_get(self, client, db):
         CategoryFactory.create_batch(12)
-        resp = self.client.get("/sitemap-categories.xml")
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp["Content-Type"], "application/xml")
+        resp = client.get("/sitemap-categories.xml")
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "application/xml"
 
 
-class PodcastSitemapTests(TestCase):
-    def test_get(self) -> None:
+class TestPodcastSitemap:
+    def test_get(self, client, db):
         PodcastFactory.create_batch(12)
-        resp = self.client.get("/sitemap-podcasts.xml")
-        self.assertEqual(resp.status_code, http.HTTPStatus.OK)
-        self.assertEqual(resp["Content-Type"], "application/xml")
+        resp = client.get("/sitemap-podcasts.xml")
+        assert resp.status_code == http.HTTPStatus.OK
+        assert resp["Content-Type"] == "application/xml"
