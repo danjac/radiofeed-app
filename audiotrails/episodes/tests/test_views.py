@@ -26,7 +26,7 @@ def player_episode(client, episode):
 
 
 class TestNewEpisodes:
-    def test_get_anonymous(self, client, db):
+    def _test_no_subscriptions(self, client):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
@@ -35,15 +35,11 @@ class TestNewEpisodes:
         assert not resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
 
-    def test_user_no_subscriptions(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
+    def test_anonymous_user(self, client, db):
+        self._test_no_subscriptions(client)
 
-        EpisodeFactory.create_batch(3)
-        resp = client.get(episodes_url)
-        assert resp.status_code == http.HTTPStatus.OK
-        assert not resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
+    def test_no_subscriptions(self, client, db, auth_user):
+        self._test_no_subscriptions(client)
 
     def test_user_has_subscriptions(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
@@ -290,7 +286,7 @@ class TestFavorites:
 
     def test_get(self, client, auth_user):
         FavoriteFactory.create_batch(3, user=auth_user)
-        resp = client.get(reverse("episodes:favorites"))
+        resp = client.get(self.url)
 
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -306,10 +302,8 @@ class TestFavorites:
             )
 
         FavoriteFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(
-            reverse("episodes:favorites"),
-            {"q": "testing"},
-        )
+
+        resp = client.get(self.url, {"q": "testing"})
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 1
 
