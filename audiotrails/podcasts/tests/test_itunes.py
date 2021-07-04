@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from unittest import mock
-
+import pytest
 import requests
-
-from django.test import TestCase
 
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
@@ -38,7 +35,7 @@ class MockResponse:
         return {"results": MOCK_ITUNES_RESPONSE}
 
 
-class SearchResultTests(TestCase):
+class TestSearchResult:
     def test_cleaned_title(self):
         result = itunes.SearchResult(
             title="<b>test</b>",
@@ -46,82 +43,93 @@ class SearchResultTests(TestCase):
             image="",
             itunes="",
         )
-        self.assertEqual(result.cleaned_title, "test")
+        assert result.cleaned_title == "test"
 
 
-class SearchItunesTests(TestCase):
-    @mock.patch("requests.get", autospec=True)
-    @mock.patch("django.core.cache.cache.get", return_value=MOCK_ITUNES_RESULTS)
-    def test_get_from_cache(self, mock_cache_get, mock_requests_get):
+class TestSearchItunes:
+    def test_get_from_cache(self, db, mocker):
+        mock_requests_get = mocker.patch("requests.get", autospec=True)
+        mock_cache_get = mocker.patch(
+            "django.core.cache.cache.get", return_value=MOCK_ITUNES_RESULTS
+        )
         PodcastFactory(rss=RSS_FEED_URL)
         results, podcasts = itunes.search_itunes("testing")
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(podcasts), 0)
+        assert len(results) == 1
+        assert len(podcasts) == 0
         mock_cache_get.assert_called_with("itunes:search:testing")
         mock_requests_get.assert_not_called()
 
-    @mock.patch("requests.get", return_value=MockBadHttpResponse(), autospec=True)
-    def test_bad_http_response(self, mock):
-        self.assertRaises(itunes.Invalid, itunes.search_itunes, "testing")
-        self.assertEqual(Podcast.objects.count(), 0)
+    def test_bad_http_response(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockBadHttpResponse(), autospec=True)
+        with pytest.raises(itunes.Invalid):
+            itunes.search_itunes("testing")
+        assert Podcast.objects.count() == 0
 
-    @mock.patch("requests.get", side_effect=requests.Timeout, autospec=True)
-    def test_timeout(self, mock):
-        self.assertRaises(itunes.Timeout, itunes.search_itunes, "testing")
-        self.assertEqual(Podcast.objects.count(), 0)
+    def test_timeout(self, db, mocker):
+        mocker.patch("requests.get", side_effect=requests.Timeout, autospec=True)
+        with pytest.raises(itunes.Timeout):
+            itunes.search_itunes("testing")
+        assert Podcast.objects.count() == 0
 
-    @mock.patch("requests.get", return_value=MockResponse(), autospec=True)
-    def test_no_new_podcasts(self, mock):
+    def test_no_new_podcasts(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
         PodcastFactory(rss=RSS_FEED_URL)
         results, podcasts = itunes.search_itunes("testing")
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(podcasts), 0)
+        assert len(results) == 1
+        assert len(podcasts) == 0
 
-    @mock.patch("requests.get", return_value=MockResponse(), autospec=True)
-    def test_add_new_podcasts(self, mock):
+    def test_add_new_podcasts(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
         results, new_podcasts = itunes.search_itunes("testing")
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(new_podcasts), 1)
-        self.assertEqual(new_podcasts[0].title, RSS_FEED_NAME)
-        self.assertEqual(new_podcasts[0].rss, RSS_FEED_URL)
+        assert len(results) == 1
+        assert len(new_podcasts) == 1
+
+        assert new_podcasts[0].title == RSS_FEED_NAME
+        assert new_podcasts[0].rss == RSS_FEED_URL
 
 
-class CrawlItunesTests(TestCase):
-    @mock.patch("requests.get", return_value=MockBadHttpResponse(), autospec=True)
-    def test_bad_http_response(self, mock):
+class TestCrawlItunes:
+    def test_bad_http_response(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockBadHttpResponse(), autospec=True)
         CategoryFactory.create_batch(6)
         num_podcasts = itunes.crawl_itunes(limit=100)
-        self.assertEqual(num_podcasts, 0)
+        assert num_podcasts == 0
 
-    @mock.patch("requests.get", return_value=MockResponse(), autospec=True)
-    def test_add_new_podcasts(self, mock):
+    def test_add_new_podcasts(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
         CategoryFactory.create_batch(6)
         num_podcasts = itunes.crawl_itunes(limit=100)
-        self.assertEqual(num_podcasts, 1)
+        assert num_podcasts == 1
 
 
-class FetchItunesGenreTests(TestCase):
-    @mock.patch("requests.get", autospec=True)
-    @mock.patch("django.core.cache.cache.get", return_value=MOCK_ITUNES_RESULTS)
-    def test_get_from_cache(self, mock_cache_get, mock_requests_get):
+class TestFetchItunesGenre:
+    def test_get_from_cache(self, db, mocker):
+        mock_requests_get = mocker.patch("requests.get", autospec=True)
+        mock_cache_get = mocker.patch(
+            "django.core.cache.cache.get", return_value=MOCK_ITUNES_RESULTS
+        )
+
         PodcastFactory(rss=RSS_FEED_URL)
         results, podcasts = itunes.fetch_itunes_genre(1)
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(podcasts), 0)
+        assert len(results) == 1
+        assert len(podcasts) == 0
         mock_cache_get.assert_called_with("itunes:genre:1")
         mock_requests_get.assert_not_called()
 
-    @mock.patch("requests.get", return_value=MockResponse(), autospec=True)
-    def test_no_new_podcasts(self, mock):
+    def test_no_new_podcasts(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
         PodcastFactory(rss=RSS_FEED_URL)
         results, podcasts = itunes.fetch_itunes_genre(1)
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(podcasts), 0)
 
-    @mock.patch("requests.get", return_value=MockResponse(), autospec=True)
-    def test_add_new_podcasts(self, mock):
+        assert len(results) == 1
+        assert len(podcasts) == 0
+
+    def test_add_new_podcasts(self, db, mocker):
+        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
         results, new_podcasts = itunes.fetch_itunes_genre(1)
-        self.assertEqual(len(results), 1)
-        self.assertEqual(len(new_podcasts), 1)
-        self.assertEqual(new_podcasts[0].title, RSS_FEED_NAME)
-        self.assertEqual(new_podcasts[0].rss, RSS_FEED_URL)
+
+        assert len(results) == 1
+        assert len(new_podcasts) == 1
+
+        assert new_podcasts[0].title == RSS_FEED_NAME
+        assert new_podcasts[0].rss == RSS_FEED_URL
