@@ -1,12 +1,8 @@
 import datetime
 
-from unittest import mock
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
-from freezegun import freeze_time
 
 from audiotrails.episodes.factories import (
     AudioLogFactory,
@@ -23,15 +19,14 @@ from audiotrails.podcasts.models import Category, Podcast, Recommendation
 from audiotrails.users.factories import UserFactory
 
 
-class RecommendationManagerTests(TestCase):
-    def test_bulk_delete(self) -> None:
+class TestRecommendationManager:
+    def test_bulk_delete(self, db):
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
-        self.assertEqual(Recommendation.objects.count(), 0)
+        assert Recommendation.objects.count() == 0
 
-    def test_for_user(self) -> None:
+    def test_for_user(self, user):
 
-        user = UserFactory()
         following = FollowFactory(user=user).podcast
         favorited = FavoriteFactory(user=user).episode.podcast
         listened = AudioLogFactory(user=user).episode.podcast
@@ -57,53 +52,29 @@ class RecommendationManagerTests(TestCase):
 
         recommended = [r.recommended for r in Recommendation.objects.for_user(user)]
 
-        self.assertEqual(len(recommended), 3)
-        self.assertTrue(first in recommended)
-        self.assertTrue(second in recommended)
-        self.assertTrue(third in recommended)
+        assert len(recommended) == 3
+        assert first in recommended
+        assert second in recommended
+        assert third in recommended
 
 
-class CategoryManagerTests(TestCase):
-    def test_search(self) -> None:
+class TestCategoryManager:
+    def test_search(self, db):
         CategoryFactory(name="testing")
-        self.assertEqual(Category.objects.search("testing").count(), 1)
+        assert Category.objects.search("testing").count() == 1
 
 
-class CategoryModelTests(SimpleTestCase):
-    def test_slug(self) -> None:
+class TestCategoryModel:
+    def test_slug(self):
         category = Category(name="Testing")
-        self.assertEqual(category.slug, "testing")
+        assert category.slug == "testing"
 
-    def test_str(self) -> None:
+    def test_str(self):
         category = Category(name="Testing")
-        self.assertEqual(str(category), "Testing")
+        assert str(category) == "Testing"
 
 
-class PodcastManagerSearchTests(TransactionTestCase):
-    def test_search(self) -> None:
-        PodcastFactory(title="testing")
-        self.assertEqual(Podcast.objects.search("testing").count(), 1)
-
-    def test_search_if_empty(self) -> None:
-        PodcastFactory(title="testing")
-        self.assertEqual(Podcast.objects.search("").count(), 0)
-
-    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
-    def test_count_if_gt_1000(self, mock) -> None:
-        self.assertEqual(Podcast.objects.count(), 2000)
-
-    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=100)
-    def test_count_if_lt_1000(self, mock) -> None:
-        PodcastFactory()
-        self.assertEqual(Podcast.objects.count(), 1)
-
-    @mock.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
-    def test_count_if_filter(self, mock) -> None:
-        PodcastFactory(title="test")
-        self.assertEqual(Podcast.objects.filter(title="test").count(), 1)
-
-
-class PodcastManagerTests(TestCase):
+class TestPodcastManager:
     def _test_for_feed_sync(self):
         now = timezone.now()
 
@@ -134,70 +105,83 @@ class PodcastManagerTests(TestCase):
         PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
 
         qs = Podcast.objects.for_feed_sync()
+        assert qs.count() == 4
+        assert podcast_a in qs
+        assert podcast_b in qs
+        assert podcast_c in qs
+        assert podcast_d in qs
 
-        self.assertEqual(qs.count(), 4)
-        self.assertIn(podcast_a, qs)
-        self.assertIn(podcast_b, qs)
-        self.assertIn(podcast_c, qs)
-        self.assertIn(podcast_d, qs)
+    def test_search(self, transactional_db):
+        PodcastFactory(title="testing")
+        assert Podcast.objects.search("testing").count() == 1
 
-    @freeze_time("2021-06-19")
-    def test_for_feed_sync_even_weekday(self):
-        self._test_for_feed_sync()
+    def test_search_if_empty(self, transactional_db):
+        PodcastFactory(title="testing")
+        assert Podcast.objects.search("").count() == 0
 
-    @freeze_time("2021-06-18")
-    def test_for_feed_sync_odd_weekday(self):
-        self._test_for_feed_sync()
+    def test_count_if_gt_1000(self, db, mocker):
+        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+        assert Podcast.objects.count() == 2000
+
+    def test_count_if_lt_1000(self, db, mocker, podcast):
+        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=100)
+        assert Podcast.objects.count() == 1
+
+    def test_count_if_filter(self, db, mocker):
+        mocker.patch("audiotrails.common.db.get_reltuple_count", return_value=2000)
+        PodcastFactory(title="test")
+        assert Podcast.objects.filter(title="test").count() == 1
+
+    def test_for_feed_sync_even_weekday(self, db, freeze_time):
+        with freeze_time("2021-06-19"):
+            self._test_for_feed_sync()
+
+    def test_for_feed_sync_odd_weekday(self, db, freeze_time):
+        with freeze_time("2021-06-18"):
+            self._test_for_feed_sync()
 
 
-class PodcastModelTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.podcast = PodcastFactory(title="Testing")
-        cls.user = UserFactory()
+class TestPodcastModel:
+    def test_slug(self):
+        assert Podcast(title="Testing").slug == "testing"
 
-    def test_slug(self) -> None:
-        self.assertEqual(self.podcast.slug, "testing")
+    def test_slug_if_title_empty(self):
+        assert Podcast().slug == "podcast"
+
+    def test_get_domain(self):
+        assert Podcast(rss="https://example.com/rss.xml").get_domain() == "example.com"
+
+    def test_get_domain_if_www(self):
+        assert (
+            Podcast(rss="https://www.example.com/rss.xml").get_domain() == "example.com"
+        )
 
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>a &amp; b</b>")
         assert podcast.cleaned_title == "a & b"
 
-    def test_get_episode_count(self) -> None:
+    def test_get_episode_count(self, podcast):
         EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=self.podcast)
-        self.assertEqual(self.podcast.get_episode_count(), 3)
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        assert podcast.get_episode_count() == 3
 
-    def test_get_cached_episode_count(self) -> None:
+    def test_get_cached_episode_count(self, podcast):
         EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=self.podcast)
-        self.assertEqual(self.podcast.get_cached_episode_count(), 3)
+        EpisodeFactory.create_batch(3, podcast=podcast)
+        assert podcast.get_cached_episode_count() == 3
 
-    def test_slug_if_title_empty(self) -> None:
-        self.assertEqual(Podcast().slug, "podcast")
+    def test_is_following_anonymous(self, podcast):
+        assert not podcast.is_following(AnonymousUser())
 
-    def test_is_following_anonymous(self) -> None:
-        self.assertFalse(self.podcast.is_following(AnonymousUser()))
+    def test_is_following_false(self, podcast):
+        assert not podcast.is_following(UserFactory())
 
-    def test_is_following_false(self) -> None:
-        self.assertFalse(self.podcast.is_following(UserFactory()))
+    def test_is_following_true(self, follow):
+        assert follow.podcast.is_following(follow.user)
 
-    def test_is_following_true(self) -> None:
-        follow = FollowFactory(podcast=self.podcast)
-        self.assertTrue(self.podcast.is_following(follow.user))
-
-    def test_get_domain(self) -> None:
-        self.assertEqual(self.podcast.get_domain(), "example.com")
-
-    def test_get_domain_if_www(self) -> None:
-        self.podcast.rss = "http://www.example.com/test.rss"
-        self.assertEqual(self.podcast.get_domain(), "example.com")
-
-    def test_get_opengraph_data(self) -> None:
-        req = RequestFactory().get("/")
+    def test_get_opengraph_data(self, rf, podcast):
+        req = rf.get("/")
         req.site = Site.objects.get_current()
-        og_data = self.podcast.get_opengraph_data(req)
-        self.assertTrue(self.podcast.title in og_data["title"])
-        self.assertEqual(
-            og_data["url"], "http://testserver" + self.podcast.get_absolute_url()
-        )
+        og_data = podcast.get_opengraph_data(req)
+        assert podcast.title in og_data["title"]
+        assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()

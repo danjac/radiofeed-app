@@ -1,5 +1,6 @@
-from typing import Type
+from typing import Callable, Type
 
+import freezegun
 import pytest
 
 from django.contrib.auth import get_user_model
@@ -9,6 +10,11 @@ from audiotrails.common.typedefs import AuthenticatedUser
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
 from audiotrails.podcasts.models import Follow, Podcast
 from audiotrails.users.factories import UserFactory
+
+
+@pytest.fixture
+def freeze_time() -> Callable:
+    return freezegun.freeze_time
 
 
 @pytest.fixture
