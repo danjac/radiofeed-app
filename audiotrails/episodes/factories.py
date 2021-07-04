@@ -18,6 +18,7 @@ class EpisodeFactory(DjangoModelFactory):
     media_url = Faker("url")
     media_type = "audio/mpeg"
     pub_date = LazyFunction(timezone.now)
+    duration = "100"
 
     class Meta:
         model = Episode

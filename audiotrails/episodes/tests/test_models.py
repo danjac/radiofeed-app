@@ -1,9 +1,9 @@
 import datetime
 
-from django.contrib.auth.models import AnonymousUser
+import pytest
+
 from django.contrib.sites.models import Site
 from django.db import IntegrityError, transaction
-from django.test import RequestFactory, SimpleTestCase, TestCase, TransactionTestCase
 from django.utils import timezone
 
 from audiotrails.episodes.factories import (
@@ -16,213 +16,183 @@ from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from audiotrails.users.factories import UserFactory
 
 
-class EpisodeManagerTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-
-    def test_with_current_time_if_anonymous(self) -> None:
+class TestEpisodeManager:
+    def test_with_current_time_if_anonymous(self, db, anonymous_user):
         EpisodeFactory()
-        episode = Episode.objects.with_current_time(AnonymousUser()).first()
-        self.assertEqual(episode.current_time, 0)
-        self.assertFalse(episode.completed)
-        self.assertFalse(episode.listened)
+        episode = Episode.objects.with_current_time(anonymous_user).first()
 
-    def test_with_current_time_if_not_played(self) -> None:
+        assert episode.current_time == 0
+        assert not episode.completed
+        assert not episode.listened
+
+    def test_with_current_time_if_not_played(self, user):
         EpisodeFactory()
-        episode = Episode.objects.with_current_time(self.user).first()
-        self.assertFalse(episode.current_time)
-        self.assertFalse(episode.completed)
-        self.assertFalse(episode.listened)
+        episode = Episode.objects.with_current_time(user).first()
 
-    def test_with_current_time_if_played(self) -> None:
-        log = AudioLogFactory(user=self.user, current_time=20, updated=timezone.now())
-        episode = Episode.objects.with_current_time(self.user).first()
-        self.assertEqual(episode.current_time, 20)
-        self.assertFalse(episode.completed)
-        self.assertEqual(episode.listened, log.updated)
+        assert not episode.current_time
+        assert not episode.completed
+        assert not episode.listened
 
-    def test_with_current_time_if_completed(self) -> None:
+    def test_with_current_time_if_played(self, user):
+        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
+        episode = Episode.objects.with_current_time(user).first()
+
+        assert episode.current_time == 20
+        assert not episode.completed
+        assert episode.listened == log.updated
+
+    def test_with_current_time_if_completed(self, user):
         log = AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=20,
             completed=timezone.now(),
             updated=timezone.now(),
         )
-        episode = Episode.objects.with_current_time(self.user).first()
-        self.assertEqual(episode.current_time, 20)
-        self.assertTrue(episode.completed)
-        self.assertEqual(episode.listened, log.updated)
+        episode = Episode.objects.with_current_time(user).first()
 
+        assert episode.current_time == 20
+        assert episode.completed
+        assert episode.listened == log.updated
 
-class EpisodeManagerSearchTests(TransactionTestCase):
-    def test_search(self) -> None:
+    def test_search(self, db):
         EpisodeFactory(title="testing")
-        self.assertEqual(Episode.objects.search("testing").count(), 1)
+        assert Episode.objects.search("testing").count() == 1
 
 
-class EpisodeDurationTests(SimpleTestCase):
-    def test_time_remaining(self) -> None:
+class TestEpisodeModel:
+    def test_slug(self):
+        episode = Episode(title="Testing")
+        assert episode.slug == "testing"
+
+    def test_slug_if_title_empty(self):
+        assert Episode().slug == "episode"
+
+    def test_time_remaining(self):
         episode = Episode(duration="1:00:00")
         episode.current_time = 1200
-        self.assertEqual(episode.get_time_remaining(), 2400)
+        assert episode.get_time_remaining() == 2400
 
-    def test_time_remaining_current_time_none(self) -> None:
+    def test_time_remaining_current_time_none(self):
         episode = Episode(duration="1:00:00")
         episode.current_time = None
-        self.assertEqual(episode.get_time_remaining(), 3600)
+        assert episode.get_time_remaining() == 3600
 
-    def test_time_remaining_current_time_not_set(self) -> None:
+    def test_time_remaining_current_time_not_set(self):
         episode = Episode(duration="1:00:00")
-        self.assertEqual(episode.get_time_remaining(), 3600)
+        assert episode.get_time_remaining() == 3600
 
-    def test_duration_in_seconds_if_empty_or_none(self) -> None:
-        self.assertEqual(Episode(duration=None).get_duration_in_seconds(), 0)
-        self.assertEqual(Episode(duration="").get_duration_in_seconds(), 0)
+    def test_duration_in_seconds_if_empty_or_none(self):
+        assert Episode(duration=None).get_duration_in_seconds() == 0
+        assert Episode(duration="").get_duration_in_seconds() == 0
 
-    def test_duration_in_seconds_invalid_string(self) -> None:
-        self.assertEqual(Episode(duration="oops").get_duration_in_seconds(), 0)
+    def test_duration_in_seconds_invalid_string(self):
+        assert Episode(duration="oops").get_duration_in_seconds() == 0
 
     def test_duration_in_seconds_hours_minutes_seconds(self):
-        self.assertEqual(Episode(duration="2:30:40").get_duration_in_seconds(), 9040)
+        assert Episode(duration="2:30:40").get_duration_in_seconds() == 9040
 
     def test_duration_in_seconds_hours_minutes_seconds_extra_digit(self):
-        self.assertEqual(
-            Episode(duration="2:30:40:2903903").get_duration_in_seconds(), 9040
-        )
+        assert Episode(duration="2:30:40:2903903").get_duration_in_seconds() == 9040
 
-    def test_duration_in_seconds_minutes_seconds(self) -> None:
-        self.assertEqual(Episode(duration="30:40").get_duration_in_seconds(), 1840)
+    def test_duration_in_seconds_minutes_seconds(self):
+        assert Episode(duration="30:40").get_duration_in_seconds() == 1840
 
-    def test_duration_in_seconds_seconds_only(self) -> None:
-        self.assertEqual(Episode(duration="40").get_duration_in_seconds(), 40)
+    def test_duration_in_seconds_seconds_only(self):
+        assert Episode(duration="40").get_duration_in_seconds() == 40
 
-    def test_get_duration_in_seconds_if_empty(self) -> None:
-        self.assertEqual(Episode().get_duration_in_seconds(), 0)
-        self.assertEqual(Episode(duration="").get_duration_in_seconds(), 0)
+    def test_get_duration_in_seconds_if_empty(self):
+        assert Episode().get_duration_in_seconds() == 0
+        assert Episode(duration="").get_duration_in_seconds() == 0
 
-    def test_duration_in_seconds_if_non_numeric(self) -> None:
-        self.assertEqual(Episode(duration="NaN").get_duration_in_seconds(), 0)
+    def test_duration_in_seconds_if_non_numeric(self):
+        assert Episode(duration="NaN").get_duration_in_seconds() == 0
 
-    def test_duration_in_seconds_if_seconds_only(self) -> None:
-        self.assertEqual(Episode(duration="60").get_duration_in_seconds(), 60)
+    def test_duration_in_seconds_if_seconds_only(self):
+        assert Episode(duration="60").get_duration_in_seconds() == 60
 
-    def test_duration_in_seconds_if_minutes_and_seconds(self) -> None:
-        self.assertEqual(Episode(duration="2:30").get_duration_in_seconds(), 150)
+    def test_duration_in_seconds_if_minutes_and_seconds(self):
+        assert Episode(duration="2:30").get_duration_in_seconds() == 150
 
-    def test_duration_in_seconds_if_hours_minutes_and_seconds(self) -> None:
-        self.assertEqual(Episode(duration="2:30:30").get_duration_in_seconds(), 9030)
+    def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
+        assert Episode(duration="2:30:30").get_duration_in_seconds() == 9030
 
+    def test_is_completed_if_not_set(self, episode):
+        assert not (episode.is_completed())
 
-class EpisodeSlugTests(SimpleTestCase):
-    def test_slug(self) -> None:
-        episode = Episode(title="Testing")
-        self.assertEqual(episode.slug, "testing")
-
-    def test_slug_if_title_empty(self) -> None:
-        self.assertEqual(Episode().slug, "episode")
-
-
-class EpisodeCompleteModelTests(TransactionTestCase):
-    def setUp(self) -> None:
-        self.user = UserFactory()
-        self.episode = EpisodeFactory(duration="100")
-
-    def test_is_completed_if_not_set(self) -> None:
-        self.assertFalse(self.episode.is_completed())
-
-    def test_is_completed_if_marked_complete(self) -> None:
+    def test_is_completed_if_marked_complete(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=50,
             updated=timezone.now(),
             completed=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertTrue(
-            Episode.objects.with_current_time(self.user).first().is_completed()
-        )
+        assert Episode.objects.with_current_time(user).first().is_completed()
 
-    def test_is_completed_if_pc_complete_under_100(self) -> None:
+    def test_is_completed_if_pc_complete_under_100(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=50,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertFalse(
-            Episode.objects.with_current_time(self.user).first().is_completed()
-        )
+        assert not Episode.objects.with_current_time(user).first().is_completed()
 
-    def test_is_completed_if_pc_complete_over_100(self) -> None:
+    def test_is_completed_if_pc_complete_over_100(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=100,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertTrue(
-            Episode.objects.with_current_time(self.user).first().is_completed()
-        )
+        assert Episode.objects.with_current_time(user).first().is_completed()
 
-    def test_get_pc_complete_without_current_time_attr(self) -> None:
+    def test_get_pc_complete_without_current_time_attr(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=50,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(Episode.objects.first().get_pc_completed(), 0)
+        assert Episode.objects.first().get_pc_completed() == 0
 
-    def test_get_pc_complete(self) -> None:
+    def test_get_pc_complete(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=50,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
-            50,
-        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 50
 
-    def test_get_pc_complete_zero_current_time(self) -> None:
+    def test_get_pc_complete_zero_current_time(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=0,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
-            0,
-        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
 
-    def test_get_pc_complete_zero_duration(self) -> None:
+    def test_get_pc_complete_zero_duration(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=0,
             updated=timezone.now(),
             episode=EpisodeFactory(duration=""),
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
-            0,
-        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
 
-    def test_get_pc_complete_gt_100(self) -> None:
+    def test_get_pc_complete_gt_100(self, user, episode):
         AudioLogFactory(
-            user=self.user,
+            user=user,
             current_time=120,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(self.user).first().get_pc_completed(),
-            100,
-        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
 
-    def test_get_pc_complete_marked_complete(self) -> None:
+    def test_get_pc_complete_marked_complete(self, user, episode):
         now = timezone.now()
         user = UserFactory()
         AudioLogFactory(
@@ -230,238 +200,215 @@ class EpisodeCompleteModelTests(TransactionTestCase):
             current_time=50,
             updated=now,
             completed=now,
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(user).first().get_pc_completed(),
-            100,
-        )
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
 
-    def test_get_pc_complete_not_played(self) -> None:
-        user = UserFactory()
-        self.assertEqual(
-            Episode.objects.with_current_time(user).first().get_pc_completed(),
-            0,
-        )
+    def test_get_pc_complete_not_played(self, user, episode):
+        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
 
-    def test_get_pc_complete_anonymous(self) -> None:
+    def test_get_pc_complete_anonymous(self, anonymous_user, episode):
         AudioLogFactory(
-            user=UserFactory(),
             current_time=50,
             updated=timezone.now(),
-            episode=self.episode,
+            episode=episode,
         )
-        self.assertEqual(
-            Episode.objects.with_current_time(AnonymousUser())
-            .first()
-            .get_pc_completed(),
-            0,
+        assert (
+            Episode.objects.with_current_time(anonymous_user).first().get_pc_completed()
+            == 0
         )
-
-
-class EpisodeModelTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
-        cls.episode = EpisodeFactory()
 
     def test_str(self):
-        self.assertEqual(str(self.episode), self.episode.title)
+        assert str(Episode(title="testing")) == "testing"
 
     def test_str_no_title(self):
-        episode = EpisodeFactory(title="")
-        self.assertEqual(str(episode), episode.guid)
+        episode = Episode(title="", guid="abc123")
+        assert str(episode) == episode.guid
 
     def test_cleaned_title(self):
         episode = Episode(title="<b>a &amp; b</b>")
         assert episode.cleaned_title == "a & b"
 
     def test_get_file_size(self):
-        self.assertEqual(Episode(length=500).get_file_size(), "500\xa0bytes")
+        assert Episode(length=500).get_file_size() == "500\xa0bytes"
 
     def test_get_file_size_if_none(self):
-        self.assertEqual(Episode(length=None).get_file_size(), None)
+        assert Episode(length=None).get_file_size() is None
 
-    def test_get_media_metadata(self) -> None:
-        data = self.episode.get_media_metadata()
-        self.assertEqual(data["title"], self.episode.title)
-        self.assertEqual(data["album"], self.episode.podcast.title)
-        self.assertEqual(data["artist"], self.episode.podcast.creators)
+    def test_get_media_metadata(self, episode):
+        data = episode.get_media_metadata()
+        assert data["title"] == episode.title
+        assert data["album"] == episode.podcast.title
+        assert data["artist"] == episode.podcast.creators
 
-    def test_get_opengraph_data(self) -> None:
-        req = RequestFactory().get("/")
+    def test_get_opengraph_data(self, rf, episode):
+        req = rf.get("/")
         req.site = Site.objects.get_current()
-        data = self.episode.get_opengraph_data(req)
-        self.assertTrue(self.episode.title in data["title"])
-        self.assertEqual(
-            data["url"], "http://testserver" + self.episode.get_absolute_url()
-        )
+        data = episode.get_opengraph_data(req)
+        assert episode.title in data["title"]
+        assert data["url"] == "http://testserver" + episode.get_absolute_url()
 
-    def test_has_next_previous_episode(self) -> None:
-        self.assertEqual(self.episode.get_next_episode(), None)
-        self.assertEqual(self.episode.get_previous_episode(), None)
+    def test_has_next_previous_episode(self, episode):
+        assert episode.get_next_episode() is None
+        assert episode.get_previous_episode() is None
 
         next_episode = EpisodeFactory(
-            podcast=self.episode.podcast,
-            pub_date=self.episode.pub_date + datetime.timedelta(days=2),
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
 
         previous_episode = EpisodeFactory(
-            podcast=self.episode.podcast,
-            pub_date=self.episode.pub_date - datetime.timedelta(days=2),
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
 
         EpisodeFactory(
-            podcast=self.episode.podcast,
-            pub_date=self.episode.pub_date - datetime.timedelta(days=3),
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=3),
         )
 
-        self.assertEqual(self.episode.get_next_episode(), next_episode)
-        self.assertEqual(self.episode.get_previous_episode(), previous_episode)
+        assert episode.get_next_episode() == next_episode
+        assert episode.get_previous_episode() == previous_episode
 
-    def test_is_favorited_anonymous(self) -> None:
-        self.assertFalse(self.episode.is_favorited(AnonymousUser()))
+    def test_is_favorited_anonymous(self, anonymous_user, episode):
+        assert not episode.is_favorited(anonymous_user)
 
-    def test_is_favorited_false(self) -> None:
-        self.assertFalse(self.episode.is_favorited(self.user))
+    def test_is_favorited_false(self, user, episode):
+        assert not episode.is_favorited(user)
 
-    def test_is_favorited_true(self) -> None:
-        fave = FavoriteFactory(user=self.user, episode=self.episode)
-        self.assertTrue(fave.episode.is_favorited(fave.user))
+    def test_is_favorited_true(self, user, episode):
+        fave = FavoriteFactory(user=user, episode=episode)
+        assert fave.episode.is_favorited(fave.user)
 
-    def test_is_queued_anonymous(self) -> None:
-        self.assertFalse(self.episode.is_queued(AnonymousUser()))
+    def test_is_queued_anonymous(self, anonymous_user, episode):
+        assert not episode.is_queued(anonymous_user)
 
-    def test_is_queued_false(self) -> None:
-        self.assertFalse(self.episode.is_queued(self.user))
+    def test_is_queued_false(self, user, episode):
+        assert not episode.is_queued(user)
 
-    def test_is_queued_true(self) -> None:
-        item = QueueItemFactory(user=self.user, episode=self.episode)
-        self.assertTrue(item.episode.is_queued(item.user))
+    def test_is_queued_true(self, user, episode):
+        item = QueueItemFactory(user=user, episode=episode)
+        assert item.episode.is_queued(item.user)
 
 
-class FavoriteManagerTests(TestCase):
-    def test_search(self) -> None:
+class TestFavoriteManager:
+    def test_search(self, db):
         episode = EpisodeFactory(title="testing")
         FavoriteFactory(episode=episode)
-        self.assertEqual(Favorite.objects.search("testing").count(), 1)
+        assert Favorite.objects.search("testing").count() == 1
 
 
-class AudioLogManagerTests(TestCase):
-    def test_search(self) -> None:
+class TestAudioLogManager:
+    def test_search(self, db):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
-        self.assertEqual(AudioLog.objects.search("testing").count(), 1)
+        assert AudioLog.objects.search("testing").count() == 1
 
 
-class AudioLogModelTests(TestCase):
-    def test_to_json(self):
+class TestAudioLogModel:
+    def test_to_json(self, db):
         log = AudioLogFactory()
         data = log.to_json()
-        self.assertEqual(data["episode"]["id"], log.episode.id)
-        self.assertEqual(data["episode"]["url"], log.episode.get_absolute_url())
-        self.assertEqual(data["podcast"]["title"], log.episode.podcast.title)
-        self.assertEqual(data["podcast"]["url"], log.episode.podcast.get_absolute_url())
+        assert data["episode"]["id"] == log.episode.id
+        assert data["episode"]["url"] == log.episode.get_absolute_url()
+        assert data["podcast"]["title"] == log.episode.podcast.title
+        assert data["podcast"]["url"] == log.episode.podcast.get_absolute_url()
 
 
-class QueueItemManagerTests(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.user = UserFactory()
+class TestQueueItemManager:
+    def test_with_current_time_if_not_played(self, user):
+        QueueItemFactory(user=user)
+        item = QueueItem.objects.with_current_time(user).first()
+        assert item.current_time is None
 
-    def test_with_current_time_if_not_played(self) -> None:
-        QueueItemFactory(user=self.user)
-        item = QueueItem.objects.with_current_time(self.user).first()
-        self.assertEqual(item.current_time, None)
+    def test_with_current_time_if_played(self, user):
+        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
+        QueueItemFactory(user=user, episode=log.episode)
+        item = QueueItem.objects.with_current_time(user).first()
+        assert item.current_time == 20
 
-    def test_with_current_time_if_played(self) -> None:
-        log = AudioLogFactory(user=self.user, current_time=20, updated=timezone.now())
-        QueueItemFactory(user=self.user, episode=log.episode)
-        item = QueueItem.objects.with_current_time(self.user).first()
-        self.assertEqual(item.current_time, 20)
+    def test_move_items(self, user):
+        first = QueueItemFactory(user=user)
+        second = QueueItemFactory(user=user)
+        third = QueueItemFactory(user=user)
 
-    def test_move_items(self) -> None:
-        first = QueueItemFactory(user=self.user)
-        second = QueueItemFactory(user=self.user)
-        third = QueueItemFactory(user=self.user)
+        items = QueueItem.objects.filter(user=user).order_by("position")
 
-        items = QueueItem.objects.filter(user=self.user).order_by("position")
+        assert items[0] == first
+        assert items[1] == second
+        assert items[2] == third
 
-        self.assertEqual(items[0], first)
-        self.assertEqual(items[1], second)
-        self.assertEqual(items[2], third)
+        QueueItem.objects.move_items(user, [third.id, first.id, second.id])
 
-        QueueItem.objects.move_items(self.user, [third.id, first.id, second.id])
+        items = QueueItem.objects.filter(user=user).order_by("position")
 
-        items = QueueItem.objects.filter(user=self.user).order_by("position")
+        assert items[0] == third
+        assert items[1] == first
+        assert items[2] == second
 
-        self.assertEqual(items[0], third)
-        self.assertEqual(items[1], first)
-        self.assertEqual(items[2], second)
-
-    def test_add_item_to_start_empty(self) -> None:
+    def test_add_item_to_start_empty(self, user):
         episode = EpisodeFactory()
-        item = QueueItem.objects.add_item_to_start(self.user, episode)
-        self.assertEqual(item.episode, episode)
-        self.assertEqual(item.user, self.user)
-        self.assertEqual(item.position, 1)
+        item = QueueItem.objects.add_item_to_start(user, episode)
 
-    def test_add_item_to_start_other_items(self) -> None:
-        other = QueueItemFactory(user=self.user, position=1)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 1
+
+    def test_add_item_to_start_other_items(self, user):
+        other = QueueItemFactory(user=user, position=1)
 
         episode = EpisodeFactory()
-        item = QueueItem.objects.add_item_to_start(self.user, episode)
+        item = QueueItem.objects.add_item_to_start(user, episode)
 
-        self.assertEqual(item.episode, episode)
-        self.assertEqual(item.user, self.user)
-        self.assertEqual(item.position, 1)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 1
 
         other.refresh_from_db()
-        self.assertEqual(other.position, 2)
+        assert other.position == 2
 
-    def test_add_item_to_start_already_exists(self) -> None:
-        other = QueueItemFactory(user=self.user, position=1)
+    @pytest.mark.django_db(transaction=True)
+    def test_add_item_to_start_already_exists(self, user):
+        other = QueueItemFactory(user=user, position=1)
 
         with transaction.atomic():
-            self.assertRaises(
-                IntegrityError,
-                QueueItem.objects.add_item_to_start,
-                self.user,
-                other.episode,
-            )
-        self.assertEqual(QueueItem.objects.count(), 1)
+            with pytest.raises(IntegrityError):
+                QueueItem.objects.add_item_to_start(
+                    user,
+                    other.episode,
+                )
+        assert QueueItem.objects.count() == 1
 
         other.refresh_from_db()
-        self.assertEqual(other.position, 1)
+        assert other.position == 1
 
-    def test_add_item_to_end_empty(self) -> None:
-        episode = EpisodeFactory()
-        item = QueueItem.objects.add_item_to_end(self.user, episode)
-        self.assertEqual(item.episode, episode)
-        self.assertEqual(item.user, self.user)
-        self.assertEqual(item.position, 1)
+    def test_add_item_to_end_empty(self, user, episode):
+        item = QueueItem.objects.add_item_to_end(user, episode)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 1
 
-    def test_add_item_to_end_other_items(self) -> None:
-        QueueItemFactory(user=self.user, position=1)
+    def test_add_item_to_end_other_items(self, user, episode):
+        QueueItemFactory(user=user, position=1)
 
-        episode = EpisodeFactory()
-        item = QueueItem.objects.add_item_to_end(self.user, episode)
+        item = QueueItem.objects.add_item_to_end(user, episode)
 
-        self.assertEqual(item.episode, episode)
-        self.assertEqual(item.user, self.user)
-        self.assertEqual(item.position, 2)
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 2
 
-    def test_add_item_to_end_already_exists(self) -> None:
-        other = QueueItemFactory(user=self.user, position=1)
+    @pytest.mark.django_db(transaction=True)
+    def test_add_item_to_end_already_exists(self, user, episode):
+        other = QueueItemFactory(user=user, position=1)
 
         with transaction.atomic():
-            self.assertRaises(
-                IntegrityError,
-                QueueItem.objects.add_item_to_end,
-                self.user,
-                other.episode,
-            )
-        self.assertEqual(QueueItem.objects.count(), 1)
+            with pytest.raises(IntegrityError):
+                QueueItem.objects.add_item_to_end(
+                    user,
+                    other.episode,
+                )
+
+        assert QueueItem.objects.count() == 1
 
         other.refresh_from_db()
-        self.assertEqual(other.position, 1)
+        assert other.position == 1
