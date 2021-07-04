@@ -74,14 +74,14 @@ class TestSearchItunes:
         assert Podcast.objects.count() == 0
 
     def test_no_new_podcasts(self, db, mocker):
-        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
+        mocker.patch(REQUESTS_GET, return_value=MockResponse(), autospec=True)
         PodcastFactory(rss=RSS_FEED_URL)
         results, podcasts = itunes.search_itunes("testing")
         assert len(results) == 1
         assert len(podcasts) == 0
 
     def test_add_new_podcasts(self, db, mocker):
-        mocker.patch("requests.get", return_value=MockResponse(), autospec=True)
+        mocker.patch(REQUESTS_GET, return_value=MockResponse(), autospec=True)
         results, new_podcasts = itunes.search_itunes("testing")
         assert len(results) == 1
         assert len(new_podcasts) == 1
