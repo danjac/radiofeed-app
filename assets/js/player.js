@@ -1,219 +1,187 @@
-const defaults = {
+const playerObj = {
+  counter: '00:00:00',
   currentTime: 0,
   duration: 0,
-  isPlaying: false,
-  isPaused: false,
   isLoaded: false,
-  showPlayer: true,
+  isPaused: false,
+  isPlaying: false,
   playbackRate: 1.0,
-  counter: '00:00:00',
-};
+  showPlayer: true,
+  storageKey: 'player-enabled',
+  unlock: false,
 
-class PlayerLock {
-  // prevent player automatically starting in new tab
-  constructor(storageKey) {
-    this.storageKey = storageKey;
-  }
-  unlock() {
-    sessionStorage.setItem(this.storageKey, true);
-  }
+  init() {
+    this.$watch('duration', (value) => {
+      this.counter = formatDuration(value - this.currentTime);
+    });
+    this.$watch('currentTime', (value) => {
+      this.counter = formatDuration(this.duration - value);
+    });
 
-  lock() {
-    sessionStorage.removeItem(this.storageKey);
-  }
+    this.$watch('playbackRate', (value) => {
+      this.$refs.audio.playbackRate = value;
+    });
 
-  get isLocked() {
-    return !sessionStorage.getItem(this.storageKey);
-  }
-}
+    this.shortcuts = {
+      '+': this.incrementPlaybackRate,
+      '-': this.decrementPlaybackRate,
+      Digit0: this.resetPlaybackRate,
+      ArrowLeft: this.skipBack,
+      ArrowRight: this.skipForward,
+      Delete: this.close,
+      Space: this.togglePlay,
+    };
 
-export default function Player({ mediaSrc, csrfToken, currentTime, unlock, urls }) {
-  const lock = new PlayerLock('player-enabled');
+    this.$refs.audio.load();
+    this.timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
 
-  if (unlock) {
-    lock.unlock();
-  }
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = getMediaMetadata();
+    }
+  },
 
-  let timer;
+  shortcut(event) {
+    if (!this.shortcuts) {
+      return;
+    }
 
-  return {
-    mediaSrc,
-    ...defaults,
+    if (
+      event.ctrlKey ||
+      event.altKey ||
+      /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
+    ) {
+      return;
+    }
 
-    init() {
-      this.$watch('duration', (value) => {
-        this.counter = formatDuration(value - this.currentTime);
-      });
-      this.$watch('currentTime', (value) => {
-        this.counter = formatDuration(this.duration - value);
-      });
+    const handler = this.shortcuts[event.key] || this.shortcuts[event.code];
 
-      this.$watch('playbackRate', (value) => {
-        this.$refs.audio.playbackRate = value;
-      });
+    if (handler) {
+      event.preventDefault();
+      handler.bind(this)();
+    }
+  },
 
-      this.shortcuts = {
-        '+': this.incrementPlaybackRate,
-        '-': this.decrementPlaybackRate,
-        Digit0: this.resetPlaybackRate,
-        ArrowLeft: this.skipBack,
-        ArrowRight: this.skipForward,
-        Delete: this.close,
-        Space: this.togglePlay,
-      };
+  // audio events
+  loaded() {
+    if (this.isLoaded) {
+      return;
+    }
+    this.$refs.audio.currentTime = this.currentTime;
 
-      this.$refs.audio.load();
-
-      timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = getMediaMetadata();
-      }
-    },
-
-    shortcut(event) {
-      if (!this.shortcuts) {
-        return;
-      }
-
-      if (
-        event.ctrlKey ||
-        event.altKey ||
-        /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
-      ) {
-        return;
-      }
-
-      const handler = this.shortcuts[event.key] || this.shortcuts[event.code];
-
-      if (handler) {
-        event.preventDefault();
-        handler.bind(this)();
-      }
-    },
-
-    // audio events
-    loaded() {
-      if (this.isLoaded) {
-        return;
-      }
-      this.$refs.audio.currentTime = currentTime;
-
-      if (lock.isLocked) {
-        this.isPaused = true;
-      } else {
-        this.$refs.audio.play().catch((err) => {
-          console.error(err);
-          this.isPaused = true;
-        });
-      }
-
-      this.duration = this.$refs.audio.duration;
-      this.isLoaded = true;
-    },
-
-    error() {
-      console.log(this.$refs.audio.error);
-    },
-
-    timeUpdate() {
-      this.currentTime = Math.floor(this.$refs.audio.currentTime);
-    },
-
-    resumed() {
-      this.isPlaying = true;
-      this.isPaused = false;
-      lock.unlock();
-    },
-
-    paused() {
-      this.isPlaying = false;
+    if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
-      lock.lock();
-    },
-
-    incrementPlaybackRate() {
-      this.changePlaybackRate(0.1);
-    },
-
-    decrementPlaybackRate() {
-      this.changePlaybackRate(-0.1);
-    },
-
-    resetPlaybackRate() {
-      this.playbackRate = 1.0;
-    },
-
-    changePlaybackRate(increment) {
-      const newValue = Math.max(
-        0.5,
-        Math.min(2.0, parseFloat(this.playbackRate) + increment)
-      );
-      this.playbackRate = newValue;
-    },
-
-    skip() {
-      if (!this.isPaused) {
-        this.$refs.audio.currentTime = this.currentTime;
-      }
-    },
-
-    skipBack() {
-      if (!this.isPaused) {
-        this.$refs.audio.currentTime -= 10;
-      }
-    },
-
-    skipForward() {
-      if (!this.isPaused) {
-        this.$refs.audio.currentTime += 10;
-      }
-    },
-
-    close(url) {
-      this.mediaSrc = null;
-      this.shortcuts = null;
-
-      this.$refs.audio.pause();
-
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-
-      window.htmx.ajax('POST', url || urls.closePlayer, {
-        target: this.$el,
-        source: this.$el,
+    } else {
+      this.$refs.audio.play().catch((err) => {
+        console.error(err);
+        this.isPaused = true;
       });
-    },
+    }
 
-    ended() {
-      this.close(urls.playNextEpisode);
-    },
+    this.duration = this.$refs.audio.duration;
+    this.isLoaded = true;
+  },
 
-    togglePlay() {
-      if (this.isPaused) {
-        this.$refs.audio.play();
-      } else {
-        this.$refs.audio.pause();
-      }
-    },
+  error() {
+    console.log(this.$refs.audio.error);
+  },
 
-    canSendTimeUpdate() {
-      return this.isLoaded && !this.isPaused && !!this.currentTime;
-    },
+  timeUpdate() {
+    this.currentTime = Math.floor(this.$refs.audio.currentTime);
+  },
 
-    sendTimeUpdate() {
-      if (this.canSendTimeUpdate()) {
-        fetch(urls.timeUpdate, {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrfToken },
-          body: new URLSearchParams({ current_time: this.currentTime }),
-        }).catch((err) => console.error(err));
-      }
-    },
-  };
-}
+  resumed() {
+    this.isPlaying = true;
+    this.isPaused = false;
+    sessionStorage.setItem(this.storageKey, true);
+  },
+
+  paused() {
+    this.isPlaying = false;
+    this.isPaused = true;
+    sessionStorage.removeItem(this.storageKey);
+  },
+
+  incrementPlaybackRate() {
+    this.changePlaybackRate(0.1);
+  },
+
+  decrementPlaybackRate() {
+    this.changePlaybackRate(-0.1);
+  },
+
+  resetPlaybackRate() {
+    this.playbackRate = 1.0;
+  },
+
+  changePlaybackRate(increment) {
+    const newValue = Math.max(
+      0.5,
+      Math.min(2.0, parseFloat(this.playbackRate) + increment)
+    );
+    this.playbackRate = newValue;
+  },
+
+  skip() {
+    if (!this.isPaused) {
+      this.$refs.audio.currentTime = this.currentTime;
+    }
+  },
+
+  skipBack() {
+    if (!this.isPaused) {
+      this.$refs.audio.currentTime -= 10;
+    }
+  },
+
+  skipForward() {
+    if (!this.isPaused) {
+      this.$refs.audio.currentTime += 10;
+    }
+  },
+
+  close(url) {
+    this.mediaSrc = null;
+    this.shortcuts = null;
+
+    this.$refs.audio.pause();
+
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+
+    window.htmx.ajax('POST', url || this.urls.closePlayer, {
+      target: this.$el,
+      source: this.$el,
+    });
+  },
+
+  ended() {
+    this.close(this.urls.playNextEpisode);
+  },
+
+  togglePlay() {
+    if (this.isPaused) {
+      this.$refs.audio.play();
+    } else {
+      this.$refs.audio.pause();
+    }
+  },
+
+  canSendTimeUpdate() {
+    return this.isLoaded && !this.isPaused && !!this.currentTime;
+  },
+
+  sendTimeUpdate() {
+    if (this.canSendTimeUpdate()) {
+      fetch(this.urls.timeUpdate, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': this.csrfToken },
+        body: new URLSearchParams({ current_time: this.currentTime }),
+      }).catch((err) => console.error(err));
+    }
+  },
+};
 
 function formatDuration(value) {
   if (isNaN(value) || value < 0) return '00:00:00';
@@ -236,4 +204,11 @@ function getMediaMetadata() {
     return new window.MediaMetadata(metadata);
   }
   return null;
+}
+
+export default function Player(options) {
+  return {
+    ...playerObj,
+    ...options,
+  };
 }
