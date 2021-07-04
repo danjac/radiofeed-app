@@ -6,6 +6,8 @@ import pytest
 from django.contrib.auth.models import AnonymousUser
 
 from audiotrails.common.typedefs import AuthenticatedUser
+from audiotrails.episodes.factories import EpisodeFactory
+from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
@@ -39,6 +41,11 @@ def auth_user(client, user) -> AuthenticatedUser:
 @pytest.fixture
 def podcast(db) -> Podcast:
     return PodcastFactory()
+
+
+@pytest.fixture
+def episode(db) -> Episode:
+    return EpisodeFactory()
 
 
 @pytest.fixture
