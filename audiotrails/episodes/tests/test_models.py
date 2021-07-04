@@ -13,7 +13,6 @@ from audiotrails.episodes.factories import (
     QueueItemFactory,
 )
 from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
-from audiotrails.users.factories import UserFactory
 
 
 class TestEpisodeManager:
@@ -194,7 +193,6 @@ class TestEpisodeModel:
 
     def test_get_pc_complete_marked_complete(self, user, episode):
         now = timezone.now()
-        user = UserFactory()
         AudioLogFactory(
             user=user,
             current_time=50,

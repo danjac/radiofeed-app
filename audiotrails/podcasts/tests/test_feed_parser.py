@@ -154,12 +154,12 @@ class TestFeedParser:
 
         assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        categories = [c.name for c in new_podcast.categories.all()]
+        assigned_categories = [c.name for c in new_podcast.categories.all()]
 
-        assert "Science" in categories
-        assert "Religion & Spirituality" in categories
-        assert "Society & Culture" in categories
-        assert "Philosophy" in categories
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
 
     def test_parse_feed_permanent_redirect(self, mocker, new_podcast, categories):
         mocker.patch(

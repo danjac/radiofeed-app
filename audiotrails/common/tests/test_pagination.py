@@ -69,7 +69,6 @@ class TestPaginate:
 
     def test_paginate_invalid_page(self, rf, podcasts):
         with pytest.raises(Http404):
-            Http404,
             paginate(
                 rf.get("/", {"page": "fubar"}),
                 podcasts,
