@@ -33,6 +33,13 @@ def auth_user(client, user) -> AuthenticatedUser:
 
 
 @pytest.fixture
+def admin_user(client, db) -> AuthenticatedUser:
+    user = UserFactory(is_staff=True, is_superuser=True)
+    client.force_login(user)
+    return user
+
+
+@pytest.fixture
 def podcast(db) -> Podcast:
     return PodcastFactory()
 
