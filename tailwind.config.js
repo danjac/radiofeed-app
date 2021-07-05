@@ -10,7 +10,7 @@ module.exports = {
     purgeLayersByDefault: true,
   },
   purge: {
-    content: ['./templates/**/*.html', './static/src/js/**/*.js', './safelist.txt'],
+    content: ['./templates/**/*.html', './assets/js/**/*.js', './safelist.txt'],
     keyframes: true,
   },
   theme: {
