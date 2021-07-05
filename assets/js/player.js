@@ -31,8 +31,10 @@ const playerObj = {
       Delete: this.close,
       Space: this.togglePlay,
     };
-
+    
+    this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
+    
     this.timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
 
     if ('mediaSession' in navigator) {
@@ -66,8 +68,7 @@ const playerObj = {
     if (this.isLoaded) {
       return;
     }
-    this.$refs.audio.currentTime = this.currentTime;
-
+ 
     if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
     } else {
