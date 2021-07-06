@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import http
-
 import pytest
 
 from django.urls import reverse, reverse_lazy
 
+from audiotrails.common.assertions import assert_ok
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.factories import (
@@ -42,14 +41,14 @@ def mock_search_itunes(
 class TestPreview:
     def test_preview(self, client, podcast):
         resp = client.get(reverse("podcasts:preview", args=[podcast.id]))
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
 
 
 class TestPodcasts:
     def test_anonymous(self, client, db):
         PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(podcasts_url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_is_following_featured(self, client, auth_user):
@@ -58,7 +57,7 @@ class TestPodcasts:
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=auth_user).podcast
         resp = client.get(reverse("podcasts:featured"))
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
         assert sub not in resp.context_data["page_obj"].object_list
 
@@ -67,7 +66,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3, promoted=True)
         resp = client.get(podcasts_url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_user_is_following(self, client, auth_user):
@@ -76,7 +75,7 @@ class TestPodcasts:
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=auth_user)
         resp = client.get(podcasts_url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
 
@@ -98,7 +97,7 @@ class TestSearchPodcasts:
             reverse("podcasts:search_podcasts"),
             {"q": "testing"},
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == podcast
 
@@ -111,7 +110,7 @@ class TestPodcastRecommendations:
         resp = client.get(
             reverse("podcasts:podcast_recommendations", args=[podcast.id, podcast.slug])
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.context_data["podcast"] == podcast
         assert len(resp.context_data["recommendations"]) == 3
 
@@ -121,7 +120,7 @@ class TestPodcastDetail:
         resp = client.get(
             reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.context_data["podcast"] == podcast
 
 
@@ -135,7 +134,7 @@ class TestPodcastEpisodes:
                 args=[podcast.id, podcast.slug],
             )
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
     def test_search(self, client, transactional_db):
@@ -149,7 +148,7 @@ class TestPodcastEpisodes:
             ),
             {"q": "testing"},
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
@@ -170,7 +169,7 @@ class TestDiscover:
         PodcastFactory(categories=[c3, parents[2]])
 
         resp = client.get(self.url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["categories"]) == 3
 
     def test_search(self, client, parents):
@@ -186,7 +185,7 @@ class TestDiscover:
         PodcastFactory(categories=[c4])
 
         resp = client.get(self.url, {"q": "testing"})
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["categories"]) == 2
 
 
@@ -195,7 +194,7 @@ class TestCategoryDetail:
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
         resp = client.get(category.get_absolute_url())
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.context_data["category"] == category
 
     def test_get_episodes(self, client, category):
@@ -203,7 +202,7 @@ class TestCategoryDetail:
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(12, categories=[category])
         resp = client.get(category.get_absolute_url())
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 12
 
     def test_search(self, client, category):
@@ -215,7 +214,7 @@ class TestCategoryDetail:
         PodcastFactory(title="testing", categories=[category])
 
         resp = client.get(category.get_absolute_url(), {"q": "testing"})
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
@@ -226,14 +225,14 @@ class TestFollow:
 
     def test_subscribe(self, client, podcast, auth_user, url):
         resp = client.post(url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
     def test_already_following(self, client, podcast, auth_user, url):
         FollowFactory(user=auth_user, podcast=podcast)
         resp = client.post(url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 
@@ -241,7 +240,7 @@ class TestUnfollow:
     def test_unsubscribe(self, client, auth_user, podcast):
         FollowFactory(user=auth_user, podcast=podcast)
         resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 
@@ -263,7 +262,7 @@ class TestITunesCategory:
 
         resp = client.get(url)
 
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert not resp.context_data["error"]
         assert len(resp.context_data["results"]) == 1
         assert resp.context_data["results"][0].title == mock_search_result.title
@@ -276,7 +275,7 @@ class TestITunesCategory:
 
         resp = client.get(url)
 
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.context_data["error"]
         assert len(resp.context_data["results"]) == 0
 
@@ -286,7 +285,7 @@ class TestSearchITunes:
 
     def test_search_is_empty(self, client, db):
         resp = client.get(self.url)
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
 
         assert not resp.context_data["error"]
         assert len(resp.context_data["results"]) == 0
@@ -299,7 +298,7 @@ class TestSearchITunes:
 
         resp = client.get(self.url, {"q": "test"})
 
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert not resp.context_data["error"]
         assert len(resp.context_data["results"]) == 1
 
@@ -312,6 +311,6 @@ class TestSearchITunes:
             itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True
         )
         resp = client.get(self.url, {"q": "testing"})
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.context_data["error"]
         assert len(resp.context_data["results"]) == 0

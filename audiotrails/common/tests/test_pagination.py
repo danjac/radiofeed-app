@@ -1,10 +1,9 @@
-import http
-
 import pytest
 
 from django.http import Http404
 from django_htmx.middleware import HtmxDetails
 
+from audiotrails.common.assertions import assert_ok
 from audiotrails.common.pagination import paginate, render_paginated_response
 from audiotrails.podcasts.factories import PodcastFactory
 
@@ -28,7 +27,7 @@ class TestRenderPaginationResponse:
             self.pagination_template,
             page_size=10,
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.template_name == self.main_template
         assert "is_paginated" not in resp.context_data
 
@@ -47,7 +46,7 @@ class TestRenderPaginationResponse:
             self.pagination_template,
             page_size=10,
         )
-        assert resp.status_code == http.HTTPStatus.OK
+        assert_ok(resp)
         assert resp.template_name == self.pagination_template
         assert "is_paginated" in resp.context_data
 
