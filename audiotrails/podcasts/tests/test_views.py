@@ -138,7 +138,8 @@ class TestPodcastEpisodes:
         assert resp.status_code == http.HTTPStatus.OK
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_search(self, client, podcast):
+    def test_search(self, client, transactional_db):
+        podcast = PodcastFactory()
         EpisodeFactory.create_batch(3, podcast=podcast)
         EpisodeFactory(title="testing", podcast=podcast)
         resp = client.get(
