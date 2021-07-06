@@ -5,6 +5,7 @@ const playerObj = {
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
+  isError: false,
   playbackRate: 1.0,
   showPlayer: true,
   storageKey: 'player-enabled',
@@ -31,10 +32,10 @@ const playerObj = {
       Delete: this.close,
       Space: this.togglePlay,
     };
-    
+
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
-    
+
     this.timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
 
     if ('mediaSession' in navigator) {
@@ -68,13 +69,16 @@ const playerObj = {
     if (this.isLoaded) {
       return;
     }
- 
+
+    this.isError = false;
+
     if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
     } else {
       this.$refs.audio.play().catch((err) => {
         console.error(err);
         this.isPaused = true;
+        this.isError = true;
       });
     }
 
@@ -84,6 +88,7 @@ const playerObj = {
 
   error() {
     console.log(this.$refs.audio.error);
+    this.isError = true;
   },
 
   timeUpdate() {
@@ -93,6 +98,7 @@ const playerObj = {
   resumed() {
     this.isPlaying = true;
     this.isPaused = false;
+    this.isError = false;
     sessionStorage.setItem(this.storageKey, true);
   },
 
@@ -138,6 +144,10 @@ const playerObj = {
     if (!this.isPaused) {
       this.$refs.audio.currentTime += 10;
     }
+  },
+
+  reload() {
+    this.close(this.urls.reloadPlayer);
   },
 
   close(url) {
