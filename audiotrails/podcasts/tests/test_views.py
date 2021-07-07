@@ -103,8 +103,7 @@ class TestSearchPodcasts:
 
 
 class TestPodcastRecommendations:
-    def test_get(self, client, db):
-        podcast = PodcastFactory()
+    def test_get(self, client, db, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
         resp = client.get(
