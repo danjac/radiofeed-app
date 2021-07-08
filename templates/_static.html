@@ -1,4 +1,4 @@
-{% load static %}
+{% load static django_htmx %}
 <link rel="icon"
       type="image/png"
       href="{% static 'img/wave.png' %}">
@@ -11,3 +11,5 @@
 
 <script defer
         src="{% static 'bundle.js' %}"></script>
+
+{% django_htmx_script %}

@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django_extensions",
     "django_celery_beat",
+    "django_htmx",
     "djcelery_email",
     "widget_tweaks",
 ] + LOCAL_APPS
