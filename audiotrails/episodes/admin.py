@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars
 
-from audiotrails.common.typedefs import admin_action
 from audiotrails.episodes.models import Episode
+from audiotrails.shared.typedefs import admin_action
 
 
 @admin.register(Episode)

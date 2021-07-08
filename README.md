@@ -122,7 +122,7 @@ Use the Django shell or relevant commands to set up an admin user, and set the d
 
 To deploy just run:
 
-> ansible-playbook deploy.yml
+> git push dokku main
 
 ## LICENSE
 

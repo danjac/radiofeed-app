@@ -5,7 +5,6 @@ import pytest
 
 from django.contrib.auth.models import AnonymousUser
 
-from audiotrails.common.typedefs import AuthenticatedUser
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.factories import (
@@ -14,6 +13,7 @@ from audiotrails.podcasts.factories import (
     PodcastFactory,
 )
 from audiotrails.podcasts.models import Category, Follow, Podcast
+from audiotrails.shared.typedefs import AuthenticatedUser
 from audiotrails.users.factories import UserFactory
 
 

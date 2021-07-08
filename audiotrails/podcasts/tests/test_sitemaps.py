@@ -1,5 +1,5 @@
-from audiotrails.common.assertions import assert_ok
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
+from audiotrails.shared.assertions import assert_ok
 
 
 class TestCategorySitemap:

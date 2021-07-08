@@ -4,7 +4,6 @@ import pytest
 
 from django.urls import reverse, reverse_lazy
 
-from audiotrails.common.assertions import assert_ok
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.factories import (
@@ -15,6 +14,7 @@ from audiotrails.podcasts.factories import (
 )
 from audiotrails.podcasts.itunes import SearchResult
 from audiotrails.podcasts.models import Follow, Podcast
+from audiotrails.shared.assertions import assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 

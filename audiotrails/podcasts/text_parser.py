@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
-from audiotrails.common.html import unescape
+from audiotrails.shared.html import unescape
 
 """Additional language-specific stopwords"""
 

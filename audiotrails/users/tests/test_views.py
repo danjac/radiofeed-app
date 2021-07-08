@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.urls import reverse
 
-from audiotrails.common.assertions import assert_ok
 from audiotrails.episodes.factories import (
     AudioLogFactory,
     EpisodeFactory,
     FavoriteFactory,
 )
 from audiotrails.podcasts.factories import FollowFactory
+from audiotrails.shared.assertions import assert_ok
 
 
 class TestUserPreferences:

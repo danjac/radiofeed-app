@@ -4,10 +4,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test import RequestFactory
 
-from audiotrails.common.typedefs import AnyUser
 from audiotrails.episodes.factories import AudioLogFactory, QueueItemFactory
 from audiotrails.episodes.models import AudioLog, Episode, QueueItem
 from audiotrails.episodes.player import Player
+from audiotrails.shared.typedefs import AnyUser
 
 
 class TestPlayer:

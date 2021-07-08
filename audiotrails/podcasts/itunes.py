@@ -10,8 +10,8 @@ from django.template.defaultfilters import striptags
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 
-from audiotrails.common.template.defaulttags import unescape
 from audiotrails.podcasts.models import Category, Podcast
+from audiotrails.shared.template.defaulttags import unescape
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
 

@@ -10,13 +10,13 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from audiotrails.common.decorators import ajax_login_required
-from audiotrails.common.pagination import render_paginated_response
-from audiotrails.common.typedefs import ContextDict
 from audiotrails.episodes.views import render_episode_list_response
 from audiotrails.podcasts import itunes
 from audiotrails.podcasts.models import Category, Follow, Podcast, Recommendation
 from audiotrails.podcasts.tasks import sync_podcast_feed
+from audiotrails.shared.decorators import ajax_login_required
+from audiotrails.shared.pagination import render_paginated_response
+from audiotrails.shared.typedefs import ContextDict
 
 
 @require_safe

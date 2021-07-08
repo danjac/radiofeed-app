@@ -2,11 +2,6 @@ import pytest
 
 from django.urls import reverse, reverse_lazy
 
-from audiotrails.common.assertions import (
-    assert_bad_request,
-    assert_no_content,
-    assert_ok,
-)
 from audiotrails.episodes.factories import (
     AudioLogFactory,
     EpisodeFactory,
@@ -16,6 +11,11 @@ from audiotrails.episodes.factories import (
 from audiotrails.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from audiotrails.episodes.player import Player
 from audiotrails.podcasts.factories import FollowFactory, PodcastFactory
+from audiotrails.shared.assertions import (
+    assert_bad_request,
+    assert_no_content,
+    assert_ok,
+)
 
 episodes_url = reverse_lazy("episodes:index")
 

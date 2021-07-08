@@ -75,7 +75,7 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    reltuple_count = "audiotrails.common.db.get_reltuple_count"
+    reltuple_count = "audiotrails.shared.db.get_reltuple_count"
 
     def _test_for_feed_sync(self):
         now = timezone.now()

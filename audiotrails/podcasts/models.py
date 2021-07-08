@@ -19,9 +19,9 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from audiotrails.common.db import FastCountMixin, SearchMixin
-from audiotrails.common.template.defaulttags import unescape
-from audiotrails.common.typedefs import AnyUser, AuthenticatedUser
+from audiotrails.shared.db import FastCountMixin, SearchMixin
+from audiotrails.shared.template.defaulttags import unescape
+from audiotrails.shared.typedefs import AnyUser, AuthenticatedUser
 
 
 class CategoryQuerySet(models.QuerySet):
