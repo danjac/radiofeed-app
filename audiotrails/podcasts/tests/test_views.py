@@ -154,11 +154,9 @@ class TestPodcastEpisodes:
 class TestDiscover:
     url = reverse_lazy("podcasts:categories")
 
-    @pytest.fixture
-    def parents(self, db):
-        return CategoryFactory.create_batch(3, parent=None)
+    def test_get(self, client, db):
+        parents = CategoryFactory.create_batch(3, parent=None)
 
-    def test_get(self, client, parents):
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
         c3 = CategoryFactory(parent=parents[2])
@@ -171,7 +169,9 @@ class TestDiscover:
         assert_ok(resp)
         assert len(resp.context_data["categories"]) == 3
 
-    def test_search(self, client, parents):
+    def test_search(self, client, transactional_db):
+        parents = CategoryFactory.create_batch(3, parent=None)
+
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
         c3 = CategoryFactory(parent=parents[2], name="testing child")
@@ -204,7 +204,8 @@ class TestCategoryDetail:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 12
 
-    def test_search(self, client, category):
+    def test_search(self, client, transactional_db):
+        category = CategoryFactory()
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(

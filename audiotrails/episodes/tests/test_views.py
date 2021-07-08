@@ -110,7 +110,7 @@ class TestSearchEpisodes:
     def test_search_empty(self, db, client):
         assert client.get(self.url, {"q": ""}).url == reverse("episodes:index")
 
-    def test_search(self, db, client):
+    def test_search(self, transactional_db, client):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title="testing")
         resp = client.get(
