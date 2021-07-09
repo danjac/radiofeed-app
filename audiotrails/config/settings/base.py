@@ -12,7 +12,7 @@ env = environ.Env()
 
 DEBUG = False
 
-BASE_DIR = pathlib.Path("/app")
+BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
 
 SECRET_KEY = env("SECRET_KEY")
 
