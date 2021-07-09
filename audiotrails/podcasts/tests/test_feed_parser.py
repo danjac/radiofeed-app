@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import http
 import pathlib
 
@@ -12,11 +11,6 @@ from django.utils import timezone
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.feed_parser import (
-    conv_date,
-    conv_int,
-    conv_list,
-    conv_str,
-    conv_url,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
@@ -248,44 +242,3 @@ class TestFeedParser:
         assert not new_podcast.active
         assert not new_podcast.exception
         assert new_podcast.error_status == http.HTTPStatus.GONE
-
-
-class TestConvertors:
-    def test_conv_str(self):
-        assert conv_str("testing") == "testing"
-
-    def test_conv_str_is_none(self):
-        assert conv_str(None) == ""
-
-    def test_conv_int(self):
-        assert conv_int("123") == 123
-
-    def test_conv_int_is_none(self):
-        assert conv_int(None) is None
-
-    def test_conv_int_invalid(self):
-        assert conv_int("fubar") is None
-
-    def test_conv_url(self):
-        assert conv_url("http://example.com") == "http://example.com"
-
-    def test_conv_url_invalid(self):
-        assert conv_url("ftp://example.com") == ""
-
-    def test_conv_url_none(self):
-        assert conv_url(None) == ""
-
-    def test_conv_date(self):
-        assert isinstance(conv_date("Fri, 19 Jun 2020 16:58:03"), datetime.datetime)
-
-    def test_conv_date_invalid(self):
-        assert conv_date("fubar") is None
-
-    def test_conv_date_none(self):
-        assert conv_date(None) is None
-
-    def test_conv_list(self):
-        assert conv_list(["test"]) == ["test"]
-
-    def test_conv_list_none(self):
-        assert conv_list(None) == []

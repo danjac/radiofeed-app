@@ -1,25 +1,28 @@
 from __future__ import annotations
 
-import functools
 import http
 import secrets
 import traceback
 
 from functools import lru_cache
-from typing import Any, Callable, Iterable, Union
 
 import box
 import feedparser
 import requests
 
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.utils import timezone
-from django.utils.encoding import force_str
 from django.utils.http import http_date, quote_etag
 from feedparser.http import ACCEPT_HEADER
 
 from audiotrails.episodes.models import Episode
+from audiotrails.podcasts.convertors import (
+    conv_bool,
+    conv_date,
+    conv_int,
+    conv_list,
+    conv_str,
+    conv_url,
+)
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.models import Category, Podcast
 from audiotrails.podcasts.text_parser import extract_keywords
@@ -31,9 +34,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
-
-
-Validator = Union[Callable, list[Callable]]
 
 
 @lru_cache
@@ -103,7 +103,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
         result.feed.subtitle,
     )
 
-    podcast.explicit = parse_explicit(result.feed)
+    podcast.explicit = conv_bool(result.feed)
     podcast.creators = parse_creators(result.feed)
 
     keywords, categories = parse_taxonomy(result.feed)
@@ -137,7 +137,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         title=item.title,
         pub_date=item.pub_date,
         media_type=item.audio.type[:60],
-        explicit=parse_explicit(item),
+        explicit=conv_bool(item),
         media_url=conv_url(item.audio.href),
         length=conv_int(item.audio.length),
         link=conv_url(item.link)[:500],
@@ -149,10 +149,6 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
 
 def parse_tags(item: box.Box) -> list[str]:
     return [tag.term for tag in conv_list(item.tags) if tag.term]
-
-
-def parse_explicit(item: box.Box) -> bool:
-    return bool(item.itunes_explicit)
 
 
 def parse_taxonomy(feed: box.Box) -> tuple[list[str], list[Category]]:
@@ -259,48 +255,3 @@ def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
             setattr(podcast, k, v)
         podcast.save(update_fields=fields.keys())
     return []
-
-
-def conv(
-    *values: Iterable[Any],
-    convert: Callable,
-    validator: Validator | None = None,
-    default: Any = None,
-) -> Any:
-    """Returns first non-falsy value, converting the item. Otherwise returns default value"""
-    for value in values:
-        if value and (converted := _conv(value, convert, validator)):
-            return converted
-    return default() if callable(default) else default
-
-
-def _conv(value: Any, convert: Callable, validator: Validator | None = None) -> Any:
-    try:
-        return _validate(convert(value), validator)
-    except (ValidationError, TypeError, ValueError):
-        return None
-
-
-def _validate(value: Any, validator: Validator | None) -> Any:
-    if None in (value, validator):
-        return value
-
-    validators = [validator] if callable(validator) else validator
-
-    for _validator in validators:
-        _validator(value)
-
-    return value
-
-
-conv_str = functools.partial(conv, convert=force_str, default="")
-conv_list = functools.partial(conv, convert=list, default=list)
-conv_int = functools.partial(conv, convert=int)
-conv_date = functools.partial(conv, convert=parse_date)
-
-conv_url = functools.partial(
-    conv,
-    convert=force_str,
-    default="",
-    validator=URLValidator(schemes=["http", "https"]),
-)
