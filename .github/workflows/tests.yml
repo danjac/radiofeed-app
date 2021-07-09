@@ -17,7 +17,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
-          DATABASE_URL: postgres://postgres:password@localhost:5432/github_actions
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
@@ -39,4 +38,7 @@ jobs:
           python -m nltk.downloader stopwords
           python -m nltk.downloader wordnet
       - name: Run unit tests
+        env:
+          DATABASE_URL: postgres://postgres:password@localhost:5432/github_actions
+          SECRET_KEY: seekrit
         run: python -m pytest
