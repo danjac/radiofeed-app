@@ -40,6 +40,6 @@ jobs:
       - name: Run unit tests
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/github_actions
-          SECRET_KEY: seekrit
           REDIS_URL: redis://localhost:4321
+          SECRET_KEY: seekrit
         run: python -m pytest
