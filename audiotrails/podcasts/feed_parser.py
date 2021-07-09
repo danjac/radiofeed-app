@@ -6,7 +6,7 @@ import secrets
 import traceback
 
 from functools import lru_cache
-from typing import Any, Callable
+from typing import Any, Callable, Iterable, Union
 
 import box
 import feedparser
@@ -31,6 +31,9 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
+
+
+Validator = Union[Callable, list[Callable]]
 
 
 @lru_cache
@@ -259,10 +262,10 @@ def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
 
 
 def conv(
-    *values: Any,
+    *values: Iterable[Any],
     convert: Callable,
+    validator: Validator,
     default=None,
-    validator: Callable | None = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
@@ -271,27 +274,23 @@ def conv(
     return default() if callable(default) else default
 
 
-def _conv(
-    value: Any, convert: Callable, validator: Callable | list | None = None
-) -> Any:
+def _conv(value: Any, convert: Callable, validator: Validator | None = None) -> Any:
     try:
-        if value and (converted := convert(value)):
-            _validate(converted, validator)
-            return converted
+        return _validate(convert(value), validator)
     except (ValidationError, TypeError, ValueError):
-        pass
-
-    return None
+        return None
 
 
-def _validate(value: Any, validator: Callable | list[Callable] | None) -> None:
-    if validator is None:
-        return
+def _validate(value: Any, validator: Validator | None) -> Any:
+    if validator is None or value is None:
+        return None
 
     validators = [validator] if callable(validator) else validator
 
     for _validator in validators:
         _validator(value)
+
+    return value
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
