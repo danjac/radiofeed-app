@@ -41,4 +41,5 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:password@localhost:5432/github_actions
           SECRET_KEY: seekrit
+          REDIS_URL: redis://localhost:4321
         run: python -m pytest
