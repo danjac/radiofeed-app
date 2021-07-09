@@ -265,7 +265,7 @@ def conv(
     *values: Iterable[Any],
     convert: Callable,
     validator: Validator,
-    default=None,
+    default: Any = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
@@ -294,10 +294,9 @@ def _validate(value: Any, validator: Validator | None) -> Any:
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
-conv_int = functools.partial(conv, convert=int, default=None)
 conv_list = functools.partial(conv, convert=list, default=list)
-
-conv_date = functools.partial(conv, convert=parse_date, default=None)
+conv_int = functools.partial(conv, convert=int)
+conv_date = functools.partial(conv, convert=parse_date)
 
 conv_url = functools.partial(
     conv,
