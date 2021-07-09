@@ -110,12 +110,12 @@ class TestSearchEpisodes:
     def test_search_empty(self, db, client):
         assert client.get(self.url, {"q": ""}).url == reverse("episodes:index")
 
-    def test_search(self, transactional_db, client):
+    def test_search(self, db, client, faker):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
-        episode = EpisodeFactory(title="testing")
+        episode = EpisodeFactory(title=faker.unique.name())
         resp = client.get(
             self.url,
-            {"q": "testing"},
+            {"q": episode.title},
         )
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1

@@ -90,12 +90,12 @@ class TestSearchPodcasts:
             == podcasts_url
         )
 
-    def test_search(self, client, transactional_db):
-        podcast = PodcastFactory(title="testing")
+    def test_search(self, client, db, faker):
+        podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         resp = client.get(
             reverse("podcasts:search_podcasts"),
-            {"q": "testing"},
+            {"q": podcast.title},
         )
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -136,16 +136,17 @@ class TestPodcastEpisodes:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_search(self, client, transactional_db):
-        podcast = PodcastFactory()
+    def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
-        EpisodeFactory(title="testing", podcast=podcast)
+
+        episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
+
         resp = client.get(
             reverse(
                 "podcasts:podcast_episodes",
                 args=[podcast.id, podcast.slug],
             ),
-            {"q": "testing"},
+            {"q": episode.title},
         )
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -154,8 +155,11 @@ class TestPodcastEpisodes:
 class TestDiscover:
     url = reverse_lazy("podcasts:categories")
 
-    def test_get(self, client, db):
-        parents = CategoryFactory.create_batch(3, parent=None)
+    @pytest.fixture
+    def parents(self, db):
+        return CategoryFactory.create_batch(3, parent=None)
+
+    def test_get(self, client, parents):
 
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
@@ -169,21 +173,21 @@ class TestDiscover:
         assert_ok(resp)
         assert len(resp.context_data["categories"]) == 3
 
-    def test_search(self, client, transactional_db):
-        parents = CategoryFactory.create_batch(3, parent=None)
+    def test_search(self, client, parents, faker):
+
+        name = faker.unique.name()
 
         c1 = CategoryFactory(parent=parents[0])
         c2 = CategoryFactory(parent=parents[1])
-        c3 = CategoryFactory(parent=parents[2], name="testing child")
-
-        c4 = CategoryFactory(name="testing parent")
+        c3 = CategoryFactory(parent=parents[2], name=f"{name} child")
+        c4 = CategoryFactory(name=f"{name} parent")
 
         PodcastFactory(categories=[c1])
         PodcastFactory(categories=[c2])
         PodcastFactory(categories=[c3])
         PodcastFactory(categories=[c4])
 
-        resp = client.get(self.url, {"q": "testing"})
+        resp = client.get(self.url, {"q": name})
         assert_ok(resp)
         assert len(resp.context_data["categories"]) == 2
 
@@ -204,16 +208,15 @@ class TestCategoryDetail:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 12
 
-    def test_search(self, client, transactional_db):
-        category = CategoryFactory()
+    def test_search(self, client, category, faker):
 
         CategoryFactory.create_batch(3, parent=category)
         PodcastFactory.create_batch(
             12, title="zzzz", keywords="zzzz", categories=[category]
         )
-        PodcastFactory(title="testing", categories=[category])
+        podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
-        resp = client.get(category.get_absolute_url(), {"q": "testing"})
+        resp = client.get(category.get_absolute_url(), {"q": podcast.title})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
 

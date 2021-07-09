@@ -4,6 +4,7 @@ import freezegun
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
+from faker import Faker
 
 from audiotrails.episodes.factories import EpisodeFactory
 from audiotrails.episodes.models import Episode
@@ -20,6 +21,11 @@ from audiotrails.users.factories import UserFactory
 @pytest.fixture
 def freeze_time() -> Callable:
     return freezegun.freeze_time
+
+
+@pytest.fixture
+def faker() -> Faker:
+    return Faker()
 
 
 @pytest.fixture
