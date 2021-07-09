@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.9
+      - name: psycopg2 prerequisites
+        run: sudo apt-get install postgresql-client-11
       - name: Install dependencies
         run: |
           python -m pip install poetry
