@@ -1,4 +1,4 @@
-name: Run unit tests
+name: Run unit tests and deploy
 
 on:
   push:
@@ -43,3 +43,15 @@ jobs:
           REDIS_URL: redis://localhost:4321
           SECRET_KEY: seekrit
         run: python -m pytest -x
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: runtests
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Push to Dokku
+        uses: dokku/github-action@master
+        with:
+          branch: main
+          git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+          ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
