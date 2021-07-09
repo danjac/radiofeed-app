@@ -113,11 +113,11 @@ class TestPodcastManager:
         assert podcast_c in qs
         assert podcast_d in qs
 
-    def test_search(self, transactional_db):
+    def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
 
-    def test_search_if_empty(self, transactional_db):
+    def test_search_if_empty(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("").count() == 0
 
