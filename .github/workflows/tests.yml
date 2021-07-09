@@ -16,7 +16,9 @@ jobs:
         with:
           python-version: 3.9
       - name: psycopg2 prerequisites
-        run: sudo apt-get install postgresql-client-11
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install --no-install-recommends -y postgresql-client-11
       - name: Install dependencies
         run: |
           python -m pip install poetry
