@@ -264,12 +264,12 @@ def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
 def conv(
     *values: Iterable[Any],
     convert: Callable,
-    validator: Validator,
+    validator: Validator | None = None,
     default: Any = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
-        if converted := _conv(value, convert, validator):
+        if value and (converted := _conv(value, convert, validator)):
             return converted
     return default() if callable(default) else default
 
@@ -282,8 +282,8 @@ def _conv(value: Any, convert: Callable, validator: Validator | None = None) -> 
 
 
 def _validate(value: Any, validator: Validator | None) -> Any:
-    if validator is None or value is None:
-        return None
+    if None in (value, validator):
+        return value
 
     validators = [validator] if callable(validator) else validator
 
