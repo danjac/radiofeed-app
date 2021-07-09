@@ -42,4 +42,4 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
           REDIS_URL: redis://localhost:4321
           SECRET_KEY: seekrit
-        run: python -m pytest
+        run: python -m pytest -x
