@@ -271,16 +271,27 @@ def conv(
     return default() if callable(default) else default
 
 
-def _conv(value: Any, convert: Callable, validator: Callable | None = None) -> Any:
+def _conv(
+    value: Any, convert: Callable, validator: Callable | list | None = None
+) -> Any:
     try:
         if value and (converted := convert(value)):
-            if validator:
-                validator(converted)
+            _validate(converted, validator)
             return converted
     except (ValidationError, TypeError, ValueError):
         pass
 
     return None
+
+
+def _validate(value: Any, validator: Callable | list[Callable] | None) -> None:
+    if validator is None:
+        return
+
+    validators = [validator] if callable(validator) else validator
+
+    for _validator in validators:
+        _validator(value)
 
 
 conv_str = functools.partial(conv, convert=force_str, default="")
