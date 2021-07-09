@@ -103,7 +103,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
         result.feed.subtitle,
     )
 
-    podcast.explicit = conv_bool(result.feed)
+    podcast.explicit = conv_bool(result.feed.itunes_explicit)
     podcast.creators = parse_creators(result.feed)
 
     keywords, categories = parse_taxonomy(result.feed)
@@ -137,7 +137,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         title=item.title,
         pub_date=item.pub_date,
         media_type=item.audio.type[:60],
-        explicit=conv_bool(item),
+        explicit=conv_bool(item.itunes_explicit),
         media_url=conv_url(item.audio.href),
         length=conv_int(item.audio.length),
         link=conv_url(item.link)[:500],
