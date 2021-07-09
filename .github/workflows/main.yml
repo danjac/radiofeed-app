@@ -49,6 +49,10 @@ jobs:
     needs: runtests
     if: github.ref == 'refs/heads/main'
     steps:
+      - name: Cloning repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Push to Dokku
         uses: dokku/github-action@master
         with:
