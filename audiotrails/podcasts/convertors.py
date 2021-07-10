@@ -21,7 +21,7 @@ def conv(
     validator: Validator | None = None,
     default: Value | Callable = None,
 ) -> Any:
-    """Returns first non-falsy value, converting the item. Otherwise returns default value"""
+    """Returns first (converted) non-falsy value. Otherwise returns default value"""
     try:
         return next(
             filter(None, map(lambda value: _conv(value, convertor, validator), values))

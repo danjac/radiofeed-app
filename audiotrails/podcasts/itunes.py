@@ -4,6 +4,7 @@ import dataclasses
 
 import requests
 
+from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.template.defaultfilters import striptags
@@ -38,7 +39,7 @@ class SearchResult:
 
 
 def fetch_itunes_genre(
-    genre_id: int, num_results: int = 20
+    genre_id: int, num_results: int = settings.DEFAULT_ITUNES_LIMIT
 ) -> tuple[list[SearchResult], list[Podcast]]:
     """Fetch top rated results for genre"""
     return _get_or_create_podcasts(
@@ -54,7 +55,7 @@ def fetch_itunes_genre(
 
 
 def search_itunes(
-    search_term, num_results=12
+    search_term: str, num_results: int = settings.DEFAULT_ITUNES_LIMIT
 ) -> tuple[list[SearchResult], list[Podcast]]:
     """Does a search query on the iTunes API."""
 
@@ -70,7 +71,7 @@ def search_itunes(
     )
 
 
-def crawl_itunes(limit: int) -> int:
+def crawl_itunes(limit: int = settings.DEFAULT_ITUNES_LIMIT) -> int:
     categories = Category.objects.filter(itunes_genre_id__isnull=False).order_by("name")
     new_podcasts = 0
 
