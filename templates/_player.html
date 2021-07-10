@@ -41,10 +41,10 @@
            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
       </div>
 
-      <div class="flex items-center space-x-1 sm:space-x-2">
+      <div class="flex items-center">
 
         {% with cover_url=podcast.cover_url %}
-        <div class="w-20">
+        <div class="w-20 mr-1 sm:mr-0">
           <a href="{{ podcast_url }}">
             <img class="object-cover border dark:border-gray-500 bg-transparent h-16 w-16 self-center hover:opacity-75 border-white cursor-pointer"
                  title="{{ podcast.cleaned_title }}"
