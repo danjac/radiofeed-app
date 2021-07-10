@@ -19,7 +19,7 @@ class TestConvertors:
         assert conv_str("testing") == "testing"
 
     def test_conv_str_multiple(self):
-        assert conv_str("", None, "testing") == "testing"
+        assert conv_str("", None, "testing", "another") == "testing"
 
     def test_conv_str_none(self):
         assert conv_str(None) == ""
@@ -49,7 +49,7 @@ class TestConvertors:
         assert conv_int("123") == 123
 
     def test_conv_int_multiple(self):
-        assert conv_int("foo", None, "123") == 123
+        assert conv_int("foo", None, "123", "456", 989) == 123
 
     def test_conv_int_is_none(self):
         assert conv_int(None) is None
