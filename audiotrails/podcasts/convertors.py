@@ -22,8 +22,8 @@ def conv(
     default: Value | Callable = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
-    for value in values:
-        if value and (converted := _conv(value, convertor, validator)):
+    for value in filter(None, values):
+        if converted := _conv(value, convertor, validator):
             return converted
     return default() if callable(default) else default
 
