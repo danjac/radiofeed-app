@@ -29,13 +29,13 @@
          @play="resumed()"
          @timeupdate="timeUpdate()">
   </audio>
-  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-2 font-semibold"
+  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 sm:p-2 font-semibold"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}">
     <div class="relative space-y-3 sm:space-y-0">
 
-      <div class="w-72 sm:hidden truncate text-sm">
+      <div class="sm:hidden truncate text-sm">
         <a class="player--title"
            href="{{ episode_url }}"
            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
