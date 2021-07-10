@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import datetime
 
+import box
+
 from audiotrails.podcasts.convertors import (
     conv_bool,
     conv_date,
@@ -15,6 +17,15 @@ from audiotrails.podcasts.convertors import (
 class TestConvertors:
     def test_conv_str(self):
         assert conv_str("testing") == "testing"
+
+    def test_conv_str_multiple(self):
+        assert conv_str("", None, "testing", "another") == "testing"
+
+    def test_conv_str_none(self):
+        assert conv_str(None) == ""
+
+    def test_conv_str_box(self):
+        assert conv_str(box.Box({})) == ""
 
     def test_conv_bool_is_none(self):
         assert conv_bool(None) is False
@@ -36,6 +47,9 @@ class TestConvertors:
 
     def test_conv_int(self):
         assert conv_int("123") == 123
+
+    def test_conv_int_multiple(self):
+        assert conv_int("foo", None, "123", "456", 989) == 123
 
     def test_conv_int_is_none(self):
         assert conv_int(None) is None
