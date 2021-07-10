@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 
-from audiotrails.podcasts.feed_parser import (
+from audiotrails.podcasts.convertors import (
     conv_bool,
     conv_date,
     conv_int,

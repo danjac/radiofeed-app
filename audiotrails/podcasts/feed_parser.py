@@ -92,7 +92,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
     podcast.exception = ""
 
     podcast.title = conv_str(result.feed.title)
-    podcast.link = conv_url(result.feed.link)[:500]
+    podcast.link = conv_url(result.feed.link)
     podcast.cover_url = conv_url(result.feed.image.href)
     podcast.language = conv_str(result.feed.language, "en")[:2]
 
@@ -140,7 +140,7 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         explicit=conv_bool(item.itunes_explicit),
         media_url=conv_url(item.audio.href),
         length=conv_int(item.audio.length),
-        link=conv_url(item.link)[:500],
+        link=conv_url(item.link),
         description=conv_str(item.description, item.summary),
         duration=conv_str(item.itunes_duration)[:30],
         keywords=" ".join(parse_tags(item)),

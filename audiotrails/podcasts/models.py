@@ -141,15 +141,15 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(null=True, blank=True, max_length=500)
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    itunes: str = models.URLField(max_length=500, null=True, blank=True, unique=True)
+    itunes: str = models.URLField(max_length=2083, null=True, blank=True, unique=True)
 
     language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
     description: str = models.TextField(blank=True)
-    link: str = models.URLField(null=True, blank=True, max_length=500)
+    link: str = models.URLField(max_length=2083, null=True, blank=True)
     keywords: str = models.TextField(blank=True)
     extracted_text: str = models.TextField(blank=True)
     creators: str = models.TextField(blank=True)
