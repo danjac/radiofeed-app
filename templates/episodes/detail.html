@@ -47,10 +47,10 @@
   <div class="flex items-center space-x-3">
     <div>
       <a href="{{ podcast_url }}" title="{{ podcast.title }}">
-        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 %}
+        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=24 %}
       </a>
     </div>
-    <div class="space-y-2 text-sm">
+    <div class="space-y-3 text-sm">
       <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
         <div title="Date Published">
           {% include "_pub_date.html" with pub_date=episode.pub_date %}
