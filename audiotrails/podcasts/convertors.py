@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 
-from typing import Any, Callable, Iterable, Union
+from typing import Any, Callable, Iterable, TypeVar, Union
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -12,12 +12,14 @@ from audiotrails.podcasts.date_parser import parse_date
 
 Validator = Union[Callable, list[Callable]]
 
+Value = TypeVar("Value")
+
 
 def conv(
-    *values: Iterable[Any],
+    *values: Iterable[Value],
     convertor: Callable,
     validator: Validator | None = None,
-    default: Any = None,
+    default: Value | Callable = None,
 ) -> Any:
     """Returns first non-falsy value, converting the item. Otherwise returns default value"""
     for value in values:
@@ -26,14 +28,16 @@ def conv(
     return default() if callable(default) else default
 
 
-def _conv(value: Any, convertor: Callable, validator: Validator | None = None) -> Any:
+def _conv(
+    value: Value, convertor: Callable, validator: Validator | None = None
+) -> Value:
     try:
         return _validate(convertor(value), validator)
     except (ValidationError, TypeError, ValueError):
         return None
 
 
-def _validate(value: Any, validator: Validator | None) -> Any:
+def _validate(value: Value, validator: Validator | None) -> Value:
     if None in (value, validator):
         return value
 
