@@ -1,5 +1,7 @@
 import datetime
 
+import pytest
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.utils import timezone
@@ -77,41 +79,43 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "audiotrails.shared.db.get_reltuple_count"
 
-    def _test_for_feed_sync(self):
-        now = timezone.now()
+    @pytest.mark.parametrize("date", ["2021-06-19", "2021-06-18"])
+    def test_for_feed_sync(self, db, freeze_time, date):
+        with freeze_time(date):
+            now = timezone.now()
 
-        # no pub date yet
-        podcast_a = PodcastFactory(pub_date=None)
+            # no pub date yet
+            podcast_a = PodcastFactory(pub_date=None)
 
-        # 3 days ago: first tier
-        podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=3))
+            # 3 days ago: first tier
+            podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=3))
 
-        # 100 days ago: even/odd day
-        podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))
+            # 100 days ago: even/odd day
+            podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))
 
-        # 203 days ago: matching weekday
-        podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
+            # 203 days ago: matching weekday
+            podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
 
-        # not included:
+            # not included:
 
-        # 200 days ago: Tuesday
-        PodcastFactory(pub_date=now - datetime.timedelta(days=200))
+            # 200 days ago: Tuesday
+            PodcastFactory(pub_date=now - datetime.timedelta(days=200))
 
-        # 99 days ago: odd day
-        PodcastFactory(pub_date=now - datetime.timedelta(days=99))
+            # 99 days ago: odd day
+            PodcastFactory(pub_date=now - datetime.timedelta(days=99))
 
-        # inactive: never include
-        PodcastFactory(active=False)
+            # inactive: never include
+            PodcastFactory(active=False)
 
-        # just updated
-        PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
+            # just updated
+            PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
 
-        qs = Podcast.objects.for_feed_sync()
-        assert qs.count() == 4
-        assert podcast_a in qs
-        assert podcast_b in qs
-        assert podcast_c in qs
-        assert podcast_d in qs
+            qs = Podcast.objects.for_feed_sync()
+            assert qs.count() == 4
+            assert podcast_a in qs
+            assert podcast_b in qs
+            assert podcast_c in qs
+            assert podcast_d in qs
 
     def test_search(self, db):
         PodcastFactory(title="testing")
@@ -133,14 +137,6 @@ class TestPodcastManager:
         mocker.patch(self.reltuple_count, return_value=2000)
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
-
-    def test_for_feed_sync_even_weekday(self, db, freeze_time):
-        with freeze_time("2021-06-19"):
-            self._test_for_feed_sync()
-
-    def test_for_feed_sync_odd_weekday(self, db, freeze_time):
-        with freeze_time("2021-06-18"):
-            self._test_for_feed_sync()
 
 
 class TestPodcastModel:
