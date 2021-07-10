@@ -71,7 +71,7 @@ def search_itunes(
     )
 
 
-def crawl_itunes(limit: int) -> int:
+def crawl_itunes(limit: int = settings.DEFAULT_ITUNES_LIMIT) -> int:
     categories = Category.objects.filter(itunes_genre_id__isnull=False).order_by("name")
     new_podcasts = 0
 
