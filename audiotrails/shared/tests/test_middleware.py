@@ -59,6 +59,9 @@ class TestSearchMiddleware:
 
 
 class TestHtmxMessageMiddleware:
+    message = "It works!"
+    message_level = "message-success"
+
     @pytest.fixture
     def htmx_mw(self):
         return HtmxMiddleware(get_response)
@@ -71,24 +74,24 @@ class TestHtmxMessageMiddleware:
     def messages(self, mocker):
         mocker.patch(
             "audiotrails.shared.middleware.get_messages",
-            return_value=[Message(messages.SUCCESS, "It works!")],
+            return_value=[Message(messages.SUCCESS, self.message)],
         )
 
     @pytest.fixture
     def no_messages(self, mocker):
         mocker.patch("audiotrails.shared.middleware.get_messages", return_value=[])
 
-    def test_not_htmx_no_messages(self, rf, mocker, htmx_mw, message_mw, no_messages):
+    def _test_not_htmx(self, rf, htmx_mw, message_mw):
         req = rf.get("/")
         htmx_mw(req)
         resp = message_mw(req)
         assert "HX-Trigger" not in resp.headers
 
+    def test_not_htmx_no_messages(self, rf, mocker, htmx_mw, message_mw, no_messages):
+        self._test_not_htmx(rf, htmx_mw, message_mw)
+
     def test_not_htmx_messages(self, rf, mocker, htmx_mw, message_mw, messages):
-        req = rf.get("/")
-        htmx_mw(req)
-        resp = message_mw(req)
-        assert "HX-Trigger" not in resp.headers
+        self._test_not_htmx(rf, htmx_mw, message_mw)
 
     def test_htmx_no_messages(self, rf, mocker, htmx_mw, message_mw, no_messages):
         req = rf.get("/", HTTP_HX_REQUEST="true")
@@ -105,8 +108,8 @@ class TestHtmxMessageMiddleware:
         assert data == {
             "messages": [
                 {
-                    "message": "It works!",
-                    "tags": "message-success",
+                    "message": self.message,
+                    "tags": self.message_level,
                 },
             ],
         }
@@ -125,8 +128,8 @@ class TestHtmxMessageMiddleware:
             "reload-queue": "",
             "messages": [
                 {
-                    "message": "It works!",
-                    "tags": "message-success",
+                    "message": self.message,
+                    "tags": self.message_level,
                 },
             ],
         }
@@ -148,8 +151,8 @@ class TestHtmxMessageMiddleware:
             "start-player": "",
             "messages": [
                 {
-                    "message": "It works!",
-                    "tags": "message-success",
+                    "message": self.message,
+                    "tags": self.message_level,
                 },
             ],
         }
