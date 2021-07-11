@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
@@ -41,6 +42,8 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     except IntegrityError:
         pass
 
+    messages.success(request, "Added to Favorites")
+
     return HttpResponseNoContent()
 
 
@@ -50,6 +53,8 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
 
     Favorite.objects.filter(user=request.user, episode=episode).delete()
+
+    messages.info(request, "Removed from Favorites")
 
     response = HttpResponseNoContent()
     response["HX-Trigger"] = "reload-favorites"

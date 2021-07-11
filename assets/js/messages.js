@@ -1,6 +1,9 @@
 export default function Messages() {
   return {
     messages: [],
+    addMessages(messages) {
+      messages.forEach((message) => this.addMessage(message));
+    },
     addMessage(message) {
       this.messages.push({
         ...message,
@@ -11,11 +14,4 @@ export default function Messages() {
       }, 1500);
     },
   };
-}
-
-export function dispatchMessage(message) {
-  const event = new CustomEvent('add-message', {
-    detail: message,
-  });
-  window.dispatchEvent(event);
 }

@@ -3,9 +3,6 @@
        hx-target="this"
        hx-swap="outerHTML"
        hx-select="#follow-toggle">
-    {% if action %}
-    {% include "_oob_messages.html" %}
-    {% endif %}
     {% if is_following %}
     <button class="btn btn-secondary flex items-center"
             title="Stop following this podcast"

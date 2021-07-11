@@ -100,6 +100,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "audiotrails.shared.middleware.HtmxMessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 

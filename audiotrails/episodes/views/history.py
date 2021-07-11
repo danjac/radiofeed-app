@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST, require_safe
@@ -45,6 +46,9 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseBadRequest("Episode is currently playing")
 
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
+
+    messages.info(request, "Removed from History")
+
     response = HttpResponseNoContent()
     response["HX-Trigger"] = "reload-history"
     return response
