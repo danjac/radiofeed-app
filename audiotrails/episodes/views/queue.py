@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -48,6 +49,8 @@ def add_to_queue(
     except IntegrityError:
         pass
 
+    messages.success(request, "Added to Play Queue")
+
     return HttpResponseNoContent()
 
 
@@ -56,6 +59,7 @@ def add_to_queue(
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
+    messages.info(request, "Removed from Play Queue")
     response = HttpResponseNoContent()
     response["HX-Trigger"] = "reload-queue"
     return response
