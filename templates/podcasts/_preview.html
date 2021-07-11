@@ -35,7 +35,11 @@
 
 </div>
 
-{% if podcast.explicit %}
+{% if is_following %}
+<div class="text-sm font-semibold mb-3 text-sm">
+  You are following this podcast.
+</div>
+{% elif podcast.explicit %}
 <div class="text-sm font-semibold mb-3 text-sm">
   This podcast may contain explicit content.
 </div>
