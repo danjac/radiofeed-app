@@ -106,6 +106,7 @@ def preview(request: HttpRequest, podcast_id: int) -> HttpResponse:
         "podcasts/_preview.html",
         {
             "podcast": podcast,
+            "is_following": podcast.is_following(request.user),
         },
     )
 

@@ -124,6 +124,8 @@ To deploy just run:
 
 > git push dokku main
 
+There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
+
 ## LICENSE
 
 This project is covered by MIT license.
