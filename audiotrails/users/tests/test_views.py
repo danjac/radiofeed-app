@@ -24,7 +24,7 @@ class TestUserPreferences:
                 "autoplay": True,
             },
         )
-        assert resp.url == url
+        assert_ok(resp)
 
         auth_user.refresh_from_db()
 
