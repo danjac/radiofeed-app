@@ -10,7 +10,8 @@ export default function Messages() {
         show: true,
       });
       setTimeout(() => {
-        this.messages[this.messages.length - 1].show = false;
+        const visible = this.messages.filter((msg) => msg.show);
+        visible[visible.length - 1].show = false;
       }, 1500);
     },
   };
