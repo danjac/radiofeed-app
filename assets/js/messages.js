@@ -9,9 +9,11 @@ export default function Messages() {
         ...message,
         show: true,
       });
+
+      const index = this.messages.length - 1;
+
       setTimeout(() => {
-        const visible = this.messages.filter((msg) => msg.show);
-        visible[visible.length - 1].show = false;
+        this.messages[index].show = false;
       }, 1500);
     },
   };
