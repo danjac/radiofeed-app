@@ -69,7 +69,7 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_favorite' episode.id %}"
           @click="show=false">
-    {% icon "trash" css_class="h-4 w-4 mr-2" %}
+    {% icon "star_solid" css_class="h-4 w-4 mr-2" %}
     Remove from Favorites
   </button>
   {% else %}
