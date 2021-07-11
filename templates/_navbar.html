@@ -6,11 +6,13 @@
     <div class="flex items-center flex-shrink-0 mr-6">
       <button class="lg:hidden mr-3 focus:outline-none"
               title="Toggle Menu"
+              x-show="!sidebar"
               @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="hidden lg:hidden mr-3 focus:outline-none"
+      <button class="lg:hidden mr-3 focus:outline-none"
               title="Toggle Menu"
+              x-show="sidebar"
               @click="$dispatch('toggle-sidebar')">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
