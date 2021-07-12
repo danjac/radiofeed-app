@@ -4,7 +4,7 @@ import pytest
 
 from django.contrib import messages
 from django.contrib.messages.storage.base import Message
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django_htmx.middleware import HtmxMiddleware
 
 from audiotrails.shared.middleware import (
@@ -113,6 +113,17 @@ class TestHtmxMessageMiddleware:
                 },
             ],
         }
+
+    def test_htmx_messages_redirect(self, rf, mocker, htmx_mw, message_mw, messages):
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+
+        def _get_response(request):
+            return HttpResponseRedirect("/")
+
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        htmx_mw(req)
+        resp = HtmxMessageMiddleware(_get_response)(req)
+        assert "HX-Trigger" not in resp
 
     def test_htmx_messages_existing_hx_header(self, rf, mocker, htmx_mw, messages):
         def _get_response(request):

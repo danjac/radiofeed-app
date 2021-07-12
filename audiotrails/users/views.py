@@ -28,6 +28,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
+            return redirect(request.path)
     else:
         form = UserPreferencesForm(instance=request.user)
 
