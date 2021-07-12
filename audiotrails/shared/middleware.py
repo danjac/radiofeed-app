@@ -86,8 +86,7 @@ class HtmxMessageMiddleware(BaseMiddleware):
         return response
 
     def get_hx_trigger(self, response: HttpResponse) -> dict:
-        trigger = response.headers.get(self.hx_trigger_header, None)
-        if trigger:
+        if trigger := response.headers.get(self.hx_trigger_header, None):
             try:
                 return json.loads(trigger)
             except json.JSONDecodeError:
