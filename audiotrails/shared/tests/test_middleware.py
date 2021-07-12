@@ -18,23 +18,32 @@ def get_response(request: HttpRequest) -> HttpResponse:
     return HttpResponse()
 
 
-class TestCacheControlMiddleware:
-    @pytest.fixture
-    def htmx_mw(self):
-        return HtmxMiddleware(get_response)
+@pytest.fixture
+def htmx_mw():
+    return HtmxMiddleware(get_response)
 
+
+@pytest.fixture
+def req(rf):
+    return rf.get("/")
+
+
+@pytest.fixture
+def htmx_req(rf):
+    return rf.get("/", HTTP_HX_REQUEST="true")
+
+
+class TestCacheControlMiddleware:
     @pytest.fixture
     def cache_mw(self):
         return CacheControlMiddleware(get_response)
 
-    def test_is_htmx_request(self, rf, htmx_mw, cache_mw):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = cache_mw(req)
+    def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
+        htmx_mw(htmx_req)
+        resp = cache_mw(htmx_req)
         assert "Cache-Control" in resp.headers
 
-    def test_is_not_htmx_request(self, rf, htmx_mw, cache_mw):
-        req = rf.get("/")
+    def test_is_not_htmx_request(self, req, htmx_mw, cache_mw):
         htmx_mw(req)
         resp = cache_mw(req)
         assert "Cache-Control" not in resp.headers
@@ -51,8 +60,7 @@ class TestSearchMiddleware:
         assert req.search
         assert str(req.search) == "testing"
 
-    def test_no_search(self, rf, mw):
-        req = rf.get("/")
+    def test_no_search(self, req, mw):
         mw(req)
         assert not req.search
         assert str(req.search) == ""
@@ -61,10 +69,6 @@ class TestSearchMiddleware:
 class TestHtmxMessageMiddleware:
     message = "It works!"
     message_level = "message-success"
-
-    @pytest.fixture
-    def htmx_mw(self):
-        return HtmxMiddleware(get_response)
 
     @pytest.fixture
     def message_mw(self):
@@ -81,28 +85,25 @@ class TestHtmxMessageMiddleware:
     def no_messages(self, mocker):
         mocker.patch("audiotrails.shared.middleware.get_messages", return_value=[])
 
-    def _test_not_htmx(self, rf, htmx_mw, message_mw):
-        req = rf.get("/")
+    def _test_not_htmx(self, req, htmx_mw, message_mw):
         htmx_mw(req)
         resp = message_mw(req)
         assert "HX-Trigger" not in resp.headers
 
-    def test_not_htmx_no_messages(self, rf, mocker, htmx_mw, message_mw, no_messages):
-        self._test_not_htmx(rf, htmx_mw, message_mw)
+    def test_not_htmx_no_messages(self, req, htmx_mw, message_mw, no_messages):
+        self._test_not_htmx(req, htmx_mw, message_mw)
 
-    def test_not_htmx_messages(self, rf, mocker, htmx_mw, message_mw, messages):
-        self._test_not_htmx(rf, htmx_mw, message_mw)
+    def test_not_htmx_messages(self, req, mocker, htmx_mw, message_mw, messages):
+        self._test_not_htmx(req, htmx_mw, message_mw)
 
-    def test_htmx_no_messages(self, rf, mocker, htmx_mw, message_mw, no_messages):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = message_mw(req)
+    def test_htmx_no_messages(self, htmx_req, htmx_mw, message_mw, no_messages):
+        htmx_mw(htmx_req)
+        resp = message_mw(htmx_req)
         assert "HX-Trigger" not in resp.headers
 
-    def test_htmx_messages(self, rf, mocker, htmx_mw, message_mw, messages):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = message_mw(req)
+    def test_htmx_messages(self, htmx_req, htmx_mw, message_mw, messages):
+        htmx_mw(htmx_req)
+        resp = message_mw(htmx_req)
         assert "HX-Trigger" in resp.headers
         data = json.loads(resp.headers["HX-Trigger"])
         assert data == {
@@ -114,24 +115,22 @@ class TestHtmxMessageMiddleware:
             ],
         }
 
-    def test_htmx_messages_redirect(self, rf, mocker, htmx_mw, message_mw, messages):
+    def test_htmx_messages_redirect(self, htmx_req, htmx_mw, message_mw, messages):
         def _get_response(request):
             return HttpResponseRedirect("/")
 
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = HtmxMessageMiddleware(_get_response)(req)
+        htmx_mw(htmx_req)
+        resp = HtmxMessageMiddleware(_get_response)(htmx_req)
         assert "HX-Trigger" not in resp
 
-    def test_htmx_messages_existing_hx_header(self, rf, mocker, htmx_mw, messages):
+    def test_htmx_messages_existing_hx_header(self, htmx_req, htmx_mw, messages):
         def _get_response(request):
             resp = HttpResponse()
             resp["HX-Trigger"] = "reload-queue"
             return resp
 
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = HtmxMessageMiddleware(_get_response)(req)
+        htmx_mw(htmx_req)
+        resp = HtmxMessageMiddleware(_get_response)(htmx_req)
         data = json.loads(resp.headers["HX-Trigger"])
         assert data == {
             "reload-queue": "",
@@ -144,16 +143,15 @@ class TestHtmxMessageMiddleware:
         }
 
     def test_htmx_messages_existing_hx_multiple_header(
-        self, rf, mocker, htmx_mw, messages
+        self, htmx_req, htmx_mw, messages
     ):
         def _get_response(request):
             resp = HttpResponse()
             resp["HX-Trigger"] = json.dumps({"reload-queue": "", "start-player": ""})
             return resp
 
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-        htmx_mw(req)
-        resp = HtmxMessageMiddleware(_get_response)(req)
+        htmx_mw(htmx_req)
+        resp = HtmxMessageMiddleware(_get_response)(htmx_req)
         data = json.loads(resp.headers["HX-Trigger"])
         assert data == {
             "reload-queue": "",
