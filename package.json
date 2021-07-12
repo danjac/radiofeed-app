@@ -7,10 +7,10 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",
-    "autoprefixer": "^10.2.6",
+    "autoprefixer": "^10.3.1",
     "cssnano": "^5.0.6",
-    "esbuild": "^0.12.14",
-    "npm-check-updates": "^11.8.1",
+    "esbuild": "^0.12.15",
+    "npm-check-updates": "^11.8.2",
     "postcss": "^8.3.5",
     "postcss-cli": "^8.3.1",
     "postcss-import": "^14.0.2",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "alpinejs": "^3.2.1",
-    "htmx.org": "^1.4.1",
+    "htmx.org": "^1.5.0",
     "sortablejs": "^1.14.0"
   }
 }
