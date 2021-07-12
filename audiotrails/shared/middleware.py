@@ -21,7 +21,7 @@ class BaseMiddleware:
 
 
 class Search:
-    search_param: str = "q"
+    search_param: ClassVar[str] = "q"
     request: HttpRequest
 
     def __init__(self, request: HttpRequest):
