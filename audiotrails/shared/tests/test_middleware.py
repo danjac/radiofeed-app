@@ -115,8 +115,6 @@ class TestHtmxMessageMiddleware:
         }
 
     def test_htmx_messages_redirect(self, rf, mocker, htmx_mw, message_mw, messages):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
-
         def _get_response(request):
             return HttpResponseRedirect("/")
 
