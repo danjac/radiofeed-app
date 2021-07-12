@@ -68,10 +68,8 @@ class HtmxMessageMiddleware(BaseMiddleware):
     def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
-        if (
-            request.htmx
-            and self.use_hx_trigger(request, response)
-            and (messages := get_messages(request))
+        if self.use_hx_trigger(request, response) and (
+            messages := get_messages(request)
         ):
             response[self.hx_trigger_header] = json.dumps(
                 {
