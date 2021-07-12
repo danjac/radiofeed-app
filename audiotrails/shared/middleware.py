@@ -6,7 +6,12 @@ from typing import Callable, ClassVar
 from urllib.parse import urlencode
 
 from django.contrib.messages.api import get_messages
-from django.http import HttpRequest, HttpResponse
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    HttpResponseRedirect,
+)
 from django.utils.functional import SimpleLazyObject, cached_property
 
 
@@ -60,19 +65,12 @@ class HtmxMessageMiddleware(BaseMiddleware):
 
     hx_trigger_header: ClassVar[str] = "HX-Trigger"
 
-    def get_hx_trigger(self, response: HttpResponse) -> dict:
-        trigger = response.headers.get(self.hx_trigger_header, None)
-        if trigger:
-            try:
-                return json.loads(trigger)
-            except json.JSONDecodeError:
-                return {trigger: ""}
-        return {}
-
     def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
-        if request.htmx and (messages := get_messages(request)):
+        if self.use_hx_trigger(request, response) and (
+            messages := get_messages(request)
+        ):
             response[self.hx_trigger_header] = json.dumps(
                 {
                     **self.get_hx_trigger(response),
@@ -86,3 +84,18 @@ class HtmxMessageMiddleware(BaseMiddleware):
                 }
             )
         return response
+
+    def get_hx_trigger(self, response: HttpResponse) -> dict:
+        trigger = response.headers.get(self.hx_trigger_header, None)
+        if trigger:
+            try:
+                return json.loads(trigger)
+            except json.JSONDecodeError:
+                return {trigger: ""}
+        return {}
+
+    def use_hx_trigger(self, request: HttpRequest, response: HttpResponse) -> bool:
+        return request.htmx and type(response) not in (
+            HttpResponseRedirect,
+            HttpResponsePermanentRedirect,
+        )
