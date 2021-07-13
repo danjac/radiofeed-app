@@ -46,10 +46,9 @@ def add_to_queue(
             QueueItem.objects.add_item_to_start(request.user, episode)
         else:
             QueueItem.objects.add_item_to_end(request.user, episode)
+        messages.success(request, "Added to Play Queue")
     except IntegrityError:
         pass
-
-    messages.success(request, "Added to Play Queue")
 
     return HttpResponseNoContent()
 

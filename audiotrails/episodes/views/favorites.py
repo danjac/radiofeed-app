@@ -39,10 +39,9 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     try:
         Favorite.objects.create(episode=episode, user=request.user)
+        messages.success(request, "Added to Favorites")
     except IntegrityError:
         pass
-
-    messages.success(request, "Added to Favorites")
 
     return HttpResponseNoContent()
 

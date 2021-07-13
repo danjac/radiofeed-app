@@ -15,13 +15,13 @@ from django.utils.http import http_date, quote_etag
 from feedparser.http import ACCEPT_HEADER
 
 from audiotrails.episodes.models import Episode
-from audiotrails.podcasts.convertors import (
-    conv_bool,
-    conv_date,
-    conv_int,
-    conv_list,
-    conv_str,
-    conv_url,
+from audiotrails.podcasts.coerce import (
+    coerce_bool,
+    coerce_date,
+    coerce_int,
+    coerce_list,
+    coerce_str,
+    coerce_url,
 )
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.models import Category, Podcast
@@ -91,19 +91,20 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
     podcast.pub_date = max(item.pub_date for item in items)
     podcast.exception = ""
 
-    podcast.title = conv_str(result.feed.title)
-    podcast.link = conv_url(result.feed.link)
-    podcast.cover_url = conv_url(result.feed.image.href)
-    podcast.language = conv_str(result.feed.language, "en")[:2]
+    podcast.title = coerce_str(result.feed.title)
+    podcast.link = coerce_url(result.feed.link)
+    podcast.cover_url = coerce_url(result.feed.image.href)
 
-    podcast.description = conv_str(
+    podcast.language = coerce_str(result.feed.language, "en", limit=2)
+
+    podcast.description = coerce_str(
         result.feed.content,
         result.feed.summary,
         result.feed.description,
         result.feed.subtitle,
     )
 
-    podcast.explicit = conv_bool(result.feed.itunes_explicit)
+    podcast.explicit = coerce_bool(result.feed.itunes_explicit)
     podcast.creators = parse_creators(result.feed)
 
     keywords, categories = parse_taxonomy(result.feed)
@@ -136,19 +137,19 @@ def make_episode(podcast: Podcast, item: box.Box) -> Episode:
         guid=item.id,
         title=item.title,
         pub_date=item.pub_date,
-        media_type=item.audio.type[:60],
-        explicit=conv_bool(item.itunes_explicit),
-        media_url=conv_url(item.audio.href),
-        length=conv_int(item.audio.length),
-        link=conv_url(item.link),
-        description=conv_str(item.description, item.summary),
-        duration=conv_str(item.itunes_duration)[:30],
+        explicit=coerce_bool(item.itunes_explicit),
+        media_url=coerce_url(item.audio.href),
+        length=coerce_int(item.audio.length),
+        link=coerce_url(item.link),
+        media_type=coerce_str(item.audio.type, limit=60),
+        description=coerce_str(item.description, item.summary),
+        duration=coerce_str(item.itunes_duration, limit=30),
         keywords=" ".join(parse_tags(item)),
     )
 
 
 def parse_tags(item: box.Box) -> list[str]:
-    return [tag.term for tag in conv_list(item.tags) if tag.term]
+    return [tag.term for tag in coerce_list(item.tags) if tag.term]
 
 
 def parse_taxonomy(feed: box.Box) -> tuple[list[str], list[Category]]:
@@ -187,18 +188,20 @@ def parse_items(result: box.Box) -> list[box.Box]:
 
 
 def parse_creators(feed: box.Box) -> str:
-    return " ".join({author.name for author in conv_list(feed.authors) if author.name})
+    return " ".join(
+        {author.name for author in coerce_list(feed.authors) if author.name}
+    )
 
 
 def with_audio(item: box.Box) -> box.Box:
-    for link in conv_list(item.enclosures) + conv_list(item.links):
+    for link in coerce_list(item.enclosures) + coerce_list(item.links):
         if is_audio(link):
             return item + box.Box(audio=link)
     return item
 
 
 def with_pub_date(item: box.Box) -> box.Box:
-    return item + box.Box(pub_date=conv_date(item.published))
+    return item + box.Box(pub_date=coerce_date(item.published))
 
 
 def is_audio(link: box.Box) -> bool:
