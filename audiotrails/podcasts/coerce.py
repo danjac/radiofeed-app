@@ -22,7 +22,7 @@ def coerce(
     default: Value | Callable = None,
     **extra_kwargs,
 ) -> Any:
-    """Returns first (coerceerted) non-falsy value. Otherwise returns default value"""
+    """Returns first (coerced) non-falsy value. Otherwise returns default"""
     try:
         return next(
             filter(
