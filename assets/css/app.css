@@ -22,9 +22,6 @@ input[type='search']::-webkit-search-results-decoration {
 body {
   scroll-behavior: smooth;
 }
-#layout {
-  scroll-margin-top: 175px;
-}
 
 .hx-indicator {
   display: none;
