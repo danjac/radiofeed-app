@@ -25,5 +25,5 @@ class UserPreferencesForm(forms.ModelForm):
         )
         help_texts: dict[str, str] = {
             "autoplay": "Automatically play the next episode in your Play Queue when the current playing episode ends",
-            "send_recommendations_email": "We will send you recommendations for new podcasts every week",
+            "send_recommendations_email": "Send me podcast recommendations every week",
         }
