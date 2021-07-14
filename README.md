@@ -58,7 +58,7 @@ Issue is covered here: https://github.com/danjac/audiotrails/issues/3
 
 ## Deployment
 
-This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
+This app has been configured to run on [Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
 
 SSH into your Dokku server and create the app and add the domain (assuming "audiotrails" is your app name, and "audiotrails-domain.com" your domain):
 
