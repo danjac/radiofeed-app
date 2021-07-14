@@ -46,9 +46,9 @@ To run unit tests:
 
 > ./scripts/runtests [...]
 
-This script takes the same arguments as Django _./manage.py.test_:
+This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./scripts/runtests --keepdb --failfast --parallel
+> ./scripts/runtests -x --ff
 
 **Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
 
