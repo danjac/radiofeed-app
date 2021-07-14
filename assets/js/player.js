@@ -60,6 +60,7 @@ const playerObj = {
 
     if (handler) {
       event.preventDefault();
+      event.stopPropagation();
       handler.bind(this)();
     }
   },
