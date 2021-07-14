@@ -62,7 +62,7 @@
       <a href="{% url 'user_preferences' %}"
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
-        <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="Logged in as {{ user.username }}">
+        <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="{{ user.username }}">
       </a>
       {% else %}
       <a href="{{ home_url|login_url }}"
