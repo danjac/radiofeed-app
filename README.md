@@ -46,9 +46,9 @@ To run unit tests:
 
 > ./scripts/runtests [...]
 
-This script takes the same arguments as Django _./manage.py.test_:
+This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./scripts/runtests --keepdb --failfast --parallel
+> ./scripts/runtests -x --ff
 
 **Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
 
@@ -58,7 +58,7 @@ Issue is covered here: https://github.com/danjac/audiotrails/issues/3
 
 ## Deployment
 
-This app has been configured to run on ![Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
+This app has been configured to run on [Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
 
 SSH into your Dokku server and create the app and add the domain (assuming "audiotrails" is your app name, and "audiotrails-domain.com" your domain):
 
