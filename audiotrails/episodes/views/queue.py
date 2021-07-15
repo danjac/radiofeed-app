@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from typing import Literal
 
 from django.contrib import messages
@@ -60,7 +62,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
     messages.info(request, "Removed from Play Queue")
     response = HttpResponseNoContent()
-    response["HX-Trigger"] = "reload-queue"
+    response["HX-Trigger"] = json.dumps({"remove-queue-item": episode.id})
     return response
 
 
