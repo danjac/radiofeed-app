@@ -141,6 +141,8 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
+    num_episodes: int = models.PositiveIntegerField(default=0)
+
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
     itunes: str = models.URLField(max_length=2083, null=True, blank=True, unique=True)
