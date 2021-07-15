@@ -88,8 +88,10 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
-    podcast.pub_date = max(item.pub_date for item in items)
     podcast.exception = ""
+
+    podcast.num_episodes = len(items)
+    podcast.pub_date = max(item.pub_date for item in items)
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)

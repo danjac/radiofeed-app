@@ -147,6 +147,7 @@ class TestFeedParser:
         assert new_podcast.cover_url
 
         assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+        assert new_podcast.num_episodes == 20
 
         assigned_categories = [c.name for c in new_podcast.categories.all()]
 

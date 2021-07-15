@@ -79,7 +79,14 @@ class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
     ordering = ("-pub_date",)
-    list_display = ("__str__", "source", "pub_date", "active", "promoted")
+    list_display = (
+        "__str__",
+        "source",
+        "pub_date",
+        "active",
+        "promoted",
+        "num_episodes",
+    )
     list_editable = ("promoted",)
     search_fields = ("search_document",)
 
@@ -88,10 +95,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "redirect_to",
     )
 
-    readonly_fields = (
-        "created",
-        "updated",
-    )
+    readonly_fields = ("created", "updated", "pub_date", "num_episodes")
 
     actions = ["reactivate"]
 
