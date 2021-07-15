@@ -6,14 +6,6 @@
   {% with episode=favorite.episode %}
   {% include "episodes/_episode.html" with hx_remove="remove-favorite" %}
   {% endwith %}
-  {% empty %}
-  <p class="text-center sm:text-left text-sm">
-    {% if search %}
-    No results found for <span class="font-bold">{{ search }}</span>.
-    {% else %}
-    You do not have any Favorites at the moment.
-    {% endif %}
-  </p>
   {% endfor %}
 </div>
 {% endblock %}

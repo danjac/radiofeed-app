@@ -11,10 +11,11 @@
          x-transition:leave-start="transform translate-y-0 opacity-100"
          x-transition:leave-end="transform translate-y-full opacity-0"
          @{{ hx_remove }}.window="
-        if ($event.detail.value === {{ episode.id }}) {
-          show=false;
-          $dispatch('remove-episode');
-        }"
+         if ($event.detail.value === {{ episode.id }}) {
+            show=false;
+            $dispatch('remove-episode', { detail: {{ episode.id }} });
+         }
+         "
          {% endif %}>
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-1 sm:space-x-2">
