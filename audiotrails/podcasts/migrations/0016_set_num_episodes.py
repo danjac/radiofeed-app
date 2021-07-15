@@ -5,10 +5,10 @@ from django.db.models import Count, OuterRef, Subquery
 
 
 def set_num_episodes(apps, schema_editor):
-    Podcast = apps.get_model("podcasts.Podcast")
-    Podcast.objects.filter(pub_date__isnull=False).update(
+    podcast_model = apps.get_model("podcasts.Podcast")
+    podcast_model.objects.filter(pub_date__isnull=False).update(
         num_episodes=Subquery(
-            Podcast.objects.filter(pk=OuterRef("id"))
+            podcast_model.objects.filter(pk=OuterRef("id"))
             .annotate(episode_count=Count("episode"))
             .values("episode_count")[:1]
         )
@@ -16,8 +16,8 @@ def set_num_episodes(apps, schema_editor):
 
 
 def reset_num_episodes(apps, schema_editor):
-    Podcast = apps.get_model("podcasts.Podcast")
-    Podcast.objects.update(num_episodes=0)
+    podcast_model = apps.get_model("podcasts.Podcast")
+    podcast_model.objects.update(num_episodes=0)
 
 
 class Migration(migrations.Migration):
