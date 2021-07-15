@@ -6,7 +6,7 @@ from django.db.models import Count, OuterRef, Subquery
 
 def set_num_episodes(apps, schema_editor):
     Podcast = apps.get_model("podcasts.Podcast")
-    Podcast.objects.update(
+    Podcast.objects.filter(pub_date__isnull=False).update(
         num_episodes=Subquery(
             Podcast.objects.filter(pk=OuterRef("id"))
             .annotate(episode_count=Count("episode"))
