@@ -54,15 +54,13 @@
     {% block main %}
     <main class="w-full p-2 lg:block"
           :class="{'hidden lg:block': sidebar}">
-      <div id="content">
 
-        {% block signup_cta %}
-        {% include "_signup_cta.html" %}
-        {% endblock %}
+      {% block signup_cta %}
+      {% include "_signup_cta.html" %}
+      {% endblock %}
 
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
 
-      </div>
     </main>
     {% endblock main %}
   </div>

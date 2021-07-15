@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -56,5 +58,5 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     messages.info(request, "Removed from Favorites")
 
     response = HttpResponseNoContent()
-    response["HX-Trigger"] = "reload-favorites"
+    response["HX-Trigger"] = json.dumps({"remove-favorite": episode.id})
     return response

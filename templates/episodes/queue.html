@@ -9,8 +9,10 @@
 
 {% block content %}
 <div id="queue"
-     hx-get="{{ request.path }}"
-     hx-trigger="reload-queue from:body">
+     x-data="{showAllRemoved:false}"
+     @remove-episode.window="
+      $nextTick(() => showAllRemoved = ($el.querySelectorAll('.episode:not(.removed)').length === 0))
+     ">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-lg">Play Queue</h1>
   </div>
@@ -22,14 +24,20 @@
     {% with episode=item.episode %}
     <div data-draggable="true"
          data-id={{ item.id }}>
-      {% include "episodes/_queue_item.html" %}
+      {% include "episodes/_queue_item.html" with hx_remove="remove-queue-item" %}
     </div>
 
     {% endwith %}
     {% empty %}
-    You do not have any items in your Play Queue.
+    <p class="text-center sm:text-left text-sm">
+      You do not have any items in your Play Queue.
+    </p>
     {% endfor %}
   </div>
+  <p class="text-center sm:text-left text-sm"
+     x-show="showAllRemoved">
+    All done!
+  </p>
 </div>
 
 {% endblock content %}

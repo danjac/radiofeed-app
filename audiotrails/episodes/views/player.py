@@ -81,20 +81,7 @@ def render_player(
 
     response = TemplateResponse(request, "_player.html", {"unlock": True})
 
-    events: list[str] = []
-
     if next_episode:
-        events += [
-            "reload-queue",
-            f"reload-episode-{next_episode.id}",
-        ]
-
-    if current_episode:
-        events += [
-            f"reload-episode-{current_episode.id}",
-        ]
-
-    if events:
-        response["HX-Trigger"] = json.dumps({event: "" for event in events})
+        response["HX-Trigger"] = json.dumps({"remove-queue-item": next_episode.id})
 
     return response

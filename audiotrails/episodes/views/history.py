@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -50,5 +52,5 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     messages.info(request, "Removed from History")
 
     response = HttpResponseNoContent()
-    response["HX-Trigger"] = "reload-history"
+    response["HX-Trigger"] = json.dumps({"remove-audio-log": episode.id})
     return response
