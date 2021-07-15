@@ -4,8 +4,8 @@
     <div class="flex items-center w-full space-x-1 sm:space-x-2">
 
       <div class="w-16">
-        <a href="{{ episode.get_absolute_url }}">
-          {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=episode.cleaned_title size=14 %}
+        <a href="{{ podcast.get_absolute_url }}">
+          {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
         </a>
       </div>
 
