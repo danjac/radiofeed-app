@@ -9,10 +9,8 @@
 
 {% block content %}
 <div id="history"
-     x-data="{showAllRemoved:false}"
-     @remove-episode.window="
-      $nextTick(() => showAllRemoved = ($el.querySelectorAll('.episode:not(.removed)').length === 0))
-     ">
+     x-data="{numEpisodes: {{ page_obj.paginator.count }}}"
+     @remove-episode.window="numEpisodes-=1">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-lg">History</h1>
     {% if search or page_obj.paginator.count %}
@@ -21,9 +19,12 @@
     </div>
     {% endif %}
   </div>
-  <p class="text-center sm:text-left text-sm"
-     x-show="showAllRemoved">
-    All done!
+  <p class="text-center sm:text-left text-sm" x-show="numEpisodes === 0">
+    {% if search %}
+    No results found for <span class="font-bold">{{ search }}</span>.
+    {% else %}
+    Your History is currently empty.
+    {% endif %}
   </p>
   {% include pagination_template %}
 </div>

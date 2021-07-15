@@ -6,14 +6,6 @@
   {% with episode=log.episode %}
   {% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
   {% endwith %}
-  {% empty %}
-  <p class="text-center sm:text-left text-sm">
-    {% if search %}
-    No results found for <span class="font-bold">{{ search }}</span>.
-    {% else %}
-    Your History is currently empty.
-    {% endif %}
-  </p>
   {% endfor %}
 </div>
 {% endblock %}
