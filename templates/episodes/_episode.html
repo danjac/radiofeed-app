@@ -1,4 +1,4 @@
-{% with podcast=episode.podcast %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <section class="py-2 border-t dark:border-gray-500 text-sm">
   <div class="flex justify-between items-center">
     <div class="flex items-center w-full space-x-1 sm:space-x-2">
@@ -11,7 +11,7 @@
 
       <div class="space-y-2">
         <h2 class="w-64 sm:w-96 lg:w-full truncate">
-          <a href="{{ episode.get_absolute_url }}"
+          <a href="{{ episode_url }}"
              class="link"
              title="{{ episode.cleaned_title }}"
              class="link"
@@ -27,10 +27,14 @@
 
           {% include "episodes/_actions_toggle.html" %}
 
-          <div title="Date Published"
-               class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-            {% include "_pub_date.html" with pub_date=episode.pub_date %}
+          <div>
+            <a href="{{ episode_url }}"
+               title="Published"
+               class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
+               {% include "_pub_date.html" with pub_date=episode.pub_date %}
+            </a>
           </div>
+          
         </div>
       </div>
     </div>
