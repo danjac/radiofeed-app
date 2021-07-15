@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
-from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.http import HttpRequest
@@ -141,6 +140,8 @@ class Podcast(models.Model):
     title: str = models.TextField()
     pub_date: datetime = models.DateTimeField(null=True, blank=True)
 
+    num_episodes: int = models.PositiveIntegerField(default=0)
+
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
     itunes: str = models.URLField(max_length=2083, null=True, blank=True, unique=True)
@@ -225,16 +226,6 @@ class Podcast(models.Model):
         if user.is_anonymous:
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
-
-    def get_episode_count(self) -> int:
-        return self.episode_set.distinct().count()
-
-    def get_cached_episode_count(self) -> int:
-        return cache.get_or_set(
-            f"podcast-episode-count-{self.pk}",
-            self.get_episode_count,
-            timeout=settings.DEFAULT_CACHE_TIMEOUT,
-        )
 
     def get_opengraph_data(self, request: HttpRequest) -> dict[str, str | int]:
 

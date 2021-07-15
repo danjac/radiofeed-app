@@ -21,15 +21,13 @@
          title="Date Last Published">
       {% include "_pub_date.html" with pub_date=podcast.pub_date %}
     </div>
-    {% with num_episodes=podcast.get_cached_episode_count %}
-    {% if num_episodes %}
+    {% if podcast.num_episodes %}
     <div class="font-semibold text-gray-600 dark:text-gray-300">
       <a href="{{ podcast.get_episodes_url }}" class="link" @click="$dispatch('close-modal')">
-        {{ num_episodes }} episode{{ num_episodes|pluralize }}
+        {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
       </a>
     </div>
     {% endif %}
-    {% endwith %}
     {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
   </div>
 

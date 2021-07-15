@@ -6,11 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.utils import timezone
 
-from audiotrails.episodes.factories import (
-    AudioLogFactory,
-    EpisodeFactory,
-    FavoriteFactory,
-)
+from audiotrails.episodes.factories import AudioLogFactory, FavoriteFactory
 from audiotrails.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
@@ -157,16 +153,6 @@ class TestPodcastModel:
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>a &amp; b</b>")
         assert podcast.cleaned_title == "a & b"
-
-    def test_get_episode_count(self, podcast):
-        EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        assert podcast.get_episode_count() == 3
-
-    def test_get_cached_episode_count(self, podcast):
-        EpisodeFactory.create_batch(3)
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        assert podcast.get_cached_episode_count() == 3
 
     def test_is_following_anonymous(self, podcast):
         assert not podcast.is_following(AnonymousUser())
