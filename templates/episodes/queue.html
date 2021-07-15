@@ -9,8 +9,8 @@
 
 {% block content %}
 <div id="queue"
-     x-data="{numEpisodes: {{ queue_items|length }}}"
-     @remove-episode.window="numEpisodes-=1">
+     x-data="{count: {{ queue_items|length }}}"
+     @remove-episode.window="count-=1">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-lg">Play Queue</h1>
   </div>
@@ -28,7 +28,7 @@
     {% endwith %}
     {% endfor %}
   </div>
-  <p class="text-center sm:text-left text-sm" x-show="numEpisodes===0">
+  <p class="text-center sm:text-left text-sm" x-show="count===0">
     You do not have any items in your Play Queue.
   </p>
 </div>
