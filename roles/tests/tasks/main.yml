@@ -1,5 +1,0 @@
-- name: Run unit tests
-  shell: |
-    podman exec -it \
-    -e DJANGO_SETTINGS_MODULE=audiotrails.config.settings.test \
-    audiopod-webapp ./manage.py test --keepdb --failfast --parallel
