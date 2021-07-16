@@ -9,3 +9,4 @@ data:
   EMAIL_PORT: '1025'
   REDIS_URL: redis://localhost:6379/0
   SECRET_KEY: seekrit!
+  DJANGO_WATCHMAN_TIMEOUT: 30

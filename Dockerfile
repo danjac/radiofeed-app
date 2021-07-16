@@ -36,6 +36,9 @@ RUN chmod +x /entrypoint
 COPY ./scripts/docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 
+COPY ./scripts/docker/start-watchman /start-watchman
+RUN chmod +x /start-watchman
+
 COPY ./scripts/docker/start-celeryworker /start-celeryworker
 RUN chmod +x /start-celeryworker
 
@@ -50,6 +53,10 @@ COPY ./pyproject.toml /pyproject.toml
 COPY ./poetry.lock /poetry.lock
 
 RUN poetry config virtualenvs.create false
+
+# https://github.com/python-poetry/poetry/issues/3321
+RUN mkdir -p /usr/local/lib/python3.9/site-packages
+
 RUN poetry install
 
 RUN python -m nltk.downloader stopwords

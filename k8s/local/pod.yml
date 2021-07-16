@@ -97,6 +97,20 @@ spec:
           name: audiotrails-host
       workingDir: /app
 
+    - name: watchman
+      command:
+        - /start-watchman
+      envFrom:
+        - configMapRef:
+            name: audiopod-configmap
+      image: localhost/audiotrails:latest
+      # imagePullPolicy: Never
+      resources: {}
+      volumeMounts:
+        - mountPath: /app
+          name: audiotrails-host
+      workingDir: /app
+
     - name: webapp
       command:
         - /entrypoint
