@@ -36,7 +36,7 @@
        :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}">
     <div class="relative space-y-1 sm:space-y-0">
 
-      <div class="sm:hidden truncate text-sm">
+      <div class="sm:hidden truncate text-center text-sm">
         <a class="player--title"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
