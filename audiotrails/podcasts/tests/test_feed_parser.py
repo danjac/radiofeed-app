@@ -8,6 +8,8 @@ import requests
 
 from django.utils import timezone
 
+from audiotrails.episodes.factories import EpisodeFactory
+from audiotrails.episodes.models import Episode
 from audiotrails.podcasts.date_parser import parse_date
 from audiotrails.podcasts.factories import CategoryFactory, PodcastFactory
 from audiotrails.podcasts.feed_parser import (
@@ -110,6 +112,12 @@ class TestFeedParser:
 
     def test_parse_feed(self, mocker, new_podcast, categories):
 
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -123,7 +131,12 @@ class TestFeedParser:
         )
         episodes = parse_feed(new_podcast)
 
-        assert len(episodes) == 20
+        # new episodes: 19
+        assert len(episodes) == 19
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
 
         new_podcast.refresh_from_db()
 
