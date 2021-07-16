@@ -295,16 +295,14 @@ def resolve_podcast_rss(
     podcast: Podcast, response: requests.Response
 ) -> tuple[str, bool]:
 
-    if (
+    return response.url, (
         response.status_code
         in (
             http.HTTPStatus.MOVED_PERMANENTLY,
             http.HTTPStatus.PERMANENT_REDIRECT,
         )
         and response.url != podcast.rss
-    ):
-        return response.url, True
-    return response.url, False
+    )
 
 
 def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
