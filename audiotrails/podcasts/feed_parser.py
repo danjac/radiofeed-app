@@ -237,19 +237,21 @@ def with_pub_date(item: box.Box) -> box.Box:
 
 
 def with_description(item: box.Box) -> box.Box:
-    contents = "".join(
-        [
-            content
-            for content in [
-                coerce_str(content.value) for content in coerce_list(item.content)
-            ]
-            if content
-        ]
-    )
     return item + box.Box(
-        description=coerce_str(contents, item.description, item.summary)
+        description=coerce_str(
+            get_content(item, "text/html"), 
+            item.description, 
+            get_content(item, "text/plain"), 
+            item.summary,
+        )
     )
 
+def get_content(item: Box, type: str) -> str:
+    for content in coerce_list(item.content):
+        if coerce_str(content.type) == type:
+            return coerce_str(content.value)
+    return ""
+    
 
 def is_audio(link: box.Box) -> bool:
     return (
