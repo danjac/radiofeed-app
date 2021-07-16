@@ -126,9 +126,28 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     # remove any episodes that may have been deleted on the podcast
     episodes.exclude(guid__in=[item.id for item in items]).delete()
     guids = episodes.values_list("guid", flat=True)
+     
+    episodes = [make_episode(episode) for item in items]
+    
+    # update existing content
+    
+    Episode.objects.bulk_update(
+        [episode for episode if episode.guid in guids],
+        fields=[
+            "title",
+            "description",
+            "keywords",
+            "media_url",
+            "media_type",
+            "length",
+            "link",
+            "duration",
+            "explicit",
+        ],
+    )
 
     return Episode.objects.bulk_create(
-        [make_episode(podcast, item) for item in items if item.id not in guids],
+        [episode for episode if episode.guid not in guids],
         ignore_conflicts=True,
     )
 
