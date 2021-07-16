@@ -16,7 +16,7 @@
   <label class="flex items-center w-full font-semibold" for="{{ field.id_for_label }}">
     {{ field.label }}
   </label>
-  {% with css_class=css_class|default:'p-1 w-full dark:bg-gray-900 dark:text-white' %}
+  {% with css_class=css_class|default:'p-1 w-full dark:bg-gray-900 dark:text-white text-sm' %}
   {% render_field field aria-label=field.label class=css_class %}
   {% endwith %}
   {% endif %}
