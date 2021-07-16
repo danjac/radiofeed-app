@@ -240,8 +240,8 @@ def with_description(item: box.Box) -> box.Box:
     return item + box.Box(
         description=coerce_str(
             parse_content(item, "text/html"),
-            item.description,
             parse_content(item, "text/plain"),
+            item.description,
             item.summary,
         )
     )
