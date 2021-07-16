@@ -3,41 +3,6 @@
 set -o errexit
 set -o nounset
 
-watchman watch /app/assets/css
-
-watchman -j <<-EOT
-["trigger", "/app/assets/css", {
-   "name": "tailwind-css",
-   "expression": ["match", "**/*.css", "wholename"],
-   "command": ["npm", "run", "build-css"],
-   "append_files": false
-}]
-EOT
-
-
-watchman watch /app/templates
-
-watchman -j <<-EOT
-["trigger", "/app/templates", {
-   "name": "tailwind-html",
-   "expression": ["match", "**/*.html", "wholename"],
-   "command": ["npm", "run", "build-css"],
-   "append_files": false
-}]
-EOT
-
-watchman watch /app/assets/js
-
-watchman -j <<-EOT
-["trigger", "/app/assets/js", {
-   "name": "esbuild",
-   "expression": ["match", "**/*.js", "wholename"],
-   "command": ["npm", "run", "build-js"],
-   "append_files": false
-}]
-EOT
-
-
 # start django
 ./manage.py migrate
 ./manage.py runserver 0.0.0.0:8000
