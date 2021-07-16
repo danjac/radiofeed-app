@@ -49,6 +49,11 @@ class TestPodcastAdmin:
         admin.reactivate(req, Podcast.objects.all())
         assert Podcast.objects.filter(error_status=None, active=True).count() == 4
 
+    def test_sync_podcast_feeds(self, podcast, admin, req, mocker):
+        mock_task = mocker.patch("audiotrails.podcasts.tasks.sync_podcast_feed.delay")
+        admin.sync_podcast_feeds(req, Podcast.objects.all())
+        mock_task.assert_called_with(podcast.rss, force_update=True)
+
     def test_pub_date_filter_none(self, podcasts, admin, req):
         PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {}, Podcast, admin)
