@@ -121,18 +121,24 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
-    episodes = Episode.objects.filter(podcast=podcast)
+    qs = Episode.objects.filter(podcast=podcast)
 
     # remove any episodes that may have been deleted on the podcast
-    episodes.exclude(guid__in=[item.id for item in items]).delete()
-    guids = dict(episodes.values_list("guid", "pk"))
+    qs.exclude(guid__in=[item.id for item in items]).delete()
 
-    episodes = [make_episode(podcast, item, guids.get(item.id, None)) for item in items]
+    # determine new/current items
+    guid_map = dict(qs.values_list("guid", "pk"))
+
+    episodes = [
+        make_episode(podcast, item, guid_map.get(item.id, None)) for item in items
+    ]
+
+    guids = guid_map.keys()
 
     # update existing content
 
     Episode.objects.bulk_update(
-        [episode for episode in episodes if episode.guid in guids.keys()],
+        [episode for episode in episodes if episode.guid in guids],
         fields=[
             "title",
             "description",
@@ -147,7 +153,7 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     )
 
     return Episode.objects.bulk_create(
-        [episode for episode in episodes if episode.guid not in guids.keys()],
+        [episode for episode in episodes if episode.guid not in guids],
         ignore_conflicts=True,
     )
 
