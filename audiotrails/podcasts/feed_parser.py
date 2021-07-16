@@ -125,14 +125,14 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
 
     # remove any episodes that may have been deleted on the podcast
     episodes.exclude(guid__in=[item.id for item in items]).delete()
-    guids = episodes.values_list("guid", flat=True)
-     
-    episodes = [make_episode(episode) for item in items]
-    
+    guids = dict(episodes.values_list("guid", "pk"))
+
+    episodes = [make_episode(podcast, item, guids.get(item.id, None)) for item in items]
+
     # update existing content
-    
+
     Episode.objects.bulk_update(
-        [episode for episode if episode.guid in guids],
+        [episode for episode in episodes if episode.guid in guids.keys()],
         fields=[
             "title",
             "description",
@@ -147,13 +147,14 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
     )
 
     return Episode.objects.bulk_create(
-        [episode for episode if episode.guid not in guids],
+        [episode for episode in episodes if episode.guid not in guids.keys()],
         ignore_conflicts=True,
     )
 
 
-def make_episode(podcast: Podcast, item: box.Box) -> Episode:
+def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Episode:
     return Episode(
+        pk=pk,
         podcast=podcast,
         guid=item.id,
         title=item.title,
@@ -230,14 +231,18 @@ def with_pub_date(item: box.Box) -> box.Box:
 
 
 def with_description(item: box.Box) -> box.Box:
-    contents = "".join([
-       content for content in
-       [
-           coerce_str(content.value)
-           for content in coerce_list(item.content)
-       ] if content
-    ])
-    return item + box.Box(description=coerce_str(contents, item.description, item.summary))
+    contents = "".join(
+        [
+            content
+            for content in [
+                coerce_str(content.value) for content in coerce_list(item.content)
+            ]
+            if content
+        ]
+    )
+    return item + box.Box(
+        description=coerce_str(contents, item.description, item.summary)
+    )
 
 
 def is_audio(link: box.Box) -> bool:
