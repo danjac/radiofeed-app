@@ -41,12 +41,12 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast) -> list[Episode]:
+def parse_feed(podcast: Podcast, force_update: bool = False) -> list[Episode]:
 
     try:
         response = requests.get(
             podcast.rss,
-            headers=get_feed_headers(podcast),
+            headers=get_feed_headers(podcast, force_update),
             allow_redirects=True,
             timeout=10,
         )
@@ -239,19 +239,20 @@ def with_pub_date(item: box.Box) -> box.Box:
 def with_description(item: box.Box) -> box.Box:
     return item + box.Box(
         description=coerce_str(
-            get_content(item, "text/html"), 
-            item.description, 
-            get_content(item, "text/plain"), 
+            parse_content(item, "text/html"),
+            item.description,
+            parse_content(item, "text/plain"),
             item.summary,
         )
     )
 
-def get_content(item: Box, type: str) -> str:
+
+def parse_content(item: box.Box, type: str) -> str:
     for content in coerce_list(item.content):
         if coerce_str(content.type) == type:
             return coerce_str(content.value)
     return ""
-    
+
 
 def is_audio(link: box.Box) -> bool:
     return (
@@ -272,11 +273,15 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def get_feed_headers(podcast: Podcast) -> dict[str, str]:
+def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
     }
+
+    # ignore any modified/etag headers
+    if force_update:
+        return headers
 
     if podcast.etag:
         headers["If-None-Match"] = quote_etag(podcast.etag)

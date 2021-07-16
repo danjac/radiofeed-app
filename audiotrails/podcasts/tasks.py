@@ -52,11 +52,14 @@ def create_podcast_recommendations() -> None:
 
 @shared_task(name="audiotrails.podcasts.sync_podcast_feed")
 def sync_podcast_feed(
-    rss: str, counter: int | None = None, total: int | None = None
+    rss: str,
+    counter: int | None = None,
+    total: int | None = None,
+    force_update: bool = False,
 ) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss, active=True)
-        new_episodes = parse_feed(podcast)
+        new_episodes = parse_feed(podcast, force_update=force_update)
         logger.info(
             get_podcast_sync_message(
                 podcast,

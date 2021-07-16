@@ -7,6 +7,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from audiotrails.podcasts.models import Category, Podcast
+from audiotrails.podcasts.tasks import sync_podcast_feed
 
 
 @admin.register(Category)
@@ -97,7 +98,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     readonly_fields = ("created", "updated", "pub_date", "num_episodes")
 
-    actions = ["reactivate"]
+    actions = ["reactivate", "sync_podcast_feeds"]
 
     @admin.action(description="Re-activate podcasts")
     def reactivate(self, request: HttpRequest, queryset: QuerySet):
@@ -107,6 +108,18 @@ class PodcastAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"{num_updated} podcasts re-activated",
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Sync podcast feeds")
+    def sync_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
+
+        for rss in queryset.values_list("rss", flat=True):
+            sync_podcast_feed.delay(rss, force_update=True)
+
+        self.message_user(
+            request,
+            f"{queryset.count()} podcast(s) scheduled for update",
             messages.SUCCESS,
         )
 
