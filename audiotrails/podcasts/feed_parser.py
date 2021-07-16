@@ -218,7 +218,7 @@ def with_description(item: box.Box) -> box.Box:
            for content in coerce_list(item.content)
        ] if content
     ])
-    return item + box.Box(coerce_str(contents, item.description, item.summary))
+    return item + box.Box(description=coerce_str(contents, item.description, item.summary))
 
 
 def is_audio(link: box.Box) -> bool:
