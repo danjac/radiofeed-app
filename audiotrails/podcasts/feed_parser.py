@@ -181,18 +181,22 @@ def extract_text(
     return " ".join(extract_keywords(podcast.language, text))
 
 
-def parse_items(result: box.Box) -> list[box.Box]:
-    return [
-        item
-        for item in [with_pub_date(with_audio(item)) for item in result.entries]
-        if is_episode(item)
-    ]
-
-
 def parse_creators(feed: box.Box) -> str:
     return " ".join(
         {author.name for author in coerce_list(feed.authors) if author.name}
     )
+
+
+def parse_items(result: box.Box) -> list[box.Box]:
+    return [
+        item
+        for item in [parse_item(item) for item in result.entries]
+        if is_episode(item)
+    ]
+
+
+def parse_item(item: box.Box) -> box.Box:
+    return with_description(with_pub_date(with_audio(item)))
 
 
 def with_audio(item: box.Box) -> box.Box:
@@ -204,6 +208,17 @@ def with_audio(item: box.Box) -> box.Box:
 
 def with_pub_date(item: box.Box) -> box.Box:
     return item + box.Box(pub_date=coerce_date(item.published))
+
+
+def with_description(item: box.Box) -> box.Box:
+    contents = "".join([
+       content for content in
+       [
+           coerce_str(content.value)
+           for content in coerce_list(item.content)
+       ] if content
+    ])
+    return item + box.Box(coerce_str(contents, item.description, item.summary))
 
 
 def is_audio(link: box.Box) -> bool:
