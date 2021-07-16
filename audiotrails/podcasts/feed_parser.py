@@ -5,6 +5,7 @@ import secrets
 import traceback
 
 from functools import lru_cache
+from typing import Generator
 
 import box
 import feedparser
@@ -239,19 +240,19 @@ def with_pub_date(item: box.Box) -> box.Box:
 def with_description(item: box.Box) -> box.Box:
     return item + box.Box(
         description=coerce_str(
-            parse_content(item, "text/html"),
-            parse_content(item, "text/plain"),
+            *parse_content(item),
             item.description,
             item.summary,
         )
     )
 
 
-def parse_content(item: box.Box, type: str) -> str:
-    for content in coerce_list(item.content):
-        if coerce_str(content.type) == type:
-            return coerce_str(content.value)
-    return ""
+def parse_content(item: box.Box) -> Generator[str, None, None]:
+    contents = coerce_list(item.content)
+    for content_type in ("text/html", "text/plain"):
+        for content in contents:
+            if coerce_str(content.type) == content_type:
+                yield coerce_str(content.value)
 
 
 def is_audio(link: box.Box) -> bool:
