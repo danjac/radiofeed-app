@@ -30,7 +30,11 @@ def home_page(request: HttpRequest) -> HttpResponse:
 
 
 def static_page(template_name: str) -> Callable:
-    return require_safe(lambda request: TemplateResponse(request, template_name))
+    @require_safe
+    def _render_page(request: HttpRequest) -> HttpResponse:
+        return TemplateResponse(request, template_name)
+
+    return _render_page
 
 
 @require_safe
