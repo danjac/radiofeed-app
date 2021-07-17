@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_safe
 
 from jcasts.episodes.sitemaps import EpisodeSitemap
 from jcasts.podcasts.sitemaps import CategorySitemap, PodcastSitemap
@@ -21,6 +22,7 @@ sitemaps = {
 }
 
 
+@require_safe
 def home_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("episodes:index")
