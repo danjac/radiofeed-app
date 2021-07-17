@@ -5,7 +5,7 @@
     {% if is_podcast %}
     <a href="{{ podcast_url }}">
       {% endif %}
-      {% include "podcasts/_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
+      {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
       {% if podcast and podcast.pub_date %}
     </a>
     {% endif %}

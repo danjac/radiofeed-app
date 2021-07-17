@@ -58,6 +58,8 @@ class Episode(models.Model):
     description: str = models.TextField(blank=True)
     keywords: str = models.TextField(blank=True)
 
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+
     media_url: str = models.URLField(max_length=2083)
     media_type: str = models.CharField(max_length=60)
     length: int | None = models.BigIntegerField(null=True, blank=True)
@@ -99,6 +101,9 @@ class Episode(models.Model):
 
     def get_file_size(self) -> str | None:
         return filesizeformat(self.length) if self.length else None
+
+    def get_cover_url(self) -> str | None:
+        return self.cover_url or self.podcast.cover_url
 
     def get_next_episode(self) -> Episode | None:
         try:
