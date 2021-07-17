@@ -1,5 +1,5 @@
 {% load static %}
-{% url 'episodes:index' as home_url %}
+{% url 'home_page' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
   <div class="flex items-center justify-between p-2">
 
@@ -57,6 +57,7 @@
       </div>
     </form>
 
+
     <div class="flex items-center space-x-3">
       {% if user.is_authenticated %}
       <a href="{% url 'user_preferences' %}"
@@ -65,11 +66,11 @@
         <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="{{ user.username }}">
       </a>
       {% else %}
-      <a href="{{ home_url|login_url }}"
+      <a href="{{ request.path|login_url }}"
          hx-disable="true"
          @click="$dispatch('close-sidebar')"
          class="inline-block text-white hover:text-blue-500">Login</a>
-      <a href="{{ home_url|signup_url }}"
+      <a href="{{ request.path|signup_url }}"
          hx-disable="true"
          @click="$dispatch('close-sidebar')"
          class="inline-block text-white hover:text-blue-500">Signup</a>
