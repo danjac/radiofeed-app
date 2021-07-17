@@ -237,7 +237,7 @@ class TestEpisodeModel:
         data = episode.get_media_metadata()
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
-        assert data["artist"] == episode.podcast.creators
+        assert data["artist"] == episode.podcast.owner
 
     def test_get_opengraph_data(self, rf, episode):
         req = rf.get("/")

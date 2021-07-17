@@ -1,5 +1,11 @@
-{% if podcast.creators %}
+{% if podcast.owner %}
 <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm flex-wrap">
-  {{ podcast.creators }}
+  {% if podcast.link %}
+  <a href="{{ podcast.link }}" target="_blank" rel="noopener">
+    {{ podcast.owner }}
+  </a>
+  {% else %}
+  {{ podcast.owner }}
+  {% endif %}
 </div>
 {% endif %}

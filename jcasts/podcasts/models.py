@@ -153,7 +153,7 @@ class Podcast(models.Model):
     link: str = models.URLField(max_length=2083, null=True, blank=True)
     keywords: str = models.TextField(blank=True)
     extracted_text: str = models.TextField(blank=True)
-    creators: str = models.TextField(blank=True)
+    owner: str = models.TextField(blank=True)
 
     created: datetime = models.DateTimeField(auto_now_add=True)
     updated: datetime = models.DateTimeField(auto_now=True)

@@ -107,8 +107,12 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
         result.feed.subtitle,
     )
 
+    podcast.owner = coerce_str(
+        result.feed.publisher_detail.name,
+        result.feed.author,
+    )
+
     podcast.explicit = coerce_bool(result.feed.itunes_explicit)
-    podcast.creators = parse_creators(result.feed)
 
     keywords, categories = parse_taxonomy(result.feed)
 
@@ -200,18 +204,12 @@ def extract_text(
             podcast.title,
             podcast.description,
             podcast.keywords,
-            podcast.creators,
+            podcast.owner,
         ]
         + [c.name for c in categories]
         + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
-
-
-def parse_creators(feed: box.Box) -> str:
-    return " ".join(
-        {author.name for author in coerce_list(feed.authors) if author.name}
-    )
 
 
 def parse_items(result: box.Box) -> list[box.Box]:
