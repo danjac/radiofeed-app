@@ -1,7 +1,11 @@
+from typing import Callable
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
@@ -17,12 +21,18 @@ sitemaps = {
 }
 
 
-def static_page(template_name):
+def home_page(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect("episodes:index")
+    return TemplateResponse("index.html")
+
+
+def static_page(template_name: str) -> Callable:
     return lambda request: TemplateResponse(request, template_name)
 
 
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request):
+def robots(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "robots.txt",
@@ -49,6 +59,7 @@ about_urls = [
 ]
 
 urlpatterns = [
+    path("", home_page, name="home_page"),
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
     path("account/", include("jcasts.users.urls")),
