@@ -8,7 +8,7 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
-## Running Audiotrails on your local machine
+## Running jcasts on your local machine
 
 Local development uses Podman and Buildah:
 
@@ -16,15 +16,15 @@ https://podman.io/getting-started/installation
 
 https://buildah.io/
 
-To get started, run _./bootstrap.sh_. This will create a new pod, _audiopod_ and create and run the required containers.
+To get started, run _./bootstrap.sh_. This will create a new pod, _jcasts_ and create and run the required containers.
 
 Once this is installed, you can start your local instance again by just running
 
-> podman pod start audiopod
+> podman pod start jcasts
 
 You can check the state of the pod if troubleshooting using
 
-> podman pod inspect audiopod
+> podman pod inspect jcasts
 
 See the Podman docs for more details.
 
@@ -52,33 +52,33 @@ This script takes the same arguments as _./python -m pytest_ e.g.:
 
 **Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
 
-> podman start audiopod-celerybeat
+> podman start jcasts-celerybeat
 
-Issue is covered here: https://github.com/danjac/audiotrails/issues/3
+Issue is covered here: https://github.com/danjac/jcasts/issues/3
 
 ## Deployment
 
 This app has been configured to run on [Dokku](https://github.com/dokku/dokku). You can set up for example a Dokku Droplet on Digital Ocean available as one of their one-click apps. Set up your DNS with your provider as per the Dokku instructions.
 
-SSH into your Dokku server and create the app and add the domain (assuming "audiotrails" is your app name, and "audiotrails-domain.com" your domain):
+SSH into your Dokku server and create the app and add the domain (assuming "jcasts" is your app name, and "jcasts-domain.com" your domain):
 
-> dokku apps:create audiotrails
+> dokku apps:create jcasts
 
-> dokku domains:add audiotrails audiotrails-domain.com
+> dokku domains:add jcasts jcasts-domain.com
 
 Make sure you add buildpacks for PostgreSQL and Redis:
 
 > dokku plugin:install https://github.com/dokku/dokku-postgres.git
 
-> dokku postgres:create audiotrails_db
+> dokku postgres:create jcasts_db
 
-> dokku postgres:link audiotrails_db audiotrails
+> dokku postgres:link jcasts_db jcasts
 
 > dokku plugin:install https://github.com/dokku/dokku-redis.git
 
-> dokku redis:create audiotrails_redis
+> dokku redis:create jcasts_redis
 
-> dokku redis:link audiotrails_redis audiotrails
+> dokku redis:link jcasts_redis jcasts
 
 These instructions will automatically set up the environment variables **DATABASE_URL** and **REDIS_URL**.
 
@@ -98,21 +98,21 @@ Next add to Git and deploy:
 
 > dokku ssh:add deploy-ssh /path/to/my_pub
 
-> git remote add dokku dokku@my-domain-or-ip-address:audiotrails
+> git remote add dokku dokku@my-domain-or-ip-address:jcasts
 
 Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 
-> dokku letsencrypt audiotrails
+> dokku letsencrypt jcasts
 
 > dokku letsencrypt:cron-job --add
 
 Next set up celery and celerybeat workers:
 
-> dokku ps:scale audiotrails worker=1
+> dokku ps:scale jcasts worker=1
 
-> dokku ps:scale audiotrails beat=1
+> dokku ps:scale jcasts beat=1
 
 You should now be able to access the Django management commands:
 

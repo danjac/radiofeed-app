@@ -3,8 +3,8 @@
 set -o errexit
 set -o nounset
 
-IMAGE=audiotrails:latest
-POD=audiopod
+IMAGE=jcasts:latest
+POD=jcasts
 CONFIG_DIR=k8s/local
 
 podman build -t $IMAGE .

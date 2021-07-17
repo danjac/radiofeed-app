@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -i -t audiopod-celeryworker celery $@
+podman exec -i -t jcasts-celeryworker celery $@
 

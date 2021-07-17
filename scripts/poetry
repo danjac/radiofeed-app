@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -it audiopod-webapp poetry $@
+podman exec -it jcasts-webapp poetry $@
 

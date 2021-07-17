@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-podman exec -it audiopod-watchman tail -n 30 /usr/local/var/run/watchman/root-state/log
+podman exec -it jcasts-watchman tail -n 30 /usr/local/var/run/watchman/root-state/log

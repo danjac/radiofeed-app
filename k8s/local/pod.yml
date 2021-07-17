@@ -3,8 +3,8 @@ kind: Pod
 metadata:
   creationTimestamp: '2021-04-25T12:15:59Z'
   labels:
-    app: audiopod
-  name: audiopod
+    app: jcasts
+  name: jcasts
 spec:
   securityContext:
     seLinuxOptions: {}
@@ -35,7 +35,7 @@ spec:
       resources: {}
       volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: audiotrails-db-host
+          name: jcasts-db-host
       workingDir: /
 
     - name: mailhog
@@ -72,13 +72,13 @@ spec:
         - /start-celeryworker
       envFrom:
         - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
+            name: jcasts-configmap
+      image: localhost/jcasts:latest
       # imagePullPolicy: Never
       resources: {}
       volumeMounts:
         - mountPath: /app
-          name: audiotrails-host
+          name: jcasts-host
       workingDir: /app
 
     - name: celerybeat
@@ -88,13 +88,13 @@ spec:
         - /start-celerybeat
       envFrom:
         - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
+            name: jcasts-configmap
+      image: localhost/jcasts:latest
       #imagePullPolicy: Never
       resources: {}
       volumeMounts:
         - mountPath: /app
-          name: audiotrails-host
+          name: jcasts-host
       workingDir: /app
 
     - name: watchman
@@ -102,13 +102,13 @@ spec:
         - /start-watchman
       envFrom:
         - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
+            name: jcasts-configmap
+      image: localhost/jcasts:latest
       # imagePullPolicy: Never
       resources: {}
       volumeMounts:
         - mountPath: /app
-          name: audiotrails-host
+          name: jcasts-host
       workingDir: /app
 
     - name: webapp
@@ -118,8 +118,8 @@ spec:
         - /start-webapp
       envFrom:
         - configMapRef:
-            name: audiopod-configmap
-      image: localhost/audiotrails:latest
+            name: jcasts-configmap
+      image: localhost/jcasts:latest
       # imagePullPolicy: Never
       ports:
         - containerPort: 8000
@@ -128,7 +128,7 @@ spec:
       resources: {}
       volumeMounts:
         - mountPath: /app
-          name: audiotrails-host
+          name: jcasts-host
       workingDir: /app
 
   dnsConfig: {}
@@ -137,9 +137,9 @@ spec:
     - hostPath:
         path: .
         type: Directory
-      name: audiotrails-host
+      name: jcasts-host
     - hostPath:
         path: ./db
         type: DirectoryOrCreate
-      name: audiotrails-db-host
+      name: jcasts-db-host
 status: {}
