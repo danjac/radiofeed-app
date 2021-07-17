@@ -24,7 +24,7 @@ sitemaps = {
 def home_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect("episodes:index")
-    return TemplateResponse("index.html")
+    return TemplateResponse(request, "index.html")
 
 
 def static_page(template_name: str) -> Callable:

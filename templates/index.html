@@ -1,5 +1,18 @@
-{% extends "base.html" %}
+{% load static i18n %}
+<!DOCTYPE html>
+{% get_current_language as language_code %}
+<html lang="{{ language_code }}">
 
-{% block content %}
-welcome!
-{% endblock %}
+<head>
+  <title>
+    jCasts :: Po
+  </title>
+  {% include "_meta.html" %}
+  {% include "_static.html" %}
+</head>
+
+<body>
+  welcome!
+</body>
+
+</html>
