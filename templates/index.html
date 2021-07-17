@@ -5,14 +5,72 @@
 
 <head>
   <title>
-    jCasts :: Po
+    jCasts :: Discover and Organize Your Podcasts
   </title>
   {% include "_meta.html" %}
   {% include "_static.html" %}
 </head>
 
 <body>
-  welcome!
+  <div class="min-h-screen bg-indigo-800 text-white py-6 flex flex-col justify-center lg:py-12">
+    <div class="relative py-3 mx-auto px-6 lg:px-0">
+
+      <div class="mb-12 text-5xl text-white flex items-center lg:justify-center space-x-6">
+        <img src="{% static 'img/wave.png' %}"
+             height="64"
+             width="64"
+             alt="{{ request.site.name }}">
+        <h1 class="text-4xl lg:text-5xl font-mono">
+          {{ request.site.name }}
+        </h1>
+      </div>
+
+      <div class="lg:flex w-full">
+
+        <div class="mb-12 lg:mb-0 lg:w-1/2 lg:border-r border-white">
+
+          <h2 class="text-3xl mb-6">
+            Discover and organize your favorite podcasts.
+          </h2>
+
+          <p class="flex-wrap lg:max-w-lg">
+            Search for interesting podcasts, follow and listen to your favorite feeds, and enjoy our AI-generated recommendations.
+          </p>
+
+        </div>
+
+        <div class="lg:w-1/2 lg:pl-6">
+          <div class="p-3 border border-white rounded mb-6">
+            <p class="text-lg mb-3">
+              Join {{ request.site.name }} and...
+            </p>
+            <ul class="mb-3">
+              <li><strong>Listen</strong> to episodes</li>
+              <li><strong>Follow</strong> your favorite podcasts</li>
+              <li><strong>Share</strong> podcasts and episodes with your friends</li>
+              <li><strong>Discover</strong> new podcasts with our search and AI recommendations</li>
+            </ul>
+          </div>
+
+          <div class="mb-6">
+            <a class="flex items-center btn btn-default border-white text-lg w-40"
+               title="Sign Up"
+               href="{% url 'account_signup' %}">
+              Sign Up Today!
+            </a>
+          </div>
+
+          <p class="text-sm">Already have an account? Then please
+            <a class="underline link text-white"
+               href="{% url 'account_login' %}">sign in</a>.
+          </p>
+
+
+
+        </div>
+      </div>
+    </div>
+    {% include "_cookie_notice.html" %}
 </body>
 
 </html>
