@@ -239,6 +239,19 @@ class TestEpisodeModel:
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
 
+    def test_get_cover_url_if_episode_cover(self, podcast):
+        episode = EpisodeFactory(
+            podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
+        )
+        assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
+
+    def test_get_cover_url_if_podcast_cover(self, episode):
+        assert episode.get_cover_url() == "https://example.com/cover.jpg"
+
+    def test_get_cover_url_if_none(self, db):
+        episode = EpisodeFactory(podcast__cover_url=None)
+        assert episode.get_cover_url() is None
+
     def test_get_opengraph_data(self, rf, episode):
         req = rf.get("/")
         req.site = Site.objects.get_current()
