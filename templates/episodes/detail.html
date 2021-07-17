@@ -46,9 +46,7 @@
 
   <div class="flex items-center space-x-3">
     <div>
-      <a href="{{ podcast_url }}" title="{{ podcast.title }}">
-        {% include "podcasts/_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=24 %}
-      </a>
+      {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=24 %}
     </div>
     <div class="space-y-3 text-sm">
       <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
