@@ -8,6 +8,8 @@ This is a very simple MVP podcast app. It has the following features:
 6. Subscribe to individual podcast feeds
 7. Recommend similar podcasts
 
+This app is currently live on https://jcasts.io.
+
 ## Running jcasts on your local machine
 
 Local development uses Podman and Buildah:
