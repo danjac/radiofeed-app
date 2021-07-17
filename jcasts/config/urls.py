@@ -1,10 +1,15 @@
+from typing import Callable
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import include, path
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_safe
 
 from jcasts.episodes.sitemaps import EpisodeSitemap
 from jcasts.podcasts.sitemaps import CategorySitemap, PodcastSitemap
@@ -17,12 +22,24 @@ sitemaps = {
 }
 
 
-def static_page(template_name):
-    return lambda request: TemplateResponse(request, template_name)
+@require_safe
+def home_page(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect("episodes:index")
+    return TemplateResponse(request, "index.html")
 
 
+def static_page(template_name: str) -> Callable:
+    @require_safe
+    def _render_page(request: HttpRequest) -> HttpResponse:
+        return TemplateResponse(request, template_name)
+
+    return _render_page
+
+
+@require_safe
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request):
+def robots(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "robots.txt",
@@ -49,6 +66,7 @@ about_urls = [
 ]
 
 urlpatterns = [
+    path("", home_page, name="home_page"),
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
     path("account/", include("jcasts.users.urls")),
