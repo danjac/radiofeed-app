@@ -197,7 +197,7 @@ class Episode(models.Model):
         return {
             "title": self.title,
             "album": self.podcast.title,
-            "artist": self.podcast.creators,
+            "artist": self.podcast.owner,
             "artwork": [
                 {
                     "src": cover_url,

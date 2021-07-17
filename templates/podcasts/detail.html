@@ -46,12 +46,12 @@
   </div>
   {% endif %}
 
+  {% include "podcasts/_categories.html" %}
+
   <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
     {{ podcast.description|clean_html }}
   </blockquote>
 
   {% include "podcasts/_disclaimer.html" %}
-  {% include "podcasts/_categories.html" %}
-
 </div>
 {% endblock podcast_content %}

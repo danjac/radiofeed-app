@@ -154,7 +154,7 @@ class TestFeedParser:
             == "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity."
         )
 
-        assert new_podcast.creators == "8th Kind"
+        assert new_podcast.owner == "8th Kind"
 
         assert new_podcast.modified
         assert new_podcast.modified.day == 1
