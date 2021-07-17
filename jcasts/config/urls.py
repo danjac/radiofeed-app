@@ -29,10 +29,12 @@ def home_page(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(request, "index.html")
 
 
+@require_safe
 def static_page(template_name: str) -> Callable:
     return lambda request: TemplateResponse(request, template_name)
 
 
+@require_safe
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
