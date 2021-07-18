@@ -185,10 +185,10 @@ class Episode(models.Model):
             "keywords": self.keywords,
         }
 
-        if self.podcast.cover_url:
+        if cover_url := self.get_cover_url():
             og_data = {
                 **og_data,
-                "image": self.podcast.cover_url,
+                "image": cover_url,
                 "image_height": 200,
                 "image_width": 200,
             }
@@ -197,7 +197,7 @@ class Episode(models.Model):
 
     def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session
-        cover_url = self.podcast.cover_url or static("img/podcast-icon.png")
+        cover_url = self.get_cover_url() or static("img/podcast-icon.png")
 
         return {
             "title": self.title,

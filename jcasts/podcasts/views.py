@@ -174,6 +174,7 @@ def episodes(
             {
                 "newest_first": newest_first,
                 "oldest_first": oldest_first,
+                "is_podcast_detail": True,
             },
         ),
         cached=True,
