@@ -1,7 +1,6 @@
 from typing import Callable
 
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpRequest, HttpResponse
@@ -92,9 +91,6 @@ if settings.DEBUG:
 
     if "silk" in settings.INSTALLED_APPS:
         urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
-
-    # static views
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     # allow preview/debugging of error views in development
     urlpatterns += [
