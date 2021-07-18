@@ -301,7 +301,7 @@ def resolve_podcast_rss(
             http.HTTPStatus.MOVED_PERMANENTLY,
             http.HTTPStatus.PERMANENT_REDIRECT,
         )
-        and response.url != podcast.rss
+        or response.url != podcast.rss
     )
 
 
