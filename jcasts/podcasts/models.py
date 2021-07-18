@@ -233,7 +233,7 @@ class Podcast(models.Model):
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.title}",
             "description": self.description,
-            "keywords": self.keywords,
+            "keywords": ", ".join(self.keywords.split()),
         }
 
         if self.cover_url:

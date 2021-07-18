@@ -182,7 +182,7 @@ class Episode(models.Model):
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,
-            "keywords": self.keywords,
+            "keywords": ", ".join(self.keywords.split()),
         }
 
         if cover_url := self.get_cover_url():
