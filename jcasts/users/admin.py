@@ -15,5 +15,11 @@ class UserAdmin(auth_admin.UserAdmin):
         ("User", {"fields": ("send_recommendations_email",)}),
     ) + auth_admin.UserAdmin.fieldsets
 
-    list_display = ["username", "email", "is_superuser"]
+    list_display = [
+        "username",
+        "email",
+        "is_superuser",
+        "date_joined",
+        "last_login",
+    ]
     search_fields = ["email", "username"]
