@@ -195,10 +195,7 @@ task_track_started = True
 
 # https://django-taggit.readthedocs.io/en/latest/getting_started.html
 
-MEDIA_URL = env("MEDIA_URL", default="/media/")
 STATIC_URL = env("STATIC_URL", default="/static/")
-
-MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [BASE_DIR / "assets"]
 
 TEMPLATES: list[dict] = [
