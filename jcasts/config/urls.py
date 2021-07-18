@@ -86,13 +86,9 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
-
+# allow preview/debugging of error views in development
 if settings.DEBUG:
 
-    if "silk" in settings.INSTALLED_APPS:
-        urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
-
-    # allow preview/debugging of error views in development
     urlpatterns += [
         path("errors/400/", static_page("400.html")),
         path("errors/403/", static_page("403.html")),
