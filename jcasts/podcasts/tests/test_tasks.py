@@ -82,5 +82,5 @@ class TestSyncPodcastFeed:
         mock_parse_feed.assert_not_called()
 
     def test_ok(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.rss, counter=10, total=100)
+        tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called()

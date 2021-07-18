@@ -42,7 +42,7 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast, force_update: bool = False) -> list[Episode]:
+def parse_feed(podcast: Podcast, force_update: bool = False) -> bool:
 
     try:
         response = requests.get(
@@ -70,7 +70,7 @@ def parse_feed(podcast: Podcast, force_update: bool = False) -> list[Episode]:
     return sync_podcast(podcast, response)
 
 
-def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]:
+def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     rss, is_changed = resolve_podcast_rss(podcast, response)
 
@@ -122,10 +122,15 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> list[Episode]
 
     podcast.save()
 
-    return sync_episodes(podcast, items)
+    sync_episodes(podcast, items)
+
+    return True
 
 
-def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
+def sync_episodes(podcast: Podcast, items: list[box.Box]) -> None:
+    """Remove any episodes no longer in feed, update any current and
+    add new"""
+
     qs = Episode.objects.filter(podcast=podcast)
 
     # remove any episodes that may have been deleted on the podcast
@@ -158,7 +163,9 @@ def sync_episodes(podcast: Podcast, items: list[box.Box]) -> list[Episode]:
         ],
     )
 
-    return Episode.objects.bulk_create(
+    # new episodes
+
+    Episode.objects.bulk_create(
         [episode for episode in episodes if episode.guid not in guids],
         ignore_conflicts=True,
     )
@@ -305,9 +312,9 @@ def resolve_podcast_rss(
     )
 
 
-def handle_empty_result(podcast: Podcast, **fields) -> list[Episode]:
+def handle_empty_result(podcast: Podcast, **fields) -> bool:
     if fields:
         for k, v in fields.items():
             setattr(podcast, k, v)
         podcast.save(update_fields=fields.keys())
-    return []
+    return False

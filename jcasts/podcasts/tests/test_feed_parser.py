@@ -101,8 +101,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        episodes = parse_feed(new_podcast)
-        assert len(episodes), 19
+        assert parse_feed(new_podcast) is True
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -113,8 +112,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        episodes = parse_feed(new_podcast)
-        assert len(episodes) == 0
+        assert parse_feed(new_podcast) is False
 
     def test_parse_feed(self, mocker, new_podcast, categories):
 
@@ -135,10 +133,10 @@ class TestFeedParser:
                 },
             ),
         )
-        episodes = parse_feed(new_podcast)
+        assert parse_feed(new_podcast) is True
 
         # new episodes: 19
-        assert len(episodes) == 19
+        assert Episode.objects.count() == 20
 
         # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
@@ -188,9 +186,8 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        episodes = parse_feed(new_podcast)
-
-        assert len(episodes) == 20
+        assert parse_feed(new_podcast)
+        assert Episode.objects.filter(podcast=new_podcast).count() == 20
 
         new_podcast.refresh_from_db()
 
@@ -215,9 +212,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        episodes = parse_feed(new_podcast)
-
-        assert len(episodes) == 0
+        assert parse_feed(new_podcast) is False
 
         new_podcast.refresh_from_db()
 
@@ -232,9 +227,7 @@ class TestFeedParser:
                 new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
         )
-        episodes = parse_feed(new_podcast)
-
-        assert episodes == []
+        assert parse_feed(new_podcast) is False
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -242,9 +235,8 @@ class TestFeedParser:
 
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-        episodes = parse_feed(new_podcast)
+        assert parse_feed(new_podcast) is False
 
-        assert episodes == []
         assert new_podcast.active
         assert new_podcast.exception
 
@@ -253,9 +245,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        episodes = parse_feed(new_podcast)
-
-        assert episodes == []
+        assert parse_feed(new_podcast) is False
 
         new_podcast.refresh_from_db()
 
