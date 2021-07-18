@@ -17,19 +17,20 @@
 
       {% include "_messages.html" %}
 
-      <div class="mb-12 text-5xl text-white flex items-center lg:justify-center space-x-6">
+      <div class="mb-6 sm:mb-12 text-3xl sm:text-5xl text-white flex items-center lg:justify-center space-x-6">
         <img src="{% static 'img/wave-white.png' %}"
              height="64"
              width="64"
-             alt="{{ request.site.name }}">
-        <h1 class="text-4xl lg:text-5xl font-mono">
+             alt="{{ request.site.name }}"
+             class="w-12 h-12 sm:w-16 sm:h-16">
+        <h1 class="font-mono">
           {{ request.site.name }}
         </h1>
       </div>
 
       <div class="lg:flex w-full">
 
-        <div class="mb-12 lg:mb-0 lg:w-1/2 lg:border-r border-white">
+        <div class="mb-6 lg:mb-0 lg:w-1/2 lg:border-r border-white">
 
           <h2 class="text-3xl mb-6">
             Discover and organize your favorite podcasts.
@@ -38,7 +39,7 @@
           <p class="flex-wrap lg:max-w-lg mb-6">
             Search for interesting podcasts, follow and listen to your favorite feeds, and enjoy our AI-generated recommendations.
           </p>
-          <div>
+          <div class="text-center sm:text-left">
             <a class="font-semibold underline"
                title="See latest"
                href="{% url 'episodes:index' %}">
@@ -62,7 +63,7 @@
             </ul>
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 flex items-center justify-center sm:justify-start">
             <a class="flex items-center btn btn-default border-white text-lg w-40"
                title="Sign Up"
                href="{% url 'account_signup' %}">
