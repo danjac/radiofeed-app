@@ -4,18 +4,6 @@
   <div class="flex items-center justify-between p-2">
 
     <div class="flex items-center flex-shrink-0 mr-6">
-      <button class="lg:hidden mr-3 focus:outline-none"
-              title="Toggle Menu"
-              x-show="!sidebar"
-              @click="$dispatch('toggle-sidebar')">
-        {% icon "menu" css_class="h-6 w-6" %}
-      </button>
-      <button class="lg:hidden mr-3 focus:outline-none"
-              title="Toggle Menu"
-              x-show="sidebar"
-              @click="$dispatch('toggle-sidebar')">
-        {% icon "chevron_down" css_class="h-6 w-6" %}
-      </button>
       <a href="{{ home_url }}"
          @click="$dispatch('close-sidebar')"
          title="{{ request.site.name }}"
@@ -66,16 +54,19 @@
          title="Settings for {{ user.username }}">
         <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="{{ user.username }}">
       </a>
-      {% else %}
-      <a href="{{ request.path|login_url }}"
-         hx-disable="true"
-         @click="$dispatch('close-sidebar')"
-         class="inline-block text-white hover:text-blue-500">Login</a>
-      <a href="{{ request.path|signup_url }}"
-         hx-disable="true"
-         @click="$dispatch('close-sidebar')"
-         class="inline-block text-white hover:text-blue-500">Signup</a>
       {% endif %}
+      <button class="lg:hidden mr-3 focus:outline-none"
+              title="Toggle Menu"
+              x-show="!sidebar"
+              @click="$dispatch('toggle-sidebar')">
+        {% icon "menu" css_class="h-6 w-6" %}
+      </button>
+      <button class="lg:hidden mr-3 focus:outline-none"
+              title="Toggle Menu"
+              x-show="sidebar"
+              @click="$dispatch('toggle-sidebar')">
+        {% icon "chevron_down" css_class="h-6 w-6" %}
+      </button>
     </div>
   </div>
 </header>
