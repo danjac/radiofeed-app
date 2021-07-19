@@ -6,6 +6,7 @@ from jcasts.shared.template.defaulttags import (
     active_link,
     format_duration,
     get_privacy_details,
+    get_twitter_account,
     keepspaces,
     login_url,
     re_active_link,
@@ -108,8 +109,15 @@ class TestKeepspaces:
 
 
 class TestPrivacyDetails:
-    def test_get_privacy_details(self):
-        assert get_privacy_details()
+    def test_get_privacy_details(self, settings):
+        settings.PRIVACY_DETAILS = "testing"
+        assert get_privacy_details() == "testing"
+
+
+class TestTwitterAccount:
+    def test_twitter_account(self, settings):
+        settings.TWITTER_ACCOUNT = "testme"
+        assert get_twitter_account() == "testme"
 
 
 class TestShareButtons:

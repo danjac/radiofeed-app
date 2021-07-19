@@ -10,3 +10,4 @@ data:
   REDIS_URL: redis://localhost:6379/0
   SECRET_KEY: seekrit!
   DJANGO_WATCHMAN_TIMEOUT: 30
+  TWITTER_ACCOUNT: casts_j

@@ -28,7 +28,6 @@
           <a href="{{ episode_url }}"
              class="link"
              title="{{ episode.cleaned_title }}"
-             class="link"
              hx-get="{% url 'episodes:preview' episode.id %}"
              hx-target="#modal"
              hx-select="#modal"
