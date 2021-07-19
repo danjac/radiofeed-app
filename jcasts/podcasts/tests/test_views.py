@@ -14,7 +14,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import SearchResult
 from jcasts.podcasts.models import Follow, Podcast
-from jcasts.shared.assertions import assert_ok
+from jcasts.shared.assertions import assert_no_content, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -42,6 +42,14 @@ class TestPreview:
     def test_preview(self, client, podcast):
         resp = client.get(reverse("podcasts:preview", args=[podcast.id]))
         assert_ok(resp)
+
+
+class TestActions:
+    def test_anonymous(self, client, podcast):
+        assert_ok(client.get(reverse("podcasts:actions", args=[podcast.id])))
+
+    def test_authenticated(self, client, podcast, auth_user):
+        assert_ok(client.get(reverse("podcasts:actions", args=[podcast.id])))
 
 
 class TestPodcasts:
@@ -226,9 +234,14 @@ class TestFollow:
     def url(self, podcast):
         return reverse("podcasts:follow", args=[podcast.id])
 
-    def test_subscribe(self, client, podcast, auth_user, url):
+    def test_follow(self, client, podcast, auth_user, url):
         resp = client.post(url)
         assert_ok(resp)
+        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+    def test_follow_action(self, client, podcast, auth_user, url):
+        resp = client.post(url, {"action": True})
+        assert_no_content(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
@@ -240,10 +253,18 @@ class TestFollow:
 
 
 class TestUnfollow:
-    def test_unsubscribe(self, client, auth_user, podcast):
+    def test_unfollow(self, client, auth_user, podcast):
         FollowFactory(user=auth_user, podcast=podcast)
         resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
+        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+    def test_unfollow_action(self, client, auth_user, podcast):
+        FollowFactory(user=auth_user, podcast=podcast)
+        resp = client.post(
+            reverse("podcasts:unfollow", args=[podcast.id]), {"action": True}
+        )
+        assert_no_content(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 
