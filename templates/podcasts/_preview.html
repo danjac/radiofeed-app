@@ -4,7 +4,7 @@
 <a href="{{ podcast.get_absolute_url }}"
    @click="$dispatch('close-modal')"
    class="link">
-  {{ podcast.cleaned_title }}
+  {{ podcast.cleaned_title|truncatechars:120 }}
 </a>
 {% endblock %}
 
