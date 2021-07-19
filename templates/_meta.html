@@ -47,8 +47,11 @@
   <meta name="twitter:image"
         content="{{ og_data.image }}">
   {% endif %}
+  {% get_twitter_account as twitter %}
+  {% if twitter %}
   <meta name="twitter:site"
-        content="@casts_j">
+        content="@{{ twitter }}">
+  {% endif %}
   <meta name="twitter:title"
         content="{{ og_title }}">
   {% endwith %}

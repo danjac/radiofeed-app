@@ -106,6 +106,11 @@ def get_privacy_details() -> dict[str, str]:
     return settings.PRIVACY_DETAILS
 
 
+@register.simple_tag
+def get_twitter_account() -> str | None:
+    return settings.TWITTER_ACCOUNT
+
+
 @register.inclusion_tag("icons/_svg.html")
 def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> ContextDict:
     return {
