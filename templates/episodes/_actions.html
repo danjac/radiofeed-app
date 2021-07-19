@@ -9,7 +9,7 @@
         const vh = document.documentElement.clientHeight;
         position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
     }">
-  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" %}
+  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" episode_url=episode.get_absolute_url %}
   {% if user.is_authenticated %}
   {% with time_remaining=episode.get_time_remaining|format_duration %}
   {% if is_playing %}
@@ -94,7 +94,7 @@
   <a class="{{ BUTTON_CSS_CLASS }}"
      hx-disable="true"
      title="Log in or sign up to play this episode"
-     href="{{ episode.get_absolute_url|login_url }}">
+     href="{{ episode_url|login_url }}">
     <div class="mr-2">
       {% icon "login" css_class="h-4 w-4" %}
     </div>
@@ -113,7 +113,7 @@
   {% if not is_detail %}
   <a class="{{ BUTTON_CSS_CLASS }}"
      title="View episode details"
-     href="{{ episode.get_absolute_url }}">
+     href="{{ episode_url }}">
     <div class="mr-2">
       {% icon "link" css_class="h-4 w-4" %}
     </div>
