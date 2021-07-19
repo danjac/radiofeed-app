@@ -50,29 +50,9 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}"
 
     if request.POST.get("format") == "opml":
-        response = TemplateResponse(
-            request,
-            "account/opml.xml",
-            {"podcasts": podcasts},
-            content_type="application/xml",
-        )
-        response["Content-Disposition"] = f"attachment; filename={filename}.xml"
-        return response
+        return render_opml_export_response(request, podcasts, filename)
 
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f"attachment; filename={filename}.csv"
-    writer = csv.writer(response)
-    writer.writerow(["Title", "RSS", "Website", "Published"])
-    for podcast in podcasts:
-        writer.writerow(
-            [
-                podcast.title,
-                podcast.rss,
-                podcast.link,
-                podcast.pub_date.strftime("%Y-%m-%d"),
-            ]
-        )
-    return response
+    return render_csv_export_response(podcasts, filename)
 
 
 @require_safe
@@ -119,4 +99,34 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
         httponly=False,
         samesite="Lax",
     )
+    return response
+
+
+def render_opml_export_response(
+    request: HttpRequest, podcasts: list[Podcast], filename: str
+) -> HttpResponse:
+    response = TemplateResponse(
+        request,
+        "account/opml.xml",
+        {"podcasts": podcasts},
+        content_type="application/xml",
+    )
+    response["Content-Disposition"] = f"attachment; filename={filename}.xml"
+    return response
+
+
+def render_csv_export_response(podcasts: list[Podcast], filename: str) -> HttpResponse:
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f"attachment; filename={filename}.csv"
+    writer = csv.writer(response)
+    writer.writerow(["Title", "RSS", "Website", "Published"])
+    for podcast in podcasts:
+        writer.writerow(
+            [
+                podcast.title,
+                podcast.rss,
+                podcast.link,
+                podcast.pub_date.strftime("%Y-%m-%d"),
+            ]
+        )
     return response
