@@ -1,43 +1,25 @@
-{% with podcast=result.podcast is_podcast=result.podcast.pub_date podcast_url=result.podcast.get_absolute_url %}
+{% with podcast=result.podcast %}
+{% if podcast and podcast.pub_date %}
+{% include "podcasts/_podcast.html" %}
+{% else %}
 <section class="py-2 flex items-center space-x-1 sm:space-x-2 border-t dark:border-gray-500 text-sm">
   {% if result.image %}
   <div class="w-16">
-    {% if is_podcast %}
-    <a href="{{ podcast_url }}">
-      {% endif %}
-      {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
-      {% if podcast and podcast.pub_date %}
-    </a>
-    {% endif %}
+    {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
   </div>
   {% endif %}
-  <div class="space-y-2 text-sm">
+  <div class="space-y-3 text-sm">
     <h2 class="w-56 sm:w-96 lg:w-full truncate">
-      {% if is_podcast %}
-      <a href="{{ podcast_url }}"
-         title="{{ result.cleaned_title }}"
-         class="link"
-         hx-get="{% url 'podcasts:preview' podcast.id %}"
-         hx-target="#modal"
-         hx-select="#modal"
-         hx-swap="outerHTML"
-         hx-trigger="click delay:200ms">
-        {{ result.cleaned_title|truncatechars:120 }}</a>
-      {% else %}
       <a href="{{ result.itunes }}"
          title="See {{ result.cleaned_title }} in iTunes"
          rel="noopener"
          target="_blank"
          class="link">{{ result.cleaned_title|truncatechars:120 }}</a>
-      {% endif %}
     </h2>
-    <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs{% if not podcast %} animate-pulse{% endif %}">
-      {% if is_podcast %}
-      Added {{ podcast.created|timesince }} ago
-      {% else %}
+    <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
       Adding podcast to database...
-      {% endif %}
     </div>
   </div>
 </section>
+{% endif %}
 {% endwith %}
