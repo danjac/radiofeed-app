@@ -16,6 +16,11 @@ urlpatterns = [
         name="preview",
     ),
     path(
+        "podcasts/<int:podcast_id>/actions/",
+        views.actions,
+        name="actions",
+    ),
+    path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
         views.recommendations,
         name="podcast_recommendations",

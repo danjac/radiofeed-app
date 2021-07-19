@@ -1,0 +1,11 @@
+<div class="relative flex items-center">
+  <button title="Actions for {{ podcast.cleaned_title }}"
+          class="focus:outline-none"
+          hx-get="{% url 'podcasts:actions' podcast.id %}"
+          hx-target="#actions-{{ podcast.id }}"
+          hx-swap="innerHTML"
+          hx-trigger="click delay:200ms">
+    {% icon "ellipsis" css_class="w-6 h-6" %}
+  </button>
+  <div id="actions-{{ podcast.id }}"></div>
+</div>

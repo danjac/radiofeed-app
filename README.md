@@ -1,14 +1,4 @@
-This is a very simple MVP podcast app. It has the following features:
-
-1. Sync podcasts with their RSS feeds
-2. Discover podcasts through iTunes categories
-3. Search individual podcasts and episodes
-4. Play episodes using an embedded HTML5 audio player
-5. Favorite episodes
-6. Subscribe to individual podcast feeds
-7. Recommend similar podcasts
-
-This app is currently live on https://jcasts.io.
+This is the source code for [jCasts](https://jcasts.io), a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself.
 
 ## Running jcasts on your local machine
 

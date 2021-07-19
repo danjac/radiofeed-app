@@ -16,6 +16,7 @@ from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.podcasts.tasks import sync_podcast_feed
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.response import HttpResponseNoContent
 from jcasts.shared.typedefs import ContextDict
 
 
@@ -47,6 +48,19 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
             "search_url": reverse("podcasts:search_podcasts"),
         },
         cached=featured,
+    )
+
+
+@require_safe
+def actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    podcast = get_podcast_or_404(request, podcast_id)
+    return TemplateResponse(
+        request,
+        "podcasts/_actions.html",
+        {
+            "podcast": podcast,
+            "is_following": podcast.is_following(request.user),
+        },
     )
 
 
@@ -312,6 +326,9 @@ def get_podcast_detail_context(
 def render_follow_response(
     request: HttpRequest, podcast: Podcast, is_following: bool
 ) -> HttpResponse:
+
+    if request.POST.get("action"):
+        return HttpResponseNoContent()
 
     return TemplateResponse(
         request,
