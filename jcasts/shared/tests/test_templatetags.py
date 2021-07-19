@@ -110,8 +110,9 @@ class TestKeepspaces:
 
 class TestPrivacyDetails:
     def test_get_privacy_details(self, settings):
-        settings.PRIVACY_DETAILS = "testing"
-        assert get_privacy_details() == "testing"
+        details = {"host_country": "Finland"}
+        settings.PRIVACY_DETAILS = details
+        assert get_privacy_details() == details
 
 
 class TestTwitterAccount:
