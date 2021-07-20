@@ -40,12 +40,12 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return TemplateResponse(request, "account/export_podcast_feeds.html")
-    # set a max limit of 500 for now to prevent a DOS attack
+   
     podcasts = (
         Podcast.objects.filter(follow__user=request.user, pub_date__isnull=False)
         .distinct()
         .order_by("-pub_date")
-    )[:500]
+    ).iterator()
 
     filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}"
 
