@@ -103,6 +103,16 @@ const playerObj = {
     sessionStorage.setItem(this.storageKey, true);
   },
 
+  waiting() {
+    this.isPlaying = false;
+  },
+
+  playing() {
+    if (!this.isPaused) {
+      this.isPlaying = true;
+    }
+  },
+
   paused() {
     this.isPlaying = false;
     this.isPaused = true;

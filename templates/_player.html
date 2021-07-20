@@ -28,6 +28,9 @@
          @loadedmetadata="loaded()"
          @pause="paused()"
          @play="resumed()"
+         @loadstart="waiting()"
+         @waiting="waiting()"
+         @playing="playing()"
          @timeupdate="timeUpdate()">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 sm:p-2 font-semibold"
@@ -74,14 +77,14 @@
 
               <button title="Pause"
                       @click="togglePlay"
-                      x-show="isPlaying"
+                      x-show="!isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "pause" css_class="h-8 w-8" %}
               </button>
 
               <button title="Play"
                       @click="togglePlay"
-                      x-show="isPaused"
+                      x-show="isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-600 mr-2">
                 {% icon "play" css_class="h-8 w-8" %}
               </button>
