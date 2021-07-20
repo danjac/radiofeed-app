@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -12,7 +10,7 @@ from jcasts.episodes.models import Favorite
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
 @require_safe
@@ -56,7 +54,4 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Favorites")
-
-    response = HttpResponseNoContent()
-    response["HX-Trigger"] = json.dumps({"remove-favorite": episode.id})
-    return response
+    return with_hx_trigger(HttpResponseNoContent(), {"remove-favorite": episode.id})

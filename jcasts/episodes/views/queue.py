@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from typing import Literal
 
 from django.contrib import messages
@@ -14,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 from jcasts.episodes.models import QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
 @require_safe
@@ -61,9 +59,8 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(episode=episode, user=request.user).delete()
     messages.info(request, "Removed from Play Queue")
-    response = HttpResponseNoContent()
-    response["HX-Trigger"] = json.dumps({"remove-queue-item": episode.id})
-    return response
+
+    return with_hx_trigger(HttpResponseNoContent(), {"remove-queue-item": episode.id})
 
 
 @require_POST

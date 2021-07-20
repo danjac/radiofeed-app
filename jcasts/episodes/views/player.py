@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
@@ -9,7 +7,7 @@ from django.views.decorators.http import require_POST
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
 @require_POST
@@ -82,6 +80,6 @@ def render_player(
     response = TemplateResponse(request, "_player.html", {"unlock": True})
 
     if next_episode:
-        response["HX-Trigger"] = json.dumps({"remove-queue-item": next_episode.id})
+        response = with_hx_trigger(response, {"remove-queue-item": next_episode.id})
 
     return response
