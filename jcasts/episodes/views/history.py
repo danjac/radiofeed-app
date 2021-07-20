@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
@@ -11,7 +9,7 @@ from jcasts.episodes.models import AudioLog
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
 @require_safe
@@ -50,7 +48,4 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     AudioLog.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from History")
-
-    response = HttpResponseNoContent()
-    response["HX-Trigger"] = json.dumps({"remove-audio-log": episode.id})
-    return response
+    return with_hx_trigger(HttpResponseNoContent(), {"remove-audio-log": episode.id})

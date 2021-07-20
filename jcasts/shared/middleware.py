@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import json
-
 from typing import Callable, ClassVar
 from urllib.parse import urlencode
 
@@ -13,6 +11,8 @@ from django.http import (
     HttpResponseRedirect,
 )
 from django.utils.functional import SimpleLazyObject, cached_property
+
+from jcasts.shared.response import with_hx_trigger
 
 
 class BaseMiddleware:
@@ -63,17 +63,15 @@ class HtmxMessageMiddleware(BaseMiddleware):
     """If htmx request, adds any messages to response
     header to be handled in JS."""
 
-    hx_trigger_header: ClassVar[str] = "HX-Trigger"
-
     def __call__(self, request: HttpRequest) -> HttpResponse:
         response = self.get_response(request)
 
         if self.use_hx_trigger(request, response) and (
             messages := get_messages(request)
         ):
-            response[self.hx_trigger_header] = json.dumps(
+            return with_hx_trigger(
+                response,
                 {
-                    **self.get_hx_trigger(response),
                     "messages": [
                         {
                             "message": str(message),
@@ -81,17 +79,9 @@ class HtmxMessageMiddleware(BaseMiddleware):
                         }
                         for message in messages
                     ],
-                }
+                },
             )
         return response
-
-    def get_hx_trigger(self, response: HttpResponse) -> dict:
-        if trigger := response.headers.get(self.hx_trigger_header, None):
-            try:
-                return json.loads(trigger)
-            except json.JSONDecodeError:
-                return {trigger: ""}
-        return {}
 
     def use_hx_trigger(self, request: HttpRequest, response: HttpResponse) -> bool:
         return request.htmx and type(response) not in (
