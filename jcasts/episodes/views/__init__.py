@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from django.conf import settings
-from django.db.models import OuterRef, Subquery
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_safe
 
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.typedefs import ContextDict
@@ -17,40 +16,21 @@ from jcasts.shared.typedefs import ContextDict
 @require_safe
 def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
 
-    # get the latest episode for each podcast
-
-    latest_episodes = (
-        Episode.objects.filter(podcast=OuterRef("pk")).order_by("-pub_date").distinct()
+    follows = (
+        set(request.user.follow_set.values_list("podcast", flat=True))
+        if request.user.is_authenticated
+        else set()
     )
 
-    follows = []
-
-    if request.user.is_authenticated:
-        follows = list(request.user.follow_set.values_list("podcast", flat=True))
-
-        # filter out any episodes the user has already listened to
-        listened_ids = list(
-            AudioLog.objects.filter(user=request.user).values_list("episode", flat=True)
-        )
-        if listened_ids:
-            latest_episodes = latest_episodes.exclude(pk__in=listened_ids)
-
     podcast_ids = (
-        list(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
+        set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
         if featured or not follows
         else follows
     )
 
-    episode_ids = (
-        Podcast.objects.filter(pk__in=podcast_ids)
-        .annotate(latest_episode=Subquery(latest_episodes.values("pk")[:1]))
-        .values_list("latest_episode", flat=True)
-        .distinct()
-    )
-
     episodes = (
         Episode.objects.select_related("podcast")
-        .filter(pk__in=set(episode_ids))
+        .filter(podcast__in=podcast_ids)
         .order_by("-pub_date")
         .distinct()
     )
@@ -61,10 +41,10 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
         "episodes/index.html",
         {
             "featured": featured,
-            "has_follows": follows,
+            "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=request.user.is_anonymous,
+        cached=featured or request.user.is_anonymous,
     )
 
 
