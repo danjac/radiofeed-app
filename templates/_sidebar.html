@@ -134,7 +134,18 @@
         </button>
       </form>
     </li>
+    {% else %}
+    <li>
+      {% re_active_link request.get_full_path|signup_url '/account/*' as link %}
+      <a href="{{ link.url }}"
+         accesskey="9"
+         title="Sign up or Log in to your account"
+         @click="$dispatch('close-sidebar')"
+         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         {% icon "login" css_class="h-5 w-5 mr-3" %} 
+         Signup or Login
+      </a>
+    </li>
     {% endif %}
-
   </ul>
 </nav>
