@@ -2,10 +2,10 @@ admin_url:
 admins:
 app_name:
 domain_name:
-google_tracking_id:
 letsencrypt_email:
 mailgun_api_key:
 mailgun_sender_domain:
 secret_key:
 sentry_url:
 app_db_name:
+twitter_account:

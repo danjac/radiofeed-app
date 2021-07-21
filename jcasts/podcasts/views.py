@@ -169,7 +169,6 @@ def episodes(
 
     podcast = get_podcast_or_404(request, podcast_id)
     newest_first = request.GET.get("ordering", "desc") == "desc"
-    oldest_first = not (newest_first)
 
     episodes = podcast.episode_set.select_related("podcast")
 
@@ -187,7 +186,7 @@ def episodes(
             podcast,
             {
                 "newest_first": newest_first,
-                "oldest_first": oldest_first,
+                "oldest_first": not (newest_first),
                 "is_podcast_detail": True,
             },
         ),
