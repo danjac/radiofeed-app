@@ -25,22 +25,13 @@ def player_episode(client, episode):
 
 
 class TestNewEpisodes:
-    def _test_no_subscriptions(self, client):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
-        EpisodeFactory.create_batch(3)
-        resp = client.get(episodes_url)
-        assert_ok(resp)
-        assert not resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-
     def test_anonymous_user(self, client, db):
-        self._test_no_subscriptions(client)
+        self._test_no_follows(client)
 
-    def test_no_subscriptions(self, client, db, auth_user):
-        self._test_no_subscriptions(client)
+    def test_no_follows(self, client, db, auth_user):
+        self._test_no_follows(client)
 
-    def test_user_has_subscriptions(self, client, auth_user):
+    def test_user_has_follows(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -56,29 +47,7 @@ class TestNewEpisodes:
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
 
-    def test_user_has_listened_items(self, client, auth_user):
-        promoted = PodcastFactory(promoted=True)
-        EpisodeFactory(podcast=promoted)
-
-        EpisodeFactory.create_batch(3)
-
-        log = AudioLogFactory(user=auth_user)
-        FollowFactory(user=auth_user, podcast=log.episode.podcast)
-
-        episode = EpisodeFactory()
-        FollowFactory(user=auth_user, podcast=episode.podcast)
-
-        resp = client.get(episodes_url)
-        assert_ok(resp)
-        assert not resp.context_data["featured"]
-        assert resp.context_data["has_follows"]
-        assert len(resp.context_data["page_obj"].object_list) == 1
-        assert resp.context_data["page_obj"].object_list[0] == episode
-
-        episode_ids = [obj.id for obj in resp.context_data["page_obj"].object_list]
-        assert log.episode.id not in episode_ids
-
-    def test_user_has_subscriptions_featured(self, client, auth_user):
+    def test_user_has_follows_featured(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -94,6 +63,15 @@ class TestNewEpisodes:
         assert resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0].podcast == promoted
+
+    def _test_no_follows(self, client):
+        promoted = PodcastFactory(promoted=True)
+        EpisodeFactory(podcast=promoted)
+        EpisodeFactory.create_batch(3)
+        resp = client.get(episodes_url)
+        assert_ok(resp)
+        assert not resp.context_data["has_follows"]
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestSearchEpisodes:
