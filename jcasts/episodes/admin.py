@@ -7,7 +7,7 @@ from jcasts.shared.typedefs import admin_action
 
 @admin.register(Episode)
 class EpisodeAdmin(admin.ModelAdmin):
-    ordering = ("-pub_date",)
+    ordering = ("-id",)
     list_display = ("episode_title", "podcast_title", "pub_date")
     raw_id_fields = ("podcast",)
     search_fields = ("search_document",)
