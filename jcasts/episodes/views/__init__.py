@@ -32,7 +32,6 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
         Episode.objects.select_related("podcast")
         .filter(podcast__in=podcast_ids)
         .order_by("-pub_date")
-        .distinct()
     )
 
     return render_episode_list_response(

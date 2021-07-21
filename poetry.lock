@@ -1108,14 +1108,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "pywatchman"
-version = "1.4.1"
-description = "Watchman client for python"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "redis"
 version = "3.5.3"
 description = "Python client for Redis key-value store"
@@ -1409,7 +1401,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "340440c9bd6d74bd048b03288d41bf6220df8f4089b31a62fd6aa3b4aec1ede4"
+content-hash = "2385b4696cd2b0f330114b56c017073f225633a1d6e538e0b4069b731c25975c"
 
 [metadata.files]
 amqp = [
@@ -2020,9 +2012,6 @@ python3-openid = [
 pytz = [
     {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
     {file = "pytz-2021.1.tar.gz", hash = "sha256:83a4a90894bf38e243cf052c8b58f381bfe9a7a483f6a9cab140bc7f702ac4da"},
-]
-pywatchman = [
-    {file = "pywatchman-1.4.1.tar.gz", hash = "sha256:d0047eb275deafb0011eda0a1a815fbd9742478c3d2b5ad6956d300e447dc2f9"},
 ]
 redis = [
     {file = "redis-3.5.3-py2.py3-none-any.whl", hash = "sha256:432b788c4530cfe16d8d943a09d40ca6c16149727e4afe8c2c9d5580c59d9f24"},
