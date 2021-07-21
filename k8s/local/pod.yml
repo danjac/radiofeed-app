@@ -97,9 +97,9 @@ spec:
           name: jcasts-host
       workingDir: /app
 
-    - name: watchman
+    - name: watch
       command:
-        - /start-watchman
+        - /start-watch
       envFrom:
         - configMapRef:
             name: jcasts-configmap

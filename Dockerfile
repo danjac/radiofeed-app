@@ -15,35 +15,7 @@ RUN apt-get install -y nodejs
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# watchman
-
-RUN curl -sLO https://github.com/facebook/watchman/releases/download/v2021.04.26.00/watchman-v2021.04.26.00-linux.zip \
-    && unzip watchman-v2021.04.26.00-linux.zip \
-    && mkdir -p /usr/local/var/run/watchman \
-    && cd watchman-v2021.04.26.00-linux \
-    && cp bin/* /usr/local/bin \
-    && cp lib/* /usr/local/lib \
-    && chmod 755 /usr/local/bin/watchman \
-    && chmod 2777 /usr/local/var/run/watchman
-
 WORKDIR /app
-
-# scripts
-
-COPY ./scripts/docker/entrypoint /entrypoint
-RUN chmod +x /entrypoint
-
-COPY ./scripts/docker/start-webapp /start-webapp
-RUN chmod +x /start-webapp
-
-COPY ./scripts/docker/start-watchman /start-watchman
-RUN chmod +x /start-watchman
-
-COPY ./scripts/docker/start-celeryworker /start-celeryworker
-RUN chmod +x /start-celeryworker
-
-COPY ./scripts/docker/start-celerybeat /start-celerybeat
-RUN chmod +x /start-celerybeat
 
 # python requirements
 
@@ -71,3 +43,20 @@ COPY package-lock.json ./package-lock.json
 
 RUN npm cache clean --force
 RUN npm install
+
+# scripts
+
+COPY ./scripts/docker/entrypoint /entrypoint
+RUN chmod +x /entrypoint
+
+COPY ./scripts/docker/start-webapp /start-webapp
+RUN chmod +x /start-webapp
+
+COPY ./scripts/docker/start-watch /start-watch
+RUN chmod +x /start-watch
+
+COPY ./scripts/docker/start-celeryworker /start-celeryworker
+RUN chmod +x /start-celeryworker
+
+COPY ./scripts/docker/start-celerybeat /start-celerybeat
+RUN chmod +x /start-celerybeat
