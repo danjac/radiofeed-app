@@ -132,52 +132,60 @@ class TestStartPlayer:
         assert_ok(resp)
 
 
-class TestPlayNextEpisode:
-    url = reverse_lazy("episodes:play_next_episode")
+class TestMarkComplete:
+    mark_complete_url = reverse_lazy("episodes:mark_complete")
+    play_next_url = reverse_lazy("episodes:play_next")
 
-    def test_has_next_in_queue(self, client, auth_user, player_episode):
+    @pytest.mark.parametrize("url", [mark_complete_url, play_next_url])
+    def test_has_next_in_queue(self, client, auth_user, player_episode, url):
         QueueItem.objects.create(position=0, user=auth_user, episode=player_episode)
-        resp = client.post(self.url)
+        resp = client.post(url)
 
         assert_ok(resp)
 
         assert QueueItem.objects.count() == 0
 
+    @pytest.mark.parametrize(
+        "url,queue_count", [(mark_complete_url, 1), (play_next_url, 0)]
+    )
     def test_has_next_in_queue_if_autoplay_disabled(
-        self, client, auth_user, player_episode
+        self, client, auth_user, player_episode, url, queue_count
     ):
 
         auth_user.autoplay = False
         auth_user.save()
 
         QueueItem.objects.create(position=0, user=auth_user, episode=player_episode)
-        resp = client.post(self.url)
+        resp = client.post(url)
 
         assert_ok(resp)
-        assert QueueItem.objects.count() == 1
+        assert QueueItem.objects.count() == queue_count
 
+    @pytest.mark.parametrize("url", [mark_complete_url, play_next_url])
     def test_has_next_in_queue_if_autoplay_enabled(
-        self, client, auth_user, player_episode
+        self, client, auth_user, player_episode, url
     ):
 
         log = AudioLogFactory(user=auth_user, current_time=2000, episode=player_episode)
 
-        resp = client.post(self.url)
+        resp = client.post(url)
         assert_ok(resp)
 
         log.refresh_from_db()
         assert log.completed
 
-    def test_play_next_episode_in_history(self, client, auth_user, player_episode):
+    @pytest.mark.parametrize("url", [mark_complete_url, play_next_url])
+    def test_play_next_episode_in_history(self, client, auth_user, player_episode, url):
         AudioLogFactory(user=auth_user, current_time=30, episode=player_episode)
         QueueItem.objects.create(position=0, user=auth_user, episode=player_episode)
-        resp = client.post(self.url)
+        resp = client.post(url)
 
         assert_ok(resp)
         assert QueueItem.objects.count() == 0
 
-    def test_queue_empty(self, client, auth_user):
-        resp = client.post(self.url)
+    @pytest.mark.parametrize("url", [mark_complete_url, play_next_url])
+    def test_queue_empty(self, client, auth_user, url):
+        resp = client.post(url)
         assert_ok(resp)
         assert QueueItem.objects.count() == 0
 
