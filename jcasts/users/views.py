@@ -1,5 +1,4 @@
 import csv
-import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,11 +8,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.views.decorators.http import (
-    require_http_methods,
-    require_POST,
-    require_safe,
-)
+from django.views.decorators.http import require_http_methods, require_safe
 
 from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.models import Follow, Podcast
@@ -40,7 +35,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     if request.method != "POST":
         return TemplateResponse(request, "account/export_podcast_feeds.html")
-   
+
     podcasts = (
         Podcast.objects.filter(follow__user=request.user, pub_date__isnull=False)
         .distinct()
@@ -86,20 +81,6 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         messages.info(request, "Your account has been deleted")
         return redirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
-
-
-@require_POST
-def accept_cookies(request: HttpRequest) -> HttpResponse:
-    response = HttpResponse()
-    response.set_cookie(
-        "accept-cookies",
-        value="true",
-        expires=timezone.now() + datetime.timedelta(days=30),
-        secure=False,
-        httponly=False,
-        samesite="Lax",
-    )
-    return response
 
 
 def render_opml_export_response(

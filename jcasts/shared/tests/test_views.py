@@ -47,3 +47,10 @@ class TestErrorPages:
 
     def test_csrf(self, db, client):
         assert_ok(client.get(reverse("error:csrf")))
+
+
+class TestAcceptCookies:
+    def test_post(self, client, db):
+        resp = client.post(reverse("accept_cookies"))
+        assert_ok(resp)
+        assert "accept-cookies" in resp.cookies

@@ -11,19 +11,19 @@
 <div id="settings-content">
   <nav class="mb-3 pb-3 border-b dark:border-gray-500 text-sm">
     <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight space-x-6">
-      {% active_link 'user_preferences' as link %}
+      {% active_link 'users:preferences' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
            title="Preferences"
            href="{{ link.url }}">Preferences</a>
       </li>
-      {% active_link 'export_podcast_feeds' as link %}
+      {% active_link 'users:export_podcast_feeds' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
            title="Export"
            href="{{ link.url }}">Export</a>
       </li>
-      {% active_link 'user_stats' as link %}
+      {% active_link 'users:stats' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
            title="Statistics"
@@ -47,7 +47,7 @@
            title="Social Logins"
            href="{{ link.url }}">Social Logins</a>
       </li>
-      {% active_link 'delete_account' as link %}
+      {% active_link 'users:delete_account' as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">
         <a class="hover:text-blue-500"
            title="Delete Account"

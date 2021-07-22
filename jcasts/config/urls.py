@@ -30,5 +30,6 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
+    path("account/", include("allauth.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
