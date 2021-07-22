@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -i -t jcasts-celeryworker celery $@
+docker-compose run --rm celeryworker celery $@
 

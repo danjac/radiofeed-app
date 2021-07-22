@@ -2,23 +2,9 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 ## Running jcasts on your local machine
 
-Local development uses Podman and Buildah:
+Local development requires docker and docker-compose. Just run:
 
-https://podman.io/getting-started/installation
-
-https://buildah.io/
-
-To get started, run _./bootstrap.sh_. This will create a new pod, _jcasts_ and create and run the required containers.
-
-Once this is installed, you can start your local instance again by just running
-
-> podman pod start jcasts
-
-You can check the state of the pod if troubleshooting using
-
-> podman pod inspect jcasts
-
-See the Podman docs for more details.
+> docker-compose up --build
 
 Next load the categories and sample podcasts into the database:
 
