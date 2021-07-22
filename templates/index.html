@@ -5,13 +5,13 @@
 
 <head>
   <title>
-    jCasts :: Discover and Organize Your Podcasts
+    {{ request.site.name }} :: Discover and Organize Your Podcasts
   </title>
   {% include "_meta.html" %}
   {% include "_static.html" %}
 </head>
 
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <div class="min-h-screen bg-gradient-to-b from-indigo-900 to-indigo-700 text-white py-6 flex flex-col justify-center lg:py-12">
     <div class="relative py-3 mx-auto px-6 lg:px-0">
 

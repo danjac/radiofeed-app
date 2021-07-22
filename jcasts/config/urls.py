@@ -6,7 +6,6 @@ from django.views.decorators.cache import cache_page
 
 from jcasts.episodes.sitemaps import EpisodeSitemap
 from jcasts.podcasts.sitemaps import CategorySitemap, PodcastSitemap
-from jcasts.users.views import accept_cookies
 
 sitemaps = {
     "categories": CategorySitemap,
@@ -19,8 +18,7 @@ urlpatterns = [
     path("", include("jcasts.shared.urls")),
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
-    path("account/", include("jcasts.users.urls")),
-    path("accept-cookies/", accept_cookies, name="accept_cookies"),
+    path("", include("jcasts.users.urls")),
     path(
         "sitemap.xml",
         cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.index),
@@ -32,5 +30,6 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
+    path("account/", include("allauth.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]

@@ -50,7 +50,7 @@
 
     <div class="flex items-center space-x-3">
       {% if user.is_authenticated %}
-      <a href="{% url 'user_preferences' %}"
+      <a href="{% url 'users:preferences' %}"
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
         <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="{{ user.username }}">

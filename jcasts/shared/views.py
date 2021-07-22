@@ -1,9 +1,12 @@
+import datetime
+
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_POST, require_safe
 
 
 @require_safe
@@ -21,6 +24,20 @@ def robots(request: HttpRequest) -> HttpResponse:
         "robots.txt",
         {"sitemap_url": request.build_absolute_uri("/sitemap.xml")},
     )
+
+
+@require_POST
+def accept_cookies(request: HttpRequest) -> HttpResponse:
+    response = HttpResponse()
+    response.set_cookie(
+        "accept-cookies",
+        value="true",
+        expires=timezone.now() + datetime.timedelta(days=30),
+        secure=True,
+        httponly=True,
+        samesite="Lax",
+    )
+    return response
 
 
 @require_safe
