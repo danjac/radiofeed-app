@@ -34,7 +34,7 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
         value="true",
         expires=timezone.now() + datetime.timedelta(days=30),
         secure=False,
-        httponly=False,
+        httponly=True,
         samesite="Lax",
     )
     return response
