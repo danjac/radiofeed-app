@@ -1,5 +1,6 @@
 type
 cursor-not-allowed
+pointer-events-none
 opacity-50
 animate-pulse
 top-0

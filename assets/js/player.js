@@ -7,6 +7,7 @@ const playerObj = {
   isPlaying: false,
   isError: false,
   playbackRate: 1.0,
+  queueHasNext: false,
   showPlayer: true,
   storageKey: 'player-enabled',
   unlock: false,
@@ -155,10 +156,6 @@ const playerObj = {
     if (!this.isPaused) {
       this.$refs.audio.currentTime += 10;
     }
-  },
-
-  reload() {
-    this.close(this.urls.reloadPlayer);
   },
 
   close(url) {
