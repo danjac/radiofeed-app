@@ -2,6 +2,8 @@ from django.urls import include, path
 
 from jcasts.users import views
 
+app_name = "episodes"
+
 urlpatterns = [
     path("preferences/", views.user_preferences, name="user_preferences"),
     path("stats/", views.user_stats, name="user_stats"),
