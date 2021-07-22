@@ -23,9 +23,9 @@ from jcasts.shared.typedefs import ContextDict
 @require_safe
 def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
     follows = (
-        list(request.user.follow_set.values_list("podcast", flat=True))
+        set(request.user.follow_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
-        else []
+        else set()
     )
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
