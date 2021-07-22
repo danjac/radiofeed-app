@@ -6,7 +6,7 @@
 <html lang="{{ language_code }}">
 
 <head>
-  <title>{{ request.site.name }} | Error</title>
+  <title>{{ request.site.name|default:"Site" }} | Error</title>
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
