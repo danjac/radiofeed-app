@@ -12,7 +12,7 @@
        queueHasNext: {{ request.player.queue_has_next|yesno:'true,false' }},
        urls: {
          closePlayer: '{% url "episodes:close_player" %}',
-         playNextEpisode: '{% url "episodes:play_next_episode" %}',
+         markComplete: '{% url "episodes:mark_complete" %}',
          timeUpdate: '{% url "episodes:player_time_update" %}'
        }
     })"
@@ -92,7 +92,7 @@
                 {% icon "play" css_class="h-8 w-8" %}
               </button>
 
-              <button title="Stop"
+              <button title="Close Player"
                       @click="close()"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "stop" css_class="h-8 w-8" %}
@@ -102,7 +102,7 @@
                       :class="{'text-gray-300 cursor-not-allowed': !queueHasNext}"
                       :disabled="!queueHasNext"
                       :title="queueHasNext ? 'Play next item in Play Queue': 'No more items in Play Queue'"
-                      hx-post="{% url "episodes:play_next_episode" %}"
+                      hx-post="{% url "episodes:play_next" %}"
                       hx-target="#player"
                       hx-swap="outerHTML">
                 {% icon "fast_forward" css_class="h-8 w-8" %}

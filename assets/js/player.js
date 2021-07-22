@@ -176,7 +176,7 @@ const playerObj = {
   },
 
   ended() {
-    this.close(this.urls.playNextEpisode);
+    this.close(this.urls.markComplete);
   },
 
   togglePlay() {
