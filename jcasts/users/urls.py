@@ -8,5 +8,5 @@ urlpatterns = [
     path("account/stats/", views.user_stats, name="user_stats"),
     path("account/~export/", views.export_podcast_feeds, name="export_podcast_feeds"),
     path("account/~delete/", views.delete_account, name="delete_account"),
-    path("", include("allauth.urls")),
+    path("account/", include("allauth.urls")),
 ]
