@@ -1,5 +1,6 @@
 FROM python:3.9.5-buster
 
+
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER=1
@@ -16,6 +17,7 @@ RUN apt-get install -y nodejs
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
 
 # python requirements
 
@@ -44,6 +46,7 @@ COPY package-lock.json ./package-lock.json
 RUN npm cache clean --force
 RUN npm ci
 
+
 # scripts
 
 COPY ./scripts/docker/entrypoint /entrypoint
@@ -52,11 +55,10 @@ RUN chmod +x /entrypoint
 COPY ./scripts/docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 
-COPY ./scripts/docker/start-watch /start-watch
-RUN chmod +x /start-watch
-
 COPY ./scripts/docker/start-celeryworker /start-celeryworker
 RUN chmod +x /start-celeryworker
 
 COPY ./scripts/docker/start-celerybeat /start-celerybeat
 RUN chmod +x /start-celerybeat
+
+USER 1000:1000

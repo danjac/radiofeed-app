@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -it jcasts-webapp pytest $@
+docker-compose run --rm webapp pytest $@
 

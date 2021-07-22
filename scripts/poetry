@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-podman exec -it jcasts-webapp poetry $@
+docker-compose run --rm webapp poetry $@
 
