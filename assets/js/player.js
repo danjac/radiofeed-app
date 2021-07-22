@@ -157,10 +157,6 @@ const playerObj = {
     }
   },
 
-  reload() {
-    this.close(this.urls.reloadPlayer);
-  },
-
   close(url) {
     this.mediaSrc = null;
     this.shortcuts = null;
