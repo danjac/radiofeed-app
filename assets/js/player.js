@@ -174,10 +174,6 @@ const playerObj = {
     });
   },
 
-  ended() {
-    this.close(this.urls.playNextEpisode);
-  },
-
   playNext() {
     this.close(this.urls.playNextEpisode);
   },

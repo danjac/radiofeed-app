@@ -26,7 +26,7 @@
          preload="metadata"
          :src="mediaSrc"
          @error="error()"
-         @ended="ended()"
+         @ended="playNext()"
          @loadedmetadata="loaded()"
          @pause="paused()"
          @play="resumed()"
