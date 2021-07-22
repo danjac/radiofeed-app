@@ -78,7 +78,7 @@ class Player:
     def is_playing(self, episode: Episode) -> bool:
         return self.get_current_episode_id() == episode.id
 
-    def has_next_episode(self) -> bool:
+    def queue_has_next(self) -> bool:
         return (
             QueueItem.objects.filter(user=self.request.user).exists()
             if self.request.user.is_authenticated
