@@ -182,6 +182,10 @@ const playerObj = {
     this.close(this.urls.playNextEpisode);
   },
 
+  playNext() {
+    this.close(this.urls.playNextEpisode);
+  },
+
   togglePlay() {
     if (this.isPaused) {
       this.$refs.audio.play();

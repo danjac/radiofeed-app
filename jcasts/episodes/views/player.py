@@ -80,6 +80,11 @@ def render_player(
     response = TemplateResponse(request, "_player.html", {"unlock": True})
 
     if next_episode:
-        response = with_hx_trigger(response, {"remove-queue-item": next_episode.id})
+        response = with_hx_trigger(
+            response,
+            {
+                "remove-queue-item": next_episode.id,
+            },
+        )
 
     return response

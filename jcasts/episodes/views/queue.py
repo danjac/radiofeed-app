@@ -50,17 +50,24 @@ def add_to_queue(
     except IntegrityError:
         pass
 
-    return HttpResponseNoContent()
+    return with_hx_trigger(HttpResponseNoContent(), {"queue-has-next": True})
 
 
 @require_POST
 @ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
-    QueueItem.objects.filter(episode=episode, user=request.user).delete()
+    qs = QueueItem.objects.filter(user=request.user)
+    qs.filter(episode=episode).delete()
     messages.info(request, "Removed from Play Queue")
 
-    return with_hx_trigger(HttpResponseNoContent(), {"remove-queue-item": episode.id})
+    return with_hx_trigger(
+        HttpResponseNoContent(),
+        {
+            "remove-queue-item": episode.id,
+            "queue-has-next": qs.exists(),
+        },
+    )
 
 
 @require_POST
