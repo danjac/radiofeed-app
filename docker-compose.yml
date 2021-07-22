@@ -25,21 +25,23 @@ services:
       - '8025:8025'
       - '1025:1025'
 
-  local: &local
+  master: &master
     build:
       context: .
+    image: jcasts/master:0.1
     restart: on-failure
     privileged: true
 
   watcher:
-    <<: *local
+    <<: *master
     command: ['npm', 'run', 'watch']
+    user: 1000:1000
     volumes:
       - .:/app
       - /app/node_modules
 
   django: &django
-    <<: *local
+    <<: *master
     environment: *default-env
     depends_on:
       - postgres

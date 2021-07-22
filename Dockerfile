@@ -61,4 +61,3 @@ RUN chmod +x /start-celeryworker
 COPY ./scripts/docker/start-celerybeat /start-celerybeat
 RUN chmod +x /start-celerybeat
 
-USER 1000:1000
