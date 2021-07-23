@@ -18,7 +18,7 @@ You an also create a super user if you wish to access the Django admin:
 
 > ./scripts/manage createsuperuser
 
-You can access the development app in your browser at http://localhost:8000.
+You can access the development app in your browser at http://localhost.
 
 To run unit tests:
 
@@ -27,12 +27,6 @@ To run unit tests:
 This script takes the same arguments as _./python -m pytest_ e.g.:
 
 > ./scripts/runtests -x --ff
-
-**Note** due to migration issues the celerybeat container may not start immediately. If you need to use celerybeat in development, just run:
-
-> podman start jcasts-celerybeat
-
-Issue is covered here: https://github.com/danjac/jcasts/issues/3
 
 ## Deployment
 

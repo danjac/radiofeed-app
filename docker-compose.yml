@@ -35,7 +35,6 @@ services:
   watcher:
     <<: *master
     command: ['npm', 'run', 'watch']
-    user: 1000:1000
     volumes:
       - .:/app
       - /app/node_modules
