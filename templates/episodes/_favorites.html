@@ -1,11 +1,9 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-<div class="divide-y divide-gray-300 dark:divide-gray-500">
-  {% for favorite in page_obj %}
-  {% with episode=favorite.episode %}
-  {% include "episodes/_episode.html" with hx_remove="remove-favorite" %}
-  {% endwith %}
-  {% endfor %}
-</div>
+{% for favorite in page_obj %}
+{% with episode=favorite.episode %}
+{% include "episodes/_episode.html" with hx_remove="remove-favorite" %}
+{% endwith %}
+{% endfor %}
 {% endblock %}
