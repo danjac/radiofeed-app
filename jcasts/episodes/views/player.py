@@ -30,7 +30,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def mark_complete(request: HttpRequest, play_next: bool = False) -> HttpResponse:
+def mark_complete(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
@@ -39,9 +39,7 @@ def mark_complete(request: HttpRequest, play_next: bool = False) -> HttpResponse
     else:
         current_episode = None
 
-    play_next = play_next or request.user.autoplay
-
-    if play_next and (
+    if request.user.autoplay and (
         next_item := (
             QueueItem.objects.filter(user=request.user)
             .with_current_time(request.user)
