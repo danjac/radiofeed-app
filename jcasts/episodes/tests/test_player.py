@@ -140,22 +140,3 @@ class TestPlayer:
 
         log.refresh_from_db()
         assert log.current_time == 600
-
-    def test_queue_has_next_anonymous(self, rf, anonymous_user):
-        req = self.make_request(rf, user=anonymous_user)
-        player = Player(req)
-
-        assert not player.queue_has_next()
-
-    def test_queue_has_next_empty(self, rf, auth_user):
-        req = self.make_request(rf, user=auth_user)
-        player = Player(req)
-        assert not player.queue_has_next()
-
-    def test_queue_has_next_not_empty(self, rf, auth_user):
-        req = self.make_request(rf, user=auth_user)
-        player = Player(req)
-
-        QueueItemFactory(user=auth_user)
-
-        assert player.queue_has_next()

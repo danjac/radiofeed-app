@@ -50,14 +50,6 @@ urlpatterns = [
         name="mark_complete",
     ),
     path(
-        "player/~next/",
-        player.mark_complete,
-        name="play_next",
-        kwargs={
-            "play_next": True,
-        },
-    ),
-    path(
         "player/~timeupdate/",
         player.player_time_update,
         name="player_time_update",

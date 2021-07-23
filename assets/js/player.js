@@ -7,7 +7,6 @@ const playerObj = {
   isPlaying: false,
   isError: false,
   playbackRate: 1.0,
-  queueHasNext: false,
   showPlayer: true,
   storageKey: 'player-enabled',
   unlock: false,
