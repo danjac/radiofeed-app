@@ -12,7 +12,11 @@ Next load the categories and sample podcasts into the database:
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./scripts/manage sync_podcast_feeds --use-celery
+> ./scripts/manage sync_podcast_feeds 
+
+You can then generate podcast recommendations with this command:
+
+> ./scripts/manage make_recommendations
 
 You an also create a super user if you wish to access the Django admin:
 
@@ -98,6 +102,12 @@ To deploy just run:
 
 There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
 
-## LICENSE
+## Maintenance
+
+There is an Ansible playbook configured to clean up Docker containers, run server updates etc:
+
+> ansible-playbook maintenance.yml
+
+## License
 
 This project is covered by MIT license.
