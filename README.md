@@ -102,6 +102,12 @@ To deploy just run:
 
 There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
 
-## LICENSE
+## Maintenance
+
+There is an Ansible playbook configured to clean up Docker containers, run server updates etc:
+
+> ansible-playbook maintenance.yml
+
+## License
 
 This project is covered by MIT license.
