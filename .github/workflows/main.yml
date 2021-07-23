@@ -1,10 +1,6 @@
 name: Run unit tests and deploy
 
-on:
-  push:
-    branches:
-      - develop
-      - main
+on: push
 
 jobs:
   runtests:
