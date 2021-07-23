@@ -1,11 +1,9 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-<div class="divide-y divide-gray-300 dark:divide-gray-500">
-  {% for log in page_obj %}
-  {% with episode=log.episode %}
-  {% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
-  {% endwith %}
-  {% endfor %}
-</div>
+{% for log in page_obj %}
+{% with episode=log.episode %}
+{% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
+{% endwith %}
+{% endfor %}
 {% endblock %}
