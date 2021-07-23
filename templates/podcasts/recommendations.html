@@ -5,11 +5,9 @@
 
 {% block podcast_content %}
 {% cache 3600 recommendations podcast.id request.user.username %}
-<div class="divide-y divide-gray-300 dark:divide-gray-500">
-  {% for recommendation in recommendations %}
-  {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
-  {% endfor %}
-</div>
+{% for recommendation in recommendations %}
+{% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
+{% endfor %}
 {% endcache %}
 
 {% endblock podcast_content %}
