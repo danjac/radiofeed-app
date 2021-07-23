@@ -10,7 +10,7 @@
 {% block content %}
 <div id="queue"
      x-data="{count: {{ queue_items|length }}}"
-     @remove-episode.window="count-=1">
+     @remove-queue-item.window="count-=1">
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-lg">Play Queue</h1>
   </div>
