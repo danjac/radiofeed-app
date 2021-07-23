@@ -12,7 +12,11 @@ Next load the categories and sample podcasts into the database:
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./scripts/manage sync_podcast_feeds --use-celery
+> ./scripts/manage sync_podcast_feeds 
+
+You can then generate podcast recommendations with this command:
+
+> ./scripts/manage make_recommendations
 
 You an also create a super user if you wish to access the Django admin:
 
