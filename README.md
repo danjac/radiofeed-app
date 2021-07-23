@@ -18,7 +18,7 @@ You an also create a super user if you wish to access the Django admin:
 
 > ./scripts/manage createsuperuser
 
-You can access the development app in your browser at http://localhost:8000.
+You can access the development app in your browser at http://localhost.
 
 To run unit tests:
 
