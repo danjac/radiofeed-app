@@ -10,7 +10,6 @@
          @{{ hx_remove }}.window="
          if ($event.detail.value === {{ episode.id }}) {
             show=false;
-            $dispatch('remove-episode', { detail: {{ episode.id }} });
          }
          "
          {% endif %}>
