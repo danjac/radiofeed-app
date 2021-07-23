@@ -1,7 +1,6 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <section class="py-2 border-t dark:border-gray-500 text-sm episode"
          {% if hx_remove %}
-         :class="{removed: !show}"
          x-data="{show: true}"
          x-show="show"
          x-transition:leave="transition ease-out duration-500"
