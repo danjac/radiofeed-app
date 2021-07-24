@@ -9,9 +9,9 @@ ENV PYTHONHASHSEED=random
 # dependencies
 
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client-11 curl ca-certificates inotify-tools
+    && apt-get install --no-install-recommends -y postgresql-client-11
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

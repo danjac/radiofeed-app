@@ -15,34 +15,45 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - pg_data:/var/lib/postgresql/data
+    stop_grace_period: '3s'
 
   redis:
     image: redis:6.2.2-buster
+    stop_grace_period: '3s'
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:
       - '8025:8025'
       - '1025:1025'
+    stop_grace_period: '3s'
 
-  master: &master
+  master:
     build:
       context: .
     image: jcasts/master:0.1
+
+  base: &base
+    image: jcasts/master:0.1
     restart: on-failure
     privileged: true
+    tty: true
+    stop_grace_period: '3s'
 
   watcher:
-    <<: *master
+    <<: *base
     command: ['npm', 'run', 'watch']
     volumes:
       - .:/app
       - /app/node_modules
+    depends_on:
+      - master
 
   django: &django
-    <<: *master
+    <<: *base
     environment: *default-env
     depends_on:
+      - master
       - postgres
       - redis
     volumes:

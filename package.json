@@ -1,7 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "check-updates": "ncu -u",
     "watch-css": "NODE_ENV=production postcss ./assets/css/app.css -o ./assets/bundle.css -w",
     "watch-js": "esbuild ./assets/js/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/bundle.js",
     "watch": "concurrently npm:watch-css npm:watch-js"
@@ -12,7 +11,6 @@
     "concurrently": "^6.2.0",
     "cssnano": "^5.0.7",
     "esbuild": "^0.12.15",
-    "npm-check-updates": "^11.8.3",
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
     "postcss-import": "^14.0.2",
