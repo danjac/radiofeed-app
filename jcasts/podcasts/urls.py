@@ -11,11 +11,6 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
-        "podcasts/<int:podcast_id>/actions/",
-        views.actions,
-        name="actions",
-    ),
-    path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
         views.recommendations,
         name="podcast_recommendations",

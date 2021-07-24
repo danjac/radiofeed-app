@@ -52,19 +52,6 @@ def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
 
 
 @require_safe
-def actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    podcast = get_podcast_or_404(request, podcast_id)
-    return TemplateResponse(
-        request,
-        "podcasts/_actions.html",
-        {
-            "podcast": podcast,
-            "is_following": podcast.is_following(request.user),
-        },
-    )
-
-
-@require_safe
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return redirect("podcasts:index")

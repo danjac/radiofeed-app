@@ -14,7 +14,6 @@
         {{ podcast.cleaned_title|truncatechars:120 }}</a>
     </h2>
     <div class="space-x-2 flex items-center">
-      {% include "podcasts/_actions_toggle.html" %}
       <a href="{{ podcast.get_episodes_url }}"
          title="Last Published"
          class="link font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
