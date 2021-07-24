@@ -2,7 +2,7 @@
 {% cache 3600 podcast-categories podcast.id %}
 {% with categories=podcast.categories.all %}
 {% if categories %}
-<div class="space-y-2 space-x-2">
+<div class="space-y-2 lg:space-y-3 space-x-2 lg:space-x-3">
   {% for category in categories %}
   <div class="inline-block">
     <a class="btn btn-link flex items-center text-sm lg:text-base"
