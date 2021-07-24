@@ -68,22 +68,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-def preview(request: HttpRequest, episode_id: int) -> HttpResponse:
-
-    episode = get_episode_or_404(
-        request, episode_id, with_podcast=True, with_current_time=True
-    )
-
-    return TemplateResponse(
-        request,
-        "episodes/_preview.html",
-        {
-            "episode": episode,
-        },
-    )
-
-
-@require_safe
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(

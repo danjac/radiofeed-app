@@ -11,8 +11,8 @@
 <div id="queue"
      x-data="{count: {{ queue_items|length }}}"
      @remove-queue-item.window="count-=1">
-  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-    <h1 class="font-bold flex justify-center sm:justify-start text-lg">Play Queue</h1>
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3 lg:mb-6">
+    <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl">Play Queue</h1>
   </div>
   <div x-data="DragDrop({
       csrfToken: '{{ csrf_token }}',
@@ -28,7 +28,7 @@
     {% endwith %}
     {% endfor %}
   </div>
-  <p class="text-center sm:text-left text-sm" x-show="count===0">
+  <p class="text-center sm:text-left text-sm lg:text-base" x-show="count===0">
     You do not have any items in your Play Queue.
   </p>
 </div>

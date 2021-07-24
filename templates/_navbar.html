@@ -16,7 +16,7 @@
              alt="{{ request.site.name }}">
       </a>
 
-      <a class="font-bold text-lg font-mono"
+      <a class="font-bold text-lg lg:text-xl font-mono"
          title="{{ request.site.name }}"
          @click="$dispatch('close-sidebar')"
          href="{{ home_url }}">{{ request.site.name }}</a>
@@ -37,7 +37,7 @@
              @enter="$refs.input.select()"
              aria-label="{{ placeholder|default:'Search' }}"
              placeholder="Find a podcast..."
-             class="px-4 py-1 focus:outline-none rounded focus:ring w-72 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm">
+             class="px-4 py-1 focus:outline-none rounded focus:ring w-72 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
       <div class="absolute inset-y-0 right-0 flex items-center pr-3">
         <button type="submit"
                 title="Search"

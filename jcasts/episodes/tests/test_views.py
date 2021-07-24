@@ -108,15 +108,6 @@ class TestEpisodeDetail:
         assert resp.context_data["episode"] == episode
 
 
-class TestEpisodePreview:
-    def test_preview(self, client, episode):
-        resp = client.get(
-            reverse("episodes:preview", args=[episode.id]),
-        )
-        assert_ok(resp)
-        assert resp.context_data["episode"] == episode
-
-
 class TestEpisodeActions:
     def test_actions(self, client, auth_user, episode):
         resp = client.get(

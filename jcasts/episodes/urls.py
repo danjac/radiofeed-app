@@ -7,7 +7,6 @@ from jcasts.episodes.views import (
     history,
     index,
     player,
-    preview,
     queue,
     search_episodes,
 )
@@ -19,11 +18,6 @@ urlpatterns = [
     path("new/", index, name="index"),
     path("featured/", index, name="featured", kwargs={"featured": True}),
     path("search/episodes/", search_episodes, name="search_episodes"),
-    path(
-        "episodes/preview/<int:episode_id>/",
-        preview,
-        name="preview",
-    ),
     path(
         "episodes/actions/<int:episode_id>/",
         actions,

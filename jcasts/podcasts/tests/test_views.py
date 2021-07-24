@@ -38,12 +38,6 @@ def mock_search_itunes(
     return [mock_search_result], [PodcastFactory()]
 
 
-class TestPreview:
-    def test_preview(self, client, podcast):
-        resp = client.get(reverse("podcasts:preview", args=[podcast.id]))
-        assert_ok(resp)
-
-
 class TestActions:
     def test_anonymous(self, client, podcast):
         assert_ok(client.get(reverse("podcasts:actions", args=[podcast.id])))

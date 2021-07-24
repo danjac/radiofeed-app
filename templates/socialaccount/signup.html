@@ -5,9 +5,9 @@
 {% block head_title %}{% translate "Signup" %}{% endblock %}
 
 {% block content %}
-<h1 class="mb-3 font-bold">{% translate "Sign Up" %}</h1>
+<h1 class="mb-3 lg:mb-6 font-bold">{% translate "Sign Up" %}</h1>
 
-<p class="mb-3">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to
+<p class="mb-3 lg:mb-6">{% blocktranslate with provider_name=account.get_provider.name site_name=site.name %}You are about to
   use your {{provider_name}} account to login to
   {{site_name}}. As a final step, please complete the following form:{% endblocktranslate %}</p>
 
