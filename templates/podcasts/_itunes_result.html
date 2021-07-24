@@ -5,10 +5,10 @@
 <section class="py-2 flex items-center space-x-2 border-t dark:border-gray-500 text-sm">
   {% if result.image %}
   <div>
-    {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
+    {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=16 css_class="h-14 w-14 lg:h-16 lg:w-16" %}
   </div>
   {% endif %}
-  <div class="space-y-2 text-sm">
+  <div class="space-y-2 lg:space-y-3 text-sm">
     <h2 class="w-56 sm:w-96 lg:w-full truncate">
       <a href="{{ result.itunes }}"
          title="See {{ result.cleaned_title }} in iTunes"

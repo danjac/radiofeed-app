@@ -2,11 +2,11 @@
 <section class="flex items-center space-x-2 py-2 border-t dark:border-gray-500">
   <div>
     <a href="{{ podcast_url }}">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=16 css_class="h-14 w-14 lg:h-16 lg:w-16" %}
     </a>
   </div>
 
-  <div class="space-y-2">
+  <div class="space-y-2 lg:space-y-3">
     <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
       <a href="{{ podcast_url }}"
          title="{{ podcast.cleaned_title }}"
