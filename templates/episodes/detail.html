@@ -60,7 +60,28 @@
         </div>
       </div>
       {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
-      {% include "episodes/_actions_toggle.html" with is_detail=True %}
+      <div class="flex items-center"
+           x-data="{playing: false}">
+        <template x-if="playing">
+          <button hx-post="{% url 'episodes:start_player' episode.id %}"
+                  hx-push-url="false"
+                  hx-target="#player"
+                  hx-swap="innerHTML"
+                  @click="playing=false">
+            {% icon "stop" css_class="h-8 w-8 mr-2" %}
+          </button>
+        </template>
+        <template x-if="!playing">
+          <button hx-post="{% url 'episodes:start_player' episode.id %}"
+                  hx-push-url="false"
+                  hx-target="#player"
+                  hx-swap="innerHTML"
+                  @click="playing=true">
+            {% icon "play" css_class="h-8 w-8 mr-2" %}
+          </button>
+        </template>
+        {% include "episodes/_actions_toggle.html" with is_detail=True %}
+      </div>
     </div>
   </div>
 

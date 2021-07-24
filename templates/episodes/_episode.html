@@ -27,6 +27,14 @@
         </h2>
         <div class="space-x-2 flex items-center">
 
+          <button hx-post="{% url 'episodes:start_player' episode.id %}"
+                  hx-push-url="false"
+                  hx-target="#player"
+                  hx-swap="innerHTML"
+                  @click="show=false;">
+            {% icon "play" css_class="h-6 w-6" %}
+          </button>
+
           {% include "episodes/_actions_toggle.html" %}
 
           {% if is_podcast_detail %}
