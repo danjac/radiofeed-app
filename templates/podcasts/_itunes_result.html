@@ -2,9 +2,9 @@
 {% if podcast and podcast.pub_date %}
 {% include "podcasts/_podcast.html" %}
 {% else %}
-<section class="py-2 flex items-center space-x-1 sm:space-x-2 border-t dark:border-gray-500 text-sm">
+<section class="py-2 flex items-center space-x-2 border-t dark:border-gray-500 text-sm">
   {% if result.image %}
-  <div class="w-16">
+  <div>
     {% include "_cover_image.html" with cover_url=result.image alt=result.cleaned_title size=14 %}
   </div>
   {% endif %}
