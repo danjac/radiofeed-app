@@ -84,3 +84,7 @@ class TestSyncPodcastFeed:
     def test_ok(self, db, podcast, mock_parse_feed):
         tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called()
+
+    def test_pc_complete(self, db, podcast, mock_parse_feed):
+        tasks.sync_podcast_feed(podcast.rss, pc_complete=35)
+        mock_parse_feed.assert_called()

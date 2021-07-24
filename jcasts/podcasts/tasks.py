@@ -42,7 +42,8 @@ def sync_podcast_feeds(last_updated: int = 24) -> None:
     logger.info(f"Syncing {total} podcasts")
 
     for counter, rss in enumerate(qs.iterator(), 1):
-        sync_podcast_feed.delay(rss)
+        pc_complete = round(counter / total * 100)
+        sync_podcast_feed.delay(rss, pc_complete=pc_complete)
 
 
 @shared_task(name="jcasts.podcasts.create_podcast_recommendations")
@@ -51,11 +52,15 @@ def create_podcast_recommendations() -> None:
 
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str, force_update: bool = False) -> None:
+def sync_podcast_feed(
+    rss: str, *, force_update: bool = False, pc_complete: int | None = None
+) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss, active=True)
         if parse_feed(podcast, force_update=force_update):
             logger.info(f"Podcast {podcast} updated")
+        if pc_complete:
+            logger.info(f"{pc_complete}% done")
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
