@@ -38,14 +38,6 @@ def mock_search_itunes(
     return [mock_search_result], [PodcastFactory()]
 
 
-class TestActions:
-    def test_anonymous(self, client, podcast):
-        assert_ok(client.get(reverse("podcasts:actions", args=[podcast.id])))
-
-    def test_authenticated(self, client, podcast, auth_user):
-        assert_ok(client.get(reverse("podcasts:actions", args=[podcast.id])))
-
-
 class TestPodcasts:
     def test_anonymous(self, client, db):
         PodcastFactory.create_batch(3, promoted=True)
