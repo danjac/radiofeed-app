@@ -52,10 +52,10 @@
 
         <div class="lg:w-1/2 lg:pl-6">
           <div class="p-3 border border-white rounded mb-6">
-            <p class="text-lg mb-3">
+            <p class="text-lg md:text-xl mb-3 lg:mb-6">
               Join {{ request.site.name }} and...
             </p>
-            <ul class="mb-3">
+            <ul class="mb-3 lg:mb-6">
               <li><strong>Listen</strong> to episodes</li>
               <li><strong>Follow</strong> your favorite podcasts</li>
               <li><strong>Share</strong> podcasts and episodes with your friends</li>
@@ -64,7 +64,7 @@
           </div>
 
           <div class="mb-6 flex items-center justify-center sm:justify-start">
-            <a class="flex items-center btn btn-default border-white text-lg w-40"
+            <a class="flex items-center btn btn-default border-white text-lg md:text-xl w-40"
                title="Sign Up"
                href="{% url 'account_signup' %}">
               Sign Up Today!

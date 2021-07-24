@@ -7,11 +7,11 @@
 .markdown h3,
 .markdown h4,
 .markdown h5 {
-  @apply font-bold mb-3;
+  @apply font-bold mb-3 lg:mb-6;
 }
 
 .markdown hr {
-  @apply border-gray-300 dark:border-gray-600 mb-3;
+  @apply border-gray-300 dark:border-gray-600 mb-3 lg:mb-6;
 }
 
 .markdown pre {
@@ -27,7 +27,7 @@
 }
 
 .markdown p {
-  @apply py-1 mb-3;
+  @apply py-1 mb-3 lg:mb-6;
 }
 
 .markdown p:empty,
@@ -41,11 +41,11 @@
 }
 
 .markdown ol {
-  @apply list-decimal list-inside mb-3 space-y-2;
+  @apply list-decimal list-inside mb-3 lg:mb-6 space-y-2;
 }
 
 .markdown ul {
-  @apply list-disc list-inside mb-3 space-y-2;
+  @apply list-disc list-inside mb-3 lg:mb-6 space-y-2;
 }
 
 .markdown li ul,

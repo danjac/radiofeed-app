@@ -7,22 +7,17 @@
   </div>
 
   <div class="space-y-2 lg:space-y-3">
-    <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
+    <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm lg:text-base">
       <a href="{{ podcast_url }}"
          title="{{ podcast.cleaned_title }}"
-         class="link"
-         hx-get="{% url 'podcasts:preview' podcast.id %}"
-         hx-target="#modal"
-         hx-select="#modal"
-         hx-swap="outerHTML"
-         hx-trigger="click delay:200ms">
+         class="link">
         {{ podcast.cleaned_title|truncatechars:120 }}</a>
     </h2>
     <div class="space-x-2 flex items-center">
       {% include "podcasts/_actions_toggle.html" %}
       <a href="{{ podcast.get_episodes_url }}"
          title="Last Published"
-         class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
+         class="link font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
         {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
       </a>
     </div>

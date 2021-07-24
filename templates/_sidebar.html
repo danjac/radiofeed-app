@@ -23,7 +23,7 @@
 </div>
 
 <nav>
-  <ul class="sidebar space-y-4">
+  <ul class="sidebar space-y-4 lg:space-y-5 lg:text-lg">
     <li>
       {% active_link 'episodes:index' as link %}
       <a href="{{ link.url }}"
@@ -142,7 +142,7 @@
          title="Sign up or Log in to your account"
          @click="$dispatch('close-sidebar')"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-         {% icon "login" css_class="h-5 w-5 mr-3" %} 
+         {% icon "login" css_class="h-5 w-5 mr-3" %}
          Signup or Login
       </a>
     </li>
