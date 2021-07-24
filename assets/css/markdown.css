@@ -1,5 +1,5 @@
 .markdown {
-  @apply break-words text-gray-800 dark:text-gray-200 leading-snug tracking-tight space-y-2;
+  @apply break-words text-gray-800 dark:text-gray-200 space-y-2;
 }
 
 .markdown h1,

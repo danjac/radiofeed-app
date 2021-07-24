@@ -10,7 +10,7 @@
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
-<nav class="flex justify-between mb-3 lg:mb-6 border-b dark:border-gray-500 pb-3 lg:pb-6 text-sm">
+<nav class="flex justify-between mb-3 lg:mb-6 border-b dark:border-gray-500 pb-3 lg:pb-6 text-sm lg:text-base">
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
@@ -35,7 +35,7 @@
 {% endif %}
 {% endwith %}
 
-<section class="space-y-3 pb-3 lg:pb-6 mb-3 lg:mb-6">
+<section class="space-y-3 lg:space-y-6 pb-3 lg:pb-6 mb-3 lg:mb-6">
   <div>
     <a href="{{ podcast_url }}"
        title="{{ podcast.cleaned_title }}"
@@ -46,9 +46,11 @@
 
   <div class="flex items-center space-x-3 lg:space-x-6">
     <div>
-      {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" %}
+      <a href="{{ podcast_url }}">
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" %}
+      </a>
     </div>
-    <div class="space-y-3 lg:space-y-4 text-sm">
+    <div class="space-y-3 lg:space-y-4 text-sm lg:text-base">
       <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3">
         <div title="Date Published">
           {% include "_pub_date.html" with pub_date=episode.pub_date %}
@@ -67,12 +69,12 @@
   {% endif %}
 
   {% if episode.explicit or podcast.explicit %}
-  <div class="font-semibold text-sm">
+  <div class="font-semibold text-sm lg:text-base">
     This episode may contain explicit content.
   </div>
   {% endif %}
 
-  <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
+  <blockquote class="markdown max-w-sm sm:max-w-full text-sm lg:text-base">
     {{ episode.description|clean_html }}
   </blockquote>
 
