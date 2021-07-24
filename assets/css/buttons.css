@@ -2,10 +2,6 @@
   @apply px-2 py-1 rounded font-semibold text-sm;
 }
 
-.btn:lg {
-  @apply text-base;
-}
-
 .btn[disabled],
 form.submitting .btn {
   @apply cursor-not-allowed font-normal opacity-75;
