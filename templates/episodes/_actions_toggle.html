@@ -4,6 +4,7 @@
           hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
           hx-target="#actions-{{ episode.id }}"
           hx-swap="innerHTML"
+          hx-push-url="false"
           hx-trigger="click delay:200ms">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>

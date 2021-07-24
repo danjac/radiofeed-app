@@ -3,6 +3,7 @@
           class="focus:outline-none"
           hx-get="{% url 'podcasts:actions' podcast.id %}"
           hx-target="#actions-{{ podcast.id }}"
+          hx-push-url="false"
           hx-swap="innerHTML"
           hx-trigger="click delay:200ms">
     {% icon "ellipsis" css_class="w-6 h-6" %}
