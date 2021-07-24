@@ -49,20 +49,20 @@
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
           @click="show=false">
     {% icon "arrow_up" css_class="h-4 w-4 mr-2" %}
-    Play Next
+    Add to Start of Queue
   </button>
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
           @click="show=false">
     {% icon "arrow_down" css_class="h-4 w-4 mr-2" %}
-    Play Last
+    Add to End of Queue
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
           @click="show=false">
     {% icon "collection" css_class="h-4 w-4 mr-2" %}
-    Play Next
+    Add to Play Queue
   </button>
   {% endif %}
   {% endif %}
