@@ -15,6 +15,7 @@
   {% if is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:close_player' %}"
+          hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML"
           @click="show=false">
@@ -24,6 +25,7 @@
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:start_player' episode.id %}"
+          hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML"
           @click="show=false;">
