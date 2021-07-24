@@ -3,7 +3,7 @@
 {% block podcast_content %}
 <div class="sm:flex items-center mb-3 lg:mb-6 justify-between border-t dark:border-gray-500 pt-6">
 
-  <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 text-sm">
+  <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 text-sm lg:text-base">
     {% if search %}
     <a href="{% url 'episodes:search_episodes' %}{{ search_qs }}"
        title="Search Episodes"
