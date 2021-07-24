@@ -9,9 +9,9 @@
          @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
          {% endif %}>
   <div class="flex justify-between items-center">
-    <div class="flex items-center w-full space-x-1 sm:space-x-2">
+    <div class="flex items-center w-full space-x-2">
 
-      <div class="w-16">
+      <div>
         <a href="{{ episode_url }}">
           {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=14 %}
         </a>
