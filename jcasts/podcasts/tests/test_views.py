@@ -14,7 +14,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import SearchResult
 from jcasts.podcasts.models import Follow, Podcast
-from jcasts.shared.assertions import assert_no_content, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_no_content, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -248,7 +248,7 @@ class TestFollow:
     def test_already_following(self, client, podcast, auth_user, url):
         FollowFactory(user=auth_user, podcast=podcast)
         resp = client.post(url)
-        assert_ok(resp)
+        assert_conflict(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 

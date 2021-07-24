@@ -16,7 +16,7 @@ from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.podcasts.tasks import sync_podcast_feed
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 from jcasts.shared.typedefs import ContextDict
 
 
@@ -285,9 +285,9 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
         messages.success(request, "You are now following this podcast")
+        return render_follow_response(request, podcast, True)
     except IntegrityError:
-        pass
-    return render_follow_response(request, podcast, True)
+        return HttpResponseConflict()
 
 
 @ajax_login_required

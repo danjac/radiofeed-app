@@ -11,7 +11,12 @@ from jcasts.episodes.factories import (
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from jcasts.episodes.player import Player
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
-from jcasts.shared.assertions import assert_bad_request, assert_no_content, assert_ok
+from jcasts.shared.assertions import (
+    assert_bad_request,
+    assert_conflict,
+    assert_no_content,
+    assert_ok,
+)
 
 episodes_url = reverse_lazy("episodes:index")
 
@@ -296,7 +301,7 @@ class TestAddFavorite:
     def test_already_favorite(self, client, auth_user, episode):
         FavoriteFactory(episode=episode, user=auth_user)
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
-        assert_no_content(resp)
+        assert_conflict(resp)
         assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -420,7 +425,7 @@ class TestAddToQueue:
                 args=[episode.id],
             ),
         )
-        assert_no_content(resp)
+        assert_conflict(resp)
 
 
 class TestRemoveFromQueue:

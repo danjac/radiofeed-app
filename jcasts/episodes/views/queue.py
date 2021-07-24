@@ -12,7 +12,11 @@ from django.views.decorators.http import require_POST, require_safe
 from jcasts.episodes.models import QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
+from jcasts.shared.response import (
+    HttpResponseConflict,
+    HttpResponseNoContent,
+    with_hx_trigger,
+)
 
 
 @require_safe
@@ -47,10 +51,9 @@ def add_to_queue(
         else:
             QueueItem.objects.add_item_to_end(request.user, episode)
         messages.success(request, "Added to Play Queue")
+        return HttpResponseNoContent()
     except IntegrityError:
-        pass
-
-    return HttpResponseNoContent()
+        return HttpResponseConflict()
 
 
 @require_POST

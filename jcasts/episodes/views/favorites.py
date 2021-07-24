@@ -10,7 +10,11 @@ from jcasts.episodes.models import Favorite
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
+from jcasts.shared.response import (
+    HttpResponseConflict,
+    HttpResponseNoContent,
+    with_hx_trigger,
+)
 
 
 @require_safe
@@ -40,10 +44,9 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     try:
         Favorite.objects.create(episode=episode, user=request.user)
         messages.success(request, "Added to Favorites")
+        return HttpResponseNoContent()
     except IntegrityError:
-        pass
-
-    return HttpResponseNoContent()
+        return HttpResponseConflict()
 
 
 @require_POST
