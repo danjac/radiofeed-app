@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose run --rm celeryworker celery $@
+docker-compose run --rm celeryworker celery -A jcasts $@
 
