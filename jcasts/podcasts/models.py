@@ -186,19 +186,18 @@ class Podcast(models.Model):
         # the less frequently the podcast has been updated, the longer we
         # can expect until it's updated again
 
-        days = secrets.choice(
-            [
-                range(1, 2),
-                range(2, 3),
-                range(3, 6),
-                range(6, 8),
-            ][bisect.bisect((0, 90, 180, 360), diff.days) - 1]
-        )
-
-        return (now + timedelta(days=days)).replace(
-            hour=secrets.choice(range(1, 24)),
-            minute=secrets.choice(range(1, 60)),
-            second=secrets.choice(range(1, 60)),
+        return now + timedelta(
+            days=secrets.choice(
+                [
+                    range(1, 2),
+                    range(2, 3),
+                    range(3, 6),
+                    range(6, 8),
+                ][bisect.bisect((0, 90, 180, 360), diff.days) - 1]
+            ),
+            hours=secrets.choice(range(1, 24)),
+            minutes=secrets.choice(range(1, 60)),
+            seconds=secrets.choice(range(1, 60)),
         )
 
     @property
