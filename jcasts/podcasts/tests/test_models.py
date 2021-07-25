@@ -1,12 +1,10 @@
 from datetime import timedelta
 
-import pytest
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.utils import timezone
 
-from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
+from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
@@ -145,20 +143,31 @@ class TestPodcastModel:
             Podcast(pub_date=None, active=True).get_next_scheduled_feed_update() is None
         )
 
-    @pytest.mark.parametrize(
-        "pub_date,active,day_range",
-        [
-            (3, True, (0, 2)),
-            (30, True, (0, 2)),
-            (99, True, (1, 3)),
-            (200, True, (2, 6)),
-            (500, True, (5, 8)),
-        ],
-    )
-    def test_get_next_scheduled_feed_update(self, pub_date, active, day_range):
-        now = timezone.now()
-        scheduled = Podcast(
-            pub_date=now - timedelta(days=pub_date), active=True
-        ).get_next_scheduled_feed_update()
-        diff = (scheduled - now).days
-        assert diff in range(*day_range)
+    def test_get_next_scheduled_feed_update_no_episodes(self, podcast):
+        # should be no more than a day if no episodes found
+        scheduled = podcast.get_next_scheduled_feed_update()
+        assert (scheduled - timezone.now()).days < 1
+
+    def test_get_next_scheduled_feed_update(self, podcast):
+
+        # approx 1 a week between episodes
+        now = timezone.now().replace(hour=12, minute=0)
+
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=7))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=14))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=21))
+
+        scheduled = podcast.get_next_scheduled_feed_update()
+        assert (scheduled - timezone.now()).days == 7
+
+    def test_get_next_scheduled_feed_update_last_episode_month_ago(self, podcast):
+
+        # approx 1 a week between episodes, but last episode thirty days ago
+        now = timezone.now().replace(hour=12, minute=0)
+
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=30))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=37))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=44))
+
+        scheduled = podcast.get_next_scheduled_feed_update()
+        assert (scheduled - timezone.now()).days == 7

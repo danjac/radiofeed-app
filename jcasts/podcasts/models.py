@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import bisect
 import secrets
+import statistics
 
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -178,24 +178,28 @@ class Podcast(models.Model):
 
         now = timezone.now()
 
-        diff = now - self.pub_date
+        diffs = []
 
-        # we don't want dogpiling of all days, so spread out semi-randomly
-        # at least one day in future
+        prev_date = now
 
-        # the less frequently the podcast has been updated, the longer we
-        # can expect until it's updated again
+        for pub_date in (
+            self.episode_set.filter(pub_date__lte=now)
+            .order_by("-pub_date")
+            .values_list("pub_date", flat=True)
+        ):
+            diffs.append((prev_date - pub_date).total_seconds() / 3600)
+            prev_date = pub_date
+
+        hours = round(statistics.mean(diffs)) if diffs else 1
+
+        # max 7 days, min 1 hour
+
+        hours = max(min(hours, 168), 1)
+
+        # add some randomization to result for a bit of load-balancing
 
         return now + timedelta(
-            days=secrets.choice(
-                [
-                    range(1, 2),
-                    range(2, 3),
-                    range(3, 6),
-                    range(6, 8),
-                ][bisect.bisect((0, 90, 180, 360), diff.days) - 1]
-            ),
-            hours=secrets.choice(range(1, 12)),
+            hours=hours + secrets.choice(range(0, 3)),
             minutes=secrets.choice(range(1, 60)),
         )
 
