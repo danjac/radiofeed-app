@@ -1,6 +1,3 @@
-from typing import Callable
-
-import freezegun
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
@@ -12,11 +9,6 @@ from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFac
 from jcasts.podcasts.models import Category, Follow, Podcast
 from jcasts.shared.typedefs import AuthenticatedUser
 from jcasts.users.factories import UserFactory
-
-
-@pytest.fixture
-def freeze_time() -> Callable:
-    return freezegun.freeze_time
 
 
 @pytest.fixture
