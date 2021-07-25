@@ -47,9 +47,11 @@ def sync_podcast_feeds(hours: int = 1) -> None:
     with a specific ETA, but all tasks are deleted if the docker worker containers
     are restarted.
     """
-    for podcast_id in Podcast.objects.filter(
-        scheduled__lte=timezone.now(), active=True
-    ).values_list("id", flat=True):
+    for podcast_id in (
+        Podcast.objects.filter(scheduled__lte=timezone.now(), active=True)
+        .order_by("scheduled")
+        .values_list("id", flat=True)
+    ):
         sync_podcast_feed.delay(podcast_id)
 
 
