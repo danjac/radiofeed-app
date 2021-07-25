@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 
 from django.utils import timezone
@@ -50,27 +48,42 @@ class TestCrawlItunes:
         mock_crawl_itunes.assert_called()
 
 
-class TestSyncPodcastFeedsTests:
+class TestSchedulePodcastFeedsTests:
     @pytest.fixture
     def mock_sync_podcast_feed(self, mocker):
         return mocker.patch(
-            "jcasts.podcasts.tasks.sync_podcast_feed.delay",
+            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
             autospec=True,
         )
 
-    def test_podcast_just_updated(self, db, mock_sync_podcast_feed):
-        podcast = PodcastFactory(pub_date=timezone.now())
-        tasks.sync_podcast_feeds()
-        mock_sync_podcast_feed.assert_not_called()
-        podcast.refresh_from_db()
-        assert not podcast.last_checked
-
-    def test_podcast_updated_more_than_12_hours_ago(self, db, mock_sync_podcast_feed):
-        podcast = PodcastFactory(pub_date=timezone.now() - datetime.timedelta(hours=24))
-        tasks.sync_podcast_feeds()
+    def test_podcast_not_scheduled(self, db, mock_sync_podcast_feed):
+        podcast = PodcastFactory(pub_date=timezone.now(), active=True)
+        tasks.schedule_podcast_feeds()
         mock_sync_podcast_feed.assert_called()
         podcast.refresh_from_db()
-        assert podcast.last_checked
+        assert podcast.scheduled
+
+    def test_podcast_scheduled(self, db, mock_sync_podcast_feed):
+        scheduled = timezone.now()
+        podcast = PodcastFactory(pub_date=timezone.now(), scheduled=scheduled)
+        tasks.schedule_podcast_feeds()
+        mock_sync_podcast_feed.assert_not_called()
+        podcast.refresh_from_db()
+        assert podcast.scheduled == scheduled
+
+    def test_podcast_no_pub_date(self, db, mock_sync_podcast_feed):
+        podcast = PodcastFactory(pub_date=None)
+        tasks.schedule_podcast_feeds()
+        mock_sync_podcast_feed.assert_not_called()
+        podcast.refresh_from_db()
+        assert podcast.scheduled is None
+
+    def test_podcast_inactive(self, db, mock_sync_podcast_feed):
+        podcast = PodcastFactory(pub_date=timezone.now(), active=False)
+        tasks.schedule_podcast_feeds()
+        mock_sync_podcast_feed.assert_not_called()
+        podcast.refresh_from_db()
+        assert podcast.scheduled is None
 
 
 class TestSyncPodcastFeed:
@@ -81,14 +94,6 @@ class TestSyncPodcastFeed:
             autospec=True,
         )
 
-    def test_no_podcast_found(self, db, mock_parse_feed):
-        tasks.sync_podcast_feed(12345)
-        mock_parse_feed.assert_not_called()
-
     def test_ok(self, db, podcast, mock_parse_feed):
         tasks.sync_podcast_feed(podcast.rss)
-        mock_parse_feed.assert_called()
-
-    def test_total(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.rss, total=100, processed=35)
         mock_parse_feed.assert_called()
