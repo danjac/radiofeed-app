@@ -40,9 +40,9 @@ def schedule_podcast_feeds() -> None:
 
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
-def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
+def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
     try:
-        podcast = Podcast.objects.get(rss=rss, active=True)
+        podcast = Podcast.objects.get(pk=podcast_id, active=True)
         logger.info(f"Sync podcast {podcast}")
 
         parse_feed(podcast, force_update=force_update)
@@ -51,7 +51,7 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
         _schedule_podcast_feed(podcast)
 
     except Podcast.DoesNotExist:
-        logger.debug(f"No podcast found for RSS {rss}")
+        logger.debug(f"No podcast found for ID {podcast_id}")
 
 
 def _schedule_podcast_feed(podcast: Podcast) -> None:
@@ -59,6 +59,6 @@ def _schedule_podcast_feed(podcast: Podcast) -> None:
         logger.info(f"Podcast {podcast} scheduled to run at {scheduled.isoformat()}")
         # scheduling is tricky: setting ETA is ideal, but docker restarts
         # might nuke the scheduling
-        sync_podcast_feed.apply_async((podcast.rss,), eta=scheduled)
+        sync_podcast_feed.apply_async((podcast.pk,), eta=scheduled)
 
     Podcast.objects.filter(pk=podcast.pk).update(scheduled=scheduled)

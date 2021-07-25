@@ -95,9 +95,9 @@ class TestSyncPodcastFeed:
         )
 
     def test_ok(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.rss)
+        tasks.sync_podcast_feed(podcast.id)
         mock_parse_feed.assert_called()
 
     def test_does_not_exist(self, db, mock_parse_feed):
-        tasks.sync_podcast_feed("https://example.com/rss")
+        tasks.sync_podcast_feed(1234)
         mock_parse_feed.assert_not_called()
