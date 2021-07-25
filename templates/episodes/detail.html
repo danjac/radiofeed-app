@@ -4,13 +4,13 @@
 
 {% block content %}
 
-<h1 class="font-bold text-lg md:text-xl mb-3 lg:mb-6">{{ episode.cleaned_title }}</h1>
+<h1 class="font-bold text-lg md:text-xl mb-3">{{ episode.cleaned_title }}</h1>
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
-<nav class="flex justify-between mb-3 lg:mb-6 border-b dark:border-gray-500 pb-3 lg:pb-6 text-sm lg:text-base">
+<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3 text-sm lg:text-base">
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
@@ -35,7 +35,7 @@
 {% endif %}
 {% endwith %}
 
-<section class="space-y-3 lg:space-y-6 pb-3 lg:pb-6 mb-3 lg:mb-6">
+<section class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast_url }}"
        title="{{ podcast.cleaned_title }}"

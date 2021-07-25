@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="sm:flex justify-between items-center mb-3 lg:mb-6 space-y-2 sm:space-y-0">
+<div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
   <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg md:text-xl">
     New Releases
   </h1>
@@ -16,7 +16,7 @@
 </div>
 
 {% if has_follows %}
-<div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 lg:mb-6 lg:text-lg">
+<div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 lg:text-lg">
   <div class="flex items-center justify-center sm:justify-start">
     {% if featured %}
     <a href="{% url 'episodes:index' %}"
