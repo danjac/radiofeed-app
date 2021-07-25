@@ -107,6 +107,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
+            "is_playing": request.player.is_playing(episode),
             "og_data": episode.get_opengraph_data(request),
         },
     )

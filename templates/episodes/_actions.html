@@ -11,6 +11,7 @@
     }">
   {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" episode_url=episode.get_absolute_url %}
   {% if user.is_authenticated %}
+  {% if not is_detail %}
   {% with time_remaining=episode.get_time_remaining|format_duration %}
   {% if is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
@@ -35,6 +36,7 @@
   </button>
   {% endif %}
   {% endwith %}
+  {% endif %}
 
   {% if not is_playing %}
   {% if is_queued %}
