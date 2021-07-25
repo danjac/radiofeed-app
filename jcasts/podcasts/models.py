@@ -197,7 +197,6 @@ class Podcast(models.Model):
             ),
             hours=secrets.choice(range(1, 4)),
             minutes=secrets.choice(range(1, 60)),
-            seconds=secrets.choice(range(1, 60)),
         )
 
     @property
