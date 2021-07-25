@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="mb-3 lg:mb-6 flex justify-center sm:justify-start space-x-1 text-sm lg:text-base">
+<div class="mb-3 lg:mb-6 flex flex-wrap justify-center sm:justify-start space-x-1 text-sm lg:text-base">
   <a href="{% url 'podcasts:categories' %}"
      class="link">Discover</a>
   {% if category.parent %}

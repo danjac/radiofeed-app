@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1 class="font-bold text-center sm:text-left text-lg md:text-xl mb-3 lg:mb-6">{{ episode.cleaned_title }}</h1>
+<h1 class="font-bold text-lg md:text-xl mb-3 lg:mb-6">{{ episode.cleaned_title }}</h1>
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
 
