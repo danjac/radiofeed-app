@@ -67,7 +67,9 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def for_feed_sync(self, last_updated: int = 24) -> models.QuerySet:
+    def for_feed_sync(
+        self, last_updated: int = 24, last_checked: int = 4
+    ) -> models.QuerySet:
         """Podcasts due to be updated with their RSS feeds.
 
         1) Ignore any inactive podcasts
@@ -124,6 +126,12 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 )
                 & tiered_q
             ),
+            models.Q(
+                models.Q(last_checked__isnull=True)
+                | models.Q(
+                    last_checked__lt=timezone.now() - timedelta(hours=last_checked)
+                ),
+            ),
             active=True,
         ).distinct()
 
@@ -138,7 +146,9 @@ class Podcast(models.Model):
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
-    pub_date: datetime = models.DateTimeField(null=True, blank=True)
+
+    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
+    last_checked: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_episodes: int = models.PositiveIntegerField(default=0)
 
