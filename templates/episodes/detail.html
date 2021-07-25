@@ -53,6 +53,7 @@
     <div class="space-y-3 text-sm lg:text-base">
       {% if user.is_authenticated %}
       <div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
+           x-cloak
            @close-player.window="isPlaying=false"
            @play-episode.window="isPlaying=$event.detail.value==={{ episode.id }}">
         <button class="flex items-center btn btn-secondary"
