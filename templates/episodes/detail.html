@@ -72,14 +72,14 @@
                 hx-target="#player"
                 hx-swap="innerHTML">
           {% icon "play" css_class="btn-icon mr-2" %}
-          {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
+          {% if episode.listened and not episode.is_completed %}Resume{% else %}Play Episode{% endif %}
         </button>
       </div>
       {% else %}
       <div>
         <button class="flex items-center btn btn-default" disabled title="You must sign up or log in to play this episode">
           {% icon "play" css_class="h-6 w-6 mr-2" %}
-          {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
+          Play Episode
         </button>
       </div>
       {% endif %}
@@ -88,19 +88,17 @@
     </div>
   </div>
 
-  <div class="sm:flex items-center space-y-3 sm:space-y-0">
-    <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3 text-sm lg:text-base sm:mr-3">
-      <div title="Date Published">
-        {% include "_pub_date.html" with pub_date=episode.pub_date %}
-      </div>
-      <div title="Duration">
-        {{ duration|format_duration }}
-      </div>
+  <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3 text-sm lg:text-base">
+    <div title="Date Published">
+      {% include "_pub_date.html" with pub_date=episode.pub_date %}
     </div>
-    {% if episode.listened %}
-    {% include "episodes/_listened.html" %}
-    {% endif %}
+    <div title="Duration">
+      {{ duration|format_duration }}
+    </div>
   </div>
+  {% if episode.listened %}
+  {% include "episodes/_listened.html" %}
+  {% endif %}
 
   {% if episode.explicit or podcast.explicit %}
   <div class="font-semibold text-sm lg:text-base">
