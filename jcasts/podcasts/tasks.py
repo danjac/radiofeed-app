@@ -29,7 +29,7 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_updated: int = 24, last_checked: int = 3) -> None:
+def sync_podcast_feeds(last_updated: int = 24, last_checked: int = 2) -> None:
     """Sync podcasts with RSS feeds. Fetch any without a pub date or
     pub_date > given period."""
 
