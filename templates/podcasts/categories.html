@@ -17,11 +17,11 @@
   {% if search %}
   <div class="space-y-3">
     {% for category in categories %}
-    <div>
+    <h2 class="lg:text-lg">
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
-         class="link">{{ category.name }}</a>
-    </div>
+         class="link font-bold">{{ category.name }}</a>
+    </h2>
     {% empty %}
     <p class="text-center sm:text-left text-sm">
       No categories have been found matching <strong>{{ search }}.</strong>
@@ -31,16 +31,16 @@
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
-  <section class="py-3 space-y-3">
-    <div class="flex items-center justify-center sm:justify-start">
+  <section class="py-3 lg:py-6 space-y-3 lg:space-y-6">
+    <h2 class="flex items-center justify-center sm:justify-start lg:text-lg">
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
-         class="link">{{ category.name }}</a>
-    </div>
+         class="link font-bold">{{ category.name }}</a>
+    </h2>
     {% if children %}
-    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start text-sm">
+    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start text-sm lg:text-base">
       {% for child in children %}
-      <a class="link inline-block"
+      <a class="link inline-block text-gray-600 dark:text-gray-300"
          title="{{ child.name }}"
          href="{{ child.get_absolute_url }}">{{ child.name }}</a>
       {% endfor %}
