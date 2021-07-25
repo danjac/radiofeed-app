@@ -195,7 +195,7 @@ class Podcast(models.Model):
                     range(6, 8),
                 ][bisect.bisect((0, 90, 180, 360), diff.days) - 1]
             ),
-            hours=secrets.choice(range(1, 4)),
+            hours=secrets.choice(range(1, 12)),
             minutes=secrets.choice(range(1, 60)),
         )
 
