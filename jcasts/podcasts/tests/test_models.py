@@ -92,7 +92,17 @@ class TestPodcastManager:
             # 203 days ago: matching weekday
             podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
 
+            # last checked > 4 hours ago
+            podcast_e = PodcastFactory(
+                pub_date=None, last_checked=now - datetime.timedelta(hours=6)
+            )
+
             # not included:
+
+            # last checked < 1 hour ago
+            PodcastFactory(
+                pub_date=None, last_checked=now - datetime.timedelta(hours=1)
+            )
 
             # 200 days ago: Tuesday
             PodcastFactory(pub_date=now - datetime.timedelta(days=200))
@@ -107,11 +117,12 @@ class TestPodcastManager:
             PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
 
             qs = Podcast.objects.for_feed_sync()
-            assert qs.count() == 4
+            assert qs.count() == 5
             assert podcast_a in qs
             assert podcast_b in qs
             assert podcast_c in qs
             assert podcast_d in qs
+            assert podcast_e in qs
 
     def test_search(self, db):
         PodcastFactory(title="testing")

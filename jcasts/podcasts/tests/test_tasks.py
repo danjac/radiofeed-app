@@ -59,14 +59,18 @@ class TestSyncPodcastFeedsTests:
         )
 
     def test_podcast_just_updated(self, db, mock_sync_podcast_feed):
-        PodcastFactory(pub_date=timezone.now())
+        podcast = PodcastFactory(pub_date=timezone.now())
         tasks.sync_podcast_feeds()
         mock_sync_podcast_feed.assert_not_called()
+        podcast.refresh_from_db()
+        assert not podcast.last_checked
 
     def test_podcast_updated_more_than_12_hours_ago(self, db, mock_sync_podcast_feed):
-        PodcastFactory(pub_date=timezone.now() - datetime.timedelta(hours=24))
+        podcast = PodcastFactory(pub_date=timezone.now() - datetime.timedelta(hours=24))
         tasks.sync_podcast_feeds()
         mock_sync_podcast_feed.assert_called()
+        podcast.refresh_from_db()
+        assert podcast.last_checked
 
 
 class TestSyncPodcastFeed:
@@ -85,6 +89,6 @@ class TestSyncPodcastFeed:
         tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called()
 
-    def test_pc_complete(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.rss, pc_complete=35)
+    def test_total(self, db, podcast, mock_parse_feed):
+        tasks.sync_podcast_feed(podcast.rss, total=100, processed=35)
         mock_parse_feed.assert_called()
