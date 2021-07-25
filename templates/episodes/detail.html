@@ -72,14 +72,14 @@
                 hx-target="#player"
                 hx-swap="innerHTML">
           {% icon "play" css_class="btn-icon mr-2" %}
-          {% if episode.listened and not episode.is_completed %}Resume{% else %}Play Episode{% endif %}
+          {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
         </button>
       </div>
       {% else %}
       <div>
         <button class="flex items-center btn btn-default" disabled title="You must sign up or log in to play this episode">
           {% icon "play" css_class="h-6 w-6 mr-2" %}
-          Play Episode
+          Play
         </button>
       </div>
       {% endif %}
