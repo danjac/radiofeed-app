@@ -83,10 +83,10 @@ class PodcastAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
         "source",
-        "pub_date",
         "active",
         "promoted",
-        "num_episodes",
+        "pub_date",
+        "scheduled",
     )
     list_editable = ("promoted",)
     search_fields = ("search_document",)
