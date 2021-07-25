@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 
 from django.utils import timezone
@@ -49,41 +51,61 @@ class TestCrawlItunes:
 
 
 class TestSchedulePodcastFeedsTests:
-    @pytest.fixture
-    def mock_sync_podcast_feed(self, mocker):
-        return mocker.patch(
-            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
-            autospec=True,
-        )
-
-    def test_podcast_not_scheduled(self, db, mock_sync_podcast_feed):
+    def test_podcast_not_scheduled(self, db):
         podcast = PodcastFactory(pub_date=timezone.now(), active=True)
         tasks.schedule_podcast_feeds()
-        mock_sync_podcast_feed.assert_called()
         podcast.refresh_from_db()
         assert podcast.scheduled
 
-    def test_podcast_scheduled(self, db, mock_sync_podcast_feed):
+    def test_podcast_scheduled(self, db):
         scheduled = timezone.now()
         podcast = PodcastFactory(pub_date=timezone.now(), scheduled=scheduled)
         tasks.schedule_podcast_feeds()
-        mock_sync_podcast_feed.assert_not_called()
         podcast.refresh_from_db()
         assert podcast.scheduled == scheduled
 
-    def test_podcast_no_pub_date(self, db, mock_sync_podcast_feed):
+    def test_podcast_no_pub_date(self, db):
         podcast = PodcastFactory(pub_date=None)
         tasks.schedule_podcast_feeds()
-        mock_sync_podcast_feed.assert_not_called()
         podcast.refresh_from_db()
         assert podcast.scheduled is None
 
-    def test_podcast_inactive(self, db, mock_sync_podcast_feed):
+    def test_podcast_inactive(self, db):
         podcast = PodcastFactory(pub_date=timezone.now(), active=False)
         tasks.schedule_podcast_feeds()
-        mock_sync_podcast_feed.assert_not_called()
         podcast.refresh_from_db()
         assert podcast.scheduled is None
+
+
+class TestSyncPodcastFeedsTests:
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.tasks.sync_podcast_feed.delay",
+            autospec=True,
+        )
+
+    @pytest.mark.parametrize(
+        "delta,active,do_sync",
+        [
+            (timedelta(minutes=30), True, False),
+            (timedelta(minutes=-30), True, True),
+            (timedelta(minutes=-30), False, False),
+            (timedelta(minutes=200), True, False),
+        ],
+    )
+    def test_sync_podcast_feeds(
+        self, db, mock_sync_podcast_feed, delta, active, do_sync
+    ):
+        now = timezone.now()
+
+        PodcastFactory(scheduled=now + delta, pub_date=now, active=active)
+        tasks.sync_podcast_feeds()
+
+        if do_sync:
+            mock_sync_podcast_feed.assert_called()
+        else:
+            mock_sync_podcast_feed.assert_not_called()
 
 
 class TestSyncPodcastFeed:

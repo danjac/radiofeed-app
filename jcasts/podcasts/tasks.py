@@ -3,6 +3,7 @@ from __future__ import annotations
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from jcasts.podcasts import itunes
 from jcasts.podcasts.emails import send_recommendations_email
@@ -39,6 +40,19 @@ def schedule_podcast_feeds() -> None:
         _schedule_podcast_feed(podcast)
 
 
+@shared_task(name="jcasts.podcasts.sync_podcast_feeds")
+def sync_podcast_feeds(hours: int = 1) -> None:
+    """
+    Should be run every hour or so. Ideally we would schedule each task individually
+    with a specific ETA, but all tasks are deleted if the docker worker containers
+    are restarted.
+    """
+    for podcast_id in Podcast.objects.filter(
+        scheduled__lte=timezone.now(), active=True
+    ).values_list("id", flat=True):
+        sync_podcast_feed.delay(podcast_id)
+
+
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
 def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
     try:
@@ -57,8 +71,5 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
 def _schedule_podcast_feed(podcast: Podcast) -> None:
     if scheduled := podcast.get_next_scheduled_feed_update():
         logger.info(f"Podcast {podcast} scheduled to run at {scheduled.isoformat()}")
-        # scheduling is tricky: setting ETA is ideal, but docker restarts
-        # might nuke the scheduling
-        sync_podcast_feed.apply_async((podcast.pk,), eta=scheduled)
 
     Podcast.objects.filter(pk=podcast.pk).update(scheduled=scheduled)
