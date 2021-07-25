@@ -3,9 +3,9 @@
 {% block subtitle %} | {{ podcast.cleaned_title }}{% endblock %}
 
 {% block content %}
-<h1 class="font-bold text-lg md:text-xl mb-3 lg:mb-6 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
+<h1 class="font-bold text-lg md:text-xl mb-3 text-center sm:text-left">{{ podcast.cleaned_title }}</h1>
 <div id="podcast-content">
-  <nav class="flex items-center mb-3 lg:mb-6 justify-center sm:justify-start text-sm lg:text-base">
+  <nav class="flex items-center mb-3 justify-center sm:justify-start text-sm lg:text-base">
     <ul class="flex items-center space-x-6">
       {% active_link podcast.get_detail_url as link %}
       <li class="{% if link.exact %} tab--active{% endif %}">

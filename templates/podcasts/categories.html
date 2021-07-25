@@ -4,7 +4,7 @@
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3 lg:mb-6 space-y-2 sm:space-y-0 border-b dark:border-gray-500 pb-3 lg:pb-6">
+<div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0 border-b dark:border-gray-500 pb-3">
   <h1 class="font-bold flex justify-center sm:justify-start text-lg md:text-xl">Discover New Podcasts</h1>
   <div class="flex items-center justify-center sm:justify-end">
     {% include "forms/_search_form.html" with placeholder="Filter categories..." %}
@@ -15,7 +15,7 @@
 <div class="divide-y divide-gray-300 dark:divide-gray-500"
      id="categories">
   {% if search %}
-  <div class="space-y-3 lg:space-y-6">
+  <div class="space-y-3">
     {% for category in categories %}
     <h2 class="lg:text-lg">
       <a href="{{ category.get_absolute_url }}"
@@ -31,7 +31,7 @@
   {% else %}
   {% for category in categories %}
   {% with children=category.children.all %}
-  <section class="py-3 lg:py-6 space-y-3 lg:space-y-6">
+  <section class="py-3 lg:py-6 space-y-3">
     <h2 class="flex items-center justify-center sm:justify-start lg:text-lg">
       <a href="{{ category.get_absolute_url }}"
          title="{{ category.name }}"
