@@ -1,4 +1,4 @@
-import datetime
+from datetime import timedelta
 
 import pytest
 
@@ -75,55 +75,6 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
 
-    @pytest.mark.parametrize("date", ["2021-06-19", "2021-06-18"])
-    def test_for_feed_sync(self, db, freeze_time, date):
-        with freeze_time(date):
-            now = timezone.now()
-
-            # no pub date yet
-            podcast_a = PodcastFactory(pub_date=None)
-
-            # 3 days ago: first tier
-            podcast_b = PodcastFactory(pub_date=now - datetime.timedelta(days=3))
-
-            # 100 days ago: even/odd day
-            podcast_c = PodcastFactory(pub_date=now - datetime.timedelta(days=100))
-
-            # 203 days ago: matching weekday
-            podcast_d = PodcastFactory(pub_date=now - datetime.timedelta(days=203))
-
-            # last checked > 4 hours ago
-            podcast_e = PodcastFactory(
-                pub_date=None, last_checked=now - datetime.timedelta(hours=6)
-            )
-
-            # not included:
-
-            # last checked < 1 hour ago
-            PodcastFactory(
-                pub_date=None, last_checked=now - datetime.timedelta(hours=1)
-            )
-
-            # 200 days ago: Tuesday
-            PodcastFactory(pub_date=now - datetime.timedelta(days=200))
-
-            # 99 days ago: odd day
-            PodcastFactory(pub_date=now - datetime.timedelta(days=99))
-
-            # inactive: never include
-            PodcastFactory(active=False)
-
-            # just updated
-            PodcastFactory(pub_date=now - datetime.timedelta(hours=1))
-
-            qs = Podcast.objects.for_feed_sync()
-            assert qs.count() == 5
-            assert podcast_a in qs
-            assert podcast_b in qs
-            assert podcast_c in qs
-            assert podcast_d in qs
-            assert podcast_e in qs
-
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -180,3 +131,34 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
+
+    def test_get_next_scheduled_feed_update_inactive(self):
+        assert (
+            Podcast(
+                pub_date=timezone.now(), active=False
+            ).get_next_scheduled_feed_update()
+            is None
+        )
+
+    def test_get_next_scheduled_feed_update_no_pub_date(self):
+        assert (
+            Podcast(pub_date=None, active=True).get_next_scheduled_feed_update() is None
+        )
+
+    @pytest.mark.parametrize(
+        "pub_date,active,day_range",
+        [
+            (3, True, (0, 2)),
+            (30, True, (0, 2)),
+            (99, True, (1, 3)),
+            (200, True, (2, 6)),
+            (500, True, (5, 8)),
+        ],
+    )
+    def test_get_next_scheduled_feed_update(self, pub_date, active, day_range):
+        now = timezone.now()
+        scheduled = Podcast(
+            pub_date=now - timedelta(days=pub_date), active=True
+        ).get_next_scheduled_feed_update()
+        diff = (scheduled - now).days
+        assert diff in range(*day_range)

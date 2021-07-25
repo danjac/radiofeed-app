@@ -96,7 +96,13 @@ class PodcastAdmin(admin.ModelAdmin):
         "redirect_to",
     )
 
-    readonly_fields = ("created", "updated", "pub_date", "num_episodes")
+    readonly_fields = (
+        "created",
+        "updated",
+        "pub_date",
+        "scheduled",
+        "num_episodes",
+    )
 
     actions = ["reactivate", "sync_podcast_feeds"]
 

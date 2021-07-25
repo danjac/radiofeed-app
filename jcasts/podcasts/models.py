@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import bisect
+import secrets
+
 from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
@@ -67,73 +70,7 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def for_feed_sync(
-        self, last_updated: int = 24, last_checked: int = 2
-    ) -> models.QuerySet:
-        """Podcasts due to be updated with their RSS feeds.
-
-        1) Ignore any inactive podcasts
-        2) Update any podcasts with pub date NULL
-        3) Update any podcasts with pub date < 90 days
-        4) update any podcasts updated in last 90-180 days if pub date weekday
-            falls on alternate (odd or even) day depending on current
-            weekday
-        5) update any podcasts updated in last 180-365 days if pub date weekday
-            falls on every third day depending on current
-            weekday
-        5) Update any podcasts updated > 365 days if pub date weekday
-            is same as current weekday
-        6) Do not update any podcasts if pub date is more recent than `last_updated`
-            hours ago.
-        """
-
-        now = timezone.now()
-        weekday = now.isoweekday()
-
-        first_tier = now - timedelta(days=90)
-        second_tier = now - timedelta(days=180)
-        third_tier = now - timedelta(days=365)
-
-        weekdays = range(1, 8)
-
-        tiered_q = (
-            models.Q(pub_date__gt=first_tier)
-            | models.Q(
-                pub_date__range=(second_tier, first_tier),
-                pub_date__iso_week_day__in=[
-                    w for w in weekdays if w % 2 == weekday % 2
-                ],
-            )
-            | models.Q(
-                pub_date__range=(third_tier, second_tier),
-                pub_date__iso_week_day__in=[
-                    w for w in weekdays if w % 3 == weekday % 3
-                ],
-            )
-            | models.Q(
-                pub_date__lt=third_tier,
-                pub_date__iso_week_day=weekday,
-            )
-        )
-
-        return self.filter(
-            models.Q(
-                pub_date__isnull=True,
-            )
-            | models.Q(
-                models.Q(
-                    pub_date__lt=now - timedelta(hours=last_updated),
-                )
-                & tiered_q
-            ),
-            models.Q(
-                models.Q(last_checked__isnull=True)
-                | models.Q(
-                    last_checked__lt=timezone.now() - timedelta(hours=last_checked)
-                ),
-            ),
-            active=True,
-        ).distinct()
+    ...
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
@@ -148,7 +85,7 @@ class Podcast(models.Model):
     title: str = models.TextField()
 
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
-    last_checked: datetime | None = models.DateTimeField(null=True, blank=True)
+    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_episodes: int = models.PositiveIntegerField(default=0)
 
@@ -227,6 +164,41 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
+
+    def get_next_scheduled_feed_update(self) -> datetime | None:
+        """Returns the next scheduled time to sync with RSS feed.
+
+        If None, then there is no next date scheduled and should be ignored.
+
+        Once podcast has synced, re-schedule again.
+        """
+
+        if not self.active or not self.pub_date:
+            return None
+
+        now = timezone.now()
+
+        diff = now - self.pub_date
+
+        # we don't want dogpiling of all days, so spread out semi-randomly
+        # at least one day in future
+
+        # the less frequently the podcast has been updated, the longer we
+        # can expect until it's updated again
+
+        return now + timedelta(
+            days=secrets.choice(
+                [
+                    range(1, 2),
+                    range(2, 3),
+                    range(3, 6),
+                    range(6, 8),
+                ][bisect.bisect((0, 90, 180, 360), diff.days) - 1]
+            ),
+            hours=secrets.choice(range(1, 24)),
+            minutes=secrets.choice(range(1, 60)),
+            seconds=secrets.choice(range(1, 60)),
+        )
 
     @property
     def slug(self) -> str:
