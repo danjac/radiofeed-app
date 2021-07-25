@@ -84,7 +84,10 @@ def render_player(
             response,
             {
                 "remove-queue-item": next_episode.id,
+                "play-episode": next_episode.id,
             },
         )
+    else:
+        response = with_hx_trigger(response, "close-player")
 
     return response
