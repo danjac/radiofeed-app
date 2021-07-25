@@ -89,6 +89,6 @@ class TestSyncPodcastFeed:
         tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called()
 
-    def test_pc_complete(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.rss, pc_complete=35)
+    def test_total(self, db, podcast, mock_parse_feed):
+        tasks.sync_podcast_feed(podcast.rss, total=100, processed=35)
         mock_parse_feed.assert_called()

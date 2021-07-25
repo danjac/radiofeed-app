@@ -29,7 +29,7 @@ def send_recommendation_emails() -> None:
 
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(last_updated: int = 24, last_checked: int = 4) -> None:
+def sync_podcast_feeds(last_updated: int = 24, last_checked: int = 3) -> None:
     """Sync podcasts with RSS feeds. Fetch any without a pub date or
     pub_date > given period."""
 
@@ -43,19 +43,17 @@ def sync_podcast_feeds(last_updated: int = 24, last_checked: int = 4) -> None:
         .values_list("id", "rss")
     )
 
-    total = qs.count()
     processed = 0
 
-    logger.info(f"Syncing {total} podcasts")
     paginator = Paginator(qs, per_page=100, allow_empty_first_page=True)
+    logger.info(f"Syncing {paginator.count} podcasts")
 
     for page_obj in paginator:
         podcast_ids = set()
 
-        for counter, (podcast_id, rss) in enumerate(page_obj.object_list, 1):
-            processed += counter
-            pc_complete = round(processed / total * 100)
-            sync_podcast_feed.delay(rss, pc_complete=pc_complete)
+        for podcast_id, rss in page_obj.object_list:
+            processed += 1
+            sync_podcast_feed.delay(rss, total=paginator.count, processed=processed)
             podcast_ids.add(podcast_id)
 
         Podcast.objects.filter(pk__in=podcast_ids).update(last_checked=timezone.now())
@@ -68,14 +66,14 @@ def create_podcast_recommendations() -> None:
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
 def sync_podcast_feed(
-    rss: str, *, force_update: bool = False, pc_complete: int | None = None
+    rss: str, *, force_update: bool = False, total: int = None, processed: int = None
 ) -> None:
     try:
         podcast = Podcast.objects.get(rss=rss, active=True)
         if parse_feed(podcast, force_update=force_update):
             logger.info(f"Podcast {podcast} updated")
-        if pc_complete:
-            logger.info(f"{pc_complete}% done")
+        if total and processed:
+            logger.info(f"{processed}/{total} done")
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for RSS {rss}")
