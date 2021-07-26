@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import secrets
-import statistics
-
 from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
@@ -70,7 +67,47 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    ...
+    def for_feed_sync(self, now: datetime | None = None) -> models.QuerySet:
+        now = now or timezone.now()
+        weekday = now.isoweekday()
+
+        first_tier = now - timedelta(days=30)
+        second_tier = now - timedelta(days=60)
+        third_tier = now - timedelta(days=90)
+
+        weekdays = range(1, 8)
+
+        tiered_q = (
+            # less than 30 days: check once a day
+            models.Q(pub_date__gt=first_tier)
+            # last pub > 30 days: check every other day
+            | models.Q(
+                pub_date__range=(second_tier, first_tier),
+                pub_date__iso_week_day__in=[
+                    w for w in weekdays if w % 2 == weekday % 2
+                ],
+            )
+            # last pub > 90 days: check every third day
+            | models.Q(
+                pub_date__range=(third_tier, second_tier),
+                pub_date__iso_week_day__in=[
+                    w for w in weekdays if w % 3 == weekday % 3
+                ],
+            )
+            # last pub > 120 days: check once a week
+            | models.Q(
+                pub_date__lt=third_tier,
+                pub_date__iso_week_day=weekday,
+            )
+        ) & models.Q(pub_date__hour=now.hour)
+
+        return self.filter(
+            models.Q(
+                pub_date__isnull=True,
+            )
+            | tiered_q,
+            active=True,
+        ).distinct()
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
@@ -85,7 +122,6 @@ class Podcast(models.Model):
     title: str = models.TextField()
 
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
-    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_episodes: int = models.PositiveIntegerField(default=0)
 
@@ -164,61 +200,6 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
-
-    def get_next_scheduled_feed_update(self) -> datetime | None:
-        """Returns the next scheduled time to sync with RSS feed.
-
-        If None, then there is no next date scheduled and should be ignored.
-
-        Once podcast has synced, re-schedule again.
-        """
-
-        if not self.active or not self.pub_date:
-            return None
-
-        now = timezone.now()
-
-        # normalize to UTC
-
-        pub_dates = [
-            timezone.localtime(
-                timezone.make_aware(pub_date)
-                if timezone.is_naive(pub_date)
-                else pub_date,
-            )
-            for pub_date in list(
-                self.episode_set.filter(pub_date__lte=now)
-                .order_by("-pub_date")
-                .values_list("pub_date", flat=True)
-            )
-        ]
-
-        if pub_dates:
-
-            diffs = []
-            prev_date = now
-
-            for pub_date in pub_dates:
-                diffs.append((prev_date - pub_date).total_seconds() / 3600)
-                prev_date = pub_date
-
-            hours = round(statistics.mean(diffs))
-            last_pub_date = max(pub_dates)
-            scheduled = last_pub_date + timedelta(hours=hours)
-
-            next_week = now + timedelta(days=7)
-
-            scheduled = next_week if scheduled < now else min(scheduled, next_week)
-
-        else:
-            # no episodes yet, just run in an hour or so
-            scheduled = last_pub_date = now + timedelta(hours=1)
-
-        # add some more randomization (0-60 mins) for better load-balancing
-
-        return scheduled.replace(
-            hour=last_pub_date.hour, minute=secrets.choice(range(1, 60))
-        )
 
     @property
     def slug(self) -> str:
