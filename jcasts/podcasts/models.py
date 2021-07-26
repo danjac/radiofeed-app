@@ -107,11 +107,9 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 pub_date__isnull=True,
             )
             | models.Q(
-                # recent: check every other hour
+                # recent: check twice a day
                 pub_date__gte=recent,
-                pub_date__hour__in=[
-                    hour for hour in range(0, 25) if hour % 2 == now.hour % 2
-                ],
+                pub_date__hour__in=[now.hour, abs(now.hour - 12)],
             )
             | daily_q,
             active=True,
