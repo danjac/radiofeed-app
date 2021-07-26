@@ -80,39 +80,39 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "now,last_pub,exists",
         [
-            # recent, 24 hours ago
+            # 0: recent, 24 hours ago
             (now, datetime(2021, 7, 25, 12, 15, tzinfo=pytz.utc), True),
-            # recent, 12 hours ago
+            # 1: recent, 12 hours ago
             (now, datetime(2021, 7, 26, 0, 15, tzinfo=pytz.utc), True),
-            # recent, wrong hour
+            # 2: recent, wrong hour
             (now, datetime(2021, 7, 25, 13, 15, tzinfo=pytz.utc), False),
-            # first tier, right hour
+            # 3: first tier, right hour
             (now, datetime(2021, 7, 19, 12, 15, tzinfo=pytz.utc), True),
-            # first tier, wrong hour
+            # 4: first tier, wrong hour
             (now, datetime(2021, 7, 19, 13, 15, tzinfo=pytz.utc), False),
-            # second tier, right weekday, right hour
-            (now, datetime(2021, 6, 23, 12, 15, tzinfo=pytz.utc), True),
-            # second tier, wrong weekday, right hour
-            (now, datetime(2021, 6, 23, 12, 15, tzinfo=pytz.utc), True),
-            # second tier, wrong weekday, right hour
-            (now, datetime(2021, 6, 24, 13, 15, tzinfo=pytz.utc), False),
-            # third tier, right weekday, right hour
-            (now, datetime(2021, 4, 29, 12, 15, tzinfo=pytz.utc), True),
-            # third tier, wrong weekday, right hour
-            (now, datetime(2021, 4, 28, 12, 15, tzinfo=pytz.utc), False),
-            # third tier, right weekday, wrong hour
-            (now, datetime(2021, 4, 29, 13, 15, tzinfo=pytz.utc), False),
-            # final tier, right weekday, right hour
+            # 5: second tier, right weekday, right hour
+            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), True),
+            # 6: second tier, wrong weekday, right hour
+            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), True),
+            # 7: second tier, wrong weekday, right hour
+            (now, datetime(2021, 5, 24, 13, 15, tzinfo=pytz.utc), False),
+            # 8: third tier, right weekday, right hour
+            (now, datetime(2021, 4, 5, 12, 15, tzinfo=pytz.utc), True),
+            # 9: third tier, wrong weekday, right hour
+            (now, datetime(2021, 4, 6, 12, 15, tzinfo=pytz.utc), False),
+            # 10: third tier, right weekday, wrong hour
+            (now, datetime(2021, 4, 5, 13, 15, tzinfo=pytz.utc), False),
+            # 11: final tier, right weekday, right hour
             (now, datetime(2021, 1, 18, 12, 15, tzinfo=pytz.utc), True),
-            # final tier, wrong weekday, right hour
+            # 12: final tier, wrong weekday, right hour
             (now, datetime(2021, 1, 20, 12, 15, tzinfo=pytz.utc), False),
-            # final tier, right weekday, wrong hour
+            # 13: final tier, right weekday, wrong hour
             (now, datetime(2021, 1, 18, 13, 15, tzinfo=pytz.utc), False),
-            # zombie tier, right weekday, right hour
+            # 14: zombie tier, right weekday, right hour
             (now, datetime(2019, 7, 26, 12, 15, tzinfo=pytz.utc), True),
-            # zombie tier, wrong weekday, right hour
+            # 15: zombie tier, wrong weekday, right hour
             (now, datetime(2019, 7, 28, 12, 15, tzinfo=pytz.utc), False),
-            # zombie tier, right weekday, wrong hour
+            # 16: zombie tier, right weekday, wrong hour
             (now, datetime(2019, 7, 26, 13, 15, tzinfo=pytz.utc), False),
         ],
     )
