@@ -90,14 +90,14 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                     w for w in weekdays if w % 2 == weekday % 2
                 ],
             )
-            # last pub > 90 days: check every third day
+            # last pub > 60 days: check every third day
             | models.Q(
                 pub_date__range=(third_tier, second_tier),
                 pub_date__iso_week_day__in=[
                     w for w in weekdays if w % 3 == weekday % 3
                 ],
             )
-            # last pub > 120 days: check once a week
+            # last pub > 90 days: check once a week
             | models.Q(
                 pub_date__range=(zombie, third_tier),
                 pub_date__iso_week_day=weekday,
