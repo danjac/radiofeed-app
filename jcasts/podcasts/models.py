@@ -192,11 +192,10 @@ class Podcast(models.Model):
 
         hours = round(statistics.mean(diffs)) if diffs else 1
 
-        # max 7 days, min 1 hour
+        # max 7/8 days, min 1 hour
+        hours = max(min(hours, 168 + secrets.choice(range(0, 24))), 1)
 
-        hours = max(min(hours, 168), 1)
-
-        # add some randomization to result for a bit of load-balancing
+        # add some more randomization (0-3 hours) for better load-balancing
 
         return now + timedelta(
             hours=hours + secrets.choice(range(0, 3)),
