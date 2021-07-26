@@ -76,6 +76,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         second_tier = now - timedelta(days=60)
         third_tier = now - timedelta(days=90)
 
+        zombie = now - timedelta(days=365)
+
         weekdays = range(1, 8)
 
         daily_q = (
@@ -97,8 +99,13 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
             # last pub > 120 days: check once a week
             | models.Q(
-                pub_date__lt=third_tier,
+                pub_date__range=(zombie, third_tier),
                 pub_date__iso_week_day=weekday,
+            )
+            # zombie: check once a month or so
+            | models.Q(
+                pub_date__lte=zombie,
+                pub_date__day__in={now.day, 29, 30, 31},
             )
         ) & models.Q(pub_date__hour=now.hour)
 
@@ -106,8 +113,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             models.Q(
                 pub_date__isnull=True,
             )
+            # recent: check twice a day
             | models.Q(
-                # recent: check twice a day
                 pub_date__gte=recent,
                 pub_date__hour__in=[now.hour, abs(now.hour - 12)],
             )
