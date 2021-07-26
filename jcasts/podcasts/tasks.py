@@ -34,9 +34,7 @@ def create_podcast_recommendations() -> None:
 
 @shared_task(name="jcasts.podcasts.schedule_podcast_feeds")
 def schedule_podcast_feeds() -> None:
-    for podcast in Podcast.objects.filter(
-        scheduled__isnull=True, pub_date__isnull=False, active=True
-    ):
+    for podcast in Podcast.objects.filter(pub_date__isnull=False, active=True):
         _schedule_podcast_feed(podcast)
 
 

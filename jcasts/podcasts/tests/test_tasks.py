@@ -57,12 +57,12 @@ class TestSchedulePodcastFeedsTests:
         podcast.refresh_from_db()
         assert podcast.scheduled
 
-    def test_podcast_scheduled(self, db):
+    def test_podcast_rescheduled(self, db):
         scheduled = timezone.now()
         podcast = PodcastFactory(pub_date=timezone.now(), scheduled=scheduled)
         tasks.schedule_podcast_feeds()
         podcast.refresh_from_db()
-        assert podcast.scheduled == scheduled
+        assert podcast.scheduled != scheduled
 
     def test_podcast_no_pub_date(self, db):
         podcast = PodcastFactory(pub_date=None)

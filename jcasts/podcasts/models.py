@@ -178,29 +178,47 @@ class Podcast(models.Model):
 
         now = timezone.now()
 
-        diffs = []
+        pub_dates = [
+            timezone.localtime(
+                timezone.make_aware(pub_date)
+                if timezone.is_naive(pub_date)
+                else pub_date,
+            )
+            for pub_date in list(
+                self.episode_set.filter(pub_date__lte=now)
+                .order_by("-pub_date")
+                .values_list("pub_date", flat=True)
+            )
+        ]
 
-        prev_date = now
+        if pub_dates:
 
-        for pub_date in (
-            self.episode_set.filter(pub_date__lte=now)
-            .order_by("-pub_date")
-            .values_list("pub_date", flat=True)
-        ):
-            diffs.append((prev_date - pub_date).total_seconds() / 3600)
-            prev_date = pub_date
+            diffs = []
+            prev_date = now
 
-        hours = round(statistics.mean(diffs)) if diffs else 1
+            for pub_date in pub_dates:
+                diffs.append((prev_date - pub_date).total_seconds() / 3600)
+                prev_date = pub_date
+
+            hours = round(statistics.mean(diffs))
+            last_pub_date = max(pub_dates)
+
+        else:
+            last_pub_date = now + timedelta(hours=secrets.choice(range(0, 24)))
+            hours = 1
 
         # max 7/8 days, min 1 hour
         hours = max(min(hours, 168 + secrets.choice(range(0, 24))), 1)
 
-        # add some more randomization (0-3 hours) for better load-balancing
+        # add some more randomization (0-60 mins) for better load-balancing
 
-        return now + timedelta(
-            hours=hours + secrets.choice(range(0, 3)),
-            minutes=secrets.choice(range(1, 60)),
-        )
+        return (
+            now
+            + timedelta(
+                hours=hours,
+                minutes=secrets.choice(range(1, 60)),
+            )
+        ).replace(hour=last_pub_date.hour)
 
     @property
     def slug(self) -> str:
