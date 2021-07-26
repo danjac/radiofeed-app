@@ -153,11 +153,20 @@ class TestPodcastModel:
         # approx 1 a week between episodes
         now = timezone.now().replace(hour=0, minute=0)
 
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=7))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=14))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=21))
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=7)).replace(hour=12)
+        )
+
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=14)).replace(hour=18)
+        )
+
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=21)).replace(hour=9)
+        )
 
         scheduled = podcast.get_next_scheduled_feed_update()
+        assert scheduled.hour == 12
         assert (scheduled - timezone.now()).days == 7
 
     def test_get_next_scheduled_feed_update_last_episode_month_ago(self, podcast):
