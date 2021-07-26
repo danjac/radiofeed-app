@@ -50,33 +50,6 @@ class TestCrawlItunes:
         mock_crawl_itunes.assert_called()
 
 
-class TestSchedulePodcastFeedsTests:
-    def test_podcast_not_scheduled(self, db):
-        podcast = PodcastFactory(pub_date=timezone.now(), active=True)
-        tasks.schedule_podcast_feeds()
-        podcast.refresh_from_db()
-        assert podcast.scheduled
-
-    def test_podcast_rescheduled(self, db):
-        scheduled = timezone.now()
-        podcast = PodcastFactory(pub_date=timezone.now(), scheduled=scheduled)
-        tasks.schedule_podcast_feeds()
-        podcast.refresh_from_db()
-        assert podcast.scheduled != scheduled
-
-    def test_podcast_no_pub_date(self, db):
-        podcast = PodcastFactory(pub_date=None)
-        tasks.schedule_podcast_feeds()
-        podcast.refresh_from_db()
-        assert podcast.scheduled is None
-
-    def test_podcast_inactive(self, db):
-        podcast = PodcastFactory(pub_date=timezone.now(), active=False)
-        tasks.schedule_podcast_feeds()
-        podcast.refresh_from_db()
-        assert podcast.scheduled is None
-
-
 class TestSyncPodcastFeedsTests:
     @pytest.fixture
     def mock_sync_podcast_feed(self, mocker):
@@ -85,27 +58,15 @@ class TestSyncPodcastFeedsTests:
             autospec=True,
         )
 
-    @pytest.mark.parametrize(
-        "delta,active,do_sync",
-        [
-            (timedelta(minutes=30), True, False),
-            (timedelta(minutes=-30), True, True),
-            (timedelta(minutes=-30), False, False),
-            (timedelta(minutes=200), True, False),
-        ],
-    )
-    def test_sync_podcast_feeds(
-        self, db, mock_sync_podcast_feed, delta, active, do_sync
-    ):
+    def test_sync_podcast_feeds(self, db, mock_sync_podcast_feed):
         now = timezone.now()
 
-        PodcastFactory(scheduled=now + delta, pub_date=now, active=active)
+        podcast = PodcastFactory(
+            pub_date=(now - timedelta(days=7)).replace(hour=now.hour), active=True
+        )
         tasks.sync_podcast_feeds()
 
-        if do_sync:
-            mock_sync_podcast_feed.assert_called()
-        else:
-            mock_sync_podcast_feed.assert_not_called()
+        mock_sync_podcast_feed.assert_called_with(podcast.id)
 
 
 class TestSyncPodcastFeed:

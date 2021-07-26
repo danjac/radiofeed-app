@@ -1,10 +1,12 @@
-from datetime import timedelta
+from datetime import datetime
+
+import pytest
+import pytz
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.utils import timezone
 
-from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
+from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
@@ -73,6 +75,47 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
 
+    now = datetime(2021, 7, 26, 12, 30, tzinfo=pytz.utc)
+
+    @pytest.mark.parametrize(
+        "now,last_pub,exists",
+        [
+            # first tier, right hour
+            (now, datetime(2021, 7, 19, 12, 15, tzinfo=pytz.utc), True),
+            # first tier, wrong hour
+            (now, datetime(2021, 7, 19, 13, 15, tzinfo=pytz.utc), False),
+            # second tier, right weekday, right hour
+            (now, datetime(2021, 6, 23, 12, 15, tzinfo=pytz.utc), True),
+            # second tier, wrong weekday, right hour
+            (now, datetime(2021, 6, 23, 12, 15, tzinfo=pytz.utc), True),
+            # second tier, wrong weekday, right hour
+            (now, datetime(2021, 6, 24, 13, 15, tzinfo=pytz.utc), False),
+            # third tier, right weekday, right hour
+            (now, datetime(2021, 4, 29, 12, 15, tzinfo=pytz.utc), True),
+            # third tier, wrong weekday, right hour
+            (now, datetime(2021, 4, 28, 12, 15, tzinfo=pytz.utc), False),
+            # third tier, right weekday, wrong hour
+            (now, datetime(2021, 4, 29, 13, 15, tzinfo=pytz.utc), False),
+            # final tier, right weekday, right hour
+            (now, datetime(2020, 7, 27, 12, 15, tzinfo=pytz.utc), True),
+            # final tier, wrong weekday, right hour
+            (now, datetime(2020, 7, 28, 12, 15, tzinfo=pytz.utc), False),
+            # final tier, right weekday, wrong hour
+            (now, datetime(2020, 7, 27, 13, 15, tzinfo=pytz.utc), False),
+        ],
+    )
+    def test_for_feed_sync(self, db, now, last_pub, exists):
+        PodcastFactory(active=True, pub_date=last_pub)
+        assert Podcast.objects.for_feed_sync(now).exists() is exists
+
+    def test_for_feed_sync_no_pub_date(self, db):
+        PodcastFactory(active=True, pub_date=None)
+        assert Podcast.objects.for_feed_sync().exists()
+
+    def test_for_feed_sync_inactive(self, db):
+        PodcastFactory(active=False, pub_date=None)
+        assert not Podcast.objects.for_feed_sync().exists()
+
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -129,90 +172,3 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
-
-    def test_get_next_scheduled_feed_update_inactive(self):
-        assert (
-            Podcast(
-                pub_date=timezone.now(), active=False
-            ).get_next_scheduled_feed_update()
-            is None
-        )
-
-    def test_get_next_scheduled_feed_update_no_pub_date(self):
-        assert (
-            Podcast(pub_date=None, active=True).get_next_scheduled_feed_update() is None
-        )
-
-    def test_get_next_scheduled_feed_update_no_episodes(self, podcast):
-        # should be no more than a day if no episodes found
-        scheduled = podcast.get_next_scheduled_feed_update()
-        assert (scheduled - timezone.now()).days < 1
-
-    def test_get_next_scheduled_feed_update_three_days(self, podcast):
-
-        # approx 1 a week between episodes
-        now = timezone.now().replace(hour=0, minute=0)
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=2)).replace(hour=12)
-        )
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=5)).replace(hour=18)
-        )
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=8)).replace(hour=9)
-        )
-
-        scheduled = podcast.get_next_scheduled_feed_update()
-        assert scheduled.hour == 12
-        # every three days, so should run tomorrow
-        assert (scheduled - timezone.now()).days == 1
-
-    def test_get_next_scheduled_feed_update_one_week(self, podcast):
-
-        # approx 1 a week between episodes
-        now = timezone.now().replace(hour=0, minute=0)
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=7)).replace(hour=12)
-        )
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=14)).replace(hour=18)
-        )
-
-        EpisodeFactory(
-            podcast=podcast, pub_date=(now - timedelta(days=21)).replace(hour=9)
-        )
-
-        scheduled = podcast.get_next_scheduled_feed_update()
-        assert scheduled.hour == 12
-        # should be today, as last time 7 days ago
-        assert (scheduled - timezone.now()).days == 0
-
-    def test_get_next_scheduled_feed_update_last_episode_month_diff(self, podcast):
-
-        # approx one month between episodes, but last episode yesterday. Should be max
-        # 1 week
-        now = timezone.now().replace(hour=12, minute=0)
-
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=1))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=31))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=61))
-
-        scheduled = podcast.get_next_scheduled_feed_update()
-        assert (scheduled - timezone.now()).days in (7, 8)
-
-    def test_get_next_scheduled_feed_update_last_episode_month_ago(self, podcast):
-
-        # approx 1 a week between episodes, but last episode thirty days ago
-        now = timezone.now().replace(hour=12, minute=0)
-
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=30))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=37))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=44))
-
-        scheduled = podcast.get_next_scheduled_feed_update()
-        assert (scheduled - timezone.now()).days == 7

@@ -3,7 +3,6 @@ from __future__ import annotations
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
-from django.utils import timezone
 
 from jcasts.podcasts import itunes
 from jcasts.podcasts.emails import send_recommendations_email
@@ -32,12 +31,6 @@ def create_podcast_recommendations() -> None:
     recommend()
 
 
-@shared_task(name="jcasts.podcasts.schedule_podcast_feeds")
-def schedule_podcast_feeds() -> None:
-    for podcast in Podcast.objects.filter(pub_date__isnull=False, active=True):
-        _schedule_podcast_feed(podcast)
-
-
 @shared_task(name="jcasts.podcasts.sync_podcast_feeds")
 def sync_podcast_feeds(hours: int = 1) -> None:
     """
@@ -46,8 +39,8 @@ def sync_podcast_feeds(hours: int = 1) -> None:
     are restarted.
     """
     for podcast_id in (
-        Podcast.objects.filter(scheduled__lte=timezone.now(), active=True)
-        .order_by("scheduled")
+        Podcast.objects.for_feed_sync()
+        .order_by("-pub_date")
         .values_list("id", flat=True)
     ):
         sync_podcast_feed.delay(podcast_id)
@@ -61,15 +54,5 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
 
         parse_feed(podcast, force_update=force_update)
 
-        # re-schedule for next time
-        _schedule_podcast_feed(podcast)
-
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for ID {podcast_id}")
-
-
-def _schedule_podcast_feed(podcast: Podcast) -> None:
-    if scheduled := podcast.get_next_scheduled_feed_update():
-        logger.info(f"Podcast {podcast} scheduled to run at {scheduled.isoformat()}")
-
-    Podcast.objects.filter(pk=podcast.pk).update(scheduled=scheduled)
