@@ -148,7 +148,29 @@ class TestPodcastModel:
         scheduled = podcast.get_next_scheduled_feed_update()
         assert (scheduled - timezone.now()).days < 1
 
-    def test_get_next_scheduled_feed_update(self, podcast):
+    def test_get_next_scheduled_feed_update_three_days(self, podcast):
+
+        # approx 1 a week between episodes
+        now = timezone.now().replace(hour=0, minute=0)
+
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=2)).replace(hour=12)
+        )
+
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=5)).replace(hour=18)
+        )
+
+        EpisodeFactory(
+            podcast=podcast, pub_date=(now - timedelta(days=8)).replace(hour=9)
+        )
+
+        scheduled = podcast.get_next_scheduled_feed_update()
+        assert scheduled.hour == 12
+        # every three days, so should run tomorrow
+        assert (scheduled - timezone.now()).days == 1
+
+    def test_get_next_scheduled_feed_update_one_week(self, podcast):
 
         # approx 1 a week between episodes
         now = timezone.now().replace(hour=0, minute=0)
@@ -167,7 +189,8 @@ class TestPodcastModel:
 
         scheduled = podcast.get_next_scheduled_feed_update()
         assert scheduled.hour == 12
-        assert (scheduled - timezone.now()).days == 7
+        # should be today, as last time 7 days ago
+        assert (scheduled - timezone.now()).days == 0
 
     def test_get_next_scheduled_feed_update_last_episode_month_ago(self, podcast):
 
