@@ -206,8 +206,9 @@ class Podcast(models.Model):
             last_pub_date = max(pub_dates)
             scheduled = last_pub_date + timedelta(hours=hours)
 
-            # should be max one week, min immediately
-            scheduled = min(max(scheduled, now), now + timedelta(days=7))
+            next_week = now + timedelta(days=7)
+
+            scheduled = next_week if scheduled < now else min(scheduled, next_week)
 
         else:
             # no episodes yet, just run in an hour or so
