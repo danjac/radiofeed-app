@@ -192,6 +192,19 @@ class TestPodcastModel:
         # should be today, as last time 7 days ago
         assert (scheduled - timezone.now()).days == 0
 
+    def test_get_next_scheduled_feed_update_last_episode_month_diff(self, podcast):
+
+        # approx one month between episodes, but last episode yesterday. Should be max
+        # 1 week
+        now = timezone.now().replace(hour=12, minute=0)
+
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=1))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=31))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=61))
+
+        scheduled = podcast.get_next_scheduled_feed_update()
+        assert (scheduled - timezone.now()).days in (7, 8)
+
     def test_get_next_scheduled_feed_update_last_episode_month_ago(self, podcast):
 
         # approx 1 a week between episodes, but last episode thirty days ago
