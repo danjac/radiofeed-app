@@ -215,4 +215,4 @@ class TestPodcastModel:
         EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=44))
 
         scheduled = podcast.get_next_scheduled_feed_update()
-        assert (scheduled - timezone.now()).days == 0
+        assert (scheduled - timezone.now()).days == 7
