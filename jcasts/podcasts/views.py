@@ -235,7 +235,7 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
         error = True
 
     for podcast in new_podcasts:
-        sync_podcast_feed.delay(pk=podcast.id)
+        sync_podcast_feed.delay(podcast.id)
 
     return TemplateResponse(
         request,
