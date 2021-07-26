@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="mb-3 flex flex-wrap justify-center sm:justify-start space-x-1 text-sm lg:text-base">
+<div class="mb-3 flex flex-wrap justify-center sm:justify-start space-x-1 text-sm">
   <a href="{% url 'podcasts:categories' %}"
      class="link">Discover</a>
   {% if category.parent %}
@@ -18,7 +18,7 @@
   <span class="text-gray-600 dark:text-gray-300">iTunes</span>
 </div>
 
-<h1 class="font-bold mb-3 flex justify-center sm:justify-start text-center text-lg md:text-xl">
+<h1 class="font-bold mb-3 flex justify-center sm:justify-start text-center text-lg">
   Top-Rated {{ category.name }} Podcasts on iTunes
 </h1>
 
@@ -26,7 +26,7 @@
 {% include "podcasts/_itunes_result.html" %}
 {% empty %}
 {% if error %}
-<p class="font-semibold text-center sm:text-left text-sm lg:text-base">Unable to connect to the ITunes API at the moment.</p>
+<p class="font-semibold text-center sm:text-left text-sm">Unable to connect to the ITunes API at the moment.</p>
 {% endif %}
 {% endfor %}
 {% endblock content %}

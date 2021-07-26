@@ -9,7 +9,7 @@
   {% for result in results %}
   {% include "podcasts/_itunes_result.html" %}
   {% empty %}
-  <p class="text-center sm:text-left text-sm lg:text-base font-semibold pt-3 border-t dark:border-gray-500">
+  <p class="text-center sm:text-left text-sm font-semibold pt-3 border-t dark:border-gray-500">
     {% if error %}
     Unable to connect to the ITunes API at the moment.
     {% elif search %}

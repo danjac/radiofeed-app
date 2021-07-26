@@ -4,7 +4,7 @@
 {% include "podcasts/_podcast.html" %}
 {% empty %}
 {% if search %}
-<p class="text-center sm:text-left text-sm lg:text-base pt-3 border-t dark:border-gray-500">
+<p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
   No results found for <span class="font-bold">{{ search }}</span>. {% endif %}
 </p>
 {% endfor %}
