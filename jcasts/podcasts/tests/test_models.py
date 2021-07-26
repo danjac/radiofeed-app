@@ -105,10 +105,16 @@ class TestPodcastManager:
         ],
     )
     def test_for_feed_sync(self, db, now, last_pub, exists):
-        print(last_pub)
-
         PodcastFactory(active=True, pub_date=last_pub)
         assert Podcast.objects.for_feed_sync(now).exists() is exists
+
+    def test_for_feed_sync_no_pub_date(self, db):
+        PodcastFactory(active=True, pub_date=None)
+        assert Podcast.objects.for_feed_sync().exists()
+
+    def test_for_feed_sync_inactive(self, db):
+        PodcastFactory(active=False, pub_date=None)
+        assert not Podcast.objects.for_feed_sync().exists()
 
     def test_search(self, db):
         PodcastFactory(title="testing")
