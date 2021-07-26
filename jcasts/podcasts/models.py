@@ -178,6 +178,8 @@ class Podcast(models.Model):
 
         now = timezone.now()
 
+        # normalize to UTC
+
         pub_dates = [
             timezone.localtime(
                 timezone.make_aware(pub_date)
@@ -202,23 +204,21 @@ class Podcast(models.Model):
 
             hours = round(statistics.mean(diffs))
             last_pub_date = max(pub_dates)
+            scheduled = last_pub_date + timedelta(hours=hours)
+
+            # if scheduled time is negative then make it one week from now
+            if scheduled < now:
+                scheduled = now + timedelta(days=7)
 
         else:
-            last_pub_date = now + timedelta(hours=secrets.choice(range(0, 24)))
-            hours = 1
-
-        # max 7/8 days, min 1 hour
-        hours = max(min(hours, 168 + secrets.choice(range(0, 24))), 1)
+            # no episodes yet, just run in an hour or so
+            scheduled = last_pub_date = now + timedelta(hours=1)
 
         # add some more randomization (0-60 mins) for better load-balancing
 
-        return (
-            now
-            + timedelta(
-                hours=hours,
-                minutes=secrets.choice(range(1, 60)),
-            )
-        ).replace(hour=last_pub_date.hour)
+        return scheduled.replace(
+            hour=last_pub_date.hour, minute=secrets.choice(range(1, 60))
+        )
 
     @property
     def slug(self) -> str:
