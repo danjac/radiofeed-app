@@ -118,8 +118,8 @@ class PodcastAdmin(admin.ModelAdmin):
     @admin.action(description="Sync podcast feeds")
     def sync_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
 
-        for rss in queryset.values_list("rss", flat=True):
-            sync_podcast_feed.delay(rss, force_update=True)
+        for podcast_id in queryset.values_list("pk", flat=True):
+            sync_podcast_feed.delay(podcast_id, force_update=True)
 
         self.message_user(
             request,
