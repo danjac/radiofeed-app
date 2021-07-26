@@ -91,9 +91,9 @@ class TestPodcastManager:
             # 4: first tier, wrong hour
             (now, datetime(2021, 7, 19, 13, 15, tzinfo=pytz.utc), False),
             # 5: second tier, right weekday, right hour
-            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), True),
+            (now, datetime(2021, 5, 24, 12, 15, tzinfo=pytz.utc), True),
             # 6: second tier, wrong weekday, right hour
-            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), True),
+            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), False),
             # 7: second tier, wrong weekday, right hour
             (now, datetime(2021, 5, 24, 13, 15, tzinfo=pytz.utc), False),
             # 8: third tier, right weekday, right hour
