@@ -80,10 +80,6 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "now,last_pub,exists",
         [
-            # recent, right hour
-            (now, datetime(2021, 7, 25, 10, 15, tzinfo=pytz.utc), True),
-            # recent, wrong hour
-            (now, datetime(2021, 7, 25, 13, 15, tzinfo=pytz.utc), False),
             # first tier, right hour
             (now, datetime(2021, 7, 19, 12, 15, tzinfo=pytz.utc), True),
             # first tier, wrong hour

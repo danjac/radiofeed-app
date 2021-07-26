@@ -71,16 +71,15 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         now = now or timezone.now()
         weekday = now.isoweekday()
 
-        recent = now - timedelta(days=7)
         first_tier = now - timedelta(days=30)
         second_tier = now - timedelta(days=60)
         third_tier = now - timedelta(days=90)
 
         weekdays = range(1, 8)
 
-        daily_q = (
+        tiered_q = (
             # less than 30 days: check once a day
-            models.Q(pub_date__range=(first_tier, recent))
+            models.Q(pub_date__gt=first_tier)
             # last pub > 30 days: check every other day
             | models.Q(
                 pub_date__range=(second_tier, first_tier),
@@ -106,14 +105,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             models.Q(
                 pub_date__isnull=True,
             )
-            | models.Q(
-                # recent: check every other hour
-                pub_date__gte=recent,
-                pub_date__hour__in=[
-                    hour for hour in range(0, 25) if hour % 2 == now.hour % 2
-                ],
-            )
-            | daily_q,
+            | tiered_q,
             active=True,
         ).distinct()
 
