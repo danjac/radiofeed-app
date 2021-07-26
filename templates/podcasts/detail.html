@@ -11,7 +11,7 @@
       {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" css_class="h-24 w-24 lg:h-28 lg:w-28" %}
     </div>
 
-    <div class="space-y-2 lg:space-y-3 text-sm lg:text-base">
+    <div class="space-y-2 lg:space-y-3 text-sm">
       {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-3">
         <div>
@@ -36,17 +36,17 @@
     </div>
   </div>
 
-  <div class="font-semibold flex items-center text-gray-600 dark:text-gray-300 text-sm lg:text-base">
+  <div class="font-semibold flex items-center text-gray-600 dark:text-gray-300 text-sm">
     Last updated {{ podcast.pub_date|timesince }} ago
   </div>
 
   {% if podcast.explicit %}
-  <div class="font-semibold text-sm lg:text-base">
+  <div class="font-semibold text-sm">
     This podcast may contain explicit content.
   </div>
   {% endif %}
 
-  <blockquote class="markdown max-w-sm sm:max-w-full text-sm lg:text-base">
+  <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
     {{ podcast.description|clean_html }}
   </blockquote>
 

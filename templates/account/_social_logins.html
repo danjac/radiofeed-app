@@ -1,7 +1,7 @@
 {% load socialaccount %}
 {% get_providers as socialaccount_providers %}
 {% if socialaccount_providers %}
-<div class="text-sm lg:text-base flex items-center mt-3 pt-3 border-t {{ css_class|default:'' }}">
+<div class="text-sm flex items-center mt-3 pt-3 border-t {{ css_class|default:'' }}">
   <div class="mr-1">Login or signup through</div>
   {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>
