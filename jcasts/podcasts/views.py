@@ -84,7 +84,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             error = True
 
     for podcast in new_podcasts:
-        sync_podcast_feed.delay(rss=podcast.rss)
+        sync_podcast_feed.delay(podcast.id)
 
     return TemplateResponse(
         request,
