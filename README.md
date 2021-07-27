@@ -102,6 +102,15 @@ To deploy just run:
 
 There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
 
+## Periodic tasks
+
+Use celerybeat in the Django admin to set up these tasks in production:
+
+* _jcasts.podcasts.sync_podcast_feeds_ : run once an hour
+* _jcasts.podcasts.send_recommendation_emails_ : run at least once a week
+* _jcasts.podcasts.create_podcast_recommendations_ : run at least once or twice a day
+* _jcasts.podcasts.crawl_itunes_: run at least once a week
+
 ## Maintenance
 
 There is an Ansible playbook configured to clean up Docker containers, run server updates etc:
