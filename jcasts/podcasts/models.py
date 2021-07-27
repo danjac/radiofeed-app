@@ -67,6 +67,22 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+    def with_scheduled(self) -> models.QuerySet:
+        return self.filter(pub_date__isnull=False, frequency__isnull=False).annotate(
+            scheduled=models.ExpressionWrapper(
+                models.F("pub_date") + models.F("frequency"),
+                output_field=models.DateTimeField(),
+            )
+        )
+
+    def scheduled(self) -> models.QuerySet:
+        """This will replace current feed sync"""
+        return (
+            self.filter(active=True)
+            .with_scheduled()
+            .filter(scheduled__lte=timezone.now())
+        )
+
     def for_feed_sync(self, now: datetime | None = None) -> models.QuerySet:
         """
 
@@ -177,7 +193,7 @@ class Podcast(models.Model):
     title: str = models.TextField()
 
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
-    frequency: int = models.PositiveIntegerField(default=1)
+    frequency: timedelta = models.DurationField(null=True, blank=True)
 
     num_episodes: int = models.PositiveIntegerField(default=0)
 

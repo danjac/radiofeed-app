@@ -1,9 +1,11 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
 from django.http import HttpRequest
+from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
@@ -33,6 +35,15 @@ class TestPodcastAdmin:
     def test_source(self, podcasts, admin):
         podcast = podcasts[0]
         assert admin.source(podcasts[0]) == podcast.get_domain()
+
+    def test_scheduled_if_none(self, db, admin):
+        podcast = PodcastFactory(frequency=None, pub_date=None)
+        assert admin.scheduled(podcast) is None
+
+    def test_scheduled_if_not_none(self, db, admin):
+        now = timezone.now()
+        podcast = PodcastFactory(frequency=timedelta(days=3), pub_date=now)
+        assert (admin.scheduled(podcast) - now).days == 3
 
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")

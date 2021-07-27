@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Iterable
 
 from django.contrib import admin, messages
@@ -86,7 +87,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "frequency",
     )
     list_editable = ("promoted",)
     search_fields = ("search_document",)
@@ -101,6 +101,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "frequency",
+        "scheduled",
         "num_episodes",
     )
 
@@ -131,6 +132,11 @@ class PodcastAdmin(admin.ModelAdmin):
 
     def source(self, obj: Podcast) -> str:
         return obj.get_domain()
+
+    def scheduled(self, obj: Podcast) -> datetime | None:
+        if None in (obj.pub_date, obj.frequency):
+            return None
+        return obj.pub_date + obj.frequency
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str

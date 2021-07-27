@@ -69,16 +69,16 @@ class TestCalcFrequency:
         now = timezone.now()
 
         dates = [
-            now - timedelta(days=5),
-            now - timedelta(days=12),
-            now - timedelta(days=15),
-            now - timedelta(days=30),
+            now - timedelta(days=5, hours=12),
+            now - timedelta(days=12, hours=12),
+            now - timedelta(days=15, hours=12),
+            now - timedelta(days=30, hours=12),
         ]
 
-        assert calc_frequency(dates) == 8
+        assert calc_frequency(dates).days == 7
 
     def test_calc_frequency_if_empty(self):
-        assert calc_frequency([]) == 1
+        assert calc_frequency([]) is None
 
 
 class TestFeedParser:
@@ -168,7 +168,7 @@ class TestFeedParser:
         assert new_podcast.rss
         assert new_podcast.title == "Mysterious Universe"
 
-        assert new_podcast.frequency > 1
+        assert new_podcast.frequency.days > 1
 
         assert (
             new_podcast.description

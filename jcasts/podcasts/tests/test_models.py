@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 import pytz
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
+from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
@@ -125,6 +126,39 @@ class TestPodcastManager:
     def test_for_feed_sync_inactive(self, db):
         PodcastFactory(active=False, pub_date=None)
         assert not Podcast.objects.for_feed_sync().exists()
+
+    def test_with_scheduled(self, db):
+        PodcastFactory(
+            pub_date=datetime(2021, 7, 27, 12, 30, tzinfo=pytz.utc),
+            frequency=timedelta(hours=24),
+        )
+        podcast = Podcast.objects.with_scheduled().first()
+
+        assert podcast.scheduled.year == 2021
+        assert podcast.scheduled.month == 7
+        assert podcast.scheduled.day == 28
+        assert podcast.scheduled.minute == 30
+
+    @pytest.mark.parametrize(
+        "days_ago,active,exists",
+        [
+            (8, True, True),
+            (8, False, False),
+            (3, True, False),
+            (0, True, False),
+        ],
+    )
+    def test_scheduled(self, db, days_ago, active, exists):
+        PodcastFactory(
+            active=active,
+            pub_date=timezone.now() - timedelta(days=days_ago),
+            frequency=timedelta(days=7),
+        )
+        assert Podcast.objects.scheduled().exists() is exists
+
+    def test_with_scheduled_no_pub_date_or_frequency(self, db):
+        PodcastFactory(pub_date=None, frequency=None)
+        assert not Podcast.objects.with_scheduled().exists()
 
     def test_search(self, db):
         PodcastFactory(title="testing")

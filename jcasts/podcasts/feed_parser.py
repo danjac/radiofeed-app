@@ -5,7 +5,7 @@ import secrets
 import statistics
 import traceback
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import lru_cache
 from typing import Generator
 
@@ -287,15 +287,17 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def calc_frequency(pub_dates: list[datetime]) -> int:
+def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
     if not pub_dates:
-        return 1
+        return None
     prev = timezone.now()
     diffs = []
     for pub_date in sorted(pub_dates, reverse=True):
-        diffs.append((prev - pub_date).days)
+        diffs.append((prev - pub_date).total_seconds() / 3600)
         prev = pub_date
-    return min(round(statistics.mean(diffs)), 30)
+    # max ~1 month
+    hours = min(round(statistics.mean(diffs)), 730)
+    return timedelta(hours=hours)
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:

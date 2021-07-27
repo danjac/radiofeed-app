@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         qs = Podcast.objects.filter(
-            pub_date__isnull=False, active=True, frequency=1
+            pub_date__isnull=False, active=True, frequency__isnull=True
         ).order_by("-pub_date")
         total = qs.count()
 
@@ -22,4 +22,6 @@ class Command(BaseCommand):
         )
         frequency = calc_frequency(pub_dates)
         Podcast.objects.filter(pk=podcast.id).update(frequency=frequency)
-        self.stdout.write(f"[{counter}/{total}] Podcast {podcast}: freq {frequency}")
+        self.stdout.write(
+            f"[{counter}/{total}] Podcast {podcast}: freq {frequency.days if frequency else 'None'}"
+        )
