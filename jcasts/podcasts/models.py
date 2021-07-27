@@ -76,7 +76,19 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self) -> models.QuerySet:
-        """This will replace current feed sync"""
+        """This will replace current feed sync
+
+        Problem:
+
+        - podcast has freq 7 days. We check in 7 days, nothing found.
+        - we check in an hour, nothing found & so on: IOW podcast is on "hiatus"
+        - checker will keep checking indefinitely...
+        - on each miss, reschedule/recalculate.
+        example:
+
+        podcast updates once a week.
+        """
+
         return (
             self.filter(active=True)
             .with_scheduled()
@@ -84,26 +96,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def for_feed_sync(self, now: datetime | None = None) -> models.QuerySet:
-        """
-
-        Pub date > 30 days:
-
-        1. Figure out the frequency in days (mean of all episode pub dates)
-        2. If frequency is 0 (hourly), sync hourly
-        3. If frequency is 1 (daily), sync daily
-        ... etc
-
-        - default frequency is 1 for all podcasts
-
-        - problem: off-by-one
-        - so freq might be 7 (once a week)
-        - but, release is one day early/late
-
-        better option: "buckets"
-
-        i.e. same buckets as current days below
-        """
-
         now = now or timezone.now()
 
         first_hourly_tier = now - timedelta(days=1)

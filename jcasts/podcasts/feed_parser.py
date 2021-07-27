@@ -335,5 +335,13 @@ def handle_empty_result(podcast: Podcast, **fields) -> bool:
     if fields:
         for k, v in fields.items():
             setattr(podcast, k, v)
-        podcast.save(update_fields=fields.keys())
+
+    # re-schedule next feed sync
+    pub_dates = (
+        Episode.objects.filter(podcast=podcast)
+        .values_list("pub_date", flat=True)
+        .order_by("-pub_date")
+    )
+    podcast.frequency = calc_frequency(pub_dates)
+    podcast.save(update_fields=list(fields.keys()) + ["frequency"])
     return False
