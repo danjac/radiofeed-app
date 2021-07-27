@@ -31,15 +31,18 @@ def create_podcast_recommendations() -> None:
     recommend()
 
 
-@shared_task(name="jcasts.podcasts.sync_podcast_feeds")
-def sync_podcast_feeds(hours: int = 1) -> None:
-    """
-    Should be run every hour or so. Ideally we would schedule each task individually
-    with a specific ETA, but all tasks are deleted if the docker worker containers
-    are restarted.
-    """
+@shared_task(name="jcasts.podcasts.sync_frequent_podcast_feeds")
+def sync_frequent_podcast_feeds() -> None:
     for podcast_id in (
-        Podcast.objects.scheduled().order_by("-scheduled").values_list("id", flat=True)
+        Podcast.objects.frequent().order_by("-scheduled").values_list("id", flat=True)
+    ):
+        sync_podcast_feed.delay(podcast_id)
+
+
+@shared_task(name="jcasts.podcasts.sync_podcast_feeds")
+def sync_infrequent_podcast_feeds() -> None:
+    for podcast_id in (
+        Podcast.objects.infrequent().order_by("-pub_date").values_list("id", flat=True)
     ):
         sync_podcast_feed.delay(podcast_id)
 

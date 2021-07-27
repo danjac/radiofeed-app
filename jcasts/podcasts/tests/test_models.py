@@ -89,26 +89,42 @@ class TestPodcastManager:
         assert podcast.scheduled.minute == 30
 
     @pytest.mark.parametrize(
-        "days_ago,active,exists",
+        "days_ago,hours_ago, active,exists",
         [
-            (8, True, True),
-            (8, False, False),
-            (3, True, False),
-            (0, True, False),
-            (120, True, False),
+            (8, 0, True, True),
+            (8, 1, True, False),
+            (8, 0, False, False),
+            (3, 0, True, False),
+            (0, 0, True, False),
+            (120, 0, True, False),
         ],
     )
-    def test_scheduled(self, db, days_ago, active, exists):
+    def test_frequent(self, db, days_ago, hours_ago, active, exists):
+        now = timezone.now()
+        PodcastFactory(
+            active=active,
+            pub_date=(now - timedelta(days=days_ago)).replace(
+                hour=now.hour - hours_ago, minute=30
+            ),
+            frequency=timedelta(days=7),
+        )
+        assert Podcast.objects.frequent().exists() is exists
+
+    @pytest.mark.parametrize(
+        "days_ago,active,exists",
+        [
+            (8, True, False),
+            (120, True, False),
+            (120, False, False),
+            (210, True, True),
+        ],
+    )
+    def test_infrequent(self, db, days_ago, active, exists):
         PodcastFactory(
             active=active,
             pub_date=timezone.now() - timedelta(days=days_ago),
-            frequency=timedelta(days=7),
         )
-        assert Podcast.objects.scheduled().exists() is exists
-
-    def test_with_scheduled_no_pub_date_or_frequency(self, db):
-        PodcastFactory(pub_date=None, frequency=None)
-        assert not Podcast.objects.with_scheduled().exists()
+        assert Podcast.objects.infrequent().exists() is exists
 
     def test_search(self, db):
         PodcastFactory(title="testing")
