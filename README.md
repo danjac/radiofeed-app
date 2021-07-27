@@ -102,7 +102,7 @@ To deploy just run:
 
 There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
 
-# Periodic tasks
+## Periodic tasks
 
 Use celerybeat in the Django admin to set up these tasks in production:
 
