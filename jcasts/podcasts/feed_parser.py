@@ -288,6 +288,8 @@ def is_episode(item: box.Box) -> bool:
 
 
 def calc_frequency(pub_dates: list[datetime]) -> int:
+    if not pub_dates:
+        return 1
     prev = timezone.now()
     diffs = []
     for pub_date in sorted(pub_dates, reverse=True):

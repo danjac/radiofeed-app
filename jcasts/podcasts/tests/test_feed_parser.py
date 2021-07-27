@@ -77,6 +77,9 @@ class TestCalcFrequency:
 
         assert calc_frequency(dates) == 8
 
+    def test_calc_frequency_if_empty(self):
+        assert calc_frequency([]) == 1
+
 
 class TestFeedParser:
 
