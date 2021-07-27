@@ -75,7 +75,7 @@ class TestCalcFrequency:
             now - timedelta(days=30, hours=12),
         ]
 
-        assert calc_frequency(dates).days == 7
+        assert calc_frequency(dates).days == 8
 
     def test_calc_frequency_if_empty(self):
         assert calc_frequency([]) is None

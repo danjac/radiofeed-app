@@ -293,10 +293,10 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
     prev = timezone.now()
     diffs = []
     for pub_date in sorted(pub_dates, reverse=True):
-        diffs.append((prev - pub_date).total_seconds() / 3600)
+        diffs.append((prev - pub_date).days)
         prev = pub_date
-    hours = round(statistics.mean(diffs))
-    return timedelta(hours=hours)
+    days = round(statistics.mean(diffs))
+    return timedelta(days=days)
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
