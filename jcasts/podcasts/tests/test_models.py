@@ -115,10 +115,7 @@ class TestPodcastManager:
         ],
     )
     def test_for_feed_sync(self, db, now, last_pub, exists):
-        p = PodcastFactory(active=True, pub_date=last_pub)
-        print(p.pub_date)
-        print([p.pub_date for p in Podcast.objects.for_feed_sync(now)])
-        print(str(Podcast.objects.for_feed_sync(now).query))
+        PodcastFactory(active=True, pub_date=last_pub)
         assert Podcast.objects.for_feed_sync(now).exists() is exists
 
     def test_for_feed_sync_no_pub_date(self, db):
