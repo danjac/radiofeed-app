@@ -58,7 +58,7 @@ class TestSyncPodcastFeedsTests:
             autospec=True,
         )
 
-    def test_sync_podcast_feeds(self, db, mock_sync_podcast_feed):
+    def test_sync_frequent_podcast_feeds(self, db, mock_sync_podcast_feed):
         now = timezone.now()
 
         podcast = PodcastFactory(
@@ -66,7 +66,18 @@ class TestSyncPodcastFeedsTests:
             pub_date=(now - timedelta(days=7)).replace(hour=now.hour),
             active=True,
         )
-        tasks.sync_podcast_feeds()
+        tasks.sync_frequent_podcast_feeds()
+
+        mock_sync_podcast_feed.assert_called_with(podcast.id)
+
+    def test_sync_infrequent_podcast_feeds(self, db, mock_sync_podcast_feed):
+        now = timezone.now()
+
+        podcast = PodcastFactory(
+            pub_date=(now - timedelta(days=210)),
+            active=True,
+        )
+        tasks.sync_infrequent_podcast_feeds()
 
         mock_sync_podcast_feed.assert_called_with(podcast.id)
 

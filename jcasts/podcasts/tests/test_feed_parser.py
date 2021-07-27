@@ -168,8 +168,6 @@ class TestFeedParser:
         assert new_podcast.rss
         assert new_podcast.title == "Mysterious Universe"
 
-        assert new_podcast.frequency.days > 1
-
         assert (
             new_podcast.description
             == "Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity."

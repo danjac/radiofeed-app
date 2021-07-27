@@ -75,12 +75,21 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             ),
         )
 
-    def scheduled(self) -> models.QuerySet:
+    def frequent(self) -> models.QuerySet:
         now = timezone.now()
-        return (
-            self.filter(active=True)
-            .with_scheduled()
-            .filter(scheduled__lte=now, scheduled__gte=now - timedelta(days=90))
+        return self.with_scheduled().filter(
+            active=True,
+            scheduled__lte=now,
+            scheduled__gte=now - timedelta(days=90),
+            pub_date__hour__in=[h for h in range(0, 25) if h % 2 == now.hour % 2],
+        )
+
+    def infrequent(self) -> models.QuerySet:
+        now = timezone.now()
+        return self.filter(
+            active=True,
+            pub_date__lt=now - timedelta(days=90),
+            pub_date__iso_week_day=now.isoweekday(),
         )
 
 

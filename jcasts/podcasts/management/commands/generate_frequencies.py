@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -10,7 +12,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         qs = Podcast.objects.filter(
-            pub_date__isnull=False, active=True, frequency__isnull=True
+            pub_date__gte=timezone.now() - timedelta(days=90),
+            active=True,
+            frequency__isnull=True,
         ).order_by("-pub_date")
         total = qs.count()
 

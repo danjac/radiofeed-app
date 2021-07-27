@@ -287,12 +287,16 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
+def calc_frequency(pub_dates: list[datetime], limit: int = 90) -> timedelta | None:
+    date_from = timezone.now() - timedelta(days=limit)
+    pub_dates = [
+        pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > date_from
+    ]
     if not pub_dates:
         return None
     prev = timezone.now()
     diffs = []
-    for pub_date in sorted(pub_dates, reverse=True):
+    for pub_date in pub_dates:
         diffs.append((prev - pub_date).days)
         prev = pub_date
     days = round(statistics.mean(diffs))
