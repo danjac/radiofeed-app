@@ -260,6 +260,7 @@ class TestFeedParser:
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
         assert parse_feed(new_podcast) is False
 
+        new_podcast.refresh_from_db()
         assert new_podcast.active
         assert new_podcast.exception
 

@@ -295,8 +295,7 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
     for pub_date in sorted(pub_dates, reverse=True):
         diffs.append((prev - pub_date).total_seconds() / 3600)
         prev = pub_date
-    # max ~1 month
-    hours = min(round(statistics.mean(diffs)), 730)
+    hours = round(statistics.mean(diffs))
     return timedelta(hours=hours)
 
 
@@ -332,8 +331,6 @@ def resolve_podcast_rss(
 
 
 def handle_empty_result(podcast: Podcast, **fields) -> bool:
-    data = dict(fields)
-
     # re-schedule next feed sync
     pub_dates = (
         Episode.objects.filter(podcast=podcast)
