@@ -68,51 +68,80 @@ class Category(models.Model):
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def for_feed_sync(self, now: datetime | None = None) -> models.QuerySet:
+
         now = now or timezone.now()
 
-        recent = now - timedelta(days=7)
-        first_tier = now - timedelta(days=30)
-        second_tier = now - timedelta(days=90)
-        third_tier = now - timedelta(days=120)
-        zombie_tier = now - timedelta(days=365)
+        first_hourly_tier = now - timedelta(days=1)
+        second_hourly_tier = now - timedelta(days=3)
+        third_hourly_tier = now - timedelta(days=7)
 
+        first_daily_tier = now - timedelta(days=30)
+        second_daily_tier = now - timedelta(days=90)
+        third_daily_tier = now - timedelta(days=120)
+        zombie_daily_tier = now - timedelta(days=365)
+
+        hours = range(0, 25)
         days = range(1, 32)
+
+        second_tier_hours = {h for h in hours if h % 2 == now.hour % 2}
+
+        third_tier_hours = {
+            h for h in hours if h % 3 == now.hour % 3 and h not in second_tier_hours
+        }
+
+        second_tier_days = {d for d in days if d % 2 == now.day % 2}
+
+        third_tier_days = {
+            d for d in days if d % 3 == now.day % 3 and d not in second_tier_days
+        }
+
+        hourly_q = (
+            # first tier: check every hour
+            models.Q(
+                pub_date__gte=first_hourly_tier,
+            )
+            # second tier: check every other hour
+            | models.Q(
+                pub_date__range=(second_hourly_tier, first_hourly_tier),
+                pub_date__hour__in=second_tier_hours,
+            )
+            # third tier: check every 3 hours
+            | models.Q(
+                pub_date__range=(third_hourly_tier, second_hourly_tier),
+                pub_date__hour__in=third_tier_hours,
+            )
+        )
 
         daily_q = (
             # first tier: check once a day
-            models.Q(pub_date__range=(first_tier, recent))
+            models.Q(
+                pub_date__range=(first_daily_tier, third_hourly_tier),
+            )
             # second tier: check once every other day
             | models.Q(
-                pub_date__range=(second_tier, first_tier),
-                pub_date__day__in=[d for d in days if d % 2 == now.day % 2],
+                pub_date__range=(second_daily_tier, first_daily_tier),
+                pub_date__day__in=second_tier_days,
             )
             # third tier: check once every three days
             | models.Q(
-                pub_date__range=(third_tier, second_tier),
-                pub_date__day__in=[d for d in days if d % 3 == now.day % 3],
+                pub_date__range=(third_daily_tier, second_daily_tier),
+                pub_date__day__in=third_tier_days,
             )
             # fourth tier: check once a week
             | models.Q(
-                pub_date__range=(zombie_tier, third_tier),
+                pub_date__range=(zombie_daily_tier, third_daily_tier),
                 pub_date__iso_week_day=now.isoweekday(),
             )
             # zombies: check once a month or so
             | models.Q(
-                pub_date__lte=zombie_tier,
+                pub_date__lte=zombie_daily_tier,
                 pub_date__day=now.day,
             )
         ) & models.Q(pub_date__hour=now.hour)
 
         return self.filter(
-            models.Q(
-                pub_date__isnull=True,
-            )
-            # recent: check twice a day
-            | models.Q(
-                pub_date__gte=recent,
-                pub_date__hour__in=[now.hour, abs(now.hour - 12)],
-            )
-            | daily_q,
+            hourly_q | daily_q,
+            pub_date__isnull=False,
             active=True,
         ).distinct()
 

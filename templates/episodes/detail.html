@@ -6,7 +6,7 @@
 
 <h1 class="font-bold text-lg mb-3">{{ episode.cleaned_title }}</h1>
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds podcast_url=episode.podcast.get_absolute_url %}
+{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
@@ -37,7 +37,7 @@
 
 <section class="space-y-3 pb-3 mb-3">
   <div>
-    <a href="{{ podcast_url }}"
+    <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
        class="link">
       {{ podcast.cleaned_title }}
@@ -46,7 +46,7 @@
 
   <div class="flex items-center space-x-3 lg:space-x-4">
     <div>
-      <a href="{{ podcast_url }}">
+      <a href="{{ podcast.get_detail_url }}">
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" %}
       </a>
     </div>
