@@ -80,49 +80,44 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "now,last_pub,exists",
         [
-            # 0: recent, 24 hours ago
+            # 0: first hourly tier
             (now, datetime(2021, 7, 25, 12, 15, tzinfo=pytz.utc), True),
-            # 1: recent, 12 hours ago
-            (now, datetime(2021, 7, 26, 0, 15, tzinfo=pytz.utc), True),
-            # 2: recent, wrong hour
-            (now, datetime(2021, 7, 25, 13, 15, tzinfo=pytz.utc), False),
-            # 3: first tier, right hour
-            (now, datetime(2021, 7, 19, 12, 15, tzinfo=pytz.utc), True),
-            # 4: first tier, wrong hour
-            (now, datetime(2021, 7, 19, 13, 15, tzinfo=pytz.utc), False),
-            # 5: second tier, right weekday, right hour
-            (now, datetime(2021, 5, 24, 12, 15, tzinfo=pytz.utc), True),
-            # 6: second tier, wrong weekday, right hour
-            (now, datetime(2021, 5, 23, 12, 15, tzinfo=pytz.utc), False),
-            # 7: second tier, wrong weekday, right hour
-            (now, datetime(2021, 5, 24, 13, 15, tzinfo=pytz.utc), False),
-            # 8: third tier, right weekday, right hour
-            (now, datetime(2021, 4, 5, 12, 15, tzinfo=pytz.utc), True),
-            # 9: third tier, wrong weekday, right hour
-            (now, datetime(2021, 4, 6, 12, 15, tzinfo=pytz.utc), False),
-            # 10: third tier, right weekday, wrong hour
-            (now, datetime(2021, 4, 5, 13, 15, tzinfo=pytz.utc), False),
-            # 11: final tier, right weekday, right hour
-            (now, datetime(2021, 1, 18, 12, 15, tzinfo=pytz.utc), True),
-            # 12: final tier, wrong weekday, right hour
-            (now, datetime(2021, 1, 20, 12, 15, tzinfo=pytz.utc), False),
-            # 13: final tier, right weekday, wrong hour
-            (now, datetime(2021, 1, 18, 13, 15, tzinfo=pytz.utc), False),
-            # 14: zombie tier, right weekday, right hour
-            (now, datetime(2019, 7, 26, 12, 15, tzinfo=pytz.utc), True),
-            # 15: zombie tier, wrong weekday, right hour
-            (now, datetime(2019, 7, 28, 12, 15, tzinfo=pytz.utc), False),
-            # 16: zombie tier, right weekday, wrong hour
-            (now, datetime(2019, 7, 26, 13, 15, tzinfo=pytz.utc), False),
+            # 1: second hourly tier, right hour
+            (now, datetime(2021, 7, 24, 12, 15, tzinfo=pytz.utc), True),
+            # 2: second hourly tier, wrong hour
+            (now, datetime(2021, 7, 24, 13, 15, tzinfo=pytz.utc), False),
+            # 3: third hourly tier, right hour
+            (now, datetime(2021, 7, 20, 9, 15, tzinfo=pytz.utc), True),
+            # 4: third hourly tier, wrong hour
+            (now, datetime(2021, 7, 20, 13, 15, tzinfo=pytz.utc), False),
+            # 5: first daily tier, right hour
+            (now, datetime(2021, 7, 18, 12, 15, tzinfo=pytz.utc), True),
+            # 6: first daily tier, wrong hour
+            (now, datetime(2021, 7, 18, 13, 15, tzinfo=pytz.utc), False),
+            # 7: second daily tier, right day, right hour
+            (now, datetime(2021, 6, 2, 12, 15, tzinfo=pytz.utc), True),
+            # 8: second daily tier, right day, wrong hour
+            (now, datetime(2021, 6, 2, 13, 15, tzinfo=pytz.utc), False),
+            # 9: second daily tier, wrong day, right hour
+            (now, datetime(2021, 6, 1, 12, 15, tzinfo=pytz.utc), False),
+            # 10: third daily tier, right day, right hour
+            (now, datetime(2021, 3, 1, 12, 15, tzinfo=pytz.utc), True),
+            # 11: third daily tier, right day, wrong hour
+            (now, datetime(2021, 3, 1, 13, 15, tzinfo=pytz.utc), False),
+            # 12: third daily tier, wrong day, right hour
+            (now, datetime(2021, 3, 2, 13, 15, tzinfo=pytz.utc), False),
         ],
     )
     def test_for_feed_sync(self, db, now, last_pub, exists):
-        PodcastFactory(active=True, pub_date=last_pub)
+        p = PodcastFactory(active=True, pub_date=last_pub)
+        print(p.pub_date)
+        print([p.pub_date for p in Podcast.objects.for_feed_sync(now)])
+        print(str(Podcast.objects.for_feed_sync(now).query))
         assert Podcast.objects.for_feed_sync(now).exists() is exists
 
     def test_for_feed_sync_no_pub_date(self, db):
         PodcastFactory(active=True, pub_date=None)
-        assert Podcast.objects.for_feed_sync().exists()
+        assert not Podcast.objects.for_feed_sync().exists()
 
     def test_for_feed_sync_inactive(self, db):
         PodcastFactory(active=False, pub_date=None)
