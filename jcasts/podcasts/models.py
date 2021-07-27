@@ -72,105 +72,16 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             scheduled=models.ExpressionWrapper(
                 models.F("pub_date") + models.F("frequency"),
                 output_field=models.DateTimeField(),
-            )
+            ),
         )
 
     def scheduled(self) -> models.QuerySet:
-        """This will replace current feed sync
-
-        Problem:
-
-        - podcast has freq 7 days. We check in 7 days, nothing found.
-        - we check in an hour, nothing found & so on: IOW podcast is on "hiatus"
-        - checker will keep checking indefinitely...
-        - on each miss, reschedule/recalculate.
-        example:
-
-        podcast updates once a week.
-        """
-
+        now = timezone.now()
         return (
             self.filter(active=True)
             .with_scheduled()
-            .filter(scheduled__lte=timezone.now())
+            .filter(scheduled__lte=now, scheduled__gte=now - timedelta(days=90))
         )
-
-    def for_feed_sync(self, now: datetime | None = None) -> models.QuerySet:
-        now = now or timezone.now()
-
-        first_hourly_tier = now - timedelta(days=1)
-        second_hourly_tier = now - timedelta(days=3)
-        third_hourly_tier = now - timedelta(days=7)
-
-        first_daily_tier = now - timedelta(days=30)
-        second_daily_tier = now - timedelta(days=90)
-        third_daily_tier = now - timedelta(days=120)
-        zombie_daily_tier = now - timedelta(days=365)
-
-        hours = range(0, 25)
-        days = range(1, 32)
-
-        second_tier_hours = {h for h in hours if h % 2 == now.hour % 2}
-
-        third_tier_hours = {
-            h for h in hours if h % 3 == now.hour % 3 and h not in second_tier_hours
-        }
-
-        second_tier_days = {d for d in days if d % 2 == now.day % 2}
-
-        third_tier_days = {
-            d for d in days if d % 3 == now.day % 3 and d not in second_tier_days
-        }
-
-        hourly_q = (
-            # first tier: check every hour
-            models.Q(
-                pub_date__gte=first_hourly_tier,
-            )
-            # second tier: check every other hour
-            | models.Q(
-                pub_date__range=(second_hourly_tier, first_hourly_tier),
-                pub_date__hour__in=second_tier_hours,
-            )
-            # third tier: check every 3 hours
-            | models.Q(
-                pub_date__range=(third_hourly_tier, second_hourly_tier),
-                pub_date__hour__in=third_tier_hours,
-            )
-        )
-
-        daily_q = (
-            # first tier: check once a day
-            models.Q(
-                pub_date__range=(first_daily_tier, third_hourly_tier),
-            )
-            # second tier: check once every other day
-            | models.Q(
-                pub_date__range=(second_daily_tier, first_daily_tier),
-                pub_date__day__in=second_tier_days,
-            )
-            # third tier: check once every three days
-            | models.Q(
-                pub_date__range=(third_daily_tier, second_daily_tier),
-                pub_date__day__in=third_tier_days,
-            )
-            # fourth tier: check once a week
-            | models.Q(
-                pub_date__range=(zombie_daily_tier, third_daily_tier),
-                pub_date__iso_week_day=now.isoweekday(),
-            )
-            # zombies: check once a month or so
-            | models.Q(
-                pub_date__lte=zombie_daily_tier,
-                pub_date__day=now.day,
-            )
-        ) & models.Q(pub_date__hour=now.hour)
-
-        return self.filter(
-            hourly_q | daily_q,
-            pub_date__isnull=False,
-            active=True,
-        ).distinct()
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)

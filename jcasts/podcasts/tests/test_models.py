@@ -76,57 +76,6 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
 
-    now = datetime(2021, 7, 26, 12, 30, tzinfo=pytz.utc)
-
-    @pytest.mark.parametrize(
-        "now,last_pub,exists",
-        [
-            # 0: first hourly tier
-            (now, datetime(2021, 7, 25, 12, 15, tzinfo=pytz.utc), True),
-            # 1: second hourly tier, right hour
-            (now, datetime(2021, 7, 24, 12, 15, tzinfo=pytz.utc), True),
-            # 2: second hourly tier, wrong hour
-            (now, datetime(2021, 7, 24, 13, 15, tzinfo=pytz.utc), False),
-            # 3: third hourly tier, right hour
-            (now, datetime(2021, 7, 20, 9, 15, tzinfo=pytz.utc), True),
-            # 4: third hourly tier, wrong hour
-            (now, datetime(2021, 7, 20, 13, 15, tzinfo=pytz.utc), False),
-            # 5: first daily tier, right hour
-            (now, datetime(2021, 7, 18, 12, 15, tzinfo=pytz.utc), True),
-            # 6: first daily tier, wrong hour
-            (now, datetime(2021, 7, 18, 13, 15, tzinfo=pytz.utc), False),
-            # 7: second daily tier, right day, right hour
-            (now, datetime(2021, 6, 2, 12, 15, tzinfo=pytz.utc), True),
-            # 8: second daily tier, right day, wrong hour
-            (now, datetime(2021, 6, 2, 13, 15, tzinfo=pytz.utc), False),
-            # 9: second daily tier, wrong day, right hour
-            (now, datetime(2021, 6, 1, 12, 15, tzinfo=pytz.utc), False),
-            # 10: third daily tier, right day, right hour
-            (now, datetime(2021, 3, 1, 12, 15, tzinfo=pytz.utc), True),
-            # 11: third daily tier, right day, wrong hour
-            (now, datetime(2021, 3, 1, 13, 15, tzinfo=pytz.utc), False),
-            # 12: third daily tier, wrong day, right hour
-            (now, datetime(2021, 3, 2, 13, 15, tzinfo=pytz.utc), False),
-            # 13: zombie tier, right day, right hour
-            (now, datetime(2020, 3, 26, 12, 15, tzinfo=pytz.utc), True),
-            # 14: zombie tier, right day, wrong hour
-            (now, datetime(2020, 3, 26, 13, 15, tzinfo=pytz.utc), False),
-            # 15: zombie tier, wrong day, right hour
-            (now, datetime(2020, 3, 25, 12, 15, tzinfo=pytz.utc), False),
-        ],
-    )
-    def test_for_feed_sync(self, db, now, last_pub, exists):
-        PodcastFactory(active=True, pub_date=last_pub)
-        assert Podcast.objects.for_feed_sync(now).exists() is exists
-
-    def test_for_feed_sync_no_pub_date(self, db):
-        PodcastFactory(active=True, pub_date=None)
-        assert not Podcast.objects.for_feed_sync().exists()
-
-    def test_for_feed_sync_inactive(self, db):
-        PodcastFactory(active=False, pub_date=None)
-        assert not Podcast.objects.for_feed_sync().exists()
-
     def test_with_scheduled(self, db):
         PodcastFactory(
             pub_date=datetime(2021, 7, 27, 12, 30, tzinfo=pytz.utc),
@@ -146,6 +95,7 @@ class TestPodcastManager:
             (8, False, False),
             (3, True, False),
             (0, True, False),
+            (120, True, False),
         ],
     )
     def test_scheduled(self, db, days_ago, active, exists):
