@@ -106,6 +106,12 @@ class TestPodcastManager:
             (now, datetime(2021, 3, 1, 13, 15, tzinfo=pytz.utc), False),
             # 12: third daily tier, wrong day, right hour
             (now, datetime(2021, 3, 2, 13, 15, tzinfo=pytz.utc), False),
+            # 13: zombie tier, right day, right hour
+            (now, datetime(2020, 3, 26, 12, 15, tzinfo=pytz.utc), True),
+            # 14: zombie tier, right day, wrong hour
+            (now, datetime(2020, 3, 26, 13, 15, tzinfo=pytz.utc), False),
+            # 15: zombie tier, wrong day, right hour
+            (now, datetime(2020, 3, 25, 12, 15, tzinfo=pytz.utc), False),
         ],
     )
     def test_for_feed_sync(self, db, now, last_pub, exists):
