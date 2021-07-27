@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import http
 import secrets
+import statistics
 import traceback
 
+from datetime import datetime
 from functools import lru_cache
 from typing import Generator
 
@@ -92,7 +94,11 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
     podcast.exception = ""
 
     podcast.num_episodes = len(items)
-    podcast.pub_date = max(item.pub_date for item in items)
+
+    pub_dates = [item.pub_date for item in items]
+
+    podcast.pub_date = max(pub_dates)
+    podcast.frequency = calc_frequency(pub_dates)
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)
@@ -279,6 +285,15 @@ def is_episode(item: box.Box) -> bool:
             item.pub_date and item.pub_date < timezone.now(),
         )
     )
+
+
+def calc_frequency(pub_dates: list[datetime]) -> int:
+    prev = timezone.now()
+    diffs = []
+    for pub_date in sorted(pub_dates, reverse=True):
+        diffs.append((prev - pub_date).days)
+        prev = pub_date
+    return round(statistics.mean(diffs))
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
