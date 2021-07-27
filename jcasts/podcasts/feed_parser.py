@@ -295,7 +295,7 @@ def calc_frequency(pub_dates: list[datetime]) -> int:
     for pub_date in sorted(pub_dates, reverse=True):
         diffs.append((prev - pub_date).days)
         prev = pub_date
-    return round(statistics.mean(diffs))
+    return min(round(statistics.mean(diffs)), 30)
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
