@@ -95,6 +95,7 @@ class TestPodcastManager:
             (8, False, False),
             (3, True, False),
             (0, True, False),
+            (120, True, False),
         ],
     )
     def test_scheduled(self, db, days_ago, active, exists):
