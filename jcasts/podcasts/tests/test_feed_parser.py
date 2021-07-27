@@ -3,6 +3,8 @@ from __future__ import annotations
 import http
 import pathlib
 
+from datetime import timedelta
+
 import pytest
 import requests
 
@@ -13,6 +15,7 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
+    calc_frequency,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
@@ -58,6 +61,24 @@ class TestFeedHeaders:
         headers = get_feed_headers(podcast, force_update=True)
         assert "If-Modified-Since" not in headers
         assert "If-None-Match" not in headers
+
+
+class TestCalcFrequency:
+    def test_calc_frequency(self):
+
+        now = timezone.now()
+
+        dates = [
+            now - timedelta(days=5, hours=12),
+            now - timedelta(days=12, hours=12),
+            now - timedelta(days=15, hours=12),
+            now - timedelta(days=30, hours=12),
+        ]
+
+        assert calc_frequency(dates).days == 7
+
+    def test_calc_frequency_if_empty(self):
+        assert calc_frequency([]) is None
 
 
 class TestFeedParser:
@@ -146,6 +167,8 @@ class TestFeedParser:
 
         assert new_podcast.rss
         assert new_podcast.title == "Mysterious Universe"
+
+        assert new_podcast.frequency.days > 1
 
         assert (
             new_podcast.description
