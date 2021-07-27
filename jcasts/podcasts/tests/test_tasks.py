@@ -62,7 +62,9 @@ class TestSyncPodcastFeedsTests:
         now = timezone.now()
 
         podcast = PodcastFactory(
-            pub_date=(now - timedelta(days=7)).replace(hour=now.hour), active=True
+            frequency=timedelta(days=1),
+            pub_date=(now - timedelta(days=7)).replace(hour=now.hour),
+            active=True,
         )
         tasks.sync_podcast_feeds()
 
