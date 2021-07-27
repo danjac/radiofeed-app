@@ -39,9 +39,7 @@ def sync_podcast_feeds(hours: int = 1) -> None:
     are restarted.
     """
     for podcast_id in (
-        Podcast.objects.for_feed_sync()
-        .order_by("-pub_date")
-        .values_list("id", flat=True)
+        Podcast.objects.scheduled().order_by("-scheduled").values_list("id", flat=True)
     ):
         sync_podcast_feed.delay(podcast_id)
 
@@ -52,7 +50,8 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
         logger.info(f"Sync podcast {podcast}")
 
-        parse_feed(podcast, force_update=force_update)
+        if parse_feed(podcast, force_update=force_update):
+            logger.info(f"{podcast} updated")
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for ID {podcast_id}")

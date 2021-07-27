@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Iterable
 
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils.formats import localize
 
 from jcasts.podcasts.models import Category, Podcast
 from jcasts.podcasts.tasks import sync_podcast_feed
@@ -133,10 +133,10 @@ class PodcastAdmin(admin.ModelAdmin):
     def source(self, obj: Podcast) -> str:
         return obj.get_domain()
 
-    def scheduled(self, obj: Podcast) -> datetime | None:
+    def scheduled(self, obj: Podcast) -> str | None:
         if None in (obj.pub_date, obj.frequency):
             return None
-        return obj.pub_date + obj.frequency
+        return localize(obj.pub_date + obj.frequency)
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str

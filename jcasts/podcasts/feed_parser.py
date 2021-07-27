@@ -332,9 +332,7 @@ def resolve_podcast_rss(
 
 
 def handle_empty_result(podcast: Podcast, **fields) -> bool:
-    if fields:
-        for k, v in fields.items():
-            setattr(podcast, k, v)
+    data = dict(fields)
 
     # re-schedule next feed sync
     pub_dates = (
@@ -342,6 +340,9 @@ def handle_empty_result(podcast: Podcast, **fields) -> bool:
         .values_list("pub_date", flat=True)
         .order_by("-pub_date")
     )
-    podcast.frequency = calc_frequency(pub_dates)
-    podcast.save(update_fields=list(fields.keys()) + ["frequency"])
+    data = {
+        **fields,
+        "frequency": calc_frequency(pub_dates),
+    }
+    Podcast.objects.filter(pk=podcast.id).update(**data)
     return False
