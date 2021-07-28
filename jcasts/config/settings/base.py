@@ -33,12 +33,12 @@ RQ_QUEUES = {
         "USE_REDIS_CACHE": "default",
     },
 }
+RQ_SHOW_ADMIN_LINK = True
 
 DEFAULT_CACHE_TIMEOUT = 3600
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
-EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
 
 ATOMIC_REQUESTS = True
 
@@ -85,9 +85,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_extensions",
-    "django_celery_beat",
     "django_htmx",
-    "djcelery_email",
     "widget_tweaks",
     "django_rq",
 ] + LOCAL_APPS
