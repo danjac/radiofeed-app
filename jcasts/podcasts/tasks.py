@@ -4,6 +4,7 @@ from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.utils import timezone
 
 from jcasts.podcasts import itunes
@@ -66,26 +67,21 @@ def sync_infrequent_podcast_feeds():
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
 def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
+
+    if not cache.set(f"sync_podcast_feed:{podcast_id}", 1, 3600, nx=True):
+        logger.info(f"Task for podcast id {podcast_id} is locked")
+        return
+
     try:
+
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
-
-        # ensure duplicate tasks not executed
-        if (
-            not force_update
-            and podcast.updated
-            and (timezone.now() - podcast.updated).total_seconds() < 3600
-        ):
-            logger.info(f"{podcast} just updated at {podcast.updated}, ignore")
-            return
-
-        logger.info(f"Sync podcast {podcast}")
-
-        success = parse_feed(podcast, force_update=force_update)
-        logger.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
-
-        if scheduled := podcast.get_next_scheduled():
-            logger.info(f"{podcast} next pull: {scheduled}")
-            sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
-
     except Podcast.DoesNotExist:
-        logger.debug(f"No podcast found for ID {podcast_id}")
+        logger.debug(f"No podcast found for id {podcast_id}")
+        return
+
+    success = parse_feed(podcast, force_update=force_update)
+    logger.info(f"{Podcast} pull {'OK' if success else 'FAIL'}")
+
+    if scheduled := podcast.get_next_scheduled():
+        logger.info(f"{podcast} next pull: {scheduled}")
+        sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
