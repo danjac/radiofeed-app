@@ -70,8 +70,11 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
         logger.info(f"Sync podcast {podcast}")
 
-        parse_feed(podcast, force_update=force_update)
+        success = parse_feed(podcast, force_update=force_update)
+        logger.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
+
         if scheduled := podcast.get_next_scheduled():
+            logger.info(f"{podcast} next pull: {scheduled}")
             sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
 
     except Podcast.DoesNotExist:
