@@ -74,7 +74,7 @@ def sync_podcast_feed(rss: int, *, force_update: bool = False) -> None:
 
     try:
 
-        podcast = Podcast.objects.get(pk=rss, active=True)
+        podcast = Podcast.objects.get(rss=rss, active=True)
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for rss {rss}")
         return
