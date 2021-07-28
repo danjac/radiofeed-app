@@ -122,7 +122,7 @@ class TestSyncPodcastFeed:
             pub_date=now - timedelta(days=3),
         )
         mocker.patch("jcasts.podcasts.tasks.cache.set", return_value=True)
-        tasks.sync_podcast_feed(podcast.id)
+        tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called_with(podcast, force_update=False)
         mock_sync_podcast_feed.assert_called()
 
@@ -133,7 +133,7 @@ class TestSyncPodcastFeed:
             pub_date=now - timedelta(days=3),
         )
         mocker.patch("jcasts.podcasts.tasks.cache.set", return_value=False)
-        tasks.sync_podcast_feed(podcast.id)
+        tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_not_called()
         mock_sync_podcast_feed.assert_not_called()
 
@@ -146,7 +146,7 @@ class TestSyncPodcastFeed:
             pub_date=now - timedelta(days=3),
         )
         mocker.patch("jcasts.podcasts.tasks.cache.set", return_value=True)
-        tasks.sync_podcast_feed(podcast.id)
+        tasks.sync_podcast_feed(podcast.rss)
         mock_parse_feed.assert_called_with(podcast, force_update=False)
         mock_sync_podcast_feed.assert_not_called()
 
