@@ -163,6 +163,12 @@ class Podcast(models.Model):
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
     def get_next_scheduled(self) -> datetime | None:
+        """Returns next scheduled feed sync time.
+        If frequency is set, will return last pub date + frequency or current time +
+        frequency, whichever is greater (minimum: 1 hour).
+
+        If feed inactive or no frequency set, returns None.
+        """
         if not self.active or None in (self.pub_date, self.frequency):
             return None
 
@@ -171,7 +177,7 @@ class Podcast(models.Model):
         # minimum 1 hour
         frequency = max(self.frequency, timedelta(hours=1))
 
-        # should be in future
+        # should always be in future
         if (scheduled := self.pub_date + frequency) > now:
             return scheduled
 

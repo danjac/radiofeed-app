@@ -122,7 +122,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast) > timezone.now()
+        assert parse_feed(new_podcast)
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -133,7 +133,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast) is None
+        assert parse_feed(new_podcast)
 
     def test_parse_feed(self, mocker, new_podcast, categories):
 
@@ -207,7 +207,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast) is None
+        assert parse_feed(new_podcast)
         assert Episode.objects.filter(podcast=new_podcast).count() == 20
 
         new_podcast.refresh_from_db()
@@ -233,7 +233,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast) is None
+        assert parse_feed(new_podcast)
 
         new_podcast.refresh_from_db()
 

@@ -43,7 +43,8 @@ def schedule_podcast_feeds() -> None:
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         ).order_by("-pub_date")
     ).iterator():
-        sync_podcast_feed.apply_async((podcast.id,), eta=podcast.get_next_scheduled())
+        if scheduled := podcast.get_next_scheduled():
+            sync_podcast_feed.apply_async((podcast.id,), eta=scheduled)
 
 
 @shared_task(name="jcasts.podcasts.sync_infrequent_podcast_feeds")
@@ -69,7 +70,8 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
         logger.info(f"Sync podcast {podcast}")
 
-        if scheduled := parse_feed(podcast, force_update=force_update):
+        parse_feed(podcast, force_update=force_update)
+        if scheduled := podcast.get_next_scheduled():
             sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
 
     except Podcast.DoesNotExist:

@@ -45,7 +45,7 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast, force_update: bool = False) -> datetime | None:
+def parse_feed(podcast: Podcast, force_update: bool = False) -> bool:
 
     try:
         response = requests.get(
@@ -72,10 +72,10 @@ def parse_feed(podcast: Podcast, force_update: bool = False) -> datetime | None:
 
     sync_podcast(podcast, response)
 
-    return podcast.get_next_scheduled()
+    return True
 
 
-def sync_podcast(podcast: Podcast, response: requests.Response) -> datetime | None:
+def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     rss, is_changed = resolve_podcast_rss(podcast, response)
 
@@ -133,7 +133,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> datetime | No
 
     sync_episodes(podcast, items)
 
-    return podcast.get_next_scheduled()
+    return True
 
 
 def sync_episodes(podcast: Podcast, items: list[box.Box]) -> None:
@@ -337,9 +337,8 @@ def resolve_podcast_rss(
     )
 
 
-def handle_empty_result(podcast: Podcast, active=True, **fields) -> datetime | None:
+def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
     # re-schedule next feed sync
-    update_fields = ["active"] + list(fields.keys())
 
     if active:
         pub_dates = (
@@ -347,12 +346,20 @@ def handle_empty_result(podcast: Podcast, active=True, **fields) -> datetime | N
             .values_list("pub_date", flat=True)
             .order_by("-pub_date")
         )
-        podcast.frequency = calc_frequency(pub_dates)
-        update_fields += ["frequency"]
+        frequency = calc_frequency(pub_dates)
+    else:
+        frequency = None
 
-    for k, v in fields.items():
+    for_update = {
+        **fields,
+        "active": active,
+        "frequency": frequency,
+        "updated": timezone.now(),
+    }
+
+    for k, v in for_update.items():
         setattr(podcast, k, v)
 
-    podcast.save(update_fields=update_fields)
+    podcast.save(update_fields=for_update.keys())
 
-    return podcast.get_next_scheduled()
+    return False
