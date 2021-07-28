@@ -67,30 +67,7 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_scheduled(self) -> models.QuerySet:
-        return self.filter(pub_date__isnull=False, frequency__isnull=False).annotate(
-            scheduled=models.ExpressionWrapper(
-                models.F("pub_date") + models.F("frequency"),
-                output_field=models.DateTimeField(),
-            ),
-        )
-
-    def frequent(self) -> models.QuerySet:
-        now = timezone.now()
-        return self.with_scheduled().filter(
-            active=True,
-            scheduled__lte=now,
-            scheduled__gte=now - timedelta(days=90),
-            scheduled__hour__in=[now.hour, abs(now.hour - 12)],
-        )
-
-    def infrequent(self) -> models.QuerySet:
-        now = timezone.now()
-        return self.filter(
-            active=True,
-            pub_date__lt=now - timedelta(days=90),
-            pub_date__iso_week_day=now.isoweekday(),
-        )
+    ...
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
@@ -184,6 +161,27 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
+
+    def get_next_scheduled(self) -> datetime | None:
+        """Returns next scheduled feed sync time.
+        If frequency is set, will return last pub date + frequency or current time +
+        frequency, whichever is greater (minimum: 1 hour).
+
+        If feed inactive or no frequency set, returns None.
+        """
+        if not self.active or None in (self.pub_date, self.frequency):
+            return None
+
+        now = timezone.now()
+
+        # minimum 1 hour
+        frequency = max(self.frequency, timedelta(hours=1))
+
+        # should always be in future
+        if (scheduled := self.pub_date + frequency) > now:
+            return scheduled
+
+        return now + frequency
 
     @property
     def slug(self) -> str:

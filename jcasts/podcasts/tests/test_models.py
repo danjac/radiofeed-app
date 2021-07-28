@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
-import pytz
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
@@ -76,56 +75,6 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
 
-    def test_with_scheduled(self, db):
-        PodcastFactory(
-            pub_date=datetime(2021, 7, 27, 12, 30, tzinfo=pytz.utc),
-            frequency=timedelta(hours=24),
-        )
-        podcast = Podcast.objects.with_scheduled().first()
-
-        assert podcast.scheduled.year == 2021
-        assert podcast.scheduled.month == 7
-        assert podcast.scheduled.day == 28
-        assert podcast.scheduled.minute == 30
-
-    @pytest.mark.parametrize(
-        "days_ago,hours_ago, active,exists",
-        [
-            (8, 0, True, True),
-            (8, 1, True, False),
-            (8, 0, False, False),
-            (3, 0, True, False),
-            (0, 0, True, False),
-            (120, 0, True, False),
-        ],
-    )
-    def test_frequent(self, db, days_ago, hours_ago, active, exists):
-        now = timezone.now()
-        PodcastFactory(
-            active=active,
-            pub_date=(now - timedelta(days=days_ago)).replace(
-                hour=now.hour - hours_ago, minute=30
-            ),
-            frequency=timedelta(days=7),
-        )
-        assert Podcast.objects.frequent().exists() is exists
-
-    @pytest.mark.parametrize(
-        "days_ago,active,exists",
-        [
-            (8, True, False),
-            (120, True, False),
-            (120, False, False),
-            (210, True, True),
-        ],
-    )
-    def test_infrequent(self, db, days_ago, active, exists):
-        PodcastFactory(
-            active=active,
-            pub_date=timezone.now() - timedelta(days=days_ago),
-        )
-        assert Podcast.objects.infrequent().exists() is exists
-
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -182,3 +131,69 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
+
+    def test_get_next_scheduled_inactive(self):
+        assert (
+            Podcast(
+                active=False,
+                pub_date=timezone.now() - timedelta(days=7),
+                frequency=timedelta(days=1),
+            ).get_next_scheduled()
+            is None
+        )
+
+    def test_get_next_scheduled_no_pub_date(self):
+        assert (
+            Podcast(
+                active=True,
+                frequency=timedelta(days=1),
+                pub_date=None,
+            ).get_next_scheduled()
+            is None
+        )
+
+    def test_get_next_scheduled_no_frequency(self):
+        assert (
+            Podcast(
+                active=True,
+                frequency=None,
+                pub_date=timezone.now() - timedelta(days=7),
+            ).get_next_scheduled()
+            is None
+        )
+
+    def test_get_next_scheduled_frequency_zero(self):
+        now = timezone.now()
+        scheduled = Podcast(
+            active=True,
+            frequency=timedelta(seconds=0),
+            pub_date=now - timedelta(hours=1),
+        ).get_next_scheduled()
+        assert (scheduled - now).total_seconds() == pytest.approx(3600)
+
+    def test_get_next_scheduled_frequency_lt_one_hour(self):
+        now = timezone.now()
+        scheduled = Podcast(
+            active=True,
+            frequency=timedelta(seconds=60),
+            pub_date=now - timedelta(hours=1),
+        ).get_next_scheduled()
+        assert (scheduled - now).total_seconds() == pytest.approx(3600)
+
+    def test_get_next_scheduled_lt_now(self):
+        now = timezone.now()
+        scheduled = Podcast(
+            active=True,
+            frequency=timedelta(days=30),
+            pub_date=now - timedelta(days=60),
+        ).get_next_scheduled()
+        assert (scheduled - now).days == 30
+
+    def test_get_next_scheduled_gt_now(self):
+        now = timezone.now()
+        scheduled = Podcast(
+            active=True,
+            frequency=timedelta(days=7),
+            pub_date=now - timedelta(days=6),
+        ).get_next_scheduled()
+        assert (scheduled - now).days == 1

@@ -4,7 +4,7 @@ from jcasts.podcasts import tasks
 
 
 class Command(BaseCommand):
-    help = "Syncs podcast feeds"
+    help = "Schedule podcast feeds"
 
     def handle(self, *args, **options) -> None:
-        tasks.sync_frequent_podcast_feeds.delay()
+        tasks.schedule_podcast_feeds.delay()

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import collections
-import datetime
 import logging
 import operator
 import statistics
@@ -10,6 +9,7 @@ from typing import Generator
 
 import pandas
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
@@ -25,7 +25,6 @@ logger = logging.getLogger(__name__)
 
 NUM_MATCHES: int = 12
 NUM_RECENT_EPISODES: int = 6
-MAX_PUB_DAYS: int = 90
 
 
 def recommend() -> None:
@@ -49,7 +48,7 @@ def recommend() -> None:
 
 def get_podcast_queryset() -> QuerySet:
     return Podcast.objects.filter(
-        pub_date__gt=timezone.now() - datetime.timedelta(days=MAX_PUB_DAYS)
+        pub_date__gt=timezone.now() - settings.RELEVANCY_THRESHOLD
     ).exclude(extracted_text="")
 
 

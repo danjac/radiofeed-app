@@ -50,25 +50,43 @@ class TestCrawlItunes:
         mock_crawl_itunes.assert_called()
 
 
-class TestSyncPodcastFeedsTests:
+class TestSchedulePodcastFeedsTests:
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
+            autospec=True,
+        )
+
+    def test_schedule_podcast_feeds(self, db, mock_sync_podcast_feed):
+        now = timezone.now()
+
+        PodcastFactory(
+            frequency=timedelta(days=1),
+            pub_date=(now - timedelta(days=7)).replace(hour=now.hour),
+            active=True,
+        )
+        tasks.schedule_podcast_feeds()
+        mock_sync_podcast_feed.assert_called()
+
+    def test_schedule_podcast_feeds_none_scheduled(self, db, mock_sync_podcast_feed):
+
+        PodcastFactory(
+            frequency=None,
+            pub_date=None,
+            active=True,
+        )
+        tasks.schedule_podcast_feeds()
+        mock_sync_podcast_feed.assert_not_called()
+
+
+class TestSyncInfreqentPodcastFeedsTests:
     @pytest.fixture
     def mock_sync_podcast_feed(self, mocker):
         return mocker.patch(
             "jcasts.podcasts.tasks.sync_podcast_feed.delay",
             autospec=True,
         )
-
-    def test_sync_frequent_podcast_feeds(self, db, mock_sync_podcast_feed):
-        now = timezone.now()
-
-        podcast = PodcastFactory(
-            frequency=timedelta(days=1),
-            pub_date=(now - timedelta(days=7)).replace(hour=now.hour),
-            active=True,
-        )
-        tasks.sync_frequent_podcast_feeds()
-
-        mock_sync_podcast_feed.assert_called_with(podcast.id)
 
     def test_sync_infrequent_podcast_feeds(self, db, mock_sync_podcast_feed):
         now = timezone.now()
@@ -90,10 +108,34 @@ class TestSyncPodcastFeed:
             autospec=True,
         )
 
-    def test_ok(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.id)
-        mock_parse_feed.assert_called()
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
+            autospec=True,
+        )
 
-    def test_does_not_exist(self, db, mock_parse_feed):
+    def test_ok(self, db, mock_parse_feed, mock_sync_podcast_feed):
+        podcast = PodcastFactory(
+            frequency=timedelta(days=1),
+            pub_date=timezone.now(),
+        )
+        tasks.sync_podcast_feed(podcast.id)
+        mock_parse_feed.assert_called_with(podcast, force_update=False)
+        mock_sync_podcast_feed.assert_called_with(
+            (podcast.id,), eta=podcast.get_next_scheduled()
+        )
+
+    def test_no_next_scheduled(self, db, mock_parse_feed, mock_sync_podcast_feed):
+        podcast = PodcastFactory(
+            frequency=None,
+            pub_date=timezone.now(),
+        )
+        tasks.sync_podcast_feed(podcast.id)
+        mock_parse_feed.assert_called_with(podcast, force_update=False)
+        mock_sync_podcast_feed.assert_not_called()
+
+    def test_does_not_exist(self, db, mock_parse_feed, mock_sync_podcast_feed):
         tasks.sync_podcast_feed(1234)
         mock_parse_feed.assert_not_called()
+        mock_sync_podcast_feed.assert_not_called()

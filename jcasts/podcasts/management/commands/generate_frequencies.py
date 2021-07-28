@@ -1,5 +1,4 @@
-from datetime import timedelta
-
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -8,13 +7,13 @@ from jcasts.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
-    help = "One-off command to set starting frequencies for all podcasts"
+    help = "One-off command to set starting frequencies for all relevant podcasts"
 
     def handle(self, *args, **options) -> None:
         qs = Podcast.objects.filter(
-            pub_date__gte=timezone.now() - timedelta(days=90),
             active=True,
-            frequency__isnull=True,
+            pub_date__isnull=False,
+            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         ).order_by("-pub_date")
         total = qs.count()
 

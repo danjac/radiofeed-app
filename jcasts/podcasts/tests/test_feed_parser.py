@@ -122,7 +122,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast) is True
+        assert parse_feed(new_podcast)
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -133,7 +133,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast)
 
     def test_parse_feed(self, mocker, new_podcast, categories):
 
@@ -233,7 +233,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast)
 
         new_podcast.refresh_from_db()
 

@@ -13,6 +13,7 @@ import box
 import feedparser
 import requests
 
+from django.conf import settings
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from feedparser.http import ACCEPT_HEADER
@@ -69,7 +70,9 @@ def parse_feed(podcast: Podcast, force_update: bool = False) -> bool:
         # no change, ignore
         return handle_empty_result(podcast)
 
-    return sync_podcast(podcast, response)
+    sync_podcast(podcast, response)
+
+    return True
 
 
 def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
@@ -287,15 +290,15 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def calc_frequency(pub_dates: list[datetime], limit: int = 90) -> timedelta | None:
-    date_from = timezone.now() - timedelta(days=limit)
+def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
+    max_date = timezone.now() - settings.RELEVANCY_THRESHOLD
     pub_dates = [
-        pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > date_from
+        pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > max_date
     ]
     if not pub_dates:
         return None
-    prev = timezone.now()
     diffs = []
+    prev = timezone.now()
     for pub_date in pub_dates:
         diffs.append((prev - pub_date).days)
         prev = pub_date
@@ -334,16 +337,29 @@ def resolve_podcast_rss(
     )
 
 
-def handle_empty_result(podcast: Podcast, **fields) -> bool:
+def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
     # re-schedule next feed sync
-    pub_dates = (
-        Episode.objects.filter(podcast=podcast)
-        .values_list("pub_date", flat=True)
-        .order_by("-pub_date")
-    )
-    data = {
+
+    if active:
+        pub_dates = (
+            Episode.objects.filter(podcast=podcast)
+            .values_list("pub_date", flat=True)
+            .order_by("-pub_date")
+        )
+        frequency = calc_frequency(pub_dates)
+    else:
+        frequency = None
+
+    for_update = {
         **fields,
-        "frequency": calc_frequency(pub_dates),
+        "active": active,
+        "frequency": frequency,
+        "updated": timezone.now(),
     }
-    Podcast.objects.filter(pk=podcast.id).update(**data)
+
+    for k, v in for_update.items():
+        setattr(podcast, k, v)
+
+    podcast.save(update_fields=for_update.keys())
+
     return False

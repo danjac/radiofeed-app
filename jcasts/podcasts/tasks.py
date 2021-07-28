@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from jcasts.podcasts import itunes
 from jcasts.podcasts.emails import send_recommendations_email
@@ -31,18 +33,33 @@ def create_podcast_recommendations() -> None:
     recommend()
 
 
-@shared_task(name="jcasts.podcasts.sync_frequent_podcast_feeds")
-def sync_frequent_podcast_feeds() -> None:
-    for podcast_id in (
-        Podcast.objects.frequent().order_by("-scheduled").values_list("id", flat=True)
-    ):
-        sync_podcast_feed.delay(podcast_id)
+@shared_task(name="jcasts.podcasts.schedule_podcast_feeds")
+def schedule_podcast_feeds() -> None:
+    """Schedules recent podcasts to run at allotted time."""
+    for podcast in (
+        Podcast.objects.filter(
+            active=True,
+            frequency__isnull=False,
+            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        ).order_by("-pub_date")
+    ).iterator():
+        if scheduled := podcast.get_next_scheduled():
+            sync_podcast_feed.apply_async((podcast.id,), eta=scheduled)
 
 
-@shared_task(name="jcasts.podcasts.sync_podcast_feeds")
-def sync_infrequent_podcast_feeds() -> None:
+@shared_task(name="jcasts.podcasts.sync_infrequent_podcast_feeds")
+def sync_infrequent_podcast_feeds():
+    """Matches any older feeds with pub date having same weekday. Should be run daily."""
+    now = timezone.now()
     for podcast_id in (
-        Podcast.objects.infrequent().order_by("-pub_date").values_list("id", flat=True)
+        Podcast.objects.filter(
+            active=True,
+            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
+            pub_date__iso_week_day=now.isoweekday(),
+        )
+        .order_by("-pub_date")
+        .values_list("pk", flat=True)
+        .iterator()
     ):
         sync_podcast_feed.delay(podcast_id)
 
@@ -53,8 +70,9 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
         logger.info(f"Sync podcast {podcast}")
 
-        if parse_feed(podcast, force_update=force_update):
-            logger.info(f"{podcast} updated")
+        parse_feed(podcast, force_update=force_update)
+        if scheduled := podcast.get_next_scheduled():
+            sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
 
     except Podcast.DoesNotExist:
         logger.debug(f"No podcast found for ID {podcast_id}")
