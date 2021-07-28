@@ -68,6 +68,16 @@ def sync_infrequent_podcast_feeds():
 def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
+
+        # ensure duplicate tasks not executed
+        if (
+            not force_update
+            and podcast.updated
+            and (timezone.now() - podcast.updated).total_seconds() < 3600
+        ):
+            logger.info(f"{podcast} just updated at {podcast.updated}, ignore")
+            return
+
         logger.info(f"Sync podcast {podcast}")
 
         success = parse_feed(podcast, force_update=force_update)

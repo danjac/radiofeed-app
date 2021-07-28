@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from jcasts.podcasts import tasks
 from jcasts.podcasts.factories import PodcastFactory
+from jcasts.podcasts.models import Podcast
 from jcasts.users.factories import UserFactory
 
 
@@ -116,21 +117,33 @@ class TestSyncPodcastFeed:
         )
 
     def test_ok(self, db, mock_parse_feed, mock_sync_podcast_feed):
+        now = timezone.now()
         podcast = PodcastFactory(
             frequency=timedelta(days=1),
-            pub_date=timezone.now(),
+            pub_date=now - timedelta(days=3),
         )
+        Podcast.objects.filter(pk=podcast.id).update(updated=now - timedelta(days=3))
         tasks.sync_podcast_feed(podcast.id)
         mock_parse_feed.assert_called_with(podcast, force_update=False)
-        mock_sync_podcast_feed.assert_called_with(
-            (podcast.id,), eta=podcast.get_next_scheduled()
+        mock_sync_podcast_feed.assert_called()
+
+    def test_too_recent(self, db, mock_parse_feed, mock_sync_podcast_feed):
+        now = timezone.now()
+        podcast = PodcastFactory(
+            frequency=timedelta(days=1),
+            pub_date=now - timedelta(days=3),
         )
+        tasks.sync_podcast_feed(podcast.id)
+        mock_parse_feed.assert_not_called()
+        mock_sync_podcast_feed.assert_not_called()
 
     def test_no_next_scheduled(self, db, mock_parse_feed, mock_sync_podcast_feed):
+        now = timezone.now()
         podcast = PodcastFactory(
             frequency=None,
-            pub_date=timezone.now(),
+            pub_date=now - timedelta(days=3),
         )
+        Podcast.objects.filter(pk=podcast.id).update(updated=now - timedelta(days=3))
         tasks.sync_podcast_feed(podcast.id)
         mock_parse_feed.assert_called_with(podcast, force_update=False)
         mock_sync_podcast_feed.assert_not_called()
