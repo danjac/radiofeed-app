@@ -187,7 +187,7 @@ class TestPodcastModel:
             frequency=timedelta(days=30),
             pub_date=now - timedelta(days=60),
         ).get_next_scheduled()
-        assert (scheduled - now).days == 30
+        assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
     def test_get_next_scheduled_gt_now(self):
         now = timezone.now()
