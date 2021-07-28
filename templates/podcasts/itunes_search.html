@@ -5,17 +5,15 @@
 {% block search_content %}
 
 
-<div class="divide-y divide-gray-300 dark:divide-gray-500">
-  {% for result in results %}
-  {% include "podcasts/_itunes_result.html" %}
-  {% empty %}
-  <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
+{% for result in results %}
+{% include "podcasts/_itunes_result.html" %}
+{% empty %}
+<p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
   {% if error %}
-    Unable to connect to the ITunes API at the moment.
+  Unable to connect to the ITunes API at the moment.
   {% elif search %}
-    No results found for <span class="font-bold">{{ search }}</span>.
-    {% endif %}
+  No results found for <span class="font-bold">{{ search }}</span>.
+  {% endif %}
   {% endfor %}
-  </p>
-</div>
+</p>
 {% endblock %}

@@ -45,38 +45,38 @@ def schedule_podcast_feeds() -> None:
         ).order_by("-pub_date")
     ).iterator():
         if scheduled := podcast.get_next_scheduled():
-            sync_podcast_feed.apply_async((podcast.id,), eta=scheduled)
+            sync_podcast_feed.apply_async((podcast.rss,), eta=scheduled)
 
 
 @shared_task(name="jcasts.podcasts.sync_infrequent_podcast_feeds")
 def sync_infrequent_podcast_feeds():
     """Matches any older feeds with pub date having same weekday. Should be run daily."""
     now = timezone.now()
-    for podcast_id in (
+    for rss in (
         Podcast.objects.filter(
             active=True,
             pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
             pub_date__iso_week_day=now.isoweekday(),
         )
         .order_by("-pub_date")
-        .values_list("pk", flat=True)
+        .values_list("rss", flat=True)
         .iterator()
     ):
-        sync_podcast_feed.delay(podcast_id)
+        sync_podcast_feed.delay(rss)
 
 
 @shared_task(name="jcasts.podcasts.sync_podcast_feed")
-def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
+def sync_podcast_feed(rss: int, *, force_update: bool = False) -> None:
 
-    if not cache.set(f"sync_podcast_feed:{podcast_id}", 1, 3600, nx=True):
-        logger.info(f"Task for podcast id {podcast_id} is locked")
+    if not cache.set(f"sync_podcast_feed:{rss}", 1, 3600, nx=True):
+        logger.info(f"Task for podcast rss {rss} is locked")
         return
 
     try:
 
-        podcast = Podcast.objects.get(pk=podcast_id, active=True)
+        podcast = Podcast.objects.get(rss=rss, active=True)
     except Podcast.DoesNotExist:
-        logger.debug(f"No podcast found for id {podcast_id}")
+        logger.debug(f"No podcast found for rss {rss}")
         return
 
     success = parse_feed(podcast, force_update=force_update)
@@ -84,4 +84,4 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
 
     if scheduled := podcast.get_next_scheduled():
         logger.info(f"{podcast} next pull: {scheduled}")
-        sync_podcast_feed.apply_async((podcast_id,), eta=scheduled)
+        sync_podcast_feed.apply_async((rss,), eta=scheduled)
