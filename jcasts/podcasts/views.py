@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST, require_safe
 from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
-from jcasts.podcasts.tasks import sync_podcast_feed
+from jcasts.podcasts.scheduler import sync_podcast_feed
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent

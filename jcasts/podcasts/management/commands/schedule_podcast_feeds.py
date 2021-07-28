@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import tasks
+from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
     help = "Schedule podcast feeds"
 
     def handle(self, *args, **options) -> None:
-        tasks.schedule_podcast_feeds()
+        scheduler.schedule_podcast_feeds()
