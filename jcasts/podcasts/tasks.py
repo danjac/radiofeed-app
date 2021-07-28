@@ -80,7 +80,7 @@ def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
         return
 
     success = parse_feed(podcast, force_update=force_update)
-    logger.info(f"{Podcast} pull {'OK' if success else 'FAIL'}")
+    logger.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
 
     if scheduled := podcast.get_next_scheduled():
         logger.info(f"{podcast} next pull: {scheduled}")
