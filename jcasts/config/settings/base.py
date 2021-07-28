@@ -1,6 +1,7 @@
 import pathlib
 import socket
 
+from datetime import timedelta
 from email.utils import getaddresses
 
 import environ
@@ -241,6 +242,10 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
+
+# Project-specific
+
+RELEVANCY_THRESHOLD = timedelta(days=env.int("RELEVANCY_THRESHOLD_DAYS", default=90))
 
 PRIVACY_DETAILS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),

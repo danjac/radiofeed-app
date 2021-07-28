@@ -54,11 +54,11 @@ class TestSyncPodcastFeedsTests:
     @pytest.fixture
     def mock_sync_podcast_feed(self, mocker):
         return mocker.patch(
-            "jcasts.podcasts.tasks.sync_podcast_feed.delay",
+            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
             autospec=True,
         )
 
-    def test_sync_frequent_podcast_feeds(self, db, mock_sync_podcast_feed):
+    def test_sync_podcast_feeds(self, db, mock_sync_podcast_feed):
         now = timezone.now()
 
         podcast = PodcastFactory(
@@ -67,8 +67,18 @@ class TestSyncPodcastFeedsTests:
             active=True,
         )
         tasks.sync_frequent_podcast_feeds()
+        mock_sync_podcast_feed.assert_called_with(
+            (podcast.id,), eta=podcast.get_next_scheduled()
+        )
 
-        mock_sync_podcast_feed.assert_called_with(podcast.id)
+
+class TestSyncInfreqentPodcastFeedsTests:
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.tasks.sync_podcast_feed.delay",
+            autospec=True,
+        )
 
     def test_sync_infrequent_podcast_feeds(self, db, mock_sync_podcast_feed):
         now = timezone.now()
@@ -90,10 +100,21 @@ class TestSyncPodcastFeed:
             autospec=True,
         )
 
-    def test_ok(self, db, podcast, mock_parse_feed):
-        tasks.sync_podcast_feed(podcast.id)
-        mock_parse_feed.assert_called()
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.tasks.sync_podcast_feed.apply_async",
+            autospec=True,
+        )
 
-    def test_does_not_exist(self, db, mock_parse_feed):
+    def test_ok(self, db, podcast, mock_parse_feed, mock_sync_podcast_feed):
+        tasks.sync_podcast_feed(podcast.id)
+        mock_parse_feed.assert_called_with(podcast)
+        mock_sync_podcast_feed.assert_called_with(
+            (podcast.id,), eta=podcast.get_next_scheduled()
+        )
+
+    def test_does_not_exist(self, db, mock_parse_feed, mock_sync_podcast_feed):
         tasks.sync_podcast_feed(1234)
         mock_parse_feed.assert_not_called()
+        mock_sync_podcast_feed.assert_not_called()
