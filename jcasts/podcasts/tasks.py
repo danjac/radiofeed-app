@@ -64,7 +64,7 @@ def sync_infrequent_podcast_feeds():
         sync_podcast_feed.delay(podcast_id)
 
 
-@shared_task(name="jcasts.podcasts.sync_podcast_feed")
+@shared_task(name="jcasts.podcasts.sync_podcast_feed", acks_late=False)
 def sync_podcast_feed(podcast_id: int, *, force_update: bool = False) -> None:
     try:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
