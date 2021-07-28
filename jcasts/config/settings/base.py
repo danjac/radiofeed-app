@@ -192,7 +192,9 @@ MESSAGE_TAGS = {
 # https://celery.readthedocs.io/en/latest/userguide/configuration.html
 
 result_backend = CELERY_BROKER_URL = REDIS_URL
-result_backend_transport_options = {'visibility_timeout': 24 * 60 * 60 * RELEVANCY_THRESHOLD.days}
+result_backend_transport_options = {
+    "visibility_timeout": 24 * 60 * 60 * RELEVANCY_THRESHOLD.days
+}
 result_serializer = "json"
 task_acks_late = True
 task_track_started = True
@@ -249,7 +251,6 @@ LOGGING = {
 # Project-specific
 
 
-
 PRIVACY_DETAILS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "host_country": env("HOST_COUNTRY", default="Finland"),
@@ -263,4 +264,3 @@ GRAVATAR_DEFAULT_RATING = env("GRAVATAR_DEFAULT_RATING", default="g")
 DEFAULT_ITUNES_LIMIT = env.int("DEFAULT_ITUNES_LIMIT", default=DEFAULT_PAGE_SIZE)
 
 TWITTER_ACCOUNT = env("TWITTER_ACCOUNT", default=None)
-
