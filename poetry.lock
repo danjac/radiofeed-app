@@ -249,6 +249,17 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 toml = ["toml"]
 
 [[package]]
+name = "croniter"
+version = "1.0.15"
+description = "croniter provides iteration for datetime object with cron like format"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.dependencies]
+python-dateutil = "*"
+
+[[package]]
 name = "cryptography"
 version = "3.4.7"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
@@ -441,6 +452,23 @@ python-versions = ">=3.6"
 [package.dependencies]
 Django = ">=2.2"
 redis = ">=3.0.0"
+
+[[package]]
+name = "django-rq"
+version = "2.4.1"
+description = "An app that provides django integration for RQ (Redis Queue)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+django = ">=2.0"
+redis = ">=3"
+rq = ">=1.2"
+
+[package.extras]
+Sentry = ["raven (>=6.1.0)"]
+testing = ["mock (>=2.0.0)"]
 
 [[package]]
 name = "django-split-settings"
@@ -1149,6 +1177,31 @@ requests = ">=2.0.0"
 rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
+name = "rq"
+version = "1.9.0"
+description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+click = ">=5.0.0"
+redis = ">=3.5.0"
+
+[[package]]
+name = "rq-scheduler"
+version = "0.11.0"
+description = "Provides job scheduling capabilities to RQ (Redis Queue)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+croniter = ">=0.3.9"
+python-dateutil = "*"
+rq = ">=0.13"
+
+[[package]]
 name = "scikit-learn"
 version = "0.24.2"
 description = "A set of python modules for machine learning and data mining"
@@ -1390,7 +1443,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "133cee125f5da397ccd2f6eaaabc85d7b41d130712d93bfaab90528a40a041e1"
+content-hash = "c45004fb5a1ca37f9c33f90bfd9403fb021babb18b53c0ae941313465fe7c1e3"
 
 [metadata.files]
 amqp = [
@@ -1596,6 +1649,10 @@ coverage = [
     {file = "coverage-5.5-pp37-none-any.whl", hash = "sha256:2a3859cb82dcbda1cfd3e6f71c27081d18aa251d20a17d87d26d4cd216fb0af4"},
     {file = "coverage-5.5.tar.gz", hash = "sha256:ebe78fe9a0e874362175b02371bdfbee64d8edc42a044253ddf4ee7d3c15212c"},
 ]
+croniter = [
+    {file = "croniter-1.0.15-py2.py3-none-any.whl", hash = "sha256:0f97b361fe343301a8f66f852e7d84e4fb7f21379948f71e1bbfe10f5d015fbd"},
+    {file = "croniter-1.0.15.tar.gz", hash = "sha256:a70dfc9d52de9fc1a886128b9148c89dd9e76b67d55f46516ca94d2d73d58219"},
+]
 cryptography = [
     {file = "cryptography-3.4.7-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:3d8427734c781ea5f1b41d6589c293089704d4759e34597dce91014ac125aad1"},
     {file = "cryptography-3.4.7-cp36-abi3-macosx_11_0_arm64.whl", hash = "sha256:8e56e16617872b0957d1c9742a3f94b43533447fd78321514abbe7db216aa250"},
@@ -1668,6 +1725,10 @@ django-permissions-policy = [
 django-redis = [
     {file = "django-redis-5.0.0.tar.gz", hash = "sha256:048f665bbe27f8ff2edebae6aa9c534ab137f1e8fa7234147ef470df3f3aa9b8"},
     {file = "django_redis-5.0.0-py3-none-any.whl", hash = "sha256:97739ca9de3f964c51412d1d7d8aecdfd86737bb197fce6e1ff12620c63c97ee"},
+]
+django-rq = [
+    {file = "django-rq-2.4.1.tar.gz", hash = "sha256:f09059ab37403a47c7933bca396fabb7f3058732d132462eade5333bc4bcac5f"},
+    {file = "django_rq-2.4.1-py2.py3-none-any.whl", hash = "sha256:23981f83c537178cbbf730f192c13e99cede2204e9d917b1c1c80c42215dd227"},
 ]
 django-split-settings = [
     {file = "django-split-settings-1.0.1.tar.gz", hash = "sha256:2da16cd967cd38315ec7ff0ae0c9db8488f8528bb2e5de26cd898328dc4bbeac"},
@@ -2053,6 +2114,14 @@ requests-oauthlib = [
     {file = "requests-oauthlib-1.3.0.tar.gz", hash = "sha256:b4261601a71fd721a8bd6d7aa1cc1d6a8a93b4a9f5e96626f8e4d91e8beeaa6a"},
     {file = "requests_oauthlib-1.3.0-py2.py3-none-any.whl", hash = "sha256:7f71572defaecd16372f9006f33c2ec8c077c3cfa6f5911a9a90202beb513f3d"},
     {file = "requests_oauthlib-1.3.0-py3.7.egg", hash = "sha256:fa6c47b933f01060936d87ae9327fead68768b69c6c9ea2109c48be30f2d4dbc"},
+]
+rq = [
+    {file = "rq-1.9.0-py2.py3-none-any.whl", hash = "sha256:7af1e9706dbe6f1eac16dffacd8271ec27c1369950941f14dab6bb08a62979d7"},
+    {file = "rq-1.9.0.tar.gz", hash = "sha256:bdfef943de838955e474cfd0e25b9b8c53ed4b9c361fe4bb11cf56d17a87acc5"},
+]
+rq-scheduler = [
+    {file = "rq-scheduler-0.11.0.tar.gz", hash = "sha256:db79bb56cdbc4f7ffdd8bd659e389e91aa0db9c1abf002dc46f5dd6f0dbd2910"},
+    {file = "rq_scheduler-0.11.0-py2.py3-none-any.whl", hash = "sha256:da94e9b6badf112995ff38fe16192e4f4c43c412b3c9614684ed8c8f7ca517d2"},
 ]
 scikit-learn = [
     {file = "scikit-learn-0.24.2.tar.gz", hash = "sha256:d14701a12417930392cd3898e9646cf5670c190b933625ebe7511b1f7d7b8736"},

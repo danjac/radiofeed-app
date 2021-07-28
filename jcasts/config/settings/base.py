@@ -28,6 +28,12 @@ REDIS_URL = env("REDIS_URL")
 
 CACHES = {"default": env.cache("REDIS_URL")}
 
+RQ_QUEUES = {
+    "default": {
+        "USE_REDIS_CACHE": "default",
+    },
+}
+
 DEFAULT_CACHE_TIMEOUT = 3600
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
@@ -243,6 +249,7 @@ LOGGING = {
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
+        "rq.worker": {"handlers": ["console"], "level": "DEBUG"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
