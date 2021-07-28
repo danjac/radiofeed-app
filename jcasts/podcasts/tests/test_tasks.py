@@ -97,7 +97,7 @@ class TestSyncInfreqentPodcastFeedsTests:
         )
         tasks.sync_infrequent_podcast_feeds()
 
-        mock_sync_podcast_feed.assert_called_with(podcast.id)
+        mock_sync_podcast_feed.assert_called_with(podcast.rss)
 
 
 class TestSyncPodcastFeed:
