@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "djcelery_email",
     "widget_tweaks",
+    "django_rq",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
