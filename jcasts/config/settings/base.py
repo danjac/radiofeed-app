@@ -196,7 +196,7 @@ result_backend_transport_options = {
     "visibility_timeout": 24 * 60 * 60 * RELEVANCY_THRESHOLD.days
 }
 result_serializer = "json"
-task_acks_late = True
+task_acks_late = False
 task_track_started = True
 
 # https://django-taggit.readthedocs.io/en/latest/getting_started.html
