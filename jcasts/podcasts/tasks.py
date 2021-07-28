@@ -4,8 +4,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.cache import cache
-from django.db.models import Q
 from django.utils import timezone
 from django_rq import get_scheduler, job
 
@@ -36,22 +34,6 @@ def create_podcast_recommendations() -> None:
     recommend()
 
 
-def sync_infrequent_podcast_feeds():
-    """Matches any older feeds with pub date having same weekday. Should be run daily."""
-    now = timezone.now()
-    for podcast_id in (
-        Podcast.objects.filter(
-            active=True,
-            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
-            pub_date__iso_week_day=now.isoweekday(),
-        )
-        .order_by("-pub_date")
-        .values_list("pk", flat=True)
-        .iterator()
-    ):
-        sync_podcast_feed.delay(podcast_id)
-
-
 def schedule_podcast_feeds() -> None:
     """Schedules recent podcasts to run at allotted time."""
     for podcast in (
@@ -65,20 +47,16 @@ def schedule_podcast_feeds() -> None:
 
 
 @job
-def sync_podcast_feed(identifier: int | str, *, force_update: bool = False) -> None:
+def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
 
-    if not cache.set(f"sync_podcast_feed:{identifier}", 1, 3600, nx=True):
-        logging.info(f"Task for podcast {identifier} is locked")
-        return
+    # if not cache.set(f"sync_podcast_feed:{rss}", 1, 3600, nx=True):
+    # logging.info(f"Task for podcast {rss} is locked")
+    # return
 
     try:
 
-        podcast = Podcast.objects.filter(
-            Q(Q(pk=identifier) | Q(rss=identifier)),
-            active=True,
-        ).get()
+        podcast = Podcast.objects.get(rss=rss, active=True)
     except Podcast.DoesNotExist:
-        logging.debug(f"No podcast found for {identifier}")
         return
 
     success = parse_feed(podcast, force_update=force_update)

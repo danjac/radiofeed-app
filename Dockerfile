@@ -49,14 +49,15 @@ RUN npm ci
 
 # scripts
 
-COPY ./scripts/docker/entrypoint /entrypoint
+COPY ./docker/entrypoint /entrypoint
 RUN chmod +x /entrypoint
 
-COPY ./scripts/docker/start-webapp /start-webapp
+COPY ./docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 
-COPY ./scripts/docker/start-worker /start-worker
+COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
 
-COPY ./scripts/docker/start-scheduler /start-scheduler
+COPY ./docker/start-scheduler /start-scheduler
 RUN chmod +x /start-scheduler
+
