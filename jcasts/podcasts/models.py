@@ -173,15 +173,16 @@ class Podcast(models.Model):
             return None
 
         now = timezone.now()
+        min_delta = timedelta(hours=1)
 
         # minimum 1 hour
-        frequency = max(self.frequency, timedelta(hours=1))
+        frequency = max(self.frequency, min_delta)
 
         # should always be in future
         if (scheduled := self.pub_date + frequency) > now:
             return scheduled
 
-        return now + frequency
+        return now + min_delta
 
     @property
     def slug(self) -> str:
