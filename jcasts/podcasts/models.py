@@ -81,7 +81,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             active=True,
             scheduled__lte=now,
             scheduled__gte=now - timedelta(days=90),
-            pub_date__hour__in=[h for h in range(0, 25) if h % 2 == now.hour % 2],
+            scheduled__hour__in=[now.hour, abs(now.hour - 12)],
         )
 
     def infrequent(self) -> models.QuerySet:
