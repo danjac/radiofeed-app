@@ -3,5 +3,19 @@
     "dokku": {
       "predeploy": "python manage.py collectstatic --clear --noinput && python manage.py migrate --noinput"
     }
-  }
+  },
+  "cron": [
+    {
+      "command": "python manage.py sync_infrequent_feeds",
+      "schedule": "15 3 * * *"
+    },
+    {
+      "command": "python manage.py send_recommendation_emails",
+      "schedule": "0 9 * * 1"
+    },
+    {
+      "command": "python manage.py make_recommendations",
+      "schedule": "15 6 * * *"
+    }
+  ]
 }
