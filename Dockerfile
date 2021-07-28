@@ -49,15 +49,15 @@ RUN npm ci
 
 # scripts
 
-COPY ./scripts/docker/entrypoint /entrypoint
+COPY ./docker/entrypoint /entrypoint
 RUN chmod +x /entrypoint
 
-COPY ./scripts/docker/start-webapp /start-webapp
+COPY ./docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 
-COPY ./scripts/docker/start-celeryworker /start-celeryworker
-RUN chmod +x /start-celeryworker
+COPY ./docker/start-worker /start-worker
+RUN chmod +x /start-worker
 
-COPY ./scripts/docker/start-celerybeat /start-celerybeat
-RUN chmod +x /start-celerybeat
+COPY ./docker/start-scheduler /start-scheduler
+RUN chmod +x /start-scheduler
 
