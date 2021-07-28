@@ -84,7 +84,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
             error = True
 
     for podcast in new_podcasts:
-        sync_podcast_feed.delay(podcast.id)
+        sync_podcast_feed.delay(podcast.id, force_update=True)
 
     return TemplateResponse(
         request,
@@ -235,7 +235,7 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
         error = True
 
     for podcast in new_podcasts:
-        sync_podcast_feed.delay(podcast.id)
+        sync_podcast_feed.delay(podcast.id, force_update=True)
 
     return TemplateResponse(
         request,
