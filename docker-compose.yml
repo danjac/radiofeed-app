@@ -66,15 +66,15 @@ services:
       - '80:8000'
     command: /start-webapp
 
-  celeryworker:
+  worker:
     <<: *django
-    command: /start-celeryworker
+    command: /start-worker
 
-  celerybeat:
+  scheduler:
     <<: *django
-    command: /start-celerybeat
+    command: /start-scheduler
     depends_on:
-      - celeryworker
+      - worker
       - webapp
 
 volumes:

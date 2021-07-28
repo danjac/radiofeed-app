@@ -8,29 +8,29 @@ Local development requires docker and docker-compose. Just run:
 
 Next load the categories and sample podcasts into the database:
 
-> ./scripts/manage seed_podcast_data
+> ./bin/manage seed_podcast_data
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./scripts/manage sync_podcast_feeds 
+> ./bin/manage sync_podcast_feeds
 
 You can then generate podcast recommendations with this command:
 
-> ./scripts/manage make_recommendations
+> ./bin/manage make_recommendations
 
 You an also create a super user if you wish to access the Django admin:
 
-> ./scripts/manage createsuperuser
+> ./bin/manage createsuperuser
 
 You can access the development app in your browser at http://localhost.
 
 To run unit tests:
 
-> ./scripts/runtests [...]
+> ./bin/runtests [...]
 
 This script takes the same arguments as _./python -m pytest_ e.g.:
 
-> ./scripts/runtests -x --ff
+> ./bin/runtests -x --ff
 
 ## Deployment
 
