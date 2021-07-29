@@ -15,11 +15,15 @@ from jcasts.podcasts.models import Podcast
 def schedule_podcast_feeds(reset: bool = False) -> int:
     if reset:
         Podcast.objects.update(scheduled=None)
+
     qs = Podcast.objects.filter(
         active=True,
         scheduled__isnull=True,
+        frequency__isnull=False,
+        pub_date__isnull=False,
         pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
     ).order_by("-pub_date")
+
     total = qs.count()
 
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
@@ -85,7 +89,6 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     except Podcast.DoesNotExist:
         return
 
-    print("parser", parse_feed)
     success = parse_feed(podcast, force_update=force_update)
     logging.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
     if podcast.scheduled:
