@@ -100,7 +100,8 @@ class TestSyncSporadicFeeds:
     @pytest.mark.parametrize(
         "active,last_pub,result",
         [
-            (True, timedelta(days=99), 1),
+            (True, timedelta(days=105), 1),
+            (True, timedelta(days=99), 0),
             (True, timedelta(days=30), 0),
             (True, None, 0),
             (False, timedelta(days=99), 0),

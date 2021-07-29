@@ -64,11 +64,14 @@ def sync_frequent_feeds(force_update: bool = False) -> int:
 
 
 def sync_sporadic_feeds() -> int:
+    "Should run daily. Matches older feeds with same weekday in last pub date"
+    now = timezone.now()
     counter = 0
     for counter, rss in enumerate(
         Podcast.objects.filter(
             active=True,
-            pub_date__lt=timezone.now() - settings.RELEVANCY_THRESHOLD,
+            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
+            pub_date__iso_week_day=now.isoweekday(),
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
