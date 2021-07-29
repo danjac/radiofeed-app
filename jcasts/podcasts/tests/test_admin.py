@@ -50,7 +50,7 @@ class TestPodcastAdmin:
         assert Podcast.objects.filter(error_status=None, active=True).count() == 4
 
     def test_sync_podcast_feeds(self, podcast, admin, req, mocker):
-        mock_task = mocker.patch("jcasts.podcasts.tasks.sync_podcast_feed.delay")
+        mock_task = mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed.delay")
         admin.sync_podcast_feeds(req, Podcast.objects.all())
         mock_task.assert_called_with(podcast.rss, force_update=True)
 

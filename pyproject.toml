@@ -54,6 +54,7 @@ pytest-xdist = "^2.3.0"
 pytest-cov = "^2.12.1"
 pytest-mock = "^3.6.1"
 pytest-randomly = "^3.8.0"
+fakeredis = "^1.5.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
