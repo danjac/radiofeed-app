@@ -12,7 +12,9 @@ from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
 
 
-def schedule_podcast_feeds() -> int:
+def schedule_podcast_feeds(reset: bool = False) -> int:
+    if reset:
+        Podcast.objects.update(scheduled=None)
     qs = Podcast.objects.filter(
         active=True,
         scheduled__isnull=True,

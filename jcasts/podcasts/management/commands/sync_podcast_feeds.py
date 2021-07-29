@@ -4,7 +4,7 @@ from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
-    help = "Schedule podcast feeds"
+    help = "Run podcast feed updates"
 
     def add_arguments(self, parser) -> None:
         parser.add_argument(
