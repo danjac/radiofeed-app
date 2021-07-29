@@ -35,6 +35,7 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     Podcast.objects.bulk_update(
         _schedule_podcast_feeds(), ["scheduled"], batch_size=1000
     )
+
     return total
 
 

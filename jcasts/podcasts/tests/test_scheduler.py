@@ -52,11 +52,50 @@ class TestSchedulePodcastFeeds:
 
 
 class TestSyncFrequentFeeds:
-    ...
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed.delay")
+
+    @pytest.mark.parametrize(
+        "force_update,active,scheduled,last_pub,result",
+        [
+            (False, True, timedelta(hours=-1), timedelta(days=30), 1),
+            (False, True, timedelta(hours=1), timedelta(days=30), 0),
+            (True, True, timedelta(hours=1), timedelta(days=30), 1),
+            (False, False, timedelta(hours=-1), timedelta(days=30), 0),
+            (False, False, None, timedelta(days=30), 0),
+            (False, True, timedelta(hours=-1), timedelta(days=99), 0),
+            (True, True, timedelta(hours=-1), timedelta(days=99), 0),
+        ],
+    )
+    def test_sync_frequent_feeds(
+        self,
+        db,
+        mock_sync_podcast_feed,
+        force_update,
+        active,
+        scheduled,
+        last_pub,
+        result,
+    ):
+        now = timezone.now()
+        PodcastFactory(
+            active=active,
+            scheduled=now + scheduled if scheduled else None,
+            pub_date=now - last_pub if last_pub else None,
+        )
+        assert scheduler.sync_frequent_feeds(force_update=force_update) == result
+
+        if result:
+            mock_sync_podcast_feed.assert_called()
+        else:
+            mock_sync_podcast_feed.assert_not_called()
 
 
 class TestSyncSporadicFeeds:
-    ...
+    @pytest.fixture
+    def mock_sync_podcast_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed")
 
 
 class TestSyncPodcastFeed:
