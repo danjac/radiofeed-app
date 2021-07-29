@@ -13,21 +13,23 @@ from jcasts.podcasts.models import Podcast
 
 
 def schedule_podcast_feeds() -> int:
+    qs = Podcast.objects.filter(
+        active=True,
+        scheduled__isnull=True,
+        pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+    ).order_by("-pub_date")
+    total = qs.count()
+
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
         """Schedules recent podcasts to run at allotted time."""
-        for podcast in (
-            Podcast.objects.filter(
-                active=True,
-                scheduled__isnull=True,
-                pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
-            ).order_by("-pub_date")
-        ).iterator():
+        for podcast in qs.iterator():
             podcast.scheduled = podcast.get_next_scheduled()
             yield podcast
 
-    return Podcast.objects.bulk_update(
+    Podcast.objects.bulk_update(
         _schedule_podcast_feeds(), ["scheduled"], batch_size=1000
     )
+    return total
 
 
 def sync_frequent_feeds() -> int:
