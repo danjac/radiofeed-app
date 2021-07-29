@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import recommender
+from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
-    help = "Updates all podcasts from their RSS feeds."
+    help = "Schedule podcast feeds"
 
     def handle(self, *args, **options) -> None:
-        recommender.recommend()
+        scheduler.sync_podcast_feeds()

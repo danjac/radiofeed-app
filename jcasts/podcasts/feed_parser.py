@@ -350,16 +350,12 @@ def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
     else:
         frequency = None
 
-    for_update = {
+    Podcast.objects.filter(pk=podcast.id).update(
+        active=active,
+        frequency=frequency,
+        updated=timezone.now(),
+        scheduled=podcast.get_next_scheduled(),
         **fields,
-        "active": active,
-        "frequency": frequency,
-        "updated": timezone.now(),
-    }
-
-    for k, v in for_update.items():
-        setattr(podcast, k, v)
-
-    podcast.save(update_fields=for_update.keys())
+    )
 
     return False

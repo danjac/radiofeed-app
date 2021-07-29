@@ -86,6 +86,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
+        "scheduled",
     )
     list_editable = ("promoted",)
     search_fields = ("search_document",)
@@ -100,6 +101,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "frequency",
+        "scheduled",
         "num_episodes",
     )
 
