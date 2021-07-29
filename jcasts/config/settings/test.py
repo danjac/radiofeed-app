@@ -1,6 +1,9 @@
+import django_rq.queues
+import fakeredis
+
 from split_settings.tools import include
 
-from jcasts.config.settings.base import ALLOWED_HOSTS, REDIS_URL
+from jcasts.config.settings.base import ALLOWED_HOSTS
 
 include("base.py")
 
@@ -12,10 +15,14 @@ ALLOWED_HOSTS += [".example.com"]
 
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
+# workaround: https://github.com/rq/django-rq/issues/317#issuecomment-505266162
+
+django_rq.queues.get_redis_connection = (
+    lambda _, strict: fakeredis.FakeStrictRedis() if strict else fakeredis.FakeRedis()
+)
+
 RQ_QUEUES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {"CLIENT_CLASS": "fakeredis.FakeStrictRedis"},
-    },
+        "ASYNC": False,
+    }
 }

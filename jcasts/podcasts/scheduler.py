@@ -85,6 +85,7 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
     except Podcast.DoesNotExist:
         return
 
+    print("parser", parse_feed)
     success = parse_feed(podcast, force_update=force_update)
     logging.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
     if podcast.scheduled:
