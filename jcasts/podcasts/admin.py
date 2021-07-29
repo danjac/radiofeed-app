@@ -7,7 +7,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.tasks import sync_podcast_feed
+from jcasts.podcasts.scheduler import sync_podcast_feed
 
 
 @admin.register(Category)

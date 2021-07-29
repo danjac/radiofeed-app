@@ -7,4 +7,5 @@ class Command(BaseCommand):
     help = "Schedule podcast feeds"
 
     def handle(self, *args, **options) -> None:
-        scheduler.schedule_podcast_feeds()
+        num_scheduled = scheduler.schedule_podcast_feeds()
+        self.stdout.write(self.style.SUCCESS(f"{num_scheduled} podcasts scheduled"))

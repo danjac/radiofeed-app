@@ -12,7 +12,7 @@ from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
 
 
-def schedule_podcast_feeds() -> None:
+def schedule_podcast_feeds() -> int:
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
         """Schedules recent podcasts to run at allotted time."""
         for podcast in (
@@ -25,15 +25,14 @@ def schedule_podcast_feeds() -> None:
             podcast.scheduled = podcast.get_next_scheduled()
             yield podcast
 
-    Podcast.objects.bulk_update(
+    return Podcast.objects.bulk_update(
         _schedule_podcast_feeds(), ["scheduled"], batch_size=1000
     )
 
 
-def sync_podcast_feeds() -> None:
-    """Schedules recent podcasts to run at allotted time."""
+def sync_frequent_feeds() -> int:
     now = timezone.now()
-    for rss in (
+    for counter, rss in enumerate(
         Podcast.objects.filter(
             active=True,
             scheduled__isnull=False,
@@ -42,8 +41,29 @@ def sync_podcast_feeds() -> None:
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
-    ).iterator():
+        .iterator(),
+        1,
+    ):
         sync_podcast_feed.delay(rss)
+
+    return counter
+
+
+def sync_sporadic_feeds() -> int:
+    now = timezone.now()
+    for counter, rss in enumerate(
+        Podcast.objects.filter(
+            active=True,
+            pub_date__lte=now - settings.RELEVANCY_THRESHOLD,
+        )
+        .order_by("-pub_date")
+        .values_list("rss", flat=True)
+        .iterator(),
+        1,
+    ):
+        sync_podcast_feed.delay(rss)
+
+    return counter
 
 
 @job
@@ -57,3 +77,5 @@ def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
 
     success = parse_feed(podcast, force_update=force_update)
     logging.info(f"{podcast} pull {'OK' if success else 'FAIL'}")
+    if podcast.scheduled:
+        logging.info(f"{podcast} next pull scheduled at {podcast.scheduled}")

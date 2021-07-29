@@ -6,7 +6,11 @@
   },
   "cron": [
     {
-      "command": "python manage.py sync_infrequent_feeds",
+      "command": "python manage.py sync_podcast_feeds",
+      "schedule": "30 * * * *"
+    },
+    {
+      "command": "python manage.py sync_podcast_feeds --sporadic",
       "schedule": "15 3 * * *"
     },
     {

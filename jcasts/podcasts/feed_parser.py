@@ -102,6 +102,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     podcast.pub_date = max(pub_dates)
     podcast.frequency = calc_frequency(pub_dates)
+    podcast.scheduled = podcast.get_next_scheduled()
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)
