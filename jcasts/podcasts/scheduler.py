@@ -83,7 +83,7 @@ def sync_sporadic_feeds() -> int:
     return counter
 
 
-@job
+@job("feeds")
 def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
 
     try:

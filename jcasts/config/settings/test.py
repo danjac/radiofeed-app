@@ -24,5 +24,8 @@ django_rq.queues.get_redis_connection = (
 RQ_QUEUES = {
     "default": {
         "ASYNC": False,
-    }
+    },
+    "feeds": {
+        "ASYNC": False,
+    },
 }

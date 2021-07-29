@@ -32,13 +32,24 @@ RQ_QUEUES = {
     "default": {
         "USE_REDIS_CACHE": "default",
     },
+    "feeds": {
+        "USE_REDIS_CACHE": "default",
+    },
+    "mail": {
+        "USE_REDIS_CACHE": "default",
+    },
 }
+
 RQ_SHOW_ADMIN_LINK = True
 
 DEFAULT_CACHE_TIMEOUT = 3600
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
+
+EMAIL_BACKEND = "jcasts.shared.email.RqBackend"
+RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+RQ_EMAIL_QUEUE = "mail"
 
 ATOMIC_REQUESTS = True
 
