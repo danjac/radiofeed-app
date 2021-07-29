@@ -1,10 +1,16 @@
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import tasks
+from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
-    help = "Schedule podcast feeds"
+    help = "Schedule podcast feeds for update"
+
+    def add_arguments(self, parser) -> None:
+        parser.add_argument(
+            "--reset", action="store_true", help="Reset all scheduled times"
+        )
 
     def handle(self, *args, **options) -> None:
-        tasks.schedule_podcast_feeds.delay()
+        num_scheduled = scheduler.schedule_podcast_feeds(reset=options["reset"])
+        self.stdout.write(self.style.SUCCESS(f"{num_scheduled} podcasts scheduled"))

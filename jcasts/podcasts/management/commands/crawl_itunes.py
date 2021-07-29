@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import recommender
+from jcasts.podcasts import itunes
 
 
 class Command(BaseCommand):
-    help = "Updates all podcasts from their RSS feeds."
+    help = "Crawl iTunes for new podcasts"
 
     def handle(self, *args, **options) -> None:
-        recommender.recommend()
+        itunes.crawl_itunes()

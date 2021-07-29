@@ -84,11 +84,9 @@ Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku letsencrypt:cron-job --add
 
-Next set up celery and celerybeat workers:
+Next set up workers:
 
 > dokku ps:scale jcasts worker=1
-
-> dokku ps:scale jcasts beat=1
 
 You should now be able to access the Django management commands:
 
@@ -101,15 +99,6 @@ To deploy just run:
 > git push dokku main
 
 There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
-
-## Periodic tasks
-
-Use celerybeat in the Django admin to set up these tasks in production:
-
-* _jcasts.podcasts.sync_podcast_feeds_ : run once an hour
-* _jcasts.podcasts.send_recommendation_emails_ : run at least once a week
-* _jcasts.podcasts.create_podcast_recommendations_ : run at least once or twice a day
-* _jcasts.podcasts.crawl_itunes_: run at least once a week
 
 ## Maintenance
 

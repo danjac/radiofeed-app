@@ -2,11 +2,13 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
+from django_rq import job
 
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import AuthenticatedUser
 
 
+@job
 def send_recommendations_email(user: AuthenticatedUser) -> None:
     """Sends email with 2 or 3 recommended podcasts, based on:
     - favorites

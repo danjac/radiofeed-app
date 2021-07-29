@@ -102,6 +102,7 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     podcast.pub_date = max(pub_dates)
     podcast.frequency = calc_frequency(pub_dates)
+    podcast.scheduled = podcast.get_next_scheduled()
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)
@@ -350,16 +351,12 @@ def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
     else:
         frequency = None
 
-    for_update = {
+    Podcast.objects.filter(pk=podcast.id).update(
+        active=active,
+        frequency=frequency,
+        updated=timezone.now(),
+        scheduled=podcast.get_next_scheduled(),
         **fields,
-        "active": active,
-        "frequency": frequency,
-        "updated": timezone.now(),
-    }
-
-    for k, v in for_update.items():
-        setattr(podcast, k, v)
-
-    podcast.save(update_fields=for_update.keys())
+    )
 
     return False

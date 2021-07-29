@@ -69,12 +69,7 @@ services:
   worker:
     <<: *django
     command: /start-worker
-
-  scheduler:
-    <<: *django
-    command: /start-scheduler
     depends_on:
-      - worker
       - webapp
 
 volumes:

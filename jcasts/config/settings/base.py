@@ -28,11 +28,28 @@ REDIS_URL = env("REDIS_URL")
 
 CACHES = {"default": env.cache("REDIS_URL")}
 
+RQ_QUEUES = {
+    "default": {
+        "USE_REDIS_CACHE": "default",
+    },
+    "feeds": {
+        "USE_REDIS_CACHE": "default",
+    },
+    "mail": {
+        "USE_REDIS_CACHE": "default",
+    },
+}
+
+RQ_SHOW_ADMIN_LINK = True
+
 DEFAULT_CACHE_TIMEOUT = 3600
 
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
-EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
+
+EMAIL_BACKEND = "jcasts.shared.email.RqBackend"
+RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+RQ_EMAIL_QUEUE = "mail"
 
 ATOMIC_REQUESTS = True
 
@@ -79,10 +96,9 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "django_extensions",
-    "django_celery_beat",
     "django_htmx",
-    "djcelery_email",
     "widget_tweaks",
+    "django_rq",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -243,6 +259,7 @@ LOGGING = {
     },
     "loggers": {
         "root": {"handlers": ["console"], "level": "INFO"},
+        "rq.worker": {"handlers": ["console"], "level": "DEBUG"},
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },

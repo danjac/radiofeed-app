@@ -7,7 +7,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.tasks import sync_podcast_feed
+from jcasts.podcasts.scheduler import sync_podcast_feed
 
 
 @admin.register(Category)
@@ -86,6 +86,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
+        "scheduled",
     )
     list_editable = ("promoted",)
     search_fields = ("search_document",)
@@ -100,6 +101,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "frequency",
+        "scheduled",
         "num_episodes",
     )
 

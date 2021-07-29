@@ -58,6 +58,4 @@ RUN chmod +x /start-webapp
 COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
 
-COPY ./docker/start-scheduler /start-scheduler
-RUN chmod +x /start-scheduler
 
