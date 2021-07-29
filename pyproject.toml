@@ -42,7 +42,6 @@ Unidecode = "^1.2.0"
 whitenoise = {extras = ["brotli"], version = "^5.2.0"}
 django-htmx = "^1.1.0"
 django-rq = "^2.4.1"
-rq-scheduler = "^0.11.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "^5.5"

@@ -72,12 +72,5 @@ services:
     depends_on:
       - webapp
 
-  scheduler:
-    <<: *django
-    command: /start-scheduler
-    depends_on:
-      - worker
-      - webapp
-
 volumes:
   pg_data: {}
