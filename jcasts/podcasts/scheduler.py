@@ -34,6 +34,7 @@ def schedule_podcast_feeds() -> int:
 
 def sync_frequent_feeds() -> int:
     now = timezone.now()
+    counter = 0
     for counter, rss in enumerate(
         Podcast.objects.filter(
             active=True,
@@ -53,6 +54,7 @@ def sync_frequent_feeds() -> int:
 
 def sync_sporadic_feeds() -> int:
     now = timezone.now()
+    counter = 0
     for counter, rss in enumerate(
         Podcast.objects.filter(
             active=True,
