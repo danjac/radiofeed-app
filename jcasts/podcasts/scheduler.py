@@ -64,12 +64,11 @@ def sync_frequent_feeds(force_update: bool = False) -> int:
 
 
 def sync_sporadic_feeds() -> int:
-    now = timezone.now()
     counter = 0
     for counter, rss in enumerate(
         Podcast.objects.filter(
             active=True,
-            pub_date__lte=now - settings.RELEVANCY_THRESHOLD,
+            pub_date__lt=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)

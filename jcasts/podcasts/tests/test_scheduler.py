@@ -95,7 +95,30 @@ class TestSyncFrequentFeeds:
 class TestSyncSporadicFeeds:
     @pytest.fixture
     def mock_sync_podcast_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed")
+        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed.delay")
+
+    @pytest.mark.parametrize(
+        "active,last_pub,result",
+        [
+            (True, timedelta(days=99), 1),
+            (True, timedelta(days=30), 0),
+            (True, None, 0),
+            (False, timedelta(days=99), 0),
+        ],
+    )
+    def test_sync_sporadic_feeds(
+        self, db, mock_sync_podcast_feed, active, last_pub, result
+    ):
+        PodcastFactory(
+            active=active,
+            pub_date=timezone.now() - last_pub if last_pub else None,
+        )
+        assert scheduler.sync_sporadic_feeds() == result
+
+        if result:
+            mock_sync_podcast_feed.assert_called()
+        else:
+            mock_sync_podcast_feed.assert_not_called()
 
 
 class TestSyncPodcastFeed:
