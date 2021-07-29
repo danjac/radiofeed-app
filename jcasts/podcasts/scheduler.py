@@ -34,22 +34,26 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     return total
 
 
-def sync_frequent_feeds() -> int:
+def sync_frequent_feeds(force_update: bool = False) -> int:
     now = timezone.now()
     counter = 0
-    for counter, rss in enumerate(
+    qs = (
         Podcast.objects.filter(
             active=True,
-            scheduled__isnull=False,
-            scheduled__lte=now,
             pub_date__gte=now - settings.RELEVANCY_THRESHOLD,
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
-        .iterator(),
-        1,
-    ):
-        sync_podcast_feed.delay(rss)
+    )
+
+    if not force_update:
+        qs = qs.filter(
+            scheduled__isnull=False,
+            scheduled__lte=now,
+        )
+
+    for counter, rss in enumerate(qs.iterator(), 1):
+        sync_podcast_feed.delay(rss, force_update=force_update)
 
     return counter
 
