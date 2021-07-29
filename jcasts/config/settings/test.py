@@ -28,4 +28,7 @@ RQ_QUEUES = {
     "feeds": {
         "ASYNC": False,
     },
+    "mail": {
+        "ASYNC": False,
+    },
 }
