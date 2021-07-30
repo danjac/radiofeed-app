@@ -49,7 +49,6 @@ def get_categories_dict() -> dict[str, Category]:
 
 
 def parse_frequent_feeds(force_update: bool = False) -> int:
-    now = timezone.now()
     counter = 0
     qs = (
         Podcast.objects.frequent()
@@ -60,7 +59,7 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
     if not force_update:
         qs = qs.filter(
             scheduled__isnull=False,
-            scheduled__lte=now,
+            scheduled__lte=timezone.now(),
         )
 
     for counter, rss in enumerate(qs.iterator(), 1):
@@ -71,12 +70,11 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
 
 def parse_sporadic_feeds() -> int:
     "Should run daily. Matches older feeds with same weekday in last pub date"
-    now = timezone.now()
     counter = 0
     for counter, rss in enumerate(
         Podcast.objects.sporadic()
         .filter(
-            pub_date__iso_week_day=now.isoweekday(),
+            pub_date__iso_week_day=timezone.now().isoweekday(),
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
