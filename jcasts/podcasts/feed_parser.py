@@ -27,11 +27,7 @@ from jcasts.podcasts.coerce import (
 )
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.scheduler import (
-    calc_frequency,
-    calc_frequency_from_podcast,
-    schedule,
-)
+from jcasts.podcasts.scheduler import schedule
 from jcasts.podcasts.text_parser import extract_keywords
 
 USER_AGENTS = [
@@ -146,12 +142,8 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
-    podcast.frequency = calc_frequency(pub_dates)
 
-    podcast.scheduled = schedule(
-        frequency=podcast.frequency,
-        pub_date=podcast.pub_date,
-    )
+    podcast.scheduled = schedule(podcast, pub_dates)
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)
@@ -372,12 +364,10 @@ def resolve_podcast_rss(
 
 
 def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
-    frequency = calc_frequency_from_podcast(podcast) if active else None
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
-        frequency=frequency,
-        scheduled=schedule(pub_date=podcast.pub_date, frequency=frequency),
+        scheduled=schedule(podcast),
         updated=timezone.now(),
         **fields,
     )
