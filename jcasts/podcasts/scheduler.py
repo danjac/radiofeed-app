@@ -15,8 +15,6 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     """Sets podcast feed scheduled times. This can be run once to set
     initial scheduling, afterwards should be calibrated automatically after fresh
     pull attempts.
-
-    Run calc_podcast_frequencies() to set the initial frequencies first.
     """
     if reset:
         Podcast.objects.update(scheduled=None)
