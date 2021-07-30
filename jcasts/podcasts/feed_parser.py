@@ -101,17 +101,15 @@ def parse_feed(rss: str, *, force_update: bool = False) -> bool:
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
-        return handle_empty_result(
-            podcast, error_status=response.status_code, active=False
-        )
+        return parse_failure(podcast, error_status=response.status_code, active=False)
 
     except requests.RequestException:
         # temp issue, maybe network error, log & try again later
-        return handle_empty_result(podcast, exception=traceback.format_exc())
+        return parse_failure(podcast, exception=traceback.format_exc())
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
         # no change, ignore
-        return handle_empty_result(podcast)
+        return parse_failure(podcast)
 
     return parse_podcast(podcast, response)
 
@@ -124,13 +122,13 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
         other := Podcast.objects.filter(rss=rss).exclude(pk=podcast.pk).first()
     ):
         # permanent redirect to URL already taken by another podcast
-        return handle_empty_result(podcast, redirect_to=other, active=False)
+        return parse_failure(podcast, redirect_to=other, active=False)
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
-        return handle_empty_result(podcast, rss=rss)
+        return parse_failure(podcast, rss=rss)
 
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
@@ -362,7 +360,7 @@ def resolve_podcast_rss(
     )
 
 
-def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
+def parse_failure(podcast: Podcast, active=True, **fields) -> bool:
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
