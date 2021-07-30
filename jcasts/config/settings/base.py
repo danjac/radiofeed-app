@@ -26,7 +26,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 REDIS_URL = env("REDIS_URL")
 
-CACHES = {"default": env.cache("REDIS_URL")}
+CACHES = {
+    "default": {
+        **env.cache("REDIS_URL"),
+        "KEY_FUNCTION": "jcasts.shared.cache.make_cache_key",
+    }
+}
+
 
 RQ_QUEUES = {
     "default": {
