@@ -77,8 +77,21 @@ class TestSchedulePodcastFeeds:
 
 
 class TestSchedule:
-    def test_schedule_no_pub_date(self, podcast):
-        assert scheduler.schedule(PodcastFactory(pub_date=None)) is None
+    def test_schedule_no_pub_date(self, db):
+        assert (
+            scheduler.schedule(
+                PodcastFactory(pub_date=None), self.get_pub_dates(3, 6, 9)
+            )
+            is None
+        )
+
+    def test_schedule_inactive(self, db):
+        assert (
+            scheduler.schedule(
+                PodcastFactory(active=False), self.get_pub_dates(3, 6, 9)
+            )
+            is None
+        )
 
     def test_schedule_frequency_zero(self, podcast):
         now = timezone.now()
@@ -93,20 +106,13 @@ class TestSchedule:
 
         scheduled = scheduler.schedule(
             PodcastFactory(),
-            [now - timedelta(seconds=60)],
+            [now - timedelta(minutes=30)],
         )
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
+        assert (scheduled - now).total_seconds() == pytest.approx(3600, rel=10)
 
     def test_schedule_lt_now(self, db):
         now = timezone.now()
-        scheduled = scheduler.schedule(
-            PodcastFactory(),
-            [
-                now - timedelta(days=3),
-                now - timedelta(days=6),
-                now - timedelta(days=9),
-            ],
-        )
+        scheduled = scheduler.schedule(PodcastFactory(), self.get_pub_dates(3, 6, 9))
         assert (scheduled - now).days == 3
 
     def test_schedule_from_episodes(self, podcast):
@@ -114,13 +120,11 @@ class TestSchedule:
 
         [
             EpisodeFactory(podcast=podcast, pub_date=pub_date)
-            for pub_date in (
-                now - timedelta(days=5, hours=12),
-                now - timedelta(days=12, hours=12),
-                now - timedelta(days=15, hours=12),
-                now - timedelta(days=30, hours=12),
-            )
+            for pub_date in self.get_pub_dates(3, 6, 9)
         ]
-
         scheduled = scheduler.schedule(podcast)
-        assert (scheduled - now).days == 7
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(72)
+
+    def get_pub_dates(self, *days):
+        now = timezone.now()
+        return [now - timedelta(days=day) for day in days]

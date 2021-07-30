@@ -78,6 +78,7 @@ def schedule(
 
     # should always be in future
     if (scheduled := podcast.pub_date + frequency) > now:
+        print("scheduled", scheduled, now, (scheduled - now).total_seconds())
         return scheduled
 
     # add 5% of frequency to current time (min 1 hour)
