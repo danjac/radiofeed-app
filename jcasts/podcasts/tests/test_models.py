@@ -130,6 +130,15 @@ class TestPodcastManager:
 
 
 class TestPodcastModel:
+    def test_str(self):
+        assert str(Podcast(title="title") == "title")
+
+    def test_str_title_empty(self):
+        assert (
+            str(Podcast(title="", rss="https://example.com/rss.xml"))
+            == "https://example.com/rss.xml"
+        )
+
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
 

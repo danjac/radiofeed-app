@@ -46,6 +46,42 @@ class TestCalcFrequencyFromPodcast:
         assert scheduler.calc_frequency_from_podcast(podcast).days == 8
 
 
+class TestCalcPodcastFrequencies:
+    def test_frequency_is_none(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30), frequency=None
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies() == 1
+        podcast.refresh_from_db()
+        assert podcast.frequency
+
+    def test_frequency_already_set(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30),
+            frequency=timezone.timedelta(days=100),
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date)
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies() == 0
+        podcast.refresh_from_db()
+        assert podcast.frequency.days == 100
+
+    def test_frequency_reset(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30),
+            frequency=timezone.timedelta(days=100),
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date)
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies(reset=True) == 1
+        podcast.refresh_from_db()
+        assert podcast.frequency.days == 15
+
+
 class TestSchedulePodcastFeeds:
     @pytest.mark.parametrize(
         "is_scheduled,last_pub,freq,active,result,num_scheduled",
