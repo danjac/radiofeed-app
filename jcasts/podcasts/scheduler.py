@@ -3,7 +3,6 @@ from __future__ import annotations
 import statistics
 
 from datetime import datetime, timedelta
-from typing import Generator
 
 from django.conf import settings
 from django.utils import timezone
@@ -22,51 +21,20 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     if reset:
         Podcast.objects.update(scheduled=None)
 
-    qs = (
-        Podcast.objects.frequent()
-        .filter(scheduled__isnull=True, frequency__isnull=False)
-        .order_by("-pub_date")
-    )
+    qs = Podcast.objects.frequent().filter(scheduled__isnull=True).order_by("-pub_date")
 
-    total = qs.count()
+    for_update = []
 
-    def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
-        """Schedules recent podcasts to run at allotted time."""
-        for podcast in qs.iterator():
-            podcast.scheduled = schedule(
-                pub_date=podcast.pub_date, frequency=podcast.frequency
-            )
-            yield podcast
+    for podcast in qs.iterator():
+        podcast.scheduled = schedule(podcast)
+        for_update.append(podcast)
 
-    Podcast.objects.bulk_update(
-        _schedule_podcast_feeds(), fields=["scheduled"], batch_size=1000
-    )
+    Podcast.objects.bulk_update(for_update, fields=["scheduled"], batch_size=1000)
 
-    return total
+    return len(for_update)
 
 
-def calc_podcast_frequencies(reset: bool = False) -> int:
-    if reset:
-        Podcast.objects.update(frequency=None)
-
-    qs = Podcast.objects.frequent().filter(frequency__isnull=True).order_by("-pub_date")
-
-    total = qs.count()
-
-    def _calc_frequencies() -> Generator[Podcast, None, None]:
-        """Schedules recent podcasts to run at allotted time."""
-        for podcast in qs.iterator():
-            podcast.frequency = calc_frequency_from_podcast(podcast)
-            yield podcast
-
-    Podcast.objects.bulk_update(
-        _calc_frequencies(), fields=["frequency"], batch_size=1000
-    )
-
-    return total
-
-
-def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
+def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     max_date = timezone.now() - settings.RELEVANCY_THRESHOLD
     pub_dates = [
         pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > max_date
@@ -82,38 +50,36 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
     return timedelta(days=days)
 
 
-def calc_frequency_from_podcast(podcast: Podcast) -> timedelta | None:
-    return calc_frequency(
+def schedule(
+    podcast: Podcast,
+    pub_dates: list[datetime] | None = None,
+) -> datetime | None:
+    """Returns next scheduled feed sync time.
+    Will calculate based on list of provided pub dates or most recent episodes.
+    """
+    if not podcast.active or podcast.pub_date is None:
+        return None
+
+    now = timezone.now()
+
+    pub_dates = pub_dates or (
         Episode.objects.filter(
-            podcast=podcast, pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD
+            podcast=podcast, pub_date__gte=now - settings.RELEVANCY_THRESHOLD
         )
         .values_list("pub_date", flat=True)
         .order_by("-pub_date")
     )
 
-
-def schedule(
-    *,
-    pub_date: datetime | None,
-    frequency: timedelta | None,
-) -> datetime | None:
-    """Returns next scheduled feed sync time.
-    If frequency is set, will return last pub date + frequency or current time +
-    frequency, whichever is greater (minimum: 1 hour).
-
-    If feed inactive or no frequency set, returns None.
-    """
-    if None in (pub_date, frequency):
+    if not pub_dates or (frequency := get_frequency(pub_dates)) is None:
         return None
 
-    now = timezone.now()
     min_delta = timedelta(hours=1)
 
     # minimum 1 hour
     frequency = max(frequency, min_delta)
 
     # should always be in future
-    if (scheduled := pub_date + frequency) > now:
+    if (scheduled := podcast.pub_date + frequency) > now:
         return scheduled
 
     # add 5% of frequency to current time (min 1 hour)
