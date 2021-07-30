@@ -12,6 +12,7 @@ from django.db import models
 from django.http import HttpRequest
 from django.template.defaultfilters import striptags
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -66,7 +67,18 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    ...
+    def active(self) -> models.QuerySet:
+        return self.filter(active=True, pub_date__isnull=False)
+
+    def frequent(self) -> models.QuerySet:
+        return self.active().filter(
+            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        )
+
+    def sporadic(self) -> models.QuerySet:
+        return self.active().filter(
+            pub_date__lt=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        )
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)

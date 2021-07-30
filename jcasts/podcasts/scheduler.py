@@ -22,13 +22,11 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     if reset:
         Podcast.objects.update(scheduled=None)
 
-    qs = Podcast.objects.filter(
-        active=True,
-        scheduled__isnull=True,
-        frequency__isnull=False,
-        pub_date__isnull=False,
-        pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
-    ).order_by("-pub_date")
+    qs = (
+        Podcast.objects.frequent()
+        .filter(scheduled__isnull=True, frequency__isnull=False)
+        .order_by("-pub_date")
+    )
 
     total = qs.count()
 
@@ -51,12 +49,7 @@ def calc_podcast_frequencies(reset: bool = False) -> int:
     if reset:
         Podcast.objects.update(frequency=None)
 
-    qs = Podcast.objects.filter(
-        active=True,
-        frequency__isnull=True,
-        pub_date__isnull=False,
-        pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
-    ).order_by("-pub_date")
+    qs = Podcast.objects.frequent().filter(frequency__isnull=True).order_by("-pub_date")
 
     total = qs.count()
 

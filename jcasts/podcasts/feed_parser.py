@@ -11,7 +11,6 @@ import box
 import feedparser
 import requests
 
-from django.conf import settings
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -53,10 +52,7 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
     now = timezone.now()
     counter = 0
     qs = (
-        Podcast.objects.filter(
-            active=True,
-            pub_date__gte=now - settings.RELEVANCY_THRESHOLD,
-        )
+        Podcast.objects.frequent()
         .order_by("-scheduled", "-pub_date")
         .values_list("rss", flat=True)
     )
@@ -78,9 +74,8 @@ def parse_sporadic_feeds() -> int:
     now = timezone.now()
     counter = 0
     for counter, rss in enumerate(
-        Podcast.objects.filter(
-            active=True,
-            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
+        Podcast.objects.sporadic()
+        .filter(
             pub_date__iso_week_day=now.isoweekday(),
         )
         .order_by("-pub_date")
