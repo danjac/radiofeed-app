@@ -57,6 +57,7 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
         )
+    print(timezone.now(), qs.count())
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)

@@ -24,4 +24,4 @@ class Command(BaseCommand):
                 force_update=options["force_update"]
             )
 
-        self.stdout.write(f"{num_feeds} feed(s) to be pulled")
+        self.stdout.write(self.style.SUCCESS(f"{num_feeds} feed(s) to be pulled"))

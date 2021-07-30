@@ -22,7 +22,7 @@ class TestGetFrequency:
             now - timedelta(days=30, hours=12),
         ]
 
-        assert scheduler.get_frequency(dates).days == 8
+        assert scheduler.get_frequency(dates).days == 6
 
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
@@ -113,7 +113,7 @@ class TestSchedule:
     def test_schedule_lt_now(self, db):
         now = timezone.now()
         scheduled = scheduler.schedule(PodcastFactory(), self.get_pub_dates(3, 6, 9))
-        assert (scheduled - now).days == 3
+        assert (scheduled - now).days == 2
 
     def test_schedule_from_episodes(self, podcast):
         now = timezone.now()
@@ -123,7 +123,7 @@ class TestSchedule:
             for pub_date in self.get_pub_dates(3, 6, 9)
         ]
         scheduled = scheduler.schedule(podcast)
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(72)
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(48)
 
     def get_pub_dates(self, *days):
         now = timezone.now()
