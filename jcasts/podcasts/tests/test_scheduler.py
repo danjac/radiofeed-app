@@ -93,25 +93,11 @@ class TestSchedule:
 
         scheduled = scheduler.schedule(
             PodcastFactory(),
-            [now - timedelta(hours=1)],
+            [now - timedelta(seconds=60)],
         )
         assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
     def test_schedule_lt_now(self, db):
-        now = timezone.now()
-        scheduled = scheduler.schedule(
-            PodcastFactory(),
-            [
-                now - timedelta(days=30),
-                now - timedelta(days=60),
-                now - timedelta(days=90),
-                now - timedelta(days=180),
-            ],
-        )
-        print(scheduled)
-        assert (scheduled - now).total_seconds() / (24 * 60 * 60) == pytest.approx(30)
-
-    def test_schedule_gt_now(self, db):
         now = timezone.now()
         scheduled = scheduler.schedule(
             PodcastFactory(),
