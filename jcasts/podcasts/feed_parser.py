@@ -48,7 +48,7 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
     counter = 0
     qs = (
         Podcast.objects.frequent()
-        .order_by("-scheduled", "-pub_date")
+        .order_by("scheduled", "-pub_date")
         .values_list("rss", flat=True)
     )
 
