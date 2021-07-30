@@ -142,7 +142,6 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
-
     podcast.scheduled = schedule(podcast, pub_dates)
 
     podcast.title = coerce_str(result.feed.title)

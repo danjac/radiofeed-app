@@ -68,7 +68,7 @@ def schedule(
         .order_by("-pub_date")
     )
 
-    if not pub_dates or (frequency := get_frequency(pub_dates)) is None:
+    if (frequency := get_frequency(pub_dates)) is None:
         return None
 
     min_delta = timedelta(hours=1)
