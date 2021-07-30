@@ -30,7 +30,7 @@ from jcasts.podcasts.models import Category, Podcast
 from jcasts.podcasts.scheduler import (
     calc_frequency,
     calc_frequency_from_podcast,
-    get_next_scheduled,
+    schedule,
 )
 from jcasts.podcasts.text_parser import extract_keywords
 
@@ -148,7 +148,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
     podcast.pub_date = max(pub_dates)
     podcast.frequency = calc_frequency(pub_dates)
 
-    podcast.scheduled = get_next_scheduled(
+    podcast.scheduled = schedule(
         frequency=podcast.frequency,
         pub_date=podcast.pub_date,
     )
@@ -377,7 +377,7 @@ def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         frequency=frequency,
-        scheduled=get_next_scheduled(pub_date=podcast.pub_date, frequency=frequency),
+        scheduled=schedule(pub_date=podcast.pub_date, frequency=frequency),
         updated=timezone.now(),
         **fields,
     )
