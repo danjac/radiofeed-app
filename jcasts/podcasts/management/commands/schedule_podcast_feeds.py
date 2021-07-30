@@ -12,6 +12,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
-        scheduler.calc_podcast_frequencies(reset=options["reset"])
-        num_scheduled = scheduler.schedule_podcast_feeds(reset=options["reset"])
-        self.stdout.write(self.style.SUCCESS(f"{num_scheduled} podcasts scheduled"))
+        if num_freq := scheduler.calc_podcast_frequencies(reset=options["reset"]):
+            self.stdout.write(self.style.SUCCESS(f"{num_freq} podcast frequencies set"))
+
+        if num_scheduled := scheduler.schedule_podcast_feeds(reset=options["reset"]):
+            self.stdout.write(self.style.SUCCESS(f"{num_scheduled} podcasts scheduled"))
