@@ -13,12 +13,19 @@ from jcasts.podcasts.models import Podcast
 
 
 def schedule_podcast_feeds(reset: bool = False) -> int:
+    """Sets podcast feed scheduled times. This can be run once to set
+    initial scheduling, afterwards should be calibrated automatically after fresh
+    pull attempts.
+
+    Run calc_podcast_frequencies() to set the initial frequencies first.
+    """
     if reset:
-        Podcast.objects.update(scheduled=None, frequency=None)
+        Podcast.objects.update(scheduled=None)
 
     qs = Podcast.objects.filter(
         active=True,
         scheduled__isnull=True,
+        frequency__isnull=False,
         pub_date__isnull=False,
         pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
     ).order_by("-pub_date")
@@ -28,17 +35,39 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
         """Schedules recent podcasts to run at allotted time."""
         for podcast in qs.iterator():
-            podcast.frequency = podcast.frequency or calc_frequency_from_podcast(
-                podcast
-            )
             podcast.scheduled = get_next_scheduled(
                 pub_date=podcast.pub_date, frequency=podcast.frequency
             )
-            print(podcast.frequency, podcast.scheduled)
             yield podcast
 
     Podcast.objects.bulk_update(
-        _schedule_podcast_feeds(), fields=["scheduled", "frequency"], batch_size=1000
+        _schedule_podcast_feeds(), fields=["scheduled"], batch_size=1000
+    )
+
+    return total
+
+
+def calc_podcast_frequencies(reset: bool = False) -> int:
+    if reset:
+        Podcast.objects.update(frequency=None)
+
+    qs = Podcast.objects.filter(
+        active=True,
+        frequency__isnull=True,
+        pub_date__isnull=False,
+        pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+    ).order_by("-pub_date")
+
+    total = qs.count()
+
+    def _calc_frequencies() -> Generator[Podcast, None, None]:
+        """Schedules recent podcasts to run at allotted time."""
+        for podcast in qs.iterator():
+            podcast.frequency = calc_frequency_from_podcast(podcast)
+            yield podcast
+
+    Podcast.objects.bulk_update(
+        _calc_frequencies(), fields=["frequency"], batch_size=1000
     )
 
     return total
