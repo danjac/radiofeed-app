@@ -96,8 +96,48 @@ class TestPodcastManager:
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
 
+    @pytest.mark.parametrize(
+        "active,last_pub,exists",
+        [
+            (True, timedelta(days=30), True),
+            (True, timedelta(days=99), False),
+            (False, timedelta(days=30), False),
+            (True, None, False),
+        ],
+    )
+    def test_frequent(self, db, active, last_pub, exists):
+        PodcastFactory(
+            active=active, pub_date=timezone.now() - last_pub if last_pub else None
+        )
+
+        assert Podcast.objects.frequent().exists() is exists
+
+    @pytest.mark.parametrize(
+        "active,last_pub,exists",
+        [
+            (True, timedelta(days=30), False),
+            (True, timedelta(days=99), True),
+            (False, timedelta(days=99), False),
+            (True, None, False),
+        ],
+    )
+    def test_sporadic(self, db, active, last_pub, exists):
+        PodcastFactory(
+            active=active, pub_date=timezone.now() - last_pub if last_pub else None
+        )
+
+        assert Podcast.objects.sporadic().exists() is exists
+
 
 class TestPodcastModel:
+    rss = "https://example.com/rss.xml"
+
+    def test_str(self):
+        assert str(Podcast(title="title")) == "title"
+
+    def test_str_title_empty(self):
+        assert str(Podcast(title="", rss=self.rss)) == self.rss
+
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
 
@@ -105,12 +145,10 @@ class TestPodcastModel:
         assert Podcast().slug == "podcast"
 
     def test_get_domain(self):
-        assert Podcast(rss="https://example.com/rss.xml").get_domain() == "example.com"
+        assert Podcast(rss=self.rss).get_domain() == "example.com"
 
     def test_get_domain_if_www(self):
-        assert (
-            Podcast(rss="https://www.example.com/rss.xml").get_domain() == "example.com"
-        )
+        assert Podcast(rss=self.rss).get_domain() == "example.com"
 
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>a &amp; b</b>")
@@ -131,69 +169,3 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
-
-    def test_get_next_scheduled_inactive(self):
-        assert (
-            Podcast(
-                active=False,
-                pub_date=timezone.now() - timedelta(days=7),
-                frequency=timedelta(days=1),
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_no_pub_date(self):
-        assert (
-            Podcast(
-                active=True,
-                frequency=timedelta(days=1),
-                pub_date=None,
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_no_frequency(self):
-        assert (
-            Podcast(
-                active=True,
-                frequency=None,
-                pub_date=timezone.now() - timedelta(days=7),
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_frequency_zero(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(seconds=0),
-            pub_date=now - timedelta(hours=1),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
-
-    def test_get_next_scheduled_frequency_lt_one_hour(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(seconds=60),
-            pub_date=now - timedelta(hours=1),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
-
-    def test_get_next_scheduled_lt_now(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(days=30),
-            pub_date=now - timedelta(days=90),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() / (24 * 60 * 60) == pytest.approx(1.5)
-
-    def test_get_next_scheduled_gt_now(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(days=7),
-            pub_date=now - timedelta(days=6),
-        ).get_next_scheduled()
-        assert (scheduled - now).days == 1

@@ -6,8 +6,8 @@ from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
+from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.scheduler import sync_podcast_feed
 
 
 @admin.register(Category)
@@ -105,7 +105,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "num_episodes",
     )
 
-    actions = ["reactivate", "sync_podcast_feeds"]
+    actions = ["reactivate", "parse_feeds"]
 
     @admin.action(description="Re-activate podcasts")
     def reactivate(self, request: HttpRequest, queryset: QuerySet):
@@ -118,11 +118,11 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    @admin.action(description="Sync podcast feeds")
-    def sync_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
+    @admin.action(description="Parse podcast feeds")
+    def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
 
         for rss in queryset.values_list("rss", flat=True):
-            sync_podcast_feed.delay(rss, force_update=True)
+            parse_feed.delay(rss, force_update=True)
 
         self.message_user(
             request,

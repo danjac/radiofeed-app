@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import scheduler
+from jcasts.podcasts import feed_parser
 
 
 class Command(BaseCommand):
@@ -18,9 +18,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         if options["sporadic"]:
-            num_feeds = scheduler.sync_sporadic_feeds()
+            num_feeds = feed_parser.parse_sporadic_feeds()
         else:
-            num_feeds = scheduler.sync_frequent_feeds(
+            num_feeds = feed_parser.parse_frequent_feeds(
                 force_update=options["force_update"]
             )
 

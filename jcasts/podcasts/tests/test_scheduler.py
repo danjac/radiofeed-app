@@ -4,9 +4,82 @@ import pytest
 
 from django.utils import timezone
 
+from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts import scheduler
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
+
+
+class TestCalcFrequency:
+    def test_calc_frequency(self):
+
+        now = timezone.now()
+
+        dates = [
+            now - timedelta(days=5, hours=12),
+            now - timedelta(days=12, hours=12),
+            now - timedelta(days=15, hours=12),
+            now - timedelta(days=30, hours=12),
+        ]
+
+        assert scheduler.calc_frequency(dates).days == 8
+
+    def test_calc_frequency_if_empty(self):
+        assert scheduler.calc_frequency([]) is None
+
+
+class TestCalcFrequencyFromPodcast:
+    def test_calc_frequency(self, podcast):
+
+        now = timezone.now()
+
+        [
+            EpisodeFactory(podcast=podcast, pub_date=pub_date)
+            for pub_date in (
+                now - timedelta(days=5, hours=12),
+                now - timedelta(days=12, hours=12),
+                now - timedelta(days=15, hours=12),
+                now - timedelta(days=30, hours=12),
+            )
+        ]
+
+        assert scheduler.calc_frequency_from_podcast(podcast).days == 8
+
+
+class TestCalcPodcastFrequencies:
+    def test_frequency_is_none(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30), frequency=None
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies() == 1
+        podcast.refresh_from_db()
+        assert podcast.frequency
+
+    def test_frequency_already_set(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30),
+            frequency=timezone.timedelta(days=100),
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date)
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies() == 0
+        podcast.refresh_from_db()
+        assert podcast.frequency.days == 100
+
+    def test_frequency_reset(self, db):
+
+        podcast = PodcastFactory(
+            pub_date__lte=timezone.now() - timedelta(days=30),
+            frequency=timezone.timedelta(days=100),
+        )
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date)
+        EpisodeFactory(podcast=podcast, pub_date=podcast.pub_date - timedelta(days=30))
+        assert scheduler.calc_podcast_frequencies(reset=True) == 1
+        podcast.refresh_from_db()
+        assert podcast.frequency.days == 15
 
 
 class TestSchedulePodcastFeeds:
@@ -15,7 +88,7 @@ class TestSchedulePodcastFeeds:
         [
             (False, timedelta(days=30), timedelta(days=7), True, 1, 1),
             (True, timedelta(days=30), timedelta(days=7), True, 0, 1),
-            (False, timedelta(days=30), None, False, 0, 0),
+            (False, timedelta(days=30), None, True, 0, 0),
             (False, timedelta(days=99), timedelta(days=7), True, 0, 0),
             (False, None, timedelta(days=7), True, 0, 0),
         ],
@@ -32,7 +105,12 @@ class TestSchedulePodcastFeeds:
         )
 
         assert scheduler.schedule_podcast_feeds() == result
-        assert Podcast.objects.filter(scheduled__isnull=False).count() == num_scheduled
+        assert (
+            Podcast.objects.filter(
+                scheduled__isnull=False, frequency__isnull=False
+            ).count()
+            == num_scheduled
+        )
 
     def test_schedule_reset(self, db):
         now = timezone.now()
@@ -42,95 +120,69 @@ class TestSchedulePodcastFeeds:
             active=True,
         )
 
+        EpisodeFactory(podcast=podcast, pub_date=timezone.now() - timedelta(days=3))
+
         scheduled = podcast.scheduled
 
         assert scheduler.schedule_podcast_feeds(reset=True) == 1
-        assert Podcast.objects.filter(scheduled__isnull=False).count() == 1
+        assert (
+            Podcast.objects.filter(
+                scheduled__isnull=False, frequency__isnull=False
+            ).count()
+            == 1
+        )
 
         podcast.refresh_from_db()
         assert podcast.scheduled > scheduled
 
 
-class TestSyncFrequentFeeds:
-    @pytest.fixture
-    def mock_sync_podcast_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed.delay")
+class TestGetNextScheduled:
+    def test_get_next_scheduled_no_pub_date(self):
+        assert (
+            scheduler.get_next_scheduled(
+                frequency=timedelta(days=1),
+                pub_date=None,
+            )
+            is None
+        )
 
-    @pytest.mark.parametrize(
-        "force_update,active,scheduled,last_pub,result",
-        [
-            (False, True, timedelta(hours=-1), timedelta(days=30), 1),
-            (False, True, timedelta(hours=1), timedelta(days=30), 0),
-            (True, True, timedelta(hours=1), timedelta(days=30), 1),
-            (False, False, timedelta(hours=-1), timedelta(days=30), 0),
-            (False, False, None, timedelta(days=30), 0),
-            (False, True, timedelta(hours=-1), timedelta(days=99), 0),
-            (True, True, timedelta(hours=-1), timedelta(days=99), 0),
-        ],
-    )
-    def test_sync_frequent_feeds(
-        self,
-        db,
-        mock_sync_podcast_feed,
-        force_update,
-        active,
-        scheduled,
-        last_pub,
-        result,
-    ):
+    def test_get_next_scheduled_no_frequency(self):
+        assert (
+            scheduler.get_next_scheduled(
+                frequency=None,
+                pub_date=timezone.now() - timedelta(days=7),
+            )
+            is None
+        )
+
+    def test_get_next_scheduled_frequency_zero(self):
         now = timezone.now()
-        PodcastFactory(
-            active=active,
-            scheduled=now + scheduled if scheduled else None,
-            pub_date=now - last_pub if last_pub else None,
+        scheduled = scheduler.get_next_scheduled(
+            frequency=timedelta(seconds=0),
+            pub_date=now - timedelta(hours=1),
         )
-        assert scheduler.sync_frequent_feeds(force_update=force_update) == result
+        assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
-        if result:
-            mock_sync_podcast_feed.assert_called()
-        else:
-            mock_sync_podcast_feed.assert_not_called()
-
-
-class TestSyncSporadicFeeds:
-    @pytest.fixture
-    def mock_sync_podcast_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.scheduler.sync_podcast_feed.delay")
-
-    @pytest.mark.parametrize(
-        "active,last_pub,result",
-        [
-            (True, timedelta(days=105), 1),
-            (True, timedelta(days=99), 0),
-            (True, timedelta(days=30), 0),
-            (True, None, 0),
-            (False, timedelta(days=99), 0),
-        ],
-    )
-    def test_sync_sporadic_feeds(
-        self, db, mock_sync_podcast_feed, active, last_pub, result
-    ):
-        PodcastFactory(
-            active=active,
-            pub_date=timezone.now() - last_pub if last_pub else None,
+    def test_get_next_scheduled_frequency_lt_one_hour(self):
+        now = timezone.now()
+        scheduled = scheduler.get_next_scheduled(
+            frequency=timedelta(seconds=60),
+            pub_date=now - timedelta(hours=1),
         )
-        assert scheduler.sync_sporadic_feeds() == result
+        assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
-        if result:
-            mock_sync_podcast_feed.assert_called()
-        else:
-            mock_sync_podcast_feed.assert_not_called()
+    def test_get_next_scheduled_lt_now(self):
+        now = timezone.now()
+        scheduled = scheduler.get_next_scheduled(
+            frequency=timedelta(days=30),
+            pub_date=now - timedelta(days=90),
+        )
+        assert (scheduled - now).total_seconds() / (24 * 60 * 60) == pytest.approx(1.5)
 
-
-class TestSyncPodcastFeed:
-    @pytest.fixture
-    def mock_parse_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.scheduler.parse_feed")
-
-    def test_sync_podcast_feed(self, podcast, mock_parse_feed):
-        scheduler.sync_podcast_feed.delay(podcast.rss)
-        mock_parse_feed.assert_called()
-
-    def test_sync_podcast_feed_does_not_exist(self, db, mock_parse_feed):
-        scheduler.sync_podcast_feed.delay("https://example.com/rss.xml")
-        mock_parse_feed.assert_not_called()
+    def test_get_next_scheduled_gt_now(self):
+        now = timezone.now()
+        scheduled = scheduler.get_next_scheduled(
+            frequency=timedelta(days=7),
+            pub_date=now - timedelta(days=6),
+        )
+        assert (scheduled - now).days == 1

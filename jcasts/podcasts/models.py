@@ -67,7 +67,18 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    ...
+    def active(self) -> models.QuerySet:
+        return self.filter(active=True, pub_date__isnull=False)
+
+    def frequent(self) -> models.QuerySet:
+        return self.active().filter(
+            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        )
+
+    def sporadic(self) -> models.QuerySet:
+        return self.active().filter(
+            pub_date__lt=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        )
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
@@ -138,6 +149,7 @@ class Podcast(models.Model):
         indexes = [
             models.Index(fields=["-created", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
+            models.Index(fields=["-scheduled"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),
         ]
@@ -163,31 +175,6 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
-
-    def get_next_scheduled(self) -> datetime | None:
-        """Returns next scheduled feed sync time.
-        If frequency is set, will return last pub date + frequency or current time +
-        frequency, whichever is greater (minimum: 1 hour).
-
-        If feed inactive or no frequency set, returns None.
-        """
-        if not self.active or None in (self.pub_date, self.frequency):
-            return None
-
-        now = timezone.now()
-        min_delta = timedelta(hours=1)
-
-        # minimum 1 hour
-        frequency = max(self.frequency, min_delta)
-
-        # should always be in future
-        if (scheduled := self.pub_date + frequency) > now:
-            return scheduled
-
-        # add 5% of frequency to current time (min 1 hour)
-        # e.g. 7 days - try again in about 8 hours
-
-        return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta)
 
     @property
     def slug(self) -> str:

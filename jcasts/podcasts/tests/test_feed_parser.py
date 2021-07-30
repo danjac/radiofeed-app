@@ -15,10 +15,11 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
-    calc_frequency,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
+    parse_frequent_feeds,
+    parse_sporadic_feeds,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -26,7 +27,7 @@ from jcasts.podcasts.models import Podcast
 class MockResponse:
     def __init__(
         self,
-        url: str,
+        url: str = "",
         status: int = http.HTTPStatus.OK,
         content: bytes = b"",
         headers: None | dict = None,
@@ -43,6 +44,75 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self) -> None:
         raise requests.HTTPError()
+
+
+class TestParseFrequentFeeds:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+
+    @pytest.mark.parametrize(
+        "force_update,active,scheduled,last_pub,result",
+        [
+            (False, True, timedelta(hours=-1), timedelta(days=30), 1),
+            (False, True, timedelta(hours=1), timedelta(days=30), 0),
+            (True, True, timedelta(hours=1), timedelta(days=30), 1),
+            (False, False, timedelta(hours=-1), timedelta(days=30), 0),
+            (False, False, None, timedelta(days=30), 0),
+            (False, True, timedelta(hours=-1), timedelta(days=99), 0),
+            (True, True, timedelta(hours=-1), timedelta(days=99), 0),
+        ],
+    )
+    def test_parse_frequent_feeds(
+        self,
+        db,
+        mock_parse_feed,
+        force_update,
+        active,
+        scheduled,
+        last_pub,
+        result,
+    ):
+        now = timezone.now()
+        PodcastFactory(
+            active=active,
+            scheduled=now + scheduled if scheduled else None,
+            pub_date=now - last_pub if last_pub else None,
+        )
+        assert parse_frequent_feeds(force_update=force_update) == result
+
+        if result:
+            mock_parse_feed.assert_called()
+        else:
+            mock_parse_feed.assert_not_called()
+
+
+class TestParseSporadicFeeds:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+
+    @pytest.mark.parametrize(
+        "active,last_pub,result",
+        [
+            (True, timedelta(days=105), 1),
+            (True, timedelta(days=99), 0),
+            (True, timedelta(days=30), 0),
+            (True, None, 0),
+            (False, timedelta(days=99), 0),
+        ],
+    )
+    def test_parse_sporadic_feeds(self, db, mock_parse_feed, active, last_pub, result):
+        PodcastFactory(
+            active=active,
+            pub_date=timezone.now() - last_pub if last_pub else None,
+        )
+        assert parse_sporadic_feeds() == result
+
+        if result:
+            mock_parse_feed.assert_called()
+        else:
+            mock_parse_feed.assert_not_called()
 
 
 class TestFeedHeaders:
@@ -63,25 +133,7 @@ class TestFeedHeaders:
         assert "If-None-Match" not in headers
 
 
-class TestCalcFrequency:
-    def test_calc_frequency(self):
-
-        now = timezone.now()
-
-        dates = [
-            now - timedelta(days=5, hours=12),
-            now - timedelta(days=12, hours=12),
-            now - timedelta(days=15, hours=12),
-            now - timedelta(days=30, hours=12),
-        ]
-
-        assert calc_frequency(dates).days == 8
-
-    def test_calc_frequency_if_empty(self):
-        assert calc_frequency([]) is None
-
-
-class TestFeedParser:
+class TestParseFeed:
 
     mock_file = "rss_mock.xml"
     mock_http_get = "requests.get"
@@ -122,7 +174,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -133,9 +185,12 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
-    def test_parse_feed(self, mocker, new_podcast, categories):
+    def test_parse_feed_podcast_not_found(self, db):
+        assert parse_feed("https://example.com/rss.xml") is False
+
+    def test_parse_feed_ok(self, mocker, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -154,7 +209,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(new_podcast) is True
+        assert parse_feed(new_podcast.rss) is True
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -207,7 +262,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss)
         assert Episode.objects.filter(podcast=new_podcast).count() == 20
 
         new_podcast.refresh_from_db()
@@ -233,7 +288,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
 
@@ -248,7 +303,7 @@ class TestFeedParser:
                 new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -256,7 +311,7 @@ class TestFeedParser:
 
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -267,7 +322,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
 

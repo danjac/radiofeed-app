@@ -9,11 +9,9 @@ from typing import Generator
 
 import pandas
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
-from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -29,7 +27,7 @@ NUM_RECENT_EPISODES: int = 6
 
 def recommend() -> None:
 
-    podcasts = get_podcast_queryset()
+    podcasts = Podcast.objects.frequent().exclude(extracted_text="")
 
     Recommendation.objects.bulk_delete()
 
@@ -44,12 +42,6 @@ def recommend() -> None:
 
     for language in languages:
         create_recommendations_for_language(podcasts, categories, language)
-
-
-def get_podcast_queryset() -> QuerySet:
-    return Podcast.objects.filter(
-        pub_date__gt=timezone.now() - settings.RELEVANCY_THRESHOLD
-    ).exclude(extracted_text="")
 
 
 def create_recommendations_for_language(
