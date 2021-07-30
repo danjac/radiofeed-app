@@ -118,8 +118,8 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    @admin.action(description="parse podcast feeds")
-    def parse_feeds(self, request: HttpRequest, queryset: QuerySet):
+    @admin.action(description="Parse podcast feeds")
+    def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
 
         for rss in queryset.values_list("rss", flat=True):
             parse_feed.delay(rss, force_update=True)

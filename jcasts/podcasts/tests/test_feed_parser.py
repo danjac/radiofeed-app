@@ -27,7 +27,7 @@ from jcasts.podcasts.models import Podcast
 class MockResponse:
     def __init__(
         self,
-        url: str,
+        url: str = "",
         status: int = http.HTTPStatus.OK,
         content: bytes = b"",
         headers: None | dict = None,
@@ -46,24 +46,10 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError()
 
 
-class TestParsePodcastFeed:
-    @pytest.fixture
-    def mock_parse_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed")
-
-    def test_parse_feed(self, podcast, mock_parse_feed):
-        parse_feed.delay(podcast.rss)
-        mock_parse_feed.assert_called()
-
-    def test_parse_feed_does_not_exist(self, db, mock_parse_feed):
-        parse_feed.delay("https://example.com/rss.xml")
-        mock_parse_feed.assert_not_called()
-
-
 class TestParseFrequentFeeds:
     @pytest.fixture
     def mock_parse_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.scheduler.parse_feed.delay")
+        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
 
     @pytest.mark.parametrize(
         "force_update,active,scheduled,last_pub,result",
@@ -147,7 +133,7 @@ class TestFeedHeaders:
         assert "If-None-Match" not in headers
 
 
-class TestFeedParser:
+class TestParseFeed:
 
     mock_file = "rss_mock.xml"
     mock_http_get = "requests.get"
@@ -188,7 +174,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -199,9 +185,12 @@ class TestFeedParser:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
-    def test_parse_feed(self, mocker, new_podcast, categories):
+    def test_parse_feed_podcast_not_found(self, db):
+        assert parse_feed("https://example.com/rss.xml") is False
+
+    def test_parse_feed_ok(self, mocker, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -220,7 +209,7 @@ class TestFeedParser:
                 },
             ),
         )
-        assert parse_feed(new_podcast) is True
+        assert parse_feed(new_podcast.rss) is True
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -273,7 +262,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss)
         assert Episode.objects.filter(podcast=new_podcast).count() == 20
 
         new_podcast.refresh_from_db()
@@ -299,7 +288,7 @@ class TestFeedParser:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast)
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
 
@@ -314,7 +303,7 @@ class TestFeedParser:
                 new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -322,7 +311,7 @@ class TestFeedParser:
 
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -333,7 +322,7 @@ class TestFeedParser:
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        assert parse_feed(new_podcast) is False
+        assert parse_feed(new_podcast.rss) is False
 
         new_podcast.refresh_from_db()
 

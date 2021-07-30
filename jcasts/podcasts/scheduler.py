@@ -34,6 +34,7 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
             podcast.scheduled = get_next_scheduled(
                 pub_date=podcast.pub_date, frequency=podcast.frequency
             )
+            print(podcast.frequency, podcast.scheduled)
             yield podcast
 
     Podcast.objects.bulk_update(
@@ -62,7 +63,7 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
 def calc_frequency_from_podcast(podcast: Podcast) -> timedelta | None:
     return calc_frequency(
         Episode.objects.filter(
-            podcast=podcast, pub_date__gte=settings.RELEVANCY_THRESHOLD
+            podcast=podcast, pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD
         )
         .values_list("pub_date", flat=True)
         .order_by("-pub_date")

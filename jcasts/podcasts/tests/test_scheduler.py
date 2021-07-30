@@ -4,6 +4,7 @@ import pytest
 
 from django.utils import timezone
 
+from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts import scheduler
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -25,6 +26,24 @@ class TestCalcFrequency:
 
     def test_calc_frequency_if_empty(self):
         assert scheduler.calc_frequency([]) is None
+
+
+class TestCalcFrequencyFromPodcast:
+    def test_calc_frequency(self, podcast):
+
+        now = timezone.now()
+
+        [
+            EpisodeFactory(podcast=podcast, pub_date=pub_date)
+            for pub_date in (
+                now - timedelta(days=5, hours=12),
+                now - timedelta(days=12, hours=12),
+                now - timedelta(days=15, hours=12),
+                now - timedelta(days=30, hours=12),
+            )
+        ]
+
+        assert scheduler.calc_frequency_from_podcast(podcast).days == 8
 
 
 class TestSchedulePodcastFeeds:
@@ -60,6 +79,8 @@ class TestSchedulePodcastFeeds:
             active=True,
         )
 
+        EpisodeFactory(podcast=podcast, pub_date=timezone.now() - timedelta(days=3))
+
         scheduled = podcast.scheduled
 
         assert scheduler.schedule_podcast_feeds(reset=True) == 1
@@ -70,16 +91,6 @@ class TestSchedulePodcastFeeds:
 
 
 class TestGetNextScheduled:
-    def test_get_next_scheduled_inactive(self):
-        assert (
-            scheduler.get_next_scheduled(
-                active=False,
-                pub_date=timezone.now() - timedelta(days=7),
-                frequency=timedelta(days=1),
-            )
-            is None
-        )
-
     def test_get_next_scheduled_no_pub_date(self):
         assert (
             scheduler.get_next_scheduled(

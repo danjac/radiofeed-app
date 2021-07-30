@@ -265,7 +265,7 @@ class TestITunesCategory:
 
     def test_get(self, client, mocker, category_with_itunes, url):
 
-        mocker.patch("jcasts.podcasts.views.sync_podcast_feed.delay", autospec=True)
+        mocker.patch("jcasts.podcasts.views.parse_feed.delay", autospec=True)
         mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
 
         resp = client.get(url)
@@ -299,8 +299,8 @@ class TestSearchITunes:
         assert len(resp.context_data["results"]) == 0
 
     def test_search(self, client, mocker, db):
-        mock_sync = mocker.patch(
-            "jcasts.podcasts.views.sync_podcast_feed.delay", autospec=True
+        mock_parse = mocker.patch(
+            "jcasts.podcasts.views.parse_feed.delay", autospec=True
         )
         mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
 
@@ -312,7 +312,7 @@ class TestSearchITunes:
 
         assert resp.context_data["results"][0].title == mock_search_result.title
 
-        mock_sync.assert_called()
+        mock_parse.assert_called()
 
     def test_invalid_results(self, client, mocker, db):
         mocker.patch.object(
