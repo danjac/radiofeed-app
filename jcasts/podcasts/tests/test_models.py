@@ -130,14 +130,13 @@ class TestPodcastManager:
 
 
 class TestPodcastModel:
+    rss = "https://example.com/rss.xml"
+
     def test_str(self):
-        assert str(Podcast(title="title") == "title")
+        assert str(Podcast(title="title")) == "title"
 
     def test_str_title_empty(self):
-        assert (
-            str(Podcast(title="", rss="https://example.com/rss.xml"))
-            == "https://example.com/rss.xml"
-        )
+        assert str(Podcast(title="", rss=self.rss)) == self.rss
 
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
@@ -146,12 +145,10 @@ class TestPodcastModel:
         assert Podcast().slug == "podcast"
 
     def test_get_domain(self):
-        assert Podcast(rss="https://example.com/rss.xml").get_domain() == "example.com"
+        assert Podcast(rss=self.rss).get_domain() == "example.com"
 
     def test_get_domain_if_www(self):
-        assert (
-            Podcast(rss="https://www.example.com/rss.xml").get_domain() == "example.com"
-        )
+        assert Podcast(rss=self.rss).get_domain() == "example.com"
 
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>a &amp; b</b>")
