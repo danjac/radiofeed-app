@@ -136,52 +136,52 @@ class TestSchedulePodcastFeeds:
         assert podcast.scheduled > scheduled
 
 
-class TestGetNextScheduled:
-    def test_get_next_scheduled_no_pub_date(self):
+class TestSchedule:
+    def test_schedule_no_pub_date(self):
         assert (
-            scheduler.get_next_scheduled(
+            scheduler.schedule(
                 frequency=timedelta(days=1),
                 pub_date=None,
             )
             is None
         )
 
-    def test_get_next_scheduled_no_frequency(self):
+    def test_schedule_no_frequency(self):
         assert (
-            scheduler.get_next_scheduled(
+            scheduler.schedule(
                 frequency=None,
                 pub_date=timezone.now() - timedelta(days=7),
             )
             is None
         )
 
-    def test_get_next_scheduled_frequency_zero(self):
+    def test_schedule_frequency_zero(self):
         now = timezone.now()
-        scheduled = scheduler.get_next_scheduled(
+        scheduled = scheduler.schedule(
             frequency=timedelta(seconds=0),
             pub_date=now - timedelta(hours=1),
         )
         assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
-    def test_get_next_scheduled_frequency_lt_one_hour(self):
+    def test_schedule_frequency_lt_one_hour(self):
         now = timezone.now()
-        scheduled = scheduler.get_next_scheduled(
+        scheduled = scheduler.schedule(
             frequency=timedelta(seconds=60),
             pub_date=now - timedelta(hours=1),
         )
         assert (scheduled - now).total_seconds() == pytest.approx(3600)
 
-    def test_get_next_scheduled_lt_now(self):
+    def test_schedule_lt_now(self):
         now = timezone.now()
-        scheduled = scheduler.get_next_scheduled(
+        scheduled = scheduler.schedule(
             frequency=timedelta(days=30),
             pub_date=now - timedelta(days=90),
         )
         assert (scheduled - now).total_seconds() / (24 * 60 * 60) == pytest.approx(1.5)
 
-    def test_get_next_scheduled_gt_now(self):
+    def test_schedule_gt_now(self):
         now = timezone.now()
-        scheduled = scheduler.get_next_scheduled(
+        scheduled = scheduler.schedule(
             frequency=timedelta(days=7),
             pub_date=now - timedelta(days=6),
         )

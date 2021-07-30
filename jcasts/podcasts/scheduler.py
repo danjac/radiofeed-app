@@ -33,7 +33,7 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
         """Schedules recent podcasts to run at allotted time."""
         for podcast in qs.iterator():
-            podcast.scheduled = get_next_scheduled(
+            podcast.scheduled = schedule(
                 pub_date=podcast.pub_date, frequency=podcast.frequency
             )
             yield podcast
@@ -92,7 +92,7 @@ def calc_frequency_from_podcast(podcast: Podcast) -> timedelta | None:
     )
 
 
-def get_next_scheduled(
+def schedule(
     *,
     pub_date: datetime | None,
     frequency: timedelta | None,
