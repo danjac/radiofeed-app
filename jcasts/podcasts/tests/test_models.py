@@ -1,5 +1,10 @@
+from datetime import timedelta
+
+import pytest
+
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
+from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
@@ -90,6 +95,38 @@ class TestPodcastManager:
         mocker.patch(self.reltuple_count, return_value=2000)
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
+
+    @pytest.mark.parametrize(
+        "active,last_pub,exists",
+        [
+            (True, timedelta(days=30), True),
+            (True, timedelta(days=99), False),
+            (False, timedelta(days=30), False),
+            (True, None, False),
+        ],
+    )
+    def test_frequent(self, db, active, last_pub, exists):
+        PodcastFactory(
+            active=active, pub_date=timezone.now() - last_pub if last_pub else None
+        )
+
+        assert Podcast.objects.frequent().exists() is exists
+
+    @pytest.mark.parametrize(
+        "active,last_pub,exists",
+        [
+            (True, timedelta(days=30), False),
+            (True, timedelta(days=99), True),
+            (False, timedelta(days=99), False),
+            (True, None, False),
+        ],
+    )
+    def test_sporadic(self, db, active, last_pub, exists):
+        PodcastFactory(
+            active=active, pub_date=timezone.now() - last_pub if last_pub else None
+        )
+
+        assert Podcast.objects.sporadic().exists() is exists
 
 
 class TestPodcastModel:
