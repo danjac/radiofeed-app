@@ -15,10 +15,11 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
-    calc_frequency,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
+    parse_frequent_feeds,
+    parse_sporadic_feeds,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -45,6 +46,89 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError()
 
 
+class TestParsePodcastFeed:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed")
+
+    def test_parse_feed(self, podcast, mock_parse_feed):
+        parse_feed.delay(podcast.rss)
+        mock_parse_feed.assert_called()
+
+    def test_parse_feed_does_not_exist(self, db, mock_parse_feed):
+        parse_feed.delay("https://example.com/rss.xml")
+        mock_parse_feed.assert_not_called()
+
+
+class TestParseFrequentFeeds:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.scheduler.parse_feed.delay")
+
+    @pytest.mark.parametrize(
+        "force_update,active,scheduled,last_pub,result",
+        [
+            (False, True, timedelta(hours=-1), timedelta(days=30), 1),
+            (False, True, timedelta(hours=1), timedelta(days=30), 0),
+            (True, True, timedelta(hours=1), timedelta(days=30), 1),
+            (False, False, timedelta(hours=-1), timedelta(days=30), 0),
+            (False, False, None, timedelta(days=30), 0),
+            (False, True, timedelta(hours=-1), timedelta(days=99), 0),
+            (True, True, timedelta(hours=-1), timedelta(days=99), 0),
+        ],
+    )
+    def test_parse_frequent_feeds(
+        self,
+        db,
+        mock_parse_feed,
+        force_update,
+        active,
+        scheduled,
+        last_pub,
+        result,
+    ):
+        now = timezone.now()
+        PodcastFactory(
+            active=active,
+            scheduled=now + scheduled if scheduled else None,
+            pub_date=now - last_pub if last_pub else None,
+        )
+        assert parse_frequent_feeds(force_update=force_update) == result
+
+        if result:
+            mock_parse_feed.assert_called()
+        else:
+            mock_parse_feed.assert_not_called()
+
+
+class TestParseSporadicFeeds:
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+
+    @pytest.mark.parametrize(
+        "active,last_pub,result",
+        [
+            (True, timedelta(days=105), 1),
+            (True, timedelta(days=99), 0),
+            (True, timedelta(days=30), 0),
+            (True, None, 0),
+            (False, timedelta(days=99), 0),
+        ],
+    )
+    def test_parse_sporadic_feeds(self, db, mock_parse_feed, active, last_pub, result):
+        PodcastFactory(
+            active=active,
+            pub_date=timezone.now() - last_pub if last_pub else None,
+        )
+        assert parse_sporadic_feeds() == result
+
+        if result:
+            mock_parse_feed.assert_called()
+        else:
+            mock_parse_feed.assert_not_called()
+
+
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
@@ -61,24 +145,6 @@ class TestFeedHeaders:
         headers = get_feed_headers(podcast, force_update=True)
         assert "If-Modified-Since" not in headers
         assert "If-None-Match" not in headers
-
-
-class TestCalcFrequency:
-    def test_calc_frequency(self):
-
-        now = timezone.now()
-
-        dates = [
-            now - timedelta(days=5, hours=12),
-            now - timedelta(days=12, hours=12),
-            now - timedelta(days=15, hours=12),
-            now - timedelta(days=30, hours=12),
-        ]
-
-        assert calc_frequency(dates).days == 8
-
-    def test_calc_frequency_if_empty(self):
-        assert calc_frequency([]) is None
 
 
 class TestFeedParser:

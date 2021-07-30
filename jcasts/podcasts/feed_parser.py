@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import http
 import secrets
-import statistics
 import traceback
 
-from datetime import datetime, timedelta
 from functools import lru_cache
 from typing import Generator
 
@@ -16,6 +14,7 @@ import requests
 from django.conf import settings
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
+from django_rq import job
 from feedparser.http import ACCEPT_HEADER
 
 from jcasts.episodes.models import Episode
@@ -29,6 +28,11 @@ from jcasts.podcasts.coerce import (
 )
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.models import Category, Podcast
+from jcasts.podcasts.scheduler import (
+    calc_frequency,
+    calc_frequency_from_podcast,
+    get_next_scheduled,
+)
 from jcasts.podcasts.text_parser import extract_keywords
 
 USER_AGENTS = [
@@ -45,7 +49,57 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_feed(podcast: Podcast, force_update: bool = False) -> bool:
+def parse_frequent_feeds(force_update: bool = False) -> int:
+    now = timezone.now()
+    counter = 0
+    qs = (
+        Podcast.objects.filter(
+            active=True,
+            pub_date__gte=now - settings.RELEVANCY_THRESHOLD,
+        )
+        .order_by("-scheduled", "-pub_date")
+        .values_list("rss", flat=True)
+    )
+
+    if not force_update:
+        qs = qs.filter(
+            scheduled__isnull=False,
+            scheduled__lte=now,
+        )
+
+    for counter, rss in enumerate(qs.iterator(), 1):
+        parse_feed.delay(rss, force_update=force_update)
+
+    return counter
+
+
+def parse_sporadic_feeds() -> int:
+    "Should run daily. Matches older feeds with same weekday in last pub date"
+    now = timezone.now()
+    counter = 0
+    for counter, rss in enumerate(
+        Podcast.objects.filter(
+            active=True,
+            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
+            pub_date__iso_week_day=now.isoweekday(),
+        )
+        .order_by("-pub_date")
+        .values_list("rss", flat=True)
+        .iterator(),
+        1,
+    ):
+        parse_feed.delay(rss)
+
+    return counter
+
+
+@job("feeds")
+def parse_feed(rss: str, *, force_update: bool = False) -> bool:
+    try:
+
+        podcast = Podcast.objects.get(rss=rss, active=True)
+    except Podcast.DoesNotExist:
+        return False
 
     try:
         response = requests.get(
@@ -70,12 +124,10 @@ def parse_feed(podcast: Podcast, force_update: bool = False) -> bool:
         # no change, ignore
         return handle_empty_result(podcast)
 
-    sync_podcast(podcast, response)
-
-    return True
+    return parse_podcast(podcast, response)
 
 
-def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
+def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     rss, is_changed = resolve_podcast_rss(podcast, response)
 
@@ -102,7 +154,11 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     podcast.pub_date = max(pub_dates)
     podcast.frequency = calc_frequency(pub_dates)
-    podcast.scheduled = podcast.get_next_scheduled()
+
+    podcast.scheduled = get_next_scheduled(
+        frequency=podcast.frequency,
+        pub_date=podcast.pub_date,
+    )
 
     podcast.title = coerce_str(result.feed.title)
     podcast.link = coerce_url(result.feed.link)
@@ -132,12 +188,12 @@ def sync_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     podcast.save()
 
-    sync_episodes(podcast, items)
+    parse_episodes(podcast, items)
 
     return True
 
 
-def sync_episodes(podcast: Podcast, items: list[box.Box]) -> None:
+def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -291,22 +347,6 @@ def is_episode(item: box.Box) -> bool:
     )
 
 
-def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
-    max_date = timezone.now() - settings.RELEVANCY_THRESHOLD
-    pub_dates = [
-        pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > max_date
-    ]
-    if not pub_dates:
-        return None
-    diffs = []
-    prev = timezone.now()
-    for pub_date in pub_dates:
-        diffs.append((prev - pub_date).days)
-        prev = pub_date
-    days = round(statistics.mean(diffs))
-    return timedelta(days=days)
-
-
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
@@ -339,23 +379,13 @@ def resolve_podcast_rss(
 
 
 def handle_empty_result(podcast: Podcast, active=True, **fields) -> bool:
-    # re-schedule next feed sync
-
-    if active:
-        pub_dates = (
-            Episode.objects.filter(podcast=podcast)
-            .values_list("pub_date", flat=True)
-            .order_by("-pub_date")
-        )
-        frequency = calc_frequency(pub_dates)
-    else:
-        frequency = None
+    frequency = calc_frequency_from_podcast(podcast) if active else None
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         frequency=frequency,
+        scheduled=get_next_scheduled(pub_date=podcast.pub_date, frequency=frequency),
         updated=timezone.now(),
-        scheduled=podcast.get_next_scheduled(),
         **fields,
     )
 

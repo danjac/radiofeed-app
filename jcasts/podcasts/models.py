@@ -12,7 +12,6 @@ from django.db import models
 from django.http import HttpRequest
 from django.template.defaultfilters import striptags
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -163,31 +162,6 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
-
-    def get_next_scheduled(self) -> datetime | None:
-        """Returns next scheduled feed sync time.
-        If frequency is set, will return last pub date + frequency or current time +
-        frequency, whichever is greater (minimum: 1 hour).
-
-        If feed inactive or no frequency set, returns None.
-        """
-        if not self.active or None in (self.pub_date, self.frequency):
-            return None
-
-        now = timezone.now()
-        min_delta = timedelta(hours=1)
-
-        # minimum 1 hour
-        frequency = max(self.frequency, min_delta)
-
-        # should always be in future
-        if (scheduled := self.pub_date + frequency) > now:
-            return scheduled
-
-        # add 5% of frequency to current time (min 1 hour)
-        # e.g. 7 days - try again in about 8 hours
-
-        return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta)
 
     @property
     def slug(self) -> str:

@@ -1,25 +1,24 @@
 from __future__ import annotations
 
-import logging
+import statistics
 
+from datetime import datetime, timedelta
 from typing import Generator
 
 from django.conf import settings
 from django.utils import timezone
-from django_rq import job
 
-from jcasts.podcasts.feed_parser import parse_feed
+from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
 
 def schedule_podcast_feeds(reset: bool = False) -> int:
     if reset:
-        Podcast.objects.update(scheduled=None)
+        Podcast.objects.update(scheduled=None, frequency=None)
 
     qs = Podcast.objects.filter(
         active=True,
         scheduled__isnull=True,
-        frequency__isnull=False,
         pub_date__isnull=False,
         pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
     ).order_by("-pub_date")
@@ -29,68 +28,72 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     def _schedule_podcast_feeds() -> Generator[Podcast, None, None]:
         """Schedules recent podcasts to run at allotted time."""
         for podcast in qs.iterator():
-            podcast.scheduled = podcast.get_next_scheduled()
+            podcast.frequency = podcast.frequency or calc_frequency_from_podcast(
+                podcast
+            )
+            podcast.scheduled = get_next_scheduled(
+                pub_date=podcast.pub_date, frequency=podcast.frequency
+            )
             yield podcast
 
     Podcast.objects.bulk_update(
-        _schedule_podcast_feeds(), ["scheduled"], batch_size=1000
+        _schedule_podcast_feeds(), fields=["scheduled", "frequency"], batch_size=1000
     )
 
     return total
 
 
-def sync_frequent_feeds(force_update: bool = False) -> int:
-    now = timezone.now()
-    counter = 0
-    qs = (
-        Podcast.objects.filter(
-            active=True,
-            pub_date__gte=now - settings.RELEVANCY_THRESHOLD,
+def calc_frequency(pub_dates: list[datetime]) -> timedelta | None:
+    max_date = timezone.now() - settings.RELEVANCY_THRESHOLD
+    pub_dates = [
+        pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > max_date
+    ]
+    if not pub_dates:
+        return None
+    diffs = []
+    prev = timezone.now()
+    for pub_date in pub_dates:
+        diffs.append((prev - pub_date).days)
+        prev = pub_date
+    days = round(statistics.mean(diffs))
+    return timedelta(days=days)
+
+
+def calc_frequency_from_podcast(podcast: Podcast) -> timedelta | None:
+    return calc_frequency(
+        Episode.objects.filter(
+            podcast=podcast, pub_date__gte=settings.RELEVANCY_THRESHOLD
         )
+        .values_list("pub_date", flat=True)
         .order_by("-pub_date")
-        .values_list("rss", flat=True)
     )
 
-    if not force_update:
-        qs = qs.filter(
-            scheduled__isnull=False,
-            scheduled__lte=now,
-        )
 
-    for counter, rss in enumerate(qs.iterator(), 1):
-        sync_podcast_feed.delay(rss, force_update=force_update)
+def get_next_scheduled(
+    *,
+    pub_date: datetime | None,
+    frequency: timedelta | None,
+) -> datetime | None:
+    """Returns next scheduled feed sync time.
+    If frequency is set, will return last pub date + frequency or current time +
+    frequency, whichever is greater (minimum: 1 hour).
 
-    return counter
+    If feed inactive or no frequency set, returns None.
+    """
+    if None in (pub_date, frequency):
+        return None
 
-
-def sync_sporadic_feeds() -> int:
-    "Should run daily. Matches older feeds with same weekday in last pub date"
     now = timezone.now()
-    counter = 0
-    for counter, rss in enumerate(
-        Podcast.objects.filter(
-            active=True,
-            pub_date__lt=now - settings.RELEVANCY_THRESHOLD,
-            pub_date__iso_week_day=now.isoweekday(),
-        )
-        .order_by("-pub_date")
-        .values_list("rss", flat=True)
-        .iterator(),
-        1,
-    ):
-        sync_podcast_feed.delay(rss)
+    min_delta = timedelta(hours=1)
 
-    return counter
+    # minimum 1 hour
+    frequency = max(frequency, min_delta)
 
+    # should always be in future
+    if (scheduled := pub_date + frequency) > now:
+        return scheduled
 
-@job("feeds")
-def sync_podcast_feed(rss: str, *, force_update: bool = False) -> None:
+    # add 5% of frequency to current time (min 1 hour)
+    # e.g. 7 days - try again in about 8 hours
 
-    try:
-
-        podcast = Podcast.objects.get(rss=rss, active=True)
-    except Podcast.DoesNotExist:
-        return
-
-    parse_feed(podcast, force_update=force_update)
-    logging.info(f"{podcast} sync complete")
+    return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta)

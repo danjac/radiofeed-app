@@ -1,10 +1,5 @@
-from datetime import timedelta
-
-import pytest
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
@@ -131,69 +126,3 @@ class TestPodcastModel:
         og_data = podcast.get_opengraph_data(req)
         assert podcast.title in og_data["title"]
         assert og_data["url"] == "http://testserver" + podcast.get_absolute_url()
-
-    def test_get_next_scheduled_inactive(self):
-        assert (
-            Podcast(
-                active=False,
-                pub_date=timezone.now() - timedelta(days=7),
-                frequency=timedelta(days=1),
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_no_pub_date(self):
-        assert (
-            Podcast(
-                active=True,
-                frequency=timedelta(days=1),
-                pub_date=None,
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_no_frequency(self):
-        assert (
-            Podcast(
-                active=True,
-                frequency=None,
-                pub_date=timezone.now() - timedelta(days=7),
-            ).get_next_scheduled()
-            is None
-        )
-
-    def test_get_next_scheduled_frequency_zero(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(seconds=0),
-            pub_date=now - timedelta(hours=1),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
-
-    def test_get_next_scheduled_frequency_lt_one_hour(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(seconds=60),
-            pub_date=now - timedelta(hours=1),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
-
-    def test_get_next_scheduled_lt_now(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(days=30),
-            pub_date=now - timedelta(days=90),
-        ).get_next_scheduled()
-        assert (scheduled - now).total_seconds() / (24 * 60 * 60) == pytest.approx(1.5)
-
-    def test_get_next_scheduled_gt_now(self):
-        now = timezone.now()
-        scheduled = Podcast(
-            active=True,
-            frequency=timedelta(days=7),
-            pub_date=now - timedelta(days=6),
-        ).get_next_scheduled()
-        assert (scheduled - now).days == 1
