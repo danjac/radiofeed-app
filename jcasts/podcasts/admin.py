@@ -79,7 +79,10 @@ class ActiveFilter(admin.SimpleListFilter):
 class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
-    ordering = ("-pub_date",)
+    ordering = (
+        "scheduled",
+        "-pub_date",
+    )
     list_display = (
         "__str__",
         "source",
