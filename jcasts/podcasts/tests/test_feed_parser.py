@@ -225,6 +225,7 @@ class TestParseFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.rss
+        assert new_podcast.active
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
