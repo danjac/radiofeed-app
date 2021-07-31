@@ -5,7 +5,6 @@ const playerObj = {
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
-  isWaiting: false,
   isError: false,
   playbackRate: 1.0,
   showPlayer: true,
@@ -95,6 +94,10 @@ const playerObj = {
 
   timeUpdate() {
     this.currentTime = Math.floor(this.$refs.audio.currentTime);
+  },
+
+  waiting() {
+    this.isPlaying = false;
   },
 
   resumed() {
