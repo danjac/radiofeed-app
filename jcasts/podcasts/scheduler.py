@@ -40,13 +40,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     if not pub_dates:
         return None
 
-    head, *tail = pub_dates
-
-    # we just have one data point: measure time from that date
-    if not tail:
-        head, tail = timezone.now(), [head]
+    (head, *tail) = pub_dates if len(pub_dates) > 1 else (timezone.now(), pub_dates[0])
 
     diffs = []
+
     for pub_date in pub_dates:
         diffs.append((head - pub_date).total_seconds())
         head = pub_date
