@@ -103,7 +103,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "created",
         "updated",
         "pub_date",
-        "scheduled",
         "num_episodes",
     )
 
