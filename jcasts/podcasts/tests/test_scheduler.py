@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 import pytest
+import pytz
 
 from django.utils import timezone
 
@@ -26,13 +27,21 @@ class TestGetFrequency:
 
     def test_get_frequency_single_date(self):
 
-        now = timezone.now()
+        assert (
+            scheduler.get_frequency(
+                [
+                    timezone.now() - timedelta(days=5, hours=12),
+                ]
+            ).days
+            == 5
+        )
 
-        dates = [
-            now - timedelta(days=5, hours=12),
-        ]
+    def test_get_frequency_not_utc(self):
 
-        assert scheduler.get_frequency(dates).days == 5
+        dt = timezone.now() - timedelta(days=5, hours=12)
+        dt = pytz.timezone("Europe/Helsinki").normalize(dt)
+
+        assert scheduler.get_frequency([dt]).days == 5
 
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
