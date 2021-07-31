@@ -40,6 +40,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     if not pub_dates:
         return None
 
+    # if single date, start with time since that date
     (head, *tail) = pub_dates if len(pub_dates) > 1 else (timezone.now(), pub_dates[0])
 
     diffs = []
@@ -57,6 +58,9 @@ def schedule(
 ) -> datetime | None:
     """Returns next scheduled feed sync time.
     Will calculate based on list of provided pub dates or most recent episodes.
+
+    Returns None if podcast inactive or has no pub dates. Minimum scheduled time
+    otherwise will be 1 hour from now.
     """
     if not podcast.active or podcast.pub_date is None:
         return None

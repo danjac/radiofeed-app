@@ -24,6 +24,16 @@ class TestGetFrequency:
 
         assert scheduler.get_frequency(dates).days == 6
 
+    def test_get_frequency_single_date(self):
+
+        now = timezone.now()
+
+        dates = [
+            now - timedelta(days=5, hours=12),
+        ]
+
+        assert scheduler.get_frequency(dates).days == 5
+
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
 
