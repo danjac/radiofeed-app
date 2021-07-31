@@ -29,8 +29,6 @@
          @loadedmetadata="loaded()"
          @pause="paused()"
          @play="resumed()"
-         @loadstart="waiting()"
-         @waiting="waiting()"
          @playing="playing()"
          @timeupdate="timeUpdate()">
   </audio>
@@ -70,30 +68,31 @@
             <div class="flex items-center">
 
               <button title="Reload to start player"
-                      @click="location.reload()"
-                      x-show="!isLoaded || isError || isWaiting"
+                      hx-target="#player"
+                      hx-post="{% url 'episodes:start_player' episode.id %}"
+                      hx-swap="outerHTML"
                       class="focus:outline-none hover:text-blue-500 mr-2">
-                {% icon "refresh" css_class="h-8 w-8" %}
+                {% icon "refresh" css_class="h-6 w-6 lg:h-8 lg:w-8" %}
               </button>
 
               <button title="Pause"
                       @click="togglePlay"
                       x-show="!isPaused && isLoaded && !isError"
                       class="focus:outline-none hover:text-blue-500 mr-2">
-                {% icon "pause" css_class="h-8 w-8" %}
+                {% icon "pause" css_class="h-6 w-6 lg:h-8 lg:w-8" %}
               </button>
 
               <button title="Play"
                       @click="togglePlay"
                       x-show="isPaused && isLoaded && !isError"
                       class="focus:outline-none hover:text-blue-600 mr-2">
-                {% icon "play" css_class="h-8 w-8" %}
+                {% icon "play" css_class="h-6 w-6 lg:h-8 lg:w-8" %}
               </button>
 
               <button title="Close Player"
                       @click="close()"
                       class="focus:outline-none hover:text-blue-500">
-                {% icon "stop" css_class="h-8 w-8" %}
+                {% icon "stop" css_class="h-6 w-6 lg:h-8 lg:w-8" %}
               </button>
 
             </div>

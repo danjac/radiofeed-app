@@ -175,6 +175,8 @@ class TestParseFeed:
             ),
         )
         assert parse_feed(new_podcast.rss) is False
+        new_podcast.refresh_from_db()
+        assert new_podcast.active
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -186,6 +188,8 @@ class TestParseFeed:
             ),
         )
         assert parse_feed(new_podcast.rss) is False
+        new_podcast.refresh_from_db()
+        assert new_podcast.active
 
     def test_parse_feed_podcast_not_found(self, db):
         assert parse_feed("https://example.com/rss.xml") is False
@@ -221,6 +225,7 @@ class TestParseFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.rss
+        assert new_podcast.active
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
@@ -294,6 +299,7 @@ class TestParseFeed:
 
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
+        assert new_podcast.scheduled is None
         assert new_podcast.redirect_to == other
 
     def test_parse_feed_not_modified(self, mocker, new_podcast, categories):
@@ -328,4 +334,5 @@ class TestParseFeed:
 
         assert not new_podcast.active
         assert not new_podcast.exception
+        assert new_podcast.scheduled is None
         assert new_podcast.error_status == http.HTTPStatus.GONE

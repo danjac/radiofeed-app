@@ -73,7 +73,6 @@ const playerObj = {
     }
 
     this.isError = false;
-    this.isWaiting = false;
 
     if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
@@ -102,26 +101,18 @@ const playerObj = {
     this.isPlaying = true;
     this.isPaused = false;
     this.isError = false;
-    this.isWaiting = false;
     sessionStorage.setItem(this.storageKey, true);
-  },
-
-  waiting() {
-    this.isPlaying = false;
-    this.isWaiting = true;
   },
 
   playing() {
     if (!this.isPaused) {
       this.isPlaying = true;
     }
-    this.isWaiting = false;
   },
 
   paused() {
     this.isPlaying = false;
     this.isPaused = true;
-    this.isWaiting = false;
     sessionStorage.removeItem(this.storageKey);
   },
 

@@ -364,9 +364,9 @@ def resolve_podcast_rss(
 def parse_failure(podcast: Podcast, active=True, **fields) -> bool:
 
     Podcast.objects.filter(pk=podcast.id).update(
-        active=active,
-        scheduled=schedule(podcast),
+        scheduled=schedule(podcast) if active else None,
         updated=timezone.now(),
+        active=active,
         **fields,
     )
 
