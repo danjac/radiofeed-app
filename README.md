@@ -2,8 +2,6 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 ![desktop](/screenshots/desktop.png?raw=True)
 
-![mobile](/screenshots/mobile.png?raw=True)
-
 ## Running jcasts on your local machine
 
 Local development requires docker and docker-compose. Just run:
