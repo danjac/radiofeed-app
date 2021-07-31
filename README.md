@@ -1,5 +1,7 @@
 This is the source code for [jCasts](https://jcasts.io), a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself.
 
+![desktop](/screenshots/desktop.png?raw=True)
+
 ## Running jcasts on your local machine
 
 Local development requires docker and docker-compose. Just run:
