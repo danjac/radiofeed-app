@@ -102,15 +102,19 @@ def parse_feed(rss: str, *, force_update: bool = False) -> bool:
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
-        return parse_failure(podcast, error_status=response.status_code, active=False)
+        return parse_failure(podcast, status=response.status_code, active=False)
 
-    except requests.RequestException:
+    except requests.RequestException as e:
         # temp issue, maybe network error, log & try again later
-        return parse_failure(podcast, exception=traceback.format_exc())
+        return parse_failure(
+            podcast,
+            status=e.response.status_code if e.response else None,
+            exception=traceback.format_exc(),
+        )
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
         # no change, ignore
-        return parse_failure(podcast)
+        return parse_failure(podcast, status=response.status_code)
 
     return parse_podcast(podcast, response)
 
@@ -123,7 +127,9 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
         other := Podcast.objects.filter(rss=rss).exclude(pk=podcast.pk).first()
     ):
         # permanent redirect to URL already taken by another podcast
-        return parse_failure(podcast, redirect_to=other, active=False)
+        return parse_failure(
+            podcast, redirect_to=other, active=False, status=response.status_code
+        )
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
@@ -134,6 +140,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
+    podcast.status = response.status_code
     podcast.exception = ""
 
     podcast.num_episodes = len(items)

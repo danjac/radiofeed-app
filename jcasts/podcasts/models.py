@@ -125,8 +125,8 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    # HTTP error status
-    error_status: int | None = models.PositiveSmallIntegerField(null=True, blank=True)
+    # HTTP status of last fetch
+    status: int | None = models.PositiveSmallIntegerField(null=True, blank=True)
 
     # error fetching RSS
     exception: str = models.TextField(blank=True)

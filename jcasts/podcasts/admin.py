@@ -110,9 +110,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     @admin.action(description="Re-activate podcasts")
     def reactivate(self, request: HttpRequest, queryset: QuerySet):
-        num_updated = queryset.filter(active=False).update(
-            active=True, error_status=None
-        )
+        num_updated = queryset.filter(active=False).update(active=True)
         self.message_user(
             request,
             f"{num_updated} podcasts re-activated",
