@@ -2,7 +2,7 @@ const playerObj = {
   counter: '00:00:00',
   currentTime: 0,
   duration: 0,
-  err: null,
+  errMsg: null,
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
@@ -44,7 +44,7 @@ const playerObj = {
   },
 
   shortcut(event) {
-    if (!this.shortcuts) {
+    if (!this.shortcuts || !this.$refs.audio) {
       return;
     }
 
@@ -71,7 +71,7 @@ const playerObj = {
       return;
     }
 
-    this.err = null;
+    this.errMsg = null;
 
     if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
@@ -79,7 +79,7 @@ const playerObj = {
       this.$refs.audio.play().catch((err) => {
         this.isPaused = true;
         this.isPlaying = false;
-        this.err = err;
+        this.errMsg = getAudioError(err);
       });
     }
 
@@ -89,7 +89,7 @@ const playerObj = {
 
   error() {
     this.isPlaying = false;
-    this.err = this.$refs.audio.error;
+    this.errMsg = getAudioError(this.$refs.audio.error);
   },
 
   timeUpdate() {
@@ -106,7 +106,7 @@ const playerObj = {
   resumed() {
     this.isPaused = false;
     this.isPlaying = true;
-    this.err = null;
+    this.errMsg = null;
     sessionStorage.setItem(this.storageKey, true);
   },
 
@@ -197,6 +197,17 @@ const playerObj = {
     }
   },
 };
+
+function getAudioError(err) {
+  switch (err.code) {
+    case 0: // not allowed
+      return 'Press Play button to continue';
+    case 4: // not supported
+      return 'Media not supported';
+    default:
+      return 'Press Reload button to continue';
+  }
+}
 
 function formatDuration(value) {
   if (isNaN(value) || value < 0) return '00:00:00';
