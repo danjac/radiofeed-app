@@ -45,9 +45,9 @@ class TestPodcastAdmin:
         assert qs.count() == 3
 
     def test_reactivate(self, podcasts, admin, req):
-        PodcastFactory(active=False, error_status=404)
+        PodcastFactory(active=False)
         admin.reactivate(req, Podcast.objects.all())
-        assert Podcast.objects.filter(error_status=None, active=True).count() == 4
+        assert Podcast.objects.filter(active=True).count() == 4
 
     def test_parse_podcast_feeds(self, podcast, admin, req, mocker):
         mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")

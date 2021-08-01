@@ -335,4 +335,4 @@ class TestParseFeed:
         assert not new_podcast.active
         assert not new_podcast.exception
         assert new_podcast.scheduled is None
-        assert new_podcast.error_status == http.HTTPStatus.GONE
+        assert new_podcast.status == http.HTTPStatus.GONE
