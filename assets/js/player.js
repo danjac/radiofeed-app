@@ -2,12 +2,12 @@ const playerObj = {
   counter: '00:00:00',
   currentTime: 0,
   duration: 0,
+  err: false,
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
   playbackRate: 1.0,
   showPlayer: true,
-  error: null,
   storageKey: 'player-enabled',
   unlock: false,
 
@@ -71,7 +71,7 @@ const playerObj = {
       return;
     }
 
-    this.error = null;
+    this.err = null;
 
     if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
       this.isPaused = true;
@@ -79,7 +79,7 @@ const playerObj = {
       this.$refs.audio.play().catch((err) => {
         this.isPaused = true;
         this.isPlaying = false;
-        this.error = err;
+        this.err = err;
       });
     }
 
@@ -89,7 +89,7 @@ const playerObj = {
 
   error() {
     this.isPlaying = false;
-    this.error = this.$refs.audio.error;
+    this.err = this.$refs.audio.error;
   },
 
   timeUpdate() {
@@ -104,7 +104,7 @@ const playerObj = {
   resumed() {
     this.isPaused = false;
     this.isPlaying = true;
-    this.error = null;
+    this.err = null;
     sessionStorage.setItem(this.storageKey, true);
   },
 

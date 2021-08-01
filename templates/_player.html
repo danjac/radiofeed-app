@@ -43,10 +43,10 @@
     <div class="relative space-y-1 sm:space-y-0">
 
       <div class="sm:hidden truncate text-center text-xs">
-        <span x-text="error ? error.toString().substring(0, 100) : ''"
-              x-show="error"></span>
+        <span x-text="err ? err.toString().substring(0, 100) : ''"
+              x-show="err"></span>
         <a class="player--title"
-           x-show="!error"
+           x-show="!err"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
@@ -106,10 +106,10 @@
             </div>
 
             <div class="hidden sm:block w-72 lg:w-full text-center truncate text-sm">
-              <span x-text="error ? error.toString().substring(0, 120) : ''"
-                    x-show="error"></span>
+              <span x-text="err ? err.toString().substring(0, 120) : ''"
+                    x-show="err"></span>
               <a class="player--title"
-                 x-show="!error"
+                 x-show="!err"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
                  title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
