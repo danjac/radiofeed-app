@@ -76,7 +76,8 @@
 
               <button title="Reload player"
                       class="focus:outline-none hover:text-blue-500 mr-2"
-                      x-show="!isPlaying"
+                      :class="{'opacity-75 cursor-not-allowed pointer-events-none text-gray-300': isPlaying}"
+                      :enabled="!isPlaying"
                       hx-get="{% url 'episodes:reload_player' %}"
                       hx-target="#player"
                       hx-swap="outerHTML">
