@@ -4,6 +4,7 @@ import http
 import secrets
 import traceback
 
+from dataclasses import dataclass
 from functools import lru_cache
 from typing import Generator
 
@@ -39,6 +40,15 @@ USER_AGENTS = [
 ]
 
 
+@dataclass
+class ParseResult:
+    status: int | None
+    success: bool
+
+    def __bool__(self) -> bool:
+        return self.success
+
+
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
@@ -57,7 +67,6 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
         )
-    print(timezone.now(), qs.count())
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)
@@ -84,12 +93,12 @@ def parse_sporadic_feeds() -> int:
 
 
 @job("feeds")
-def parse_feed(rss: str, *, force_update: bool = False) -> bool:
+def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
     try:
 
         podcast = Podcast.objects.get(rss=rss, active=True)
     except Podcast.DoesNotExist:
-        return False
+        return ParseResult(None, False)
 
     try:
         response = requests.get(
@@ -102,24 +111,24 @@ def parse_feed(rss: str, *, force_update: bool = False) -> bool:
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
-        return parse_failure(podcast, status=response.status_code, active=False)
+        return parse_failure(podcast, response.status_code, active=False)
 
     except requests.RequestException as e:
         # temp issue, maybe network error, log & try again later
         return parse_failure(
             podcast,
-            status=e.response.status_code if e.response else None,
+            e.response.status_code if e.response else None,
             exception=traceback.format_exc(),
         )
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
         # no change, ignore
-        return parse_failure(podcast, status=response.status_code)
+        return parse_failure(podcast, response.status_code)
 
     return parse_podcast(podcast, response)
 
 
-def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
+def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
 
     rss, is_changed = resolve_podcast_rss(podcast, response)
 
@@ -128,14 +137,14 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
     ):
         # permanent redirect to URL already taken by another podcast
         return parse_failure(
-            podcast, redirect_to=other, active=False, status=response.status_code
+            podcast, response.status_code, redirect_to=other, active=False
         )
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
-        return parse_failure(podcast, rss=rss)
+        return parse_failure(podcast, response.status_code, rss=rss)
 
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
@@ -180,7 +189,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> bool:
 
     parse_episodes(podcast, items)
 
-    return True
+    return ParseResult(response.status_code, True)
 
 
 def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
@@ -368,13 +377,16 @@ def resolve_podcast_rss(
     )
 
 
-def parse_failure(podcast: Podcast, active=True, **fields) -> bool:
+def parse_failure(
+    podcast: Podcast, status: int | None, active=True, **fields
+) -> ParseResult:
 
     Podcast.objects.filter(pk=podcast.id).update(
         scheduled=schedule(podcast) if active else None,
         updated=timezone.now(),
         active=active,
+        status=status,
         **fields,
     )
 
-    return False
+    return ParseResult(status, False)
