@@ -29,14 +29,13 @@
          @loadedmetadata="loaded()"
          @pause="paused()"
          @play="resumed()"
-         @play="waiting()"
-         @playing="playing()"
+         @suspend="suspend()"
          @timeupdate="timeUpdate()">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 sm:p-2 font-semibold"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
-       :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}">
+       :class="{'player--active': isPlaying, 'player--inactive': !isPlaying}">
     <div class="relative space-y-1 sm:space-y-0">
 
       <div class="sm:hidden truncate text-center text-sm">
@@ -70,22 +69,23 @@
 
               <button title="Reload to start player"
                       hx-target="#player"
-                      hx-post="{% url 'episodes:start_player' episode.id %}"
+                      hx-get="{% url 'episodes:get_player' %}"
                       hx-swap="outerHTML"
-                      class="focus:outline-none hover:text-blue-500 mr-2">
+                      class="focus:outline-none hover:text-blue-500 mr-2"
+                      x-show="!isPlaying && !isPaused">
                 {% icon "refresh" css_class="h-8 w-8" %}
               </button>
 
               <button title="Pause"
                       @click="togglePlay"
-                      x-show="!isPaused && isLoaded && !isError"
+                      x-show="!isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "pause" css_class="h-8 w-8" %}
               </button>
 
               <button title="Play"
                       @click="togglePlay"
-                      x-show="isPaused && isLoaded && !isError"
+                      x-show="isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-600 mr-2">
                 {% icon "play" css_class="h-8 w-8" %}
               </button>
