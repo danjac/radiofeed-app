@@ -2,7 +2,7 @@ const playerObj = {
   counter: '00:00:00',
   currentTime: 0,
   duration: 0,
-  err: false,
+  err: null,
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
