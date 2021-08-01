@@ -24,13 +24,17 @@
   <audio x-ref="audio"
          preload="metadata"
          :src="mediaSrc"
-         @error="error()"
-         @ended="ended()"
-         @loadedmetadata="loaded()"
-         @pause="paused()"
-         @play="resumed()"
-         @suspend="suspend()"
-         @timeupdate="timeUpdate()">
+         @canplaythrough="resumed"
+         @ended="ended"
+         @error="error"
+         @loadedmetadata="loaded"
+         @loadstart="buffering"
+         @pause="paused"
+         @play="resumed"
+         @timeupdate="timeUpdate"
+         @progress="buffering"
+         @stalled="buffering"
+         @suspend="buffering">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 sm:p-2 font-semibold"
        x-ref="controls"
@@ -67,12 +71,12 @@
 
             <div class="flex items-center">
 
-              <button title="Reload to start player"
-                      hx-target="#player"
-                      hx-get="{% url 'episodes:get_player' %}"
-                      hx-swap="outerHTML"
+              <button title="Reload player"
                       class="focus:outline-none hover:text-blue-500 mr-2"
-                      x-show="!isPlaying && !isPaused">
+                      x-show="!isPlaying"
+                      hx-get="{% url 'episodes:reload_player' %}"
+                      hx-target="#player"
+                      hx-swap="outerHTML">
                 {% icon "refresh" css_class="h-8 w-8" %}
               </button>
 

@@ -12,7 +12,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 @ajax_login_required
 @require_safe
-def get_player(request: HttpRequest) -> HttpResponse:
+def reload_player(request: HttpRequest) -> HttpResponse:
     """Fetches current player, if any. Useful if reloading player."""
     return TemplateResponse(request, "_player.html")
 

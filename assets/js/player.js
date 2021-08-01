@@ -92,16 +92,10 @@ const playerObj = {
     this.currentTime = Math.floor(this.$refs.audio.currentTime);
   },
 
-  suspend() {
-    console.log('suspend!!!');
+  buffering(event) {
     const { buffered } = this.$refs.audio;
-    let isBuffering = false;
-    if (this.currentTime > buffered.end(buffered.length - 1)) {
-      console.log('buffering....');
-      this.isPlaying = false;
-    } else {
-      this.isPlaying = true;
-    }
+    //console.log('checking buffer...', event);
+    this.isPlaying = false;
   },
 
   resumed() {
@@ -154,7 +148,7 @@ const playerObj = {
     }
   },
 
-  close(url) {
+  close(url, method) {
     this.mediaSrc = null;
     this.shortcuts = null;
 

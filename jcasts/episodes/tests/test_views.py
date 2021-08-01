@@ -117,8 +117,8 @@ class TestEpisodeActions:
         assert resp.context_data["episode"] == episode
 
 
-class TestGetPlayer:
-    url = reverse_lazy("episodes:get_player")
+class TestReloadPlayer:
+    url = reverse_lazy("episodes:reload_player")
 
     def test_stop_if_player_empty(self, client, auth_user):
         assert_ok(client.get(self.url))
