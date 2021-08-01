@@ -174,7 +174,7 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
@@ -187,12 +187,12 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
     def test_parse_feed_podcast_not_found(self, db):
-        assert parse_feed("https://example.com/rss.xml") is False
+        assert not parse_feed("https://example.com/rss.xml")
 
     def test_parse_feed_ok(self, mocker, new_podcast, categories):
 
@@ -213,7 +213,7 @@ class TestParseFeed:
                 },
             ),
         )
-        assert parse_feed(new_podcast.rss) is True
+        assert parse_feed(new_podcast.rss)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -293,7 +293,7 @@ class TestParseFeed:
                 content=self.get_feedparser_content(),
             ),
         )
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
 
         new_podcast.refresh_from_db()
 
@@ -309,7 +309,7 @@ class TestParseFeed:
                 new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
         )
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -317,7 +317,7 @@ class TestParseFeed:
 
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -328,7 +328,7 @@ class TestParseFeed:
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        assert parse_feed(new_podcast.rss) is False
+        assert not parse_feed(new_podcast.rss)
 
         new_podcast.refresh_from_db()
 
