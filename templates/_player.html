@@ -28,10 +28,10 @@
          @ended="ended"
          @error="error"
          @loadedmetadata="loaded"
-         @loadstart="buffering"
          @pause="paused"
          @play="resumed"
          @timeupdate="timeUpdate"
+         @loadstart="buffering"
          @progress="buffering"
          @stalled="buffering"
          @suspend="buffering">
@@ -43,10 +43,13 @@
     <div class="relative space-y-1 sm:space-y-0">
 
       <div class="sm:hidden truncate text-center text-sm">
+        <span x-text="error ? error.toString().substring(0, 100) : ''"
+              x-show="error"></span>
         <a class="player--title"
+           x-show="!error"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
-           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
+           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
       </div>
 
       <div class="flex items-center">
@@ -103,10 +106,13 @@
             </div>
 
             <div class="hidden sm:block w-72 lg:w-full text-center truncate text-sm">
+              <span x-text="error ? error.toString().substring(0, 120) : ''"
+                    x-show="error"></span>
               <a class="player--title"
+                 x-show="!error"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
-                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center">
