@@ -5,7 +5,7 @@
 <div class="space-y-2 lg:space-y-3 space-x-2 lg:space-x-3">
   {% for category in categories %}
   <div class="inline-block">
-    <a class="btn btn-link flex items-center text-sm"
+    <a class="btn btn-link flex items-center text-xs lg:text-sm"
        title="{{ category.name }}"
        href="{{ category.get_absolute_url }}">
       {% icon "tag" css_class="btn-icon mr-2" %}
