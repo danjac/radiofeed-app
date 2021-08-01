@@ -94,7 +94,9 @@ const playerObj = {
 
   timeUpdate() {
     this.isPlaying = true;
-    this.currentTime = Math.floor(this.$refs.audio.currentTime);
+    if (this.$refs.audio) {
+      this.currentTime = Math.floor(this.$refs.audio.currentTime);
+    }
   },
 
   buffering() {
