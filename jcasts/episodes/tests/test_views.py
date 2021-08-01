@@ -117,6 +117,18 @@ class TestEpisodeActions:
         assert resp.context_data["episode"] == episode
 
 
+class TestReloadPlayer:
+    url = reverse_lazy("episodes:reload_player")
+
+    def test_stop_if_player_empty(self, client, auth_user):
+        assert_ok(client.get(self.url))
+
+    def test_stop(self, client, auth_user, player_episode):
+
+        AudioLogFactory(user=auth_user, episode=player_episode, current_time=2000)
+        assert_ok(client.get(self.url))
+
+
 class TestStartPlayer:
     def test_play_from_start(self, client, auth_user, episode):
         resp = client.post(reverse("episodes:start_player", args=[episode.id]))

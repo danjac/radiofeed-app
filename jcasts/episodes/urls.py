@@ -28,6 +28,7 @@ urlpatterns = [
         episode_detail,
         name="episode_detail",
     ),
+    path("player/~reload/", player.reload_player, name="reload_player"),
     path(
         "player/<int:episode_id>/~start/",
         player.start_player,

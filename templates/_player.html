@@ -24,26 +24,32 @@
   <audio x-ref="audio"
          preload="metadata"
          :src="mediaSrc"
-         @error="error()"
-         @ended="ended()"
-         @loadedmetadata="loaded()"
-         @pause="paused()"
-         @play="resumed()"
-         @play="waiting()"
-         @playing="playing()"
-         @timeupdate="timeUpdate()">
+         @canplaythrough="resumed"
+         @ended="ended"
+         @error="error"
+         @loadedmetadata="loaded"
+         @pause="paused"
+         @play="resumed"
+         @timeupdate="timeUpdate"
+         @loadstart="buffering"
+         @progress="buffering"
+         @stalled="buffering"
+         @suspend="buffering">
   </audio>
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 sm:p-2 font-semibold"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
-       :class="{'player--active': isPlaying && isLoaded, 'player--inactive': !isPlaying || !isLoaded}">
+       :class="{'player--active': isPlaying, 'player--inactive': !isPlaying}">
     <div class="relative space-y-1 sm:space-y-0">
 
-      <div class="sm:hidden truncate text-center text-sm">
+      <div class="sm:hidden truncate text-center text-xs">
+        <span x-text="err ? err.toString().substring(0, 100) : ''"
+              x-show="err"></span>
         <a class="player--title"
+           x-show="!err"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
-           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
+           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
       </div>
 
       <div class="flex items-center">
@@ -68,24 +74,25 @@
 
             <div class="flex items-center">
 
-              <button title="Reload to start player"
+              <button title="Reload player"
+                      class="focus:outline-none hover:text-blue-500 mr-2"
+                      x-show="!isPlaying"
+                      hx-get="{% url 'episodes:reload_player' %}"
                       hx-target="#player"
-                      hx-post="{% url 'episodes:start_player' episode.id %}"
-                      hx-swap="outerHTML"
-                      class="focus:outline-none hover:text-blue-500 mr-2">
+                      hx-swap="outerHTML">
                 {% icon "refresh" css_class="h-8 w-8" %}
               </button>
 
               <button title="Pause"
                       @click="togglePlay"
-                      x-show="!isPaused && isLoaded && !isError"
+                      x-show="!isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-500 mr-2">
                 {% icon "pause" css_class="h-8 w-8" %}
               </button>
 
               <button title="Play"
                       @click="togglePlay"
-                      x-show="isPaused && isLoaded && !isError"
+                      x-show="isPaused && isLoaded"
                       class="focus:outline-none hover:text-blue-600 mr-2">
                 {% icon "play" css_class="h-8 w-8" %}
               </button>
@@ -99,10 +106,13 @@
             </div>
 
             <div class="hidden sm:block w-72 lg:w-full text-center truncate text-sm">
+              <span x-text="err ? err.toString().substring(0, 120) : ''"
+                    x-show="err"></span>
               <a class="player--title"
+                 x-show="!err"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
-                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center">

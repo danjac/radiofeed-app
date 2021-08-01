@@ -2,12 +2,19 @@ from __future__ import annotations
 
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_safe
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
+
+
+@ajax_login_required
+@require_safe
+def reload_player(request: HttpRequest) -> HttpResponse:
+    """Fetches current player, if any. Useful if reloading player."""
+    return TemplateResponse(request, "_player.html")
 
 
 @require_POST
