@@ -35,7 +35,7 @@
 {% endif %}
 {% endwith %}
 
-<section class="space-y-3 pb-3 mb-3">
+<section class="space-y-2 pb-3 mb-3">
   <div>
     <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
@@ -43,6 +43,12 @@
       {{ podcast.cleaned_title }}
     </a>
   </div>
+
+  {% if episode.episode and episode.season %}
+  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+    Episode {{ episode.episode }} / Season {{ episode.season }}
+  </div>
+  {% endif %}
 
   <div class="flex items-center space-x-3 lg:space-x-4">
     <div>
@@ -78,7 +84,9 @@
       </div>
       {% else %}
       <div>
-        <button class="flex items-center btn btn-default" disabled title="You must sign up or log in to play this episode">
+        <button class="flex items-center btn btn-default"
+                disabled
+                title="You must sign up or log in to play this episode">
           {% icon "play" css_class="h-6 w-6 mr-2" %}
           Play
         </button>
@@ -89,7 +97,7 @@
     </div>
   </div>
 
-  <div class="flex items-center font-semibold text-gray-600 dark:text-gray-300 space-x-3 text-sm">
+  <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-3 text-sm">
     <div title="Date Published">
       {% include "_pub_date.html" with pub_date=episode.pub_date %}
     </div>
