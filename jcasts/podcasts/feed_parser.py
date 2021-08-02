@@ -41,7 +41,7 @@ USER_AGENTS = [
 
 @dataclass
 class ParseResult:
-    status: int | None
+    status: int | None = None
     success: bool = False
     exception: Exception | None = None
 
