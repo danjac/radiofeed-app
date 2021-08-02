@@ -40,7 +40,7 @@
             Search for interesting podcasts, follow and listen to your favorite feeds, and enjoy our AI-generated recommendations.
           </p>
           <div class="text-center sm:text-left">
-            <a class="font-semibold underline"
+            <a class="font-semibold underline text-lg"
                title="See latest"
                href="{% url 'episodes:index' %}">
               Explore Popular Podcasts
@@ -53,7 +53,8 @@
         <div class="lg:w-1/2 lg:pl-6">
           <div class="p-3 border border-white rounded mb-6">
             <p class="lg:text-lg mb-3">
-              Join {{ request.site.name }} and...
+              <a href="{% url 'account_signup' %}"
+                 class="underline font-semibold">Join {{ request.site.name }}</a> and...
             </p>
             <ul class="mb-3 list-inside list-disc">
               <li><strong>Listen</strong> to episodes</li>
