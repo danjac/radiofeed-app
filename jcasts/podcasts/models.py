@@ -128,9 +128,6 @@ class Podcast(models.Model):
     # HTTP status of last fetch
     status: int | None = models.PositiveSmallIntegerField(null=True, blank=True)
 
-    # error fetching RSS
-    exception: str = models.TextField(blank=True)
-
     # if permanent redirect to feed that already exists
     redirect_to: Podcast | None = models.ForeignKey(
         "self",

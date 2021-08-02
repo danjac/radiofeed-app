@@ -192,7 +192,11 @@ class TestParseFeed:
         assert new_podcast.active
 
     def test_parse_feed_podcast_not_found(self, db):
-        assert not parse_feed("https://example.com/rss.xml")
+        result = parse_feed("https://example.com/rss.xml")
+        assert result.success is False
+
+        with pytest.raises(Podcast.DoesNotExist):
+            result.raise_exception()
 
     def test_parse_feed_ok(self, mocker, new_podcast, categories):
 
@@ -317,22 +321,29 @@ class TestParseFeed:
 
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
-        assert not parse_feed(new_podcast.rss)
+
+        result = parse_feed(new_podcast.rss)
+        assert result.success is False
+
+        with pytest.raises(requests.RequestException):
+            result.raise_exception()
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
-        assert new_podcast.exception
 
     def test_parse_feed_gone(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        assert not parse_feed(new_podcast.rss)
+        result = parse_feed(new_podcast.rss)
+        assert result.success is False
+
+        # no exception
+        result.raise_exception()
 
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
-        assert not new_podcast.exception
         assert new_podcast.scheduled is None
         assert new_podcast.status == http.HTTPStatus.GONE
