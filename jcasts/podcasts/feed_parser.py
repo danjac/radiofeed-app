@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import http
 import secrets
-import traceback
 
 from dataclasses import dataclass
 from functools import lru_cache
@@ -43,10 +42,15 @@ USER_AGENTS = [
 @dataclass
 class ParseResult:
     status: int | None
-    success: bool
+    success: bool = False
+    exception: Exception | None = None
 
     def __bool__(self) -> bool:
         return self.success
+
+    def raise_exception(self) -> None:
+        if self.exception:
+            raise self.exception
 
 
 @lru_cache
@@ -97,8 +101,8 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
     try:
 
         podcast = Podcast.objects.get(rss=rss, active=True)
-    except Podcast.DoesNotExist:
-        return ParseResult(None, False)
+    except Podcast.DoesNotExist as e:
+        return ParseResult(None, False, exception=e)
 
     try:
         response = requests.get(
@@ -111,19 +115,17 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         response.raise_for_status()
     except requests.HTTPError:
         # dead feed, don't request again
-        return parse_failure(podcast, response.status_code, active=False)
+        return parse_failure(podcast, status=response.status_code, active=False)
 
     except requests.RequestException as e:
         # temp issue, maybe network error, log & try again later
         return parse_failure(
-            podcast,
-            e.response.status_code if e.response else None,
-            exception=traceback.format_exc(),
+            podcast, status=e.response.status_code if e.response else None, exception=e
         )
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
         # no change, ignore
-        return parse_failure(podcast, response.status_code)
+        return parse_failure(podcast, status=response.status_code)
 
     return parse_podcast(podcast, response)
 
@@ -137,14 +139,14 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     ):
         # permanent redirect to URL already taken by another podcast
         return parse_failure(
-            podcast, response.status_code, redirect_to=other, active=False
+            podcast, status=response.status_code, redirect_to=other, active=False
         )
 
     result = box.Box(feedparser.parse(response.content), default_box=True)
 
     # check if any items
     if not (items := parse_items(result)):
-        return parse_failure(podcast, response.status_code, rss=rss)
+        return parse_failure(podcast, status=response.status_code, rss=rss)
 
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
@@ -378,7 +380,12 @@ def resolve_podcast_rss(
 
 
 def parse_failure(
-    podcast: Podcast, status: int | None, active=True, **fields
+    podcast: Podcast,
+    *,
+    status: int | None,
+    exception: Exception | None = None,
+    active=True,
+    **fields,
 ) -> ParseResult:
 
     Podcast.objects.filter(pk=podcast.id).update(
@@ -389,4 +396,4 @@ def parse_failure(
         **fields,
     )
 
-    return ParseResult(status, False)
+    return ParseResult(status, False, exception)
