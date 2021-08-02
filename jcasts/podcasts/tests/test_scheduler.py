@@ -118,7 +118,7 @@ class TestSchedule:
             PodcastFactory(),
             [now - timedelta(hours=1)],
         )
-        assert (scheduled - now).total_seconds() == pytest.approx(3600)
+        assert round((scheduled - now).total_seconds()) in range(3590, 7210)
 
     def test_schedule_frequency_lt_one_hour(self, db):
         now = timezone.now()
@@ -127,7 +127,7 @@ class TestSchedule:
             PodcastFactory(),
             [now - timedelta(minutes=30)],
         )
-        assert (scheduled - now).total_seconds() == pytest.approx(3600, rel=10)
+        assert round((scheduled - now).total_seconds()) in range(3590, 7210)
 
     def test_schedule_lt_now(self, db):
         now = timezone.now()
@@ -142,7 +142,7 @@ class TestSchedule:
             for pub_date in self.get_pub_dates(3, 6, 9)
         ]
         scheduled = scheduler.schedule(podcast)
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(48)
+        assert round((scheduled - now).total_seconds() / 3600) in range(48, 50)
 
     def get_pub_dates(self, *days):
         now = timezone.now()
