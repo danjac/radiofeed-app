@@ -336,7 +336,11 @@ class TestParseFeed:
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
         )
-        assert not parse_feed(new_podcast.rss)
+        result = parse_feed(new_podcast.rss)
+        assert result.success is False
+
+        # no exception
+        result.raise_exception()
 
         new_podcast.refresh_from_db()
 
