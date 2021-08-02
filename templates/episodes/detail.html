@@ -35,7 +35,7 @@
 {% endif %}
 {% endwith %}
 
-<section class="space-y-2 pb-3 mb-3">
+<section class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
@@ -44,9 +44,11 @@
     </a>
   </div>
 
-  {% if episode.episode and episode.season %}
+  {% if episode.episode or episode.season %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
-    Episode {{ episode.episode }} / Season {{ episode.season }}
+    {% if episode.episode %}Episode {{ episode.episode }}{% endif %}
+    {% if episode.episode and episode.season %}/{% endif %}
+    {% if episode.season %}Season {{ episode.season }}{% endif %}
   </div>
   {% endif %}
 
