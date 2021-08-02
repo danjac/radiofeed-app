@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -78,10 +79,13 @@ def schedule(
     if (frequency := get_frequency(pub_dates)) is None:
         return None
 
+    # minimum 1 hour
     min_delta = timedelta(hours=1)
 
-    # minimum 1 hour
-    frequency = max(frequency, min_delta)
+    # add some randomization to load balance between jobs
+    frequency = max(frequency, min_delta) + timedelta(
+        minutes=secrets.choice(range(0, 60))
+    )
 
     # will go out in future, should be ok
     if (scheduled := podcast.pub_date + frequency) > now:
