@@ -179,7 +179,10 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
         result.feed.author,
     )
 
-    podcast.explicit = coerce_bool(result.feed.itunes_explicit)
+    podcast.explicit = coerce_bool(
+        result.feed.itunes_explicit,
+        result.feed.googleplay_explicit,
+    )
 
     keywords, categories = parse_taxonomy(result.feed)
 
@@ -245,8 +248,17 @@ def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Epis
         guid=item.id,
         title=item.title,
         pub_date=item.pub_date,
-        explicit=coerce_bool(item.itunes_explicit),
-        cover_url=coerce_url(item.image.href),
+        explicit=coerce_bool(
+            item.itunes_explicit,
+            item.googleplay_explicit,
+        ),
+        season=coerce_int(item.itunes_season),
+        episode=coerce_int(item.itunes_episode),
+        episode_type=coerce_str(item.itunes_episodetype),
+        cover_url=coerce_url(
+            item.image.href,
+            item.googleplay_image,
+        ),
         media_url=coerce_url(item.audio.href),
         length=coerce_int(item.audio.length),
         link=coerce_url(item.link),
