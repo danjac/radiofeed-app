@@ -16,7 +16,6 @@ app_name = "episodes"
 
 urlpatterns = [
     path("new/", index, name="index"),
-    path("featured/", index, name="featured", kwargs={"featured": True}),
     path("search/episodes/", search_episodes, name="search_episodes"),
     path(
         "episodes/actions/<int:episode_id>/",

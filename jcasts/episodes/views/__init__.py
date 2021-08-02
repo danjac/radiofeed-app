@@ -14,7 +14,9 @@ from jcasts.shared.typedefs import ContextDict
 
 
 @require_safe
-def index(request: HttpRequest, featured: bool = False) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
+
+    featured = "featured" in request.GET
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))

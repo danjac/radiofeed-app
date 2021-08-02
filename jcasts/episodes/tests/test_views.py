@@ -61,7 +61,7 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        resp = client.get(reverse("episodes:featured"))
+        resp = client.get(reverse("episodes:index"), {"featured": True})
 
         assert_ok(resp)
         assert resp.context_data["featured"]

@@ -83,6 +83,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "scheduled",
         "-pub_date",
     )
+
     list_display = (
         "__str__",
         "source",
@@ -91,6 +92,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "scheduled",
     )
+
     list_editable = ("promoted",)
     search_fields = ("search_document",)
 
@@ -106,7 +108,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "num_episodes",
     )
 
-    actions = ["reactivate", "parse_feeds"]
+    actions = ["reactivate", "parse_podcast_feeds"]
 
     @admin.action(description="Re-activate podcasts")
     def reactivate(self, request: HttpRequest, queryset: QuerySet):

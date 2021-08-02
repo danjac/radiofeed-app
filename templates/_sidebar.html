@@ -25,6 +25,17 @@
 <nav>
   <ul class="sidebar space-y-4 lg:space-y-5">
     <li>
+      {% active_link 'podcasts:index' as link %}
+      <a href="{{ link.url }}"
+         accesskey="2"
+         title="Podcasts"
+         @click="$dispatch('close-sidebar')"
+         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+        {% icon "rss" css_class="h-5 w-5 mr-3" %}
+        Podcasts
+      </a>
+    </li>
+    <li>
       {% active_link 'episodes:index' as link %}
       <a href="{{ link.url }}"
          accesskey="1"
@@ -33,17 +44,6 @@
          class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "sparkles" css_class="h-5 w-5 mr-3" %}
         New Releases
-      </a>
-    </li>
-    <li>
-      {% active_link 'podcasts:index' as link %}
-      <a href="{{ link.url }}"
-         accesskey="2"
-         title="Podcasts"
-         @click="$dispatch('close-sidebar')"
-         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-        {% icon "rss" css_class="h-5 w-5 mr-3" %}
-        Podcasts
       </a>
     </li>
     <li>
@@ -142,8 +142,8 @@
          title="Sign up or Log in to your account"
          @click="$dispatch('close-sidebar')"
          class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-         {% icon "login" css_class="h-5 w-5 mr-3" %}
-         Signup/Login
+        {% icon "login" css_class="h-5 w-5 mr-3" %}
+        Signup/Login
       </a>
     </li>
     {% endif %}

@@ -152,8 +152,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-HOME_URL = reverse_lazy("episodes:index")
-LOGIN_REDIRECT_URL = reverse_lazy("episodes:index")
+HOME_URL = LOGIN_REDIRECT_URL = reverse_lazy("podcasts:index")
 
 LOGIN_URL = "account_login"
 

@@ -50,7 +50,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=auth_user).podcast
-        resp = client.get(reverse("podcasts:featured"))
+        resp = client.get(reverse("podcasts:index"), {"featured": True})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
         assert sub not in resp.context_data["page_obj"].object_list

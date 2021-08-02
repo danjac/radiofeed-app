@@ -18,7 +18,7 @@
   <a href="{% url 'podcasts:index' %}"
      class="link">My Podcasts</a>
   {% else %}
-  <a href="{% url 'podcasts:featured' %}"
+  <a href="{% url 'podcasts:index' %}?featured=true"
      class="link">Featured Podcasts</a>
   {% endif %}
 </div>

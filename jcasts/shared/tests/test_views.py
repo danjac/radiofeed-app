@@ -10,7 +10,7 @@ class TestHomePage:
 
     def test_authenticated(self, client, auth_user):
         resp = client.get(reverse("home_page"))
-        assert resp.url == reverse("episodes:index")
+        assert resp.url == reverse("podcasts:index")
 
 
 class TestRobots:
