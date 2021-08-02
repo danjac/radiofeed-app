@@ -1,4 +1,4 @@
-<div class="fixed z-50 top-20 inset-x-0 mx-auto w-64 sm:w-96"
+<div class="fixed z-50 top-20 inset-x-0 mx-auto w-64"
      id="messages"
      x-data="Messages()"
      x-init="() => {
@@ -10,7 +10,7 @@
   <div class="space-y-3">
     <template x-for="(message, index) in messages"
               :key="index">
-      <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl max-w-lg sm:max-w-sm text-sm"
+      <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl text-sm"
            :class="message.tags"
            @click="message.show=false"
            x-show="message.show"
