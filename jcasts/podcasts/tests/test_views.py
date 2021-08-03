@@ -45,12 +45,12 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following_featured(self, client, auth_user):
+    def test_user_is_following_promoted(self, client, auth_user):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=auth_user).podcast
-        resp = client.get(reverse("podcasts:index"), {"featured": True})
+        resp = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
         assert sub not in resp.context_data["page_obj"].object_list

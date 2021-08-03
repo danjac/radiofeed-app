@@ -47,12 +47,12 @@ class TestNewEpisodes:
 
         resp = client.get(episodes_url)
         assert_ok(resp)
-        assert not resp.context_data["featured"]
+        assert not resp.context_data["promoted"]
         assert resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
 
-    def test_user_has_follows_featured(self, client, auth_user):
+    def test_user_has_follows_promoted(self, client, auth_user):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -61,10 +61,10 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        resp = client.get(reverse("episodes:index"), {"featured": True})
+        resp = client.get(reverse("episodes:index"), {"promoted": True})
 
         assert_ok(resp)
-        assert resp.context_data["featured"]
+        assert resp.context_data["promoted"]
         assert resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0].podcast == promoted

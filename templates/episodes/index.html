@@ -10,7 +10,7 @@
   </h1>
   {% if not has_follows %}
   <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search episodes..." %}
+    {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
   </div>
   {% endif %}
 </div>
@@ -18,12 +18,12 @@
 {% if has_follows %}
 <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm lg:text-base">
   <div class="flex items-center justify-center sm:justify-start">
-    {% if featured %}
+    {% if promoted %}
     <a href="{% url 'episodes:index' %}"
        class="link">My Podcasts</a>
     {% else %}
-    <a href="{% url 'episodes:index' %}?featured=true"
-       class="link">Featured Podcasts</a>
+    <a href="{% url 'episodes:index' %}?promoted=true"
+       class="link">Promoted</a>
     {% endif %}
   </div>
   <div class="flex items-center justify-center sm:justify-end">

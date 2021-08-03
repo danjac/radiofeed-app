@@ -16,7 +16,7 @@ from jcasts.shared.typedefs import ContextDict
 @require_safe
 def index(request: HttpRequest) -> HttpResponse:
 
-    featured = "featured" in request.GET
+    promoted = "promoted" in request.GET
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
@@ -26,7 +26,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     podcast_ids = (
         set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
-        if featured or not follows
+        if promoted or not follows
         else follows
     )
 
@@ -41,11 +41,11 @@ def index(request: HttpRequest) -> HttpResponse:
         episodes,
         "episodes/index.html",
         {
-            "featured": featured,
+            "promoted": promoted,
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=featured or request.user.is_anonymous,
+        cached=promoted or request.user.is_anonymous,
     )
 
 
