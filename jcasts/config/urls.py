@@ -32,5 +32,6 @@ urlpatterns = [
     ),
     path("account/", include("allauth.urls")),
     path("rq/", include("django_rq.urls")),
+    path(settings.HIJACK_URL, include("hijack.urls", namespace="hijack")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
