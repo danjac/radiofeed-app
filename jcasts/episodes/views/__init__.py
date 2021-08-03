@@ -50,7 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=True,
+        cached=promoted or request.user.is_anonymous,
     )
 
 
