@@ -37,7 +37,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .filter(
             podcast__in=set(podcast_qs.values_list("pk", flat=True)),
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
-         )
+        )
         .order_by("-pub_date")
     )
 
