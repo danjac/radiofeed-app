@@ -111,17 +111,18 @@
   {% include "episodes/_listened.html" %}
   {% endif %}
 
+
   {% if episode.explicit or podcast.explicit %}
   <div class="font-semibold text-sm">
     This episode may contain explicit content.
   </div>
   {% endif %}
 
-  <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
-    {{ episode.description|clean_html }}
-  </blockquote>
-
   {% include "podcasts/_disclaimer.html" %}
+
+  <div class="markdown max-w-sm sm:max-w-full text-sm">
+    {{ episode.description|clean_html }}
+  </div>
 
 </section>
 {% endwith %}
