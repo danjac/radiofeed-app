@@ -102,8 +102,6 @@ INSTALLED_APPS = [
     "django_htmx",
     "widget_tweaks",
     "django_rq",
-    "hijack",
-    "compat",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -268,12 +266,6 @@ LOGGING = {
         "django.request": {"handlers": ["console"], "level": "ERROR"},
     },
 }
-
-# Django-hijack: https://django-hijack.readthedocs.io/en/stable/
-
-HIJACK_URL = env("HIJACK_URL", default="hijack/")
-HIJACK_LOGIN_REDIRECT_URL = HOME_URL
-HIJACK_LOGOUT_REDIRECT_URL = f"/{ADMIN_URL}/auth/user/"
 
 # Project-specific
 
