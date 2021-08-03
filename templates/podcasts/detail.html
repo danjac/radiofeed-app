@@ -48,6 +48,8 @@
     </div>
   </div>
 
+  {% include "podcasts/_categories.html" %}
+
   <div class="font-semibold flex items-center text-gray-600 dark:text-gray-300 text-sm">
     Last updated {{ podcast.pub_date|timesince }} ago
   </div>
@@ -64,6 +66,5 @@
     {{ podcast.description|clean_html }}
   </div>
 
-  {% include "podcasts/_categories.html" %}
 </div>
 {% endblock podcast_content %}
