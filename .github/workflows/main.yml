@@ -33,7 +33,7 @@ jobs:
         with:
           virtualenvs-create: false
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: python -m poetry install --no-interaction
       - name: Download NLTK resources
         run: |
           python -m nltk.downloader stopwords
