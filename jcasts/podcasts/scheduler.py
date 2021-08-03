@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -81,17 +80,14 @@ def schedule(
 
     # minimum 1 hour
     min_delta = timedelta(hours=1)
-    
-    # add some randomization of 0-60 mins to load balance between jobs
-    randomized = timedelta(minutes=secrets.choice(range(0, 60)))
 
     frequency = max(frequency, min_delta)
 
     # will go out in future, should be ok
     if (scheduled := podcast.pub_date + frequency) > now:
-        return scheduled + randomized
+        return scheduled
 
     # add 5% of frequency to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta) + randomized
+    return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta)
