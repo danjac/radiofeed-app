@@ -30,7 +30,7 @@
          accesskey="2"
          title="Podcasts"
          @click="$dispatch('close-sidebar')"
-         class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+         class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
         {% icon "rss" css_class="h-5 w-5 mr-3" %}
         Podcasts
       </a>
