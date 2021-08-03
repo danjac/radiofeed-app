@@ -236,17 +236,6 @@ dev = ["flake8", "sphinx", "sphinx-rtd-theme", "tox", "twine", "wheel"]
 postal = ["cryptography"]
 
 [[package]]
-name = "django-compat"
-version = "1.0.15"
-description = "For- and backwards compatibility layer for Django 1.4, 1.7, 1.8, 1.9, 1.10, and 1.11"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-six = ">=1.10.0"
-
-[[package]]
 name = "django-environ"
 version = "0.4.5"
 description = "Django-environ allows you to utilize 12factor inspired environment variables to configure your Django application."
@@ -264,17 +253,6 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 Django = ">=2.2"
-
-[[package]]
-name = "django-hijack"
-version = "2.3.0"
-description = "django-hijack allows superusers to hijack (=login as) and work on behalf of another user."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-django = ">=2.2"
 
 [[package]]
 name = "django-htmx"
@@ -1257,7 +1235,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "a3f3d649e08053e191d8818324a4564ecfd14caca9e6fda0bd276943b2de3379"
+content-hash = "06b6c7950ff8290f9e8f9617f8975fd695b5f54b0c2df1d3501a9f54110067ab"
 
 [metadata.files]
 appnope = [
@@ -1477,9 +1455,6 @@ django-anymail = [
     {file = "django-anymail-8.4.tar.gz", hash = "sha256:671a338de43b8e414d48c6d16aac1df54d2f24f916e1073f9f60aef5acffaf89"},
     {file = "django_anymail-8.4-py3-none-any.whl", hash = "sha256:2e8307e84f0a12f9283469017094a8246db9a0fc608ac17dd1027ee011ece986"},
 ]
-django-compat = [
-    {file = "django-compat-1.0.15.tar.gz", hash = "sha256:3ac9a3bedc56b9365d9eb241bc5157d0c193769bf995f9a78dc1bc24e7c2331b"},
-]
 django-environ = [
     {file = "django-environ-0.4.5.tar.gz", hash = "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde"},
     {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
@@ -1487,10 +1462,6 @@ django-environ = [
 django-extensions = [
     {file = "django-extensions-3.1.3.tar.gz", hash = "sha256:5f0fea7bf131ca303090352577a9e7f8bfbf5489bd9d9c8aea9401db28db34a0"},
     {file = "django_extensions-3.1.3-py3-none-any.whl", hash = "sha256:50de8977794a66a91575dd40f87d5053608f679561731845edbd325ceeb387e3"},
-]
-django-hijack = [
-    {file = "django-hijack-2.3.0.tar.gz", hash = "sha256:216de6ff863b5f48314795083e96267ff0829ff7f7180c26ca3c17d8a134e1cf"},
-    {file = "django_hijack-2.3.0-py3-none-any.whl", hash = "sha256:8b820b6fe605cf2f3b50817985d7245285a18c027b7e3eb424d18b7908ecd2e1"},
 ]
 django-htmx = [
     {file = "django-htmx-1.2.1.tar.gz", hash = "sha256:7b36c0d9a9c056bdca8f26b8a7ecab28c58bae0a3feb76c3e58cdf04d8a25d79"},
