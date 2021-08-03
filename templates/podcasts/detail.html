@@ -43,6 +43,14 @@
              target="_blank"
              rel="noopener">iTunes</a>
         </div>
+        {% if user.is_staff %}
+        <div>
+          <a href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
+             hx-disable="true"
+             class="link">Admin</a>
+        </div>
+        {% endif %}
+
       </div>
       {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
     </div>

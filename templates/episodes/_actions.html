@@ -114,6 +114,16 @@
     </div>
     Download
   </a>
+  {% if is_detail and user.is_staff %}
+  <a href="{% url 'admin:episodes_episode_change' episode.id %}"
+     hx-disable="true"
+     class="{{ BUTTON_CSS_CLASS }}">
+    <div class="mr-2">
+      {% icon "adjustments" css_class="h-4 w-4" %}
+    </div>
+    View in Admin
+  </a>
+  {% endif %}
   {% if not is_detail %}
   <a class="{{ BUTTON_CSS_CLASS }}"
      title="View episode details"
