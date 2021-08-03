@@ -6,7 +6,9 @@
   {% if podcast.owner %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 flex-wrap text-sm">
     {% if podcast.link %}
-    <a href="{{ podcast.link }}" target="_blank" rel="noopener">
+    <a href="{{ podcast.link }}"
+       target="_blank"
+       rel="noopener">
       {{ podcast.owner }}
     </a>
     {% else %}
@@ -50,17 +52,18 @@
     Last updated {{ podcast.pub_date|timesince }} ago
   </div>
 
+  {% include "podcasts/_disclaimer.html" %}
+
   {% if podcast.explicit %}
   <div class="font-semibold text-sm">
     This podcast may contain explicit content.
   </div>
   {% endif %}
 
-  <blockquote class="markdown max-w-sm sm:max-w-full text-sm">
+  <div class="markdown max-w-sm sm:max-w-full text-sm">
     {{ podcast.description|clean_html }}
-  </blockquote>
+  </div>
 
   {% include "podcasts/_categories.html" %}
-  {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endblock podcast_content %}
