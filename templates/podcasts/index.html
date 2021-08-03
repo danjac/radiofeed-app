@@ -4,37 +4,39 @@
 
 {% block content %}
 
-<h1 class="font-bold flex items-center justify-center sm:justify-start lg:text-lg lg:justify-between mb-3">
+{% if has_follows %}
+<h1 class="font-bold lg:text-lg text-center sm:text-left mb-3">
   {% if promoted %}
-  Promoted
+  Promoted Podcasts
   {% else %}
   My Podcasts
   {% endif %}
-  <div class="flex items-center hidden lg:block text-sm">
-    {% if promoted %}
-    <a href="{% url 'podcasts:index' %}"
-       class="link">My Podcasts</a>
-    {% else %}
-    <a href="{% url 'podcasts:index' %}?promoted=true"
-       class="link">Promoted</a>
-    {% endif %}
-  </div>
 </h1>
-
-{% if has_follows %}
-<div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm lg:hidden">
+<div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm">
   <div class="flex items-center justify-center sm:justify-start">
     {% if promoted %}
     <a href="{% url 'podcasts:index' %}"
        class="link">My Podcasts</a>
     {% else %}
     <a href="{% url 'podcasts:index' %}?promoted=true"
-       class="link">Promoted</a>
+       class="link">Promoted Podcasts</a>
     {% endif %}
   </div>
-  <div class="flex items-center justify-center sm:justify-end lg:hidden">
+  <div class="flex items-center justify-center sm:justify-end">
     {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
   </div>
+</div>
+{% else %}
+<div class="sm:flex items-center justify-between mb-3">
+
+  <h1 class="font-bold lg:text-lg text-center sm:text-left mb-3 sm:mb-0">
+    Podcasts
+  </h1>
+
+  <div class="flex items-center justify-center sm:justify-start">
+    {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
+  </div>
+
 </div>
 {% endif %}
 
