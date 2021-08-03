@@ -38,7 +38,7 @@ def index(request: HttpRequest) -> HttpResponse:
     episodes = (
         Episode.objects.select_related("podcast")
         .filter(podcast__in=podcast_ids)
-        .order_by("-pub_date")
+        .order_by("-pub_date", "-id")
     )
 
     return render_episode_list_response(
