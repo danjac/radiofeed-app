@@ -18,17 +18,22 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET
 
+    podcast_ids = set()
+
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )
 
-    podcast_ids = (
-        set(Podcast.objects.filter(promoted=True).values_list("pk", flat=True))
-        if promoted or not follows
-        else follows
-    )
+    podcast_qs = Podcast.objects.frequent()
+
+    if follows and not promoted:
+        podcast_qs = podcast_qs.filter(pk__in=follows)
+    else:
+        podcast_qs = podcast_qs.filter(promoted=True)
+
+    podcast_ids = set(podcast_qs.values_list("pk", flat=True))
 
     episodes = (
         Episode.objects.select_related("podcast")
