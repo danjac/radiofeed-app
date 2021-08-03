@@ -55,8 +55,8 @@ jobs:
           SECRET_KEY: seekrit
         run: |
           source .venv/bin/activate
-          nltk.downloader stopwords
-          nltk.downloader wordnet
+          python -m nltk.downloader stopwords
+          python -m nltk.downloader wordnet
           pytest -x
 
   deploy:
