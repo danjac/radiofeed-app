@@ -1,4 +1,4 @@
-{% load static i18n hijack_tags %}
+{% load static i18n %}
 {% block header_tags %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
@@ -30,7 +30,6 @@
       @close-sidebar.window="sidebar=false"
       @toggle-sidebar.window="sidebar=!sidebar"
       {% endblock %}>
-  {% hijack_notification %}
   {% endblock header_tags %}
 
   {% block page_header %}
