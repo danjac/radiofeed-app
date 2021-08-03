@@ -102,6 +102,8 @@ INSTALLED_APPS = [
     "django_htmx",
     "widget_tweaks",
     "django_rq",
+    "hijack",
+    "compat",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -267,8 +269,13 @@ LOGGING = {
     },
 }
 
-# Project-specific
+# Django-hijack: https://django-hijack.readthedocs.io/en/stable/
 
+HIJACK_URL = env("HIJACK_URL", default="hijack/")
+HIJACK_LOGIN_REDIRECT_URL = HOME_URL
+HIJACK_LOGOUT_REDIRECT_URL = f"/{ADMIN_URL}/auth/user/"
+
+# Project-specific
 
 PRIVACY_DETAILS = {
     "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
