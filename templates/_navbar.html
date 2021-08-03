@@ -24,7 +24,7 @@
 
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
-          class="relative bg-transparent hidden lg:block"
+          class="relative bg-transparent hidden sm:block"
           hx-push-url="true"
           x-data="{search: ''}"
           @submit="$refs.input.blur(); search='';$dispatch('close-sidebar');">
@@ -53,7 +53,10 @@
       <a href="{% url 'users:preferences' %}"
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
-        <img src="{{ user.get_gravatar_url }}" height="30" width="30" alt="{{ user.username }}">
+        <img src="{{ user.get_gravatar_url }}"
+             height="30"
+             width="30"
+             alt="{{ user.username }}">
       </a>
       {% endif %}
       <button class="lg:hidden mr-3 focus:outline-none"
