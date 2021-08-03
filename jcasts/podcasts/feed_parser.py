@@ -220,16 +220,19 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     Episode.objects.bulk_update(
         [episode for episode in episodes if episode.guid in guids],
         fields=[
-            "title",
-            "description",
-            "keywords",
             "cover_url",
-            "media_url",
-            "media_type",
+            "description",
+            "duration",
+            "episode",
+            "episode_type",
+            "explicit",
+            "keywords",
             "length",
             "link",
-            "duration",
-            "explicit",
+            "media_type",
+            "media_url",
+            "season",
+            "title",
         ],
     )
 
