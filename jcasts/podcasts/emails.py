@@ -1,9 +1,15 @@
+from __future__ import annotations
+
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
+from django.utils import timezone
 from django_rq import job
 
+from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import AuthenticatedUser
 
@@ -28,10 +34,28 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     podcasts = Podcast.objects.filter(pk__in=recommendations)
 
-    if len(podcasts) not in (2, 3):
-        return
-
     user.recommended_podcasts.add(*podcasts)
+
+    # any unlistened episodes this week
+
+    episodes = Episode.objects.filter(
+        pub_date__gte=timezone.now() - timedelta(days=7),
+        podcast__in=set(user.follow_set.values_list("podcast", flat=True)),
+    ).select_related("podcast")
+
+    if excluded := (
+        set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
+        | set(QueueItem.objects.filter(user=user).values_list("episode", flat=True))
+        | set(Favorite.objects.filter(user=user).values_list("episode", flat=True))
+    ):
+        episodes = episodes.exclude(pk__in=excluded)
+
+    episodes = list(
+        {episode.podcast_id: episode for episode in episodes.order_by("?")}.values()
+    )[:3]
+
+    if len(podcasts) not in (2, 3) and len(episodes) not in (2, 3):
+        return
 
     site = Site.objects.get_current()
 
@@ -40,6 +64,7 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
         "site": site,
         "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
         "podcasts": podcasts,
+        "episodes": episodes,
     }
 
     message = loader.render_to_string("podcasts/emails/recommendations.txt", context)

@@ -11,9 +11,9 @@
 
   <p>Greetings from {{ site.name }}!
 
-  <p>Here are some podcasts you might find interesting:
+  <p>Here are some podcasts you might find interesting:</p>
 
-    {% for podcast in podcasts %}
+  {% for podcast in podcasts %}
   <p>
     <a href="{{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
   </p>
@@ -23,6 +23,22 @@
   </p>
   <hr />
   {% endfor %}
+
+  {% if episodes %}
+  <p>...and here are are some new episodes this week from your favorite podcasts you might have missed:</p>
+  {% for episode in episodes %}
+
+  <p>
+    <a href="{{ protocol }}://{{ site.domain }}{{ episode.get_absolute_url }}">{{ episode.podcast.title }} - {{ episode.title }}</a>
+  </p>
+
+  <p>
+    {{ episode.description|striptags|unescape|urlize|truncatewords:60 }}
+  </p>
+
+  <hr />
+  {% endfor %}
+  {% endif %}
 
   <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations" option
     on your <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">settings</a> page.</p>

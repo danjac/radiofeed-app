@@ -15,6 +15,19 @@ Here are some podcasts you might find interesting:
 
 {% endfor %}
 
+{% if episodes %}
+...and here are are some new episodes this week from your favorite podcasts you might have missed:
+{% for episode in episodes %}
+
+{{ episode.podcast.title }} - {{ episode.title }}
+
+{{ episode.description|striptags|unescape|urlize|truncatewords:60 }}
+
+{{ protocol }}://{{ site.domain }}{{ episode.get_absolute_url }}
+
+{% endfor %}
+{% endif %}
+
 If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations" option
 on your settings page:
 
