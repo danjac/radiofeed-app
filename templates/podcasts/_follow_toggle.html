@@ -23,10 +23,10 @@
   </div>
   {% else %}
   <div class="flex items-center">
-    <a class="btn btn-default flex items-center"
+    <a class="btn btn-default inline-flex items-center"
        href="{{ podcast.get_absolute_url|login_url }}"
        hx-disable="true"
-       title="Log in">
+       title="Log in to follow this podcast">
       {% icon "eye" css_class="btn-icon mr-2" %}
       Follow
     </a>

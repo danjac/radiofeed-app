@@ -1,0 +1,39 @@
+{% if user.is_authenticated %}
+<div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
+     x-cloak
+     @close-player.window="isPlaying=false"
+     @play-episode.window="isPlaying=$event.detail.value==={{ episode.id }}">
+  <button class="flex items-center btn btn-secondary"
+          x-show="isPlaying"
+          hx-post="{% url 'episodes:close_player' %}"
+          hx-push-url="false"
+          hx-target="#player"
+          hx-swap="innerHTML">
+    {% icon "stop" css_class="btn-icon mr-2" %}
+    Close Player
+  </button>
+
+  <button class="flex items-center btn btn-default"
+          x-show="!isPlaying"
+          hx-post="{% url 'episodes:start_player' episode.id %}"
+          hx-push-url="false"
+          hx-target="#player"
+          hx-swap="innerHTML">
+    {% icon "play" css_class="btn-icon mr-2" %}
+    {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
+  </button>
+</div>
+{% else %}
+<div>
+
+
+  <a class="btn btn-default inline-flex items-center justify-center"
+     href="{{ episode.get_absolute_url|login_url }}"
+     hx-disable="true"
+     title="You must sign up or log in to play this episode">
+    {% icon "play" css_class="btn-icon mr-2" %}
+    Play
+  </a>
+
+</div>
+{% endif %}
