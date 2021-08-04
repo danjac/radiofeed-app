@@ -13,7 +13,7 @@ class RqBackend(BaseEmailBackend):
         return len(email_messages)
 
 
-@job("mail")
+@job(settings.RQ_EMAIL_QUEUE)
 def send_rq_message(message: EmailMessage) -> None:
     message.connection = get_connection(settings.RQ_EMAIL_BACKEND, fail_silently=False)
     message.send(fail_silently=False)
