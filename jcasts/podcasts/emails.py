@@ -9,7 +9,7 @@ from django.template import loader
 from django.utils import timezone
 from django_rq import job
 
-from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast, Recommendation
 from jcasts.shared.typedefs import AuthenticatedUser
 
@@ -38,20 +38,16 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     # any unlistened episodes this week
 
-    episodes = Episode.objects.filter(
-        pub_date__gte=timezone.now() - timedelta(days=7),
-        podcast__in=set(user.follow_set.values_list("podcast", flat=True)),
-    ).select_related("podcast")
-
-    if excluded := (
-        set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
-        | set(QueueItem.objects.filter(user=user).values_list("episode", flat=True))
-        | set(Favorite.objects.filter(user=user).values_list("episode", flat=True))
-    ):
-        episodes = episodes.exclude(pk__in=excluded)
-
     episodes = list(
-        {episode.podcast_id: episode for episode in episodes.order_by("?")}.values()
+        {
+            episode.podcast_id: episode
+            for episode in Episode.objects.recommended(user)
+            .filter(
+                pub_date__gte=timezone.now() - timedelta(days=7),
+            )
+            .select_related("podcast")
+            .order_by("?")
+        }.values()
     )[:3]
 
     if len(podcasts) not in (2, 3) and len(episodes) not in (2, 3):

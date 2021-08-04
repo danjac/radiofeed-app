@@ -41,6 +41,21 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
+    def recommended(self, user: AuthenticatedUser) -> models.QuerySet:
+        """Return all episodes for podcasts the user is following,
+        minus any the user has already queued/favorited/listened to."""
+        episodes = Episode.objects.filter(
+            podcast__in=set(user.follow_set.values_list("podcast", flat=True)),
+        ).select_related("podcast")
+
+        if excluded := (
+            set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
+            | set(QueueItem.objects.filter(user=user).values_list("episode", flat=True))
+            | set(Favorite.objects.filter(user=user).values_list("episode", flat=True))
+        ):
+            episodes = episodes.exclude(pk__in=excluded)
+        return episodes.distinct()
+
 
 EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 

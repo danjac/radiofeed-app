@@ -13,9 +13,36 @@ from jcasts.episodes.factories import (
     QueueItemFactory,
 )
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.podcasts.factories import FollowFactory
 
 
 class TestEpisodeManager:
+    def test_recommended_no_follows(self, db, user):
+
+        assert Episode.objects.recommended(user).count() == 0
+
+    def test_recommended(self, db, user):
+
+        podcast = FollowFactory(user=user).podcast
+        # ok
+        first = EpisodeFactory(podcast=podcast)
+
+        # not following
+        EpisodeFactory()
+
+        # listened
+        AudioLogFactory(episode__podcast=podcast, user=user)
+
+        # favorite
+        FavoriteFactory(episode__podcast=podcast, user=user)
+
+        # queued
+        QueueItemFactory(episode__podcast=podcast, user=user)
+
+        episodes = Episode.objects.recommended(user)
+        assert episodes.count() == 1
+        assert episodes.first() == first
+
     def test_with_current_time_if_anonymous(self, db, anonymous_user):
         EpisodeFactory()
         episode = Episode.objects.with_current_time(anonymous_user).first()
