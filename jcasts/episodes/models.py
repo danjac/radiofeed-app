@@ -101,6 +101,7 @@ class Episode(models.Model):
             models.Index(fields=["guid"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["-pub_date"]),
+            models.Index(fields=["-pub_date", "-id"]),
             GinIndex(fields=["search_vector"]),
         ]
 
