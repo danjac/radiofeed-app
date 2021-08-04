@@ -50,7 +50,7 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
         }.values()
     )[:3]
 
-    if len(podcasts) not in (2, 3) and len(episodes) not in (2, 3):
+    if len(podcasts) + len(episodes) not in range(2, 7):
         return
 
     site = Site.objects.get_current()
