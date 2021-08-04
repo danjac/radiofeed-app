@@ -23,8 +23,7 @@ class PodcastSitemap(Sitemap):
     limit: ClassVar[int] = 100
 
     def items(self) -> QuerySet:
-        return Podcast.objects.filter(
-            pub_date__isnull=False,
+        return Podcast.objects.active().filter(
             pub_date__gt=timezone.now() - datetime.timedelta(hours=24),
         ).order_by("-pub_date")
 
