@@ -86,12 +86,16 @@
       </div>
       {% else %}
       <div>
-        <button class="flex items-center btn btn-default"
-                disabled
-                title="You must sign up or log in to play this episode">
-          {% icon "play" css_class="h-6 w-6 mr-2" %}
-          Play
-        </button>
+     
+        
+    <a class="btn btn-default flex items-center"
+       href="{{ episode.get_absolute_url|login_url }}"
+       hx-disable="true"
+       title="You must sign up or log in to play this episode">
+      {% icon "play" css_class="btn-icon mr-2" %}
+      Play
+    </a>
+        
       </div>
       {% endif %}
       {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
