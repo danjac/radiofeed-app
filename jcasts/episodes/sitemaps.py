@@ -1,5 +1,7 @@
 import datetime
 
+from typing import ClassVar
+
 from django.contrib.sitemaps import Sitemap
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -8,9 +10,9 @@ from jcasts.episodes.models import Episode
 
 
 class EpisodeSitemap(Sitemap):
-    changefreq: str = "hourly"
-    priority: float = 0.5
-    limit: int = 100
+    changefreq: ClassVar[str] = "hourly"
+    priority: ClassVar[float] = 0.5
+    limit: ClassVar[int] = 100
 
     def items(self) -> QuerySet:
         return (
