@@ -1,8 +1,7 @@
-<div class="flex justify-center sm:justify-start">
-  <div>
+  <div class="flex justify-center sm:justify-start sm:hidden mb-6">
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
-          class="relative bg-transparent sm:hidden mb-6"
+          class="relative bg-transparent"
           hx-push-url="true"
           x-data="{search: ''}"
           @submit="$dispatch('close-sidebar');">
@@ -21,133 +20,132 @@
         </button>
       </div>
     </form>
-
-    <nav>
-      <ul class="sidebar space-y-4 lg:space-y-5">
-        <li>
-          {% active_link 'podcasts:index' as link %}
-          <a href="{{ link.url }}"
-             accesskey="2"
-             title="Podcasts"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-            {% icon "rss" css_class="h-5 w-5 mr-3" %}
-            Podcasts
-          </a>
-        </li>
-        <li>
-          {% active_link 'episodes:index' as link %}
-          <a href="{{ link.url }}"
-             accesskey="1"
-             title="New Releases"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-            {% icon "sparkles" css_class="h-5 w-5 mr-3" %}
-            New Releases
-          </a>
-        </li>
-        <li>
-          {% active_link 'podcasts:categories' as link %}
-          <a href="{{ link.url }}"
-             accesskey="3"
-             title="Discover"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-            {% icon "search" css_class="h-5 w-5 mr-3" %}
-            Discover
-          </a>
-        </li>
-        {% if user.is_authenticated %}
-        <li>
-          {% active_link 'episodes:queue' as link %}
-          <a href="{{ link.url }}"
-             accesskey="4"
-             title="Play Queue"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-            {% icon "collection" css_class="h-5 w-5 mr-3" %}
-            Play Queue
-          </a>
-        </li>
-
-        <li>
-          {% active_link 'episodes:favorites' as link %}
-          <a href="{{ link.url }}"
-             accesskey="5"
-             title="Favorites"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-            {% icon "star" css_class="h-5 w-5 mr-3" %}
-            Favorites
-          </a>
-        </li>
-
-        <li>
-          {% active_link 'episodes:history' as link %}
-          <a href="{{ link.url }}"
-             accesskey="6"
-             title="History"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
-            {% icon "database" css_class="h-5 w-5 mr-3" %}
-            History
-          </a>
-        </li>
-
-        <li>
-          {% re_active_link 'users:preferences' '/account/*' as link %}
-          <a href="{{ link.url }}"
-             accesskey="7"
-             title="Settings"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-            {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
-            Settings
-          </a>
-        </li>
-        {% endif %}
-
-        <li>
-          {% re_active_link 'about:credits' '/about/*' as link %}
-          <a href="{{ link.url }}"
-             accesskey="8"
-             title="About"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-            {% icon "info" css_class="h-5 w-5 mr-3" %}
-            About
-          </a>
-        </li>
-        {% if user.is_authenticated %}
-        <li>
-          <form class="inline-block"
-                hx-disable="true"
-                action="{% url 'account_logout' %}"
-                method="post">
-            {% csrf_token %}
-            <button accesskey="9"
-                    title="Logout"
-                    @click="$dispatch('close-sidebar')"
-                    class="flex items-center link">
-              {% icon "logout" css_class="h-5 w-5 mr-3" %}
-              Logout
-            </button>
-          </form>
-        </li>
-        {% else %}
-        <li>
-          {% re_active_link request.get_full_path|signup_url '/account/*' as link %}
-          <a href="{{ link.url }}"
-             accesskey="9"
-             title="Sign up or Log in to your account"
-             @click="$dispatch('close-sidebar')"
-             class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-            {% icon "login" css_class="h-5 w-5 mr-3" %}
-            Signup/Login
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-    </nav>
   </div>
-</div>
+
+  <nav>
+    <ul class="sidebar space-y-4 lg:space-y-5">
+      <li>
+        {% active_link 'podcasts:index' as link %}
+        <a href="{{ link.url }}"
+           accesskey="2"
+           title="Podcasts"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "rss" css_class="h-5 w-5 mr-3" %}
+          Podcasts
+        </a>
+      </li>
+      <li>
+        {% active_link 'episodes:index' as link %}
+        <a href="{{ link.url }}"
+           accesskey="1"
+           title="New Releases"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "sparkles" css_class="h-5 w-5 mr-3" %}
+          New Releases
+        </a>
+      </li>
+      <li>
+        {% active_link 'podcasts:categories' as link %}
+        <a href="{{ link.url }}"
+           accesskey="3"
+           title="Discover"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "search" css_class="h-5 w-5 mr-3" %}
+          Discover
+        </a>
+      </li>
+      {% if user.is_authenticated %}
+      <li>
+        {% active_link 'episodes:queue' as link %}
+        <a href="{{ link.url }}"
+           accesskey="4"
+           title="Play Queue"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "collection" css_class="h-5 w-5 mr-3" %}
+          Play Queue
+        </a>
+      </li>
+
+      <li>
+        {% active_link 'episodes:favorites' as link %}
+        <a href="{{ link.url }}"
+           accesskey="5"
+           title="Favorites"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "star" css_class="h-5 w-5 mr-3" %}
+          Favorites
+        </a>
+      </li>
+
+      <li>
+        {% active_link 'episodes:history' as link %}
+        <a href="{{ link.url }}"
+           accesskey="6"
+           title="History"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
+          {% icon "database" css_class="h-5 w-5 mr-3" %}
+          History
+        </a>
+      </li>
+
+      <li>
+        {% re_active_link 'users:preferences' '/account/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="7"
+           title="Settings"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
+          Settings
+        </a>
+      </li>
+      {% endif %}
+
+      <li>
+        {% re_active_link 'about:credits' '/about/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="8"
+           title="About"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+      {% if user.is_authenticated %}
+      <li>
+        <form class="inline-block"
+              hx-disable="true"
+              action="{% url 'account_logout' %}"
+              method="post">
+          {% csrf_token %}
+          <button accesskey="9"
+                  title="Logout"
+                  @click="$dispatch('close-sidebar')"
+                  class="flex items-center link">
+            {% icon "logout" css_class="h-5 w-5 mr-3" %}
+            Logout
+          </button>
+        </form>
+      </li>
+      {% else %}
+      <li>
+        {% re_active_link request.get_full_path|signup_url '/account/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="9"
+           title="Sign up or Log in to your account"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "login" css_class="h-5 w-5 mr-3" %}
+          Signup/Login
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
