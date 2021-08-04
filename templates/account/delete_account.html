@@ -13,7 +13,7 @@
           hx-disable="true"
           action="{% url 'users:delete_account' %}">
       {% csrf_token %}
-      <button class="btn btn-danger flex items-center"
+      <button class="btn btn-danger inline-flex items-center"
               name="confirm-delete"
               value="true"
               @click="return confirm('Are you sure?')">

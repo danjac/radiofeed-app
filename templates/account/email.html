@@ -41,21 +41,21 @@
   </div>
   {% endfor %}
   <div class="flex items-center space-x-2">
-    <button class="flex items-center btn btn-default"
+    <button class="inline-flex items-center btn btn-default"
             name="action_primary"
             value="1">
       {% icon "sparkles" css_class="btn-icon mr-2" %}
       Primary
     </button>
 
-    <button class="flex items-center btn btn-secondary"
+    <button class="inline-flex items-center btn btn-secondary"
             name="action_send"
             value="1">
       {% icon "mail" css_class="btn-icon mr-2" %}
       Re-Verify
     </button>
 
-    <button class="flex items-center btn btn-danger"
+    <button class="inline-flex items-center btn btn-danger"
             name="action_remove"
             value="1">
       {% icon "trash" css_class="btn-icon mr-2" %}
@@ -83,7 +83,7 @@
   {% csrf_token %}
   {% include "forms/_fields.html" %}
   <div class="flex items-center">
-    <button class="flex items-center btn btn-default"
+    <button class="inline-flex items-center btn btn-default"
             name="action_add"
             value="true">
       {% icon "plus" css_class="btn-icon mr-2" %}

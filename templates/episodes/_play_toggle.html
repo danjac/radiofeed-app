@@ -3,7 +3,7 @@
      x-cloak
      @close-player.window="isPlaying=false"
      @play-episode.window="isPlaying=$event.detail.value==={{ episode.id }}">
-  <button class="flex items-center btn btn-secondary"
+  <button class="inline-flex items-center btn btn-secondary"
           x-show="isPlaying"
           hx-post="{% url 'episodes:close_player' %}"
           hx-push-url="false"
@@ -13,7 +13,7 @@
     Close Player
   </button>
 
-  <button class="flex items-center btn btn-default"
+  <button class="inline-flex items-center btn btn-default"
           x-show="!isPlaying"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-push-url="false"
