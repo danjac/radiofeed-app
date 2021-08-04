@@ -34,8 +34,6 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     podcasts = Podcast.objects.filter(pk__in=recommendations)
 
-    user.recommended_podcasts.add(*podcasts)
-
     # any unlistened episodes this week
 
     episodes = list(
@@ -52,6 +50,11 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     if len(podcasts) + len(episodes) not in range(2, 7):
         return
+
+    # save recommendations
+
+    if podcasts:
+        user.recommended_podcasts.add(*podcasts)
 
     site = Site.objects.get_current()
 
