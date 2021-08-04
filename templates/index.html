@@ -39,8 +39,31 @@
           <p class="flex-wrap lg:max-w-lg mb-6">
             Search for interesting podcasts, follow and listen to your favorite feeds, and enjoy our AI-generated recommendations.
           </p>
+
+
+          <div class="mb-3 flex items-center justify-center sm:justify-start">
+            <form action="{% url 'podcasts:search_podcasts' %}"
+                  method="get"
+                  class="relative bg-transparent">
+              <input type="search"
+                     name="q"
+                     accesskey="k"
+                     autocomplete="off"
+                     aria-label="Search podcasts"
+                     placeholder="Find a podcast..."
+                     class="px-4 py-1 focus:outline-none rounded focus:ring w-72 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                <button type="submit"
+                        title="Search"
+                        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                  {% icon "search" css_class="h-4 w-4" %}
+                </button>
+              </div>
+            </form>
+          </div>
+
           <div class="text-center sm:text-left">
-            <a class="font-semibold underline text-lg"
+            <a class="font-semibold underline"
                title="See latest"
                href="{% url 'podcasts:index' %}">
               Explore Popular Podcasts
@@ -48,6 +71,7 @@
           </div>
 
         </div>
+
 
         <div class="lg:w-1/2 lg:pl-6">
           <div class="p-3 border border-white rounded mb-6">
