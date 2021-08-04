@@ -11,6 +11,7 @@
 
   <p>Greetings from {{ site.name }}!
 
+  {% if podcasts %}
   <p>Here are some podcasts you might find interesting:</p>
 
   {% for podcast in podcasts %}
@@ -23,9 +24,12 @@
   </p>
   <hr />
   {% endfor %}
+  {% endif %}
 
   {% if episodes %}
-  <p>...and here are are some new episodes this week from your favorite podcasts you might have missed:</p>
+
+  <p>{% if podcasts %}...and here{% else %}Here {% endif %} are some new episodes this week from your favorite podcasts you might have missed:</p>
+
   {% for episode in episodes %}
 
   <p>
