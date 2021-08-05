@@ -2,7 +2,12 @@
      x-init="
      $el.querySelectorAll('p,div,li,dl').forEach(el => {
         const text = el.innerHTML.trim();
-        if(text === '' || text === '{{ "&nbsp;"|escapejs }}') {
+        const remove = [
+          '',
+          '{{ "&nbsp;"|escapejs }}',
+          '{{ "<br>"|escapejs }}'
+        ]
+        if (remove.indexOf(text) > -1) {
           el.parentNode.removeChild(el);
         }
      });">

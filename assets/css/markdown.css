@@ -30,9 +30,6 @@
   @apply py-1 mb-3;
 }
 
-.markdown p:-moz-only-whitespace,
-.markdown div:-moz-only-whitespace,
-.markdown li:-moz-only-whitespace,
 .markdown p:empty,
 .markdown div:empty,
 .markdown li:empty {
