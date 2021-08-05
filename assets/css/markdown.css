@@ -30,16 +30,6 @@
   @apply py-1 mb-3;
 }
 
-.markdown p:empty,
-.markdown div:empty,
-.markdown li:empty {
-  @apply hidden;
-}
-
-.markdown br:nth-child(2n + 1) {
-  @apply hidden;
-}
-
 .markdown ol {
   @apply list-decimal list-inside mb-3 space-y-2;
 }
