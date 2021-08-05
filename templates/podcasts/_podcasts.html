@@ -7,5 +7,11 @@
 <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
   No results found for <span class="font-bold">{{ search }}</span>. {% endif %}
 </p>
+  {% if search_qs %}
+<p class="text-center sm:text-left text-sm mt-3">
+  {% url 'podcasts:search_itunes' as url %}
+  Can't find the podcast you're looking for? Try our <a href="{{ url|add:search_qs }}" class="link underline">iTunes</a> search.
+</p>
+  {% endif %}
 {% endfor %}
 {% endblock results %}
