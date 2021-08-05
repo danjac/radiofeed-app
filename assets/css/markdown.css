@@ -38,6 +38,10 @@
   @apply list-disc list-inside mb-3;
 }
 
+.markdown li ul {
+  @apply mt-3;
+}
+
 .markdown li {
   @apply pl-2 mb-3;
 }
