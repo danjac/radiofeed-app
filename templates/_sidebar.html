@@ -107,17 +107,6 @@
       </li>
       {% endif %}
 
-      <li>
-        {% re_active_link 'about:credits' '/about/*' as link %}
-        <a href="{{ link.url }}"
-           accesskey="8"
-           title="About"
-           @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
-          About
-        </a>
-      </li>
       {% if user.is_authenticated %}
       <li>
         <form class="inline-block"
@@ -136,16 +125,41 @@
       </li>
       {% else %}
       <li>
-        {% re_active_link request.get_full_path|signup_url '/account/*' as link %}
-        <a href="{{ link.url }}"
-           accesskey="9"
-           title="Sign up or Log in to your account"
+        {% active_link 'account_login' as link %}
+        <a href="{{ request.get_full_path|login_url }}"
+           accesskey="l"
+           title="Log in to your account"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "login" css_class="h-5 w-5 mr-3" %}
-          Signup/Login
+          Login
         </a>
       </li>
+
+      <li>
+        {% active_link 'account_signup' as link %}
+        <a href="{{ request.get_full_path|signup_url }}"
+           accesskey="s"
+           title="Join {{ request.site.name }}"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "user_add" css_class="h-5 w-5 mr-3" %}
+          Signup
+        </a>
+      </li>
+
       {% endif %}
+      <li>
+        {% re_active_link 'about:credits' '/about/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="8"
+           title="About"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+
     </ul>
   </nav>
