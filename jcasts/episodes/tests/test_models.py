@@ -328,6 +328,27 @@ class TestEpisodeModel:
         item = QueueItemFactory(user=user, episode=episode)
         assert item.episode.is_queued(item.user)
 
+    @pytest.mark.parametrize(
+        "episode_type,number,season,expected",
+        [
+            ("full", None, None, ""),
+            ("trailer", None, None, "Trailer"),
+            ("trailer", 10, 3, "Trailer"),
+            ("full", 10, 3, "Episode 10/Season 3"),
+            ("full", 10, None, "Episode 10"),
+            ("full", None, 3, "Season 3"),
+        ],
+    )
+    def test_get_episode_metadata(self, episode_type, number, season, expected):
+        assert (
+            Episode(
+                episode_type=episode_type,
+                episode=number,
+                season=season,
+            ).get_episode_metadata()
+            == expected
+        )
+
 
 class TestFavoriteManager:
     def test_search(self, db):

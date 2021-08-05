@@ -44,13 +44,13 @@
     </a>
   </div>
 
-  {% if episode.episode or episode.season %}
+  {% with metadata=episode.get_episode_metadata %}
+  {% if metadata %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
-    {% if episode.episode %}Episode {{ episode.episode }}{% endif %}
-    {% if episode.episode and episode.season %}/{% endif %}
-    {% if episode.season %}Season {{ episode.season }}{% endif %}
+    {{ metadata }}
   </div>
   {% endif %}
+  {% endwith %}
 
   <div class="flex items-center space-x-3 lg:space-x-4">
     <div>

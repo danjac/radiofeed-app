@@ -215,6 +215,20 @@ class Episode(models.Model):
 
         return og_data
 
+    def get_episode_metadata(self) -> str:
+        if self.episode_type != "full":
+            return self.episode_type.capitalize()
+
+        season_info = []
+
+        if self.episode is not None:
+            season_info.append(f"Episode {self.episode}")
+
+        if self.season is not None:
+            season_info.append(f"Season {self.season}")
+
+        return "/".join(season_info)
+
     def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session
         cover_url = self.get_cover_url() or static("img/podcast-icon.png")
