@@ -107,17 +107,6 @@
       </li>
       {% endif %}
 
-      <li>
-        {% re_active_link 'about:credits' '/about/*' as link %}
-        <a href="{{ link.url }}"
-           accesskey="8"
-           title="About"
-           @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
-          About
-        </a>
-      </li>
       {% if user.is_authenticated %}
       <li>
         <form class="inline-block"
@@ -160,5 +149,17 @@
       </li>
 
       {% endif %}
+      <li>
+        {% re_active_link 'about:credits' '/about/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="8"
+           title="About"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
+
     </ul>
   </nav>
