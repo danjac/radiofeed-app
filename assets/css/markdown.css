@@ -31,16 +31,15 @@
 }
 
 .markdown ol {
-  @apply list-decimal list-inside mb-3 space-y-2;
+  @apply list-decimal list-inside mb-3;
 }
 
 .markdown ul {
-  @apply list-disc list-inside mb-3 space-y-2;
+  @apply list-disc list-inside mb-3;
 }
 
-.markdown li ul,
-.markdown li ol {
-  @apply mr-2;
+.markdown li {
+  @apply pl-2 mb-3;
 }
 
 .markdown li div,
