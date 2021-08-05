@@ -1,0 +1,10 @@
+<div class="markdown max-w-sm sm:max-w-full text-sm"
+     x-init="
+     $el.querySelectorAll('p,div,li,dl').forEach(el => {
+        const text = el.innerHTML.trim();
+        if(text === '' || text === '{{ "&nbsp;"|escapejs }}') {
+          el.parentNode.removeChild(el);
+        }
+     });">
+  {{ content|clean_html }}
+</div>
