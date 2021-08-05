@@ -227,7 +227,7 @@ class Episode(models.Model):
         if self.season is not None:
             season_info.append(f"Season {self.season}")
 
-        return "/".join(season_info)
+        return " ".join(season_info)
 
     def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session

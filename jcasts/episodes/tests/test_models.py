@@ -334,7 +334,7 @@ class TestEpisodeModel:
             ("full", None, None, ""),
             ("trailer", None, None, "Trailer"),
             ("trailer", 10, 3, "Trailer"),
-            ("full", 10, 3, "Episode 10/Season 3"),
+            ("full", 10, 3, "Episode 10 Season 3"),
             ("full", 10, None, "Episode 10"),
             ("full", None, 3, "Season 3"),
         ],
