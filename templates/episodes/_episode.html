@@ -13,13 +13,15 @@
 
       <div>
 
+        {% if is_podcast_detail %}
         <a href="{{ episode_url }}">
-          {% if is_podcast_detail %}
           {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=14 %}
-          {% else %}
-          {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title|add:" - "|add:episode.cleaned_title size=14 %}
-          {% endif %}
         </a>
+        {% else %}
+        <a href="{{ podcast.get_absolute_url }}">
+          {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+        </a>
+        {% endif %}
       </div>
 
       <div class="space-y-2 lg:space-y-3">
