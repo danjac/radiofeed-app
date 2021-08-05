@@ -70,9 +70,7 @@
   </div>
   {% endif %}
 
-  <div class="markdown max-w-sm sm:max-w-full text-sm">
-    {{ podcast.description|clean_html }}
-  </div>
+  {% include "_markdown.html" with content=podcast.description %}
 
 </div>
 {% endblock podcast_content %}
