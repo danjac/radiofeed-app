@@ -10,8 +10,9 @@
         position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
     }">
   {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" episode_url=episode.get_absolute_url %}
-  {% if user.is_authenticated %}
+
   {% if not is_detail %}
+
   {% with time_remaining=episode.get_time_remaining|format_duration %}
   {% if is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
@@ -23,6 +24,7 @@
     {% icon "stop" css_class="h-4 w-4 mr-2" %}
     Close Player
   </button>
+
   {% else %}
 
   <button class="{{ BUTTON_CSS_CLASS }}"
@@ -40,7 +42,6 @@
   {% endif %}
 
   {% if not is_playing %}
-
   {% if episode.listened and not episode.completed %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:mark_complete' episode.id %}"
@@ -108,26 +109,6 @@
   </button>
   {% endif %}
 
-  {% else %}
-  <a class="{{ BUTTON_CSS_CLASS }}"
-     hx-disable="true"
-     title="Log in or sign up to play this episode"
-     href="{{ episode_url|login_url }}">
-    <div class="mr-2">
-      {% icon "login" css_class="h-4 w-4" %}
-    </div>
-    Log in or Sign up
-  </a>
-  {% endif %}
-
-  <a class="{{ BUTTON_CSS_CLASS }}"
-     title="Download episode"
-     href="{{ episode.media_url }}">
-    <div class="mr-2">
-      {% icon "download" css_class="h-4 w-4" %}
-    </div>
-    Download
-  </a>
   {% if is_detail and user.is_staff %}
   <a href="{% url 'admin:episodes_episode_change' episode.id %}"
      hx-disable="true"
@@ -138,21 +119,12 @@
     View in Admin
   </a>
   {% endif %}
-  {% if not is_detail %}
-  <a class="{{ BUTTON_CSS_CLASS }}"
-     title="View episode details"
-     href="{{ episode_url }}">
-    <div class="mr-2">
-      {% icon "link" css_class="h-4 w-4" %}
-    </div>
-    View Details
-  </a>
-  {% endif %}
 
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
     {% icon "x" css_class="h-4 w-4 mr-2" %}
     Close
   </button>
+
   {% endwith %}
 </div>

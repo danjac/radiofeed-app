@@ -10,6 +10,7 @@ from django.views.decorators.http import require_safe
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
+from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.typedefs import ContextDict
 
@@ -75,6 +76,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
+@ajax_login_required
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
@@ -83,7 +85,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     num_queue_items: int = (
         0
-        if request.user.is_anonymous or request.player.is_playing(episode)
+        if request.player.is_playing(episode)
         else QueueItem.objects.filter(user=request.user).count()
     )
 
