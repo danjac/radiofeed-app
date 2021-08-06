@@ -9,7 +9,7 @@
         const vh = document.documentElement.clientHeight;
         position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
     }">
-  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" episode_url=episode.get_absolute_url %}
+  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 inline-flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CLASS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
 
   {% if not is_detail %}
 
@@ -21,7 +21,7 @@
           hx-target="#player"
           hx-swap="innerHTML"
           @click="show=false">
-    {% icon "stop" css_class="h-4 w-4 mr-2" %}
+    {% icon "stop" css_class=ICON_CLASS %}
     Close Player
   </button>
 
@@ -33,7 +33,7 @@
           hx-target="#player"
           hx-swap="innerHTML"
           @click="show=false;">
-    {% icon "play" css_class="h-4 w-4 mr-2" %}
+    {% icon "play" css_class=ICON_CLASS %}
     {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
     {% if time_remaining %}(~{{ time_remaining }}){% endif %}
   </button>
@@ -49,7 +49,7 @@
           hx-target="#player"
           hx-swap="innerHTML"
           @click="show=false;">
-    {% icon "check" css_class="h-4 w-4 mr-2" %}
+    {% icon "check" css_class=ICON_CLASS %}
     Mark Complete
   </button>
   {% endif %}
@@ -58,27 +58,27 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
           @click="show=false">
-    {% icon "trash" css_class="h-4 w-4 mr-2" %}
+    {% icon "trash" css_class=ICON_CLASS %}
     Remove from Queue
   </button>
   {% elif num_queue_items %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
           @click="show=false">
-    {% icon "arrow_up" css_class="h-4 w-4 mr-2" %}
+    {% icon "arrow_up" css_class=ICON_CLASS %}
     Play Next
   </button>
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
           @click="show=false">
-    {% icon "arrow_down" css_class="h-4 w-4 mr-2" %}
+    {% icon "arrow_down" css_class=ICON_CLASS %}
     Play Last
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
           @click="show=false">
-    {% icon "collection" css_class="h-4 w-4 mr-2" %}
+    {% icon "collection" css_class=ICON_CLASS %}
     Add to Play Queue
   </button>
   {% endif %}
@@ -88,14 +88,14 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_favorite' episode.id %}"
           @click="show=false">
-    {% icon "star_solid" css_class="h-4 w-4 mr-2" %}
+    {% icon "star_solid" css_class=ICON_CLASS %}
     Remove from Favorites
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_favorite' episode.id %}"
           @click="show=false">
-    {% icon "star" css_class="h-4 w-4 mr-2" %}
+    {% icon "star" css_class=ICON_CLASS %}
     Add to Favorites
   </button>
   {% endif %}
@@ -104,25 +104,30 @@
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
           @click="show=false">
-    {% icon "trash" css_class="h-4 w-4 mr-2" %}
+    {% icon "trash" css_class=ICON_CLASS %}
     Remove from History
   </button>
   {% endif %}
+
+  <a href="{{ episode.media_url }}"
+     hx-disable="true"
+     class="{{ BUTTON_CSS_CLASS }}">
+    {% icon "download" css_class=ICON_CLASS %}
+    Download
+  </a>
 
   {% if is_detail and user.is_staff %}
   <a href="{% url 'admin:episodes_episode_change' episode.id %}"
      hx-disable="true"
      class="{{ BUTTON_CSS_CLASS }}">
-    <div class="mr-2">
-      {% icon "adjustments" css_class="h-4 w-4" %}
-    </div>
+    {% icon "adjustments" css_class=ICON_CLASS %}
     View in Admin
   </a>
   {% endif %}
 
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
-    {% icon "x" css_class="h-4 w-4 mr-2" %}
+    {% icon "x" css_class=ICON_CLASS %}
     Close
   </button>
 

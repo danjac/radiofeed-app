@@ -3,7 +3,8 @@
      height=16
      width=16
      viewBox="0 0 24 24"
-     stroke="currentColor">
+     stroke="currentColor"
+     class="{{ css_class|default:'' }}">
   <path stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="2"
