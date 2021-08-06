@@ -53,7 +53,9 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
         min_pub_date = timezone.now() - since
 
-        episodes = self.filter(pub_date__gte=min_pub_date).order_by("-pub_date", "-id")
+        episodes = self.filter(
+            pub_date__gte=min_pub_date, episode_type="full"
+        ).order_by("-pub_date", "-id")
 
         if excluded := (
             set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))

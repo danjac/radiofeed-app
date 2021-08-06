@@ -39,6 +39,9 @@ class TestEpisodeManager:
         # queued
         QueueItemFactory(episode__podcast=podcast, user=user)
 
+        # trailer
+        EpisodeFactory(podcast=podcast, episode_type="trailer")
+
         # too old
         EpisodeFactory(
             podcast=podcast, pub_date=timezone.now() - datetime.timedelta(days=30)
