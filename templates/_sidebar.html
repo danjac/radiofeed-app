@@ -127,7 +127,10 @@
           {% csrf_token %}
           <button accesskey="9"
                   title="Logout"
-                  @click="$dispatch('close-sidebar')"
+                  @click="
+                  $dispatch('close-sidebar');
+                  $dispatch('logout');
+                  "
                   class="flex items-center link">
             {% icon "logout" css_class="h-5 w-5 mr-3" %}
             Logout

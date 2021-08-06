@@ -33,6 +33,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
     AudioLog.objects.filter(
         episode=episode_id,
         user=request.user,
+        autoplay=False,
         completed__isnull=True,
     ).update(completed=timezone.now())
 
@@ -100,7 +101,7 @@ def render_player(
     next_episode: Episode | None = None,
 ) -> HttpResponse:
 
-    response = TemplateResponse(request, "_player.html", {"unlock": True})
+    response = TemplateResponse(request, "_player.html", {"autoplay": True})
 
     if next_episode:
         response = with_hx_trigger(

@@ -1,4 +1,5 @@
 const playerObj = {
+  autoplay: false,
   counter: '00:00:00',
   currentTime: 0,
   duration: 0,
@@ -9,7 +10,6 @@ const playerObj = {
   playbackRate: 1.0,
   showPlayer: true,
   storageKey: 'player-enabled',
-  unlock: false,
 
   init() {
     this.$watch('duration', (value) => {
@@ -65,6 +65,10 @@ const playerObj = {
     }
   },
 
+  clearSession() {
+    sessionStorage.removeItem(this.storageKey);
+  },
+
   // audio events
   loaded() {
     if (this.isLoaded) {
@@ -73,14 +77,14 @@ const playerObj = {
 
     this.errMsg = null;
 
-    if (!this.unlock && !sessionStorage.getItem(this.storageKey)) {
-      this.isPaused = true;
-    } else {
+    if (this.autoplay || sessionStorage.getItem(this.storageKey)) {
       this.$refs.audio.play().catch((err) => {
         this.isPaused = true;
         this.isPlaying = false;
         this.errMsg = getAudioError(err);
       });
+    } else {
+      this.isPaused = true;
     }
 
     this.duration = this.$refs.audio.duration;
@@ -113,7 +117,7 @@ const playerObj = {
   paused() {
     this.isPlaying = false;
     this.isPaused = true;
-    sessionStorage.removeItem(this.storageKey);
+    this.clearSession();
   },
 
   incrementPlaybackRate() {
@@ -158,8 +162,7 @@ const playerObj = {
     this.shortcuts = null;
 
     this.$refs.audio.pause();
-
-    sessionStorage.removeItem(this.storageKey);
+    this.clearSession();
 
     if (this.timer) {
       clearInterval(this.timer);

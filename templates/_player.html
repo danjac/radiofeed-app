@@ -8,7 +8,9 @@
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        csrfToken: '{{ csrf_token }}',
-       unlock: {{ unlock|yesno:'true,false' }},
+       {% if autoplay %}
+       autoplay: true,
+       {% endif %}
        urls: {
          closePlayer: '{% url "episodes:close_player" %}',
          playNext: '{% url "episodes:play_next_episode" %}',
@@ -17,6 +19,7 @@
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
      @close-sidebar.window="showPlayer = true"
+     @logout.window="clearSession"
      @keydown.window="shortcut"
      hx-swap="outerHTML"
      id="player">
