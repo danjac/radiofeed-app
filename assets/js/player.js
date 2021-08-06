@@ -141,7 +141,6 @@ const playerObj = {
       this.$refs.audio.currentTime = this.currentTime;
     }
   },
-
   skipBack() {
     if (!this.isPaused) {
       this.$refs.audio.currentTime -= 10;
@@ -159,6 +158,8 @@ const playerObj = {
     this.shortcuts = null;
 
     this.$refs.audio.pause();
+
+    sessionStorage.removeItem(this.storageKey);
 
     if (this.timer) {
       clearInterval(this.timer);
