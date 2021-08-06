@@ -217,15 +217,23 @@ class Episode(models.Model):
 
     def get_episode_metadata(self) -> str:
 
+        episode_type = (
+            self.episode_type.capitalize()
+            if self.episode_type and self.episode_type.lower() != "full"
+            else None
+        )
+
         return " ".join(
             [
                 info
                 for info in (
-                    self.episode_type.capitalize()
-                    if self.episode_type != "full"
+                    episode_type,
+                    f"Episode {self.episode}"
+                    if self.episode and not episode_type
                     else None,
-                    f"Episode {self.episode}" if self.episode else None,
-                    f"Season {self.season}" if self.season else None,
+                    f"Season {self.season}"
+                    if self.season and not episode_type
+                    else None,
                 )
                 if info
             ]
