@@ -25,7 +25,6 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
         Recommendation.objects.for_user(user)
         .select_related("recommended")
         .order_by("-frequency", "-similarity")
-        .values("recommended")
         .distinct()[:3]
     )
 
