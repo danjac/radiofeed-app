@@ -36,7 +36,7 @@ const playerObj = {
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
 
-    this.timer = setInterval(this.sendTimeUpdate.bind(this), 5000);
+    this.timer = this.timer || setInterval(this.sendTimeUpdate.bind(this), 5000);
 
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = getMediaMetadata();
