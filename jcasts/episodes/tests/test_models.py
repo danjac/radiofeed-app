@@ -39,6 +39,11 @@ class TestEpisodeManager:
         # queued
         QueueItemFactory(episode__podcast=podcast, user=user)
 
+        # too old
+        EpisodeFactory(
+            podcast=podcast, pub_date=timezone.now() - datetime.timedelta(days=30)
+        )
+
         episodes = Episode.objects.recommended(user)
         assert episodes.count() == 1
         assert episodes.first() == first

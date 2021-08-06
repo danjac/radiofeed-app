@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, ClassVar
 
 from django.conf import settings
@@ -11,6 +11,7 @@ from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat, striptags
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
@@ -41,12 +42,18 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def recommended(self, user: AuthenticatedUser) -> models.QuerySet:
+    def recommended(
+        self, user: AuthenticatedUser, since: timedelta = timedelta(days=7)
+    ) -> models.QuerySet:
         """Return all episodes for podcasts the user is following,
         minus any the user has already queued/favorited/listened to."""
-        episodes = Episode.objects.filter(
-            podcast__in=set(user.follow_set.values_list("podcast", flat=True)),
-        ).select_related("podcast")
+
+        if not (podcast_ids := set(user.follow_set.values_list("podcast", flat=True))):
+            return self.none()
+
+        min_pub_date = timezone.now() - since
+
+        episodes = self.filter(pub_date__gte=min_pub_date).order_by("-pub_date", "-id")
 
         if excluded := (
             set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
@@ -54,7 +61,20 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             | set(Favorite.objects.filter(user=user).values_list("episode", flat=True))
         ):
             episodes = episodes.exclude(pk__in=excluded)
-        return episodes.distinct()
+
+        episode_ids = set(
+            Podcast.objects.filter(pk__in=podcast_ids, pub_date__gte=min_pub_date)
+            .annotate(
+                latest_episode=models.Subquery(
+                    episodes.filter(podcast=models.OuterRef("pk")).values("pk")[:1]
+                )
+            )
+            .values_list("latest_episode", flat=True)
+        )
+
+        return (
+            self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
+        )
 
 
 EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
@@ -216,18 +236,28 @@ class Episode(models.Model):
         return og_data
 
     def get_episode_metadata(self) -> str:
-        if self.episode_type != "full":
-            return self.episode_type.capitalize()
 
-        season_info = []
+        episode_type = (
+            self.episode_type.capitalize()
+            if self.episode_type and self.episode_type.lower() != "full"
+            else None
+        )
 
-        if self.episode is not None:
-            season_info.append(f"Episode {self.episode}")
-
-        if self.season is not None:
-            season_info.append(f"Season {self.season}")
-
-        return " ".join(season_info)
+        return " ".join(
+            [
+                info
+                for info in (
+                    episode_type,
+                    f"Episode {self.episode}"
+                    if self.episode and not episode_type
+                    else None,
+                    f"Season {self.season}"
+                    if self.season and not episode_type
+                    else None,
+                )
+                if info
+            ]
+        )
 
     def get_media_metadata(self) -> dict[str, Any]:
         # https://developers.google.com/web/updates/2017/02/media-session

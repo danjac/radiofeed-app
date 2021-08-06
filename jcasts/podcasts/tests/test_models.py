@@ -38,8 +38,6 @@ class TestRecommendationManager:
         second = RecommendationFactory(podcast=favorited).recommended
         third = RecommendationFactory(podcast=listened).recommended
 
-        # already received
-
         # not connected
         RecommendationFactory()
 

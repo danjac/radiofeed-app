@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from datetime import timedelta
-
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import loader
-from django.utils import timezone
 from django_rq import job
 
 from jcasts.episodes.models import Episode
@@ -36,17 +33,9 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     # any unlistened episodes this week
 
-    episodes = list(
-        {
-            episode.podcast_id: episode
-            for episode in Episode.objects.recommended(user)
-            .filter(
-                pub_date__gte=timezone.now() - timedelta(days=7),
-            )
-            .select_related("podcast")
-            .order_by("?")
-        }.values()
-    )[:3]
+    episodes = (
+        Episode.objects.recommended(user).select_related("podcast").order_by("?")[:3]
+    )
 
     if len(podcasts) + len(episodes) not in range(2, 7):
         return
