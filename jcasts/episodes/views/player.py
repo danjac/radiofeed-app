@@ -5,6 +5,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
@@ -85,6 +86,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
+@ratelimit(key="ip", rate="20/m")
 @ajax_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
