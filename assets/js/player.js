@@ -36,7 +36,7 @@ const playerObj = {
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
 
-    this.timer = this.timer || setInterval(this.sendTimeUpdate.bind(this), 5000);
+    this.lastTimeUpdate = null;
 
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = getMediaMetadata();
@@ -100,6 +100,7 @@ const playerObj = {
     this.isPlaying = true;
     if (this.$refs.audio) {
       this.currentTime = Math.floor(this.$refs.audio.currentTime);
+      this.sendTimeUpdate();
     }
   },
 
@@ -164,11 +165,6 @@ const playerObj = {
     this.$refs.audio.pause();
     this.clearSession();
 
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-
     window.htmx.ajax('POST', url || this.urls.closePlayer, {
       target: this.$el,
       source: this.$el,
@@ -187,17 +183,15 @@ const playerObj = {
     }
   },
 
-  canSendTimeUpdate() {
-    return this.isLoaded && !this.isPaused && !!this.currentTime;
-  },
-
   sendTimeUpdate() {
-    if (this.canSendTimeUpdate()) {
+    const time = Math.round(this.currentTime);
+    if (time % 5 === 0 && this.lastTimeUpdate !== time) {
       fetch(this.urls.timeUpdate, {
         method: 'POST',
         headers: { 'X-CSRFToken': this.csrfToken },
-        body: new URLSearchParams({ current_time: this.currentTime }),
+        body: new URLSearchParams({ current_time: time }),
       }).catch((err) => console.error(err));
+      this.lastTimeUpdate = time;
     }
   },
 };
