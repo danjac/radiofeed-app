@@ -11,7 +11,7 @@
        unlock: {{ unlock|yesno:'true,false' }},
        urls: {
          closePlayer: '{% url "episodes:close_player" %}',
-         markComplete: '{% url "episodes:mark_complete" %}',
+         playNext: '{% url "episodes:play_next_episode" %}',
          timeUpdate: '{% url "episodes:player_time_update" %}'
        }
     })"

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
+from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from jcasts.episodes.models import Episode, QueueItem
+from jcasts.episodes.models import AudioLog, Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
@@ -27,6 +29,19 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
+def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
+    AudioLog.objects.filter(
+        episode=episode_id,
+        user=request.user,
+        completed__isnull=True,
+    ).update(completed=timezone.now())
+
+    messages.info(request, "Episode marked complete")
+    return HttpResponseNoContent()
+
+
+@require_POST
+@ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     if log := request.player.stop_episode():
         current_episode = log.episode
@@ -36,8 +51,9 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
+@require_POST
 @ajax_login_required
-def mark_complete(request: HttpRequest) -> HttpResponse:
+def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
