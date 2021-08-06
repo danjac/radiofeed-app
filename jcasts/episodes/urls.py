@@ -34,14 +34,19 @@ urlpatterns = [
         name="start_player",
     ),
     path(
+        "player/<int:episode_id>/~complete/",
+        player.mark_complete,
+        name="mark_complete",
+    ),
+    path(
         "player/~close/",
         player.close_player,
         name="close_player",
     ),
     path(
-        "player/~done/",
-        player.mark_complete,
-        name="mark_complete",
+        "player/~next/",
+        player.play_next_episode,
+        name="play_next_episode",
     ),
     path(
         "player/~timeupdate/",

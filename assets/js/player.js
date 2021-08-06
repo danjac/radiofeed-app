@@ -172,7 +172,7 @@ const playerObj = {
   },
 
   ended() {
-    this.close(this.urls.markComplete);
+    this.close(this.urls.playNext);
   },
 
   togglePlay() {

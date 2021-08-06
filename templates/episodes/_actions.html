@@ -24,6 +24,7 @@
     Close Player
   </button>
   {% else %}
+
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-push-url="false"
@@ -31,7 +32,7 @@
           hx-swap="innerHTML"
           @click="show=false;">
     {% icon "play" css_class="h-4 w-4 mr-2" %}
-    {% if episode.is_completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
+    {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
     {% if time_remaining %}(~{{ time_remaining }}){% endif %}
   </button>
   {% endif %}
@@ -39,6 +40,19 @@
   {% endif %}
 
   {% if not is_playing %}
+
+  {% if episode.listened and not episode.completed %}
+  <button class="{{ BUTTON_CSS_CLASS }}"
+          hx-post="{% url 'episodes:mark_complete' episode.id %}"
+          hx-push-url="false"
+          hx-target="#player"
+          hx-swap="innerHTML"
+          @click="show=false;">
+    {% icon "check" css_class="h-4 w-4 mr-2" %}
+    Mark Complete
+  </button>
+  {% endif %}
+
   {% if is_queued %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:remove_from_queue' episode.id %}"

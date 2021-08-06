@@ -140,8 +140,8 @@ class TestStartPlayer:
         assert_ok(resp)
 
 
-class TestMarkComplete:
-    url = reverse_lazy("episodes:mark_complete")
+class TestPlayNextEpisode:
+    url = reverse_lazy("episodes:play_next_episode")
 
     def test_has_next_in_queue(self, client, auth_user, player_episode):
         QueueItem.objects.create(position=0, user=auth_user, episode=player_episode)
@@ -478,3 +478,13 @@ class TestMoveQueueItems:
         resp = client.post(reverse("episodes:move_queue_items"), {"items": "incorrect"})
 
         assert_bad_request(resp)
+
+
+class TestMarkComplete:
+    def test_mark_complete(self, client, auth_user, episode):
+        log = AudioLogFactory(user=auth_user, episode=episode, completed=None)
+        assert_no_content(
+            client.post(reverse("episodes:mark_complete", args=[episode.id]))
+        )
+        log.refresh_from_db()
+        assert log.completed
