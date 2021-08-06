@@ -7,7 +7,7 @@ from django.template import loader
 from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts.models import Podcast, Recommendation
+from jcasts.podcasts.models import Recommendation
 from jcasts.shared.typedefs import AuthenticatedUser
 
 
@@ -29,7 +29,7 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
         .distinct()[:3]
     )
 
-    podcasts = Podcast.objects.filter(pk__in=recommendations)
+    podcasts = [r.recommended for r in recommendations]
 
     # any unlistened episodes this week
 
