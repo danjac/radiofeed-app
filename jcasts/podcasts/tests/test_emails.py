@@ -27,6 +27,8 @@ class TestSendRecommendationEmail:
         second_episode = EpisodeFactory(podcast=second)
         third_episode = EpisodeFactory(podcast=third)
 
+        EpisodeFactory(podcast=first)
+
         AudioLogFactory(user=user, episode=first_episode)
         QueueItemFactory(user=user, episode=second_episode)
         FavoriteFactory(user=user, episode=third_episode)
