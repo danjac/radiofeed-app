@@ -38,6 +38,8 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
+EPISODE_BATCH_SIZE = 500
+
 
 @dataclass
 class ParseResult:
@@ -234,7 +236,7 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
             "season",
             "title",
         ],
-        batch_size=500,
+        batch_size=EPISODE_BATCH_SIZE,
     )
 
     # new episodes
@@ -242,7 +244,7 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     Episode.objects.bulk_create(
         [episode for episode in episodes if episode.guid not in guids],
         ignore_conflicts=True,
-        batch_size=500,
+        batch_size=EPISODE_BATCH_SIZE,
     )
 
 
