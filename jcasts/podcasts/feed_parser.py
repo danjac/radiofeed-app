@@ -234,6 +234,7 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
             "season",
             "title",
         ],
+        batch_size=500,
     )
 
     # new episodes
@@ -241,6 +242,7 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     Episode.objects.bulk_create(
         [episode for episode in episodes if episode.guid not in guids],
         ignore_conflicts=True,
+        batch_size=500,
     )
 
 
