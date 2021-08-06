@@ -61,7 +61,13 @@
     <div class="space-y-2 lg:space-y-3 text-sm">
       {% include "episodes/_play_toggle.html" %}
       {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
+      {% if user.is_authenticated %}
       {% include "episodes/_actions_toggle.html" with is_detail=True %}
+      {% else %}
+      <a class="inline-block link"
+         download
+         href="{{ episode.media_url }}">Download</a>
+      {% endif %}
     </div>
   </div>
 
