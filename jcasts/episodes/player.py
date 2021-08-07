@@ -34,7 +34,6 @@ class Player:
             episode=episode,
             user=self.request.user,
             defaults={
-                "autoplay": True,
                 "updated": timezone.now(),
                 "completed": None,
             },
@@ -58,7 +57,6 @@ class Player:
         now = timezone.now()
 
         log.updated = now
-        log.autoplay = False
 
         if mark_completed:
             log.completed = now
