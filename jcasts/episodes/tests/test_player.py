@@ -41,6 +41,7 @@ class TestPlayer:
 
         assert not log.completed
         assert log.updated
+        assert log.autoplay
 
     def test_start_episode_from_queue(self, rf, episode, user):
         req = self.make_request(rf, user=user)
@@ -59,6 +60,7 @@ class TestPlayer:
 
         assert not log.completed
         assert log.updated
+        assert log.autoplay
 
         assert not QueueItem.objects.exists()
 
@@ -80,6 +82,7 @@ class TestPlayer:
         assert log.current_time == 500
 
         assert log.updated
+        assert log.autoplay
         assert not log.completed
 
     def test_stop_episode_empty(self, rf, user):
@@ -90,17 +93,19 @@ class TestPlayer:
 
     def test_stop_episode_not_in_session(self, rf, episode, user):
 
-        AudioLogFactory(episode=episode, user=user)
+        log = AudioLogFactory(episode=episode, user=user, autoplay=True)
 
         req = self.make_request(rf, user=user)
 
         player = Player(req)
 
         assert player.stop_episode() is None
+        log.refresh_from_db()
+        assert log.autoplay
 
     def test_stop_episode_in_session(self, rf, episode, user):
 
-        log = AudioLogFactory(episode=episode, user=user)
+        log = AudioLogFactory(episode=episode, user=user, autoplay=True)
 
         req = self.make_request(rf, episode=log.episode, user=user)
 
@@ -109,9 +114,12 @@ class TestPlayer:
         assert player.stop_episode() == log
         assert not player.is_playing(log.episode)
 
+        log.refresh_from_db()
+        assert not log.autoplay
+
     def test_stop_episode_mark_complete(self, rf, episode, user):
 
-        log = AudioLogFactory(episode=episode, user=user)
+        log = AudioLogFactory(episode=episode, user=user, autoplay=True)
 
         req = self.make_request(rf, episode=log.episode, user=user)
         player = Player(req)
@@ -121,6 +129,7 @@ class TestPlayer:
 
         log.refresh_from_db()
         assert log.completed
+        assert not log.autoplay
 
     def test_update_current_time_not_playing(self, rf, episode, user):
         req = self.make_request(rf, user=user)
@@ -131,7 +140,9 @@ class TestPlayer:
 
     def test_update_current_time(self, rf, episode, user):
 
-        log = AudioLogFactory(episode=episode, user=user, current_time=500)
+        log = AudioLogFactory(
+            episode=episode, user=user, current_time=500, autoplay=False
+        )
 
         req = self.make_request(rf, episode=log.episode, user=user)
 
@@ -140,3 +151,4 @@ class TestPlayer:
 
         log.refresh_from_db()
         assert log.current_time == 600
+        assert log.autoplay

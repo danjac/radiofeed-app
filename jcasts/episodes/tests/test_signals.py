@@ -24,7 +24,7 @@ class TestOpenPlayer:
         assert req.session == {}
 
     def test_has_unfinished_episode(self, rf, django_user_model, user):
-        log = AudioLogFactory(user=user, completed=None)
+        log = AudioLogFactory(user=user, completed=None, autoplay=True)
 
         req = rf.get("/")
         req.session = {}
@@ -32,6 +32,16 @@ class TestOpenPlayer:
         open_player(sender=django_user_model, user=user, request=req)
 
         assert req.session == {"player": {"episode": log.episode_id}}
+
+    def test_has_unfinished_episode_autoplay_off(self, rf, django_user_model, user):
+        AudioLogFactory(user=user, completed=None, autoplay=False)
+
+        req = rf.get("/")
+        req.session = {}
+
+        open_player(sender=django_user_model, user=user, request=req)
+
+        assert req.session == {}
 
 
 class TestClosePlayer:
