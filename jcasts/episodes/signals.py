@@ -19,12 +19,11 @@ def open_player(
             completed__isnull=True,
             autoplay=True,
         )
+        .select_related("episode")
         .order_by("-updated")
         .first()
     ) :
-        request.session["player"] = {
-            "episode": log.episode_id,
-        }
+        request.player.add_episode(log.episode)
 
 
 @receiver(user_logged_out)
