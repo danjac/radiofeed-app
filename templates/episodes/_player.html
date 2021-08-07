@@ -1,7 +1,7 @@
 {% load static %}
 {% if log %}
-{% with episode=log.episode podcast=log.episode.podcast %}
-{% with episode_url=episode.get_absolute_url podcast_url=podcast.get_absolute_url %}
+{% with episode=episode|default:log.episode %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div x-data="Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
@@ -58,7 +58,7 @@
 
         {% with cover_url=podcast.cover_url %}
         <div class="w-20 mr-1 sm:mr-0">
-          <a href="{{ podcast_url }}"
+          <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
             <img class="object-cover bg-transparent h-16 w-16 self-center hover:opacity-75 cursor-pointer"
                  title="{{ podcast.cleaned_title }}"

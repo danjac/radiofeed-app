@@ -83,10 +83,10 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
+    is_playing = request.player.is_playing(episode)
+
     num_queue_items: int = (
-        0
-        if request.player.is_playing(episode)
-        else QueueItem.objects.filter(user=request.user).count()
+        0 if is_playing else QueueItem.objects.filter(user=request.user).count()
     )
 
     return TemplateResponse(
@@ -96,8 +96,8 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episode": episode,
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
-            "is_playing": request.player.is_playing(episode),
             "is_detail": request.GET.get("detail", False),
+            "is_playing": is_playing,
             "num_queue_items": num_queue_items,
         },
     )
