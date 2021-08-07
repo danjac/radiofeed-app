@@ -18,7 +18,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
-    return render_player(request, episode)
+    return render_player(request, episode, autoplay=True)
 
 
 @require_POST
@@ -50,14 +50,13 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     else:
         next_episode = None
 
-    return render_player(request, next_episode)
+    return render_player(request, next_episode, autoplay=next_episode is not None)
 
 
 @ajax_login_required
 @require_safe
 def reload_player(request: HttpRequest) -> HttpResponse:
-    """Fetches current player, if any. Useful if reloading player."""
-    return TemplateResponse(request, "_player.html")
+    return render_player(request)
 
 
 @require_POST
@@ -89,19 +88,21 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 def render_player(
     request: HttpRequest,
     next_episode: Episode | None = None,
+    autoplay: bool = False,
 ) -> HttpResponse:
 
-    response = TemplateResponse(request, "_player.html", {"autoplay": True})
+    response = TemplateResponse(request, "_player.html", {"autoplay": autoplay})
 
-    if next_episode:
-        response = with_hx_trigger(
-            response,
-            {
-                "remove-queue-item": next_episode.id,
-                "play-episode": next_episode.id,
-            },
-        )
-    else:
-        response = with_hx_trigger(response, "close-player")
+    if request.method == "POST":
+        if next_episode:
+            response = with_hx_trigger(
+                response,
+                {
+                    "remove-queue-item": next_episode.id,
+                    "play-episode": next_episode.id,
+                },
+            )
+        else:
+            response = with_hx_trigger(response, "close-player")
 
     return response
