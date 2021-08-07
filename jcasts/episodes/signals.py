@@ -17,7 +17,6 @@ def open_player(
         log := AudioLog.objects.filter(
             user=user,
             completed__isnull=True,
-            autoplay=True,
         )
         .order_by("-updated")
         .first()
