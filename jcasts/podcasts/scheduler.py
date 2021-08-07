@@ -52,6 +52,16 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     return timedelta(seconds=round(statistics.mean(diffs)))
 
 
+def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
+    return (
+        Episode.objects.filter(
+            podcast=podcast, pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD
+        )
+        .values_list("pub_date", flat=True)
+        .order_by("-pub_date")
+    )
+
+
 def schedule(
     podcast: Podcast,
     pub_dates: list[datetime] | None = None,
@@ -65,21 +75,13 @@ def schedule(
     if not podcast.active or podcast.pub_date is None:
         return None
 
-    now = timezone.now()
-
-    pub_dates = pub_dates or (
-        Episode.objects.filter(
-            podcast=podcast, pub_date__gte=now - settings.RELEVANCY_THRESHOLD
-        )
-        .values_list("pub_date", flat=True)
-        .order_by("-pub_date")
-    )
-
-    if (frequency := get_frequency(pub_dates)) is None:
+    if (frequency := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
         return None
 
     # minimum 1 hour
     min_delta = timedelta(hours=1)
+
+    now = timezone.now()
 
     frequency = max(frequency, min_delta)
 
