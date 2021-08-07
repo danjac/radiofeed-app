@@ -51,7 +51,6 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     if request.user.autoplay and (
         next_item := (
             QueueItem.objects.filter(user=request.user)
-            .with_current_time(request.user)
             .select_related("episode", "episode__podcast")
             .order_by("position")
             .first()
