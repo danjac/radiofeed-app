@@ -14,7 +14,7 @@ from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import itunes
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
-from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.decorators import hx_login_required
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 from jcasts.shared.typedefs import ContextDict
@@ -250,7 +250,7 @@ def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
     )
 
 
-@ajax_login_required
+@hx_login_required
 @require_POST
 def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
@@ -264,7 +264,7 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
 
-@ajax_login_required
+@hx_login_required
 @require_POST
 def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
