@@ -383,17 +383,6 @@ class TestAudioLogModel:
 
 
 class TestQueueItemManager:
-    def test_with_current_time_if_not_played(self, user):
-        QueueItemFactory(user=user)
-        item = QueueItem.objects.with_current_time(user).first()
-        assert item.current_time is None
-
-    def test_with_current_time_if_played(self, user):
-        log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
-        QueueItemFactory(user=user, episode=log.episode)
-        item = QueueItem.objects.with_current_time(user).first()
-        assert item.current_time == 20
-
     def test_move_items(self, user):
         first = QueueItemFactory(user=user)
         second = QueueItemFactory(user=user)

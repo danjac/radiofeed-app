@@ -402,16 +402,6 @@ class QueueItemQuerySet(models.QuerySet):
 
         return qs.bulk_update(for_update, ["position"])
 
-    def with_current_time(self, user: AuthenticatedUser) -> models.QuerySet:
-        """Adds current_time annotation."""
-        return self.annotate(
-            current_time=models.Subquery(
-                AudioLog.objects.filter(
-                    user=user, episode=models.OuterRef("episode")
-                ).values("current_time")
-            ),
-        )
-
 
 QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
