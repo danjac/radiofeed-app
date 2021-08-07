@@ -53,8 +53,8 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     return render_player(request, next_episode)
 
 
-@hx_login_required
 @require_safe
+@hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
     return render_player(request)
 
@@ -67,7 +67,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
         user=request.user,
         autoplay=False,
         completed__isnull=True,
-    ).update(completed=timezone.now())
+    ).update(completed=timezone.now(), current_time=0)
 
     messages.info(request, "Episode marked complete")
     return HttpResponseNoContent()
