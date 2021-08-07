@@ -16,12 +16,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @require_POST
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    episode = get_episode_or_404(request, episode_id, with_podcast=True)
-
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
-
-    request.player.start_episode(episode)
-    return render_player(request, episode)
+    return render_player(request, get_episode_or_404(request, episode_id))
 
 
 @require_POST
@@ -43,14 +38,12 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
         next_item := (
             QueueItem.objects.filter(user=request.user)
             .with_current_time(request.user)
-            .select_related("episode", "episode__podcast")
+            .select_related("episode")
             .order_by("position")
             .first()
         )
     ):
         next_episode = next_item.episode
-        request.player.start_episode(next_episode)
-        next_item.delete()
     else:
         next_episode = None
 
@@ -103,6 +96,14 @@ def render_player(
 
     if request.method == "POST":
         if next_episode:
+
+            QueueItem.objects.filter(
+                user=request.user,
+                episode=next_episode,
+            ).delete()
+
+            request.player.start_episode(next_episode)
+
             return with_hx_trigger(
                 response,
                 {
@@ -110,6 +111,7 @@ def render_player(
                     "play-episode": next_episode.id,
                 },
             )
+
         return with_hx_trigger(response, "close-player")
 
     return response
