@@ -5,12 +5,12 @@ from typing import Iterable
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import pluralize
 
-from jcasts.podcasts.feed_parser import parse_feed
-from jcasts.podcasts.models import Category, Podcast
+from jcasts.podcasts import feed_parser, models, scheduler
 
 
-@admin.register(Category)
+@admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     ordering = ("name",)
     list_display = ("name", "parent", "itunes_genre_id")
@@ -75,7 +75,7 @@ class ActiveFilter(admin.SimpleListFilter):
         return queryset
 
 
-@admin.register(Podcast)
+@admin.register(models.Podcast)
 class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
@@ -106,6 +106,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "num_episodes",
+        "frequency",
     )
 
     actions = ["reactivate", "parse_podcast_feeds"]
@@ -123,7 +124,7 @@ class PodcastAdmin(admin.ModelAdmin):
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
 
         for rss in queryset.values_list("rss", flat=True):
-            parse_feed.delay(rss, force_update=True)
+            feed_parser.parse_feed.delay(rss, force_update=True)
 
         self.message_user(
             request,
@@ -131,8 +132,20 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def source(self, obj: Podcast) -> str:
+    def source(self, obj: models.Podcast) -> str:
         return obj.get_domain()
+
+    def frequency(self, obj: models.Podcast) -> str:
+        if (
+            freq := scheduler.get_frequency(scheduler.get_recent_pub_dates(obj))
+        ) is None:
+            return "-"
+
+        if freq.days < 1:
+            hours = round(freq.total_seconds() / 3600)
+            return f"{hours} hour{pluralize(hours)}"
+
+        return f"{freq.days} day{pluralize(freq.days)}"
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str
