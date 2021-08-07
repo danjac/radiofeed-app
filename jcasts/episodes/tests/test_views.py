@@ -482,9 +482,15 @@ class TestMoveQueueItems:
 
 class TestMarkComplete:
     def test_mark_complete(self, client, auth_user, episode):
-        log = AudioLogFactory(user=auth_user, episode=episode, completed=None)
+        log = AudioLogFactory(
+            user=auth_user,
+            episode=episode,
+            completed=None,
+            current_time=600,
+        )
         assert_no_content(
             client.post(reverse("episodes:mark_complete", args=[episode.id]))
         )
         log.refresh_from_db()
         assert log.completed
+        assert log.current_time == 0

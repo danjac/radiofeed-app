@@ -67,7 +67,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
         user=request.user,
         autoplay=False,
         completed__isnull=True,
-    ).update(completed=timezone.now())
+    ).update(completed=timezone.now(), current_time=0)
 
     messages.info(request, "Episode marked complete")
     return HttpResponseNoContent()
