@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import messages
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -16,14 +17,18 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @require_POST
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    return render_player(request, get_episode_or_404(request, episode_id))
+    return render_player_start(request, get_episode_or_404(request, episode_id))
 
 
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    request.player.stop_episode()
-    return render_player(request)
+    if episode_id := request.player.remove_episode():
+        get_audio_log_queryset(request, episode_id).update(
+            autoplay=False,
+            updated=timezone.now(),
+        )
+    return render_player_close(request)
 
 
 @require_POST
@@ -32,7 +37,14 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    request.player.stop_episode(mark_completed=True)
+    if episode_id := request.player.remove_episode():
+        now = timezone.now()
+        get_audio_log_queryset(request, episode_id).update(
+            autoplay=False,
+            updated=now,
+            completed=now,
+            current_time=0,
+        )
 
     if request.user.autoplay and (
         next_item := (
@@ -43,28 +55,21 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
             .first()
         )
     ):
-        next_episode = next_item.episode
-    else:
-        next_episode = None
-
-    return render_player(request, next_episode)
+        return render_player_start(request, next_item.episode)
+    return render_player_close(request)
 
 
 @require_safe
 @hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
-    return render_player(request)
+    return render_player(request, log=get_player_audio_log(request))
 
 
 @require_POST
 @hx_login_required
 def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    AudioLog.objects.filter(
-        episode=episode_id,
-        user=request.user,
-        completed__isnull=True,
-    ).update(
+    get_audio_log_queryset(request, episode_id).filter(completed__isnull=True).update(
         completed=timezone.now(),
         current_time=0,
         autoplay=False,
@@ -80,38 +85,65 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        request.player.update_current_time(int(request.POST["current_time"]))
+        if episode_id := request.player.get_episode():
+            get_audio_log_queryset(request, episode_id).update(
+                current_time=int(request.POST["current_time"]),
+                updated=timezone.now(),
+                autoplay=True,
+            )
         return HttpResponseNoContent()
     except (KeyError, ValueError):
-        return HttpResponseBadRequest("missing or invalid data")
+        return HttpResponseBadRequest()
+
+
+def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
+    if request.user.is_authenticated and (episode_id := request.player.get_episode()):
+        return get_audio_log_queryset(request, episode_id).first()
+    return None
+
+
+def get_audio_log_queryset(request: HttpRequest, episode_id: int) -> QuerySet:
+    return AudioLog.objects.filter(user=request.user, episode=episode_id)
+
+
+def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
+
+    QueueItem.objects.filter(
+        user=request.user,
+        episode=episode,
+    ).delete()
+
+    log, _ = AudioLog.objects.update_or_create(
+        episode=episode,
+        user=request.user,
+        defaults={
+            "autoplay": True,
+            "completed": None,
+            "updated": timezone.now(),
+        },
+    )
+
+    request.player.add_episode(episode)
+
+    return with_hx_trigger(
+        render_player(request, log, autoplay=True),
+        {
+            "remove-queue-item": episode.id,
+            "play-episode": episode.id,
+        },
+    )
+
+
+def render_player_close(request: HttpRequest) -> HttpResponse:
+    return with_hx_trigger(render_player(request), "close-player")
 
 
 def render_player(
-    request: HttpRequest, next_episode: Episode | None = None
+    request: HttpRequest, log: AudioLog | None = None, autoplay: bool = False
 ) -> HttpResponse:
 
     response = TemplateResponse(
-        request, "_player.html", {"autoplay": next_episode is not None}
+        request, "_player.html", {"autoplay": autoplay, "log": log}
     )
-
-    if request.method == "POST":
-        if next_episode:
-
-            QueueItem.objects.filter(
-                user=request.user,
-                episode=next_episode,
-            ).delete()
-
-            request.player.start_episode(next_episode)
-
-            return with_hx_trigger(
-                response,
-                {
-                    "remove-queue-item": next_episode.id,
-                    "play-episode": next_episode.id,
-                },
-            )
-
-        return with_hx_trigger(response, "close-player")
 
     return response

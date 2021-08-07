@@ -1,5 +1,4 @@
 {% load static %}
-{% with log=request.player.audio_log %}
 {% if log %}
 {% with episode=log.episode podcast=log.episode.podcast %}
 {% with episode_url=episode.get_absolute_url podcast_url=podcast.get_absolute_url %}
@@ -189,4 +188,3 @@
 {% endwith %}
 {% endwith %}
 {% endif %}
-{% endwith %}

@@ -24,7 +24,7 @@ episodes_url = reverse_lazy("episodes:index")
 @pytest.fixture
 def player_episode(client, episode):
     session = client.session
-    session[Player.session_key] = {"episode": episode.id}
+    session[Player.session_key] = episode.id
     session.save()
     return episode
 

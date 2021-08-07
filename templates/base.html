@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n player %}
 {% block header_tags %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
@@ -65,7 +65,7 @@
   {% block player %}
   {% if user.is_authenticated %}
   <div id="player">
-    {% include "_player.html" %}
+    {% render_player %}
   </div>
   {% endif %}
   {% endblock player %}
