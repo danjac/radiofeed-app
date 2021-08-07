@@ -30,20 +30,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
-    AudioLog.objects.filter(
-        episode=episode_id,
-        user=request.user,
-        autoplay=False,
-        completed__isnull=True,
-    ).update(completed=timezone.now())
-
-    messages.info(request, "Episode marked complete")
-    return HttpResponseNoContent()
-
-
-@require_POST
-@ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     if log := request.player.stop_episode():
         current_episode = log.episode
@@ -52,7 +38,6 @@ def close_player(request: HttpRequest) -> HttpResponse:
     return render_player(request, current_episode=current_episode)
 
 
-@require_POST
 @require_POST
 @ajax_login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
@@ -83,6 +68,20 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
         next_episode=next_episode,
         current_episode=current_episode,
     )
+
+
+@require_POST
+@ajax_login_required
+def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
+    AudioLog.objects.filter(
+        episode=episode_id,
+        user=request.user,
+        autoplay=False,
+        completed__isnull=True,
+    ).update(completed=timezone.now())
+
+    messages.info(request, "Episode marked complete")
+    return HttpResponseNoContent()
 
 
 @require_POST
