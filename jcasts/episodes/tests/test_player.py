@@ -43,6 +43,8 @@ class TestPlayer:
         assert log.updated
         assert log.autoplay
 
+        assert player.audio_log == log
+
     def test_start_episode_from_queue(self, rf, episode, user):
         req = self.make_request(rf, user=user)
         player = Player(req)
@@ -63,6 +65,8 @@ class TestPlayer:
         assert log.autoplay
 
         assert not QueueItem.objects.exists()
+
+        assert player.audio_log == log
 
     def test_start_episode_already_played(self, rf, episode, user):
 
@@ -85,11 +89,15 @@ class TestPlayer:
         assert log.autoplay
         assert not log.completed
 
+        assert player.audio_log == log
+
     def test_stop_episode_empty(self, rf, user):
         req = self.make_request(rf, user=user)
 
         player = Player(req)
         assert player.stop_episode() is None
+
+        assert player.audio_log is None
 
     def test_stop_episode_not_in_session(self, rf, episode, user):
 
@@ -102,6 +110,8 @@ class TestPlayer:
         assert player.stop_episode() is None
         log.refresh_from_db()
         assert log.autoplay
+
+        assert player.audio_log is None
 
     def test_stop_episode_in_session(self, rf, episode, user):
 
@@ -117,6 +127,8 @@ class TestPlayer:
         log.refresh_from_db()
         assert not log.autoplay
 
+        assert player.audio_log is None
+
     def test_stop_episode_mark_complete(self, rf, episode, user):
 
         log = AudioLogFactory(episode=episode, user=user, autoplay=True)
@@ -130,6 +142,8 @@ class TestPlayer:
         log.refresh_from_db()
         assert log.completed
         assert not log.autoplay
+
+        assert player.audio_log is None
 
     def test_update_current_time_not_playing(self, rf, episode, user):
         req = self.make_request(rf, user=user)
@@ -152,3 +166,16 @@ class TestPlayer:
         log.refresh_from_db()
         assert log.current_time == 600
         assert log.autoplay
+
+    def test_audio_log_is_empty(self, rf, user):
+        req = self.make_request(rf, user=user)
+        player = Player(req)
+        assert player.audio_log is None
+
+    def test_audio_log_is_in_session(self, rf, user, episode):
+        log = AudioLogFactory(episode=episode, user=user, autoplay=True)
+
+        req = self.make_request(rf, episode=log.episode, user=user)
+
+        player = Player(req)
+        assert player.audio_log == log
