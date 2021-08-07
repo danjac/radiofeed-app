@@ -17,7 +17,9 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @require_POST
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    return render_player_start(request, get_episode_or_404(request, episode_id))
+    return render_player_start(
+        request, get_episode_or_404(request, episode_id, with_podcast=True)
+    )
 
 
 @require_POST
