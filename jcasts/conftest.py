@@ -1,6 +1,9 @@
+from typing import Callable
+
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpResponse
 from faker import Faker
 
 from jcasts.episodes.factories import EpisodeFactory
@@ -14,6 +17,11 @@ from jcasts.users.factories import UserFactory
 @pytest.fixture
 def faker() -> Faker:
     return Faker()
+
+
+@pytest.fixture
+def get_response() -> Callable:
+    return lambda req: HttpResponse()
 
 
 @pytest.fixture

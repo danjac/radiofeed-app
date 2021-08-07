@@ -4,7 +4,7 @@ import pytest
 
 from django.contrib import messages
 from django.contrib.messages.storage.base import Message
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django_htmx.middleware import HtmxMiddleware
 
 from jcasts.shared.middleware import (
@@ -14,12 +14,8 @@ from jcasts.shared.middleware import (
 )
 
 
-def get_response(request: HttpRequest) -> HttpResponse:
-    return HttpResponse()
-
-
 @pytest.fixture
-def htmx_mw():
+def htmx_mw(get_response):
     return HtmxMiddleware(get_response)
 
 
@@ -35,7 +31,7 @@ def htmx_req(rf):
 
 class TestCacheControlMiddleware:
     @pytest.fixture
-    def cache_mw(self):
+    def cache_mw(self, get_response):
         return CacheControlMiddleware(get_response)
 
     def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
@@ -51,7 +47,7 @@ class TestCacheControlMiddleware:
 
 class TestSearchMiddleware:
     @pytest.fixture
-    def mw(self):
+    def mw(self, get_response):
         return SearchMiddleware(get_response)
 
     def test_search(self, rf, mw):
@@ -71,7 +67,7 @@ class TestHtmxMessageMiddleware:
     message_level = "message-success"
 
     @pytest.fixture
-    def message_mw(self):
+    def message_mw(self, get_response):
         return HtmxMessageMiddleware(get_response)
 
     @pytest.fixture
