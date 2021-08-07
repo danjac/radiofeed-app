@@ -34,6 +34,7 @@ class Player:
             episode=episode,
             user=self.request.user,
             defaults={
+                "autoplay": True,
                 "updated": timezone.now(),
                 "completed": None,
             },
@@ -57,6 +58,7 @@ class Player:
         now = timezone.now()
 
         log.updated = now
+        log.autoplay = False
 
         if mark_completed:
             log.completed = now
@@ -70,10 +72,9 @@ class Player:
         if self.request.user.is_authenticated and (
             episode_id := self.get_current_episode_id()
         ):
-            AudioLog.objects.filter(
-                episode=episode_id,
-                user=self.request.user,
-            ).update(current_time=round(current_time))
+            AudioLog.objects.filter(episode=episode_id, user=self.request.user).update(
+                current_time=round(current_time), autoplay=True
+            )
 
     def is_playing(self, episode: Episode) -> bool:
         return self.get_current_episode_id() == episode.id
