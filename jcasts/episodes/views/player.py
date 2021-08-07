@@ -97,7 +97,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 
 def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
-    if request.user.is_authenticated and (episode_id := request.player.get_episode()):
+    if episode_id := request.player.get_episode():
         return (
             get_audio_log_queryset(request, episode_id)
             .select_related("episode", "episode__podcast")
