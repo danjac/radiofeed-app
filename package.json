@@ -10,14 +10,14 @@
     "autoprefixer": "^10.3.1",
     "concurrently": "^6.2.0",
     "cssnano": "^5.0.7",
-    "esbuild": "^0.12.15",
+    "esbuild": "^0.12.18",
     "postcss": "^8.3.6",
     "postcss-cli": "^8.3.1",
     "postcss-import": "^14.0.2",
     "tailwindcss": "^2.2.7"
   },
   "dependencies": {
-    "alpinejs": "^3.2.2",
+    "alpinejs": "^3.2.3",
     "htmx.org": "^1.5.0",
     "sortablejs": "^1.14.0"
   }

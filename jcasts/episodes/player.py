@@ -6,7 +6,7 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.models import AudioLog, Episode
 
 
 class Player:
@@ -23,11 +23,6 @@ class Player:
         session_data = {
             "episode": episode.id,
         }
-
-        QueueItem.objects.filter(
-            user=self.request.user,
-            episode=episode,
-        ).delete()
 
         self.clear_audio_log()
 
