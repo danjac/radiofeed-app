@@ -216,7 +216,7 @@ class TestPlayerTimeUpdate:
 
         resp = client.post(
             self.url,
-            {"current_time": "1030.0001"},
+            {"current_time": "1030"},
         )
         assert_no_content(resp)
 
@@ -226,7 +226,7 @@ class TestPlayerTimeUpdate:
     def test_player_not_running(self, client, auth_user):
         resp = client.post(
             self.url,
-            {"current_time": "1030.0001"},
+            {"current_time": "1030"},
         )
         assert_no_content(resp)
 
