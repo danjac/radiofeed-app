@@ -62,7 +62,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 @require_safe
 @hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
-    return render_player(request, log=get_player_audio_log(request))
+    return render_player(request, {"log": get_player_audio_log(request)})
 
 
 @require_POST
@@ -98,7 +98,11 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
     if request.user.is_authenticated and (episode_id := request.player.get_episode()):
-        return get_audio_log_queryset(request, episode_id).first()
+        return (
+            get_audio_log_queryset(request, episode_id)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
     return None
 
 
@@ -126,7 +130,14 @@ def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
     request.player.add_episode(episode)
 
     return with_hx_trigger(
-        render_player(request, log, autoplay=True),
+        render_player(
+            request,
+            {
+                "log": log,
+                "episode": episode,
+                "autoplay": True,
+            },
+        ),
         {
             "remove-queue-item": episode.id,
             "play-episode": episode.id,
@@ -139,11 +150,6 @@ def render_player_close(request: HttpRequest) -> HttpResponse:
 
 
 def render_player(
-    request: HttpRequest, log: AudioLog | None = None, autoplay: bool = False
+    request: HttpRequest, extra_context: dict | None = None
 ) -> HttpResponse:
-
-    response = TemplateResponse(
-        request, "_player.html", {"autoplay": autoplay, "log": log}
-    )
-
-    return response
+    return TemplateResponse(request, "episodes/_player.html", extra_context)
