@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from django.http import HttpRequest
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from jcasts.episodes.models import AudioLog, Episode, QueueItem
 
@@ -28,6 +29,8 @@ class Player:
             episode=episode,
         ).delete()
 
+        self.clear_audio_log()
+
         self.request.session[self.session_key] = session_data
 
         log, _ = AudioLog.objects.update_or_create(
@@ -40,20 +43,18 @@ class Player:
             },
         )
 
-        self.current_log = log
-
         return log
 
     def stop_episode(self, mark_completed: bool = False) -> AudioLog | None:
         """Removes episode from session and updates log.
         Returns episode.
         """
-        if (log := self.get_audio_log()) is None:
+
+        if (log := self.audio_log) is None:
             return None
 
+        self.clear_audio_log()
         del self.request.session[self.session_key]
-
-        self.current_log = None
 
         now = timezone.now()
 
@@ -85,19 +86,21 @@ class Player:
     def get_session_data(self) -> dict:
         return self.request.session.get(self.session_key, {})
 
-    def get_audio_log(self) -> AudioLog | None:
-        if hasattr(self, "current_log"):
-            return self.current_log
-
+    @cached_property
+    def audio_log(self) -> AudioLog | None:
         if self.request.user.is_anonymous or (
             (episode_id := self.get_current_episode_id()) is None
         ):
-            self.current_log = None
+            return None
 
-        else:
-            self.current_log = (
-                AudioLog.objects.filter(user=self.request.user, episode=episode_id)
-                .select_related("episode", "episode__podcast")
-                .first()
-            )
-        return self.current_log
+        return (
+            AudioLog.objects.filter(user=self.request.user, episode=episode_id)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
+
+    def clear_audio_log(self):
+        try:
+            del self.audio_log
+        except AttributeError:
+            pass
