@@ -79,7 +79,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        request.player.update_current_time(float(request.POST["current_time"]))
+        request.player.update_current_time(int(request.POST["current_time"]))
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest("missing or invalid data")
