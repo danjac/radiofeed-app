@@ -487,10 +487,13 @@ class TestMarkComplete:
             episode=episode,
             completed=None,
             current_time=600,
+            autoplay=True,
         )
         assert_no_content(
             client.post(reverse("episodes:mark_complete", args=[episode.id]))
         )
         log.refresh_from_db()
+
         assert log.completed
         assert log.current_time == 0
+        assert not log.autoplay

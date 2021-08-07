@@ -62,12 +62,16 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 @require_POST
 @hx_login_required
 def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
+
     AudioLog.objects.filter(
         episode=episode_id,
         user=request.user,
-        autoplay=False,
         completed__isnull=True,
-    ).update(completed=timezone.now(), current_time=0)
+    ).update(
+        completed=timezone.now(),
+        current_time=0,
+        autoplay=False,
+    )
 
     messages.info(request, "Episode marked complete")
     return HttpResponseNoContent()
