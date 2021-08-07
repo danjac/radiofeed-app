@@ -18,7 +18,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
-    return render_player(request, episode, autoplay=True)
+    return render_player(request, episode)
 
 
 @require_POST
@@ -50,7 +50,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     else:
         next_episode = None
 
-    return render_player(request, next_episode, autoplay=next_episode is not None)
+    return render_player(request, next_episode)
 
 
 @ajax_login_required
@@ -88,10 +88,11 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 def render_player(
     request: HttpRequest,
     next_episode: Episode | None = None,
-    autoplay: bool = False,
 ) -> HttpResponse:
 
-    response = TemplateResponse(request, "_player.html", {"autoplay": autoplay})
+    response = TemplateResponse(
+        request, "_player.html", {"autoplay": next_episode is not None}
+    )
 
     if request.method == "POST":
         if next_episode:
