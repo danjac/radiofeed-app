@@ -53,8 +53,8 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     return render_player(request, next_episode)
 
 
-@hx_login_required
 @require_safe
+@hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
     return render_player(request)
 
