@@ -96,14 +96,13 @@ def render_player(
 
     if request.method == "POST":
         if next_episode:
-            response = with_hx_trigger(
+            return with_hx_trigger(
                 response,
                 {
                     "remove-queue-item": next_episode.id,
                     "play-episode": next_episode.id,
                 },
             )
-        else:
-            response = with_hx_trigger(response, "close-player")
+        return with_hx_trigger(response, "close-player")
 
     return response
