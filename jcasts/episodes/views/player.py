@@ -13,29 +13,19 @@ from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
-@ajax_login_required
-@require_safe
-def reload_player(request: HttpRequest) -> HttpResponse:
-    """Fetches current player, if any. Useful if reloading player."""
-    return TemplateResponse(request, "_player.html")
-
-
 @require_POST
 @ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
     request.player.start_episode(episode)
-    return render_player(request, next_episode=episode)
+    return render_player(request, episode)
 
 
 @require_POST
 @ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    if log := request.player.stop_episode():
-        current_episode = log.episode
-    else:
-        current_episode = None
-    return render_player(request, current_episode=current_episode)
+    request.player.stop_episode()
+    return render_player(request)
 
 
 @require_POST
@@ -44,10 +34,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    if log := request.player.stop_episode(mark_completed=True):
-        current_episode = log.episode
-    else:
-        current_episode = None
+    request.player.stop_episode(mark_completed=True)
 
     if request.user.autoplay and (
         next_item := (
@@ -63,11 +50,14 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     else:
         next_episode = None
 
-    return render_player(
-        request,
-        next_episode=next_episode,
-        current_episode=current_episode,
-    )
+    return render_player(request, next_episode)
+
+
+@ajax_login_required
+@require_safe
+def reload_player(request: HttpRequest) -> HttpResponse:
+    """Fetches current player, if any. Useful if reloading player."""
+    return TemplateResponse(request, "_player.html")
 
 
 @require_POST
@@ -98,7 +88,6 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 def render_player(
     request: HttpRequest,
-    current_episode: Episode | None = None,
     next_episode: Episode | None = None,
 ) -> HttpResponse:
 
