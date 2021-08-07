@@ -9,5 +9,6 @@ import Player from './player';
   window.DragDrop = DragDrop;
   window.Messages = Messages;
   window.Player = Player;
+
   Alpine.start();
 })();
