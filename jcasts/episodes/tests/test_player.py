@@ -4,8 +4,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test import RequestFactory
 
-from jcasts.episodes.factories import AudioLogFactory, QueueItemFactory
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.factories import AudioLogFactory
+from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.player import Player
 from jcasts.shared.typedefs import AnyUser
 
@@ -42,29 +42,6 @@ class TestPlayer:
         assert not log.completed
         assert log.updated
         assert log.autoplay
-
-        assert player.audio_log == log
-
-    def test_start_episode_from_queue(self, rf, episode, user):
-        req = self.make_request(rf, user=user)
-        player = Player(req)
-
-        QueueItemFactory(episode=episode, user=user)
-
-        assert player.start_episode(episode).current_time == 0
-        assert player.is_playing(episode)
-
-        log = AudioLog.objects.get()
-
-        assert log.episode == episode
-        assert log.user == user
-        assert log.current_time == 0
-
-        assert not log.completed
-        assert log.updated
-        assert log.autoplay
-
-        assert not QueueItem.objects.exists()
 
         assert player.audio_log == log
 

@@ -17,6 +17,9 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
+
+    QueueItem.objects.filter(user=request.user, episode=episode).delete()
+
     request.player.start_episode(episode)
     return render_player(request, episode)
 
@@ -47,6 +50,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     ):
         next_episode = next_item.episode
         request.player.start_episode(next_episode)
+        next_item.delete()
     else:
         next_episode = None
 
@@ -90,8 +94,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 
 def render_player(
-    request: HttpRequest,
-    next_episode: Episode | None = None,
+    request: HttpRequest, next_episode: Episode | None = None
 ) -> HttpResponse:
 
     response = TemplateResponse(
