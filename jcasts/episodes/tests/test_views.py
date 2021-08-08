@@ -128,6 +128,18 @@ class TestStartPlayer:
             user=auth_user, episode=episode, is_playing=True
         ).exists()
 
+    def test_another_episode_in_player(self, client, auth_user, episode):
+        previous = AudioLogFactory(user=auth_user, is_playing=True)
+        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
+        assert_ok(resp)
+
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
+
+        previous.refresh_from_db()
+        assert not previous.is_playing
+
     def test_resume(self, client, auth_user, episode):
         log = AudioLogFactory(
             user=auth_user, episode=episode, current_time=2000, is_playing=False

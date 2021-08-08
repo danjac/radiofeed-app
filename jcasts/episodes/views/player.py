@@ -16,6 +16,13 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @require_POST
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+
+    # close current running episode first
+    get_audio_log_queryset(request).update(
+        is_playing=False,
+        updated=timezone.now(),
+    )
+
     return render_player_start(
         request, get_episode_or_404(request, episode_id, with_podcast=True)
     )
