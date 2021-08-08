@@ -10,6 +10,8 @@ def assert_status(response: HttpResponse, status: int) -> None:
 
 assert_ok = functools.partial(assert_status, status=http.HTTPStatus.OK)
 
+assert_gone = functools.partial(assert_status, status=http.HTTPStatus.GONE)
+
 assert_conflict = functools.partial(assert_status, status=http.HTTPStatus.CONFLICT)
 
 assert_bad_request = functools.partial(

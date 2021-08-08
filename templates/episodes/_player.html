@@ -13,7 +13,7 @@
        urls: {
          closePlayer: '{% url "episodes:close_player" %}',
          playNext: '{% url "episodes:play_next_episode" %}',
-         timeUpdate: '{% url "episodes:player_time_update" %}'
+         timeUpdate: '{% url "episodes:player_time_update" episode.id %}'
        }
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
@@ -160,7 +160,7 @@
                       class="focus:outline-none hover:text-blue-500 mr-2"
                       hx-get="{% url 'episodes:reload_player' %}"
                       hx-target="#player"
-                      hx-swap="outerHTML">
+                      hx-swap="innerHTML">
                 {% icon "refresh" css_class="h-5 w-5 md:h-6 md:w-6" %}
               </button>
 
