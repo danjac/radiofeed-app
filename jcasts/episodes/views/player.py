@@ -72,8 +72,7 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @hx_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
-    """Update current play time of episode. We pass the episode ID so
-    if user has two browsers open, only one should be updated at any one time."""
+    """Update current play time of episode."""
 
     try:
         if episode_id := request.player.get_episode():
