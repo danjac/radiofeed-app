@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 
 
-def hx_login_required(view: Callable, next_url: str | None = None) -> Callable:
+def hx_login_required(view: Callable) -> Callable:
     @functools.wraps(view)
     def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
@@ -20,7 +20,7 @@ def hx_login_required(view: Callable, next_url: str | None = None) -> Callable:
         if request.htmx:
             response = HttpResponseForbidden()
             response["HX-Redirect"] = redirect_to_login(
-                next_url or settings.HOME_URL, redirect_field_name=REDIRECT_FIELD_NAME
+                settings.LOGIN_REDIRECT_URL, redirect_field_name=REDIRECT_FIELD_NAME
             ).url
             response["HX-Refresh"] = "true"
             return response

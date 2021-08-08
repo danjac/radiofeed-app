@@ -63,10 +63,9 @@ def reload_player(request: HttpRequest) -> HttpResponse:
             .select_related("episode", "episode__podcast")
             .first()
         )
-    else:
-        log = None
+        return render_player(request, {"log": log})
 
-    return render_player(request, {"log": log})
+    return HttpResponse()
 
 
 @require_POST
