@@ -15,7 +15,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 @require_POST
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    return render_player_start(
+    return render_start_player(
         request, get_episode_or_404(request, episode_id, with_podcast=True)
     )
 
@@ -24,7 +24,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     request.player.remove_episode()
-    return render_player_close(request)
+    return render_close_player(request)
 
 
 @require_POST
@@ -49,8 +49,8 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
             .first()
         )
     ):
-        return render_player_start(request, next_item.episode)
-    return render_player_close(request)
+        return render_start_player(request, next_item.episode)
+    return render_close_player(request)
 
 
 @require_safe
@@ -87,7 +87,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
+def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
 
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
@@ -118,7 +118,7 @@ def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
     )
 
 
-def render_player_close(request: HttpRequest) -> HttpResponse:
+def render_close_player(request: HttpRequest) -> HttpResponse:
     return with_hx_trigger(render_player(request), "close-player")
 
 
