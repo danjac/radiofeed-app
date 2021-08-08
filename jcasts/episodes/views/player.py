@@ -24,11 +24,10 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    if episode_id := request.player.remove_episode():
-        get_audio_log_queryset(request, episode_id).update(
-            autoplay=False,
-            updated=timezone.now(),
-        )
+    get_audio_log_queryset(request, request.player.remove_episode()).update(
+        autoplay=False,
+        updated=timezone.now(),
+    )
     return render_player_close(request)
 
 
@@ -38,15 +37,14 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    if episode_id := request.player.remove_episode():
-        now = timezone.now()
+    now = timezone.now()
 
-        get_audio_log_queryset(request, episode_id).update(
-            autoplay=False,
-            updated=now,
-            completed=now,
-            current_time=0,
-        )
+    get_audio_log_queryset(request, request.player.remove_episode()).update(
+        autoplay=False,
+        updated=now,
+        completed=now,
+        current_time=0,
+    )
 
     if request.user.autoplay and (
         next_item := (
@@ -72,7 +70,7 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        get_audio_log_queryset(request).update(
+        get_audio_log_queryset(request, request.player.get_episode()).update(
             current_time=int(request.POST["current_time"]),
             updated=timezone.now(),
             autoplay=True,
@@ -84,16 +82,13 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
     return (
-        get_audio_log_queryset(request)
+        get_audio_log_queryset(request, request.player.get_episode())
         .select_related("episode", "episode__podcast")
         .first()
     )
 
 
-def get_audio_log_queryset(
-    request: HttpRequest, episode_id: int | None = None
-) -> QuerySet:
-    episode_id = episode_id or request.player.get_episode()
+def get_audio_log_queryset(request: HttpRequest, episode_id: int | None) -> QuerySet:
     if episode_id is None:
         return AudioLog.objects.none()
 
