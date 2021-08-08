@@ -418,8 +418,12 @@ class TestAudioLogModel:
         user = UserFactory()
         # same user: ok
         AudioLogFactory(user=user, is_playing=True)
-        # another user: ok
+        # same user + not playing: ok
+        AudioLogFactory(user=user, is_playing=False)
+        # another user playing: ok
         AudioLogFactory(is_playing=True)
+        # another user not playing: ok
+        AudioLogFactory(is_playing=False)
         # same user also playing: not ok
         with pytest.raises(IntegrityError):
             AudioLogFactory(user=user, is_playing=True)
