@@ -345,12 +345,11 @@ class AudioLog(TimeStampedModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+
     updated: datetime = models.DateTimeField()
     completed: datetime | None = models.DateTimeField(null=True, blank=True)
-    autoplay: bool = models.BooleanField(default=False)
 
     is_playing: bool = models.BooleanField(default=False)
-
     current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()
