@@ -11,7 +11,7 @@ register = template.Library()
 def render_player(context: dict) -> dict:
     request = context["request"]
 
-    if request.user.is_authenticated and (episode_id := request.player.get_episode()):
+    if request.user.is_authenticated and (episode_id := request.player.get()):
 
         return {
             "log": AudioLog.objects.filter(user=request.user, episode=episode_id)

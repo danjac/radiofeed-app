@@ -83,7 +83,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    is_playing = request.player.is_episode(episode)
+    is_playing = request.player.has(episode.id)
 
     is_queue = (
         False if is_playing else QueueItem.objects.filter(user=request.user).exists()
@@ -116,7 +116,7 @@ def episode_detail(
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": request.player.is_episode(episode),
+            "is_playing": request.player.has(episode.id),
             "og_data": episode.get_opengraph_data(request),
         },
     )

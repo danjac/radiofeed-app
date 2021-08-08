@@ -23,7 +23,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    request.player.remove_episode()
+    request.player.remove()
     return render_close_player(request)
 
 
@@ -33,7 +33,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    if episode_id := request.player.remove_episode():
+    if episode_id := request.player.remove():
 
         now = timezone.now()
 
@@ -57,7 +57,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 @hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
 
-    if episode_id := request.player.get_episode():
+    if episode_id := request.player.get():
         log = (
             AudioLog.objects.filter(user=request.user, episode=episode_id)
             .select_related("episode", "episode__podcast")
@@ -75,7 +75,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode."""
 
     try:
-        if episode_id := request.player.get_episode():
+        if episode_id := request.player.get():
 
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
                 updated=timezone.now(),
@@ -100,7 +100,7 @@ def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
         },
     )
 
-    request.player.set_episode(episode)
+    request.player.set(episode.id)
 
     return with_hx_trigger(
         render_player(

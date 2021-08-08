@@ -8,8 +8,8 @@ from jcasts.episodes.factories import (
     FavoriteFactory,
     QueueItemFactory,
 )
+from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
-from jcasts.episodes.player import Player
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,

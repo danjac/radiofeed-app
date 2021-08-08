@@ -1,5 +1,5 @@
 from jcasts.episodes.factories import AudioLogFactory
-from jcasts.episodes.player import Player
+from jcasts.episodes.middleware import Player
 from jcasts.episodes.templatetags.player import render_player
 
 

@@ -39,7 +39,7 @@ def index(request: HttpRequest) -> HttpResponse:
 @hx_login_required
 def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    if episode_id != request.player.get_episode():
+    if not request.player.has(episode_id):
         AudioLog.objects.filter(
             user=request.user, episode=episode_id, completed__isnull=True
         ).update(
@@ -54,7 +54,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
-    if episode_id != request.player.get_episode():
+    if not request.player.has(episode_id):
         AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
         messages.info(request, "Removed from History")
     return with_hx_trigger(HttpResponseNoContent(), {"remove-audio-log": episode_id})

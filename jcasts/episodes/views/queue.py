@@ -43,7 +43,7 @@ def add_to_queue(
 
     # can't add to queue if currently playing
 
-    if request.player.is_episode(episode):
+    if request.player.has(episode.id):
         return HttpResponseBadRequest()
 
     try:

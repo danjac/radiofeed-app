@@ -7,8 +7,8 @@ from django.http import HttpResponse
 from faker import Faker
 
 from jcasts.episodes.factories import EpisodeFactory
+from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import Episode
-from jcasts.episodes.player import Player
 from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Category, Follow, Podcast
 from jcasts.shared.typedefs import AuthenticatedUser
