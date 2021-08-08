@@ -34,11 +34,6 @@ urlpatterns = [
         name="start_player",
     ),
     path(
-        "player/<int:episode_id>/~complete/",
-        player.mark_complete,
-        name="mark_complete",
-    ),
-    path(
         "player/~close/",
         player.close_player,
         name="close_player",
@@ -54,6 +49,11 @@ urlpatterns = [
         name="player_time_update",
     ),
     path("history/", history.index, name="history"),
+    path(
+        "history/<int:episode_id>/~complete/",
+        history.mark_complete,
+        name="mark_complete",
+    ),
     path(
         "history/<int:episode_id>/~remove/",
         history.remove_audio_log,

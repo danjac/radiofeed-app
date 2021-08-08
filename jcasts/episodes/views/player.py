@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.contrib import messages
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -25,11 +24,10 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    if episode_id := request.player.remove_episode():
-        get_audio_log_queryset(request, episode_id).update(
-            autoplay=False,
-            updated=timezone.now(),
-        )
+    get_audio_log_queryset(request, request.player.remove_episode()).update(
+        autoplay=False,
+        updated=timezone.now(),
+    )
     return render_player_close(request)
 
 
@@ -39,14 +37,14 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
-    if episode_id := request.player.remove_episode():
-        now = timezone.now()
-        get_audio_log_queryset(request, episode_id).update(
-            autoplay=False,
-            updated=now,
-            completed=now,
-            current_time=0,
-        )
+    now = timezone.now()
+
+    get_audio_log_queryset(request, request.player.remove_episode()).update(
+        autoplay=False,
+        updated=now,
+        completed=now,
+        current_time=0,
+    )
 
     if request.user.autoplay and (
         next_item := (
@@ -67,47 +65,33 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@hx_login_required
-def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
-
-    get_audio_log_queryset(request, episode_id).filter(completed__isnull=True).update(
-        completed=timezone.now(),
-        current_time=0,
-        autoplay=False,
-    )
-
-    messages.info(request, "Episode marked complete")
-    return HttpResponseNoContent()
-
-
-@require_POST
 @ratelimit(key="ip", rate="20/m")
 @hx_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        if episode_id := request.player.get_episode():
-            get_audio_log_queryset(request, episode_id).update(
-                current_time=int(request.POST["current_time"]),
-                updated=timezone.now(),
-                autoplay=True,
-            )
+        get_audio_log_queryset(request, request.player.get_episode()).update(
+            current_time=int(request.POST["current_time"]),
+            updated=timezone.now(),
+            autoplay=True,
+        )
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
 
 def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
-    if episode_id := request.player.get_episode():
-        return (
-            get_audio_log_queryset(request, episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
-    return None
+    return (
+        get_audio_log_queryset(request, request.player.get_episode())
+        .select_related("episode", "episode__podcast")
+        .first()
+    )
 
 
-def get_audio_log_queryset(request: HttpRequest, episode_id: int) -> QuerySet:
+def get_audio_log_queryset(request: HttpRequest, episode_id: int | None) -> QuerySet:
+    if episode_id is None:
+        return AudioLog.objects.none()
+
     return AudioLog.objects.filter(user=request.user, episode=episode_id)
 
 
