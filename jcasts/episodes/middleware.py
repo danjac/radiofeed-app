@@ -16,7 +16,7 @@ class Player:
     def __init__(self, request: HttpRequest):
         self.request = request
 
-    def get(self) -> str | None:
+    def get(self) -> int | None:
         return self.request.session.get(self.session_key)
 
     def set(self, episode_id: int) -> None:
