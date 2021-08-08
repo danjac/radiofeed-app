@@ -9,7 +9,8 @@
          @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
          {% endif %}>
   <div class="flex justify-between items-center">
-    <div class="flex items-center w-full space-x-2">
+
+    <div class="flex items-center w-full space-x-3">
 
       <div>
 
@@ -24,7 +25,7 @@
         {% endif %}
       </div>
 
-      <div class="space-y-2 lg:space-y-3">
+      <div class="space-y-3">
         <h2 class="w-56 sm:w-96 lg:w-full truncate">
           <a href="{{ episode_url }}"
              class="link"
