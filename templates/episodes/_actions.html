@@ -61,7 +61,7 @@
     {% icon "trash" css_class=ICON_CLASS %}
     Remove from Queue
   </button>
-  {% elif num_queue_items %}
+  {% elif is_queue %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
           @click="show=false">

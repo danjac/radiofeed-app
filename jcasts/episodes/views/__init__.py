@@ -85,8 +85,8 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     is_playing = request.player.is_episode(episode)
 
-    num_queue_items: int = (
-        0 if is_playing else QueueItem.objects.filter(user=request.user).count()
+    is_queue = (
+        False if is_playing else QueueItem.objects.filter(user=request.user).exists()
     )
 
     return TemplateResponse(
@@ -98,7 +98,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
             "is_queued": episode.is_queued(request.user),
             "is_detail": request.GET.get("detail", False),
             "is_playing": is_playing,
-            "num_queue_items": num_queue_items,
+            "is_queue": is_queue,
         },
     )
 
