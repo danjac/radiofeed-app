@@ -41,20 +41,18 @@ def add_to_queue(
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
-    # can't add to queue if currently playing
+    if not request.player.has(episode.id):
 
-    if request.player.has(episode.id):
-        return HttpResponseBadRequest()
+        try:
+            if to == "start":
+                QueueItem.objects.add_item_to_start(request.user, episode)
+            else:
+                QueueItem.objects.add_item_to_end(request.user, episode)
+            messages.success(request, "Added to Play Queue")
+        except IntegrityError:
+            return HttpResponseConflict()
 
-    try:
-        if to == "start":
-            QueueItem.objects.add_item_to_start(request.user, episode)
-        else:
-            QueueItem.objects.add_item_to_end(request.user, episode)
-        messages.success(request, "Added to Play Queue")
-        return HttpResponseNoContent()
-    except IntegrityError:
-        return HttpResponseConflict()
+    return HttpResponseNoContent()
 
 
 @require_POST

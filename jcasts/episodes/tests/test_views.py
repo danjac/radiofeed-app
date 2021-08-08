@@ -472,7 +472,7 @@ class TestAddToQueue:
                 args=[player_episode.id],
             ),
         )
-        assert_bad_request(resp)
+        assert_no_content(resp)
         assert QueueItem.objects.count() == 0
 
     @pytest.mark.django_db(transaction=True)
