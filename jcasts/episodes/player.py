@@ -24,5 +24,5 @@ class Player:
     def remove_episode(self) -> str | None:
         return self.request.session.pop(self.session_key, None)
 
-    def is_playing(self, episode: Episode) -> bool:
+    def is_episode(self, episode: Episode) -> bool:
         return self.get_episode() == episode.id

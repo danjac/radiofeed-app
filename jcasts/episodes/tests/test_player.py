@@ -31,8 +31,8 @@ class TestPlayer:
         assert player.get_episode() is None
 
     def test_is_playing_false(self, player, episode):
-        assert not player.is_playing(episode)
+        assert not player.is_episode(episode)
 
     def test_is_playing_true(self, player, episode):
         player.set_episode(episode)
-        assert player.is_playing(episode)
+        assert player.is_episode(episode)
