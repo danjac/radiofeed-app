@@ -481,13 +481,16 @@ class TestMoveQueueItems:
 
 
 class TestMarkComplete:
-    def test_mark_complete(self, client, auth_user, episode):
-        log = AudioLogFactory(
+    @pytest.fixture
+    def log(self, auth_user, episode):
+        return AudioLogFactory(
             user=auth_user,
             episode=episode,
             completed=None,
             current_time=600,
         )
+
+    def test_mark_complete(self, client, auth_user, episode, log):
         assert_no_content(
             client.post(reverse("episodes:mark_complete", args=[episode.id]))
         )
@@ -495,3 +498,13 @@ class TestMarkComplete:
 
         assert log.completed
         assert log.current_time == 0
+
+    def test_is_playing(self, client, auth_user, player_episode, log):
+        """Do not remove log if episode is currently playing"""
+        assert_bad_request(
+            client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
+        )
+
+        log.refresh_from_db()
+        assert not log.completed
+        assert log.current_time == 600

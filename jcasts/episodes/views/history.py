@@ -3,6 +3,7 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from jcasts.episodes.models import AudioLog
@@ -33,6 +34,29 @@ def index(request: HttpRequest) -> HttpResponse:
         "episodes/history.html",
         "episodes/_history.html",
     )
+
+
+@require_POST
+@hx_login_required
+def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
+
+    episode = get_episode_or_404(request, episode_id)
+
+    # you shouldn't be able to update history if episode currently playing
+
+    if request.player.is_playing(episode):
+        return HttpResponseBadRequest("Episode is currently playing")
+
+    AudioLog.objects.filter(
+        user=request.user, episode=episode, completed__isnull=True
+    ).update(
+        completed=timezone.now(),
+        current_time=0,
+        autoplay=False,
+    )
+
+    messages.info(request, "Episode marked complete")
+    return HttpResponseNoContent()
 
 
 @require_POST

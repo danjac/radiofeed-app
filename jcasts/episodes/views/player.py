@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.contrib import messages
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
@@ -41,6 +40,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.remove_episode():
         now = timezone.now()
+
         get_audio_log_queryset(request, episode_id).update(
             autoplay=False,
             updated=now,
@@ -67,47 +67,36 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@hx_login_required
-def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
-
-    get_audio_log_queryset(request, episode_id).filter(completed__isnull=True).update(
-        completed=timezone.now(),
-        current_time=0,
-        autoplay=False,
-    )
-
-    messages.info(request, "Episode marked complete")
-    return HttpResponseNoContent()
-
-
-@require_POST
 @ratelimit(key="ip", rate="20/m")
 @hx_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        if episode_id := request.player.get_episode():
-            get_audio_log_queryset(request, episode_id).update(
-                current_time=int(request.POST["current_time"]),
-                updated=timezone.now(),
-                autoplay=True,
-            )
+        get_audio_log_queryset(request).update(
+            current_time=int(request.POST["current_time"]),
+            updated=timezone.now(),
+            autoplay=True,
+        )
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
 
 def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
-    if episode_id := request.player.get_episode():
-        return (
-            get_audio_log_queryset(request, episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
-    return None
+    return (
+        get_audio_log_queryset(request)
+        .select_related("episode", "episode__podcast")
+        .first()
+    )
 
 
-def get_audio_log_queryset(request: HttpRequest, episode_id: int) -> QuerySet:
+def get_audio_log_queryset(
+    request: HttpRequest, episode_id: int | None = None
+) -> QuerySet:
+    episode_id = episode_id or request.player.get_episode()
+    if episode_id is None:
+        return AudioLog.objects.none()
+
     return AudioLog.objects.filter(user=request.user, episode=episode_id)
 
 
