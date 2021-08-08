@@ -9,7 +9,7 @@ from jcasts.shared.middleware import BaseMiddleware
 
 
 class Player:
-    """Manages current player episode in session"""
+    """Tracks current player episode in session"""
 
     session_key: ClassVar[str] = "player_episode"
 
