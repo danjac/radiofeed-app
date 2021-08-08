@@ -48,7 +48,9 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseBadRequest("Episode is currently playing")
 
     AudioLog.objects.filter(
-        user=request.user, episode=episode, completed__isnull=True
+        user=request.user,
+        episode=episode,
+        completed__isnull=True,
     ).update(
         completed=timezone.now(),
         current_time=0,
