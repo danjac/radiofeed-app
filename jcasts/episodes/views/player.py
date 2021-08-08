@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -18,7 +17,7 @@ from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     # close current running episode first
-    get_audio_log_queryset(request).update(
+    AudioLog.objects.playing(request.user).update(
         is_playing=False,
         updated=timezone.now(),
     )
@@ -31,7 +30,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    get_audio_log_queryset(request).update(
+    AudioLog.objects.playing(request.user).update(
         is_playing=False,
         updated=timezone.now(),
     )
@@ -46,7 +45,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
     now = timezone.now()
 
-    get_audio_log_queryset(request).update(
+    AudioLog.objects.playing(request.user).update(
         is_playing=False,
         updated=now,
         completed=now,
@@ -71,7 +70,7 @@ def reload_player(request: HttpRequest) -> HttpResponse:
     return render_player(
         request,
         {
-            "log": get_audio_log_queryset(request)
+            "log": AudioLog.objects.playing(request.user)
             .select_related("episode", "episode__podcast")
             .first()
         },
@@ -84,17 +83,13 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        get_audio_log_queryset(request).update(
+        AudioLog.objects.playing(request.user).update(
             current_time=int(request.POST["current_time"]),
             updated=timezone.now(),
         )
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
-
-
-def get_audio_log_queryset(request: HttpRequest) -> QuerySet:
-    return AudioLog.objects.filter(user=request.user, is_playing=True)
 
 
 def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:

@@ -6,7 +6,7 @@ class TestRenderPlayer:
     def test_render_is_anonymous(self, rf, anonymous_user):
         req = rf.get("/")
         req.user = anonymous_user
-        assert render_player({"request": req}) == {}
+        assert render_player({"request": req}) == {"log": None}
 
     def test_render_is_empty(self, rf, user):
         req = rf.get("/")

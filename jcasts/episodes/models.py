@@ -335,6 +335,11 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
+    def playing(self, user: AnyUser) -> models.QuerySet:
+        if user.is_anonymous:
+            return self.none()
+        return self.filter(user=user, is_playing=True)
+
 
 AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 

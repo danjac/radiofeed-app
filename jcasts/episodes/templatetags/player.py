@@ -9,13 +9,10 @@ register = template.Library()
 
 @register.inclusion_tag("episodes/_player.html", takes_context=True)
 def render_player(context: dict) -> dict:
-    if context["request"].user.is_anonymous:
-        return {}
-
-    log = (
-        AudioLog.objects.filter(user=context["request"].user, is_playing=True)
-        .select_related("episode", "episode__podcast")
-        .first()
-    )
-
-    return {"log": log}
+    return {
+        "log": (
+            AudioLog.objects.playing(context["request"].user)
+            .select_related("episode", "episode__podcast")
+            .first()
+        )
+    }

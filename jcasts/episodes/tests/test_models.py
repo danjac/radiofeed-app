@@ -404,6 +404,22 @@ class TestAudioLogManager:
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
 
+    def test_playing_anonymous(self, db, anonymous_user):
+        AudioLogFactory(is_playing=True)
+        assert not AudioLog.objects.playing(anonymous_user).exists()
+
+    def test_playing_other_user(self, db, user):
+        AudioLogFactory(is_playing=True)
+        assert not AudioLog.objects.playing(user).exists()
+
+    def test_playing_none_playing(self, db, user):
+        AudioLogFactory(is_playing=False, user=user)
+        assert not AudioLog.objects.playing(user).exists()
+
+    def test_playing_none_has_playing(self, db, user):
+        AudioLogFactory(is_playing=True, user=user)
+        assert AudioLog.objects.playing(user).exists()
+
 
 class TestAudioLogModel:
     def test_to_json(self, db):
