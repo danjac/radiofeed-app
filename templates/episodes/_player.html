@@ -13,7 +13,7 @@
        urls: {
          closePlayer: '{% url "episodes:close_player" %}',
          playNext: '{% url "episodes:play_next_episode" %}',
-         timeUpdate: '{% url "episodes:player_time_update" episode.id %}'
+         timeUpdate: '{% url "episodes:player_time_update" %}'
        }
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"

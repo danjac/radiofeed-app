@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-<div x-data="{isPlaying: {{ episode.is_playing|yesno:'true,false' }}}"
+<div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
      x-cloak
      @close-player.window="isPlaying=false"
      @play-episode.window="isPlaying=$event.detail.value==={{ episode.id }}">

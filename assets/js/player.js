@@ -194,9 +194,6 @@ const playerObj = {
         .then((response) => {
           if (response.status === 204) {
             this.lastTimeUpdate = time;
-          } else {
-            this.errMsg = 'Reload to re-sync with server';
-            this.$refs.audio.pause();
           }
         })
         .catch((err) => console.log(err));

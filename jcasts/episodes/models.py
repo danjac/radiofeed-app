@@ -30,7 +30,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         if user.is_anonymous:
             return self.annotate(
                 completed=models.Value(None, output_field=models.DateTimeField()),
-                is_playing=models.Value(False, output_field=models.BooleanField()),
                 current_time=models.Value(0, output_field=models.IntegerField()),
                 listened=models.Value(None, output_field=models.DateTimeField()),
             )
@@ -39,7 +38,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
         return self.annotate(
             completed=models.Subquery(logs.values("completed")),
-            is_playing=models.Subquery(logs.values("is_playing")),
             current_time=models.Subquery(logs.values("current_time")),
             listened=models.Subquery(logs.values("updated")),
         )
@@ -175,13 +173,6 @@ class Episode(models.Model):
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
-
-    def is_playing(self, user: AnyUser) -> bool:
-        if user.is_anonymous:
-            return False
-        return AudioLog.objects.filter(
-            user=user, episode=self, is_playing=True
-        ).exists()
 
     def get_duration_in_seconds(self) -> int:
         """Returns total number of seconds given string in [h:][m:]s format.
@@ -335,11 +326,6 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
-    def playing(self, user: AnyUser) -> models.QuerySet:
-        if user.is_anonymous:
-            return self.none()
-        return self.filter(user=user, is_playing=True)
-
 
 AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
@@ -353,8 +339,6 @@ class AudioLog(TimeStampedModel):
 
     updated: datetime = models.DateTimeField()
     completed: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    is_playing: bool = models.BooleanField(default=False)
     current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()
@@ -364,11 +348,6 @@ class AudioLog(TimeStampedModel):
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s",
                 fields=["user", "episode"],
-            ),
-            models.UniqueConstraint(
-                name="unique_%(app_label)s_%(class)s_is_playing",
-                fields=["user", "is_playing"],
-                condition=models.Q(is_playing=True),
             ),
         ]
         indexes = [

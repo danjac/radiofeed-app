@@ -14,7 +14,6 @@ from jcasts.episodes.factories import (
 )
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory
-from jcasts.users.factories import UserFactory
 
 
 class TestEpisodeManager:
@@ -59,7 +58,6 @@ class TestEpisodeManager:
         assert episode.current_time == 0
         assert not episode.completed
         assert not episode.listened
-        assert not episode.is_playing
 
     def test_with_current_time_if_not_played(self, user):
         EpisodeFactory()
@@ -68,7 +66,6 @@ class TestEpisodeManager:
         assert not episode.current_time
         assert not episode.completed
         assert not episode.listened
-        assert not episode.is_playing
 
     def test_with_current_time_if_played(self, user):
         log = AudioLogFactory(user=user, current_time=20, updated=timezone.now())
@@ -76,7 +73,6 @@ class TestEpisodeManager:
 
         assert episode.current_time == 20
         assert not episode.completed
-        assert not episode.is_playing
         assert episode.listened == log.updated
 
     def test_with_current_time_if_completed(self, user):
@@ -89,22 +85,7 @@ class TestEpisodeManager:
         episode = Episode.objects.with_current_time(user).first()
 
         assert episode.current_time == 20
-        assert not episode.is_playing
         assert episode.completed
-        assert episode.listened == log.updated
-
-    def test_with_current_time_if_playing(self, user):
-        log = AudioLogFactory(
-            user=user,
-            current_time=20,
-            updated=timezone.now(),
-            is_playing=True,
-        )
-        episode = Episode.objects.with_current_time(user).first()
-
-        assert episode.current_time == 20
-        assert episode.is_playing
-        assert not episode.completed
         assert episode.listened == log.updated
 
     def test_search(self, db):
@@ -345,20 +326,6 @@ class TestEpisodeModel:
         fave = FavoriteFactory(user=user, episode=episode)
         assert fave.episode.is_favorited(fave.user)
 
-    def test_is_playing_anonymous(self, anonymous_user, episode):
-        assert not episode.is_playing(anonymous_user)
-
-    def test_is_playing_no_log(self, user, episode):
-        assert not episode.is_playing(user)
-
-    def test_is_playing_false(self, user, episode):
-        AudioLogFactory(user=user, episode=episode, is_playing=False)
-        assert not episode.is_playing(user)
-
-    def test_is_playing_true(self, user, episode):
-        AudioLogFactory(user=user, episode=episode, is_playing=True)
-        assert episode.is_playing(user)
-
     def test_is_queued_anonymous(self, anonymous_user, episode):
         assert not episode.is_queued(anonymous_user)
 
@@ -404,22 +371,6 @@ class TestAudioLogManager:
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
 
-    def test_playing_anonymous(self, db, anonymous_user):
-        AudioLogFactory(is_playing=True)
-        assert not AudioLog.objects.playing(anonymous_user).exists()
-
-    def test_playing_other_user(self, db, user):
-        AudioLogFactory(is_playing=True)
-        assert not AudioLog.objects.playing(user).exists()
-
-    def test_playing_none_playing(self, db, user):
-        AudioLogFactory(is_playing=False, user=user)
-        assert not AudioLog.objects.playing(user).exists()
-
-    def test_playing_none_has_playing(self, db, user):
-        AudioLogFactory(is_playing=True, user=user)
-        assert AudioLog.objects.playing(user).exists()
-
 
 class TestAudioLogModel:
     def test_to_json(self, db):
@@ -429,20 +380,6 @@ class TestAudioLogModel:
         assert data["episode"]["url"] == log.episode.get_absolute_url()
         assert data["podcast"]["title"] == log.episode.podcast.title
         assert data["podcast"]["url"] == log.episode.podcast.get_absolute_url()
-
-    def test_is_playing_constraint(self, transactional_db):
-        user = UserFactory()
-        # same user: ok
-        AudioLogFactory(user=user, is_playing=True)
-        # same user + not playing: ok
-        AudioLogFactory(user=user, is_playing=False)
-        # another user playing: ok
-        AudioLogFactory(is_playing=True)
-        # another user not playing: ok
-        AudioLogFactory(is_playing=False)
-        # same user also playing: not ok
-        with pytest.raises(IntegrityError):
-            AudioLogFactory(user=user, is_playing=True)
 
 
 class TestQueueItemManager:

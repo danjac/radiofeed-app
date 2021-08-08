@@ -44,7 +44,7 @@ urlpatterns = [
         name="play_next_episode",
     ),
     path(
-        "player/<int:episode_id>/~timeupdate/",
+        "player/~timeupdate/",
         player.player_time_update,
         name="player_time_update",
     ),

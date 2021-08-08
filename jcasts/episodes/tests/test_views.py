@@ -9,16 +9,20 @@ from jcasts.episodes.factories import (
     QueueItemFactory,
 )
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.player import Player
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
     assert_conflict,
-    assert_gone,
     assert_no_content,
     assert_ok,
 )
 
 episodes_url = reverse_lazy("episodes:index")
+
+
+def _is_playing(client, episode):
+    return client.session.get(Player.session_key) == episode.id
 
 
 class TestNewEpisodes:
@@ -115,8 +119,7 @@ class TestReloadPlayer:
     def test_player_empty(self, client, auth_user):
         assert_ok(client.get(self.url))
 
-    def test_reload(self, client, auth_user):
-        AudioLogFactory(user=auth_user, is_playing=True)
+    def test_player_not_empty(self, client, auth_user, player_episode):
         assert_ok(client.get(self.url))
 
 
@@ -127,100 +130,118 @@ class TestStartPlayer:
     def test_play_from_start(self, client, auth_user, episode):
         assert_ok(client.post(self.url(episode)))
 
-        assert AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+        assert client.session[Player.session_key] == episode.id
 
     def test_another_episode_in_player(self, client, auth_user, episode):
-        previous = AudioLogFactory(user=auth_user, is_playing=True)
+        client.session[Player.session_key] = EpisodeFactory().id
+
         assert_ok(client.post(self.url(episode)))
 
-        assert AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        previous.refresh_from_db()
-        assert not previous.is_playing
+        assert client.session[Player.session_key] == episode.id
 
     def test_resume(self, client, auth_user, episode):
-        log = AudioLogFactory(
-            user=auth_user, episode=episode, current_time=2000, is_playing=False
-        )
+        log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
         assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()
-        assert log.is_playing
+
+        assert log.current_time == 2000
+        assert client.session[Player.session_key] == episode.id
 
 
 class TestPlayNextEpisode:
     url = reverse_lazy("episodes:play_next_episode")
 
-    def test_has_next_in_queue(self, client, auth_user, episode):
+    def test_has_next_in_queue(self, client, auth_user, player_episode):
 
-        previous = AudioLogFactory(user=auth_user, is_playing=True)
+        episode = EpisodeFactory()
 
-        QueueItem.objects.create(position=0, user=auth_user, episode=episode)
+        previous = AudioLogFactory(user=auth_user, episode=player_episode)
+
+        QueueItemFactory(user=auth_user, episode=episode)
         resp = client.post(self.url)
 
         assert_ok(resp)
 
         assert QueueItem.objects.count() == 0
 
-        assert AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         previous.refresh_from_db()
+
         assert previous.completed
-        assert not previous.is_playing
         assert previous.current_time == 0
 
-    def test_has_next_in_queue_if_autoplay_disabled(self, client, auth_user, episode):
+        assert not _is_playing(client, previous)
+        assert _is_playing(client, episode)
 
-        previous = AudioLogFactory(user=auth_user, is_playing=True)
+    def test_has_next_in_queue_if_autoplay_disabled(
+        self, client, auth_user, player_episode
+    ):
+
+        episode = EpisodeFactory()
+        previous = AudioLogFactory(user=auth_user, episode=player_episode)
 
         auth_user.autoplay = False
         auth_user.save()
 
-        QueueItem.objects.create(position=0, user=auth_user, episode=episode)
+        QueueItemFactory(user=auth_user, episode=episode)
         resp = client.post(self.url)
 
         assert_ok(resp)
         assert QueueItem.objects.count() == 1
 
-        assert not AudioLog.objects.filter(
-            user=auth_user, episode=episode, is_playing=True
-        ).exists()
+        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         previous.refresh_from_db()
+
+        assert not _is_playing(client, episode)
+        assert not _is_playing(client, previous.episode)
+
         assert previous.completed
-        assert not previous.is_playing
         assert previous.current_time == 0
 
-    def test_has_next_in_queue_if_autoplay_enabled(self, client, auth_user, episode):
+    def test_has_next_in_queue_if_autoplay_enabled(
+        self, client, auth_user, player_episode
+    ):
 
-        previous = AudioLogFactory(user=auth_user, current_time=2000, is_playing=True)
+        episode = EpisodeFactory()
+        QueueItemFactory(user=auth_user, episode=episode)
+
+        previous = AudioLogFactory(
+            user=auth_user, current_time=2000, episode=player_episode
+        )
 
         resp = client.post(self.url)
         assert_ok(resp)
 
         previous.refresh_from_db()
+
         assert previous.completed
-        assert not previous.is_playing
         assert previous.current_time == 0
 
-    def test_queue_empty(self, client, auth_user):
+        assert not _is_playing(client, previous)
+        assert _is_playing(client, episode)
 
-        previous = AudioLogFactory(user=auth_user, current_time=2000, is_playing=True)
+    def test_queue_empty(self, client, auth_user, player_episode):
+
+        previous = AudioLogFactory(
+            user=auth_user, current_time=2000, episode=player_episode
+        )
 
         resp = client.post(self.url)
         assert_ok(resp)
         assert QueueItem.objects.count() == 0
 
         previous.refresh_from_db()
+
         assert previous.completed
-        assert not previous.is_playing
         assert previous.current_time == 0
+
+        assert not _is_playing(client, previous)
 
 
 class TestClosePlayer:
@@ -230,31 +251,33 @@ class TestClosePlayer:
         resp = client.post(self.url)
         assert_ok(resp)
 
-    def test_stop(self, client, auth_user):
+    def test_stop(self, client, auth_user, player_episode):
 
-        log = AudioLogFactory(user=auth_user, is_playing=True, current_time=2000)
+        log = AudioLogFactory(user=auth_user, current_time=2000, episode=player_episode)
+
         resp = client.post(self.url)
         assert_ok(resp)
 
         # do not mark complete
         log.refresh_from_db()
+
         assert not log.completed
-        assert not log.is_playing
         assert log.current_time == 2000
+
+        assert not _is_playing(client, player_episode)
 
 
 class TestPlayerTimeUpdate:
-    @pytest.fixture
-    def log(self, auth_user):
-        return AudioLogFactory(user=auth_user, is_playing=True)
+    url = reverse_lazy("episodes:player_time_update")
 
-    def url(self, episode):
-        return reverse("episodes:player_time_update", args=[episode.id])
+    @pytest.fixture
+    def log(self, auth_user, player_episode):
+        return AudioLogFactory(user=auth_user, episode=player_episode)
 
     def test_is_running(self, client, auth_user, log):
 
         resp = client.post(
-            self.url(log.episode),
+            self.url,
             {"current_time": "1030"},
         )
         assert_no_content(resp)
@@ -264,19 +287,19 @@ class TestPlayerTimeUpdate:
 
     def test_player_not_running(self, client, auth_user, episode):
         resp = client.post(
-            self.url(episode),
+            self.url,
             {"current_time": "1030"},
         )
-        assert_gone(resp)
+        assert_no_content(resp)
 
     def test_missing_data(self, client, auth_user, log):
 
-        resp = client.post(self.url(log.episode))
+        resp = client.post(self.url)
         assert_bad_request(resp)
 
     def test_invalid_data(self, client, auth_user, log):
 
-        resp = client.post(self.url(log.episode), {"current_time": "xyz"})
+        resp = client.post(self.url, {"current_time": "xyz"})
         assert_bad_request(resp)
 
 
@@ -366,9 +389,9 @@ class TestRemoveAudioLog:
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
-    def test_is_playing(self, client, auth_user):
+    def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
-        log = AudioLogFactory(user=auth_user, is_playing=True)
+        log = AudioLogFactory(user=auth_user, episode=player_episode)
         assert_no_content(client.post(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
@@ -442,12 +465,11 @@ class TestAddToQueue:
         assert items[2].episode, first
         assert items[2].position == 3
 
-    def test_is_playing(self, client, auth_user):
-        log = AudioLogFactory(user=auth_user, is_playing=True)
+    def test_is_playing(self, client, auth_user, player_episode):
         resp = client.post(
             reverse(
                 self.add_to_start_url,
-                args=[log.episode.id],
+                args=[player_episode.id],
             ),
         )
         assert_bad_request(resp)
@@ -532,14 +554,13 @@ class TestMarkComplete:
         assert log.completed
         assert log.current_time == 0
 
-    def test_is_playing(self, client, auth_user, episode):
+    def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(
             user=auth_user,
-            episode=episode,
+            episode=player_episode,
             completed=None,
             current_time=600,
-            is_playing=True,
         )
 
         assert_no_content(
