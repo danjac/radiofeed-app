@@ -8,7 +8,7 @@ register = template.Library()
 
 
 @register.inclusion_tag("episodes/_player.html", takes_context=True)
-def render_player(context: dict) -> dict:
+def audio_player(context: dict) -> dict:
     request = context["request"]
 
     if request.user.is_authenticated and (episode_id := request.player.get()):
