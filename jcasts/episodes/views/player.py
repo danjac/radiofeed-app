@@ -102,7 +102,7 @@ def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
         },
     )
 
-    request.player.add_episode(episode)
+    request.player.set_episode(episode)
 
     return with_hx_trigger(
         render_player(

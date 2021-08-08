@@ -8,6 +8,8 @@ from jcasts.episodes.models import Episode
 
 
 class Player:
+    """Manages current player episode in session"""
+
     session_key: ClassVar[str] = "player_episode"
 
     def __init__(self, request: HttpRequest):
@@ -16,7 +18,7 @@ class Player:
     def get_episode(self) -> str | None:
         return self.request.session.get(self.session_key)
 
-    def add_episode(self, episode: Episode) -> None:
+    def set_episode(self, episode: Episode) -> None:
         self.request.session[self.session_key] = episode.id
 
     def remove_episode(self) -> str | None:

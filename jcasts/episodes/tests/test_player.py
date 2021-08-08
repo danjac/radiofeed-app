@@ -18,14 +18,14 @@ class TestPlayer:
         assert player.get_episode() is None
 
     def test_get_episode_if_not_none(self, player, episode):
-        player.add_episode(episode)
+        player.set_episode(episode)
         assert player.get_episode() == episode.id
 
     def test_remove_episode_if_none(self, player):
         assert player.remove_episode() is None
 
     def test_remove_episode_if_not_none(self, player, episode):
-        player.add_episode(episode)
+        player.set_episode(episode)
 
         assert player.remove_episode() == episode.id
         assert player.get_episode() is None
@@ -34,5 +34,5 @@ class TestPlayer:
         assert not player.is_playing(episode)
 
     def test_is_playing_true(self, player, episode):
-        player.add_episode(episode)
+        player.set_episode(episode)
         assert player.is_playing(episode)
