@@ -1,5 +1,4 @@
 from jcasts.episodes.factories import AudioLogFactory
-from jcasts.episodes.player import Player
 from jcasts.episodes.templatetags.player import render_player
 
 
@@ -13,16 +12,13 @@ class TestRenderPlayer:
         req = rf.get("/")
         req.user = user
         req.session = {}
-        req.player = Player(req)
         assert render_player({"request": req}) == {"log": None}
 
     def test_render_is_playing(self, rf, user, episode):
-        log = AudioLogFactory(episode=episode, user=user)
+        log = AudioLogFactory(episode=episode, user=user, is_playing=True)
 
         req = rf.get("/")
         req.user = user
         req.session = {}
-        req.player = Player(req)
-        req.player.add_episode(episode)
 
         assert render_player({"request": req}) == {"log": log}

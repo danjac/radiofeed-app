@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django import template
 
-from jcasts.episodes.views.player import get_player_audio_log
+from jcasts.episodes.models import AudioLog
 
 register = template.Library()
 
@@ -11,4 +11,11 @@ register = template.Library()
 def render_player(context: dict) -> dict:
     if context["request"].user.is_anonymous:
         return {}
-    return {"log": get_player_audio_log(context["request"])}
+
+    log = (
+        AudioLog.objects.filter(user=context["request"].user, is_playing=True)
+        .select_related("episode", "episode__podcast")
+        .first()
+    )
+
+    return {"log": log}

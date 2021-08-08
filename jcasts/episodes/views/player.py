@@ -24,8 +24,8 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_POST
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    get_audio_log_queryset(request, request.player.remove_episode()).update(
-        autoplay=False,
+    get_audio_log_queryset(request).update(
+        is_playing=False,
         updated=timezone.now(),
     )
     return render_player_close(request)
@@ -39,8 +39,8 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
     now = timezone.now()
 
-    get_audio_log_queryset(request, request.player.remove_episode()).update(
-        autoplay=False,
+    get_audio_log_queryset(request).update(
+        is_playing=False,
         updated=now,
         completed=now,
         current_time=0,
@@ -61,7 +61,14 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 @require_safe
 @hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
-    return render_player(request, {"log": get_player_audio_log(request)})
+    return render_player(
+        request,
+        {
+            "log": get_audio_log_queryset(request)
+            .select_related("episode", "episode__podcast")
+            .first()
+        },
+    )
 
 
 @require_POST
@@ -70,29 +77,17 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode"""
     try:
-        get_audio_log_queryset(request, request.player.get_episode()).update(
+        get_audio_log_queryset(request).update(
             current_time=int(request.POST["current_time"]),
             updated=timezone.now(),
-            autoplay=True,
         )
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
 
-def get_player_audio_log(request: HttpRequest) -> AudioLog | None:
-    return (
-        get_audio_log_queryset(request, request.player.get_episode())
-        .select_related("episode", "episode__podcast")
-        .first()
-    )
-
-
-def get_audio_log_queryset(request: HttpRequest, episode_id: int | None) -> QuerySet:
-    if episode_id is None:
-        return AudioLog.objects.none()
-
-    return AudioLog.objects.filter(user=request.user, episode=episode_id)
+def get_audio_log_queryset(request: HttpRequest) -> QuerySet:
+    return AudioLog.objects.filter(user=request.user, is_playing=True)
 
 
 def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
@@ -106,13 +101,11 @@ def render_player_start(request: HttpRequest, episode: Episode) -> HttpResponse:
         episode=episode,
         user=request.user,
         defaults={
-            "autoplay": True,
+            "is_playing": True,
             "completed": None,
             "updated": timezone.now(),
         },
     )
-
-    request.player.add_episode(episode)
 
     return with_hx_trigger(
         render_player(
