@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 
 from django.urls import reverse, reverse_lazy
@@ -248,13 +250,13 @@ class TestPlayerTimeUpdate:
     def log(self, auth_user):
         return AudioLogFactory(user=auth_user, is_playing=True)
 
-    def url(self, episode):
-        return reverse("episodes:player_time_update", args=[episode.id])
+    def url(self, code):
+        return reverse("episodes:player_time_update", args=[code])
 
     def test_is_running(self, client, auth_user, log):
 
         resp = client.post(
-            self.url(log.episode),
+            self.url(log.uuid.hex),
             {"current_time": "1030"},
         )
         assert_no_content(resp)
@@ -264,19 +266,19 @@ class TestPlayerTimeUpdate:
 
     def test_player_not_running(self, client, auth_user, episode):
         resp = client.post(
-            self.url(episode),
+            self.url(uuid.uuid4().hex),
             {"current_time": "1030"},
         )
         assert_gone(resp)
 
     def test_missing_data(self, client, auth_user, log):
 
-        resp = client.post(self.url(log.episode))
+        resp = client.post(self.url(log.uuid.hex))
         assert_bad_request(resp)
 
     def test_invalid_data(self, client, auth_user, log):
 
-        resp = client.post(self.url(log.episode), {"current_time": "xyz"})
+        resp = client.post(self.url(log.uuid.hex), {"current_time": "xyz"})
         assert_bad_request(resp)
 
 

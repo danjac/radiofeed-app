@@ -85,14 +85,14 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ratelimit(key="ip", rate="20/m")
 @hx_login_required
-def player_time_update(request: HttpRequest, episode_id: int) -> HttpResponse:
+def player_time_update(request: HttpRequest, code: str) -> HttpResponse:
     """Update current play time of episode. We pass the episode ID so
     if user has two browsers open, only one should be updated at any one time."""
     try:
         if not AudioLog.objects.playing(request.user).update(
             current_time=int(request.POST["current_time"]),
             updated=timezone.now(),
-            episode=episode_id,
+            code=code,
         ):
             return HttpResponseGone()
         return HttpResponseNoContent()

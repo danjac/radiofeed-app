@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from datetime import datetime, timedelta
 from typing import Any, ClassVar
 
@@ -356,6 +358,7 @@ class AudioLog(TimeStampedModel):
 
     is_playing: bool = models.BooleanField(default=False)
     current_time: int = models.IntegerField(default=0)
+    code: str = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
 
     objects = AudioLogManager()
 
