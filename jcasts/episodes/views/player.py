@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseGone,
+)
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
@@ -80,13 +85,16 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 @require_POST
 @ratelimit(key="ip", rate="20/m")
 @hx_login_required
-def player_time_update(request: HttpRequest) -> HttpResponse:
-    """Update current play time of episode"""
+def player_time_update(request: HttpRequest, episode_id: int) -> HttpResponse:
+    """Update current play time of episode. We pass the episode ID so
+    if user has two browsers open, only one should be updated at any one time."""
     try:
-        AudioLog.objects.playing(request.user).update(
+        if not AudioLog.objects.playing(request.user).update(
             current_time=int(request.POST["current_time"]),
             updated=timezone.now(),
-        )
+            episode=episode_id,
+        ):
+            return HttpResponseGone()
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()

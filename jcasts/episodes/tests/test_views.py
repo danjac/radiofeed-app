@@ -13,6 +13,7 @@ from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
     assert_conflict,
+    assert_gone,
     assert_no_content,
     assert_ok,
 )
@@ -243,16 +244,17 @@ class TestClosePlayer:
 
 
 class TestPlayerTimeUpdate:
-    url = reverse_lazy("episodes:player_time_update")
-
     @pytest.fixture
     def log(self, auth_user):
         return AudioLogFactory(user=auth_user, is_playing=True)
 
+    def url(self, episode):
+        return reverse("episodes:player_time_update", args=[episode.id])
+
     def test_is_running(self, client, auth_user, log):
 
         resp = client.post(
-            self.url,
+            self.url(log.episode),
             {"current_time": "1030"},
         )
         assert_no_content(resp)
@@ -260,21 +262,21 @@ class TestPlayerTimeUpdate:
         log.refresh_from_db()
         assert log.current_time == 1030
 
-    def test_player_not_running(self, client, auth_user):
+    def test_player_not_running(self, client, auth_user, episode):
         resp = client.post(
-            self.url,
+            self.url(episode),
             {"current_time": "1030"},
         )
-        assert_no_content(resp)
+        assert_gone(resp)
 
     def test_missing_data(self, client, auth_user, log):
 
-        resp = client.post(self.url)
+        resp = client.post(self.url(log.episode))
         assert_bad_request(resp)
 
     def test_invalid_data(self, client, auth_user, log):
 
-        resp = client.post(self.url, {"current_time": "xyz"})
+        resp = client.post(self.url(log.episode), {"current_time": "xyz"})
         assert_bad_request(resp)
 
 
