@@ -207,7 +207,10 @@ class Follow(TimeStampedModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(name="uniq_follow", fields=["user", "podcast"])
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s",
+                fields=["user", "podcast"],
+            )
         ]
         indexes = [models.Index(fields=["-created"])]
 
@@ -271,6 +274,7 @@ class Recommendation(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(
-                fields=["podcast", "recommended"], name="unique_recommendation"
+                name="unique_%(app_label)s_%(class)s",
+                fields=["podcast", "recommended"],
             ),
         ]

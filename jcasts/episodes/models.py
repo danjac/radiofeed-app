@@ -116,7 +116,10 @@ class Episode(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["podcast", "guid"], name="unique_episode")
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s",
+                fields=["podcast", "guid"],
+            )
         ]
         indexes = [
             models.Index(fields=["podcast", "pub_date"]),
@@ -304,7 +307,9 @@ class Favorite(TimeStampedModel):
     class Meta:
 
         constraints = [
-            models.UniqueConstraint(name="uniq_favorite", fields=["user", "episode"])
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s", fields=["user", "episode"]
+            )
         ]
         indexes = [
             models.Index(fields=["-created"]),
@@ -337,7 +342,9 @@ class AudioLog(TimeStampedModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(name="uniq_audio_log", fields=["user", "episode"])
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s", fields=["user", "episode"]
+            )
         ]
         indexes = [
             models.Index(fields=["-updated"]),
@@ -417,7 +424,10 @@ class QueueItem(TimeStampedModel):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(name="uniq_queue_item", fields=["user", "episode"]),
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s",
+                fields=["user", "episode"],
+            ),
         ]
         indexes = [
             models.Index(fields=["position"]),
