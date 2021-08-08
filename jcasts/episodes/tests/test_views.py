@@ -120,9 +120,11 @@ class TestReloadPlayer:
 
 
 class TestStartPlayer:
+    def url(self, episode):
+        return reverse("episodes:start_player", args=[episode.id])
+
     def test_play_from_start(self, client, auth_user, episode):
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert_ok(resp)
+        assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(
             user=auth_user, episode=episode, is_playing=True
@@ -130,8 +132,7 @@ class TestStartPlayer:
 
     def test_another_episode_in_player(self, client, auth_user, episode):
         previous = AudioLogFactory(user=auth_user, is_playing=True)
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert_ok(resp)
+        assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(
             user=auth_user, episode=episode, is_playing=True
@@ -144,8 +145,7 @@ class TestStartPlayer:
         log = AudioLogFactory(
             user=auth_user, episode=episode, current_time=2000, is_playing=False
         )
-        resp = client.post(reverse("episodes:start_player", args=[episode.id]))
-        assert_ok(resp)
+        assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()
         assert log.is_playing
