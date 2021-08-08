@@ -46,7 +46,8 @@
 
       <div class="sm:hidden truncate text-center text-xs">
         <span x-text="errMsg ? errMsg.substring(0, 100) : ''"
-              x-show="errMsg"></span>
+              x-show="errMsg"
+              class="player--title"></span>
         <a class="player--title"
            x-show="!errMsg"
            href="{{ episode_url }}"

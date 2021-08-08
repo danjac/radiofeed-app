@@ -196,7 +196,6 @@ const playerObj = {
             this.lastTimeUpdate = time;
           } else {
             this.errMsg = 'Reload to re-sync with server';
-            this.isPlaying = false;
             this.$refs.audio.pause();
           }
         })
