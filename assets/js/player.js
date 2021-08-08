@@ -190,17 +190,8 @@ const playerObj = {
         method: 'POST',
         headers: { 'X-CSRFToken': this.csrfToken },
         body: new URLSearchParams({ current_time: time }),
-      })
-        .then((response) => {
-          if (response.status === 204) {
-            this.lastTimeUpdate = time;
-          } else {
-            this.errMsg = 'Reload to re-sync with server';
-            this.isPlaying = false;
-            this.$refs.audio.pause();
-          }
-        })
-        .catch((err) => console.log(err));
+      }).catch((err) => console.error(err));
+      this.lastTimeUpdate = time;
     }
   },
 };

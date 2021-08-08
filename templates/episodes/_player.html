@@ -160,7 +160,7 @@
                       class="focus:outline-none hover:text-blue-500 mr-2"
                       hx-get="{% url 'episodes:reload_player' %}"
                       hx-target="#player"
-                      hx-swap="innerHTML">
+                      hx-swap="outerHTML">
                 {% icon "refresh" css_class="h-5 w-5 md:h-6 md:w-6" %}
               </button>
 
