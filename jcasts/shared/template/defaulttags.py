@@ -7,6 +7,7 @@ import re
 from urllib import parse
 
 import bs4
+import markdown
 
 from django import template
 from django.conf import settings
@@ -70,7 +71,7 @@ def re_active_link(
 @register.filter
 @stringfilter
 def clean_html(value: str) -> str:
-    return mark_safe(_unescape(clean_html_content(value or "")))
+    return mark_safe(_unescape(clean_html_content(markdown.markdown(value) or "")))
 
 
 @register.filter

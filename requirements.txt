@@ -37,6 +37,7 @@ ipython==7.26.0; python_version >= "3.7"
 jedi==0.18.0; python_version >= "3.7"
 joblib==1.0.1; python_version >= "3.6"
 lxml==4.6.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+markdown==3.3.4; python_version >= "3.6"
 matplotlib-inline==0.1.2; python_version >= "3.7"
 nltk==3.6.2; python_version >= "3.5"
 numpy==1.21.1; python_version >= "3.7" and python_full_version >= "3.7.1"
