@@ -91,7 +91,7 @@ class Item(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return value not in (False, None, "none")
+        return value not in (False, None, "none", "no")
 
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
@@ -143,7 +143,7 @@ class Feed(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return value not in (False, None, "none")
+        return value not in (False, None, "none", "no")
 
     @validator("language")
     def get_language(cls, value: str) -> str:
