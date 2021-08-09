@@ -261,7 +261,7 @@ def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Epis
         ),
         season=coerce_int(item.itunes_season),
         episode=coerce_int(item.itunes_episode),
-        episode_type=coerce_str(item.itunes_episodetype),
+        episode_type=coerce_str(item.itunes_episodetype, default="full"),
         cover_url=coerce_url(
             item.image.href,
             item.googleplay_image,
