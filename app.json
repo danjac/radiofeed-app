@@ -20,6 +20,10 @@
     {
       "command": "python manage.py make_recommendations",
       "schedule": "15 6,12 * * *"
+    },
+    {
+      "command": "python manage.py clearsessions",
+      "schedule": "15 1 * * *"
     }
   ]
 }
