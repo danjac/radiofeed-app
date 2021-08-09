@@ -70,7 +70,7 @@ def re_active_link(
 
 @register.filter
 @stringfilter
-def clean_html(value: str) -> str:
+def markup(value: str) -> str:
     return mark_safe(_unescape(clean_html_content(markdown.markdown(value) or "")))
 
 
