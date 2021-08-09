@@ -87,23 +87,21 @@ class Item(BaseModel):
         pub_date = parse_date(value)
         if pub_date and pub_date < timezone.now():
             return pub_date
-        raise ValueError("No pub date")
+        raise ValueError("no pub date")
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
         return value not in (False, None, "none")
 
-    @root_validator
-    def get_description_from_content(cls, values: dict) -> dict:
-        for content_type in ("text/html", "text/plain"):
-            for content in values.get("content", []):
-                if content.type == content_type and content.value:
-                    return {**values, "description": content.value}
-        return values
-
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
         for value in values.get("enclosures", []) + values.get("links", []):
+            try:
+                if not isinstance(value, Enclosure):
+                    value = Enclosure(**value)
+            except ValidationError:
+                continue
+
             if (
                 value.type
                 and value.type.startswith("audio")
@@ -113,6 +111,14 @@ class Item(BaseModel):
                 return {**values, "audio": value}
 
         raise ValueError("audio missing")
+
+    @root_validator
+    def get_description_from_content(cls, values: dict) -> dict:
+        for content_type in ("text/html", "text/plain"):
+            for content in values.get("content", []):
+                if content.type == content_type and content.value:
+                    return {**values, "description": content.value}
+        return values
 
 
 class Feed(BaseModel):
@@ -138,6 +144,10 @@ class Feed(BaseModel):
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
         return value not in (False, None, "none")
+
+    @validator("language")
+    def get_language(cls, value: str) -> str:
+        return value[:2]
 
 
 class Result(BaseModel):
@@ -271,7 +281,6 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.status = response.status_code
-    podcast.exception = ""
 
     podcast.num_episodes = len(result.entries)
     pub_dates = [item.published for item in result.entries]
@@ -280,10 +289,10 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     podcast.scheduled = schedule(podcast, pub_dates)
 
     podcast.title = result.feed.title
+    podcast.language = result.feed.language
+
     podcast.link = result.feed.link
     podcast.cover_url = result.feed.image.href if result.feed.image else None
-
-    podcast.language = result.feed.language[:2]
 
     podcast.description = (
         result.feed.summary or result.feed.description or result.feed.subtitle
@@ -429,12 +438,6 @@ def resolve_podcast_rss(
         )
         or response.url != podcast.rss
     )
-
-
-def parse_explicit(value: str | None | bool) -> bool:
-    if value in (None, False, "no", "none"):
-        return False
-    return True
 
 
 def parse_failure(
