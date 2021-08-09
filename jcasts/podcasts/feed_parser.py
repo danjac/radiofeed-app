@@ -91,15 +91,15 @@ class Item(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return parse_explicit(value)
+        return value not in (False, None, "none")
 
-    @validator("description")
-    def get_description(cls, value: str, values: dict) -> str:
+    @root_validator
+    def get_description_from_content(cls, values: dict) -> dict:
         for content_type in ("text/html", "text/plain"):
             for content in values.get("content", []):
                 if content.type == content_type and content.value:
-                    return content.value
-        return value
+                    return {**values, "description": content.value}
+        return values
 
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
@@ -137,7 +137,7 @@ class Feed(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return parse_explicit(value)
+        return value not in (False, None, "none")
 
 
 class Result(BaseModel):
