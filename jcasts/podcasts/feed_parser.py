@@ -114,8 +114,8 @@ class Item(BaseModel):
 
     @root_validator
     def get_description_from_content(cls, values: dict) -> dict:
-        for content_type in ("text/html", "text/plain"):
-            for content in values.get("content", []):
+        for content in values.get("content", []):
+            for content_type in ("text/html", "text/plain"):
                 if content.type == content_type and content.value:
                     return {**values, "description": content.value}
         return values
