@@ -9,6 +9,7 @@ from jcasts.shared.template.defaulttags import (
     get_twitter_account,
     keepspaces,
     login_url,
+    markup,
     re_active_link,
     share_buttons,
 )
@@ -146,6 +147,17 @@ class TestShareButtons:
             share_urls["linkedin"]
             == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/1234/test/"
         )
+
+
+class TestMarkup:
+    def test_value_none(self):
+        return markup(None) == ""
+
+    def test_markdown(self):
+        return markup("*test*") == "<b>test</b>"
+
+    def test_html(self):
+        return markup("<p>test</p>") == "<p>test</p>"
 
 
 class TestPaginationUrl:
