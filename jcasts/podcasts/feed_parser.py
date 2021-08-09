@@ -252,9 +252,9 @@ def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Epis
     return Episode(
         pk=pk,
         podcast=podcast,
-        guid=item.id,
-        title=item.title,
         pub_date=item.pub_date,
+        guid=coerce_str(item.id),
+        title=coerce_str(item.title),
         explicit=coerce_bool(
             item.itunes_explicit,
             item.googleplay_explicit,
@@ -302,7 +302,7 @@ def extract_text(
             podcast.owner,
         ]
         + [c.name for c in categories]
-        + [item.title for item in items][:6]
+        + [coerce_str(item.title) for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
 
