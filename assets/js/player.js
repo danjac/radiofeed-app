@@ -8,8 +8,12 @@ const playerObj = {
   isPaused: false,
   isPlaying: false,
   playbackRate: 1.0,
+  defaultPlaybackRate: 1.0,
   showPlayer: true,
-  storageKey: 'player-enabled',
+  keys: {
+    enable: 'player-enabled',
+    playbackRate: 'player-playback-rate',
+  },
 
   init() {
     this.$watch('duration', (value) => {
@@ -66,7 +70,7 @@ const playerObj = {
   },
 
   clearSession() {
-    sessionStorage.removeItem(this.storageKey);
+    sessionStorage.removeItem(this.keys.enable);
   },
 
   // audio events
@@ -77,7 +81,11 @@ const playerObj = {
 
     this.errMsg = null;
 
-    if (this.autoplay || sessionStorage.getItem(this.storageKey)) {
+    this.playbackRate = parseFloat(
+      sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
+    );
+
+    if (this.autoplay || sessionStorage.getItem(this.keys.enable)) {
       this.$refs.audio.play().catch((err) => {
         this.isPaused = true;
         this.isPlaying = false;
@@ -112,7 +120,7 @@ const playerObj = {
     this.isPaused = false;
     this.isPlaying = true;
     this.errMsg = null;
-    sessionStorage.setItem(this.storageKey, true);
+    sessionStorage.setItem(this.keys.enable, true);
   },
 
   paused() {
@@ -130,7 +138,7 @@ const playerObj = {
   },
 
   resetPlaybackRate() {
-    this.playbackRate = 1.0;
+    this.setPlaybackRate(this.defaultPlaybackRate);
   },
 
   changePlaybackRate(increment) {
@@ -138,7 +146,12 @@ const playerObj = {
       0.5,
       Math.min(2.0, parseFloat(this.playbackRate) + increment)
     );
-    this.playbackRate = newValue;
+    this.setPlaybackRate(newValue);
+  },
+
+  setPlaybackRate(value) {
+    this.playbackRate = value;
+    sessionStorage.setItem(this.keys.playbackRate, value);
   },
 
   skip() {
