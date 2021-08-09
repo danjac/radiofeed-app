@@ -255,6 +255,7 @@ def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Epis
         pub_date=item.pub_date,
         guid=coerce_str(item.id),
         title=coerce_str(item.title),
+        link=coerce_url(item.link),
         explicit=coerce_bool(
             item.itunes_explicit,
             item.googleplay_explicit,
@@ -268,7 +269,6 @@ def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Epis
         ),
         media_url=coerce_url(item.audio.href),
         length=coerce_int(item.audio.length),
-        link=coerce_url(item.link),
         media_type=coerce_str(item.audio.type, limit=60),
         description=coerce_str(item.description, item.summary),
         duration=coerce_str(item.itunes_duration, limit=30),
