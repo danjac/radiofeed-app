@@ -14,7 +14,7 @@
 {% cache 3600 categories search %}
 <div id="categories">
   {% if search %}
-  <div class="space-y-3">
+  <div class="space-y-3 pt-3 border-t dark:border-gray-500">
     {% for category in categories %}
     <h2>
       <a href="{{ category.get_absolute_url }}"
