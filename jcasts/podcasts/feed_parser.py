@@ -66,7 +66,7 @@ class Item(BaseModel):
     audio: Enclosure
 
     image: Image = None
-    link: HttpUrl = None
+    link: str = ""
 
     itunes_explicit: bool = False
     itunes_season: int = None
@@ -126,8 +126,7 @@ class Feed(BaseModel):
     title: str = ""
     author: str = ""
     language: str = ""
-
-    link: HttpUrl = None
+    link: str = ""
 
     image: Image = None
 
