@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import http
+import json
 import pathlib
 
 from datetime import datetime, timedelta
@@ -355,82 +356,9 @@ class TestParseFeed:
 class TestItemModel:
     @pytest.fixture
     def item_data(self):
-        return {
-            "content": [
-                {
-                    "base": "http://rss.acast.com/channelhistoryhit",
-                    "language": None,
-                    "type": "text/html",
-                    "value": "<p>Approximately 1.35 billion people use it, either as "
-                    "a first or second language, so English and the way "
-                    "that we speak it has a daily impact on huge numbers of "
-                    "people. But how did the English language develop? In "
-                    "this episode from our sibling podcast <a "
-                    'href="https://podfollow.com/gone-medieval/view" '
-                    'rel="noopener noreferrer" target="_blank">Gone '
-                    "Medieval</a>, Cat Jarman spoke to Eleanor Rye, an "
-                    "Associate Lecturer in English Language and Linguistics "
-                    "at the University of York. Using the present-day "
-                    "language, place names and dialects as evidence, Ellie "
-                    "shows us how English was impacted by a series of "
-                    "migrations.&nbsp;&nbsp;</p> &#10;&nbsp;<br /><hr "
-                    '/><p>See <a href="https://acast.com/privacy" '
-                    'rel="noopener noreferrer" style="color: grey;" '
-                    'target="_blank">acast.com/privacy</a> for privacy and '
-                    "opt-out information.</p>",
-                }
-            ],
-            "guidislink": False,
-            "id": "74561fff-4b98-4985-a36f-4970be28782e",
-            "image": {
-                "href": "https://thumborcdn.acast.com/AA9YH364rPs8gxGOwgyXGEvLhyo=/3000x3000/https://mediacdn.acast.com/assets/74561fff-4b98-4985-a36f-4970be28782e/cover-image-ks08c9r7-gonemedieval_square_3000x3000.jpg"
-            },
-            "itunes_duration": "00:38:34",
-            "itunes_episodetype": "full",
-            "itunes_explicit": None,
-            "link": "https://play.acast.com/s/dansnowshistoryhit/theoriginsofenglish",
-            "links": [
-                {
-                    "href": "https://play.acast.com/s/dansnowshistoryhit/theoriginsofenglish",
-                    "rel": "alternate",
-                    "type": "text/html",
-                },
-                {
-                    "href": "https://sphinx.acast.com/channelhistoryhit/dansnowshistoryhit/theoriginsofenglish/media.mp3",
-                    "length": "55705268",
-                    "rel": "enclosure",
-                    "type": "audio/mpeg",
-                },
-            ],
-            "published": "Sat, 07 Aug 2021 04:00:00 GMT",
-            "subtitle": "Approximately 1.35 billion people use it, either as a first or "
-            "second language, so English & the way that we speak it has a "
-            "daily impact on huge numbers of people. But how did the English "
-            "language develop?",
-            "subtitle_detail": {
-                "base": "http://rss.acast.com/channelhistoryhit",
-                "language": None,
-                "type": "text/plain",
-                "value": "Approximately 1.35 billion people use it, "
-                "either as a first or second language, so "
-                "English & the way that we speak it has a daily "
-                "impact on huge numbers of people. But how did "
-                "the English language develop?",
-            },
-            "summary": "Approximately 1.35 billion people use it, either as a first or "
-            "second language, so English and the way that we speak it has a "
-            "daily impact on huge numbers of people. But how did the English "
-            "language develop? In this episode from our sibling podcast Gone "
-            "Medieval, Cat Jarman spoke to Eleanor Rye, an Associate Lecturer "
-            "in English Language and Linguistics at the University of York. "
-            "Using the present-day language, place names and dialects as "
-            "evidence, Ellie shows us how English was impacted by a series of "
-            "migrations.&nbsp;&nbsp; &#10;&nbsp;<br /><hr /><p>See <a "
-            'href="https://acast.com/privacy" rel="noopener noreferrer" '
-            'style="color: grey;" target="_blank">acast.com/privacy</a> for '
-            "privacy and opt-out information.</p>",
-            "title": "The Origins of English",
-        }
+        return json.load(
+            open(pathlib.Path(__file__).parent / "mocks" / "feed_item.json", "rb")
+        )
 
     def test_missing_audio(self, item_data):
         del item_data["links"]
