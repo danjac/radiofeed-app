@@ -71,7 +71,7 @@ class Item(BaseModel):
     itunes_explicit: bool = False
     itunes_season: int = None
     itunes_episode: int = None
-    itunes_episodetype: str = ""
+    itunes_episodetype: str = "full"
     itunes_duration: str = ""
 
     description: str = ""
@@ -123,15 +123,16 @@ class Item(BaseModel):
 
 class Feed(BaseModel):
 
-    title: str = ""
+    title: str
+    link: HttpUrl = None
     author: str = ""
-    language: str = ""
-    link: str = ""
 
     image: Image = None
+    language: str = "en"
 
     publisher_detail: Author = None
 
+    content: str = ""
     summary: str = ""
     description: str = ""
     subtitle: str = ""
@@ -369,8 +370,8 @@ def make_episode(podcast: Podcast, item: Item, pk: int | None = None) -> Episode
     return Episode(
         pk=pk,
         podcast=podcast,
-        pub_date=item.published,
         guid=item.id,
+        pub_date=item.published,
         title=item.title,
         link=item.link,
         description=item.description or item.summary,
