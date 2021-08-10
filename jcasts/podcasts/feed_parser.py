@@ -5,7 +5,7 @@ import itertools
 import secrets
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from functools import lru_cache
 from typing import Optional
 
@@ -211,18 +211,18 @@ def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -
     return counter
 
 
-def parse_sporadic_feeds(limit: int | None = None, freq_hours: int = 1) -> int:
+def parse_sporadic_feeds(limit: int | None = None) -> int:
     counter = 0
 
     now = timezone.now()
-
-    hours = [(now - timedelta(hours=hour)).hour for hour in range(1, freq_hours + 1)]
 
     qs = (
         Podcast.objects.sporadic()
         .filter(
             pub_date__iso_week_day=now.isoweekday(),
-            pub_date__hour__in=hours,
+        )
+        .exclude(
+            updated__day=now.day,
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
