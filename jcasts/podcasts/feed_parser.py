@@ -104,12 +104,7 @@ class Item(BaseModel):
             except ValidationError:
                 continue
 
-            if (
-                value.type
-                and value.type.startswith("audio")
-                and value.href
-                and value.rel == "enclosure"
-            ):
+            if value.rel == "enclosure" and value.type.startswith("audio"):
                 return {**values, "audio": value}
 
         raise ValueError("audio missing")
