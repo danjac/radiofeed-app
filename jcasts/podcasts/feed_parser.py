@@ -226,7 +226,7 @@ def parse_sporadic_feeds(limit: int | None = None) -> int:
             updated__month=now.month,
             updated__year=now.year,
         )
-        .order_by("updated", "-pub_date")
+        .order_by("-pub_date")
         .values_list("rss", flat=True)
     )
     if limit:
