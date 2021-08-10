@@ -216,10 +216,7 @@ def parse_sporadic_feeds(limit: int | None = None, freq_hours: int = 1) -> int:
 
     now = timezone.now()
 
-    hours = range(
-        max(round((now - timedelta(hours=freq_hours)).hour), 0),
-        now.hour,
-    )
+    hours = [(now - timedelta(hours=hour)).hour for hour in range(1, freq_hours + 1)]
 
     qs = (
         Podcast.objects.sporadic()
