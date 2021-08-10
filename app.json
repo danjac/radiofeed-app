@@ -11,7 +11,7 @@
     },
     {
       "command": "python manage.py parse_podcast_feeds --sporadic --limit=750",
-      "schedule": "45 3,9,15,21 * * *"
+      "schedule": "45 */3 * * *"
     },
     {
       "command": "python manage.py send_recommendation_emails",
