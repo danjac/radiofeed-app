@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import http
+import itertools
 import secrets
 
 from dataclasses import dataclass
@@ -94,7 +95,9 @@ class Item(BaseModel):
 
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
-        for value in values.get("enclosures", []) + values.get("links", []):
+        for value in itertools.chain(
+            *[values.get(field, []) for field in ("enclosures", "links")]
+        ):
             try:
                 if not isinstance(value, Enclosure):
                     value = Enclosure(**value)

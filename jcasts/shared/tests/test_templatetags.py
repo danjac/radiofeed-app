@@ -162,6 +162,9 @@ class TestMarkup:
 
 
 class TestNormalizeUrl:
+    base_url = "www.newstatesman.com/podcast"
+    expected_url = "https://" + base_url
+
     def test_none(self):
         assert normalize_url(None) == ""
 
@@ -169,16 +172,10 @@ class TestNormalizeUrl:
         assert normalize_url("") == ""
 
     def test_missing_http(self):
-        assert (
-            normalize_url("www.newstatesman.com/podcast")
-            == "https://www.newstatesman.com/podcast"
-        )
+        assert normalize_url(self.base_url) == self.expected_url
 
     def test_already_complete(self):
-        assert (
-            normalize_url("https://www.newstatesman.com/podcast")
-            == "https://www.newstatesman.com/podcast"
-        )
+        assert normalize_url(self.expected_url) == self.expected_url
 
 
 class TestPaginationUrl:
