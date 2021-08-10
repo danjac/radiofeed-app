@@ -12,6 +12,8 @@ import markdown
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
@@ -25,6 +27,8 @@ register = template.Library()
 
 
 ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
+
+_validate_url = URLValidator(["http", "https"])
 
 
 @register.filter
@@ -139,3 +143,17 @@ def share_buttons(
             "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
         },
     }
+
+
+@register.filter
+@stringfilter
+def normalize_url(url: str | None) -> str:
+    if not url:
+        return ""
+    for value in (url, "https://" + url):
+        try:
+            _validate_url(value)
+            return value
+        except ValidationError:
+            pass
+    return ""

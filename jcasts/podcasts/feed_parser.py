@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import http
+import itertools
 import secrets
 
 from dataclasses import dataclass
@@ -31,10 +32,8 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
-EPISODE_BATCH_SIZE = 500
 
-
-class Content(BaseModel):
+class ContentItem(BaseModel):
     value: str = ""
     type: str = ""
 
@@ -78,7 +77,7 @@ class Item(BaseModel):
     description: str = ""
     summary: str = ""
 
-    content: list[Content] = []
+    content: list[ContentItem] = []
     enclosures: list[Enclosure] = []
     links: list[Enclosure] = []
     tags: list[Tag] = []
@@ -96,7 +95,9 @@ class Item(BaseModel):
 
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
-        for value in values.get("enclosures", []) + values.get("links", []):
+        for value in itertools.chain(
+            *[values.get(field, []) for field in ("enclosures", "links")]
+        ):
             try:
                 if not isinstance(value, Enclosure):
                     value = Enclosure(**value)
@@ -115,11 +116,12 @@ class Item(BaseModel):
 
     @root_validator
     def get_description_from_content(cls, values: dict) -> dict:
-        for content in values.get("content", []):
-            for content_type in ("text/html", "text/plain"):
-                if content.type == content_type and content.value:
-                    return {**values, "description": content.value}
-        return values
+        return {
+            **values,
+            "description": parse_content_items(
+                values.get("content", []), "text/html", "text/plain"
+            ),
+        }
 
 
 class Feed(BaseModel):
@@ -134,7 +136,6 @@ class Feed(BaseModel):
     author: str = ""
     publisher_detail: Optional[Author] = None
 
-    content: str = ""
     summary: str = ""
     description: str = ""
     subtitle: str = ""
@@ -337,7 +338,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     return ParseResult(podcast.rss, response.status_code, True)
 
 
-def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
+def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -370,7 +371,7 @@ def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
             "season",
             "title",
         ],
-        batch_size=EPISODE_BATCH_SIZE,
+        batch_size=batch_size,
     )
 
     # new episodes
@@ -378,7 +379,7 @@ def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
     Episode.objects.bulk_create(
         [episode for episode in episodes if episode.guid not in guids],
         ignore_conflicts=True,
-        batch_size=EPISODE_BATCH_SIZE,
+        batch_size=batch_size,
     )
 
 
@@ -420,6 +421,14 @@ def extract_text(
         + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
+
+
+def parse_content_items(content_items: list[ContentItem], *content_types: str) -> str:
+    for item in content_items:
+        for content_type in content_types:
+            if item.type == content_type and item.value:
+                return item.value
+    return ""
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:

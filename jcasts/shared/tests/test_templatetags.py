@@ -10,6 +10,7 @@ from jcasts.shared.template.defaulttags import (
     keepspaces,
     login_url,
     markup,
+    normalize_url,
     re_active_link,
     share_buttons,
 )
@@ -158,6 +159,23 @@ class TestMarkup:
 
     def test_html(self):
         return markup("<p>test</p>") == "<p>test</p>"
+
+
+class TestNormalizeUrl:
+    base_url = "www.newstatesman.com/podcast"
+    expected_url = "https://" + base_url
+
+    def test_none(self):
+        assert normalize_url(None) == ""
+
+    def test_empty(self):
+        assert normalize_url("") == ""
+
+    def test_missing_http(self):
+        assert normalize_url(self.base_url) == self.expected_url
+
+    def test_already_complete(self):
+        assert normalize_url(self.expected_url) == self.expected_url
 
 
 class TestPaginationUrl:

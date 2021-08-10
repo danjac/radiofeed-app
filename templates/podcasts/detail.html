@@ -1,12 +1,13 @@
 {% extends "podcasts/podcast_detail_base.html" %}
 
 {% block podcast_content %}
+{% with link=podcast.link|normalize_url %}
 <div class="space-y-3 border-t dark:border-gray-500 pt-3">
 
   {% if podcast.owner %}
   <div class="font-semibold text-gray-600 dark:text-gray-300 flex-wrap text-sm">
-    {% if podcast.link %}
-    <a href="{{ podcast.link }}"
+    {% if link %}
+    <a href="{{ link }}"
        target="_blank"
        rel="noopener">
       {{ podcast.owner }}
@@ -26,12 +27,14 @@
     <div class="space-y-2 lg:space-y-3 text-sm">
       {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-3">
+        {% if link %}
         <div>
-          <a href="{{ podcast.link }}"
+          <a href="{{ link }}"
              class="link"
              target="_blank"
              rel="noopener">Website</a>
         </div>
+        {% endif %}
         <div>
           <a href="{{ podcast.rss }}"
              class="link"
@@ -73,4 +76,5 @@
   {% include "_markdown.html" with content=podcast.description %}
 
 </div>
+{% endwith %}
 {% endblock podcast_content %}
