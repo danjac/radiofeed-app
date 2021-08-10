@@ -130,18 +130,18 @@ const playerObj = {
   },
 
   incrementPlaybackRate() {
-    this.incrementPlaybackRate(0.1);
+    this.changePlaybackRate(0.1);
   },
 
   decrementPlaybackRate() {
-    this.incrementPlaybackRate(-0.1);
+    this.changePlaybackRate(-0.1);
   },
 
   resetPlaybackRate() {
     this.setPlaybackRate(this.defaultPlaybackRate);
   },
 
-  incrementPlaybackRate(increment) {
+  changePlaybackRate(increment) {
     const newValue = Math.max(
       0.5,
       Math.min(2.0, parseFloat(this.playbackRate) + increment)
