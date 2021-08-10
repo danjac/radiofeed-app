@@ -38,7 +38,7 @@ class ContentItem(BaseModel):
     type: str = ""
 
 
-class Enclosure(BaseModel):
+class Link(BaseModel):
     href: HttpUrl
     length: Optional[int] = None
     type: str = ""
@@ -63,7 +63,7 @@ class Item(BaseModel):
     title: str
 
     published: datetime
-    audio: Enclosure
+    audio: Link
 
     link: str = ""
     image: Optional[Image] = None
@@ -78,8 +78,8 @@ class Item(BaseModel):
     summary: str = ""
 
     content: list[ContentItem] = []
-    enclosures: list[Enclosure] = []
-    links: list[Enclosure] = []
+    enclosures: list[Link] = []
+    links: list[Link] = []
     tags: list[Tag] = []
 
     @validator("published", pre=True)
@@ -99,12 +99,13 @@ class Item(BaseModel):
             *[values.get(field, []) for field in ("enclosures", "links")]
         ):
             try:
-                if not isinstance(value, Enclosure):
-                    value = Enclosure(**value)
+
+                if not isinstance(value, Link):
+                    value = Link(**value)
             except ValidationError:
                 continue
 
-            if value.rel == "enclosure" and value.type.startswith("audio"):
+            if is_audio(value):
                 return {**values, "audio": value}
 
         raise ValueError("audio missing")
@@ -424,6 +425,10 @@ def parse_content_items(content_items: list[ContentItem], *content_types: str) -
             if item.type == content_type and item.value:
                 return item.value
     return ""
+
+
+def is_audio(link: Link) -> bool:
+    return link.type.startswith("audio") and link.rel == "enclosure"
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
