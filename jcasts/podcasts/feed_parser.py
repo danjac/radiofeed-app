@@ -223,6 +223,8 @@ def parse_sporadic_feeds(limit: int | None = None) -> int:
         )
         .exclude(
             updated__day=now.day,
+            updated__month=now.month,
+            updated__year=now.year,
         )
         .order_by("updated", "-pub_date")
         .values_list("rss", flat=True)
