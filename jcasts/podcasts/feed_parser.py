@@ -173,6 +173,7 @@ class Result(BaseModel):
 
 @dataclass
 class ParseResult:
+    rss: str
     status: int | None = None
     success: bool = False
     exception: Exception | None = None
@@ -190,7 +191,7 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_frequent_feeds(force_update: bool = False) -> int:
+def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -> int:
     counter = 0
     qs = (
         Podcast.objects.frequent()
@@ -203,6 +204,9 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
         )
+
+    if limit:
+        qs = qs[:limit]
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)
@@ -234,7 +238,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
 
         podcast = Podcast.objects.get(rss=rss, active=True)
     except Podcast.DoesNotExist as e:
-        return ParseResult(None, False, exception=e)
+        return ParseResult(rss, None, False, exception=e)
 
     try:
         response = requests.get(
@@ -320,7 +324,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
 
     parse_episodes(podcast, result.entries)
 
-    return ParseResult(response.status_code, True)
+    return ParseResult(podcast.rss, response.status_code, True)
 
 
 def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
@@ -456,4 +460,4 @@ def parse_failure(
         **fields,
     )
 
-    return ParseResult(status, False, exception)
+    return ParseResult(podcast.rss, status, False, exception)

@@ -56,15 +56,16 @@ class TestParseFrequentFeeds:
         return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
 
     @pytest.mark.parametrize(
-        "force_update,active,scheduled,last_pub,result",
+        "force_update,active,scheduled,last_pub,limit,result",
         [
-            (False, True, timedelta(hours=-1), timedelta(days=30), 1),
-            (False, True, timedelta(hours=1), timedelta(days=30), 0),
-            (True, True, timedelta(hours=1), timedelta(days=30), 1),
-            (False, False, timedelta(hours=-1), timedelta(days=30), 0),
-            (False, False, None, timedelta(days=30), 0),
-            (False, True, timedelta(hours=-1), timedelta(days=99), 0),
-            (True, True, timedelta(hours=-1), timedelta(days=99), 0),
+            (False, True, timedelta(hours=-1), timedelta(days=30), 1000, 1),
+            (False, True, timedelta(hours=-1), timedelta(days=30), None, 1),
+            (False, True, timedelta(hours=1), timedelta(days=30), 1000, 0),
+            (True, True, timedelta(hours=1), timedelta(days=30), 1000, 1),
+            (False, False, timedelta(hours=-1), timedelta(days=30), 1000, 0),
+            (False, False, None, timedelta(days=30), 1000, 0),
+            (False, True, timedelta(hours=-1), timedelta(days=99), 1000, 0),
+            (True, True, timedelta(hours=-1), timedelta(days=99), 1000, 0),
         ],
     )
     def test_parse_frequent_feeds(
@@ -75,6 +76,7 @@ class TestParseFrequentFeeds:
         active,
         scheduled,
         last_pub,
+        limit,
         result,
     ):
         now = timezone.now()
@@ -83,7 +85,7 @@ class TestParseFrequentFeeds:
             scheduled=now + scheduled if scheduled else None,
             pub_date=now - last_pub if last_pub else None,
         )
-        assert parse_frequent_feeds(force_update=force_update) == result
+        assert parse_frequent_feeds(force_update=force_update, limit=limit) == result
 
         if result:
             mock_parse_feed.assert_called()
