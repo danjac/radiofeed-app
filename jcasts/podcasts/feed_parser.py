@@ -91,7 +91,7 @@ class Item(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return value not in (False, None, "none", "no")
+        return is_explicit(value)
 
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
@@ -142,7 +142,7 @@ class Feed(BaseModel):
 
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
-        return value not in (False, None, "none", "no")
+        return is_explicit(value)
 
     @validator("language")
     def get_language(cls, value: str) -> str:
@@ -429,6 +429,10 @@ def parse_content_items(content_items: list[ContentItem], *content_types: str) -
 
 def is_audio(link: Link) -> bool:
     return link.type.startswith("audio") and link.rel == "enclosure"
+
+
+def is_explicit(value: str | bool | None):
+    return value not in (False, None, "no", "none")
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
