@@ -101,20 +101,24 @@ class TestParseSporadicFeeds:
     @pytest.mark.parametrize(
         "active,last_pub,limit, result",
         [
-            (True, timedelta(days=105), 1000, 1),
-            (True, timedelta(days=105), None, 1),
-            (True, timedelta(days=99), 1000, 0),
-            (True, timedelta(days=30), 1000, 0),
+            (True, timedelta(days=105, hours=1), 1000, 1),
+            (True, timedelta(days=105, hours=0), 1000, 0),
+            (True, timedelta(days=105, hours=1), None, 1),
+            (True, timedelta(days=99, hours=1), 1000, 0),
+            (True, timedelta(days=30, hours=1), 1000, 0),
+            (False, timedelta(days=99, hours=1), 1000, 0),
             (True, None, 1000, 0),
-            (False, timedelta(days=99), 1000, 0),
         ],
     )
     def test_parse_sporadic_feeds(
         self, db, mock_parse_feed, active, last_pub, limit, result
     ):
+        now = timezone.now()
+        pub_date = now - last_pub if last_pub else None
+
         PodcastFactory(
             active=active,
-            pub_date=timezone.now() - last_pub if last_pub else None,
+            pub_date=pub_date,
         )
         assert parse_sporadic_feeds(limit=limit) == result
 
