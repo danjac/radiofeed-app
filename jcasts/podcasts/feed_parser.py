@@ -330,13 +330,9 @@ def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
     qs.exclude(guid__in=[item.id for item in items]).delete()
 
     # determine new/current items
-    guid_map = dict(qs.values_list("guid", "pk"))
+    guids = dict(qs.values_list("guid", "pk"))
 
-    episodes = [
-        make_episode(podcast, item, guid_map.get(item.id, None)) for item in items
-    ]
-
-    guids = guid_map.keys()
+    episodes = [make_episode(podcast, item, guids.get(item.id, None)) for item in items]
 
     # update existing content
 
