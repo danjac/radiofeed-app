@@ -6,6 +6,7 @@ import secrets
 from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
+from typing import Optional
 
 import feedparser
 import requests
@@ -65,12 +66,12 @@ class Item(BaseModel):
     published: datetime
     audio: Enclosure
 
-    image: Image = None
     link: str = ""
+    image: Optional[Image] = None
 
     itunes_explicit: bool = False
-    itunes_season: int = None
-    itunes_episode: int = None
+    itunes_season: Optional[int] = None
+    itunes_episode: Optional[int] = None
     itunes_episodetype: str = "full"
     itunes_duration: str = ""
 
@@ -124,13 +125,14 @@ class Item(BaseModel):
 class Feed(BaseModel):
 
     title: str
-    link: HttpUrl = None
-    author: str = ""
+    link: str = ""
 
-    image: Image = None
     language: str = "en"
 
-    publisher_detail: Author = None
+    image: Optional[Image] = None
+
+    author: str = ""
+    publisher_detail: Optional[Author] = None
 
     content: str = ""
     summary: str = ""
