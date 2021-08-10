@@ -10,7 +10,7 @@
       "schedule": "0,30 * * * *"
     },
     {
-      "command": "python manage.py parse_podcast_feeds --sporadic --limit=1000",
+      "command": "python manage.py parse_podcast_feeds --sporadic --limit=1000 --freqhours=6",
       "schedule": "45 3,9,15,21 * * *"
     },
     {
