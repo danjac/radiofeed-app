@@ -4,10 +4,9 @@ import http
 import secrets
 
 from dataclasses import dataclass
+from datetime import datetime
 from functools import lru_cache
-from typing import Generator
 
-import box
 import feedparser
 import requests
 
@@ -15,16 +14,9 @@ from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
 from feedparser.http import ACCEPT_HEADER
+from pydantic import BaseModel, HttpUrl, ValidationError, root_validator, validator
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts.coerce import (
-    coerce_bool,
-    coerce_date,
-    coerce_int,
-    coerce_list,
-    coerce_str,
-    coerce_url,
-)
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.models import Category, Podcast
 from jcasts.podcasts.scheduler import schedule
@@ -39,6 +31,141 @@ USER_AGENTS = [
 ]
 
 EPISODE_BATCH_SIZE = 500
+
+
+class Content(BaseModel):
+    value: str = ""
+    type: str = ""
+
+
+class Enclosure(BaseModel):
+    href: HttpUrl
+    length: int = None
+    type: str = ""
+    rel: str = ""
+
+
+class Tag(BaseModel):
+    term: str
+
+
+class Author(BaseModel):
+    name: str
+
+
+class Image(BaseModel):
+    href: HttpUrl
+
+
+class Item(BaseModel):
+
+    id: str
+    title: str
+
+    published: datetime
+    audio: Enclosure
+
+    image: Image = None
+    link: str = ""
+
+    itunes_explicit: bool = False
+    itunes_season: int = None
+    itunes_episode: int = None
+    itunes_episodetype: str = ""
+    itunes_duration: str = ""
+
+    description: str = ""
+    summary: str = ""
+
+    content: list[Content] = []
+    enclosures: list[Enclosure] = []
+    links: list[Enclosure] = []
+    tags: list[Tag] = []
+
+    @validator("published", pre=True)
+    def get_published(cls, value: str | None) -> datetime | None:
+        pub_date = parse_date(value)
+        if pub_date and pub_date < timezone.now():
+            return pub_date
+        raise ValueError("no pub date")
+
+    @validator("itunes_explicit", pre=True)
+    def get_explicit(cls, value: str | bool | None) -> bool:
+        return value not in (False, None, "none", "no")
+
+    @root_validator(pre=True)
+    def get_audio(cls, values: dict) -> dict:
+        for value in values.get("enclosures", []) + values.get("links", []):
+            try:
+                if not isinstance(value, Enclosure):
+                    value = Enclosure(**value)
+            except ValidationError:
+                continue
+
+            if (
+                value.type
+                and value.type.startswith("audio")
+                and value.href
+                and value.rel == "enclosure"
+            ):
+                return {**values, "audio": value}
+
+        raise ValueError("audio missing")
+
+    @root_validator
+    def get_description_from_content(cls, values: dict) -> dict:
+        for content in values.get("content", []):
+            for content_type in ("text/html", "text/plain"):
+                if content.type == content_type and content.value:
+                    return {**values, "description": content.value}
+        return values
+
+
+class Feed(BaseModel):
+
+    title: str = ""
+    author: str = ""
+    language: str = ""
+    link: str = ""
+
+    image: Image = None
+
+    publisher_detail: Author = None
+
+    summary: str = ""
+    description: str = ""
+    subtitle: str = ""
+
+    itunes_explicit: bool = False
+
+    tags: list[Tag] = []
+
+    @validator("itunes_explicit", pre=True)
+    def get_explicit(cls, value: str | bool | None) -> bool:
+        return value not in (False, None, "none", "no")
+
+    @validator("language")
+    def get_language(cls, value: str) -> str:
+        return value[:2]
+
+
+class Result(BaseModel):
+    feed: Feed
+    entries: list[Item]
+
+    @validator("entries", pre=True)
+    def get_items(cls, value: list) -> list:
+        items = []
+        for item in value:
+            try:
+                Item(**item)
+            except ValidationError:
+                pass
+            else:
+                items.append(item)
+        if not items:
+            raise ValueError("Feed must have at least 1 item")
+        return items
 
 
 @dataclass
@@ -144,62 +271,56 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
             podcast, status=response.status_code, redirect_to=other, active=False
         )
 
-    result = box.Box(feedparser.parse(response.content), default_box=True)
-
-    # check if any items
-    if not (items := parse_items(result)):
-        return parse_failure(podcast, status=response.status_code, rss=rss)
+    try:
+        result = Result.parse_obj(feedparser.parse(response.content))
+    except ValidationError as e:
+        return parse_failure(podcast, status=response.status_code, exception=e)
 
     podcast.rss = rss
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.status = response.status_code
-    podcast.exception = ""
 
-    podcast.num_episodes = len(items)
-
-    pub_dates = [item.pub_date for item in items]
+    podcast.num_episodes = len(result.entries)
+    pub_dates = [item.published for item in result.entries]
 
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
 
-    podcast.title = coerce_str(result.feed.title)
-    podcast.link = coerce_url(result.feed.link)
-    podcast.cover_url = coerce_url(result.feed.image.href)
+    podcast.title = result.feed.title
+    podcast.language = result.feed.language
 
-    podcast.language = coerce_str(result.feed.language, "en", limit=2)
+    podcast.link = result.feed.link
+    podcast.cover_url = result.feed.image.href if result.feed.image else None
 
-    podcast.description = coerce_str(
-        result.feed.content,
-        result.feed.summary,
-        result.feed.description,
-        result.feed.subtitle,
+    podcast.description = (
+        result.feed.summary or result.feed.description or result.feed.subtitle
     )
 
-    podcast.owner = coerce_str(
-        result.feed.publisher_detail.name,
-        result.feed.author,
+    podcast.owner = (
+        result.feed.publisher_detail.name
+        if result.feed.publisher_detail
+        else result.feed.author
     )
+    podcast.explicit = result.feed.itunes_explicit
 
-    podcast.explicit = coerce_bool(
-        result.feed.itunes_explicit,
-        result.feed.googleplay_explicit,
-    )
+    categories_dct = get_categories_dict()
 
-    keywords, categories = parse_taxonomy(result.feed)
+    tags = [tag.term for tag in result.feed.tags if tag.term]
+    categories = [categories_dct[tag] for tag in tags if tag in categories_dct]
 
-    podcast.keywords = " ".join(keywords)
-    podcast.extracted_text = extract_text(podcast, categories, items)
-    podcast.categories.set(categories)  # type: ignore
-
+    podcast.keywords = " ".join(tag for tag in tags if tag not in categories_dct)
+    podcast.extracted_text = extract_text(podcast, categories, result.entries)
     podcast.save()
 
-    parse_episodes(podcast, items)
+    podcast.categories.set(categories)  # type: ignore
+
+    parse_episodes(podcast, result.entries)
 
     return ParseResult(response.status_code, True)
 
 
-def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
+def parse_episodes(podcast: Podcast, items: list[Item]) -> None:
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -209,13 +330,9 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     qs.exclude(guid__in=[item.id for item in items]).delete()
 
     # determine new/current items
-    guid_map = dict(qs.values_list("guid", "pk"))
+    guids = dict(qs.values_list("guid", "pk"))
 
-    episodes = [
-        make_episode(podcast, item, guid_map.get(item.id, None)) for item in items
-    ]
-
-    guids = guid_map.keys()
+    episodes = [make_episode(podcast, item, guids.get(item.id, None)) for item in items]
 
     # update existing content
 
@@ -248,51 +365,32 @@ def parse_episodes(podcast: Podcast, items: list[box.Box]) -> None:
     )
 
 
-def make_episode(podcast: Podcast, item: box.Box, pk: int | None = None) -> Episode:
+def make_episode(podcast: Podcast, item: Item, pk: int | None = None) -> Episode:
     return Episode(
         pk=pk,
         podcast=podcast,
-        pub_date=item.pub_date,
-        guid=coerce_str(item.id),
-        title=coerce_str(item.title),
-        explicit=coerce_bool(
-            item.itunes_explicit,
-            item.googleplay_explicit,
-        ),
-        season=coerce_int(item.itunes_season),
-        episode=coerce_int(item.itunes_episode),
-        episode_type=coerce_str(item.itunes_episodetype),
-        cover_url=coerce_url(
-            item.image.href,
-            item.googleplay_image,
-        ),
-        media_url=coerce_url(item.audio.href),
-        length=coerce_int(item.audio.length),
-        link=coerce_url(item.link),
-        media_type=coerce_str(item.audio.type, limit=60),
-        description=coerce_str(item.description, item.summary),
-        duration=coerce_str(item.itunes_duration, limit=30),
-        keywords=" ".join(parse_tags(item)),
-    )
-
-
-def parse_tags(item: box.Box) -> list[str]:
-    return [tag.term for tag in coerce_list(item.tags) if tag.term]
-
-
-def parse_taxonomy(feed: box.Box) -> tuple[list[str], list[Category]]:
-    categories_dct = get_categories_dict()
-    tags = parse_tags(feed)
-    return (
-        [name for name in tags if name not in categories_dct],
-        [categories_dct[name] for name in tags if name in categories_dct],
+        pub_date=item.published,
+        guid=item.id,
+        title=item.title,
+        link=item.link,
+        description=item.description or item.summary,
+        explicit=item.itunes_explicit,
+        season=item.itunes_season,
+        episode=item.itunes_episode,
+        episode_type=item.itunes_episodetype,
+        cover_url=item.image.href if item.image else None,
+        media_url=item.audio.href,
+        length=item.audio.length,
+        media_type=item.audio.type,
+        duration=item.itunes_duration,
+        keywords=" ".join([tag.term for tag in item.tags if tag.term]),
     )
 
 
 def extract_text(
     podcast: Podcast,
     categories: list[Category],
-    items: list[box.Box],
+    items: list[Item],
 ) -> str:
     text = " ".join(
         [
@@ -302,69 +400,9 @@ def extract_text(
             podcast.owner,
         ]
         + [c.name for c in categories]
-        + [coerce_str(item.title) for item in items][:6]
+        + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
-
-
-def parse_items(result: box.Box) -> list[box.Box]:
-    return [
-        item
-        for item in [parse_item(item) for item in result.entries]
-        if is_episode(item)
-    ]
-
-
-def parse_item(item: box.Box) -> box.Box:
-    return with_description(with_pub_date(with_audio(item)))
-
-
-def with_audio(item: box.Box) -> box.Box:
-    for link in coerce_list(item.enclosures) + coerce_list(item.links):
-        if is_audio(link):
-            return item + box.Box(audio=link)
-    return item
-
-
-def with_pub_date(item: box.Box) -> box.Box:
-    return item + box.Box(pub_date=coerce_date(item.published))
-
-
-def with_description(item: box.Box) -> box.Box:
-    return item + box.Box(
-        description=coerce_str(
-            *parse_content(item),
-            item.description,
-            item.summary,
-        )
-    )
-
-
-def parse_content(item: box.Box) -> Generator[str, None, None]:
-    contents = coerce_list(item.content)
-    for content_type in ("text/html", "text/plain"):
-        for content in contents:
-            if coerce_str(content.type) == content_type:
-                yield coerce_str(content.value)
-
-
-def is_audio(link: box.Box) -> bool:
-    return (
-        link.type
-        and link.type.startswith("audio/")
-        and link.href
-        and link.rel == "enclosure"
-    )
-
-
-def is_episode(item: box.Box) -> bool:
-    return all(
-        (
-            item.id,
-            item.audio,
-            item.pub_date and item.pub_date < timezone.now(),
-        )
-    )
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:

@@ -1,20 +1,24 @@
 from __future__ import annotations
 
 import http
+import json
 import pathlib
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
+import pytz
 import requests
 
 from django.utils import timezone
+from pydantic import ValidationError
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
+    Item,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
@@ -174,7 +178,12 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert not parse_feed(new_podcast.rss)
+
+        result = parse_feed(new_podcast.rss)
+        assert not result
+        with pytest.raises(ValidationError):
+            result.raise_exception()
+
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
@@ -187,7 +196,12 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert not parse_feed(new_podcast.rss)
+
+        result = parse_feed(new_podcast.rss)
+        assert not result
+        with pytest.raises(ValidationError):
+            result.raise_exception()
+
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
@@ -347,3 +361,106 @@ class TestParseFeed:
         assert not new_podcast.active
         assert new_podcast.scheduled is None
         assert new_podcast.status == http.HTTPStatus.GONE
+
+
+class TestItemModel:
+    @pytest.fixture
+    def item_data(self):
+        return json.load(
+            open(pathlib.Path(__file__).parent / "mocks" / "feed_item.json", "rb")
+        )
+
+    def test_missing_audio(self, item_data):
+        del item_data["links"]
+        with pytest.raises(ValidationError):
+            Item.parse_obj(item_data)
+
+    def test_invalid_audio(self, item_data):
+        item_data["links"] = [
+            {
+                "length": "55705268",
+                "rel": "enclosure",
+                "type": "audio/mpeg",
+            },
+        ]
+        with pytest.raises(ValidationError):
+            Item.parse_obj(item_data)
+
+    def test_published(self, item_data):
+        del item_data["published"]
+        with pytest.raises(ValidationError):
+            Item.parse_obj(item_data)
+
+    def test_published_in_future(self, item_data):
+        item_data["published"] = (timezone.now() + timedelta(days=1)).strftime(
+            "%a, %d %b %Y %H:%M:%s"
+        )
+        with pytest.raises(ValidationError):
+            Item.parse_obj(item_data)
+
+    def test_missing_content(self, item_data):
+        del item_data["content"]
+        item = Item.parse_obj(item_data)
+        assert item.description == ""
+
+    def test_parse_complete_item(self, item_data):
+        item = Item.parse_obj(item_data)
+
+        assert item.id == "74561fff-4b98-4985-a36f-4970be28782e"
+        assert item.title == "The Origins of English"
+        assert item.published == datetime(2021, 8, 7, 4, 0, tzinfo=pytz.timezone("GMT"))
+
+        assert item.itunes_duration == "00:38:34"
+        assert item.itunes_episodetype == "full"
+        assert item.itunes_explicit is False
+
+        assert (
+            item.link
+            == "https://play.acast.com/s/dansnowshistoryhit/theoriginsofenglish"
+        )
+
+        assert item.image.href == (
+            "https://thumborcdn.acast.com/AA9YH364rPs8gxGOwgyXGEvLhyo=/3000x3000/https://mediacdn.acast.com/assets/74561fff-4b98-4985-a36f-4970be28782e/cover-image-ks08c9r7-gonemedieval_square_3000x3000.jpg"
+        )
+
+        assert item.audio.href == (
+            "https://sphinx.acast.com/channelhistoryhit/dansnowshistoryhit/theoriginsofenglish/media.mp3"
+        )
+        assert item.audio.length == 55705268
+        assert item.audio.rel == "enclosure"
+        assert item.audio.type == "audio/mpeg"
+
+        assert item.summary == (
+            "Approximately 1.35 billion people use it, either as a first or "
+            "second language, so English and the way that we speak it has a "
+            "daily impact on huge numbers of people. But how did the English "
+            "language develop? In this episode from our sibling podcast Gone "
+            "Medieval, Cat Jarman spoke to Eleanor Rye, an Associate Lecturer "
+            "in English Language and Linguistics at the University of York. "
+            "Using the present-day language, place names and dialects as "
+            "evidence, Ellie shows us how English was impacted by a series of "
+            "migrations.&nbsp;&nbsp; &#10;&nbsp;<br /><hr /><p>See <a "
+            'href="https://acast.com/privacy" rel="noopener noreferrer" '
+            'style="color: grey;" target="_blank">acast.com/privacy</a> for '
+            "privacy and opt-out information.</p>"
+        )
+
+        assert item.description == (
+            "<p>Approximately 1.35 billion people use it, either as "
+            "a first or second language, so English and the way "
+            "that we speak it has a daily impact on huge numbers of "
+            "people. But how did the English language develop? In "
+            "this episode from our sibling podcast <a "
+            'href="https://podfollow.com/gone-medieval/view" '
+            'rel="noopener noreferrer" target="_blank">Gone '
+            "Medieval</a>, Cat Jarman spoke to Eleanor Rye, an "
+            "Associate Lecturer in English Language and Linguistics "
+            "at the University of York. Using the present-day "
+            "language, place names and dialects as evidence, Ellie "
+            "shows us how English was impacted by a series of "
+            "migrations.&nbsp;&nbsp;</p> &#10;&nbsp;<br /><hr "
+            '/><p>See <a href="https://acast.com/privacy" '
+            'rel="noopener noreferrer" style="color: grey;" '
+            'target="_blank">acast.com/privacy</a> for privacy and '
+            "opt-out information.</p>"
+        )
