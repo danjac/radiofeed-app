@@ -101,12 +101,11 @@ class TestParseSporadicFeeds:
     @pytest.mark.parametrize(
         "active,last_pub,limit, result",
         [
-            (True, timedelta(days=105, hours=1), 1000, 1),
-            (True, timedelta(days=105, hours=0), 1000, 0),
-            (True, timedelta(days=105, hours=1), None, 1),
-            (True, timedelta(days=99, hours=1), 1000, 0),
-            (True, timedelta(days=30, hours=1), 1000, 0),
-            (False, timedelta(days=99, hours=1), 1000, 0),
+            (True, timedelta(days=105), 1000, 1),
+            (True, timedelta(days=105), None, 1),
+            (True, timedelta(days=99), 1000, 0),
+            (True, timedelta(days=30), 1000, 0),
+            (False, timedelta(days=99), 1000, 0),
             (True, None, 1000, 0),
         ],
     )
