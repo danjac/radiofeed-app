@@ -41,7 +41,7 @@ class Content(BaseModel):
 
 class Enclosure(BaseModel):
     href: HttpUrl
-    length: int = None
+    length: Optional[int] = None
     type: str = ""
     rel: str = ""
 
