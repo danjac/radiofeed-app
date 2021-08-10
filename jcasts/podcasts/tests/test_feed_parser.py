@@ -178,7 +178,12 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
             ),
         )
-        assert not parse_feed(new_podcast.rss)
+
+        result = parse_feed(new_podcast.rss)
+        assert not result
+        with pytest.raises(ValidationError):
+            result.raise_exception()
+
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
@@ -191,7 +196,12 @@ class TestParseFeed:
                 content=self.get_feedparser_content("rss_empty_mock.xml"),
             ),
         )
-        assert not parse_feed(new_podcast.rss)
+
+        result = parse_feed(new_podcast.rss)
+        assert not result
+        with pytest.raises(ValidationError):
+            result.raise_exception()
+
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
