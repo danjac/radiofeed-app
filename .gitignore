@@ -43,6 +43,7 @@ celerybeat-schedule
 # Common typos
 :w
 '
+:
 
 # Ansible
 
