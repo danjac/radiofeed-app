@@ -305,6 +305,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     podcast.explicit = result.feed.itunes_explicit
 
     categories_dct = get_categories_dict()
+
     tags = [tag.term for tag in result.feed.tags if tag.term]
     categories = [categories_dct[tag] for tag in tags if tag in categories_dct]
 
