@@ -214,19 +214,21 @@ def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -
     return counter
 
 
-def parse_sporadic_feeds() -> int:
+def parse_sporadic_feeds(limit: int | None = None) -> int:
     "Should run daily. Matches older feeds with same weekday in last pub date"
     counter = 0
-    for counter, rss in enumerate(
+    qs = (
         Podcast.objects.sporadic()
         .filter(
             pub_date__iso_week_day=timezone.now().isoweekday(),
         )
         .order_by("-pub_date")
         .values_list("rss", flat=True)
-        .iterator(),
-        1,
-    ):
+    )
+    if limit:
+        qs = qs[:limit]
+
+    for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss)
 
     return counter

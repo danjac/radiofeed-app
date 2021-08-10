@@ -18,12 +18,12 @@ class Command(BaseCommand):
         parser.add_argument(
             "--limit",
             type=int,
-            help="Set limit (frequent feeds only)",
+            help="Set limit",
         )
 
     def handle(self, *args, **options) -> None:
         if options["sporadic"]:
-            num_feeds = feed_parser.parse_sporadic_feeds()
+            num_feeds = feed_parser.parse_sporadic_feeds(limit=options["limit"])
         else:
             num_feeds = feed_parser.parse_frequent_feeds(
                 force_update=options["force_update"], limit=options["limit"]
