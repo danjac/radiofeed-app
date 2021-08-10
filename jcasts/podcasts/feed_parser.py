@@ -221,6 +221,9 @@ def parse_sporadic_feeds(limit: int | None = None) -> int:
         .filter(
             pub_date__iso_week_day=now.isoweekday(),
         )
+        .exclude(
+            updated__day=now.day,
+        )
         .order_by("updated", "-pub_date")
         .values_list("rss", flat=True)
     )
