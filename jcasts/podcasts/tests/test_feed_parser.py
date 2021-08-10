@@ -99,21 +99,24 @@ class TestParseSporadicFeeds:
         return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
 
     @pytest.mark.parametrize(
-        "active,last_pub,result",
+        "active,last_pub,limit, result",
         [
-            (True, timedelta(days=105), 1),
-            (True, timedelta(days=99), 0),
-            (True, timedelta(days=30), 0),
-            (True, None, 0),
-            (False, timedelta(days=99), 0),
+            (True, timedelta(days=105), 1000, 1),
+            (True, timedelta(days=105), None, 1),
+            (True, timedelta(days=99), 1000, 0),
+            (True, timedelta(days=30), 1000, 0),
+            (True, None, 1000, 0),
+            (False, timedelta(days=99), 1000, 0),
         ],
     )
-    def test_parse_sporadic_feeds(self, db, mock_parse_feed, active, last_pub, result):
+    def test_parse_sporadic_feeds(
+        self, db, mock_parse_feed, active, last_pub, limit, result
+    ):
         PodcastFactory(
             active=active,
             pub_date=timezone.now() - last_pub if last_pub else None,
         )
-        assert parse_sporadic_feeds() == result
+        assert parse_sporadic_feeds(limit=limit) == result
 
         if result:
             mock_parse_feed.assert_called()
