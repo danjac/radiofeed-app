@@ -33,7 +33,7 @@ USER_AGENTS = [
 ]
 
 
-class Content(BaseModel):
+class ContentItem(BaseModel):
     value: str = ""
     type: str = ""
 
@@ -77,7 +77,7 @@ class Item(BaseModel):
     description: str = ""
     summary: str = ""
 
-    content: list[Content] = []
+    content: list[ContentItem] = []
     enclosures: list[Enclosure] = []
     links: list[Enclosure] = []
     tags: list[Tag] = []
@@ -116,11 +116,12 @@ class Item(BaseModel):
 
     @root_validator
     def get_description_from_content(cls, values: dict) -> dict:
-        for content in values.get("content", []):
-            for content_type in ("text/html", "text/plain"):
-                if content.type == content_type and content.value:
-                    return {**values, "description": content.value}
-        return values
+        return {
+            **values,
+            "description": parse_content_items(
+                values.get("content", []), "text/html", "text/plain"
+            ),
+        }
 
 
 class Feed(BaseModel):
@@ -135,7 +136,6 @@ class Feed(BaseModel):
     author: str = ""
     publisher_detail: Optional[Author] = None
 
-    content: str = ""
     summary: str = ""
     description: str = ""
     subtitle: str = ""
@@ -421,6 +421,14 @@ def extract_text(
         + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
+
+
+def parse_content_items(content_items: list[ContentItem], *content_types: str) -> str:
+    for item in content_items:
+        for content_type in content_types:
+            if item.type == content_type and item.value:
+                return item.value
+    return ""
 
 
 def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
