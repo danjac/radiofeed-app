@@ -15,13 +15,18 @@ class Command(BaseCommand):
             action="store_true",
             help="Update all feeds (ignore scheduled times)",
         )
+        parser.add_argument(
+            "--limit",
+            type=int,
+            help="Set limit (frequent feeds only)",
+        )
 
     def handle(self, *args, **options) -> None:
         if options["sporadic"]:
             num_feeds = feed_parser.parse_sporadic_feeds()
         else:
             num_feeds = feed_parser.parse_frequent_feeds(
-                force_update=options["force_update"]
+                force_update=options["force_update"], limit=options["limit"]
             )
 
         self.stdout.write(self.style.SUCCESS(f"{num_feeds} feed(s) to be pulled"))

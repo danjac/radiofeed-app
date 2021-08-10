@@ -191,7 +191,7 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_frequent_feeds(force_update: bool = False) -> int:
+def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -> int:
     counter = 0
     qs = (
         Podcast.objects.frequent()
@@ -204,6 +204,9 @@ def parse_frequent_feeds(force_update: bool = False) -> int:
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
         )
+
+    if limit:
+        qs = qs[:limit]
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)
