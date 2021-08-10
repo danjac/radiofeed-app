@@ -420,9 +420,9 @@ def extract_text(
 
 
 def parse_content_items(content_items: list[ContentItem], *content_types: str) -> str:
-    for item in content_items:
-        for content_type in content_types:
-            if item.type == content_type and item.value:
+    for content_type in content_types:
+        for item in content_items:
+            if item.value and item.type == content_type:
                 return item.value
     return ""
 
