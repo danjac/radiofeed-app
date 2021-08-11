@@ -14,7 +14,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import SearchResult
 from jcasts.podcasts.models import Follow, Podcast
-from jcasts.shared.assertions import assert_conflict, assert_no_content, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -225,11 +225,6 @@ class TestFollow:
         assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
-    def test_follow_action(self, client, podcast, auth_user, url):
-        resp = client.post(url, {"action": True})
-        assert_no_content(resp)
-        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
-
     @pytest.mark.django_db(transaction=True)
     def test_already_following(self, client, podcast, auth_user, url):
         FollowFactory(user=auth_user, podcast=podcast)
@@ -241,16 +236,8 @@ class TestFollow:
 class TestUnfollow:
     def test_unfollow(self, client, auth_user, podcast):
         FollowFactory(user=auth_user, podcast=podcast)
-        resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
+        resp = client.delete(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
-        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
-
-    def test_unfollow_action(self, client, auth_user, podcast):
-        FollowFactory(user=auth_user, podcast=podcast)
-        resp = client.post(
-            reverse("podcasts:unfollow", args=[podcast.id]), {"action": True}
-        )
-        assert_no_content(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 

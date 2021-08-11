@@ -51,7 +51,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
     return HttpResponseNoContent()
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["DELETE"])
 @hx_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     if not request.player.has(episode_id):

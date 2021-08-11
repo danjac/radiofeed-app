@@ -49,7 +49,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["DELETE"])
 @hx_login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)

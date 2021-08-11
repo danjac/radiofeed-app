@@ -16,7 +16,7 @@ from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import hx_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 from jcasts.shared.typedefs import ContextDict
 
 
@@ -264,7 +264,7 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["DELETE"])
 @hx_login_required
 def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
@@ -299,9 +299,6 @@ def get_podcast_detail_context(
 def render_follow_response(
     request: HttpRequest, podcast: Podcast, is_following: bool
 ) -> HttpResponse:
-
-    if request.POST.get("action"):
-        return HttpResponseNoContent()
 
     return TemplateResponse(
         request,

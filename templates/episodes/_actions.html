@@ -56,7 +56,7 @@
 
   {% if is_queued %}
   <button class="{{ BUTTON_CSS_CLASS }}"
-          hx-post="{% url 'episodes:remove_from_queue' episode.id %}"
+          hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
           @click="show=false">
     {% icon "trash" css_class=ICON_CLASS %}
     Remove from Queue
@@ -86,7 +86,7 @@
 
   {% if is_favorited %}
   <button class="{{ BUTTON_CSS_CLASS }}"
-          hx-post="{% url 'episodes:remove_favorite' episode.id %}"
+          hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
           @click="show=false">
     {% icon "star_solid" css_class=ICON_CLASS %}
     Remove from Favorites
@@ -102,7 +102,7 @@
 
   {% if episode.listened and not is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
-          hx-post="{% url 'episodes:remove_audio_log' episode.id %}"
+          hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
           @click="show=false">
     {% icon "trash" css_class=ICON_CLASS %}
     Remove from History

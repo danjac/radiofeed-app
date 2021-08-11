@@ -373,7 +373,7 @@ class TestAddFavorite:
 class TestRemoveFavorite:
     def test_post(self, client, auth_user, episode):
         FavoriteFactory(user=auth_user, episode=episode)
-        resp = client.post(reverse("episodes:remove_favorite", args=[episode.id]))
+        resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
         assert_no_content(resp)
         assert not Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -385,19 +385,19 @@ class TestRemoveAudioLog:
     def test_ok(self, client, auth_user, episode):
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
-        assert_no_content(client.post(self.url(episode)))
+        assert_no_content(client.delete(self.url(episode)))
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(user=auth_user, episode=player_episode)
-        assert_no_content(client.post(self.url(log.episode)))
+        assert_no_content(client.delete(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
     def test_none_remaining(self, client, auth_user, episode):
         log = AudioLogFactory(user=auth_user, episode=episode)
-        assert_no_content(client.post(self.url(log.episode)))
+        assert_no_content(client.delete(self.url(log.episode)))
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
 
@@ -490,7 +490,7 @@ class TestAddToQueue:
 class TestRemoveFromQueue:
     def test_post(self, client, auth_user):
         item = QueueItemFactory(user=auth_user)
-        resp = client.post(
+        resp = client.delete(
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
 

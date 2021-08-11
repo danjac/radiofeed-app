@@ -55,7 +55,7 @@ def add_to_queue(
     return HttpResponseNoContent()
 
 
-@require_http_methods(["POST"])
+@require_http_methods(["DELETE"])
 @hx_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
