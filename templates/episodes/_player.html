@@ -60,12 +60,7 @@
         <div class="w-20 mr-1 sm:mr-0">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
-            <img class="object-cover bg-transparent border dark:border-gray-500 h-16 w-16 self-center hover:opacity-75 cursor-pointer"
-                 title="{{ podcast.cleaned_title }}"
-                 alt="{{ podcast.cleaned_title }}"
-                 width="20"
-                 height="20"
-                 src="{% if cover_url %}{{ cover_url }}{% else %}{% static 'img/podcast-icon.png' %}{% endif %}">
+            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" %}
           </a>
         </div>
         {% endwith %}
