@@ -219,14 +219,17 @@ const playerObj = {
 };
 
 function getAudioError(err) {
-  switch (err.code) {
-    case 0: // not allowed
-      return 'Press Play button to continue';
-    case 4: // not supported
-      return 'Media not supported';
-    default:
-      return 'Press Reload button to continue';
+  if (err.code === 0) {
+    // autoplay not allowed: user has to manually click "Play" button
+    return 'Press Play button to continue';
   }
+
+  let msg = 'Press Reload button to continue';
+
+  if (err.code) {
+    msg += ' (ERR: ' + err.code + ')';
+  }
+  return msg;
 }
 
 function formatDuration(value) {
