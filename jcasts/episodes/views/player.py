@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, Episode, QueueItem
@@ -12,7 +12,7 @@ from jcasts.shared.decorators import hx_login_required
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     return render_start_player(
@@ -20,14 +20,14 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     request.player.remove()
     return render_close_player(request)
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
@@ -53,7 +53,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
     return render_close_player(request)
 
 
-@require_safe
+@require_http_methods(["GET"])
 @hx_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
 
@@ -68,8 +68,8 @@ def reload_player(request: HttpRequest) -> HttpResponse:
     return HttpResponse()
 
 
-@require_POST
 @ratelimit(key="ip", rate="20/m")
+@require_http_methods(["POST"])
 @hx_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode."""

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Favorite
 from jcasts.episodes.views import get_episode_or_404
@@ -17,7 +17,7 @@ from jcasts.shared.response import (
 )
 
 
-@require_safe
+@require_http_methods(["GET"])
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
     favorites = Favorite.objects.filter(user=request.user).select_related(
@@ -36,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
@@ -49,7 +49,7 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
         return HttpResponseConflict()
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)

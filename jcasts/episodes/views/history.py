@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog
 from jcasts.shared.decorators import hx_login_required
@@ -12,7 +12,7 @@ from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
-@require_safe
+@require_http_methods(["GET"])
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
 
@@ -35,7 +35,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
@@ -51,7 +51,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
     return HttpResponseNoContent()
 
 
-@require_POST
+@require_http_methods(["POST"])
 @hx_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     if not request.player.has(episode_id):

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 
 from django.conf import settings
@@ -8,7 +10,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
-from django.views.decorators.http import require_http_methods, require_safe
+from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.models import Follow, Podcast
@@ -50,7 +52,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     return render_csv_export_response(podcasts, filename)
 
 
-@require_safe
+@require_http_methods(["GET"])
 @login_required
 def user_stats(request: HttpRequest) -> HttpResponse:
 

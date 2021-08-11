@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
@@ -15,7 +15,7 @@ from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.typedefs import ContextDict
 
 
-@require_safe
+@require_http_methods(["GET"])
 def index(request: HttpRequest) -> HttpResponse:
 
     follows = (
@@ -55,7 +55,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_safe
+@require_http_methods(["GET"])
 def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
@@ -75,7 +75,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_safe
+@require_http_methods(["GET"])
 @hx_login_required
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
@@ -103,7 +103,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
     )
 
 
-@require_safe
+@require_http_methods(["GET"])
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
