@@ -3,6 +3,7 @@ cursor-not-allowed
 pointer-events-none
 opacity-50
 animate-pulse
+self-center
 top-0
 bottom-0
 h-8
