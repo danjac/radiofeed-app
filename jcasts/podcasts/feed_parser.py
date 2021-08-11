@@ -465,7 +465,7 @@ def parse_failure(
     *,
     status: int | None,
     exception: Exception | None = None,
-    active=True,
+    active: bool = True,
     **fields,
 ) -> ParseResult:
 
