@@ -43,7 +43,7 @@ class Link(BaseModel):
     length: Optional[int] = None
     type: str = ""
     rel: str = ""
-        
+
     def is_audio(self) -> bool:
         return self.type.startswith("audio") and self.rel == "enclosure"
 
@@ -95,7 +95,7 @@ class Item(BaseModel):
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
         return is_explicit(value)
-    
+
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
         for value in itertools.chain(
@@ -108,7 +108,7 @@ class Item(BaseModel):
 
                 if value.is_audio():
                     return {**values, "audio": value}
-               
+
             except ValidationError:
                 pass
 
@@ -273,11 +273,6 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         # no change, ignore
         return parse_failure(podcast, status=response.status_code)
 
-    return parse_podcast(podcast, response)
-
-
-def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
-
     rss, is_changed = resolve_podcast_rss(podcast, response)
 
     if is_changed and (
@@ -330,7 +325,7 @@ def parse_podcast(podcast: Podcast, response: requests.Response) -> ParseResult:
     podcast.extracted_text = extract_text(podcast, categories, result.entries)
     podcast.save()
 
-    podcast.categories.set(categories)  # type: ignore
+    podcast.categories.set(categories)
 
     parse_episodes(podcast, result.entries)
 
