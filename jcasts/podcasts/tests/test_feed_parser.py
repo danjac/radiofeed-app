@@ -19,6 +19,7 @@ from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
     Item,
+    Link,
     get_categories_dict,
     get_feed_headers,
     parse_feed,
@@ -373,6 +374,30 @@ class TestParseFeed:
         assert not new_podcast.active
         assert new_podcast.scheduled is None
         assert new_podcast.status == http.HTTPStatus.GONE
+
+
+class TestLinkModel:
+    def test_is_not_audio(self):
+        link = Link(
+            **{
+                "rel": "alternate",
+                "type": "text/html",
+                "href": "https://play.acast.com/s/dansnowshistoryhit/theoriginsofenglish",
+            },
+        )
+        assert link.is_audio() is False
+
+    def test_is_audio(self):
+        link = Link(
+            **{
+                "length": "55705268",
+                "type": "audio/mpeg",
+                "href": "https://sphinx.acast.com/channelhistoryhit/dansnowshistoryhit/theoriginsofenglish/media.mp3",
+                "rel": "enclosure",
+            }
+        )
+
+        assert link.is_audio() is True
 
 
 class TestItemModel:
