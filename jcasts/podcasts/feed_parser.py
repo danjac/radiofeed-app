@@ -99,7 +99,7 @@ class Item(BaseModel):
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
         for value in itertools.chain(
-            *[values.get(field, []) for field in ("enclosures", "links")]
+            *[values.get(field, []) for field in ("links", "enclosures")]
         ):
             try:
 
@@ -116,12 +116,12 @@ class Item(BaseModel):
 
     @root_validator
     def get_description_from_content(cls, values: dict) -> dict:
-        return {
-            **values,
-            "description": parse_content_items(
-                values.get("content", []), "text/html", "text/plain"
-            ),
-        }
+        content_items = values.get("content", [])
+        for content_type in ("text/html", "text/plain"):
+            for item in content_items:
+                if item.value and item.type == content_type:
+                    return {**values, "description": item.value}
+        return values
 
 
 class Feed(BaseModel):
@@ -415,14 +415,6 @@ def extract_text(
         + [item.title for item in items][:6]
     )
     return " ".join(extract_keywords(podcast.language, text))
-
-
-def parse_content_items(content_items: list[ContentItem], *content_types: str) -> str:
-    for content_type in content_types:
-        for item in content_items:
-            if item.value and item.type == content_type:
-                return item.value
-    return ""
 
 
 def is_explicit(value: str | bool | None):
