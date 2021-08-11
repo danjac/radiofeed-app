@@ -92,7 +92,7 @@ class Item(BaseModel):
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
         return is_explicit(value)
-
+    
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
         for value in itertools.chain(
@@ -102,11 +102,12 @@ class Item(BaseModel):
 
                 if not isinstance(value, Link):
                     value = Link(**value)
-            except ValidationError:
-                continue
 
-            if is_audio(value):
-                return {**values, "audio": value}
+                if is_audio(value):
+                    return {**values, "audio": value}
+               
+            except ValidationError:
+                pass
 
         raise ValueError("audio missing")
 
