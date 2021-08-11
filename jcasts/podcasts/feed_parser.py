@@ -211,7 +211,7 @@ def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -
     return counter
 
 
-def parse_sporadic_feeds(limit: int | None = None) -> int:
+def parse_sporadic_feeds(limit: int | None = None, force_update: bool = False) -> int:
     counter = 0
 
     now = timezone.now()
@@ -233,7 +233,7 @@ def parse_sporadic_feeds(limit: int | None = None) -> int:
         qs = qs[:limit]
 
     for counter, rss in enumerate(qs.iterator(), 1):
-        parse_feed.delay(rss)
+        parse_feed.delay(rss, force_update=force_update)
 
     return counter
 
