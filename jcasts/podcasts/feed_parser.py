@@ -43,6 +43,9 @@ class Link(BaseModel):
     length: Optional[int] = None
     type: str = ""
     rel: str = ""
+        
+    def is_audio(self) -> bool:
+        return self.type.startswith("audio") and self.rel == "enclosure"
 
 
 class Tag(BaseModel):
@@ -92,7 +95,7 @@ class Item(BaseModel):
     @validator("itunes_explicit", pre=True)
     def get_explicit(cls, value: str | bool | None) -> bool:
         return is_explicit(value)
-
+    
     @root_validator(pre=True)
     def get_audio(cls, values: dict) -> dict:
         for value in itertools.chain(
@@ -102,11 +105,12 @@ class Item(BaseModel):
 
                 if not isinstance(value, Link):
                     value = Link(**value)
-            except ValidationError:
-                continue
 
-            if is_audio(value):
-                return {**values, "audio": value}
+                if value.is_audio():
+                    return {**values, "audio": value}
+               
+            except ValidationError:
+                pass
 
         raise ValueError("audio missing")
 
@@ -424,10 +428,6 @@ def parse_content_items(content_items: list[ContentItem], *content_types: str) -
             if item.value and item.type == content_type:
                 return item.value
     return ""
-
-
-def is_audio(link: Link) -> bool:
-    return link.type.startswith("audio") and link.rel == "enclosure"
 
 
 def is_explicit(value: str | bool | None):
