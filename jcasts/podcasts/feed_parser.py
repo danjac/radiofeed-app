@@ -192,7 +192,9 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -> int:
+def parse_frequent_feeds(
+    *, force_update: bool = False, limit: int | None = None
+) -> int:
     counter = 0
     qs = (
         Podcast.objects.frequent()
@@ -215,7 +217,9 @@ def parse_frequent_feeds(force_update: bool = False, limit: int | None = None) -
     return counter
 
 
-def parse_sporadic_feeds(limit: int | None = None, force_update: bool = False) -> int:
+def parse_sporadic_feeds(
+    *, force_update: bool = False, limit: int | None = None
+) -> int:
     counter = 0
 
     now = timezone.now()
