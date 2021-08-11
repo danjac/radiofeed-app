@@ -33,8 +33,8 @@ const playerObj = {
       Digit0: this.resetPlaybackRate,
       ArrowLeft: this.skipBack,
       ArrowRight: this.skipForward,
-      Delete: this.close,
-      Space: this.togglePlay,
+      Delete: this.closePlayer,
+      Space: this.togglePlayPause,
     };
 
     this.$refs.audio.currentTime = this.currentTime;
@@ -171,29 +171,33 @@ const playerObj = {
     }
   },
 
-  close(url) {
+  closePlayer() {
+    this.stopPlayer(this.urls.closePlayer);
+  },
+
+  ended() {
+    this.stopPlayer(this.urls.playNext);
+  },
+
+  togglePlayPause() {
+    if (this.isPaused) {
+      this.$refs.audio.play();
+    } else {
+      this.$refs.audio.pause();
+    }
+  },
+
+  stopPlayer(url) {
     this.mediaSrc = null;
     this.shortcuts = null;
 
     this.$refs.audio.pause();
     this.clearSession();
 
-    window.htmx.ajax('POST', url || this.urls.closePlayer, {
+    window.htmx.ajax('POST', url, {
       target: this.$el,
       source: this.$el,
     });
-  },
-
-  ended() {
-    this.close(this.urls.playNext);
-  },
-
-  togglePlay() {
-    if (this.isPaused) {
-      this.$refs.audio.play();
-    } else {
-      this.$refs.audio.pause();
-    }
   },
 
   sendTimeUpdate() {
