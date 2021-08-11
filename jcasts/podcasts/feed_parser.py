@@ -43,6 +43,9 @@ class Link(BaseModel):
     length: Optional[int] = None
     type: str = ""
     rel: str = ""
+        
+    def is_audio(self) -> bool:
+        return self.type.startswith("audio") and self.rel == "enclosure"
 
 
 class Tag(BaseModel):
@@ -103,7 +106,7 @@ class Item(BaseModel):
                 if not isinstance(value, Link):
                     value = Link(**value)
 
-                if is_audio(value):
+                if value.is_audio():
                     return {**values, "audio": value}
                
             except ValidationError:
@@ -425,10 +428,6 @@ def parse_content_items(content_items: list[ContentItem], *content_types: str) -
             if item.value and item.type == content_type:
                 return item.value
     return ""
-
-
-def is_audio(link: Link) -> bool:
-    return link.type.startswith("audio") and link.rel == "enclosure"
 
 
 def is_explicit(value: str | bool | None):
