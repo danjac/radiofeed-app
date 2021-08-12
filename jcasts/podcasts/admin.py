@@ -102,11 +102,13 @@ class PodcastAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
+        "num_episodes",
         "created",
         "updated",
         "pub_date",
-        "num_episodes",
+        "scheduled",
         "frequency",
+        "result",
     )
 
     actions = ["reactivate", "parse_podcast_feeds"]
