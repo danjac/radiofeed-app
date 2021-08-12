@@ -52,10 +52,6 @@ class BadMockResponse(MockResponse):
 
 
 class TestParseFrequentFeeds:
-    @pytest.fixture
-    def mock_parse_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
-
     @pytest.mark.parametrize(
         "force_update,active,scheduled,last_pub,limit,result",
         [
@@ -72,7 +68,7 @@ class TestParseFrequentFeeds:
     def test_parse_frequent_feeds(
         self,
         db,
-        mock_parse_feed,
+        mocker,
         force_update,
         active,
         scheduled,
@@ -80,6 +76,9 @@ class TestParseFrequentFeeds:
         limit,
         result,
     ):
+
+        mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+
         now = timezone.now()
         PodcastFactory(
             active=active,
@@ -95,10 +94,6 @@ class TestParseFrequentFeeds:
 
 
 class TestParseSporadicFeeds:
-    @pytest.fixture
-    def mock_parse_feed(self, mocker):
-        return mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
-
     @pytest.mark.parametrize(
         "active,last_pub,updated,limit,result",
         [
@@ -111,8 +106,10 @@ class TestParseSporadicFeeds:
         ],
     )
     def test_parse_sporadic_feeds(
-        self, db, mock_parse_feed, active, last_pub, updated, limit, result
+        self, db, mocker, active, last_pub, updated, limit, result
     ):
+        mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+
         now = timezone.now()
         pub_date = now - last_pub if last_pub else None
         updated = now - updated if updated else now
