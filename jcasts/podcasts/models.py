@@ -125,9 +125,6 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    # HTTP status of last fetch
-    status: int | None = models.PositiveSmallIntegerField(null=True, blank=True)
-
     # if permanent redirect to feed that already exists
     redirect_to: Podcast | None = models.ForeignKey(
         "self",
@@ -135,6 +132,9 @@ class Podcast(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
     )
+
+    # store last RSS feed result
+    result = models.JSONField(default=dict)
 
     search_vector: str = SearchVectorField(null=True, editable=False)
 

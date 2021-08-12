@@ -3,6 +3,7 @@ from __future__ import annotations
 import http
 import itertools
 import secrets
+import traceback
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -186,6 +187,21 @@ class ParseResult:
         if self.exception:
             raise self.exception
 
+    def as_dict(self):
+
+        data = {
+            "rss": self.rss,
+            "success": self.success,
+            "status": self.status,
+        }
+
+        try:
+            self.raise_exception()
+        except Exception:
+            data["exception"] = traceback.format_exc()
+
+        return data
+
 
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
@@ -327,13 +343,16 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
 
     podcast.keywords = " ".join(tag for tag in tags if tag not in categories_dct)
     podcast.extracted_text = extract_text(podcast, categories, result.entries)
-    podcast.save()
 
     podcast.categories.set(categories)
 
     parse_episodes(podcast, result.entries)
 
-    return ParseResult(podcast.rss, response.status_code, True)
+    parse_result = ParseResult(podcast.rss, response.status_code, True)
+    podcast.result = parse_result.as_dict()
+    podcast.save()
+
+    return parse_result
 
 
 def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
@@ -465,12 +484,14 @@ def parse_failure(
     **fields,
 ) -> ParseResult:
 
+    result = ParseResult(podcast.rss, status, False, exception)
+
     Podcast.objects.filter(pk=podcast.id).update(
         scheduled=schedule(podcast) if active else None,
         updated=timezone.now(),
         active=active,
-        status=status,
+        result=result.as_dict(),
         **fields,
     )
 
-    return ParseResult(podcast.rss, status, False, exception)
+    return result
