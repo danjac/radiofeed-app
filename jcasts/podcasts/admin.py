@@ -105,8 +105,10 @@ class PodcastAdmin(admin.ModelAdmin):
         "num_episodes",
         "created",
         "updated",
-        "pub_date",
+        "modified",
         "scheduled",
+        "pub_date",
+        "etag",
         "frequency",
         "result",
     )
