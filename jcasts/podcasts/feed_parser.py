@@ -54,7 +54,7 @@ class Tag(BaseModel):
 
 
 class Author(BaseModel):
-    name: str
+    name: str = ""
 
 
 class Image(BaseModel):
@@ -346,7 +346,11 @@ def parse_success(
 
     podcast.description = feed.summary or feed.description or feed.subtitle
 
-    podcast.owner = feed.publisher_detail.name if feed.publisher_detail else feed.author
+    podcast.owner = (
+        feed.publisher_detail.name
+        if feed.publisher_detail and feed.publisher_detail.name
+        else feed.author
+    )
     podcast.explicit = feed.itunes_explicit
 
     categories_dct = get_categories_dict()
