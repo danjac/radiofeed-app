@@ -3,7 +3,6 @@ from __future__ import annotations
 import http
 import itertools
 import secrets
-import traceback
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -195,21 +194,6 @@ class ParseResult:
         if self.exception:
             raise self.exception
 
-    def as_dict(self):
-
-        data = {
-            "rss": self.rss,
-            "success": self.success,
-            "status": self.status,
-        }
-
-        try:
-            self.raise_exception()
-        except Exception:
-            data["exception"] = traceback.format_exc()
-
-        return data
-
 
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
@@ -301,15 +285,11 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         # no change, ignore
         return parse_failure(podcast, status=response.status_code)
 
-    rss, is_changed = resolve_podcast_rss(podcast, response)
+    is_changed, exists = resolve_podcast_rss(podcast, response)
 
-    if is_changed and (
-        other := Podcast.objects.filter(rss=rss).exclude(pk=podcast.pk).first()
-    ):
+    if is_changed and exists:
         # permanent redirect to URL already taken by another podcast
-        return parse_failure(
-            podcast, status=response.status_code, redirect_to=other, active=False
-        )
+        return parse_failure(podcast, status=response.status_code, active=False)
 
     try:
         result = Result.parse_obj(feedparser.parse(response.content))
@@ -362,14 +342,11 @@ def parse_success(
     podcast.extracted_text = extract_text(podcast, categories, items)
 
     podcast.categories.set(categories)  # type: ignore
+    podcast.save()
 
     parse_episodes(podcast, items)
 
-    result = ParseResult(podcast.rss, response.status_code, True)
-    podcast.result = result.as_dict()
-    podcast.save()
-
-    return result
+    return ParseResult(podcast.rss, response.status_code, True)
 
 
 def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
@@ -480,16 +457,22 @@ def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, 
 
 def resolve_podcast_rss(
     podcast: Podcast, response: requests.Response
-) -> tuple[str, bool]:
+) -> tuple[bool, bool]:
 
-    return response.url, (
+    if (
         response.status_code
         in (
             http.HTTPStatus.MOVED_PERMANENTLY,
             http.HTTPStatus.PERMANENT_REDIRECT,
         )
-        or response.url != podcast.rss
-    )
+        and response.url != podcast.rss
+    ):
+        return (
+            True,
+            Podcast.objects.filter(rss=response.url).exists(),
+        )
+
+    return False, False
 
 
 def parse_failure(
@@ -501,14 +484,11 @@ def parse_failure(
     **fields,
 ) -> ParseResult:
 
-    result = ParseResult(podcast.rss, status, False, exception)
-
     Podcast.objects.filter(pk=podcast.id).update(
-        result=result.as_dict(),
+        active=active,
         scheduled=schedule(podcast) if active else None,
         updated=timezone.now(),
-        active=active,
         **fields,
     )
 
-    return result
+    return ParseResult(podcast.rss, status, False, exception)

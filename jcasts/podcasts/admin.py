@@ -96,10 +96,7 @@ class PodcastAdmin(admin.ModelAdmin):
     list_editable = ("promoted",)
     search_fields = ("search_document",)
 
-    raw_id_fields = (
-        "recipients",
-        "redirect_to",
-    )
+    raw_id_fields = ("recipients",)
 
     readonly_fields = (
         "num_episodes",
@@ -110,7 +107,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "etag",
         "frequency",
-        "result",
     )
 
     actions = ["reactivate", "parse_podcast_feeds"]

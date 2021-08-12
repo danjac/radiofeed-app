@@ -218,11 +218,6 @@ class TestParseFeed:
         new_podcast.refresh_from_db()
         assert new_podcast.active
 
-        assert not new_podcast.result["success"]
-        assert new_podcast.result["exception"]
-        assert new_podcast.result["rss"] == new_podcast.rss
-        assert new_podcast.result["status"] == http.HTTPStatus.OK
-
     def test_parse_feed_podcast_not_found(self, db):
         result = parse_feed("https://example.com/rss.xml")
         assert result.success is False
@@ -290,11 +285,6 @@ class TestParseFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-        assert new_podcast.result["success"]
-        assert "exception" not in new_podcast.result
-        assert new_podcast.result["rss"] == new_podcast.rss
-        assert new_podcast.result["status"] == http.HTTPStatus.OK
-
     def test_parse_feed_permanent_redirect(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
@@ -315,11 +305,6 @@ class TestParseFeed:
 
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
-
-        assert new_podcast.result["success"]
-        assert "exception" not in new_podcast.result
-        assert new_podcast.result["rss"] == self.redirect_rss
-        assert new_podcast.result["status"] == http.HTTPStatus.PERMANENT_REDIRECT
 
     def test_parse_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -346,12 +331,6 @@ class TestParseFeed:
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
         assert new_podcast.scheduled is None
-        assert new_podcast.redirect_to == other
-
-        assert not new_podcast.result["success"]
-        assert "exception" not in new_podcast.result
-        assert new_podcast.result["rss"] == new_podcast.rss
-        assert new_podcast.result["status"] == http.HTTPStatus.PERMANENT_REDIRECT
 
     def test_parse_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -366,11 +345,6 @@ class TestParseFeed:
         assert new_podcast.active
         assert not new_podcast.modified
 
-        assert not new_podcast.result["success"]
-        assert "exception" not in new_podcast.result
-        assert new_podcast.result["rss"] == new_podcast.rss
-        assert new_podcast.result["status"] == http.HTTPStatus.NOT_MODIFIED
-
     def test_parse_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
@@ -382,10 +356,6 @@ class TestParseFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
-
-        assert not new_podcast.result["success"]
-        assert new_podcast.result["exception"]
-        assert new_podcast.result["rss"] == new_podcast.rss
 
     def test_parse_feed_gone(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -402,11 +372,6 @@ class TestParseFeed:
 
         assert not new_podcast.active
         assert new_podcast.scheduled is None
-
-        assert not new_podcast.result["success"]
-        assert "exception" not in new_podcast.result
-        assert new_podcast.result["rss"] == new_podcast.rss
-        assert new_podcast.result["status"] == http.HTTPStatus.GONE
 
 
 class TestLinkModel:

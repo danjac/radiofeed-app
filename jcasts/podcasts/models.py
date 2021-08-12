@@ -125,17 +125,6 @@ class Podcast(models.Model):
         settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
     )
 
-    # if permanent redirect to feed that already exists
-    redirect_to: Podcast | None = models.ForeignKey(
-        "self",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
-
-    # store last RSS feed result
-    result = models.JSONField(default=dict)
-
     search_vector: str = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
