@@ -305,54 +305,59 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
 
     try:
         result = Result.parse_obj(feedparser.parse(response.content))
+
     except ValidationError as e:
         return parse_failure(podcast, status=response.status_code, exception=e)
 
-    podcast.rss = rss
+    return parse_success(podcast, response, result.feed, result.entries)
+
+
+def parse_success(
+    podcast: Podcast,
+    response: requests.Response,
+    feed: Feed,
+    items: list[Item],
+) -> ParseResult:
+
+    podcast.rss = response.url
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.status = response.status_code
 
-    podcast.num_episodes = len(result.entries)
-    pub_dates = [item.published for item in result.entries]
+    podcast.num_episodes = len(items)
 
+    pub_dates = [item.published for item in items]
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
 
-    podcast.title = result.feed.title
-    podcast.language = result.feed.language
+    podcast.title = feed.title
+    podcast.language = feed.language
 
-    podcast.link = result.feed.link
-    podcast.cover_url = result.feed.image.href if result.feed.image else None
+    podcast.link = feed.link
+    podcast.cover_url = feed.image.href if feed.image else None
 
-    podcast.description = (
-        result.feed.summary or result.feed.description or result.feed.subtitle
-    )
+    podcast.description = feed.summary or feed.description or feed.subtitle
 
-    podcast.owner = (
-        result.feed.publisher_detail.name
-        if result.feed.publisher_detail
-        else result.feed.author
-    )
-    podcast.explicit = result.feed.itunes_explicit
+    podcast.owner = feed.publisher_detail.name if feed.publisher_detail else feed.author
+    podcast.explicit = feed.itunes_explicit
 
     categories_dct = get_categories_dict()
 
-    tags = [tag.term for tag in result.feed.tags if tag.term]
+    tags = [tag.term for tag in feed.tags if tag.term]
     categories = [categories_dct[tag] for tag in tags if tag in categories_dct]
 
     podcast.keywords = " ".join(tag for tag in tags if tag not in categories_dct)
-    podcast.extracted_text = extract_text(podcast, categories, result.entries)
+    podcast.extracted_text = extract_text(podcast, categories, items)
 
-    podcast.categories.set(categories)
+    podcast.categories.set(categories)  # type: ignore
 
-    parse_episodes(podcast, result.entries)
+    parse_episodes(podcast, items)
 
-    parse_result = ParseResult(podcast.rss, response.status_code, True)
-    podcast.result = parse_result.as_dict()
+    result = ParseResult(podcast.rss, response.status_code, True)
+    podcast.result = result.as_dict()
     podcast.save()
 
-    return parse_result
+    return result
 
 
 def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
@@ -487,10 +492,10 @@ def parse_failure(
     result = ParseResult(podcast.rss, status, False, exception)
 
     Podcast.objects.filter(pk=podcast.id).update(
+        result=result.as_dict(),
         scheduled=schedule(podcast) if active else None,
         updated=timezone.now(),
         active=active,
-        result=result.as_dict(),
         **fields,
     )
 
