@@ -352,6 +352,7 @@ class AudioLog(TimeStampedModel):
         ]
         indexes = [
             models.Index(fields=["-updated"]),
+            models.Index(fields=["updated"]),
         ]
 
     def to_json(self) -> dict[str, Any]:

@@ -312,6 +312,12 @@ class TestHistory:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
+    def test_get_oldest_first(self, client, auth_user):
+        AudioLogFactory.create_batch(3, user=auth_user)
+        resp = client.get(self.url, {"ordering": "asc"})
+        assert_ok(resp)
+        assert len(resp.context_data["page_obj"].object_list) == 3
+
     def test_search(self, client, auth_user):
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")

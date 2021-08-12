@@ -130,6 +130,19 @@ class TestPodcastEpisodes:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
+    def test_get_oldest_first(self, client, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast)
+
+        resp = client.get(
+            reverse(
+                "podcasts:podcast_episodes",
+                args=[podcast.id, podcast.slug],
+            ),
+            {"ordering": "asc"},
+        )
+        assert_ok(resp)
+        assert len(resp.context_data["page_obj"].object_list) == 3
+
     def test_search(self, client, podcast, faker):
         EpisodeFactory.create_batch(3, podcast=podcast)
 

@@ -142,6 +142,7 @@ def episodes(
 ) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
+
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
     episodes = podcast.episode_set.select_related("podcast")

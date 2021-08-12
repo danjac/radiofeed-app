@@ -22,16 +22,22 @@ def index(request: HttpRequest) -> HttpResponse:
         .order_by("-updated")
     )
 
+    newest_first = request.GET.get("ordering", "desc") == "desc"
+
     if request.search:
         logs = logs.search(request.search).order_by("-rank", "-updated")
     else:
-        logs = logs.order_by("-updated")
+        logs = logs.order_by("-updated" if newest_first else "updated")
 
     return render_paginated_response(
         request,
         logs,
         "episodes/history.html",
         "episodes/_history.html",
+        {
+            "newest_first": newest_first,
+            "oldest_first": not (newest_first),
+        },
     )
 
 
