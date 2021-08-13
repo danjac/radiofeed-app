@@ -23,8 +23,7 @@ from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
     parse_feed,
-    parse_frequent_feeds,
-    parse_sporadic_feeds,
+    parse_scheduled_feeds,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -51,28 +50,24 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError()
 
 
-class TestParseFrequentFeeds:
+class TestParseScheduledFeeds:
     @pytest.mark.parametrize(
-        "force_update,active,scheduled,last_pub,limit,result",
+        "force_update,active,scheduled,limit,result",
         [
-            (False, True, timedelta(hours=-1), timedelta(days=30), 1000, 1),
-            (False, True, timedelta(hours=-1), timedelta(days=30), None, 1),
-            (False, True, timedelta(hours=1), timedelta(days=30), 1000, 0),
-            (True, True, timedelta(hours=1), timedelta(days=30), 1000, 1),
-            (False, False, timedelta(hours=-1), timedelta(days=30), 1000, 0),
-            (False, False, None, timedelta(days=30), 1000, 0),
-            (False, True, timedelta(hours=-1), timedelta(days=99), 1000, 0),
-            (True, True, timedelta(hours=-1), timedelta(days=99), 1000, 0),
+            (False, True, timedelta(hours=-1), 1000, 1),
+            (False, True, timedelta(hours=-1), None, 1),
+            (False, True, timedelta(hours=1), 1000, 0),
+            (True, True, timedelta(hours=1), 1000, 1),
+            (False, False, None, 1000, 0),
         ],
     )
-    def test_parse_frequent_feeds(
+    def test_parse_scheduled_feeds(
         self,
         db,
         mocker,
         force_update,
         active,
         scheduled,
-        last_pub,
         limit,
         result,
     ):
@@ -83,45 +78,8 @@ class TestParseFrequentFeeds:
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
-            pub_date=now - last_pub if last_pub else None,
         )
-        assert parse_frequent_feeds(force_update=force_update, limit=limit) == result
-
-        if result:
-            mock_parse_feed.assert_called()
-        else:
-            mock_parse_feed.assert_not_called()
-
-
-class TestParseSporadicFeeds:
-    @pytest.mark.parametrize(
-        "active,last_pub,updated,limit,result",
-        [
-            (True, timedelta(days=105), timedelta(days=105), 1000, 1),
-            (True, timedelta(days=105), timedelta(days=0), 1000, 0),
-            (True, timedelta(days=99), timedelta(days=105), 1000, 0),
-            (True, timedelta(days=30), timedelta(days=105), 1000, 0),
-            (False, timedelta(days=99), timedelta(days=105), 1000, 0),
-            (True, None, timedelta(days=105), 1000, 0),
-        ],
-    )
-    def test_parse_sporadic_feeds(
-        self, db, mocker, active, last_pub, updated, limit, result
-    ):
-        mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
-
-        now = timezone.now()
-        pub_date = now - last_pub if last_pub else None
-        updated = now - updated if updated else now
-
-        podcast = PodcastFactory(
-            active=active,
-            pub_date=pub_date,
-        )
-
-        Podcast.objects.filter(pk=podcast.id).update(updated=updated)
-
-        assert parse_sporadic_feeds(limit=limit) == result
+        assert parse_scheduled_feeds(force_update=force_update, limit=limit) == result
 
         if result:
             mock_parse_feed.assert_called()

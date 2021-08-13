@@ -201,12 +201,12 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_frequent_feeds(
+def parse_scheduled_feeds(
     *, force_update: bool = False, limit: int | None = None
 ) -> int:
     counter = 0
     qs = (
-        Podcast.objects.frequent()
+        Podcast.objects.filter(scheduled__isnull=False)
         .order_by("scheduled", "-pub_date")
         .values_list("rss", flat=True)
     )
@@ -287,7 +287,10 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         # no change, ignore
         return parse_failure(podcast, status=response.status_code)
 
-    if response.url != podcast.rss and Podcast.objects.filter(rss=response.url).exists():
+    if (
+        response.url != podcast.rss
+        and Podcast.objects.filter(rss=response.url).exists()
+    ):
         # permanent redirect to URL already taken by another podcast
         return parse_failure(podcast, status=response.status_code, active=False)
 

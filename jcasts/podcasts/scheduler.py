@@ -19,7 +19,9 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     if reset:
         Podcast.objects.update(scheduled=None)
 
-    qs = Podcast.objects.frequent().filter(scheduled__isnull=True).order_by("-pub_date")
+    qs = Podcast.objects.filter(
+        scheduled__isnull=True, active=True, pub_date__isnull=False
+    ).order_by("-pub_date")
 
     for_update = []
 
@@ -75,21 +77,34 @@ def schedule(
     if not podcast.active or podcast.pub_date is None:
         return None
 
-    if (frequency := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
-        return None
-
-    # minimum 1 hour
-    min_delta = timedelta(hours=1)
-
     now = timezone.now()
 
-    frequency = max(frequency, min_delta)
+    # minimum 1 hour
+    min_freq = timedelta(hours=1)
+
+    # maximum 7 days
+    max_freq = timedelta(days=7)
+
+    if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
+        # past threshold:
+        # start 7 days from now, add (current weekday) days, set last hour/minute
+        # e.g today is monday (iso 1, pub date is wed iso 3) : total +9 days
+        return (
+            now
+            + max_freq
+            + timedelta(days=abs(now.isoweekday() - podcast.pub_date.isoweekday()))
+        ).replace(
+            hour=podcast.pub_date.hour,
+            minute=podcast.pub_date.minute,
+        )
+
+    freq = min(max(freq, min_freq), max_freq)
 
     # will go out in future, should be ok
-    if (scheduled := podcast.pub_date + frequency) > now:
+    if (scheduled := podcast.pub_date + freq) > now:
         return scheduled
 
-    # add 5% of frequency to current time (min 1 hour)
+    # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    return now + max(timedelta(seconds=frequency.total_seconds() * 0.05), min_delta)
+    return now + max(timedelta(seconds=freq.total_seconds() * 0.05), min_freq)
