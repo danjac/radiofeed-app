@@ -42,15 +42,15 @@
 
 
           <div class="mb-3 flex items-center justify-center sm:justify-start">
-            <form action="{% url 'episodes:search_episodes' %}"
+            <form action="{% url 'podcasts:search_podcasts' %}"
                   method="get"
                   class="relative bg-transparent">
               <input type="search"
                      name="q"
                      accesskey="k"
                      autocomplete="off"
-                     aria-label="Search podcasts"
-                     placeholder="Find an episode or podcast..."
+                     aria-label="Search"
+                     placeholder="Find a podcast..."
                      class="px-4 py-1 focus:outline-none rounded focus:ring w-72 placeholder-opacity-100 text-gray-900 text-sm">
               <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                 <button type="submit"
