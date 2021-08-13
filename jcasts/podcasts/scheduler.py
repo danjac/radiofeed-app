@@ -89,8 +89,8 @@ def schedule(
     if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
         # past threshold: random 7-14 days
         return (now + max_freq + timedelta(days=secrets.choice(range(0, 8)))).replace(
-            hour=secrets.choice(range(0, 25)),
-            minute=secrets.choice(range(0, 61)),
+            hour=secrets.choice(range(0, 24)),
+            minute=secrets.choice(range(0, 60)),
         )
 
     freq = min(max(freq, min_freq), max_freq)
