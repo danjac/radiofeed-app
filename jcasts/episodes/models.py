@@ -154,14 +154,14 @@ class Episode(models.Model):
 
     def get_next_episode(self) -> Episode | None:
 
-        return self._default_manager.filter(
+        return self.__class__._default_manager.filter(
             podcast=self.podcast,
             pub_date__gt=self.pub_date,
         ).order_by('pub_date').first()
 
     def get_previous_episode(self) -> Episode | None:
 
-        return self._default_manager.filter(
+        return self.__class__._default_manager.filter(
             podcast=self.podcast,
             pub_date__lt=self.pub_date,
         ).order_by('-pub_date').first()
