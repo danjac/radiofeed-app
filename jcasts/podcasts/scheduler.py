@@ -14,6 +14,7 @@ from jcasts.podcasts.models import Podcast
 MIN_FREQ = timedelta(hours=1)
 MAX_FREQ = timedelta(days=7)
 
+DAYS = range(0, 8)
 HOURS = range(0, 24)
 MINUTES = range(0, 60)
 
@@ -72,8 +73,9 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
     )
 
 
-def random_schedule(delta: timedelta) -> datetime:
-    return (timezone.now() + delta).replace(
+def random_schedule() -> datetime:
+    # randomly schedule time 7-14 days from now
+    return (timezone.now() + MAX_FREQ + timedelta(days=secrets.choice(DAYS))).replace(
         hour=secrets.choice(HOURS),
         minute=secrets.choice(MINUTES),
     )
@@ -86,8 +88,8 @@ def schedule(
     """Returns next scheduled feed sync time.
     Will calculate based on list of provided pub dates or most recent episodes.
 
-    Returns None if podcast inactive or has no pub dates. Minimum scheduled time
-    otherwise will be 1 hour from now.
+    Returns None if podcast inactive. If no pub dates returns a randomized time.
+    Minimum scheduled time otherwise will be 1 hour from now.
     """
     if not podcast.active or podcast.pub_date is None:
         return None
@@ -95,8 +97,7 @@ def schedule(
     now = timezone.now()
 
     if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
-        # past threshold: random 7-14 days
-        return random_schedule(MAX_FREQ + timedelta(days=secrets.choice(range(0, 8))))
+        return random_schedule()
 
     # will go out in future, should be ok
     if (scheduled := podcast.pub_date + freq) > now:
