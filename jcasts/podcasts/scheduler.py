@@ -81,6 +81,15 @@ def random_schedule() -> datetime:
     )
 
 
+def increment(base: timedelta, value: float = 0.05) -> datetime:
+    # add 5% of freq to current time (min 1 hour)
+    # e.g. 7 days - try again in about 8 hours
+
+    return timezone.now() + max(
+        timedelta(seconds=base.total_seconds() * value), MIN_FREQ
+    )
+
+
 def schedule(
     podcast: Podcast,
     pub_dates: list[datetime] | None = None,
@@ -88,7 +97,6 @@ def schedule(
     """Returns next scheduled feed sync time.
     Will calculate based on list of provided pub dates or most recent episodes.
 
-    Returns None if podcast inactive. If no pub dates returns a randomized time.
     Minimum scheduled time otherwise will be 1 hour from now.
     """
     if not podcast.active or podcast.pub_date is None:
@@ -96,14 +104,12 @@ def schedule(
 
     now = timezone.now()
 
+    # if no pub dates, just use last podcast pub date
     if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
-        return random_schedule()
+        return increment(now - podcast.pub_date)
 
     # will go out in future, should be ok
     if (scheduled := podcast.pub_date + freq) > now:
         return scheduled
 
-    # add 5% of freq to current time (min 1 hour)
-    # e.g. 7 days - try again in about 8 hours
-
-    return now + max(timedelta(seconds=freq.total_seconds() * 0.05), MIN_FREQ)
+    return increment(freq)

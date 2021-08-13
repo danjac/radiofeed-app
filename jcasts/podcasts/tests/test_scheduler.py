@@ -119,7 +119,7 @@ class TestSchedule:
             [],
         )
 
-        assert (scheduled - now).days in range(7, 14)
+        assert (scheduled - now).days == 6
 
     def test_schedule_frequency_zero(self, podcast):
         now = timezone.now()
@@ -153,16 +153,17 @@ class TestSchedule:
         scheduled = scheduler.schedule(podcast)
         assert round((scheduled - now).total_seconds() / 3600) == 48
 
-    def test_schedule_from_episodes_over_threshold(self, podcast):
+    def test_schedule_from_episodes_over_threshold(self, db):
         now = timezone.now()
+        podcast = PodcastFactory(pub_date=now - timedelta(days=100))
 
         [
             EpisodeFactory(podcast=podcast, pub_date=pub_date)
             for pub_date in self.get_pub_dates(100, 120, 180)
         ]
+
         scheduled = scheduler.schedule(podcast)
-        # max 7 days
-        assert (scheduled - now).days in range(7, 14)
+        assert (scheduled - now).days == 5
 
     def get_pub_dates(self, *days):
         now = timezone.now()
