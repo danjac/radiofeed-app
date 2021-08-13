@@ -162,7 +162,7 @@ class TestSchedule:
         ]
         scheduled = scheduler.schedule(podcast)
         # max 7 days
-        assert (scheduled - now).days == 7
+        assert (scheduled - now).days in range(7, 14)
 
     def get_pub_dates(self, *days):
         now = timezone.now()

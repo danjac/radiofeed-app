@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -86,16 +87,10 @@ def schedule(
     max_freq = timedelta(days=7)
 
     if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
-        # past threshold:
-        # start 7 days from now, add (current weekday) days, set last hour/minute
-        # e.g today is monday (iso 1, pub date is wed iso 3) : total +9 days
-        return (
-            now
-            + max_freq
-            + timedelta(days=abs(now.isoweekday() - podcast.pub_date.isoweekday()))
-        ).replace(
-            hour=podcast.pub_date.hour,
-            minute=podcast.pub_date.minute,
+        # past threshold: random 7-14 days
+        return (now + max_freq + timedelta(days=secrets.choice(range(0, 8)))).replace(
+            hour=secrets.choice(range(0, 25)),
+            minute=secrets.choice(range(0, 61)),
         )
 
     freq = min(max(freq, min_freq), max_freq)
