@@ -153,17 +153,19 @@ class Episode(models.Model):
         return self.cover_url or self.podcast.cover_url
 
     def get_next_episode(self) -> Episode | None:
-        try:
-            return self.get_next_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
+
+        return self._default_manager.filter(
+            podcast=self.podcast,
+            pub_date__gt=self.pub_date,
+        ).order_by('pub_date').first()
 
     def get_previous_episode(self) -> Episode | None:
-        try:
-            return self.get_previous_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
 
+        return self._default_manager.filter(
+            podcast=self.podcast,
+            pub_date__lt=self.pub_date,
+        ).order_by('-pub_date').first()
+        
     def is_queued(self, user: AnyUser) -> bool:
         if user.is_anonymous:
             return False
