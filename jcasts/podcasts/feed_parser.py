@@ -12,6 +12,7 @@ from typing import Optional
 import feedparser
 import requests
 
+from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -255,6 +256,7 @@ def parse_sporadic_feeds(
 
 
 @job("feeds")
+@transaction.atomic
 def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
     try:
 
@@ -285,9 +287,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         # no change, ignore
         return parse_failure(podcast, status=response.status_code)
 
-    is_changed, exists = resolve_podcast_rss(podcast, response)
-
-    if is_changed and exists:
+    if response.url != podcast.rss and Podcast.objects.filter(rss=response.url).exists():
         # permanent redirect to URL already taken by another podcast
         return parse_failure(podcast, status=response.status_code, active=False)
 
@@ -453,26 +453,6 @@ def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, 
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
-
-
-def resolve_podcast_rss(
-    podcast: Podcast, response: requests.Response
-) -> tuple[bool, bool]:
-
-    if (
-        response.status_code
-        in (
-            http.HTTPStatus.MOVED_PERMANENTLY,
-            http.HTTPStatus.PERMANENT_REDIRECT,
-        )
-        and response.url != podcast.rss
-    ):
-        return (
-            True,
-            Podcast.objects.filter(rss=response.url).exists(),
-        )
-
-    return False, False
 
 
 def parse_failure(
