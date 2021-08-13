@@ -11,6 +11,12 @@ from django.utils import timezone
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
+MIN_FREQ = timedelta(hours=1)
+MAX_FREQ = timedelta(days=7)
+
+HOURS = range(0, 24)
+MINUTES = range(0, 60)
+
 
 def schedule_podcast_feeds(reset: bool = False) -> int:
     """Sets podcast feed scheduled times. This can be run once to set
@@ -52,7 +58,8 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
         diffs.append((head - pub_date).total_seconds())
         head = pub_date
 
-    return timedelta(seconds=round(statistics.mean(diffs)))
+    freq = timedelta(seconds=round(statistics.mean(diffs)))
+    return min(max(freq, MIN_FREQ), MAX_FREQ)
 
 
 def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
@@ -62,6 +69,13 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
         )
         .values_list("pub_date", flat=True)
         .order_by("-pub_date")
+    )
+
+
+def random_schedule(delta: timedelta) -> datetime:
+    return (timezone.now() + delta).replace(
+        hour=secrets.choice(HOURS),
+        minute=secrets.choice(MINUTES),
     )
 
 
@@ -80,20 +94,9 @@ def schedule(
 
     now = timezone.now()
 
-    # minimum 1 hour
-    min_freq = timedelta(hours=1)
-
-    # maximum 7 days
-    max_freq = timedelta(days=7)
-
     if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
         # past threshold: random 7-14 days
-        return (now + max_freq + timedelta(days=secrets.choice(range(0, 8)))).replace(
-            hour=secrets.choice(range(0, 24)),
-            minute=secrets.choice(range(0, 60)),
-        )
-
-    freq = min(max(freq, min_freq), max_freq)
+        return random_schedule(MAX_FREQ + timedelta(days=secrets.choice(range(0, 8))))
 
     # will go out in future, should be ok
     if (scheduled := podcast.pub_date + freq) > now:
@@ -102,4 +105,4 @@ def schedule(
     # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    return now + max(timedelta(seconds=freq.total_seconds() * 0.05), min_freq)
+    return now + max(timedelta(seconds=freq.total_seconds() * 0.05), MIN_FREQ)
