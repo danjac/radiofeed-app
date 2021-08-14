@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -70,14 +69,6 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
         )
         .values_list("pub_date", flat=True)
         .order_by("-pub_date")
-    )
-
-
-def random_schedule() -> datetime:
-    # randomly schedule time 7-14 days from now
-    return (timezone.now() + MAX_FREQ + timedelta(days=secrets.choice(DAYS))).replace(
-        hour=secrets.choice(HOURS),
-        minute=secrets.choice(MINUTES),
     )
 
 
