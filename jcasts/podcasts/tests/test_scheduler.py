@@ -27,21 +27,6 @@ class TestGetFrequency:
 
         assert scheduler.get_frequency(dates).days == 7
 
-    def test_get_frequency_single_date(self):
-
-        assert (
-            round(
-                scheduler.get_frequency(
-                    [
-                        timezone.now() - timedelta(days=5, hours=12),
-                    ],
-                    min_pub_dates=1,
-                ).total_seconds()
-                / 3600
-            )
-            == 1
-        )
-
     def test_get_frequency_insufficient_dates(self):
 
         assert (
@@ -49,7 +34,6 @@ class TestGetFrequency:
                 [
                     timezone.now() - timedelta(days=5, hours=12),
                 ],
-                min_pub_dates=2,
             )
             is None
         )
@@ -60,7 +44,7 @@ class TestGetFrequency:
 
         dts = [pytz.timezone("Europe/Helsinki").normalize(dt) for dt in dts]
 
-        assert scheduler.get_frequency(dts, min_pub_dates=1).days == 3
+        assert scheduler.get_frequency(dts).days == 5
 
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
@@ -162,7 +146,7 @@ class TestSchedule:
         scheduled = scheduler.schedule(
             PodcastFactory(), self.get_pub_dates(3, 6, 9, 12, 15, 18)
         )
-        assert (scheduled - now).days == 2
+        assert (scheduled - now).days == 3
 
     def test_schedule_from_episodes(self, podcast):
         now = timezone.now()
@@ -172,7 +156,7 @@ class TestSchedule:
             for pub_date in self.get_pub_dates(3, 6, 9, 12, 15, 18)
         ]
         scheduled = scheduler.schedule(podcast)
-        assert round((scheduled - now).total_seconds() / 3600) == 60
+        assert round((scheduled - now).total_seconds() / 3600) == 72
 
     def test_schedule_from_episodes_over_threshold(self, db):
         now = timezone.now()

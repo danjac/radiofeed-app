@@ -37,30 +37,34 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
     return len(for_update)
 
 
-def get_frequency(
-    pub_dates: list[datetime], min_pub_dates: int = 3
-) -> timedelta | None:
+def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     """Calculates frequency given set of pub dates. If no available dates within range,
     returns None.
     """
-    min_date = timezone.now() - settings.RELEVANCY_THRESHOLD
+    now = timezone.now()
+
+    min_date = now - settings.RELEVANCY_THRESHOLD
 
     pub_dates = [
         pub_date for pub_date in sorted(pub_dates, reverse=True) if pub_date > min_date
     ]
 
-    if len(pub_dates) < min_pub_dates:
+    # we need at least 3 dates for meaningful comparison
+
+    if len(pub_dates) < 3:
         return None
 
     (head, *tail) = pub_dates
 
     diffs = []
 
-    for pub_date in pub_dates:
+    for pub_date in tail:
         diffs.append((head - pub_date).total_seconds())
         head = pub_date
 
     freq = timedelta(seconds=round(statistics.mean(diffs)))
+
+    # min 1 hour, max 7 days
     return min(max(freq, MIN_FREQ), MAX_FREQ)
 
 
