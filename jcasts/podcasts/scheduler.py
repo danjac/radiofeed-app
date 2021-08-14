@@ -50,8 +50,7 @@ def get_frequency(
     if len(pub_dates) < min_pub_dates:
         return None
 
-    # if single date, start with time since that date
-    (head, *tail) = pub_dates if len(pub_dates) > 1 else (timezone.now(), pub_dates[0])
+    (head, *tail) = pub_dates
 
     diffs = []
 

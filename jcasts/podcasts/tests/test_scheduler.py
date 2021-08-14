@@ -30,13 +30,16 @@ class TestGetFrequency:
     def test_get_frequency_single_date(self):
 
         assert (
-            scheduler.get_frequency(
-                [
-                    timezone.now() - timedelta(days=5, hours=12),
-                ],
-                min_pub_dates=1,
-            ).days
-            == 5
+            round(
+                scheduler.get_frequency(
+                    [
+                        timezone.now() - timedelta(days=5, hours=12),
+                    ],
+                    min_pub_dates=1,
+                ).total_seconds()
+                / 3600
+            )
+            == 1
         )
 
     def test_get_frequency_insufficient_dates(self):
@@ -52,11 +55,12 @@ class TestGetFrequency:
         )
 
     def test_get_frequency_not_utc(self):
+        now = timezone.now()
+        dts = [now - timedelta(days=i * 5, hours=12) for i in range(3)]
 
-        dt = timezone.now() - timedelta(days=5, hours=12)
-        dt = pytz.timezone("Europe/Helsinki").normalize(dt)
+        dts = [pytz.timezone("Europe/Helsinki").normalize(dt) for dt in dts]
 
-        assert scheduler.get_frequency([dt], min_pub_dates=1).days == 5
+        assert scheduler.get_frequency(dts, min_pub_dates=1).days == 3
 
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
