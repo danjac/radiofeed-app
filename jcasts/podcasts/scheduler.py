@@ -10,9 +10,6 @@ from django.utils import timezone
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
-# minimum number of dates required to accurately predict frequency
-DEFAULT_MIN_PUB_DATES = 3
-
 MIN_FREQ = timedelta(hours=1)
 MAX_FREQ = timedelta(days=7)
 
@@ -41,7 +38,7 @@ def schedule_podcast_feeds(reset: bool = False) -> int:
 
 
 def get_frequency(
-    pub_dates: list[datetime], min_pub_dates: int = DEFAULT_MIN_PUB_DATES
+    pub_dates: list[datetime], min_pub_dates: int = 3
 ) -> timedelta | None:
     max_date = timezone.now() - settings.RELEVANCY_THRESHOLD
     pub_dates = [
