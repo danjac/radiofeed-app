@@ -6,9 +6,7 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 Local development requires docker and docker-compose. Just run:
 
-> make build
-> make install
-> make run
+> make build && make install && make run
 
 To update podcast data and download episodes from their RSS feeds:
 
