@@ -74,15 +74,6 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
     )
 
 
-def increment(base: timedelta, value: float = 0.05) -> datetime:
-    # add 5% of freq to current time (min 1 hour)
-    # e.g. 7 days - try again in about 8 hours
-
-    return timezone.now() + max(
-        timedelta(seconds=base.total_seconds() * value), MIN_FREQ
-    )
-
-
 def schedule(
     podcast: Podcast,
     pub_dates: list[datetime] | None = None,
@@ -95,12 +86,17 @@ def schedule(
 
     now = timezone.now()
 
-    # if no pub dates, just use last podcast pub date
-    if (freq := get_frequency(pub_dates or get_recent_pub_dates(podcast))) is None:
-        return increment(now - podcast.pub_date)
+    freq = (
+        get_frequency(pub_dates or get_recent_pub_dates(podcast))
+        or now - podcast.pub_date
+    )
 
-    # will go out in future, should be ok
     if (scheduled := podcast.pub_date + freq) > now:
         return scheduled
 
-    return increment(freq)
+    # add 5% of freq to current time (min 1 hour)
+    # e.g. 7 days - try again in about 8 hours
+
+    return timezone.now() + max(
+        timedelta(seconds=freq.total_seconds() * 0.05), MIN_FREQ
+    )
