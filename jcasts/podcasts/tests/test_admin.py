@@ -40,14 +40,18 @@ class TestPodcastAdmin:
         assert admin.frequency(podcasts[0]) == "-"
 
     def test_frequency_hours(self, podcasts, admin):
-        EpisodeFactory(
-            podcast=podcasts[0], pub_date=timezone.now() - timedelta(hours=7)
-        )
-        assert admin.frequency(podcasts[0]) == "7 hours"
+        for i in range(7):
+            EpisodeFactory(
+                podcast=podcasts[0], pub_date=timezone.now() - timedelta(hours=i)
+            )
+        assert admin.frequency(podcasts[0]) == "1 hour"
 
     def test_frequency_days(self, podcasts, admin):
-        EpisodeFactory(podcast=podcasts[0], pub_date=timezone.now() - timedelta(days=7))
-        assert admin.frequency(podcasts[0]) == "7 days"
+        for i in range(7):
+            EpisodeFactory(
+                podcast=podcasts[0], pub_date=timezone.now() - timedelta(days=7 * i)
+            )
+        assert admin.frequency(podcasts[0]) == "6 days"
 
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")

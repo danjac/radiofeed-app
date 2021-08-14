@@ -21,9 +21,11 @@ class TestGetFrequency:
             now - timedelta(days=12, hours=12),
             now - timedelta(days=15, hours=12),
             now - timedelta(days=30, hours=12),
+            now - timedelta(days=45, hours=12),
+            now - timedelta(days=60, hours=12),
         ]
 
-        assert scheduler.get_frequency(dates).days == 6
+        assert scheduler.get_frequency(dates).days == 7
 
     def test_get_frequency_single_date(self):
 
@@ -31,9 +33,22 @@ class TestGetFrequency:
             scheduler.get_frequency(
                 [
                     timezone.now() - timedelta(days=5, hours=12),
-                ]
+                ],
+                min_pub_dates=1,
             ).days
             == 5
+        )
+
+    def test_get_frequency_insufficient_dates(self):
+
+        assert (
+            scheduler.get_frequency(
+                [
+                    timezone.now() - timedelta(days=5, hours=12),
+                ],
+                min_pub_dates=2,
+            )
+            is None
         )
 
     def test_get_frequency_not_utc(self):
@@ -41,7 +56,7 @@ class TestGetFrequency:
         dt = timezone.now() - timedelta(days=5, hours=12)
         dt = pytz.timezone("Europe/Helsinki").normalize(dt)
 
-        assert scheduler.get_frequency([dt]).days == 5
+        assert scheduler.get_frequency([dt], min_pub_dates=1).days == 5
 
     def test_get_frequency_if_empty(self):
         assert scheduler.get_frequency([]) is None
@@ -140,7 +155,9 @@ class TestSchedule:
 
     def test_schedule_lt_now(self, db):
         now = timezone.now()
-        scheduled = scheduler.schedule(PodcastFactory(), self.get_pub_dates(3, 6, 9))
+        scheduled = scheduler.schedule(
+            PodcastFactory(), self.get_pub_dates(3, 6, 9, 12, 15, 18)
+        )
         assert (scheduled - now).days == 2
 
     def test_schedule_from_episodes(self, podcast):
@@ -148,10 +165,10 @@ class TestSchedule:
 
         [
             EpisodeFactory(podcast=podcast, pub_date=pub_date)
-            for pub_date in self.get_pub_dates(3, 6, 9)
+            for pub_date in self.get_pub_dates(3, 6, 9, 12, 15, 18)
         ]
         scheduled = scheduler.schedule(podcast)
-        assert round((scheduled - now).total_seconds() / 3600) == 48
+        assert round((scheduled - now).total_seconds() / 3600) == 60
 
     def test_schedule_from_episodes_over_threshold(self, db):
         now = timezone.now()
