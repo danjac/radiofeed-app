@@ -10,6 +10,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--force-update",
             action="store_true",
+            help="Update all feeds (including unscheduled)",
         )
         parser.add_argument(
             "--limit",
@@ -19,7 +20,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        num_feeds = feed_parser.parse_scheduled_feeds(
+        num_feeds = feed_parser.parse_podcast_feeds(
             force_update=options["force_update"], limit=options["limit"]
         )
         self.stdout.write(self.style.SUCCESS(f"{num_feeds} feed(s) to be pulled"))

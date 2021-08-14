@@ -201,12 +201,10 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def parse_scheduled_feeds(
-    *, force_update: bool = False, limit: int | None = None
-) -> int:
+def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
     counter = 0
     qs = (
-        Podcast.objects.filter(scheduled__isnull=False)
+        Podcast.objects.filter(active=True)
         .order_by("scheduled", "-pub_date")
         .values_list("rss", flat=True)
     )
@@ -217,35 +215,6 @@ def parse_scheduled_feeds(
             scheduled__lte=timezone.now(),
         )
 
-    if limit:
-        qs = qs[:limit]
-
-    for counter, rss in enumerate(qs.iterator(), 1):
-        parse_feed.delay(rss, force_update=force_update)
-
-    return counter
-
-
-def parse_sporadic_feeds(
-    *, force_update: bool = False, limit: int | None = None
-) -> int:
-    counter = 0
-
-    now = timezone.now()
-
-    qs = (
-        Podcast.objects.sporadic()
-        .filter(
-            pub_date__iso_week_day=now.isoweekday(),
-        )
-        .exclude(
-            updated__day=now.day,
-            updated__month=now.month,
-            updated__year=now.year,
-        )
-        .order_by("-pub_date")
-        .values_list("rss", flat=True)
-    )
     if limit:
         qs = qs[:limit]
 

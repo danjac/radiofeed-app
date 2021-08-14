@@ -6,15 +6,13 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 Local development requires docker and docker-compose. Just run:
 
-> docker-compose up --build
-
-Next load the categories and sample podcasts into the database:
-
-> ./bin/manage seed_podcast_data
+> make build
+> make install
+> make run
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./bin/manage sync_podcast_feeds
+> ./bin/manage parse_podcast_feeds --force-update
 
 You can then generate podcast recommendations with this command:
 
