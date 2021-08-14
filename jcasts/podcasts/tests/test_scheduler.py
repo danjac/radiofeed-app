@@ -55,7 +55,7 @@ class TestSchedulePodcastFeeds:
         "is_scheduled,last_pub,freq,active,result,num_scheduled",
         [
             (False, timedelta(days=30), timedelta(days=7), True, 1, 1),
-            (True, timedelta(days=30), timedelta(days=7), True, 0, 1),
+            (True, timedelta(days=30), timedelta(days=7), True, 1, 1),
             (False, timedelta(days=30), None, True, 1, 1),
             (False, timedelta(days=99), timedelta(days=7), True, 1, 1),
             (False, None, timedelta(days=7), True, 0, 0),
@@ -77,25 +77,6 @@ class TestSchedulePodcastFeeds:
 
         assert scheduler.schedule_podcast_feeds() == result
         assert Podcast.objects.filter(scheduled__isnull=False).count() == num_scheduled
-
-    def test_schedule_reset(self, db):
-        now = timezone.now()
-
-        podcast = PodcastFactory(
-            scheduled=now - timedelta(days=10),
-            pub_date=now - timedelta(days=30),
-            active=True,
-        )
-
-        EpisodeFactory(podcast=podcast, pub_date=timezone.now() - timedelta(days=3))
-
-        scheduled = podcast.scheduled
-
-        assert scheduler.schedule_podcast_feeds(reset=True) == 1
-        assert Podcast.objects.filter(scheduled__isnull=False).count() == 1
-
-        podcast.refresh_from_db()
-        assert podcast.scheduled > scheduled
 
 
 class TestSchedule:
