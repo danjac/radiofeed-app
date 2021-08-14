@@ -11,7 +11,7 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
 # minimum number of dates required to accurately predict frequency
-DEFAULT_MIN_PUB_DATES = 6
+DEFAULT_MIN_PUB_DATES = 3
 
 MIN_FREQ = timedelta(hours=1)
 MAX_FREQ = timedelta(days=7)
