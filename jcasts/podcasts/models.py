@@ -75,11 +75,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
 
-    def sporadic(self) -> models.QuerySet:
-        return self.active().filter(
-            pub_date__lt=timezone.now() - settings.RELEVANCY_THRESHOLD,
-        )
-
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
