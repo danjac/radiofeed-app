@@ -14,17 +14,15 @@ MIN_FREQ = timedelta(hours=1)
 MAX_FREQ = timedelta(days=7)
 
 
-def schedule_podcast_feeds(reset: bool = False) -> int:
+def schedule_podcast_feeds() -> int:
     """Sets podcast feed scheduled times. This can be run once to set
     initial scheduling, afterwards should be calibrated automatically after fresh
     pull attempts.
     """
-    if reset:
-        Podcast.objects.update(scheduled=None)
 
-    qs = Podcast.objects.filter(
-        scheduled__isnull=True, active=True, pub_date__isnull=False
-    ).order_by("-pub_date")
+    qs = Podcast.objects.filter(active=True, pub_date__isnull=False).order_by(
+        "-pub_date"
+    )
 
     for_update = []
 
