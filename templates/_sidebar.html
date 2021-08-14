@@ -27,7 +27,7 @@
       <li>
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
-           accesskey="2"
+           accesskey="p"
            title="Podcasts"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -38,7 +38,7 @@
       <li>
         {% active_link 'episodes:index' as link %}
         <a href="{{ link.url }}"
-           accesskey="1"
+           accesskey="n"
            title="New Releases"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -49,7 +49,7 @@
       <li>
         {% active_link 'podcasts:categories' as link %}
         <a href="{{ link.url }}"
-           accesskey="3"
+           accesskey="d"
            title="Discover"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -61,7 +61,7 @@
       <li>
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
-           accesskey="4"
+           accesskey="q"
            title="Play Queue"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -73,7 +73,7 @@
       <li>
         {% active_link 'episodes:favorites' as link %}
         <a href="{{ link.url }}"
-           accesskey="5"
+           accesskey="f"
            title="Favorites"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -85,7 +85,7 @@
       <li>
         {% active_link 'episodes:history' as link %}
         <a href="{{ link.url }}"
-           accesskey="6"
+           accesskey="h"
            title="History"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} sidebar--active{% endif %}">
@@ -97,7 +97,7 @@
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
-           accesskey="7"
+           accesskey="s"
            title="Settings"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -108,7 +108,7 @@
       <li>
         {% re_active_link 'about:credits' '/about/*' as link %}
         <a href="{{ link.url }}"
-           accesskey="8"
+           accesskey="a"
            title="About"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
@@ -125,7 +125,7 @@
               action="{% url 'account_logout' %}"
               method="post">
           {% csrf_token %}
-          <button accesskey="9"
+          <button accesskey="l"
                   title="Logout"
                   @click="$dispatch('close-sidebar')"
                   class="flex items-center link">
@@ -150,19 +150,19 @@
       <li>
         {% active_link 'account_signup' as link %}
         <a href="{{ request.get_full_path|signup_url }}"
-           accesskey="s"
+           accesskey="j"
            title="Join {{ request.site.name }}"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
           {% icon "user_add" css_class="h-5 w-5 mr-3" %}
-          Signup
+          Join
         </a>
       </li>
 
       <li>
         {% re_active_link 'about:credits' '/about/*' as link %}
         <a href="{{ link.url }}"
-           accesskey="8"
+           accesskey="a"
            title="About"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} sidebar--active{% endif %}">
