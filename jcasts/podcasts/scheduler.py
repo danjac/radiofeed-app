@@ -89,8 +89,6 @@ def schedule(
 ) -> datetime | None:
     """Returns next scheduled feed sync time.
     Will calculate based on list of provided pub dates or most recent episodes.
-
-    Minimum scheduled time otherwise will be 1 hour from now.
     """
     if not podcast.active or podcast.pub_date is None:
         return None
