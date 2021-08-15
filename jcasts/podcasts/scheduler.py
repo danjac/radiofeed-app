@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -97,9 +96,4 @@ def schedule(
     # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    # add some randomization (+3 hours) so we don't have a ton at the same time
-
-    return now + timedelta(
-        seconds=((now - podcast.pub_date).total_seconds() * 0.05)
-        + secrets.choice(range(0, 3600 * 3)),
-    )
+    return now + timedelta(seconds=((now - podcast.pub_date).total_seconds() * 0.05))
