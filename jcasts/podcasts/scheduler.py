@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 import statistics
 
 from datetime import datetime, timedelta
@@ -76,6 +77,20 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
     )
 
 
+def randomize(scheduled: datetime) -> datetime:
+    """Adds some semi-randomization to scheduled time > 8 hours, so we don't
+    start with 1000s of podcasts having the same scheduled time. Range will
+    be +/- 0-3 hours."""
+
+    if (scheduled - timezone.now()).total_seconds() > (8 * 3600):
+
+        return scheduled + timedelta(
+            hours=secrets.choice(range(-2, 3)), minutes=secrets.choice(range(-60, 61))
+        )
+
+    return scheduled
+
+
 def schedule(
     podcast: Podcast,
     pub_dates: list[datetime] | None = None,
@@ -94,9 +109,11 @@ def schedule(
     )
 
     if (scheduled := podcast.pub_date + freq) > now:
-        return scheduled
+        return randomize(scheduled)
 
     # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    return now + max(timedelta(seconds=freq.total_seconds() * 0.05), MIN_FREQ)
+    return randomize(
+        now + max(timedelta(seconds=freq.total_seconds() * 0.05), MIN_FREQ)
+    )
