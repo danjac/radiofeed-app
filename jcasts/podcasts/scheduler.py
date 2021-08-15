@@ -104,7 +104,8 @@ def schedule(
         minute=podcast.pub_date.minute,
     )
 
-    if (scheduled - now) < MIN_FREQ:
+    # must be at least 1 hour ahead
+    while (scheduled - now) < MIN_FREQ:
         scheduled += MIN_FREQ
 
     return scheduled
