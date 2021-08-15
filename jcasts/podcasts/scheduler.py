@@ -96,6 +96,6 @@ def schedule(
     # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
 
-    diff = max(now - podcast.pub_date, MIN_FREQ)
+    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
 
-    return now + timedelta(seconds=(diff.total_seconds() * 0.05))
+    return now + max(diff, MIN_FREQ)
