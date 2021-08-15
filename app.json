@@ -7,19 +7,19 @@
   "cron": [
     {
       "command": "python manage.py parse_podcast_feeds",
-      "schedule": "0,30 * * * *"
+      "schedule": "0/15 * * * *"
     },
     {
       "command": "python manage.py send_recommendation_emails",
-      "schedule": "15 9 * * 1"
+      "schedule": "12 9 * * 1"
     },
     {
       "command": "python manage.py make_recommendations",
-      "schedule": "15 6,12 * * *"
+      "schedule": "20 6,12 * * *"
     },
     {
       "command": "python manage.py clearsessions",
-      "schedule": "15 1 * * *"
+      "schedule": "35 1 * * *"
     }
   ]
 }
