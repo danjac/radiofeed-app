@@ -89,12 +89,9 @@ def schedule(
 
     now = timezone.now()
 
-    freq = (
-        get_frequency(pub_dates or get_recent_pub_dates(podcast))
-        or now - podcast.pub_date
-    )
+    freq = get_frequency(pub_dates or get_recent_pub_dates(podcast))
 
-    if (scheduled := podcast.pub_date + freq) > now:
+    if freq and (scheduled := podcast.pub_date + freq) > now:
         return scheduled
 
     # add 5% of freq to current time (min 1 hour)
@@ -103,5 +100,6 @@ def schedule(
     # add some randomization (+3 hours) so we don't have a ton at the same time
 
     return now + timedelta(
-        seconds=(freq.total_seconds() * 0.05) + secrets.choice(range(0, 3600 * 3)),
+        seconds=((now - podcast.pub_date).total_seconds() * 0.05)
+        + secrets.choice(range(0, 3600 * 3)),
     )
