@@ -25,7 +25,7 @@ class TestGetFrequency:
             now - timedelta(days=60, hours=12),
         ]
 
-        assert scheduler.get_frequency(dates).days == 7
+        assert scheduler.get_frequency(dates).days == 11
 
     def test_get_frequency_insufficient_dates(self):
 
