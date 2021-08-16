@@ -11,7 +11,6 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
 MIN_FREQ = timedelta(hours=1)
-MAX_FREQ = timedelta(days=7)
 
 
 def schedule_podcast_feeds() -> int:
@@ -62,8 +61,8 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
 
     freq = timedelta(seconds=round(statistics.mean(diffs)))
 
-    # min 1 hour, max 7 days
-    return min(max(freq, MIN_FREQ), MAX_FREQ)
+    # min 1 hour
+    return max(freq, MIN_FREQ)
 
 
 def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
