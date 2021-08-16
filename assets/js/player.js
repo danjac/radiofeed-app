@@ -27,16 +27,6 @@ const playerObj = {
       this.$refs.audio.playbackRate = value;
     });
 
-    this.shortcuts = {
-      '+': this.incrementPlaybackRate,
-      '-': this.decrementPlaybackRate,
-      Digit0: this.resetPlaybackRate,
-      ArrowLeft: this.skipBack,
-      ArrowRight: this.skipForward,
-      Delete: this.closePlayer,
-      Space: this.togglePlayPause,
-    };
-
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
 
@@ -44,28 +34,6 @@ const playerObj = {
 
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = getMediaMetadata();
-    }
-  },
-
-  shortcut(event) {
-    if (!this.shortcuts || !this.$refs.audio) {
-      return;
-    }
-
-    if (
-      event.ctrlKey ||
-      event.altKey ||
-      /^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)
-    ) {
-      return;
-    }
-
-    const handler = this.shortcuts[event.key] || this.shortcuts[event.code];
-
-    if (handler) {
-      event.preventDefault();
-      event.stopPropagation();
-      handler.bind(this)();
     }
   },
 

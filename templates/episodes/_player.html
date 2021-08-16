@@ -18,7 +18,6 @@
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
      @close-sidebar.window="showPlayer = true"
-     @keydown.window="shortcut"
      hx-swap="innerHTML">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
