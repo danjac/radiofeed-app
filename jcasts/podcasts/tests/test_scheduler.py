@@ -18,6 +18,22 @@ class TestGetFrequency:
 
         dates = [
             now - timedelta(days=5, hours=12),
+            now - timedelta(days=8, hours=12),
+            now - timedelta(days=11, hours=12),
+            now - timedelta(days=15, hours=12),
+            now - timedelta(days=18, hours=12),
+            now - timedelta(days=21, hours=12),
+        ]
+
+        assert scheduler.get_frequency(dates).days == 3
+
+    def test_get_frequency_gt_week(self):
+        """Max should be 7 days"""
+
+        now = timezone.now()
+
+        dates = [
+            now - timedelta(days=5, hours=12),
             now - timedelta(days=12, hours=12),
             now - timedelta(days=15, hours=12),
             now - timedelta(days=30, hours=12),
@@ -25,7 +41,8 @@ class TestGetFrequency:
             now - timedelta(days=60, hours=12),
         ]
 
-        assert scheduler.get_frequency(dates).days == 11
+        # actual value ~11 days
+        assert scheduler.get_frequency(dates).days == 7
 
     def test_get_frequency_insufficient_dates(self):
 
