@@ -157,7 +157,6 @@ const playerObj = {
 
   stopPlayer(url) {
     this.mediaSrc = null;
-    this.shortcuts = null;
 
     this.$refs.audio.pause();
     this.clearSession();
