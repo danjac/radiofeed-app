@@ -37,6 +37,48 @@ const playerObj = {
     }
   },
 
+  shortcuts(event) {
+    if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+      return;
+    }
+
+    switch (event.code) {
+      case 'Space':
+        event.preventDefault();
+        event.stopPropagation();
+        this.togglePlayPause();
+        return;
+      case 'ArrowRight':
+        event.preventDefault();
+        event.stopPropagation();
+        this.skipForward();
+        return;
+      case 'ArrowLeft':
+        event.preventDefault();
+        event.stopPropagation();
+        this.skipBack();
+        return;
+    }
+
+    switch (event.key) {
+      case '+':
+        event.preventDefault();
+        event.stopPropagation();
+        this.incrementPlaybackRate();
+        return;
+      case '-':
+        event.preventDefault();
+        event.stopPropagation();
+        this.decrementPlaybackRate();
+        return;
+      case '0':
+        event.preventDefault();
+        event.stopPropagation();
+        this.resetPlaybackRate();
+        return;
+    }
+  },
+
   clearSession() {
     sessionStorage.removeItem(this.keys.enable);
   },
@@ -139,12 +181,8 @@ const playerObj = {
     }
   },
 
-  closePlayer() {
-    this.stopPlayer(this.urls.closePlayer);
-  },
-
   ended() {
-    this.stopPlayer(this.urls.playNext);
+    this.$refs.playNext.click();
   },
 
   togglePlayPause() {
@@ -153,15 +191,6 @@ const playerObj = {
     } else {
       this.$refs.audio.pause();
     }
-  },
-
-  stopPlayer(url) {
-    this.mediaSrc = null;
-
-    this.$refs.audio.pause();
-    this.clearSession();
-
-    window.htmx.ajax('POST', url, { target: this.$el, source: this.$el });
   },
 
   sendTimeUpdate() {

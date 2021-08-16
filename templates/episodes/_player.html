@@ -18,6 +18,7 @@
     })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
      @close-sidebar.window="showPlayer = true"
+     @keydown.window="shortcuts"
      hx-swap="outerHTML">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
@@ -87,9 +88,18 @@
               </button>
 
               <button title="Close Player"
-                      @click="closePlayer"
+                      hx-post="{% url "episodes:close_player" %}"
+                      hx-target="#player"
+                      hx-swap="innerHTML"
                       class="focus:outline-none hover:text-blue-500">
                 {% icon "stop" css_class="h-8 w-8" %}
+              </button>
+
+              <button hx-post="{% url "episodes:play_next_episode" %}"
+                      hx-target="#player"
+                      hx-swap="innerHTML"
+                      class="hidden"
+                      x-ref="playNext">
               </button>
 
             </div>
