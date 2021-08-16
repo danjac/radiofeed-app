@@ -194,10 +194,7 @@ const playerObj = {
     this.$refs.audio.pause();
     this.clearSession();
 
-    window.htmx.ajax('POST', url, {
-      target: this.$el,
-      source: this.$el,
-    });
+    window.htmx.ajax('POST', url, this.$el);
   },
 
   sendTimeUpdate() {
