@@ -86,6 +86,7 @@
               </button>
 
               <button title="Close Player"
+                      accesskey="x"
                       hx-post="{% url "episodes:close_player" %}"
                       hx-target="#player"
                       hx-swap="innerHTML"
@@ -159,6 +160,7 @@
 
               <button title="Reload player"
                       class="focus:outline-none hover:text-blue-500 mr-2"
+                      accesskey="r"
                       hx-get="{% url 'episodes:reload_player' %}"
                       hx-target="#player"
                       hx-swap="innerHTML">

@@ -4,6 +4,50 @@
 
 {% block about_content %}
 
+<h2 class="font-semibold mb-3">Player Shortcuts</h2>
+
+<p class="mb-3 text-sm">
+  These keyboard shortcuts are available when the Player is running.
+</p>
+
+<table class="mb-3 table-auto w-full border dark:border-gray-500 text-sm"
+       aria-label="Navigation Shortcuts">
+  <thead>
+    <tr class="bg-gray-100 dark:bg-gray-800">
+      <th scope="col"
+          class="text-left p-1">Key</th>
+      <th scope="col"
+          class="text-left p-1">Action</th>
+    </tr>
+  </thead>
+  <tbody class="font-mono">
+    <tr>
+      <td class="border dark:border-gray-500 p-1">Spacebar</td>
+      <td class="border dark:border-gray-500 p-1">Toggle Play/Pause</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">Left Arrow</td>
+      <td class="border dark:border-gray-500 p-1">Skip Backwards 10s</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">Right Arrow</td>
+      <td class="border dark:border-gray-500 p-1">Skip Forwards 10s</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">+</td>
+      <td class="border dark:border-gray-500 p-1">Increase Playback Rate</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">-</td>
+      <td class="border dark:border-gray-500 p-1">Decrease Playback Rate</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">0</td>
+      <td class="border dark:border-gray-500 p-1">Reset Default Playback Rate</td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 class="font-semibold mb-3">Navigation Shortcuts</h2>
 
 <p class="mb-3 text-sm">
@@ -64,6 +108,14 @@
     <tr>
       <td class="border dark:border-gray-500 p-1">j</td>
       <td class="border dark:border-gray-500 p-1">Join</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">x</td>
+      <td class="border dark:border-gray-500 p-1">Close Player (if running)</td>
+    </tr>
+    <tr>
+      <td class="border dark:border-gray-500 p-1">r</td>
+      <td class="border dark:border-gray-500 p-1">Reload Player (if running)</td>
     </tr>
   </tbody>
 </table>
