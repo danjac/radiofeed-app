@@ -7,17 +7,16 @@
        mediaSrc: '{{ episode.media_url }}',
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        csrfToken: '{{ csrf_token }}',
+       urls: {
+         timeUpdate: '{% url "episodes:player_time_update" %}'
+       },
        {% if autoplay %}
        autoplay: true,
        {% endif %}
-       urls: {
-         timeUpdate: '{% url "episodes:player_time_update" %}'
-       }
-    })"
+   })"
      @toggle-sidebar.window="showPlayer = !showPlayer"
      @close-sidebar.window="showPlayer = true"
-     @keydown.window="shortcuts"
-     hx-swap="outerHTML">
+     @keydown.window="shortcuts">
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
          preload="metadata"
