@@ -8,12 +8,12 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
-from jcasts.shared.decorators import hx_login_required
+from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
 
 
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     return render_start_player(
         request, get_episode_or_404(request, episode_id, with_podcast=True)
@@ -21,14 +21,14 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     request.player.remove()
     return render_close_player(request)
 
 
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
@@ -54,7 +54,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@hx_login_required
+@ajax_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.get():
@@ -70,7 +70,7 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode."""
 
