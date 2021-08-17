@@ -79,10 +79,6 @@ const playerObj = {
     }
   },
 
-  clearSession() {
-    sessionStorage.removeItem(this.keys.enable);
-  },
-
   // audio events
   loaded() {
     if (this.isLoaded) {
@@ -136,7 +132,7 @@ const playerObj = {
   paused() {
     this.isPlaying = false;
     this.isPaused = true;
-    this.clearSession();
+    sessionStorage.removeItem(this.keys.enable);
   },
 
   incrementPlaybackRate() {
