@@ -6,9 +6,11 @@ import Messages from './messages';
 import Player from './player';
 
 (function () {
-  window.DragDrop = DragDrop;
-  window.Messages = Messages;
-  window.Player = Player;
+  window.jCasts = {
+    DragDrop,
+    Messages,
+    Player,
+  };
 
   Alpine.start();
 })();
