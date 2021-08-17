@@ -20,6 +20,14 @@ class TestEpisodeAdmin:
         episode = EpisodeFactory(podcast__title="testing")
         assert admin.podcast_title(episode) == "testing"
 
+    def test_get_ordering_no_search_term(self, admin, rf):
+        ordering = admin.get_ordering(rf.get("/"))
+        assert ordering == ["-id"]
+
+    def test_get_ordering_search_term(self, admin, rf):
+        ordering = admin.get_ordering(rf.get("/", {"q": "test"}))
+        assert ordering == []
+
     def test_get_search_results_no_search_term(self, rf, db, admin):
         EpisodeFactory.create_batch(3)
         qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "")

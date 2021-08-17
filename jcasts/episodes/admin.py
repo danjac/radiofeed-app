@@ -1,4 +1,7 @@
+from typing import Iterable
+
 from django.contrib import admin
+from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
 from jcasts.episodes import models
@@ -7,7 +10,6 @@ from jcasts.shared.typedefs import admin_action
 
 @admin.register(models.Episode)
 class EpisodeAdmin(admin.ModelAdmin):
-    ordering = ("-id",)
     list_display = ("episode_title", "podcast_title", "pub_date")
     list_select_related = ("podcast",)
     raw_id_fields = ("podcast",)
@@ -29,3 +31,12 @@ class EpisodeAdmin(admin.ModelAdmin):
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False
+
+    def get_ordering(self, request: HttpRequest) -> Iterable[str]:
+        return (
+            []
+            if request.GET.get("q")
+            else [
+                "-id",
+            ]
+        )

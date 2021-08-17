@@ -63,6 +63,15 @@ class TestPodcastAdmin:
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "")
         assert qs.count() == 3
 
+    def test_get_ordering_no_search_term(self, admin, req):
+        ordering = admin.get_ordering(req)
+        assert ordering == ["scheduled", "-pub_date"]
+
+    def test_get_ordering_search_term(self, admin, req):
+        req.GET = {"q": "test"}
+        ordering = admin.get_ordering(req)
+        assert ordering == []
+
     def test_reactivate(self, podcasts, admin, req):
         PodcastFactory(active=False)
         admin.reactivate(req, Podcast.objects.all())
