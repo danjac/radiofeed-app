@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 
 
-def hx_login_required(view: Callable) -> Callable:
+def ajax_login_required(view: Callable) -> Callable:
     @functools.wraps(view)
     def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:

@@ -6,15 +6,15 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 
-from jcasts.shared.decorators import hx_login_required
+from jcasts.shared.decorators import ajax_login_required
 
 
-@hx_login_required
+@ajax_login_required
 def my_ajax_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse()
 
 
-class TestHxLoginRequired:
+class TestAjaxLoginRequired:
     def test_anonymous_htmx(self, rf, anonymous_user):
         req = rf.get("/")
         req.user = anonymous_user

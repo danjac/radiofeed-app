@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import QueueItem
 from jcasts.episodes.views import get_episode_or_404
-from jcasts.shared.decorators import hx_login_required
+from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import (
     HttpResponseConflict,
     HttpResponseNoContent,
@@ -34,7 +34,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def add_to_queue(
     request: HttpRequest, episode_id: int, to=Literal["start", "end"]
 ) -> HttpResponse:
@@ -56,7 +56,7 @@ def add_to_queue(
 
 
 @require_http_methods(["DELETE"])
-@hx_login_required
+@ajax_login_required
 def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(user=request.user).filter(episode=episode).delete()
@@ -71,7 +71,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-@hx_login_required
+@ajax_login_required
 def move_queue_items(request: HttpRequest) -> HttpResponse:
 
     try:

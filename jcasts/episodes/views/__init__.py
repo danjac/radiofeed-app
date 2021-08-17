@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.decorators import hx_login_required
+from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.typedefs import ContextDict
 
@@ -76,7 +76,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@hx_login_required
+@ajax_login_required
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
