@@ -79,11 +79,6 @@ class ActiveFilter(admin.SimpleListFilter):
 class PodcastAdmin(admin.ModelAdmin):
     list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
 
-    ordering = (
-        "scheduled",
-        "-pub_date",
-    )
-
     list_display = (
         "__str__",
         "source",
@@ -153,3 +148,13 @@ class PodcastAdmin(admin.ModelAdmin):
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False
+
+    def get_ordering(self, request: HttpRequest) -> Iterable[str]:
+        return (
+            []
+            if request.GET.get("q")
+            else [
+                "scheduled",
+                "-pub_date",
+            ]
+        )
