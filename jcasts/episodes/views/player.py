@@ -78,6 +78,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         if episode_id := request.player.get():
 
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
+                completed=None,
                 updated=timezone.now(),
                 current_time=int(request.POST["current_time"]),
             )

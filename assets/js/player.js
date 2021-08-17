@@ -38,7 +38,7 @@ const playerObj = {
   },
 
   shortcuts(event) {
-    if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+    if (event.ctrlKey || event.altKey || event.target.tagName.match(/INPUT|TEXTAREA/)) {
       return;
     }
 
