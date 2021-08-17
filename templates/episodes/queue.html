@@ -14,7 +14,7 @@
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start lg:text-lg">Play Queue</h1>
   </div>
-  <div x-data="DragDrop({
+  <div x-data="jCasts.DragDrop({
       csrfToken: '{{ csrf_token }}',
       url: '{% url "episodes:move_queue_items" %}',
     })">
@@ -28,7 +28,8 @@
     {% endwith %}
     {% endfor %}
   </div>
-  <p class="text-center sm:text-left text-sm" x-show="count===0">
+  <p class="text-center sm:text-left text-sm"
+     x-show="count===0">
     You do not have any items in your Play Queue.
   </p>
 </div>

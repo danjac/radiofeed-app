@@ -1,6 +1,6 @@
 <div class="fixed z-50 top-20 inset-x-0 mx-auto w-64"
      id="messages"
-     x-data="Messages()"
+     x-data="jCasts.Messages()"
      x-init="() => {
         {% for message in messages %}
         addMessage({ message: '{{ message }}', tags: '{{ message.tags }}' });
