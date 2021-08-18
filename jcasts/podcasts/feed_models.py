@@ -64,7 +64,7 @@ class Image(BaseModel):
     href: HttpUrl
 
 
-class Item(BaseModel):
+class FeedItem(BaseModel):
 
     id: str
     title: str
@@ -165,16 +165,16 @@ class Feed(BaseModel):
         return value[:2]
 
 
-class Result(BaseModel):
+class FeedResult(BaseModel):
     feed: Feed
-    entries: list[Item]
+    entries: list[FeedItem]
 
     @validator("entries", pre=True)
     def get_items(cls, value: list) -> list:
         items = []
         for item in value:
             try:
-                Item(**item)
+                FeedItem(**item)
             except ValidationError:
                 pass
             else:
