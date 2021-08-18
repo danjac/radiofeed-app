@@ -145,3 +145,14 @@ class TestFetchItunesGenre:
 
         assert new_podcasts[0].title == RSS_FEED_NAME
         assert new_podcasts[0].rss == RSS_FEED_URL
+
+
+class TestItunesResultModel:
+    def test_get_cleaned_title(self):
+        result = itunes.ItunesResult(
+            collectionName="<b>test</b>",
+            feedUrl="https://example.com/rss.xml",
+            trackViewUrl="https://apple.com/feed",
+            artworkUrl600="https://apple.com/test.jpg",
+        )
+        assert result.get_cleaned_title() == "test"

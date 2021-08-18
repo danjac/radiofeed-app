@@ -12,7 +12,7 @@ from jcasts.podcasts.factories import (
     PodcastFactory,
     RecommendationFactory,
 )
-from jcasts.podcasts.feed_models import ItunesResult
+from jcasts.podcasts.itunes import ItunesResult
 from jcasts.podcasts.models import Follow, Podcast
 from jcasts.shared.assertions import assert_conflict, assert_ok
 

@@ -1,17 +1,36 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import requests
 
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
+from django.template.defaultfilters import striptags
 from django.utils.encoding import force_str
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, HttpUrl, ValidationError
 
-from jcasts.podcasts.feed_models import ItunesResult
 from jcasts.podcasts.models import Category, Podcast
+from jcasts.shared.template.defaulttags import unescape
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
+
+
+class ItunesResult(BaseModel):
+
+    title: str = Field(alias="collectionName")
+    rss: HttpUrl = Field(alias="feedUrl")
+    itunes: HttpUrl = Field(alias="trackViewUrl")
+    image: HttpUrl = Field(alias="artworkUrl600")
+
+    podcast: Optional[Podcast] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def get_cleaned_title(self) -> str:
+        return striptags(unescape(self.title))
 
 
 class Timeout(requests.exceptions.Timeout):
