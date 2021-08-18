@@ -9,7 +9,7 @@ import pytz
 from django.utils import timezone
 from pydantic import ValidationError
 
-from jcasts.podcasts.feed_models import Item, ItunesResult, Link
+from jcasts.podcasts.feed_models import FeedItem, ItunesResult, Link
 
 
 class TestItunesResult:
@@ -47,7 +47,7 @@ class TestLinkModel:
         assert link.is_audio() is True
 
 
-class TestItemModel:
+class TestFeedItemModel:
     @pytest.fixture
     def item_data(self):
         return json.load(
@@ -57,7 +57,7 @@ class TestItemModel:
     def test_missing_audio(self, item_data):
         del item_data["links"]
         with pytest.raises(ValidationError):
-            Item.parse_obj(item_data)
+            FeedItem.parse_obj(item_data)
 
     def test_invalid_audio(self, item_data):
         item_data["links"] = [
@@ -68,27 +68,27 @@ class TestItemModel:
             },
         ]
         with pytest.raises(ValidationError):
-            Item.parse_obj(item_data)
+            FeedItem.parse_obj(item_data)
 
     def test_published(self, item_data):
         del item_data["published"]
         with pytest.raises(ValidationError):
-            Item.parse_obj(item_data)
+            FeedItem.parse_obj(item_data)
 
     def test_published_in_future(self, item_data):
         item_data["published"] = (timezone.now() + timedelta(days=1)).strftime(
             "%a, %d %b %Y %H:%M:%s"
         )
         with pytest.raises(ValidationError):
-            Item.parse_obj(item_data)
+            FeedItem.parse_obj(item_data)
 
     def test_missing_content(self, item_data):
         del item_data["content"]
-        item = Item.parse_obj(item_data)
+        item = FeedItem.parse_obj(item_data)
         assert item.description == ""
 
     def test_parse_complete_item(self, item_data):
-        item = Item.parse_obj(item_data)
+        item = FeedItem.parse_obj(item_data)
 
         assert item.id == "74561fff-4b98-4985-a36f-4970be28782e"
         assert item.title == "The Origins of English"

@@ -18,7 +18,7 @@ from pydantic import ValidationError
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.feed_models import Feed, Item, Result
+from jcasts.podcasts.feed_models import Feed, FeedItem, FeedResult
 from jcasts.podcasts.models import Category, Podcast
 from jcasts.podcasts.scheduler import schedule
 from jcasts.podcasts.text_parser import extract_keywords
@@ -115,7 +115,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         return parse_failure(podcast, status=response.status_code, active=False)
 
     try:
-        result = Result.parse_obj(feedparser.parse(response.content))
+        result = FeedResult.parse_obj(feedparser.parse(response.content))
 
     except ValidationError as e:
         return parse_failure(podcast, status=response.status_code, exception=e)
@@ -127,7 +127,7 @@ def parse_success(
     podcast: Podcast,
     response: requests.Response,
     feed: Feed,
-    items: list[Item],
+    items: list[FeedItem],
 ) -> ParseResult:
 
     podcast.rss = response.url
@@ -172,7 +172,9 @@ def parse_success(
     return ParseResult(podcast.rss, response.status_code, True)
 
 
-def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
+def parse_episodes(
+    podcast: Podcast, items: list[FeedItem], batch_size: int = 500
+) -> None:
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -217,7 +219,7 @@ def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -
     )
 
 
-def make_episode(podcast: Podcast, item: Item, pk: int | None = None) -> Episode:
+def make_episode(podcast: Podcast, item: FeedItem, pk: int | None = None) -> Episode:
     return Episode(
         pk=pk,
         podcast=podcast,
@@ -242,7 +244,7 @@ def make_episode(podcast: Podcast, item: Item, pk: int | None = None) -> Episode
 def extract_text(
     podcast: Podcast,
     categories: list[Category],
-    items: list[Item],
+    items: list[FeedItem],
 ) -> str:
     text = " ".join(
         [
