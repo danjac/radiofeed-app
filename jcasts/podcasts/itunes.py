@@ -45,15 +45,14 @@ def fetch_itunes_genre(
     genre_id: int, num_results: int = settings.DEFAULT_ITUNES_LIMIT
 ) -> tuple[list[ItunesResult], list[Podcast]]:
     """Fetch top rated results for genre"""
-    return get_or_create_podcasts(
-        fetch_itunes_results(
-            {
-                "term": "podcast",
-                "limit": num_results,
-                "genreId": genre_id,
-            },
-            cache_key=f"itunes:genre:{genre_id}",
-        )
+
+    return fetch_itunes_results_with_podcasts(
+        params={
+            "term": "podcast",
+            "limit": num_results,
+            "genreId": genre_id,
+        },
+        cache_key=f"itunes:genre:{genre_id}",
     )
 
 
@@ -62,15 +61,13 @@ def search_itunes(
 ) -> tuple[list[ItunesResult], list[Podcast]]:
     """Does a search query on the iTunes API."""
 
-    return get_or_create_podcasts(
-        fetch_itunes_results(
-            {
-                "media": "podcast",
-                "limit": num_results,
-                "term": force_str(search_term),
-            },
-            cache_key=f"itunes:search:{search_term}",
-        )
+    return fetch_itunes_results_with_podcasts(
+        params={
+            "media": "podcast",
+            "limit": num_results,
+            "term": force_str(search_term),
+        },
+        cache_key=f"itunes:search:{search_term}",
     )
 
 
@@ -90,6 +87,12 @@ def crawl_itunes(limit: int = settings.DEFAULT_ITUNES_LIMIT) -> int:
 
         new_podcasts += len(podcasts)
     return new_podcasts
+
+
+def fetch_itunes_results_with_podcasts(
+    **kwargs,
+) -> tuple[list[ItunesResult], list[Podcast]]:
+    return get_or_create_podcasts(fetch_itunes_results(**kwargs))
 
 
 def get_or_create_podcasts(
