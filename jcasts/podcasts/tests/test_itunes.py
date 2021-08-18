@@ -11,17 +11,19 @@ REQUESTS_GET = "requests.get"
 
 RSS_FEED_URL = "https://feeds.fireside.fm/testandcode/rss"
 RSS_FEED_NAME = "Test & Code : Python Testing"
+ITUNES_URL = "https://podcasts.apple.com/us/podcast/test-code-python-testing-for-software-engineering/id1029487211?uo=4"
+ARTWORK_URL = "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3"
 
 MOCK_ITUNES_RESPONSE = [
     {
         "feedUrl": RSS_FEED_URL,
         "collectionName": RSS_FEED_NAME,
-        "trackViewUrl": "https://podcasts.apple.com/us/podcast/test-code-python-testing-for-software-engineering/id1029487211?uo=4",
-        "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+        "trackViewUrl": ITUNES_URL,
+        "artworkUrl600": ARTWORK_URL,
     },
 ]
 
-MOCK_ITUNES_RESULTS = itunes._make_search_results(MOCK_ITUNES_RESPONSE)
+MOCK_ITUNES_RESULTS = [itunes.parse_result(result) for result in MOCK_ITUNES_RESPONSE]
 
 
 class MockBadHttpResponse:
@@ -30,25 +32,33 @@ class MockBadHttpResponse:
 
 
 class MockResponse:
+    _mock_results = MOCK_ITUNES_RESPONSE
+
     def raise_for_status(self):
         ...
 
     def json(self) -> dict:
-        return {"results": MOCK_ITUNES_RESPONSE}
-
-
-class TestSearchResult:
-    def test_cleaned_title(self):
-        result = itunes.SearchResult(
-            title="<b>test</b>",
-            rss="",
-            image="",
-            itunes="",
-        )
-        assert result.cleaned_title == "test"
+        return {"results": self._mock_results}
 
 
 class TestSearchItunes:
+    def test_invalid_result(self, db, mocker):
+        class _MockResponse(MockResponse):
+            _mock_results = [
+                *MOCK_ITUNES_RESPONSE,
+                {
+                    "collectionName": "Invalid",
+                    "trackViewUrl": "https://example.com/itunes",
+                    "artworkUrl600": ARTWORK_URL,
+                },
+            ]
+
+        mocker.patch(REQUESTS_GET, autospec=True, return_value=_MockResponse())
+        results, podcasts = itunes.search_itunes("testing")
+        assert len(results) == 1
+        assert len(podcasts) == 1
+        assert podcasts[0].rss == RSS_FEED_URL
+
     def test_get_from_cache(self, db, mocker):
         mock_requests_get = mocker.patch(REQUESTS_GET, autospec=True)
         mock_cache_get = mocker.patch(

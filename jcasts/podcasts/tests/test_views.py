@@ -12,29 +12,29 @@ from jcasts.podcasts.factories import (
     PodcastFactory,
     RecommendationFactory,
 )
-from jcasts.podcasts.itunes import SearchResult
+from jcasts.podcasts.feed_models import ItunesResult
 from jcasts.podcasts.models import Follow, Podcast
 from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
-mock_search_result = SearchResult(
-    rss="http://example.com/test.xml",
-    itunes="https://apple.com/some-link",
-    image="test.jpg",
-    title="test title",
+mock_search_result = ItunesResult(
+    collectionName="test title",
+    feedUrl="http://example.com/test.xml",
+    trackViewUrl="https://apple.com/some-link",
+    artworkUrl600="https://example.com/test.jpg",
 )
 
 
 def mock_fetch_itunes_genre(
     genre_id: int, num_results: int = 20
-) -> tuple[list[SearchResult], list[Podcast]]:
+) -> tuple[list[ItunesResult], list[Podcast]]:
     return [mock_search_result], [PodcastFactory()]
 
 
 def mock_search_itunes(
     search_term: str, num_results: int = 12
-) -> tuple[list[SearchResult], list[Podcast]]:
+) -> tuple[list[ItunesResult], list[Podcast]]:
     return [mock_search_result], [PodcastFactory()]
 
 

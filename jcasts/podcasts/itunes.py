@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-import dataclasses
-
 import requests
 
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
-from django.template.defaultfilters import striptags
 from django.utils.encoding import force_str
-from django.utils.functional import cached_property
+from pydantic import ValidationError
 
+from jcasts.podcasts.feed_models import ItunesResult
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.shared.template.defaulttags import unescape
 
 ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
 
@@ -25,25 +22,12 @@ class Invalid(requests.RequestException):
     pass
 
 
-@dataclasses.dataclass
-class SearchResult:
-    rss: str
-    itunes: str
-    title: str
-    image: str
-    podcast: Podcast | None = None
-
-    @cached_property
-    def cleaned_title(self) -> str:
-        return striptags(unescape(self.title))
-
-
 def fetch_itunes_genre(
     genre_id: int, num_results: int = settings.DEFAULT_ITUNES_LIMIT
-) -> tuple[list[SearchResult], list[Podcast]]:
+) -> tuple[list[ItunesResult], list[Podcast]]:
     """Fetch top rated results for genre"""
-    return _get_or_create_podcasts(
-        _get_search_results(
+    return get_or_create_podcasts(
+        fetch_itunes_results(
             {
                 "term": "podcast",
                 "limit": num_results,
@@ -56,11 +40,11 @@ def fetch_itunes_genre(
 
 def search_itunes(
     search_term: str, num_results: int = settings.DEFAULT_ITUNES_LIMIT
-) -> tuple[list[SearchResult], list[Podcast]]:
+) -> tuple[list[ItunesResult], list[Podcast]]:
     """Does a search query on the iTunes API."""
 
-    return _get_or_create_podcasts(
-        _get_search_results(
+    return get_or_create_podcasts(
+        fetch_itunes_results(
             {
                 "media": "podcast",
                 "limit": num_results,
@@ -89,9 +73,9 @@ def crawl_itunes(limit: int = settings.DEFAULT_ITUNES_LIMIT) -> int:
     return new_podcasts
 
 
-def _get_or_create_podcasts(
-    results: list[SearchResult],
-) -> tuple[list[SearchResult], list[Podcast]]:
+def get_or_create_podcasts(
+    results: list[ItunesResult],
+) -> tuple[list[ItunesResult], list[Podcast]]:
     """Looks up podcast associated with result. Optionally adds new podcasts if not found"""
 
     podcasts = Podcast.objects.filter(
@@ -99,6 +83,7 @@ def _get_or_create_podcasts(
     ).in_bulk(field_name="rss")
 
     new_podcasts = []
+
     for result in results:
         result.podcast = podcasts.get(result.rss, None)
         if result.podcast is None:
@@ -112,12 +97,12 @@ def _get_or_create_podcasts(
     return results, new_podcasts
 
 
-def _get_search_results(
+def fetch_itunes_results(
     params: dict[str, str | int],
     cache_key: str,
     cache_timeout: int = 86400,
     requests_timeout: int = 3,
-) -> list[SearchResult]:
+) -> list[ItunesResult]:
 
     if results := cache.get(cache_key):
         return results
@@ -130,7 +115,13 @@ def _get_search_results(
             verify=True,
         )
         response.raise_for_status()
-        results = _make_search_results(response.json()["results"])
+        results = [
+            result
+            for result in [
+                parse_result(result) for result in response.json()["results"]
+            ]
+            if result
+        ]
         cache.set(cache_key, results, timeout=cache_timeout)
         return results
     except requests.exceptions.Timeout as e:
@@ -140,14 +131,8 @@ def _get_search_results(
         raise Invalid from e
 
 
-def _make_search_results(results: list[dict[str, str]]) -> list[SearchResult]:
-    return [
-        SearchResult(
-            item["feedUrl"],
-            item["trackViewUrl"],
-            item["collectionName"],
-            item["artworkUrl600"],
-        )
-        for item in results
-        if "feedUrl" in item
-    ]
+def parse_result(result: dict) -> ItunesResult | None:
+    try:
+        return ItunesResult.parse_obj(result)
+    except ValidationError:
+        return None
