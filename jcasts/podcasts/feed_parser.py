@@ -181,10 +181,6 @@ class FeedResult(BaseModel):
         return items
 
 
-def is_explicit(value: str | bool | None):
-    return value not in (False, None, "no", "none")
-
-
 @dataclass
 class ParseResult:
     rss: str
@@ -198,11 +194,6 @@ class ParseResult:
     def raise_exception(self) -> None:
         if self.exception:
             raise self.exception
-
-
-@lru_cache
-def get_categories_dict() -> dict[str, Category]:
-    return Category.objects.in_bulk(field_name="name")
 
 
 def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
@@ -427,6 +418,15 @@ def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, 
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
+
+
+@lru_cache
+def get_categories_dict() -> dict[str, Category]:
+    return Category.objects.in_bulk(field_name="name")
+
+
+def is_explicit(value: str | bool | None):
+    return value not in (False, None, "no", "none")
 
 
 def parse_failure(
