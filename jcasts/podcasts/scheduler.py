@@ -35,11 +35,6 @@ def schedule_podcast_feeds() -> int:
     return len(for_update)
 
 
-def normalize(value: timedelta) -> timedelta:
-
-    return min(max(value, MIN_FREQ), MAX_FREQ)
-
-
 def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     """Calculates frequency given set of pub dates. If no available dates within range,
     returns None.
@@ -65,7 +60,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
         diffs.append((head - pub_date).total_seconds())
         head = pub_date
 
-    return normalize(timedelta(seconds=round(statistics.mean(diffs))))
+    freq = timedelta(seconds=round(statistics.mean(diffs)))
+
+    # min 1 hour/max 7 days
+    return min(max(freq, MIN_FREQ), MAX_FREQ)
 
 
 def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
@@ -95,8 +93,9 @@ def schedule(
     if freq and (scheduled := podcast.pub_date + freq) > now:
         return scheduled
 
-    # add 5% of freq to current time
+    # add 5% of freq to current time (min 1 hour)
+    # e.g. 7 days - try again in about 8 hours
 
-    return now + normalize(
-        timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
-    )
+    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
+
+    return now + max(diff, MIN_FREQ)
