@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: pyupgrade
         # https://github.com/samuelcolvin/pydantic/issues/2597
-        exclude: jcasts/podcasts/feed_parser.py
+        exclude: jcasts/podcasts/feed_models.py
         language_version: python3.9
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v4.3.21
