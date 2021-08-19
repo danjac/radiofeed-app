@@ -4,9 +4,9 @@ This is the source code for [jCasts](https://jcasts.io), a simple, easy to use p
 
 ## Running jcasts on your local machine
 
-Local development requires docker and docker-compose. Just run:
+Local development requires docker and docker-compose. Just run the Makefile:
 
-> make build && make install && make run
+> make
 
 To update podcast data and download episodes from their RSS feeds:
 
