@@ -97,6 +97,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "num_episodes",
         "created",
         "updated",
+        "parsed",
         "modified",
         "scheduled",
         "pub_date",
