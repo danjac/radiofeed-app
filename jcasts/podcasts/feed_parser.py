@@ -274,17 +274,21 @@ def parse_success(
     items: list[FeedItem],
 ) -> ParseResult:
 
+    # feed status
     podcast.rss = response.url
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
     podcast.status = response.status_code
 
-    podcast.num_episodes = len(items)
-
+    # parsing status
     pub_dates = [item.published for item in items]
+
+    podcast.num_episodes = len(items)
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
+    podcast.parsed = timezone.now()
 
+    # content
     podcast.title = feed.title
     podcast.language = feed.language
 
@@ -300,6 +304,7 @@ def parse_success(
     )
     podcast.explicit = feed.itunes_explicit
 
+    # taxonomy
     categories_dct = get_categories_dict()
 
     tags = [tag.term for tag in feed.tags if tag.term]
@@ -311,6 +316,7 @@ def parse_success(
     podcast.categories.set(categories)  # type: ignore
     podcast.save()
 
+    # episodes
     parse_episodes(podcast, items)
 
     return ParseResult(podcast.rss, response.status_code, True)
@@ -438,10 +444,13 @@ def parse_failure(
     **fields,
 ) -> ParseResult:
 
+    now = timezone.now()
+
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         scheduled=schedule(podcast) if active else None,
-        updated=timezone.now(),
+        updated=now,
+        parsed=now,
         **fields,
     )
 

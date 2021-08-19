@@ -156,6 +156,7 @@ class TestParseFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
+        assert new_podcast.parsed
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -174,6 +175,7 @@ class TestParseFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
+        assert new_podcast.parsed
 
     def test_parse_feed_podcast_not_found(self, db):
         result = parse_feed("https://example.com/rss.xml")
@@ -227,6 +229,7 @@ class TestParseFeed:
         assert new_podcast.modified.day == 1
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
+        assert new_podcast.parsed
 
         assert new_podcast.etag
         assert new_podcast.explicit
@@ -262,6 +265,7 @@ class TestParseFeed:
 
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
+        assert new_podcast.parsed
 
     def test_parse_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -288,6 +292,7 @@ class TestParseFeed:
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
         assert new_podcast.scheduled is None
+        assert new_podcast.parsed
 
     def test_parse_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(

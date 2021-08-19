@@ -89,6 +89,7 @@ class Podcast(models.Model):
 
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
+    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     num_episodes: int = models.PositiveIntegerField(default=0)
 
