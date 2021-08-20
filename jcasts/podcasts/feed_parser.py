@@ -294,7 +294,7 @@ def parse_success(
     podcast.link = feed.link
     podcast.cover_url = feed.image.href if feed.image else None
 
-    podcast.description = feed.summary or feed.description or feed.subtitle
+    podcast.description = feed.description or feed.summary or feed.subtitle
 
     podcast.owner = (
         feed.publisher_detail.name
