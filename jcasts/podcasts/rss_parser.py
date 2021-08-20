@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from functools import lru_cache
 from typing import Any, Generator, Optional
 
 import lxml
@@ -103,53 +104,15 @@ class XPathParser:
         return [] if self.multiple else self.default
 
 
-ITEM_MAPPINGS = {
-    "guid": XPathParser("guid/text()"),
-    "title": XPathParser("title/text()"),
-    "link": XPathParser("link/text()", default=""),
-    "description": XPathParser(
-        "content:encoded/text()",
-        "description/text()",
-        "itunes:summary/text()",
-        default="",
-    ),
-    "pub_date": XPathParser("pubDate/text()"),
-    "media_url": XPathParser("enclosure//@url"),
-    "media_type": XPathParser("enclosure//@type"),
-    "length": XPathParser("enclosure//@length"),
-    "cover_url": XPathParser("itunes:image/@href"),
-    "explicit": XPathParser("itunes:explicit/text()"),
-    "episode": XPathParser("itunes:episode/text()"),
-    "season": XPathParser("itunes:season/text()"),
-    "duration": XPathParser("itunes:duration/text()", default=""),
-    "episode_type": XPathParser("itunes:episodetype/text()", default="full"),
-    "keywords": XPathParser("category/text()", multiple=True),
-}
+class XPathMapper:
+    def __init__(self, **mappings: XPathParser):
+        self.mappings = mappings
 
-FEED_MAPPINGS = {
-    "title": XPathParser("title/text()"),
-    "link": XPathParser("link/text()", default=""),
-    "language": XPathParser("language/text()", default="en"),
-    "description": XPathParser(
-        "description/text()",
-        "itunes:summary/text()",
-        default="",
-    ),
-    "cover_url": XPathParser("image/url/text()"),
-    "explicit": XPathParser("itunes:explicit/text()"),
-    "owner": XPathParser(
-        "itunes:author/text()",
-        "itunes:owner/itunes:name/text()",
-    ),
-    "categories": XPathParser("//itunes:category/@text", multiple=True),
-}
-
-
-def parse(element: lxml.etree.Element, mappings: dict[str, XPathParser]) -> dict:
-    parsed = {}
-    for field, parser in mappings.items():
-        parsed[field] = parser.parse(element)
-    return parsed
+    def parse(self, element: lxml.etree.Element) -> dict:
+        parsed = {}
+        for field, parser in self.mappings.items():
+            parsed[field] = parser.parse(element)
+        return parsed
 
 
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
@@ -162,22 +125,73 @@ def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
         raise RssParserError("<channel /> not found")
 
     try:
-        feed = Feed.parse_obj(parse(channel, FEED_MAPPINGS))
+        feed = Feed.parse_obj(feed_mapper().parse(channel))
     except ValidationError as e:
         raise RssParserError from e
 
-    if not (items := [*parse_items(channel)]):
+    if not (items := [*parse_items(channel, item_mapper())]):
         raise RssParserError("no valid entries found")
 
     return feed, items
 
 
-def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
+def parse_items(
+    channel: lxml.etree.Element, mapper: XPathMapper
+) -> Generator[Item, None, None]:
 
     for element in channel.iterfind("item"):
 
         try:
-            yield Item.parse_obj(parse(element, ITEM_MAPPINGS))
+            yield Item.parse_obj(mapper.parse(element))
 
         except ValidationError:
             ...
+
+
+@lru_cache
+def item_mapper() -> XPathMapper:
+
+    return XPathMapper(
+        guid=XPathParser("guid/text()"),
+        title=XPathParser("title/text()"),
+        link=XPathParser("link/text()", default=""),
+        description=XPathParser(
+            "content:encoded/text()",
+            "description/text()",
+            "itunes:summary/text()",
+            default="",
+        ),
+        pub_date=XPathParser("pubDate/text()"),
+        media_url=XPathParser("enclosure//@url"),
+        media_type=XPathParser("enclosure//@type"),
+        length=XPathParser("enclosure//@length"),
+        cover_url=XPathParser("itunes:image/@href"),
+        explicit=XPathParser("itunes:explicit/text()"),
+        episode=XPathParser("itunes:episode/text()"),
+        season=XPathParser("itunes:season/text()"),
+        duration=XPathParser("itunes:duration/text()", default=""),
+        episode_type=XPathParser("itunes:episodetype/text()", default="full"),
+        keywords=XPathParser("category/text()", multiple=True),
+    )
+
+
+@lru_cache
+def feed_mapper() -> XPathMapper:
+
+    return XPathMapper(
+        title=XPathParser("title/text()"),
+        link=XPathParser("link/text()", default=""),
+        language=XPathParser("language/text()", default="en"),
+        description=XPathParser(
+            "description/text()",
+            "itunes:summary/text()",
+            default="",
+        ),
+        cover_url=XPathParser("image/url/text()"),
+        explicit=XPathParser("itunes:explicit/text()"),
+        owner=XPathParser(
+            "itunes:author/text()",
+            "itunes:owner/itunes:name/text()",
+        ),
+        categories=XPathParser("//itunes:category/@text", multiple=True),
+    )
