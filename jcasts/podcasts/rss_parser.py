@@ -10,7 +10,10 @@ from pydantic import BaseModel, HttpUrl, ValidationError, validator
 
 from jcasts.podcasts.date_parser import parse_date
 
-NAMESPACES = {"itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd"}
+NAMESPACES = {
+    "content": "http://purl.org/rss/1.0/modules/content/",
+    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+}
 
 
 class RssParserError(ValueError):
@@ -104,7 +107,12 @@ ITEM_MAPPINGS = {
     "guid": XPathParser("guid/text()"),
     "title": XPathParser("title/text()"),
     "link": XPathParser("link/text()", default=""),
-    "description": XPathParser("description/text()", default=""),
+    "description": XPathParser(
+        "content:encoded/text()",
+        "description/text()",
+        "itunes:summary/text()",
+        default="",
+    ),
     "pub_date": XPathParser("pubDate/text()"),
     "media_url": XPathParser("enclosure//@url"),
     "media_type": XPathParser("enclosure//@type"),
@@ -122,7 +130,11 @@ FEED_MAPPINGS = {
     "title": XPathParser("title/text()"),
     "link": XPathParser("link/text()", default=""),
     "language": XPathParser("language/text()", default="en"),
-    "description": XPathParser("description/text()", default=""),
+    "description": XPathParser(
+        "description/text()",
+        "itunes:summary/text()",
+        default="",
+    ),
     "cover_url": XPathParser("image/url/text()"),
     "explicit": XPathParser("itunes:explicit/text()"),
     "owner": XPathParser(
