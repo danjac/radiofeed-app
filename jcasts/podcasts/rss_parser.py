@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from functools import lru_cache
-from typing import Any, Generator, Optional
+from typing import Any, ClassVar, Generator, Optional
 
 import lxml
 
@@ -10,11 +10,6 @@ from django.utils import timezone
 from pydantic import BaseModel, HttpUrl, ValidationError, validator
 
 from jcasts.podcasts.date_parser import parse_date
-
-NAMESPACES = {
-    "content": "http://purl.org/rss/1.0/modules/content/",
-    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-}
 
 
 class RssParserError(ValueError):
@@ -92,6 +87,11 @@ class Feed(BaseModel):
 
 
 class XPathParser:
+    namespaces: ClassVar[dict[str, str]] = {
+        "content": "http://purl.org/rss/1.0/modules/content/",
+        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+    }
+
     def __init__(self, *paths: str, multiple: bool = False, default: Any = None):
         self.paths = paths
         self.multiple = multiple
@@ -99,7 +99,7 @@ class XPathParser:
 
     def parse(self, element: lxml.etree.Element) -> str | list:
         for path in self.paths:
-            if value := element.xpath(path, namespaces=NAMESPACES):
+            if value := element.xpath(path, namespaces=self.namespaces):
                 return value if self.multiple else value[0]
         return [] if self.multiple else self.default
 
