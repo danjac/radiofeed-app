@@ -155,12 +155,6 @@ def item_mapper() -> XPathMapper:
         guid=XPathParser("guid/text()"),
         title=XPathParser("title/text()"),
         link=XPathParser("link/text()", default=""),
-        description=XPathParser(
-            "content:encoded/text()",
-            "description/text()",
-            "itunes:summary/text()",
-            default="",
-        ),
         pub_date=XPathParser("pubDate/text()"),
         media_url=XPathParser("enclosure//@url"),
         media_type=XPathParser("enclosure//@type"),
@@ -169,6 +163,12 @@ def item_mapper() -> XPathMapper:
         explicit=XPathParser("itunes:explicit/text()"),
         episode=XPathParser("itunes:episode/text()"),
         season=XPathParser("itunes:season/text()"),
+        description=XPathParser(
+            "content:encoded/text()",
+            "description/text()",
+            "itunes:summary/text()",
+            default="",
+        ),
         duration=XPathParser("itunes:duration/text()", default=""),
         episode_type=XPathParser("itunes:episodetype/text()", default="full"),
         keywords=XPathParser("category/text()", multiple=True),
@@ -191,10 +191,10 @@ def feed_mapper() -> XPathMapper:
             "image/url/text()",
             "itunes:image/@href",
         ),
-        explicit=XPathParser("itunes:explicit/text()"),
         owner=XPathParser(
             "itunes:author/text()",
             "itunes:owner/itunes:name/text()",
         ),
+        explicit=XPathParser("itunes:explicit/text()"),
         categories=XPathParser("//itunes:category/@text", multiple=True),
     )
