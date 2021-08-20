@@ -75,7 +75,9 @@ def re_active_link(
 @register.filter
 @stringfilter
 def markup(value: str) -> str:
-    return mark_safe(_unescape(clean_html_content(markdown.markdown(value) or "")))
+    if value := value.strip():
+        return mark_safe(_unescape(clean_html_content(markdown.markdown(value))))
+    return ""
 
 
 @register.filter

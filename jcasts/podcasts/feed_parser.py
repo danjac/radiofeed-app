@@ -4,22 +4,19 @@ import http
 import secrets
 
 from dataclasses import dataclass
-from datetime import datetime
 from functools import lru_cache
-from typing import Optional
 
-import lxml
 import requests
 
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
-from pydantic import BaseModel, HttpUrl, ValidationError, validator
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.models import Category, Podcast
+from jcasts.podcasts.rss_parser import Feed, Item, RssParserError, parse_rss
 from jcasts.podcasts.scheduler import schedule
 from jcasts.podcasts.text_parser import extract_keywords
 
@@ -32,8 +29,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
-
-NAMESPACES = {"itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd"}
 
 
 def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
@@ -57,76 +52,6 @@ def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None)
         parse_feed.delay(rss, force_update=force_update)
 
     return counter
-
-
-class Item(BaseModel):
-
-    guid: str
-    title: str
-    link: str = ""
-
-    pub_date: datetime
-
-    cover_url: Optional[HttpUrl]
-
-    media_url: HttpUrl
-    media_type: str
-    length: Optional[int] = None
-
-    explicit: bool = False
-
-    season: Optional[int] = None
-    episode: Optional[int] = None
-    episode_type: str = "full"
-    duration: str = ""
-
-    description: str = ""
-    keywords: str = ""
-
-    @validator("pub_date", pre=True)
-    def get_pub_date(cls, value: str | None) -> datetime | None:
-        pub_date = parse_date(value)
-        if pub_date and pub_date < timezone.now():
-            return pub_date
-        raise ValueError("not a valid pub date")
-
-    @validator("explicit", pre=True)
-    def is_explicit(cls, value: str) -> bool:
-        return value.lower() in ("yes", "clean") if value else False
-
-    @validator("keywords", pre=True)
-    def get_keywords(cls, value: list) -> str:
-        return " ".join(value)
-
-    @validator("media_type")
-    def is_audio(cls, value: str) -> str:
-        if not (value or "").startswith("audio/"):
-            raise ValueError("not a valid audio enclosure")
-        return value
-
-
-class Feed(BaseModel):
-
-    title: str
-    link: str = ""
-
-    language: str = "en"
-    cover_url: Optional[HttpUrl]
-
-    owner: str = ""
-    description: str = ""
-
-    explicit: bool = False
-
-    categories: list[str] = []
-
-    @validator("explicit", pre=True)
-    def is_explicit(cls, value: str) -> bool:
-        return value.lower() in ("yes", "clean") if value else False
-
-    @validator("language")
-    def get_language(cls, value: str) -> str:
-        return value[:2]
 
 
 @dataclass
@@ -186,7 +111,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
     try:
         feed, items = parse_rss(response.content)
 
-    except (lxml.etree.ParseError, ValidationError, ValueError) as e:
+    except RssParserError as e:
         return parse_failure(podcast, status=response.status_code, exception=e)
 
     return parse_success(podcast, response, feed, items)
@@ -229,7 +154,6 @@ def parse_success(
 
     # taxonomy
     categories_dct = get_categories_dict()
-    print(feed.categories)
 
     categories = [
         categories_dct[category]
@@ -358,82 +282,3 @@ def parse_failure(
     )
 
     return ParseResult(podcast.rss, status, False, exception)
-
-
-class Mapping:
-    def __init__(self, *paths: str, multiple: bool = False):
-        self.paths = paths
-        self.multiple = multiple
-
-    def parse(self, element: lxml.etree.Element) -> str | list:
-        for path in self.paths:
-            if value := element.xpath(path, namespaces=NAMESPACES):
-                return value if self.multiple else value[0]
-        return [] if self.multiple else ""
-
-
-ITEM_MAPPINGS = {
-    "guid": Mapping("guid/text()"),
-    "title": Mapping("title/text()"),
-    "link": Mapping("link/text()"),
-    "description": Mapping("description/text()"),
-    "pub_date": Mapping("pubDate/text()"),
-    "media_url": Mapping("enclosure//@url"),
-    "media_type": Mapping("enclosure//@type"),
-    "length": Mapping("enclosure//@length"),
-    "cover_url": Mapping("itunes:image/@href"),
-    "duration": Mapping("itunes:duration/text()"),
-    "explicit": Mapping("itunes:explicit/text()"),
-    "episode": Mapping("itunes:episode/text()"),
-    "episode_type": Mapping("itunes:episodetype/text()"),
-    "season": Mapping("itunes:season/text()"),
-    "keywords": Mapping("category/text()", multiple=True),
-}
-
-FEED_MAPPINGS = {
-    "title": Mapping("title/text()"),
-    "link": Mapping("link/text()"),
-    "language": Mapping("language/text()"),
-    "description": Mapping("description/text()"),
-    "cover_url": Mapping("image/url/text()"),
-    "explicit": Mapping("itunes:explicit/text()"),
-    "owner": Mapping(
-        "itunes:author/text()",
-        "itunes:owner/itunes:name/text()",
-    ),
-    "categories": Mapping("//itunes:category/@text", multiple=True),
-}
-
-
-def parse(element: lxml.etree.Element, mappings: dict[str, Mapping]) -> dict:
-    parsed = {}
-    for field, mapping in mappings.items():
-        parsed[field] = mapping.parse(element)
-    return parsed
-
-
-def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
-    xml = lxml.etree.fromstring(content)
-    if (channel := xml.find("channel")) is None:
-        raise ValueError("<channel /> not found")
-
-    feed = Feed.parse_obj(parse(channel, FEED_MAPPINGS))
-
-    items = [
-        item
-        for item in [parse_item(element) for element in channel.iterfind("item")]
-        if item
-    ]
-    if not items:
-        raise ValueError("no valid entries found")
-
-    return feed, items
-
-
-def parse_item(element: lxml.etree.Element) -> Item | None:
-
-    try:
-        return Item.parse_obj(parse(element, ITEM_MAPPINGS))
-    except ValidationError as e:
-        print(e)
-        return None
