@@ -35,6 +35,17 @@ def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
     return feed, items
 
 
+def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
+
+    for element in channel.iterfind("item"):
+
+        try:
+            yield Item.parse_obj(item_mapper.parse(element))
+
+        except ValidationError:
+            ...
+
+
 class Item(BaseModel):
 
     guid: str
@@ -175,14 +186,3 @@ item_mapper = XPathMapper(
     episode_type=XPathParser("itunes:episodetype/text()", default="full"),
     keywords=XPathParser("category/text()", multiple=True),
 )
-
-
-def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
-
-    for element in channel.iterfind("item"):
-
-        try:
-            yield Item.parse_obj(item_mapper.parse(element))
-
-        except ValidationError:
-            ...
