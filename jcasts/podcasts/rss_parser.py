@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 import lxml
 
@@ -91,7 +91,7 @@ class Feed(BaseModel):
 
 
 class XPathParser:
-    def __init__(self, *paths: str, multiple: bool = False, default=None):
+    def __init__(self, *paths: str, multiple: bool = False, default: Any = None):
         self.paths = paths
         self.multiple = multiple
         self.default = default
