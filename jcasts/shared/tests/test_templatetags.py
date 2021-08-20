@@ -154,6 +154,9 @@ class TestMarkup:
     def test_value_none(self):
         return markup(None) == ""
 
+    def test_value_empty(self):
+        return markup("  ") == ""
+
     def test_markdown(self):
         return markup("*test*") == "<b>test</b>"
 

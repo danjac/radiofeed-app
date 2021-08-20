@@ -396,17 +396,6 @@ aioredis = ["aioredis"]
 lua = ["lupa"]
 
 [[package]]
-name = "feedparser"
-version = "6.0.8"
-description = "Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-sgmllib3k = "*"
-
-[[package]]
 name = "future"
 version = "0.18.2"
 description = "Clean single-source support for Python 3 and 2"
@@ -1073,14 +1062,6 @@ sqlalchemy = ["sqlalchemy (>=1.2)"]
 tornado = ["tornado (>=5)"]
 
 [[package]]
-name = "sgmllib3k"
-version = "1.0.0"
-description = "Py3k port of sgmllib."
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1262,7 +1243,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "84c1995c89f1e1a78a5ae7f89362bdb15bbfd6da3fbb7b9b3b137aabb4d61da9"
+content-hash = "fe6292d16773eb921948b3001c9ee62e971f70f2d157c3bfcb0d3c43e57fece2"
 
 [metadata.files]
 appnope = [
@@ -1554,10 +1535,6 @@ faker = [
 fakeredis = [
     {file = "fakeredis-1.6.0-py3-none-any.whl", hash = "sha256:3449b306f3a85102b28f8180c24722ef966fcb1e3c744758b6f635ec80321a5c"},
     {file = "fakeredis-1.6.0.tar.gz", hash = "sha256:11ccfc9769d718d37e45b382e64a6ba02586b622afa0371a6bd85766d72255f3"},
-]
-feedparser = [
-    {file = "feedparser-6.0.8-py3-none-any.whl", hash = "sha256:1b7f57841d9cf85074deb316ed2c795091a238adb79846bc46dccdaf80f9c59a"},
-    {file = "feedparser-6.0.8.tar.gz", hash = "sha256:5ce0410a05ab248c8c7cfca3a0ea2203968ee9ff4486067379af4827a59f9661"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
@@ -1990,9 +1967,6 @@ scipy = [
 sentry-sdk = [
     {file = "sentry-sdk-1.3.1.tar.gz", hash = "sha256:ebe99144fa9618d4b0e7617e7929b75acd905d258c3c779edcd34c0adfffe26c"},
     {file = "sentry_sdk-1.3.1-py2.py3-none-any.whl", hash = "sha256:f33d34c886d0ba24c75ea8885a8b3a172358853c7cbde05979fc99c29ef7bc52"},
-]
-sgmllib3k = [
-    {file = "sgmllib3k-1.0.0.tar.gz", hash = "sha256:7868fb1c8bfa764c1ac563d3cf369c381d1325d36124933a726f29fcdaa812e9"},
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},

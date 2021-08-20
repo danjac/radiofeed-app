@@ -1,10 +1,35 @@
+import uuid
+
 import factory
 
 from django.utils import timezone
+from factory import DictFactory, Faker, LazyFunction
 from factory.django import DjangoModelFactory
 
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
+
+
+class FeedFactory(DictFactory):
+    title = Faker("text")
+    description = Faker("text")
+    link = Faker("url")
+    cover_url = Faker("url")
+    explicit = None
+
+
+class ItemFactory(DictFactory):
+
+    guid = LazyFunction(lambda: uuid.uuid4().hex)
+    pub_date = LazyFunction(lambda: timezone.now().isoformat())
+    title = Faker("text")
+    description = Faker("text")
+    media_url = Faker("url")
+    media_type = "audio/mpeg"
+    length = 10000000
+    duration = "100"
+    explicit = None
+    cover_url = None
 
 
 class CategoryFactory(DjangoModelFactory):
