@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 
 import lxml
 
@@ -166,20 +166,18 @@ def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
     except ValidationError as e:
         raise RssParserError from e
 
-    items = [
-        item
-        for item in [parse_item(element) for element in channel.iterfind("item")]
-        if item
-    ]
-    if not items:
+    if not (items := [*parse_items(channel)]):
         raise RssParserError("no valid entries found")
 
     return feed, items
 
 
-def parse_item(element: lxml.etree.Element) -> Item | None:
+def parse_items(channel: lxml.etree.Element) -> Generator[Item, None, None]:
 
-    try:
-        return Item.parse_obj(parse(element, ITEM_MAPPINGS))
-    except ValidationError:
-        return None
+    for element in channel.iterfind("item"):
+
+        try:
+            yield Item.parse_obj(parse(element, ITEM_MAPPINGS))
+
+        except ValidationError:
+            ...
