@@ -130,7 +130,7 @@ class TestParseFeed:
 
         get_categories_dict.cache_clear()
 
-    def get_feedparser_content(self, filename: str = "") -> bytes:
+    def get_rss_content(self, filename: str = "") -> bytes:
         return open(
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file), "rb"
         ).read()
@@ -140,7 +140,7 @@ class TestParseFeed:
             self.mock_http_get,
             return_value=MockResponse(
                 url=new_podcast.rss,
-                content=self.get_feedparser_content("rss_no_podcasts_mock.xml"),
+                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
             ),
         )
 
@@ -159,7 +159,7 @@ class TestParseFeed:
             self.mock_http_get,
             return_value=MockResponse(
                 url=new_podcast.rss,
-                content=self.get_feedparser_content("rss_empty_mock.xml"),
+                content=self.get_rss_content("rss_empty_mock.xml"),
             ),
         )
 
@@ -191,7 +191,7 @@ class TestParseFeed:
             self.mock_http_get,
             return_value=MockResponse(
                 url=new_podcast.rss,
-                content=self.get_feedparser_content(),
+                content=self.get_rss_content(),
                 headers={
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
@@ -249,7 +249,7 @@ class TestParseFeed:
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
                 },
-                content=self.get_feedparser_content(),
+                content=self.get_rss_content(),
             ),
         )
         assert parse_feed(new_podcast.rss)
@@ -276,7 +276,7 @@ class TestParseFeed:
                     "ETag": "abc123",
                     "Last-Modified": self.updated,
                 },
-                content=self.get_feedparser_content(),
+                content=self.get_rss_content(),
             ),
         )
         assert not parse_feed(new_podcast.rss)

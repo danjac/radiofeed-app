@@ -143,7 +143,7 @@ def parse(element: lxml.etree.Element, mappings: dict[str, XPathParser]) -> dict
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
     try:
         xml = lxml.etree.fromstring(content)
-    except lxml.etree.ParserError as e:
+    except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
     if (channel := xml.find("channel")) is None:
