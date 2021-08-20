@@ -91,7 +91,6 @@ class Episode(models.Model):
     guid: str = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
-    link: str | None = models.URLField(null=True, blank=True, max_length=2083)
 
     title: str = models.TextField(blank=True)
     description: str = models.TextField(blank=True)

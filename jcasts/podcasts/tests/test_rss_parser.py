@@ -62,10 +62,6 @@ class TestItem:
         item = Item.parse_obj(ItemFactory())
         assert not item.explicit
 
-    def test_empty_link(self):
-        item = Item.parse_obj(ItemFactory(link=""))
-        assert item.link == ""
-
     def test_not_audio(self):
         with pytest.raises(ValidationError):
             Item.parse_obj(ItemFactory(media_type="video/mp4"))

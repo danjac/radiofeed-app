@@ -204,7 +204,6 @@ def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -
             "explicit",
             "keywords",
             "length",
-            "link",
             "media_type",
             "media_url",
             "season",

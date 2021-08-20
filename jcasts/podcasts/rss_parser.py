@@ -20,7 +20,6 @@ class Item(BaseModel):
 
     guid: str
     title: str
-    link: str = ""
 
     pub_date: datetime
 
@@ -154,7 +153,6 @@ def item_mapper() -> XPathMapper:
     return XPathMapper(
         guid=XPathParser("guid/text()"),
         title=XPathParser("title/text()"),
-        link=XPathParser("link/text()", default=""),
         pub_date=XPathParser("pubDate/text()"),
         media_url=XPathParser("enclosure//@url"),
         media_type=XPathParser("enclosure//@type"),
