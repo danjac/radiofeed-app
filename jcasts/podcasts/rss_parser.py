@@ -187,7 +187,10 @@ def feed_mapper() -> XPathMapper:
             "itunes:summary/text()",
             default="",
         ),
-        cover_url=XPathParser("image/url/text()"),
+        cover_url=XPathParser(
+            "image/url/text()",
+            "itunes:image/@href",
+        ),
         explicit=XPathParser("itunes:explicit/text()"),
         owner=XPathParser(
             "itunes:author/text()",
