@@ -1,7 +1,9 @@
+all: build seed test run
+
 build:
 	docker-compose build
 
-install:
+seed:
 	./bin/manage seed_podcast_data
 
 test:
