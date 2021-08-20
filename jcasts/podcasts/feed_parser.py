@@ -278,7 +278,6 @@ def parse_success(
     podcast.rss = response.url
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
-    podcast.status = response.status_code
 
     # parsing status
     pub_dates = [item.published for item in items]
