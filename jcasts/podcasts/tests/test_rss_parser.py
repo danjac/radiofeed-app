@@ -40,6 +40,10 @@ class TestFeed:
         feed = Feed.parse_obj(FeedFactory())
         assert not feed.explicit
 
+    def test_empty_link(self):
+        feed = Feed.parse_obj(FeedFactory(link=""))
+        assert feed.link == ""
+
     def test_missing_title(self):
         with pytest.raises(ValidationError):
             Feed.parse_obj(FeedFactory(title=None))
@@ -57,6 +61,10 @@ class TestItem:
     def test_ok(self):
         item = Item.parse_obj(ItemFactory())
         assert not item.explicit
+
+    def test_empty_link(self):
+        item = Item.parse_obj(ItemFactory(link=""))
+        assert item.link == ""
 
     def test_not_audio(self):
         with pytest.raises(ValidationError):
