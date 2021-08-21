@@ -44,11 +44,6 @@ class Category(models.Model):
         related_name="children",
     )
 
-    # https://itunes.apple.com/search?term=podcast&genreId=1402&limit=20
-    itunes_genre_id: int = models.IntegerField(
-        verbose_name="iTunes Genre ID", null=True, blank=True, unique=True
-    )
-
     objects = CategoryManager()
 
     class Meta:
@@ -94,8 +89,6 @@ class Podcast(models.Model):
     num_episodes: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
-
-    itunes: str = models.URLField(max_length=2083, null=True, blank=True, unique=True)
 
     language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]

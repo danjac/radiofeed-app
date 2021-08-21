@@ -1,8 +1,9 @@
-from typing import Callable
+from typing import Callable, Generator
 
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
+from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
 
@@ -18,6 +19,15 @@ from jcasts.users.factories import UserFactory
 @pytest.fixture
 def faker() -> Faker:
     return Faker()
+
+
+@pytest.fixture
+def locmem_cache(settings) -> Generator:
+    settings.CACHES = {
+        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+    }
+    yield
+    cache.clear()
 
 
 @pytest.fixture

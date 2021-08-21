@@ -10,6 +10,11 @@
       "schedule": "0,30 * * * *"
     },
     {
+      "command": "python manage.py fetch_new_feeds --limit=100",
+      "schedule": "15 18 * * * *"
+    },
+
+    {
       "command": "python manage.py send_recommendation_emails",
       "schedule": "12 9 * * 1"
     },

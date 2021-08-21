@@ -13,7 +13,10 @@ from jcasts.podcasts import feed_parser, models, scheduler
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     ordering = ("name",)
-    list_display = ("name", "parent", "itunes_genre_id")
+    list_display = (
+        "name",
+        "parent",
+    )
     search_fields = ("name",)
 
 

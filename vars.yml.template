@@ -9,3 +9,5 @@ secret_key:
 sentry_url:
 app_db_name:
 twitter_account:
+podcastindex_api_key:
+podcastindex_api_secret:

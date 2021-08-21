@@ -32,3 +32,8 @@ RQ_QUEUES = {
         "ASYNC": False,
     },
 }
+
+PODCASTINDEX_CONFIG = {
+    "api_key": "notset",
+    "api_secret": "notset",
+}

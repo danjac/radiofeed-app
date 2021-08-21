@@ -1,21 +1,15 @@
-{% with podcast=result.podcast %}
+{% with podcast=feed.podcast %}
 {% if podcast and podcast.pub_date %}
 {% include "podcasts/_podcast.html" %}
 {% else %}
 {% with cleaned_title=result.get_cleaned_title %}
 <section class="py-2 flex items-center space-x-2 border-t dark:border-gray-500">
-  {% if result.image %}
   <div>
-    {% include "_cover_image.html" with cover_url=result.image alt=cleaned_title size=14 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
   </div>
-  {% endif %}
   <div class="space-y-2 lg:space-y-3">
-    <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
-      <a href="{{ result.itunes }}"
-         title="See {{ cleaned_title }} in iTunes"
-         rel="noopener"
-         target="_blank"
-         class="link">{{ cleaned_title|truncatechars:120 }}</a>
+    <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm font-semibold">
+      {{ feed.title }}
     </h2>
     <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
       Adding podcast to database...
