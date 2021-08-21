@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import enum
+import functools
 import json
 
 from django.http import HttpResponse
@@ -43,3 +44,12 @@ def with_hx_trigger(
 
     response[header.value] = json.dumps({**payload, **data})
     return response
+
+
+with_hx_trigger_after_swap = functools.partial(
+    with_hx_trigger, header=HxTrigger.HX_TRIGGER_AFTER_SWAP
+)
+
+with_hx_trigger_after_settle = functools.partial(
+    with_hx_trigger, header=HxTrigger.HX_TRIGGER_AFTER_SETTLE
+)
