@@ -150,7 +150,7 @@ class TestParseFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert new_podcast.active
+        assert not new_podcast.active
         assert new_podcast.parsed
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -169,7 +169,7 @@ class TestParseFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert new_podcast.active
+        assert not new_podcast.active
         assert new_podcast.parsed
 
     def test_parse_feed_podcast_not_found(self, db):
@@ -311,7 +311,7 @@ class TestParseFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert new_podcast.active
+        assert not new_podcast.active
 
     def test_parse_feed_gone(self, mocker, new_podcast, categories):
         mocker.patch(

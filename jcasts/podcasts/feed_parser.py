@@ -92,9 +92,11 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         return parse_failure(podcast, status=response.status_code, active=False)
 
     except requests.RequestException as e:
-        # temp issue, maybe network error, log & try again later
         return parse_failure(
-            podcast, status=e.response.status_code if e.response else None, exception=e
+            podcast,
+            status=e.response.status_code if e.response else None,
+            active=False,
+            exception=e,
         )
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
@@ -112,7 +114,9 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         feed, items = parse_rss(response.content)
 
     except RssParserError as e:
-        return parse_failure(podcast, status=response.status_code, exception=e)
+        return parse_failure(
+            podcast, status=response.status_code, active=False, exception=e
+        )
 
     return parse_success(podcast, response, feed, items)
 
