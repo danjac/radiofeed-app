@@ -11,7 +11,7 @@
     },
     {
       "command": "python manage.py fetch_new_feeds --limit=100",
-      "schedule": "15 18 * * * *"
+      "schedule": "15 18 * * *"
     },
 
     {
