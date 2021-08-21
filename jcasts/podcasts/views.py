@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import podcastindex
@@ -71,6 +72,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     )
 
 
+@ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
 def search_podcastindex(request: HttpRequest) -> HttpResponse:
 

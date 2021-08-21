@@ -3,8 +3,15 @@
 {% block subtitle %} | Search iTunes {% endblock %}
 
 {% block search_content %}
+{% if feeds %}
+<p class="text-center sm:text-left text-sm mb-3">
+  Results sourced from <a href="https://podcastindex.org/"
+     rel="noopener"
+     _blank="true"
+     class="link">Podcast Index</a>
 
-
+</p>
+{% endif %}
 {% for feed in feeds %}
 {% include "podcasts/_index_feed.html" %}
 {% empty %}
@@ -16,6 +23,6 @@
   {% else %}
   No search query provided.
   {% endif %}
-  {% endfor %}
 </p>
+{% endfor %}
 {% endblock %}
