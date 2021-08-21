@@ -27,7 +27,9 @@ def search(search_term: str, cached: bool = False) -> list[Feed]:
         if cached and (feeds := cache.get(cache_key)) is not None:
             return feeds
 
-        feeds = with_podcasts(get_client().search(search_term))
+        feeds = with_podcasts(
+            parse_feed_data(get_client().fetch("/search/byterm", {"q": search_term}))
+        )
 
         if cached:
             cache.set(cache_key, feeds)
@@ -37,12 +39,37 @@ def search(search_term: str, cached: bool = False) -> list[Feed]:
 
 
 def new_feeds(limit: int = 20, since: timedelta = timedelta(hours=24)) -> list[Feed]:
-    return with_podcasts(get_client().new_feeds(limit, since))
+
+    return with_podcasts(
+        parse_feed_data(
+            get_client().fetch(
+                "/recent/newfeeds",
+                {
+                    "max": limit,
+                    "since": (timezone.now() - since).timestamp(),
+                },
+            )
+        )
+    )
 
 
 @lru_cache
 def get_client() -> Client:
     return Client.from_settings()
+
+
+def parse_feed_data(data: dict) -> list[Feed]:
+    def _parse_feed(result: dict) -> Feed | None:
+        try:
+            return Feed.parse_obj(result)
+        except ValidationError:
+            return None
+
+    return [
+        feed
+        for feed in [_parse_feed(result) for result in data.get("feeds", [])]
+        if feed
+    ]
 
 
 def with_podcasts(
@@ -101,37 +128,12 @@ class Client:
         assert api_secret, "api_secret missing or not set in PODCASTINDEX_CONFIG"
         return cls(api_key, api_secret)
 
-    def search(self, search_term: str) -> list[Feed]:
-        return self.parse_feeds("/search/byterm", {"q": search_term})
-
-    def new_feeds(self, limit: int, since: timedelta) -> list[Feed]:
-
-        return self.parse_feeds(
-            "/recent/newfeeds",
-            {"max": limit, "since": (timezone.now() - since).timestamp()},
-        )
-
-    def parse_feeds(self, endpoint: str, data: dict | None = None) -> list[Feed]:
-
+    def fetch(self, endpoint: str, data: dict | None = None) -> dict:
         response = requests.post(
             self.base_url + endpoint, headers=self.get_headers(), data=data
         )
         response.raise_for_status()
-
-        return [
-            feed
-            for feed in [
-                self.parse_feed(result) for result in response.json().get("feeds", [])
-            ]
-            if feed
-        ]
-
-    def parse_feed(self, result: dict) -> Feed | None:
-
-        try:
-            return Feed.parse_obj(result)
-        except ValidationError:
-            return None
+        return response.json()
 
     def get_headers(self) -> dict[str, str]:
 
