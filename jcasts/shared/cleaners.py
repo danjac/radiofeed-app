@@ -3,6 +3,7 @@ from __future__ import annotations
 import html
 
 import bleach
+import markdown
 
 from html5lib.filters import whitespace
 
@@ -68,7 +69,7 @@ def linkify_callback(attrs: dict, new: bool = False) -> dict:
     return attrs
 
 
-def clean_html_content(value: str | None) -> str:
+def clean(value: str | None) -> str:
     return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
 
 
@@ -76,3 +77,10 @@ def unescape(value: str | None) -> str:
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
     return html.unescape(value) if value else ""
+
+
+def markup(value: str | None) -> str:
+    """Parses Markdown and/or html and returns cleaned result."""
+    if value := (value or "").strip():
+        return unescape(clean(markdown.markdown(value)))
+    return ""
