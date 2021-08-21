@@ -137,9 +137,9 @@ class Client:
 
         epoch_time = int(time.time())
 
-        hash = self.api_key + self.api_secret + str(epoch_time)
+        hashed = self.api_key + self.api_secret + str(epoch_time)
 
-        sha_1 = hashlib.sha1(hash.encode()).hexdigest()
+        sha_1 = hashlib.sha1(hashed.encode()).hexdigest()
 
         return {
             "X-Auth-Date": str(epoch_time),
