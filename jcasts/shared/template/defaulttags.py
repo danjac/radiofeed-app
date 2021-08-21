@@ -16,6 +16,7 @@ from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from jcasts.shared import cleaners
 from jcasts.shared.typedefs import ContextDict
@@ -72,7 +73,7 @@ def re_active_link(
 @register.filter(is_safe=True)
 @stringfilter
 def markup(value: str) -> str:
-    return cleaners.markup(value)
+    return mark_safe(cleaners.markup(value))
 
 
 @register.filter
