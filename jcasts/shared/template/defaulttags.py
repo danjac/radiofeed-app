@@ -7,7 +7,6 @@ import re
 from urllib import parse
 
 import bs4
-import markdown
 
 from django import template
 from django.conf import settings
@@ -17,10 +16,8 @@ from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 
-from jcasts.shared.html import clean_html_content
-from jcasts.shared.html import unescape as _unescape
+from jcasts.shared import cleaners
 from jcasts.shared.typedefs import ContextDict
 
 register = template.Library()
@@ -72,18 +69,16 @@ def re_active_link(
     return ActiveLink(url, False, False)
 
 
-@register.filter
+@register.filter(is_safe=True)
 @stringfilter
 def markup(value: str) -> str:
-    if value := value.strip():
-        return mark_safe(_unescape(clean_html_content(markdown.markdown(value))))
-    return ""
+    return cleaners.markup(value)
 
 
 @register.filter
 @stringfilter
 def unescape(value: str) -> str:
-    return _unescape(value or "")
+    return cleaners.unescape(value)
 
 
 @register.filter
@@ -150,6 +145,7 @@ def share_buttons(
 @register.filter
 @stringfilter
 def normalize_url(url: str | None) -> str:
+    """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if not url:
         return ""
     for value in (url, "https://" + url):
