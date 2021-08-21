@@ -12,7 +12,7 @@ from django.http import (
 )
 from django.utils.functional import SimpleLazyObject, cached_property
 
-from jcasts.shared.response import with_hx_trigger
+from jcasts.shared.htmx import with_hx_trigger
 
 
 class BaseMiddleware:

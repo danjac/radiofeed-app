@@ -4,7 +4,7 @@ import pytest
 
 from django.http import HttpResponse
 
-from jcasts.shared.response import with_hx_trigger
+from jcasts.shared.htmx import with_hx_trigger
 
 
 class TestWithHxTrigger:

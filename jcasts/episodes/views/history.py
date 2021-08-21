@@ -8,8 +8,9 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog
 from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseNoContent, with_hx_trigger
+from jcasts.shared.response import HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
