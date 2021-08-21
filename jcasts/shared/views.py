@@ -6,17 +6,17 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_http_methods
 
 
-@require_safe
+@require_http_methods(["GET"])
 def home_page(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect(settings.HOME_URL)
     return TemplateResponse(request, "index.html")
 
 
-@require_safe
+@require_http_methods(["GET", "HEAD"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def robots(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
@@ -26,7 +26,7 @@ def robots(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_POST
+@require_http_methods(["POST"])
 def accept_cookies(request: HttpRequest) -> HttpResponse:
     response = HttpResponse()
     response.set_cookie(
@@ -40,6 +40,6 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
     return response
 
 
-@require_safe
+@require_http_methods(["GET"])
 def static_page(request: HttpRequest, template_name: str) -> HttpResponse:
     return TemplateResponse(request, template_name)
