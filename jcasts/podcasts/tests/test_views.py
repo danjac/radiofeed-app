@@ -5,37 +5,16 @@ import pytest
 from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import EpisodeFactory
-from jcasts.podcasts import itunes
 from jcasts.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
     PodcastFactory,
     RecommendationFactory,
 )
-from jcasts.podcasts.itunes import ItunesResult
-from jcasts.podcasts.models import Follow, Podcast
+from jcasts.podcasts.models import Follow
 from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
-
-mock_search_result = ItunesResult(
-    collectionName="test title",
-    feedUrl="http://example.com/test.xml",
-    trackViewUrl="https://apple.com/some-link",
-    artworkUrl600="https://example.com/test.jpg",
-)
-
-
-def mock_fetch_itunes_genre(
-    genre_id: int, num_results: int = 20
-) -> tuple[list[ItunesResult], list[Podcast]]:
-    return [mock_search_result], [PodcastFactory()]
-
-
-def mock_search_itunes(
-    search_term: str, num_results: int = 12
-) -> tuple[list[ItunesResult], list[Podcast]]:
-    return [mock_search_result], [PodcastFactory()]
 
 
 class TestPodcasts:
@@ -94,6 +73,16 @@ class TestSearchPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == podcast
+
+
+class TestSearchPodcastIndex:
+    def test_search(self, client, db, mocker):
+        mock_search = mocker.patch("jcasts.podcasts.podcastindex.search")
+
+        resp = client.get(reverse("podcasts:search_podcastindex"), {"q": "test"})
+        assert_ok(resp)
+
+        mock_search.assert_called()
 
 
 class TestPodcastRecommendations:
@@ -252,73 +241,3 @@ class TestUnfollow:
         resp = client.delete(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
-
-
-class TestITunesCategory:
-    @pytest.fixture
-    def category_with_itunes(self, db):
-        return CategoryFactory(itunes_genre_id=1200)
-
-    @pytest.fixture
-    def url(self, category_with_itunes):
-        return reverse("podcasts:itunes_category", args=[category_with_itunes.id])
-
-    def test_get(self, client, mocker, category_with_itunes, url):
-
-        mocker.patch("jcasts.podcasts.views.parse_feed.delay", autospec=True)
-        mocker.patch.object(itunes, "fetch_itunes_genre", mock_fetch_itunes_genre)
-
-        resp = client.get(url)
-
-        assert_ok(resp)
-        assert not resp.context_data["error"]
-        assert len(resp.context_data["results"]) == 1
-        assert resp.context_data["results"][0].title == mock_search_result.title
-
-    def test_invalid_results(self, client, mocker, category_with_itunes, url):
-
-        mocker.patch.object(
-            itunes, "fetch_itunes_genre", side_effect=itunes.Invalid, autospec=True
-        )
-
-        resp = client.get(url)
-
-        assert_ok(resp)
-        assert resp.context_data["error"]
-        assert len(resp.context_data["results"]) == 0
-
-
-class TestSearchITunes:
-    url = reverse_lazy("podcasts:search_itunes")
-
-    def test_search_is_empty(self, client, db):
-        resp = client.get(self.url)
-        assert_ok(resp)
-
-        assert not resp.context_data["error"]
-        assert len(resp.context_data["results"]) == 0
-
-    def test_search(self, client, mocker, db):
-        mock_parse = mocker.patch(
-            "jcasts.podcasts.views.parse_feed.delay", autospec=True
-        )
-        mocker.patch.object(itunes, "search_itunes", mock_search_itunes)
-
-        resp = client.get(self.url, {"q": "test"})
-
-        assert_ok(resp)
-        assert not resp.context_data["error"]
-        assert len(resp.context_data["results"]) == 1
-
-        assert resp.context_data["results"][0].title == mock_search_result.title
-
-        mock_parse.assert_called()
-
-    def test_invalid_results(self, client, mocker, db):
-        mocker.patch.object(
-            itunes, "search_itunes", side_effect=itunes.Invalid, autospec=True
-        )
-        resp = client.get(self.url, {"q": "testing"})
-        assert_ok(resp)
-        assert resp.context_data["error"]
-        assert len(resp.context_data["results"]) == 0

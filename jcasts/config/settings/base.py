@@ -9,11 +9,17 @@ import environ
 from django.contrib import messages
 from django.urls import reverse_lazy
 
+BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
+
+if (env_file := BASE_DIR / ".env").exists():
+    with open(env_file) as fp:
+        environ.Env.read_env(fp)
+
+
 env = environ.Env()
 
 DEBUG = False
 
-BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
 
 SECRET_KEY = env("SECRET_KEY")
 
@@ -282,3 +288,9 @@ GRAVATAR_DEFAULT_RATING = env("GRAVATAR_DEFAULT_RATING", default="g")
 DEFAULT_ITUNES_LIMIT = env.int("DEFAULT_ITUNES_LIMIT", default=DEFAULT_PAGE_SIZE)
 
 TWITTER_ACCOUNT = env("TWITTER_ACCOUNT", default=None)
+
+
+PODCASTINDEX_CONFIG = {
+    "api_key": env("PODCASTINDEX_API_KEY", default=None),
+    "api_secret": env("PODCASTINDEX_API_SECRET", default=None),
+}

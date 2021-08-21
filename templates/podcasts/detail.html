@@ -27,7 +27,7 @@
     <div class="space-y-2 lg:space-y-3 text-sm">
       {% include "podcasts/_follow_toggle.html" %}
       <div class="flex items-center space-x-3">
-        {% if link %}
+        {% if link and link != podcast.rss %}
         <div>
           <a href="{{ link }}"
              class="link"
@@ -39,12 +39,6 @@
           <a href="{{ podcast.rss }}"
              class="link"
              download>RSS</a>
-        </div>
-        <div>
-          <a href="{{ podcast.itunes }}"
-             class="link"
-             target="_blank"
-             rel="noopener">iTunes</a>
         </div>
         {% if user.is_staff %}
         <div>

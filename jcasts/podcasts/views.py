@@ -11,8 +11,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import itunes
-from jcasts.podcasts.feed_parser import parse_feed
+from jcasts.podcasts import podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -73,27 +72,15 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def search_itunes(request: HttpRequest) -> HttpResponse:
+def search_podcastindex(request: HttpRequest) -> HttpResponse:
 
-    error: bool = False
-    results: list[itunes.SearchResult] = []
-    new_podcasts: list[Podcast] = []
-
-    if request.search:
-        try:
-            results, new_podcasts = itunes.search_itunes(request.search)
-        except (itunes.Timeout, itunes.Invalid):
-            error = True
-
-    for podcast in new_podcasts:
-        parse_feed.delay(podcast.rss, force_update=True)
+    feeds = podcastindex.search(request.search, cached=True) if request.search else []
 
     return TemplateResponse(
         request,
-        "podcasts/itunes_search.html",
+        "podcasts/index_search.html",
         {
-            "results": results,
-            "error": error,
+            "feeds": feeds,
             "clear_search_url": reverse("podcasts:index"),
         },
     )
@@ -218,36 +205,6 @@ def category_detail(
             "children": category.children.order_by("name"),
         },
         cached=True,
-    )
-
-
-@require_http_methods(["GET"])
-def itunes_category(request: HttpRequest, category_id: int) -> HttpResponse:
-    error: bool = False
-    results: list[itunes.SearchResult] = []
-    new_podcasts: list[Podcast] = []
-
-    category = get_object_or_404(
-        Category.objects.select_related("parent").filter(itunes_genre_id__isnull=False),
-        pk=category_id,
-    )
-    try:
-        results, new_podcasts = itunes.fetch_itunes_genre(category.itunes_genre_id)
-        error = False
-    except (itunes.Timeout, itunes.Invalid):
-        error = True
-
-    for podcast in new_podcasts:
-        parse_feed.delay(podcast.rss, force_update=True)
-
-    return TemplateResponse(
-        request,
-        "podcasts/itunes_category.html",
-        {
-            "category": category,
-            "results": results,
-            "error": error,
-        },
     )
 
 

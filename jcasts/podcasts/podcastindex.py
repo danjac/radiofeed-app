@@ -1,0 +1,149 @@
+from __future__ import annotations
+
+import base64
+import hashlib
+import time
+
+from datetime import timedelta
+from functools import lru_cache
+from typing import Optional, Union
+
+import requests
+
+from django.conf import settings
+from django.core.cache import cache
+from django.utils import timezone
+from django.utils.encoding import force_str
+from pydantic import BaseModel, HttpUrl, ValidationError
+
+from jcasts.podcasts.feed_parser import parse_feed
+from jcasts.podcasts.models import Podcast
+
+
+def search(search_term: str, cached: bool = False) -> list[Feed]:
+    if search_term := force_str(search_term or "").strip():
+        cache_key = base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
+
+        if cached and (feeds := cache.get(cache_key)) is not None:
+            return feeds
+
+        feeds = with_podcasts(get_client().search(search_term))
+
+        if cached:
+            cache.set(cache_key, feeds)
+        return feeds
+
+    return []
+
+
+def new_feeds(limit: int = 20, since: timedelta = timedelta(hours=24)) -> list[Feed]:
+    return with_podcasts(get_client().new_feeds(limit, since))
+
+
+@lru_cache
+def get_client() -> Client:
+    return Client.from_settings()
+
+
+def with_podcasts(
+    feeds: list[Feed],
+) -> list[Feed]:
+    """Looks up podcast associated with result. Adds new podcasts if they are not already in the database"""
+
+    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
+        field_name="rss"
+    )
+
+    new_podcasts = []
+
+    for feed in feeds:
+        feed.podcast = podcasts.get(feed.url, None)
+        if feed.podcast is None:
+            new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
+
+    if new_podcasts:
+        Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
+
+        for podcast in new_podcasts:
+            parse_feed.delay(podcast.rss, force_update=True)
+
+    return feeds
+
+
+class Feed(BaseModel):
+    id: int
+    url: HttpUrl
+
+    title: str = ""
+    image: Union[HttpUrl, str] = ""
+
+    podcast: Optional[Podcast] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class Client:
+    base_url = "https://api.podcastindex.org/api/1.0"
+    user_agent = "Voyce"
+
+    def __init__(self, api_key: str, api_secret: str):
+        self.api_key = api_key
+        self.api_secret = api_secret
+
+    @classmethod
+    def from_settings(cls) -> Client:
+
+        api_key = settings.PODCASTINDEX_CONFIG.setdefault("api_key", None)
+        api_secret = settings.PODCASTINDEX_CONFIG.setdefault("api_secret", None)
+
+        assert api_key, "api_key missing or not set in PODCASTINDEX_CONFIG"
+        assert api_secret, "api_secret missing or not set in PODCASTINDEX_CONFIG"
+        return cls(api_key, api_secret)
+
+    def search(self, search_term: str) -> list[Feed]:
+        return self.parse_feeds("/search/byterm", {"q": search_term})
+
+    def new_feeds(self, limit: int, since: timedelta) -> list[Feed]:
+
+        return self.parse_feeds(
+            "/recent/newfeeds",
+            {"max": limit, "since": (timezone.now() - since).timestamp()},
+        )
+
+    def parse_feeds(self, endpoint: str, data: dict | None = None) -> list[Feed]:
+
+        response = requests.post(
+            self.base_url + endpoint, headers=self.get_headers(), data=data
+        )
+        response.raise_for_status()
+
+        return [
+            feed
+            for feed in [
+                self.parse_feed(result) for result in response.json().get("feeds", [])
+            ]
+            if feed
+        ]
+
+    def parse_feed(self, result: dict) -> Feed | None:
+
+        try:
+            return Feed.parse_obj(result)
+        except ValidationError:
+            return None
+
+    def get_headers(self) -> dict[str, str]:
+
+        epoch_time = int(time.time())
+
+        hash = self.api_key + self.api_secret + str(epoch_time)
+
+        sha_1 = hashlib.sha1(hash.encode()).hexdigest()
+
+        return {
+            "X-Auth-Date": str(epoch_time),
+            "X-Auth-Key": self.api_key,
+            "Authorization": sha_1,
+            "User-Agent": self.user_agent,
+        }
