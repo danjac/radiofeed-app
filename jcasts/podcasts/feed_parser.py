@@ -32,6 +32,14 @@ USER_AGENTS = [
 ]
 
 
+class NotModified(requests.RequestException):
+    ...
+
+
+class DuplicateFeed(requests.RequestException):
+    ...
+
+
 def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
     counter = 0
     qs = Podcast.objects.order_by("scheduled", "-pub_date").values_list(
@@ -72,15 +80,18 @@ class ParseResult:
 @job("feeds")
 @transaction.atomic
 def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
-    try:
 
+    try:
         podcast = get_podcast(rss, force_update)
+        response = get_feed_response(podcast, force_update)
+
+        return parse_success(podcast, response, *parse_rss(response.content))
 
     except Podcast.DoesNotExist as e:
-        return ParseResult(rss, None, False, exception=e)
+        return ParseResult(rss, status=None, success=False, exception=e)
 
-    try:
-        response = get_response(podcast, force_update)
+    except NotModified as e:
+        return parse_failure(podcast, status=e.response.status_code)
 
     except requests.RequestException as e:
         return parse_failure(
@@ -91,20 +102,6 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
             tb=traceback.format_exc(),
         )
 
-    if response.status_code == http.HTTPStatus.NOT_MODIFIED:
-        # no change, ignore
-        return parse_failure(podcast, status=response.status_code)
-
-    if (
-        response.url != podcast.rss
-        and Podcast.objects.filter(rss=response.url).exists()
-    ):
-        # permanent redirect to URL already taken by another podcast
-        return parse_failure(podcast, status=response.status_code, active=False)
-
-    try:
-        feed, items = parse_rss(response.content)
-
     except RssParserError as e:
         return parse_failure(
             podcast,
@@ -114,10 +111,8 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
             tb=traceback.format_exc(),
         )
 
-    return parse_success(podcast, response, feed, items)
 
-
-def get_response(podcast: Podcast, force_update: bool = False):
+def get_feed_response(podcast: Podcast, force_update: bool = False):
     response = requests.get(
         podcast.rss,
         headers=get_feed_headers(podcast, force_update),
@@ -126,6 +121,16 @@ def get_response(podcast: Podcast, force_update: bool = False):
     )
 
     response.raise_for_status()
+
+    if response.status_code == http.HTTPStatus.NOT_MODIFIED:
+        raise NotModified(response=response)
+
+    if (
+        response.url != podcast.rss
+        and Podcast.objects.filter(rss=response.url).exists()
+    ):
+        raise DuplicateFeed(response=response)
+
     return response
 
 
