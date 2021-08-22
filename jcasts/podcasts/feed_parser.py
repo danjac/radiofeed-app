@@ -112,7 +112,9 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         )
 
 
-def get_feed_response(podcast: Podcast, force_update: bool = False):
+def get_feed_response(
+    podcast: Podcast, force_update: bool = False
+) -> requests.Response:
     response = requests.get(
         podcast.rss,
         headers=get_feed_headers(podcast, force_update),
