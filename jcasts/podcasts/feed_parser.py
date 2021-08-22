@@ -239,7 +239,8 @@ def extract_text(
     items: list[Item],
 ) -> str:
     text = " ".join(
-        [
+        value
+        for value in [
             podcast.title,
             podcast.description,
             podcast.keywords,
@@ -247,6 +248,7 @@ def extract_text(
         ]
         + [c.name for c in categories]
         + [item.title for item in items][:6]
+        if value
     )
     return " ".join(extract_keywords(podcast.language, text))
 
