@@ -24,6 +24,15 @@ class TestRssParser:
         with pytest.raises(RssParserError):
             parse_rss(b"<rss><channel /></rss>")
 
+    def test_iso_8859_1(self):
+        content = open(
+            pathlib.Path(__file__).parent / "mocks" / "rss_mock_iso_8859-1.xml",
+            "rb",
+        ).read()
+
+        with pytest.raises(RssParserError):
+            parse_rss(content)
+
     def test_with_bad_chars(self):
         content = open(
             pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "r"
