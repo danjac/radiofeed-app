@@ -24,6 +24,17 @@ class TestRssParser:
         with pytest.raises(RssParserError):
             parse_rss(b"<rss><channel /></rss>")
 
+    def test_with_bad_chars(self):
+        content = open(
+            pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "r"
+        ).read()
+
+        content = content.replace("&amp;", "&")
+        feed, items = parse_rss(bytes(content.encode("utf-8")))
+
+        assert len(items) == 20
+        assert feed.title == "Mysterious Universe"
+
     def test_ok(self):
         content = open(
             pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "rb"
