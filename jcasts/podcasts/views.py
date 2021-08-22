@@ -80,7 +80,7 @@ def search_podcastindex(request: HttpRequest) -> HttpResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/index_search.html",
+        "podcasts/podcastindex_search.html",
         {
             "feeds": feeds,
             "clear_search_url": reverse("podcasts:index"),
