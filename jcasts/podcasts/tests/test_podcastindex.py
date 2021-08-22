@@ -9,38 +9,9 @@ from jcasts.podcasts import podcastindex
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
 
-REQUESTS_POST = "requests.post"
 
-FEED_URL = "https://feeds.fireside.fm/testandcode/rss"
-TITLE = "Test & Code : Python Testing"
-IMAGE = "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3"
-
-MOCK_RESULTS = {
-    "count": 1,
-    "feeds": [
-        {
-            "id": 12345,
-            "url": FEED_URL,
-            "title": TITLE,
-            "image": IMAGE,
-        }
-    ],
-}
-
-
-class MockBadResponse:
-    def raise_for_status(self):
-        raise requests.HTTPError()
-
-
-class MockResponse:
-    _mock_results = MOCK_RESULTS
-
-    def raise_for_status(self):
-        ...
-
-    def json(self) -> dict:
-        return self._mock_results
+def patch_request(mocker, response):
+    return mocker.patch("requests.post", return_value=response, autospec=True)
 
 
 @pytest.fixture
@@ -48,9 +19,52 @@ def mock_parse_feed(mocker):
     return mocker.patch("jcasts.podcasts.podcastindex.parse_feed.delay")
 
 
+@pytest.fixture
+def mock_good_response(mocker):
+    class MockResponse:
+        def raise_for_status(self):
+            ...
+
+        def json(self) -> dict:
+
+            return {
+                "count": 1,
+                "feeds": [
+                    {
+                        "id": 12345,
+                        "url": "https://feeds.fireside.fm/testandcode/rss",
+                        "title": "Test & Code : Python Testing",
+                        "image": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                    }
+                ],
+            }
+
+    yield patch_request(mocker, MockResponse())
+
+
+@pytest.fixture
+def mock_bad_response(mocker):
+    class MockResponse:
+        def raise_for_status(self):
+            raise requests.HTTPError()
+
+    yield patch_request(mocker, MockResponse())
+
+
+@pytest.fixture
+def mock_invalid_response(mocker):
+    class MockResponse:
+        def raise_for_status(self):
+            ...
+
+        def json(self):
+            return {"count": 1, "feeds": [{"id": 12345, "url": "bad-url"}]}
+
+    yield patch_request(mocker, MockResponse())
+
+
 class TestNewFeeds:
-    def test_ok(self, db, mocker, mock_parse_feed):
-        mocker.patch(REQUESTS_POST, return_value=MockResponse(), autospec=True)
+    def test_ok(self, db, mock_good_response, mock_parse_feed):
 
         feeds = podcastindex.new_feeds()
         assert len(feeds) == 1
@@ -61,47 +75,32 @@ class TestNewFeeds:
 class TestSearch:
     cache_key = "6447567a64413d3d"
 
-    def test_empty_string(self, db, mocker, mock_parse_feed):
-        mock_req = mocker.patch(
-            REQUESTS_POST, return_value=MockBadResponse(), autospec=True
-        )
-
+    def test_empty_string(self, db, mock_good_response, mock_parse_feed):
         podcastindex.search(" ")
         podcastindex.search("")
 
-        mock_req.assert_not_called()
+        mock_good_response.assert_not_called()
 
-    def test_not_ok(self, db, mocker, mock_parse_feed):
+    def test_not_ok(self, db, mock_bad_response, mock_parse_feed):
 
-        mocker.patch(REQUESTS_POST, return_value=MockBadResponse(), autospec=True)
         with pytest.raises(requests.HTTPError):
             podcastindex.search("test")
 
         assert not Podcast.objects.exists()
         mock_parse_feed.assert_not_called()
 
-    def test_ok(self, db, mocker, mock_parse_feed):
-        mocker.patch(REQUESTS_POST, return_value=MockResponse(), autospec=True)
+    def test_ok(self, db, mock_good_response, mock_parse_feed):
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
         mock_parse_feed.assert_called()
 
-    def _test_bad_data(self, db, mocker, mock_parse_feed):
-
-        results = {**MOCK_RESULTS}
-        results["feeds"][0]["url"] = "bad"
-
-        class BadResponse(MockResponse):
-            _mock_results = results
-
-        mocker.patch(REQUESTS_POST, return_value=BadResponse(), autospec=True)
+    def test_bad_data(self, db, mock_invalid_response, mock_parse_feed):
         feeds = podcastindex.search("test")
         assert len(feeds) == 0
         mock_parse_feed.assert_not_called()
 
-    def test_is_not_cached(self, db, mocker, mock_parse_feed, locmem_cache):
-        mocker.patch(REQUESTS_POST, return_value=MockResponse(), autospec=True)
+    def test_is_not_cached(self, db, mock_good_response, mock_parse_feed, locmem_cache):
 
         feeds = podcastindex.search("test", cached=True)
 
@@ -111,14 +110,11 @@ class TestSearch:
 
         assert cache.get(self.cache_key) == feeds
 
-    def test_is_cached(self, db, mocker, mock_parse_feed, locmem_cache):
-        mock_req = mocker.patch(
-            REQUESTS_POST, return_value=MockResponse(), autospec=True
-        )
+    def test_is_cached(self, db, mock_good_response, mock_parse_feed, locmem_cache):
 
         cache.set(
             self.cache_key,
-            [podcastindex.Feed(**result) for result in MOCK_RESULTS["feeds"]],
+            [podcastindex.Feed(url="https://example.com", title="test")],
         )
 
         feeds = podcastindex.search("test", cached=True)
@@ -126,12 +122,11 @@ class TestSearch:
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
-        mock_req.assert_not_called()
+        mock_good_response.assert_not_called()
         mock_parse_feed.assert_not_called()
 
-    def test_podcast_exists(self, db, mocker, mock_parse_feed):
-        PodcastFactory(rss=FEED_URL)
-        mocker.patch(REQUESTS_POST, return_value=MockResponse(), autospec=True)
+    def test_podcast_exists(self, db, mock_good_response, mock_parse_feed):
+        PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()

@@ -98,7 +98,6 @@ def with_podcasts(
 
 
 class Feed(BaseModel):
-    id: int
     url: HttpUrl
 
     title: str = ""
