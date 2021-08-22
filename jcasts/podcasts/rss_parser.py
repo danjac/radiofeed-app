@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Generator, Optional
 import lxml
 
 from django.utils import timezone
-from pydantic import BaseModel, HttpUrl, ValidationError, validator
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, validator
 
 from jcasts.podcasts.date_parser import parse_date
 
@@ -50,26 +50,27 @@ def parse_items(
 
 class Item(BaseModel):
 
-    guid: str
-    title: str
+    guid: str = Field(..., strip_whitespace=True)
+    title: str = Field(..., strip_whitespace=True)
 
     pub_date: datetime
 
-    cover_url: Optional[HttpUrl]
+    cover_url: Optional[HttpUrl] = None
 
     media_url: HttpUrl
-    media_type: str
+    media_type: str = Field(..., strip_whitespace=True, max_length=60)
     length: Optional[int] = None
 
     explicit: bool = False
 
     season: Optional[int] = None
     episode: Optional[int] = None
-    episode_type: str = "full"
-    duration: str = ""
 
-    description: str = ""
-    keywords: str = ""
+    episode_type: str = Field("full", strip_whitespace=True, max_length=30)
+    duration: str = Field("", strip_whitespace=True, max_length=30)
+
+    description: str = Field("", strip_whitespace=True)
+    keywords: str = Field("", strip_whitespace=True)
 
     @validator("pub_date", pre=True)
     def get_pub_date(cls, value: str | None) -> datetime | None:
@@ -95,14 +96,15 @@ class Item(BaseModel):
 
 class Feed(BaseModel):
 
-    title: str
-    link: str = ""
+    title: str = Field(..., strip_whitespace=True)
+    link: str = Field("", strip_whitespace=True)
 
-    language: str = "en"
+    language: str = Field("en", strip_whitespace=True, max_length=2)
+
     cover_url: Optional[HttpUrl]
 
-    owner: str = ""
-    description: str = ""
+    owner: str = Field("", strip_whitespace=True)
+    description: str = Field("", strip_whitespace=True)
 
     explicit: bool = False
 
@@ -112,7 +114,7 @@ class Feed(BaseModel):
     def is_explicit(cls, value: str) -> bool:
         return value.lower() in ("yes", "clean") if value else False
 
-    @validator("language")
+    @validator("language", pre=True)
     def get_language(cls, value: str) -> str:
         return value[:2]
 
