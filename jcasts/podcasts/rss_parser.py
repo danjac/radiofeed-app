@@ -103,7 +103,7 @@ class Feed(BaseModel):
 
     cover_url: Optional[HttpUrl] = None
 
-    owner: str = ""
+    owner: Optional[str] = ""
     description: str = ""
 
     explicit: bool = False
