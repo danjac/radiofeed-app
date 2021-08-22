@@ -18,14 +18,14 @@ class RssParserError(ValueError):
 
 
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
-    xml = lxml.etree.parse(
-        io.BytesIO(content),
-        parser=lxml.etree.XMLParser(recover=True),
-    )
     try:
+        xml = lxml.etree.parse(
+            io.BytesIO(content),
+            parser=lxml.etree.XMLParser(recover=True),
+        )
         channel = xml.find("channel")
 
-    except AssertionError as e:
+    except (lxml.etree.XMLSyntaxError, AssertionError) as e:
         raise RssParserError from e
 
     if channel is None:
