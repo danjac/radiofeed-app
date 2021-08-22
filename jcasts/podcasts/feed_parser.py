@@ -74,7 +74,8 @@ class ParseResult:
 def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
     try:
 
-        podcast = Podcast.objects.get(rss=rss, active=True)
+        podcast = get_podcast(rss, force_update)
+
     except Podcast.DoesNotExist as e:
         return ParseResult(rss, None, False, exception=e)
 
@@ -270,6 +271,14 @@ def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, 
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
+
+
+def get_podcast(rss: str, force_update: bool = False) -> Podcast:
+
+    qs = Podcast.objects.filter(rss=rss)
+    if not force_update:
+        qs = qs.filter(active=True)
+    return qs.get()
 
 
 def parse_failure(
