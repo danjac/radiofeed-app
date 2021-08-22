@@ -321,8 +321,8 @@ class TestParseFeed:
         result = parse_feed(new_podcast.rss)
         assert result.success is False
 
-        # no exception
-        result.raise_exception()
+        with pytest.raises(requests.HTTPError):
+            result.raise_exception()
 
         new_podcast.refresh_from_db()
 

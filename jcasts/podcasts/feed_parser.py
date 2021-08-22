@@ -80,17 +80,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         return ParseResult(rss, None, False, exception=e)
 
     try:
-        response = requests.get(
-            podcast.rss,
-            headers=get_feed_headers(podcast, force_update),
-            allow_redirects=True,
-            timeout=10,
-        )
-
-        response.raise_for_status()
-    except requests.HTTPError:
-        # dead feed, don't request again
-        return parse_failure(podcast, status=response.status_code, active=False)
+        response = get_response(podcast, force_update)
 
     except requests.RequestException as e:
         return parse_failure(
@@ -125,6 +115,18 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         )
 
     return parse_success(podcast, response, feed, items)
+
+
+def get_response(podcast: Podcast, force_update: bool = False):
+    response = requests.get(
+        podcast.rss,
+        headers=get_feed_headers(podcast, force_update),
+        allow_redirects=True,
+        timeout=10,
+    )
+
+    response.raise_for_status()
+    return response
 
 
 def parse_success(
