@@ -20,7 +20,7 @@ class RssParserError(ValueError):
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
     xml = lxml.etree.parse(
         io.BytesIO(content),
-        parser=lxml.etree.XMLParser(encoding="utf-8", recover=True),
+        parser=lxml.etree.XMLParser(recover=True),
     )
     try:
         channel = xml.find("channel")
