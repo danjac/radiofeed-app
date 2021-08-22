@@ -10,6 +10,7 @@ from django.http import (
     HttpResponsePermanentRedirect,
     HttpResponseRedirect,
 )
+from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
 from jcasts.shared.htmx import with_hx_trigger
@@ -35,7 +36,7 @@ class Search:
 
     @cached_property
     def value(self) -> str:
-        return self.request.GET.get(self.search_param, "").strip()
+        return force_str(self.request.GET.get(self.search_param, "")).strip()
 
     @cached_property
     def qs(self) -> str:

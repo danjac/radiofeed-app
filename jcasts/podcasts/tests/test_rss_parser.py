@@ -35,6 +35,16 @@ class TestRssParser:
         assert len(items) == 20
         assert feed.title == "Mysterious Universe"
 
+    def test_owner_missing(self):
+        content = open(
+            pathlib.Path(__file__).parent / "mocks" / "rss_mock_small.xml", "rb"
+        ).read()
+
+        feed, items = parse_rss(content)
+
+        assert len(items) == 1
+        assert feed.title == "ABC News Update"
+
     def test_ok(self):
         content = open(
             pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "rb"

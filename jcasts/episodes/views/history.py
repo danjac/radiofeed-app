@@ -26,7 +26,7 @@ def index(request: HttpRequest) -> HttpResponse:
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
     if request.search:
-        logs = logs.search(request.search).order_by("-rank", "-updated")
+        logs = logs.search(request.search.value).order_by("-rank", "-updated")
     else:
         logs = logs.order_by("-updated" if newest_first else "updated")
 

@@ -60,7 +60,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)
-        .search(request.search)
+        .search(request.search.value)
         .order_by("-rank", "-pub_date")
     )
 
@@ -76,7 +76,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def search_podcastindex(request: HttpRequest) -> HttpResponse:
 
-    feeds = podcastindex.search(request.search, cached=True) if request.search else []
+    feeds = podcastindex.search_cached(request.search.value) if request.search else []
 
     return TemplateResponse(
         request,
@@ -137,7 +137,7 @@ def episodes(
     episodes = podcast.episode_set.select_related("podcast")
 
     if request.search:
-        episodes = episodes.search(request.search).order_by("-rank", "-pub_date")
+        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
@@ -164,7 +164,9 @@ def categories(request: HttpRequest) -> HttpResponse:
     categories = Category.objects.all()
 
     if request.search:
-        categories = categories.search(request.search).order_by("-similarity", "name")
+        categories = categories.search(request.search.value).order_by(
+            "-similarity", "name"
+        )
     else:
         categories = (
             categories.filter(parent__isnull=True)
@@ -194,7 +196,7 @@ def category_detail(
     podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
-        podcasts = podcasts.search(request.search).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

@@ -21,7 +21,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "episode", "episode__podcast"
     )
     if request.search:
-        favorites = favorites.search(request.search).order_by("-rank", "-created")
+        favorites = favorites.search(request.search.value).order_by("-rank", "-created")
     else:
         favorites = favorites.order_by("-created")
 

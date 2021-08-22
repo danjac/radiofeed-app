@@ -13,29 +13,29 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
-from django.utils.encoding import force_str
 from pydantic import BaseModel, HttpUrl, ValidationError
 
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
 
 
-def search(search_term: str, cached: bool = False) -> list[Feed]:
-    if search_term := force_str(search_term or "").strip():
-        cache_key = base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
+def search(search_term: str) -> list[Feed]:
+    return with_podcasts(
+        parse_feed_data(get_client().fetch("/search/byterm", {"q": search_term}))
+    )
 
-        if cached and (feeds := cache.get(cache_key)) is not None:
-            return feeds
 
-        feeds = with_podcasts(
-            parse_feed_data(get_client().fetch("/search/byterm", {"q": search_term}))
-        )
+def search_cached(search_term: str) -> list[Feed]:
 
-        if cached:
-            cache.set(cache_key, feeds)
+    cache_key = (
+        "podcastindex:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
+    )
+    if (feeds := cache.get(cache_key)) is not None:
         return feeds
 
-    return []
+    feeds = search(search_term)
+    cache.set(cache_key, feeds)
+    return feeds
 
 
 def new_feeds(limit: int = 20, since: timedelta = timedelta(hours=24)) -> list[Feed]:

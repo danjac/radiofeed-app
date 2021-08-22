@@ -17,17 +17,13 @@ class RssParserError(ValueError):
 
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
 
-    if (
-        xml := lxml.etree.fromstring(
-            content,
-            parser=lxml.etree.XMLParser(encoding="utf-8", recover=True),
-        )
-    ) is None:
-        raise RssParserError("Invalid XML")
+    xml = lxml.etree.fromstring(
+        content,
+        parser=lxml.etree.XMLParser(encoding="utf-8", recover=True),
+    )
 
-    if (channel := xml.find("channel")) is None:
-
-        raise RssParserError("<channel /> missing")
+    if xml is None or (channel := xml.find("channel")) is None:
+        raise RssParserError("<channel /> is missing")
 
     try:
         feed = Feed.parse_obj(FeedMapper().parse(channel))
@@ -178,8 +174,7 @@ class FeedMapper(XPathMapper):
             "itunes:image/@href",
         ),
         "owner": XPathParser(
-            "itunes:author/text()",
-            "itunes:owner/itunes:name/text()",
+            "itunes:author/text()", "itunes:owner/itunes:name/text()", default=""
         ),
         "explicit": XPathParser("itunes:explicit/text()"),
         "categories": XPathParser("//itunes:category/@text", multiple=True),

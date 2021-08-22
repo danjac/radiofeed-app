@@ -63,7 +63,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
     episodes = (
         Episode.objects.select_related("podcast")
-        .search(request.search)
+        .search(request.search.value)
         .order_by("-rank", "-pub_date")
     )
 

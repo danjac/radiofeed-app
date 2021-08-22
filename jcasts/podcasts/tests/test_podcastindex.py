@@ -73,13 +73,7 @@ class TestNewFeeds:
 
 
 class TestSearch:
-    cache_key = "6447567a64413d3d"
-
-    def test_empty_string(self, db, mock_good_response, mock_parse_feed):
-        podcastindex.search(" ")
-        podcastindex.search("")
-
-        mock_good_response.assert_not_called()
+    cache_key = "podcastindex:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response, mock_parse_feed):
 
@@ -102,7 +96,7 @@ class TestSearch:
 
     def test_is_not_cached(self, db, mock_good_response, mock_parse_feed, locmem_cache):
 
-        feeds = podcastindex.search("test", cached=True)
+        feeds = podcastindex.search_cached("test")
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
@@ -117,7 +111,7 @@ class TestSearch:
             [podcastindex.Feed(url="https://example.com", title="test")],
         )
 
-        feeds = podcastindex.search("test", cached=True)
+        feeds = podcastindex.search_cached("test")
 
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
