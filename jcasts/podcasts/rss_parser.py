@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Generator, Optional
 import lxml
 
 from django.utils import timezone
-from pydantic import BaseModel, Field, HttpUrl, ValidationError, validator
+from pydantic import BaseModel, HttpUrl, ValidationError, validator
 
 from jcasts.podcasts.date_parser import parse_date
 
@@ -50,15 +50,15 @@ def parse_items(
 
 class Item(BaseModel):
 
-    guid: str = Field(..., strip_whitespace=True)
-    title: str = Field(..., strip_whitespace=True)
+    guid: str
+    title: str
 
     pub_date: datetime
 
     cover_url: Optional[HttpUrl] = None
 
     media_url: HttpUrl
-    media_type: str = Field(..., strip_whitespace=True, max_length=60)
+    media_type: str = ""
     length: Optional[int] = None
 
     explicit: bool = False
@@ -66,11 +66,11 @@ class Item(BaseModel):
     season: Optional[int] = None
     episode: Optional[int] = None
 
-    episode_type: str = Field("full", strip_whitespace=True, max_length=30)
-    duration: str = Field("", strip_whitespace=True, max_length=30)
+    episode_type: str = "full"
+    duration: str = ""
 
-    description: str = Field("", strip_whitespace=True)
-    keywords: str = Field("", strip_whitespace=True)
+    description: str = ""
+    keywords: str = ""
 
     @validator("pub_date", pre=True)
     def get_pub_date(cls, value: str | None) -> datetime | None:
@@ -96,15 +96,15 @@ class Item(BaseModel):
 
 class Feed(BaseModel):
 
-    title: str = Field(..., strip_whitespace=True)
-    link: str = Field("", strip_whitespace=True)
+    title: str
+    link: str
 
-    language: str = Field("en", strip_whitespace=True, max_length=2)
+    language: str = "en"
 
-    cover_url: Optional[HttpUrl]
+    cover_url: Optional[HttpUrl] = None
 
-    owner: str = Field("", strip_whitespace=True)
-    description: str = Field("", strip_whitespace=True)
+    owner: str = ""
+    description: str = ""
 
     explicit: bool = False
 
@@ -129,9 +129,18 @@ class XPathParser:
         self, element: lxml.etree.Element, namespaces: dict[str, str]
     ) -> str | list:
         for path in self.paths:
-            if value := element.xpath(path, namespaces=namespaces):
+            if value := list(
+                map(
+                    self.strip_whitespace,
+                    element.xpath(path, namespaces=namespaces),
+                )
+            ):
                 return value if self.multiple else value[0]
+
         return [] if self.multiple else self.default
+
+    def strip_whitespace(self, value: str | None) -> str:
+        return (value or "").strip()
 
 
 class XPathMapper:

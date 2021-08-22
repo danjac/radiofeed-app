@@ -54,7 +54,7 @@ class TestParsePodcastFeeds:
             (False, True, timedelta(hours=1), 1000, 0),
             (True, True, timedelta(hours=1), 1000, 1),
             (True, True, None, 1000, 1),
-            (True, False, None, 1000, 0),
+            (True, False, None, 1000, 1),
             (False, False, None, 1000, 0),
         ],
     )

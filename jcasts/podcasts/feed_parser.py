@@ -34,14 +34,13 @@ USER_AGENTS = [
 
 def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
     counter = 0
-    qs = (
-        Podcast.objects.filter(active=True)
-        .order_by("scheduled", "-pub_date")
-        .values_list("rss", flat=True)
+    qs = Podcast.objects.order_by("scheduled", "-pub_date").values_list(
+        "rss", flat=True
     )
 
     if not force_update:
         qs = qs.filter(
+            active=True,
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
         )
