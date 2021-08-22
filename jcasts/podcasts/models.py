@@ -86,6 +86,9 @@ class Podcast(models.Model):
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
+    exception: str = models.TextField(blank=True)
+
     num_episodes: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)

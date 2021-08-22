@@ -106,6 +106,8 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "etag",
         "frequency",
+        "http_status",
+        "exception",
     )
 
     actions = ["reactivate", "parse_podcast_feeds"]

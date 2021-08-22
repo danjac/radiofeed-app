@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import http
 import secrets
+import traceback
 
 from dataclasses import dataclass
 from functools import lru_cache
@@ -97,6 +98,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
             status=e.response.status_code if e.response else None,
             active=False,
             exception=e,
+            tb=traceback.format_exc(),
         )
 
     if response.status_code == http.HTTPStatus.NOT_MODIFIED:
@@ -115,7 +117,11 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
 
     except RssParserError as e:
         return parse_failure(
-            podcast, status=response.status_code, active=False, exception=e
+            podcast,
+            status=response.status_code,
+            active=False,
+            exception=e,
+            tb=traceback.format_exc(),
         )
 
     return parse_success(podcast, response, feed, items)
@@ -130,6 +136,7 @@ def parse_success(
 
     # feed status
     podcast.rss = response.url
+    podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = parse_date(response.headers.get("Last-Modified"))
 
@@ -140,6 +147,7 @@ def parse_success(
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
     podcast.parsed = timezone.now()
+    podcast.exception = ""
 
     # content
 
@@ -269,8 +277,9 @@ def parse_failure(
     podcast: Podcast,
     *,
     status: int | None,
-    exception: Exception | None = None,
     active: bool = True,
+    exception: Exception | None = None,
+    tb: str = "",
     **fields,
 ) -> ParseResult:
 
@@ -281,6 +290,8 @@ def parse_failure(
         scheduled=schedule(podcast) if active else None,
         updated=now,
         parsed=now,
+        http_status=status,
+        exception=tb,
         **fields,
     )
 
