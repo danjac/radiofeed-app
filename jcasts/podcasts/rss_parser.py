@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import io
+
 from datetime import datetime
 from typing import Any, ClassVar, Generator, Optional
 
@@ -16,13 +18,18 @@ class RssParserError(ValueError):
 
 
 def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
+    xml = lxml.etree.parse(
+        io.BytesIO(content),
+        parser=lxml.etree.XMLParser(encoding="utf-8", recover=True),
+    )
     try:
-        xml = lxml.etree.fromstring(content)
-    except lxml.etree.XMLSyntaxError as e:
+        channel = xml.find("channel")
+
+    except AssertionError as e:
         raise RssParserError from e
 
-    if (channel := xml.find("channel")) is None:
-        raise RssParserError("<channel /> not found")
+    if channel is None:
+        raise RssParserError("<channel /> missing")
 
     try:
         feed = Feed.parse_obj(FeedMapper().parse(channel))
