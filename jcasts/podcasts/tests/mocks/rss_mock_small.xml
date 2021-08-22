@@ -1,0 +1,61 @@
+<rss version="2.0">
+<channel>
+<atom:link href="https://feeds.megaphone.fm/ESP9792844572" rel="self" type="application/rss+xml"/>
+<title>ABC News Update</title>
+<link>http://abcradio.com/podcasts/abc-news-update/</link>
+<language>en-us</language>
+<copyright>Copyright 2021, ABC Audio. All rights reserved.</copyright>
+<description>
+The latest headlines from ABC News, refreshed hourly 24/7.
+</description>
+<image>
+<url>
+https://megaphone.imgix.net/podcasts/00cf2f8a-99e1-11ea-b075-6b108fbbdded/image/ABNCUpdate.jpg?ixlib=rails-2.1.2&max-w=3000&max-h=3000&fit=crop&auto=format,compress
+</url>
+<title>ABC News Update</title>
+<link>http://abcradio.com/podcasts/abc-news-update/</link>
+</image>
+<itunes:explicit>no</itunes:explicit>
+<itunes:type>episodic</itunes:type>
+<itunes:subtitle/>
+<itunes:author>ABC News</itunes:author>
+<itunes:summary>
+The latest headlines from ABC News, refreshed hourly 24/7.
+</itunes:summary>
+<content:encoded>
+<p>The latest headlines from ABC News, refreshed hourly 24/7.</p>
+</content:encoded>
+<itunes:owner>
+<itunes:name/>
+<itunes:email>abc.podcast.support@abc.com</itunes:email>
+</itunes:owner>
+<itunes:image href="https://megaphone.imgix.net/podcasts/00cf2f8a-99e1-11ea-b075-6b108fbbdded/image/ABNCUpdate.jpg?ixlib=rails-2.1.2&max-w=3000&max-h=3000&fit=crop&auto=format,compress"/>
+<itunes:category text="News"> </itunes:category>
+<itunes:new-feed-url>https://feeds.megaphone.fm/ESP9792844572</itunes:new-feed-url>
+<item>
+<title>ABC News Update</title>
+<description>
+The latest headlines from ABC News, refreshed hourly 24/7.
+</description>
+<pubDate>Sun, 22 Aug 2021 18:08:35 -0000</pubDate>
+<itunes:title>ABC News Update</itunes:title>
+<itunes:episodeType>full</itunes:episodeType>
+<itunes:author>ABC News</itunes:author>
+<itunes:image href="https://megaphone.imgix.net/podcasts/e3f9adf2-af18-11ea-a273-b35a853302ac/image/ABCNUpdate.jpg?ixlib=rails-2.1.2&max-w=3000&max-h=3000&fit=crop&auto=format,compress"/>
+<itunes:subtitle>
+The latest headlines from ABC News, refreshed hourly 24/7.
+</itunes:subtitle>
+<itunes:summary>
+The latest headlines from ABC News, refreshed hourly 24/7.
+</itunes:summary>
+<content:encoded>
+<p>The latest headlines from ABC News, refreshed hourly 24/7.</p>
+</content:encoded>
+<itunes:duration>253</itunes:duration>
+<guid isPermaLink="false">
+https://serve.castfire.com/audio/3766321/3766321_2020-06-15-140421.96.mp3
+</guid>
+<enclosure url="https://www.podtrac.com/pts/redirect.mp3/traffic.megaphone.fm/ESP7536701051.mp3?updated=1629655896" length="0" type="audio/mpeg"/>
+</item>
+</channel>
+</rss>
