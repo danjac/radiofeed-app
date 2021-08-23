@@ -3,14 +3,14 @@
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
-<div>
+<div class="flex items-center space-x-3">
   {% for provider in socialaccount_providers %}
-  {% if forloop.last and not forloop.first %}
-  <span>or</span>
-  {% endif %}
-  <a class="font-semibold hover:text-blue-500 underline"
+  <a class="inline-flex items-center btn btn-secondary"
      hx-disable="true"
-     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">{{provider.name}}</a>
+     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+    {% icon provider.id css_class="btn-icon mr-2" %}
+    {{ provider.name }}
+  </a>
   {% endfor %}
 </div>
 {% endif %}
