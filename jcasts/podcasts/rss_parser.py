@@ -25,6 +25,7 @@ def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
             parser=lxml.etree.XMLParser(
                 encoding="utf-8",
                 no_network=True,
+                resolve_entities=False,
                 recover=True,
             ),
         )
