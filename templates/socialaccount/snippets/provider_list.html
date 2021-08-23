@@ -3,11 +3,14 @@
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
-<div class="space-x-2">
+<div class="space-x-1">
   {% for provider in socialaccount_providers %}
   <a class="font-semibold hover:text-blue-500"
      hx-disable="true"
      href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">{{provider.name}}</a>
+  {% if forloop.last and not forloop.first %}
+  <span>or</span>
+  {% endif %}
   {% endfor %}
 </div>
 {% endif %}
