@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n socialaccount %}
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
@@ -95,10 +95,30 @@
             </a>
           </div>
 
-          <p class="text-sm flex items-center justify-center sm:justify-start">
+          <div class="text-sm flex items-center justify-center sm:justify-start">
             Already have an account? Then please <a class="ml-1 underline link text-white"
                href="{% url 'account_login' %}">sign in</a>.
-          </p>
+          </div>
+
+          {% get_providers as socialaccount_providers %}
+
+          {% if socialaccount_providers %}
+          <div class="mt-6 space-y-3 sm:space-y-0 sm:space-x-3 sm:flex items-center text-center sm:text-left">
+
+            <div class="text-sm font-semibold">Login or Sign up with</div>
+            <div class="flex items-center space-x-3 justify-center sm:justify-start">
+              {% for provider in socialaccount_providers %}
+              <a class="inline-flex items-center btn btn-default border-white"
+                 hx-disable="true"
+                 href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+                {% icon provider.id css_class="btn-icon mr-2" %}
+                {{ provider.name }}
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
 
         </div>
       </div>
