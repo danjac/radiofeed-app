@@ -10,7 +10,7 @@
       "schedule": "0,30 * * * *"
     },
     {
-      "command": "python manage.py fetch_new_feeds --limit=100",
+      "command": "python manage.py fetch_new_feeds --limit=200",
       "schedule": "15 18 * * *"
     },
 
