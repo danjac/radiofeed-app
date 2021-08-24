@@ -156,6 +156,7 @@ def parse_success(
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
     podcast.parsed = timezone.now()
+    podcast.active = True
     podcast.exception = ""
 
     # content
