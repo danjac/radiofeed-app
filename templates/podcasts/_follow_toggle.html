@@ -2,12 +2,13 @@
   <div id="follow-toggle"
        hx-target="this"
        hx-swap="outerHTML"
+       hx-vals='{"render": true}'
        hx-select="#follow-toggle">
     {% if is_following %}
     <button class="btn btn-secondary inline-flex items-center"
             title="Stop following this podcast"
             hx-trigger="click delay:200ms"
-            hx-delete="{% url 'podcasts:unfollow' podcast.id %}">
+            hx-post="{% url 'podcasts:unfollow' podcast.id %}">
       {% icon "eye_slash" css_class="btn-icon mr-2" %}
       Follow
     </button>

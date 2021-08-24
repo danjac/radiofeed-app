@@ -16,7 +16,7 @@ from jcasts.podcasts import podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 from jcasts.shared.typedefs import ContextDict
 
 
@@ -221,12 +221,12 @@ def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         Follow.objects.create(user=request.user, podcast=podcast)
         messages.success(request, "You are now following this podcast")
-        return render_follow_response(request, podcast, True)
+        return render_follow_response(request, podcast, follow=True)
     except IntegrityError:
         return HttpResponseConflict()
 
 
-@require_http_methods(["DELETE"])
+@require_http_methods(["POST"])
 @ajax_login_required
 def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
@@ -234,7 +234,7 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_follow_response(request, podcast, False)
+    return render_follow_response(request, podcast, follow=False)
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
@@ -259,13 +259,19 @@ def get_podcast_detail_context(
 
 
 def render_follow_response(
-    request: HttpRequest, podcast: Podcast, is_following: bool
+    request: HttpRequest,
+    podcast: Podcast,
+    follow: bool,
 ) -> HttpResponse:
 
-    return TemplateResponse(
-        request,
-        "podcasts/_follow_toggle.html",
-        {"podcast": podcast, "is_following": is_following, "action": True},
+    return (
+        TemplateResponse(
+            request,
+            "podcasts/_follow_toggle.html",
+            {"podcast": podcast, "is_following": follow},
+        )
+        if request.POST.get("render")
+        else HttpResponseNoContent()
     )
 
 
