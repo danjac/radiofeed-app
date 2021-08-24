@@ -3,6 +3,7 @@ from django.urls import reverse
 from jcasts.podcasts.models import Category
 from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template.defaulttags import (
+    absolute_uri,
     active_link,
     format_duration,
     get_privacy_details,
@@ -14,6 +15,63 @@ from jcasts.shared.template.defaulttags import (
     re_active_link,
     share_buttons,
 )
+
+
+class TestAbsoluteUri:
+    def test_has_request_no_url(self, rf):
+        url = absolute_uri({"request": rf.get("/")})
+        assert url == "http://testserver/"
+
+    def test_has_request_no_url_https(self, rf, settings):
+        settings.SECURE_SSL_REDIRECT = True
+        url = absolute_uri({"request": rf.get("/")})
+        assert url == "http://testserver/"
+
+    def test_has_request_static_url(self, rf):
+        url = absolute_uri({"request": rf.get("/")}, "/podcasts/search/")
+        assert url == "http://testserver/podcasts/search/"
+
+    def test_has_request_resolved_url(self, rf):
+        url = absolute_uri(
+            {"request": rf.get("/")},
+            "podcasts:podcast_detail",
+            podcast_id=12345,
+            slug="test",
+        )
+        assert url == "http://testserver/podcasts/12345/test/"
+
+    def test_has_request_from_model(self, rf, podcast):
+        url = absolute_uri(
+            {"request": rf.get("/")},
+            podcast,
+        )
+        assert url == "http://testserver" + podcast.get_absolute_url()
+
+    def test_not_has_request_no_url(self, db):
+        url = absolute_uri({})
+        assert url == "http://example.com"
+
+    def test_not_has_request_no_url_https(self, db, settings):
+        settings.SECURE_SSL_REDIRECT = True
+        url = absolute_uri({})
+        assert url == "https://example.com"
+
+    def test_not_has_request_static_url(self, db):
+        url = absolute_uri({}, "/podcasts/search/")
+        assert url == "http://example.com/podcasts/search/"
+
+    def test_not_has_request_resolved_url(self, db):
+        url = absolute_uri(
+            {},
+            "podcasts:podcast_detail",
+            podcast_id=12345,
+            slug="test",
+        )
+        assert url == "http://example.com/podcasts/12345/test/"
+
+    def test_not_has_request_model(self, podcast):
+        url = absolute_uri({}, podcast)
+        assert url == "http://example.com" + podcast.get_absolute_url()
 
 
 class TestFormatDuration:
