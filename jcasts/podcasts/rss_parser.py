@@ -183,8 +183,8 @@ class FeedMapper(XPathMapper):
             default="",
         ),
         "cover_url": XPathParser(
-            "image/url/text()",
             "itunes:image/@href",
+            "image/url/text()",
         ),
         "owner": XPathParser(
             "itunes:author/text()", "itunes:owner/itunes:name/text()", default=""
