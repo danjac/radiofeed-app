@@ -48,8 +48,6 @@ def send_recommendations_email(user: AuthenticatedUser) -> None:
 
     context = {
         "recipient": user,
-        "site": site,
-        "protocol": "https" if settings.SECURE_SSL_REDIRECT else "http",
         "podcasts": podcasts,
         "episodes": episodes,
     }

@@ -11,12 +11,12 @@
 
   <p>Greetings from {{ site.name }}!
 
-  {% if podcasts %}
+    {% if podcasts %}
   <p>Here are some podcasts you might find interesting:</p>
 
   {% for podcast in podcasts %}
   <p>
-    <a href="{{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}">{{ podcast.title }}</a>
+    <a href="{% absolute_uri podcast %}">{{ podcast.title }}</a>
   </p>
 
   <p>
@@ -33,7 +33,7 @@
   {% for episode in episodes %}
 
   <p>
-    <a href="{{ protocol }}://{{ site.domain }}{{ episode.get_absolute_url }}">{{ episode.podcast.title }} - {{ episode.title }}</a>
+  <a href="{% absolute_uri episode %}">{{ episode.podcast.title }} - {{ episode.title }}</a>
   </p>
 
   <p>

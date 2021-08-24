@@ -12,7 +12,7 @@ Here are some podcasts you might find interesting:
 
 {{ podcast.description|striptags|unescape|truncatewords:60 }}
 
-{{ protocol }}://{{ site.domain }}{{ podcast.get_absolute_url }}
+{% absolute_uri podcast %}
 
 {% endfor %}
 {% endif %}
@@ -25,7 +25,7 @@ Here are some podcasts you might find interesting:
 
 {{ episode.description|striptags|unescape|urlize|truncatewords:60 }}
 
-{{ protocol }}://{{ site.domain }}{{ episode.get_absolute_url }}
+{% absolute_uri episode %}
 
 {% endfor %}
 {% endif %}

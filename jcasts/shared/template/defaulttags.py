@@ -11,6 +11,7 @@ import bs4
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
@@ -27,6 +28,22 @@ register = template.Library()
 ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
 
 _validate_url = URLValidator(["http", "https"])
+
+
+@register.simple_tag(takes_context=True)
+def absolute_uri(context: ContextDict, url: str | None = None, *args, **kwargs) -> str:
+
+    url = resolve_url(url, *args, **kwargs) if url else None
+
+    if "request" in context:
+        return context["request"].build_absolute_uri(url)
+
+    # in case we don't have a request, e.g. in email job
+    domain = Site.objects.get_current().domain
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    base_url = protocol + "://" + domain
+
+    return parse.urljoin(base_url, url) if url else base_url
 
 
 @register.filter
