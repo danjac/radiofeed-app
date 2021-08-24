@@ -59,7 +59,6 @@
     Last updated {{ podcast.pub_date|timesince }} ago
   </div>
 
-  {% include "podcasts/_disclaimer.html" %}
 
   {% if podcast.explicit %}
   <div class="font-semibold text-sm">
@@ -69,6 +68,7 @@
 
   {% include "_markdown.html" with content=podcast.description %}
 
+  {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %}
 {% endblock podcast_content %}
