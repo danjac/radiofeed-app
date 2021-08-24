@@ -35,7 +35,7 @@
 {% endif %}
 {% endwith %}
 
-<section class="space-y-3 pb-3 mb-3">
+<div class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
@@ -83,8 +83,6 @@
   {% include "episodes/_listened.html" %}
   {% endif %}
 
-  {% include "podcasts/_disclaimer.html" %}
-
   {% if episode.explicit or podcast.explicit %}
   <div class="font-semibold text-sm">
     This episode may contain explicit content.
@@ -93,6 +91,7 @@
 
   {% include "_markdown.html" with content=episode.description %}
 
-</section>
+  {% include "podcasts/_disclaimer.html" %}
+</div>
 {% endwith %}
 {% endblock %}
