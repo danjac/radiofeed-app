@@ -130,7 +130,7 @@
      hx-disable="true"
      class="{{ BUTTON_CSS_CLASS }}">
     {% icon "download" css_class=ICON_CLASS %}
-    Download
+    Download ({{ episode.get_file_size }})
   </a>
 
   {% if is_detail and user.is_staff %}

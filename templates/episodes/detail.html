@@ -64,9 +64,9 @@
       {% if user.is_authenticated %}
       {% include "episodes/_actions_toggle.html" with is_detail=True %}
       {% else %}
-      <a class="inline-block link"
+      <a class="inline-block link underline"
          download
-         href="{{ episode.media_url }}">Download</a>
+         href="{{ episode.media_url }}">Download ({{ episode.get_file_size }})</a>
       {% endif %}
     </div>
   </div>
