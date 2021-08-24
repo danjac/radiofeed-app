@@ -35,7 +35,6 @@
 
   {% block page_header %}
   {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-  {% block cookie_notice %}{% include "_cookie_notice.html" %}{% endblock %}
   {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
   {% endblock page_header %}
 
@@ -61,6 +60,8 @@
     {% endblock main %}
   </div>
   {% endblock layout %}
+
+  {% block cookie_notice %}{% include "_cookie_notice.html" %}{% endblock %}
 
   {% block page_footer %}
   {% block player %}
