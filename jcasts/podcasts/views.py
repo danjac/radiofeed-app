@@ -46,6 +46,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "podcasts/index.html",
         {
             "promoted": promoted,
+            "show_latest": True,
             "has_follows": follows,
             "search_url": reverse("podcasts:search_podcasts"),
         },
