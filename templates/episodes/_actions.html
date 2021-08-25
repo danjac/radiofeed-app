@@ -109,24 +109,6 @@
   </button>
   {% endif %}
 
-  {% if is_detail %}
-  {% if is_following %}
-  <button class="{{ BUTTON_CSS_CLASS }}"
-          hx-post="{% url 'podcasts:unfollow' episode.podcast.id %}"
-          @click="show=false">
-    {% icon "eye_slash" css_class=ICON_CLASS %}
-    Unfollow Podcast
-  </button>
-  {% else %}
-  <button class="{{ BUTTON_CSS_CLASS }}"
-          hx-post="{% url 'podcasts:follow' episode.podcast.id %}"
-          @click="show=false">
-    {% icon "eye" css_class=ICON_CLASS %}
-    Follow Podcast
-  </button>
-  {% endif %}
-  {% endif %}
-
   {% if user.is_staff %}
   <a href="{% url 'admin:episodes_episode_change' episode.id %}"
      class="{{ BUTTON_CSS_CLASS }}"

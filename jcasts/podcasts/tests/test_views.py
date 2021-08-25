@@ -12,12 +12,7 @@ from jcasts.podcasts.factories import (
     RecommendationFactory,
 )
 from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import (
-    assert_conflict,
-    assert_no_content,
-    assert_not_found,
-    assert_ok,
-)
+from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -241,11 +236,6 @@ class TestFollow:
         return reverse("podcasts:follow", args=[podcast.id])
 
     def test_follow(self, client, podcast, auth_user, url):
-        resp = client.post(url)
-        assert_no_content(resp)
-        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
-
-    def test_follow_render(self, client, podcast, auth_user, url):
         resp = client.post(url, {"render": True})
         assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
@@ -262,13 +252,5 @@ class TestUnfollow:
     def test_unfollow(self, client, auth_user, podcast):
         FollowFactory(user=auth_user, podcast=podcast)
         resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
-        assert_no_content(resp)
-        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
-
-    def test_unfollow_render(self, client, auth_user, podcast):
-        FollowFactory(user=auth_user, podcast=podcast)
-        resp = client.post(
-            reverse("podcasts:unfollow", args=[podcast.id]), {"render": True}
-        )
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()

@@ -16,7 +16,7 @@ from jcasts.podcasts import podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 from jcasts.shared.typedefs import ContextDict
 
 
@@ -276,14 +276,10 @@ def render_follow_response(
     follow: bool,
 ) -> HttpResponse:
 
-    return (
-        TemplateResponse(
-            request,
-            "podcasts/_follow_toggle.html",
-            {"podcast": podcast, "is_following": follow},
-        )
-        if request.POST.get("render")
-        else HttpResponseNoContent()
+    return TemplateResponse(
+        request,
+        "podcasts/_follow_toggle.html",
+        {"podcast": podcast, "is_following": follow},
     )
 
 
