@@ -78,9 +78,11 @@
         {% endif %}
 
         {% else %}
+        {% with file_size=episode.get_file_size %}
         <a class="inline-block link"
            download
-           href="{{ episode.media_url }}">Download ({{ episode.get_file_size }})</a>
+           href="{{ episode.media_url }}">Download{% if file_size %} ({{ episode.get_file_size }}){% endif %}</a>
+        {% endwith %}
         {% endif %}
       </div>
     </div>

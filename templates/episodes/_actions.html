@@ -114,7 +114,7 @@
           hx-post="{% url 'podcasts:unfollow' episode.podcast.id %}"
           @click="show=false">
     {% icon "eye_slash" css_class=ICON_CLASS %}
-   Unfollow Podcast
+    Unfollow Podcast
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS_CLASS }}"
@@ -126,12 +126,14 @@
   {% endif %}
 
 
+  {% with file_size=episode.get_file_size %}
   <a href="{{ episode.media_url }}"
      hx-disable="true"
      class="{{ BUTTON_CSS_CLASS }}">
     {% icon "download" css_class=ICON_CLASS %}
-    Download ({{ episode.get_file_size }})
+    Download{% if file_size %} ({{ episode.get_file_size }}){% endif %}
   </a>
+  {% endwith %}
 
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
