@@ -109,6 +109,7 @@
   </button>
   {% endif %}
 
+  {% if is_detail %}
   {% if is_following %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'podcasts:unfollow' episode.podcast.id %}"
@@ -123,6 +124,7 @@
     {% icon "eye" css_class=ICON_CLASS %}
     Follow Podcast
   </button>
+  {% endif %}
   {% endif %}
 
 
