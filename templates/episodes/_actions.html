@@ -133,15 +133,6 @@
     Download ({{ episode.get_file_size }})
   </a>
 
-  {% if is_detail and user.is_staff %}
-  <a href="{% url 'admin:episodes_episode_change' episode.id %}"
-     hx-disable="true"
-     class="{{ BUTTON_CSS_CLASS }}">
-    {% icon "adjustments" css_class=ICON_CLASS %}
-    View in Admin
-  </a>
-  {% endif %}
-
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
     {% icon "x" css_class=ICON_CLASS %}
