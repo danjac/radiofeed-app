@@ -109,7 +109,7 @@
   </button>
   {% endif %}
 
-  {% if user.is_staff %}
+  {% if is_detail and user.is_staff %}
   <a href="{% url 'admin:episodes_episode_change' episode.id %}"
      class="{{ BUTTON_CSS_CLASS }}"
      hx-disable="true"
