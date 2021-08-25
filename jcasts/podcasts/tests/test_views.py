@@ -12,7 +12,7 @@ from jcasts.podcasts.factories import (
     RecommendationFactory,
 )
 from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import assert_conflict, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -51,6 +51,19 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
+
+
+class TestLatest:
+    def url(self, podcast):
+        return reverse("podcasts:latest", args=[podcast.id])
+
+    def test_has_no_episodes(self, client, podcast):
+        resp = client.get(self.url(podcast))
+        assert_not_found(resp)
+
+    def test_has_episodes(self, client, episode):
+        resp = client.get(self.url(episode.podcast))
+        assert resp.url == episode.get_absolute_url()
 
 
 class TestSearchPodcasts:

@@ -1,14 +1,13 @@
-{% with podcast_url=podcast.get_absolute_url %}
 <section class="flex items-center space-x-3 py-2 border-t dark:border-gray-500">
   <div>
-    <a href="{{ podcast_url }}">
+    <a href="{{ podcast.get_absolute_url }}">
       {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
     </a>
   </div>
 
   <div class="space-y-3">
     <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
-      <a href="{{ podcast_url }}"
+      <a href="{% url 'podcasts:latest' podcast.id %}"
          title="{{ podcast.cleaned_title }}"
          class="link">
         {{ podcast.cleaned_title|truncatechars:120 }}</a>
@@ -22,4 +21,3 @@
     </div>
   </div>
 </section>
-{% endwith %}

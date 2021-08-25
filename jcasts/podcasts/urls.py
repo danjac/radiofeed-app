@@ -25,6 +25,11 @@ urlpatterns = [
         name="podcast_detail",
     ),
     path(
+        "podcasts/<int:podcast_id>/~latest/",
+        views.latest,
+        name="latest",
+    ),
+    path(
         "podcasts/<int:podcast_id>/~follow/",
         views.follow,
         name="follow",
