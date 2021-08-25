@@ -10,9 +10,9 @@ urlpatterns = [
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/podcastindex/", views.search_podcastindex, name="search_podcastindex"),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/similar/",
-        views.recommendations,
-        name="podcast_recommendations",
+        "podcasts/<int:podcast_id>/<slug:slug>/",
+        views.podcast_detail,
+        name="podcast_detail",
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/episodes/",
@@ -20,9 +20,9 @@ urlpatterns = [
         name="podcast_episodes",
     ),
     path(
-        "podcasts/<int:podcast_id>/<slug:slug>/",
-        views.podcast_detail,
-        name="podcast_detail",
+        "podcasts/<int:podcast_id>/<slug:slug>/similar/",
+        views.recommendations,
+        name="podcast_recommendations",
     ),
     path(
         "podcasts/<int:podcast_id>/~latest/",

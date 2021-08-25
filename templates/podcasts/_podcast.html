@@ -1,19 +1,19 @@
 <section class="flex items-center space-x-3 py-2 border-t dark:border-gray-500">
   <div>
-    <a href="{{ podcast.get_absolute_url }}">
+    <a href="{{ podcast.get_detail_url }}">
       {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
     </a>
   </div>
 
   <div class="space-y-3">
     <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
-      <a href="{{ podcast.get_episodes_url }}"
+      <a href="{{ podcast.get_latest_url }}"
          title="{{ podcast.cleaned_title }}"
          class="link">
         {{ podcast.cleaned_title|truncatechars:120 }}</a>
     </h2>
     <div class="space-x-2 flex items-center">
-      <a href="{{ podcast.get_latest_url }}"
+      <a href="{{ podcast.get_episodes_url }}"
          title="Last Published"
          class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
         {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
