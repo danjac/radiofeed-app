@@ -64,19 +64,9 @@
 
       {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
 
-      <div class="flex items-center space-x-3">
+      <div>
         {% if user.is_authenticated %}
         {% include "episodes/_actions_toggle.html" with is_detail=True %}
-        {% if user.is_staff %}
-        <a href="{% url 'admin:episodes_episode_change' episode.id %}"
-           hx-disable="true"
-           target="_blank"
-           rel="noopener"
-           class="link">
-          Admin
-        </a>
-        {% endif %}
-
         {% else %}
         {% with file_size=episode.get_file_size %}
         <a class="inline-block link"

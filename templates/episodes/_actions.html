@@ -127,6 +127,15 @@
   {% endif %}
   {% endif %}
 
+  {% if user.is_staff %}
+  <a href="{% url 'admin:episodes_episode_change' episode.id %}"
+     class="{{ BUTTON_CSS_CLASS }}"
+     hx-disable="true"
+     @click="show=false">
+    {% icon "adjustments" css_class=ICON_CLASS %}
+    View in Admin
+  </a>
+  {% endif %}
 
   {% with file_size=episode.get_file_size %}
   <a href="{{ episode.media_url }}"
