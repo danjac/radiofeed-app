@@ -17,7 +17,7 @@ from django_rq import job
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.rss_parser import Feed, Item, RssParserError, parse_rss
+from jcasts.podcasts.rss_parser import RssParserError, parse_rss
 from jcasts.podcasts.scheduler import schedule
 from jcasts.podcasts.text_parser import extract_keywords
 
@@ -40,7 +40,7 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feeds(*, force_update: bool = False, limit: int | None = None) -> int:
+def parse_podcast_feeds(*, force_update=False, limit=None):
     counter = 0
     qs = Podcast.objects.order_by("scheduled", "-pub_date").values_list(
         "rss", flat=True
@@ -69,17 +69,17 @@ class ParseResult:
     success: bool = False
     exception: Exception | None = None
 
-    def __bool__(self) -> bool:
+    def __bool__(self):
         return self.success
 
-    def raise_exception(self) -> None:
+    def raise_exception(self):
         if self.exception:
             raise self.exception
 
 
 @job("feeds")
 @transaction.atomic
-def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
+def parse_feed(rss, *, force_update=False) -> ParseResult:
 
     try:
         podcast = get_podcast(rss, force_update)
@@ -112,9 +112,7 @@ def parse_feed(rss: str, *, force_update: bool = False) -> ParseResult:
         )
 
 
-def get_feed_response(
-    podcast: Podcast, force_update: bool = False
-) -> requests.Response:
+def get_feed_response(podcast, force_update=False) -> requests.Response:
     response = requests.get(
         podcast.rss,
         headers=get_feed_headers(podcast, force_update),
@@ -136,12 +134,7 @@ def get_feed_response(
     return response
 
 
-def parse_success(
-    podcast: Podcast,
-    response: requests.Response,
-    feed: Feed,
-    items: list[Item],
-) -> ParseResult:
+def parse_success(podcast, response, feed, items):
 
     # feed status
     podcast.rss = response.url
@@ -196,7 +189,7 @@ def parse_success(
     return ParseResult(podcast.rss, response.status_code, True)
 
 
-def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -> None:
+def parse_episodes(podcast, items, batch_size=500):
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -243,11 +236,7 @@ def parse_episodes(podcast: Podcast, items: list[Item], batch_size: int = 500) -
     )
 
 
-def extract_text(
-    podcast: Podcast,
-    categories: list[Category],
-    items: list[Item],
-) -> str:
+def extract_text(podcast, categories, items):
     text = " ".join(
         value
         for value in [
@@ -263,7 +252,7 @@ def extract_text(
     return " ".join(extract_keywords(podcast.language, text))
 
 
-def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
+def get_feed_headers(podcast, force_update=False):
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
@@ -281,11 +270,11 @@ def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, 
 
 
 @lru_cache
-def get_categories_dict() -> dict[str, Category]:
+def get_categories_dict():
     return Category.objects.in_bulk(field_name="name")
 
 
-def get_podcast(rss: str, force_update: bool = False) -> Podcast:
+def get_podcast(rss, force_update=False):
 
     qs = Podcast.objects.filter(rss=rss)
     if not force_update:
@@ -294,14 +283,14 @@ def get_podcast(rss: str, force_update: bool = False) -> Podcast:
 
 
 def parse_failure(
-    podcast: Podcast,
+    podcast,
     *,
-    status: int | None,
-    active: bool = True,
-    exception: Exception | None = None,
+    status,
+    active=True,
+    exception=None,
     tb: str = "",
     **fields,
-) -> ParseResult:
+):
 
     now = timezone.now()
 

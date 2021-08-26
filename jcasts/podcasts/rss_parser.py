@@ -17,7 +17,7 @@ class RssParserError(ValueError):
     ...
 
 
-def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
+def parse_rss(content):
 
     try:
         xml = lxml.etree.parse(
