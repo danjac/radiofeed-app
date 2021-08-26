@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import statistics
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
@@ -14,7 +12,7 @@ MIN_FREQ = timedelta(hours=1)
 MAX_FREQ = timedelta(days=7)
 
 
-def schedule_podcast_feeds() -> int:
+def schedule_podcast_feeds():
     """Sets podcast feed scheduled times. This can be run once to set
     initial scheduling, afterwards should be calibrated automatically after fresh
     pull attempts.
@@ -35,7 +33,7 @@ def schedule_podcast_feeds() -> int:
     return len(for_update)
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
+def get_frequency(pub_dates):
     """Calculates frequency given set of pub dates. If no available dates within range,
     returns None.
     """
@@ -66,7 +64,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
     return min(max(freq, MIN_FREQ), MAX_FREQ)
 
 
-def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
+def get_recent_pub_dates(podcast):
     return (
         Episode.objects.filter(
             podcast=podcast, pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD
@@ -76,10 +74,7 @@ def get_recent_pub_dates(podcast: Podcast) -> list[datetime]:
     )
 
 
-def schedule(
-    podcast: Podcast,
-    pub_dates: list[datetime] | None = None,
-) -> datetime | None:
+def schedule(podcast, pub_dates=None):
     """Returns next scheduled feed sync time.
     Will calculate based on list of provided pub dates or most recent episodes.
     """

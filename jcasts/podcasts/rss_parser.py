@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 
 from datetime import datetime
-from typing import Any, ClassVar, Generator, Optional
+from typing import Optional
 
 import lxml
 
@@ -49,9 +49,7 @@ def parse_rss(content):
     return feed, items
 
 
-def parse_items(
-    channel: lxml.etree.Element, mapper: ItemMapper
-) -> Generator[Item, None, None]:
+def parse_items(channel, mapper):
 
     for element in channel.iterfind("item"):
 
@@ -87,22 +85,22 @@ class Item(BaseModel):
     keywords: str = ""
 
     @validator("pub_date", pre=True)
-    def get_pub_date(cls, value: str | None) -> datetime | None:
+    def get_pub_date(cls, value):
         pub_date = parse_date(value)
         if pub_date and pub_date < timezone.now():
             return pub_date
         raise ValueError("not a valid pub date")
 
     @validator("explicit", pre=True)
-    def is_explicit(cls, value: str) -> bool:
+    def is_explicit(cls, value):
         return value.lower() in ("yes", "clean") if value else False
 
     @validator("keywords", pre=True)
-    def get_keywords(cls, value: list) -> str:
+    def get_keywords(cls, value):
         return " ".join(value)
 
     @validator("media_type")
-    def is_audio(cls, value: str) -> str:
+    def is_audio(cls, value):
         if not (value or "").startswith("audio/"):
             raise ValueError("not a valid audio enclosure")
         return value
@@ -125,23 +123,21 @@ class Feed(BaseModel):
     categories: list[str] = []
 
     @validator("explicit", pre=True)
-    def is_explicit(cls, value: str) -> bool:
+    def is_explicit(cls, value):
         return value.lower() in ("yes", "clean") if value else False
 
     @validator("language", pre=True)
-    def get_language(cls, value: str) -> str:
+    def get_language(cls, value):
         return value[:2]
 
 
 class XPathParser:
-    def __init__(self, *paths: str, multiple: bool = False, default: Any = None):
+    def __init__(self, *paths, multiple=False, default=None):
         self.paths = paths
         self.multiple = multiple
         self.default = default
 
-    def parse(
-        self, element: lxml.etree.Element, namespaces: dict[str, str]
-    ) -> str | list:
+    def parse(self, element, namespaces):
         for path in self.paths:
             if value := list(
                 map(
@@ -158,14 +154,14 @@ class XPathParser:
 
 
 class XPathMapper:
-    mappings: ClassVar[dict[str, XPathParser]]
+    mappings = {}
 
-    namespaces: ClassVar[dict[str, str]] = {
+    namespaces = {
         "content": "http://purl.org/rss/1.0/modules/content/",
         "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
     }
 
-    def parse(self, element: lxml.etree.Element) -> dict:
+    def parse(self, element):
         parsed = {}
         for field, parser in self.mappings.items():
             parsed[field] = parser.parse(element, self.namespaces)
@@ -173,7 +169,7 @@ class XPathMapper:
 
 
 class FeedMapper(XPathMapper):
-    mappings: ClassVar[dict[str, XPathParser]] = {
+    mappings = {
         "title": XPathParser("title/text()"),
         "link": XPathParser("link/text()", default=""),
         "language": XPathParser("language/text()", default="en"),
@@ -196,7 +192,7 @@ class FeedMapper(XPathMapper):
 
 class ItemMapper(XPathMapper):
 
-    mappings: ClassVar[dict[str, XPathParser]] = {
+    mappings = {
         "guid": XPathParser("guid/text()"),
         "title": XPathParser("title/text()"),
         "pub_date": XPathParser("pubDate/text()"),
