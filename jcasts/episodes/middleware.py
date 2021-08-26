@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from typing import ClassVar
-
-from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from jcasts.shared.middleware import BaseMiddleware
@@ -11,25 +8,25 @@ from jcasts.shared.middleware import BaseMiddleware
 class Player:
     """Tracks current player episode in session"""
 
-    session_key: ClassVar[str] = "player_episode"
+    session_key = "player_episode"
 
-    def __init__(self, request: HttpRequest):
+    def __init__(self, request):
         self.request = request
 
-    def get(self) -> int | None:
+    def get(self):
         return self.request.session.get(self.session_key)
 
-    def set(self, episode_id: int) -> None:
+    def set(self, episode_id):
         self.request.session[self.session_key] = episode_id
 
-    def has(self, episode_id: int) -> bool:
+    def has(self, episode_id):
         return self.get() == episode_id
 
-    def remove(self) -> int | None:
+    def remove(self):
         return self.request.session.pop(self.session_key, None)
 
 
 class PlayerMiddleware(BaseMiddleware):
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request):
         request.player = SimpleLazyObject(lambda: Player(request))
         return self.get_response(request)
