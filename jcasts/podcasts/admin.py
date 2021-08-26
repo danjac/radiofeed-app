@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
-
 from django.contrib import admin, messages
-from django.db.models import QuerySet
-from django.http import HttpRequest
 from django.template.defaultfilters import pluralize
 
 from jcasts.podcasts import feed_parser, models, scheduler
@@ -24,15 +20,13 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub date"
     parameter_name = "pub_date"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(pub_date__isnull=False)
@@ -45,12 +39,10 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (("yes", "Promoted"),)
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(promoted=True)
@@ -61,15 +53,13 @@ class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
 
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> Iterable[tuple[str, str]]:
+    def lookups(self, request, model_admin):
         return (
             ("yes", "Active"),
             ("no", "Inactive"),
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+    def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
             return queryset.filter(active=True)
@@ -113,7 +103,7 @@ class PodcastAdmin(admin.ModelAdmin):
     actions = ["reactivate", "parse_podcast_feeds"]
 
     @admin.action(description="Re-activate podcasts")
-    def reactivate(self, request: HttpRequest, queryset: QuerySet):
+    def reactivate(self, request, queryset):
         num_updated = queryset.filter(active=False).update(active=True)
         self.message_user(
             request,
@@ -122,7 +112,7 @@ class PodcastAdmin(admin.ModelAdmin):
         )
 
     @admin.action(description="Parse podcast feeds")
-    def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet):
+    def parse_podcast_feeds(self, request, queryset):
 
         for rss in queryset.values_list("rss", flat=True):
             feed_parser.parse_feed.delay(rss, force_update=True)
@@ -133,10 +123,10 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def source(self, obj: models.Podcast) -> str:
+    def source(self, obj):
         return obj.get_domain()
 
-    def frequency(self, obj: models.Podcast) -> str:
+    def frequency(self, obj):
         if (
             freq := scheduler.get_frequency(scheduler.get_recent_pub_dates(obj))
         ) is None:
@@ -148,14 +138,12 @@ class PodcastAdmin(admin.ModelAdmin):
 
         return f"{freq.days} day{pluralize(freq.days)}"
 
-    def get_search_results(
-        self, request: HttpRequest, queryset: QuerySet, search_term: str
-    ) -> QuerySet:
+    def get_search_results(self, request, queryset, search_term):
         if not search_term:
             return super().get_search_results(request, queryset, search_term)
         return queryset.search(search_term).order_by("-rank", "-pub_date"), False
 
-    def get_ordering(self, request: HttpRequest) -> Iterable[str]:
+    def get_ordering(self, request):
         return (
             []
             if request.GET.get("q")
