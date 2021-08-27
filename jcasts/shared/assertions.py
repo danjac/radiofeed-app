@@ -3,7 +3,7 @@ import http
 
 
 def assert_status(response, status):
-    assert response.status_code == status, response.content
+    assert response.status_code == status, response.content  # nosec
 
 
 assert_ok = functools.partial(assert_status, status=http.HTTPStatus.OK)
