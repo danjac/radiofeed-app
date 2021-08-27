@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.contrib import admin, messages
 from django.template.defaultfilters import pluralize
 

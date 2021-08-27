@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import http
 import pathlib
 
@@ -26,22 +24,22 @@ from jcasts.podcasts.models import Podcast
 class MockResponse:
     def __init__(
         self,
-        url: str = "",
-        status: int = http.HTTPStatus.OK,
-        content: bytes = b"",
-        headers: None | dict = None,
+        url="",
+        status=http.HTTPStatus.OK,
+        content=b"",
+        headers=None,
     ):
         self.url = url
         self.content = content
         self.headers = headers or {}
         self.status_code = status
 
-    def raise_for_status(self) -> None:
+    def raise_for_status(self):
         ...
 
 
 class BadMockResponse(MockResponse):
-    def raise_for_status(self) -> None:
+    def raise_for_status(self):
         raise requests.HTTPError()
 
 

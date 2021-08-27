@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 
 from django.urls import reverse, reverse_lazy

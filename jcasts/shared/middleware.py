@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from urllib.parse import urlencode
 
 from django.contrib.messages.api import get_messages

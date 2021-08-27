@@ -1,8 +1,4 @@
-from __future__ import annotations
-
 import functools
-
-from typing import Callable
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -11,7 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 
 
-def ajax_login_required(view: Callable) -> Callable:
+def ajax_login_required(view):
     @functools.wraps(view)
     def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if request.user.is_authenticated:
