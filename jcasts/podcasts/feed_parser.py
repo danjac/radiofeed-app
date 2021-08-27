@@ -39,24 +39,27 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feeds(*, force_update=False, limit=None):
+def parse_podcast_feeds(*, force_update=False):
     counter = 0
-    qs = Podcast.objects.order_by("scheduled", "-pub_date").values_list(
-        "rss", flat=True
+    now = timezone.now()
+
+    qs = (
+        Podcast.objects.order_by("scheduled", "-pub_date")
+        .filter(queued__isnull=True)
+        .values_list("rss", flat=True)
     )
 
     if not force_update:
         qs = qs.filter(
             active=True,
             scheduled__isnull=False,
-            scheduled__lte=timezone.now(),
+            scheduled__lte=now,
         )
-
-    if limit:
-        qs = qs[:limit]
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)
+
+    qs.update(queued=now)
 
     return counter
 
@@ -148,6 +151,7 @@ def parse_success(podcast, response, feed, items):
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = schedule(podcast, pub_dates)
     podcast.parsed = timezone.now()
+    podcast.queued = None
     podcast.active = True
     podcast.exception = ""
 
@@ -298,6 +302,7 @@ def parse_failure(
         scheduled=schedule(podcast) if active else None,
         updated=now,
         parsed=now,
+        queued=None,
         http_status=status,
         exception=tb,
         **fields,

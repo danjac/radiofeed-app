@@ -79,6 +79,7 @@ class Podcast(models.Model):
     pub_date = models.DateTimeField(null=True, blank=True)
     scheduled = models.DateTimeField(null=True, blank=True)
     parsed = models.DateTimeField(null=True, blank=True)
+    queued = models.DateTimeField(null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
