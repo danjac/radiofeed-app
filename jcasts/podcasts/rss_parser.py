@@ -10,6 +10,11 @@ from pydantic import BaseModel, HttpUrl, ValidationError, validator
 
 from jcasts.podcasts.date_parser import parse_date
 
+NAMESPACES = {
+    "content": "http://purl.org/rss/1.0/modules/content/",
+    "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+}
+
 
 class RssParserError(ValueError):
     ...
@@ -30,29 +35,21 @@ def parse_rss(content):
     except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
-    if (channel := xml.find("channel")) is None:
-        raise RssParserError("<channel /> is missing")
+    try:
+        if (channel := xml.find("channel")) is None:
+            raise RssParserError("<channel /> is missing")
+    except AssertionError as e:
+        raise RssParserError from e
 
     try:
-        feed = Feed.parse_obj(FeedMapper().parse(channel))
+        feed = Feed.parse_obj(parse_feed(channel))
     except ValidationError as e:
         raise RssParserError from e
 
-    if not (items := [*parse_items(channel, ItemMapper())]):
+    if not (items := [*parse_items(channel)]):
         raise RssParserError("no valid entries found")
 
     return feed, items
-
-
-def parse_items(channel, mapper):
-
-    for element in channel.iterfind("item"):
-
-        try:
-            yield Item.parse_obj(mapper.parse(element))
-
-        except ValidationError:
-            ...
 
 
 class Item(BaseModel):
@@ -126,85 +123,75 @@ class Feed(BaseModel):
         return value[:2]
 
 
-class XPathParser:
-    def __init__(self, *paths, multiple=False, default=None):
-        self.paths = paths
-        self.multiple = multiple
-        self.default = default
-
-    def parse(self, element, namespaces):
-        for path in self.paths:
-            if value := list(
-                map(
-                    self.strip_whitespace,
-                    element.xpath(path, namespaces=namespaces),
-                )
-            ):
-                return value if self.multiple else value[0]
-
-        return [] if self.multiple else self.default
-
-    def strip_whitespace(self, value):
-        return (value or "").strip()
-
-
-class XPathMapper:
-    mappings = {}
-
-    namespaces = {
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-    }
-
-    def parse(self, element):
-        parsed = {}
-        for field, parser in self.mappings.items():
-            parsed[field] = parser.parse(element, self.namespaces)
-        return parsed
-
-
-class FeedMapper(XPathMapper):
-    mappings = {
-        "title": XPathParser("title/text()"),
-        "link": XPathParser("link/text()", default=""),
-        "language": XPathParser("language/text()", default="en"),
-        "description": XPathParser(
+def parse_feed(channel):
+    return {
+        "title": xfind(channel, "title/text()"),
+        "link": xfind(channel, "link/text()", default=""),
+        "language": xfind(channel, "language/text()", default="en"),
+        "explicit": xfind(channel, "itunes:explicit/text()"),
+        "description": xfind(
+            channel,
             "description/text()",
             "itunes:summary/text()",
             default="",
         ),
-        "cover_url": XPathParser(
+        "cover_url": xfind(
+            channel,
             "itunes:image/@href",
             "image/url/text()",
         ),
-        "owner": XPathParser(
-            "itunes:author/text()", "itunes:owner/itunes:name/text()", default=""
+        "owner": xfind(
+            channel,
+            "itunes:author/text()",
+            "itunes:owner/itunes:name/text()",
+            default="",
         ),
-        "explicit": XPathParser("itunes:explicit/text()"),
-        "categories": XPathParser("//itunes:category/@text", multiple=True),
+        "categories": xfindall(channel, "//itunes:category/@text"),
     }
 
 
-class ItemMapper(XPathMapper):
+def parse_items(channel):
 
-    mappings = {
-        "guid": XPathParser("guid/text()"),
-        "title": XPathParser("title/text()"),
-        "pub_date": XPathParser("pubDate/text()"),
-        "media_url": XPathParser("enclosure//@url"),
-        "media_type": XPathParser("enclosure//@type"),
-        "length": XPathParser("enclosure//@length"),
-        "cover_url": XPathParser("itunes:image/@href"),
-        "explicit": XPathParser("itunes:explicit/text()"),
-        "episode": XPathParser("itunes:episode/text()"),
-        "season": XPathParser("itunes:season/text()"),
-        "description": XPathParser(
+    for item in channel.iterfind("item"):
+
+        try:
+            yield Item.parse_obj(parse_item(item))
+
+        except ValidationError:
+            ...
+
+
+def parse_item(item):
+    return {
+        "guid": xfind(item, "guid/text()"),
+        "title": xfind(item, "title/text()"),
+        "pub_date": xfind(item, "pubDate/text()"),
+        "media_url": xfind(item, "enclosure//@url"),
+        "media_type": xfind(item, "enclosure//@type"),
+        "length": xfind(item, "enclosure//@length"),
+        "cover_url": xfind(item, "itunes:image/@href"),
+        "explicit": xfind(item, "itunes:explicit/text()"),
+        "episode": xfind(item, "itunes:episode/text()"),
+        "season": xfind(item, "itunes:season/text()"),
+        "description": xfind(
+            item,
             "content:encoded/text()",
             "description/text()",
             "itunes:summary/text()",
             default="",
         ),
-        "duration": XPathParser("itunes:duration/text()", default=""),
-        "episode_type": XPathParser("itunes:episodetype/text()", default="full"),
-        "keywords": XPathParser("category/text()", multiple=True),
+        "duration": xfind(item, "itunes:duration/text()", default=""),
+        "episode_type": xfind(item, "itunes:episodetype/text()", default="full"),
+        "keywords": xfindall(item, "category/text()"),
     }
+
+
+def xfind(element, *paths, default=None):
+    for path in paths:
+        if values := element.xpath(path, namespaces=NAMESPACES):
+            return values[0].strip()
+    return default
+
+
+def xfindall(element, path):
+    return [value.strip() for value in element.xpath(path, namespaces=NAMESPACES)]
