@@ -63,7 +63,7 @@ class User(AbstractUser):
         default=settings.GRAVATAR_DEFAULT_IMAGE,
         rating=settings.GRAVATAR_DEFAULT_RATING,
     ):
-        digest = hashlib.md5(self.email.encode("utf-8")).hexdigest()  # nosec
+        digest = hashlib.md5(self.email.encode("utf-8")).hexdigest()
         qs = urlencode(
             {
                 "s": str(size),
