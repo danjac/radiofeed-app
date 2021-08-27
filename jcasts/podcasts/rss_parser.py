@@ -129,16 +129,9 @@ def parse_feed(channel):
         "link": xfind(channel, "link/text()", default=""),
         "language": xfind(channel, "language/text()", default="en"),
         "explicit": xfind(channel, "itunes:explicit/text()"),
+        "cover_url": xfind(channel, "itunes:image/@href", "image/url/text()"),
         "description": xfind(
-            channel,
-            "description/text()",
-            "itunes:summary/text()",
-            default="",
-        ),
-        "cover_url": xfind(
-            channel,
-            "itunes:image/@href",
-            "image/url/text()",
+            channel, "description/text()", "itunes:summary/text()", default=""
         ),
         "owner": xfind(
             channel,
