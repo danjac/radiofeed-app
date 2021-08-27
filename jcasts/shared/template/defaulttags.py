@@ -85,7 +85,7 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 @register.filter(is_safe=True)
 @stringfilter
 def markup(value):
-    return mark_safe(cleaners.markup(value))
+    return mark_safe(cleaners.markup(value))  # nosec
 
 
 @register.filter
