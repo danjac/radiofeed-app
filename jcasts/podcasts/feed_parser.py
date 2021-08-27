@@ -1,5 +1,5 @@
 import http
-import random
+import secrets
 import traceback
 
 from dataclasses import dataclass
@@ -258,7 +258,7 @@ def extract_text(podcast, categories, items):
 def get_feed_headers(podcast, force_update=False):
     headers: dict[str, str] = {
         "Accept": ACCEPT_HEADER,
-        "User-Agent": random.choice(USER_AGENTS),
+        "User-Agent": secrets.choice(USER_AGENTS),
     }
 
     # ignore any modified/etag headers
