@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -15,7 +15,7 @@ from jcasts.shared.response import HttpResponseNoContent
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
+def start_player(request, episode_id):
     return render_start_player(
         request, get_episode_or_404(request, episode_id, with_podcast=True)
     )
@@ -23,14 +23,14 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request: HttpRequest) -> HttpResponse:
+def close_player(request):
     request.player.remove()
     return render_close_player(request)
 
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def play_next_episode(request: HttpRequest) -> HttpResponse:
+def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
 
@@ -56,7 +56,7 @@ def play_next_episode(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @ajax_login_required
-def reload_player(request: HttpRequest) -> HttpResponse:
+def reload_player(request):
 
     if episode_id := request.player.get():
         log = (
@@ -72,7 +72,7 @@ def reload_player(request: HttpRequest) -> HttpResponse:
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request: HttpRequest) -> HttpResponse:
+def player_time_update(request):
     """Update current play time of episode."""
 
     try:
@@ -89,7 +89,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
+def render_start_player(request, episode: Episode):
 
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
@@ -120,11 +120,9 @@ def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
     )
 
 
-def render_close_player(request: HttpRequest) -> HttpResponse:
+def render_close_player(request):
     return with_hx_trigger(render_player(request), "close-player")
 
 
-def render_player(
-    request: HttpRequest, extra_context: dict | None = None
-) -> HttpResponse:
+def render_player(request, extra_context=None):
     return TemplateResponse(request, "episodes/_player.html", extra_context)
