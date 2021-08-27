@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.utils.functional import SimpleLazyObject
 
 from jcasts.shared.middleware import BaseMiddleware

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import io
 
 from datetime import datetime
@@ -149,7 +147,7 @@ class XPathParser:
 
         return [] if self.multiple else self.default
 
-    def strip_whitespace(self, value: str | None) -> str:
+    def strip_whitespace(self, value):
         return (value or "").strip()
 
 

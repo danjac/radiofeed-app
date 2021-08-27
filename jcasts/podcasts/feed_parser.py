@@ -1,11 +1,10 @@
-from __future__ import annotations
-
 import http
 import secrets
 import traceback
 
 from dataclasses import dataclass
 from functools import lru_cache
+from typing import Optional
 
 import requests
 
@@ -65,9 +64,9 @@ def parse_podcast_feeds(*, force_update=False, limit=None):
 @dataclass
 class ParseResult:
     rss: str
-    status: int | None = None
     success: bool = False
-    exception: Exception | None = None
+    status: Optional[http.HTTPStatus] = None
+    exception: Optional[Exception] = None
 
     def __bool__(self):
         return self.success
@@ -88,7 +87,7 @@ def parse_feed(rss, *, force_update=False) -> ParseResult:
         return parse_success(podcast, response, *parse_rss(response.content))
 
     except Podcast.DoesNotExist as e:
-        return ParseResult(rss, status=None, success=False, exception=e)
+        return ParseResult(rss, success=False, status=None, exception=e)
 
     except NotModified as e:
         return parse_failure(podcast, status=e.response.status_code)
@@ -186,7 +185,7 @@ def parse_success(podcast, response, feed, items):
     # episodes
     parse_episodes(podcast, items)
 
-    return ParseResult(podcast.rss, response.status_code, True)
+    return ParseResult(podcast.rss, success=True, status=response.status_code)
 
 
 def parse_episodes(podcast, items, batch_size=500):
@@ -304,4 +303,4 @@ def parse_failure(
         **fields,
     )
 
-    return ParseResult(podcast.rss, status, False, exception)
+    return ParseResult(podcast.rss, success=False, status=status, exception=exception)

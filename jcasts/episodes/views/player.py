@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone

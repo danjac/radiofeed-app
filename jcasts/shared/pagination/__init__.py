@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from django.conf import settings
-from django.core.paginator import InvalidPage, Page, Paginator
+from django.core.paginator import InvalidPage, Paginator
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
@@ -14,7 +12,7 @@ def paginate(
     param="page",
     allow_empty=True,
     orphans=0,
-) -> Page:
+):
 
     paginator = Paginator(
         object_list, page_size, allow_empty_first_page=allow_empty, orphans=orphans
