@@ -176,7 +176,7 @@ class Episode(models.Model):
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_duration_in_seconds(self) -> int:
+    def get_duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format.
         Invalid formats return zero."""
 
@@ -193,7 +193,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def get_pc_completed(self) -> int:
+    def get_pc_completed(self):
         """Use with the `with_current_time` QuerySet method"""
 
         try:

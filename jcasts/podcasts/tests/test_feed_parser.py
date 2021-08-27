@@ -128,7 +128,7 @@ class TestParseFeed:
 
         get_categories_dict.cache_clear()
 
-    def get_rss_content(self, filename: str = "") -> bytes:
+    def get_rss_content(self, filename=""):
         return open(
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file), "rb"
         ).read()

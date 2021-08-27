@@ -127,7 +127,7 @@ def get_episode_or_404(
     *,
     with_podcast=False,
     with_current_time=False,
-) -> Episode:
+):
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")

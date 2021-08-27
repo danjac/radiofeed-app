@@ -78,7 +78,7 @@ class ParseResult:
 
 @job("feeds")
 @transaction.atomic
-def parse_feed(rss, *, force_update=False) -> ParseResult:
+def parse_feed(rss, *, force_update=False):
 
     try:
         podcast = get_podcast(rss, force_update)
@@ -111,7 +111,7 @@ def parse_feed(rss, *, force_update=False) -> ParseResult:
         )
 
 
-def get_feed_response(podcast, force_update=False) -> requests.Response:
+def get_feed_response(podcast, force_update=False):
     response = requests.get(
         podcast.rss,
         headers=get_feed_headers(podcast, force_update),

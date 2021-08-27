@@ -8,7 +8,7 @@ class UserFactory(DjangoModelFactory):
     email: str = Faker("email")
 
     @post_generation
-    def password(self, *args, **kwargs) -> None:
+    def password(self, *args, **kwargs):
         self.set_password("testpass1")
 
     class Meta:

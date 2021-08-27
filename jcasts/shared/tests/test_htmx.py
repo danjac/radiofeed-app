@@ -9,7 +9,7 @@ from jcasts.shared.htmx import with_hx_trigger
 
 class TestWithHxTrigger:
     @pytest.fixture
-    def response(self) -> HttpResponse:
+    def response(self):
         return HttpResponse()
 
     def test_no_data(self, response):

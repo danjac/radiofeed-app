@@ -123,7 +123,7 @@ class Client:
         assert api_secret, "api_secret missing or not set in PODCASTINDEX_CONFIG"
         return cls(api_key, api_secret)
 
-    def fetch(self, endpoint, data=None) -> dict:
+    def fetch(self, endpoint, data=None):
         response = requests.post(
             self.base_url + endpoint, headers=self.get_headers(), data=data
         )

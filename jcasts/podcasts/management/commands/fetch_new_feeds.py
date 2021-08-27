@@ -8,7 +8,7 @@ from jcasts.podcasts import podcastindex
 class Command(BaseCommand):
     help = "Fetch new feeds from Podcast Index"
 
-    def add_arguments(self, parser) -> None:
+    def add_arguments(self, parser):
         parser.add_argument(
             "--limit",
             type=int,
@@ -19,7 +19,7 @@ class Command(BaseCommand):
             "--since", type=int, default=24, help="Hours since new feeds added"
         )
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
         feeds = podcastindex.new_feeds(
             limit=options["limit"], since=timedelta(hours=options["since"])
         )

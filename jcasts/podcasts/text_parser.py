@@ -332,7 +332,7 @@ def get_stopwords(language):
         return []
 
 
-def clean_text(text: str) -> str:
+def clean_text(text):
     """Remove HTML tags and entities, punctuation and numbers."""
     text = cleaners.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)

@@ -9,7 +9,7 @@ from jcasts.episodes.factories import (
     QueueItemFactory,
 )
 from jcasts.episodes.middleware import Player
-from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
@@ -385,7 +385,7 @@ class TestRemoveFavorite:
 
 
 class TestRemoveAudioLog:
-    def url(self, episode: Episode) -> str:
+    def url(self, episode):
         return reverse("episodes:remove_audio_log", args=[episode.id])
 
     def test_ok(self, client, auth_user, episode):
