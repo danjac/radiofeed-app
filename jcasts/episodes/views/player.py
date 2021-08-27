@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.models import AudioLog, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
@@ -87,7 +87,7 @@ def player_time_update(request):
         return HttpResponseBadRequest()
 
 
-def render_start_player(request, episode: Episode):
+def render_start_player(request, episode):
 
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
