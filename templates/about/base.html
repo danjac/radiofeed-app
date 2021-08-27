@@ -14,11 +14,11 @@
            title="Credits"
            href="{{ link.url }}">Credits</a>
       </li>
-      {% active_link 'about:shortcuts' as link %}
+      {% active_link 'about:help' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">
         <a class="hover:text-blue-500"
-           title="Shortcuts"
-           href="{{ link.url }}">Shortcuts</a>
+           title="help"
+           href="{{ link.url }}">Help</a>
       </li>
       {% active_link 'about:privacy' as link %}
       <li class="{% if link.exact %}tab--active{% endif %}">

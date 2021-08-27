@@ -10,10 +10,10 @@ about_urls = [
         kwargs={"template_name": "about/credits.html"},
     ),
     path(
-        "shortcuts/",
+        "help/",
         views.static_page,
-        name="shortcuts",
-        kwargs={"template_name": "about/shortcuts.html"},
+        name="help",
+        kwargs={"template_name": "about/help.html"},
     ),
     path(
         "privacy/",

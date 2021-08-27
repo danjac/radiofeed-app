@@ -22,8 +22,8 @@ class TestAboutPages:
     def test_credits(self, db, client):
         assert_ok(client.get(reverse("about:credits")))
 
-    def test_shortcuts(self, db, client):
-        assert_ok(client.get(reverse("about:shortcuts")))
+    def test_help(self, db, client):
+        assert_ok(client.get(reverse("about:help")))
 
     def test_privacy(self, db, client):
         assert_ok(client.get(reverse("about:privacy")))
