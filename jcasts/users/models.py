@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import hashlib
 
 from urllib.parse import urlencode
@@ -10,7 +8,7 @@ from django.db import models
 
 
 class UserQuerySet(models.QuerySet):
-    def for_email(self, email: str) -> models.QuerySet:
+    def for_email(self, email):
         """Returns users matching this email address, including both
         primary and secondary email addresses
         """
@@ -18,17 +16,15 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names: list[str]) -> models.QuerySet:
+    def matches_usernames(self, names):
         """Returns users matching the (case insensitive) username."""
         if not names:
             return self.none()
         return self.filter(username__iregex=r"^(%s)+" % "|".join(names))
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
-    def create_user(
-        self, username: str, email: str, password: str | None = None, **kwargs
-    ) -> User:
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+    def create_user(self, username, email, password=None, **kwargs):
         user = self.model(
             username=username, email=self.normalize_email(email), **kwargs
         )
@@ -36,9 +32,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
         user.save(using=self._db)
         return user
 
-    def create_superuser(
-        self, username: str, email: str, password: str, **kwargs
-    ) -> User:
+    def create_superuser(self, username, email, password, **kwargs):
         return self.create_user(
             username,
             email,
@@ -50,12 +44,12 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
 
 
 class User(AbstractUser):
-    send_recommendations_email: bool = models.BooleanField(default=True)
-    autoplay: bool = models.BooleanField(default=True)
+    send_recommendations_email = models.BooleanField(default=True)
+    autoplay = models.BooleanField(default=True)
 
     objects = UserManager()
 
-    def get_email_addresses(self) -> set[str]:
+    def get_email_addresses(self):
         """Get set of emails belonging to user.
 
         Returns:
@@ -65,10 +59,10 @@ class User(AbstractUser):
 
     def get_gravatar_url(
         self,
-        size: int | str = settings.GRAVATAR_DEFAULT_SIZE,
-        default: str = settings.GRAVATAR_DEFAULT_IMAGE,
-        rating: str = settings.GRAVATAR_DEFAULT_RATING,
-    ) -> str:
+        size=settings.GRAVATAR_DEFAULT_SIZE,
+        default=settings.GRAVATAR_DEFAULT_IMAGE,
+        rating=settings.GRAVATAR_DEFAULT_RATING,
+    ):
         digest = hashlib.md5(self.email.encode("utf-8")).hexdigest()
         qs = urlencode(
             {

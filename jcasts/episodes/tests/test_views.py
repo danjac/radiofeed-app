@@ -175,7 +175,7 @@ class TestPlayNextEpisode:
         assert previous.completed
         assert previous.current_time == 0
 
-        assert not _is_playing(client, previous)
+        assert not _is_playing(client, previous.episode)
         assert _is_playing(client, episode)
 
     def test_has_next_in_queue_if_autoplay_disabled(

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import collections
 import math
 import re
@@ -20,7 +18,6 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from jcasts.shared import cleaners
-from jcasts.shared.typedefs import ContextDict
 
 register = template.Library()
 
@@ -31,7 +28,7 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: ContextDict, url: str | None = None, *args, **kwargs) -> str:
+def absolute_uri(context, url=None, *args, **kwargs):
 
     url = resolve_url(url, *args, **kwargs) if url else None
 
@@ -47,7 +44,7 @@ def absolute_uri(context: ContextDict, url: str | None = None, *args, **kwargs) 
 
 
 @register.filter
-def format_duration(total_seconds: int | None) -> str:
+def format_duration(total_seconds):
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
     if not total_seconds:
         return ""
@@ -64,7 +61,7 @@ def format_duration(total_seconds: int | None) -> str:
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveLink:
+def active_link(context, url_name, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
@@ -77,9 +74,7 @@ def active_link(context: ContextDict, url_name: str, *args, **kwargs) -> ActiveL
 
 
 @register.simple_tag(takes_context=True)
-def re_active_link(
-    context: ContextDict, url_name: str, pattern: str, *args, **kwargs
-) -> ActiveLink:
+def re_active_link(context, url_name, pattern, *args, **kwargs):
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
         return ActiveLink(url, True, False)
@@ -89,19 +84,19 @@ def re_active_link(
 
 @register.filter(is_safe=True)
 @stringfilter
-def markup(value: str) -> str:
+def markup(value):
     return mark_safe(cleaners.markup(value))
 
 
 @register.filter
 @stringfilter
-def unescape(value: str) -> str:
+def unescape(value):
     return cleaners.unescape(value)
 
 
 @register.filter
 @register.filter
-def keepspaces(text: str | None) -> str:
+def keepspaces(text):
     # changes any <br /> <p> <li> etc to spaces
     if text is None:
         return ""
@@ -112,27 +107,27 @@ def keepspaces(text: str | None) -> str:
 
 
 @register.filter
-def login_url(url: str) -> str:
+def login_url(url):
     return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
 @register.filter
-def signup_url(url: str) -> str:
+def signup_url(url):
     return f"{reverse('account_signup')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
 @register.simple_tag
-def get_privacy_details() -> dict[str, str]:
+def get_privacy_details():
     return settings.PRIVACY_DETAILS
 
 
 @register.simple_tag
-def get_twitter_account() -> str | None:
+def get_twitter_account():
     return settings.TWITTER_ACCOUNT
 
 
 @register.inclusion_tag("icons/_svg.html")
-def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> ContextDict:
+def icon(name, css_class="", title="", **attrs):
     return {
         "name": name,
         "css_class": css_class,
@@ -143,9 +138,7 @@ def icon(name: str, css_class: str = "", title: str = "", **attrs: str) -> Conte
 
 
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
-def share_buttons(
-    context: ContextDict, url: str, subject: str, css_class: str = ""
-) -> ContextDict:
+def share_buttons(context, url, subject, css_class=""):
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
@@ -162,7 +155,7 @@ def share_buttons(
 
 @register.filter
 @stringfilter
-def normalize_url(url: str | None) -> str:
+def normalize_url(url):
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if not url:
         return ""

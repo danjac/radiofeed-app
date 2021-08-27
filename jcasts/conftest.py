@@ -1,5 +1,3 @@
-from typing import Callable, Generator
-
 import pytest
 
 from django.contrib.auth.models import AnonymousUser
@@ -9,20 +7,17 @@ from faker import Faker
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.middleware import Player
-from jcasts.episodes.models import Episode
 from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
-from jcasts.podcasts.models import Category, Follow, Podcast
-from jcasts.shared.typedefs import AuthenticatedUser
 from jcasts.users.factories import UserFactory
 
 
 @pytest.fixture
-def faker() -> Faker:
+def faker():
     return Faker()
 
 
 @pytest.fixture
-def locmem_cache(settings) -> Generator:
+def locmem_cache(settings):
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }
@@ -31,43 +26,43 @@ def locmem_cache(settings) -> Generator:
 
 
 @pytest.fixture
-def get_response() -> Callable:
+def get_response():
     return lambda req: HttpResponse()
 
 
 @pytest.fixture
-def user(db) -> AuthenticatedUser:
+def user(db):
     return UserFactory()
 
 
 @pytest.fixture
-def anonymous_user() -> AnonymousUser:
+def anonymous_user():
     return AnonymousUser()
 
 
 @pytest.fixture
-def auth_user(client, user) -> AuthenticatedUser:
+def auth_user(client, user):
     client.force_login(user)
     return user
 
 
 @pytest.fixture
-def podcast(db) -> Podcast:
+def podcast(db):
     return PodcastFactory()
 
 
 @pytest.fixture
-def episode(db) -> Episode:
+def episode(db):
     return EpisodeFactory()
 
 
 @pytest.fixture
-def category(db) -> Category:
+def category(db):
     return CategoryFactory()
 
 
 @pytest.fixture
-def follow(auth_user, podcast) -> Follow:
+def follow(auth_user, podcast):
     return FollowFactory(podcast=podcast, user=auth_user)
 
 
