@@ -69,6 +69,7 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 
 class Podcast(models.Model):
+    # test commit
 
     rss = models.URLField(unique=True, max_length=500)
     active = models.BooleanField(default=True)
