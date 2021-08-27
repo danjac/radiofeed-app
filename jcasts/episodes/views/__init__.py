@@ -1,7 +1,4 @@
-from __future__ import annotations
-
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -12,11 +9,10 @@ from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.typedefs import ContextDict
 
 
 @require_http_methods(["GET"])
-def index(request: HttpRequest) -> HttpResponse:
+def index(request):
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
@@ -56,7 +52,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request):
 
     if not request.search:
         return redirect("episodes:index")
@@ -77,7 +73,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 @ajax_login_required
-def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
+def actions(request, episode_id):
 
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
@@ -109,9 +105,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def episode_detail(
-    request: HttpRequest, episode_id: int, slug: str | None = None
-) -> HttpResponse:
+def episode_detail(request, episode_id, slug=None):
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -128,12 +122,12 @@ def episode_detail(
 
 
 def get_episode_or_404(
-    request: HttpRequest,
-    episode_id: int,
+    request,
+    episode_id,
     *,
-    with_podcast: bool = False,
-    with_current_time: bool = False,
-) -> Episode:
+    with_podcast=False,
+    with_current_time=False,
+):
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
@@ -143,12 +137,12 @@ def get_episode_or_404(
 
 
 def render_episode_list_response(
-    request: HttpRequest,
-    episodes: list[Episode],
-    template_name: str,
-    extra_context: ContextDict | None = None,
-    cached: bool = False,
-) -> HttpResponse:
+    request,
+    episodes,
+    template_name,
+    extra_context=None,
+    cached=False,
+):
     return render_paginated_response(
         request,
         episodes,

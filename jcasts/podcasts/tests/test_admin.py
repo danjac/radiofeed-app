@@ -4,7 +4,6 @@ from unittest import mock
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.http import HttpRequest
 from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
@@ -20,15 +19,15 @@ from jcasts.podcasts.models import Podcast
 
 class TestPodcastAdmin:
     @pytest.fixture(scope="class")
-    def admin(self) -> PodcastAdmin:
+    def admin(self):
         return PodcastAdmin(Podcast, AdminSite())
 
     @pytest.fixture
-    def podcasts(self, db) -> list[Podcast]:
+    def podcasts(self, db):
         return PodcastFactory.create_batch(3, active=True, promoted=False)
 
     @pytest.fixture
-    def req(self, rf) -> HttpRequest:
+    def req(self, rf):
         req = rf.get("/")
         req._messages = mock.Mock()
         return req

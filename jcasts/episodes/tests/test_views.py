@@ -9,7 +9,7 @@ from jcasts.episodes.factories import (
     QueueItemFactory,
 )
 from jcasts.episodes.middleware import Player
-from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
@@ -175,7 +175,7 @@ class TestPlayNextEpisode:
         assert previous.completed
         assert previous.current_time == 0
 
-        assert not _is_playing(client, previous)
+        assert not _is_playing(client, previous.episode)
         assert _is_playing(client, episode)
 
     def test_has_next_in_queue_if_autoplay_disabled(
@@ -385,7 +385,7 @@ class TestRemoveFavorite:
 
 
 class TestRemoveAudioLog:
-    def url(self, episode: Episode) -> str:
+    def url(self, episode):
         return reverse("episodes:remove_audio_log", args=[episode.id])
 
     def test_ok(self, client, auth_user, episode):

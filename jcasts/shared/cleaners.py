@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import html
 
 import bleach
@@ -63,23 +61,23 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs: dict, new: bool = False) -> dict:
+def linkify_callback(attrs, new=False):
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
 
 
-def clean(value: str | None) -> str:
+def clean(value):
     return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
 
 
-def unescape(value: str | None) -> str:
+def unescape(value):
     """Removes any HTML entities such as &nbsp; and replaces
     them with plain ASCII equivalents."""
     return html.unescape(value) if value else ""
 
 
-def markup(value: str | None) -> str:
+def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := (value or "").strip():
         return unescape(clean(markdown.markdown(value)))

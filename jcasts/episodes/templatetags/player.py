@@ -1,15 +1,12 @@
-from __future__ import annotations
-
 from django import template
 
 from jcasts.episodes.models import AudioLog
-from jcasts.shared.typedefs import ContextDict
 
 register = template.Library()
 
 
 @register.inclusion_tag("episodes/_player.html", takes_context=True)
-def audio_player(context: ContextDict) -> ContextDict:
+def audio_player(context):
     request = context["request"]
 
     if request.user.is_authenticated and (episode_id := request.player.get()):

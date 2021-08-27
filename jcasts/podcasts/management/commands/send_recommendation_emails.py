@@ -7,7 +7,7 @@ from jcasts.podcasts.emails import send_recommendations_email
 class Command(BaseCommand):
     help = "Schedule podcast feeds"
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args, **options):
         for user in get_user_model().objects.filter(
             send_recommendations_email=True, is_active=True
         ):

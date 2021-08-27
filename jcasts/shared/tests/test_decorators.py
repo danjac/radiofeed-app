@@ -3,14 +3,14 @@ import http
 import pytest
 
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from django.urls import reverse
 
 from jcasts.shared.decorators import ajax_login_required
 
 
 @ajax_login_required
-def my_ajax_view(request: HttpRequest) -> HttpResponse:
+def my_ajax_view(request):
     return HttpResponse()
 
 

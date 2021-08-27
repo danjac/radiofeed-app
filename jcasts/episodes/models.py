@@ -1,13 +1,9 @@
-from __future__ import annotations
-
 from datetime import datetime, timedelta
-from typing import Any, ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
-from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat, striptags
 from django.templatetags.static import static
 from django.urls import reverse
@@ -19,11 +15,10 @@ from model_utils.models import TimeStampedModel
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.db import FastCountMixin, SearchMixin
 from jcasts.shared.template.defaulttags import unescape
-from jcasts.shared.typedefs import AnyUser, AuthenticatedUser
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_current_time(self, user: AnyUser) -> models.QuerySet:
+    def with_current_time(self, user):
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -42,9 +37,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def recommended(
-        self, user: AuthenticatedUser, since: timedelta = timedelta(days=7)
-    ) -> models.QuerySet:
+    def recommended(self, user, since=timedelta(days=7)):
         """Return all episodes for podcasts the user is following,
         minus any the user has already queued/favorited/listened to."""
 
@@ -88,28 +81,28 @@ class Episode(models.Model):
 
     podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid: str = models.TextField()
+    guid = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    keywords = models.TextField(blank=True)
 
-    episode_type: str = models.CharField(max_length=30, default="full")
-    episode: int | None = models.IntegerField(null=True, blank=True)
-    season: int | None = models.IntegerField(null=True, blank=True)
+    episode_type = models.CharField(max_length=30, default="full")
+    episode = models.IntegerField(null=True, blank=True)
+    season = models.IntegerField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
-    media_url: str = models.URLField(max_length=2083)
-    media_type: str = models.CharField(max_length=60)
-    length: int | None = models.BigIntegerField(null=True, blank=True)
+    media_url = models.URLField(max_length=2083)
+    media_type = models.CharField(max_length=60)
+    length = models.BigIntegerField(null=True, blank=True)
 
-    duration: str = models.CharField(max_length=30, blank=True)
-    explicit: bool = models.BooleanField(default=False)
+    duration = models.CharField(max_length=30, blank=True)
+    explicit = models.BooleanField(default=False)
 
-    search_vector: str = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager = EpisodeManager()
 
@@ -131,27 +124,27 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title or self.guid
 
-    def get_absolute_url(self) -> str:
+    def get_absolute_url(self):
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
     @property
-    def slug(self) -> str:
+    def slug(self):
         return slugify(self.title, allow_unicode=False) or "episode"
 
     @cached_property
-    def cleaned_title(self) -> str:
+    def cleaned_title(self):
         return striptags(unescape(self.title))
 
-    def get_file_size(self) -> str | None:
+    def get_file_size(self):
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self) -> str | None:
+    def get_cover_url(self):
         return self.cover_url or self.podcast.cover_url
 
-    def get_next_episode(self) -> Episode | None:
+    def get_next_episode(self):
 
         return (
             self.__class__._default_manager.filter(
@@ -162,7 +155,7 @@ class Episode(models.Model):
             .first()
         )
 
-    def get_previous_episode(self) -> Episode | None:
+    def get_previous_episode(self):
 
         return (
             self.__class__._default_manager.filter(
@@ -173,17 +166,17 @@ class Episode(models.Model):
             .first()
         )
 
-    def is_queued(self, user: AnyUser) -> bool:
+    def is_queued(self, user):
         if user.is_anonymous:
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user: AnyUser) -> bool:
+    def is_favorited(self, user):
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_duration_in_seconds(self) -> int:
+    def get_duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format.
         Invalid formats return zero."""
 
@@ -200,7 +193,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def get_pc_completed(self) -> int:
+    def get_pc_completed(self):
         """Use with the `with_current_time` QuerySet method"""
 
         try:
@@ -221,7 +214,7 @@ class Episode(models.Model):
         except (ZeroDivisionError, AttributeError):
             return 0
 
-    def get_time_remaining(self) -> int:
+    def get_time_remaining(self):
         duration = self.get_duration_in_seconds()
 
         try:
@@ -229,15 +222,15 @@ class Episode(models.Model):
         except (AttributeError, TypeError):
             return duration
 
-    def is_completed(self) -> bool:
+    def is_completed(self):
         """Use with the `with_current_time` QuerySet method"""
         try:
             return self.completed or self.get_pc_completed() >= 100
         except AttributeError:
             return False
 
-    def get_opengraph_data(self, request: HttpRequest) -> dict[str, str | int]:
-        og_data: dict[str, str | int] = {
+    def get_opengraph_data(self, request):
+        og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
             "description": self.description,
@@ -254,7 +247,7 @@ class Episode(models.Model):
 
         return og_data
 
-    def get_episode_metadata(self) -> str:
+    def get_episode_metadata(self):
 
         episode_type = (
             self.episode_type.capitalize()
@@ -278,7 +271,7 @@ class Episode(models.Model):
             ]
         )
 
-    def get_media_metadata(self) -> dict[str, Any]:
+    def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session
         cover_url = self.get_cover_url() or static("img/podcast-icon.png")
 
@@ -298,7 +291,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: ClassVar[list[tuple[str, str]]] = [
+    search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -309,9 +302,7 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 class Favorite(TimeStampedModel):
 
-    user: AuthenticatedUser = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
@@ -330,7 +321,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
-    search_vectors: ClassVar[list[tuple[str, str]]] = [
+    search_vectors = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -341,14 +332,12 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user: AuthenticatedUser = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    updated: datetime = models.DateTimeField()
-    completed: datetime | None = models.DateTimeField(null=True, blank=True)
-    current_time: int = models.IntegerField(default=0)
+    updated = models.DateTimeField()
+    completed = models.DateTimeField(null=True, blank=True)
+    current_time = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
@@ -364,7 +353,7 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["updated"]),
         ]
 
-    def to_json(self) -> dict[str, Any]:
+    def to_json(self):
         cover_url = self.episode.podcast.cover_url or static("img/podcast-icon.png")
         return {
             "currentTime": self.current_time,
@@ -388,15 +377,11 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def add_item_to_start(
-        self,
-        user: AuthenticatedUser,
-        episode: Episode,
-    ) -> QueueItem:
+    def add_item_to_start(self, user, episode):
         self.filter(user=user).update(position=models.F("position") + 1)
         return self.create(episode=episode, user=user, position=1)
 
-    def add_item_to_end(self, user: AuthenticatedUser, episode: Episode) -> QueueItem:
+    def add_item_to_end(self, user, episode):
         return self.create(
             episode=episode,
             user=user,
@@ -409,7 +394,7 @@ class QueueItemQuerySet(models.QuerySet):
             + 1,
         )
 
-    def move_items(self, user: AuthenticatedUser, item_ids: list[int]) -> None:
+    def move_items(self, user, item_ids):
         qs = self.filter(user=user, pk__in=item_ids)
 
         items = qs.in_bulk()
@@ -428,11 +413,9 @@ QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
-    user: AuthenticatedUser = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position: int = models.IntegerField(default=0)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)
 
     objects = QueueItemManager()
 

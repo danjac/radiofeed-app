@@ -1,7 +1,10 @@
-all: build seed test run
+all: build migrate seed test run
 
 build:
 	docker-compose build
+
+migrate:
+	./bin/manage migrate
 
 seed:
 	./bin/manage seed_podcast_data

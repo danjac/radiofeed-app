@@ -1,7 +1,7 @@
 import datetime
 
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 
 
 @require_http_methods(["GET"])
-def home_page(request: HttpRequest) -> HttpResponse:
+def home_page(request):
     if request.user.is_authenticated:
         return redirect(settings.HOME_URL)
     return TemplateResponse(request, "index.html")
@@ -18,7 +18,7 @@ def home_page(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET", "HEAD"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def robots(request: HttpRequest) -> HttpResponse:
+def robots(request):
     return TemplateResponse(
         request,
         "robots.txt",
@@ -27,7 +27,7 @@ def robots(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["POST"])
-def accept_cookies(request: HttpRequest) -> HttpResponse:
+def accept_cookies(request):
     response = HttpResponse()
     response.set_cookie(
         "accept-cookies",
@@ -41,5 +41,5 @@ def accept_cookies(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def static_page(request: HttpRequest, template_name: str) -> HttpResponse:
+def static_page(request, template_name: str):
     return TemplateResponse(request, template_name)

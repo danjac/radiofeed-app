@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import re
 
 from functools import lru_cache
@@ -13,7 +11,7 @@ from jcasts.shared import cleaners
 
 """Additional language-specific stopwords"""
 
-ENGLISH_DAYS: list[str] = [
+ENGLISH_DAYS = [
     "monday",
     "tuesday",
     "wednesday",
@@ -30,7 +28,7 @@ ENGLISH_DAYS: list[str] = [
     "sun",
 ]
 
-ENGLISH_NUMBERS: list[str] = [
+ENGLISH_NUMBERS = [
     "one",
     "two",
     "three",
@@ -43,7 +41,7 @@ ENGLISH_NUMBERS: list[str] = [
     "ten",
 ]
 
-ENGLISH_MONTHS: list[str] = [
+ENGLISH_MONTHS = [
     "january",
     "february",
     "march",
@@ -70,7 +68,7 @@ ENGLISH_MONTHS: list[str] = [
     "dec",
 ]
 
-ENGLISH_MISC_WORDS: list[str] = [
+ENGLISH_MISC_WORDS = [
     "across",
     "advice",
     "along",
@@ -281,7 +279,7 @@ ENGLISH_MISC_WORDS: list[str] = [
     "youre",
 ]
 
-CORPORATES: list[str] = [
+CORPORATES = [
     "apple",
     "patreon",
     "spotify",
@@ -289,14 +287,14 @@ CORPORATES: list[str] = [
     "itunes",
 ]
 
-STOPWORDS: dict[str, list[str]] = {
+STOPWORDS = {
     "en": ENGLISH_DAYS
     + ENGLISH_MONTHS
     + ENGLISH_NUMBERS
     + ENGLISH_MISC_WORDS
     + CORPORATES
 }
-NLTK_LANGUAGES: dict[str, str] = {
+NLTK_LANGUAGES = {
     "ar": "arabic",
     "az": "azerbaijani",
     "da": "danish",
@@ -327,14 +325,14 @@ lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
-def get_stopwords(language: str) -> list[str]:
+def get_stopwords(language):
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except KeyError:
         return []
 
 
-def clean_text(text: str) -> str:
+def clean_text(text):
     """Remove HTML tags and entities, punctuation and numbers."""
     text = cleaners.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
@@ -342,7 +340,7 @@ def clean_text(text: str) -> str:
     return text
 
 
-def extract_keywords(language: str, text: str) -> list[str]:
+def extract_keywords(language, text):
 
     if not (text := clean_text(text).lower()):
         return []
@@ -352,5 +350,5 @@ def extract_keywords(language: str, text: str) -> list[str]:
     return [token for token in tokenize(text) if token and token not in stopwords]
 
 
-def tokenize(text: str) -> list[str]:
+def tokenize(text):
     return [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]

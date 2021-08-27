@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import base64
 import hashlib
 import time
@@ -19,13 +17,13 @@ from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
 
 
-def search(search_term: str) -> list[Feed]:
+def search(search_term):
     return with_podcasts(
         parse_feed_data(get_client().fetch("/search/byterm", {"q": search_term}))
     )
 
 
-def search_cached(search_term: str) -> list[Feed]:
+def search_cached(search_term):
 
     cache_key = (
         "podcastindex:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
@@ -38,7 +36,7 @@ def search_cached(search_term: str) -> list[Feed]:
     return feeds
 
 
-def new_feeds(limit: int = 20, since: timedelta = timedelta(hours=24)) -> list[Feed]:
+def new_feeds(limit=20, since=timedelta(hours=24)):
 
     return with_podcasts(
         parse_feed_data(
@@ -54,12 +52,12 @@ def new_feeds(limit: int = 20, since: timedelta = timedelta(hours=24)) -> list[F
 
 
 @lru_cache
-def get_client() -> Client:
+def get_client():
     return Client.from_settings()
 
 
-def parse_feed_data(data: dict) -> list[Feed]:
-    def _parse_feed(result: dict) -> Feed | None:
+def parse_feed_data(data):
+    def _parse_feed(result):
         try:
             return Feed.parse_obj(result)
         except ValidationError:
@@ -72,9 +70,7 @@ def parse_feed_data(data: dict) -> list[Feed]:
     ]
 
 
-def with_podcasts(
-    feeds: list[Feed],
-) -> list[Feed]:
+def with_podcasts(feeds):
     """Looks up podcast associated with result. Adds new podcasts if they are not already in the database"""
 
     podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
@@ -113,12 +109,12 @@ class Client:
     base_url = "https://api.podcastindex.org/api/1.0"
     user_agent = "Voyce"
 
-    def __init__(self, api_key: str, api_secret: str):
+    def __init__(self, api_key, api_secret):
         self.api_key = api_key
         self.api_secret = api_secret
 
     @classmethod
-    def from_settings(cls) -> Client:
+    def from_settings(cls):
 
         api_key = settings.PODCASTINDEX_CONFIG.setdefault("api_key", None)
         api_secret = settings.PODCASTINDEX_CONFIG.setdefault("api_secret", None)
@@ -127,14 +123,14 @@ class Client:
         assert api_secret, "api_secret missing or not set in PODCASTINDEX_CONFIG"
         return cls(api_key, api_secret)
 
-    def fetch(self, endpoint: str, data: dict | None = None) -> dict:
+    def fetch(self, endpoint, data=None):
         response = requests.post(
             self.base_url + endpoint, headers=self.get_headers(), data=data
         )
         response.raise_for_status()
         return response.json()
 
-    def get_headers(self) -> dict[str, str]:
+    def get_headers(self):
 
         epoch_time = int(time.time())
 

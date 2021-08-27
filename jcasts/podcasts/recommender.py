@@ -1,16 +1,11 @@
-from __future__ import annotations
-
 import collections
 import logging
 import operator
 import statistics
 
-from typing import Generator
-
 import pandas
 
 from django.db import transaction
-from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -25,7 +20,7 @@ NUM_MATCHES: int = 12
 NUM_RECENT_EPISODES: int = 6
 
 
-def recommend() -> None:
+def recommend():
 
     podcasts = Podcast.objects.frequent().exclude(extracted_text="")
 
@@ -44,11 +39,7 @@ def recommend() -> None:
         create_recommendations_for_language(podcasts, categories, language)
 
 
-def create_recommendations_for_language(
-    podcasts: QuerySet,
-    categories: QuerySet,
-    language: str,
-) -> None:
+def create_recommendations_for_language(podcasts, categories, language):
     logger.info("Recommendations for %s", language)
 
     matches = build_matches_dict(
@@ -68,11 +59,7 @@ def create_recommendations_for_language(
             )
 
 
-def build_matches_dict(
-    podcasts: QuerySet,
-    categories: QuerySet,
-    language: str,
-) -> dict[tuple[int, int], list]:
+def build_matches_dict(podcasts, categories, language):
 
     matches = collections.defaultdict(list)
     podcasts = podcasts.filter(language__iexact=language)
@@ -88,7 +75,7 @@ def build_matches_dict(
     return matches
 
 
-def recommendations_from_matches(matches) -> Generator[Recommendation, None, None]:
+def recommendations_from_matches(matches):
     for (podcast_id, recommended_id), values in matches.items():
         frequency = len(values)
         similarity = statistics.median(values)
@@ -101,9 +88,7 @@ def recommendations_from_matches(matches) -> Generator[Recommendation, None, Non
         )
 
 
-def find_similarities_for_podcasts(
-    podcasts: QuerySet, language: str
-) -> Generator[tuple[int, int, float], None, None]:
+def find_similarities_for_podcasts(podcasts, language):
 
     if not podcasts.exists():  # pragma: no cover
         return
@@ -115,9 +100,7 @@ def find_similarities_for_podcasts(
                 yield podcast_id, recommended_id, similarity
 
 
-def find_similarities(
-    podcasts: QuerySet, language: str
-) -> Generator[tuple[int, list[tuple[int, float]]], None, None]:
+def find_similarities(podcasts, language):
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.
     """
@@ -148,15 +131,13 @@ def find_similarities(
             pass
 
 
-def find_similarity(
-    df: pandas.DataFrame, similar: list[int], current_id: int
-) -> tuple[int, list[tuple[int, float]]]:
+def find_similarity(df, similar, current_id):
 
     sorted_similar = sorted(
         list(enumerate(similar)), key=operator.itemgetter(1), reverse=True
     )[:NUM_MATCHES]
 
-    matches: list[tuple[int, float]] = [
+    matches = [
         (df.loc[row, "id"], similarity)
         for row, similarity in sorted_similar
         if df.loc[row, "id"] != current_id

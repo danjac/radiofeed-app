@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 import requests
 
@@ -25,7 +23,7 @@ def mock_good_response(mocker):
         def raise_for_status(self):
             ...
 
-        def json(self) -> dict:
+        def json(self):
 
             return {
                 "count": 1,

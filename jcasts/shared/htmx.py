@@ -1,10 +1,6 @@
-from __future__ import annotations
-
 import enum
 import functools
 import json
-
-from django.http import HttpResponse
 
 
 class HxTrigger(enum.Enum):
@@ -13,11 +9,7 @@ class HxTrigger(enum.Enum):
     HX_TRIGGER_AFTER_SWAP = "HX-Trigger-After-Swap"
 
 
-def with_hx_trigger(
-    response: HttpResponse,
-    data: str | dict,
-    header: HxTrigger = HxTrigger.HX_TRIGGER,
-) -> HttpResponse:
+def with_hx_trigger(response, data, header=HxTrigger.HX_TRIGGER):
     """Returns HX-Trigger header. If header already
     added to response, will add the new trigger
     to the existing header.
