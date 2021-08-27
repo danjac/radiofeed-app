@@ -30,10 +30,7 @@ def parse_rss(content):
     except lxml.etree.XMLSyntaxError as e:
         raise RssParserError from e
 
-    try:
-        channel = xml.find("channel")
-        assert channel is not None
-    except AssertionError:
+    if (channel := xml.find("channel")) is None:
         raise RssParserError("<channel /> is missing")
 
     try:

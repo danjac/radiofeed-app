@@ -119,8 +119,6 @@ class Client:
         api_key = settings.PODCASTINDEX_CONFIG.setdefault("api_key", None)
         api_secret = settings.PODCASTINDEX_CONFIG.setdefault("api_secret", None)
 
-        assert api_key, "api_key missing or not set in PODCASTINDEX_CONFIG"
-        assert api_secret, "api_secret missing or not set in PODCASTINDEX_CONFIG"
         return cls(api_key, api_secret)
 
     def fetch(self, endpoint, data=None):
@@ -136,7 +134,7 @@ class Client:
 
         hashed = self.api_key + self.api_secret + str(epoch_time)
 
-        sha_1 = hashlib.sha1(hashed.encode()).hexdigest()
+        sha_1 = hashlib.sha1(hashed.encode()).hexdigest()  # nosec
 
         return {
             "X-Auth-Date": str(epoch_time),
