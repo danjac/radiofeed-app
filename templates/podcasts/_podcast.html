@@ -7,7 +7,7 @@
   </div>
 
   <div class="space-y-3">
-    <h2 class="w-56 sm:w-96 lg:w-full truncate text-sm">
+    <h2 class="w-72 sm:w-96 lg:w-full truncate text-sm">
       <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
          title="{{ podcast.cleaned_title }}"
          class="link">
