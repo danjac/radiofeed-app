@@ -4,6 +4,14 @@
       "predeploy": "python manage.py collectstatic --clear --noinput && python manage.py migrate --noinput"
     }
   },
+  "formation": {
+    "web": {
+      "quantity": 1
+    },
+    "worker": {
+      "quantity": 2
+    }
+  },
   "cron": [
     {
       "command": "python manage.py parse_podcast_feeds",
