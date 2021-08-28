@@ -14,11 +14,8 @@ from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts.date_parser import parse_date
+from jcasts.podcasts import date_parser, rss_parser, scheduler, text_parser
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.podcasts.rss_parser import RssParserError, parse_rss
-from jcasts.podcasts.scheduler import schedule
-from jcasts.podcasts.text_parser import extract_keywords
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -87,10 +84,10 @@ def parse_feed(rss, *, force_update=False):
         podcast = get_podcast(rss, force_update)
         response = get_feed_response(podcast, force_update)
 
-        return parse_success(podcast, response, *parse_rss(response.content))
+        return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
 
     except Podcast.DoesNotExist as e:
-        return ParseResult(rss, success=False, status=None, exception=e)
+        return ParseResult(rss, success=False, exception=e)
 
     except NotModified as e:
         return parse_failure(podcast, status=e.response.status_code)
@@ -104,7 +101,7 @@ def parse_feed(rss, *, force_update=False):
             tb=traceback.format_exc(),
         )
 
-    except RssParserError as e:
+    except rss_parser.RssParserError as e:
         return parse_failure(
             podcast,
             status=response.status_code,
@@ -142,14 +139,14 @@ def parse_success(podcast, response, feed, items):
     podcast.rss = response.url
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
-    podcast.modified = parse_date(response.headers.get("Last-Modified"))
+    podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
 
     # parsing status
     pub_dates = [item.pub_date for item in items]
 
     podcast.num_episodes = len(items)
     podcast.pub_date = max(pub_dates)
-    podcast.scheduled = schedule(podcast, pub_dates)
+    podcast.scheduled = scheduler.schedule(podcast, pub_dates)
     podcast.parsed = timezone.now()
     podcast.queued = None
     podcast.active = True
@@ -205,7 +202,7 @@ def parse_episodes(podcast, items, batch_size=500):
     guids = dict(qs.values_list("guid", "pk"))
 
     episodes = [
-        Episode(pk=guids.get(item.guid, None), podcast=podcast, **item.dict())
+        Episode(pk=guids.get(item.guid), podcast=podcast, **item.dict())
         for item in items
     ]
 
@@ -252,7 +249,7 @@ def extract_text(podcast, categories, items):
         + [item.title for item in items][:6]
         if value
     )
-    return " ".join(extract_keywords(podcast.language, text))
+    return " ".join(text_parser.extract_keywords(podcast.language, text))
 
 
 def get_feed_headers(podcast, force_update=False):
@@ -288,7 +285,7 @@ def get_podcast(rss, force_update=False):
 def parse_failure(
     podcast,
     *,
-    status,
+    status=None,
     active=True,
     exception=None,
     tb: str = "",
@@ -299,7 +296,7 @@ def parse_failure(
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
-        scheduled=schedule(podcast) if active else None,
+        scheduled=scheduler.schedule(podcast) if active else None,
         updated=now,
         parsed=now,
         queued=None,
