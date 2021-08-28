@@ -21,9 +21,7 @@ class TestAjaxLoginRequired:
         req.htmx = True
         resp = my_ajax_view(req)
         assert resp.status_code == http.HTTPStatus.FORBIDDEN
-        assert (
-            resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/podcasts/"
-        )
+        assert resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/"
         assert resp.headers["HX-Refresh"] == "true"
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user):

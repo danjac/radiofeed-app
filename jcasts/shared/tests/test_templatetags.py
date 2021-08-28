@@ -117,14 +117,14 @@ class TestLoginUrl:
 
 
 class TestActiveLink:
-    podcasts_url = "podcasts:index"
+    episodes_url = "episodes:index"
     categories_url = "podcasts:categories"
 
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = active_link({"request": req}, self.podcasts_url)
-        assert route.url == reverse(self.podcasts_url)
+        route = active_link({"request": req}, self.episodes_url)
+        assert route.url == reverse(self.episodes_url)
         assert not route.match
         assert not route.exact
 
@@ -137,10 +137,10 @@ class TestActiveLink:
         assert not route.exact
 
     def test_active_link_exact_match(self, rf):
-        url = reverse(self.podcasts_url)
+        url = reverse(self.episodes_url)
         req = rf.get(url)
-        route = active_link({"request": req}, self.podcasts_url)
-        assert route.url == reverse(self.podcasts_url)
+        route = active_link({"request": req}, self.episodes_url)
+        assert route.url == reverse(self.episodes_url)
         assert route.match
         assert route.exact
 
