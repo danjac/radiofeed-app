@@ -33,8 +33,6 @@ def send_recommendations_email(user):
         Episode.objects.recommended(user).select_related("podcast").order_by("?")[:3]
     )
 
-    print(podcasts, episodes)
-
     if len(podcasts) + len(episodes) not in range(2, 7):
         return
 
