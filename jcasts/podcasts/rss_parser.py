@@ -22,16 +22,14 @@ class RssParserError(ValueError):
 
 def parse_rss(content):
 
-    context = lxml.etree.iterparse(
+    for _, element in lxml.etree.iterparse(
         io.BytesIO(content),
         encoding="utf-8",
         no_network=True,
         resolve_entities=False,
         recover=True,
         events=("end",),
-    )
-
-    for _, element in context:
+    ):
         if element.tag == "channel":
             try:
                 return parse_channel(element)
