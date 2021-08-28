@@ -28,9 +28,10 @@ def parse_rss(content):
         no_network=True,
         resolve_entities=False,
         recover=True,
+        events=("end",),
     )
 
-    for action, element in context:
+    for _, element in context:
         if element.tag == "channel":
             try:
                 return parse_channel(element)
