@@ -166,3 +166,18 @@ def normalize_url(url):
         except ValidationError:
             pass
     return ""
+
+
+@register.filter
+@stringfilter
+def colorpicker(value, colors):
+    """
+    Given set of colors, picks a color from comma-separated list
+    based on initial value of string.
+
+    Example:
+
+    {{ user.username|colorpicker:"#00ff00,#ff0000,#0000ff" }}
+    """
+    choices = colors.split(",")
+    return choices[ord(value[0] if value else " ") % len(choices)]

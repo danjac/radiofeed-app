@@ -5,6 +5,7 @@ from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template.defaulttags import (
     absolute_uri,
     active_link,
+    colorpicker,
     format_duration,
     get_privacy_details,
     get_twitter_account,
@@ -15,6 +16,19 @@ from jcasts.shared.template.defaulttags import (
     re_active_link,
     share_buttons,
 )
+
+
+class TestColorpicker:
+    colors = "red,blue,green,purple"
+
+    def test_empty(self):
+        assert colorpicker("", self.colors) == "red"
+
+    def test_not_empty(self):
+        assert colorpicker("aaaa", self.colors) == "blue"
+        assert colorpicker("bbbb", self.colors) == "green"
+        assert colorpicker("cccc", self.colors) == "purple"
+        assert colorpicker("dddd", self.colors) == "red"
 
 
 class TestAbsoluteUri:
