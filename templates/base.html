@@ -39,8 +39,10 @@
   {% endblock page_header %}
 
   {% block layout %}
+
   <div class="min-h-full mx-auto flex relative pt-3"
        id="layout">
+
     {% include "_messages.html" %}
 
     {% block sidebar %}
@@ -54,9 +56,6 @@
     <main class="w-full p-2 md:block"
           :class="{'hidden md:block': sidebar}">
 
-      {% block signup_cta %}
-      {% include "_signup_cta.html" %}
-      {% endblock %}
       {% block content %}{% endblock %}
 
     </main>
