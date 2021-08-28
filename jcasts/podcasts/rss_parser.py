@@ -112,7 +112,7 @@ def parse_rss(content):
 
 def parse_channel(channel):
     try:
-        feed = Feed.parse_obj(parse_feed(channel))
+        feed = Feed.parse_obj(parse_feed(XPathFinder(channel, namespaces=NAMESPACES)))
     except ValidationError as e:
         raise RssParserError from e
     if not (items := [*parse_items(channel)]):
@@ -120,8 +120,7 @@ def parse_channel(channel):
     return feed, items
 
 
-def parse_feed(channel):
-    finder = XPathFinder(channel, namespaces=NAMESPACES)
+def parse_feed(finder):
     return {
         "title": finder.find("title/text()"),
         "link": finder.find("link/text()", default=""),
@@ -145,14 +144,13 @@ def parse_items(channel):
     for item in channel.iterfind("item"):
 
         try:
-            yield Item.parse_obj(parse_item(item))
+            yield Item.parse_obj(parse_item(XPathFinder(item, namespaces=NAMESPACES)))
 
         except ValidationError:
             pass
 
 
-def parse_item(item):
-    finder = XPathFinder(item, namespaces=NAMESPACES)
+def parse_item(finder):
     return {
         "guid": finder.find("guid/text()"),
         "title": finder.find("title/text()"),
