@@ -184,11 +184,12 @@ class XPathFinder:
         self.namespaces = namespaces
 
     def find(self, *paths, default=None):
+
         """Find single attribute or text value. Returns
         first matching value."""
         for path in paths:
             try:
-                if values := self.element.xpath(path, namespaces=self.namespaces):
+                if values := self.xpath(path):
                     return values[0].strip()
             except UnicodeDecodeError:
                 pass
@@ -197,9 +198,9 @@ class XPathFinder:
     def findall(self, path):
         """Returns list of attributes or text values"""
         try:
-            return [
-                value.strip()
-                for value in self.element.xpath(path, namespaces=self.namespaces)
-            ]
+            return [value.strip() for value in self.xpath(path)]
         except UnicodeDecodeError:  # pragma: no cover
             return []
+
+    def xpath(self, path):
+        return self.element.xpath(path, namespaces=self.namespaces)
