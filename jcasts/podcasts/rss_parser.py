@@ -93,19 +93,23 @@ class Feed(BaseModel):
 
 def parse_rss(content):
 
-    for _, element in lxml.etree.iterparse(
-        io.BytesIO(content),
-        encoding="utf-8",
-        no_network=True,
-        resolve_entities=False,
-        recover=True,
-        events=("end",),
-    ):
-        if element.tag == "channel":
-            try:
-                return parse_channel(element)
-            finally:
-                element.clear()
+    try:
+        for _, element in lxml.etree.iterparse(
+            io.BytesIO(content),
+            encoding="utf-8",
+            no_network=True,
+            resolve_entities=False,
+            recover=True,
+            events=("end",),
+        ):
+            if element.tag == "channel":
+                try:
+                    return parse_channel(element)
+                finally:
+                    element.clear()
+
+    except lxml.etree.XMLSyntaxError as e:
+        raise RssParserError from e
 
     raise RssParserError("<channel /> not found in RSS feed")
 

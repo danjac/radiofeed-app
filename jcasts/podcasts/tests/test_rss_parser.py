@@ -18,6 +18,10 @@ class TestRssParser:
             "rb",
         ).read()
 
+    def test_empty(self):
+        with pytest.raises(RssParserError):
+            parse_rss(b"")
+
     def test_invalid_xml(self):
         with pytest.raises(RssParserError):
             parse_rss(b"junk string")
