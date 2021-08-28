@@ -30,8 +30,9 @@ class TestRssParser:
             "rb",
         ).read()
 
-        with pytest.raises(RssParserError):
-            parse_rss(content)
+        feed, items = parse_rss(content)
+        assert feed.title
+        assert items
 
     def test_with_bad_chars(self):
         content = open(

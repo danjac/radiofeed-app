@@ -22,33 +22,31 @@ class RssParserError(ValueError):
 
 def parse_rss(content):
 
-    try:
-        rss = lxml.etree.parse(
-            io.BytesIO(content),
-            parser=lxml.etree.XMLParser(
-                encoding="utf-8",
-                no_network=True,
-                resolve_entities=False,
-                recover=True,
-            ),
-        )
-    except lxml.etree.XMLSyntaxError as e:
-        raise RssParserError from e
+    context = lxml.etree.iterparse(
+        io.BytesIO(content),
+        encoding="utf-8",
+        no_network=True,
+        resolve_entities=False,
+        recover=True,
+    )
 
-    try:
-        if (channel := rss.find("channel")) is None:
-            raise RssParserError("<channel /> is missing")
-    except AssertionError as e:
-        raise RssParserError from e
+    for action, element in context:
+        if element.tag == "channel":
+            try:
+                return parse_channel(element)
+            finally:
+                element.clear()
 
+    raise RssParserError("<channel /> not found in RSS feed")
+
+
+def parse_channel(channel):
     try:
         feed = Feed.parse_obj(parse_feed(channel))
     except ValidationError as e:
         raise RssParserError from e
-
     if not (items := [*parse_items(channel)]):
-        raise RssParserError("no valid entries found")
-
+        raise RssParserError("no items found in RSS feed")
     return feed, items
 
 
