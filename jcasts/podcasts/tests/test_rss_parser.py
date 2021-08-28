@@ -31,8 +31,8 @@ class TestRssParser:
         ).read()
 
         feed, items = parse_rss(content)
-        assert feed.title
-        assert items
+        assert feed.title == "Thunder & Lightning"
+        assert len(items) == 643
 
     def test_with_bad_chars(self):
         content = open(
