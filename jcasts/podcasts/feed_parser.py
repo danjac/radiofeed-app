@@ -253,7 +253,7 @@ def extract_text(podcast, categories, items):
 
 
 def get_feed_headers(podcast, force_update=False):
-    headers: dict[str, str] = {
+    headers = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
     }
