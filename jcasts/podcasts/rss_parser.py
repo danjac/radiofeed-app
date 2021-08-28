@@ -23,7 +23,7 @@ class RssParserError(ValueError):
 def parse_rss(content):
 
     try:
-        xml = lxml.etree.parse(
+        rss = lxml.etree.parse(
             io.BytesIO(content),
             parser=lxml.etree.XMLParser(
                 encoding="utf-8",
@@ -36,7 +36,7 @@ def parse_rss(content):
         raise RssParserError from e
 
     try:
-        if (channel := xml.find("channel")) is None:
+        if (channel := rss.find("channel")) is None:
             raise RssParserError("<channel /> is missing")
     except AssertionError as e:
         raise RssParserError from e
