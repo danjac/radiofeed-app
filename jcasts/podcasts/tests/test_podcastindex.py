@@ -61,8 +61,14 @@ def mock_invalid_response(mocker):
     yield patch_request(mocker, MockResponse())
 
 
+@pytest.fixture
+def podcastindex_client():
+    yield
+    podcastindex.get_client.cache_clear()
+
+
 class TestNewFeeds:
-    def test_ok(self, db, mock_good_response, mock_parse_feed):
+    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
 
         feeds = podcastindex.new_feeds()
         assert len(feeds) == 1
@@ -73,7 +79,13 @@ class TestNewFeeds:
 class TestSearch:
     cache_key = "podcastindex:6447567a64413d3d"
 
-    def test_not_ok(self, db, mock_bad_response, mock_parse_feed):
+    def test_missing_settings(self, db, settings, podcastindex_client):
+        settings.PODCASTINDEX_CONFIG = {}
+
+        with pytest.raises(ValueError):
+            podcastindex.search("test")
+
+    def test_not_ok(self, db, mock_bad_response, mock_parse_feed, podcastindex_client):
 
         with pytest.raises(requests.HTTPError):
             podcastindex.search("test")
@@ -81,18 +93,22 @@ class TestSearch:
         assert not Podcast.objects.exists()
         mock_parse_feed.assert_not_called()
 
-    def test_ok(self, db, mock_good_response, mock_parse_feed):
+    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
         mock_parse_feed.assert_called()
 
-    def test_bad_data(self, db, mock_invalid_response, mock_parse_feed):
+    def test_bad_data(
+        self, db, mock_invalid_response, mock_parse_feed, podcastindex_client
+    ):
         feeds = podcastindex.search("test")
         assert len(feeds) == 0
         mock_parse_feed.assert_not_called()
 
-    def test_is_not_cached(self, db, mock_good_response, mock_parse_feed, locmem_cache):
+    def test_is_not_cached(
+        self, db, mock_good_response, mock_parse_feed, locmem_cache, podcastindex_client
+    ):
 
         feeds = podcastindex.search_cached("test")
 
@@ -102,7 +118,9 @@ class TestSearch:
 
         assert cache.get(self.cache_key) == feeds
 
-    def test_is_cached(self, db, mock_good_response, mock_parse_feed, locmem_cache):
+    def test_is_cached(
+        self, db, mock_good_response, mock_parse_feed, locmem_cache, podcastindex_client
+    ):
 
         cache.set(
             self.cache_key,
@@ -117,7 +135,9 @@ class TestSearch:
         mock_good_response.assert_not_called()
         mock_parse_feed.assert_not_called()
 
-    def test_podcast_exists(self, db, mock_good_response, mock_parse_feed):
+    def test_podcast_exists(
+        self, db, mock_good_response, mock_parse_feed, podcastindex_client
+    ):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = podcastindex.search("test")
         assert len(feeds) == 1

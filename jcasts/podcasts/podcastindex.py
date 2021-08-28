@@ -116,8 +116,13 @@ class Client:
     @classmethod
     def from_settings(cls):
 
-        api_key = settings.PODCASTINDEX_CONFIG.setdefault("api_key", None)
-        api_secret = settings.PODCASTINDEX_CONFIG.setdefault("api_secret", None)
+        config = getattr(settings, "PODCASTINDEX_CONFIG", {})
+
+        api_key = config.setdefault("api_key", None)
+        api_secret = config.setdefault("api_secret", None)
+
+        if None in (api_key, api_secret):
+            raise ValueError("API Key and API Secret must be set in settings")
 
         return cls(api_key, api_secret)
 
