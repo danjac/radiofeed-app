@@ -12,6 +12,12 @@ from jcasts.podcasts.rss_parser import Feed, Item, RssParserError, parse_rss
 
 
 class TestRssParser:
+    def read_mock(self, filename):
+        return open(
+            pathlib.Path(__file__).parent / "mocks" / filename,
+            "rb",
+        ).read()
+
     def test_invalid_xml(self):
         with pytest.raises(RssParserError):
             parse_rss(b"junk string")
@@ -25,20 +31,17 @@ class TestRssParser:
             parse_rss(b"<rss><channel /></rss>")
 
     def test_iso_8859_1(self):
-        content = open(
-            pathlib.Path(__file__).parent / "mocks" / "rss_mock_iso_8859-1.xml",
-            "rb",
-        ).read()
-
-        feed, items = parse_rss(content)
+        feed, items = parse_rss(self.read_mock("rss_mock_iso_8859-1.xml"))
         assert feed.title == "Thunder & Lightning"
         assert len(items) == 643
 
-    def test_with_bad_chars(self):
-        content = open(
-            pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "r"
-        ).read()
+    def test_unicode_errors(self):
+        feed, items = parse_rss(self.read_mock("rss_mock_large.xml"))
+        assert feed.title == "AAA United Public Radio & UFO Paranormal Radio Network"
+        assert len(items) == 8641
 
+    def test_with_bad_chars(self):
+        content = self.read_mock("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
         feed, items = parse_rss(bytes(content.encode("utf-8")))
 
@@ -46,21 +49,13 @@ class TestRssParser:
         assert feed.title == "Mysterious Universe"
 
     def test_owner_missing(self):
-        content = open(
-            pathlib.Path(__file__).parent / "mocks" / "rss_mock_small.xml", "rb"
-        ).read()
-
-        feed, items = parse_rss(content)
+        feed, items = parse_rss(self.read_mock("rss_mock_small.xml"))
 
         assert len(items) == 1
         assert feed.title == "ABC News Update"
 
     def test_ok(self):
-        content = open(
-            pathlib.Path(__file__).parent / "mocks" / "rss_mock.xml", "rb"
-        ).read()
-
-        feed, items = parse_rss(content)
+        feed, items = parse_rss(self.read_mock("rss_mock.xml"))
 
         assert len(items) == 20
         assert feed.title == "Mysterious Universe"

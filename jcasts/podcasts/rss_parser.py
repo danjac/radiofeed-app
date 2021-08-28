@@ -148,7 +148,7 @@ def parse_items(channel):
             yield Item.parse_obj(parse_item(item))
 
         except ValidationError:
-            ...
+            pass
 
 
 def parse_item(item):
@@ -178,10 +178,16 @@ def parse_item(item):
 
 def xfind(element, *paths, default=None):
     for path in paths:
-        if values := element.xpath(path, namespaces=NAMESPACES):
-            return values[0].strip()
+        try:
+            if values := element.xpath(path, namespaces=NAMESPACES):
+                return values[0].strip()
+        except UnicodeDecodeError:
+            pass
     return default
 
 
 def xfindall(element, path):
-    return [value.strip() for value in element.xpath(path, namespaces=NAMESPACES)]
+    try:
+        return [value.strip() for value in element.xpath(path, namespaces=NAMESPACES)]
+    except UnicodeDecodeError:  # pragma: no cover
+        return []
