@@ -63,7 +63,6 @@ error_urls = [
 ]
 
 urlpatterns = [
-    path("", views.home_page, name="home_page"),
     path("robots.txt", views.robots, name="robots"),
     path("~accept_cookies", views.accept_cookies, name="accept_cookies"),
     path("about/", include((about_urls, "about"), namespace="about")),

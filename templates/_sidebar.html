@@ -1,4 +1,4 @@
-  <div class="flex justify-center sm:justify-start sm:hidden mb-3 pb-3 border-b dark:border-gray-500">
+  <div class="flex justify-center sm:justify-start sm:hidden mb-3 pb-6 border-b dark:border-gray-500">
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
           class="relative bg-transparent"
@@ -22,7 +22,7 @@
     </form>
   </div>
 
-  <nav>
+  <nav class="pt-3 pl-3">
     <ul class="sidebar space-y-4 lg:space-y-5">
       <li>
         {% active_link 'podcasts:index' as link %}

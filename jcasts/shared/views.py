@@ -2,18 +2,10 @@ import datetime
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
-
-
-@require_http_methods(["GET"])
-def home_page(request):
-    if request.user.is_authenticated:
-        return redirect(settings.HOME_URL)
-    return TemplateResponse(request, "index.html")
 
 
 @require_http_methods(["GET", "HEAD"])

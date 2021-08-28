@@ -3,16 +3,6 @@ from django.urls import reverse
 from jcasts.shared.assertions import assert_ok
 
 
-class TestHomePage:
-    def test_anonymous(self, db, client):
-        resp = client.get(reverse("home_page"))
-        assert_ok(resp)
-
-    def test_authenticated(self, client, auth_user):
-        resp = client.get(reverse("home_page"))
-        assert resp.url == reverse("podcasts:index")
-
-
 class TestRobots:
     def test_robots(self, db, client):
         assert_ok(client.get(reverse("robots")))

@@ -39,21 +39,24 @@
   {% endblock page_header %}
 
   {% block layout %}
-  <div class="min-h-full mx-auto flex relative pt-6"
+  <div class="min-h-full mx-auto flex relative pt-3"
        id="layout">
     {% include "_messages.html" %}
 
     {% block sidebar %}
-    <aside class="w-full hidden lg:block lg:w-60 p-2 lg:sticky lg:top-20 lg:h-screen"
-           :class="{'hidden lg:block': !sidebar}">
+    <aside class="w-full hidden md:block md:w-60 p-2 md:sticky md:top-20 md:h-screen"
+           :class="{'hidden md:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full p-2 lg:block"
-          :class="{'hidden lg:block': sidebar}">
+    <main class="w-full p-2 md:block"
+          :class="{'hidden md:block': sidebar}">
 
+      {% block signup_cta %}
+      {% include "_signup_cta.html" %}
+      {% endblock %}
       {% block content %}{% endblock %}
 
     </main>

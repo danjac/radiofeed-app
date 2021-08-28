@@ -6,7 +6,7 @@ app_name = "podcasts"
 
 
 urlpatterns = [
-    path("podcasts/", views.index, name="index"),
+    path("", views.index, name="index"),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
     path("search/podcastindex/", views.search_podcastindex, name="search_podcastindex"),
     path(
