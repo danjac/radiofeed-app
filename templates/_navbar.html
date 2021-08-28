@@ -53,10 +53,11 @@
       <a href="{% url 'users:preferences' %}"
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
-        <img src="{{ user.get_gravatar_url }}"
-             height="30"
-             width="30"
-             alt="{{ user.username }}">
+        <div class="h-4 w-4 rounded-full p-3 flex items-center justify-center bold bg-indigo-500">
+          <span class="align-middle text-white text-sm font-bold ">
+            {{ user.username.0|capfirst }}
+          </span>
+        </div>
       </a>
       {% endif %}
       <button class="lg:hidden mr-3 focus:outline-none"

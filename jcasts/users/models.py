@@ -1,8 +1,3 @@
-import hashlib
-
-from urllib.parse import urlencode
-
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
@@ -56,19 +51,3 @@ class User(AbstractUser):
             set: set of email addresses
         """
         return {self.email} | set(self.emailaddress_set.values_list("email", flat=True))
-
-    def get_gravatar_url(
-        self,
-        size=settings.GRAVATAR_DEFAULT_SIZE,
-        default=settings.GRAVATAR_DEFAULT_IMAGE,
-        rating=settings.GRAVATAR_DEFAULT_RATING,
-    ):
-        digest = hashlib.md5(self.email.encode("utf-8")).hexdigest()  # nosec
-        qs = urlencode(
-            {
-                "s": str(size),
-                "d": default,
-                "r": rating,
-            }
-        )
-        return f"https://www.gravatar.com/avatar/{digest}?{qs}"

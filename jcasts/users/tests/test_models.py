@@ -1,5 +1,3 @@
-import pytest
-
 from allauth.account.models import EmailAddress
 
 from jcasts.users.factories import UserFactory
@@ -62,20 +60,3 @@ class TestUserModel:
         emails = user.get_email_addresses()
         assert user.email in emails
         assert email in emails
-
-    @pytest.mark.parametrize(
-        "expected,params",
-        [
-            (
-                "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=30&d=retro&r=g",
-                {},
-            ),
-            (
-                "https://www.gravatar.com/avatar/5658ffccee7f0ebfda2b226238b1eb6e?s=100&d=retro&r=g",
-                {"size": 100},
-            ),
-        ],
-    )
-    def test_get_gravatar_url(self, django_user_model, expected, params):
-        user = django_user_model(email="email@example.com")
-        assert user.get_gravatar_url(**params) == expected
