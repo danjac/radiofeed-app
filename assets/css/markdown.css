@@ -39,7 +39,7 @@
 }
 
 .markdown li {
-  @apply pl-2 mb-3;
+  @apply mb-3;
 }
 
 .markdown li div,
