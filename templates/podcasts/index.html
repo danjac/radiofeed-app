@@ -5,39 +5,30 @@
 {% block content %}
 
 {% if has_follows %}
-<h1 class="font-bold lg:text-lg text-center sm:text-left mb-3">
-  {% if promoted %}
-  Promoted Podcasts
-  {% else %}
-  My Podcasts
-  {% endif %}
-</h1>
-<div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm">
-  <div class="flex items-center justify-center sm:justify-start">
+<div class="sm:mb-3 sm:flex justify-between">
+  <h1 class="font-bold lg:text-lg text-center sm:text-left mb-3">
     {% if promoted %}
-    <a href="{% url 'podcasts:index' %}"
-       class="link">My Podcasts</a>
+    Promoted Podcasts
     {% else %}
-    <a href="{% url 'podcasts:index' %}?promoted=true"
-       class="link">Promoted Podcasts</a>
+    My Podcasts
     {% endif %}
-  </div>
-  <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search: Podcasts" %}
+  </h1>
+  <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm">
+    <div class="flex items-center justify-center sm:justify-start">
+      {% if promoted %}
+      <a href="{% url 'podcasts:index' %}"
+         class="link">My Podcasts</a>
+      {% else %}
+      <a href="{% url 'podcasts:index' %}?promoted=true"
+         class="link">Promoted Podcasts</a>
+      {% endif %}
+    </div>
   </div>
 </div>
 {% else %}
-<div class="sm:flex items-center justify-between mb-3">
-
-  <h1 class="font-bold lg:text-lg text-center sm:text-left mb-3 sm:mb-0">
-    Podcasts
-  </h1>
-
-  <div class="flex items-center justify-center sm:justify-start">
-    {% include "forms/_search_form.html" with placeholder="Find a podcast..." %}
-  </div>
-
-</div>
+<h1 class="font-bold lg:text-lg text-center sm:text-left mb-3">
+  Podcasts
+</h1>
 {% endif %}
 
 {% include pagination_template %}
