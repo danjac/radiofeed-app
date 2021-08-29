@@ -51,6 +51,12 @@ class Item(BaseModel):
             return pub_date
         raise ValueError("not a valid pub date")
 
+    @validator("length", pre=True)
+    def get_length(cls, value):
+        if isinstance(value, str) and value.strip() == "":
+            return None
+        return value
+
     @validator("explicit", pre=True)
     def is_explicit(cls, value):
         return value.lower() in ("yes", "clean") if value else False

@@ -28,6 +28,12 @@ class TestRssParser:
         with pytest.raises(RssParserError):
             parse_rss(b"<rss><channel /></rss>")
 
+    def test_missing_enclosure_length(self):
+
+        feed, items = self.parse_rss_from_mock_file("rss_missing_enc_length.xml")
+        assert feed.title == "The Vanilla JS Podcast"
+        assert len(items) == 71
+
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
