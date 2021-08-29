@@ -195,18 +195,16 @@ class XPathFinder:
         first matching value."""
         for path in paths:
             try:
-                if values := self.xpath(path):
-                    return values[0].strip()
-            except UnicodeDecodeError:
+                return self.findall(path)[0]
+            except IndexError:
                 pass
         return default
 
     def findall(self, path):
-        """Returns list of attributes or text values"""
         try:
-            return [value.strip() for value in self.xpath(path)]
-        except UnicodeDecodeError:  # pragma: no cover
+            return [
+                value.strip()
+                for value in self.element.xpath(path, namespaces=self.namespaces)
+            ]
+        except UnicodeDecodeError:
             return []
-
-    def xpath(self, path):
-        return self.element.xpath(path, namespaces=self.namespaces)
