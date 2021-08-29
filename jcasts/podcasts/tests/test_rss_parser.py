@@ -28,12 +28,6 @@ class TestRssParser:
         with pytest.raises(RssParserError):
             parse_rss(b"<rss><channel /></rss>")
 
-    def test_missing_enclosure_length(self):
-
-        feed, items = self.parse_rss_from_mock_file("rss_missing_enc_length.xml")
-        assert feed.title == "The Vanilla JS Podcast"
-        assert len(items) == 71
-
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
@@ -42,27 +36,25 @@ class TestRssParser:
         assert len(items) == 20
         assert feed.title == "Mysterious Universe"
 
-    def test_unicode_errors(self):
-        feed, items = self.parse_rss_from_mock_file("rss_mock_large.xml")
-        assert feed.title == "AAA United Public Radio & UFO Paranormal Radio Network"
-        assert len(items) == 8641
+    @pytest.mark.parametrize(
+        "filename,title,num_items",
+        [
+            ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
+            (
+                "rss_mock_large.xml",
+                "AAA United Public Radio & UFO Paranormal Radio Network",
+                8641,
+            ),
+            ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", 643),
+            ("rss_mock_small.xml", "ABC News Update", 1),
+            ("rss_mock.xml", "Mysterious Universe", 20),
+        ],
+    )
+    def test_parse_rss(self, filename, title, num_items):
 
-    def test_iso_8859_1(self):
-        feed, items = self.parse_rss_from_mock_file("rss_mock_iso_8859-1.xml")
-        assert feed.title == "Thunder & Lightning"
-        assert len(items) == 643
-
-    def test_owner_missing(self):
-        feed, items = self.parse_rss_from_mock_file("rss_mock_small.xml")
-
-        assert len(items) == 1
-        assert feed.title == "ABC News Update"
-
-    def test_ok(self):
-        feed, items = self.parse_rss_from_mock_file("rss_mock.xml")
-
-        assert len(items) == 20
-        assert feed.title == "Mysterious Universe"
+        feed, items = self.parse_rss_from_mock_file(filename)
+        assert feed.title == title
+        assert len(items) == num_items
 
     def read_mock_file(self, mock_filename):
         return open(
