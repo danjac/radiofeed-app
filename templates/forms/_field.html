@@ -3,7 +3,7 @@
 {% if field.is_hidden %}
 {{ field }}
 {% else %}
-<div class="text-sm space-y-2">
+<div class="text-sm space-y-3">
   {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %}
   {% if field|widget_type == "checkboxinput" %}
   {% with css_class=css_class|default:'mr-3 dark:bg-gray-900' %}
@@ -13,7 +13,8 @@
   </label>
   {% endwith %}
   {% else %}
-  <label class="flex items-center w-full font-semibold" for="{{ field.id_for_label }}">
+  <label class="flex items-center w-full font-semibold"
+         for="{{ field.id_for_label }}">
     {{ field.label }}
   </label>
   {% with css_class=css_class|default:'p-1 w-3/4 sm:w-1/3 lg:w-1/4 dark:bg-gray-900 dark:text-white text-sm' %}
