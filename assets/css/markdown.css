@@ -27,7 +27,6 @@
 }
 
 .markdown p,
-.markdown li,
 .markdown div,
 .markdown pre {
   @apply flex flex-wrap;
