@@ -5,15 +5,15 @@
 {% block content %}
 
 {% if has_follows %}
-<div class="sm:mb-3 sm:flex justify-between">
-  <h1 class="font-bold lg:text-lg text-center sm:text-left mb-3">
+<div class="sm:mb-3 sm:flex justify-between mb-3">
+  <h1 class="font-bold lg:text-lg text-center sm:text-left mb-3 sm:mb-0">
     {% if promoted %}
     Promoted Podcasts
     {% else %}
     My Podcasts
     {% endif %}
   </h1>
-  <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3 text-sm">
+  <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 text-sm">
     <div class="flex items-center justify-center sm:justify-start">
       {% if promoted %}
       <a href="{% url 'podcasts:index' %}"
