@@ -27,7 +27,7 @@
 }
 
 .markdown p {
-  @apply py-1 mb-3;
+  @apply py-1 mb-3 flex flex-wrap;
 }
 
 .markdown ol {
