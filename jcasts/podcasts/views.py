@@ -19,7 +19,6 @@ from jcasts.shared.response import HttpResponseConflict
 
 @require_http_methods(["GET"])
 def index(request):
-    promoted = "promoted" in request.GET
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
@@ -30,7 +29,7 @@ def index(request):
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    promoted = promoted or not follows
+    promoted = "promoted" in request.GET or not follows
 
     if promoted:
         podcasts = podcasts.filter(promoted=True)
