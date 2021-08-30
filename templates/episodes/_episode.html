@@ -8,53 +8,50 @@
      x-transition:leave-end="transform opacity-0"
      @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
      {% endif %}>
-  <div class="flex justify-between items-center">
 
-    <div class="flex items-center w-full space-x-3">
+  <div class="flex items-center w-full space-x-3">
 
-      <div>
+    <div>
+
+      {% if is_podcast_detail %}
+      <a href="{{ episode_url }}">
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=14 %}
+      </a>
+      {% else %}
+      <a href="{{ podcast.get_absolute_url }}">
+        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+      </a>
+      {% endif %}
+    </div>
+
+    <div class="flex flex-col place-content-between h-14">
+      <h2 class="w-64 sm:w-96 lg:w-full truncate">
+        <a href="{{ episode_url }}"
+           class="link"
+           title="{{ episode.cleaned_title }}">
+          {{ episode.cleaned_title|truncatechars:120 }}
+        </a>
+      </h2>
+      <div class="space-x-2 flex items-center">
+
+        {% if user.is_authenticated %}
+        {% include "episodes/_actions_toggle.html" %}
+        {% endif %}
 
         {% if is_podcast_detail %}
-        <a href="{{ episode_url }}">
-          {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=14 %}
-        </a>
+        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
+          {% include "_pub_date.html" with pub_date=episode.pub_date %}
+        </div>
         {% else %}
-        <a href="{{ podcast.get_absolute_url }}">
-          {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
-        </a>
+        <div class="w-48 sm:w-96 lg:w-full truncate">
+          <a href="{{ podcast.get_episodes_url }}"
+             class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
+            {{ podcast.cleaned_title|truncatechars:100 }}
+          </a>
+        </div>
         {% endif %}
       </div>
-
-      <div class="flex flex-col place-content-between h-14">
-        <h2 class="{{ has_extra_buttons|yesno:'w-60,w-64' }} sm:w-96 lg:w-full truncate">
-          <a href="{{ episode_url }}"
-             class="link"
-             title="{{ episode.cleaned_title }}">
-            {{ episode.cleaned_title|truncatechars:120 }}
-          </a>
-        </h2>
-        <div class="space-x-2 flex items-center">
-
-          {% if user.is_authenticated %}
-          {% include "episodes/_actions_toggle.html" %}
-          {% endif %}
-
-          {% if is_podcast_detail %}
-          <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-            {% include "_pub_date.html" with pub_date=episode.pub_date %}
-          </div>
-          {% else %}
-          <div class="w-48 sm:w-96 lg:w-full truncate">
-            <a href="{{ podcast.get_episodes_url }}"
-               class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
-              {{ podcast.cleaned_title|truncatechars:100 }}
-            </a>
-          </div>
-          {% endif %}
-        </div>
-      </div>
     </div>
-    {% block extra_buttons %}{% endblock %}
   </div>
 </div>
 {% endwith %}
