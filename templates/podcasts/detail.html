@@ -60,12 +60,6 @@
   </div>
 
 
-  {% if podcast.explicit %}
-  <div class="font-semibold text-sm">
-    This podcast may contain explicit content.
-  </div>
-  {% endif %}
-
   {% include "_markdown.html" with content=podcast.description %}
 
   {% include "podcasts/_disclaimer.html" %}

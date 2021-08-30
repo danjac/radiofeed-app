@@ -46,15 +46,15 @@
     {% include "_messages.html" %}
 
     {% block sidebar %}
-    <aside class="w-full hidden md:block md:w-60 p-2 md:sticky md:top-24 md:h-screen"
-           :class="{'hidden md:block': !sidebar}">
+    <aside class="w-full hidden h-1/5 z-50 lg:z-0 lg:block lg:w-60 p-2 lg:sticky lg:top-24 lg:h-screen"
+           :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full p-2 md:block"
-          :class="{'hidden md:block': sidebar}">
+    <main class="w-full p-2 lg:block"
+          :class="{'hidden lg:block': sidebar}">
 
       {% block content %}{% endblock %}
 

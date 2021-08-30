@@ -46,7 +46,7 @@
 
   {% with metadata=episode.get_episode_metadata %}
   {% if metadata %}
-  <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm">
+  <div class="font-semibold text-gray-800 dark:text-gray-300 text-sm">
     {{ metadata }}
   </div>
   {% endif %}
@@ -78,27 +78,28 @@
     </div>
   </div>
 
-  <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-3 text-sm">
+  <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3 text-sm">
     <div title="Date Published">
       {% include "_pub_date.html" with pub_date=episode.pub_date %}
     </div>
     <div title="Duration">
       {{ duration|format_duration }}
     </div>
+    {% if episode.explicit or podcast.explicit %}
+    <div class="flex items-center"
+         title="May contain adult themes and language, listener discretion advised">
+      {% icon "warning" css_class="btn-icon h-4 w-4 mr-1" %}
+      Explicit
+    </div>
+    {% endif %}
   </div>
   {% if episode.listened %}
   {% include "episodes/_listened.html" %}
   {% endif %}
 
-  {% if episode.explicit or podcast.explicit %}
-  <div class="font-semibold text-sm">
-    This episode may contain explicit content.
-  </div>
-  {% endif %}
-
   {% include "_markdown.html" with content=episode.description %}
+  {% include "podcasts/_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
 
-  {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %}
 {% endblock %}
