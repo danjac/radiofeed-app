@@ -116,14 +116,6 @@ def signup_url(url):
     return _redirect_to_auth_url(url, reverse("account_signup"))
 
 
-def _redirect_to_auth_url(url, redirect_url):
-
-    if url.startswith("/account/"):
-        return redirect_url
-
-    return f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
-
-
 @register.simple_tag
 def get_privacy_details():
     return settings.PRIVACY_DETAILS
@@ -189,3 +181,12 @@ def colorpicker(value, colors):
     """
     choices = colors.split(",")
     return choices[ord(value[0] if value else " ") % len(choices)]
+
+
+def _redirect_to_auth_url(url, redirect_url):
+
+    return (
+        redirect_url
+        if url.startswith("/account/")
+        else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+    )
