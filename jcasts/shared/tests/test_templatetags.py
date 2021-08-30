@@ -120,9 +120,6 @@ class TestLoginUrl:
         url = "/account/login/"
         assert login_url(url) == url
 
-    def test_invalid_url(self):
-        assert login_url("/fubar/") == "/account/login/"
-
 
 class TestSignupUrl:
     def test_signup_url(self):
@@ -138,9 +135,6 @@ class TestSignupUrl:
     def test_signup_url_to_same_path(self):
         url = "/account/signup/"
         assert signup_url(url) == url
-
-    def test_invalid_url(self):
-        assert signup_url("/fubar/") == "/account/signup/"
 
 
 class TestActiveLink:
