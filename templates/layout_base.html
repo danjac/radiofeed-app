@@ -2,6 +2,8 @@
 {% block header_tags %}
 {% block title_tag %}{{ block.super }}{% endblock %}
 {% endblock header_tags %}
-{% block page_header %}{% endblock %}
+{% block page_header %}
+{% include "_signup_cta.html" with hx_swap=True %}
+{% endblock %}
 {% block page_footer %}{% endblock %}
 {% block footer_tags %}{% endblock %}

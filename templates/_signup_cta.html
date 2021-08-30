@@ -1,12 +1,15 @@
 {% if user.is_anonymous %}
-<div class="text-center mb-3 p-3 bg-blue-700 text-white text-sm font-bold">
+<div id="signup-cta"
+     {% if hx_swap %}hx-swap-oob="true"
+     {% endif %}
+     class="text-center mb-3 p-3 bg-blue-700 text-white text-sm font-bold">
   <a class="underline link text-white"
      hx-disable="true"
-     href="{% url 'account_signup' %}">Sign up</a> or
+     href="{{ request.get_full_path|signup_url }}">Sign up</a> or
 
   <a class="underline link text-white"
      hx-disable="true"
-     href="{% url 'account_login' %}">log in</a>
+     href="{{ request.get_full_path|login_url }}">log in</a>
   to follow your favorite podcasts and listen to episodes!
 </div>
 {% endif %}
