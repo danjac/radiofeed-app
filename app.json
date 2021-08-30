@@ -28,7 +28,7 @@
     },
     {
       "command": "python manage.py make_recommendations",
-      "schedule": "20 6,12 * * *"
+      "schedule": "20 3 * * *"
     },
     {
       "command": "python manage.py clearsessions",
