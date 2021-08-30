@@ -12,5 +12,7 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 
 INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS
 
-# podman internal ips
-INTERNAL_IPS = socket.gethostbyname_ex(socket.gethostname())[2]
+# docker internal ips
+
+_, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[:-1] + "1" for ip in ips]
