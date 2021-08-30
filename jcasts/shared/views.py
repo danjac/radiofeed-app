@@ -33,5 +33,5 @@ def accept_cookies(request):
 
 
 @require_http_methods(["GET"])
-def static_page(request, template_name: str):
+def static_page(request, template_name):
     return TemplateResponse(request, template_name)
