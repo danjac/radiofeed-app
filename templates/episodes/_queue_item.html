@@ -25,11 +25,7 @@
           </a>
         </h2>
         <div class="space-x-2 flex items-center">
-
-          {% if user.is_authenticated %}
           {% include "episodes/_actions_toggle.html" %}
-          {% endif %}
-
           {% if is_podcast_detail %}
           <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
             {% include "_pub_date.html" with pub_date=episode.pub_date %}
