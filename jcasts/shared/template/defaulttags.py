@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.utils.safestring import mark_safe
 
 from jcasts.shared import cleaners
@@ -108,12 +108,25 @@ def keepspaces(text):
 
 @register.filter
 def login_url(url):
-    return f"{reverse('account_login')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+    return _redirect_to_auth_url(url, "account_login")
 
 
 @register.filter
 def signup_url(url):
-    return f"{reverse('account_signup')}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
+    return _redirect_to_auth_url(url, "account_signup")
+
+
+def _redirect_to_auth_url(url, auth_url_name):
+
+    redirect_url = reverse(auth_url_name)
+
+    try:
+        if resolve(parse.urlparse(url).path).url_name == auth_url_name:
+            return redirect_url
+    except Resolver404:
+        return redirect_url
+
+    return f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
 
 
 @register.simple_tag
