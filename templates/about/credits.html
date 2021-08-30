@@ -3,85 +3,87 @@
 {% block subtitle %} About | Credits {% endblock %}
 
 {% block about_content %}
-<p class="mb-3 text-sm">
-  <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your
-  favorite podcasts.
-</p>
-<p class="mb-3 text-sm">
-  This is an open-source project covered by the MIT license.
-</p>
+<div class="max-w-prose space-y-3">
+  <p class="text-sm">
+    <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your
+    favorite podcasts.
+  </p>
+  <p class="text-sm">
+    This is an open-source project covered by the MIT license.
+  </p>
 
-<h2 class="font-semibold text-sm mb-3">Additional Credits:</h2>
-<ul class="mb-3 text-sm space-y-3">
+  <h2 class="font-semibold text-sm">Additional Credits:</h2>
+  <ul class="text-sm space-y-3">
 
-  <li>
-    Podcasts sourced from <a href="https://podcastindex.org/"
-       rel="noopener"
-       target="_blank"
-       class="underline hover:text-blue-500">Podcast Index</a>
-  </li>
-
-
-  <li>
-    Share icons from <a target="_blank"
-       href="https://fontawesome.com"
-       class="underline hover:text-blue-500"
-       rel="noopener">Font Awesome</a>
-  </li>
-
-  <li>
-    Loader icon from <a target="_blank"
-       href="https://github.com/SamHerbert/SVG-Loaders"
-       class="underline hover:text-blue-500"
-       rel="noopener">Sam Herbert</a>
-  </li>
+    <li>
+      Podcasts sourced from <a href="https://podcastindex.org/"
+         rel="noopener"
+         target="_blank"
+         class="underline hover:text-blue-500">Podcast Index</a>
+    </li>
 
 
-  <li>
-    <a target="_blank"
-       rel="noopener"
-       class="underline hover:text-blue-500"
-       href="https://icons8.com/icons/set/browse-podcasts">Browse Podcasts icon</a> by
-    <a target="_blank"
-       rel="noopener"
-       class="underline hover:text-blue-500"
-       href="https://icons8.com">Icons8</a>
+    <li>
+      Share icons from <a target="_blank"
+         href="https://fontawesome.com"
+         class="underline hover:text-blue-500"
+         rel="noopener">Font Awesome</a>
+    </li>
 
-  </li>
-</ul>
+    <li>
+      Loader icon from <a target="_blank"
+         href="https://github.com/SamHerbert/SVG-Loaders"
+         class="underline hover:text-blue-500"
+         rel="noopener">Sam Herbert</a>
+    </li>
 
 
-<p class="mb-3 text-sm max-w-prose">
-  All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-  nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
-</p>
+    <li>
+      <a target="_blank"
+         rel="noopener"
+         class="underline hover:text-blue-500"
+         href="https://icons8.com/icons/set/browse-podcasts">Browse Podcasts icon</a> by
+      <a target="_blank"
+         rel="noopener"
+         class="underline hover:text-blue-500"
+         href="https://icons8.com">Icons8</a>
 
-<div class="mb-3 sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0 text-sm">
+    </li>
+  </ul>
 
-  <div>
-    <a class="underline hover:text-blue-500"
-       target="_blank"
-       rel="noopener"
-       href="https://github.com/danjac/jcasts/">Source code</a>
+
+  <p class="text-sm max-w-prose">
+    All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
+    nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
+  </p>
+
+  <div class="sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0 text-sm">
+
+    <div>
+      <a class="underline hover:text-blue-500"
+         target="_blank"
+         rel="noopener"
+         href="https://github.com/danjac/jcasts/">Source code</a>
+    </div>
+    <div>
+      <a class="underline hover:text-blue-500"
+         target="_blank"
+         rel="noopener"
+         href="https://github.com/danjac/jcasts/issues">Report an issue</a>
+    </div>
+    {% get_twitter_account as twitter %}
+    {% if twitter %}
+    <div><a class="underline hover:text-blue-500"
+         target="_blank"
+         rel="noopener"
+         href="https://twitter.com/{{ twitter }}">Twitter</a></div>
+    {% endif %}
+
+    <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
+         href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
+
+
   </div>
-  <div>
-    <a class="underline hover:text-blue-500"
-       target="_blank"
-       rel="noopener"
-       href="https://github.com/danjac/jcasts/issues">Report an issue</a>
-  </div>
-  {% get_twitter_account as twitter %}
-  {% if twitter %}
-  <div><a class="underline hover:text-blue-500"
-       target="_blank"
-       rel="noopener"
-       href="https://twitter.com/{{ twitter }}">Twitter</a></div>
-  {% endif %}
-
-  <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
-       href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
-
 
 </div>
-
 {% endblock about_content %}

@@ -1,13 +1,13 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<section class="py-2 border-t dark:border-gray-500 text-sm episode"
-         {% if hx_remove %}
-         x-data="{show: true}"
-         x-show="show"
-         x-transition:leave="transition ease-out duration-500"
-         x-transition:leave-start="transform opacity-100"
-         x-transition:leave-end="transform opacity-0"
-         @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
-         {% endif %}>
+<div class="py-2 border-t dark:border-gray-500 text-sm episode"
+     {% if hx_remove %}
+     x-data="{show: true}"
+     x-show="show"
+     x-transition:leave="transition ease-out duration-500"
+     x-transition:leave-start="transform opacity-100"
+     x-transition:leave-end="transform opacity-0"
+     @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
+     {% endif %}>
   <div class="flex justify-between items-center">
 
     <div class="flex items-center w-full space-x-3">
@@ -25,7 +25,7 @@
         {% endif %}
       </div>
 
-      <div class="space-y-3">
+      <div class="flex flex-col place-content-between h-14">
         <h2 class="{{ has_extra_buttons|yesno:'w-60,w-64' }} sm:w-96 lg:w-full truncate">
           <a href="{{ episode_url }}"
              class="link"
@@ -56,5 +56,5 @@
     </div>
     {% block extra_buttons %}{% endblock %}
   </div>
-</section>
+</div>
 {% endwith %}

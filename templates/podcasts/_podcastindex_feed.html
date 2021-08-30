@@ -3,20 +3,20 @@
 {% include "podcasts/_podcast.html" %}
 {% else %}
 {% with cleaned_title=result.get_cleaned_title %}
-<section class="py-2 flex items-center space-x-2 border-t dark:border-gray-500">
+<div class="py-2 flex items-center space-x-2 border-t dark:border-gray-500">
   <div>
     {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
   </div>
-  <div class="space-y-2 lg:space-y-3">
+  <div class="flex flex-col place-content-between h-14">
     <h2 class="w-64 sm:w-96 lg:w-full truncate text-sm font-semibold"
         title="{{ feed.title }}">
       {{ feed.title|truncatechars:120 }}
     </h2>
-    <div class="text-sm font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
+    <div class="font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
       Adding podcast to database...
     </div>
   </div>
-</section>
+</div>
 {% endwith %}
 {% endif %}
 {% endwith %}
