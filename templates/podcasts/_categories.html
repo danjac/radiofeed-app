@@ -2,9 +2,9 @@
 {% cache 3600 podcast-categories podcast.id %}
 {% with categories=podcast.categories.all %}
 {% if categories %}
-<div class="flex-wrap space-x-1 sm:space-x-2 text-sm">
+<div class="max-w-max flex-wrap flex items-center space-x-1 sm:space-x-2 text-sm">
   {% for category in categories %}
-  <a class="link"
+  <a class="link inline-block"
      title="{{ category.name }}"
      href="{{ category.get_absolute_url }}">
     {{ category.name }}
