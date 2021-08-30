@@ -48,6 +48,7 @@ class TestRssParser:
             ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", 643),
             ("rss_mock_small.xml", "ABC News Update", 1),
             ("rss_mock.xml", "Mysterious Universe", 20),
+            ("rss_invalid_duration.xml", "At The Races with Steve Byk", 449),
         ],
     )
     def test_parse_rss(self, filename, title, num_items):
@@ -114,3 +115,23 @@ class TestItem:
     def test_explicit_false(self):
         item = Item.parse_obj(ItemFactory(explicit="no"))
         assert not item.explicit
+
+    def test_empty_duration(self):
+        item = Item.parse_obj(ItemFactory(duration=""))
+        assert item.duration == ""
+
+    def test_invalid_duration(self):
+        item = Item.parse_obj(ItemFactory(duration="https://example.com"))
+        assert item.duration == ""
+
+    def test_duration_h_m(self):
+        item = Item.parse_obj(ItemFactory(duration="10:20"))
+        assert item.duration == "10:20"
+
+    def test_duration_h_m_over_60(self):
+        item = Item.parse_obj(ItemFactory(duration="10:90"))
+        assert item.duration == "10"
+
+    def test_duration_h_m_s(self):
+        item = Item.parse_obj(ItemFactory(duration="10:30:30"))
+        assert item.duration == "10:30:30"

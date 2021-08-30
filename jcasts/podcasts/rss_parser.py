@@ -65,6 +65,21 @@ class Item(BaseModel):
     def get_keywords(cls, value):
         return " ".join(value)
 
+    @validator("duration", pre=True)
+    def get_duration(cls, value):
+        if not value:
+            return ""
+        try:
+            return ":".join(
+                [
+                    str(v)
+                    for v in [int(v) for v in value.split(":")[:3]]
+                    if v in range(0, 60)
+                ]
+            )
+        except ValueError:
+            return ""
+
     @validator("media_type")
     def is_audio(cls, value):
         if not (value or "").startswith("audio/"):
