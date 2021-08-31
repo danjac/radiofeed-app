@@ -258,6 +258,14 @@ class TestEpisodeModel:
         episode = Episode(title="", guid="abc123")
         assert str(episode) == episode.guid
 
+    def test_cleaned_title(self):
+        episode = Episode(title="<b>Test &amp; Code")
+        assert episode.cleaned_title == "Test & Code"
+
+    def test_cleaned_description(self):
+        episode = Episode(description="<b>Test &amp; Code")
+        assert episode.cleaned_description == "Test & Code"
+
     def test_get_file_size(self):
         assert Episode(length=500).get_file_size() == "500\xa0bytes"
 

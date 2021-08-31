@@ -10,7 +10,7 @@ Here are some podcasts you might find interesting:
 
 {{ podcast.title }}
 
-{{ podcast.description|striptags|truncatewords:60 }}
+{{ podcast.cleaned_description|truncatewords:60 }}
 
 {% absolute_uri podcast %}
 
@@ -23,7 +23,7 @@ Here are some podcasts you might find interesting:
 
 {{ episode.podcast.title }} - {{ episode.title }}
 
-{{ episode.description|striptags|unescape|urlize|truncatewords:60 }}
+{{ episode.cleaned_description|truncatewords:60 }}
 
 {% absolute_uri episode %}
 

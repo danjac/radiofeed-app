@@ -1,7 +1,7 @@
 {% load static %}
 {% if log %}
 {% with episode=episode|default:log.episode %}
-{% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|striptags podcast_title=episode.podcast.title|striptags %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div x-data="jCasts.Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
@@ -47,7 +47,7 @@
            x-show="!errMsg"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
-           title="{{ episode_title }}">{{ episode_title|truncatechars:100 }}</a>
+           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
       </div>
 
       <div class="flex items-center">
@@ -56,7 +56,7 @@
         <div class="w-20 mr-1 sm:mr-0">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" alt=podcast_title %}
+            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" alt=podcast.cleaned_title %}
           </a>
         </div>
         {% endwith %}
@@ -109,7 +109,7 @@
                  x-show="!errMsg"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
-                 title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center sm:hidden">

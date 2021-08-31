@@ -17,6 +17,17 @@ class TestClean:
         assert cleaners.clean(text) == "alert('xss ahoy!')"
 
 
+class TestStripHtml:
+    def test_value_none(self):
+        return cleaners.strip_html(None) == ""
+
+    def test_value_empty(self):
+        return cleaners.strip_html("") == ""
+
+    def test_value_has_content(self):
+        return cleaners.strip_html("<p>this &amp; that</p>") == "this & that"
+
+
 class TestMarkup:
     def test_value_none(self):
         return cleaners.markup(None) == ""

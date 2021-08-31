@@ -1,6 +1,9 @@
+import html
+
 import bleach
 import markdown
 
+from django.template.defaultfilters import striptags
 from html5lib.filters import whitespace
 
 ALLOWED_TAGS: list[str] = [
@@ -69,8 +72,17 @@ def clean(value):
     return bleach.linkify(cleaner.clean(value), [linkify_callback]) if value else ""  # type: ignore
 
 
+def strip_whitespace(value):
+    return value or ""
+
+
+def strip_html(value):
+    """Removes all HTML tags and entities"""
+    return html.unescape(striptags(strip_whitespace(value)))
+
+
 def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
-    if value := (value or "").strip():
+    if value := strip_whitespace(value):
         return clean(markdown.markdown(value))
     return ""

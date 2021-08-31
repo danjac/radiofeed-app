@@ -20,7 +20,7 @@
       </p>
 
       <p>
-        {{ podcast.description|striptags|urlize|truncatewords:60 }}
+        {{ podcast.cleaned_description|urlize|truncatewords:60 }}
       </p>
       <hr />
       {% endfor %}
@@ -38,7 +38,7 @@
       </p>
 
       <p>
-        {{ episode.description|striptags|urlize|truncatewords:60 }}
+        {{ episode.cleaned_description|urlize|truncatewords:60 }}
       </p>
 
       <hr />

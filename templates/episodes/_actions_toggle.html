@@ -1,5 +1,5 @@
 <div class="relative flex items-center">
-  <button title="Actions for {{ episode.title|striptags }}"
+  <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
           hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
           hx-target="#actions-{{ episode.id }}"

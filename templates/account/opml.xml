@@ -7,7 +7,7 @@
 	<body>
 		<outline text="My Podcasts" title="My Podcasts">
 			{% for podcast in podcasts %}
-			<outline type="rss" text="{{ podcast.description|striptags|truncatewords:60 }}" title="{{ podcast.title }}" xmlUrl="{{ podcast.rss }}" htmlUrl="{{ podcast.link }}" />
+			<outline type="rss" text="{{ podcast.cleaned_description|truncatewords:60 }}" title="{{ podcast.title }}" xmlUrl="{{ podcast.rss }}" htmlUrl="{{ podcast.link }}" />
 			{% endfor %}
 		</outline>
 	</body>

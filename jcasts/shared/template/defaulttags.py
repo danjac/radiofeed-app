@@ -1,5 +1,4 @@
 import collections
-import html
 import math
 import re
 
@@ -85,13 +84,6 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 @stringfilter
 def markup(value):
     return mark_safe(cleaners.markup(value))  # nosec
-
-
-@register.filter
-@stringfilter
-def unescape(value):
-    """Removes any HTML entities. Used e.g. if handling plain text content."""
-    return html.unescape(value)
 
 
 @register.filter

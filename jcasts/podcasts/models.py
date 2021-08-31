@@ -8,9 +8,11 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
+from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 
 
@@ -127,6 +129,14 @@ class Podcast(models.Model):
     def get_absolute_url(self):
         return self.get_detail_url()
 
+    @cached_property
+    def cleaned_title(self):
+        return strip_html(self.title)
+
+    @cached_property
+    def cleaned_description(self):
+        return strip_html(self.description)
+
     def get_latest_url(self):
         return reverse("podcasts:latest", args=[self.pk])
 
@@ -155,8 +165,8 @@ class Podcast(models.Model):
 
         og_data: dict[str, str | int] = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
-            "title": f"{request.site.name} | {self.title}",
-            "description": self.description,
+            "title": f"{request.site.name} | {self.cleaned_title}",
+            "description": self.cleaned_description,
             "keywords": ", ".join(self.keywords.split()),
         }
 
