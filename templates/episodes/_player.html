@@ -56,7 +56,7 @@
         <div class="w-20 mr-1 sm:mr-0">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" %}
+            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" alt=podcast_title %}
           </a>
         </div>
         {% endwith %}
