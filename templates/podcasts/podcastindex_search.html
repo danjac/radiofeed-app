@@ -9,8 +9,8 @@
 <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
   {% if error %}
   Unable to connect to the Podcast Index API at the moment.
-  {% elif search %}
-  No results found for <span class="font-bold">{{ search }}</span>.
+  {% elif request.search %}
+  No results found for <span class="font-bold">{{ request.search.value }}</span>.
   {% else %}
   No search query provided.
   {% endif %}

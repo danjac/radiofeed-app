@@ -11,9 +11,9 @@
   </div>
 </div>
 
-{% cache 3600 categories search %}
+{% cache 3600 categories request.search.value %}
 <div id="categories">
-  {% if search %}
+  {% if request.search %}
   <div class="space-y-3 pt-3 border-t dark:border-gray-500">
     {% for category in categories %}
     <h2>
@@ -23,7 +23,7 @@
     </h2>
     {% empty %}
     <p class="text-center sm:text-left text-sm">
-      No categories have been found matching <strong>{{ search }}.</strong>
+      No categories have been found matching <strong>{{ request.search.value }}.</strong>
     </p>
     {% endfor %}
   </div>

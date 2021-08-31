@@ -3,9 +3,9 @@
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
-{% if search %}
+{% if request.search %}
 <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
-  No results found for <span class="font-bold">{{ search }}</span>. {% endif %}
+  No results found for <span class="font-bold">{{ request.search.value }}</span>. {% endif %}
 </p>
 {% endfor %}
 {% endblock results %}

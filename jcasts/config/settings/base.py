@@ -245,9 +245,6 @@ TEMPLATES: list[dict] = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "jcasts.shared.template.context_processors.contact_details",
-                "jcasts.shared.template.context_processors.is_cookies_accepted",
-                "jcasts.shared.template.context_processors.search",
             ],
             "builtins": [
                 "jcasts.shared.template.defaulttags",

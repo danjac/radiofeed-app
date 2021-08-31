@@ -63,7 +63,9 @@
   </div>
   {% endblock layout %}
 
-  {% block cookie_notice %}{% include "_cookie_notice.html" %}{% endblock %}
+  {% block cookie_notice %}
+  {% cookie_notice %}
+  {% endblock %}
 
   {% block page_footer %}
   {% block player %}

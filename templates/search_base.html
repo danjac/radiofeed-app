@@ -7,7 +7,9 @@
 
 <div id="search-results">
   <nav class="mb-3 sm:flex justify-between text-sm">
-    <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight sm:mb-0 space-x-6 mb-3 sm:mb-0">
+    <ul
+        class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight sm:mb-0 space-x-6 mb-3 sm:mb-0">
+      {% with search_qs="?"|add:request.search.qs %}
       {% active_link 'podcasts:search_podcasts' as link %}
       <li class="{% if link.match %} tab--active{% endif %}">
         <a class="link"
@@ -26,6 +28,7 @@
            title="Search iTunes"
            href="{{ link.url|add:search_qs }}">Podcast Index</a>
       </li>
+      {% endwith %}
     </ul>
     <div class="flex items-center justify-center sm:justify-end">
       {% include "forms/_search_form.html" with placeholder="Search..." %}

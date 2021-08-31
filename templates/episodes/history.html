@@ -18,8 +18,8 @@
 
 
     <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 text-sm">
-      {% if search %}
-      <a href="{% url 'episodes:search_episodes' %}{{ search_qs }}"
+      {% if request.search %}
+      <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
          title="Search Episodes"
          class="link">Search All Podcasts</a>
       {% elif newest_first %}
@@ -42,8 +42,8 @@
 
   <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500"
      x-show="count === 0">
-    {% if search %}
-    No results found for <span class="font-bold">{{ search }}</span>.
+    {% if request.search %}
+    No results found for <span class="font-bold">{{ request.search }}</span>.
     {% else %}
     Your History is currently empty.
     {% endif %}

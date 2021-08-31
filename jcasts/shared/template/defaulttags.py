@@ -80,6 +80,11 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
     return ActiveLink(url, False, False)
 
 
+@register.simple_tag
+def contact_details():
+    return {"contact_details": settings.CONTACT_DETAILS}
+
+
 @register.filter(is_safe=True)
 @stringfilter
 def markup(value):
@@ -121,6 +126,11 @@ def share_buttons(context, url, subject, css_class=""):
             "linkedin": f"https://www.linkedin.com/sharing/share-offsite/?url={url}",
         },
     }
+
+
+@register.inclusion_tag("_cookie_notice.html", takes_context=True)
+def cookie_notice(context):
+    return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
 @register.filter
