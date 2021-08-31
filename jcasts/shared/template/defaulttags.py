@@ -82,7 +82,7 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 @register.simple_tag
 def get_contact_details():
-    return {"contact_details": settings.CONTACT_DETAILS}
+    return settings.CONTACT_DETAILS
 
 
 @register.filter(is_safe=True)
