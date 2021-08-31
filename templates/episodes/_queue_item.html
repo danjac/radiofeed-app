@@ -1,4 +1,4 @@
-{% with podcast=episode.podcast episode_url=episode.get_absolute_url  episode_title=episode.title|striptags podcast_title=episode.podcast.title|striptags %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|striptags podcast_title=episode.podcast.title|striptags %}
 <div class="py-2 border-t dark:border-gray-500 text-sm episode"
      x-data="{show: true}"
      x-show="show"
