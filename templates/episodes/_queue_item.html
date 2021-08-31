@@ -26,18 +26,12 @@
         </h2>
         <div class="space-x-2 flex items-center">
           {% include "episodes/_actions_toggle.html" %}
-          {% if is_podcast_detail %}
-          <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-            {% include "_pub_date.html" with pub_date=episode.pub_date %}
-          </div>
-          {% else %}
           <div class="w-48 sm:w-96 lg:w-full truncate">
             <a href="{{ podcast.get_episodes_url }}"
                class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
               {{ podcast_title|truncatechars:100 }}
             </a>
           </div>
-          {% endif %}
         </div>
       </div>
     </div>
