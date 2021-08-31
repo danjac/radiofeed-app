@@ -16,7 +16,7 @@
 
       {% for podcast in podcasts %}
       <p>
-        <a href="{% absolute_uri podcast %}">{{ podcast.title|striptags }}</a>
+        <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
       </p>
 
       <p>
@@ -34,7 +34,7 @@
       {% for episode in episodes %}
 
       <p>
-        <a href="{% absolute_uri episode %}">{{ episode.podcast.title|striptags }} - {{ episode.title|striptags }}</a>
+        <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
       </p>
 
       <p>
