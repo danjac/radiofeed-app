@@ -82,15 +82,19 @@ Once the app is deployed set up LetsEncrypt for SSL protection:
 
 > dokku letsencrypt:cron-job --add
 
-Next set up workers:
-
-> dokku ps:scale jcasts worker=1
-
 You should now be able to access the Django management commands:
 
-> dokku run python manage.py [command][...options]
+> dokku run jcasts python manage.py [command][...options]
 
-Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run _loaddata_ and _sync_podcast_feeds_ commands to add the categories and podcasts and sync the RSS feeds.
+Or remotely:
+
+> ssh dokku@my-domain -t run jcasts ./manage.py [command][...options]
+
+For example, to open the interactive Django shell from your local machine:
+
+> ssh dokku@my-domain -t run jcasts ./manage.py shell_plus
+
+Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run the *seed_podcast_data* and *parse_podcast_feeds* Django commands to add the categories and podcasts and sync the RSS feeds.
 
 To deploy just run:
 
