@@ -132,10 +132,6 @@ class TestPodcastModel:
     def test_get_domain_if_www(self):
         assert Podcast(rss=self.rss).get_domain() == "example.com"
 
-    def test_cleaned_title(self):
-        podcast = Podcast(title="<b>a &amp; b</b>")
-        assert podcast.cleaned_title == "a & b"
-
     def test_is_following_anonymous(self, podcast):
         assert not podcast.is_following(AnonymousUser())
 

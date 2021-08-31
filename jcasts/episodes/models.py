@@ -4,17 +4,15 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
-from django.template.defaultfilters import filesizeformat, striptags
+from django.template.defaultfilters import filesizeformat
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.db import FastCountMixin, SearchMixin
-from jcasts.shared.template.defaulttags import unescape
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
@@ -133,10 +131,6 @@ class Episode(models.Model):
     @property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "episode"
-
-    @cached_property
-    def cleaned_title(self):
-        return striptags(unescape(self.title))
 
     def get_file_size(self):
         return filesizeformat(self.length) if self.length else None

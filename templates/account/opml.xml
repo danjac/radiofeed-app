@@ -7,8 +7,8 @@
 	<body>
 		<outline text="My Podcasts" title="My Podcasts">
 			{% for podcast in podcasts %}
-			<outline type="rss" text="{{ podcast.description|keepspaces|unescape|truncatewords:60 }}" title="{{ podcast.title }}" xmlUrl="{{ podcast.rss }}" htmlUrl="{{ podcast.link }}"/>
-				{% endfor %}
+			<outline type="rss" text="{{ podcast.description|keepspaces|truncatewords:60 }}" title="{{ podcast.title }}" xmlUrl="{{ podcast.rss }}" htmlUrl="{{ podcast.link }}" />
+			{% endfor %}
 		</outline>
-		</body>
-	</opml>
+	</body>
+</opml>

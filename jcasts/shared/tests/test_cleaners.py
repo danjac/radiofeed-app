@@ -17,16 +17,6 @@ class TestClean:
         assert cleaners.clean(text) == "alert('xss ahoy!')"
 
 
-class TestUnescape:
-    def test_named_unescape(self):
-        text = "this &amp; that"
-        assert cleaners.unescape(text) == "this & that"
-
-    def test_numeric_unescape(self):
-        text = "gov&#8217;t"
-        assert cleaners.unescape(text) == "gov’t"
-
-
 class TestMarkup:
     def test_value_none(self):
         return cleaners.markup(None) == ""

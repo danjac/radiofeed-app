@@ -1,3 +1,4 @@
+import html
 import re
 
 from functools import lru_cache
@@ -6,8 +7,6 @@ from django.template.defaultfilters import striptags
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
-
-from jcasts.shared import cleaners
 
 """Additional language-specific stopwords"""
 
@@ -334,7 +333,7 @@ def get_stopwords(language):
 
 def clean_text(text):
     """Remove HTML tags and entities, punctuation and numbers."""
-    text = cleaners.unescape(striptags(text.strip()))
+    text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
     text = re.sub(r"[0-9]+", "", text)
     return text

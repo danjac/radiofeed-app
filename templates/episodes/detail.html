@@ -1,10 +1,10 @@
 {% extends "episodes/base.html" %}
 
-{% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
+{% block subtitle %} | {{ episode.podcast.title|striptags }} | {{ episode_title|striptags }}{% endblock %}
 
 {% block content %}
-
-<h1 class="font-bold lg:text-lg mb-3">{{ episode.cleaned_title }}</h1>
+{% with episode_title=episode.title|striptags podcast_title=episode.podcast.title|striptags %}
+<h1 class="font-bold lg:text-lg mb-3">{{ episode_title }}</h1>
 
 {% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
 
@@ -14,7 +14,7 @@
   {% if prev_episode %}
   <a class="link"
      href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.cleaned_title }}">
+     title="{{ prev_episode_title }}">
     Previous
   </a>
 
@@ -24,7 +24,7 @@
   {% if next_episode %}
   <a class="link"
      href="{{ next_episode.get_absolute_url }}"
-     title="{{ next_episode.cleaned_title }}">
+     title="{{ next_episode_title }}">
     Next
   </a>
   {% else %}
@@ -38,9 +38,9 @@
 <div class="space-y-3 pb-3 mb-3">
   <div>
     <a href="{{ podcast.get_episodes_url }}"
-       title="{{ podcast.cleaned_title }}"
+       title="{{ podcast_title }}"
        class="link text-sm">
-      {{ podcast.cleaned_title }}
+      {{ podcast_title }}
     </a>
   </div>
 
@@ -55,14 +55,14 @@
   <div class="flex items-center space-x-3 lg:space-x-4">
     <div>
       <a href="{{ podcast.get_detail_url }}">
-        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" %}
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode_title size=28 css_class="h-24 w-24 lg:h-28 lg:w-28" %}
       </a>
     </div>
     <div class="space-y-2 lg:space-y-3 text-sm">
 
       {% include "episodes/_play_toggle.html" %}
 
-      {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
+      {% share_buttons episode.get_absolute_url podcast_title|add:" | "|add:episode_title %}
 
       <div>
         {% if user.is_authenticated %}
@@ -101,5 +101,6 @@
   {% include "podcasts/_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
 
 </div>
+{% endwith %}
 {% endwith %}
 {% endblock %}

@@ -1,4 +1,5 @@
 import collections
+import html
 import math
 import re
 
@@ -91,7 +92,8 @@ def markup(value):
 @register.filter
 @stringfilter
 def unescape(value):
-    return cleaners.unescape(value)
+    """Removes any HTML entities. Used e.g. if handling plain text content."""
+    return html.unescape(value)
 
 
 @register.filter

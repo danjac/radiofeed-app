@@ -1,7 +1,7 @@
 {% load static %}
 {% if log %}
 {% with episode=episode|default:log.episode %}
-{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+{% with podcast=episode.podcast episode_url=episode.get_absolute_url episode_title=episode.title|striptags podcast_title=episode.podcast.title|striptags %}
 <div x-data="jCasts.Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',
@@ -47,7 +47,7 @@
            x-show="!errMsg"
            href="{{ episode_url }}"
            hx-swap="outerHTML show:window:top"
-           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
+           title="{{ episode_title }}">{{ episode_title|truncatechars:100 }}</a>
       </div>
 
       <div class="flex items-center">
@@ -109,7 +109,7 @@
                  x-show="!errMsg"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
-                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
+                 title="{{ episode_title }}">{{ episode_title|truncatechars:120 }}</a>
             </div>
 
             <div class="flex items-center sm:hidden">
