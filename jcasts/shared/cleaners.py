@@ -80,5 +80,5 @@ def unescape(value):
 def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := (value or "").strip():
-        return unescape(clean(markdown.markdown(value)))
+        return clean(markdown.markdown(value))
     return ""
