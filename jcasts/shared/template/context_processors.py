@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def search(request):
     return {
         "search": str(request.search),
@@ -7,3 +10,7 @@ def search(request):
 
 def is_cookies_accepted(request):
     return {"accept_cookies": "accept-cookies" in request.COOKIES}
+
+
+def contact_details(request):
+    return {"contact_details": settings.CONTACT_DETAILS}

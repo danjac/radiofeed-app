@@ -104,16 +104,6 @@ def signup_url(url):
     return _redirect_to_auth_url(url, reverse("account_signup"))
 
 
-@register.simple_tag
-def get_privacy_details():
-    return settings.PRIVACY_DETAILS
-
-
-@register.simple_tag
-def get_twitter_account():
-    return settings.TWITTER_ACCOUNT
-
-
 @register.inclusion_tag("icons/_svg.html")
 def icon(name, css_class="", title="", **attrs):
     return {

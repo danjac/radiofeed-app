@@ -7,8 +7,6 @@ from jcasts.shared.template.defaulttags import (
     active_link,
     colorpicker,
     format_duration,
-    get_privacy_details,
-    get_twitter_account,
     login_url,
     markup,
     normalize_url,
@@ -183,19 +181,6 @@ class TestReActiveLink:
         assert route.url == reverse(self.categories_url)
         assert route.match
         assert not route.exact
-
-
-class TestPrivacyDetails:
-    def test_get_privacy_details(self, settings):
-        details = {"host_country": "Finland"}
-        settings.PRIVACY_DETAILS = details
-        assert get_privacy_details() == details
-
-
-class TestTwitterAccount:
-    def test_twitter_account(self, settings):
-        settings.TWITTER_ACCOUNT = "testme"
-        assert get_twitter_account() == "testme"
 
 
 class TestShareButtons:

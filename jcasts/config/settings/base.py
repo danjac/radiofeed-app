@@ -245,6 +245,7 @@ TEMPLATES: list[dict] = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "jcasts.shared.template.context_processors.contact_details",
                 "jcasts.shared.template.context_processors.is_cookies_accepted",
                 "jcasts.shared.template.context_processors.search",
             ],
@@ -276,8 +277,12 @@ LOGGING = {
 
 # Project-specific
 
+CONTACT_DETAILS = {
+    "email": env("CONTACT_EMAIL", default="admin@localhost"),
+    "twitter": env("TWITTER_ACCOUNT", default=None),
+}
+
 PRIVACY_DETAILS = {
-    "contact_email": env("CONTACT_EMAIL", default="admin@localhost"),
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
 }
@@ -287,9 +292,6 @@ GRAVATAR_DEFAULT_IMAGE = env("GRAVATAR_DEFAULT_IMAGE", default="retro")
 GRAVATAR_DEFAULT_RATING = env("GRAVATAR_DEFAULT_RATING", default="g")
 
 DEFAULT_ITUNES_LIMIT = env.int("DEFAULT_ITUNES_LIMIT", default=DEFAULT_PAGE_SIZE)
-
-TWITTER_ACCOUNT = env("TWITTER_ACCOUNT", default=None)
-
 
 PODCASTINDEX_CONFIG = {
     "api_key": env("PODCASTINDEX_API_KEY", default=None),

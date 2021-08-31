@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import include, path
 
 from jcasts.shared import views
@@ -7,7 +8,9 @@ about_urls = [
         "",
         views.static_page,
         name="credits",
-        kwargs={"template_name": "about/credits.html"},
+        kwargs={
+            "template_name": "about/credits.html",
+        },
     ),
     path(
         "help/",
@@ -19,7 +22,10 @@ about_urls = [
         "privacy/",
         views.static_page,
         name="privacy",
-        kwargs={"template_name": "about/privacy.html"},
+        kwargs={
+            "template_name": "about/privacy.html",
+            "extra_context": {"privacy_details": settings.PRIVACY_DETAILS},
+        },
     ),
 ]
 

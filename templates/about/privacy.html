@@ -5,7 +5,6 @@
 
 {% block about_content %}
 
-{% get_privacy_details as privacy_details %}
 {% get_providers as socialaccount_providers %}
 
 
@@ -351,8 +350,8 @@
                             <h2 class="font-semibold mb-3 pt-3 border-t dark:border-gray-500">Contact Us</h2>
 
                             <p class="mb-3">If you have any questions about this Privacy Policy, You can contact us at
-                              <a href="mailto:{{ privacy_details.contact_email }}"
-                                 class="link underline">{{ privacy_details.contact_email }}</a>.</p>
+                              <a href="mailto:{{ contact_details.email }}"
+                                 class="link underline">{{ contact_details.email }}</a>.</p>
 
 </div>
 {% endblock about_content %}

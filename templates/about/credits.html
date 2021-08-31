@@ -71,12 +71,11 @@
          rel="noopener"
          href="https://github.com/danjac/jcasts/issues">Report an issue</a>
     </div>
-    {% get_twitter_account as twitter %}
-    {% if twitter %}
+    {% if contact_details.twitter %}
     <div><a class="underline hover:text-blue-500"
          target="_blank"
          rel="noopener"
-         href="https://twitter.com/{{ twitter }}">Twitter</a></div>
+         href="https://twitter.com/{{ contact_details.twitter }}">Twitter</a></div>
     {% endif %}
 
     <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
