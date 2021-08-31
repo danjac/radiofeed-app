@@ -1,7 +1,8 @@
 {% extends "podcasts/base.html" %}
 {% load cache %}
 
-{% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} | {{ category.name }}{% endblock %}
+{% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} |
+{{ category.name }}{% endblock %}
 
 {% block content %}
 
@@ -23,12 +24,12 @@
 </div>
 
 {% with search_placeholder="Search: "|add:category.name %}
-{% if search %}
+{% if request.search %}
 <h1 class="mb-3 font-bold flex items-center justify-center sm:justify-start lg:text-lg">{{ category.name }}</h1>
 <div class="mb-3 sm:flex items-center justify-center sm:justify-between text-sm">
 
   <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
-    <a href="{% url 'podcasts:search_podcasts' %}{{ search_qs }}"
+    <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
        title="Search Podcasts"
        class="link">Search All Categories</a>
   </div>
