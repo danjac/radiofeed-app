@@ -8,7 +8,7 @@ Here are some podcasts you might find interesting:
 
 {% for podcast in podcasts %}
 
-{{ podcast.title }}
+{{ podcast.cleaned_title }}
 
 {{ podcast.cleaned_description|truncatewords:60 }}
 
@@ -21,7 +21,7 @@ Here are some podcasts you might find interesting:
 {% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last week you might have missed:
 {% for episode in episodes %}
 
-{{ episode.podcast.title }} - {{ episode.title }}
+{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}
 
 {{ episode.cleaned_description|truncatewords:60 }}
 
