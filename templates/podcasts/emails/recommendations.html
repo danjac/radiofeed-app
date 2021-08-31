@@ -16,11 +16,11 @@
 
       {% for podcast in podcasts %}
       <p>
-        <a href="{% absolute_uri podcast %}">{{ podcast.title }}</a>
+        <a href="{% absolute_uri podcast %}">{{ podcast.title|striptags }}</a>
       </p>
 
       <p>
-        {{ podcast.description|striptags|urlize|truncatewords:60 }}
+        {{ podcast.description|unescape|striptags|urlize|truncatewords:60 }}
       </p>
       <hr />
       {% endfor %}
@@ -34,11 +34,11 @@
       {% for episode in episodes %}
 
       <p>
-        <a href="{% absolute_uri episode %}">{{ episode.podcast.title }} - {{ episode.title }}</a>
+        <a href="{% absolute_uri episode %}">{{ episode.podcast.title|striptags }} - {{ episode.title|striptags }}</a>
       </p>
 
       <p>
-        {{ episode.description|striptags|urlize|truncatewords:60 }}
+        {{ episode.description|unescape|striptags|urlize|truncatewords:60 }}
       </p>
 
       <hr />
