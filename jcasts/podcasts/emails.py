@@ -45,6 +45,7 @@ def send_recommendations_email(user):
 
     context = {
         "recipient": user,
+        "site": site,
         "podcasts": podcasts,
         "episodes": episodes,
     }
