@@ -65,12 +65,13 @@
          rel="noopener"
          href="https://github.com/danjac/jcasts/">Source code</a>
     </div>
+    {% if contact_details.email %}
     <div>
       <a class="underline hover:text-blue-500"
-         target="_blank"
-         rel="noopener"
-         href="https://github.com/danjac/jcasts/issues">Report an issue</a>
+         href="mailto:{{ contact_details.email }}">Feedback</a>
     </div>
+    {% endif %}
+
     {% if contact_details.twitter %}
     <div><a class="underline hover:text-blue-500"
          target="_blank"
