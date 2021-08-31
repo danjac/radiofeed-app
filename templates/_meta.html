@@ -11,7 +11,7 @@
         content="no-cache">
   <meta name="robots"
         content="index,follow" />
-  {% with og_description=og_data.description|striptags|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
+  {% with og_description=og_data.description|truncatewords:60|default:"Find your favorite podcasts" og_title=og_data.title|default:request.site.name %}
   <meta name="description"
         content="{{ og_description }}" />
   <meta name="keywords"

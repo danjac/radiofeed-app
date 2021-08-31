@@ -8,10 +8,12 @@ from django.template.defaultfilters import filesizeformat
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
 from jcasts.podcasts.models import Podcast
+from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 
 
@@ -128,6 +130,14 @@ class Episode(models.Model):
     def get_absolute_url(self):
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
+    @cached_property
+    def cleaned_title(self):
+        return strip_html(self.title)
+
+    @cached_property
+    def cleaned_description(self):
+        return strip_html(self.description)
+
     @property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "episode"
@@ -226,8 +236,8 @@ class Episode(models.Model):
     def get_opengraph_data(self, request):
         og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
-            "title": f"{request.site.name} | {self.podcast.title} | {self.title}",
-            "description": self.description,
+            "title": f"{request.site.name} | {self.podcast.cleaned_title} | {self.cleaned_title}",
+            "description": self.cleaned_description,
             "keywords": ", ".join(self.keywords.split()),
         }
 
@@ -270,8 +280,8 @@ class Episode(models.Model):
         cover_url = self.get_cover_url() or static("img/podcast-icon.png")
 
         return {
-            "title": self.title,
-            "album": self.podcast.title,
+            "title": self.cleaned_title,
+            "album": self.podcast.cleaned_title,
             "artist": self.podcast.owner,
             "artwork": [
                 {

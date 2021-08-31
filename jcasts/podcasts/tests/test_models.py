@@ -126,6 +126,14 @@ class TestPodcastModel:
     def test_slug_if_title_empty(self):
         assert Podcast().slug == "podcast"
 
+    def test_cleaned_title(self):
+        podcast = Podcast(title="<b>Test &amp; Code")
+        assert podcast.cleaned_title == "Test & Code"
+
+    def test_cleaned_description(self):
+        podcast = Podcast(description="<b>Test &amp; Code")
+        assert podcast.cleaned_description == "Test & Code"
+
     def test_get_domain(self):
         assert Podcast(rss=self.rss).get_domain() == "example.com"
 
