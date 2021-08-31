@@ -1,3 +1,5 @@
+import html
+
 import bleach
 import markdown
 
@@ -72,5 +74,5 @@ def clean(value):
 def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := (value or "").strip():
-        return clean(markdown.markdown(value))
+        return unescape(clean(markdown.markdown(value)))
     return ""
