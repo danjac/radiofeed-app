@@ -8,9 +8,9 @@ Here are some podcasts you might find interesting:
 
 {% for podcast in podcasts %}
 
-{{ podcast.title }}
+{{ podcast.title|striptags }}
 
-{{ podcast.description|striptags|truncatewords:60 }}
+{{ podcast.description|unescape|striptags|truncatewords:60 }}
 
 {% absolute_uri podcast %}
 
@@ -21,9 +21,9 @@ Here are some podcasts you might find interesting:
 {% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last week you might have missed:
 {% for episode in episodes %}
 
-{{ episode.podcast.title }} - {{ episode.title }}
+{{ episode.podcast.title|striptags }} - {{ episode.title|striptags }}
 
-{{ episode.description|striptags|unescape|urlize|truncatewords:60 }}
+{{ episode.description|unescape|striptags|urlize|truncatewords:60 }}
 
 {% absolute_uri episode %}
 
