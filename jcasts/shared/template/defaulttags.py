@@ -81,7 +81,7 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 
 @register.simple_tag
-def contact_details():
+def get_contact_details():
     return {"contact_details": settings.CONTACT_DETAILS}
 
 
