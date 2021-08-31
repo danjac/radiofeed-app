@@ -36,6 +36,7 @@ def index(request):
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
         .order_by("-pub_date", "-id")
+        .distinct()
     )
 
     return render_episode_list_response(
