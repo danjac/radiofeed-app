@@ -73,7 +73,7 @@ def clean(value):
 
 
 def strip_whitespace(value):
-    return value or ""
+    return (value or "").strip()
 
 
 def strip_html(value):
