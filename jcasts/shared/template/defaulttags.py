@@ -5,8 +5,6 @@ import re
 
 from urllib import parse
 
-import bs4
-
 from django import template
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -94,18 +92,6 @@ def markup(value):
 def unescape(value):
     """Removes any HTML entities. Used e.g. if handling plain text content."""
     return html.unescape(value)
-
-
-@register.filter
-@register.filter
-def keepspaces(text):
-    # changes any <br /> <p> <li> etc to spaces
-    if text is None:
-        return ""
-    if not (text := text.strip()):
-        return ""
-    tag = bs4.BeautifulSoup(text, features="lxml").find("body")
-    return tag.get_text(separator=" ").strip() if tag else text
 
 
 @register.filter

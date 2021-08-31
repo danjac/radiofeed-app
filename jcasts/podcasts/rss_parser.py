@@ -3,7 +3,7 @@ import io
 from datetime import datetime
 from typing import Optional
 
-import lxml
+import lxml.etree
 
 from django.utils import timezone
 from pydantic import BaseModel, HttpUrl, ValidationError, validator

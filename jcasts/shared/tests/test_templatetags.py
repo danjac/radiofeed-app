@@ -9,7 +9,6 @@ from jcasts.shared.template.defaulttags import (
     format_duration,
     get_privacy_details,
     get_twitter_account,
-    keepspaces,
     login_url,
     markup,
     normalize_url,
@@ -184,23 +183,6 @@ class TestReActiveLink:
         assert route.url == reverse(self.categories_url)
         assert route.match
         assert not route.exact
-
-
-class TestKeepspaces:
-    def test_value_is_empty(self):
-        assert keepspaces("") == ""
-
-    def test_value_is_none(self):
-        assert keepspaces(None) == ""
-
-    def test_value_does_not_have_body(self):
-        assert keepspaces("\n    ") == ""
-
-    def test_value_has_html(self):
-        assert keepspaces("test<br />this<ul><li>hello</li></ul>") == "test this hello"
-
-    def test_value_has_no_html_content(self):
-        assert keepspaces("test") == "test"
 
 
 class TestPrivacyDetails:
