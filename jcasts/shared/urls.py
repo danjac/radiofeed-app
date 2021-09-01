@@ -71,6 +71,7 @@ error_urls = [
 urlpatterns = [
     path("robots.txt", views.robots, name="robots"),
     path("~accept_cookies", views.accept_cookies, name="accept_cookies"),
+    path("health/", views.health_check, name="health_check"),
     path("about/", include((about_urls, "about"), namespace="about")),
     path("error/", include((error_urls, "error"), namespace="error")),
 ]
