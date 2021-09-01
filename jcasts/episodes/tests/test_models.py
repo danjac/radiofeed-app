@@ -172,6 +172,17 @@ class TestEpisodeModel:
         )
         assert Episode.objects.with_current_time(user).first().is_completed()
 
+    def test_pc_complete_if_duration_none(self, user):
+        episode = EpisodeFactory(duration="")
+
+        AudioLogFactory(
+            user=user,
+            current_time=50,
+            updated=timezone.now(),
+            episode=episode,
+        )
+        assert not Episode.objects.with_current_time(user).first().is_completed()
+
     def test_is_completed_if_pc_complete_under_100(self, user, episode):
         AudioLogFactory(
             user=user,

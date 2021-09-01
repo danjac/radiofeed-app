@@ -203,23 +203,17 @@ class Episode(models.Model):
     def get_pc_completed(self):
         """Use with the `with_current_time` QuerySet method"""
 
-        try:
-            # if marked complete just assume 100% done
-            if self.completed:
-                return 100
+        # if marked complete just assume 100% done
+        if getattr(self, "completed", None):
+            return 100
 
-            if not self.current_time:
-                return 0
-
-            return min(
-                (
-                    (self.current_time / self.get_duration_in_seconds()) * 100,
-                    100,
-                )
-            )
-
-        except (ZeroDivisionError, AttributeError):
+        if not (current_time := getattr(self, "current_time", None)):
             return 0
+
+        if not (duration := self.get_duration_in_seconds()):
+            return 0
+
+        return min((current_time / duration) * 100, 100)
 
     def get_time_remaining(self):
         duration = self.get_duration_in_seconds()
