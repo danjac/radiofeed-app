@@ -284,10 +284,6 @@ PRIVACY_DETAILS = {
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
 }
 
-GRAVATAR_DEFAULT_SIZE = 30
-GRAVATAR_DEFAULT_IMAGE = env("GRAVATAR_DEFAULT_IMAGE", default="retro")
-GRAVATAR_DEFAULT_RATING = env("GRAVATAR_DEFAULT_RATING", default="g")
-
 PODCASTINDEX_CONFIG = {
     "api_key": env("PODCASTINDEX_API_KEY", default=None),
     "api_secret": env("PODCASTINDEX_API_SECRET", default=None),
