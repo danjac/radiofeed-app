@@ -71,6 +71,11 @@ class Item(BaseModel):
         if not value:
             return ""
         try:
+            # plain seconds value
+            return int(value)
+        except ValueError:
+            pass
+        try:
             return ":".join(
                 [
                     str(v)

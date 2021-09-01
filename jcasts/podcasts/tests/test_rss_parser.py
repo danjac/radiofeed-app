@@ -124,6 +124,10 @@ class TestItem:
         item = Item.parse_obj(ItemFactory(duration="https://example.com"))
         assert item.duration == ""
 
+    def test_duration_seconds_only(self):
+        item = Item.parse_obj(ItemFactory(duration="1000"))
+        assert item.duration == "1000"
+
     def test_duration_h_m(self):
         item = Item.parse_obj(ItemFactory(duration="10:20"))
         assert item.duration == "10:20"
