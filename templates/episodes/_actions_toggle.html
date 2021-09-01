@@ -1,7 +1,8 @@
 {% with ICON_CLASS=is_detail|yesno:"w-6 h-6,w-4 h-4" %}
 <div x-data="{active: false}"
      x-cloak
-     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
+     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false"
+     class="flex flex-col items-center">
   <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
           x-show="!active"
