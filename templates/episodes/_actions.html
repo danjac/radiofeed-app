@@ -1,13 +1,20 @@
-<div class="absolute bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm top-0 {% if is_detail %}right-0 sm:right-auto{% endif %}"
-     :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
-     x-data="{show: true, position: 'dropdown'}"
+<div class="absolute bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm top-0"
+     :class="{
+        'top-0': vPosition === 'dropdown',
+        'bottom-0': vPosition === 'dropup',
+        'right-0': hPosition === 'right',
+        'left-0': hPosition === 'left',
+     }"
+     x-data="{show: true, vPosition: 'dropdown', hPosition: 'right'}"
      x-show="show"
      @click.away="show=false"
      @keydown.escape.window="show=false"
      x-init="() => {
         const rect = $el.getBoundingClientRect();
-        const vh = document.documentElement.clientHeight;
-        position = (vh - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
+        const ch = document.documentElement.clientHeight;
+        const cw = document.documentElement.clientWidth;
+        vPosition = (ch - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
+        hPosition = (cw - rect.right - rect.width) > 0 ? 'left' : 'right';
     }">
   {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 inline-flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CLASS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
 
