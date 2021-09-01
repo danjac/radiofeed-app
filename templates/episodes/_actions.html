@@ -2,8 +2,6 @@
      :class="{
         'top-0': vPosition === 'dropdown',
         'bottom-0': vPosition === 'dropup',
-        'right-0': hPosition === 'right',
-        'left-0': hPosition === 'left',
      }"
      x-data="{
         show: true,
@@ -17,9 +15,7 @@
      x-init="() => {
         const rect = $el.getBoundingClientRect();
         const ch = document.documentElement.clientHeight;
-        const cw = document.documentElement.clientWidth;
         vPosition = (ch - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
-        hPosition = (cw - rect.right - rect.width) > 0 ? 'left' : 'right';
     }"
      x-show="show"
      @click.away="close()"

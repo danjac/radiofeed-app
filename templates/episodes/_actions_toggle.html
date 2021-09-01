@@ -1,8 +1,8 @@
 {% with ICON_CLASS=is_detail|yesno:"w-6 h-6,w-4 h-4" %}
 <div x-data="{active: false}"
      x-cloak
-     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false"
-     class="flex items-center">
+     class="flex items-center"
+     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
   <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
           x-show="!active"
@@ -27,7 +27,8 @@
     {% icon "ellipsis" css_class=ICON_CLASS %}
     {% endif %}
   </button>
-  <div id="actions-{{ episode.id }}"
-       class="relative"></div>
 </div>
+<div id="actions-{{ episode.id }}"
+     class="relative"></div>
+
 {% endwith %}
