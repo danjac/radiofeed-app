@@ -1,13 +1,32 @@
-<div class="flex items-center">
+{% with ICON_CLASS=is_detail|yesno:"w-6 h-6,w-4 h-4" %}
+<div x-data="{active: false}"
+     x-cloak
+     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
   <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
+          x-show="!active"
           hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
           hx-target="#actions-{{ episode.id }}"
           hx-swap="innerHTML"
           hx-push-url="false"
-          hx-trigger="click delay:200ms">
-    {% icon "ellipsis" css_class="w-6 h-6" %}
+          @click="active=true">
+    {% if is_detail %}
+    {% icon "ellipsis" css_class=ICON_CLASS %}
+    {% else %}
+    {% icon "ellipsis" css_class=ICON_CLASS %}
+    {% endif %}
   </button>
+  <button title="Actions for {{ episode.cleaned_title }}"
+          class="focus:outline-none"
+          x-show="active"
+          @click="active=false">
+    {% if is_detail %}
+    {% icon "ellipsis" css_class=ICON_CLASS %}
+    {% else %}
+    {% icon "ellipsis" css_class=ICON_CLASS %}
+    {% endif %}
+  </button>
+  <div id="actions-{{ episode.id }}"
+       class="relative"></div>
 </div>
-<div id="actions-{{ episode.id }}"
-     class="relative"></div>
+{% endwith %}
