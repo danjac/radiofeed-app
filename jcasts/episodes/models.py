@@ -228,7 +228,7 @@ class Episode(models.Model):
 
     def is_completed(self):
         """Use with the `with_current_time` QuerySet method"""
-        return self.get_completed() is not None or self.get_pc_completed() >= 100
+        return self.get_pc_completed() >= 100
 
     def get_opengraph_data(self, request):
         og_data = {
