@@ -4,8 +4,8 @@
 <div class="sm:flex items-center mb-3 justify-between">
 
   <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 text-sm">
-    {% if search %}
-    <a href="{% url 'episodes:search_episodes' %}{{ search_qs }}"
+    {% if request.search %}
+    <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
        title="Search Episodes"
        class="link">Search All Podcasts</a>
     {% elif newest_first %}
