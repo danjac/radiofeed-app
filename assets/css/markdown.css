@@ -44,7 +44,7 @@
 
 .markdown li div,
 .markdown li p {
-  @apply inline-block;
+  @apply inline;
 }
 
 /* img might have src stripped out if unsafe */
