@@ -1,4 +1,4 @@
-<div class="absolute left-0 bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm"
+<div class="absolute bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm top-0 {% if is_detail %}right-0 sm:right-auto{% endif %}"
      :class="{'top-0': position === 'dropdown', 'bottom-0': position === 'dropup'}"
      x-data="{show: true, position: 'dropdown'}"
      x-show="show"

@@ -1,4 +1,4 @@
-<div class="relative flex items-center">
+<div class="flex items-center">
   <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
           hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
@@ -8,5 +8,6 @@
           hx-trigger="click delay:200ms">
     {% icon "ellipsis" css_class="w-6 h-6" %}
   </button>
-  <div id="actions-{{ episode.id }}"></div>
 </div>
+<div id="actions-{{ episode.id }}"
+     class="relative"></div>
