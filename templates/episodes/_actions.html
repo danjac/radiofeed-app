@@ -28,7 +28,7 @@
 
   {% if not is_detail %}
 
-  {% with time_remaining=episode.get_time_remaining|format_duration %}
+  {% with time_remaining=episode.time_remaining|format_duration %}
   {% if is_playing %}
   <button class="{{ BUTTON_CSS_CLASS }}"
           hx-post="{% url 'episodes:close_player' %}"

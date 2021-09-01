@@ -183,12 +183,21 @@ class Episode(models.Model):
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_duration_in_seconds(self):
+    def get_current_time(self):
+        """Return current_time if annotated in QuerySet `with_current_time` method"""
+        return getattr(self, "current_time", None) or 0
+
+    def get_completed(self):
+        """Return completed if annotated in QuerySet `with_current_time` method"""
+        return getattr(self, "completed", None)
+
+    @cached_property
+    def duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format.
         Invalid formats return None."""
 
         if not self.duration:
-            return None
+            return 0
 
         try:
             return sum(
@@ -198,37 +207,35 @@ class Episode(models.Model):
                 )
             )
         except ValueError:
-            return None
+            return 0
 
-    def get_current_time(self):
-        """Return current_time if annotated in QuerySet `with_current_time` method"""
-        return getattr(self, "current_time", None)
-
-    def get_completed(self):
-        """Return completed if annotated in QuerySet `with_current_time` method"""
-        return getattr(self, "completed", None)
-
-    def get_pc_completed(self):
+    @cached_property
+    def pc_complete(self):
         """Use with the `with_current_time` QuerySet method"""
 
         # if marked complete just assume 100% done
         if self.get_completed():
             return 100
 
-        if not (current_time := self.get_current_time()):
+        try:
+            return min(
+                round((self.get_current_time() / self.duration_in_seconds) * 100), 100
+            )
+        except ZeroDivisionError:
             return 0
 
-        if not (duration := self.get_duration_in_seconds()):
-            return 0
+    @cached_property
+    def time_remaining(self):
+        return (
+            self.duration_in_seconds - self.get_current_time()
+            if self.duration_in_seconds
+            else 0
+        )
 
-        return min((current_time / duration) * 100, 100)
-
-    def get_time_remaining(self):
-        return (self.get_duration_in_seconds() or 0) - (self.get_current_time() or 0)
-
+    @cached_property
     def is_completed(self):
         """Use with the `with_current_time` QuerySet method"""
-        return self.get_pc_completed() >= 100
+        return self.pc_complete > 99
 
     def get_opengraph_data(self, request):
         og_data = {

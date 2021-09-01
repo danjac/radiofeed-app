@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="font-bold lg:text-lg mb-3">{{ episode.cleaned_title }}</h1>
 
-{% with podcast=episode.podcast duration=episode.get_duration_in_seconds %}
+{% with podcast=episode.podcast duration=episode.duration_in_seconds %}
 
 {% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
 {% if prev_episode or next_episode %}
@@ -81,9 +81,11 @@
     <div title="Date Published">
       {% include "_pub_date.html" with pub_date=episode.pub_date %}
     </div>
+    {% if duration %}
     <div title="Duration">
       {{ duration|format_duration }}
     </div>
+    {% endif %}
     {% with file_size=episode.get_file_size %}
     {% if file_size %}
     <div title="Size">

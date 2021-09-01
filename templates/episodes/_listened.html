@@ -1,5 +1,5 @@
 {% if episode.listened %}
-{% with is_completed=episode.is_completed pc_complete=episode.get_pc_completed listened=episode.listened|date %}
+{% with is_completed=episode.is_completed pc_complete=episode.pc_complete listened=episode.listened|date %}
 <div class="font-semibold text-gray-600 dark:text-gray-300 text-sm {{ css_class|default:'' }}">
   {% if is_completed %}
   Completed {{ listened }}

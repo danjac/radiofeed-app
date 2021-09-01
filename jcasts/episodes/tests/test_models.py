@@ -113,54 +113,51 @@ class TestEpisodeModel:
     def test_time_remaining(self):
         episode = Episode(duration="1:00:00")
         episode.current_time = 1200
-        assert episode.get_time_remaining() == 2400
+        assert episode.time_remaining == 2400
+
+    def test_time_remaining_if_no_duration(self):
+        episode = Episode(duration="")
+        episode.current_time = 1200
+        assert episode.time_remaining == 0
 
     def test_time_remaining_current_time_none(self):
         episode = Episode(duration="1:00:00")
         episode.current_time = None
-        assert episode.get_time_remaining() == 3600
+        assert episode.time_remaining == 3600
 
     def test_time_remaining_current_time_not_set(self):
         episode = Episode(duration="1:00:00")
-        assert episode.get_time_remaining() == 3600
-
-    def test_duration_in_seconds_if_empty_or_none(self):
-        assert Episode(duration=None).get_duration_in_seconds() is None
-        assert Episode(duration="").get_duration_in_seconds() is None
-
-    def test_duration_in_seconds_invalid_string(self):
-        assert Episode(duration="oops").get_duration_in_seconds() is None
+        assert episode.time_remaining == 3600
 
     def test_duration_in_seconds_hours_minutes_seconds(self):
-        assert Episode(duration="2:30:40").get_duration_in_seconds() == 9040
+        assert Episode(duration="2:30:40").duration_in_seconds == 9040
 
     def test_duration_in_seconds_hours_minutes_seconds_extra_digit(self):
-        assert Episode(duration="2:30:40:2903903").get_duration_in_seconds() == 9040
+        assert Episode(duration="2:30:40:2903903").duration_in_seconds == 9040
 
     def test_duration_in_seconds_minutes_seconds(self):
-        assert Episode(duration="30:40").get_duration_in_seconds() == 1840
+        assert Episode(duration="30:40").duration_in_seconds == 1840
 
     def test_duration_in_seconds_seconds_only(self):
-        assert Episode(duration="40").get_duration_in_seconds() == 40
+        assert Episode(duration="40").duration_in_seconds == 40
 
     def test_get_duration_in_seconds_if_empty(self):
-        assert Episode().get_duration_in_seconds() is None
-        assert Episode(duration="").get_duration_in_seconds() is None
+        assert Episode(duration="").duration_in_seconds == 0
 
     def test_duration_in_seconds_if_non_numeric(self):
-        assert Episode(duration="NaN").get_duration_in_seconds() is None
+        assert Episode(duration="NaN").duration_in_seconds == 0
 
     def test_duration_in_seconds_if_seconds_only(self):
-        assert Episode(duration="60").get_duration_in_seconds() == 60
+        assert Episode(duration="60").duration_in_seconds == 60
 
     def test_duration_in_seconds_if_minutes_and_seconds(self):
-        assert Episode(duration="2:30").get_duration_in_seconds() == 150
+        assert Episode(duration="2:30").duration_in_seconds == 150
 
     def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
-        assert Episode(duration="2:30:30").get_duration_in_seconds() == 9030
+        assert Episode(duration="2:30:30").duration_in_seconds == 9030
 
     def test_is_completed_if_not_set(self, episode):
-        assert not (episode.is_completed())
+        assert not (episode.is_completed)
 
     def test_is_completed_if_marked_complete(self, user, episode):
         AudioLogFactory(
@@ -170,7 +167,7 @@ class TestEpisodeModel:
             completed=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().is_completed()
+        assert Episode.objects.with_current_time(user).first().is_completed
 
     def test_pc_complete_if_duration_none(self, user):
         episode = EpisodeFactory(duration="")
@@ -181,7 +178,7 @@ class TestEpisodeModel:
             updated=timezone.now(),
             episode=episode,
         )
-        assert not Episode.objects.with_current_time(user).first().is_completed()
+        assert not Episode.objects.with_current_time(user).first().is_completed
 
     def test_is_completed_if_pc_complete_under_100(self, user, episode):
         AudioLogFactory(
@@ -190,7 +187,7 @@ class TestEpisodeModel:
             updated=timezone.now(),
             episode=episode,
         )
-        assert not Episode.objects.with_current_time(user).first().is_completed()
+        assert not Episode.objects.with_current_time(user).first().is_completed
 
     def test_is_completed_if_pc_complete_over_100(self, user, episode):
         AudioLogFactory(
@@ -199,54 +196,54 @@ class TestEpisodeModel:
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().is_completed()
+        assert Episode.objects.with_current_time(user).first().is_completed
 
-    def test_get_pc_complete_without_current_time_attr(self, user, episode):
+    def test_pc_complete_without_current_time_attr(self, user, episode):
         AudioLogFactory(
             user=user,
             current_time=50,
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.first().get_pc_completed() == 0
+        assert Episode.objects.first().pc_complete == 0
 
-    def test_get_pc_complete(self, user, episode):
+    def test_pc_complete(self, user, episode):
         AudioLogFactory(
             user=user,
             current_time=50,
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 50
+        assert Episode.objects.with_current_time(user).first().pc_complete == 50
 
-    def test_get_pc_complete_zero_current_time(self, user, episode):
+    def test_pc_complete_zero_current_time(self, user, episode):
         AudioLogFactory(
             user=user,
             current_time=0,
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
+        assert Episode.objects.with_current_time(user).first().pc_complete == 0
 
-    def test_get_pc_complete_zero_duration(self, user, episode):
+    def test_pc_complete_zero_duration(self, user, episode):
         AudioLogFactory(
             user=user,
             current_time=0,
             updated=timezone.now(),
             episode=EpisodeFactory(duration=""),
         )
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
+        assert Episode.objects.with_current_time(user).first().pc_complete == 0
 
-    def test_get_pc_complete_gt_100(self, user, episode):
+    def test_pc_complete_gt_100(self, user, episode):
         AudioLogFactory(
             user=user,
             current_time=120,
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
+        assert Episode.objects.with_current_time(user).first().pc_complete == 100
 
-    def test_get_pc_complete_marked_complete(self, user, episode):
+    def test_pc_complete_marked_complete(self, user, episode):
         now = timezone.now()
         AudioLogFactory(
             user=user,
@@ -255,20 +252,19 @@ class TestEpisodeModel:
             completed=now,
             episode=episode,
         )
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 100
+        assert Episode.objects.with_current_time(user).first().pc_complete == 100
 
-    def test_get_pc_complete_not_played(self, user, episode):
-        assert Episode.objects.with_current_time(user).first().get_pc_completed() == 0
+    def test_pc_complete_not_played(self, user, episode):
+        assert Episode.objects.with_current_time(user).first().pc_complete == 0
 
-    def test_get_pc_complete_anonymous(self, anonymous_user, episode):
+    def test_pc_complete_anonymous(self, anonymous_user, episode):
         AudioLogFactory(
             current_time=50,
             updated=timezone.now(),
             episode=episode,
         )
         assert (
-            Episode.objects.with_current_time(anonymous_user).first().get_pc_completed()
-            == 0
+            Episode.objects.with_current_time(anonymous_user).first().pc_complete == 0
         )
 
     def test_str(self):
