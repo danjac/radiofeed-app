@@ -18,6 +18,16 @@
   </div>
   {% endif %}
 
+  {% if podcast.funding_url %}
+  <div class="font-semibold flex-wrap text-sm">
+    <a href="{{ podcast.funding_url }}"
+       target="_blank"
+       rel="noopener">
+      {{ podcast.funding_text|default:'Support this podcast' }}
+    </a>
+  </div>
+  {% endif %}
+
   <div class="flex items-center space-x-6">
 
     <div>

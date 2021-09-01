@@ -164,6 +164,8 @@ def parse_success(podcast, response, feed, items):
         "description",
         "owner",
         "explicit",
+        "funding_url",
+        "funding_text",
     ):
         setattr(podcast, field, values[field])
 

@@ -87,6 +87,9 @@ class Podcast(models.Model):
 
     cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
+    funding_url = models.URLField(max_length=2083, null=True, blank=True)
+    funding_text = models.TextField(blank=True)
+
     language = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )

@@ -13,6 +13,7 @@ from jcasts.podcasts.date_parser import parse_date
 NAMESPACES = {
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+    "podcast": "https://podcastindex.org/namespace/1.0",
 }
 
 
@@ -96,6 +97,9 @@ class Feed(BaseModel):
 
     cover_url: Optional[HttpUrl] = None
 
+    funding_url: Optional[HttpUrl] = None
+    funding_text: str = ""
+
     owner: str = ""
     description: str = ""
 
@@ -152,6 +156,8 @@ def parse_feed(finder):
         "language": finder.find("language/text()", default="en"),
         "explicit": finder.find("itunes:explicit/text()"),
         "cover_url": finder.find("itunes:image/@href", "image/url/text()"),
+        "funding_url": finder.find("podcast:funding/@url"),
+        "funding_text": finder.find("podcast:funding/text()", default=""),
         "description": finder.find(
             "description/text()", "itunes:summary/text()", default=""
         ),
