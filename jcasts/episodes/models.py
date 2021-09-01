@@ -1,4 +1,7 @@
+import os
+
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -182,10 +185,10 @@ class Episode(models.Model):
 
     def get_duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format.
-        Invalid formats return zero."""
+        Invalid formats return None."""
 
         if not self.duration:
-            return 0
+            return None
 
         try:
             return sum(
@@ -195,7 +198,7 @@ class Episode(models.Model):
                 )
             )
         except ValueError:
-            return 0
+            return None
 
     def get_pc_completed(self):
         """Use with the `with_current_time` QuerySet method"""
@@ -274,6 +277,10 @@ class Episode(models.Model):
                 if info
             ]
         )
+
+    def get_media_url_ext(self):
+        _, ext = os.path.splitext(urlparse(self.media_url).path)
+        return ext[1:]
 
     def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session

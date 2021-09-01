@@ -70,7 +70,7 @@
         {% with file_size=episode.get_file_size %}
         <a class="inline-block link"
            download
-           href="{{ episode.media_url }}">Download{% if file_size %} ({{ episode.get_file_size }}){% endif %}</a>
+           href="{{ episode.media_url }}">Download {{ episode.get_media_url_ext|upper }}</a>
         {% endwith %}
         {% endif %}
       </div>
@@ -84,6 +84,13 @@
     <div title="Duration">
       {{ duration|format_duration }}
     </div>
+    {% with file_size=episode.get_file_size %}
+    {% if file_size %}
+    <div title="Size">
+      {{ file_size }}
+    </div>
+    {% endif %}
+    {% endwith %}
     {% if episode.explicit or podcast.explicit %}
     <div class="flex items-center"
          title="May contain adult themes and language. Listener discretion advised.">

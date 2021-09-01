@@ -101,6 +101,15 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "episode"
 
+    def test_get_media_url_ext(self):
+
+        assert (
+            Episode(
+                media_url="https://thegrognardfiles.com/wp-content/uploads/2021/08/Episode-50-Part-1-Fighting-Fantasy-with-Ian-Livingstone-27_08_2021-23.58.mp3"
+            ).get_media_url_ext()
+            == "mp3"
+        )
+
     def test_time_remaining(self):
         episode = Episode(duration="1:00:00")
         episode.current_time = 1200
@@ -116,11 +125,11 @@ class TestEpisodeModel:
         assert episode.get_time_remaining() == 3600
 
     def test_duration_in_seconds_if_empty_or_none(self):
-        assert Episode(duration=None).get_duration_in_seconds() == 0
-        assert Episode(duration="").get_duration_in_seconds() == 0
+        assert Episode(duration=None).get_duration_in_seconds() is None
+        assert Episode(duration="").get_duration_in_seconds() is None
 
     def test_duration_in_seconds_invalid_string(self):
-        assert Episode(duration="oops").get_duration_in_seconds() == 0
+        assert Episode(duration="oops").get_duration_in_seconds() is None
 
     def test_duration_in_seconds_hours_minutes_seconds(self):
         assert Episode(duration="2:30:40").get_duration_in_seconds() == 9040
@@ -135,11 +144,11 @@ class TestEpisodeModel:
         assert Episode(duration="40").get_duration_in_seconds() == 40
 
     def test_get_duration_in_seconds_if_empty(self):
-        assert Episode().get_duration_in_seconds() == 0
-        assert Episode(duration="").get_duration_in_seconds() == 0
+        assert Episode().get_duration_in_seconds() is None
+        assert Episode(duration="").get_duration_in_seconds() is None
 
     def test_duration_in_seconds_if_non_numeric(self):
-        assert Episode(duration="NaN").get_duration_in_seconds() == 0
+        assert Episode(duration="NaN").get_duration_in_seconds() is None
 
     def test_duration_in_seconds_if_seconds_only(self):
         assert Episode(duration="60").get_duration_in_seconds() == 60

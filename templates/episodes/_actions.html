@@ -119,14 +119,12 @@
   </a>
   {% endif %}
 
-  {% with file_size=episode.get_file_size %}
   <a href="{{ episode.media_url }}"
      hx-disable="true"
      class="{{ BUTTON_CSS_CLASS }}">
     {% icon "download" css_class=ICON_CLASS %}
-    Download{% if file_size %} ({{ episode.get_file_size }}){% endif %}
+    Download {{ episode.get_media_url_ext|upper }}
   </a>
-  {% endwith %}
 
   <button class="{{ BUTTON_CSS_CLASS }}"
           @click="show=false">
