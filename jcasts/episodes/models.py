@@ -107,7 +107,7 @@ class Episode(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager = EpisodeManager()
+    objects = EpisodeManager()
 
     class Meta:
         constraints = [
@@ -200,14 +200,22 @@ class Episode(models.Model):
         except ValueError:
             return None
 
+    def get_current_time(self):
+        """Return current_time if annotated in QuerySet `with_current_time` method"""
+        return getattr(self, "current_time", None)
+
+    def get_completed(self):
+        """Return completed if annotated in QuerySet `with_current_time` method"""
+        return getattr(self, "completed", None)
+
     def get_pc_completed(self):
         """Use with the `with_current_time` QuerySet method"""
 
         # if marked complete just assume 100% done
-        if getattr(self, "completed", None):
+        if self.get_completed():
             return 100
 
-        if not (current_time := getattr(self, "current_time", None)):
+        if not (current_time := self.get_current_time()):
             return 0
 
         if not (duration := self.get_duration_in_seconds()):
@@ -216,19 +224,11 @@ class Episode(models.Model):
         return min((current_time / duration) * 100, 100)
 
     def get_time_remaining(self):
-        duration = self.get_duration_in_seconds()
-
-        try:
-            return duration - self.current_time
-        except (AttributeError, TypeError):
-            return duration
+        return (self.get_duration_in_seconds() or 0) - (self.get_current_time() or 0)
 
     def is_completed(self):
         """Use with the `with_current_time` QuerySet method"""
-        try:
-            return self.completed or self.get_pc_completed() >= 100
-        except AttributeError:
-            return False
+        return self.get_completed() is not None or self.get_pc_completed() >= 100
 
     def get_opengraph_data(self, request):
         og_data = {
