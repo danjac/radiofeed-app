@@ -51,7 +51,7 @@
   {% endif %}
   {% endwith %}
 
-  <div class="flex items-center space-x-3 lg:space-x-4">
+  <div class="flex items-center space-x-6">
     <div>
       <a href="{{ podcast.get_detail_url }}">
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 css_class="h-28 w-28" %}
