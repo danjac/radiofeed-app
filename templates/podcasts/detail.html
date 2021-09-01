@@ -5,7 +5,7 @@
 <div class="space-y-3 border-t dark:border-gray-500 pt-3">
 
   {% if podcast.owner %}
-  <div class="font-semibold text-gray-600 dark:text-gray-300 flex-wrap text-sm">
+  <div class="font-semibold flex-wrap text-sm">
     {% if link %}
     <a href="{{ link }}"
        target="_blank"
@@ -15,16 +15,6 @@
     {% else %}
     {{ podcast.owner }}
     {% endif %}
-  </div>
-  {% endif %}
-
-  {% if podcast.funding_url %}
-  <div class="font-semibold flex-wrap text-sm">
-    <a href="{{ podcast.funding_url }}"
-       target="_blank"
-       rel="noopener">
-      {{ podcast.funding_text|default:'Support this podcast' }}
-    </a>
   </div>
   {% endif %}
 
@@ -62,6 +52,16 @@
       {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
     </div>
   </div>
+  {% if podcast.funding_url %}
+  <div class="font-semibold flex-wrap text-sm">
+    <a href="{{ podcast.funding_url }}"
+       target="_blank"
+       rel="noopener">
+      {{ podcast.funding_text|default:'Support this podcast' }}
+    </a>
+  </div>
+  {% endif %}
+
 
   {% include "podcasts/_categories.html" %}
 
