@@ -129,7 +129,10 @@ def parse_rss(content):
         ):
             if element.tag == "channel":
                 try:
-                    return parse_channel(element)
+                    return parse_channel(
+                        element,
+                        namespaces=NAMESPACES | (element.getparent().nsmap or {}),
+                    )
                 finally:
                     element.clear()
 
@@ -139,12 +142,12 @@ def parse_rss(content):
     raise RssParserError("<channel /> not found in RSS feed")
 
 
-def parse_channel(channel):
+def parse_channel(channel, namespaces):
     try:
-        feed = Feed.parse_obj(parse_feed(XPathFinder(channel, namespaces=NAMESPACES)))
+        feed = Feed.parse_obj(parse_feed(XPathFinder(channel, namespaces)))
     except ValidationError as e:
         raise RssParserError from e
-    if not (items := [*parse_items(channel)]):
+    if not (items := [*parse_items(channel, namespaces)]):
         raise RssParserError("no items found in RSS feed")
     return feed, items
 
@@ -170,12 +173,12 @@ def parse_feed(finder):
     }
 
 
-def parse_items(channel):
+def parse_items(channel, namespaces):
 
     for item in channel.iterfind("item"):
 
         try:
-            yield Item.parse_obj(parse_item(XPathFinder(item, namespaces=NAMESPACES)))
+            yield Item.parse_obj(parse_item(XPathFinder(item, namespaces)))
 
         except ValidationError:
             pass
