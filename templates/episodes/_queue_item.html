@@ -24,7 +24,7 @@
             {{ episode.cleaned_title|truncatechars:120 }}
           </a>
         </h2>
-        <div class="space-x-2 flex items-center">
+        <div class="space-x-1 flex items-center">
           {% include "episodes/_actions_toggle.html" %}
           <div class="w-48 sm:w-96 lg:w-full truncate">
             <a href="{{ podcast.get_episodes_url }}"

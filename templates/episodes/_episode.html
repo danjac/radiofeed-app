@@ -32,7 +32,7 @@
           {{ episode.cleaned_title|truncatechars:120 }}
         </a>
       </h2>
-      <div class="space-x-2 flex items-center">
+      <div class="space-x-1 flex items-center">
 
         {% if user.is_authenticated %}
         {% include "episodes/_actions_toggle.html" %}
