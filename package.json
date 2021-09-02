@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "watch-css": "NODE_ENV=production postcss ./assets/css/app.css -o ./assets/bundle.css -w --poll",
+    "watch-css": "NODE_ENV=production postcss ./assets/css/app.css -o ./assets/bundle.css --poll --watch --verbose",
     "watch-js": "esbuild ./assets/js/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/bundle.js",
     "watch": "concurrently npm:watch-css npm:watch-js"
   },
