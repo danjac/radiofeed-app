@@ -9,7 +9,7 @@
           hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML">
-    {% icon "stop" css_class="btn-icon mr-2" %}
+    {% icon "stop" css_class="h-4 w-4 mr-2 h-6 w-6" %}
     Close Player
   </button>
 
@@ -19,7 +19,7 @@
           hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML">
-    {% icon "play" css_class="btn-icon mr-2" %}
+    {% icon "play" css_class="h-4 w-4 mr-2 h-6 w-6" %}
     {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
   </button>
 </div>
@@ -31,7 +31,7 @@
      href="{{ episode.get_absolute_url|login_url }}"
      hx-disable="true"
      title="You must sign up or log in to play this episode">
-    {% icon "play" css_class="btn-icon mr-2" %}
+    {% icon "play" css_class="h-4 w-4 mr-2 h-6 w-6" %}
     Play
   </a>
 

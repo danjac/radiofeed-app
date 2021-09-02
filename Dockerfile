@@ -38,7 +38,6 @@ RUN python -m nltk.downloader wordnet
 
 # frontend requirements
 
-COPY postcss.config.js ./postcss.config.js
 COPY tailwind.config.js ./tailwind.config.js
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json

@@ -7,24 +7,23 @@
 
 <div id="search-results">
   <nav class="mb-3 sm:flex justify-between text-sm">
-    <ul
-        class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight sm:mb-0 space-x-6 mb-3 sm:mb-0">
-      {% with search_qs="?"|add:request.search.qs %}
+    <ul class="flex items-center justify-center sm:justify-start overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight sm:mb-0 space-x-6 mb-3 sm:mb-0">
+      {% with search_qs="?"|add:request.search.qs TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-400" %}
       {% active_link 'podcasts:search_podcasts' as link %}
-      <li class="{% if link.match %} tab--active{% endif %}">
-        <a class="link"
+      <li>
+        <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Search Podcasts"
            href="{{ link.url|add:search_qs }}">Podcasts</a>
       </li>
       {% active_link 'episodes:search_episodes' as link %}
-      <li class="{% if link.match %} tab--active{% endif %}">
-        <a class="link"
+      <li>
+        <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Search Episodes"
            href="{{ link.url|add:search_qs }}">Episodes</a>
       </li>
       {% active_link 'podcasts:search_podcastindex' as link %}
-      <li class="{% if link.match %} tab--active{% endif %}">
-        <a class="link"
+      <li>
+        <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Search iTunes"
            href="{{ link.url|add:search_qs }}">Podcast Index</a>
       </li>

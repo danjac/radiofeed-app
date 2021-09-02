@@ -8,7 +8,7 @@
             title="Stop following this podcast"
             hx-trigger="click delay:200ms"
             hx-post="{% url 'podcasts:unfollow' podcast.id %}">
-      {% icon "eye_slash" css_class="btn-icon mr-2" %}
+      {% icon "eye_slash" css_class="h-4 w-4 mr-2" %}
       Follow
     </button>
     {% else %}
@@ -16,7 +16,7 @@
             title="Follow this podcast"
             hx-trigger="click delay:200ms"
             hx-post="{% url 'podcasts:follow' podcast.id %}">
-      {% icon "eye" css_class="btn-icon mr-2" %}
+      {% icon "eye" css_class="h-4 w-4 mr-2" %}
       Follow
     </button>
     {% endif %}
@@ -27,7 +27,7 @@
        href="{{ podcast.get_absolute_url|login_url }}"
        hx-disable="true"
        title="Log in to follow this podcast">
-      {% icon "eye" css_class="btn-icon mr-2" %}
+      {% icon "eye" css_class="h-4 w-4 mr-2" %}
       Follow
     </a>
   </div>

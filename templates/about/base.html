@@ -9,19 +9,19 @@
   <nav class="mb-3 pb-3 border-b dark:border-gray-500">
     <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight space-x-6 text-sm">
       {% active_link 'about:credits' as link %}
-      <li class="{% if link.exact %}tab--active{% endif %}">
+      <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
         <a class="hover:text-blue-500"
            title="Credits"
            href="{{ link.url }}">Credits</a>
       </li>
       {% active_link 'about:help' as link %}
-      <li class="{% if link.exact %}tab--active{% endif %}">
+      <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
         <a class="hover:text-blue-500"
            title="help"
            href="{{ link.url }}">Help</a>
       </li>
       {% active_link 'about:privacy' as link %}
-      <li class="{% if link.exact %}tab--active{% endif %}">
+      <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
         <a class="hover:text-blue-500"
            title="Privacy"
            href="{{ link.url }}">Privacy</a>

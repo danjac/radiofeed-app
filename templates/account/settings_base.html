@@ -11,48 +11,50 @@
 <div id="settings-content">
   <nav class="mb-3 pb-3 border-b dark:border-gray-500 text-sm">
     <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none leading-tight space-x-6">
+      {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-400" %}
       {% active_link 'users:preferences' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Preferences"
            href="{{ link.url }}">Preferences</a>
       </li>
       {% active_link 'users:export_podcast_feeds' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Export"
            href="{{ link.url }}">Export</a>
       </li>
       {% active_link 'users:stats' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Statistics"
            href="{{ link.url }}">Statistics</a>
       </li>
       {% active_link 'account_email' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Email Addresses"
            href="{{ link.url }}">Email Addresses</a>
       </li>
       {% active_link 'account_change_password' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Change Password"
            href="{{ link.url }}">Change Password</a>
       </li>
       {% active_link 'socialaccount_connections' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Social Logins"
            href="{{ link.url }}">Social Logins</a>
       </li>
       {% active_link 'users:delete_account' as link %}
-      <li class="{% if link.exact %} tab--active{% endif %}">
-        <a class="hover:text-blue-500"
+      <li>
+        <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Delete Account"
            href="{{ link.url }}">Delete Account</a>
       </li>
+      {% endwith %}
     </ul>
   </nav>
   {% endif %}
