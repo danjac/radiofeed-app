@@ -76,8 +76,8 @@ jobs:
       - name: Upload assets
         uses: actions/upload-artifact@v2
         with:
-          name: bundle
-          path: ./assets/bundle/*
+          name: dist
+          path: assets/dist
       - name: Push to Dokku
         uses: dokku/github-action@master
         with:
