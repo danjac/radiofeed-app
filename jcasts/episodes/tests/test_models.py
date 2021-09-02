@@ -17,6 +17,66 @@ from jcasts.podcasts.factories import FollowFactory
 
 
 class TestEpisodeManager:
+    def test_get_next_episode_if_none(self, episode):
+
+        assert Episode.objects.get_next_episode(episode) is None
+
+    def test_get_previous_episode_if_none(self, episode):
+
+        assert Episode.objects.get_previous_episode(episode) is None
+
+    def test_get_next_episode(self, episode):
+
+        next_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_next_episode(episode) == next_episode
+
+    def test_get_next_episode_not_same_podcast(self, episode):
+
+        EpisodeFactory(
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_next_episode(episode) is None
+
+    def test_get_next_episode_before_current(self, episode):
+
+        EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_next_episode(episode) is None
+
+    def test_get_previous_episode(self, episode):
+
+        previous_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_previous_episode(episode) == previous_episode
+
+    def test_get_previous_not_same_podcast(self, episode):
+
+        EpisodeFactory(
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_previous_episode(episode) is None
+
+    def test_get_previous_episode_after_current(self, episode):
+
+        EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + datetime.timedelta(days=2),
+        )
+
+        assert Episode.objects.get_previous_episode(episode) is None
+
     def test_recommended_no_follows(self, db, user):
 
         assert Episode.objects.recommended(user).count() == 0
@@ -313,28 +373,6 @@ class TestEpisodeModel:
         data = episode.get_opengraph_data(req)
         assert episode.title in data["title"]
         assert data["url"] == "http://testserver" + episode.get_absolute_url()
-
-    def test_has_next_previous_episode(self, episode):
-        assert episode.get_next_episode() is None
-        assert episode.get_previous_episode() is None
-
-        next_episode = EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
-        )
-
-        previous_episode = EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date - datetime.timedelta(days=2),
-        )
-
-        EpisodeFactory(
-            podcast=episode.podcast,
-            pub_date=episode.pub_date - datetime.timedelta(days=3),
-        )
-
-        assert episode.get_next_episode() == next_episode
-        assert episode.get_previous_episode() == previous_episode
 
     def test_is_favorited_anonymous(self, anonymous_user, episode):
         assert not episode.is_favorited(anonymous_user)

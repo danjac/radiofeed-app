@@ -7,13 +7,12 @@
 
 {% with podcast=episode.podcast duration=episode.duration_in_seconds %}
 
-{% with prev_episode=episode.get_previous_episode next_episode=episode.get_next_episode %}
-{% if prev_episode or next_episode %}
+{% if previous_episode or next_episode %}
 <nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3 text-sm">
-  {% if prev_episode %}
+  {% if previous_episode %}
   <a class="link"
-     href="{{ prev_episode.get_absolute_url }}"
-     title="{{ prev_episode.cleaned_title }}">
+     href="{{ previous_episode.get_absolute_url }}"
+     title="{{ previous_episode.cleaned_title }}">
     Previous
   </a>
 
@@ -32,7 +31,6 @@
 
 </nav>
 {% endif %}
-{% endwith %}
 
 <div class="space-y-3 pb-3 mb-3">
   <div>

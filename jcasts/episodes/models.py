@@ -76,6 +76,28 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
         )
 
+    def get_next_episode(self, episode):
+
+        return (
+            self.filter(
+                podcast=episode.podcast_id,
+                pub_date__gt=episode.pub_date,
+            )
+            .order_by("pub_date")
+            .first()
+        )
+
+    def get_previous_episode(self, episode):
+
+        return (
+            self.filter(
+                podcast=episode.podcast_id,
+                pub_date__lt=episode.pub_date,
+            )
+            .order_by("-pub_date")
+            .first()
+        )
+
 
 EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
