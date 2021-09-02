@@ -1,4 +1,4 @@
-<div class="absolute bg-white dark:bg-gray-800 w-56 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm"
+<div class="absolute bg-white dark:bg-gray-800 w-52 sm:w-64 border shadow-xl z-20 dark:border-gray-500 text-sm"
      :class="{
         'top-0': vPosition === 'dropdown',
         'bottom-0': vPosition === 'dropup',
@@ -19,7 +19,7 @@
      x-show="show"
      @click.away="close()"
      @keydown.escape.window="close()">
-  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 inline-flex items-center px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CLASS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
+  {% with BUTTON_CSS_CLASS="w-full hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CLASS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
 
   {% if not is_detail %}
 
