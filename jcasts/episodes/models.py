@@ -173,28 +173,6 @@ class Episode(models.Model):
     def get_cover_url(self):
         return self.cover_url or self.podcast.cover_url
 
-    def get_next_episode(self):
-
-        return (
-            self.__class__._default_manager.filter(
-                podcast=self.podcast,
-                pub_date__gt=self.pub_date,
-            )
-            .order_by("pub_date")
-            .first()
-        )
-
-    def get_previous_episode(self):
-
-        return (
-            self.__class__._default_manager.filter(
-                podcast=self.podcast,
-                pub_date__lt=self.pub_date,
-            )
-            .order_by("-pub_date")
-            .first()
-        )
-
     def is_queued(self, user):
         if user.is_anonymous:
             return False
