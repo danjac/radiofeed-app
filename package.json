@@ -3,9 +3,7 @@
   "scripts": {
     "watch-css": "NODE_ENV=production tailwindcss -i ./assets/css/app.css -o ./assets/dist/bundle.css --minify --watch --verbose",
     "watch-js": "esbuild ./assets/js/app.js --watch --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/dist/bundle.js",
-    "watch": "concurrently npm:watch-css npm:watch-js",
-    "build-css": "NODE_ENV=production tailwindcss -i ./assets/css/app.css -o ./assets/dist/bundle.css --minify --verbose",
-    "build-js": "esbuild ./assets/js/app.js --bundle --sourcemap --minify-whitespace --minify-syntax --outfile=./assets/dist/bundle.js"
+    "watch": "concurrently npm:watch-css npm:watch-js"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.3.3",

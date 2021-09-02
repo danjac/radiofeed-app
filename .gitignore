@@ -31,7 +31,6 @@ npm-debug.log*
 *.pot
 
 # Django media/static dirs
-assets/dist/
 media/
 staticfiles
 
