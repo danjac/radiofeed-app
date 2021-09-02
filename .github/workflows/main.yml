@@ -68,7 +68,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+      - name: Build assets
+        run: |
+          npm install
+          npm run build-js
+          npm run build-css
+      - name: Upload assets
+        uses: actions/upload-artifact@v2
+        with:
+          name: bundle
+          path: assets/bundle
       - name: Push to Dokku
         uses: dokku/github-action@master
         with:
