@@ -121,10 +121,6 @@ input[type='search']::-webkit-search-results-decoration {
   @apply bg-gradient-to-r from-blue-900 to-blue-600 dark:from-blue-800;
 }
 
-.player--indicator {
-  @apply bg-gray-800;
-}
-
 .player--active .player--title:hover {
   @apply text-blue-500;
 }
@@ -180,11 +176,6 @@ input[type='range']::-moz-range-thumb {
   @apply px-2 py-1 rounded font-semibold text-sm;
 }
 
-.btn[disabled],
-form.submitting .btn {
-  @apply cursor-not-allowed font-normal opacity-75;
-}
-
 .btn:focus {
   @apply outline-none;
 }
@@ -193,22 +184,12 @@ form.submitting .btn {
   @apply text-white bg-blue-800 border border-blue-800 dark:border-white;
 }
 
-.btn-default[disabled],
-form.submitting .btn-default {
-  @apply text-white bg-blue-600;
-}
-
 .btn-default:hover {
   @apply hover:bg-blue-600;
 }
 
 .btn-secondary {
   @apply border border-blue-800 text-blue-800 dark:text-white dark:border-white;
-}
-
-.btn-secondary[disabled],
-form.submitting .btn-secondary {
-  @apply border-blue-600 text-blue-600 bg-gray-100 dark:text-blue-400 dark:border-blue-300;
 }
 
 .btn-secondary:hover {
