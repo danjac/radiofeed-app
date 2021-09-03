@@ -58,7 +58,6 @@
           Discover
         </a>
       </li>
-      {% if user.is_authenticated %}
       <li>
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
@@ -94,7 +93,19 @@
           History
         </a>
       </li>
+      <li>
+        {% re_active_link 'about:credits' '/about/*' as link %}
+        <a href="{{ link.url }}"
+           accesskey="a"
+           title="About"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          About
+        </a>
+      </li>
 
+      {% if user.is_authenticated %}
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
@@ -106,20 +117,7 @@
           Settings
         </a>
       </li>
-      <li>
-        {% re_active_link 'about:help' '/about/*' as link %}
-        <a href="{{ link.url }}"
-           accesskey="a"
-           title="About"
-           @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
-          About
-        </a>
-      </li>
 
-      {% endif %}
-      {% if user.is_authenticated %}
       <li>
         <form class="inline-block"
               hx-disable="true"
@@ -134,18 +132,6 @@
             Logout
           </button>
         </form>
-      </li>
-      {% else %}
-      <li>
-        {% re_active_link 'about:credits' '/about/*' as link %}
-        <a href="{{ link.url }}"
-           accesskey="a"
-           title="About"
-           @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
-          About
-        </a>
       </li>
       {% endif %}
       {% endwith %}
