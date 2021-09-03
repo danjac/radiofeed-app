@@ -1,5 +1,6 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
+{% spaceless %}
 <img class="object-cover border dark:border-gray-500 bg-transparent hover:opacity-75 {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}"
      alt="{{ alt }}"
      title="{{ alt }}"
@@ -7,6 +8,7 @@
      width="{{ size }}"
      height="{{ size }}"
      src="{{ placeholder }}"
+     {% with cover_url=cover_url|safe_url %}
      {% if cover_url %}
      x-data="{
         isLoaded: false,
@@ -19,4 +21,5 @@
      @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
-     {% endif %}>
+     {% endif %}{% endwith %}>
+{% endspaceless %}

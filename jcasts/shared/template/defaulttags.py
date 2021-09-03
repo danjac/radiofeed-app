@@ -149,6 +149,15 @@ def normalize_url(url):
 
 
 @register.filter
+def safe_url(url):
+    if not url or url.startswith("https://"):
+        return url
+    if url.startswith("http://"):
+        return "https://" + url[7:]
+    return None
+
+
+@register.filter
 @stringfilter
 def colorpicker(value, colors):
     """

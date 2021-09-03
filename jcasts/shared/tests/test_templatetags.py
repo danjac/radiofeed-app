@@ -11,6 +11,7 @@ from jcasts.shared.template.defaulttags import (
     markup,
     normalize_url,
     re_active_link,
+    safe_url,
     share_buttons,
     signup_url,
 )
@@ -239,6 +240,20 @@ class TestNormalizeUrl:
 
     def test_already_complete(self):
         assert normalize_url(self.expected_url) == self.expected_url
+
+
+class TestSafeUrl:
+    def test_none(self):
+        assert safe_url(None) is None
+
+    def test_https(self):
+        assert safe_url("https://example.com") == "https://example.com"
+
+    def test_http(self):
+        assert safe_url("http://example.com") == "https://example.com"
+
+    def test_ftp(self):
+        assert safe_url("ftp://example.com") is None
 
 
 class TestPaginationUrl:
