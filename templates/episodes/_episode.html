@@ -38,13 +38,13 @@
         {% include "episodes/_actions_toggle.html" %}
         {% endif %}
 
-        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center w-48 sm:w-96 lg:w-full truncate">
+        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center">
           {% if is_podcast_detail %}
           {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
           {% else %}
           <a href="{{ podcast.get_episodes_url }}"
-             class="text-gray-600 dark:text-gray-300 text-xs link">
-            {{ podcast.cleaned_title|truncatechars:100 }}
+             class="text-gray-600 dark:text-gray-300 text-xs link w-56 sm:w-96 lg:w-full truncate inline-block">
+            {{ podcast.cleaned_title|truncatechars:120 }}
           </a>
           {% endif %}
         </div>
