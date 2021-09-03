@@ -20,7 +20,7 @@
           hx-target="#player"
           hx-swap="innerHTML">
     {% icon "play" css_class="h-4 w-4 mr-2 h-6 w-6" %}
-    {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %} Episode
+    {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play Episode{% endif %}
   </button>
 </div>
 {% else %}
