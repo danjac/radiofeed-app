@@ -5,7 +5,7 @@ from jcasts.shared import views
 
 about_urls = [
     path(
-        "",
+        "credits/",
         views.static_page,
         name="credits",
         kwargs={
@@ -19,11 +19,11 @@ about_urls = [
         kwargs={"template_name": "about/help.html"},
     ),
     path(
-        "privacy/",
+        "terms/",
         views.static_page,
-        name="privacy",
+        name="terms",
         kwargs={
-            "template_name": "about/privacy.html",
+            "template_name": "about/terms.html",
             "extra_context": {"privacy_details": settings.PRIVACY_DETAILS},
         },
     ),

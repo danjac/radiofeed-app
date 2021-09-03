@@ -20,8 +20,8 @@ class TestAboutPages:
     def test_help(self, db, client):
         assert_ok(client.get(reverse("about:help")))
 
-    def test_privacy(self, db, client):
-        assert_ok(client.get(reverse("about:privacy")))
+    def test_terms(self, db, client):
+        assert_ok(client.get(reverse("about:terms")))
 
 
 class TestErrorPages:

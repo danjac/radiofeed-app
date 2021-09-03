@@ -3,37 +3,66 @@
 {% block subtitle %} About | Credits {% endblock %}
 
 {% block about_content %}
-<div class="max-w-prose space-y-3">
-  <p class="text-sm">
-    <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your
-    favorite podcasts.
-  </p>
-  <p class="text-sm">
-    This is an open-source project covered by the MIT license.
+<div class="max-w-prose space-y-3 text-sm">
+
+  <h2 class="font-semibold">Technology</h2>
+
+  <p><strong>{{ request.site.name }}</strong> is an
+    <a class="underline link"
+       target="_blank"
+       rel="noopener"
+       href="https://github.com/danjac/jcasts/">open source project</a>
+    under the <a href=""
+       target="_blank"
+       rel="noopener"
+       href="https://mit-license.org/">MIT license</a>.
   </p>
 
-  <h2 class="font-semibold text-sm">Additional Credits:</h2>
+  <p class="text-sm">
+    Runs on <a href="https://www.djangoproject.com/"
+       class="link underline"
+       rel="noopener"
+       target="_blank">Django</a> with the help of <a href="https://htmx.org"
+       class="link underline"
+       rel="noopener"
+       target="_blank">
+      HTMX</a>, <a href="https://alpinejs.dev/"
+       class="link underline"
+       rel="noopener"
+       target="_blank">AlpineJS</a>
+    and <a href="https://tailwindcss.com/"
+       class="link underline"
+       rel="noopener"
+       target="_blank">Tailwind</a>.
+  </p>
+
+  <h2 class="font-semibold">Additional Credits</h2>
+
   <ul class="text-sm space-y-3">
 
     <li>
       Podcasts sourced from <a href="https://podcastindex.org/"
          rel="noopener"
          target="_blank"
-         class="underline hover:text-blue-500">Podcast Index</a>
+         class="underline link">Podcast Index</a>
     </li>
 
 
     <li>
-      Share icons from <a target="_blank"
+      SVG icons from <a target="_blank"
          href="https://fontawesome.com"
-         class="underline hover:text-blue-500"
+         class="underline link"
          rel="noopener">Font Awesome</a>
+      and <a target="_blank"
+         href="https://heroicons.com/"
+         class="underline link"
+         rel="noopener">Heroicons</a>
     </li>
 
     <li>
       Loader icon from <a target="_blank"
          href="https://github.com/SamHerbert/SVG-Loaders"
-         class="underline hover:text-blue-500"
+         class="underline link"
          rel="noopener">Sam Herbert</a>
     </li>
 
@@ -41,11 +70,11 @@
     <li>
       <a target="_blank"
          rel="noopener"
-         class="underline hover:text-blue-500"
+         class="underline link"
          href="https://icons8.com/icons/set/browse-podcasts">Browse Podcasts icon</a> by
       <a target="_blank"
          rel="noopener"
-         class="underline hover:text-blue-500"
+         class="underline link"
          href="https://icons8.com">Icons8</a>
 
     </li>
@@ -57,30 +86,24 @@
     nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
   </p>
 
-  <div class="sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0 text-sm">
+  <div class="sm:flex items-center sm:space-x-3 space-y-3 sm:space-y-0">
 
     {% get_contact_details as contact_details %}
-    <div>
-      <a class="underline hover:text-blue-500"
-         target="_blank"
-         rel="noopener"
-         href="https://github.com/danjac/jcasts/">Source code</a>
-    </div>
     {% if contact_details.email %}
     <div>
-      <a class="underline hover:text-blue-500"
+      <a class="underline link"
          href="mailto:{{ contact_details.email }}">Feedback</a>
     </div>
     {% endif %}
 
     {% if contact_details.twitter %}
-    <div><a class="underline hover:text-blue-500"
+    <div><a class="underline link"
          target="_blank"
          rel="noopener"
          href="https://twitter.com/{{ contact_details.twitter }}">Twitter</a></div>
     {% endif %}
 
-    <div>&copy; {% now 'Y' %} <a class="underline hover:text-blue-500"
+    <div>&copy; {% now 'Y' %} <a class="underline link"
          href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
 
 

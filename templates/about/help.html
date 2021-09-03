@@ -4,7 +4,10 @@
 
 {% block about_content %}
 <div class="space-y-3 max-w-prose">
-
+  <p class="text-sm">
+    <strong>{{ request.site.name }}</strong> is a web application for discovering, following and listening to your
+    favorite podcasts.
+  </p>
   <h2 class="font-semibold mb-3 text-sm">Player Shortcuts</h2>
 
   <p class="mb-3 text-sm">
@@ -46,6 +49,15 @@
         <td class="border dark:border-gray-500 p-1">Reset Default Playback Rate</td>
         <td class="border dark:border-gray-500 p-1">0</td>
       </tr>
+      <tr>
+        <td class="border dark:border-gray-500 p-1">Close Player (if running)</td>
+        <td class="border dark:border-gray-500 p-1">alt+shift+x</td>
+      </tr>
+      <tr>
+        <td class="border dark:border-gray-500 p-1">Reload Player (if running)</td>
+        <td class="border dark:border-gray-500 p-1">alt+shift+r</td>
+      </tr>
+
     </tbody>
   </table>
 
@@ -110,14 +122,6 @@
       <tr>
         <td class="border dark:border-gray-500 p-1">Join</td>
         <td class="border dark:border-gray-500 p-1">j</td>
-      </tr>
-      <tr>
-        <td class="border dark:border-gray-500 p-1">Close Player (if running)</td>
-        <td class="border dark:border-gray-500 p-1">x</td>
-      </tr>
-      <tr>
-        <td class="border dark:border-gray-500 p-1">Reload Player (if running)</td>
-        <td class="border dark:border-gray-500 p-1">r</td>
       </tr>
     </tbody>
   </table>
