@@ -7,9 +7,9 @@
 {% block content %}
 <h1 class="font-semibold mb-3 lg:text-lg">{% trans "Social Network Login Failure" %}</h1>
 
-<p class="text-sm mb-3">{% trans "An error occurred while attempting to login via your social network account." %}</p>
+<p class="mb-3">{% trans "An error occurred while attempting to login via your social network account." %}</p>
 
-<pre class="text-mono text-sm">
+<pre class="text-mono">
 Code: {{ auth_error.code }}, Error: {{ auth_error.exception }}
 </pre>
 

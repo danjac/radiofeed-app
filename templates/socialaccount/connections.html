@@ -5,12 +5,12 @@
 
 {% block settings_content %}
 
-<div class="w-full md:w-3/4 lg:w-1/2 text-sm space-y-3">
+<div class="w-full md:w-3/4 lg:w-1/2 space-y-3">
 
   {% if form.accounts %}
   <p>{% blocktranslate %}You can sign in to your account using any of the following third party accounts:{% endblocktranslate %}</p>
   <form method="post"
-        class="mb-3 pb-3 border-b dark:border-gray-500 space-y-3 text-sm"
+        class="mb-3 pb-3 border-b dark:border-gray-500 space-y-3"
         action="{% url 'socialaccount_connections' %}">
     {% csrf_token %}
 

@@ -22,7 +22,7 @@
          class="link font-bold">{{ category.name }}</a>
     </h2>
     {% empty %}
-    <p class="text-center sm:text-left text-sm">
+    <p class="text-center sm:text-left">
       No categories have been found matching <strong>{{ request.search.value }}.</strong>
     </p>
     {% endfor %}
@@ -37,7 +37,7 @@
          class="link font-bold">{{ category.name }}</a>
     </h2>
     {% if children %}
-    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start text-sm">
+    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start">
       {% for child in children %}
       <a class="link inline-block text-gray-600 dark:text-gray-300"
          title="{{ child.name }}"

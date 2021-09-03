@@ -7,7 +7,7 @@
   </div>
 
   <div class="flex flex-col place-content-between h-14">
-    <h2 class="w-64 sm:w-96 lg:w-full truncate text-sm">
+    <h2 class="w-64 sm:w-96 lg:w-full truncate">
       <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
          title="{{ podcast.cleaned_title }}"
          class="link">

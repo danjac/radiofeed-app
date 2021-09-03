@@ -17,7 +17,7 @@
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
 
 
-    <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 text-sm">
+    <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
       {% if request.search %}
       <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
          title="Search Episodes"
@@ -40,7 +40,7 @@
   </div>
 
 
-  <p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500"
+  <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500"
      x-show="count === 0">
     {% if request.search %}
     No results found for <span class="font-bold">{{ request.search }}</span>.

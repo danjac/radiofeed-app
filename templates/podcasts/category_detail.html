@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div class="mb-3 flex justify-center sm:justify-start items-center space-x-1 text-sm">
+<div class="mb-3 flex justify-center sm:justify-start items-center space-x-1">
   <div>
     <a href="{% url 'podcasts:categories' %}"
        title="Discover"
@@ -26,7 +26,7 @@
 {% with search_placeholder="Search: "|add:category.name %}
 {% if request.search %}
 <h1 class="mb-3 font-bold flex items-center justify-center sm:justify-start lg:text-lg">{{ category.name }}</h1>
-<div class="mb-3 sm:flex items-center justify-center sm:justify-between text-sm">
+<div class="mb-3 sm:flex items-center justify-center sm:justify-between">
 
   <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
     <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
@@ -49,7 +49,7 @@
 </div>
 {% cache 3600 category category.id %}
 {% if children %}
-<nav class="mb-3 flex flex-wrap justify-center sm:justify-start space-x-2 lg:space-x-3 text-sm">
+<nav class="mb-3 flex flex-wrap justify-center sm:justify-start space-x-2 lg:space-x-3">
   {% for child in children %}
   <a href="{{ child.get_absolute_url }}"
      title="{{ child.name }}"

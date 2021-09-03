@@ -102,7 +102,7 @@
 
             </div>
 
-            <div class="hidden sm:block w-72 lg:w-full text-center truncate text-sm">
+            <div class="hidden sm:block w-72 lg:w-full text-center truncate">
               <span x-text="errMsg ? errMsg.substring(0, 120) : ''"
                     x-show="errMsg"></span>
               <a class="player--title"
@@ -148,7 +148,7 @@
               <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive"
                       @click="decrementPlaybackRate"
                       title="Decrease Playback Rate">-</button>
-              <div class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive text-sm"
+              <div class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive"
                    title="Playback Rate">
                 x<span x-text="playbackRate.toFixed(1)"></span>
               </div>
@@ -178,7 +178,7 @@
                    @change="skip"
                    min="0"
                    class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
-            <div class="w-20 mr-2 text-right tracking-tighter text-sm player--counter">
+            <div class="w-20 mr-2 text-right tracking-tighter player--counter">
               -<span x-text="counter"></span>
             </div>
           </div>

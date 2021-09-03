@@ -2,7 +2,7 @@
 {% get_providers as socialaccount_providers %}
 {% if socialaccount_providers %}
 <div
-     class="text-sm sm:space-x-3 sm:flex space-y-3 sm:space-y-0 items-center mt-3 pt-3 border-t dark:border-gray-500 {{ css_class|default:'' }}">
+     class="sm:space-x-3 sm:flex space-y-3 sm:space-y-0 items-center mt-3 pt-3 border-t dark:border-gray-500 {{ css_class|default:'' }}">
   <span class="font-semibold">Login or Sign up with </span>
   {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>

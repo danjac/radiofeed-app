@@ -10,7 +10,7 @@
   <div class="space-y-3">
     <template x-for="(message, index) in messages"
               :key="index">
-      <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl text-sm"
+      <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl"
            :class="message.tags"
            @click="message.show=false"
            x-show="message.show"

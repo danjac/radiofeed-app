@@ -6,7 +6,7 @@
 {% for feed in feeds %}
 {% include "podcasts/_podcastindex_feed.html" %}
 {% empty %}
-<p class="text-center sm:text-left text-sm pt-3 border-t dark:border-gray-500">
+<p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
   {% if error %}
   Unable to connect to the Podcast Index API at the moment.
   {% elif request.search %}

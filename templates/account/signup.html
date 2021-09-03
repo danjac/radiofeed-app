@@ -10,14 +10,14 @@
   Sign Up
 </h1>
 
-<p class="mb-3 text-sm">{% blocktranslate %}Already have an account? Then please
+<p class="mb-3">{% blocktranslate %}Already have an account? Then please
   <a class="underline link"
      href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
 </p>
 
 <form method="post"
       action="{{ request.path }}"
-      class="text-sm space-y-3"
+      class="space-y-3"
       hx-disable="true"
       novalidate>
   {% csrf_token %}
@@ -37,7 +37,7 @@
 
 {% include "account/_social_logins.html" %}
 
-<p class="mt-3 text-sm">
+<p class="mt-3">
   Please review our <a class="underline link"
      href="{% url 'about:terms' %}">Privacy Policy</a> before you join.
 </p>

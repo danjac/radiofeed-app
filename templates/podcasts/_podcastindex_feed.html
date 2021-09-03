@@ -8,7 +8,7 @@
     {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
   </div>
   <div class="flex flex-col place-content-between h-14">
-    <h2 class="w-64 sm:w-96 lg:w-full truncate text-sm font-semibold"
+    <h2 class="w-64 sm:w-96 lg:w-full truncate font-semibold"
         title="{{ feed.title }}">
       {{ feed.title|truncatechars:120 }}
     </h2>

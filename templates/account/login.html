@@ -7,14 +7,14 @@
   Sign In
 </h1>
 
-<p class="mb-3 text-sm">{% blocktranslate %}If you have not created an account yet, then please
+<p class="mb-3">{% blocktranslate %}If you have not created an account yet, then please
   <a class="underline hover:text-blue-500"
      href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}
 </p>
 
 <form method="post"
       action="{{ request.path }}"
-      class="text-sm space-y-3"
+      class="space-y-3"
       hx-disable="true"
       novalidate>
   {% csrf_token %}

@@ -8,7 +8,7 @@
 {% with podcast=episode.podcast duration=episode.duration_in_seconds %}
 
 {% if previous_episode or next_episode %}
-<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3 text-sm">
+<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3">
   {% if previous_episode %}
   <a class="link"
      href="{{ previous_episode.get_absolute_url }}"
@@ -36,14 +36,14 @@
   <div>
     <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
-       class="link text-sm">
+       class="link">
       {{ podcast.cleaned_title }}
     </a>
   </div>
 
   {% with metadata=episode.get_episode_metadata %}
   {% if metadata %}
-  <div class="font-semibold text-gray-800 dark:text-gray-300 text-sm">
+  <div class="font-semibold text-gray-800 dark:text-gray-300">
     {{ metadata }}
   </div>
   {% endif %}
@@ -55,7 +55,7 @@
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 %}
       </a>
     </div>
-    <div class="flex flex-col place-content-between h-24 text-sm">
+    <div class="flex flex-col place-content-between h-24">
 
       {% include "episodes/_play_toggle.html" %}
 
@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3 text-sm">
+  <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3">
     <div title="Date Published">
       {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
     </div>
