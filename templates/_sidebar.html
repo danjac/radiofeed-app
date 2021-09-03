@@ -105,6 +105,7 @@
         </a>
       </li>
 
+      {% if user.is_authenticated %}
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
@@ -117,7 +118,7 @@
         </a>
       </li>
 
-      {% if user.is_authenticated %}
+
       <li>
         <form class="inline-block"
               hx-disable="true"
