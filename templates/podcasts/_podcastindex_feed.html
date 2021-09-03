@@ -3,7 +3,7 @@
 {% include "podcasts/_podcast.html" %}
 {% else %}
 {% with cleaned_title=result.get_cleaned_title %}
-<div class="py-2 flex items-center space-x-2 border-t dark:border-gray-500">
+<div class="py-3 flex items-center space-x-3 border-t dark:border-gray-500">
   <div>
     {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
   </div>
