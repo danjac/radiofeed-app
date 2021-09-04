@@ -22,7 +22,7 @@
     {% with episode=item.episode %}
     <div data-draggable="true"
          data-id={{ item.id }}>
-      {% include "episodes/_queue_item.html" %}
+      {% include "episodes/_queue_item.html" with hx_remove="remove-queue-item" %}
     </div>
 
     {% endwith %}

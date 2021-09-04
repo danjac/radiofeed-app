@@ -1,5 +1,4 @@
 {% extends "episodes/base.html" %}
-{% load player %}
 
 {% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
@@ -51,14 +50,16 @@
   {% endwith %}
 
   <div class="flex items-center space-x-3 sm:space-x-6">
+
     <div>
       <a href="{{ podcast.get_detail_url }}">
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=28 %}
       </a>
     </div>
-    <div class="flex flex-col place-content-between h-24">
 
-      {% play_toggle episode is_detail=True %}
+    <div class="space-y-4">
+
+      {% include "episodes/_play_toggle.html" %}
 
       {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
 

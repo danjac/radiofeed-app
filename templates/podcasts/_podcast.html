@@ -5,7 +5,7 @@
     <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
        class="link"
        title="{{ podcast.cleaned_title }}">
-      {{ podcast.cleaned_title|truncatechars:120 }}
+      {{ podcast.cleaned_title }}
     </a>
   </h2>
 
@@ -13,12 +13,12 @@
 
     <div>
       <a href="{{ podcast_url }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=16 %}
+        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
       </a>
     </div>
 
 
-    <div class="space-y-5">
+    <div class="space-y-4">
 
       <div class="flex items-center">
         <a href="{{ podcast.get_episodes_url }}"

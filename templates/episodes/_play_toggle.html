@@ -1,34 +1,30 @@
-{% with ICON_CSS=is_detail|yesno:"mr-2 h-4 w-4,h-8 w-8" %}
+{% with ICON_CSS="mr-2 h-4 w-4" %}
 {% if user.is_authenticated %}
 <div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
      x-cloak
      @close-player.window="isPlaying=false"
      @play-episode.window="isPlaying=$event.detail.value==={{ episode.id }}">
-  <button class="inline-flex items-center{% if is_detail %} btn btn-secondary{% endif %}"
+  <button class="inline-flex items-center btn btn-secondary"
           x-show="isPlaying"
           hx-post="{% url 'episodes:close_player' %}"
           hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML">
     {% icon "stop" css_class=ICON_CSS %}
-    {% if is_detail %}
     Close Player
-    {% endif %}
   </button>
 
-  <button class="inline-flex items-center{% if is_detail %} btn btn-default{% endif %}"
+  <button class="inline-flex items-center btn btn-default"
           x-show="!isPlaying"
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-push-url="false"
           hx-target="#player"
           hx-swap="innerHTML">
     {% icon "play" css_class=ICON_CSS %}
-    {% if is_detail %}
     {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
-    {% endif %}
   </button>
 </div>
-{% elif is_detail %}
+{% else %}
 <div>
 
   <a class="btn btn-default inline-flex items-center justify-center"
