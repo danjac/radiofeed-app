@@ -8,6 +8,13 @@
      x-transition:leave-end="transform opacity-0"
      @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
      {% endif %}>
+  <h2 class="flex flex-wrap mb-3">
+    <a href="{{ episode_url }}"
+       class="link"
+       title="{{ episode.cleaned_title }}">
+      {{ episode.cleaned_title|truncatechars:120 }}
+    </a>
+  </h2>
 
   <div class="flex items-center w-full space-x-3">
 
@@ -24,32 +31,30 @@
       {% endif %}
     </div>
 
-    <div class="flex flex-col place-content-between h-14">
-      <h2 class="w-64 sm:w-96 lg:w-full truncate">
-        <a href="{{ episode_url }}"
-           class="link"
-           title="{{ episode.cleaned_title }}">
-          {{ episode.cleaned_title|truncatechars:120 }}
+    <div class="space-y-3">
+
+      <div>
+        <a href="{{ podcast.get_episodes_url }}"
+           class="text-gray-600 dark:text-gray-300 text-xs link w-56 sm:w-96 lg:w-full truncate inline-block">
+          {{ podcast.cleaned_title|truncatechars:120 }}
         </a>
-      </h2>
-      <div class="space-x-1 flex items-center">
+
+      </div>
+
+      <div class="flex items-center space-x-2">
 
         {% if user.is_authenticated %}
-        {% include "episodes/_actions_toggle.html" %}
+        <div>
+          {% include "episodes/_actions_toggle.html" %}
+        </div>
         {% endif %}
 
-        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center">
-          {% if is_podcast_detail %}
+        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
           {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
-          {% else %}
-          <a href="{{ podcast.get_episodes_url }}"
-             class="text-gray-600 dark:text-gray-300 text-xs link w-56 sm:w-96 lg:w-full truncate inline-block">
-            {{ podcast.cleaned_title|truncatechars:120 }}
-          </a>
-          {% endif %}
         </div>
 
       </div>
+
     </div>
   </div>
 </div>

@@ -1,12 +1,23 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="py-2 border-t dark:border-gray-500 episode"
+<div class="py-3 border-t dark:border-gray-500 episode"
+     {% if hx_remove %}
      x-data="{show: true}"
      x-show="show"
      x-transition:leave="transition ease-out duration-500"
      x-transition:leave-start="transform opacity-100"
      x-transition:leave-end="transform opacity-0"
-     @remove-queue-item.window="if ($event.detail.value === {{ episode.id }}) show=false">
-  <div class="flex justify-between items-center">
+     @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
+     {% endif %}>
+
+  <h2 class="flex flex-wrap mb-3">
+    <a href="{{ episode_url }}"
+       class="link"
+       title="{{ episode.cleaned_title }}">
+      {{ episode.cleaned_title|truncatechars:120 }}
+    </a>
+  </h2>
+
+  <div class="flex items-center w-full justify-between">
 
     <div class="flex items-center w-full space-x-3">
 
@@ -16,31 +27,38 @@
         </a>
       </div>
 
-      <div class="flex flex-col place-content-between h-14">
-        <h2 class="w-60 sm:w-96 lg:w-full truncate">
-          <a href="{{ episode_url }}"
-             class="link"
-             title="{{ episode.cleaned_title }}">
-            {{ episode.cleaned_title|truncatechars:120 }}
+      <div class="space-y-3">
+
+        <div>
+          <a href="{{ podcast.get_episodes_url }}"
+             class="text-gray-600 dark:text-gray-300 text-xs link w-56 sm:w-96 lg:w-full truncate inline-block">
+            {{ podcast.cleaned_title|truncatechars:120 }}
           </a>
-        </h2>
-        <div class="space-x-1 flex items-center">
-          {% include "episodes/_actions_toggle.html" %}
-          <div class="w-56 sm:w-96 lg:w-full truncate">
-            <a href="{{ podcast.get_episodes_url }}"
-               class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
-              {{ podcast.cleaned_title|truncatechars:100 }}
-            </a>
-          </div>
+
         </div>
+
+        <div class="flex items-center space-x-2">
+
+          <div>
+            {% include "episodes/_actions_toggle.html" %}
+          </div>
+
+          <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
+            {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
+          </div>
+
+        </div>
+
       </div>
     </div>
     <div>
       <button class="inline-flex items-center handle"
               title="Move">
-        {% icon "view_list" css_class="h-4 w-4 h-6 w-6" %}
+        {% icon "view_list" css_class="h-6 w-6" %}
       </button>
     </div>
+
+
   </div>
 </div>
 {% endwith %}
