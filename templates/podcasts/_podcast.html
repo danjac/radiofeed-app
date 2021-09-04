@@ -1,7 +1,7 @@
 {% with podcast_url=podcast.get_absolute_url %}
 
 <div class="py-3 border-t dark:border-gray-500">
-  <h2 class="flex flex-wrap font-semibold break-words mb-3 lg:hidden">
+  <h2 class="flex flex-wrap font-semibold break-words mb-3">
     <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
        class="link"
        title="{{ podcast.cleaned_title }}">
@@ -17,31 +17,21 @@
       </a>
     </div>
 
-    <div>
 
-      <h2 class="flex flex-wrap font-semibold break-words hidden lg:block mb-6">
-        <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
-           class="link"
-           title="{{ podcast.cleaned_title }}">
-          {{ podcast.cleaned_title|truncatechars:120 }}
+    <div class="space-y-5">
+
+      <div class="flex items-center">
+        <a href="{{ podcast.get_episodes_url }}"
+           title="Last Published"
+           class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
+          {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
         </a>
-      </h2>
-
-      <div class="space-y-5 lg:flex items-center lg:space-x-3 lg:space-y-0">
-
-        <div class="flex items-center">
-          <a href="{{ podcast.get_episodes_url }}"
-             title="Last Published"
-             class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
-            {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
-          </a>
-        </div>
-
-        <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center">
-          {{ podcast.pub_date|timesince }} ago
-        </div>
-
       </div>
+
+      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center">
+        {{ podcast.pub_date|timesince }} ago
+      </div>
+
     </div>
   </div>
 </div>
