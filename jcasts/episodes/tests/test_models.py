@@ -187,7 +187,8 @@ class TestEpisodeModel:
 
     def test_time_remaining_current_time_not_set(self):
         episode = Episode(duration="1:00:00")
-        assert episode.time_remaining == 3600
+        with pytest.raises(AssertionError):
+            episode.time_remaining
 
     def test_duration_in_seconds_hours_minutes_seconds(self):
         assert Episode(duration="2:30:40").duration_in_seconds == 9040
@@ -217,7 +218,8 @@ class TestEpisodeModel:
         assert Episode(duration="2:30:30").duration_in_seconds == 9030
 
     def test_is_completed_if_not_set(self, episode):
-        assert not (episode.is_completed)
+        with pytest.raises(AssertionError):
+            episode.is_completed
 
     def test_is_completed_if_marked_complete(self, user, episode):
         AudioLogFactory(
@@ -265,7 +267,8 @@ class TestEpisodeModel:
             updated=timezone.now(),
             episode=episode,
         )
-        assert Episode.objects.first().pc_complete == 0
+        with pytest.raises(AssertionError):
+            Episode.objects.first().pc_complete
 
     def test_pc_complete(self, user, episode):
         AudioLogFactory(

@@ -183,13 +183,13 @@ class Episode(models.Model):
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
-    def get_current_time(self):
-        """Return current_time if annotated in QuerySet `with_current_time` method"""
-        return getattr(self, "current_time", None) or 0
+    @cached_property
+    def current_time(self):
+        raise AssertionError("use with QuerySet method 'with_current_time'")
 
-    def get_completed(self):
-        """Return completed if annotated in QuerySet `with_current_time` method"""
-        return getattr(self, "completed", None)
+    @cached_property
+    def completed(self):
+        raise AssertionError("use with QuerySet method 'with_current_time'")
 
     @cached_property
     def duration_in_seconds(self):
@@ -214,20 +214,18 @@ class Episode(models.Model):
         """Use with the `with_current_time` QuerySet method"""
 
         # if marked complete just assume 100% done
-        if self.get_completed():
+        if self.completed:
             return 100
 
         try:
-            return min(
-                round((self.get_current_time() / self.duration_in_seconds) * 100), 100
-            )
-        except ZeroDivisionError:
+            return min(round((self.current_time / self.duration_in_seconds) * 100), 100)
+        except (TypeError, ZeroDivisionError):
             return 0
 
     @cached_property
     def time_remaining(self):
         return (
-            self.duration_in_seconds - self.get_current_time()
+            self.duration_in_seconds - (self.current_time or 0)
             if self.duration_in_seconds
             else 0
         )
