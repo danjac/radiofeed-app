@@ -9,7 +9,8 @@
      x-transition:leave-end="transform opacity-0"
      @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
      {% endif %}>
-  <h2 class="flex flex-wrap mb-3">
+
+  <h2 class="flex flex-wrap font-semibold break-words mb-3">
     <a href="{{ episode_url }}"
        class="link"
        title="{{ episode.cleaned_title }}">
@@ -32,15 +33,15 @@
       {% endif %}
     </div>
 
-    <div class="{{ user.is_authenticated|yesno:"space-y-1,space-y-3" }}">
+    <div>
 
-      <div>
+      <h3 class="font-semibold break-words mb-3 w-56 sm:w-96 lg:w-full truncate">
         <a href="{{ podcast.get_episodes_url }}"
-           class="text-gray-600 dark:text-gray-300 text-xs link w-56 sm:w-96 lg:w-full truncate inline-block">
+           class="link text-xs"
+           title="{{ podcast.cleaned_title }}">
           {{ podcast.cleaned_title|truncatechars:120 }}
         </a>
-
-      </div>
+      </h3>
 
       <div class="flex items-center space-x-2">
 
