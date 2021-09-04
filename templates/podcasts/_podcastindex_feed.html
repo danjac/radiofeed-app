@@ -1,22 +1,24 @@
 {% with podcast=feed.podcast %}
-{% if podcast and podcast.pub_date %}
-{% include "podcasts/_podcast.html" %}
-{% else %}
-{% with cleaned_title=result.get_cleaned_title %}
 <div class="py-3 flex items-center space-x-3 border-t dark:border-gray-500">
   <div>
-    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=16 %}
   </div>
-  <div class="flex flex-col place-content-between h-14">
+  <div class="space-y-5">
     <h2 class="w-64 sm:w-96 lg:w-full truncate font-semibold"
         title="{{ feed.title }}">
       {{ feed.title|truncatechars:120 }}
     </h2>
+    {% if podcast and podcast.pub_date %}
+    <div>
+      <a href="{{ podcast.get_absolute_url }}" class="link font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs">
+        View Podcast
+      </a>
+    </div>
+    {% else %}
     <div class="font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
       Adding podcast to database...
     </div>
+    {% endif %}
   </div>
 </div>
-{% endwith %}
-{% endif %}
 {% endwith %}

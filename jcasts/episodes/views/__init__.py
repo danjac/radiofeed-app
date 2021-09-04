@@ -48,7 +48,6 @@ def index(request):
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=promoted or request.user.is_anonymous,
     )
 
 
@@ -68,7 +67,6 @@ def search_episodes(request):
         request,
         episodes,
         "episodes/search.html",
-        cached=True,
     )
 
 
@@ -116,7 +114,6 @@ def episode_detail(request, episode_id, slug=None):
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": request.player.has(episode.id),
             "og_data": episode.get_opengraph_data(request),
             "next_episode": Episode.objects.get_next_episode(episode),
             "previous_episode": Episode.objects.get_previous_episode(episode),
@@ -144,14 +141,13 @@ def render_episode_list_response(
     episodes,
     template_name,
     extra_context=None,
-    cached=False,
 ):
     return render_paginated_response(
         request,
         episodes,
         template_name,
         pagination_template_name="episodes/_episodes_cached.html"
-        if cached
+        if request.user.is_anonymous
         else "episodes/_episodes.html",
         extra_context={
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,

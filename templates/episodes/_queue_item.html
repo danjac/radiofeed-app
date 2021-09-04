@@ -1,3 +1,4 @@
+{% load player %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div class="py-3 border-t dark:border-gray-500 episode"
      {% if hx_remove %}
@@ -23,11 +24,11 @@
 
       <div>
         <a href="{{ podcast.get_absolute_url }}">
-          {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+          {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=16 %}
         </a>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-2">
 
         <div>
           <a href="{{ podcast.get_episodes_url }}"
@@ -39,6 +40,9 @@
 
         <div class="flex items-center space-x-2">
 
+          <div>
+            {% play_toggle episode %}
+          </div>
           <div>
             {% include "episodes/_actions_toggle.html" %}
           </div>

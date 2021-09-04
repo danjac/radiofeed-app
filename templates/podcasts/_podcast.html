@@ -12,11 +12,11 @@
 
     <div>
       <a href="{{ podcast_url }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=16 %}
       </a>
     </div>
 
-    <div class="space-y-3">
+    <div class="space-y-5">
       <div>
         <a href="{{ podcast.get_episodes_url }}"
            title="Last Published"
