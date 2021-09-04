@@ -1,7 +1,7 @@
 {% with podcast_url=podcast.get_absolute_url %}
 
-<div class="py-3 border-t dark:border-gray-500">
-  <h2 class="flex flex-wrap font-semibold break-words mb-3">
+<div class="py-3 space-y-2 pt-3 border-t dark:border-gray-500"
+  <h2 class="flex flex-wrap font-semibold break-words">
     <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
        class="link"
        title="{{ podcast.cleaned_title }}">
