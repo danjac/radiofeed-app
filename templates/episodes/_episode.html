@@ -32,7 +32,7 @@
       {% endif %}
     </div>
 
-    <div class="space-y-2">
+    <div class="{{ user.is_authenticated|yesno:"space-y-1,space-y-3" }}">
 
       <div>
         <a href="{{ podcast.get_episodes_url }}"

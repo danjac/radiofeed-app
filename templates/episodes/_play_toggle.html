@@ -1,4 +1,4 @@
-{% with ICON_CSS=is_detail|yesno:"mr-2 h-4 w-4,h-7 w-7" %}
+{% with ICON_CSS=is_detail|yesno:"mr-2 h-4 w-4,h-8 w-8" %}
 {% if user.is_authenticated %}
 <div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
      x-cloak
