@@ -48,6 +48,7 @@ def index(request):
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
+        cached=promoted or request.user.is_anonymous,
     )
 
 
@@ -67,6 +68,7 @@ def search_episodes(request):
         request,
         episodes,
         "episodes/search.html",
+        cached=True,
     )
 
 
@@ -141,13 +143,14 @@ def render_episode_list_response(
     episodes,
     template_name,
     extra_context=None,
+    cached=False,
 ):
     return render_paginated_response(
         request,
         episodes,
         template_name,
         pagination_template_name="episodes/_episodes_cached.html"
-        if request.user.is_anonymous
+        if cached
         else "episodes/_episodes.html",
         extra_context={
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,

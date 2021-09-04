@@ -35,11 +35,11 @@
       {% endif %}
     </div>
 
-    <div class="space-y-3">
+    <div class="space-y-4">
 
-      <h3 class="w-56 sm:w-96 lg:w-full">
+      <h3 class="w-56 sm:w-96 lg:w-full truncate">
         <a href="{{ podcast.get_episodes_url }}"
-           class="link text-gray-600 dark:text-gray-300 text-xs w-56 sm:w-96 lg:w-full truncate inline-block"
+           class="link text-gray-600 dark:text-gray-300 text-xs"
            title="{{ podcast.cleaned_title }}">
           {{ podcast.cleaned_title|truncatechars:120 }}
         </a>

@@ -1,9 +1,9 @@
 {% with podcast=feed.podcast %}
 <div class="py-3 flex items-center space-x-3 border-t dark:border-gray-500">
   <div>
-    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=16 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
   </div>
-  <div class="space-y-5">
+  <div class="space-y-3">
     <h2 class="w-64 sm:w-96 lg:w-full truncate font-semibold"
         title="{{ feed.title }}">
       {{ feed.title|truncatechars:120 }}
