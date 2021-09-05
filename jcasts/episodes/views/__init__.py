@@ -117,6 +117,7 @@ def episode_detail(request, episode_id, slug=None):
         {
             "episode": episode,
             "og_data": episode.get_opengraph_data(request),
+            "is_playing": request.player.has(episode.id),
             "next_episode": Episode.objects.get_next_episode(episode),
             "previous_episode": Episode.objects.get_previous_episode(episode),
         },
