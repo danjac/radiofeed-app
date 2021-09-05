@@ -27,7 +27,7 @@
   {% endblock cover_image %}
 
   {% block content %}
-  <div class="sm:space-y-2">
+  <div class="{{ user.is_authenticated|yesno:"sm:space-y-2,space-y-3" }}">
     {% block title %}
     <h2 class="truncate w-60 sm:w-96 lg:w-full">
       <a href="{{ episode_url }}"
