@@ -8,7 +8,7 @@
 {% if user.emailaddress_set.all %}
 <p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form class="space-y-3 border-b dark:border-gray-500 pb-3 mb-3"
+<form class="space-y-3 mb-6"
       hx-disable="true"
       method="post"
       id="email-addresses"
