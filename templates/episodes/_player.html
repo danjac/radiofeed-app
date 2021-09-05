@@ -39,7 +39,7 @@
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
     <div class="relative space-y-2 sm:space-y-0">
 
-      <div class="sm:hidden truncate text-center text-xs">
+      <div class="sm:hidden truncate text-center text-sm">
         <span x-text="errMsg ? errMsg.substring(0, 100) : ''"
               x-show="errMsg"
               class="player--title"></span>
