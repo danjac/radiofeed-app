@@ -27,8 +27,7 @@
   {% endblock cover_image %}
 
   {% block content %}
-  <div class="{{ user.is_authenticated|yesno:"sm:space-y-2,space-y-3" }}">
-    {% block title %}
+  <div class="space-y-3 sm:space-y-4">
     <h2 class="truncate w-60 sm:w-96 lg:w-full">
       <a href="{{ episode_url }}"
          class="link"
@@ -37,28 +36,27 @@
       </a>
 
     </h2>
-    {% if is_podcast_detail %}
-    <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-      {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
-    </div>
-    {% else %}
-    <h3 class="truncate w-60 sm:w-96 lg:w-full">
-      <a href="{{ podcast.get_episodes_url }}"
-         class="link text-xs text-gray-500 dark:text-gray-300 font-semibold"
-         title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title|truncatechars:120 }}
-      </a>
-    </h3>
-    {% endif %}
-
-    {% endblock title %}
-
-    {% if user.is_authenticated %}
     <div class="flex items-center space-x-2">
-      {% include "episodes/_actions_toggle.html" %}
-    </div>
-    {% endif %}
+      {% if user.is_authenticated %}
+      <div>
+        {% include "episodes/_actions_toggle.html" %}
+      </div>
+      {% endif %}
 
+      {% if is_podcast_detail %}
+      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
+        {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
+      </div>
+      {% else %}
+      <h3 class="truncate w-56 sm:w-96 lg:w-full">
+        <a href="{{ podcast.get_episodes_url }}"
+           class="link text-xs text-gray-500 dark:text-gray-300 font-semibold"
+           title="{{ podcast.cleaned_title }}">
+          {{ podcast.cleaned_title|truncatechars:120 }}
+        </a>
+      </h3>
+      {% endif %}
+    </div>
   </div>
   {% endblock content %}
 </div>
