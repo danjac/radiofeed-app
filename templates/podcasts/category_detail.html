@@ -1,31 +1,25 @@
 {% extends "podcasts/base.html" %}
 {% load cache %}
 
-{% block subtitle %} | Discover {% if category.parent %} | {{ category.parent.name }} {% endif %} |
-{{ category.name }}{% endblock %}
+{% block subtitle %} |  {{ category.name }} Podcasts{% endblock %}
 
 {% block content %}
 
-<div class="mb-3 flex justify-center sm:justify-start items-center space-x-1">
-  <div>
-    <a href="{% url 'podcasts:categories' %}"
-       title="Discover"
-       class="link">Discover</a>
-  </div>
-  {% if category.parent %}
-  <div class="text-gray-600 dark:text-gray-300">&gt;</div>
-  <div>
-    <a href="{{ category.parent.get_absolute_url }}"
-       class="link mr-1">{{ category.parent.name }}</a>
+{% with search_placeholder="Search: "|add:category.name %}
+
+<div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
+  <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg">
+   {{ category.name }} Podcasts
+  </h1>
+  {% if not request.search %}
+  <div class="flex items-center justify-center sm:justify-end">
+    {% include "forms/_search_form.html" with placeholder=search_placeholder %}
   </div>
   {% endif %}
-  <div class="text-gray-600 dark:text-gray-300">&gt;</div>
-  <div class="text-gray-600 dark:text-gray-300">{{ category.name }}</div>
 </div>
 
-{% with search_placeholder="Search: "|add:category.name %}
+
 {% if request.search %}
-<h1 class="mb-3 font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg">{{ category.name }}</h1>
 <div class="mb-3 sm:flex items-center justify-center sm:justify-between">
 
   <div class="mb-3 sm:mb-0 flex items-center justify-center sm:justify-start">
@@ -37,27 +31,7 @@
   <div class="flex items-center justify-center sm:justify-end">
     {% include "forms/_search_form.html" with placeholder=search_placeholder %}
   </div>
-
 </div>
-
-{% else %}
-<div class="sm:flex items-center justify-between mb-3 space-y-3 sm:space-y-0">
-  <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg">{{ category.name }}</h1>
-  <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder=search_placeholder %}
-  </div>
-</div>
-{% cache 3600 category category.id %}
-{% if children %}
-<nav class="mb-3 flex flex-wrap justify-center sm:justify-start space-x-2 lg:space-x-3">
-  {% for child in children %}
-  <a href="{{ child.get_absolute_url }}"
-     title="{{ child.name }}"
-     class="link">{{ child.name }}</a>
-  {% endfor %}
-</nav>
-{% endif %}
-{% endcache %}
 {% endif %}
 {% endwith %}
 

@@ -47,17 +47,6 @@
           New Releases
         </a>
       </li>
-      <li>
-        {% active_link 'podcasts:categories' as link %}
-        <a href="{{ link.url }}"
-           accesskey="d"
-           title="Discover"
-           @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "search" css_class="h-5 w-5 mr-3" %}
-          Discover
-        </a>
-      </li>
 
       {% if user.is_authenticated %}
       <li>

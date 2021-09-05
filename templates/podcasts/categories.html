@@ -4,53 +4,18 @@
 {% block subtitle %} | Discover{% endblock %}
 
 {% block content %}
-<div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
-  <h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg">Discover New Podcasts</h1>
-  <div class="flex items-center justify-center sm:justify-end">
-    {% include "forms/_search_form.html" with placeholder="Search: Categories" %}
-  </div>
-</div>
+<h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg mb-3 pb-3 border-b dark:border-gray-500">Discover New Podcasts</h1>
 
-{% cache 3600 categories request.search.value %}
-<div id="categories">
-  {% if request.search %}
-  <div class="space-y-3 pt-3 border-t dark:border-gray-500">
-    {% for category in categories %}
-    <h2>
-      <a href="{{ category.get_absolute_url }}"
-         title="{{ category.name }}"
-         class="link font-bold">{{ category.name }}</a>
-    </h2>
-    {% empty %}
-    <p class="text-center sm:text-left">
-      No categories have been found matching <strong>{{ request.search.value }}.</strong>
-    </p>
-    {% endfor %}
-  </div>
-  {% else %}
+{# cache 3600 categories request.search.value #}
+<div class="grid grid-flow-row grid-cols-2 sm:grid-cols-3 gap-3">
   {% for category in categories %}
-  {% with children=category.children.all %}
-  <section class="py-3 border-t dark:border-gray-500 space-y-3">
-    <h2 class="flex items-center justify-center sm:justify-start">
-      <a href="{{ category.get_absolute_url }}"
-         title="{{ category.name }}"
-         class="link font-bold">{{ category.name }}</a>
-    </h2>
-    {% if children %}
-    <nav class="flex flex-wrap items-center space-x-3 justify-center sm:justify-start">
-      {% for child in children %}
-      <a class="link inline-block text-gray-600 dark:text-gray-300"
-         title="{{ child.name }}"
-         href="{{ child.get_absolute_url }}">{{ child.name }}</a>
-      {% endfor %}
-    </nav>
-    {% endif %}
-  </section>
-  {% endwith %}
-  {% empty %}
+  <div>
+    <a href="{{ category.get_absolute_url }}"
+       title="{{ category.name }}"
+       class="link font-bold">{{ category.name }}</a>
+  </div>
   {% endfor %}
-
-  {% endif %}
 </div>
-{% endcache %}
+
+{# endcache #}
 {% endblock %}

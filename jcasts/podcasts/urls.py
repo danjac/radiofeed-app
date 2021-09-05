@@ -39,7 +39,6 @@ urlpatterns = [
         views.unfollow,
         name="unfollow",
     ),
-    path("discover/", views.categories, name="categories"),
     path(
         "discover/<int:category_id>/<slug:slug>/",
         views.category_detail,

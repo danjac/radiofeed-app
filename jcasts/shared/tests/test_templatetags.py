@@ -1,6 +1,5 @@
 from django.urls import reverse
 
-from jcasts.podcasts.models import Category
 from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template.defaulttags import (
     absolute_uri,
@@ -137,7 +136,6 @@ class TestSignupUrl:
 
 class TestActiveLink:
     episodes_url = "episodes:index"
-    categories_url = "podcasts:categories"
 
     def test_active_link_no_match(self, rf):
         url = reverse("account_login")
@@ -145,14 +143,6 @@ class TestActiveLink:
         route = active_link({"request": req}, self.episodes_url)
         assert route.url == reverse(self.episodes_url)
         assert not route.match
-        assert not route.exact
-
-    def test_active_link_non_exact_match(self, rf):
-        url = Category(id=1234, name="test").get_absolute_url()
-        req = rf.get(url)
-        route = active_link({"request": req}, self.categories_url)
-        assert route.url == reverse(self.categories_url)
-        assert route.match
         assert not route.exact
 
     def test_active_link_exact_match(self, rf):
@@ -165,21 +155,20 @@ class TestActiveLink:
 
 
 class TestReActiveLink:
-    categories_url = "podcasts:categories"
+    about_url = "about:terms"
 
     def test_re_active_link_no_match(self, rf):
         url = reverse("account_login")
         req = rf.get(url)
-        route = re_active_link({"request": req}, self.categories_url, "/discover/*")
-        assert route.url == reverse(self.categories_url)
+        route = re_active_link({"request": req}, self.about_url, "/about/*")
+        assert route.url == reverse(self.about_url)
         assert not route.match
         assert not route.exact
 
     def test_active_link_non_exact_match(self, rf):
-        url = Category(id=1234, name="test").get_absolute_url()
-        req = rf.get(url)
-        route = re_active_link({"request": req}, self.categories_url, "/discover/*")
-        assert route.url == reverse(self.categories_url)
+        req = rf.get(reverse(self.about_url))
+        route = re_active_link({"request": req}, self.about_url, "/about/*")
+        assert route.url == reverse(self.about_url)
         assert route.match
         assert not route.exact
 

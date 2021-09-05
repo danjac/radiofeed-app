@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
-from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -161,38 +160,9 @@ def episodes(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def categories(request):
-
-    categories = Category.objects.all()
-
-    if request.search:
-        categories = categories.search(request.search.value).order_by(
-            "-similarity", "name"
-        )
-    else:
-        categories = (
-            categories.filter(parent__isnull=True)
-            .prefetch_related(
-                Prefetch(
-                    "children",
-                    queryset=Category.objects.order_by("name"),
-                )
-            )
-            .order_by("name")
-        )
-    return TemplateResponse(
-        request,
-        "podcasts/categories.html",
-        {"categories": categories},
-    )
-
-
-@require_http_methods(["GET"])
 def category_detail(request, category_id, slug=None):
-    category: Category = get_object_or_404(
-        Category.objects.select_related("parent"), pk=category_id
-    )
 
+    category = get_object_or_404(Category, pk=category_id)
     podcasts = category.podcast_set.filter(pub_date__isnull=False)
 
     if request.search:
