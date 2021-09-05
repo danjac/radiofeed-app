@@ -33,11 +33,11 @@
          @stalled="buffering"
          @suspend="buffering">
   </audio>
-  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full px-1 sm:px-2 py-2 font-semibold"
+  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
-    <div class="relative space-y-3 sm:space-y-0">
+    <div class="relative space-y-2 sm:space-y-0">
 
       <div class="sm:hidden truncate text-center text-xs">
         <span x-text="errMsg ? errMsg.substring(0, 100) : ''"
@@ -53,15 +53,15 @@
       <div class="flex items-center">
 
         {% with cover_url=podcast.cover_url %}
-        <div class="w-20 mr-1 sm:mr-0">
+        <div class="w-20 sm:w-24 mr-1 sm:mr-0">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 self-center" alt=podcast.cleaned_title %}
+            {% include "_cover_image.html" with size=20 css_class="h-16 w-16 sm:h-20 sm:w-20 self-center border border-gray-500" alt=podcast.cleaned_title %}
           </a>
         </div>
         {% endwith %}
 
-        <div class="w-full flex flex-col place-content-between h-16">
+        <div class="w-full space-y-3 sm:space-y-5">
 
           <div class="flex justify-between items-center w-full">
 
