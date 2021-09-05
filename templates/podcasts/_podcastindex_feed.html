@@ -8,7 +8,7 @@
     {{ feed.title|truncatechars:120 }}
   </h2>
   <div class="flex items-center space-x-3">
-    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=16 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=14 %}
     <div class="font-semibold inline-block text-gray-600 dark:text-gray-300 text-xs animate-pulse">
       Adding podcast to database...
     </div>
