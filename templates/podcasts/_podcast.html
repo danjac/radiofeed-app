@@ -1,6 +1,7 @@
 {% with podcast_url=podcast.get_absolute_url %}
 
-<div class="py-3 space-y-2 pt-3 border-t dark:border-gray-500"
+<div class="p-3 space-y-2 border dark:border-gray-500 mb-3">
+
   <h2 class="flex flex-wrap font-semibold break-words">
     <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
        class="link"
@@ -10,23 +11,21 @@
   </h2>
 
   <div class="flex items-center space-x-3">
-
     <div>
       <a href="{{ podcast_url }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
+        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=16 %}
       </a>
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-3">
 
-      <div class="flex items-center">
+      <div>
         <a href="{{ podcast.get_episodes_url }}"
            title="Last Published"
            class="link font-semibold text-gray-600 dark:text-gray-300 text-xs">
           {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
         </a>
       </div>
-
       <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs flex items-center">
         {{ podcast.pub_date|timesince }} ago
       </div>
