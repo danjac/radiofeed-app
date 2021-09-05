@@ -1,5 +1,5 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="p-3 space-y-2 border dark:border-gray-500 mb-3"
+<div class="border dark:border-gray-500 mb-3 flex items-center space-x-2 sm:space-x-3"
      {% if hx_remove %}
      x-data="{show: true}"
      x-show="show"
@@ -9,67 +9,42 @@
      @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
      {% endif %}>
 
-  {% block episode_title %}
-  <h2 class="flex flex-wrap font-semibold break-words">
-    <a href="{{ episode_url }}"
-       class="link"
-       title="{{ episode.cleaned_title }}">
-      {{ episode.cleaned_title|truncatechars:120 }}
-    </a>
-  </h2>
-  {% endblock episode_title %}
 
-  {% block podcast_title %}
-  {% if not is_podcast_detail %}
-  <h3 class="flex flex-wrap font-semibold break-words">
-    <a href="{{ podcast.get_episodes_url }}"
-       class="link text-gray-600 dark:text-gray-300 text-xs"
-       title="{{ podcast.cleaned_title }}">
-      {{ podcast.cleaned_title|truncatechars:120 }}
+  <div>
+    {% with COVER_IMAGE_CSS="h-20 w-20 border-r dark:border-gray-500" %}
+    {% if is_podcast_detail %}
+    <a href="{{ episode_url }}">
+      {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=24 css_class=COVER_IMAGE_CSS %}
     </a>
-  </h3>
-  {% endif %}
-  {% endblock podcast_title %}
-
+    {% else %}
+    <a href="{{ podcast.get_absolute_url }}">
+      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=24 css_class=COVER_IMAGE_CSS %}
+    </a>
+    {% endif %}
+    {% endwith %}
+  </div>
 
   {% block content %}
-  <div class="flex items-center w-full space-x-3">
-
-    <div>
-
-      {% if is_podcast_detail %}
-      <a href="{{ episode_url }}">
-        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=14 %}
+  <div class="space-y-5">
+    {% block title %}
+    <h2 class="truncate w-60 sm:w-96 lg:w-full">
+      <a href="{{ episode_url }}"
+         class="link"
+         title="{{ episode.cleaned_title }}">
+        {{ episode.cleaned_title|truncatechars:120 }}
       </a>
-      {% else %}
-      <a href="{{ podcast.get_absolute_url }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=14 %}
-      </a>
-      {% endif %}
-    </div>
+    </h2>
+    {% endblock title %}
 
-    <div class="space-y-3">
-
+    <div class="flex items-center space-x-2">
       {% if user.is_authenticated %}
-      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-        {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
-        {{ episode.duration_in_seconds|format_duration }}
-      </div>
-      <div>
-        {% include "episodes/_actions_toggle.html" %}
-      </div>
-      {% else %}
+      {% include "episodes/_actions_toggle.html" %}
+      {% endif %}
       <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
         {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
       </div>
-      {% if episode.duration_in_seconds %}
-      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
-        {{ episode.duration_in_seconds|format_duration }}
-      </div>
-      {% endif %}
-      {% endif %}
-
     </div>
+
   </div>
   {% endblock content %}
 </div>

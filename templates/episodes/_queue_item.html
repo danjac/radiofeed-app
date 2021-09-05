@@ -1,8 +1,20 @@
 {% extends "episodes/_episode.html" %}
+
+{% block title %}
+<h2 class="truncate w-56 sm:w-96 lg:w-full">
+  <a href="{{ episode_url }}"
+     class="link"
+     title="{{ episode.cleaned_title }}">
+    {{ episode.cleaned_title|truncatechars:100 }}
+  </a>
+</h2>
+{% endblock title %}
+
 {% block content %}
-<div class="flex items-center w-full justify-between">
+
+<div class="flex items-center justify-between w-56 sm:w-full">
   {{ block.super }}
-  <div>
+  <div class="pr-2">
     <button class="inline-flex items-center handle"
             title="Move">
       {% icon "view_list" css_class="h-6 w-6" %}
