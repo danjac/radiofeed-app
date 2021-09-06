@@ -39,7 +39,7 @@
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
     <div class="relative space-y-2 sm:space-y-0">
 
-      <div class="sm:hidden flex items-center">
+      <div class="sm:hidden flex items-center space-x-2">
         {% with cover_url=podcast.cover_url %}
         <div class="w-12">
           <a href="{{ podcast.get_absolute_url }}"
@@ -49,7 +49,7 @@
         </div>
         {% endwith %}
 
-        <div class="w-64 space-y-2">
+        <div class="w-64">
           <div class="block w-72 truncate">
             <a class="player--title"
                href="{{ episode_url }}"
