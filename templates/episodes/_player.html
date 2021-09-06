@@ -38,12 +38,12 @@
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
 
-    <div class="sm:hidden flex items-center space-x-2 mb-3">
+    <div class="sm:hidden flex items-center space-x-2 mb-2">
       {% with cover_url=podcast.cover_url %}
-      <div class="w-12">
+      <div class="w-10">
         <a href="{{ podcast.get_absolute_url }}"
            hx-swap="outerHTML show:window:top">
-          {% include "_cover_image.html" with size=24 css_class="h-12 w-12 self-center border border-gray-500" alt=podcast.cleaned_title %}
+          {% include "_cover_image.html" with size=24 css_class="h-10 w-10 self-center border border-gray-500" alt=podcast.cleaned_title %}
         </a>
       </div>
       {% endwith %}
