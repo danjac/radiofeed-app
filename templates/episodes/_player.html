@@ -50,13 +50,13 @@
         {% endwith %}
 
         <div class="w-64 space-y-2">
-          <div class="block w-56 truncate">
+          <div class="block w-72 truncate">
             <a class="player--title"
                href="{{ episode_url }}"
                hx-swap="outerHTML show:window:top"
                title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
           </div>
-          <div class="block w-56 truncate">
+          <div class="block w-72 truncate">
             <a href="{{ podcast.get_episodes_url }}"
                class="text-xs player--title"
                hx-swap="outerHTML show:window:top"
@@ -78,7 +78,7 @@
         </div>
         {% endwith %}
 
-        <div class="w-full space-y-3 sm:space-y-2">
+        <div class="w-full space-y-2">
 
           <div class="flex justify-between items-center">
 
