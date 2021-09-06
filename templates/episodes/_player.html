@@ -70,10 +70,10 @@
       <div class="flex items-center">
 
         {% with cover_url=podcast.cover_url %}
-        <div class="hidden sm:block w-20 sm:w-24">
+        <div class="hidden sm:block w-20">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=24 css_class="h-16 w-16 sm:h-20 sm:w-20 self-center border border-gray-500" alt=podcast.cleaned_title %}
+            {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
           </a>
         </div>
         {% endwith %}
