@@ -33,43 +33,20 @@
          @stalled="buffering"
          @suspend="buffering">
   </audio>
-  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold"
+  <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
 
-    <div class="sm:hidden flex items-center space-x-2 mb-2">
-      {% with cover_url=podcast.cover_url %}
-      <div class="w-10">
-        <a href="{{ podcast.get_absolute_url }}"
-           hx-swap="outerHTML show:window:top">
-          {% include "_cover_image.html" with size=24 css_class="h-10 w-10 self-center border border-gray-500" alt=podcast.cleaned_title %}
-        </a>
-      </div>
-      {% endwith %}
+    <a class="player--title w-84 truncate block sm:hidden text-center"
+       href="{{ episode_url }}"
+       hx-swap="outerHTML show:window:top"
+       title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
 
-      <div class="w-64">
-        <div class="block w-72 truncate">
-          <a class="player--title"
-             href="{{ episode_url }}"
-             hx-swap="outerHTML show:window:top"
-             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
-        </div>
-        <div class="block w-72 truncate">
-          <a href="{{ podcast.get_episodes_url }}"
-             class="text-xs player--title"
-             hx-swap="outerHTML show:window:top"
-             title="{{ podcast.cleaned_title }}">
-            {{ podcast.cleaned_title|truncatechars:120 }}
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex items-center">
+    <div class="flex items-center space-x-2 sm:space-x-0">
 
       {% with cover_url=podcast.cover_url %}
-      <div class="hidden sm:block w-20">
+      <div class="w-20">
         <a href="{{ podcast.get_absolute_url }}"
            hx-swap="outerHTML show:window:top">
           {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
@@ -89,7 +66,7 @@
                     class="focus:outline-none hover:text-blue-500 mr-2 inline-block"
                     :disabled="!isLoaded"
                     :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-              {% icon "pause" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+              {% icon "pause" css_class="h-8 w-8" %}
             </button>
 
             <button title="Play"
@@ -97,7 +74,7 @@
                     x-show="isPaused"
                     class="focus:outline-none hover:text-blue-600 mr-2 inline-block"
                     :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-              {% icon "play" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+              {% icon "play" css_class="h-8 w-8" %}
             </button>
 
             <button title="Close Player"
@@ -106,7 +83,7 @@
                     hx-target="#player"
                     hx-swap="innerHTML"
                     class="focus:outline-none hover:text-blue-500 inline-block">
-              {% icon "stop" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+              {% icon "stop" css_class="h-8 w-8" %}
             </button>
 
             <button hx-post="{% url "episodes:play_next_episode" %}"
@@ -118,21 +95,11 @@
 
           </div>
 
-          <div class="hidden sm:block text-center">
-            <div class="block truncate w-72 lg:w-full">
-              <a class="player--title"
-                 href="{{ episode_url }}"
-                 hx-swap="outerHTML show:window:top"
-                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
-            </div>
-            <div class="block truncate w-72 lg:w-full">
-              <a href="{{ podcast.get_episodes_url }}"
-                 class="text-xs player--title"
-                 hx-swap="outerHTML show:window:top"
-                 title="{{ podcast.cleaned_title }}">
-                {{ podcast.cleaned_title|truncatechars:120 }}
-              </a>
-            </div>
+          <div class="flex items-center justify-center">
+            <a class="player--title hidden sm:block truncate w-84 lg:w-full"
+               href="{{ episode_url }}"
+               hx-swap="outerHTML show:window:top"
+               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
           </div>
 
           <div class="flex items-center sm:hidden">
