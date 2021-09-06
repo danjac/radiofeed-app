@@ -37,174 +37,172 @@
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
-    <div class="relative space-y-2 sm:space-y-0">
 
-      <div class="sm:hidden flex items-center space-x-2">
-        {% with cover_url=podcast.cover_url %}
-        <div class="w-12">
-          <a href="{{ podcast.get_absolute_url }}"
-             hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=24 css_class="h-12 w-12 self-center border border-gray-500" alt=podcast.cleaned_title %}
-          </a>
+    <div class="sm:hidden flex items-center space-x-2 mb-3">
+      {% with cover_url=podcast.cover_url %}
+      <div class="w-12">
+        <a href="{{ podcast.get_absolute_url }}"
+           hx-swap="outerHTML show:window:top">
+          {% include "_cover_image.html" with size=24 css_class="h-12 w-12 self-center border border-gray-500" alt=podcast.cleaned_title %}
+        </a>
+      </div>
+      {% endwith %}
+
+      <div class="w-64">
+        <div class="block w-72 truncate">
+          <a class="player--title"
+             href="{{ episode_url }}"
+             hx-swap="outerHTML show:window:top"
+             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
         </div>
-        {% endwith %}
-
-        <div class="w-64">
-          <div class="block w-72 truncate">
-            <a class="player--title"
-               href="{{ episode_url }}"
-               hx-swap="outerHTML show:window:top"
-               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
-          </div>
-          <div class="block w-72 truncate">
-            <a href="{{ podcast.get_episodes_url }}"
-               class="text-xs player--title"
-               hx-swap="outerHTML show:window:top"
-               title="{{ podcast.cleaned_title }}">
-              {{ podcast.cleaned_title|truncatechars:120 }}
-            </a>
-          </div>
+        <div class="block w-72 truncate">
+          <a href="{{ podcast.get_episodes_url }}"
+             class="text-xs player--title"
+             hx-swap="outerHTML show:window:top"
+             title="{{ podcast.cleaned_title }}">
+            {{ podcast.cleaned_title|truncatechars:120 }}
+          </a>
         </div>
       </div>
+    </div>
 
-      <div class="flex items-center">
+    <div class="flex items-center">
 
-        {% with cover_url=podcast.cover_url %}
-        <div class="hidden sm:block w-20">
-          <a href="{{ podcast.get_absolute_url }}"
-             hx-swap="outerHTML show:window:top">
-            {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
-          </a>
-        </div>
-        {% endwith %}
+      {% with cover_url=podcast.cover_url %}
+      <div class="hidden sm:block w-20">
+        <a href="{{ podcast.get_absolute_url }}"
+           hx-swap="outerHTML show:window:top">
+          {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
+        </a>
+      </div>
+      {% endwith %}
 
-        <div class="w-full space-y-2">
+      <div class="w-full space-y-2">
 
-          <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center">
 
-            <div class="flex items-center">
+          <div class="flex items-center">
 
-              <button title="Pause"
-                      @click="togglePlayPause"
-                      x-show="!isPaused"
-                      class="focus:outline-none hover:text-blue-500 mr-2 inline-block"
-                      :disabled="!isLoaded"
-                      :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                {% icon "pause" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
-              </button>
+            <button title="Pause"
+                    @click="togglePlayPause"
+                    x-show="!isPaused"
+                    class="focus:outline-none hover:text-blue-500 mr-2 inline-block"
+                    :disabled="!isLoaded"
+                    :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+              {% icon "pause" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+            </button>
 
-              <button title="Play"
-                      @click="togglePlayPause"
-                      x-show="isPaused"
-                      class="focus:outline-none hover:text-blue-600 mr-2 inline-block"
-                      :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                {% icon "play" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
-              </button>
+            <button title="Play"
+                    @click="togglePlayPause"
+                    x-show="isPaused"
+                    class="focus:outline-none hover:text-blue-600 mr-2 inline-block"
+                    :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+              {% icon "play" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+            </button>
 
-              <button title="Close Player"
-                      accesskey="x"
-                      hx-post="{% url "episodes:close_player" %}"
-                      hx-target="#player"
-                      hx-swap="innerHTML"
-                      class="focus:outline-none hover:text-blue-500 inline-block">
-                {% icon "stop" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
-              </button>
+            <button title="Close Player"
+                    accesskey="x"
+                    hx-post="{% url "episodes:close_player" %}"
+                    hx-target="#player"
+                    hx-swap="innerHTML"
+                    class="focus:outline-none hover:text-blue-500 inline-block">
+              {% icon "stop" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
+            </button>
 
-              <button hx-post="{% url "episodes:play_next_episode" %}"
-                      hx-target="#player"
-                      hx-swap="innerHTML"
-                      class="hidden"
-                      x-ref="playNext">
-              </button>
-
-            </div>
-
-            <div class="hidden sm:block text-center">
-              <div class="block truncate w-72 lg:w-full">
-                <a class="player--title"
-                   href="{{ episode_url }}"
-                   hx-swap="outerHTML show:window:top"
-                   title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
-              </div>
-              <div class="block truncate w-72 lg:w-full">
-                <a href="{{ podcast.get_episodes_url }}"
-                   class="text-xs player--title"
-                   hx-swap="outerHTML show:window:top"
-                   title="{{ podcast.cleaned_title }}">
-                  {{ podcast.cleaned_title|truncatechars:120 }}
-                </a>
-              </div>
-            </div>
-
-            <div class="flex items-center sm:hidden">
-
-              <button title="Skip back 10 seconds"
-                      @click="skipBack"
-                      class="focus:outline-none hover:text-blue-500 player--interactive mr-2 inline-block">
-                {% icon "skip_back_10" css_class="h-6 w-6" %}
-              </button>
-
-              <button title="Skip forward 10 seconds"
-                      @click="skipForward"
-                      class="player--interactive focus:outline-none hover:text-blue-500 inline-block">
-                {% icon "skip_forward_10" css_class="h-6 w-6" %}
-              </button>
-
-            </div>
-
-            <div class="flex items-center">
-
-
-              <button title="Skip back 10 seconds"
-                      @click="skipBack"
-                      class="focus:outline-none hover:text-blue-500 player--interactive mr-2 hidden sm:inline-block">
-                {% icon "skip_back_10" css_class="h-6 w-6" %}
-              </button>
-
-              <button title="Skip forward 10 seconds"
-                      @click="skipForward"
-                      class="player--interactive focus:outline-none hover:text-blue-500 mr-3 hidden sm:inline-block">
-                {% icon "skip_forward_10" css_class="h-6 w-6" %}
-              </button>
-
-
-              <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive inline-block"
-                      @click="decrementPlaybackRate"
-                      title="Decrease Playback Rate">-</button>
-              <div class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive"
-                   title="Playback Rate">
-                x<span x-text="playbackRate.toFixed(1)"></span>
-              </div>
-
-              <button class="focus:outline-none p-1 hover:text-blue-500 mr-3 player--interactive inline-block"
-                      @click="incrementPlaybackRate"
-                      title="Increase Playback Rate">+</button>
-
-
-              <button title="Reload player"
-                      class="focus:outline-none hover:text-blue-500 inline-block"
-                      accesskey="r"
-                      hx-get="{% url 'episodes:reload_player' %}"
-                      hx-target="#player"
-                      hx-swap="innerHTML">
-                {% icon "refresh" css_class="h-5 w-5 md:h-6 md:w-6" %}
-              </button>
-
-            </div>
+            <button hx-post="{% url "episodes:play_next_episode" %}"
+                    hx-target="#player"
+                    hx-swap="innerHTML"
+                    class="hidden"
+                    x-ref="playNext">
+            </button>
 
           </div>
 
-          <div class="flex items-center w-full mx-1">
-            <input type="range"
-                   :max="duration"
-                   :disabled="isPaused || !isLoaded"
-                   x-model="currentTime"
-                   @change="skip"
-                   min="0"
-                   class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
-            <div class="w-20 mr-2 text-right tracking-tighter player--counter">
-              -<span x-text="counter"></span>
+          <div class="hidden sm:block text-center">
+            <div class="block truncate w-72 lg:w-full">
+              <a class="player--title"
+                 href="{{ episode_url }}"
+                 hx-swap="outerHTML show:window:top"
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
             </div>
+            <div class="block truncate w-72 lg:w-full">
+              <a href="{{ podcast.get_episodes_url }}"
+                 class="text-xs player--title"
+                 hx-swap="outerHTML show:window:top"
+                 title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title|truncatechars:120 }}
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-center sm:hidden">
+
+            <button title="Skip back 10 seconds"
+                    @click="skipBack"
+                    class="focus:outline-none hover:text-blue-500 player--interactive mr-2 inline-block">
+              {% icon "skip_back_10" css_class="h-6 w-6" %}
+            </button>
+
+            <button title="Skip forward 10 seconds"
+                    @click="skipForward"
+                    class="player--interactive focus:outline-none hover:text-blue-500 inline-block">
+              {% icon "skip_forward_10" css_class="h-6 w-6" %}
+            </button>
+
+          </div>
+
+          <div class="flex items-center">
+
+
+            <button title="Skip back 10 seconds"
+                    @click="skipBack"
+                    class="focus:outline-none hover:text-blue-500 player--interactive mr-2 hidden sm:inline-block">
+              {% icon "skip_back_10" css_class="h-6 w-6" %}
+            </button>
+
+            <button title="Skip forward 10 seconds"
+                    @click="skipForward"
+                    class="player--interactive focus:outline-none hover:text-blue-500 mr-3 hidden sm:inline-block">
+              {% icon "skip_forward_10" css_class="h-6 w-6" %}
+            </button>
+
+
+            <button class="focus:outline-none mr-1 md:mr-2 p-1 hover:text-blue-500 player--interactive inline-block"
+                    @click="decrementPlaybackRate"
+                    title="Decrease Playback Rate">-</button>
+            <div class="mr-1 md:mr-2 tracking-tight leading-tight player--interactive"
+                 title="Playback Rate">
+              x<span x-text="playbackRate.toFixed(1)"></span>
+            </div>
+
+            <button class="focus:outline-none p-1 hover:text-blue-500 mr-3 player--interactive inline-block"
+                    @click="incrementPlaybackRate"
+                    title="Increase Playback Rate">+</button>
+
+
+            <button title="Reload player"
+                    class="focus:outline-none hover:text-blue-500 inline-block"
+                    accesskey="r"
+                    hx-get="{% url 'episodes:reload_player' %}"
+                    hx-target="#player"
+                    hx-swap="innerHTML">
+              {% icon "refresh" css_class="h-5 w-5 md:h-6 md:w-6" %}
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="flex items-center w-full mx-1">
+          <input type="range"
+                 :max="duration"
+                 :disabled="isPaused || !isLoaded"
+                 x-model="currentTime"
+                 @change="skip"
+                 min="0"
+                 class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
+          <div class="w-20 mr-2 text-right tracking-tighter player--counter">
+            -<span x-text="counter"></span>
           </div>
         </div>
       </div>
