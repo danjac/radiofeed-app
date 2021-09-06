@@ -55,7 +55,7 @@
              hx-swap="outerHTML show:window:top"
              title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
           <a href="{{ podcast.get_episodes_url }}"
-             class="link text-xs text-gray-500 dark:text-gray-300 font-semibold block w-56 truncate"
+             class="link text-xs font-semibold block w-56 truncate"
              hx-swap="outerHTML show:window:top"
              title="{{ podcast.cleaned_title }}">
             {{ podcast.cleaned_title|truncatechars:120 }}
@@ -121,7 +121,7 @@
                  hx-swap="outerHTML show:window:top"
                  title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
               <a href="{{ podcast.get_episodes_url }}"
-                 class="link text-xs text-gray-500 dark:text-gray-300 font-semibold block truncate w-72 lg:w-full"
+                 class="link text-xs font-semibold block truncate w-72 lg:w-full"
                  hx-swap="outerHTML show:window:top"
                  title="{{ podcast.cleaned_title }}">
                 {{ podcast.cleaned_title|truncatechars:120 }}
