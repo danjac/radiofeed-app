@@ -39,21 +39,33 @@
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
     <div class="relative space-y-2 sm:space-y-0">
 
-      <div class="sm:hidden truncate text-center text-sm">
-        <span x-text="errMsg ? errMsg.substring(0, 100) : ''"
-              x-show="errMsg"
-              class="player--title"></span>
-        <a class="player--title"
-           x-show="!errMsg"
-           href="{{ episode_url }}"
-           hx-swap="outerHTML show:window:top"
-           title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
+      <div class="sm:hidden flex items-center space-x-2 border-b pb-1 border-gray-500">
+        {% with cover_url=podcast.cover_url %}
+        <div class="w-16">
+          <a href="{{ podcast.get_absolute_url }}"
+             hx-swap="outerHTML show:window:top">
+            {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
+          </a>
+        </div>
+        {% endwith %}
+
+        <div class="w-64 space-y-3">
+          <a class="player--title block w-56 truncate"
+             href="{{ episode_url }}"
+             hx-swap="outerHTML show:window:top"
+             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:100 }}</a>
+          <a href="{{ podcast.get_episodes_url }}"
+             class="link text-xs text-gray-500 dark:text-gray-300 font-semibold block w-56 truncate"
+             title="{{ podcast.cleaned_title }}">
+            {{ podcast.cleaned_title|truncatechars:120 }}
+          </a>
+        </div>
       </div>
 
       <div class="flex items-center">
 
         {% with cover_url=podcast.cover_url %}
-        <div class="w-20 sm:w-24 mr-1 sm:mr-0">
+        <div class="hidden sm:block w-20 sm:w-24">
           <a href="{{ podcast.get_absolute_url }}"
              hx-swap="outerHTML show:window:top">
             {% include "_cover_image.html" with size=24 css_class="h-16 w-16 sm:h-20 sm:w-20 self-center border border-gray-500" alt=podcast.cleaned_title %}
@@ -61,9 +73,9 @@
         </div>
         {% endwith %}
 
-        <div class="w-full space-y-3 sm:space-y-5">
+        <div class="w-full space-y-3 lg:space-y-5">
 
-          <div class="flex justify-between items-center w-full pt-1">
+          <div class="flex justify-between items-center">
 
             <div class="flex items-center">
 
@@ -73,7 +85,7 @@
                       class="focus:outline-none hover:text-blue-500 mr-2 inline-block"
                       :disabled="!isLoaded"
                       :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                {% icon "pause" css_class="h-8 w-8" %}
+                {% icon "pause" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
               </button>
 
               <button title="Play"
@@ -81,7 +93,7 @@
                       x-show="isPaused"
                       class="focus:outline-none hover:text-blue-600 mr-2 inline-block"
                       :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                {% icon "play" css_class="h-8 w-8" %}
+                {% icon "play" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
               </button>
 
               <button title="Close Player"
@@ -90,7 +102,7 @@
                       hx-target="#player"
                       hx-swap="innerHTML"
                       class="focus:outline-none hover:text-blue-500 inline-block">
-                {% icon "stop" css_class="h-8 w-8" %}
+                {% icon "stop" css_class="h-8 w-8 lg:h-9 lg:w-9" %}
               </button>
 
               <button hx-post="{% url "episodes:play_next_episode" %}"
@@ -102,14 +114,16 @@
 
             </div>
 
-            <div class="hidden sm:block w-72 lg:w-full text-center truncate">
-              <span x-text="errMsg ? errMsg.substring(0, 120) : ''"
-                    x-show="errMsg"></span>
-              <a class="player--title"
-                 x-show="!errMsg"
+            <div class="hidden sm:block text-center space-y-1 py-1">
+              <a class="player--title block truncate w-72 lg:w-full"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
                  title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
+              <a href="{{ podcast.get_episodes_url }}"
+                 class="link text-xs text-gray-500 dark:text-gray-300 font-semibold block truncate w-72 lg:w-full"
+                 title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title|truncatechars:120 }}
+              </a>
             </div>
 
             <div class="flex items-center sm:hidden">
