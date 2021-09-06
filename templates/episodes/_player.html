@@ -39,7 +39,7 @@
        :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
     <div class="relative space-y-2 sm:space-y-0">
 
-      <div class="sm:hidden flex items-center space-x-2 border-b pb-1 border-gray-500">
+      <div class="sm:hidden flex items-center space-x-2 border-b pb-2 border-gray-500">
         {% with cover_url=podcast.cover_url %}
         <div class="w-16">
           <a href="{{ podcast.get_absolute_url }}"
@@ -78,7 +78,7 @@
         </div>
         {% endwith %}
 
-        <div class="w-full space-y-3">
+        <div class="w-full space-y-3 sm:space-y-2">
 
           <div class="flex justify-between items-center">
 
