@@ -58,7 +58,7 @@
           </div>
           <div class="block w-56 truncate">
             <a href="{{ podcast.get_episodes_url }}"
-               class="link text-xs font-semibold"
+               class="text-xs player--title"
                hx-swap="outerHTML show:window:top"
                title="{{ podcast.cleaned_title }}">
               {{ podcast.cleaned_title|truncatechars:120 }}
@@ -128,7 +128,7 @@
               </div>
               <div class="block truncate w-72 lg:w-full">
                 <a href="{{ podcast.get_episodes_url }}"
-                   class="link text-xs font-semibold"
+                   class="text-xs player--title"
                    hx-swap="outerHTML show:window:top"
                    title="{{ podcast.cleaned_title }}">
                   {{ podcast.cleaned_title|truncatechars:120 }}
