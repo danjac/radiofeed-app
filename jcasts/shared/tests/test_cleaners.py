@@ -2,6 +2,10 @@ from jcasts.shared import cleaners
 
 
 class TestClean:
+    def test_is_markdown(self):
+        text = "**testing**"
+        assert cleaners.clean(text) == "<b>testing</b>"
+
     def test_if_safe(self):
         text = "<p>testing with paras</p>"
         assert cleaners.clean(text) == text
