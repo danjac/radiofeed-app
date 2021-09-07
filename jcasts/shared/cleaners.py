@@ -1,11 +1,13 @@
 import html
+import re
 
 import bleach
+import markdown
 
 from django.template.defaultfilters import striptags
 from html5lib.filters import whitespace
 
-ALLOWED_TAGS: list[str] = [
+ALLOWED_TAGS = [
     "a",
     "abbr",
     "acronym",
@@ -52,6 +54,7 @@ ALLOWED_ATTRS = {
     "a": ["href", "target", "title"],
 }
 
+HTML_RE = re.compile(r'(<\/?[a-zA-Z][\s\S]*>)+', re.UNICODE)
 
 cleaner = bleach.Cleaner(
     attributes=ALLOWED_ATTRS,
@@ -83,5 +86,5 @@ def strip_html(value):
 def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := strip_whitespace(value):
-        return html.unescape(clean(value))
+        return html.unescape(clean(value) if HTML_RE.match(value) else markdown.markdown(value))
     return ""
