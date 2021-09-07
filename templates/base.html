@@ -40,10 +40,10 @@
 
   {% block layout %}
 
+  {% include "_messages.html" %}
   <div class="min-h-full mx-auto flex relative p-2 pt-6"
+       hx-history-elt
        id="layout">
-
-    {% include "_messages.html" %}
 
     {% block sidebar %}
     <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 lg:h-screen pt-3 lg:pt-0"

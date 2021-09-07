@@ -2,6 +2,12 @@
 {% if log %}
 {% with episode=episode|default:log.episode %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+
+<div id="actions-{{ episode.id }}"
+     class="relative"
+     hx-swap-oob="true"></div>
+
+
 <div x-data="jCasts.Player({
        showPlayer: true,
        mediaSrc: '{{ episode.media_url }}',

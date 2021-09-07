@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Favorite
@@ -8,7 +9,7 @@ from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
@@ -38,7 +39,7 @@ def add_favorite(request, episode_id):
     try:
         Favorite.objects.create(episode=episode, user=request.user)
         messages.success(request, "Added to Favorites")
-        return HttpResponseNoContent()
+        return with_hx_trigger(HttpResponse(), {"actions-close": episode.id})
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -51,4 +52,10 @@ def remove_favorite(request, episode_id):
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Favorites")
-    return with_hx_trigger(HttpResponseNoContent(), {"remove-favorite": episode.id})
+    return with_hx_trigger(
+        HttpResponse(),
+        {
+            "actions-close": episode.id,
+            "remove-favorite": episode.id,
+        },
+    )

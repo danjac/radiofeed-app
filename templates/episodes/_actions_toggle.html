@@ -2,7 +2,7 @@
 <div x-data="{active: false}"
      x-cloak
      class="flex items-center"
-     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
+     @actions-close.window="if ($event.detail.value==={{ episode.id }}) active=false">
   <button title="Actions for {{ episode.cleaned_title }}"
           class="focus:outline-none"
           x-show="!active"

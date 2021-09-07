@@ -365,7 +365,7 @@ class TestAddFavorite:
     def test_post(self, client, auth_user, episode):
         resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
 
-        assert_no_content(resp)
+        assert_ok(resp)
         assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
@@ -380,7 +380,7 @@ class TestRemoveFavorite:
     def test_post(self, client, auth_user, episode):
         FavoriteFactory(user=auth_user, episode=episode)
         resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
-        assert_no_content(resp)
+        assert_ok(resp)
         assert not Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -391,19 +391,19 @@ class TestRemoveAudioLog:
     def test_ok(self, client, auth_user, episode):
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
-        assert_no_content(client.delete(self.url(episode)))
+        assert_ok(client.delete(self.url(episode)))
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(user=auth_user, episode=player_episode)
-        assert_no_content(client.delete(self.url(log.episode)))
+        assert_ok(client.delete(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
     def test_none_remaining(self, client, auth_user, episode):
         log = AudioLogFactory(user=auth_user, episode=episode)
-        assert_no_content(client.delete(self.url(log.episode)))
+        assert_ok(client.delete(self.url(log.episode)))
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
 
@@ -425,7 +425,7 @@ class TestAddToQueue:
 
         for episode in (first, second, third):
             resp = client.post(reverse(self.add_to_end_url, args=[episode.id]))
-            assert_no_content(resp)
+            assert_ok(resp)
 
         items = (
             QueueItem.objects.filter(user=auth_user)
@@ -454,7 +454,7 @@ class TestAddToQueue:
                     args=[episode.id],
                 ),
             )
-            assert_no_content(resp)
+            assert_ok(resp)
 
         items = (
             QueueItem.objects.filter(user=auth_user)
@@ -478,7 +478,7 @@ class TestAddToQueue:
                 args=[player_episode.id],
             ),
         )
-        assert_no_content(resp)
+        assert_ok(resp)
         assert QueueItem.objects.count() == 0
 
     @pytest.mark.django_db(transaction=True)
@@ -500,7 +500,7 @@ class TestRemoveFromQueue:
             reverse("episodes:remove_from_queue", args=[item.episode.id])
         )
 
-        assert_no_content(resp)
+        assert_ok(resp)
         assert QueueItem.objects.filter(user=auth_user).count() == 0
 
 
@@ -528,7 +528,7 @@ class TestMoveQueueItems:
             },
         )
 
-        assert_no_content(resp)
+        assert_ok(resp)
 
         items = QueueItem.objects.filter(user=auth_user).order_by("position")
 
@@ -552,9 +552,7 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        assert_no_content(
-            client.post(reverse("episodes:mark_complete", args=[episode.id]))
-        )
+        assert_ok(client.post(reverse("episodes:mark_complete", args=[episode.id])))
         log.refresh_from_db()
 
         assert log.completed
@@ -569,9 +567,7 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        assert_no_content(
-            client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
-        )
+        assert_ok(client.post(reverse("episodes:mark_complete", args=[log.episode.id])))
 
         log.refresh_from_db()
         assert not log.completed
