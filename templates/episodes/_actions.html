@@ -4,10 +4,11 @@
         'bottom-0': vPosition === 'dropup',
      }"
      x-data="{
+        show: true,
         vPosition: 'dropdown',
         close() {
-            this.$dispatch('actions-close', { value: {{ episode.id }} });
-            $el.remove()
+            this.show = false;
+            this.$dispatch('actions-close', { id: {{ episode.id }} });
         }
      }"
      x-init="() => {
@@ -15,10 +16,9 @@
         const ch = document.documentElement.clientHeight;
         vPosition = (ch - rect.top - rect.height) > 0 ? 'dropdown' : 'dropup';
     }"
+     x-show="show"
      @click.away="close()"
-     @keydown.escape.window="close()"
-     hx-target="#actions-{{ episode.id }}"
-     hx-swap="innerHTML">
+     @keydown.escape.window="close()">
   {% with BUTTON_CSS="w-full hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
 
   {% if not is_detail %}
@@ -29,7 +29,8 @@
           hx-post="{% url 'episodes:close_player' %}"
           hx-push-url="false"
           hx-target="#player"
-          hx-swap="innerHTML">
+          hx-swap="innerHTML"
+          @click="close()">
     {% icon "stop" css_class=ICON_CSS %}
     Close Player
   </button>
@@ -40,7 +41,8 @@
           hx-post="{% url 'episodes:start_player' episode.id %}"
           hx-push-url="false"
           hx-target="#player"
-          hx-swap="innerHTML">
+          hx-swap="innerHTML"
+          @click="close();">
     {% icon "play" css_class=ICON_CSS %}
     {% if episode.completed %}Re-Play{% elif episode.listened %}Resume{% else %}Play{% endif %}
     {% if time_remaining %}(~{{ time_remaining }}){% endif %}
@@ -52,7 +54,10 @@
   {% if episode.listened and not episode.completed %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:mark_complete' episode.id %}"
-          hx-push-url="false">
+          hx-push-url="false"
+          hx-target="#player"
+          hx-swap="innerHTML"
+          @click="close();">
     {% icon "check" css_class=ICON_CSS %}
     Mark Complete
   </button>
@@ -61,27 +66,27 @@
   {% if is_queued %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "trash" css_class=ICON_CSS %}
     Remove from Queue
   </button>
   {% elif is_queue %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "arrow_up" css_class=ICON_CSS %}
     Play Next
   </button>
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "arrow_down" css_class=ICON_CSS %}
     Play Last
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "collection" css_class=ICON_CSS %}
     Add to Play Queue
   </button>
@@ -91,14 +96,14 @@
   {% if is_favorited %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "star_solid" css_class=ICON_CSS %}
     Remove from Favorites
   </button>
   {% else %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_favorite' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "star" css_class=ICON_CSS %}
     Add to Favorites
   </button>
@@ -107,7 +112,7 @@
   {% if episode.listened and not is_playing %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
-          hx-push-url="false">
+          @click="close()">
     {% icon "trash" css_class=ICON_CSS %}
     Remove from History
   </button>

@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
@@ -8,6 +7,7 @@ from jcasts.episodes.models import AudioLog
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.response import HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
@@ -52,7 +52,7 @@ def mark_complete(request, episode_id):
         )
 
         messages.info(request, "Episode marked complete")
-    return with_hx_trigger(HttpResponse(), {"actions-close": episode_id})
+    return HttpResponseNoContent()
 
 
 @require_http_methods(["DELETE"])
@@ -61,10 +61,4 @@ def remove_audio_log(request, episode_id):
     if not request.player.has(episode_id):
         AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
         messages.info(request, "Removed from History")
-    return with_hx_trigger(
-        HttpResponse(),
-        {
-            "actions-close": episode_id,
-            "remove-audio-log": episode_id,
-        },
-    )
+    return with_hx_trigger(HttpResponseNoContent(), {"remove-audio-log": episode_id})

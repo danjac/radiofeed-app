@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_http_methods
 
@@ -9,7 +9,7 @@ from jcasts.episodes.models import QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
-from jcasts.shared.response import HttpResponseConflict
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
@@ -43,7 +43,7 @@ def add_to_queue(request, episode_id, to):
         except IntegrityError:
             return HttpResponseConflict()
 
-    return with_hx_trigger(HttpResponse(), {"actions-close": episode.id})
+    return HttpResponseNoContent()
 
 
 @require_http_methods(["DELETE"])
@@ -54,9 +54,8 @@ def remove_from_queue(request, episode_id):
     messages.info(request, "Removed from Play Queue")
 
     return with_hx_trigger(
-        HttpResponse(),
+        HttpResponseNoContent(),
         {
-            "actions-close": episode.id,
             "remove-queue-item": episode.id,
         },
     )
@@ -73,4 +72,4 @@ def move_queue_items(request):
     except ValueError:
         return HttpResponseBadRequest("Invalid payload")
 
-    return HttpResponse()
+    return HttpResponseNoContent()

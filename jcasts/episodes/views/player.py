@@ -22,7 +22,8 @@ def start_player(request, episode_id):
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request):
-    return render_close_player(request, request.player.remove())
+    request.player.remove()
+    return render_close_player(request)
 
 
 @require_http_methods(["POST"])
@@ -48,7 +49,7 @@ def play_next_episode(request):
         )
     ):
         return render_start_player(request, next_item.episode)
-    return render_close_player(request, episode_id)
+    return render_close_player(request)
 
 
 @require_http_methods(["GET"])
@@ -61,7 +62,7 @@ def reload_player(request):
             .select_related("episode", "episode__podcast")
             .first()
         )
-        return TemplateResponse(request, "episodes/_player.html", {"log": log})
+        return render_player(request, {"log": log})
 
     return HttpResponse()
 
@@ -102,9 +103,8 @@ def render_start_player(request, episode):
     request.player.set(episode.id)
 
     return with_hx_trigger(
-        TemplateResponse(
+        render_player(
             request,
-            "episodes/_player.html",
             {
                 "log": log,
                 "episode": episode,
@@ -112,21 +112,15 @@ def render_start_player(request, episode):
             },
         ),
         {
-            "actions-close": episode.id,
             "remove-queue-item": episode.id,
             "play-episode": episode.id,
         },
     )
 
 
-def render_close_player(request, episode_id):
-    events = {"close-player": True}
-    if episode_id:
-        events["actions-close"] = episode_id
+def render_close_player(request):
+    return with_hx_trigger(render_player(request), "close-player")
 
-    return with_hx_trigger(
-        TemplateResponse(
-            request, "episodes/_close_player.html", {"episode_id": episode_id}
-        ),
-        events,
-    )
+
+def render_player(request, extra_context=None):
+    return TemplateResponse(request, "episodes/_player.html", extra_context)

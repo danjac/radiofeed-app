@@ -12,8 +12,5 @@ import Player from './player';
     Player,
   };
 
-  // clear HTMX history cache
-  localStorage.removeItem('htmx-history-cache');
-
   Alpine.start();
 })();
