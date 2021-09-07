@@ -55,8 +55,6 @@
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:mark_complete' episode.id %}"
           hx-push-url="false"
-          hx-target="#player"
-          hx-swap="innerHTML"
           @click="close();">
     {% icon "check" css_class=ICON_CSS %}
     Mark Complete
@@ -66,6 +64,7 @@
   {% if is_queued %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "trash" css_class=ICON_CSS %}
     Remove from Queue
@@ -73,12 +72,14 @@
   {% elif is_queue %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "arrow_up" css_class=ICON_CSS %}
     Play Next
   </button>
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "arrow_down" css_class=ICON_CSS %}
     Play Last
@@ -86,6 +87,7 @@
   {% else %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "collection" css_class=ICON_CSS %}
     Add to Play Queue
@@ -96,6 +98,7 @@
   {% if is_favorited %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "star_solid" css_class=ICON_CSS %}
     Remove from Favorites
@@ -103,6 +106,7 @@
   {% else %}
   <button class="{{ BUTTON_CSS }}"
           hx-post="{% url 'episodes:add_favorite' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "star" css_class=ICON_CSS %}
     Add to Favorites
@@ -112,6 +116,7 @@
   {% if episode.listened and not is_playing %}
   <button class="{{ BUTTON_CSS }}"
           hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
+          hx-push-url="false"
           @click="close()">
     {% icon "trash" css_class=ICON_CSS %}
     Remove from History
