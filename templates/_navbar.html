@@ -1,7 +1,7 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
-  <div class="flex items-center justify-between p-2 mx-auto lg:mx-36 xl:mx-40">
+  <div class="flex items-center justify-between p-2 lg:px-0 mx-auto lg:mx-36 xl:mx-40">
 
     <div class="flex items-center flex-shrink-0 mr-6">
 
@@ -61,13 +61,13 @@
         </div>
       </a>
       {% endif %}
-      <button class="lg:hidden mr-3 focus:outline-none"
+      <button class="lg:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="!sidebar"
               @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="lg:hidden mr-3 focus:outline-none"
+      <button class="lg:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="sidebar"
               @click="$dispatch('toggle-sidebar')">
