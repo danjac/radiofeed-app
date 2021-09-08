@@ -38,16 +38,15 @@
   {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
   {% endblock page_header %}
 
+  {% block messages %}
+  {% include "_messages.html" %}
+  {% endblock messages %}
   {% block layout %}
 
   <div class="min-h-full mx-auto flex relative p-2 pt-6"
        hx-history-elt
        id="layout">
 
-    {% block messages %}
-    {% include "_messages.html" %}
-    {% endblock messages %}
-    
     {% block sidebar %}
     <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 lg:h-screen pt-3 lg:pt-0"
            :class="{'hidden lg:block': !sidebar}">
