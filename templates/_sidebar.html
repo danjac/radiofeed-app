@@ -22,9 +22,9 @@
     </form>
   </div>
 
-  <nav class="pt-3 pl-3 text-base">
+  <nav class="pt-3 pl-3 lg:pl-0 text-base">
     {% with SIDEBAR_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-400" %}
-    <ul class="sidebar space-y-4 lg:space-y-5">
+    <ul class="space-y-4 lg:space-y-5">
       <li>
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"

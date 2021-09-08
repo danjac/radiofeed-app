@@ -41,9 +41,10 @@
   {% block messages %}
   {% include "_messages.html" %}
   {% endblock messages %}
+
   {% block layout %}
 
-  <div class="min-h-full mx-auto flex relative p-2 pt-6"
+  <div class="min-h-full mx-auto flex relative p-2 pt-6 lg:mx-32"
        hx-history-elt
        id="layout">
 
@@ -55,7 +56,7 @@
     {% endblock %}
 
     {% block main %}
-    <main class="w-full lg:block lg:w-4/6"
+    <main class="w-full lg:block lg:w-5/6"
           :class="{'hidden lg:block': sidebar}">
 
       {% block content %}{% endblock %}
