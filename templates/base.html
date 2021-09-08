@@ -49,14 +49,14 @@
        id="layout">
 
     {% block sidebar %}
-    <aside class="w-full hidden md:block md:w-1/6 md:sticky md:top-24 md:h-screen pt-3 md:pt-0"
+    <aside class="w-full hidden md:block md:w-1/5 md:sticky md:top-24 md:h-screen pt-3 md:pt-0"
            :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full md:block md:w-5/6"
+    <main class="w-full md:block md:w-4/5"
           :class="{'hidden lg:block': sidebar}">
 
       {% block content %}{% endblock %}

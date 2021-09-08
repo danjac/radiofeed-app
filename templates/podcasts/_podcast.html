@@ -14,7 +14,7 @@
       <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
          class="link"
          title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title|truncatechars:100 }}
+        {{ podcast.cleaned_title|truncatechars:90 }}
       </a>
     </h2>
 
