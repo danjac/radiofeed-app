@@ -37,7 +37,7 @@
   <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
        x-ref="controls"
        x-show="mediaSrc && showPlayer"
-       :class="{'player--active': isPlaying && !errMsg, 'player--inactive': !isPlaying || errMsg}">
+       :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
 
     <a class="player--title w-84 truncate block sm:hidden text-center"
        href="{{ episode_url }}"

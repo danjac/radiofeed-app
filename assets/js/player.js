@@ -3,7 +3,7 @@ const playerObj = {
   counter: '00:00:00',
   currentTime: 0,
   duration: 0,
-  errMsg: null,
+  isError: false,
   isLoaded: false,
   isPaused: false,
   isPlaying: false,
@@ -85,7 +85,7 @@ const playerObj = {
       return;
     }
 
-    this.errMsg = null;
+    this.isError = false;
 
     this.playbackRate = parseFloat(
       sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
@@ -95,7 +95,7 @@ const playerObj = {
       this.$refs.audio.play().catch((err) => {
         this.isPaused = true;
         this.isPlaying = false;
-        this.errMsg = getAudioError(err);
+        this.isError = true;
       });
     } else {
       this.isPaused = true;
@@ -107,7 +107,7 @@ const playerObj = {
 
   error() {
     this.isPlaying = false;
-    this.errMsg = getAudioError(this.$refs.audio.error);
+    this.isError = true;
   },
 
   timeUpdate() {
@@ -125,7 +125,7 @@ const playerObj = {
   resumed() {
     this.isPaused = false;
     this.isPlaying = true;
-    this.errMsg = null;
+    this.isError = false;
     sessionStorage.setItem(this.keys.enable, true);
   },
 
@@ -206,20 +206,6 @@ const playerObj = {
     }
   },
 };
-
-function getAudioError(err) {
-  if (err.code === 0) {
-    // autoplay not allowed: user has to manually click "Play" button
-    return 'Press Play button to continue';
-  }
-
-  let msg = 'Press Reload button to continue';
-
-  if (err.code) {
-    msg += ' (ERR: ' + err.code + ')';
-  }
-  return msg;
-}
 
 function formatDuration(value) {
   if (isNaN(value) || value < 0) return '00:00:00';
