@@ -222,22 +222,28 @@ class TestFollow:
     def url(self, podcast):
         return reverse("podcasts:follow", args=[podcast.id])
 
-    def test_follow(self, client, podcast, auth_user, url):
-        resp = client.post(url, {"render": True})
+    def test_follow(self, client, podcast, auth_user, url, django_assert_num_queries):
+        with django_assert_num_queries(5):
+            resp = client.post(url, {"render": True})
         assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_following(self, client, podcast, auth_user, url):
+    def test_already_following(
+        self, client, podcast, auth_user, url, django_assert_num_queries
+    ):
+
         FollowFactory(user=auth_user, podcast=podcast)
-        resp = client.post(url)
+        with django_assert_num_queries(5):
+            resp = client.post(url)
         assert_conflict(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 
 class TestUnfollow:
-    def test_unfollow(self, client, auth_user, podcast):
+    def test_unfollow(self, client, auth_user, podcast, django_assert_num_queries):
         FollowFactory(user=auth_user, podcast=podcast)
-        resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
+        with django_assert_num_queries(5):
+            resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
