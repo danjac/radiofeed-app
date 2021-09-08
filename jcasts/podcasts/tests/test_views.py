@@ -16,36 +16,42 @@ podcasts_url = reverse_lazy("podcasts:index")
 
 
 class TestPodcasts:
-    def test_anonymous(self, client, db):
+    def test_anonymous(self, client, db, django_assert_num_queries):
         PodcastFactory.create_batch(3, promoted=True)
-        resp = client.get(podcasts_url)
+        with django_assert_num_queries(3):
+            resp = client.get(podcasts_url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following_promoted(self, client, auth_user):
+    def test_user_is_following_promoted(
+        self, client, auth_user, django_assert_num_queries
+    ):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=auth_user).podcast
-        resp = client.get(reverse("podcasts:index"), {"promoted": True})
+        with django_assert_num_queries(6):
+            resp = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
         assert sub not in resp.context_data["page_obj"].object_list
 
-    def test_user_is_not_following(self, client, auth_user):
+    def test_user_is_not_following(self, client, auth_user, django_assert_num_queries):
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        resp = client.get(podcasts_url)
+        with django_assert_num_queries(6):
+            resp = client.get(podcasts_url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following(self, client, auth_user):
+    def test_user_is_following(self, client, auth_user, django_assert_num_queries):
         """If user following any podcasts, show only own feed with these podcasts"""
 
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=auth_user)
-        resp = client.get(podcasts_url)
+        with django_assert_num_queries(6):
+            resp = client.get(podcasts_url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast

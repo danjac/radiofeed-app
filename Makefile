@@ -10,10 +10,10 @@ seed:
 	./bin/manage seed_podcast_data
 
 test:
-	./bin/runtests -x --ff --reuse-db
+	./bin/runtests -v -x --ff --reuse-db
 
 coverage:
-	./bin/runtests -x --cov --reuse-db
+	./bin/runtests -v -x --cov --reuse-db
 
 run:
 	docker-compose up -d --remove-orphans --scale worker=4
