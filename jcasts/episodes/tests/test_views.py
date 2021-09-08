@@ -389,48 +389,19 @@ class TestPlayerTimeUpdate:
         assert_bad_request(resp)
 
 
-class TestHistory:
-    url = reverse_lazy("episodes:history")
-
-    def test_get(self, client, auth_user):
-        AudioLogFactory.create_batch(3, user=auth_user)
-        resp = client.get(self.url)
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 3
-
-    def test_get_oldest_first(self, client, auth_user):
-        AudioLogFactory.create_batch(3, user=auth_user)
-        resp = client.get(self.url, {"ordering": "asc"})
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 3
-
-    def test_search(self, client, auth_user):
-
-        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
-
-        for _ in range(3):
-            AudioLogFactory(
-                user=auth_user,
-                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
-            )
-
-        AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        resp = client.get(self.url, {"q": "testing"})
-        assert_ok(resp)
-        assert len(resp.context_data["page_obj"].object_list) == 1
-
-
 class TestFavorites:
     url = reverse_lazy("episodes:favorites")
 
-    def test_get(self, client, auth_user):
+    def test_get(self, client, auth_user, django_assert_num_queries):
         FavoriteFactory.create_batch(3, user=auth_user)
-        resp = client.get(self.url)
+
+        with django_assert_num_queries(5):
+            resp = client.get(self.url)
 
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_search(self, client, auth_user):
+    def test_search(self, client, auth_user, django_assert_num_queries):
 
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
@@ -442,32 +413,74 @@ class TestFavorites:
 
         FavoriteFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
-        resp = client.get(self.url, {"q": "testing"})
+        with django_assert_num_queries(5):
+            resp = client.get(self.url, {"q": "testing"})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestAddFavorite:
-    def test_post(self, client, auth_user, episode):
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+    def test_post(self, client, auth_user, episode, django_assert_num_queries):
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
 
         assert_no_content(resp)
         assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_favorite(self, client, auth_user, episode):
+    def test_already_favorite(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
         FavoriteFactory(episode=episode, user=auth_user)
-        resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+        with django_assert_num_queries(5):
+            resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
         assert_conflict(resp)
         assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
 
 
 class TestRemoveFavorite:
-    def test_post(self, client, auth_user, episode):
+    def test_post(self, client, auth_user, episode, django_assert_num_queries):
         FavoriteFactory(user=auth_user, episode=episode)
-        resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
+        with django_assert_num_queries(5):
+            resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
         assert_no_content(resp)
         assert not Favorite.objects.filter(user=auth_user, episode=episode).exists()
+
+
+class TestHistory:
+    url = reverse_lazy("episodes:history")
+
+    def test_get(self, client, auth_user, django_assert_num_queries):
+        AudioLogFactory.create_batch(3, user=auth_user)
+        with django_assert_num_queries(5):
+            resp = client.get(self.url)
+        assert_ok(resp)
+        assert len(resp.context_data["page_obj"].object_list) == 3
+
+    def test_get_oldest_first(self, client, auth_user, django_assert_num_queries):
+        AudioLogFactory.create_batch(3, user=auth_user)
+
+        with django_assert_num_queries(5):
+            resp = client.get(self.url, {"ordering": "asc"})
+        assert_ok(resp)
+        assert len(resp.context_data["page_obj"].object_list) == 3
+
+    def test_search(self, client, auth_user, django_assert_num_queries):
+
+        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+
+        for _ in range(3):
+            AudioLogFactory(
+                user=auth_user,
+                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
+            )
+
+        AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
+        with django_assert_num_queries(5):
+            resp = client.get(self.url, {"q": "testing"})
+        assert_ok(resp)
+        assert len(resp.context_data["page_obj"].object_list) == 1
 
 
 class TestRemoveAudioLog:
