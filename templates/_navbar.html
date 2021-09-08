@@ -37,7 +37,7 @@
              @enter="$refs.input.select()"
              aria-label="Search"
              placeholder="Search"
-             class="px-4 py-1 focus:outline-none rounded focus:ring w-64 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
+             class="px-4 py-1 focus:outline-none rounded focus:ring w-64 placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm">
       <div class="absolute inset-y-0 right-0 flex items-center pr-2">
         <button type="submit"
                 title="Search"
@@ -54,8 +54,8 @@
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
         <div
-             class="h-4 w-4 lg:h-6 lg:w-6 rounded-full p-3 flex items-center justify-center bold {{ user.username|colorpicker:"bg-indigo-500,bg-green-500,bg-red-500,bg-blue-500,bg-purple-500" }}">
-          <span class="align-middle text-white font-bold">
+             class="h-4 w-4 rounded-full p-3 flex items-center justify-center bold {{ user.username|colorpicker:"bg-indigo-500,bg-green-500,bg-red-500,bg-blue-500,bg-purple-500" }}">
+          <span class="align-middle text-white font-bold ">
             {{ user.username.0|capfirst }}
           </span>
         </div>

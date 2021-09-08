@@ -11,8 +11,8 @@
 
 
   {% block cover_image %}
-  <div class="w-16 lg:w-20">
-    {% with COVER_IMAGE_CSS="h-16 w-16 lg:h-20 lg:w-20 border-r dark:border-gray-500" %}
+  <div class="w-16">
+    {% with COVER_IMAGE_CSS="h-16 w-16 border-r dark:border-gray-500" %}
     {% if is_podcast_detail %}
     <a href="{{ episode_url }}">
       {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
@@ -27,7 +27,7 @@
   {% endblock cover_image %}
 
   {% block content %}
-  <div class="space-y-3 lg:space-y-5">
+  <div class="space-y-3">
     <h2 class="truncate w-60 sm:w-96 lg:w-full">
       <a href="{{ episode_url }}"
          class="link"
@@ -36,7 +36,7 @@
       </a>
 
     </h2>
-    <div class="flex items-center space-x-2 lg:space-x-3">
+    <div class="flex items-center space-x-2">
       {% if user.is_authenticated %}
       <div>
         {% include "episodes/_actions_toggle.html" %}
@@ -44,13 +44,13 @@
       {% endif %}
 
       {% if is_podcast_detail %}
-      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+      <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs">
         {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
       </div>
       {% else %}
       <h3 class="truncate w-56 sm:w-96 lg:w-full">
         <a href="{{ podcast.get_episodes_url }}"
-           class="link text-xs lg:text-sm text-gray-600 dark:text-gray-300 font-semibold"
+           class="link text-xs text-gray-600 dark:text-gray-300 font-semibold"
            title="{{ podcast.cleaned_title }}">
           {{ podcast.cleaned_title|truncatechars:120 }}
         </a>
