@@ -168,27 +168,41 @@ class TestReloadPlayer:
 
 
 class TestStartPlayer:
+    # we have a number of savepoints here adding to query count
+    num_savepoints = 3
+
     def url(self, episode):
         return reverse("episodes:start_player", args=[episode.id])
 
-    def test_play_from_start(self, client, auth_user, episode):
-        assert_ok(client.post(self.url(episode)))
+    def num_queries_with_savepoints(self, num_queries):
+        # SAVEPOINT + RELEASE SAVEPOINT
+        return num_queries + (self.num_savepoints * 2)
+
+    def test_play_from_start(
+        self, client, db, auth_user, episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(self.num_queries_with_savepoints(8)):
+            assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert client.session[Player.session_key] == episode.id
 
-    def test_another_episode_in_player(self, client, auth_user, episode):
+    def test_another_episode_in_player(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
         client.session[Player.session_key] = EpisodeFactory().id
 
-        assert_ok(client.post(self.url(episode)))
+        with django_assert_num_queries(self.num_queries_with_savepoints(8)):
+            assert_ok(client.post(self.url(episode)))
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
         assert client.session[Player.session_key] == episode.id
 
-    def test_resume(self, client, auth_user, episode):
+    def test_resume(self, client, auth_user, episode, django_assert_num_queries):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        assert_ok(client.post(self.url(episode)))
+        with django_assert_num_queries(self.num_queries_with_savepoints(7)):
+            assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()
 
@@ -197,16 +211,26 @@ class TestStartPlayer:
 
 
 class TestPlayNextEpisode:
+    num_savepoints = 3
+
     url = reverse_lazy("episodes:play_next_episode")
 
-    def test_has_next_in_queue(self, client, auth_user, player_episode):
+    def num_queries_with_savepoints(self, num_queries):
+        # SAVEPOINT + RELEASE SAVEPOINT
+        return num_queries + (self.num_savepoints * 2)
+
+    def test_has_next_in_queue(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
 
         episode = EpisodeFactory()
 
         previous = AudioLogFactory(user=auth_user, episode=player_episode)
 
         QueueItemFactory(user=auth_user, episode=episode)
-        resp = client.post(self.url)
+
+        with django_assert_num_queries(self.num_queries_with_savepoints(9)):
+            resp = client.post(self.url)
 
         assert_ok(resp)
 
@@ -223,7 +247,7 @@ class TestPlayNextEpisode:
         assert _is_playing(client, episode)
 
     def test_has_next_in_queue_if_autoplay_disabled(
-        self, client, auth_user, player_episode
+        self, client, auth_user, player_episode, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
@@ -233,7 +257,9 @@ class TestPlayNextEpisode:
         auth_user.save()
 
         QueueItemFactory(user=auth_user, episode=episode)
-        resp = client.post(self.url)
+
+        with django_assert_num_queries(7):
+            resp = client.post(self.url)
 
         assert_ok(resp)
         assert QueueItem.objects.count() == 1
@@ -249,7 +275,7 @@ class TestPlayNextEpisode:
         assert previous.current_time == 0
 
     def test_has_next_in_queue_if_autoplay_enabled(
-        self, client, auth_user, player_episode
+        self, client, auth_user, player_episode, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
@@ -259,7 +285,9 @@ class TestPlayNextEpisode:
             user=auth_user, current_time=2000, episode=player_episode
         )
 
-        resp = client.post(self.url)
+        with django_assert_num_queries(self.num_queries_with_savepoints(9)):
+            resp = client.post(self.url)
+
         assert_ok(resp)
 
         previous.refresh_from_db()
@@ -270,13 +298,17 @@ class TestPlayNextEpisode:
         assert not _is_playing(client, previous)
         assert _is_playing(client, episode)
 
-    def test_queue_empty(self, client, auth_user, player_episode):
+    def test_queue_empty(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
 
         previous = AudioLogFactory(
             user=auth_user, current_time=2000, episode=player_episode
         )
 
-        resp = client.post(self.url)
+        with django_assert_num_queries(8):
+            resp = client.post(self.url)
+
         assert_ok(resp)
         assert QueueItem.objects.count() == 0
 

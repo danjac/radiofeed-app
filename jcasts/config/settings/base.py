@@ -78,6 +78,8 @@ SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
 CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
 ROOT_URLCONF = "jcasts.config.urls"
 
 ASGI_APPLICATION = "jcasts.config.asgi.application"
@@ -213,16 +215,6 @@ MESSAGE_TAGS = {
     messages.WARNING: "message-warning",
     messages.ERROR: "message-error",
 }
-
-# https://celery.readthedocs.io/en/latest/userguide/configuration.html
-
-result_backend = CELERY_BROKER_URL = REDIS_URL
-result_backend_transport_options = {
-    "visibility_timeout": 24 * 60 * 60 * RELEVANCY_THRESHOLD.days
-}
-result_serializer = "json"
-task_acks_late = True
-task_track_started = True
 
 # https://django-taggit.readthedocs.io/en/latest/getting_started.html
 
