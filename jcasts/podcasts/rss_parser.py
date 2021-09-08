@@ -102,7 +102,7 @@ class Feed(BaseModel):
 
     cover_url: Optional[HttpUrl] = None
 
-    funding_url: Optional[HttpUrl] = None
+    funding_url: str = ""
     funding_text: str = ""
 
     owner: str = ""
@@ -164,7 +164,7 @@ def parse_feed(finder):
         "language": finder.find("language/text()", default="en"),
         "explicit": finder.find("itunes:explicit/text()"),
         "cover_url": finder.find("itunes:image/@href", "image/url/text()"),
-        "funding_url": finder.find("podcast:funding/@url"),
+        "funding_url": finder.find("podcast:funding/@url", default=""),
         "funding_text": finder.find("podcast:funding/text()", default=""),
         "description": finder.find(
             "description/text()", "itunes:summary/text()", default=""

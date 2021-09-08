@@ -1,7 +1,7 @@
 {% extends "podcasts/podcast_detail_base.html" %}
 
 {% block podcast_content %}
-{% with link=podcast.link|normalize_url %}
+{% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
 <div class="space-y-3 border-t dark:border-gray-500 pt-3">
 
   {% if podcast.owner %}
@@ -52,9 +52,9 @@
       {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
     </div>
   </div>
-  {% if podcast.funding_url %}
+  {% if funding_url %}
   <div class="font-semibold flex-wrap">
-    <a href="{{ podcast.funding_url }}"
+    <a href="{{ funding_url }}"
        target="_blank"
        rel="noopener">
       {{ podcast.funding_text|default:'Support this podcast' }}
