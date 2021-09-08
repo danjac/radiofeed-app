@@ -25,15 +25,13 @@
   {% endif %}
   {% include "forms/_fields.html" %}
   <div class="flex items-center">
-    <div class="flex items-center">
-      <a class="link mr-3"
-         title="Recover Your Password"
-         href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
-      <button class="inline-flex items-center btn btn-default">
-        {% icon "login" css_class="h-4 w-4 mr-2" %}
-        Sign In
-      </button>
-    </div>
+    <a class="link mr-3"
+       title="Recover Your Password"
+       href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+    <button class="inline-flex items-center btn btn-default">
+      {% icon "login" css_class="h-4 w-4 mr-2" %}
+      Sign In
+    </button>
   </div>
 </form>
 
