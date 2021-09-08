@@ -487,44 +487,65 @@ class TestRemoveAudioLog:
     def url(self, episode):
         return reverse("episodes:remove_audio_log", args=[episode.id])
 
-    def test_ok(self, client, auth_user, episode):
+    def test_ok(self, client, auth_user, episode, django_assert_num_queries):
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
-        assert_no_content(client.delete(self.url(episode)))
+
+        with django_assert_num_queries(4):
+            assert_no_content(client.delete(self.url(episode)))
+
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
-    def test_is_playing(self, client, auth_user, player_episode):
+    def test_is_playing(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(user=auth_user, episode=player_episode)
-        assert_no_content(client.delete(self.url(log.episode)))
+
+        with django_assert_num_queries(3):
+            assert_no_content(client.delete(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
-    def test_none_remaining(self, client, auth_user, episode):
+    def test_none_remaining(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
         log = AudioLogFactory(user=auth_user, episode=episode)
-        assert_no_content(client.delete(self.url(log.episode)))
+
+        with django_assert_num_queries(4):
+            assert_no_content(client.delete(self.url(log.episode)))
+
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
 
 
 class TestQueue:
-    def test_get(self, client, auth_user):
+    def test_get(self, client, auth_user, django_assert_num_queries):
         QueueItemFactory.create_batch(3, user=auth_user)
-        assert_ok(client.get(reverse("episodes:queue")))
+        with django_assert_num_queries(4):
+            assert_ok(client.get(reverse("episodes:queue")))
 
 
 class TestAddToQueue:
     add_to_start_url = "episodes:add_to_queue_start"
     add_to_end_url = "episodes:add_to_queue_end"
 
-    def test_add_to_queue_end(self, client, auth_user):
+    def test_add_to_queue_end(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
 
-        for episode in (first, second, third):
-            resp = client.post(reverse(self.add_to_end_url, args=[episode.id]))
-            assert_no_content(resp)
+        with django_assert_num_queries(6):
+            resp = client.post(reverse(self.add_to_end_url, args=[first.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.add_to_end_url, args=[second.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.add_to_end_url, args=[third.id]))
+        assert_no_content(resp)
 
         items = (
             QueueItem.objects.filter(user=auth_user)
@@ -541,19 +562,22 @@ class TestAddToQueue:
         assert items[2].episode, third
         assert items[2].position == 3
 
-    def test_add_to_queue_start(self, client, auth_user):
+    def test_add_to_queue_start(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
 
-        for episode in (first, second, third):
-            resp = client.post(
-                reverse(
-                    self.add_to_start_url,
-                    args=[episode.id],
-                ),
-            )
-            assert_no_content(resp)
+        with django_assert_num_queries(6):
+            resp = client.post(reverse(self.add_to_start_url, args=[first.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.add_to_start_url, args=[second.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.add_to_start_url, args=[third.id]))
+        assert_no_content(resp)
 
         items = (
             QueueItem.objects.filter(user=auth_user)
@@ -570,41 +594,48 @@ class TestAddToQueue:
         assert items[2].episode, first
         assert items[2].position == 3
 
-    def test_is_playing(self, client, auth_user, player_episode):
-        resp = client.post(
-            reverse(
-                self.add_to_start_url,
-                args=[player_episode.id],
-            ),
-        )
+    def test_is_playing(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(4):
+            resp = client.post(
+                reverse(
+                    self.add_to_start_url,
+                    args=[player_episode.id],
+                ),
+            )
         assert_no_content(resp)
         assert QueueItem.objects.count() == 0
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_queued(self, client, auth_user, episode):
+    def test_already_queued(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
         QueueItemFactory(episode=episode, user=auth_user)
-        resp = client.post(
-            reverse(
-                self.add_to_start_url,
-                args=[episode.id],
-            ),
-        )
+        with django_assert_num_queries(6):
+            resp = client.post(
+                reverse(
+                    self.add_to_start_url,
+                    args=[episode.id],
+                ),
+            )
         assert_conflict(resp)
 
 
 class TestRemoveFromQueue:
-    def test_post(self, client, auth_user):
+    def test_post(self, client, auth_user, django_assert_num_queries):
         item = QueueItemFactory(user=auth_user)
-        resp = client.delete(
-            reverse("episodes:remove_from_queue", args=[item.episode.id])
-        )
+        with django_assert_num_queries(5):
+            resp = client.delete(
+                reverse("episodes:remove_from_queue", args=[item.episode.id])
+            )
 
         assert_no_content(resp)
         assert QueueItem.objects.filter(user=auth_user).count() == 0
 
 
 class TestMoveQueueItems:
-    def test_post(self, client, auth_user):
+    def test_post(self, client, auth_user, django_assert_num_queries):
 
         first = QueueItemFactory(user=auth_user)
         second = QueueItemFactory(user=auth_user)
@@ -616,16 +647,17 @@ class TestMoveQueueItems:
         assert items[1] == second
         assert items[2] == third
 
-        resp = client.post(
-            reverse("episodes:move_queue_items"),
-            {
-                "items": [
-                    third.id,
-                    first.id,
-                    second.id,
-                ]
-            },
-        )
+        with django_assert_num_queries(5):
+            resp = client.post(
+                reverse("episodes:move_queue_items"),
+                {
+                    "items": [
+                        third.id,
+                        first.id,
+                        second.id,
+                    ]
+                },
+            )
 
         assert_no_content(resp)
 
@@ -635,14 +667,17 @@ class TestMoveQueueItems:
         assert items[1] == first
         assert items[2] == second
 
-    def test_invalid(self, client, auth_user):
-        resp = client.post(reverse("episodes:move_queue_items"), {"items": "incorrect"})
+    def test_invalid(self, client, auth_user, django_assert_num_queries):
+        with django_assert_num_queries(3):
+            resp = client.post(
+                reverse("episodes:move_queue_items"), {"items": "incorrect"}
+            )
 
         assert_bad_request(resp)
 
 
 class TestMarkComplete:
-    def test_mark_complete(self, client, auth_user, episode):
+    def test_mark_complete(self, client, auth_user, episode, django_assert_num_queries):
 
         log = AudioLogFactory(
             user=auth_user,
@@ -651,15 +686,19 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        assert_no_content(
-            client.post(reverse("episodes:mark_complete", args=[episode.id]))
-        )
+        with django_assert_num_queries(4):
+            assert_no_content(
+                client.post(reverse("episodes:mark_complete", args=[episode.id]))
+            )
+
         log.refresh_from_db()
 
         assert log.completed
         assert log.current_time == 0
 
-    def test_is_playing(self, client, auth_user, player_episode):
+    def test_is_playing(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(
             user=auth_user,
@@ -668,9 +707,10 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        assert_no_content(
-            client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
-        )
+        with django_assert_num_queries(3):
+            assert_no_content(
+                client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
+            )
 
         log.refresh_from_db()
         assert not log.completed
