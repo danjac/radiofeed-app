@@ -48,7 +48,6 @@
         </a>
       </li>
 
-      {% if user.is_authenticated %}
       <li>
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
@@ -84,6 +83,7 @@
           History
         </a>
       </li>
+      {% if user.is_authenticated %}
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
