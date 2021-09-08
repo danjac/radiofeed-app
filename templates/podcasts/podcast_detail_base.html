@@ -7,7 +7,7 @@
 <div id="podcast-content">
   <nav class="flex items-center mb-3 justify-center sm:justify-start">
     <ul class="flex items-center space-x-6">
-      {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-400" %}
+      {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
       {% active_link podcast.get_detail_url as link %}
       <li>
         <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
