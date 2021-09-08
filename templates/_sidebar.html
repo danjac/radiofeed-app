@@ -48,6 +48,7 @@
         </a>
       </li>
 
+      {% if user.is_authenticated %}
       <li>
         {% active_link 'episodes:queue' as link %}
         <a href="{{ link.url }}"
@@ -83,7 +84,6 @@
           History
         </a>
       </li>
-      {% if user.is_authenticated %}
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
@@ -110,6 +110,29 @@
             Logout
           </button>
         </form>
+      </li>
+      {% else %}
+      <li>
+        {% active_link request.get_full_path|login_url as link %}
+        <a href="{{ link.url }}"
+           accesskey="s"
+           title="Settings"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+          {% icon "login" css_class="h-5 w-5 mr-3" %}
+          Login
+        </a>
+      </li>
+      <li>
+        {% active_link request.get_full_path|signup_url as link %}
+        <a href="{{ link.url }}"
+           accesskey="s"
+           title="Settings"
+           @click="$dispatch('close-sidebar')"
+           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+          {% icon "user_add" css_class="h-5 w-5 mr-3" %}
+          Signup
+        </a>
       </li>
       {% endif %}
 
