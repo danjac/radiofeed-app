@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose run --rm webapp poetry $@
+docker-compose exec webapp poetry $@
 

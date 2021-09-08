@@ -9,6 +9,9 @@ migrate:
 seed:
 	./bin/manage seed_podcast_data
 
+shell:
+	./bin/manage shell_plus
+
 test:
 	./bin/runtests -v -x --ff --reuse-db
 

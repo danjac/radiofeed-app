@@ -2,5 +2,5 @@
 
 set -euo pipefail
 
-docker-compose run --rm webapp pytest $@
+docker-compose exec webapp pytest $@
 
