@@ -53,21 +53,20 @@
       <a href="{% url 'users:preferences' %}"
          @click="$dispatch('close-sidebar')"
          title="Settings for {{ user.username }}">
-        <div
-             class="h-4 w-4 rounded-full p-3 flex items-center justify-center bold {{ user.username|colorpicker:"bg-indigo-500,bg-green-500,bg-red-500,bg-blue-500,bg-purple-500" }}">
+        <div class="h-4 w-4 rounded-full p-3 flex items-center justify-center bold {{ user.username|colorpicker:"bg-indigo-500,bg-green-500,bg-red-500,bg-blue-500,bg-purple-500" }}">
           <span class="align-middle text-white font-bold ">
             {{ user.username.0|capfirst }}
           </span>
         </div>
       </a>
       {% endif %}
-      <button class="lg:hidden focus:outline-none"
+      <button class="md:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="!sidebar"
               @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="lg:hidden focus:outline-none"
+      <button class="md:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="sidebar"
               @click="$dispatch('toggle-sidebar')">
