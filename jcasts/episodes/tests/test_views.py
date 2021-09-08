@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 
 from django.urls import reverse, reverse_lazy
@@ -26,13 +28,13 @@ def _is_playing(client, episode):
 
 
 class TestNewEpisodes:
-    def test_anonymous_user(self, client, db):
-        self._test_no_follows(client)
+    def test_anonymous_user(self, client, db, django_assert_num_queries):
+        self._test_no_follows(client, django_assert_num_queries, 4)
 
-    def test_no_follows(self, client, db, auth_user):
-        self._test_no_follows(client)
+    def test_no_follows(self, client, db, auth_user, django_assert_num_queries):
+        self._test_no_follows(client, django_assert_num_queries, 7)
 
-    def test_user_has_follows(self, client, auth_user):
+    def test_user_has_follows(self, client, auth_user, django_assert_num_queries):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -41,14 +43,17 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        resp = client.get(episodes_url)
+        with django_assert_num_queries(7):
+            resp = client.get(episodes_url)
         assert_ok(resp)
         assert not resp.context_data["promoted"]
         assert resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
 
-    def test_user_has_follows_promoted(self, client, auth_user):
+    def test_user_has_follows_promoted(
+        self, client, auth_user, django_assert_num_queries
+    ):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
@@ -57,7 +62,8 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        resp = client.get(reverse("episodes:index"), {"promoted": True})
+        with django_assert_num_queries(7):
+            resp = client.get(reverse("episodes:index"), {"promoted": True})
 
         assert_ok(resp)
         assert resp.context_data["promoted"]
@@ -65,11 +71,12 @@ class TestNewEpisodes:
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0].podcast == promoted
 
-    def _test_no_follows(self, client):
+    def _test_no_follows(self, client, django_assert_num_queries, num_queries):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
-        resp = client.get(episodes_url)
+        with django_assert_num_queries(num_queries):
+            resp = client.get(episodes_url)
         assert_ok(resp)
         assert not resp.context_data["has_follows"]
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -78,37 +85,70 @@ class TestNewEpisodes:
 class TestSearchEpisodes:
     url = reverse_lazy("episodes:search_episodes")
 
-    def test_page(self, db, client):
-        resp = client.get(self.url, {"q": "test"})
+    def test_no_results(self, db, client, django_assert_num_queries):
+        with django_assert_num_queries(2):
+            resp = client.get(self.url, {"q": "test"})
         assert_ok(resp)
 
-    def test_search_empty(self, db, client):
-        assert client.get(self.url, {"q": ""}).url == reverse("episodes:index")
+    def test_search_empty(self, db, client, django_assert_num_queries):
+        with django_assert_num_queries(1):
+            assert client.get(self.url, {"q": ""}).url == reverse("episodes:index")
 
-    def test_search(self, db, client, faker):
+    def test_search(self, db, client, faker, django_assert_num_queries):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
-        resp = client.get(
-            self.url,
-            {"q": episode.title},
-        )
+        with django_assert_num_queries(3):
+            resp = client.get(
+                self.url,
+                {"q": episode.title},
+            )
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
 
 
 class TestEpisodeDetail:
-    def test_detail(self, client, episode):
-        resp = client.get(episode.get_absolute_url())
+    @pytest.fixture
+    def prev_episode(self, episode):
+        return EpisodeFactory(
+            podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
+        )
+
+    @pytest.fixture
+    def next_episode(self, episode):
+        return EpisodeFactory(
+            podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
+        )
+
+    def test_detail_anonymous(
+        self, client, episode, prev_episode, next_episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(4):
+            resp = client.get(episode.get_absolute_url())
+        assert_ok(resp)
+        assert resp.context_data["episode"] == episode
+
+    def test_detail_authenticated(
+        self,
+        client,
+        auth_user,
+        episode,
+        prev_episode,
+        next_episode,
+        django_assert_num_queries,
+    ):
+        with django_assert_num_queries(6):
+            resp = client.get(episode.get_absolute_url())
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
 
 
 class TestEpisodeActions:
-    def test_actions(self, client, auth_user, episode):
-        resp = client.get(
-            reverse("episodes:actions", args=[episode.id]),
-        )
+    def test_actions(self, client, auth_user, episode, django_assert_num_queries):
+        with django_assert_num_queries(7):
+            resp = client.get(
+                reverse("episodes:actions", args=[episode.id]),
+            )
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
 
@@ -116,11 +156,15 @@ class TestEpisodeActions:
 class TestReloadPlayer:
     url = reverse_lazy("episodes:reload_player")
 
-    def test_player_empty(self, client, auth_user):
-        assert_ok(client.get(self.url))
+    def test_player_empty(self, client, auth_user, django_assert_num_queries):
+        with django_assert_num_queries(3):
+            assert_ok(client.get(self.url))
 
-    def test_player_not_empty(self, client, auth_user, player_episode):
-        assert_ok(client.get(self.url))
+    def test_player_not_empty(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(4):
+            assert_ok(client.get(self.url))
 
 
 class TestStartPlayer:
