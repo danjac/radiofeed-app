@@ -211,7 +211,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 .link:hover {
-  @apply text-blue-600 font-semibold dark:text-blue-400;
+  @apply text-blue-600 font-semibold dark:text-blue-300;
 }
 
 @tailwind utilities;
