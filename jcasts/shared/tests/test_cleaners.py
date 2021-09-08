@@ -40,3 +40,7 @@ class TestMarkup:
 
     def test_html(self):
         return cleaners.markup("<p>test</p>") == "<p>test</p>"
+
+    def test_unsafe(self):
+        text = "<script>alert('xss ahoy!')</script>"
+        assert cleaners.markup(text) == "alert('xss ahoy!')"
