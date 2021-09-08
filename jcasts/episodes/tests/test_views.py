@@ -323,15 +323,18 @@ class TestPlayNextEpisode:
 class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
-    def test_stop_if_player_empty(self, client, auth_user):
-        resp = client.post(self.url)
+    def test_stop_if_player_empty(self, client, auth_user, django_assert_num_queries):
+        with django_assert_num_queries(3):
+            resp = client.post(self.url)
         assert_ok(resp)
 
-    def test_stop(self, client, auth_user, player_episode):
+    def test_stop(self, client, auth_user, player_episode, django_assert_num_queries):
 
         log = AudioLogFactory(user=auth_user, current_time=2000, episode=player_episode)
 
-        resp = client.post(self.url)
+        # including savepoints
+        with django_assert_num_queries(6):
+            resp = client.post(self.url)
         assert_ok(resp)
 
         # do not mark complete
@@ -350,32 +353,39 @@ class TestPlayerTimeUpdate:
     def log(self, auth_user, player_episode):
         return AudioLogFactory(user=auth_user, episode=player_episode)
 
-    def test_is_running(self, client, auth_user, log):
+    def test_is_running(self, client, auth_user, log, django_assert_num_queries):
 
-        resp = client.post(
-            self.url,
-            {"current_time": "1030"},
-        )
+        with django_assert_num_queries(4):
+            resp = client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
         assert_no_content(resp)
 
         log.refresh_from_db()
         assert log.current_time == 1030
 
-    def test_player_not_running(self, client, auth_user, episode):
-        resp = client.post(
-            self.url,
-            {"current_time": "1030"},
-        )
+    def test_player_not_running(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
+
+        with django_assert_num_queries(3):
+            resp = client.post(
+                self.url,
+                {"current_time": "1030"},
+            )
         assert_no_content(resp)
 
-    def test_missing_data(self, client, auth_user, log):
+    def test_missing_data(self, client, auth_user, log, django_assert_num_queries):
 
-        resp = client.post(self.url)
+        with django_assert_num_queries(3):
+            resp = client.post(self.url)
         assert_bad_request(resp)
 
-    def test_invalid_data(self, client, auth_user, log):
+    def test_invalid_data(self, client, auth_user, log, django_assert_num_queries):
 
-        resp = client.post(self.url, {"current_time": "xyz"})
+        with django_assert_num_queries(3):
+            resp = client.post(self.url, {"current_time": "xyz"})
         assert_bad_request(resp)
 
 
