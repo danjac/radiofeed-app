@@ -3,9 +3,11 @@
 {% block subtitle %} About | Credits {% endblock %}
 
 {% block about_content %}
-<div class="max-w-prose space-y-6">
+<div class="space-y-6">
 
   <div class="space-y-3">
+    <h2 class="font-semibold">About Us</h2>
+
     <p>
       <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
     </p>
@@ -95,9 +97,6 @@
       nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
     </p>
 
-    <div>Copyright {% now 'Y' %} <a class="underline link"
-         href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
-
   </div>
   <div class="space-y-3">
 
@@ -126,6 +125,11 @@
          rel="noopener"
          href="https://github.com/danjac/jcasts/issues">Issues</a>
     </div>
+
+    <div>&copy; {% now 'Y' %} <a class="underline link"
+         href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
+
+
   </div>
 </div>
 {% endblock about_content %}
