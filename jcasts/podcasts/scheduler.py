@@ -8,9 +8,6 @@ from django.utils import timezone
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
 
-MIN_FREQ = timedelta(hours=1)
-MAX_FREQ = timedelta(days=7)
-
 
 def schedule_podcast_feeds():
     """Sets podcast feed scheduled times. This can be run once to set
@@ -36,6 +33,11 @@ def schedule_podcast_feeds():
 def get_frequency(pub_dates):
     """Calculates frequency given set of pub dates. If no available dates within range,
     returns None.
+
+    Buckets:
+        - < 1 day: as-is
+        - 1-7 days: 24 hours
+        - > 7 days days: 1 week
     """
     now = timezone.now()
 
@@ -60,8 +62,12 @@ def get_frequency(pub_dates):
 
     freq = timedelta(seconds=round(statistics.mean(diffs)))
 
+    # if within a week, check daily
+    if freq.days in range(1, 8):
+        return timedelta(hours=24)
+
     # min 1 hour/max 7 days
-    return min(max(freq, MIN_FREQ), MAX_FREQ)
+    return min(max(freq, timedelta(hours=1)), timedelta(days=7))
 
 
 def get_recent_pub_dates(podcast):
@@ -93,4 +99,4 @@ def schedule(podcast, pub_dates=None):
 
     diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
 
-    return now + max(diff, MIN_FREQ)
+    return now + max(diff, timedelta(hours=1))
