@@ -1,5 +1,5 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="border dark:border-gray-500 mb-3 flex items-center space-x-2 sm:space-x-3"
+<div class="border dark:border-gray-500 mb-3 flex items-center justify-between"
      {% if hx_remove %}
      x-data="{show: true}"
      x-show="show"
@@ -9,25 +9,24 @@
      @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
      {% endif %}>
 
+  <div class="flex items-center space-x-2 sm:space-x-3">
 
-  {% block cover_image %}
-  <div class="w-16">
-    {% with COVER_IMAGE_CSS="h-16 w-16 border-r dark:border-gray-500" %}
-    {% if is_podcast_detail %}
-    <a href="{{ episode_url }}">
-      {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
-    </a>
-    {% else %}
-    <a href="{{ podcast.get_absolute_url }}">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
-    </a>
-    {% endif %}
-    {% endwith %}
-  </div>
-  {% endblock cover_image %}
+    {% block cover_image %}
+    <div class="w-16">
+      {% with COVER_IMAGE_CSS="h-16 w-16 border-r dark:border-gray-500" %}
+      {% if is_podcast_detail %}
+      <a href="{{ episode_url }}">
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
+      </a>
+      {% else %}
+      <a href="{{ podcast.get_absolute_url }}">
+        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
+      </a>
+      {% endif %}
+      {% endwith %}
+    </div>
+    {% endblock cover_image %}
 
-  {% block content %}
-  <div class="flex items-center justify-between w-full">
     <div class="space-y-3">
       <h2 class="truncate w-60 sm:w-96 md:w-full">
         <a href="{{ episode_url }}"
@@ -53,12 +52,12 @@
         {% endif %}
       </div>
     </div>
-    {% if user.is_authenticated %}
-    <div class="pr-3">
-      {% include "episodes/_actions_toggle.html" %}
-    </div>
-    {% endif %}
   </div>
-  {% endblock content %}
+  {% if user.is_authenticated %}
+  <div class="pr-3">
+    {% include "episodes/_actions_toggle.html" %}
+  </div>
+  {% endif %}
+
 </div>
 {% endwith %}
