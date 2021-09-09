@@ -3,12 +3,11 @@
 {% block subtitle %} | Podcasts {% endblock %}
 
 {% block content %}
-
 {% if has_follows %}
 <div class="sm:flex justify-between mb-3">
   <h1 class="font-bold text-base lg:text-lg text-center sm:text-left mb-3 sm:mb-0">
     {% if promoted %}
-    Promoted Podcasts
+    Popular Podcasts
     {% else %}
     My Podcasts
     {% endif %}
@@ -20,14 +19,14 @@
          class="link">My Podcasts</a>
       {% else %}
       <a href="{% url 'podcasts:index' %}?promoted=true"
-         class="link">Promoted Podcasts</a>
+         class="link">Popular Podcasts</a>
       {% endif %}
     </div>
   </div>
 </div>
 {% else %}
 <h1 class="font-bold text-base lg:text-lg text-center sm:text-left mb-3">
-  Podcasts
+  Popular Podcasts
 </h1>
 {% endif %}
 
