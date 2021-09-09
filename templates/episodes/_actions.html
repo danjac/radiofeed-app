@@ -1,4 +1,4 @@
-<div class="absolute bg-white dark:bg-gray-800 w-52 sm:w-64 border shadow-xl z-20 dark:border-gray-500 rounded text-xs sm:text-sm"
+<div class="absolute bg-white dark:bg-gray-800 w-52 sm:w-64 border shadow-xl z-20 dark:border-gray-500 rounded{% if not is_detail %} right-0{% endif %}"
      :class="{
         'top-0': vPosition === 'dropdown',
         'bottom-0': vPosition === 'dropup',

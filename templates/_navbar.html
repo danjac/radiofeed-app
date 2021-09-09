@@ -63,12 +63,14 @@
       <button class="md:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="!sidebar"
+              x-cloak
               @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
       <button class="md:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="sidebar"
+              x-cloak
               @click="$dispatch('toggle-sidebar')">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
