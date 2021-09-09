@@ -54,7 +54,7 @@ ALLOWED_ATTRS = {
     "a": ["href", "target", "title"],
 }
 
-HTML_RE = re.compile(r"(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
+HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
 cleaner = bleach.Cleaner(
     attributes=ALLOWED_ATTRS,
@@ -83,9 +83,14 @@ def strip_html(value):
     return html.unescape(striptags(strip_whitespace(value)))
 
 
+def as_html(value):
+    if HTML_RE.match(value):
+        return value
+    return markdown.markdown(value)
+
+
 def markup(value):
     """Parses Markdown and/or html and returns cleaned result."""
     if value := strip_whitespace(value):
-        markup = value if HTML_RE.match(value) else markdown.markdown(value)
-        return html.unescape(clean(markup))
+        return html.unescape(clean(as_html(value)))
     return ""
