@@ -97,10 +97,10 @@
           </div>
 
           <div class="flex items-center justify-center">
-            <a class="player--title hidden sm:block truncate w-80 text-center lg:w-full"
+            <a class="player--title hidden sm:block truncate text-center sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-2xl"
                href="{{ episode_url }}"
                hx-swap="outerHTML show:window:top"
-               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title|truncatechars:120 }}</a>
+               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
           </div>
 
           <div class="flex items-center sm:hidden">

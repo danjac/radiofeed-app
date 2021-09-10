@@ -21,6 +21,7 @@
          @click="$dispatch('close-sidebar')"
          href="{{ home_url }}">{{ request.site.name }}</a>
 
+      {% comment %}
       <div class="text-xs ml-2">
         <span class="sm:hidden">xs</span>
         <span class="hidden sm:inline-block md:hidden">sm</span>
@@ -29,6 +30,7 @@
         <span class="hidden xl:inline-block 2xl:hidden">xl</span>
         <span class="hidden 2xl:inline-block">2xl+</span>
       </div>
+      {% endcomment %}
 
     </div>
 
