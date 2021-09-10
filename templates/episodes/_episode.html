@@ -28,7 +28,7 @@
     {% endblock cover_image %}
 
     <div class="space-y-3">
-      <h2 class="truncate w-60 sm:w-96 2xl:w-full">
+      <h2 class="truncate w-60 sm:w-96 lg:w-full">
         <a href="{{ episode_url }}"
            class="link"
            title="{{ episode.cleaned_title }}">
@@ -42,7 +42,7 @@
           {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
         </div>
         {% else %}
-        <h3 class="truncate w-56 sm:w-96 2xl:w-full">
+        <h3 class="truncate w-56 sm:w-96 lg:w-full">
           <a href="{{ podcast.get_episodes_url }}"
              class="link text-xs text-gray-600 dark:text-gray-300 font-semibold"
              title="{{ podcast.cleaned_title }}">
