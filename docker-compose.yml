@@ -16,10 +16,20 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     stop_grace_period: '3s'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   redis:
     image: redis:6.2.2-buster
     stop_grace_period: '3s'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
@@ -27,6 +37,11 @@ services:
       - '8025:8025'
       - '1025:1025'
     stop_grace_period: '3s'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   master:
     build:
@@ -39,6 +54,11 @@ services:
     privileged: true
     tty: true
     stop_grace_period: '3s'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100k'
+        max-file: '3'
 
   watcher:
     <<: *base
