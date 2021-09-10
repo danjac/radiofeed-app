@@ -28,11 +28,11 @@
     {% endblock cover_image %}
 
     <div class="space-y-3">
-      <h2 class="truncate w-60 sm:w-96 2xl:w-auto">
+      <h2 class="truncate w-60 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
         <a href="{{ episode_url }}"
            class="link"
            title="{{ episode.cleaned_title }}">
-          {{ episode.cleaned_title|truncatechars:90 }}
+          {{ episode.cleaned_title }}
         </a>
       </h2>
       <div class="flex items-center space-x-2">
@@ -41,11 +41,11 @@
           {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
         </div>
         {% else %}
-        <h3 class="truncate w-60 sm:w-96 2xl:w-auto">
+        <h3 class="truncate w-60 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
           <a href="{{ podcast.get_episodes_url }}"
              class="link text-xs text-gray-600 dark:text-gray-300 font-semibold"
              title="{{ podcast.cleaned_title }}">
-            {{ podcast.cleaned_title|truncatechars:120 }}
+            {{ podcast.cleaned_title }}
           </a>
         </h3>
         {% endif %}

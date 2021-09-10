@@ -44,19 +44,19 @@
 
   {% block layout %}
 
-  <div class="min-h-full mx-auto flex relative p-2 pt-6 xl:mx-64"
+  <div class="min-h-full mx-auto flex relative p-2 pt-6 xl:mx-36 2xl:mx-48"
        hx-history-elt
        id="layout">
 
     {% block sidebar %}
-    <aside class="w-full hidden md:block md:w-1/5 md:sticky md:top-24 md:h-screen pt-3 md:pt-0"
+    <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 lg:h-screen pt-3 lg:pt-0"
            :class="{'hidden lg:block': !sidebar}">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full md:block md:w-4/5"
+    <main class="w-full lg:block lg:w-5/6"
           :class="{'hidden lg:block': sidebar}">
 
       {% block content %}{% endblock %}

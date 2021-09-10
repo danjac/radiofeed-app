@@ -20,6 +20,16 @@
          title="{{ request.site.name }}"
          @click="$dispatch('close-sidebar')"
          href="{{ home_url }}">{{ request.site.name }}</a>
+
+      <div class="text-xs ml-2">
+        <span class="sm:hidden">xs</span>
+        <span class="hidden sm:inline-block md:hidden">sm</span>
+        <span class="hidden md:inline-block lg:hidden">md</span>
+        <span class="hidden lg:inline-block xl:hidden">lg</span>
+        <span class="hidden xl:inline-block 2xl:hidden">xl</span>
+        <span class="hidden 2xl:inline-block">2xl+</span>
+      </div>
+
     </div>
 
     <form action="{% url 'podcasts:search_podcasts' %}"
@@ -60,14 +70,14 @@
         </div>
       </a>
       {% endif %}
-      <button class="md:hidden focus:outline-none"
+      <button class="lg:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="!sidebar"
               x-cloak
               @click="$dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="md:hidden focus:outline-none"
+      <button class="lg:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="sidebar"
               x-cloak
