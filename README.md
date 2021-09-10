@@ -96,7 +96,7 @@ For example, to open the interactive Django shell from your local machine:
 
 Use the Django shell or relevant commands to set up an admin user, and set the default Site to point to your domain. You can then run the *seed_podcast_data* and *parse_podcast_feeds* Django commands to add the categories and podcasts and sync the RSS feeds.
 
-To deploy just run:
+To deploy:
 
 > git push dokku main
 
