@@ -26,7 +26,10 @@ upgrade:
 	./bin/poetry export -o requirements.txt  --without-hashes
 	./bin/npm update
 
+maint: maintenance
+
+maintenance:
+	ansible-playbook maintenance.yml --ask-pass
+
 push:
 	git push dokku main
-
-
