@@ -21,3 +21,8 @@ coverage:
 run:
 	docker-compose up -d --remove-orphans --scale worker=4
 
+upgrade:
+	./bin/poetry update -vv
+	./bin/poetry export -o requirements.txt  --without-hashes
+	./bin/npm update
+	docker-compose build

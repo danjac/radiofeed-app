@@ -365,13 +365,14 @@ text-unidecode = "1.3"
 
 [[package]]
 name = "fakeredis"
-version = "1.6.0"
+version = "1.6.1"
 description = "Fake implementation of redis API for testing purposes."
 category = "dev"
 optional = false
 python-versions = ">=3.5"
 
 [package.dependencies]
+packaging = "*"
 redis = "<3.6.0"
 six = ">=1.12"
 sortedcontainers = "*"
@@ -969,7 +970,7 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "rq"
-version = "1.9.0"
+version = "1.10.0"
 description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
 category = "main"
 optional = false
@@ -1068,7 +1069,7 @@ python-versions = "*"
 
 [[package]]
 name = "sqlparse"
-version = "0.4.1"
+version = "0.4.2"
 description = "A non-validating SQL parser."
 category = "main"
 optional = false
@@ -1135,7 +1136,7 @@ python-versions = "*"
 
 [[package]]
 name = "unidecode"
-version = "1.3.0"
+version = "1.3.1"
 description = "ASCII transliterations of Unicode text"
 category = "main"
 optional = false
@@ -1498,8 +1499,8 @@ faker = [
     {file = "Faker-8.12.1.tar.gz", hash = "sha256:810859626d19e62a2a13aa4a08d59ada131f0522431eec163b09b6df147a25b9"},
 ]
 fakeredis = [
-    {file = "fakeredis-1.6.0-py3-none-any.whl", hash = "sha256:3449b306f3a85102b28f8180c24722ef966fcb1e3c744758b6f635ec80321a5c"},
-    {file = "fakeredis-1.6.0.tar.gz", hash = "sha256:11ccfc9769d718d37e45b382e64a6ba02586b622afa0371a6bd85766d72255f3"},
+    {file = "fakeredis-1.6.1-py3-none-any.whl", hash = "sha256:5eb1516f1fe1813e9da8f6c482178fc067af09f53de587ae03887ef5d9d13024"},
+    {file = "fakeredis-1.6.1.tar.gz", hash = "sha256:0d06a9384fb79da9f2164ce96e34eb9d4e2ea46215070805ea6fd3c174590b47"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
@@ -1874,8 +1875,8 @@ requests-oauthlib = [
     {file = "requests_oauthlib-1.3.0-py3.7.egg", hash = "sha256:fa6c47b933f01060936d87ae9327fead68768b69c6c9ea2109c48be30f2d4dbc"},
 ]
 rq = [
-    {file = "rq-1.9.0-py2.py3-none-any.whl", hash = "sha256:7af1e9706dbe6f1eac16dffacd8271ec27c1369950941f14dab6bb08a62979d7"},
-    {file = "rq-1.9.0.tar.gz", hash = "sha256:bdfef943de838955e474cfd0e25b9b8c53ed4b9c361fe4bb11cf56d17a87acc5"},
+    {file = "rq-1.10.0-py2.py3-none-any.whl", hash = "sha256:92950a3e60863de48dd1800882939bbaf089a37497ebf9f2ecf7c9fd0a4c4a95"},
+    {file = "rq-1.10.0.tar.gz", hash = "sha256:be09ec43fae9a75a4d26ea3cd520e5fa3ea2ea8cf481be33e6ec9416f0369cac"},
 ]
 scikit-learn = [
     {file = "scikit-learn-0.24.2.tar.gz", hash = "sha256:d14701a12417930392cd3898e9646cf5670c190b933625ebe7511b1f7d7b8736"},
@@ -1949,8 +1950,8 @@ sortedcontainers = [
     {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
 ]
 sqlparse = [
-    {file = "sqlparse-0.4.1-py3-none-any.whl", hash = "sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0"},
-    {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
+    {file = "sqlparse-0.4.2-py3-none-any.whl", hash = "sha256:48719e356bb8b42991bdbb1e8b83223757b93789c00910a616a071910ca4a64d"},
+    {file = "sqlparse-0.4.2.tar.gz", hash = "sha256:0c00730c74263a94e5a9919ade150dfc3b19c574389985446148402998287dae"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
@@ -1978,8 +1979,8 @@ typing-extensions = [
     {file = "typing_extensions-3.10.0.2.tar.gz", hash = "sha256:49f75d16ff11f1cd258e1b988ccff82a3ca5570217d7ad8c5f48205dd99a677e"},
 ]
 unidecode = [
-    {file = "Unidecode-1.3.0-py2.py3-none-any.whl", hash = "sha256:d01b0a22f7d90dea483da658782884de5162f40359fcaf79630738db93045c84"},
-    {file = "Unidecode-1.3.0.tar.gz", hash = "sha256:9f8235681cc520912fe02e7dd73d455c2f0471f39d36485bc278b97b3e2f2390"},
+    {file = "Unidecode-1.3.1-py3-none-any.whl", hash = "sha256:5f58926b9125b499f8ab6816828e737578fa3e31fa24d351a3ab7f4b7c064ab0"},
+    {file = "Unidecode-1.3.1.tar.gz", hash = "sha256:6efac090bf8f29970afc90caf4daae87b172709b786cb1b4da2d0c0624431ecc"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.6-py2.py3-none-any.whl", hash = "sha256:39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4"},

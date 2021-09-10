@@ -1,8 +1,0 @@
-
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-./bin/poetry update -vv
-./bin/poetry export -o requirements.txt  --without-hashes
-./bin/npm update
