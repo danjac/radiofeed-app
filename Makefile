@@ -21,8 +21,12 @@ coverage:
 run:
 	docker-compose up -d --remove-orphans --scale worker=4
 
+deploy:
+	git push dokku main
+
 upgrade:
 	./bin/poetry update -vv
 	./bin/poetry export -o requirements.txt  --without-hashes
 	./bin/npm update
-	docker-compose build
+
+
