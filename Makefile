@@ -3,6 +3,9 @@ all: build migrate seed test run
 build:
 	docker-compose build
 
+run:
+	docker-compose up -d --remove-orphans --scale worker=4
+
 migrate:
 	./bin/manage migrate
 
@@ -18,15 +21,12 @@ test:
 coverage:
 	./bin/runtests -v -x --cov --reuse-db
 
-run:
-	docker-compose up -d --remove-orphans --scale worker=4
-
-deploy:
-	git push dokku main
-
 upgrade:
 	./bin/poetry update -vv
 	./bin/poetry export -o requirements.txt  --without-hashes
 	./bin/npm update
+
+push:
+	git push dokku main
 
 
