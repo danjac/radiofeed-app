@@ -54,7 +54,7 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 .markdown pre {
-  @apply whitespace-pre-wrap text-sm;
+  @apply whitespace-pre-wrap;
 }
 
 .markdown a {
@@ -173,7 +173,7 @@ input[type='range']::-moz-range-thumb {
 /* BUTTONS */
 
 .btn {
-  @apply px-2 py-1 rounded font-semibold text-sm;
+  @apply px-2 py-1 rounded font-semibold;
 }
 
 .btn:focus {

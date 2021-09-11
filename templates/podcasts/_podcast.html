@@ -2,13 +2,13 @@
 
 <div class="border dark:border-gray-500 mb-3 flex items-center space-x-3">
 
-  <div class="w-20 sm:w-16">
+  <div class="w-20 sm:w-16 lg:w-20">
     <a href="{{ podcast_url }}">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class="h-20 w-20 sm:h-16 sm:w-16 border-r dark:border-gray-500" %}
+      {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class="h-20 w-20 sm:h-16 sm:w-16 lg:w-20 lg:h-20 border-r dark:border-gray-500" %}
     </a>
   </div>
 
-  <div class="space-y-1 sm:space-y-3 lg:space-y-2">
+  <div class="space-y-1 sm:space-y-3">
 
     <h2 class="w-48 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:overflow-y-auto sm:truncate sm:no-wrap sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
       <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"

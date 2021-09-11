@@ -12,8 +12,8 @@
   <div class="flex items-center space-x-2 sm:space-x-3">
 
     {% block cover_image %}
-    <div class="w-20 sm:w-16">
-      {% with COVER_IMAGE_CSS="w-20 h-20 sm:h-16 sm:w-16 border-r dark:border-gray-500" %}
+    <div class="w-20 sm:w-16 lg:w-20">
+      {% with COVER_IMAGE_CSS="w-20 h-20 sm:h-16 sm:w-16 lg:h-20 lg:w-20 border-r dark:border-gray-500" %}
       {% if is_podcast_detail %}
       <a href="{{ episode_url }}">
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
@@ -27,7 +27,7 @@
     </div>
     {% endblock cover_image %}
 
-    <div class="space-y-1 sm:space-y-3 lg:space-y-2">
+    <div class="space-y-1 sm:space-y-3">
       <h2 class="w-48 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:overflow-y-auto sm:truncate sm:no-wrap sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
         <a href="{{ episode_url }}"
            class="link"
