@@ -10,6 +10,7 @@ db
 *.DS_Store
 
 .cache
+.data
 __pycache__
 .mypy_cache/
 .pytest_cache/

@@ -16,6 +16,11 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     stop_grace_period: '3s'
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'postgres']
+      interval: 1s
+      timeout: 3s
+      retries: 30
     logging:
       driver: 'json-file'
       options:
@@ -25,6 +30,11 @@ services:
   redis:
     image: redis:6.2.2-buster
     stop_grace_period: '3s'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 3s
+      retries: 30
     logging:
       driver: 'json-file'
       options:
@@ -64,21 +74,24 @@ services:
     <<: *base
     command: ['npm', 'run', 'watch']
     volumes:
-      - .:/app
+      - ./:/app
       - /app/node_modules
     depends_on:
-      - master
+      master:
+        condition: service_completed_successfully
 
   django: &django
     <<: *base
     environment: *default-env
     depends_on:
-      - master
-      - postgres
-      - redis
+      master:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - .:/app
-    entrypoint: /entrypoint
+      - ./:/app
 
   webapp:
     <<: *django

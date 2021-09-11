@@ -16,10 +16,10 @@ shell:
 	./bin/manage shell_plus
 
 test:
-	./bin/runtests -v -x --ff --reuse-db
+	./bin/runtests -v -x --ff --reuse-db --tb=no
 
 coverage:
-	./bin/runtests -v -x --cov --reuse-db
+	./bin/runtests -v -x --cov --reuse-db --tb=no
 
 upgrade:
 	./bin/poetry update -vv

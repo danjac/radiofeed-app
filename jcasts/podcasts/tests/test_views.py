@@ -10,7 +10,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Follow
 from jcasts.podcasts.podcastindex import Feed
-from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -64,7 +64,7 @@ class TestLatest:
     def test_has_no_episodes(self, client, podcast, django_assert_num_queries):
         with django_assert_num_queries(3):
             resp = client.get(self.url(podcast))
-        assert_not_found(resp)
+        assert resp.url == podcast.get_absolute_url()
 
     def test_has_episodes(self, client, episode, django_assert_num_queries):
         with django_assert_num_queries(3):

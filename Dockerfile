@@ -48,9 +48,6 @@ RUN npm ci
 
 # scripts
 
-COPY ./docker/entrypoint /entrypoint
-RUN chmod +x /entrypoint
-
 COPY ./docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 

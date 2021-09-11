@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -54,10 +53,8 @@ def latest(request, podcast_id):
     """Redirects to latest episode in podcast."""
 
     podcast = get_podcast_or_404(request, podcast_id)
-    if (episode := podcast.episode_set.order_by("-pub_date").first()) is None:
-        raise Http404()
-
-    return redirect(episode)
+    episode = podcast.episode_set.order_by("-pub_date").first()
+    return redirect(episode or podcast.get_absolute_url())
 
 
 @require_http_methods(["GET"])
