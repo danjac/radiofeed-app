@@ -2,7 +2,7 @@
 
 {% block podcast_content %}
 {% with link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
-<div class="space-y-3 border-t dark:border-gray-500 pt-3">
+<div class="space-y-3 lg:space-y-6 border-t dark:border-gray-500 pt-3 lg:pt-6">
 
   {% if podcast.owner %}
   <div class="font-semibold flex-wrap">
