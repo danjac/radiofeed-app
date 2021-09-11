@@ -6,9 +6,9 @@
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}
-<p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
+<p class="mb-3 lg:mb-6">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
-<form class="space-y-3 mb-6"
+<form class="space-y-3 lg:space-y-6 mb-6"
       hx-disable="true"
       method="post"
       id="email-addresses"
@@ -41,43 +41,45 @@
   </div>
   {% endfor %}
   <div class="flex items-center space-x-2 lg:space-x-3">
+    {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
     <button class="inline-flex items-center btn btn-default"
             name="action_primary"
             value="1">
-      {% icon "sparkles" css_class="h-4 w-4 mr-2" %}
+      {% icon "sparkles" css_class=ICON_CSS %}
       Primary
     </button>
 
     <button class="inline-flex items-center btn btn-secondary"
             name="action_send"
             value="1">
-      {% icon "mail" css_class="h-4 w-4 mr-2" %}
+      {% icon "mail" css_class=ICON_CSS %}
       Re-Verify
     </button>
 
     <button class="inline-flex items-center btn btn-danger"
             name="action_remove"
             value="1">
-      {% icon "trash" css_class="h-4 w-4 mr-2" %}
+      {% icon "trash" css_class=ICON_CSS %}
       Remove
     </button>
+    {% endwith %}
   </div>
   {% endwith %}
 </form>
 
 {% else %}
 
-<p class="border-b dark:border-gray-500 pb-3 mb-3"><strong>{% translate 'Warning:'%}</strong>
+<p class="border-b dark:border-gray-500 pb-3 mb-3 lg:mb-6"><strong>{% translate 'Warning:'%}</strong>
   {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
 </p>
 
 {% endif %}
 
 {% if can_add_email %}
-<h2 class="font-semibold mb-3">{% translate "Add New E-mail Address" %}</h2>
+<h2 class="font-semibold mb-3 lg:mb-6">{% translate "Add New E-mail Address" %}</h2>
 <form method="post"
       action="{{ request.path }}"
-      class="space-y-3"
+      class="space-y-3 lg:space-y-6"
       hx-disable="true"
       novalidate>
   {% csrf_token %}
@@ -86,7 +88,7 @@
     <button class="inline-flex items-center btn btn-default"
             name="action_add"
             value="true">
-      {% icon "plus" css_class="h-4 w-4 mr-2" %}
+      {% icon "plus" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
       Add E-Mail
     </button>
   </div>
