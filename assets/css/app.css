@@ -144,7 +144,7 @@ input[type='search']::-webkit-search-results-decoration {
 
 input[type='range']::-webkit-slider-thumb,
 input[type='range']::-moz-range-thumb {
-  @apply w-4 h-4 rounded-full appearance-none pointer-events-auto bg-blue-800;
+  @apply w-4 h-4 lg:w-5 lg:h-5 rounded-full appearance-none pointer-events-auto bg-blue-800;
 }
 
 /* MESSAGES */
@@ -173,7 +173,7 @@ input[type='range']::-moz-range-thumb {
 /* BUTTONS */
 
 .btn {
-  @apply px-2 py-1 rounded font-semibold;
+  @apply px-2 py-1 lg:px-3 rounded font-semibold;
 }
 
 .btn:focus {

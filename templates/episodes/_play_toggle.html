@@ -1,4 +1,4 @@
-{% with ICON_CSS="mr-2 h-4 w-4" %}
+{% with ICON_CSS="mr-2 h-4 w-4 lg:h-5 lg:w-5" %}
 {% if user.is_authenticated %}
 <div x-data="{isPlaying: {{ is_playing|yesno:'true,false' }}}"
      x-cloak

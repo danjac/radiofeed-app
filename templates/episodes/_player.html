@@ -47,19 +47,20 @@
     <div class="flex items-center space-x-2 sm:space-x-0">
 
       {% with cover_url=podcast.cover_url %}
-      <div class="w-20">
+      <div class="w-20 lg:w-24">
         <a href="{{ podcast.get_absolute_url }}"
            hx-swap="outerHTML show:window:top">
-          {% include "_cover_image.html" with size=24 css_class="h-16 w-16 self-center border border-gray-500" alt=podcast.cleaned_title %}
+          {% include "_cover_image.html" with size=24 css_class="h-16 w-16 lg:h-20 lg:w-20 self-center border border-gray-500" alt=podcast.cleaned_title %}
         </a>
       </div>
       {% endwith %}
 
-      <div class="w-full space-y-2">
+      <div class="w-full space-y-2 lg:space-y-3">
 
         <div class="flex justify-between items-center">
 
           <div class="flex items-center">
+            {% with ICON_CSS="h-8 w-8 lg:h-9 lg:w-9"  %}
 
             <button title="Pause"
                     @click="togglePlayPause"
@@ -67,7 +68,7 @@
                     class="focus:outline-none hover:text-blue-500 mr-2 inline-block"
                     :disabled="!isLoaded"
                     :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-              {% icon "pause" css_class="h-8 w-8" %}
+              {% icon "pause" css_class=ICON_CSS %}
             </button>
 
             <button title="Play"
@@ -75,7 +76,7 @@
                     x-show="isPaused"
                     class="focus:outline-none hover:text-blue-600 mr-2 inline-block"
                     :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-              {% icon "play" css_class="h-8 w-8" %}
+              {% icon "play" css_class=ICON_CSS %}
             </button>
 
             <button title="Close Player"
@@ -84,7 +85,7 @@
                     hx-target="#player"
                     hx-swap="innerHTML"
                     class="focus:outline-none hover:text-blue-500 inline-block">
-              {% icon "stop" css_class="h-8 w-8" %}
+              {% icon "stop" css_class=ICON_CSS %}
             </button>
 
             <button hx-post="{% url "episodes:play_next_episode" %}"
@@ -93,8 +94,11 @@
                     class="hidden"
                     x-ref="playNext">
             </button>
+            {% endwith %}
 
           </div>
+
+          {% with ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
 
           <div class="flex items-center justify-center">
             <a class="player--title hidden sm:block truncate text-center sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-2xl"
@@ -108,13 +112,13 @@
             <button title="Skip back 10 seconds"
                     @click="skipBack"
                     class="focus:outline-none hover:text-blue-500 player--interactive mr-2 inline-block">
-              {% icon "skip_back_10" css_class="h-6 w-6" %}
+              {% icon "skip_back_10" css_class=ICON_CSS %}
             </button>
 
             <button title="Skip forward 10 seconds"
                     @click="skipForward"
                     class="player--interactive focus:outline-none hover:text-blue-500 inline-block">
-              {% icon "skip_forward_10" css_class="h-6 w-6" %}
+              {% icon "skip_forward_10" css_class=ICON_CSS %}
             </button>
 
           </div>
@@ -125,13 +129,13 @@
             <button title="Skip back 10 seconds"
                     @click="skipBack"
                     class="focus:outline-none hover:text-blue-500 player--interactive mr-2 hidden sm:inline-block">
-              {% icon "skip_back_10" css_class="h-6 w-6" %}
+              {% icon "skip_back_10" css_class=ICON_CSS %}
             </button>
 
             <button title="Skip forward 10 seconds"
                     @click="skipForward"
                     class="player--interactive focus:outline-none hover:text-blue-500 mr-3 hidden sm:inline-block">
-              {% icon "skip_forward_10" css_class="h-6 w-6" %}
+              {% icon "skip_forward_10" css_class=ICON_CSS %}
             </button>
 
 
@@ -154,12 +158,14 @@
                     hx-get="{% url 'episodes:reload_player' %}"
                     hx-target="#player"
                     hx-swap="innerHTML">
-              {% icon "refresh" css_class="h-5 w-5 md:h-6 md:w-6" %}
+              {% icon "refresh" css_class=ICON_CSS %}
             </button>
 
           </div>
 
         </div>
+
+        {% endwith %}
 
         <div class="flex items-center w-full mx-1">
           <input type="range"
