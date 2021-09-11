@@ -41,7 +41,7 @@
           {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
         </div>
         {% else %}
-        <h3 class="truncate w-48 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
+        <h3 class="truncate w-48 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl">
           <a href="{{ podcast.get_episodes_url }}"
              class="link text-xs lg:text-sm text-gray-600 dark:text-gray-300 font-semibold"
              title="{{ podcast.cleaned_title }}">
