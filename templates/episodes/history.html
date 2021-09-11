@@ -16,7 +16,7 @@
 
   <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3 lg:mb-6">
 
-    <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+    <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0 xl:text-lg">
       {% if request.search %}
       <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
          title="Search Episodes"
