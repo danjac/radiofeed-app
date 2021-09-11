@@ -6,6 +6,9 @@ build:
 run:
 	docker-compose up -d --remove-orphans --scale worker=4
 
+stop:
+	docker-compose down
+
 migrate:
 	./bin/manage migrate
 
