@@ -8,13 +8,13 @@
     </a>
   </div>
 
-  <div class="space-y-1 sm:space-y-3">
+  <div class="space-y-2 sm:space-y-3">
 
     <h2 class="w-48 max-h-10 flex flex-wrap break-words overflow-hidden sm:truncate sm:no-wrap sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
       <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
          class="link"
          title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title|truncatechars:90 }}
+        {{ podcast.cleaned_title }}
       </a>
     </h2>
 
