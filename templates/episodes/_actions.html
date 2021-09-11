@@ -19,7 +19,7 @@
      x-show="show"
      @click.away="close()"
      @keydown.escape.window="close()">
-  {% with BUTTON_CSS="w-full hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2" episode_url=episode.get_absolute_url %}
+  {% with BUTTON_CSS="w-full hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
 
   {% if not is_detail %}
 
