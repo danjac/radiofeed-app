@@ -1,9 +1,9 @@
 {% extends "episodes/_episode.html" %}
 
 {% block cover_image %}
-<div class="w-16">
+<div class="w-16 lg:w-20">
   <button class="handle block" title="Move item in queue">
-    {% include "_cover_image.html" with cover_url=podcast.cover_url alt="Move item in queue" size=20 css_class="h-16 w-16 border-r dark:border-gray-500" %}
+    {% include "_cover_image.html" with cover_url=podcast.cover_url alt="Move item in queue" size=20 css_class="h-16 w-16 lg:w-20 lg:h-20 border-r dark:border-gray-500" %}
   </button>
 </div>
 {% endblock cover_image %}

@@ -3,7 +3,7 @@
 {% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
 {% block content %}
-<h1 class="font-bold text-base lg:text-lg mb-3 lg:mb-6">{{ episode.cleaned_title }}</h1>
+<h1 class="font-bold text-base lg:text-lg xl:text-xl mb-3 lg:mb-6">{{ episode.cleaned_title }}</h1>
 
 {% with podcast=episode.podcast duration=episode.duration_in_seconds %}
 
@@ -32,14 +32,14 @@
 </nav>
 {% endif %}
 
-<div class="space-y-3 pb-3 mb-3 lg:mb-6">
-  <div>
+<div class="space-y-3 lg:space-y-6 mb-3 lg:mb-6">
+  <h3 class="lg:text-lg">
     <a href="{{ podcast.get_episodes_url }}"
        title="{{ podcast.cleaned_title }}"
        class="link">
       {{ podcast.cleaned_title }}
     </a>
-  </div>
+  </h3>
 
   {% with metadata=episode.get_episode_metadata %}
   {% if metadata %}

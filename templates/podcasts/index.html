@@ -5,7 +5,7 @@
 {% block content %}
 {% if has_follows %}
 <div class="sm:flex justify-between mb-3 lg:mb-6">
-  <h1 class="font-bold text-base lg:text-lg text-center sm:text-left mb-3 sm:mb-0">
+  <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3 sm:mb-0">
     {% if promoted %}
     Popular Podcasts
     {% else %}
@@ -13,7 +13,7 @@
     {% endif %}
   </h1>
   <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0">
-    <div class="flex items-center justify-center sm:justify-start">
+    <div class="flex items-center justify-center sm:justify-start xl:text-lg">
       {% if promoted %}
       <a href="{% url 'podcasts:index' %}"
          class="link">My Podcasts</a>
@@ -25,7 +25,7 @@
   </div>
 </div>
 {% else %}
-<h1 class="font-bold text-base lg:text-lg text-center sm:text-left mb-3 lg:mb-6">
+<h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3 lg:mb-6">
   Popular Podcasts
 </h1>
 {% endif %}
