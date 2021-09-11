@@ -23,7 +23,7 @@
   </div>
 
   <nav class="pt-3 pl-3 md:pl-0 text-base lg:text-lg">
-    {% with SIDEBAR_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
+    {% with SIDEBAR_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-3"%}
     <ul class="space-y-4 lg:space-y-5">
       <li>
         {% active_link 'podcasts:index' as link %}
@@ -32,7 +32,7 @@
            title="Podcasts"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "rss" css_class="h-5 w-5 mr-3" %}
+          {% icon "rss" css_class=ICON_CSS %}
           Podcasts
         </a>
       </li>
@@ -43,7 +43,7 @@
            title="New Releases"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "sparkles" css_class="h-5 w-5 mr-3" %}
+          {% icon "sparkles" css_class=ICON_CSS %}
           New Releases
         </a>
       </li>
@@ -55,7 +55,7 @@
            title="Play Queue"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "collection" css_class="h-5 w-5 mr-3" %}
+          {% icon "collection" css_class=ICON_CSS %}
           Play Queue
         </a>
       </li>
@@ -67,7 +67,7 @@
            title="Favorites"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "star" css_class="h-5 w-5 mr-3" %}
+          {% icon "star" css_class=ICON_CSS %}
           Favorites
         </a>
       </li>
@@ -79,7 +79,7 @@
            title="History"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "database" css_class="h-5 w-5 mr-3" %}
+          {% icon "database" css_class=ICON_CSS %}
           History
         </a>
       </li>
@@ -92,7 +92,7 @@
            title="Settings"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "adjustments" css_class="h-5 w-5 mr-3" %}
+          {% icon "adjustments" css_class=ICON_CSS %}
           Settings
         </a>
       </li>
@@ -107,7 +107,7 @@
                   title="Logout"
                   @click="$dispatch('close-sidebar')"
                   class="flex items-center link">
-            {% icon "logout" css_class="h-5 w-5 mr-3" %}
+            {% icon "logout" css_class=ICON_CSS %}
             Logout
           </button>
         </form>
@@ -121,7 +121,7 @@
            title="About"
            @click="$dispatch('close-sidebar')"
            class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-          {% icon "info" css_class="h-5 w-5 mr-3" %}
+          {% icon "info" css_class=ICON_CSS %}
           About
         </a>
       </li>
