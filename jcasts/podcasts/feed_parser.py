@@ -3,6 +3,7 @@ import secrets
 import traceback
 
 from dataclasses import dataclass
+from datetime import timedelta
 from functools import lru_cache
 from typing import Optional
 
@@ -14,7 +15,7 @@ from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts import date_parser, rss_parser, scheduler, text_parser
+from jcasts.podcasts import date_parser, rss_parser, text_parser
 from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -146,7 +147,7 @@ def parse_success(podcast, response, feed, items):
 
     podcast.num_episodes = len(items)
     podcast.pub_date = max(pub_dates)
-    podcast.scheduled = scheduler.schedule(podcast, pub_dates)
+    podcast.scheduled = reschedule(podcast)
     podcast.parsed = timezone.now()
     podcast.queued = None
     podcast.active = True
@@ -284,6 +285,17 @@ def get_podcast(rss, force_update=False):
     return qs.get()
 
 
+def reschedule(podcast):
+    if podcast.pub_date is None:
+        return None
+
+    # add 5% of freq to current time (min 1 hour)
+    # e.g. 7 days - try again in about 8 hours
+    now = timezone.now()
+    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
+    return now + max(diff, timedelta(hours=1))
+
+
 def parse_failure(
     podcast,
     *,
@@ -298,7 +310,7 @@ def parse_failure(
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
-        scheduled=scheduler.schedule(podcast) if active else None,
+        scheduled=reschedule(podcast) if active else None,
         updated=now,
         parsed=now,
         queued=None,

@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
-from django.template.defaultfilters import pluralize
 
-from jcasts.podcasts import feed_parser, models, scheduler
+from jcasts.podcasts import feed_parser, models
 
 
 @admin.register(models.Category)
@@ -94,7 +93,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "queued",
         "pub_date",
         "etag",
-        "frequency",
         "http_status",
         "exception",
     )
@@ -124,18 +122,6 @@ class PodcastAdmin(admin.ModelAdmin):
 
     def source(self, obj):
         return obj.get_domain()
-
-    def frequency(self, obj):
-        if (
-            freq := scheduler.get_frequency(scheduler.get_recent_pub_dates(obj))
-        ) is None:
-            return "-"
-
-        if freq.days < 1:
-            hours = round(freq.total_seconds() / 3600)
-            return f"{hours} hour{pluralize(hours)}"
-
-        return f"{freq.days} day{pluralize(freq.days)}"
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:

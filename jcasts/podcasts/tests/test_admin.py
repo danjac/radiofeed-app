@@ -1,12 +1,9 @@
-from datetime import timedelta
 from unittest import mock
 
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.utils import timezone
 
-from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.admin import (
     ActiveFilter,
     PodcastAdmin,
@@ -34,23 +31,6 @@ class TestPodcastAdmin:
 
     def test_source(self, podcasts, admin):
         assert admin.source(podcasts[0]) == podcasts[0].get_domain()
-
-    def test_frequency_none(self, podcasts, admin):
-        assert admin.frequency(podcasts[0]) == "-"
-
-    def test_frequency_hours(self, podcasts, admin):
-        for i in range(7):
-            EpisodeFactory(
-                podcast=podcasts[0], pub_date=timezone.now() - timedelta(hours=i)
-            )
-        assert admin.frequency(podcasts[0]) == "1 hour"
-
-    def test_frequency_days(self, podcasts, admin):
-        for i in range(7):
-            EpisodeFactory(
-                podcast=podcasts[0], pub_date=timezone.now() - timedelta(days=7 * i)
-            )
-        assert admin.frequency(podcasts[0]) == "1 day"
 
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
