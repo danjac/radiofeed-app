@@ -17,6 +17,7 @@ from jcasts.podcasts.feed_parser import (
     get_feed_headers,
     parse_feed,
     parse_podcast_feeds,
+    reschedule,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -336,3 +337,20 @@ class TestParseFeed:
         assert not new_podcast.active
         assert new_podcast.scheduled is None
         assert new_podcast.queued is None
+
+
+class TestReschedule:
+    def test_pub_date_none(self):
+        assert reschedule(Podcast(pub_date=None)) is None
+
+    def test_pub_date_min_one_hour(self):
+        now = timezone.now()
+        scheduled = reschedule(Podcast(pub_date=now))
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(1.0)
+
+    def test_pub_date_not_none(self):
+        now = timezone.now()
+        pub_date = now - timedelta(days=3)
+        scheduled = reschedule(Podcast(pub_date=pub_date))
+        # 5% of 3 days == 3 hours
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3.6)
