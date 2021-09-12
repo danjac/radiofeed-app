@@ -6,7 +6,7 @@
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}
-<p class="mb-3 lg:mb-6">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
+<p class="mb-3">{% translate 'The following e-mail addresses are associated with your account:' %}</p>
 
 <form class="space-y-3 lg:space-y-6 mb-6"
       hx-disable="true"
@@ -69,14 +69,14 @@
 
 {% else %}
 
-<p class="border-b dark:border-gray-500 pb-3 mb-3 lg:mb-6"><strong>{% translate 'Warning:'%}</strong>
+<p class="border-b dark:border-gray-500 pb-3 mb-3"><strong>{% translate 'Warning:'%}</strong>
   {% translate "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}
 </p>
 
 {% endif %}
 
 {% if can_add_email %}
-<h2 class="font-semibold mb-3 lg:mb-6">{% translate "Add New E-mail Address" %}</h2>
+<h2 class="font-semibold mb-3">{% translate "Add New E-mail Address" %}</h2>
 <form method="post"
       action="{{ request.path }}"
       class="space-y-3 lg:space-y-6"

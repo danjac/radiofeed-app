@@ -4,7 +4,7 @@
 {% for episode in page_obj %}
 {% include "episodes/_episode.html" %}
 {% empty %}
-<p class="text-center sm:text-left pt-3 lg:pt-6 border-t dark:border-gray-500">
+<p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
   {% if request.search %}
   No results found for <span class="font-bold">{{ request.search.value }}</span>.
   {% else %}

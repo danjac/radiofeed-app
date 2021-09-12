@@ -11,7 +11,7 @@
 <div id="queue"
      x-data="{count: {{ queue_items|length }}}"
      @remove-queue-item.window="count-=1">
-  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3 lg:mb-6">
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
     <h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg xl:text-xl">Play Queue</h1>
   </div>
   <div x-data="jCasts.DragDrop({
@@ -28,7 +28,7 @@
     {% endwith %}
     {% endfor %}
   </div>
-  <p class="text-center sm:text-left"
+  <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500"
      x-show="count===0">
     You do not have any items in your Play Queue.
   </p>
