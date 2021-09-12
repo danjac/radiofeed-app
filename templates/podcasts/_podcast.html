@@ -3,7 +3,7 @@
 <div class="border dark:border-gray-500 mb-3 flex items-center space-x-3">
 
   <div class="w-20">
-    <a href="{{ podcast_url }}">
+    <a href="{{ podcast.get_absolute_url }}">
       {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class="h-20 w-20 border-r dark:border-gray-500" %}
     </a>
   </div>
@@ -11,19 +11,27 @@
 
   <div class="flex flex-col place-content-between h-16">
     <h2 class="w-56 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:truncate sm:no-wrap sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl">
-      <a href="{% if show_latest %}{{ podcast.get_latest_url }}{% else %}{{ podcast_url }}{% endif %}"
+      <a href="{{ podcast_url }}"
          class="link"
          title="{{ podcast.cleaned_title }}">
         {{ podcast.cleaned_title }}
       </a>
     </h2>
 
-    <div>
-      <a href="{{ podcast.get_episodes_url }}"
+    <div class="text-xs lg:text-sm">
+      {% if show_latest %}
+      <a href="{{ podcast.get_latest_url }}"
          title="Last Published"
-         class="link font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+         class="link font-semibold text-gray-600 dark:text-gray-300">
+        {{ podcast.pub_date|timesince }} ago
+      </a>
+      {% else %}
+      <a href="{{ podcast.get_episodes_url }}"
+         title="Number of Episodes"
+         class="link font-semibold text-gray-600 dark:text-gray-300">
         {{ podcast.num_episodes }} episode{{ podcast.num_episodes|pluralize }}
       </a>
+      {% endif %}
     </div>
 
   </div>
