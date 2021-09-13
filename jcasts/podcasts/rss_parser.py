@@ -28,8 +28,6 @@ class Item(BaseModel):
 
     pub_date: datetime
 
-    cover_url: Optional[HttpUrl] = None
-
     media_url: HttpUrl
     media_type: str = ""
     length: Optional[int] = None
@@ -38,6 +36,8 @@ class Item(BaseModel):
 
     season: Optional[int] = None
     episode: Optional[int] = None
+
+    cover_url: Optional[str] = None
 
     episode_type: str = "full"
     duration: str = ""
@@ -185,7 +185,8 @@ def parse_items(channel, namespaces):
         try:
             yield Item.parse_obj(parse_item(XPathFinder(item, namespaces)))
 
-        except ValidationError:
+        except ValidationError as e:
+            print(e)
             pass
 
 
@@ -197,8 +198,8 @@ def parse_item(finder):
         "media_url": finder.find("enclosure//@url"),
         "media_type": finder.find("enclosure//@type"),
         "length": finder.find("enclosure//@length"),
-        "cover_url": finder.find("itunes:image/@href"),
         "explicit": finder.find("itunes:explicit/text()"),
+        "cover_url": finder.find("itunes:image/@href"),
         "episode": finder.find("itunes:episode/text()"),
         "season": finder.find("itunes:season/text()"),
         "description": finder.find(

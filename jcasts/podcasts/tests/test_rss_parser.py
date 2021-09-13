@@ -49,6 +49,7 @@ class TestRssParser:
             ("rss_mock_small.xml", "ABC News Update", 1),
             ("rss_mock.xml", "Mysterious Universe", 20),
             ("rss_invalid_duration.xml", "At The Races with Steve Byk", 449),
+            ("rss_bad_cover_urls.xml", "TED Talks Daily", 327),
         ],
     )
     def test_parse_rss(self, filename, title, num_items):

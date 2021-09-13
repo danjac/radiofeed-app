@@ -19,10 +19,10 @@ shell:
 	./bin/manage shell_plus
 
 test:
-	./bin/runtests -v -x --ff --reuse-db --tb=no
+	./bin/runtests -v -x --ff --reuse-db
 
 coverage:
-	./bin/runtests -v -x --cov --reuse-db --tb=no
+	./bin/runtests -v -x --cov --reuse-db
 
 upgrade:
 	./bin/poetry update -vv
