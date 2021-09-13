@@ -194,7 +194,7 @@ class Episode(models.Model):
     @cached_property
     def duration_in_seconds(self):
         """Returns total number of seconds given string in [h:][m:]s format.
-        Invalid formats return None."""
+        """
 
         if not self.duration:
             return 0
