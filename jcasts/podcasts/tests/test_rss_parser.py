@@ -53,8 +53,7 @@ class TestRssParser:
         ],
     )
     def test_parse_rss(self, filename, title, num_items):
-
-        feed, items = self.parse_rss_from_mock_file(filename)
+        feed, items = parse_rss(self.read_mock_file(filename))
         assert feed.title == title
         assert len(items) == num_items
 
@@ -63,9 +62,6 @@ class TestRssParser:
             pathlib.Path(__file__).parent / "mocks" / mock_filename,
             "rb",
         ).read()
-
-    def parse_rss_from_mock_file(self, mock_filename):
-        return parse_rss(self.read_mock_file(mock_filename))
 
 
 class TestFeed:
