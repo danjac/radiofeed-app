@@ -166,7 +166,7 @@ class Podcast(models.Model):
 
     def get_opengraph_data(self, request):
 
-        og_data: dict[str, str | int] = {
+        og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.cleaned_title}",
             "description": self.cleaned_description,
