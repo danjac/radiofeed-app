@@ -65,6 +65,10 @@ input[type='search']::-webkit-search-results-decoration {
   @apply text-blue-600 dark:text-blue-400;
 }
 
+.markdown div {
+  @apply mb-3;
+}
+
 .markdown p {
   @apply py-1 mb-3;
 }
