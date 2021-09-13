@@ -100,7 +100,7 @@ class Feed(BaseModel):
 
     language: str = "en"
 
-    cover_url: Optional[HttpUrl] = None
+    cover_url: Optional[str] = None
 
     funding_url: str = ""
     funding_text: str = ""
