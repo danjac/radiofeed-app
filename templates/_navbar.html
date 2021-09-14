@@ -74,14 +74,14 @@
         </div>
       </a>
       {% endif %}
-      <button class="lg:hidden focus:outline-none"
+      <button class="lg:hidden focus:outline-none transform transition"
               title="Toggle Menu"
               x-cloak
               x-show.transition="!sidebar"
               @click="sidebar=true">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
-      <button class="lg:hidden focus:outline-none"
+      <button class="lg:hidden focus:outline-none transform transition"
               title="Toggle Menu"
               x-cloak
               x-show.transition="sidebar"
@@ -94,13 +94,14 @@
   {% include "_signup_cta.html" %}
   {% endblock %}
 
-  <div class="lg:hidden absolute py-6 bg-white dark:bg-gray-800 top-10 left-0 w-full"
+  <div class="lg:hidden absolute py-6 bg-white dark:bg-gray-800 top-10 left-0 w-full shadow-xl"
        x-cloak
        x-show.transition="sidebar"
-       x-transition:enter-start="opacity-0"
-       x-transition:enter-end="opacity-100"
-       x-transition:leave-start="opacity-100"
-       x-transition:leave-end="opacity-0">
+       x-transition:enter="transition-transform transition-opacity ease-out duration-300"
+       x-transition:enter-start="opacity-0 transform -translate-y-2"
+       x-transition:enter-end="opacity-100 transform translate-y-0"
+       x-transition:leave="transition ease-in duration-300"
+       x-transition:leave-end="opacity-0 transform -translate-y-3">
     <div class="flex justify-center sm:justify-start sm:hidden mb-3"
          @click.away="sidebar=false">
 
