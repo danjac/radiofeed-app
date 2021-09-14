@@ -27,9 +27,6 @@
       hx-swap="outerHTML show:window:top"
       hx-indicator="#loader"
       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-      x-data="{sidebar: false}"
-      @close-sidebar.window="sidebar=false"
-      @toggle-sidebar.window="sidebar=!sidebar"
       {% endblock %}>
   {% endblock header_tags %}
 
@@ -49,18 +46,14 @@
        id="layout">
 
     {% block sidebar %}
-    <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 xl:top-32 lg:h-screen pt-3 lg:pt-0"
-           :class="{'hidden lg:block': !sidebar}">
+    <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 xl:top-32 lg:h-screen pt-3 lg:pt-0">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full lg:block lg:w-5/6"
-          :class="{'hidden lg:block': sidebar}">
-
+    <main class="w-full lg:block lg:w-5/6">
       {% block content %}{% endblock %}
-
     </main>
     {% endblock main %}
   </div>
