@@ -23,7 +23,7 @@
       <a href="{{ podcast.get_latest_url }}"
          title="Last Published"
          class="link font-semibold text-gray-600 dark:text-gray-300">
-        {{ podcast.pub_date|timesince }} ago
+        {{ podcast.pub_date|timesince_approx }} ago
       </a>
       {% else %}
       <a href="{{ podcast.get_episodes_url }}"

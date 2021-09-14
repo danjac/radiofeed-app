@@ -14,6 +14,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
 
 from jcasts.shared import cleaners
 
@@ -23,6 +24,14 @@ register = template.Library()
 ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
 
 _validate_url = URLValidator(["http", "https"])
+
+
+@register.filter
+def timesince_approx(value, arg=None):
+    try:
+        return timesince(value, arg, depth=1)
+    except (AttributeError, ValueError, TypeError):
+        return ""
 
 
 @register.simple_tag(takes_context=True)

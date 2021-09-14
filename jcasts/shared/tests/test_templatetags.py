@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.urls import reverse
+from django.utils import timezone
 
 from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template.defaulttags import (
@@ -13,7 +16,18 @@ from jcasts.shared.template.defaulttags import (
     safe_url,
     share_buttons,
     signup_url,
+    timesince_approx,
 )
+
+
+class TestTimesinceApprox:
+    def test_none(self):
+        assert timesince_approx(None) == ""
+
+    def test_value(self):
+        assert (
+            timesince_approx(timezone.now() - timedelta(days=3, hours=5)) == "3\xa0days"
+        )
 
 
 class TestColorpicker:

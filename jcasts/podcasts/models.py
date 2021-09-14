@@ -155,7 +155,7 @@ class Podcast(models.Model):
     def get_domain(self):
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
-    @property
+    @cached_property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "podcast"
 
