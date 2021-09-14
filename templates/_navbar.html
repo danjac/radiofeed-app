@@ -1,6 +1,6 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
-<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow relative"
+<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-20 shadow relative"
         x-data="{sidebar: false}"
         @close-sidebar.window="sidebar=false">
   <div class="flex items-center justify-between px-1 py-2">
@@ -94,7 +94,7 @@
   {% include "_signup_cta.html" %}
   {% endblock %}
 
-  <div class="lg:hidden absolute py-6 bg-white dark:bg-gray-800 top-10 left-0 w-full shadow-xl"
+  <div class="lg:hidden absolute py-6 bg-white dark:bg-gray-800 top-10 left-0 w-full shadow-xl z-50"
        x-cloak
        x-show.transition="sidebar"
        x-transition:enter="transition ease-out duration-100"
