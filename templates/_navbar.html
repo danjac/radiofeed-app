@@ -1,6 +1,8 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
-<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
+<header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow relative"
+        x-data="{sidebar: false}"
+        @close-sidebar.window="sidebar=false">
   <div class="flex items-center justify-between px-1 py-2">
 
     <div class="flex items-center flex-shrink-0 mr-6">
@@ -76,14 +78,14 @@
               title="Toggle Menu"
               x-show="!sidebar"
               x-cloak
-              @click="$dispatch('toggle-sidebar')">
+              @click="sidebar=true; $dispatch('toggle-sidebar')">
         {% icon "menu" css_class="h-6 w-6" %}
       </button>
       <button class="lg:hidden focus:outline-none"
               title="Toggle Menu"
               x-show="sidebar"
               x-cloak
-              @click="$dispatch('toggle-sidebar')">
+              @click="sidebar=false; $dispatch('toggle-sidebar')">
         {% icon "chevron_down" css_class="h-6 w-6" %}
       </button>
     </div>
@@ -92,5 +94,35 @@
   {% include "_signup_cta.html" %}
   {% endblock %}
 
+  <div class="lg:hidden absolute py-6 bg-white dark:bg-gray-800 top-10 left-0 w-full"
+       x-cloak
+       x-show="sidebar">
+    <div class="flex justify-center sm:justify-start sm:hidden mb-3">
+
+      <form action="{% url 'podcasts:search_podcasts' %}"
+            method="get"
+            class="relative bg-transparent"
+            hx-push-url="true"
+            x-data="{search: ''}"
+            @submit="$dispatch('close-sidebar');">
+        <input type="search"
+               name="q"
+               x-model="search"
+               autocomplete="off"
+               aria-label="Search"
+               placeholder="Search"
+               class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+          <button type="submit"
+                  title="Search"
+                  class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+            {% icon "search" css_class="h-4 w-4" %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {% include "_sidebar.html" %}
+  </div>
 
 </header>
