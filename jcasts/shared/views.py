@@ -31,7 +31,7 @@ def accept_cookies(request):
     response.set_cookie(
         "accept-cookies",
         value="true",
-        expires=timezone.now() + datetime.timedelta(days=30),
+        expires=timezone.now() + datetime.timedelta(days=365),
         secure=True,
         httponly=True,
         samesite="Lax",
