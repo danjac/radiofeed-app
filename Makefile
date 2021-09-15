@@ -9,6 +9,9 @@ run:
 stop:
 	docker-compose down
 
+restart:
+	docker-compose restart
+
 migrate:
 	./bin/manage migrate
 
