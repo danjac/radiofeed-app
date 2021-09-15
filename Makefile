@@ -12,6 +12,9 @@ stop:
 migrate:
 	./bin/manage migrate
 
+superuser:
+	./bin/manage createsuperuser
+
 seed:
 	./bin/manage seed_podcast_data
 
