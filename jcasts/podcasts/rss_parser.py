@@ -185,8 +185,7 @@ def parse_items(channel, namespaces):
         try:
             yield Item.parse_obj(parse_item(XPathFinder(item, namespaces)))
 
-        except ValidationError as e:
-            print(e)
+        except ValidationError:
             pass
 
 
