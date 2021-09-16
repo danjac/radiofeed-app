@@ -2,11 +2,11 @@ import http
 import secrets
 import traceback
 
-from dataclasses import dataclass
 from datetime import timedelta
 from functools import lru_cache
 from typing import Optional
 
+import attr
 import requests
 
 from django.db import transaction
@@ -62,12 +62,12 @@ def parse_podcast_feeds(*, force_update=False):
     return counter
 
 
-@dataclass
+@attr.s(kw_only=True)
 class ParseResult:
-    rss: str
-    success: bool = False
-    status: Optional[http.HTTPStatus] = None
-    exception: Optional[Exception] = None
+    rss: str = attr.ib()
+    success: bool = attr.ib(default=False)
+    status: Optional[http.HTTPStatus] = attr.ib(default=None)
+    exception: Optional[Exception] = attr.ib(default=None)
 
     def __bool__(self):
         return self.success
@@ -88,7 +88,7 @@ def parse_feed(rss, *, force_update=False):
         return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
 
     except Podcast.DoesNotExist as e:
-        return ParseResult(rss, success=False, exception=e)
+        return ParseResult(rss=rss, success=False, exception=e)
 
     except NotModified as e:
         return parse_failure(podcast, status=e.response.status_code)
@@ -154,8 +154,7 @@ def parse_success(podcast, response, feed, items):
     podcast.exception = ""
 
     # content
-
-    values = feed.dict()
+    values = attr.asdict(feed)
 
     for field in (
         "title",
@@ -189,7 +188,7 @@ def parse_success(podcast, response, feed, items):
     # episodes
     parse_episodes(podcast, items)
 
-    return ParseResult(podcast.rss, success=True, status=response.status_code)
+    return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
 
 
 def parse_episodes(podcast, items, batch_size=500):
@@ -205,7 +204,7 @@ def parse_episodes(podcast, items, batch_size=500):
     guids = dict(qs.values_list("guid", "pk"))
 
     episodes = [
-        Episode(pk=guids.get(item.guid), podcast=podcast, **item.dict())
+        Episode(pk=guids.get(item.guid), podcast=podcast, **attr.asdict(item))
         for item in items
     ]
 
@@ -319,4 +318,9 @@ def parse_failure(
         **fields,
     )
 
-    return ParseResult(podcast.rss, success=False, status=status, exception=exception)
+    return ParseResult(
+        rss=podcast.rss,
+        success=False,
+        status=status,
+        exception=exception,
+    )

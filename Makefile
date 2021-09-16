@@ -1,9 +1,9 @@
-all: build migrate seed test run
+all: build migrate seed test start
 
 build:
 	docker-compose build
 
-run:
+start:
 	docker-compose up -d --remove-orphans --scale worker=4
 
 stop:

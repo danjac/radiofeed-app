@@ -5,7 +5,6 @@ from datetime import timedelta
 import pytest
 
 from django.utils import timezone
-from pydantic import ValidationError
 
 from jcasts.podcasts.factories import FeedFactory, ItemFactory
 from jcasts.podcasts.rss_parser import Feed, Item, RssParserError, parse_rss
@@ -48,7 +47,7 @@ class TestRssParser:
             ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", 643),
             ("rss_mock_small.xml", "ABC News Update", 1),
             ("rss_mock.xml", "Mysterious Universe", 20),
-            ("rss_invalid_duration.xml", "At The Races with Steve Byk", 449),
+            ("rss_invalid_duration.xml", "At The Races with Steve Byk", 450),
             ("rss_bad_cover_urls.xml", "TED Talks Daily", 327),
         ],
     )
@@ -66,73 +65,72 @@ class TestRssParser:
 
 class TestFeed:
     def test_ok(self):
-        feed = Feed.parse_obj(FeedFactory())
-        assert not feed.explicit
+        Feed(**FeedFactory())
 
     def test_empty_link(self):
-        feed = Feed.parse_obj(FeedFactory(link=""))
-        assert feed.link == ""
+        feed = Feed(**FeedFactory(link=""))
+        assert feed.link is None
 
     def test_missing_title(self):
-        with pytest.raises(ValidationError):
-            Feed.parse_obj(FeedFactory(title=None))
+        with pytest.raises(ValueError):
+            Feed(**FeedFactory(title=None))
 
     def test_explicit_true(self):
-        feed = Feed.parse_obj(FeedFactory(explicit="yes"))
+        feed = Feed(**FeedFactory(explicit="yes"))
         assert feed.explicit
 
     def test_explicit_false(self):
-        feed = Feed.parse_obj(FeedFactory(explicit="no"))
+        feed = Feed(**FeedFactory(explicit="no"))
         assert not feed.explicit
 
 
 class TestItem:
     def test_ok(self):
-        item = Item.parse_obj(ItemFactory())
+        item = Item(**ItemFactory())
         assert not item.explicit
 
     def test_not_audio(self):
-        with pytest.raises(ValidationError):
-            Item.parse_obj(ItemFactory(media_type="video/mp4"))
+        with pytest.raises(ValueError):
+            Item(**ItemFactory(media_type="video/mp4"))
 
     def test_pub_date_none(self):
-        with pytest.raises(ValidationError):
-            Item.parse_obj(ItemFactory(pub_date=None))
+        with pytest.raises(ValueError):
+            Item(**ItemFactory(pub_date=None))
 
     def test_pub_date_gt_now(self):
-        with pytest.raises(ValidationError):
-            Item.parse_obj(
-                ItemFactory(pub_date=(timezone.now() + timedelta(days=3)).isoformat())
+        with pytest.raises(ValueError):
+            Item(
+                **ItemFactory(pub_date=(timezone.now() + timedelta(days=3)).isoformat())
             )
 
     def test_explicit_true(self):
-        item = Item.parse_obj(ItemFactory(explicit="yes"))
+        item = Item(**ItemFactory(explicit="yes"))
         assert item.explicit
 
     def test_explicit_false(self):
-        item = Item.parse_obj(ItemFactory(explicit="no"))
+        item = Item(**ItemFactory(explicit="no"))
         assert not item.explicit
 
     def test_empty_duration(self):
-        item = Item.parse_obj(ItemFactory(duration=""))
+        item = Item(**ItemFactory(duration=""))
         assert item.duration == ""
 
     def test_invalid_duration(self):
-        item = Item.parse_obj(ItemFactory(duration="https://example.com"))
+        item = Item(**ItemFactory(duration="https://example.com"))
         assert item.duration == ""
 
     def test_duration_seconds_only(self):
-        item = Item.parse_obj(ItemFactory(duration="1000"))
+        item = Item(**ItemFactory(duration="1000"))
         assert item.duration == "1000"
 
     def test_duration_h_m(self):
-        item = Item.parse_obj(ItemFactory(duration="10:20"))
+        item = Item(**ItemFactory(duration="10:20"))
         assert item.duration == "10:20"
 
     def test_duration_h_m_over_60(self):
-        item = Item.parse_obj(ItemFactory(duration="10:90"))
+        item = Item(**ItemFactory(duration="10:90"))
         assert item.duration == "10"
 
     def test_duration_h_m_s(self):
-        item = Item.parse_obj(ItemFactory(duration="10:30:30"))
+        item = Item(**ItemFactory(duration="10:30:30"))
         assert item.duration == "10:30:30"
