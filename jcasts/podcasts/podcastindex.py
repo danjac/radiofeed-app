@@ -4,17 +4,19 @@ import time
 
 from datetime import timedelta
 from functools import lru_cache
-from typing import Optional, Union
+from typing import Optional
 
+import attr
 import requests
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.utils import timezone
-from pydantic import BaseModel, HttpUrl, ValidationError
 
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
+from jcasts.podcasts.rss_parser import validate_url
 
 
 def search(search_term):
@@ -59,8 +61,11 @@ def get_client():
 def parse_feed_data(data):
     def _parse_feed(result):
         try:
-            return Feed.parse_obj(result)
-        except ValidationError:
+            return Feed(
+                **{k: v for k, v in result.items() if k in ("url", "title", "image")}
+            )
+        except (TypeError, ValueError, ValidationError) as e:
+            print(e)
             return None
 
     return [
@@ -93,16 +98,13 @@ def with_podcasts(feeds):
     return feeds
 
 
-class Feed(BaseModel):
-    url: HttpUrl
-
-    title: str = ""
-    image: Union[HttpUrl, str] = ""
+@attr.s
+class Feed:
+    url: str = attr.ib(validator=validate_url)
+    title: str = attr.ib(default="")
+    image: str = attr.ib(default="")
 
     podcast: Optional[Podcast] = None
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class Client:

@@ -1,5 +1,6 @@
 appnope==0.1.2; sys_platform == "darwin" and python_version >= "3.7"
 asgiref==3.4.1; python_version >= "3.6"
+attrs==21.2.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 backcall==0.2.0; python_version >= "3.7"
 bleach==3.3.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 brotli==1.0.9; python_version >= "3.5" and python_version < "4"
@@ -48,7 +49,6 @@ prompt-toolkit==3.0.20; python_full_version >= "3.6.2" and python_version >= "3.
 psycopg2-binary==2.9.1; python_version >= "3.6"
 ptyprocess==0.7.0; sys_platform != "win32" and python_version >= "3.7"
 pycparser==2.20; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.6"
-pydantic==1.8.2; python_full_version >= "3.6.1"
 pygments==2.10.0; python_version >= "3.7"
 pyjwt==2.1.0; python_version >= "3.6"
 pyopenssl==20.0.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
@@ -70,7 +70,6 @@ sqlparse==0.4.2; python_version >= "3.6"
 threadpoolctl==2.2.0; python_version >= "3.6"
 tqdm==4.62.2; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "3.5"
 traitlets==5.1.0; python_version >= "3.7"
-typing-extensions==3.10.0.2; python_full_version >= "3.6.1"
 unidecode==1.3.1; python_version >= "3.5"
 urllib3==1.26.6; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version < "4"
 wcwidth==0.2.5; python_full_version >= "3.6.2" and python_version >= "3.7"

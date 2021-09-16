@@ -40,5 +40,8 @@ maint: maintenance
 maintenance:
 	ansible-playbook maintenance.yml --ask-pass
 
+requirements:
+	./bin/poetry export -o requirements.txt  --without-hashes
+
 push:
 	git push dokku main
