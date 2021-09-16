@@ -1,4 +1,4 @@
-all: build migrate seed test start
+all: build start migrate test seed
 
 build:
 	docker-compose build
