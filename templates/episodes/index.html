@@ -9,21 +9,8 @@
     New Releases {% if promoted and has_follows %} - Popular Podcasts{% elif has_follows %} - My Podcasts{% endif %}
   </h1>
   {% if not has_follows %}
-  <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-3">
-
-    <div class="flex items-center justify-center sm:justify-end space-x-3">
-      {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
-    </div>
-
-    <div class="flex justify-center sm:justify-end">
-      <a href="{{ request.path }}"
-         title="Refresh"
-         class="btn btn-secondary inline-flex items-center">
-        {% icon "refresh" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-        Refresh
-      </a>
-    </div>
-
+  <div class="flex items-center justify-center sm:justify-end space-x-3">
+    {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
   </div>
   {% endif %}
 </div>
@@ -39,22 +26,11 @@
        class="link">Popular Podcasts</a>
     {% endif %}
   </div>
-  <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-3">
 
-    <div class="flex items-center justify-center sm:justify-end space-x-3">
-      {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
-    </div>
-
-    <div class="flex justify-center sm:justify-end">
-      <a href="{{ request.path }}"
-         title="Refresh"
-         class="btn btn-secondary inline-flex items-center">
-        {% icon "refresh" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-        Refresh
-      </a>
-    </div>
-
+  <div class="flex items-center justify-center sm:justify-end space-x-3">
+    {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
   </div>
+
 </div>
 {% endif %}
 
