@@ -61,7 +61,7 @@ def duration(value):
         return ""
 
 
-def validate_url(inst, attr, value):
+def is_url(inst, attr, value):
     _validate_url(value)
 
 
@@ -82,7 +82,7 @@ class Item:
 
     pub_date: datetime = attr.ib(converter=parse_date)
 
-    media_url: str = attr.ib(validator=validate_url)
+    media_url: str = attr.ib(validator=is_url)
     media_type: str = attr.ib()
 
     explicit: bool = attr.ib(converter=is_explicit)

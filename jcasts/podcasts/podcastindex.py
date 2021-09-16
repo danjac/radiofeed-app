@@ -16,7 +16,7 @@ from django.utils import timezone
 
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
-from jcasts.podcasts.rss_parser import validate_url
+from jcasts.podcasts.rss_parser import is_url
 
 
 def search(search_term):
@@ -99,7 +99,7 @@ def with_podcasts(feeds):
 
 @attr.s
 class Feed:
-    url: str = attr.ib(validator=validate_url)
+    url: str = attr.ib(validator=is_url)
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
 
