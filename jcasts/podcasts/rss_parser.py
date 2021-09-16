@@ -128,7 +128,7 @@ class Feed:
 
     explicit: bool = attr.ib(default=False, converter=is_explicit)
 
-    categories: list[str] = attr.ib(default=attr.Factory(list))
+    categories: list[str] = attr.ib(default=list)
 
 
 def parse_rss(content):
