@@ -7,7 +7,86 @@ import pytest
 from django.utils import timezone
 
 from jcasts.podcasts.factories import FeedFactory, ItemFactory
-from jcasts.podcasts.rss_parser import Feed, Item, RssParserError, parse_rss
+from jcasts.podcasts.rss_parser import (
+    Feed,
+    Item,
+    RssParserError,
+    duration,
+    int_or_none,
+    is_explicit,
+    is_url,
+    parse_rss,
+    url_or_none,
+)
+
+
+class TestDuration:
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, ""),
+            ("invalid", ""),
+            ("300", "300"),
+            ("10:30", "10:30"),
+            ("10:30:59", "10:30:59"),
+            ("10:30:99", "10:30"),
+        ],
+    )
+    def test_duration(self, value, expected):
+        assert duration(value) == expected
+
+
+class TestIntOrNone:
+    def test_is_int(self):
+        assert int_or_none("1234") == 1234
+
+    def test_not_int(self):
+        assert int_or_none("integer") is None
+
+    def test_none(self):
+        assert int_or_none(None) is None
+
+
+class TestUrlOrNone:
+    def test_is_url(self):
+        assert url_or_none("http://example.com") == "http://example.com"
+
+    def test_not_url(self):
+        assert url_or_none("example") is None
+
+    def test_none(self):
+        assert url_or_none(None) is None
+
+
+class TestIsExplicit:
+    def test_explicit(self):
+        assert is_explicit("clean")
+
+    def test_not_explicit(self):
+        assert not is_explicit("no")
+
+    def test_none(self):
+        assert not is_explicit(None)
+
+
+class TestIsUrl:
+    def test_none(self):
+        with pytest.raises(ValueError):
+            is_url(None, "url", None)
+
+    def test_not_a_url(self):
+        with pytest.raises(ValueError):
+            is_url(None, "url", "example")
+
+    def test_ftp(self):
+        with pytest.raises(ValueError):
+            is_url(None, "url", "ftp://example.com")
+
+    def test_http(self):
+        is_url(None, "url", "http://example.com")
+
+    def test_https(self):
+        is_url(None, "url", "https://example.com")
 
 
 class TestRssParser:
