@@ -12,6 +12,9 @@ stop:
 restart:
 	docker-compose restart
 
+logs:
+	docker-compose logs -f
+
 migrate:
 	./bin/manage migrate
 
@@ -30,6 +33,9 @@ test:
 coverage:
 	./bin/runtests -v -x --cov --reuse-db
 
+requirements:
+	./bin/poetry export -o requirements.txt  --without-hashes
+
 upgrade:
 	./bin/poetry update -vv
 	./bin/poetry export -o requirements.txt  --without-hashes
@@ -39,9 +45,6 @@ maint: maintenance
 
 maintenance:
 	ansible-playbook maintenance.yml --ask-pass
-
-requirements:
-	./bin/poetry export -o requirements.txt  --without-hashes
 
 push:
 	git push dokku main
