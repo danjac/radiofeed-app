@@ -114,10 +114,10 @@ class Item:
 class Feed:
 
     title: str = attr.ib(validator=not_empty)
-    link: Optional[str] = attr.ib(converter=url_or_none)
 
     language: str = attr.ib(default="en", converter=lambda value: value[:2])
 
+    link: Optional[str] = attr.ib(default=None, converter=url_or_none)
     cover_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
 
     funding_text: str = attr.ib(default="")

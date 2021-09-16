@@ -64,8 +64,7 @@ def parse_feed_data(data):
             return Feed(
                 **{k: v for k, v in result.items() if k in ("url", "title", "image")}
             )
-        except (TypeError, ValueError, ValidationError) as e:
-            print(e)
+        except (TypeError, ValueError, ValidationError):
             return None
 
     return [
