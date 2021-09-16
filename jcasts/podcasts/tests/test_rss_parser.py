@@ -15,12 +15,13 @@ from jcasts.podcasts.rss_parser import (
     int_or_none,
     is_explicit,
     is_url,
+    not_empty,
     parse_rss,
     url_or_none,
 )
 
 
-class TestDuration:
+class TestConverters:
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -35,58 +36,74 @@ class TestDuration:
     def test_duration(self, value, expected):
         assert duration(value) == expected
 
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("1234", 1234),
+            (None, None),
+            ("integer", None),
+        ],
+    )
+    def test_int_or_none(self, value, expected):
+        assert int_or_none(value) == expected
 
-class TestIntOrNone:
-    def test_is_int(self):
-        assert int_or_none("1234") == 1234
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("http://example.com", "http://example.com"),
+            ("example", None),
+            (None, None),
+        ],
+    )
+    def test_url_or_none(self, value, expected):
+        assert url_or_none(value) == expected
 
-    def test_not_int(self):
-        assert int_or_none("integer") is None
-
-    def test_none(self):
-        assert int_or_none(None) is None
-
-
-class TestUrlOrNone:
-    def test_is_url(self):
-        assert url_or_none("http://example.com") == "http://example.com"
-
-    def test_not_url(self):
-        assert url_or_none("example") is None
-
-    def test_none(self):
-        assert url_or_none(None) is None
-
-
-class TestIsExplicit:
-    def test_explicit(self):
-        assert is_explicit("clean")
-
-    def test_not_explicit(self):
-        assert not is_explicit("no")
-
-    def test_none(self):
-        assert not is_explicit(None)
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("clean", True),
+            ("yes", True),
+            ("no", False),
+            (None, False),
+        ],
+    )
+    def test_is_explicit(self, value, expected):
+        assert is_explicit(value) is expected
 
 
-class TestIsUrl:
-    def test_none(self):
-        with pytest.raises(ValueError):
-            is_url(None, "url", None)
+class TestValidators:
+    @pytest.mark.parametrize(
+        "value,exc",
+        [
+            (None, ValueError),
+            ("example", ValueError),
+            ("ftp://example.com", ValueError),
+            ("http://example.com", None),
+            ("https://example.com", None),
+        ],
+    )
+    def test_is_url(self, value, exc):
+        if exc:
+            with pytest.raises(exc):
+                is_url(None, "url", None)
+        else:
+            is_url(None, "url", value)
 
-    def test_not_a_url(self):
-        with pytest.raises(ValueError):
-            is_url(None, "url", "example")
-
-    def test_ftp(self):
-        with pytest.raises(ValueError):
-            is_url(None, "url", "ftp://example.com")
-
-    def test_http(self):
-        is_url(None, "url", "http://example.com")
-
-    def test_https(self):
-        is_url(None, "url", "https://example.com")
+    @pytest.mark.parametrize(
+        "value,exc",
+        [
+            (None, ValueError),
+            (False, ValueError),
+            ("", ValueError),
+            ("ok", None),
+        ],
+    )
+    def test_not_empty(self, value, exc):
+        if exc:
+            with pytest.raises(exc):
+                not_empty(None, "url", None)
+        else:
+            not_empty(None, "url", value)
 
 
 class TestRssParser:
