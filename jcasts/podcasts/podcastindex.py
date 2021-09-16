@@ -11,7 +11,6 @@ import requests
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from jcasts.podcasts.feed_parser import parse_feed
@@ -62,9 +61,11 @@ def parse_feed_data(data):
     def _parse_feed(result):
         try:
             return Feed(
-                **{k: v for k, v in result.items() if k in ("url", "title", "image")}
+                url=result["url"],
+                title=result["title"],
+                image=result["image"],
             )
-        except (TypeError, ValueError, ValidationError):
+        except (KeyError, TypeError, ValueError):
             return None
 
     return [

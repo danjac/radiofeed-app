@@ -62,7 +62,10 @@ def duration(value):
 
 
 def is_url(inst, attr, value):
-    _validate_url(value)
+    try:
+        _validate_url(value)
+    except ValidationError as e:
+        raise ValueError from e
 
 
 def not_empty(inst, attr, value):
@@ -97,7 +100,7 @@ class Item:
     duration: str = attr.ib(default="", converter=duration)
 
     description: str = attr.ib(default="")
-    keywords: str = attr.ib(default="", converter=lambda value: " ".join(value))
+    keywords: str = attr.ib(default="", converter=lambda value: " ".join(value or []))
 
     @pub_date.validator
     def is_pub_date_ok(self, attr, value):
@@ -160,7 +163,7 @@ def parse_rss(content):
 def parse_channel(channel, namespaces):
     try:
         feed = parse_feed(XPathFinder(channel, namespaces))
-    except (TypeError, ValueError, ValidationError) as e:
+    except (TypeError, ValueError) as e:
         raise RssParserError from e
     if not (items := [*parse_items(channel, namespaces)]):
         raise RssParserError("no items found in RSS feed")
@@ -195,7 +198,7 @@ def parse_items(channel, namespaces):
         try:
             yield parse_item(XPathFinder(item, namespaces))
 
-        except (ValueError, TypeError, ValidationError):
+        except (ValueError, TypeError):
             pass
 
 
