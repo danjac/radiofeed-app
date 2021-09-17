@@ -75,6 +75,7 @@ def get_client():
 
 def parse_feed_data(data):
     def _parse_feed(result):
+        print(result)
         try:
             return Feed(
                 url=result["url"],
@@ -95,7 +96,7 @@ def parse_feed_data(data):
 def parse_date(timestamp):
     if timestamp is None:
         return None
-    return datetime.utcfromtimestamp(timestamp)
+    return timezone.make_aware(datetime.utcfromtimestamp(timestamp))
 
 
 def with_podcasts(feeds, force_update=False):
