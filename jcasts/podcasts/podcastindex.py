@@ -63,7 +63,8 @@ def recent_feeds(limit=200, since=timedelta(hours=24)):
                     "since": (timezone.now() - since).timestamp(),
                 },
             )
-        )
+        ),
+        force_update=True,
     )
 
 
@@ -90,7 +91,7 @@ def parse_feed_data(data):
     ]
 
 
-def with_podcasts(feeds):
+def with_podcasts(feeds, force_update=False):
     """Looks up podcast associated with result. Adds new podcasts if they are not already in the database"""
 
     podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
@@ -98,17 +99,23 @@ def with_podcasts(feeds):
     )
 
     new_podcasts = []
+    for_update = []
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
+        elif force_update:
+            for_update.append(feed.podcast)
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
 
         for podcast in new_podcasts:
-            parse_feed.delay(podcast.rss, force_update=True)
+            for_update.append(podcast)
+
+    for podcast in for_update:
+        parse_feed.delay(podcast.rss, force_update=True)
 
     return feeds
 
