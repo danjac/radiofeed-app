@@ -2,7 +2,7 @@ import base64
 import hashlib
 import time
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from functools import lru_cache
 from typing import Optional
 
@@ -80,6 +80,7 @@ def parse_feed_data(data):
                 url=result["url"],
                 title=result["title"],
                 image=result["image"],
+                pub_date=parse_date(result.get("newestItemPublishedTime")),
             )
         except (KeyError, TypeError, ValueError):
             return None
@@ -89,6 +90,12 @@ def parse_feed_data(data):
         for feed in [_parse_feed(result) for result in data.get("feeds", [])]
         if feed
     ]
+
+
+def parse_date(timestamp):
+    if timestamp is None:
+        return None
+    return datetime.utcfromtimestamp(timestamp)
 
 
 def with_podcasts(feeds, force_update=False):
@@ -105,7 +112,7 @@ def with_podcasts(feeds, force_update=False):
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
-        elif force_update:
+        elif feed.pub_date and feed.pub_date > feed.podcast.pub_date:
             for_update.append(feed.podcast)
 
     if new_podcasts:
@@ -125,6 +132,7 @@ class Feed:
     url: str = attr.ib(validator=is_url)
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
+    pub_date: Optional[datetime] = attr.ib(default=None)
 
     podcast: Optional[Podcast] = None
 
