@@ -1,6 +1,5 @@
 const playerObj = {
   autoplay: false,
-  counter: '00:00:00',
   currentTime: 0,
   duration: 0,
   isError: false,
@@ -10,17 +9,22 @@ const playerObj = {
   playbackRate: 1.0,
   defaultPlaybackRate: 1.0,
   showPlayer: true,
+  counters: {
+    current: '00:00:00',
+    duration: '00:00:00',
+  },
   keys: {
     enable: 'player-enabled',
     playbackRate: 'player-playback-rate',
   },
 
   init() {
-    this.$watch('duration', (value) => {
-      this.counter = formatDuration(value - this.currentTime);
-    });
     this.$watch('currentTime', (value) => {
-      this.counter = formatDuration(this.duration - value);
+      this.counters.current = formatDuration(value);
+    });
+
+    this.$watch('duration', (value) => {
+      this.counters.duration = formatDuration(value);
     });
 
     this.$watch('playbackRate', (value) => {

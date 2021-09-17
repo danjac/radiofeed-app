@@ -37,10 +37,16 @@
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
 
-    <a class="player--title w-84 truncate block sm:hidden text-center"
-       href="{{ episode_url }}"
-       hx-swap="outerHTML show:window:top"
-       title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+    <div class="sm:hidden">
+      <a class="player--title w-84 truncate block text-center"
+         href="{{ episode_url }}"
+         hx-swap="outerHTML show:window:top"
+         title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+      <div class="text-xs lg:text-sm text-center sm:hidden">
+        <span x-text="counters.current"></span> /
+        <span x-text="counters.duration"></span>
+      </div>
+    </div>
 
     <div class="flex items-center space-x-2 sm:space-x-0">
 
@@ -97,11 +103,17 @@
           </div>
 
 
-          <div class="flex items-center justify-center">
-            <a class="player--title hidden sm:block truncate text-center sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl"
-               href="{{ episode_url }}"
-               hx-swap="outerHTML show:window:top"
-               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+          <div class="hidden sm:block">
+            <div>
+              <a class="player--title truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl"
+                 href="{{ episode_url }}"
+                 hx-swap="outerHTML show:window:top"
+                 title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+            </div>
+            <div class="text-xs lg:text-sm text-center">
+              <span x-text="counters.current"></span> /
+              <span x-text="counters.duration"></span>
+            </div>
           </div>
 
           {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 player--interactive" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
@@ -169,8 +181,7 @@
         </div>
 
         {% endwith %}
-
-        <div class="flex items-center w-full mx-1">
+        <div class="w-full h-3">
           <input type="range"
                  :max="duration"
                  :disabled="isPaused || !isLoaded"
@@ -178,9 +189,6 @@
                  @change="skip"
                  min="0"
                  class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
-          <div class="w-20 mr-2 text-right tracking-tighter player--counter">
-            -<span x-text="counter"></span>
-          </div>
         </div>
       </div>
     </div>
