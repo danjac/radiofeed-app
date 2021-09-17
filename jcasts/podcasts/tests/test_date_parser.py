@@ -2,7 +2,16 @@ import datetime
 
 import pytz
 
-from jcasts.podcasts.date_parser import parse_date
+from jcasts.podcasts.date_parser import parse_date, parse_timestamp
+
+
+class TestParseTimestamp:
+    def test_parse_timestamp_if_none(self):
+        assert parse_timestamp(None) is None
+
+    def test_parse_timestamp(self):
+        dt = parse_timestamp(1631905234)
+        assert dt.tzinfo == pytz.UTC
 
 
 class TestParseDate:

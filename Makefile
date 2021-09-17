@@ -31,7 +31,7 @@ test:
 	./bin/runtests -v -x --ff --reuse-db
 
 coverage:
-	./bin/runtests -v -x --cov --reuse-db
+	./bin/runtests -v -x --cov --reuse-db --cov-report term-missing
 
 requirements:
 	./bin/poetry export -o requirements.txt  --without-hashes

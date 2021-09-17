@@ -254,3 +254,9 @@ def parse_date(value):
         return force_tz_aware(date_parser.parse(value, tzinfos=TZ_INFOS))
     except date_parser.ParserError:
         return None
+
+
+def parse_timestamp(timestamp):
+    if timestamp is None:
+        return None
+    return force_tz_aware(datetime.utcfromtimestamp(timestamp))

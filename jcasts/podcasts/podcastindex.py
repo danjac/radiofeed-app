@@ -13,9 +13,9 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 
+from jcasts.podcasts.date_parser import parse_timestamp
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
-from jcasts.podcasts.rss_parser import is_url
 
 
 def search(search_term):
@@ -81,7 +81,7 @@ def parse_feed_data(data):
                 url=result["url"],
                 title=result["title"],
                 image=result["image"],
-                pub_date=parse_date(result.get("newestItemPublishedTime")),
+                pub_date=parse_timestamp(result.get("newestItemPublishedTime")),
             )
         except (KeyError, TypeError, ValueError):
             return None
@@ -91,12 +91,6 @@ def parse_feed_data(data):
         for feed in [_parse_feed(result) for result in data.get("feeds", [])]
         if feed
     ]
-
-
-def parse_date(timestamp):
-    if timestamp is None:
-        return None
-    return timezone.make_aware(datetime.utcfromtimestamp(timestamp))
 
 
 def with_podcasts(feeds, force_update=False):
@@ -130,7 +124,7 @@ def with_podcasts(feeds, force_update=False):
 
 @attr.s
 class Feed:
-    url: str = attr.ib(validator=is_url)
+    url: str = attr.ib()
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
     pub_date: Optional[datetime] = attr.ib(default=None)
