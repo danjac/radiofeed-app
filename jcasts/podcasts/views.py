@@ -114,13 +114,17 @@ def recommendations(request, podcast_id, slug=None):
 
 @require_http_methods(["GET"])
 def podcast_detail(request, podcast_id, slug=None):
+    podcast = get_podcast_or_404(request, podcast_id)
 
     return TemplateResponse(
         request,
         "podcasts/detail.html",
         get_podcast_detail_context(
             request,
-            get_podcast_or_404(request, podcast_id),
+            podcast,
+            {
+                "is_following": podcast.is_following(request.user),
+            },
         ),
     )
 
@@ -215,7 +219,6 @@ def get_podcast_detail_context(request, podcast, extra_context=None):
     return {
         "podcast": podcast,
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
-        "is_following": podcast.is_following(request.user),
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
