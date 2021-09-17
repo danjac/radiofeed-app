@@ -76,6 +76,15 @@ class TestNewFeeds:
         mock_parse_feed.assert_called()
 
 
+class TestRecentFeeds:
+    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
+
+        feeds = podcastindex.recent_feeds()
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        mock_parse_feed.assert_called()
+
+
 class TestSearch:
     cache_key = "podcastindex:6447567a64413d3d"
 

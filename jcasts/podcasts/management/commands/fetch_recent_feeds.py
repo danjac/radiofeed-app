@@ -16,11 +16,11 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--since", type=int, default=24, help="Hours since new feeds added"
+            "--since", type=int, default=1, help="Hours since feeds last updated"
         )
 
     def handle(self, *args, **options):
-        feeds = podcastindex.new_feeds(
+        feeds = podcastindex.recent_feeds(
             limit=options["limit"], since=timedelta(hours=options["since"])
         )
         self.stdout.write(self.style.SUCCESS(f"{len(feeds)} feed(s) updated"))
