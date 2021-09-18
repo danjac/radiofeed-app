@@ -41,6 +41,10 @@ class TestGetPodcasts:
         PodcastFactory(hub=self.hub)
         assert websub.get_podcasts().count() == 1
 
+    def test_requested(self, db):
+        PodcastFactory(hub=self.hub, requested=timezone.now())
+        assert websub.get_podcasts().count() == 0
+
     def test_exception(self, db):
         PodcastFactory(hub=self.hub, hub_exception="broken")
         assert websub.get_podcasts().count() == 0
@@ -71,15 +75,19 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
         assert podcast.hub_token
+        assert podcast.requested
 
     def test_exception(self, db, mocker):
         mock_post = mocker.patch(self.mock_http_post, return_value=MockBadResponse())
 
-        podcast = PodcastFactory(hub=self.hub)
+        podcast = PodcastFactory(
+            hub=self.hub, subscribed=timezone.now() - timedelta(hours=1)
+        )
         websub.subscribe(podcast.id)
         mock_post.assert_called()
 
         podcast.refresh_from_db()
         assert podcast.hub_token is None
         assert podcast.subscribed is None
+        assert podcast.requested is None
         assert podcast.hub_exception
