@@ -3,12 +3,14 @@ from unittest import mock
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
+    WebSubFilter,
 )
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -113,3 +115,33 @@ class TestPodcastAdmin:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+    def test_websub_filter_subscribed(self, podcasts, admin, req):
+        subscribed = PodcastFactory(subscribed=timezone.now())
+        f = WebSubFilter(req, {"websub": "subscribed"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == subscribed
+
+    def test_websub_filter_requested(self, podcasts, admin, req):
+        requested = PodcastFactory(requested=timezone.now())
+        f = WebSubFilter(req, {"websub": "requested"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == requested
+
+    def test_websub_filter_none(self, podcasts, admin, req):
+        subscribed = PodcastFactory(subscribed=timezone.now())
+        requested = PodcastFactory(requested=timezone.now())
+        f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert subscribed not in qs
+        assert requested not in qs
+
+    def test_websub_filter_all(self, podcasts, admin, req):
+        PodcastFactory(subscribed=timezone.now())
+        PodcastFactory(requested=timezone.now())
+        f = WebSubFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 5

@@ -13,6 +13,30 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+class WebSubFilter(admin.SimpleListFilter):
+    title = "WebSub"
+    parameter_name = "websub"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("subscribed", "Subscribed"),
+            ("requested", "Requested"),
+            ("none", "None"),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        print("VALUE", value)
+        if value == "subscribed":
+            return queryset.filter(subscribed__isnull=False)
+        if value == "requested":
+            return queryset.filter(requested__isnull=False)
+        if value == "none":
+            return queryset.filter(subscribed__isnull=True, requested__isnull=True)
+
+        return queryset
+
+
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub date"
     parameter_name = "pub_date"
@@ -67,7 +91,12 @@ class ActiveFilter(admin.SimpleListFilter):
 
 @admin.register(models.Podcast)
 class PodcastAdmin(admin.ModelAdmin):
-    list_filter = (PubDateFilter, ActiveFilter, PromotedFilter)
+    list_filter = (
+        ActiveFilter,
+        PromotedFilter,
+        PubDateFilter,
+        WebSubFilter,
+    )
 
     list_display = (
         "__str__",
@@ -95,6 +124,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "requested",
         "pub_date",
         "etag",
+        "hub_token",
         "http_status",
         "exception",
     )

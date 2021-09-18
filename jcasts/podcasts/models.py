@@ -75,14 +75,6 @@ class Podcast(models.Model):
     etag = models.TextField(blank=True)
     title = models.TextField()
 
-    # websub fields
-    hub = models.URLField(null=True, blank=True)
-    hub_token = models.UUIDField(unique=True, null=True, blank=True, editable=False)
-    hub_exception = models.TextField(blank=True)
-
-    requested = models.DateTimeField(null=True, blank=True)
-    subscribed = models.DateTimeField(null=True, blank=True)
-
     pub_date = models.DateTimeField(null=True, blank=True)
     scheduled = models.DateTimeField(null=True, blank=True)
     parsed = models.DateTimeField(null=True, blank=True)
@@ -115,11 +107,41 @@ class Podcast(models.Model):
     explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
 
+    # websub fields
+    hub = models.URLField(null=True, blank=True, verbose_name="WebSub URL")
+
+    hub_token = models.UUIDField(
+        unique=True,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="WebSub token",
+    )
+
+    hub_exception = models.TextField(
+        blank=True,
+        verbose_name="WebSub exception",
+    )
+
+    requested = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="WebHub subscription requested at",
+    )
+
+    subscribed = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="WebHub subscribed until",
+    )
+
     categories = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
     recipients = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name="recommended_podcasts"
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="recommended_podcasts",
     )
 
     search_vector = SearchVectorField(null=True, editable=False)
