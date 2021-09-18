@@ -37,8 +37,8 @@
        x-show="mediaSrc && showPlayer"
        :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
 
-    <div class="sm:hidden">
-      <a class="player--title w-84 truncate block text-center"
+    <div class="player--title sm:hidden">
+      <a class="w-84 truncate block text-center"
          href="{{ episode_url }}"
          hx-swap="outerHTML show:window:top"
          title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
@@ -103,9 +103,9 @@
           </div>
 
 
-          <div class="hidden sm:block">
+          <div class="hidden sm:block player--title">
             <div>
-              <a class="player--title truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl"
+              <a class="truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl"
                  href="{{ episode_url }}"
                  hx-swap="outerHTML show:window:top"
                  title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
