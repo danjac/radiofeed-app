@@ -72,6 +72,7 @@ def websub_subscribe(request, token):
         except (KeyError, ValueError):
             raise Http404()
 
+        podcast.requested = None
         podcast.subscribed = timezone.now() + timedelta(seconds=lease_seconds)
         podcast.save()
 

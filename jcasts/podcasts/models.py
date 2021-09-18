@@ -79,6 +79,8 @@ class Podcast(models.Model):
     hub = models.URLField(null=True, blank=True)
     hub_token = models.UUIDField(unique=True, null=True, blank=True, editable=False)
     hub_exception = models.TextField(blank=True)
+
+    requested = models.DateTimeField(null=True, blank=True)
     subscribed = models.DateTimeField(null=True, blank=True)
 
     pub_date = models.DateTimeField(null=True, blank=True)

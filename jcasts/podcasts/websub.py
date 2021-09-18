@@ -17,6 +17,7 @@ def get_podcasts():
     return Podcast.objects.filter(
         Q(Q(subscribed__lte=timezone.now()) | Q(subscribed__isnull=True)),
         hub__isnull=False,
+        requested__isnull=True,
         hub_exception="",
     )
 
@@ -27,6 +28,7 @@ def subscribe(podcast_id):
     podcast = get_podcasts().get(pk=podcast_id)
     podcast.hub_token = uuid.uuid4()
     podcast.hub_exception = ""
+    podcast.requested = timezone.now()
 
     response = requests.post(
         podcast.hub,
@@ -44,6 +46,7 @@ def subscribe(podcast_id):
         response.raise_for_status()
     except requests.RequestException:
 
+        podcast.requested = None
         podcast.subscribed = None
         podcast.hub_token = None
         podcast.hub_exception = traceback.format_exc()
