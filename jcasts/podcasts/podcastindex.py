@@ -2,7 +2,7 @@ import base64
 import hashlib
 import time
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import lru_cache
 from typing import Optional
 
@@ -13,7 +13,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 
-from jcasts.podcasts.date_parser import parse_timestamp
 from jcasts.podcasts.feed_parser import parse_feed
 from jcasts.podcasts.models import Podcast
 
@@ -52,22 +51,6 @@ def new_feeds(limit=20, since=timedelta(hours=24)):
     )
 
 
-def recent_feeds(limit=200, since=timedelta(hours=24)):
-
-    return with_podcasts(
-        parse_feed_data(
-            get_client().fetch(
-                "/recent/feeds",
-                {
-                    "max": limit,
-                    "since": (timezone.now() - since).timestamp(),
-                },
-            )
-        ),
-        force_update=True,
-    )
-
-
 @lru_cache
 def get_client():
     return Client.from_settings()
@@ -81,7 +64,6 @@ def parse_feed_data(data):
                 url=result["url"],
                 title=result["title"],
                 image=result["image"],
-                pub_date=parse_timestamp(result.get("newestItemPublishedTime")),
             )
         except (KeyError, TypeError, ValueError):
             return None
@@ -93,7 +75,7 @@ def parse_feed_data(data):
     ]
 
 
-def with_podcasts(feeds, force_update=False):
+def with_podcasts(feeds):
     """Looks up podcast associated with result. Adds new podcasts if they are not already in the database"""
 
     podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
@@ -101,22 +83,16 @@ def with_podcasts(feeds, force_update=False):
     )
 
     new_podcasts = []
-    for_update = []
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
-        elif feed.pub_date and feed.pub_date > feed.podcast.pub_date:
-            for_update.append(feed.podcast)
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
 
-        for podcast in new_podcasts:
-            for_update.append(podcast)
-
-    for podcast in for_update:
+    for podcast in new_podcasts:
         parse_feed.delay(podcast.rss, force_update=True)
 
     return feeds
@@ -127,7 +103,6 @@ class Feed:
     url: str = attr.ib()
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
-    pub_date: Optional[datetime] = attr.ib(default=None)
 
     podcast: Optional[Podcast] = None
 

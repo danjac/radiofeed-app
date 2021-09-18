@@ -1,10 +1,7 @@
-import datetime
-
 import pytest
 import requests
 
 from django.core.cache import cache
-from django.utils import timezone
 
 from jcasts.podcasts import podcastindex
 from jcasts.podcasts.factories import PodcastFactory
@@ -36,13 +33,6 @@ def mock_good_response(mocker):
                         "url": "https://feeds.fireside.fm/testandcode/rss",
                         "title": "Test & Code : Python Testing",
                         "image": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                        "newestItemPublishedTime": int(
-                            round(
-                                (
-                                    timezone.now() + datetime.timedelta(days=3)
-                                ).timestamp()
-                            )
-                        ),
                     }
                 ],
             }
@@ -81,15 +71,6 @@ class TestNewFeeds:
     def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
 
         feeds = podcastindex.new_feeds()
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
-
-
-class TestRecentFeeds:
-    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
-
-        feeds = podcastindex.recent_feeds()
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
         mock_parse_feed.assert_called()
@@ -161,4 +142,4 @@ class TestSearch:
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
+        mock_parse_feed.assert_not_called()

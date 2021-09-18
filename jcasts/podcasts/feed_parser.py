@@ -44,6 +44,7 @@ def parse_podcast_feeds(*, force_update=False):
     qs = (
         Podcast.objects.order_by("scheduled", "-pub_date")
         .filter(queued__isnull=True)
+        .order_by("scheduled")
         .values_list("rss", flat=True)
     )
 

@@ -23,4 +23,4 @@ class Command(BaseCommand):
         feeds = podcastindex.new_feeds(
             limit=options["limit"], since=timedelta(hours=options["since"])
         )
-        self.stdout.write(self.style.SUCCESS(f"{len(feeds)} feed(s) updated"))
+        self.stdout.write(self.style.SUCCESS(f"{len(feeds)} new feed(s) found"))
