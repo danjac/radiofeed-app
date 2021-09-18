@@ -239,7 +239,7 @@ TEMPLATES: list[dict] = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "builtins": [
-                "jcasts.shared.template.defaulttags",
+                "jcasts.shared.template",
             ],
             "libraries": {
                 "pagination": "jcasts.shared.pagination.templatetags",

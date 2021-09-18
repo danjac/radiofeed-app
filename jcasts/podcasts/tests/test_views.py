@@ -1,6 +1,9 @@
+import uuid
+
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
@@ -10,7 +13,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Follow
 from jcasts.podcasts.podcastindex import Feed
-from jcasts.shared.assertions import assert_conflict, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -247,3 +250,102 @@ class TestUnfollow:
             resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+
+class TestWebsubSubscribe:
+    hub = "https://pubsubhubbub.appspot.com/"
+    challenge = "12345abcd"
+    lease_seconds = 3600
+
+    def url(self, podcast):
+        return reverse("podcasts:websub_subscribe", args=[podcast.hub_token])
+
+    def test_get_ok(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.topic": podcast.rss,
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": self.lease_seconds,
+            },
+        )
+        assert_ok(resp)
+        assert resp.content == bytes(self.challenge, "utf-8")
+
+        podcast.refresh_from_db()
+
+        assert (timezone.now() - podcast.subscribed).total_seconds() == pytest.approx(
+            self.lease_seconds, 10
+        )
+
+    def test_missing_mode(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.topic": podcast.rss,
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": self.lease_seconds,
+            },
+        )
+        assert_not_found(resp)
+
+    def test_invalid_mode(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "unsubscribe",
+                "hub.topic": podcast.rss,
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": self.lease_seconds,
+            },
+        )
+        assert_not_found(resp)
+
+    def test_invalid_lease_seconds(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.topic": podcast.rss,
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": "test",
+            },
+        )
+        assert_not_found(resp)
+
+    def test_missing_topic(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": self.lease_seconds,
+            },
+        )
+        assert_not_found(resp)
+
+    def test_invalid_topic(self, db, client):
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.get(
+            self.url(podcast),
+            {
+                "hub.mode": "subscribe",
+                "hub.topic": "https://random.com/test.rss",
+                "hub.challenge": self.challenge,
+                "hub.lease_seconds": self.lease_seconds,
+            },
+        )
+        assert_not_found(resp)
+
+    def test_post_ok(self, db, client, mocker):
+        mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        resp = client.post(self.url(podcast))
+        assert_ok(resp)
+        mock_parse_feed.assert_called()

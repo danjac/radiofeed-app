@@ -43,15 +43,19 @@ def parse_podcast_feeds(*, force_update=False):
 
     qs = (
         Podcast.objects.order_by("scheduled", "-pub_date")
-        .filter(queued__isnull=True)
+        .filter(
+            queued__isnull=True,
+        )
         .values_list("rss", flat=True)
     )
 
+    # only parse feeds which don't have an active websub
     if not force_update:
         qs = qs.filter(
             active=True,
             scheduled__isnull=False,
             scheduled__lte=now,
+            subscribed__isnull=True,
         )
 
     for counter, rss in enumerate(qs.iterator(), 1):
@@ -154,20 +158,25 @@ def parse_success(podcast, response, feed, items):
     podcast.exception = ""
 
     # content
-    values = attr.asdict(feed)
 
     for field in (
-        "title",
-        "language",
-        "link",
         "cover_url",
         "description",
-        "owner",
         "explicit",
-        "funding_url",
         "funding_text",
+        "funding_url",
+        "language",
+        "link",
+        "owner",
+        "title",
     ):
-        setattr(podcast, field, values[field])
+        setattr(podcast, field, getattr(feed, field))
+
+    # check for hub in header or feed body
+    if "self" in response.links and "hub" in response.links:
+        podcast.hub = response.links["hub"]["url"]
+    else:
+        podcast.hub = feed.hub
 
     # taxonomy
     categories_dct = get_categories_dict()

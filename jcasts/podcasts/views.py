@@ -1,14 +1,18 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import podcastindex
+from jcasts.podcasts import feed_parser, podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -46,6 +50,35 @@ def index(request):
         },
         cached=promoted,
     )
+
+
+@require_http_methods(["GET", "POST"])
+def websub_subscribe(request, token):
+
+    podcast = get_object_or_404(Podcast, hub__isnull=False, hub_token=token)
+
+    if request.method == "GET":
+        try:
+
+            if request.GET["hub.mode"] != "subscribe":
+                raise ValueError("hub.mode should be 'subscribe'")
+
+            if request.GET["hub.topic"] != podcast.rss:
+                raise ValueError("hub.topic does not match podcast RSS")
+
+            challenge = request.GET["hub.challenge"]
+            lease_seconds = int(request.GET["hub.lease_seconds"])
+
+        except (KeyError, ValueError):
+            raise Http404()
+
+        podcast.subscribed = timezone.now() + timedelta(seconds=lease_seconds)
+        podcast.save()
+
+        return HttpResponse(challenge)
+
+    feed_parser.parse_feed.delay(podcast.rss, force_update=True)
+    return HttpResponse()
 
 
 @require_http_methods(["GET"])

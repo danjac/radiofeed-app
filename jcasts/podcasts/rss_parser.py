@@ -13,6 +13,7 @@ from django.utils import timezone
 from jcasts.podcasts.date_parser import parse_date
 
 NAMESPACES = {
+    "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
     "podcast": "https://podcastindex.org/namespace/1.0",
@@ -121,6 +122,7 @@ class Feed:
     language: str = attr.ib(default="en", converter=lambda value: value[:2])
 
     link: Optional[str] = attr.ib(default=None, converter=url_or_none)
+    hub: Optional[str] = attr.ib(default=None, converter=url_or_none)
     cover_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
 
     funding_text: str = attr.ib(default="")
@@ -179,6 +181,10 @@ def parse_feed(finder):
         cover_url=finder.find("itunes:image/@href", "image/url/text()"),
         funding_url=finder.find("podcast:funding/@url", default=""),
         funding_text=finder.find("podcast:funding/text()", default=""),
+        hub=finder.find(
+            "link[@rel='hub']/@href",
+            "atom:link[@rel='hub']/@href",
+        ),
         description=finder.find(
             "description/text()",
             "itunes:summary/text()",

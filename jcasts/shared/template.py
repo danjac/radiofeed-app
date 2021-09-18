@@ -36,11 +36,14 @@ def timesince_approx(value, arg=None):
 
 @register.simple_tag(takes_context=True)
 def absolute_uri(context, url=None, *args, **kwargs):
+    return build_absolute_uri(
+        resolve_url(url, *args, **kwargs) if url else None, context.get("request")
+    )
 
-    url = resolve_url(url, *args, **kwargs) if url else None
 
-    if "request" in context:
-        return context["request"].build_absolute_uri(url)
+def build_absolute_uri(url=None, request=None):
+    if request:
+        return request.build_absolute_uri(url)
 
     # in case we don't have a request, e.g. in email job
     domain = Site.objects.get_current().domain

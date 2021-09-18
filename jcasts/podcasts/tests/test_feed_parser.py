@@ -29,10 +29,12 @@ class MockResponse:
         status=http.HTTPStatus.OK,
         content=b"",
         headers=None,
+        links=None,
     ):
         self.url = url
         self.content = content
         self.headers = headers or {}
+        self.links = links or {}
         self.status_code = status
 
     def raise_for_status(self):
@@ -242,6 +244,31 @@ class TestParseFeed:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
+
+    def test_parse_feed_with_hub_in_link_header(self, mocker, new_podcast, categories):
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+                links={
+                    "self": {"url": new_podcast.rss},
+                    "hub": {"url": "https://pubsubhubbub.appspot.com/"},
+                },
+            ),
+        )
+        assert parse_feed(new_podcast.rss)
 
     def test_parse_feed_permanent_redirect(self, mocker, new_podcast, categories):
         mocker.patch(

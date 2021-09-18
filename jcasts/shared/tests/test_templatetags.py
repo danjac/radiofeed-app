@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from jcasts.shared.pagination.templatetags import pagination_url
-from jcasts.shared.template.defaulttags import (
+from jcasts.shared.template import (
     absolute_uri,
     active_link,
     colorpicker,

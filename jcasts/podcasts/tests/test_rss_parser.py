@@ -123,6 +123,14 @@ class TestRssParser:
         with pytest.raises(RssParserError):
             parse_rss(b"<rss><channel /></rss>")
 
+    def test_hub(self):
+        content = self.read_mock_file("rss_mock.xml").decode("utf-8")
+        feed, items = parse_rss(bytes(content.encode("utf-8")))
+
+        assert len(items) == 20
+        assert feed.title == "Mysterious Universe"
+        assert feed.hub == "https://pubsubhubbub.appspot.com/"
+
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
