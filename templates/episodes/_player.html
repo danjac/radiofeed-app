@@ -118,7 +118,7 @@
 
           {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 player--interactive" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
 
-          <div class="flex items-center sm:hidden space-x-1 lg:space-x-2 mr-2 lg:mr-3">
+          <div class="flex items-center sm:hidden space-x-1">
 
             <button title="Skip back 10 seconds"
                     @click="skipBack"
@@ -152,7 +152,7 @@
 
             </div>
 
-            <div class="flex items-center space-x-1 lg:space-x-2">
+            <div class="flex items-center space-x-1 lg:space-x-2 mr-2 lg:mr-3">
               <button class="{{ BUTTON_CSS }} inline-block"
                       @click="decrementPlaybackRate"
                       title="Decrease Playback Rate">-</button>
