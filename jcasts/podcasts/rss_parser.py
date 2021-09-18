@@ -180,7 +180,9 @@ def parse_feed(finder):
         funding_url=finder.find("podcast:funding/@url", default=""),
         funding_text=finder.find("podcast:funding/text()", default=""),
         description=finder.find(
-            "description/text()", "itunes:summary/text()", default=""
+            "description/text()",
+            "itunes:summary/text()",
+            default="",
         ),
         owner=finder.find(
             "itunes:author/text()",
