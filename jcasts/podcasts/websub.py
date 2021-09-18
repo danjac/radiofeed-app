@@ -21,7 +21,7 @@ def get_podcasts():
     )
 
 
-@job
+@job("websub")
 def subscribe(podcast_id):
 
     podcast = get_podcasts().get(pk=podcast_id)

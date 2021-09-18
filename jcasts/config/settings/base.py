@@ -41,6 +41,9 @@ RQ_QUEUES = {
     "default": {
         "USE_REDIS_CACHE": "default",
     },
+    "websub": {
+        "USE_REDIS_CACHE": "default",
+    },
     "feeds": {
         "USE_REDIS_CACHE": "default",
     },
