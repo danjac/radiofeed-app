@@ -69,7 +69,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self):
-        return self.exclude(scheduled__isnull=True).exclude(
+        return self.filter(scheduled__isnull=False).exclude(
             websub_hub__in=settings.WEBSUB_CONFIG["hubs"]
         )
 
