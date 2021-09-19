@@ -80,7 +80,7 @@ class TestParsePodcastFeeds:
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
-            subscribed=now + subscribed if subscribed else None,
+            websub_subscribed=now + subscribed if subscribed else None,
             queued=now if queued else None,
         )
         assert parse_podcast_feeds(force_update=force_update) == result

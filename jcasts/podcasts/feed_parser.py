@@ -49,7 +49,7 @@ def parse_podcast_feeds(*, force_update=False):
     if not force_update:
         qs = qs.filter(
             # only parse feeds which don't have an active websub
-            Q(Q(subscribed__isnull=True) | Q(subscribed__lt=now)),
+            Q(Q(websub_subscribed__isnull=True) | Q(websub_subscribed__lt=now)),
             active=True,
             scheduled__isnull=False,
             scheduled__lte=now,

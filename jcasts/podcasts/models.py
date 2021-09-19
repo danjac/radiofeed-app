@@ -108,28 +108,25 @@ class Podcast(models.Model):
     promoted = models.BooleanField(default=False)
 
     # websub fields
-    hub = models.URLField(null=True, blank=True, verbose_name="WebSub URL")
+    websub_hub = models.URLField(null=True, blank=True)
 
-    hub_token = models.UUIDField(
+    websub_token = models.UUIDField(
         unique=True,
         null=True,
         blank=True,
         editable=False,
-        verbose_name="WebSub token",
     )
 
-    hub_exception = models.TextField(
+    websub_exception = models.TextField(
         blank=True,
-        verbose_name="WebSub exception",
     )
 
-    requested = models.DateTimeField(
+    websub_requested = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name="WebHub subscription requested at",
     )
 
-    subscribed = models.DateTimeField(
+    websub_subscribed = models.DateTimeField(
         null=True,
         blank=True,
         verbose_name="WebHub subscribed until",

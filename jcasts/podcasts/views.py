@@ -55,7 +55,7 @@ def index(request):
 @require_http_methods(["GET", "POST"])
 def websub_subscribe(request, token):
 
-    podcast = get_object_or_404(Podcast, hub__isnull=False, hub_token=token)
+    podcast = get_object_or_404(Podcast, websub_token=token)
 
     if request.method == "GET":
         try:
@@ -72,8 +72,8 @@ def websub_subscribe(request, token):
         except (KeyError, ValueError):
             raise Http404()
 
-        podcast.requested = None
-        podcast.subscribed = timezone.now() + timedelta(seconds=lease_seconds)
+        podcast.websub_requested = None
+        podcast.websub_subscribed = timezone.now() + timedelta(seconds=lease_seconds)
         podcast.save()
 
         return HttpResponse(challenge)

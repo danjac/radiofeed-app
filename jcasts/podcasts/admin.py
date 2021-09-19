@@ -26,13 +26,16 @@ class WebSubFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         value = self.value()
-        print("VALUE", value)
         if value == "subscribed":
-            return queryset.filter(subscribed__isnull=False)
+            return queryset.filter(
+                websub_subscribed__isnull=False, websub_hub__isnull=False
+            )
         if value == "requested":
-            return queryset.filter(requested__isnull=False)
+            return queryset.filter(
+                websub_requested__isnull=False, websub_hub__isnull=False
+            )
         if value == "none":
-            return queryset.filter(subscribed__isnull=True, requested__isnull=True)
+            return queryset.filter(websub_hub__isnull=True)
 
         return queryset
 
@@ -118,13 +121,13 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "parsed",
         "modified",
+        "pub_date",
         "scheduled",
         "queued",
-        "subscribed",
-        "requested",
-        "pub_date",
+        "websub_token",
+        "websub_subscribed",
+        "websub_requested",
         "etag",
-        "hub_token",
         "http_status",
         "exception",
     )

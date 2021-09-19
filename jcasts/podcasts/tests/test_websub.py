@@ -37,28 +37,32 @@ class MockBadResponse(MockResponse):
 class TestGetPodcasts:
     hub = "https://pubsubhubbub.appspot.com/"
 
-    def test_not_subscribed(self, db):
-        PodcastFactory(hub=self.hub)
+    def test_not_websub_subscribed(self, db):
+        PodcastFactory(websub_hub=self.hub)
         assert websub.get_podcasts().count() == 1
 
-    def test_requested(self, db):
-        PodcastFactory(hub=self.hub, requested=timezone.now())
+    def test_websub_requested(self, db):
+        PodcastFactory(websub_hub=self.hub, websub_requested=timezone.now())
         assert websub.get_podcasts().count() == 0
 
     def test_exception(self, db):
-        PodcastFactory(hub=self.hub, hub_exception="broken")
+        PodcastFactory(websub_hub=self.hub, websub_exception="broken")
         assert websub.get_podcasts().count() == 0
 
-    def test_subscribed_out_of_date(self, db):
-        PodcastFactory(hub=self.hub, subscribed=timezone.now() - timedelta(hours=1))
+    def test_websub_subscribed_out_of_date(self, db):
+        PodcastFactory(
+            websub_hub=self.hub, websub_subscribed=timezone.now() - timedelta(hours=1)
+        )
         assert websub.get_podcasts().count() == 1
 
-    def test_hub_is_none(self, db):
-        PodcastFactory(hub=None)
+    def test_websub_hub_is_none(self, db):
+        PodcastFactory(websub_hub=None)
         assert websub.get_podcasts().count() == 0
 
-    def test_subscribed_not_out_of_date(self, db):
-        PodcastFactory(hub=self.hub, subscribed=timezone.now() + timedelta(hours=1))
+    def test_websub_subscribed_not_out_of_date(self, db):
+        PodcastFactory(
+            websub_hub=self.hub, websub_subscribed=timezone.now() + timedelta(hours=1)
+        )
         assert websub.get_podcasts().count() == 0
 
 
@@ -69,25 +73,26 @@ class TestSubscribe:
     def test_ok(self, db, mocker):
         mock_post = mocker.patch(self.mock_http_post, return_value=MockResponse())
 
-        podcast = PodcastFactory(hub=self.hub)
+        podcast = PodcastFactory(websub_hub=self.hub)
         websub.subscribe(podcast.id)
         mock_post.assert_called()
 
         podcast.refresh_from_db()
-        assert podcast.hub_token
-        assert podcast.requested
+        assert podcast.websub_token
+        assert podcast.websub_requested
+        assert not podcast.websub_exception
 
     def test_exception(self, db, mocker):
         mock_post = mocker.patch(self.mock_http_post, return_value=MockBadResponse())
 
         podcast = PodcastFactory(
-            hub=self.hub, subscribed=timezone.now() - timedelta(hours=1)
+            websub_hub=self.hub, websub_subscribed=timezone.now() - timedelta(hours=1)
         )
         websub.subscribe(podcast.id)
         mock_post.assert_called()
 
         podcast.refresh_from_db()
-        assert podcast.hub_token is None
-        assert podcast.subscribed is None
-        assert podcast.requested is None
-        assert podcast.hub_exception
+        assert podcast.websub_token is None
+        assert podcast.websub_subscribed is None
+        assert podcast.websub_requested is None
+        assert podcast.websub_exception

@@ -258,10 +258,10 @@ class TestWebsubSubscribe:
     lease_seconds = 3600
 
     def url(self, podcast):
-        return reverse("podcasts:websub_subscribe", args=[podcast.hub_token])
+        return reverse("podcasts:websub_subscribe", args=[podcast.websub_token])
 
     def test_get_ok(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -276,12 +276,12 @@ class TestWebsubSubscribe:
 
         podcast.refresh_from_db()
 
-        assert (timezone.now() - podcast.subscribed).total_seconds() == pytest.approx(
-            self.lease_seconds, 10
-        )
+        assert (
+            timezone.now() - podcast.websub_subscribed
+        ).total_seconds() == pytest.approx(self.lease_seconds, 10)
 
     def test_missing_mode(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -293,7 +293,7 @@ class TestWebsubSubscribe:
         assert_not_found(resp)
 
     def test_invalid_mode(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -306,7 +306,7 @@ class TestWebsubSubscribe:
         assert_not_found(resp)
 
     def test_invalid_lease_seconds(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -319,7 +319,7 @@ class TestWebsubSubscribe:
         assert_not_found(resp)
 
     def test_missing_topic(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -331,7 +331,7 @@ class TestWebsubSubscribe:
         assert_not_found(resp)
 
     def test_invalid_topic(self, db, client):
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
             self.url(podcast),
             {
@@ -345,7 +345,7 @@ class TestWebsubSubscribe:
 
     def test_post_ok(self, db, client, mocker):
         mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
-        podcast = PodcastFactory(hub=self.hub, hub_token=uuid.uuid4())
+        podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.post(self.url(podcast))
         assert_ok(resp)
         mock_parse_feed.assert_called()

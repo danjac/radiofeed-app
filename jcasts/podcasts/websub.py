@@ -14,11 +14,13 @@ from jcasts.shared.template import build_absolute_uri
 
 def get_podcasts():
 
+    now = timezone.now()
+
     return Podcast.objects.filter(
-        Q(Q(subscribed__lte=timezone.now()) | Q(subscribed__isnull=True)),
-        hub__isnull=False,
-        requested__isnull=True,
-        hub_exception="",
+        Q(Q(websub_subscribed__lte=now) | Q(websub_subscribed__isnull=True)),
+        websub_requested__isnull=True,
+        websub_hub__isnull=False,
+        websub_exception="",
     )
 
 
@@ -26,17 +28,17 @@ def get_podcasts():
 def subscribe(podcast_id):
 
     podcast = get_podcasts().get(pk=podcast_id)
-    podcast.hub_token = uuid.uuid4()
-    podcast.hub_exception = ""
-    podcast.requested = timezone.now()
+    podcast.websub_token = uuid.uuid4()
+    podcast.websub_exception = ""
+    podcast.websub_requested = timezone.now()
 
     response = requests.post(
-        podcast.hub,
+        podcast.websub_hub,
         {
             "hub.mode": "subscribe",
             "hub.topic": podcast.rss,
             "hub.callback": build_absolute_uri(
-                reverse("podcasts:websub_subscribe", args=[podcast.hub_token])
+                reverse("podcasts:websub_subscribe", args=[podcast.websub_token])
             ),
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -46,10 +48,10 @@ def subscribe(podcast_id):
         response.raise_for_status()
     except requests.RequestException:
 
-        podcast.requested = None
-        podcast.subscribed = None
-        podcast.hub_token = None
-        podcast.hub_exception = traceback.format_exc()
+        podcast.websub_requested = None
+        podcast.websub_subscribed = None
+        podcast.websub_token = None
+        podcast.websub_exception = traceback.format_exc()
 
     podcast.save()
 
