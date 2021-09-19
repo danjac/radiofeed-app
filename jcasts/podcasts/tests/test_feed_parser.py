@@ -48,16 +48,18 @@ class BadMockResponse(MockResponse):
 
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "force_update,active,queued,scheduled,result",
+        "force_update,active,queued,scheduled,subscribed,result",
         [
-            (False, True, False, timedelta(hours=-1), 1),
-            (False, True, True, timedelta(hours=-1), 0),
-            (False, True, False, timedelta(hours=-1), 1),
-            (False, True, False, timedelta(hours=1), 0),
-            (True, True, False, timedelta(hours=1), 1),
-            (True, True, False, None, 1),
-            (True, False, False, None, 1),
-            (False, False, False, None, 0),
+            (False, True, False, timedelta(hours=-1), None, 1),
+            (False, True, False, timedelta(hours=-1), timedelta(hours=24), 0),
+            (False, True, False, timedelta(hours=-1), timedelta(hours=-24), 1),
+            (False, True, True, timedelta(hours=-1), None, 0),
+            (False, True, False, timedelta(hours=-1), None, 1),
+            (False, True, False, timedelta(hours=1), None, 0),
+            (True, True, False, timedelta(hours=1), None, 1),
+            (True, True, False, None, None, 1),
+            (True, False, False, None, None, 1),
+            (False, False, False, None, None, 0),
         ],
     )
     def test_parse_podcast_feeds(
@@ -68,6 +70,7 @@ class TestParsePodcastFeeds:
         active,
         queued,
         scheduled,
+        subscribed,
         result,
     ):
 
@@ -77,6 +80,7 @@ class TestParsePodcastFeeds:
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
+            subscribed=now + subscribed if subscribed else None,
             queued=now if queued else None,
         )
         assert parse_podcast_feeds(force_update=force_update) == result

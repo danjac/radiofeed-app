@@ -10,6 +10,7 @@ import attr
 import requests
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -41,22 +42,20 @@ def parse_podcast_feeds(*, force_update=False):
     counter = 0
     now = timezone.now()
 
-    qs = (
-        Podcast.objects.order_by("scheduled", "-pub_date")
-        .filter(
-            queued__isnull=True,
-        )
-        .values_list("rss", flat=True)
+    qs = Podcast.objects.filter(
+        queued__isnull=True,
     )
 
-    # only parse feeds which don't have an active websub
     if not force_update:
         qs = qs.filter(
+            # only parse feeds which don't have an active websub
+            Q(Q(subscribed__isnull=True) | Q(subscribed__lt=now)),
             active=True,
             scheduled__isnull=False,
             scheduled__lte=now,
-            subscribed__isnull=True,
         )
+
+    qs = qs.order_by("scheduled", "-pub_date").values_list("rss", flat=True).distinct()
 
     for counter, rss in enumerate(qs.iterator(), 1):
         parse_feed.delay(rss, force_update=force_update)
