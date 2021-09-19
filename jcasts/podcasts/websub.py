@@ -44,9 +44,9 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
 
 
 @job("websub")
-def subscribe(podcast_id, **retry_options):
+def subscribe(podcast_id, retry=False, retry_from=timedelta(hours=1)):
 
-    podcast = get_podcasts(**retry_options).get(pk=podcast_id)
+    podcast = get_podcasts(retry, retry_from).get(pk=podcast_id)
     podcast.websub_token = uuid.uuid4()
     podcast.websub_exception = ""
     podcast.websub_requested = timezone.now()
