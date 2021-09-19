@@ -16,23 +16,24 @@ from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
 
 
+@pytest.fixture(scope="class")
+def admin():
+    return PodcastAdmin(Podcast, AdminSite())
+
+
+@pytest.fixture
+def podcasts(db):
+    return PodcastFactory.create_batch(3, active=True, promoted=False)
+
+
+@pytest.fixture
+def req(rf):
+    req = rf.get("/")
+    req._messages = mock.Mock()
+    return req
+
+
 class TestPodcastAdmin:
-    hub = "https://pubsubhubbub.appspot.com/"
-
-    @pytest.fixture(scope="class")
-    def admin(self):
-        return PodcastAdmin(Podcast, AdminSite())
-
-    @pytest.fixture
-    def podcasts(self, db):
-        return PodcastFactory.create_batch(3, active=True, promoted=False)
-
-    @pytest.fixture
-    def req(self, rf):
-        req = rf.get("/")
-        req._messages = mock.Mock()
-        return req
-
     def test_source(self, podcasts, admin):
         assert admin.source(podcasts[0]) == podcasts[0].get_domain()
 
@@ -65,6 +66,8 @@ class TestPodcastAdmin:
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_task.assert_called_with(podcast.rss, force_update=True)
 
+
+class TestPubDateFilter:
     def test_pub_date_filter_none(self, podcasts, admin, req):
         PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {}, Podcast, admin)
@@ -85,6 +88,8 @@ class TestPodcastAdmin:
         assert qs.count() == 3
         assert no_pub_date not in qs
 
+
+class TestActiveFilter:
     def test_active_filter_none(self, podcasts, admin, req):
         PodcastFactory(active=False)
         f = ActiveFilter(req, {}, Podcast, admin)
@@ -118,6 +123,10 @@ class TestPodcastAdmin:
         assert qs.count() == 1
         assert qs.first() == promoted
 
+
+class TestWebSubFilter:
+    hub = "https://pubsubhubbub.appspot.com/"
+
     def test_websub_filter_subscribed(self, podcasts, admin, req):
         subscribed = PodcastFactory(
             websub_subscribed=timezone.now(), websub_hub=self.hub
@@ -134,16 +143,27 @@ class TestPodcastAdmin:
         assert qs.count() == 1
         assert qs.first() == requested
 
+    def test_websub_filter_pending(self, podcasts, admin, req):
+        PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)
+        PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
+        pending = PodcastFactory(websub_hub=self.hub)
+        f = WebSubFilter(req, {"websub": "pending"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert pending in qs
+
     def test_websub_filter_none(self, podcasts, admin, req):
         subscribed = PodcastFactory(
             websub_subscribed=timezone.now(), websub_hub=self.hub
         )
         requested = PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
+        pending = PodcastFactory(websub_hub=self.hub)
         f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert subscribed not in qs
         assert requested not in qs
+        assert pending not in qs
 
     def test_websub_filter_all(self, podcasts, admin, req):
         PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)

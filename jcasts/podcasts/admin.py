@@ -21,23 +21,27 @@ class WebSubFilter(admin.SimpleListFilter):
         return (
             ("subscribed", "Subscribed"),
             ("requested", "Requested"),
+            ("pending", "Pending"),
             ("none", "None"),
         )
 
     def queryset(self, request, queryset):
-        value = self.value()
-        if value == "subscribed":
-            return queryset.filter(
-                websub_subscribed__isnull=False, websub_hub__isnull=False
-            )
-        if value == "requested":
-            return queryset.filter(
-                websub_requested__isnull=False, websub_hub__isnull=False
-            )
-        if value == "none":
-            return queryset.filter(websub_hub__isnull=True)
-
-        return queryset
+        return {
+            "subscribed": queryset.filter(
+                websub_subscribed__isnull=False,
+                websub_hub__isnull=False,
+            ),
+            "requested": queryset.filter(
+                websub_requested__isnull=False,
+                websub_hub__isnull=False,
+            ),
+            "pending": queryset.filter(
+                websub_requested__isnull=True,
+                websub_subscribed__isnull=True,
+                websub_hub__isnull=False,
+            ),
+            "none": queryset.filter(websub_hub__isnull=True),
+        }.setdefault(self.value(), queryset)
 
 
 class PubDateFilter(admin.SimpleListFilter):
