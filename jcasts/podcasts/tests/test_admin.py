@@ -23,7 +23,9 @@ def admin():
 
 @pytest.fixture
 def podcasts(db):
-    return PodcastFactory.create_batch(3, active=True, promoted=False)
+    return PodcastFactory.create_batch(
+        3, active=True, promoted=False, scheduled=timezone.now()
+    )
 
 
 @pytest.fixture

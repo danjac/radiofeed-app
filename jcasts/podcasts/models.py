@@ -63,6 +63,16 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
 
+    def websub(self):
+        return self.filter(
+            websub_hub__isnull=False, websub_hub__in=settings.WEBSUB_CONFIG["hubs"]
+        )
+
+    def scheduled(self):
+        return self.exclude(scheduled__isnull=True).exclude(
+            websub_hub__in=settings.WEBSUB_CONFIG["hubs"]
+        )
+
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 

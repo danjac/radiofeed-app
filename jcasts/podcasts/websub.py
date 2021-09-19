@@ -5,7 +5,6 @@ from datetime import timedelta
 
 import requests
 
-from django.conf import settings
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
@@ -28,10 +27,8 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
 
     now = timezone.now()
 
-    qs = Podcast.objects.filter(
+    qs = Podcast.objects.websub().filter(
         Q(Q(websub_subscribed__lte=now) | Q(websub_subscribed__isnull=True)),
-        websub_hub__isnull=False,
-        websub_hub__in=settings.WEBSUB_CONFIG["hubs"],
         websub_exception="",
     )
 
@@ -41,7 +38,6 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
         )
 
     else:
-
         qs = qs.filter(websub_requested__isnull=True)
 
     return qs

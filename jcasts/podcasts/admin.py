@@ -28,24 +28,21 @@ class WebSubFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         return {
-            "subscribed": queryset.filter(
+            "subscribed": queryset.websub().filter(
                 websub_subscribed__isnull=False,
-                websub_hub__isnull=False,
-            ),
-            "failed": queryset.filter(
-                websub_hub__isnull=False,
-            ).exclude(websub_exception=""),
-            "requested": queryset.filter(
-                websub_requested__isnull=False,
-                websub_hub__isnull=False,
-            ),
-            "pending": queryset.filter(
-                websub_requested__isnull=True,
-                websub_subscribed__isnull=True,
-                websub_hub__isnull=False,
                 websub_exception="",
             ),
-            "none": queryset.filter(websub_hub__isnull=True),
+            "failed": queryset.websub().filter().exclude(websub_exception=""),
+            "requested": queryset.websub().filter(
+                websub_requested__isnull=False,
+                websub_exception="",
+            ),
+            "pending": queryset.websub().filter(
+                websub_requested__isnull=True,
+                websub_subscribed__isnull=True,
+                websub_exception="",
+            ),
+            "none": queryset.scheduled(),
         }.setdefault(self.value(), queryset)
 
 
