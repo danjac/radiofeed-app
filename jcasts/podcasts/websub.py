@@ -15,10 +15,12 @@ from jcasts.shared.template import build_absolute_uri
 
 
 def subscribe_podcasts(**retry_options):
-    for podcast_id in (
+    counter = 0
+    for (counter, podcast_id) in enumerate(
         get_podcasts(**retry_options).values_list("pk", flat=True).iterator()
     ):
         subscribe.delay(podcast_id, **retry_options)
+    return counter
 
 
 def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
@@ -44,9 +46,9 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
 
 
 @job("websub")
-def subscribe(podcast_id, retry=False, retry_from=timedelta(hours=1)):
+def subscribe(podcast_id, **retry_options):
 
-    podcast = get_podcasts(retry, retry_from).get(pk=podcast_id)
+    podcast = get_podcasts(**retry_options).get(pk=podcast_id)
     podcast.websub_token = uuid.uuid4()
     podcast.websub_exception = ""
     podcast.websub_requested = timezone.now()

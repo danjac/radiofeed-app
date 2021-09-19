@@ -14,4 +14,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        websub.subscribe_podcasts(retry=options["retry"])
+        num_feeds = websub.subscribe_podcasts(retry=options["retry"])
+        self.stdout.write(
+            self.style.SUCCESS(f"Subscribe requests queued for {num_feeds} feed(s)")
+        )
