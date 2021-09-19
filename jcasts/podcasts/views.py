@@ -1,3 +1,5 @@
+import traceback
+
 from datetime import timedelta
 
 from django.conf import settings
@@ -70,6 +72,9 @@ def websub_subscribe(request, token):
             lease_seconds = int(request.GET["hub.lease_seconds"])
 
         except (KeyError, ValueError):
+            podcast.websub_exception = traceback.format_exc()
+            podcast.save()
+
             raise Http404()
 
         podcast.websub_requested = None

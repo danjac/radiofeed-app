@@ -292,6 +292,10 @@ class TestWebsubSubscribe:
         )
         assert_not_found(resp)
 
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
+        assert not podcast.websub_subscribed
+
     def test_invalid_mode(self, db, client):
         podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.get(
@@ -304,6 +308,9 @@ class TestWebsubSubscribe:
             },
         )
         assert_not_found(resp)
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
+        assert not podcast.websub_subscribed
 
     def test_invalid_lease_seconds(self, db, client):
         podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
@@ -329,6 +336,9 @@ class TestWebsubSubscribe:
             },
         )
         assert_not_found(resp)
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
+        assert not podcast.websub_subscribed
 
     def test_invalid_topic(self, db, client):
         podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
@@ -342,6 +352,9 @@ class TestWebsubSubscribe:
             },
         )
         assert_not_found(resp)
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
+        assert not podcast.websub_subscribed
 
     def test_post_ok(self, db, client, mocker):
         mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
