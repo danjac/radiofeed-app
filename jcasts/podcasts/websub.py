@@ -29,7 +29,6 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
 
     qs = Podcast.objects.websub().filter(
         Q(Q(websub_subscribed__lte=now) | Q(websub_subscribed__isnull=True)),
-        websub_exception="",
     )
 
     if retry:
@@ -38,7 +37,7 @@ def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
         )
 
     else:
-        qs = qs.filter(websub_requested__isnull=True)
+        qs = qs.filter(websub_requested__isnull=True, websub_exception="")
 
     return qs
 
