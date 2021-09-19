@@ -6,6 +6,12 @@ from jcasts.podcasts import websub
 class Command(BaseCommand):
     help = "Subscribe podcasts to websub"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--retry",
+            action="store_true",
+            help="Retry any failed subscribe requests",
+        )
+
     def handle(self, *args, **options):
-        for podcast_id in websub.get_podcasts().values_list("pk", flat=True).iterator():
-            websub.subscribe.delay(podcast_id)
+        websub.subscribe_podcasts(retry=options["retry"])

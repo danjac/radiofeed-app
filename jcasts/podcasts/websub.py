@@ -1,6 +1,8 @@
 import traceback
 import uuid
 
+from datetime import timedelta
+
 import requests
 
 from django.db.models import Q
@@ -12,22 +14,39 @@ from jcasts.podcasts.models import Podcast
 from jcasts.shared.template import build_absolute_uri
 
 
-def get_podcasts():
+def subscribe_podcasts(**retry_options):
+    for podcast_id in (
+        get_podcasts(**retry_options).values_list("pk", flat=True).iterator()
+    ):
+        subscribe.delay(podcast_id, **retry_options)
+
+
+def get_podcasts(retry=False, retry_from=timedelta(hours=1)):
 
     now = timezone.now()
 
-    return Podcast.objects.filter(
+    qs = Podcast.objects.filter(
         Q(Q(websub_subscribed__lte=now) | Q(websub_subscribed__isnull=True)),
-        websub_requested__isnull=True,
         websub_hub__isnull=False,
         websub_exception="",
     )
 
+    if retry:
+        qs = qs.filter(
+            websub_requested__isnull=False, websub_requested__lt=now - retry_from
+        )
+
+    else:
+
+        qs = qs.filter(websub_requested__isnull=True)
+
+    return qs
+
 
 @job("websub")
-def subscribe(podcast_id):
+def subscribe(podcast_id, **retry_options):
 
-    podcast = get_podcasts().get(pk=podcast_id)
+    podcast = get_podcasts(**retry_options).get(pk=podcast_id)
     podcast.websub_token = uuid.uuid4()
     podcast.websub_exception = ""
     podcast.websub_requested = timezone.now()

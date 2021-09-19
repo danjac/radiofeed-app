@@ -34,6 +34,16 @@ class MockBadResponse(MockResponse):
         raise requests.HTTPError()
 
 
+class TestSubscribePodcasts:
+    hub = "https://pubsubhubbub.appspot.com/"
+
+    def test_ok(self, db, mocker):
+        PodcastFactory.create_batch(3, websub_hub=self.hub)
+        mock_subscribe = mocker.patch("jcasts.podcasts.websub.subscribe.delay")
+        websub.subscribe_podcasts()
+        mock_subscribe.assert_called()
+
+
 class TestGetPodcasts:
     hub = "https://pubsubhubbub.appspot.com/"
 
@@ -44,6 +54,12 @@ class TestGetPodcasts:
     def test_websub_requested(self, db):
         PodcastFactory(websub_hub=self.hub, websub_requested=timezone.now())
         assert websub.get_podcasts().count() == 0
+
+    def test_websub_requested_retry(self, db):
+        PodcastFactory(
+            websub_hub=self.hub, websub_requested=timezone.now() - timedelta(hours=3)
+        )
+        assert websub.get_podcasts(retry=True).count() == 1
 
     def test_exception(self, db):
         PodcastFactory(websub_hub=self.hub, websub_exception="broken")
