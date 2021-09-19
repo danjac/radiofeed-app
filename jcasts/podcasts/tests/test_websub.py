@@ -38,7 +38,9 @@ class TestSubscribePodcasts:
     hub = "https://pubsubhubbub.appspot.com/"
 
     def test_ok(self, db, mocker):
-        PodcastFactory.create_batch(3, websub_hub=self.hub)
+        PodcastFactory.create_batch(
+            3, websub_hub=self.hub, websub_subscribed=timezone.now()
+        )
         mock_subscribe = mocker.patch("jcasts.podcasts.websub.subscribe.delay")
         assert websub.subscribe_podcasts() == 3
         mock_subscribe.assert_called()

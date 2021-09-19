@@ -17,7 +17,7 @@ from jcasts.shared.template import build_absolute_uri
 def subscribe_podcasts(**retry_options):
     counter = 0
     for (counter, podcast_id) in enumerate(
-        get_podcasts(**retry_options).values_list("pk", flat=True).iterator()
+        get_podcasts(**retry_options).values_list("pk", flat=True).iterator(), 1
     ):
         subscribe.delay(podcast_id, **retry_options)
     return counter
