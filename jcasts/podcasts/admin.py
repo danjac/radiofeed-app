@@ -20,6 +20,7 @@ class WebSubFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ("subscribed", "Subscribed"),
+            ("failed", "Failed"),
             ("requested", "Requested"),
             ("pending", "Pending"),
             ("none", "None"),
@@ -31,6 +32,9 @@ class WebSubFilter(admin.SimpleListFilter):
                 websub_subscribed__isnull=False,
                 websub_hub__isnull=False,
             ),
+            "failed": queryset.filter(
+                websub_hub__isnull=False,
+            ).exclude(websub_exception=""),
             "requested": queryset.filter(
                 websub_requested__isnull=False,
                 websub_hub__isnull=False,
@@ -39,6 +43,7 @@ class WebSubFilter(admin.SimpleListFilter):
                 websub_requested__isnull=True,
                 websub_subscribed__isnull=True,
                 websub_hub__isnull=False,
+                websub_exception="",
             ),
             "none": queryset.filter(websub_hub__isnull=True),
         }.setdefault(self.value(), queryset)

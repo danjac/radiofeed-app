@@ -152,6 +152,16 @@ class TestWebSubFilter:
         assert qs.count() == 1
         assert pending in qs
 
+    def test_websub_filter_failed(self, podcasts, admin, req):
+        PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)
+        PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
+        PodcastFactory(websub_hub=self.hub)
+        failed = PodcastFactory(websub_exception="oops", websub_hub=self.hub)
+        f = WebSubFilter(req, {"websub": "failed"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert failed in qs
+
     def test_websub_filter_none(self, podcasts, admin, req):
         subscribed = PodcastFactory(
             websub_subscribed=timezone.now(), websub_hub=self.hub
