@@ -1,5 +1,6 @@
 import http
 import pathlib
+import uuid
 
 from datetime import timedelta
 
@@ -80,6 +81,8 @@ class TestParsePodcastFeeds:
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
+            websub_token=uuid.uuid4() if subscribed else None,
+            websub_hub="https://pubsubhubbub.com/" if subscribed else None,
             websub_subscribed=now + subscribed if subscribed else None,
             queued=now if queued else None,
         )

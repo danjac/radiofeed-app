@@ -5,7 +5,6 @@ import uuid
 
 import requests
 
-from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django_rq import job
@@ -64,10 +63,7 @@ def make_hex_digest(algo, body, secret):
 
 
 def get_podcasts():
-
-    return Podcast.objects.websub().filter(
-        Q(Q(websub_subscribed__lte=timezone.now()) | Q(websub_subscribed__isnull=True)),
-    )
+    return Podcast.objects.websub().unsubscribed()
 
 
 @job("websub")

@@ -10,7 +10,6 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -48,12 +47,10 @@ def parse_podcast_feeds(*, force_update=False):
 
     if not force_update:
         qs = qs.filter(
-            # only parse feeds which don't have an active websub
-            Q(Q(websub_subscribed__isnull=True) | Q(websub_subscribed__lt=now)),
             active=True,
             scheduled__isnull=False,
             scheduled__lte=now,
-        )
+        ).unsubscribed()
 
     qs = qs.order_by("scheduled", "-pub_date").values_list("rss", flat=True).distinct()
 

@@ -144,6 +144,20 @@ class TestPodcastManager:
 
         assert Podcast.objects.frequent().exists() is exists
 
+    @pytest.mark.parametrize(
+        "subscribed,expected",
+        [
+            (None, 1),
+            (timedelta(days=-90), 1),
+            (timedelta(days=90), 0),
+        ],
+    )
+    def test_unsubscribed(self, db, subscribed, expected):
+        PodcastFactory(
+            websub_subscribed=timezone.now() + subscribed if subscribed else None
+        )
+        assert Podcast.objects.unsubscribed().count() == expected
+
 
 class TestPodcastModel:
     rss = "https://example.com/rss.xml"
