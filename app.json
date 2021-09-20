@@ -19,7 +19,7 @@
     },
     {
       "command": "python manage.py websub_subscribe",
-      "schedule": "30 * * * *"
+      "schedule": "15,45 * * * *"
     },
     {
       "command": "python manage.py fetch_new_feeds --limit=1000",
