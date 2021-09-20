@@ -131,6 +131,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "scheduled",
         "queued",
         "websub_token",
+        "websub_secret",
         "websub_subscribed",
         "websub_requested",
         "etag",
