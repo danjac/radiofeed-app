@@ -361,7 +361,7 @@ class TestWebsubSubscribe:
             def enqueue(self, func, *args, **kwargs):
                 pass
 
-        mock_queue = mocker.patch("django_rq.get_queue", return_value=MockQueue)
+        mock_queue = mocker.patch("jcasts.podcasts.views.get_queue")
         podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.post(self.url(podcast))
         assert_ok(resp)

@@ -63,6 +63,7 @@ def websub_subscribe(request, token):
     podcast = get_object_or_404(Podcast, websub_token=token)
 
     try:
+        print("method", request.method)
 
         if request.method == "GET":
             if request.GET["hub.mode"] != "subscribe":

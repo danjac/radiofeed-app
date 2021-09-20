@@ -276,6 +276,8 @@ class TestParseFeed:
             ),
         )
         assert parse_feed(new_podcast.rss)
+        new_podcast.refresh_from_db()
+        assert new_podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
 
     def test_parse_feed_permanent_redirect(self, mocker, new_podcast, categories):
         mocker.patch(
