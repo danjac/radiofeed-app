@@ -40,10 +40,10 @@ def validate(request, podcast):
         if content_length > MAX_BODY_SIZE:
             raise ValueError("Request body too large")
 
-        if not request.headers.get("X-Hub-Signature"):
+        if not (header := request.headers.get("X-Hub-Signature")):
             raise ValueError("X-Hub-Signature header required")
 
-        algo, signature = request.headers.get("X-Hub-Signature").split("=")
+        algo, signature = header.split("=")
 
         if not hmac.compare_digest(
             signature, make_hex_digest(algo, request.body, podcast.websub_secret)
