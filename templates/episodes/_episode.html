@@ -12,8 +12,7 @@
   <div class="flex items-center space-x-2 sm:space-x-3">
 
     {% block cover_image %}
-    <div class="w-20 h-20">
-      {% with COVER_IMAGE_CSS="w-20 h-20 border-r dark:border-gray-500" %}
+    <div class="w-20">
       {% if is_podcast_detail %}
       <a href="{{ episode_url }}">
         {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
@@ -23,7 +22,6 @@
         {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 css_class=COVER_IMAGE_CSS %}
       </a>
       {% endif %}
-      {% endwith %}
     </div>
     {% endblock cover_image %}
 

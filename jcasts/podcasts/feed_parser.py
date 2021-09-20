@@ -309,7 +309,7 @@ def parse_failure(
     status=None,
     active=True,
     exception=None,
-    tb: str = "",
+    tb="",
     **fields,
 ):
 
