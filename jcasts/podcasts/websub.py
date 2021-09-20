@@ -22,7 +22,7 @@ class InvalidSignature(ValueError):
 def subscribe_podcasts():
     counter = 0
     for (counter, podcast_id) in enumerate(
-        get_podcasts().values_list("pk", flat=True).iterator(), 1
+        get_podcasts().order_by("requested").values_list("pk", flat=True).iterator(), 1
     ):
         subscribe.delay(podcast_id)
     return counter
