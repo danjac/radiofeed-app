@@ -42,7 +42,7 @@ class WebSubFilter(admin.SimpleListFilter):
                 websub_subscribed__isnull=True,
                 websub_exception="",
             ),
-            "none": queryset.scheduled(),
+            "none": queryset.filter(websub_hub__isnull=True),
         }.setdefault(self.value(), queryset)
 
 

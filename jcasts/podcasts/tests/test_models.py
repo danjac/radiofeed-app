@@ -72,40 +72,16 @@ class TestCategoryModel:
 
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
+    hub = "https://pubsubhubbub.appspot.com/"
 
     def test_websub_none(self, db):
         PodcastFactory()
         assert Podcast.objects.websub().count() == 0
 
-    def test_websub_not_included(self, db, settings):
-
-        settings.WEBSUB_CONFIG = {"hubs": []}
-
-        PodcastFactory(websub_hub="https://pubsubhubbub.appspot.com/")
-        assert Podcast.objects.websub().count() == 0
-
     def test_websub_not_none(self, db, settings):
 
-        hub = "https://pubsubhubbub.appspot.com/"
-        settings.WEBSUB_CONFIG = {"hubs": [hub]}
-
-        PodcastFactory(websub_hub=hub)
+        PodcastFactory(websub_hub=self.hub)
         assert Podcast.objects.websub().count() == 1
-
-    def test_scheduled_none(self, db):
-        PodcastFactory()
-        assert Podcast.objects.scheduled().count() == 0
-
-    def test_scheduled_ok(self, db):
-        PodcastFactory(scheduled=timezone.now())
-        assert Podcast.objects.scheduled().count() == 1
-
-    def test_scheduled_webhub(self, db, settings):
-        hub = "https://pubsubhubbub.appspot.com/"
-        settings.WEBSUB_CONFIG = {"hubs": [hub]}
-
-        PodcastFactory(scheduled=timezone.now(), websub_hub=hub)
-        assert Podcast.objects.scheduled().count() == 0
 
     def test_search(self, db):
         PodcastFactory(title="testing")

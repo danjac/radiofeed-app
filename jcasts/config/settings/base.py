@@ -283,10 +283,3 @@ PODCASTINDEX_CONFIG = {
     "api_key": env("PODCASTINDEX_API_KEY", default=None),
     "api_secret": env("PODCASTINDEX_API_SECRET", default=None),
 }
-
-WEBSUB_CONFIG = {
-    "hubs": [
-        "https://pubsubhubbub.appspot.com/",
-        "http://pubsubhubbub.appspot.com/",
-    ]
-}
