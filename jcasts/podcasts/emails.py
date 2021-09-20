@@ -8,7 +8,7 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Recommendation
 
 
-@job
+@job("mail")
 def send_recommendations_email(user):
     """Sends email with 2 or 3 recommended podcasts, based on:
     - favorites
