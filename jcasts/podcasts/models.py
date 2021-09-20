@@ -127,6 +127,12 @@ class Podcast(models.Model):
         editable=False,
     )
 
+    websub_secret = models.UUIDField(
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
     websub_exception = models.TextField(
         blank=True,
     )

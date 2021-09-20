@@ -1,13 +1,17 @@
 import http
+import uuid
 
 from datetime import timedelta
 
+import faker
+import pytest
 import requests
 
 from django.utils import timezone
 
 from jcasts.podcasts import websub
 from jcasts.podcasts.factories import PodcastFactory
+from jcasts.podcasts.models import Podcast
 
 
 class MockResponse:
@@ -32,6 +36,74 @@ class MockResponse:
 class MockBadResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError()
+
+
+class TestValidate:
+    @pytest.fixture
+    def req_body(self):
+        yield faker.Faker().name().encode("utf-8")
+
+    def make_sig_header(self, body, secret, algo="sha512"):
+        return f"{algo}={websub.make_hex_digest(algo, body, secret)}"
+
+    def test_secret_is_none(self, rf):
+        websub.validate(rf.post("/"), Podcast())
+
+    def test_ok(self, rf, req_body):
+        podcast = Podcast(websub_secret=uuid.uuid4())
+        req = rf.post(
+            "/",
+            req_body,
+            content_type="text/xml",
+            HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, podcast.websub_secret),
+        )
+        websub.validate(req, podcast)
+
+    def test_sig_header_missing(self, rf, req_body):
+        podcast = Podcast(websub_secret=uuid.uuid4())
+        req = rf.post(
+            "/",
+            req_body,
+            content_type="text/xml",
+        )
+        with pytest.raises(websub.Invalid):
+            websub.validate(req, podcast)
+
+    def test_body_too_large(self, rf, req_body):
+        podcast = Podcast(websub_secret=uuid.uuid4())
+        body = req_body * 30000000
+
+        req = rf.post(
+            "/",
+            body,
+            content_type="text/xml",
+            HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, podcast.websub_secret),
+        )
+        with pytest.raises(websub.Invalid):
+            websub.validate(req, podcast)
+
+    def test_invalid_algo(self, rf, req_body):
+        podcast = Podcast(websub_secret=uuid.uuid4())
+        sig = self.make_sig_header(req_body, podcast.websub_secret).split("=")[1]
+        req = rf.post(
+            "/",
+            req_body,
+            content_type="text/xml",
+            HTTP_X_HUB_SIGNATURE=f"bad-algo={sig}",
+        )
+        with pytest.raises(websub.Invalid):
+            websub.validate(req, podcast)
+
+    def test_signature_mismatch(self, rf, req_body):
+        podcast = Podcast(websub_secret=uuid.uuid4())
+        req = rf.post(
+            "/",
+            req_body,
+            content_type="text/xml",
+            HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, uuid.uuid4()),
+        )
+        with pytest.raises(websub.Invalid):
+            websub.validate(req, podcast)
 
 
 class TestSubscribePodcasts:
@@ -87,6 +159,7 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
         assert podcast.websub_token
+        assert podcast.websub_secret
         assert podcast.websub_requested
         assert not podcast.websub_exception
 
@@ -101,6 +174,7 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
         assert podcast.websub_token is None
+        assert podcast.websub_secret is None
         assert podcast.websub_subscribed is None
         assert podcast.websub_requested is None
         assert podcast.websub_exception

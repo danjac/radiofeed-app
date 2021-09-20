@@ -15,7 +15,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import feed_parser, podcastindex
+from jcasts.podcasts import feed_parser, podcastindex, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -61,9 +61,9 @@ def websub_subscribe(request, token):
 
     podcast = get_object_or_404(Podcast, websub_token=token)
 
-    if request.method == "GET":
-        try:
+    try:
 
+        if request.method == "GET":
             if request.GET["hub.mode"] != "subscribe":
                 raise ValueError("hub.mode should be 'subscribe'")
 
@@ -73,20 +73,23 @@ def websub_subscribe(request, token):
             challenge = request.GET["hub.challenge"]
             lease_seconds = int(request.GET["hub.lease_seconds"])
 
-        except (KeyError, ValueError):
-            podcast.websub_exception = traceback.format_exc()
+            podcast.websub_requested = None
+            podcast.websub_subscribed = timezone.now() + timedelta(
+                seconds=lease_seconds
+            )
             podcast.save()
 
-            raise Http404()
+            return HttpResponse(challenge)
 
-        podcast.websub_requested = None
-        podcast.websub_subscribed = timezone.now() + timedelta(seconds=lease_seconds)
+        websub.validate(request, podcast)
+        feed_parser.parse_feed.delay(podcast.rss, force_update=True)
+        return HttpResponse()
+
+    except (KeyError, ValueError, websub.Invalid):
+        podcast.websub_exception = traceback.format_exc()
         podcast.save()
 
-        return HttpResponse(challenge)
-
-    feed_parser.parse_feed.delay(podcast.rss, force_update=True)
-    return HttpResponse()
+        raise Http404()
 
 
 @require_http_methods(["GET"])
