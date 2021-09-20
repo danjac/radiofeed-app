@@ -47,7 +47,7 @@ def check_signature(request, podcast):
         if not hmac.compare_digest(
             signature, make_hex_digest(algo, request.body, podcast.websub_secret)
         ):
-            raise ValueError("HMAC signature mismatch")
+            raise ValueError("HMAC signature mismatch:{header}")
 
     except (KeyError, ValueError) as e:
         raise InvalidSignature from e
