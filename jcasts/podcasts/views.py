@@ -81,11 +81,11 @@ def websub_subscribe(request, token):
 
             return HttpResponse(challenge)
 
-        websub.validate(request, podcast)
+        websub.check_signature(request, podcast)
         feed_parser.parse_feed.delay(podcast.rss, force_update=True)
         return HttpResponse()
 
-    except (KeyError, ValueError, websub.Invalid):
+    except (KeyError, ValueError, websub.InvalidSignature):
         podcast.websub_exception = traceback.format_exc()
         podcast.save()
 

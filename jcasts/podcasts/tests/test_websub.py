@@ -38,7 +38,7 @@ class MockBadResponse(MockResponse):
         raise requests.HTTPError()
 
 
-class TestValidate:
+class TestCheckSignature:
     @pytest.fixture
     def req_body(self):
         yield faker.Faker().name().encode("utf-8")
@@ -47,7 +47,7 @@ class TestValidate:
         return f"{algo}={websub.make_hex_digest(algo, body, secret)}"
 
     def test_secret_is_none(self, rf):
-        websub.validate(rf.post("/"), Podcast())
+        websub.check_signature(rf.post("/"), Podcast())
 
     def test_ok(self, rf, req_body):
         podcast = Podcast(websub_secret=uuid.uuid4())
@@ -57,7 +57,7 @@ class TestValidate:
             content_type="text/xml",
             HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, podcast.websub_secret),
         )
-        websub.validate(req, podcast)
+        websub.check_signature(req, podcast)
 
     def test_sig_header_missing(self, rf, req_body):
         podcast = Podcast(websub_secret=uuid.uuid4())
@@ -66,8 +66,8 @@ class TestValidate:
             req_body,
             content_type="text/xml",
         )
-        with pytest.raises(websub.Invalid):
-            websub.validate(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, podcast)
 
     def test_body_too_large(self, rf, req_body):
         podcast = Podcast(websub_secret=uuid.uuid4())
@@ -79,8 +79,8 @@ class TestValidate:
             content_type="text/xml",
             HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, podcast.websub_secret),
         )
-        with pytest.raises(websub.Invalid):
-            websub.validate(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, podcast)
 
     def test_invalid_algo(self, rf, req_body):
         podcast = Podcast(websub_secret=uuid.uuid4())
@@ -91,8 +91,8 @@ class TestValidate:
             content_type="text/xml",
             HTTP_X_HUB_SIGNATURE=f"bad-algo={sig}",
         )
-        with pytest.raises(websub.Invalid):
-            websub.validate(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, podcast)
 
     def test_signature_mismatch(self, rf, req_body):
         podcast = Podcast(websub_secret=uuid.uuid4())
@@ -102,8 +102,8 @@ class TestValidate:
             content_type="text/xml",
             HTTP_X_HUB_SIGNATURE=self.make_sig_header(req_body, uuid.uuid4()),
         )
-        with pytest.raises(websub.Invalid):
-            websub.validate(req, podcast)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, podcast)
 
 
 class TestSubscribePodcasts:

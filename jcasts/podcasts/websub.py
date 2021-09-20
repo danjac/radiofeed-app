@@ -16,7 +16,7 @@ from jcasts.shared.template import build_absolute_uri
 MAX_BODY_SIZE = 1024 ** 2
 
 
-class Invalid(ValueError):
+class InvalidSignature(ValueError):
     ...
 
 
@@ -29,7 +29,7 @@ def subscribe_podcasts():
     return counter
 
 
-def validate(request, podcast):
+def check_signature(request, podcast):
     if not podcast.websub_secret:
         return
 
@@ -51,7 +51,7 @@ def validate(request, podcast):
             raise ValueError("HMAC signature mismatch")
 
     except (KeyError, ValueError) as e:
-        raise Invalid from e
+        raise InvalidSignature from e
 
 
 def make_hex_digest(algo, body, secret):
@@ -60,7 +60,7 @@ def make_hex_digest(algo, body, secret):
             secret.hex.encode("utf-8"), body, getattr(hashlib, algo)
         ).hexdigest()
     except AttributeError:
-        raise Invalid(f"Unknown hashing algorithm: {algo}")
+        raise ValueError(f"Unknown hashing algorithm: {algo}")
 
 
 def get_podcasts():
