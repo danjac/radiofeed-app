@@ -184,7 +184,7 @@ class TestStartPlayer:
         ).exists()
 
     def test_another_episode_in_player(
-        self, client, auth_user, player_audio_log, episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
