@@ -8,7 +8,7 @@
            accesskey="p"
            title="Podcasts"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "rss" css_class=ICON_CSS %}
           Podcasts
         </a>
@@ -19,7 +19,7 @@
            accesskey="n"
            title="New Releases"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "sparkles" css_class=ICON_CSS %}
           New Releases
         </a>
@@ -31,7 +31,7 @@
            accesskey="q"
            title="Play Queue"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "collection" css_class=ICON_CSS %}
           Play Queue
         </a>
@@ -43,7 +43,7 @@
            accesskey="f"
            title="Favorites"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "star" css_class=ICON_CSS %}
           Favorites
         </a>
@@ -55,7 +55,7 @@
            accesskey="h"
            title="History"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "database" css_class=ICON_CSS %}
           History
         </a>
@@ -68,7 +68,7 @@
            accesskey="s"
            title="Settings"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "adjustments" css_class=ICON_CSS %}
           Settings
         </a>
@@ -84,7 +84,7 @@
           <button accesskey="l"
                   title="Logout"
                   @click="$dispatch('close-sidebar')"
-                  class="flex items-center link">
+                  class="inline-flex items-center link">
             {% icon "logout" css_class=ICON_CSS %}
             Logout
           </button>
@@ -98,7 +98,7 @@
            accesskey="a"
            title="About"
            @click="$dispatch('close-sidebar')"
-           class="flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "info" css_class=ICON_CSS %}
           About
         </a>
