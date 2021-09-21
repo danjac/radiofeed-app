@@ -1,6 +1,6 @@
 from jcasts.episodes.factories import AudioLogFactory
 from jcasts.episodes.middleware import Player
-from jcasts.users.signals import get_last_player_episode
+from jcasts.episodes.signals import get_last_player_episode
 
 
 class TestGetLastPlayerEpisode:
