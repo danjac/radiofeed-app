@@ -41,18 +41,18 @@
 
   {% block layout %}
 
-  <div class="min-h-full mx-auto flex relative p-2 pt-6 lg:pt-12 xl:mx-32"
+  <div class="min-h-full mx-auto flex relative p-2 pt-6 lg:pt-12 lg:mx-32"
        hx-history-elt
        id="layout">
 
     {% block sidebar %}
-    <aside class="w-full hidden lg:block lg:w-1/6 lg:sticky lg:top-24 xl:top-32 lg:h-screen pt-3 lg:pt-0">
+    <aside class="w-full hidden xl:block xl:w-1/6 xl:sticky xl:top-24 xl:top-32 xl:h-screen pt-3 xl:pt-0">
       {% include "_sidebar.html" %}
     </aside>
     {% endblock %}
 
     {% block main %}
-    <main class="w-full lg:block lg:w-5/6">
+    <main class="w-full xl:block xl:w-5/6">
       {% block content %}{% endblock %}
     </main>
     {% endblock main %}
