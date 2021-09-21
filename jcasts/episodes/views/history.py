@@ -51,7 +51,6 @@ def mark_complete(request, episode_id):
     ).update(
         completed=timezone.now(),
         current_time=0,
-        is_playing=False,
     )
 
     messages.info(request, "Episode marked complete")
