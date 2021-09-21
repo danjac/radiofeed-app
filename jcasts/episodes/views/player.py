@@ -14,7 +14,7 @@ from jcasts.shared.response import HttpResponseNoContent
 @require_http_methods(["POST"])
 @ajax_login_required
 def start_player(request, episode_id):
-    close_player_episode(request.user, mark_complete=False)
+    remove_episode_from_player(request.user, mark_complete=False)
 
     return render_start_player(
         request,
@@ -25,7 +25,7 @@ def start_player(request, episode_id):
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request):
-    close_player_episode(request.user, mark_complete=False)
+    remove_episode_from_player(request.user, mark_complete=False)
 
     return render_close_player(request)
 
@@ -35,7 +35,7 @@ def close_player(request):
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
-    close_player_episode(request.user, mark_complete=True)
+    remove_episode_from_player(request.user, mark_complete=True)
 
     if request.user.autoplay and (
         next_item := (
@@ -89,12 +89,12 @@ def player_time_update(request, episode_id):
         return HttpResponseBadRequest()
 
 
-def close_player_episode(user, mark_complete):
+def remove_episode_from_player(user, mark_complete):
 
-    now = timezone.now()
     kwargs = {"is_playing": False}
 
     if mark_complete:
+        now = timezone.now()
         kwargs = {
             **kwargs,
             "updated": now,
