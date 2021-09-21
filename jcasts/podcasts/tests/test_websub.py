@@ -125,6 +125,10 @@ class TestGetPodcasts:
         PodcastFactory(websub_hub=self.hub)
         assert websub.get_podcasts().count() == 1
 
+    def test_has_exception(self, db):
+        PodcastFactory(websub_hub=self.hub, websub_exception="broken")
+        assert websub.get_podcasts().count() == 0
+
     def test_websub_subscribed_out_of_date(self, db):
         PodcastFactory(
             websub_hub=self.hub, websub_subscribed=timezone.now() - timedelta(hours=1)

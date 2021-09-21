@@ -67,7 +67,7 @@ def make_hex_digest(algo, body, secret):
 
 
 def get_podcasts():
-    return Podcast.objects.websub().unsubscribed()
+    return Podcast.objects.websub().unsubscribed().filter(websub_exception="")
 
 
 @job("websub")
@@ -100,7 +100,12 @@ def subscribe(podcast_id):
         podcast.websub_subscribed = None
         podcast.websub_token = None
         podcast.websub_secret = None
-        podcast.websub_exception = traceback.format_exc()
+        podcast.websub_exception = "\n".join(
+            (
+                traceback.format_exc(),
+                response.content.decode("utf-8"),
+            )
+        )
 
     podcast.save()
 
