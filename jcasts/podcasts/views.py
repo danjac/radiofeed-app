@@ -104,7 +104,7 @@ def latest(request, podcast_id):
 
     podcast = get_podcast_or_404(request, podcast_id)
     episode = podcast.episode_set.order_by("-pub_date").first()
-    return redirect(episode or podcast.get_absolute_url())
+    return redirect(episode or podcast)
 
 
 @require_http_methods(["GET"])
