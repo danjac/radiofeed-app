@@ -242,7 +242,6 @@ class TestParseFeed:
         assert new_podcast.cover_url
 
         assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-        assert new_podcast.num_episodes == 20
         assert new_podcast.queued is None
 
         assigned_categories = [c.name for c in new_podcast.categories.all()]

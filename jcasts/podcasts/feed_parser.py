@@ -145,7 +145,6 @@ def parse_success(podcast, response, feed, items):
     # parsing status
     pub_dates = [item.pub_date for item in items]
 
-    podcast.num_episodes = len(items)
     podcast.pub_date = max(pub_dates)
     podcast.scheduled = reschedule(podcast)
     podcast.parsed = timezone.now()

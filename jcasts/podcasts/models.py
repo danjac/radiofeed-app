@@ -94,8 +94,6 @@ class Podcast(models.Model):
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
 
-    num_episodes = models.PositiveIntegerField(default=0)
-
     cover_url = models.URLField(max_length=2083, null=True, blank=True)
 
     funding_url = models.URLField(max_length=2083, null=True, blank=True)

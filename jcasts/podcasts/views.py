@@ -15,6 +15,7 @@ from django.views.decorators.http import require_http_methods
 from django_rq import get_queue
 from ratelimit.decorators import ratelimit
 
+from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import feed_parser, podcastindex, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
@@ -186,7 +187,7 @@ def episodes(request, podcast_id, slug=None):
 
     newest_first = request.GET.get("ordering", "desc") == "desc"
 
-    episodes = podcast.episode_set.select_related("podcast")
+    episodes = Episode.objects.filter(podcast=podcast).select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
@@ -268,6 +269,7 @@ def get_podcast_detail_context(request, podcast, extra_context=None):
 
     return {
         "podcast": podcast,
+        "num_episodes": Episode.objects.filter(podcast=podcast).count(),
         "has_recommendations": Recommendation.objects.filter(podcast=podcast).exists(),
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),

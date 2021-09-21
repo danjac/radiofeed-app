@@ -123,7 +123,7 @@ class TestPodcastRecommendations:
     def test_get(self, client, db, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             resp = client.get(
                 reverse(
                     "podcasts:podcast_recommendations", args=[podcast.id, podcast.slug]
@@ -136,7 +136,7 @@ class TestPodcastRecommendations:
 
 class TestPodcastDetail:
     def test_get_podcast_anonymous(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             resp = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )
@@ -146,7 +146,7 @@ class TestPodcastDetail:
     def test_get_podcast_authenticated(
         self, client, auth_user, podcast, django_assert_num_queries
     ):
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(9):
             resp = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )
@@ -158,7 +158,7 @@ class TestPodcastEpisodes:
     def test_get_episodes(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(
                 reverse(
                     "podcasts:podcast_episodes",
@@ -171,7 +171,7 @@ class TestPodcastEpisodes:
     def test_get_oldest_first(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(
                 reverse(
                     "podcasts:podcast_episodes",
@@ -187,7 +187,7 @@ class TestPodcastEpisodes:
 
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(
                 reverse(
                     "podcasts:podcast_episodes",
