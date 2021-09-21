@@ -9,10 +9,10 @@ register = template.Library()
 def audio_player(context):
     request = context["request"]
 
-    if request.user.is_authenticated and (episode_id := request.player.get()):
+    if request.user.is_authenticated:
 
         return {
-            "log": AudioLog.objects.filter(user=request.user, episode=episode_id)
+            "log": AudioLog.objects.playing(request.user)
             .select_related("episode", "episode__podcast")
             .first()
         }

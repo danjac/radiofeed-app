@@ -14,16 +14,19 @@ from jcasts.shared.response import HttpResponseNoContent
 @require_http_methods(["POST"])
 @ajax_login_required
 def start_player(request, episode_id):
+    close_player_episode(request.user, mark_complete=False)
+
     return render_start_player(
-        request, get_episode_or_404(request, episode_id, with_podcast=True)
+        request,
+        get_episode_or_404(request, episode_id, with_podcast=True),
     )
 
 
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request):
-    request.player.remove()
-    AudioLog.objects.filter(user=request.user).update(is_playing=False)
+    close_player_episode(request.user, mark_complete=False)
+
     return render_close_player(request)
 
 
@@ -32,17 +35,7 @@ def close_player(request):
 def play_next_episode(request):
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
-
-    if episode_id := request.player.remove():
-
-        now = timezone.now()
-
-        AudioLog.objects.filter(user=request.user, episode=episode_id).update(
-            updated=now,
-            completed=now,
-            current_time=0,
-            is_playing=False,
-        )
+    close_player_episode(request.user, mark_complete=True)
 
     if request.user.autoplay and (
         next_item := (
@@ -60,12 +53,11 @@ def play_next_episode(request):
 @ajax_login_required
 def reload_player(request):
 
-    if episode_id := request.player.get():
-        log = (
-            AudioLog.objects.filter(user=request.user, episode=episode_id)
-            .select_related("episode", "episode__podcast")
-            .first()
-        )
+    if (
+        log := AudioLog.objects.playing(request.user)
+        .select_related("episode", "episode__podcast")
+        .first()
+    ) :
         return render_player(request, {"log": log})
 
     return HttpResponse()
@@ -78,18 +70,32 @@ def player_time_update(request):
     """Update current play time of episode."""
 
     try:
-        if episode_id := request.player.get():
 
-            AudioLog.objects.filter(episode=episode_id, user=request.user).update(
-                completed=None,
-                updated=timezone.now(),
-                is_playing=True,
-                current_time=int(request.POST["current_time"]),
-            )
+        AudioLog.objects.playing(request.user).update(
+            completed=None,
+            updated=timezone.now(),
+            current_time=int(request.POST["current_time"]),
+        )
 
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
+
+
+def close_player_episode(user, mark_complete):
+
+    now = timezone.now()
+    kwargs = {"is_playing": False}
+
+    if mark_complete:
+        kwargs = {
+            **kwargs,
+            "updated": now,
+            "completed": now,
+            "current_time": 0,
+        }
+
+    AudioLog.objects.playing(user).update(**kwargs)
 
 
 def render_start_player(request, episode):
@@ -105,8 +111,6 @@ def render_start_player(request, episode):
             "is_playing": True,
         },
     )
-
-    request.player.set(episode.id)
 
     return with_hx_trigger(
         render_player(

@@ -432,6 +432,27 @@ class TestAudioLogManager:
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
 
+    def test_playing(self, db, user, anonymous_user):
+        log = AudioLogFactory(user=user, is_playing=True)
+        AudioLogFactory(user=user, is_playing=False)
+        AudioLogFactory(is_playing=True)
+        assert AudioLog.objects.playing(anonymous_user).count() == 0
+        assert AudioLog.objects.playing(user).count() == 1
+        assert AudioLog.objects.playing(user).first() == log
+
+    def test_is_playing(self, db, user, anonymous_user, episode):
+
+        assert AudioLog.objects.is_playing(
+            user, AudioLogFactory(user=user, is_playing=True).episode
+        )
+
+        assert not AudioLog.objects.is_playing(
+            user, AudioLogFactory(user=user, is_playing=False).episode
+        )
+
+        assert not AudioLog.objects.is_playing(anonymous_user, episode)
+        assert not AudioLog.objects.is_playing(user, EpisodeFactory())
+
 
 class TestAudioLogModel:
     def test_to_json(self, db):
@@ -441,6 +462,17 @@ class TestAudioLogModel:
         assert data["episode"]["url"] == log.episode.get_absolute_url()
         assert data["podcast"]["title"] == log.episode.podcast.title
         assert data["podcast"]["url"] == log.episode.podcast.get_absolute_url()
+
+    def test_only_one_playing_episode(self, transactional_db):
+
+        log = AudioLogFactory(is_playing=True)
+
+        AudioLogFactory(is_playing=False, user=log.user)
+
+        AudioLogFactory(is_playing=True)
+
+        with pytest.raises(IntegrityError):
+            AudioLogFactory(is_playing=True, user=log.user)
 
 
 class TestQueueItemManager:

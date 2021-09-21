@@ -5,8 +5,7 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from faker import Faker
 
-from jcasts.episodes.factories import EpisodeFactory
-from jcasts.episodes.middleware import Player
+from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory
 from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
 from jcasts.users.factories import UserFactory
 
@@ -67,8 +66,10 @@ def follow(auth_user, podcast):
 
 
 @pytest.fixture
-def player_episode(client, episode):
-    session = client.session
-    session[Player.session_key] = episode.id
-    session.save()
-    return episode
+def player_audio_log(auth_user, episode):
+    return AudioLogFactory(
+        user=auth_user,
+        episode=episode,
+        is_playing=True,
+        current_time=500,
+    )

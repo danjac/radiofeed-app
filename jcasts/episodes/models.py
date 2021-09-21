@@ -335,6 +335,14 @@ class AudioLogQuerySet(SearchMixin, models.QuerySet):
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
+    def playing(self, user):
+        if user.is_anonymous:
+            return self.none()
+        return self.filter(user=user, is_playing=True)
+
+    def is_playing(self, user, episode):
+        return self.playing(user).filter(episode=episode).exists()
+
 
 AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
@@ -356,6 +364,11 @@ class AudioLog(TimeStampedModel):
             models.UniqueConstraint(
                 name="unique_%(app_label)s_%(class)s",
                 fields=["user", "episode"],
+            ),
+            models.UniqueConstraint(
+                name="unique_%(app_label)s_%(class)s_is_playing",
+                fields=["user", "is_playing"],
+                condition=models.Q(is_playing=True, user=models.F("user")),
             ),
         ]
         indexes = [

@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import QueueItem
+from jcasts.episodes.models import AudioLog, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
@@ -32,7 +32,7 @@ def add_to_queue(request, episode_id, to):
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
-    if not request.player.has(episode.id):
+    if not AudioLog.objects.is_playing(request.user, episode):
 
         try:
             if to == "start":

@@ -10,7 +10,6 @@ from jcasts.episodes.factories import (
     FavoriteFactory,
     QueueItemFactory,
 )
-from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
@@ -23,16 +22,12 @@ from jcasts.shared.assertions import (
 episodes_url = reverse_lazy("episodes:index")
 
 
-def _is_playing(client, episode):
-    return client.session.get(Player.session_key) == episode.id
-
-
 class TestNewEpisodes:
     def test_anonymous_user(self, client, db, django_assert_num_queries):
         self._test_no_follows(client, django_assert_num_queries, 4)
 
     def test_no_follows(self, client, db, auth_user, django_assert_num_queries):
-        self._test_no_follows(client, django_assert_num_queries, 7)
+        self._test_no_follows(client, django_assert_num_queries, 8)
 
     def test_user_has_follows(self, client, auth_user, django_assert_num_queries):
         promoted = PodcastFactory(promoted=True)
@@ -43,7 +38,7 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(8):
             resp = client.get(episodes_url)
         assert_ok(resp)
         assert not resp.context_data["promoted"]
@@ -62,7 +57,7 @@ class TestNewEpisodes:
         episode = EpisodeFactory()
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(8):
             resp = client.get(reverse("episodes:index"), {"promoted": True})
 
         assert_ok(resp)
@@ -137,7 +132,7 @@ class TestEpisodeDetail:
         next_episode,
         django_assert_num_queries,
     ):
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             resp = client.get(episode.get_absolute_url())
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
@@ -145,7 +140,7 @@ class TestEpisodeDetail:
 
 class TestEpisodeActions:
     def test_actions(self, client, auth_user, episode, django_assert_num_queries):
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(8):
             resp = client.get(
                 reverse("episodes:actions", args=[episode.id]),
             )
@@ -157,11 +152,11 @@ class TestReloadPlayer:
     url = reverse_lazy("episodes:reload_player")
 
     def test_player_empty(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             assert_ok(client.get(self.url))
 
     def test_player_not_empty(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
         with django_assert_num_queries(4):
             assert_ok(client.get(self.url))
@@ -181,33 +176,40 @@ class TestStartPlayer:
     def test_play_from_start(
         self, client, db, auth_user, episode, django_assert_num_queries
     ):
-        with django_assert_num_queries(self.num_queries_with_savepoints(8)):
+        with django_assert_num_queries(self.num_queries_with_savepoints(6)):
             assert_ok(client.post(self.url(episode)))
 
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert client.session[Player.session_key] == episode.id
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
     def test_another_episode_in_player(
-        self, client, auth_user, episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, episode, django_assert_num_queries
     ):
-        client.session[Player.session_key] = EpisodeFactory().id
 
-        with django_assert_num_queries(self.num_queries_with_savepoints(8)):
+        episode = EpisodeFactory()
+
+        with django_assert_num_queries(self.num_queries_with_savepoints(6)):
             assert_ok(client.post(self.url(episode)))
 
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
-        assert client.session[Player.session_key] == episode.id
+        player_audio_log.refresh_from_db()
+        assert player_audio_log.current_time == 500
+        assert not player_audio_log.is_playing
+        assert not player_audio_log.completed
 
     def test_resume(self, client, auth_user, episode, django_assert_num_queries):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        with django_assert_num_queries(self.num_queries_with_savepoints(7)):
+        with django_assert_num_queries(self.num_queries_with_savepoints(5)):
             assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()
 
         assert log.current_time == 2000
-        assert client.session[Player.session_key] == episode.id
+        assert log.is_playing
 
 
 class TestPlayNextEpisode:
@@ -220,104 +222,94 @@ class TestPlayNextEpisode:
         return num_queries + (self.num_savepoints * 2)
 
     def test_has_next_in_queue(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
 
-        previous = AudioLogFactory(user=auth_user, episode=player_episode)
-
         QueueItemFactory(user=auth_user, episode=episode)
 
-        with django_assert_num_queries(self.num_queries_with_savepoints(9)):
+        with django_assert_num_queries(self.num_queries_with_savepoints(6)):
             resp = client.post(self.url)
 
         assert_ok(resp)
 
         assert QueueItem.objects.count() == 0
 
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
-        previous.refresh_from_db()
+        player_audio_log.refresh_from_db()
 
-        assert previous.completed
-        assert previous.current_time == 0
-
-        assert not _is_playing(client, previous.episode)
-        assert _is_playing(client, episode)
+        assert player_audio_log.completed
+        assert player_audio_log.current_time == 0
+        assert not player_audio_log.is_playing
 
     def test_has_next_in_queue_if_autoplay_disabled(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
-        previous = AudioLogFactory(user=auth_user, episode=player_episode)
 
         auth_user.autoplay = False
         auth_user.save()
 
         QueueItemFactory(user=auth_user, episode=episode)
 
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(4):
             resp = client.post(self.url)
 
         assert_ok(resp)
         assert QueueItem.objects.count() == 1
 
-        assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
+        assert not AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
-        previous.refresh_from_db()
+        player_audio_log.refresh_from_db()
 
-        assert not _is_playing(client, episode)
-        assert not _is_playing(client, previous.episode)
-
-        assert previous.completed
-        assert previous.current_time == 0
+        assert player_audio_log.completed
+        assert player_audio_log.current_time == 0
+        assert not player_audio_log.is_playing
 
     def test_has_next_in_queue_if_autoplay_enabled(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
 
         episode = EpisodeFactory()
         QueueItemFactory(user=auth_user, episode=episode)
 
-        previous = AudioLogFactory(
-            user=auth_user, current_time=2000, episode=player_episode
-        )
-
-        with django_assert_num_queries(self.num_queries_with_savepoints(9)):
+        with django_assert_num_queries(self.num_queries_with_savepoints(6)):
             resp = client.post(self.url)
 
         assert_ok(resp)
 
-        previous.refresh_from_db()
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=episode, is_playing=True
+        ).exists()
 
-        assert previous.completed
-        assert previous.current_time == 0
+        player_audio_log.refresh_from_db()
 
-        assert not _is_playing(client, previous)
-        assert _is_playing(client, episode)
+        assert player_audio_log.completed
+        assert player_audio_log.current_time == 0
+        assert not player_audio_log.is_playing
 
     def test_queue_empty(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
 
-        previous = AudioLogFactory(
-            user=auth_user, current_time=2000, episode=player_episode
-        )
-
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(5):
             resp = client.post(self.url)
 
         assert_ok(resp)
         assert QueueItem.objects.count() == 0
 
-        previous.refresh_from_db()
+        player_audio_log.refresh_from_db()
 
-        assert previous.completed
-        assert previous.current_time == 0
-
-        assert not _is_playing(client, previous)
+        assert player_audio_log.completed
+        assert player_audio_log.current_time == 0
+        assert not player_audio_log.is_playing
 
 
 class TestClosePlayer:
@@ -328,38 +320,25 @@ class TestClosePlayer:
             resp = client.post(self.url)
         assert_ok(resp)
 
-    def test_stop(self, client, auth_user, player_episode, django_assert_num_queries):
-
-        log = AudioLogFactory(
-            user=auth_user,
-            current_time=2000,
-            episode=player_episode,
-            is_playing=True,
-        )
+    def test_stop(self, client, auth_user, player_audio_log, django_assert_num_queries):
 
         # including savepoints
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(4):
             resp = client.post(self.url)
         assert_ok(resp)
 
         # do not mark complete
-        log.refresh_from_db()
+        player_audio_log.refresh_from_db()
 
-        assert not log.completed
-        assert not log.is_playing
-        assert log.current_time == 2000
-
-        assert not _is_playing(client, player_episode)
+        assert not player_audio_log.completed
+        assert not player_audio_log.is_playing
+        assert player_audio_log.current_time == 500
 
 
 class TestPlayerTimeUpdate:
     url = reverse_lazy("episodes:player_time_update")
 
-    @pytest.fixture
-    def log(self, auth_user, player_episode):
-        return AudioLogFactory(user=auth_user, episode=player_episode)
-
-    def test_is_running(self, client, auth_user, log, django_assert_num_queries):
+    def test_is_running(self, client, player_audio_log, django_assert_num_queries):
 
         with django_assert_num_queries(4):
             resp = client.post(
@@ -368,27 +347,31 @@ class TestPlayerTimeUpdate:
             )
         assert_no_content(resp)
 
-        log.refresh_from_db()
-        assert log.current_time == 1030
+        player_audio_log.refresh_from_db()
+        assert player_audio_log.current_time == 1030
 
     def test_player_not_running(
         self, client, auth_user, episode, django_assert_num_queries
     ):
 
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             resp = client.post(
                 self.url,
                 {"current_time": "1030"},
             )
         assert_no_content(resp)
 
-    def test_missing_data(self, client, auth_user, log, django_assert_num_queries):
+    def test_missing_data(
+        self, client, auth_user, player_audio_log, django_assert_num_queries
+    ):
 
         with django_assert_num_queries(3):
             resp = client.post(self.url)
         assert_bad_request(resp)
 
-    def test_invalid_data(self, client, auth_user, log, django_assert_num_queries):
+    def test_invalid_data(
+        self, client, auth_user, player_audio_log, django_assert_num_queries
+    ):
 
         with django_assert_num_queries(3):
             resp = client.post(self.url, {"current_time": "xyz"})
@@ -401,7 +384,7 @@ class TestFavorites:
     def test_get(self, client, auth_user, django_assert_num_queries):
         FavoriteFactory.create_batch(3, user=auth_user)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(self.url)
 
         assert_ok(resp)
@@ -419,7 +402,7 @@ class TestFavorites:
 
         FavoriteFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(self.url, {"q": "testing"})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -459,7 +442,7 @@ class TestHistory:
 
     def test_get(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(self.url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -467,7 +450,7 @@ class TestHistory:
     def test_get_oldest_first(self, client, auth_user, django_assert_num_queries):
         AudioLogFactory.create_batch(3, user=auth_user)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(self.url, {"ordering": "asc"})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -483,7 +466,7 @@ class TestHistory:
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(self.url, {"q": "testing"})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -504,14 +487,15 @@ class TestRemoveAudioLog:
         assert AudioLog.objects.filter(user=auth_user).count() == 1
 
     def test_is_playing(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
         """Do not remove log if episode is currently playing"""
-        log = AudioLogFactory(user=auth_user, episode=player_episode)
 
-        with django_assert_num_queries(3):
-            assert_no_content(client.delete(self.url(log.episode)))
-        assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
+        with django_assert_num_queries(4):
+            assert_no_content(client.delete(self.url(player_audio_log.episode)))
+        assert AudioLog.objects.filter(
+            user=auth_user, episode=player_audio_log.episode
+        ).exists()
 
     def test_none_remaining(
         self, client, auth_user, episode, django_assert_num_queries
@@ -528,7 +512,7 @@ class TestRemoveAudioLog:
 class TestQueue:
     def test_get(self, client, auth_user, django_assert_num_queries):
         QueueItemFactory.create_batch(3, user=auth_user)
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             assert_ok(client.get(reverse("episodes:queue")))
 
 
@@ -541,15 +525,15 @@ class TestAddToQueue:
         second = EpisodeFactory()
         third = EpisodeFactory()
 
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(7):
             resp = client.post(reverse(self.add_to_end_url, args=[first.id]))
         assert_no_content(resp)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.post(reverse(self.add_to_end_url, args=[second.id]))
         assert_no_content(resp)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.post(reverse(self.add_to_end_url, args=[third.id]))
         assert_no_content(resp)
 
@@ -573,15 +557,15 @@ class TestAddToQueue:
         second = EpisodeFactory()
         third = EpisodeFactory()
 
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(7):
             resp = client.post(reverse(self.add_to_start_url, args=[first.id]))
         assert_no_content(resp)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.post(reverse(self.add_to_start_url, args=[second.id]))
         assert_no_content(resp)
 
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.post(reverse(self.add_to_start_url, args=[third.id]))
         assert_no_content(resp)
 
@@ -600,14 +584,13 @@ class TestAddToQueue:
         assert items[2].episode, first
         assert items[2].position == 3
 
-    def test_is_playing(
-        self, client, auth_user, player_episode, django_assert_num_queries
-    ):
-        with django_assert_num_queries(4):
+    def test_is_playing(self, client, auth_user, episode, django_assert_num_queries):
+        AudioLogFactory(user=auth_user, episode=episode, is_playing=True)
+        with django_assert_num_queries(5):
             resp = client.post(
                 reverse(
                     self.add_to_start_url,
-                    args=[player_episode.id],
+                    args=[episode.id],
                 ),
             )
         assert_no_content(resp)
@@ -618,7 +601,7 @@ class TestAddToQueue:
         self, client, auth_user, episode, django_assert_num_queries
     ):
         QueueItemFactory(episode=episode, user=auth_user)
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(7):
             resp = client.post(
                 reverse(
                     self.add_to_start_url,
@@ -703,21 +686,19 @@ class TestMarkComplete:
         assert log.current_time == 0
 
     def test_is_playing(
-        self, client, auth_user, player_episode, django_assert_num_queries
+        self, client, auth_user, player_audio_log, django_assert_num_queries
     ):
         """Do not remove log if episode is currently playing"""
-        log = AudioLogFactory(
-            user=auth_user,
-            episode=player_episode,
-            completed=None,
-            current_time=600,
-        )
-
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             assert_no_content(
-                client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
+                client.post(
+                    reverse(
+                        "episodes:mark_complete", args=[player_audio_log.episode_id]
+                    )
+                )
             )
 
-        log.refresh_from_db()
-        assert not log.completed
-        assert log.current_time == 600
+        player_audio_log.refresh_from_db()
+        assert not player_audio_log.completed
+        assert player_audio_log.is_playing
+        assert player_audio_log.current_time == 500

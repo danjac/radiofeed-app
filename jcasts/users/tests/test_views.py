@@ -10,7 +10,7 @@ class TestUserPreferences:
     url = reverse_lazy("users:preferences")
 
     def test_get(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             resp = client.get(self.url)
         assert_ok(resp)
 
@@ -40,7 +40,7 @@ class TestUserStats:
         AudioLogFactory(user=auth_user)
         FavoriteFactory(user=auth_user)
 
-        with django_assert_num_queries(9):
+        with django_assert_num_queries(10):
             resp = client.get(reverse("users:stats"))
         assert_ok(resp)
         assert resp.context["stats"]["follows"] == 1
@@ -51,7 +51,7 @@ class TestExportPodcastFeeds:
     url = reverse_lazy("users:export_podcast_feeds")
 
     def test_get(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             assert_ok(client.get(self.url))
 
     def test_export_opml(self, client, follow, django_assert_num_queries):
@@ -72,7 +72,7 @@ class TestDeleteAccount:
 
     def test_get(self, client, auth_user, django_user_model, django_assert_num_queries):
         # make sure we don't accidentally delete account on get request
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             resp = client.get(self.url)
         assert_ok(resp)
         assert django_user_model.objects.exists()
@@ -80,7 +80,7 @@ class TestDeleteAccount:
     def test_post_unconfirmed(
         self, client, auth_user, django_user_model, django_assert_num_queries
     ):
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             resp = client.post(self.url)
         assert_ok(resp)
         assert django_user_model.objects.exists()

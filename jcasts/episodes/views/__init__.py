@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import Episode, QueueItem
+from jcasts.episodes.models import AudioLog, Episode, QueueItem
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -48,7 +48,6 @@ def index(request):
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=promoted or request.user.is_anonymous,
     )
 
 
@@ -64,9 +63,7 @@ def search_episodes(request):
         .order_by("-rank", "-pub_date")
     )
 
-    return render_episode_list_response(
-        request, episodes, "episodes/search.html", cached=True
-    )
+    return render_episode_list_response(request, episodes, "episodes/search.html")
 
 
 @require_http_methods(["GET"])
@@ -79,7 +76,7 @@ def actions(request, episode_id):
 
     is_detail = request.GET.get("detail", False)
 
-    is_playing = request.player.has(episode.id)
+    is_playing = AudioLog.objects.is_playing(request.user, episode)
 
     is_queue = (
         False if is_playing else QueueItem.objects.filter(user=request.user).exists()
@@ -108,13 +105,15 @@ def episode_detail(request, episode_id, slug=None):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
+    is_playing = AudioLog.objects.is_playing(request.user, episode)
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
+            "is_playing": is_playing,
             "og_data": episode.get_opengraph_data(request),
-            "is_playing": request.player.has(episode.id),
             "next_episode": Episode.objects.get_next_episode(episode),
             "previous_episode": Episode.objects.get_previous_episode(episode),
         },
@@ -141,14 +140,13 @@ def render_episode_list_response(
     episodes,
     template_name,
     extra_context=None,
-    cached=False,
 ):
     return render_paginated_response(
         request,
         episodes,
         template_name,
         pagination_template_name="episodes/_episodes_cached.html"
-        if cached
+        if request.user.is_anonymous
         else "episodes/_episodes.html",
         extra_context={
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,

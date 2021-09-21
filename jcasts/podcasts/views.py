@@ -206,7 +206,6 @@ def episodes(request, podcast_id, slug=None):
                 "is_podcast_detail": True,
             },
         ),
-        cached=True,
     )
 
 
