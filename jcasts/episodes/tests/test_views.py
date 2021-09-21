@@ -336,13 +336,14 @@ class TestClosePlayer:
 
 
 class TestPlayerTimeUpdate:
-    url = reverse_lazy("episodes:player_time_update")
+    def url(self, episode):
+        return reverse("episodes:player_time_update", args=[episode.id])
 
     def test_is_running(self, client, player_audio_log, django_assert_num_queries):
 
         with django_assert_num_queries(4):
             resp = client.post(
-                self.url,
+                self.url(player_audio_log.episode),
                 {"current_time": "1030"},
             )
         assert_no_content(resp)
@@ -356,7 +357,7 @@ class TestPlayerTimeUpdate:
 
         with django_assert_num_queries(4):
             resp = client.post(
-                self.url,
+                self.url(episode),
                 {"current_time": "1030"},
             )
         assert_no_content(resp)
@@ -366,7 +367,7 @@ class TestPlayerTimeUpdate:
     ):
 
         with django_assert_num_queries(3):
-            resp = client.post(self.url)
+            resp = client.post(self.url(player_audio_log.episode))
         assert_bad_request(resp)
 
     def test_invalid_data(
@@ -374,7 +375,9 @@ class TestPlayerTimeUpdate:
     ):
 
         with django_assert_num_queries(3):
-            resp = client.post(self.url, {"current_time": "xyz"})
+            resp = client.post(
+                self.url(player_audio_log.episode), {"current_time": "xyz"}
+            )
         assert_bad_request(resp)
 
 

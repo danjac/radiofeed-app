@@ -66,12 +66,12 @@ def reload_player(request):
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request):
+def player_time_update(request, episode_id):
     """Update current play time of episode."""
 
     try:
 
-        AudioLog.objects.playing(request.user).update(
+        AudioLog.objects.filter(episode=episode_id).update(
             completed=None,
             updated=timezone.now(),
             current_time=int(request.POST["current_time"]),

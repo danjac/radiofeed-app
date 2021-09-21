@@ -8,7 +8,7 @@
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        csrfToken: '{{ csrf_token }}',
        urls: {
-         timeUpdate: '{% url "episodes:player_time_update" %}'
+         timeUpdate: '{% url "episodes:player_time_update" episode.id %}'
        },
        {% if autoplay %}
        autoplay: true,
