@@ -83,7 +83,7 @@ def subscribe(podcast_id):
         podcast.websub_hub,
         {
             "hub.mode": "subscribe",
-            "hub.topic": podcast.rss,
+            "hub.topic": podcast.websub_url or podcast.rss,
             "hub.secret": podcast.websub_secret.hex,
             "hub.callback": build_absolute_uri(
                 reverse("podcasts:websub_subscribe", args=[podcast.websub_token])

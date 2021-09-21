@@ -171,8 +171,10 @@ def parse_success(podcast, response, feed, items):
     # check for hub in header or feed body
     if "self" in response.links and "hub" in response.links:
         podcast.websub_hub = response.links["hub"]["url"]
+        podcast.websub_url = response.links["self"]["url"]
     else:
-        podcast.websub_hub = feed.hub
+        podcast.websub_hub = feed.websub_hub
+        podcast.websub_url = feed.websub_url
 
     # taxonomy
     categories_dct = get_categories_dict()

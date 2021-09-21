@@ -69,8 +69,8 @@ def websub_subscribe(request, token):
             if request.GET["hub.mode"] != "subscribe":
                 raise ValueError("hub.mode should be 'subscribe'")
 
-            if request.GET["hub.topic"] != podcast.rss:
-                raise ValueError("hub.topic does not match podcast RSS")
+            if request.GET["hub.topic"] not in (podcast.rss, podcast.websub_url):
+                raise ValueError("hub.topic does not match podcast RSS or websub URL")
 
             challenge = request.GET["hub.challenge"]
             lease_seconds = int(request.GET["hub.lease_seconds"])

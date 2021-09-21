@@ -120,6 +120,7 @@ class Podcast(models.Model):
 
     # websub fields
     websub_hub = models.URLField(null=True, blank=True)
+    websub_url = models.URLField(null=True, blank=True)
 
     websub_token = models.UUIDField(
         unique=True,
