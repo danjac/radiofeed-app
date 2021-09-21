@@ -67,7 +67,14 @@ def reload_player(request):
 @require_http_methods(["POST"])
 @ajax_login_required
 def player_time_update(request, episode_id):
-    """Update current play time of episode."""
+    """Update current play time of episode.
+
+    Note that we don't check if the episode is currently playing:
+    it's possible that a user may close a running episode in one
+    device (or open another episode) while playing on another episode,
+    so instead we just ensure the current episode is updated while running
+    until the user reloads the player.
+    """
 
     try:
 
