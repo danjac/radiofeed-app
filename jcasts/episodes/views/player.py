@@ -91,18 +91,18 @@ def player_time_update(request, episode_id):
 
 def remove_episode_from_player(user, mark_complete):
 
-    kwargs = {"is_playing": False}
+    now = timezone.now()
 
-    if mark_complete:
-        now = timezone.now()
-        kwargs = {
-            **kwargs,
+    AudioLog.objects.playing(user).update(
+        is_playing=False,
+        **{
             "updated": now,
             "completed": now,
             "current_time": 0,
         }
-
-    AudioLog.objects.playing(user).update(**kwargs)
+        if mark_complete
+        else {},
+    )
 
 
 def render_start_player(request, episode):
