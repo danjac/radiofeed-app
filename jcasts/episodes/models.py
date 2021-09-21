@@ -193,8 +193,7 @@ class Episode(models.Model):
 
     @cached_property
     def duration_in_seconds(self):
-        """Returns total number of seconds given string in [h:][m:]s format.
-        """
+        """Returns total number of seconds given string in [h:][m:]s format."""
 
         if not self.duration:
             return 0
@@ -348,6 +347,7 @@ class AudioLog(TimeStampedModel):
     updated = models.DateTimeField()
     completed = models.DateTimeField(null=True, blank=True)
     current_time = models.IntegerField(default=0)
+    is_playing = models.BooleanField(default=False)
 
     objects = AudioLogManager()
 

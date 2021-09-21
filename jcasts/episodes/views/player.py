@@ -23,6 +23,7 @@ def start_player(request, episode_id):
 @ajax_login_required
 def close_player(request):
     request.player.remove()
+    AudioLog.objects.filter(user=request.user).update(is_playing=False)
     return render_close_player(request)
 
 
@@ -37,7 +38,10 @@ def play_next_episode(request):
         now = timezone.now()
 
         AudioLog.objects.filter(user=request.user, episode=episode_id).update(
-            updated=now, completed=now, current_time=0
+            updated=now,
+            completed=now,
+            current_time=0,
+            is_playing=False,
         )
 
     if request.user.autoplay and (
@@ -79,6 +83,7 @@ def player_time_update(request):
             AudioLog.objects.filter(episode=episode_id, user=request.user).update(
                 completed=None,
                 updated=timezone.now(),
+                is_playing=True,
                 current_time=int(request.POST["current_time"]),
             )
 
@@ -97,6 +102,7 @@ def render_start_player(request, episode):
         defaults={
             "completed": None,
             "updated": timezone.now(),
+            "is_playing": True,
         },
     )
 

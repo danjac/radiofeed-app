@@ -1,6 +1,7 @@
   <nav class="pt-3 pl-3 md:pl-0 text-base lg:text-lg">
     {% with SIDEBAR_ACTIVE_CSS="lg:text-blue-600 lg:font-bold lg:dark:text-blue-300" ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-3"%}
-    <ul class="space-y-4 sm:space-y-0 lg:space-y-5 sm:grid sm:gap-2 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-none lg:grid-rows-none lg:gap-0">
+    <ul class="space-y-4 sm:space-y-0 lg:space-y-5 sm:grid sm:gap-2 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-none lg:grid-rows-none lg:gap-0"
+        x-data>
       <li>
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
@@ -77,7 +78,8 @@
         <form class="inline-block"
               hx-disable="true"
               action="{% url 'account_logout' %}"
-              method="post">
+              method="post"
+              @submit="$dispatch('logged-out')">
           {% csrf_token %}
           <button accesskey="l"
                   title="Logout"

@@ -31,6 +31,9 @@ const playerObj = {
       this.$refs.audio.playbackRate = value;
     });
 
+    this.counters.current = formatDuration(this.currentTime);
+    this.counters.duration = formatDuration(this.duration);
+
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
 
@@ -103,6 +106,7 @@ const playerObj = {
       });
     } else {
       this.isPaused = true;
+      this.isPlaying = false;
     }
 
     this.duration = this.$refs.audio.duration;
@@ -136,6 +140,10 @@ const playerObj = {
   paused() {
     this.isPlaying = false;
     this.isPaused = true;
+    this.disable();
+  },
+
+  disable() {
     sessionStorage.removeItem(this.keys.enable);
   },
 

@@ -14,7 +14,8 @@
        autoplay: true,
        {% endif %}
    })"
-     @keydown.window="shortcuts">
+     @keydown.window="shortcuts"
+     @logged-out.window="disable">
 
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"
