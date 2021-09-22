@@ -125,6 +125,7 @@ MIDDLEWARE = [
     "django_htmx.middleware.HtmxMiddleware",
     "jcasts.shared.middleware.CacheControlMiddleware",
     "jcasts.shared.middleware.SearchMiddleware",
+    "jcasts.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

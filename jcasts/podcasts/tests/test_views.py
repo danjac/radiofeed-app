@@ -33,7 +33,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3, promoted=True)
         sub = FollowFactory(user=auth_user).podcast
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(6):
             resp = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -43,7 +43,7 @@ class TestPodcasts:
         """If user is not following any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(6):
             resp = client.get(podcasts_url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
@@ -53,7 +53,7 @@ class TestPodcasts:
 
         PodcastFactory.create_batch(3)
         sub = FollowFactory(user=auth_user)
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(6):
             resp = client.get(podcasts_url)
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
@@ -146,7 +146,7 @@ class TestPodcastDetail:
     def test_get_podcast_authenticated(
         self, client, auth_user, podcast, django_assert_num_queries
     ):
-        with django_assert_num_queries(9):
+        with django_assert_num_queries(8):
             resp = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )

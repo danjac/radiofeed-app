@@ -140,10 +140,6 @@ const playerObj = {
   paused() {
     this.isPlaying = false;
     this.isPaused = true;
-    this.disable();
-  },
-
-  disable() {
     sessionStorage.removeItem(this.keys.enable);
   },
 

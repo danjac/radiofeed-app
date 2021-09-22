@@ -8,14 +8,13 @@
        currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
        csrfToken: '{{ csrf_token }}',
        urls: {
-         timeUpdate: '{% url "episodes:player_time_update" episode.id %}'
+         timeUpdate: '{% url "episodes:player_time_update" %}'
        },
        {% if autoplay %}
        autoplay: true,
        {% endif %}
    })"
-     @keydown.window="shortcuts"
-     @logged-out.window="disable">
+     @keydown.window="shortcuts">
 
   {{ episode.get_media_metadata|json_script:"player-metadata" }}
   <audio x-ref="audio"

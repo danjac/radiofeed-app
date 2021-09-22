@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -79,7 +79,7 @@ def actions(request, episode_id):
 
     is_detail = request.GET.get("detail", False)
 
-    is_playing = AudioLog.objects.is_playing(request.user, episode)
+    is_playing = request.player.has(episode.id)
 
     is_queue = (
         False if is_playing else QueueItem.objects.filter(user=request.user).exists()
@@ -108,15 +108,13 @@ def episode_detail(request, episode_id, slug=None):
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    is_playing = AudioLog.objects.is_playing(request.user, episode)
-
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
-            "is_playing": is_playing,
             "og_data": episode.get_opengraph_data(request),
+            "is_playing": request.player.has(episode.id),
             "next_episode": Episode.objects.get_next_episode(episode),
             "previous_episode": Episode.objects.get_previous_episode(episode),
         },

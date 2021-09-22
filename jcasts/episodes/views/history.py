@@ -43,25 +43,22 @@ def index(request):
 @ajax_login_required
 def mark_complete(request, episode_id):
 
-    AudioLog.objects.filter(
-        user=request.user,
-        episode=episode_id,
-        completed__isnull=True,
-        is_playing=False,
-    ).update(
-        completed=timezone.now(),
-        current_time=0,
-    )
+    if not request.player.has(episode_id):
+        AudioLog.objects.filter(
+            user=request.user, episode=episode_id, completed__isnull=True
+        ).update(
+            completed=timezone.now(),
+            current_time=0,
+        )
 
-    messages.info(request, "Episode marked complete")
+        messages.info(request, "Episode marked complete")
     return HttpResponseNoContent()
 
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def remove_audio_log(request, episode_id):
-    AudioLog.objects.filter(
-        user=request.user, episode=episode_id, is_playing=False
-    ).delete()
-    messages.info(request, "Removed from History")
+    if not request.player.has(episode_id):
+        AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
+        messages.info(request, "Removed from History")
     return with_hx_trigger(HttpResponseNoContent(), {"remove-audio-log": episode_id})
