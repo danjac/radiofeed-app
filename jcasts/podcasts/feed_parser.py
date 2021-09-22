@@ -291,7 +291,7 @@ def get_podcast(rss, force_update=False):
 
 
 def reschedule(podcast):
-    if podcast.websub_subscribed or podcast.pub_date is None:
+    if podcast.pub_date is None:
         return None
 
     # add 5% of freq to current time (min 1 hour)

@@ -379,10 +379,6 @@ class TestReschedule:
     def test_pub_date_none(self):
         assert reschedule(Podcast(pub_date=None)) is None
 
-    def test_websub_subscribed(self):
-        now = timezone.now()
-        assert reschedule(Podcast(pub_date=now, websub_subscribed=now)) is None
-
     def test_pub_date_min_one_hour(self):
         now = timezone.now()
         scheduled = reschedule(Podcast(pub_date=now))
