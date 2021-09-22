@@ -138,7 +138,11 @@ class PodcastAdmin(admin.ModelAdmin):
         "exception",
     )
 
-    actions = ["reactivate", "parse_podcast_feeds"]
+    actions = (
+        "reactivate",
+        "parse_podcast_feeds",
+        "reverify_websub_feeds",
+    )
 
     @admin.action(description="Re-activate podcasts")
     def reactivate(self, request, queryset):
