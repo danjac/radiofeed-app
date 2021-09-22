@@ -14,8 +14,6 @@ from jcasts.shared.template import build_absolute_uri
 
 MAX_BODY_SIZE = 1024 ** 2
 
-# test commit
-
 
 class InvalidSignature(ValueError):
     ...
