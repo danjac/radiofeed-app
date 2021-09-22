@@ -61,7 +61,7 @@ def index(request):
 @csrf_exempt
 def websub_subscribe(request, token):
 
-    podcast = get_object_or_404(Podcast, websub_token=token)
+    podcast = get_object_or_404(Podcast, websub_token=token, active=True)
 
     try:
         if request.method == "GET":

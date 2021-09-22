@@ -15,25 +15,17 @@ from jcasts.podcasts.models import Podcast
 
 
 class MockResponse:
-    def __init__(
-        self,
-        url="",
-        status=http.HTTPStatus.OK,
-        content=b"",
-        headers=None,
-        links=None,
-    ):
-        self.url = url
-        self.content = content
-        self.headers = headers or {}
-        self.links = links or {}
-        self.status_code = status
+    status_code = http.HTTPStatus.OK
+    content = b""
 
     def raise_for_status(self):
         ...
 
 
-class MockBadResponse(MockResponse):
+class MockBadResponse:
+    status_code = http.HTTPStatus.UNPROCESSABLE_ENTITY
+    content = b""
+
     def raise_for_status(self):
         raise requests.HTTPError()
 
@@ -158,7 +150,7 @@ class TestSubscribe:
         mock_post = mocker.patch(self.mock_http_post, return_value=MockResponse())
 
         podcast = PodcastFactory(websub_hub=self.hub)
-        websub.subscribe(podcast.id)
+        assert websub.subscribe(podcast.id).status_code == http.HTTPStatus.OK
         mock_post.assert_called()
 
         podcast.refresh_from_db()
@@ -167,13 +159,20 @@ class TestSubscribe:
         assert podcast.websub_requested
         assert not podcast.websub_exception
 
+    def test_missing_podcast(self, db, mocker):
+
+        assert websub.subscribe(12345) is None
+
     def test_exception(self, db, mocker):
         mock_post = mocker.patch(self.mock_http_post, return_value=MockBadResponse())
 
         podcast = PodcastFactory(
             websub_hub=self.hub, websub_subscribed=timezone.now() - timedelta(hours=1)
         )
-        websub.subscribe(podcast.id)
+        assert (
+            websub.subscribe(podcast.id).status_code
+            == http.HTTPStatus.UNPROCESSABLE_ENTITY
+        )
         mock_post.assert_called()
 
         podcast.refresh_from_db()

@@ -1,5 +1,6 @@
 import hashlib
 import hmac
+import logging
 import traceback
 import uuid
 
@@ -11,6 +12,8 @@ from django_rq import job
 
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.template import build_absolute_uri
+
+logger = logging.getLogger(__name__)
 
 MAX_BODY_SIZE = 1024 ** 2
 
@@ -77,7 +80,12 @@ def get_podcasts(reverify=False):
 @job("websub")
 def subscribe(podcast_id, reverify=False):
 
-    podcast = get_podcasts(reverify).get(pk=podcast_id)
+    try:
+        podcast = get_podcasts(reverify).get(pk=podcast_id)
+        logger.error(f"No podcast found for {podcast_id}")
+    except Podcast.DoesNotExist:
+        return None
+
     podcast.websub_token = uuid.uuid4()
     podcast.websub_secret = uuid.uuid4()
     podcast.websub_exception = ""
@@ -99,7 +107,7 @@ def subscribe(podcast_id, reverify=False):
 
     try:
         response.raise_for_status()
-    except requests.RequestException:
+    except requests.RequestException as e:
 
         podcast.websub_requested = None
         podcast.websub_subscribed = None
@@ -111,6 +119,7 @@ def subscribe(podcast_id, reverify=False):
                 response.content.decode("utf-8"),
             )
         )
+        logger.exception(e)
 
     podcast.save()
 
