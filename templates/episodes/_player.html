@@ -117,19 +117,19 @@
             </div>
           </div>
 
-          {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 player--interactive" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
+          {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
 
           <div class="flex items-center sm:hidden space-x-1">
 
             <button title="Skip back 10 seconds"
                     @click="skipBack"
-                    class="{{ BUTTON_CSS }} inline-block">
+                    class="{{ BUTTON_CSS }} player--interactive inline-block">
               {% icon "skip_back_10" css_class=ICON_CSS %}
             </button>
 
             <button title="Skip forward 10 seconds"
                     @click="skipForward"
-                    class="{{ BUTTON_CSS }} inline-block">
+                    class="{{ BUTTON_CSS }} player--interactive inline-block">
               {% icon "skip_forward_10" css_class=ICON_CSS %}
             </button>
 
@@ -141,20 +141,20 @@
 
               <button title="Skip back 10 seconds"
                       @click="skipBack"
-                      class="{{ BUTTON_CSS }} hidden sm:inline-block">
+                      class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
                 {% icon "skip_back_10" css_class=ICON_CSS %}
               </button>
 
               <button title="Skip forward 10 seconds"
                       @click="skipForward"
-                      class="{{ BUTTON_CSS }} hidden sm:inline-block">
+                      class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
                 {% icon "skip_forward_10" css_class=ICON_CSS %}
               </button>
 
             </div>
 
             <div class="flex items-center space-x-1 lg:space-x-2 mr-2 lg:mr-3">
-              <button class="{{ BUTTON_CSS }} inline-block"
+              <button class="{{ BUTTON_CSS }} player--interactive inline-block"
                       @click="decrementPlaybackRate"
                       title="Decrease Playback Rate">-</button>
               <div class="mr-1 md:mr-2 tracking-tight player--interactive"
@@ -162,7 +162,7 @@
                 x<span x-text="playbackRate.toFixed(1)"></span>
               </div>
 
-              <button class="{{ BUTTON_CSS }} inline-block"
+              <button class="{{ BUTTON_CSS }} player--interactive inline-block"
                       @click="incrementPlaybackRate"
                       title="Increase Playback Rate">+</button>
             </div>
