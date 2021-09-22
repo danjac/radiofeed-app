@@ -165,7 +165,7 @@ class Episode(models.Model):
 
     @property
     def slug(self):
-        return slugify(self.title, allow_unicode=False) or "episode"
+        return slugify(self.title, allow_unicode=False) or "no-title"
 
     def get_file_size(self):
         return filesizeformat(self.length) if self.length else None

@@ -159,7 +159,7 @@ class TestEpisodeModel:
         assert episode.slug == "testing"
 
     def test_slug_if_title_empty(self):
-        assert Episode().slug == "episode"
+        assert Episode().slug == "no-title"
 
     def test_get_media_url_ext(self):
 
