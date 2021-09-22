@@ -1,3 +1,5 @@
+import uuid
+
 from unittest import mock
 
 import pytest
@@ -67,6 +69,14 @@ class TestPodcastAdmin:
         mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_task.assert_called_with(podcast.rss, force_update=True)
+
+    def test_reverify_websub_feeds(self, db, admin, req, mocker):
+        podcast = PodcastFactory(
+            websub_token=uuid.uuid4(), websub_hub="https://pubsubhubbub.com"
+        )
+        mock_task = mocker.patch("jcasts.podcasts.websub.subscribe.delay")
+        admin.reverify_websub_feeds(req, Podcast.objects.all())
+        mock_task.assert_called_with(podcast.id, reverify=True)
 
 
 class TestPubDateFilter:

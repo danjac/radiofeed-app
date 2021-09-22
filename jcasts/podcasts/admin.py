@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 
-from jcasts.podcasts import feed_parser, models
+from jcasts.podcasts import feed_parser, models, websub
 
 
 @admin.register(models.Category)
@@ -158,6 +158,18 @@ class PodcastAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"{queryset.count()} podcast(s) scheduled for update",
+            messages.SUCCESS,
+        )
+
+    @admin.action(description="Reverify websub feeds")
+    def reverify_websub_feeds(self, request, queryset):
+
+        for podcast_id in queryset.websub().values_list("pk", flat=True):
+            websub.subscribe.delay(podcast_id, reverify=True)
+
+        self.message_user(
+            request,
+            f"{queryset.count()} websub podcast(s) scheduled for reverification",
             messages.SUCCESS,
         )
 

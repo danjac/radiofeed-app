@@ -66,14 +66,18 @@ def make_hex_digest(algo, body, secret):
         raise ValueError(f"Unknown hashing algorithm: {algo}")
 
 
-def get_podcasts():
-    return Podcast.objects.websub().unsubscribed().filter(websub_exception="")
+def get_podcasts(reverify=False):
+    qs = Podcast.objects.websub()
+    if not reverify:
+        qs = qs.unsubscribed().filter(websub_exception="")
+
+    return qs
 
 
 @job("websub")
-def subscribe(podcast_id):
+def subscribe(podcast_id, reverify=False):
 
-    podcast = get_podcasts().get(pk=podcast_id)
+    podcast = get_podcasts(reverify).get(pk=podcast_id)
     podcast.websub_token = uuid.uuid4()
     podcast.websub_secret = uuid.uuid4()
     podcast.websub_exception = ""
