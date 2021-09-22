@@ -148,7 +148,7 @@ class TestPodcastModel:
         assert Podcast(title="Testing").slug == "testing"
 
     def test_slug_if_title_empty(self):
-        assert Podcast().slug == "podcast"
+        assert Podcast().slug == "no-title"
 
     def test_cleaned_title(self):
         podcast = Podcast(title="<b>Test &amp; Code")

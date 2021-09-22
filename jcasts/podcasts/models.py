@@ -200,7 +200,7 @@ class Podcast(models.Model):
 
     @cached_property
     def slug(self):
-        return slugify(self.title, allow_unicode=False) or "podcast"
+        return slugify(self.title, allow_unicode=False) or "no-title"
 
     def is_following(self, user):
         if user.is_anonymous:
