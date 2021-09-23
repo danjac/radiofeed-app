@@ -90,6 +90,7 @@ def subscribe(podcast_id, reverify=False):
     podcast.websub_secret = uuid.uuid4()
     podcast.websub_exception = ""
     podcast.websub_requested = timezone.now()
+    podcast.websub_subscribed = None
 
     response = requests.post(
         podcast.websub_hub,
@@ -110,7 +111,6 @@ def subscribe(podcast_id, reverify=False):
     except requests.RequestException as e:
 
         podcast.websub_requested = None
-        podcast.websub_subscribed = None
         podcast.websub_token = None
         podcast.websub_secret = None
         podcast.websub_exception = "\n".join(
