@@ -27,7 +27,7 @@ _validate_url = URLValidator(["http", "https"])
 
 
 @register.filter
-def timesince_approx(value, arg=None):
+def approx_timesince(value, arg=None):
     try:
         return timesince(value, arg, depth=1)
     except (AttributeError, ValueError, TypeError):

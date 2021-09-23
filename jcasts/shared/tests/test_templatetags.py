@@ -7,6 +7,7 @@ from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template import (
     absolute_uri,
     active_link,
+    approx_timesince,
     colorpicker,
     format_duration,
     login_url,
@@ -16,17 +17,16 @@ from jcasts.shared.template import (
     safe_url,
     share_buttons,
     signup_url,
-    timesince_approx,
 )
 
 
 class TestTimesinceApprox:
     def test_none(self):
-        assert timesince_approx(None) == ""
+        assert approx_timesince(None) == ""
 
     def test_value(self):
         assert (
-            timesince_approx(timezone.now() - timedelta(days=3, hours=5)) == "3\xa0days"
+            approx_timesince(timezone.now() - timedelta(days=3, hours=5)) == "3\xa0days"
         )
 
 
