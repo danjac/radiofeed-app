@@ -305,8 +305,13 @@ def reschedule(podcast):
     # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
     now = timezone.now()
-    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
-    return now + max(diff, timedelta(hours=1))
+    time_from = (
+        podcast.scheduled
+        if podcast.scheduled and podcast.scheduled > podcast.pub_date
+        else now
+    )
+    diff = timedelta(seconds=(time_from - podcast.pub_date).total_seconds() * 0.05)
+    return max(now + diff, now + timedelta(hours=1))
 
 
 def parse_failure(

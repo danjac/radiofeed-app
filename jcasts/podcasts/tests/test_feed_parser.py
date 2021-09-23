@@ -394,11 +394,32 @@ class TestReschedule:
     def test_pub_date_min_one_hour(self):
         now = timezone.now()
         scheduled = reschedule(Podcast(pub_date=now))
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(1.0)
+        self.assert_hours_diff(scheduled - now, 1.0)
 
     def test_pub_date_not_none(self):
         now = timezone.now()
         pub_date = now - timedelta(days=3)
         scheduled = reschedule(Podcast(pub_date=pub_date))
         # 5% of 3 days == 3.6 hours
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3.6)
+        self.assert_hours_diff(scheduled - now, 3.6)
+
+    def test_scheduled_not_none(self):
+        now = timezone.now()
+        pub_date = now - timedelta(days=3)
+        scheduled = reschedule(
+            Podcast(pub_date=pub_date, scheduled=now - timedelta(hours=1))
+        )
+        # 5% of 3 days == 3.6 hours
+        self.assert_hours_diff(scheduled - now, 3.55)
+
+    def test_scheduled_lt_pub_date(self):
+        now = timezone.now()
+        pub_date = now - timedelta(days=1)
+        scheduled = reschedule(
+            Podcast(pub_date=pub_date, scheduled=now - timedelta(days=3))
+        )
+        # 5% of 3 days == 3.6 hours
+        self.assert_hours_diff(scheduled - now, 1.2)
+
+    def assert_hours_diff(self, delta, expected):
+        assert delta.total_seconds() / 3600 == pytest.approx(expected)
