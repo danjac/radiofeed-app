@@ -59,18 +59,6 @@ def absolute_uri(context, url=None, *args, **kwargs):
     )
 
 
-def build_absolute_uri(url=None, request=None):
-    if request:
-        return request.build_absolute_uri(url)
-
-    # in case we don't have a request, e.g. in email job
-    domain = Site.objects.get_current().domain
-    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
-    base_url = protocol + "://" + domain
-
-    return parse.urljoin(base_url, url) if url else base_url
-
-
 @register.filter
 def format_duration(total_seconds):
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
@@ -123,12 +111,12 @@ def markup(value):
 
 @register.filter
 def login_url(url):
-    return _redirect_to_auth_url(url, reverse("account_login"))
+    return auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
 def signup_url(url):
-    return _redirect_to_auth_url(url, reverse("account_signup"))
+    return auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("icons/_svg.html")
@@ -202,10 +190,22 @@ def colorpicker(value, colors):
     return choices[ord(value[0] if value else " ") % len(choices)]
 
 
-def _redirect_to_auth_url(url, redirect_url):
+def auth_redirect_url(url, redirect_url):
 
     return (
         redirect_url
         if url.startswith("/account/")
         else f"{redirect_url}?{REDIRECT_FIELD_NAME}={urlencode(url)}"
     )
+
+
+def build_absolute_uri(url=None, request=None):
+    if request:
+        return request.build_absolute_uri(url)
+
+    # in case we don't have a request, e.g. in email job
+    domain = Site.objects.get_current().domain
+    protocol = "https" if settings.SECURE_SSL_REDIRECT else "http"
+    base_url = protocol + "://" + domain
+
+    return parse.urljoin(base_url, url) if url else base_url
