@@ -302,10 +302,10 @@ def reschedule(podcast):
     if podcast.pub_date is None:
         return None
 
-    # add 2.5% of freq to current time (min 1 hour)
+    # add 5% of freq to current time (min 1 hour)
     # e.g. 7 days - try again in about 8 hours
     now = timezone.now()
-    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.025)
+    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
     return now + max(diff, timedelta(hours=1))
 
 

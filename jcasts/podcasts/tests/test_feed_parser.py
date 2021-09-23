@@ -400,5 +400,5 @@ class TestReschedule:
         now = timezone.now()
         pub_date = now - timedelta(days=3)
         scheduled = reschedule(Podcast(pub_date=pub_date))
-        # 5% of 3 days == 3 hours
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(1.8)
+        # 5% of 3 days == 3.6 hours
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3.6)
