@@ -26,7 +26,18 @@
          name="{{ redirect_field_name }}"
          value="{{ redirect_field_value }}" />
   {% endif %}
-  {% include "forms/_fields.html" %}
+
+  {% include "forms/_errors.html" with errors=form.non_field_errors %}
+
+  {% include "forms/_field.html" with field=form.email %}
+  {% include "forms/_field.html" with field=form.username %}
+  {% include "forms/_field.html" with field=form.password1 %}
+  {% include "forms/_field.html" with field=form.password2 %}
+
+  {% if form.captcha %}
+  {% include "forms/_field.html" with field=form.captcha %}
+  {% endif %}
+
   <div>
     <button class="inline-flex items-center btn btn-default">
       {% icon "plus" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
