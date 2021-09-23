@@ -21,6 +21,7 @@ django-htmx==1.2.1; python_version >= "3.6"
 django-model-utils==4.1.1
 django-permissions-policy==4.2.0; python_version >= "3.6"
 django-ratelimit==3.0.1; python_version >= "3.4"
+django-recaptcha==2.0.6
 django-redis==5.0.0; python_version >= "3.6"
 django-rq==2.4.1
 django-split-settings==1.1.0; python_version >= "3.6" and python_version < "4.0"
