@@ -35,7 +35,7 @@
   {% include "forms/_field.html" with field=form.password2 %}
 
   {% if form.captcha %}
-  {% include "forms/_field.html" with field=form.captcha %}
+  {% form.captcha %}
   {% endif %}
 
   <div>
