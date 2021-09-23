@@ -12,4 +12,8 @@
     dokku config:set --no-restart {{ app_name }} SENTRY_URL='{{ sentry_url }}' && \
     dokku config:set --no-restart {{ app_name }} HOST_COUNTRY='{{ host_country }}' && \
     dokku config:set --no-restart {{ app_name }} TWITTER_ACCOUNT='{{ twitter_account }}' && \
-    dokku config:set --no-restart {{ app_name }} CONTACT_EMAIL='{{ contact_email }}'
+    dokku config:set --no-restart {{ app_name }} CONTACT_EMAIL='{{ contact_email }}' && \
+    dokku config:set --no-restart {{ app_name }} RECAPTCHA_PUBLIC_KEY='{{ recaptcha_public_key }}' && \
+    dokku config:set --no-restart {{ app_name }} RECAPTCHA_PRIVATE_KEY='{{ recaptcha_private_key }}' && \
+    dokku config:set --no-restart {{ app_name }} PODCASTINDEX_API_KEY='{{ podcastindex_api_key }}' && \
+    dokku config:set --no-restart {{ app_name }} PODCASTINDEX_API_SECRET='{{ podcastindex_api_secret }}'

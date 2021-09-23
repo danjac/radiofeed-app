@@ -1,3 +1,5 @@
+from allauth.account.forms import SignupForm
+from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
@@ -27,3 +29,7 @@ class UserPreferencesForm(forms.ModelForm):
             "autoplay": "Automatically play the next episode in my Play Queue when the current playing episode ends",
             "send_recommendations_email": "Send me podcast recommendations every week",
         }
+
+
+class RecaptchSignupForm(SignupForm):
+    captcha = ReCaptchaField()
