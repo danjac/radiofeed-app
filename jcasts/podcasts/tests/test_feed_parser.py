@@ -403,23 +403,5 @@ class TestReschedule:
         # 5% of 3 days == 3.6 hours
         self.assert_hours_diff(scheduled - now, 3.6)
 
-    def test_scheduled_not_none(self):
-        now = timezone.now()
-        pub_date = now - timedelta(days=3)
-        scheduled = reschedule(
-            Podcast(pub_date=pub_date, scheduled=now - timedelta(hours=3))
-        )
-        # 5% of 3 days == 3.6 hours
-        self.assert_hours_diff(scheduled - now, 3.45)
-
-    def test_scheduled_lt_pub_date(self):
-        now = timezone.now()
-        pub_date = now - timedelta(days=1)
-        scheduled = reschedule(
-            Podcast(pub_date=pub_date, scheduled=now - timedelta(days=3))
-        )
-        # 5% of 3 days == 3.6 hours
-        self.assert_hours_diff(scheduled - now, 1.2)
-
     def assert_hours_diff(self, delta, expected):
         assert delta.total_seconds() / 3600 == pytest.approx(expected)
