@@ -1,5 +1,7 @@
 version: '3.8'
 
+# Test commit
+#
 x-env: &default-env
   DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
   EMAIL_HOST: mailhog
