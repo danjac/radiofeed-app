@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.urls import reverse
 from django.utils import timezone
 
-from jcasts.shared.pagination.templatetags import pagination_url
 from jcasts.shared.template import (
     absolute_uri,
     active_link,
@@ -13,6 +12,7 @@ from jcasts.shared.template import (
     login_url,
     markup,
     normalize_url,
+    pagination_url,
     re_active_link,
     safe_url,
     share_buttons,

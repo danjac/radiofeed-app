@@ -1,4 +1,4 @@
-{% load static pagination %}
+{% load static %}
 <div id="page-items-{{ page_obj.number }}">
   {% block results %}{% endblock %}
   {% if page_obj.has_next %}

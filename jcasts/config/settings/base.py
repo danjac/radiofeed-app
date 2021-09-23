@@ -244,9 +244,6 @@ TEMPLATES: list[dict] = [
             "builtins": [
                 "jcasts.shared.template",
             ],
-            "libraries": {
-                "pagination": "jcasts.shared.pagination.templatetags",
-            },
         },
     }
 ]
