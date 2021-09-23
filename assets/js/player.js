@@ -45,44 +45,49 @@ const playerObj = {
   },
 
   shortcuts(event) {
-    if (event.ctrlKey || event.altKey || event.target.tagName.match(/INPUT|TEXTAREA/)) {
+    if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
       return;
     }
 
-    switch (event.code) {
-      case 'Space':
-        event.preventDefault();
-        event.stopPropagation();
-        this.togglePlayPause();
-        return;
-      case 'ArrowRight':
-        event.preventDefault();
-        event.stopPropagation();
-        this.skipForward();
-        return;
-      case 'ArrowLeft':
-        event.preventDefault();
-        event.stopPropagation();
-        this.skipBack();
-        return;
+    if (!event.ctrlKey && !event.altKey) {
+      switch (event.code) {
+        case 'Space':
+          event.preventDefault();
+          event.stopPropagation();
+          this.togglePlayPause();
+          return;
+        case 'ArrowRight':
+          event.preventDefault();
+          event.stopPropagation();
+          this.skipForward();
+          return;
+        case 'ArrowLeft':
+          event.preventDefault();
+          event.stopPropagation();
+          this.skipBack();
+          return;
+      }
     }
 
-    switch (event.key) {
-      case '+':
-        event.preventDefault();
-        event.stopPropagation();
-        this.incrementPlaybackRate();
-        return;
-      case '-':
-        event.preventDefault();
-        event.stopPropagation();
-        this.decrementPlaybackRate();
-        return;
-      case '0':
-        event.preventDefault();
-        event.stopPropagation();
-        this.resetPlaybackRate();
-        return;
+    // playback rate
+    if (event.altKey) {
+      switch (event.key) {
+        case '+':
+          event.preventDefault();
+          event.stopPropagation();
+          this.incrementPlaybackRate();
+          return;
+        case '-':
+          event.preventDefault();
+          event.stopPropagation();
+          this.decrementPlaybackRate();
+          return;
+        case '0':
+          event.preventDefault();
+          event.stopPropagation();
+          this.resetPlaybackRate();
+          return;
+      }
     }
   },
 
