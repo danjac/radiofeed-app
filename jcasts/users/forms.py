@@ -31,5 +31,5 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
 
-class RecaptchSignupForm(SignupForm):
+class RecaptchaSignupForm(SignupForm):
     captcha = ReCaptchaField()

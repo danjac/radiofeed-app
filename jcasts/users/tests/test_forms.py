@@ -1,4 +1,4 @@
-from jcasts.users.forms import RecaptchSignupForm
+from jcasts.users.forms import RecaptchaSignupForm
 
 
 class TestRecaptchaSignupForm:
@@ -6,5 +6,5 @@ class TestRecaptchaSignupForm:
         settings.RECAPTCHA_PUBLIC_KEY = "test"
         settings.RECAPTCHA_PRIVATE_KEY = "test"
 
-        form = RecaptchSignupForm()
+        form = RecaptchaSignupForm()
         assert form["captcha"]
