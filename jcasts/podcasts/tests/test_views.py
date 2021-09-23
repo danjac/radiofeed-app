@@ -357,12 +357,8 @@ class TestWebsubSubscribe:
         assert not podcast.websub_subscribed
 
     def test_post_ok(self, db, client, mocker):
-        class MockQueue:
-            def enqueue(self, func, *args, **kwargs):
-                pass
-
-        mock_queue = mocker.patch("jcasts.podcasts.views.get_queue")
+        mock_parse = mocker.patch("jcasts.podcasts.views.feed_parser.parse_feed_fast")
         podcast = PodcastFactory(websub_hub=self.hub, websub_token=uuid.uuid4())
         resp = client.post(self.url(podcast))
         assert_ok(resp)
-        mock_queue.assert_called()
+        mock_parse.assert_called()

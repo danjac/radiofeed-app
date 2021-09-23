@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue, job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -75,6 +75,14 @@ class ParseResult:
     def raise_exception(self):
         if self.exception:
             raise self.exception
+
+
+def parse_feed_fast(podcast):
+    return get_queue("feeds-fast").enqueue(
+        parse_feed,
+        podcast.rss,
+        force_update=True,
+    )
 
 
 @job("feeds")

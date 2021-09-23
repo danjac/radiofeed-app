@@ -12,7 +12,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django_rq import get_queue
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
@@ -83,12 +82,7 @@ def websub_subscribe(request, token):
             return HttpResponse(challenge)
 
         websub.check_signature(request, podcast)
-
-        get_queue("websub").enqueue(
-            feed_parser.parse_feed,
-            podcast.rss,
-            force_update=True,
-        )
+        feed_parser.parse_feed_fast(podcast)
 
         return HttpResponse()
 

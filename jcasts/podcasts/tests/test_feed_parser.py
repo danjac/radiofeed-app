@@ -17,6 +17,7 @@ from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
     parse_feed,
+    parse_feed_fast,
     parse_podcast_feeds,
     reschedule,
 )
@@ -92,6 +93,17 @@ class TestParsePodcastFeeds:
             mock_parse_feed.assert_called()
         else:
             mock_parse_feed.assert_not_called()
+
+
+class TestParseFeedFast:
+    def test_parse(self, podcast, mocker):
+        class MockQueue:
+            def enqueue(self, func, *args, **kwargs):
+                pass
+
+        mock_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
+        parse_feed_fast(podcast)
+        mock_queue.assert_called_with("feeds-fast")
 
 
 class TestFeedHeaders:
