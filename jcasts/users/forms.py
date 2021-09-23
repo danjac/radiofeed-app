@@ -1,4 +1,3 @@
-from allauth.account.forms import SignupForm
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
@@ -31,5 +30,9 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
 
-class RecaptchaSignupForm(SignupForm):
+class RecaptchaSignupForm(forms.Form):
     captcha = ReCaptchaField()
+
+    def signup(self, request, user):
+        """This function is required otherwise you will get an ImproperlyConfigured exception"""
+        pass
