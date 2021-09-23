@@ -192,7 +192,7 @@ def safe_url(url):
 def colorpicker(value, colors):
     """
     Given set of colors, picks a color from comma-separated list
-    based on initial value of string.
+    based on initial character of string.
 
     Example:
 
