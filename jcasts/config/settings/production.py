@@ -84,7 +84,7 @@ INSTALLED_APPS += ["anymail", "captcha"]
 
 # https://pypi.org/project/django-recaptcha/
 
-ACCOUNT_SIGNUP_FORM_CLASS = "jcasts.users.forms.RecaptchSignupForm"
+ACCOUNT_SIGNUP_FORM_CLASS = "jcasts.users.forms.RecaptchaSignupForm"
 
 RECAPTCHA_PUBLIC_KEY = env("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = env("RECAPTCHA_PRIVATE_KEY")
