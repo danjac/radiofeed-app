@@ -23,3 +23,4 @@ class UserAdmin(auth_admin.UserAdmin):
         "last_login",
     ]
     search_fields = ["email", "username"]
+    ordering = ["-date_joined", "-last_login"]
