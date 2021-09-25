@@ -13,7 +13,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 
-from jcasts.podcasts.feed_parser import parse_feed
+from jcasts.podcasts.feed_parser import parse_feed_fast
 from jcasts.podcasts.models import Podcast
 
 
@@ -93,7 +93,7 @@ def with_podcasts(feeds):
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
 
     for podcast in new_podcasts:
-        parse_feed.delay(podcast.rss, force_update=True)
+        parse_feed_fast.delay(podcast.rss)
 
     return feeds
 

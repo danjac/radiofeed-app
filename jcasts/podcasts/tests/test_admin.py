@@ -66,9 +66,9 @@ class TestPodcastAdmin:
         assert Podcast.objects.filter(active=True).count() == 4
 
     def test_parse_podcast_feeds(self, podcast, admin, req, mocker):
-        mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed_fast")
+        mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed_fast.delay")
         admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_task.assert_called_with(podcast)
+        mock_task.assert_called_with(podcast.rss)
 
     def test_reverify_websub_feeds(self, db, admin, req, mocker):
         podcast = PodcastFactory(

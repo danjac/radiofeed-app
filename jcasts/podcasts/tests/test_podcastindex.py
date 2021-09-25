@@ -14,7 +14,7 @@ def patch_request(mocker, response):
 
 @pytest.fixture
 def mock_parse_feed(mocker):
-    return mocker.patch("jcasts.podcasts.podcastindex.parse_feed.delay")
+    return mocker.patch("jcasts.podcasts.podcastindex.parse_feed_fast.delay")
 
 
 @pytest.fixture

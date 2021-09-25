@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
+from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -40,28 +40,22 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feeds(*, force_update=False):
-    counter = 0
+def parse_podcast_feeds():
     now = timezone.now()
 
-    qs = Podcast.objects.filter(
-        queued__isnull=True,
+    qs = (
+        Podcast.objects.unsubscribed()
+        .scheduled()
+        .order_by("scheduled", "-pub_date")
+        .values_list("rss", flat=True)
+        .distinct()
     )
 
-    if not force_update:
-        qs = qs.filter(
-            active=True,
-            scheduled__isnull=False,
-            scheduled__lte=now,
-        ).unsubscribed()
-
-    qs = qs.order_by("scheduled", "-pub_date").values_list("rss", flat=True).distinct()
-
-    for counter, rss in enumerate(qs.iterator(), 1):
-        parse_feed.delay(rss, force_update=force_update)
+    counter = 0
+    for (counter, rss) in enumerate(qs.iterator(), 1):
+        parse_feed.delay(rss)
 
     qs.update(queued=now)
-
     return counter
 
 
@@ -80,17 +74,18 @@ class ParseResult:
             raise self.exception
 
 
-def parse_feed_fast(podcast):
-    return get_queue("feeds-fast").enqueue(
-        parse_feed,
-        podcast.rss,
-        force_update=True,
-    )
-
-
 @job("feeds")
+def parse_feed(rss):
+    return parse_podcast_feed(rss, force_update=False)
+
+
+@job("feeds-fast")
+def parse_feed_fast(rss):
+    return parse_podcast_feed(rss, force_update=True)
+
+
 @transaction.atomic
-def parse_feed(rss, *, force_update=False):
+def parse_podcast_feed(rss, *, force_update=False):
 
     try:
         podcast = get_podcast(rss, force_update)

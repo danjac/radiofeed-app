@@ -105,6 +105,21 @@ class TestPodcastManager:
         assert Podcast.objects.filter(title="test").count() == 1
 
     @pytest.mark.parametrize(
+        "active,scheduled,exists",
+        [
+            (True, timedelta(hours=-1), True),
+            (False, timedelta(hours=-1), False),
+            (True, timedelta(hours=1), False),
+            (True, None, False),
+        ],
+    )
+    def test_scheduled(self, db, active, scheduled, exists):
+        PodcastFactory(
+            active=active, scheduled=timezone.now() + scheduled if scheduled else None
+        )
+        assert Podcast.objects.scheduled().exists() is exists
+
+    @pytest.mark.parametrize(
         "active,last_pub,exists",
         [
             (True, timedelta(days=30), True),
@@ -121,18 +136,18 @@ class TestPodcastManager:
         assert Podcast.objects.frequent().exists() is exists
 
     @pytest.mark.parametrize(
-        "subscribed,expected",
+        "subscribed,exists",
         [
-            (None, 1),
-            (timedelta(days=-90), 1),
-            (timedelta(days=90), 0),
+            (None, True),
+            (timedelta(days=-90), True),
+            (timedelta(days=90), False),
         ],
     )
-    def test_unsubscribed(self, db, subscribed, expected):
+    def test_unsubscribed(self, db, subscribed, exists):
         PodcastFactory(
             websub_subscribed=timezone.now() + subscribed if subscribed else None
         )
-        assert Podcast.objects.unsubscribed().count() == expected
+        assert Podcast.objects.unsubscribed().exists() is exists
 
 
 class TestPodcastModel:

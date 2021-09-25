@@ -66,6 +66,14 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def websub(self):
         return self.filter(websub_hub__isnull=False)
 
+    def scheduled(self):
+        return self.filter(
+            active=True,
+            queued__isnull=True,
+            scheduled__isnull=False,
+            scheduled__lte=timezone.now(),
+        )
+
     def unsubscribed(self):
         return self.filter(
             models.Q(

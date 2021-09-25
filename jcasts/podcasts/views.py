@@ -82,7 +82,7 @@ def websub_subscribe(request, token):
             return HttpResponse(challenge)
 
         websub.check_signature(request, podcast)
-        feed_parser.parse_feed_fast(podcast)
+        feed_parser.parse_feed_fast.delay(podcast.rss)
 
         return HttpResponse()
 
