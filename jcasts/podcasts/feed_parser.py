@@ -28,6 +28,9 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
+MAX_SCHEDULED_DELTA = timedelta(hours=24)
+MIN_SCHEDULED_DELTA = timedelta(hours=1)
+
 
 class NotModified(requests.RequestException):
     ...
@@ -304,11 +307,11 @@ def reschedule(podcast):
 
     now = timezone.now()
 
-    # add 5% since last time to current time (min 1 hour)
+    # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
     diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
 
-    return now + max(diff, timedelta(hours=1))
+    return now + min(max(diff, MIN_SCHEDULED_DELTA), MAX_SCHEDULED_DELTA)
 
 
 def parse_failure(

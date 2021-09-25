@@ -396,6 +396,11 @@ class TestReschedule:
         scheduled = reschedule(Podcast(pub_date=now))
         self.assert_hours_diff(scheduled - now, 1.0)
 
+    def test_pub_date_max_24_hours(self):
+        now = timezone.now()
+        scheduled = reschedule(Podcast(pub_date=now - timedelta(days=30)))
+        self.assert_hours_diff(scheduled - now, 24.0)
+
     def test_pub_date_not_none(self):
         now = timezone.now()
         pub_date = now - timedelta(days=3)
