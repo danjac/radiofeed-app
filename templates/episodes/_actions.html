@@ -1,4 +1,4 @@
-<div class="absolute bg-white dark:bg-gray-800 w-52 sm:w-64 border shadow-xl z-50 dark:border-gray-500 rounded{% if not is_detail %} right-0{% endif %}"
+<div class="absolute bg-white dark:bg-gray-800 w-52 sm:w-64 border shadow-xl z-20 dark:border-gray-500 rounded{% if not is_detail %} right-0{% endif %}"
      :class="{
         'top-0': vPosition === 'dropdown',
         'bottom-0': vPosition === 'dropup',
@@ -122,27 +122,6 @@
     Remove from History
   </button>
   {% endif %}
-
-  {% if is_following %}
-  <button class="{{ BUTTON_CSS }}"
-          hx-post="{% url 'podcasts:unfollow' episode.podcast_id %}"
-          hx-vals='{"action": true}'
-          hx-push-url="false"
-          @click="close()">
-    {% icon "eye_slash" css_class=ICON_CSS %}
-    Unfollow Podcast
-  </button>
-  {% else %}
-  <button class="{{ BUTTON_CSS }}"
-          hx-post="{% url 'podcasts:follow' episode.podcast_id %}"
-          hx-vals='{"action": true}'
-          hx-push-url="false"
-          @click="close()">
-    {% icon "eye" css_class=ICON_CSS %}
-    Follow Podcast
-  </button>
-  {% endif %}
-
 
   {% if is_detail and user.is_staff %}
   <a href="{% url 'admin:episodes_episode_change' episode.id %}"

@@ -149,7 +149,7 @@ class TestEpisodeDetail:
 
 class TestEpisodeActions:
     def test_actions(self, client, auth_user, episode, django_assert_num_queries):
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(7):
             resp = client.get(
                 reverse("episodes:actions", args=[episode.id]),
             )
