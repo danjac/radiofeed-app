@@ -13,7 +13,12 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Follow
 from jcasts.podcasts.podcastindex import Feed
-from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
+from jcasts.shared.assertions import (
+    assert_conflict,
+    assert_no_content,
+    assert_not_found,
+    assert_ok,
+)
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -227,8 +232,16 @@ class TestFollow:
 
     def test_follow(self, client, podcast, auth_user, url, django_assert_num_queries):
         with django_assert_num_queries(5):
-            resp = client.post(url, {"render": True})
+            resp = client.post(url)
         assert_ok(resp)
+        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+    def test_follow_action(
+        self, client, podcast, auth_user, url, django_assert_num_queries
+    ):
+        with django_assert_num_queries(5):
+            resp = client.post(url, {"action": True})
+        assert_no_content(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
@@ -249,6 +262,17 @@ class TestUnfollow:
         with django_assert_num_queries(5):
             resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
+        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+    def test_unfollow_action(
+        self, client, auth_user, podcast, django_assert_num_queries
+    ):
+        FollowFactory(user=auth_user, podcast=podcast)
+        with django_assert_num_queries(5):
+            resp = client.post(
+                reverse("podcasts:unfollow", args=[podcast.id]), {"action": True}
+            )
+        assert_no_content(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 
 

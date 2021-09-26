@@ -85,7 +85,7 @@ def actions(request, episode_id):
         False if is_playing else QueueItem.objects.filter(user=request.user).exists()
     )
 
-    is_following = is_detail and episode.podcast.is_following(request.user)
+    is_following = episode.podcast.is_following(request.user)
 
     return TemplateResponse(
         request,

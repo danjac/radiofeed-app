@@ -20,7 +20,7 @@ from jcasts.podcasts import feed_parser, podcastindex, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
@@ -271,11 +271,14 @@ def get_podcast_detail_context(request, podcast, extra_context=None):
 
 
 def render_follow_response(request, podcast, follow):
-
-    return TemplateResponse(
-        request,
-        "podcasts/_follow_toggle.html",
-        {"podcast": podcast, "is_following": follow},
+    return (
+        HttpResponseNoContent()
+        if "action" in request.POST
+        else TemplateResponse(
+            request,
+            "podcasts/_follow_toggle.html",
+            {"podcast": podcast, "is_following": follow},
+        )
     )
 
 
