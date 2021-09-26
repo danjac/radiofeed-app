@@ -56,17 +56,14 @@ def check_signature(request, podcast):
         ):
             raise ValueError(f"HMAC signature mismatch:{header}")
 
-    except (KeyError, ValueError) as e:
+    except (AttributeError, KeyError, ValueError) as e:
         raise InvalidSignature from e
 
 
 def make_hex_digest(algo, body, secret):
-    try:
-        return hmac.new(
-            secret.hex.encode("utf-8"), body, getattr(hashlib, algo)
-        ).hexdigest()
-    except AttributeError:
-        raise ValueError(f"Unknown hashing algorithm: {algo}")
+    return hmac.new(
+        secret.hex.encode("utf-8"), body, getattr(hashlib, algo)
+    ).hexdigest()
 
 
 def get_podcasts(reverify=False):
