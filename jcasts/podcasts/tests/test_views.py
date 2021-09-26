@@ -227,7 +227,7 @@ class TestFollow:
 
     def test_follow(self, client, podcast, auth_user, url, django_assert_num_queries):
         with django_assert_num_queries(5):
-            resp = client.post(url, {"render": True})
+            resp = client.post(url)
         assert_ok(resp)
         assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
 

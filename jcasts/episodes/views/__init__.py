@@ -85,8 +85,6 @@ def actions(request, episode_id):
         False if is_playing else QueueItem.objects.filter(user=request.user).exists()
     )
 
-    is_following = is_detail and episode.podcast.is_following(request.user)
-
     return TemplateResponse(
         request,
         "episodes/_actions.html",
@@ -94,7 +92,6 @@ def actions(request, episode_id):
             "episode": episode,
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
-            "is_following": is_following,
             "is_detail": is_detail,
             "is_playing": is_playing,
             "is_queue": is_queue,
