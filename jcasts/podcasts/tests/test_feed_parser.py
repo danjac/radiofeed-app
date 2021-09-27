@@ -412,7 +412,7 @@ class TestReschedule:
         pub_date = now - timedelta(days=3)
         scheduled = reschedule(Podcast(pub_date=pub_date))
         # 5% of 3 days == 3.6 hours
-        self.assert_hours_diff(scheduled - now, 1.8)
+        self.assert_hours_diff(scheduled - now, 3.6)
 
     def assert_hours_diff(self, delta, expected):
         assert delta.total_seconds() / 3600 == pytest.approx(expected)

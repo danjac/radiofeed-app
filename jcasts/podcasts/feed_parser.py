@@ -304,7 +304,7 @@ def reschedule(podcast):
 
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
-    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.025)
+    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
 
     return now + min(max(diff, MIN_SCHEDULED_DELTA), MAX_SCHEDULED_DELTA)
 
