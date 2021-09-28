@@ -3,5 +3,5 @@
 set -o errexit
 set -o nounset
 
-./manage.py rqworker mail websub feeds-fast feeds default
+./manage.py rqworker mail feeds-fast feeds-slow default
 

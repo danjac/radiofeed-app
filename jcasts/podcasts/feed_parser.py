@@ -73,7 +73,7 @@ class ParseResult:
             raise self.exception
 
 
-@job("feeds")
+@job("feeds-slow")
 def parse_feed(rss):
     return parse_podcast_feed(rss, force_update=False)
 
