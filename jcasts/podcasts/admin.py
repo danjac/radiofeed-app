@@ -1,6 +1,6 @@
 from django.contrib import admin, messages
 
-from jcasts.podcasts import feed_parser, models, websub
+from jcasts.podcasts import feed_parser, models
 
 
 @admin.register(models.Category)
@@ -11,39 +11,6 @@ class CategoryAdmin(admin.ModelAdmin):
         "parent",
     )
     search_fields = ("name",)
-
-
-class WebSubFilter(admin.SimpleListFilter):
-    title = "WebSub"
-    parameter_name = "websub"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("subscribed", "Subscribed"),
-            ("failed", "Failed"),
-            ("requested", "Requested"),
-            ("pending", "Pending"),
-            ("none", "None"),
-        )
-
-    def queryset(self, request, queryset):
-        return {
-            "subscribed": queryset.websub().filter(
-                websub_subscribed__isnull=False,
-                websub_exception="",
-            ),
-            "failed": queryset.websub().filter().exclude(websub_exception=""),
-            "requested": queryset.websub().filter(
-                websub_requested__isnull=False,
-                websub_exception="",
-            ),
-            "pending": queryset.websub().filter(
-                websub_requested__isnull=True,
-                websub_subscribed__isnull=True,
-                websub_exception="",
-            ),
-            "none": queryset.filter(websub_hub__isnull=True),
-        }.setdefault(self.value(), queryset)
 
 
 class PubDateFilter(admin.SimpleListFilter):
@@ -104,7 +71,6 @@ class PodcastAdmin(admin.ModelAdmin):
         ActiveFilter,
         PromotedFilter,
         PubDateFilter,
-        WebSubFilter,
     )
 
     list_display = (
@@ -128,10 +94,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "scheduled",
         "queued",
-        "websub_token",
-        "websub_secret",
-        "websub_subscribed",
-        "websub_requested",
         "etag",
         "http_status",
         "exception",
@@ -140,7 +102,6 @@ class PodcastAdmin(admin.ModelAdmin):
     actions = (
         "reactivate",
         "parse_podcast_feeds",
-        "reverify_websub_feeds",
     )
 
     @admin.action(description="Re-activate podcasts")
@@ -161,18 +122,6 @@ class PodcastAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"{queryset.count()} podcast(s) scheduled for update",
-            messages.SUCCESS,
-        )
-
-    @admin.action(description="Reverify websub feeds")
-    def reverify_websub_feeds(self, request, queryset):
-
-        for podcast_id in queryset.websub().values_list("pk", flat=True):
-            websub.subscribe.delay(podcast_id, reverify=True)
-
-        self.message_user(
-            request,
-            f"{queryset.count()} websub podcast(s) scheduled for reverification",
             messages.SUCCESS,
         )
 

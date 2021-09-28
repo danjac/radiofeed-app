@@ -1,5 +1,3 @@
-import uuid
-
 from unittest import mock
 
 import pytest
@@ -12,7 +10,6 @@ from jcasts.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    WebSubFilter,
 )
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -70,14 +67,6 @@ class TestPodcastAdmin:
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_task.assert_called_with(podcast.rss)
 
-    def test_reverify_websub_feeds(self, db, admin, req, mocker):
-        podcast = PodcastFactory(
-            websub_token=uuid.uuid4(), websub_hub="https://pubsubhubbub.com"
-        )
-        mock_task = mocker.patch("jcasts.podcasts.websub.subscribe.delay")
-        admin.reverify_websub_feeds(req, Podcast.objects.all())
-        mock_task.assert_called_with(podcast.id, reverify=True)
-
 
 class TestPubDateFilter:
     def test_pub_date_filter_none(self, podcasts, admin, req):
@@ -134,62 +123,3 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
-
-
-class TestWebSubFilter:
-    hub = "https://pubsubhubbub.appspot.com/"
-
-    def test_websub_filter_subscribed(self, podcasts, admin, req):
-        subscribed = PodcastFactory(
-            websub_subscribed=timezone.now(), websub_hub=self.hub
-        )
-        f = WebSubFilter(req, {"websub": "subscribed"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == subscribed
-
-    def test_websub_filter_requested(self, podcasts, admin, req):
-        requested = PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
-        f = WebSubFilter(req, {"websub": "requested"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == requested
-
-    def test_websub_filter_pending(self, podcasts, admin, req):
-        PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)
-        PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
-        pending = PodcastFactory(websub_hub=self.hub)
-        f = WebSubFilter(req, {"websub": "pending"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert pending in qs
-
-    def test_websub_filter_failed(self, podcasts, admin, req):
-        PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)
-        PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
-        PodcastFactory(websub_hub=self.hub)
-        failed = PodcastFactory(websub_exception="oops", websub_hub=self.hub)
-        f = WebSubFilter(req, {"websub": "failed"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert failed in qs
-
-    def test_websub_filter_none(self, podcasts, admin, req):
-        subscribed = PodcastFactory(
-            websub_subscribed=timezone.now(), websub_hub=self.hub
-        )
-        requested = PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
-        pending = PodcastFactory(websub_hub=self.hub)
-        f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert subscribed not in qs
-        assert requested not in qs
-        assert pending not in qs
-
-    def test_websub_filter_all(self, podcasts, admin, req):
-        PodcastFactory(websub_subscribed=timezone.now(), websub_hub=self.hub)
-        PodcastFactory(websub_requested=timezone.now(), websub_hub=self.hub)
-        f = WebSubFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 5

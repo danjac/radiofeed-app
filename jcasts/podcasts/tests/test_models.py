@@ -74,15 +74,6 @@ class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
     hub = "https://pubsubhubbub.appspot.com/"
 
-    def test_websub_none(self, db):
-        PodcastFactory()
-        assert Podcast.objects.websub().count() == 0
-
-    def test_websub_not_none(self, db, settings):
-
-        PodcastFactory(websub_hub=self.hub)
-        assert Podcast.objects.websub().count() == 1
-
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -134,20 +125,6 @@ class TestPodcastManager:
         )
 
         assert Podcast.objects.frequent().exists() is exists
-
-    @pytest.mark.parametrize(
-        "subscribed,exists",
-        [
-            (None, True),
-            (timedelta(days=-90), True),
-            (timedelta(days=90), False),
-        ],
-    )
-    def test_unsubscribed(self, db, subscribed, exists):
-        PodcastFactory(
-            websub_subscribed=timezone.now() + subscribed if subscribed else None
-        )
-        assert Podcast.objects.unsubscribed().exists() is exists
 
 
 class TestPodcastModel:

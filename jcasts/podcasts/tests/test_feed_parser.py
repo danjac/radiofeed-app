@@ -1,6 +1,5 @@
 import http
 import pathlib
-import uuid
 
 from datetime import timedelta
 
@@ -51,17 +50,16 @@ class BadMockResponse(MockResponse):
 
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "active,queued,scheduled,subscribed,result",
+        "active,queued,scheduled,result",
         [
-            (True, False, timedelta(hours=-1), None, 1),
-            (False, False, timedelta(hours=-1), None, 0),
-            (True, False, timedelta(hours=-1), timedelta(hours=24), 0),
-            (True, False, timedelta(hours=-1), timedelta(hours=-24), 1),
-            (True, True, timedelta(hours=-1), None, 0),
-            (True, False, timedelta(hours=-1), None, 1),
-            (True, False, timedelta(hours=1), None, 0),
-            (True, False, None, None, 0),
-            (False, False, None, None, 0),
+            (True, False, timedelta(hours=-1), 1),
+            (False, False, timedelta(hours=-1), 0),
+            (True, False, timedelta(hours=-1), 1),
+            (True, True, timedelta(hours=-1), 0),
+            (True, False, timedelta(hours=-1), 1),
+            (True, False, timedelta(hours=1), 0),
+            (True, False, None, 0),
+            (False, False, None, 0),
         ],
     )
     def test_parse_podcast_feeds(
@@ -71,7 +69,6 @@ class TestParsePodcastFeeds:
         active,
         queued,
         scheduled,
-        subscribed,
         result,
     ):
 
@@ -81,9 +78,6 @@ class TestParsePodcastFeeds:
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
-            websub_token=uuid.uuid4() if subscribed else None,
-            websub_hub="https://pubsubhubbub.com/" if subscribed else None,
-            websub_subscribed=now + subscribed if subscribed else None,
             queued=now if queued else None,
         )
         assert parse_podcast_feeds() == result
@@ -250,36 +244,6 @@ class TestParsePodcastFeed:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
-
-    def test_parse_podcast_feed_with_hub_in_link_header(
-        self, mocker, new_podcast, categories
-    ):
-
-        episode_guid = "https://mysteriousuniverse.org/?p=168097"
-        episode_title = "original title"
-
-        # test updated
-        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content(),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
-                links={
-                    "self": {"url": new_podcast.rss},
-                    "hub": {"url": "https://pubsubhubbub.appspot.com/"},
-                },
-            ),
-        )
-        assert parse_podcast_feed(new_podcast.rss)
-        new_podcast.refresh_from_db()
-        assert new_podcast.websub_hub == "https://pubsubhubbub.appspot.com/"
-        assert new_podcast.websub_url == new_podcast.rss
 
     def test_parse_podcast_feed_permanent_redirect(
         self, mocker, new_podcast, categories

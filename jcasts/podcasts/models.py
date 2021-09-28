@@ -63,23 +63,12 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
 
-    def websub(self):
-        return self.filter(websub_hub__isnull=False)
-
     def scheduled(self):
         return self.filter(
             active=True,
             queued__isnull=True,
             scheduled__isnull=False,
             scheduled__lte=timezone.now(),
-        )
-
-    def unsubscribed(self):
-        return self.filter(
-            models.Q(
-                models.Q(websub_subscribed__isnull=True)
-                | models.Q(websub_subscribed__lt=timezone.now())
-            )
         )
 
 
@@ -123,38 +112,6 @@ class Podcast(models.Model):
 
     explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
-
-    # websub fields
-    websub_hub = models.URLField(null=True, blank=True)
-    websub_url = models.URLField(null=True, blank=True)
-
-    websub_token = models.UUIDField(
-        unique=True,
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    websub_secret = models.UUIDField(
-        null=True,
-        blank=True,
-        editable=False,
-    )
-
-    websub_exception = models.TextField(
-        blank=True,
-    )
-
-    websub_requested = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    websub_subscribed = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name="WebHub subscribed until",
-    )
 
     categories = models.ManyToManyField(Category, blank=True)
 

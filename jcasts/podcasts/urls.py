@@ -40,11 +40,6 @@ urlpatterns = [
         name="unfollow",
     ),
     path(
-        "podcasts/<uuid:token>/~websub/",
-        views.websub_subscribe,
-        name="websub_subscribe",
-    ),
-    path(
         "discover/<int:category_id>/<slug:slug>/",
         views.category_detail,
         name="category_detail",

@@ -44,8 +44,7 @@ def parse_podcast_feeds():
     now = timezone.now()
 
     qs = (
-        Podcast.objects.unsubscribed()
-        .scheduled()
+        Podcast.objects.scheduled()
         .order_by("scheduled", "-pub_date")
         .values_list("rss", flat=True)
         .distinct()
@@ -172,14 +171,6 @@ def parse_success(podcast, response, feed, items):
         "title",
     ):
         setattr(podcast, field, getattr(feed, field))
-
-    # check for hub in header or feed body
-    if "self" in response.links and "hub" in response.links:
-        podcast.websub_hub = response.links["hub"]["url"]
-        podcast.websub_url = response.links["self"]["url"]
-    else:
-        podcast.websub_hub = feed.websub_hub
-        podcast.websub_url = feed.websub_url
 
     # taxonomy
     categories_dct = get_categories_dict()

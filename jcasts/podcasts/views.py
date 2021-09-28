@@ -1,22 +1,15 @@
-import traceback
-
-from datetime import timedelta
-
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import feed_parser, podcastindex, websub
+from jcasts.podcasts import podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -54,43 +47,6 @@ def index(request):
         },
         cached=promoted,
     )
-
-
-@require_http_methods(["GET", "POST"])
-@csrf_exempt
-def websub_subscribe(request, token):
-
-    podcast = get_object_or_404(Podcast, websub_token=token, active=True)
-
-    try:
-        if request.method == "GET":
-            if request.GET["hub.mode"] != "subscribe":
-                raise ValueError("hub.mode should be 'subscribe'")
-
-            if request.GET["hub.topic"] not in (podcast.rss, podcast.websub_url):
-                raise ValueError("hub.topic does not match podcast RSS or websub URL")
-
-            challenge = request.GET["hub.challenge"]
-            lease_seconds = int(request.GET["hub.lease_seconds"])
-
-            podcast.websub_requested = None
-            podcast.websub_subscribed = timezone.now() + timedelta(
-                seconds=lease_seconds
-            )
-            podcast.save()
-
-            return HttpResponse(challenge)
-
-        websub.check_signature(request, podcast)
-        feed_parser.parse_feed_fast.delay(podcast.rss)
-
-        return HttpResponse()
-
-    except (KeyError, ValueError, websub.InvalidSignature):
-        podcast.websub_exception = traceback.format_exc()
-        podcast.save()
-
-        raise Http404()
 
 
 @require_http_methods(["GET"])
