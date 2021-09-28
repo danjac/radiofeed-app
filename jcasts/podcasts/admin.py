@@ -73,13 +73,7 @@ class PodcastAdmin(admin.ModelAdmin):
         PubDateFilter,
     )
 
-    list_display = (
-        "__str__",
-        "source",
-        "active",
-        "promoted",
-        "pub_date",
-    )
+    list_display = ("__str__", "source", "active", "promoted", "pub_date", "scheduled")
 
     list_editable = ("promoted",)
     search_fields = ("search_document",)
@@ -99,19 +93,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "exception",
     )
 
-    actions = (
-        "reactivate",
-        "parse_podcast_feeds",
-    )
-
-    @admin.action(description="Re-activate podcasts")
-    def reactivate(self, request, queryset):
-        num_updated = queryset.filter(active=False).update(active=True)
-        self.message_user(
-            request,
-            f"{num_updated} podcasts re-activated",
-            messages.SUCCESS,
-        )
+    actions = ("parse_podcast_feeds",)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request, queryset):
@@ -138,6 +120,7 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
+                "scheduled",
                 "-pub_date",
             ]
         )

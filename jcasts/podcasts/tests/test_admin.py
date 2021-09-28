@@ -50,17 +50,12 @@ class TestPodcastAdmin:
 
     def test_get_ordering_no_search_term(self, admin, req):
         ordering = admin.get_ordering(req)
-        assert ordering == ["-pub_date"]
+        assert ordering == ["scheduled", "-pub_date"]
 
     def test_get_ordering_search_term(self, admin, req):
         req.GET = {"q": "test"}
         ordering = admin.get_ordering(req)
         assert ordering == []
-
-    def test_reactivate(self, podcasts, admin, req):
-        PodcastFactory(active=False)
-        admin.reactivate(req, Podcast.objects.all())
-        assert Podcast.objects.filter(active=True).count() == 4
 
     def test_parse_podcast_feeds(self, podcast, admin, req, mocker):
         mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed_fast.delay")
