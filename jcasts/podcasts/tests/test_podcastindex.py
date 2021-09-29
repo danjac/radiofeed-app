@@ -84,6 +84,13 @@ class TestRecentFeeds:
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
         mock_parse_feed.assert_called()
 
+    def test_update(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
+
+        PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
+        feeds = podcastindex.recent_feeds()
+        assert len(feeds) == 1
+        mock_parse_feed.assert_called()
+
 
 class TestSearch:
     cache_key = "podcastindex:6447567a64413d3d"
