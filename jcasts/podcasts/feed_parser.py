@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue
+from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -52,7 +52,7 @@ def parse_podcast_feeds():
 
     counter = 0
     for (counter, rss) in enumerate(qs.iterator(), 1):
-        get_queue("feeds-slow").enqueue(parse_podcast_feed, rss)
+        parse_podcast_feed.delay(rss)
 
     qs.update(queued=now)
     return counter
@@ -73,6 +73,7 @@ class ParseResult:
             raise self.exception
 
 
+@job("feeds")
 @transaction.atomic
 def parse_podcast_feed(rss):
 

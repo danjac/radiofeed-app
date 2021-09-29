@@ -41,10 +41,7 @@ RQ_QUEUES = {
     "default": {
         "USE_REDIS_CACHE": "default",
     },
-    "feeds-fast": {
-        "USE_REDIS_CACHE": "default",
-    },
-    "feeds-slow": {
+    "feeds": {
         "USE_REDIS_CACHE": "default",
     },
     "mail": {

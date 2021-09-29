@@ -63,14 +63,12 @@ class TestParsePodcastFeeds:
     def test_parse_podcast_feeds(
         self,
         db,
-        mocker,
+        mock_parse_podcast_feed,
         active,
         queued,
         scheduled,
         result,
     ):
-
-        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
 
         now = timezone.now()
         PodcastFactory(
@@ -81,9 +79,9 @@ class TestParsePodcastFeeds:
         assert parse_podcast_feeds() == result
 
         if result:
-            mock_get_queue.assert_called()
+            mock_parse_podcast_feed.assert_called()
         else:
-            mock_get_queue.assert_not_called()
+            mock_parse_podcast_feed.assert_not_called()
 
 
 class TestFeedHeaders:

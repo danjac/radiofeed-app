@@ -12,7 +12,6 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
-from django_rq import get_queue
 
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
@@ -83,15 +82,18 @@ def with_podcasts(feeds, update=False):
     )
 
     new_podcasts = []
+    now = timezone.now()
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
-            new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
-            get_queue("feeds-fast").enqueue(feed_parser.parse_podcast_feed, feed.url)
+            new_podcasts.append(Podcast(title=feed.title, rss=feed.url, queued=now))
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
+
+    for podcast in new_podcasts:
+        feed_parser.parse_podcast_feed.delay(podcast.rss)
 
     return feeds
 
