@@ -73,7 +73,7 @@ class PodcastAdmin(admin.ModelAdmin):
         PubDateFilter,
     )
 
-    list_display = ("__str__", "source", "active", "promoted", "pub_date")
+    list_display = ("__str__", "source", "active", "promoted", "scheduled", "pub_date")
 
     list_editable = ("promoted",)
     search_fields = ("search_document",)
@@ -87,6 +87,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "modified",
         "pub_date",
         "queued",
+        "scheduled",
         "etag",
         "http_status",
         "exception",
@@ -119,6 +120,7 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
+                "scheduled",
                 "-pub_date",
             ]
         )
