@@ -6,7 +6,7 @@ from jcasts.podcasts import podcastindex
 
 
 class Command(BaseCommand):
-    help = "Fetch new feeds from Podcast Index"
+    help = "Fetch recent feeds from Podcast Index"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -16,7 +16,7 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--since", type=int, default=24, help="Hours since new feeds added"
+            "--since", type=int, default=24, help="Hours since feeds updated"
         )
 
     def handle(self, *args, **options):
