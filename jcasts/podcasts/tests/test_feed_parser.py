@@ -15,8 +15,6 @@ from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
-    parse_feed,
-    parse_feed_fast,
     parse_podcast_feed,
     parse_podcast_feeds,
     reschedule,
@@ -72,7 +70,7 @@ class TestParsePodcastFeeds:
         result,
     ):
 
-        mock_parse_feed = mocker.patch("jcasts.podcasts.feed_parser.parse_feed.delay")
+        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
 
         now = timezone.now()
         PodcastFactory(
@@ -83,9 +81,9 @@ class TestParsePodcastFeeds:
         assert parse_podcast_feeds() == result
 
         if result:
-            mock_parse_feed.assert_called()
+            mock_get_queue.assert_called()
         else:
-            mock_parse_feed.assert_not_called()
+            mock_get_queue.assert_not_called()
 
 
 class TestFeedHeaders:
@@ -98,12 +96,6 @@ class TestFeedHeaders:
         podcast = Podcast(modified=timezone.now())
         headers = get_feed_headers(podcast)
         assert headers["If-Modified-Since"]
-
-    def test_force_update(self):
-        podcast = Podcast(modified=timezone.now(), etag="12345")
-        headers = get_feed_headers(podcast, force_update=True)
-        assert "If-Modified-Since" not in headers
-        assert "If-None-Match" not in headers
 
 
 class TestParsePodcastFeed:
@@ -341,20 +333,6 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.scheduled is None
         assert new_podcast.queued is None
-
-    def test_parse_feed(self, mocker, podcast):
-        mock_parse_podcast_feed = mocker.patch(
-            "jcasts.podcasts.feed_parser.parse_podcast_feed"
-        )
-        parse_feed(podcast.rss)
-        mock_parse_podcast_feed.assert_called_with(podcast.rss, force_update=False)
-
-    def test_parse_feed_fast(self, mocker, podcast):
-        mock_parse_podcast_feed = mocker.patch(
-            "jcasts.podcasts.feed_parser.parse_podcast_feed"
-        )
-        parse_feed_fast(podcast.rss)
-        mock_parse_podcast_feed.assert_called_with(podcast.rss, force_update=True)
 
 
 class TestReschedule:

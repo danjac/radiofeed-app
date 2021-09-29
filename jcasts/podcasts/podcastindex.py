@@ -12,8 +12,9 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
+from django_rq import get_queue
 
-from jcasts.podcasts.feed_parser import parse_feed_fast
+from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
 
 
@@ -51,22 +52,6 @@ def new_feeds(limit=20, since=timedelta(hours=24)):
     )
 
 
-def recent_feeds(limit=20, since=timedelta(hours=24)):
-
-    return with_podcasts(
-        parse_feed_data(
-            get_client().fetch(
-                "/recent/feeds",
-                {
-                    "max": limit,
-                    "since": (timezone.now() - since).timestamp(),
-                },
-            )
-        ),
-        update=True,
-    )
-
-
 @lru_cache
 def get_client():
     return Client.from_settings()
@@ -98,22 +83,15 @@ def with_podcasts(feeds, update=False):
     )
 
     new_podcasts = []
-    for_update = []
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
-            for_update.append(feed.url)
-
-        elif update:
-            for_update.append(feed.url)
+            get_queue("feeds-fast").enqueue(feed_parser.parse_podcast_feed, feed.url)
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
-
-    for rss in for_update:
-        parse_feed_fast.delay(rss)
 
     return feeds
 

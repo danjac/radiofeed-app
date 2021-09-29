@@ -58,9 +58,9 @@ class TestPodcastAdmin:
         assert ordering == []
 
     def test_parse_podcast_feeds(self, podcast, admin, req, mocker):
-        mock_task = mocker.patch("jcasts.podcasts.feed_parser.parse_feed_fast.delay")
+        mock_task = mocker.patch("jcasts.podcasts.admin.get_queue")
         admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_task.assert_called_with(podcast.rss)
+        mock_task.assert_called_with("feeds-fast")
 
 
 class TestPubDateFilter:

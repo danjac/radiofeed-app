@@ -1,4 +1,6 @@
 from django.contrib import admin, messages
+from django.utils import timezone
+from django_rq import get_queue
 
 from jcasts.podcasts import feed_parser, models
 
@@ -99,7 +101,9 @@ class PodcastAdmin(admin.ModelAdmin):
     def parse_podcast_feeds(self, request, queryset):
 
         for podcast in queryset:
-            feed_parser.parse_feed_fast.delay(podcast.rss)
+            get_queue("feeds-fast").enqueue(feed_parser.parse_podcast_feed, podcast.rss)
+
+        queryset.update(queued=timezone.now())
 
         self.message_user(
             request,

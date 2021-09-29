@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -52,7 +52,7 @@ def parse_podcast_feeds():
 
     counter = 0
     for (counter, rss) in enumerate(qs.iterator(), 1):
-        parse_feed.delay(rss)
+        get_queue("feeds-slow").enqueue(parse_podcast_feed, rss)
 
     qs.update(queued=now)
     return counter
@@ -73,22 +73,12 @@ class ParseResult:
             raise self.exception
 
 
-@job("feeds-slow")
-def parse_feed(rss):
-    return parse_podcast_feed(rss, force_update=False)
-
-
-@job("feeds-fast")
-def parse_feed_fast(rss):
-    return parse_podcast_feed(rss, force_update=True)
-
-
 @transaction.atomic
-def parse_podcast_feed(rss, *, force_update=False):
+def parse_podcast_feed(rss):
 
     try:
-        podcast = get_podcast(rss, force_update)
-        response = get_feed_response(podcast, force_update)
+        podcast = Podcast.objects.get(rss=rss, active=True)
+        response = get_feed_response(podcast)
 
         return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
 
@@ -117,10 +107,10 @@ def parse_podcast_feed(rss, *, force_update=False):
         )
 
 
-def get_feed_response(podcast, force_update=False):
+def get_feed_response(podcast):
     response = requests.get(
         podcast.rss,
-        headers=get_feed_headers(podcast, force_update),
+        headers=get_feed_headers(podcast),
         allow_redirects=True,
         timeout=10,
     )
@@ -257,15 +247,11 @@ def extract_text(podcast, categories, items):
     return " ".join(text_parser.extract_keywords(podcast.language, text))
 
 
-def get_feed_headers(podcast, force_update=False):
+def get_feed_headers(podcast):
     headers = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
     }
-
-    # ignore any modified/etag headers
-    if force_update:
-        return headers
 
     if podcast.etag:
         headers["If-None-Match"] = quote_etag(podcast.etag)
@@ -277,14 +263,6 @@ def get_feed_headers(podcast, force_update=False):
 @lru_cache
 def get_categories_dict():
     return Category.objects.in_bulk(field_name="name")
-
-
-def get_podcast(rss, force_update=False):
-
-    qs = Podcast.objects.filter(rss=rss)
-    if not force_update:
-        qs = qs.filter(active=True)
-    return qs.get()
 
 
 def reschedule(podcast):

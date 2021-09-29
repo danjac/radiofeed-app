@@ -13,8 +13,8 @@ def patch_request(mocker, response):
 
 
 @pytest.fixture
-def mock_parse_feed(mocker):
-    return mocker.patch("jcasts.podcasts.podcastindex.parse_feed_fast.delay")
+def mock_get_queue(mocker):
+    return mocker.patch("jcasts.podcasts.podcastindex.get_queue")
 
 
 @pytest.fixture
@@ -68,28 +68,12 @@ def podcastindex_client():
 
 
 class TestNewFeeds:
-    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
+    def test_ok(self, db, mock_good_response, mock_get_queue, podcastindex_client):
 
         feeds = podcastindex.new_feeds()
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
-
-
-class TestRecentFeeds:
-    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
-
-        feeds = podcastindex.recent_feeds()
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
-
-    def test_update(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
-
-        PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
-        feeds = podcastindex.recent_feeds()
-        assert len(feeds) == 1
-        mock_parse_feed.assert_called()
+        mock_get_queue.assert_called()
 
 
 class TestSearch:
@@ -101,41 +85,41 @@ class TestSearch:
         with pytest.raises(ValueError):
             podcastindex.search("test")
 
-    def test_not_ok(self, db, mock_bad_response, mock_parse_feed, podcastindex_client):
+    def test_not_ok(self, db, mock_bad_response, mock_get_queue, podcastindex_client):
 
         with pytest.raises(requests.HTTPError):
             podcastindex.search("test")
 
         assert not Podcast.objects.exists()
-        mock_parse_feed.assert_not_called()
+        mock_get_queue.assert_not_called()
 
-    def test_ok(self, db, mock_good_response, mock_parse_feed, podcastindex_client):
+    def test_ok(self, db, mock_good_response, mock_get_queue, podcastindex_client):
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
+        mock_get_queue.assert_called()
 
     def test_bad_data(
-        self, db, mock_invalid_response, mock_parse_feed, podcastindex_client
+        self, db, mock_invalid_response, mock_get_queue, podcastindex_client
     ):
         feeds = podcastindex.search("test")
         assert len(feeds) == 0
-        mock_parse_feed.assert_not_called()
+        mock_get_queue.assert_not_called()
 
     def test_is_not_cached(
-        self, db, mock_good_response, mock_parse_feed, locmem_cache, podcastindex_client
+        self, db, mock_good_response, mock_get_queue, locmem_cache, podcastindex_client
     ):
 
         feeds = podcastindex.search_cached("test")
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_called()
+        mock_get_queue.assert_called()
 
         assert cache.get(self.cache_key) == feeds
 
     def test_is_cached(
-        self, db, mock_good_response, mock_parse_feed, locmem_cache, podcastindex_client
+        self, db, mock_good_response, mock_get_queue, locmem_cache, podcastindex_client
     ):
 
         cache.set(
@@ -149,13 +133,13 @@ class TestSearch:
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
         mock_good_response.assert_not_called()
-        mock_parse_feed.assert_not_called()
+        mock_get_queue.assert_not_called()
 
     def test_podcast_exists(
-        self, db, mock_good_response, mock_parse_feed, podcastindex_client
+        self, db, mock_good_response, mock_get_queue, podcastindex_client
     ):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_feed.assert_not_called()
+        mock_get_queue.assert_not_called()
