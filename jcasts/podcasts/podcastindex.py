@@ -51,6 +51,21 @@ def new_feeds(limit=20, since=timedelta(hours=24)):
     )
 
 
+def recent_feeds(limit=20, since=timedelta(hours=24)):
+
+    return with_podcasts(
+        parse_feed_data(
+            get_client().fetch(
+                "/recent/feeds",
+                {
+                    "max": limit,
+                    "since": (timezone.now() - since).timestamp(),
+                },
+            )
+        )
+    )
+
+
 @lru_cache
 def get_client():
     return Client.from_settings()
@@ -58,7 +73,6 @@ def get_client():
 
 def parse_feed_data(data):
     def _parse_feed(result):
-        print(result)
         try:
             return Feed(
                 url=result["url"],
