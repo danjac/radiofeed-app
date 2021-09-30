@@ -334,25 +334,19 @@ class TestParsePodcastFeed:
 
 
 class TestReschedule:
+    @pytest.mark.parametrize(
+        "hours_ago,hours_diff",
+        [
+            (0, 1.0),
+            (72, 3.6),
+            (90 * 24, 24.0),
+        ],
+    )
+    def test_reschedule(self, hours_ago, hours_diff):
+        now = timezone.now()
+        podcast = Podcast(pub_date=now - timedelta(hours=hours_ago))
+        scheduled = reschedule(podcast)
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(hours_diff)
+
     def test_pub_date_none(self):
         assert reschedule(Podcast(pub_date=None)) is None
-
-    def test_pub_date_min_one_hour(self):
-        now = timezone.now()
-        scheduled = reschedule(Podcast(pub_date=now))
-        self.assert_hours_diff(scheduled - now, 1.0)
-
-    def test_pub_date_max_24_hours(self):
-        now = timezone.now()
-        scheduled = reschedule(Podcast(pub_date=now - timedelta(days=90)))
-        self.assert_hours_diff(scheduled - now, 24.0)
-
-    def test_pub_date_not_none(self):
-        now = timezone.now()
-        pub_date = now - timedelta(days=3)
-        scheduled = reschedule(Podcast(pub_date=pub_date))
-        # 5% of 3 days == 3.6 hours
-        self.assert_hours_diff(scheduled - now, 3.6)
-
-    def assert_hours_diff(self, delta, expected):
-        assert delta.total_seconds() / 3600 == pytest.approx(expected)
