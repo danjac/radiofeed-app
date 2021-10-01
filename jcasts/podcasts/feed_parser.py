@@ -48,7 +48,7 @@ def parse_podcast_feeds():
     for (counter, podcast) in enumerate(qs.iterator(), 1):
         parse_podcast_feed.delay(podcast.rss)
 
-    qs.filter(queued=timezone.now())
+    qs.update(queued=timezone.now())
 
     return counter
 

@@ -83,6 +83,9 @@ class TestParsePodcastFeeds:
         else:
             mock_parse_podcast_feed.assert_not_called()
 
+        num_queued = 1 if queued else result
+        assert Podcast.objects.filter(queued__isnull=False).count() == num_queued
+
 
 class TestFeedHeaders:
     def test_has_etag(self):
