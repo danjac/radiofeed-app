@@ -339,7 +339,7 @@ class TestReschedule:
         [
             (0, 1.0),
             (72, 3.6),
-            (90 * 24, 24.0),
+            (90 * 24, 108.0),
         ],
     )
     def test_reschedule(self, hours_ago, hours_diff):
