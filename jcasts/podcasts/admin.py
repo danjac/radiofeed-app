@@ -33,6 +33,28 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ScheduledFilter(admin.SimpleListFilter):
+    title = "Scheduled"
+    parameter_name = "scheduled"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("scheduled", "Scheduled"),
+            ("queued", "Queued"),
+            ("unscheduled", "Unscheduled"),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value == "scheduled":
+            return queryset.filter(scheduled__isnull=False)
+        if value == "queued":
+            return queryset.filter(queued__isnull=False)
+        if value == "unscheduled":
+            return queryset.filter(scheduled__isnull=True)
+        return queryset
+
+
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -72,6 +94,7 @@ class PodcastAdmin(admin.ModelAdmin):
         ActiveFilter,
         PromotedFilter,
         PubDateFilter,
+        ScheduledFilter,
     )
 
     list_display = ("__str__", "source", "active", "promoted", "scheduled", "pub_date")
