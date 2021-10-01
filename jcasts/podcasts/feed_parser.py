@@ -39,21 +39,25 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def parse_podcast_feeds():
+def parse_podcast_feeds(limit=1000):
     now = timezone.now()
 
     qs = (
         Podcast.objects.scheduled()
         .order_by("scheduled", "-pub_date")
-        .values_list("rss", flat=True)
-        .distinct()
+        .distinct()[:limit]
     )
 
     counter = 0
-    for (counter, rss) in enumerate(qs.iterator(), 1):
-        parse_podcast_feed.delay(rss)
+    for_update = []
 
-    qs.update(queued=now)
+    for (counter, podcast) in enumerate(qs.iterator(), 1):
+        parse_podcast_feed.delay(podcast.rss)
+        podcast.queued = now
+        for_update.append(podcast)
+
+    Podcast.objects.bulk_update(for_update, fields=["queued"])
+
     return counter
 
 
