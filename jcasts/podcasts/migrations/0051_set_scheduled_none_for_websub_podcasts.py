@@ -4,8 +4,8 @@ from django.db import migrations
 
 
 def set_scheduled_none(apps, schema_editor):
-    Podcast = apps.get_model("podcasts", "Podcast")
-    Podcast.objects.filter(websub_subscribed__isnull=False).update(scheduled=None)
+    podcast_model = apps.get_model("podcasts", "Podcast")
+    podcast_model.objects.filter(websub_subscribed__isnull=False).update(scheduled=None)
 
 
 class Migration(migrations.Migration):

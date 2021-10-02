@@ -48,6 +48,9 @@ class TestColorpicker:
 
 
 class TestAbsoluteUri:
+    SEARCH_URL = "/podcasts/search/"
+    DETAIL_URL = "/podcasts/12345/test/"
+
     def test_has_request_no_url(self, rf):
         url = absolute_uri({"request": rf.get("/")})
         assert url == TESTSERVER_URL + "/"
@@ -58,8 +61,8 @@ class TestAbsoluteUri:
         assert url == TESTSERVER_URL + "/"
 
     def test_has_request_static_url(self, rf):
-        url = absolute_uri({"request": rf.get("/")}, "/podcasts/search/")
-        assert url == TESTSERVER_URL + "/podcasts/search/"
+        url = absolute_uri({"request": rf.get("/")}, self.SEARCH_URL)
+        assert url == TESTSERVER_URL + self.SEARCH_URL
 
     def test_has_request_resolved_url(self, rf):
         url = absolute_uri(
@@ -68,7 +71,7 @@ class TestAbsoluteUri:
             podcast_id=12345,
             slug="test",
         )
-        assert url == TESTSERVER_URL + "/podcasts/12345/test/"
+        assert url == TESTSERVER_URL + self.DETAIL_URL
 
     def test_has_request_from_model(self, rf, podcast):
         url = absolute_uri(
@@ -87,17 +90,17 @@ class TestAbsoluteUri:
         assert url == EXAMPLE_HTTPS_URL
 
     def test_not_has_request_static_url(self, db):
-        url = absolute_uri({}, "/podcasts/search/")
-        assert url == EXAMPLE_HTTP_URL + "/podcasts/search/"
+        url = absolute_uri({}, self.SEARCH_URL)
+        assert url == EXAMPLE_HTTP_URL + self.SEARCH_URL
 
     def test_not_has_request_resolved_url(self, db):
         url = absolute_uri(
             {},
             "podcasts:podcast_detail",
-            podcast_id=123456,
+            podcast_id=12345,
             slug="test",
         )
-        assert url == EXAMPLE_HTTP_URL + "/podcasts/123456/test/"
+        assert url == EXAMPLE_HTTP_URL + self.DETAIL_URL
 
     def test_not_has_request_model(self, podcast):
         url = absolute_uri({}, podcast)
