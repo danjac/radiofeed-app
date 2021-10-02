@@ -103,6 +103,13 @@ class TestScheduledFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
 
+    def test_no_filter(self, podcasts, admin, req):
+        PodcastFactory(scheduled=None)
+        PodcastFactory(queued=timezone.now())
+        f = ScheduledFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 5
+
 
 class TestActiveFilter:
     def test_active_filter_none(self, podcasts, admin, req):

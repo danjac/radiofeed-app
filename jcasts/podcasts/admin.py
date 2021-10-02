@@ -45,14 +45,13 @@ class ScheduledFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        value = self.value()
-        if value == "scheduled":
-            return queryset.filter(scheduled__isnull=False)
-        if value == "queued":
-            return queryset.filter(queued__isnull=False)
-        if value == "unscheduled":
-            return queryset.filter(scheduled__isnull=True)
-        return queryset
+        return queryset.filter(
+            **{
+                "scheduled": {"scheduled__isnull": False},
+                "queued": {"queued__isnull": False},
+                "unscheduled": {"scheduled__isnull": True},
+            }.setdefault(self.value(), {})
+        )
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -97,7 +96,14 @@ class PodcastAdmin(admin.ModelAdmin):
         ScheduledFilter,
     )
 
-    list_display = ("__str__", "source", "active", "promoted", "scheduled", "pub_date")
+    list_display = (
+        "__str__",
+        "source",
+        "active",
+        "promoted",
+        "scheduled",
+        "pub_date",
+    )
 
     list_editable = ("promoted",)
     search_fields = ("search_document",)
