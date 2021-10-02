@@ -19,6 +19,10 @@ from jcasts.shared.template import (
     signup_url,
 )
 
+EXAMPLE_HTTPS_URL = "https://example.com"
+EXAMPLE_HTTP_URL = "http://example.com"
+TESTSERVER_URL = "http://testserver"
+
 
 class TestTimesinceApprox:
     def test_none(self):
@@ -46,16 +50,16 @@ class TestColorpicker:
 class TestAbsoluteUri:
     def test_has_request_no_url(self, rf):
         url = absolute_uri({"request": rf.get("/")})
-        assert url == "http://testserver/"
+        assert url == TESTSERVER_URL + "/"
 
     def test_has_request_no_url_https(self, rf, settings):
         settings.SECURE_SSL_REDIRECT = True
         url = absolute_uri({"request": rf.get("/")})
-        assert url == "http://testserver/"
+        assert url == TESTSERVER_URL + "/"
 
     def test_has_request_static_url(self, rf):
         url = absolute_uri({"request": rf.get("/")}, "/podcasts/search/")
-        assert url == "http://testserver/podcasts/search/"
+        assert url == TESTSERVER_URL + "/podcasts/search/"
 
     def test_has_request_resolved_url(self, rf):
         url = absolute_uri(
@@ -64,40 +68,40 @@ class TestAbsoluteUri:
             podcast_id=12345,
             slug="test",
         )
-        assert url == "http://testserver/podcasts/12345/test/"
+        assert url == TESTSERVER_URL + "/podcasts/12345/test/"
 
     def test_has_request_from_model(self, rf, podcast):
         url = absolute_uri(
             {"request": rf.get("/")},
             podcast,
         )
-        assert url == "http://testserver" + podcast.get_absolute_url()
+        assert url == TESTSERVER_URL + podcast.get_absolute_url()
 
     def test_not_has_request_no_url(self, db):
         url = absolute_uri({})
-        assert url == "http://example.com"
+        assert url == EXAMPLE_HTTP_URL
 
     def test_not_has_request_no_url_https(self, db, settings):
         settings.SECURE_SSL_REDIRECT = True
         url = absolute_uri({})
-        assert url == "https://example.com"
+        assert url == EXAMPLE_HTTPS_URL
 
     def test_not_has_request_static_url(self, db):
         url = absolute_uri({}, "/podcasts/search/")
-        assert url == "http://example.com/podcasts/search/"
+        assert url == EXAMPLE_HTTP_URL + "/podcasts/search/"
 
     def test_not_has_request_resolved_url(self, db):
         url = absolute_uri(
             {},
             "podcasts:podcast_detail",
-            podcast_id=12345,
+            podcast_id=123456,
             slug="test",
         )
-        assert url == "http://example.com/podcasts/12345/test/"
+        assert url == EXAMPLE_HTTP_URL + "/podcasts/123456/test/"
 
     def test_not_has_request_model(self, podcast):
         url = absolute_uri({}, podcast)
-        assert url == "http://example.com" + podcast.get_absolute_url()
+        assert url == EXAMPLE_HTTP_URL + podcast.get_absolute_url()
 
 
 class TestFormatDuration:
@@ -134,8 +138,8 @@ class TestLoginUrl:
 
 class TestSignupUrl:
     def test_signup_url(self):
-        url = "/podcasts/1234/test/"
-        assert signup_url(url) == "/account/signup/?next=/podcasts/1234/test/"
+        url = "/podcasts/12345/test/"
+        assert signup_url(url) == "/account/signup/?next=/podcasts/12345/test/"
 
     def test_signup_url_with_query_string(self):
         url = "/podcasts/1234/test/?ok=true"
@@ -189,28 +193,28 @@ class TestReActiveLink:
 
 class TestShareButtons:
     def test_share_buttons(self, rf):
-        url = "/podcasts/1234/test/"
+        url = "/podcasts/12344/test/"
         context = {"request": rf.get(url)}
         share_urls = share_buttons(context, url, "Test Podcast")["share_urls"]
 
         assert (
             share_urls["email"]
-            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/1234/test/"
+            == "mailto:?subject=Test%20Podcast&body=http%3A//testserver/podcasts/12344/test/"
         )
 
         assert (
             share_urls["facebook"]
-            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/1234/test/"
+            == "https://www.facebook.com/sharer/sharer.php?u=http%3A//testserver/podcasts/12344/test/"
         )
 
         assert (
             share_urls["twitter"]
-            == "https://twitter.com/share?url=http%3A//testserver/podcasts/1234/test/&text=Test%20Podcast"
+            == "https://twitter.com/share?url=http%3A//testserver/podcasts/12344/test/&text=Test%20Podcast"
         )
 
         assert (
             share_urls["linkedin"]
-            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/1234/test/"
+            == "https://www.linkedin.com/sharing/share-offsite/?url=http%3A//testserver/podcasts/12344/test/"
         )
 
 
@@ -250,10 +254,10 @@ class TestSafeUrl:
         assert safe_url(None) is None
 
     def test_https(self):
-        assert safe_url("https://example.com") == "https://example.com"
+        assert safe_url(EXAMPLE_HTTPS_URL) == EXAMPLE_HTTPS_URL
 
     def test_http(self):
-        assert safe_url("http://example.com") == "https://example.com"
+        assert safe_url(EXAMPLE_HTTP_URL) == EXAMPLE_HTTPS_URL
 
     def test_ftp(self):
         assert safe_url("ftp://example.com") is None

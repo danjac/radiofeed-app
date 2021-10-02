@@ -67,7 +67,7 @@ class TestNewEpisodes:
         FollowFactory(user=auth_user, podcast=episode.podcast)
 
         with django_assert_num_queries(7):
-            resp = client.get(reverse("episodes:index"), {"promoted": True})
+            resp = client.get(episodes_url, {"promoted": True})
 
         assert_ok(resp)
         assert resp.context_data["promoted"]
@@ -96,7 +96,7 @@ class TestSearchEpisodes:
 
     def test_search_empty(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
-            assert client.get(self.url, {"q": ""}).url == reverse("episodes:index")
+            assert client.get(self.url, {"q": ""}).url == episodes_url
 
     def test_search(self, db, client, faker, django_assert_num_queries):
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")

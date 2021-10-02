@@ -152,16 +152,17 @@ class TestPodcastDetail:
 
 
 class TestPodcastEpisodes:
+    def url(self, podcast):
+        return reverse(
+            "podcasts:podcast_episodes",
+            args=[podcast.id, podcast.slug],
+        )
+
     def test_get_episodes(self, client, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
 
         with django_assert_num_queries(6):
-            resp = client.get(
-                reverse(
-                    "podcasts:podcast_episodes",
-                    args=[podcast.id, podcast.slug],
-                )
-            )
+            resp = client.get(self.url(podcast))
             assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
@@ -170,10 +171,7 @@ class TestPodcastEpisodes:
 
         with django_assert_num_queries(6):
             resp = client.get(
-                reverse(
-                    "podcasts:podcast_episodes",
-                    args=[podcast.id, podcast.slug],
-                ),
+                self.url(podcast),
                 {"ordering": "asc"},
             )
         assert_ok(resp)
@@ -186,10 +184,7 @@ class TestPodcastEpisodes:
 
         with django_assert_num_queries(6):
             resp = client.get(
-                reverse(
-                    "podcasts:podcast_episodes",
-                    args=[podcast.id, podcast.slug],
-                ),
+                self.url(podcast),
                 {"q": episode.title},
             )
         assert_ok(resp)

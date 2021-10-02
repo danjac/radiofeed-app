@@ -5,8 +5,8 @@ from django.db.models import F
 
 
 def set_parsed(apps, schema_editor):
-    Podcast = apps.get_model("podcasts.Podcast")
-    Podcast.objects.filter(parsed__isnull=True).update(parsed=F("updated"))
+    podcast_model = apps.get_model("podcasts.Podcast")
+    podcast_model.objects.filter(parsed__isnull=True).update(parsed=F("updated"))
 
 
 class Migration(migrations.Migration):

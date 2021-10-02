@@ -26,6 +26,9 @@ ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
 _validate_url = URLValidator(["http", "https"])
 
 
+HTTPS_SCHEME = "https://"
+
+
 @register.simple_tag(takes_context=True)
 def pagination_url(context, page_number, param="page"):
     """
@@ -157,7 +160,7 @@ def normalize_url(url):
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if not url:
         return ""
-    for value in (url, "https://" + url):
+    for value in (url, HTTPS_SCHEME + url):
         try:
             _validate_url(value)
             return value
@@ -168,10 +171,10 @@ def normalize_url(url):
 
 @register.filter
 def safe_url(url):
-    if not url or url.startswith("https://"):
+    if not url or url.startswith(HTTPS_SCHEME):
         return url
     if url.startswith("http://"):
-        return "https://" + url[7:]
+        return HTTPS_SCHEME + url[7:]
     return None
 
 

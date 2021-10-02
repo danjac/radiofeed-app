@@ -76,8 +76,7 @@ class TestParsePodcastFeeds:
             scheduled=now + scheduled if scheduled else None,
             queued=now if queued else None,
         )
-        jobs = [*parse_podcast_feeds()]
-        result = len(jobs)
+        assert len([*parse_podcast_feeds()]) == result
 
         if result:
             mock_parse_podcast_feed.assert_called()
