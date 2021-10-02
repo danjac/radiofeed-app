@@ -43,14 +43,10 @@ def parse_podcast_feeds():
 
     qs = Podcast.objects.scheduled().order_by("scheduled", "-pub_date").distinct()
 
-    counter = 0
-
-    for (counter, podcast) in enumerate(qs.iterator(), 1):
-        parse_podcast_feed.delay(podcast.rss)
+    for podcast in qs.iterator():
+        yield parse_podcast_feed.delay(podcast.rss)
 
     qs.update(queued=timezone.now())
-
-    return counter
 
 
 @attr.s(kw_only=True)
