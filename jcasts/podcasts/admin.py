@@ -123,7 +123,10 @@ class PodcastAdmin(admin.ModelAdmin):
         "exception",
     )
 
-    actions = ("parse_podcast_feeds",)
+    actions = (
+        "parse_podcast_feeds",
+        "reactivate_podcast_feeds",
+    )
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request, queryset):
