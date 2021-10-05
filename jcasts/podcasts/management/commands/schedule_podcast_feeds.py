@@ -8,5 +8,5 @@ class Command(BaseCommand):
     help = "Enqueue podcast feeds"
 
     def handle(self, *args, **options):
-        for podcast in Podcast.objects.filter(active=True):
+        for podcast in Podcast.objects.filter(active=True).iterator():
             feed_parser.reschedule(podcast)
