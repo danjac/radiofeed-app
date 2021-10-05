@@ -62,6 +62,11 @@ class TestPodcastAdmin:
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_parse_podcast_feed.assert_called_with(podcast.rss)
 
+    def test_reactivate_podcast_feeds(self, db, admin, req):
+        PodcastFactory(active=False)
+        admin.reactivate_podcast_feeds(req, Podcast.objects.all())
+        assert Podcast.objects.filter(active=True).count() == 1
+
 
 class TestPubDateFilter:
     def test_pub_date_filter_none(self, podcasts, admin, req):

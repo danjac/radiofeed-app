@@ -141,6 +141,19 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+    @admin.action(description="Reactivate podcast feeds")
+    def reactivate_podcast_feeds(self, request, queryset):
+
+        queryset = queryset.filter(active=False)
+        num_podcasts = queryset.count()
+        queryset.update(active=True)
+
+        self.message_user(
+            request,
+            f"{num_podcasts} podcast(s) updated",
+            messages.SUCCESS,
+        )
+
     def source(self, obj):
         return obj.get_domain()
 
