@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue, job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -37,16 +37,6 @@ class NotModified(requests.RequestException):
 
 class DuplicateFeed(requests.RequestException):
     ...
-
-
-def parse_podcast_feeds():
-
-    qs = Podcast.objects.scheduled().order_by("scheduled", "-pub_date").distinct()
-
-    for podcast in qs.iterator():
-        yield parse_podcast_feed.delay(podcast.rss)
-
-    qs.update(queued=timezone.now())
 
 
 @attr.s(kw_only=True)
@@ -132,10 +122,10 @@ def parse_success(podcast, response, feed, items):
     # parsing status
     pub_dates = [item.pub_date for item in items]
 
+    now = timezone.now()
+
     podcast.pub_date = max(pub_dates)
-    podcast.scheduled = reschedule(podcast)
-    podcast.parsed = timezone.now()
-    podcast.queued = None
+    podcast.parsed = now
     podcast.active = True
     podcast.exception = ""
 
@@ -168,10 +158,13 @@ def parse_success(podcast, response, feed, items):
     podcast.extracted_text = extract_text(podcast, categories, items)
 
     podcast.categories.set(categories)  # type: ignore
+
     podcast.save()
 
     # episodes
     parse_episodes(podcast, items)
+
+    reschedule(podcast)
 
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
 
@@ -258,16 +251,24 @@ def get_categories_dict():
 
 
 def reschedule(podcast):
-    if podcast.pub_date is None:
-        return None
 
     now = timezone.now()
 
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
-    diff = timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05)
+    if podcast.pub_date:
+        diff = max(
+            timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05),
+            MIN_SCHEDULED_DELTA,
+        )
+    else:
+        diff = MIN_SCHEDULED_DELTA
 
-    return now + max(diff, MIN_SCHEDULED_DELTA)
+    scheduled = now + diff
+
+    get_queue("feeds").enqueue_at(scheduled, parse_podcast_feed, podcast.rss)
+
+    return scheduled
 
 
 def parse_failure(
@@ -284,14 +285,15 @@ def parse_failure(
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
-        scheduled=reschedule(podcast) if active else None,
         updated=now,
         parsed=now,
-        queued=None,
         http_status=status,
         exception=tb,
         **fields,
     )
+
+    if active:
+        reschedule(podcast)
 
     return ParseResult(
         rss=podcast.rss,

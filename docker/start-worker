@@ -3,5 +3,5 @@
 set -o errexit
 set -o nounset
 
-./manage.py rqworker mail feeds default
+./manage.py rqworker --with-scheduler mail feeds default
 

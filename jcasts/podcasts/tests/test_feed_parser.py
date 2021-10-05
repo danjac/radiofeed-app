@@ -16,7 +16,6 @@ from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
     parse_podcast_feed,
-    parse_podcast_feeds,
     reschedule,
 )
 from jcasts.podcasts.models import Podcast
@@ -46,47 +45,6 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError()
 
 
-class TestParsePodcastFeeds:
-    @pytest.mark.parametrize(
-        "active,queued,scheduled,result",
-        [
-            (True, False, timedelta(hours=-1), 1),
-            (False, False, timedelta(hours=-1), 0),
-            (True, False, timedelta(hours=-1), 1),
-            (True, True, timedelta(hours=-1), 0),
-            (True, False, timedelta(hours=-1), 1),
-            (True, False, timedelta(hours=1), 0),
-            (True, False, None, 0),
-            (False, False, None, 0),
-        ],
-    )
-    def test_parse_podcast_feeds(
-        self,
-        db,
-        mock_parse_podcast_feed,
-        active,
-        queued,
-        scheduled,
-        result,
-    ):
-
-        now = timezone.now()
-        PodcastFactory(
-            active=active,
-            scheduled=now + scheduled if scheduled else None,
-            queued=now if queued else None,
-        )
-        assert len([*parse_podcast_feeds()]) == result
-
-        if result:
-            mock_parse_podcast_feed.assert_called()
-        else:
-            mock_parse_podcast_feed.assert_not_called()
-
-        num_queued = 1 if queued else result
-        assert Podcast.objects.filter(queued__isnull=False).count() == num_queued
-
-
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
@@ -112,6 +70,10 @@ class TestParsePodcastFeed:
         return PodcastFactory(cover_url=None, pub_date=None, queued=timezone.now())
 
     @pytest.fixture
+    def mock_reschedule(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.reschedule")
+
+    @pytest.fixture
     def categories(self, db):
         yield [
             CategoryFactory(name=name)
@@ -132,7 +94,7 @@ class TestParsePodcastFeed:
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file), "rb"
         ).read()
 
-    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
+    def test_parse_no_podcasts(self, mocker, new_podcast, categories, mock_reschedule):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -149,9 +111,8 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert not new_podcast.active
         assert new_podcast.parsed
-        assert new_podcast.queued is None
 
-    def test_parse_empty_feed(self, mocker, new_podcast, categories):
+    def test_parse_empty_feed(self, mocker, new_podcast, categories, mock_reschedule):
 
         mocker.patch(
             self.mock_http_get,
@@ -169,16 +130,17 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert not new_podcast.active
         assert new_podcast.parsed
-        assert new_podcast.queued is None
 
-    def test_parse_podcast_feed_podcast_not_found(self, db):
+    def test_parse_podcast_feed_podcast_not_found(self, db, mock_reschedule):
         result = parse_podcast_feed("https://example.com/rss.xml")
         assert result.success is False
 
         with pytest.raises(Podcast.DoesNotExist):
             result.raise_exception()
 
-    def test_parse_podcast_feed_ok(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_ok(
+        self, mocker, new_podcast, categories, mock_reschedule
+    ):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -229,7 +191,6 @@ class TestParsePodcastFeed:
         assert new_podcast.cover_url
 
         assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-        assert new_podcast.queued is None
 
         assigned_categories = [c.name for c in new_podcast.categories.all()]
 
@@ -239,7 +200,7 @@ class TestParsePodcastFeed:
         assert "Philosophy" in assigned_categories
 
     def test_parse_podcast_feed_permanent_redirect(
-        self, mocker, new_podcast, categories
+        self, mocker, new_podcast, categories, mock_reschedule
     ):
         mocker.patch(
             self.mock_http_get,
@@ -261,10 +222,9 @@ class TestParsePodcastFeed:
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
         assert new_podcast.parsed
-        assert new_podcast.queued is None
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
-        self, mocker, new_podcast, categories
+        self, mocker, new_podcast, categories, mock_reschedule
     ):
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = new_podcast.rss
@@ -287,11 +247,11 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
-        assert new_podcast.scheduled is None
-        assert new_podcast.queued is None
         assert new_podcast.parsed
 
-    def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_not_modified(
+        self, mocker, new_podcast, categories, mock_reschedule
+    ):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -303,9 +263,10 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert new_podcast.active
         assert new_podcast.modified is None
-        assert new_podcast.queued is None
 
-    def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_error(
+        self, mocker, new_podcast, categories, mock_reschedule
+    ):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
         result = parse_podcast_feed(new_podcast.rss)
@@ -316,9 +277,10 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.queued is None
 
-    def test_parse_podcast_feed_gone(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_gone(
+        self, mocker, new_podcast, categories, mock_reschedule
+    ):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
@@ -332,11 +294,13 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
-        assert new_podcast.scheduled is None
-        assert new_podcast.queued is None
 
 
 class TestReschedule:
+    @pytest.fixture
+    def mock_get_queue(self, mocker):
+        return mocker.patch("jcasts.podcasts.feed_parser.get_queue")
+
     @pytest.mark.parametrize(
         "hours_ago,hours_diff",
         [
@@ -345,11 +309,14 @@ class TestReschedule:
             (90 * 24, 108.0),
         ],
     )
-    def test_reschedule(self, hours_ago, hours_diff):
+    def test_reschedule(self, hours_ago, hours_diff, mock_get_queue):
         now = timezone.now()
         podcast = Podcast(pub_date=now - timedelta(hours=hours_ago))
         scheduled = reschedule(podcast)
         assert (scheduled - now).total_seconds() / 3600 == pytest.approx(hours_diff)
+        mock_get_queue.assert_called_with("feeds")
 
-    def test_pub_date_none(self):
-        assert reschedule(Podcast(pub_date=None)) is None
+    def test_pub_date_none(self, mock_get_queue):
+        scheduled = reschedule(Podcast(pub_date=None))
+        assert (scheduled - timezone.now()).total_seconds() / 3600 == pytest.approx(1)
+        mock_get_queue.assert_called_with("feeds")

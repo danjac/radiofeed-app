@@ -33,27 +33,6 @@ class PubDateFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("scheduled", "Scheduled"),
-            ("queued", "Queued"),
-            ("unscheduled", "Unscheduled"),
-        )
-
-    def queryset(self, request, queryset):
-        return queryset.filter(
-            **{
-                "scheduled": {"scheduled__isnull": False},
-                "queued": {"queued__isnull": False},
-                "unscheduled": {"scheduled__isnull": True},
-            }.setdefault(self.value(), {})
-        )
-
-
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -93,7 +72,6 @@ class PodcastAdmin(admin.ModelAdmin):
         ActiveFilter,
         PromotedFilter,
         PubDateFilter,
-        ScheduledFilter,
     )
 
     list_display = (
@@ -101,7 +79,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "source",
         "active",
         "promoted",
-        "scheduled",
         "pub_date",
     )
 
@@ -116,8 +93,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "parsed",
         "modified",
         "pub_date",
-        "queued",
-        "scheduled",
         "etag",
         "http_status",
         "exception",
@@ -148,20 +123,12 @@ class PodcastAdmin(admin.ModelAdmin):
     def reactivate_podcast_feeds(self, request, queryset):
 
         queryset = queryset.filter(active=False)
-
-        for_update = []
-        now = timezone.now()
-
-        for podcast in queryset.iterator():
-            podcast.active = True
-            podcast.scheduled = feed_parser.reschedule(podcast) or now
-            for_update.append(podcast)
-
-        models.Podcast.objects.bulk_update(for_update, fields=["active", "scheduled"])
+        count = queryset.count()
+        queryset.update(active=True)
 
         self.message_user(
             request,
-            f"{len(for_update)} podcast(s) updated",
+            f"{count} podcast(s) updated",
             messages.SUCCESS,
         )
 
@@ -178,7 +145,6 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "scheduled",
                 "-pub_date",
             ]
         )

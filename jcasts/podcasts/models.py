@@ -63,14 +63,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
 
-    def scheduled(self):
-        return self.filter(
-            active=True,
-            queued__isnull=True,
-            scheduled__isnull=False,
-            scheduled__lte=timezone.now(),
-        )
-
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
@@ -84,9 +76,7 @@ class Podcast(models.Model):
     title = models.TextField()
 
     pub_date = models.DateTimeField(null=True, blank=True)
-    scheduled = models.DateTimeField(null=True, blank=True)
     parsed = models.DateTimeField(null=True, blank=True)
-    queued = models.DateTimeField(null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
@@ -128,7 +118,6 @@ class Podcast(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["scheduled", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),

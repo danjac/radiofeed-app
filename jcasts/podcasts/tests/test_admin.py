@@ -10,7 +10,6 @@ from jcasts.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    ScheduledFilter,
 )
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -51,7 +50,7 @@ class TestPodcastAdmin:
 
     def test_get_ordering_no_search_term(self, admin, req):
         ordering = admin.get_ordering(req)
-        assert ordering == ["scheduled", "-pub_date"]
+        assert ordering == ["-pub_date"]
 
     def test_get_ordering_search_term(self, admin, req):
         req.GET = {"q": "test"}
@@ -65,7 +64,7 @@ class TestPodcastAdmin:
     def test_reactivate_podcast_feeds(self, db, admin, req):
         PodcastFactory(active=False, scheduled=None)
         admin.reactivate_podcast_feeds(req, Podcast.objects.all())
-        assert Podcast.objects.filter(active=True, scheduled__isnull=False).count() == 1
+        assert Podcast.objects.filter(active=True).count() == 1
 
 
 class TestPubDateFilter:
@@ -88,32 +87,6 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
-
-
-class TestScheduledFilter:
-    def test_scheduled(self, podcasts, admin, req):
-        f = ScheduledFilter(req, {"scheduled": "scheduled"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-
-    def test_queued(self, podcasts, admin, req):
-        PodcastFactory(queued=timezone.now())
-        f = ScheduledFilter(req, {"scheduled": "queued"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-
-    def test_unscheduled(self, podcasts, admin, req):
-        PodcastFactory(scheduled=None)
-        f = ScheduledFilter(req, {"scheduled": "unscheduled"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-
-    def test_no_filter(self, podcasts, admin, req):
-        PodcastFactory(scheduled=None)
-        PodcastFactory(queued=timezone.now())
-        f = ScheduledFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 5
 
 
 class TestActiveFilter:
