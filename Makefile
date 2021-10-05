@@ -36,6 +36,8 @@ test:
 coverage:
 	./bin/runtests -v -x --cov --reuse-db --cov-report term-missing
 
+reqs: requirements
+
 requirements:
 	./bin/poetry export -o requirements.txt  --without-hashes
 
