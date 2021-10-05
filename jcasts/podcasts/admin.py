@@ -148,8 +148,10 @@ class PodcastAdmin(admin.ModelAdmin):
     def reactivate_podcast_feeds(self, request, queryset):
 
         queryset = queryset.filter(active=False)
+
         num_podcasts = queryset.count()
-        queryset.update(active=True)
+
+        queryset.update(active=True, scheduled=timezone.now())
 
         self.message_user(
             request,
