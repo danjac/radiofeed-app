@@ -149,13 +149,19 @@ class PodcastAdmin(admin.ModelAdmin):
 
         queryset = queryset.filter(active=False)
 
-        num_podcasts = queryset.count()
+        for_update = []
+        now = timezone.now()
 
-        queryset.update(active=True, scheduled=timezone.now())
+        for podcast in queryset.iterator():
+            podcast.active = True
+            podcast.scheduled = feed_parser.reschedule(podcast) or now
+            for_update.append(podcast)
+
+        models.Podcast.objects.bulk_update(for_update, fields=["active", "scheduled"])
 
         self.message_user(
             request,
-            f"{num_podcasts} podcast(s) updated",
+            f"{len(for_update)} podcast(s) updated",
             messages.SUCCESS,
         )
 
