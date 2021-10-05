@@ -82,12 +82,11 @@ def with_podcasts(feeds, update=False):
     )
 
     new_podcasts = []
-    now = timezone.now()
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
-            new_podcasts.append(Podcast(title=feed.title, rss=feed.url, queued=now))
+            new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)

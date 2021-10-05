@@ -96,21 +96,6 @@ class TestPodcastManager:
         assert Podcast.objects.filter(title="test").count() == 1
 
     @pytest.mark.parametrize(
-        "active,scheduled,exists",
-        [
-            (True, timedelta(hours=-1), True),
-            (False, timedelta(hours=-1), False),
-            (True, timedelta(hours=1), False),
-            (True, None, False),
-        ],
-    )
-    def test_scheduled(self, db, active, scheduled, exists):
-        PodcastFactory(
-            active=active, scheduled=timezone.now() + scheduled if scheduled else None
-        )
-        assert Podcast.objects.scheduled().exists() is exists
-
-    @pytest.mark.parametrize(
         "active,last_pub,exists",
         [
             (True, timedelta(days=30), True),

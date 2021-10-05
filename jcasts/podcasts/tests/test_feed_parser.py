@@ -67,7 +67,7 @@ class TestParsePodcastFeed:
 
     @pytest.fixture
     def new_podcast(self, db):
-        return PodcastFactory(cover_url=None, pub_date=None, queued=timezone.now())
+        return PodcastFactory(cover_url=None, pub_date=None)
 
     @pytest.fixture
     def mock_reschedule(self, mocker):
@@ -112,6 +112,8 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
 
+        mock_reschedule.assert_not_called()
+
     def test_parse_empty_feed(self, mocker, new_podcast, categories, mock_reschedule):
 
         mocker.patch(
@@ -131,12 +133,16 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
 
+        mock_reschedule.assert_not_called()
+
     def test_parse_podcast_feed_podcast_not_found(self, db, mock_reschedule):
         result = parse_podcast_feed("https://example.com/rss.xml")
         assert result.success is False
 
         with pytest.raises(Podcast.DoesNotExist):
             result.raise_exception()
+
+        mock_reschedule.assert_not_called()
 
     def test_parse_podcast_feed_ok(
         self, mocker, new_podcast, categories, mock_reschedule
@@ -199,6 +205,8 @@ class TestParsePodcastFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
+        mock_reschedule.assert_called()
+
     def test_parse_podcast_feed_permanent_redirect(
         self, mocker, new_podcast, categories, mock_reschedule
     ):
@@ -222,6 +230,8 @@ class TestParsePodcastFeed:
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
         assert new_podcast.parsed
+
+        mock_reschedule.assert_called()
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories, mock_reschedule
@@ -249,6 +259,8 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
 
+        mock_reschedule.assert_not_called()
+
     def test_parse_podcast_feed_not_modified(
         self, mocker, new_podcast, categories, mock_reschedule
     ):
@@ -264,6 +276,8 @@ class TestParsePodcastFeed:
         assert new_podcast.active
         assert new_podcast.modified is None
 
+        mock_reschedule.assert_called()
+
     def test_parse_podcast_feed_error(
         self, mocker, new_podcast, categories, mock_reschedule
     ):
@@ -277,6 +291,8 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
+
+        mock_reschedule.assert_not_called()
 
     def test_parse_podcast_feed_gone(
         self, mocker, new_podcast, categories, mock_reschedule
@@ -294,6 +310,8 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
+
+        mock_reschedule.assert_not_called()
 
 
 class TestReschedule:

@@ -3,7 +3,6 @@ from unittest import mock
 import pytest
 
 from django.contrib.admin.sites import AdminSite
-from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
@@ -22,9 +21,7 @@ def admin():
 
 @pytest.fixture
 def podcasts(db):
-    return PodcastFactory.create_batch(
-        3, active=True, promoted=False, scheduled=timezone.now()
-    )
+    return PodcastFactory.create_batch(3, active=True, promoted=False)
 
 
 @pytest.fixture
@@ -62,7 +59,7 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_called_with(podcast.rss)
 
     def test_reactivate_podcast_feeds(self, db, admin, req):
-        PodcastFactory(active=False, scheduled=None)
+        PodcastFactory(active=False)
         admin.reactivate_podcast_feeds(req, Podcast.objects.all())
         assert Podcast.objects.filter(active=True).count() == 1
 
