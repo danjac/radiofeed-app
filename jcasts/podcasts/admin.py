@@ -82,7 +82,7 @@ class PodcastAdmin(admin.ModelAdmin):
     )
 
     list_editable = ("promoted",)
-    search_fields = ("search_document",)
+    search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
 
@@ -131,11 +131,6 @@ class PodcastAdmin(admin.ModelAdmin):
 
     def source(self, obj):
         return obj.get_domain()
-
-    def get_search_results(self, request, queryset, search_term):
-        if not search_term:
-            return super().get_search_results(request, queryset, search_term)
-        return queryset.search(search_term).order_by("-rank", "-pub_date"), False
 
     def get_ordering(self, request):
         return (
