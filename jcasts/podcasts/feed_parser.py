@@ -291,7 +291,9 @@ def reschedule(podcast):
     else:
         diff = MIN_SCHEDULED_DELTA
 
-    diff = diff + timedelta(seconds=int(diff.total_seconds() / 2))
+    seconds = int(diff.total_seconds() / 2)
+
+    diff = diff + timedelta(seconds=secrets.choice(range(-seconds, seconds)))
 
     scheduled = now + diff
 
