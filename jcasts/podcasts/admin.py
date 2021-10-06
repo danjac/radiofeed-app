@@ -79,6 +79,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
+        "scheduled",
     )
 
     list_editable = ("promoted",)
@@ -90,6 +91,8 @@ class PodcastAdmin(admin.ModelAdmin):
         "created",
         "updated",
         "parsed",
+        "scheduled",
+        "queued",
         "modified",
         "pub_date",
         "etag",

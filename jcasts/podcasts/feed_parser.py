@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
+from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -52,6 +52,34 @@ class ParseResult:
     def raise_exception(self):
         if self.exception:
             raise self.exception
+
+
+def reschedule_podcast_feeds():
+
+    podcasts = Podcast.objects.filter(active=True, pub_date__isnull=False)
+    for_update = []
+
+    for podcast in podcasts:
+        podcast.scheduled = reschedule(podcast)
+        for_update.append(podcast)
+
+    Podcast.objects.bulk_update(for_update, fields=["scheduled"])
+
+
+def schedule_podcast_feeds():
+    now = timezone.now()
+
+    podcasts = Podcast.objects.filter(
+        active=True,
+        queued__isnull=True,
+        scheduled__isnull=False,
+        scheduled__lt=now,
+    ).order_by("scheduled", "-pub_date")
+
+    for rss in podcasts.values_list("rss", flat=True).distinct():
+        parse_podcast_feed.delay(rss)
+
+    podcasts.update(queued=now)
 
 
 @job("feeds")
@@ -126,6 +154,7 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = now
+    podcast.scheduled = reschedule(podcast)
     podcast.active = True
     podcast.exception = ""
 
@@ -163,8 +192,6 @@ def parse_success(podcast, response, feed, items):
 
     # episodes
     parse_episodes(podcast, items)
-
-    reschedule(podcast)
 
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
 
@@ -268,8 +295,6 @@ def reschedule(podcast):
 
     scheduled = now + diff
 
-    get_queue("feeds").enqueue_at(scheduled, parse_podcast_feed, podcast.rss)
-
     return scheduled
 
 
@@ -289,13 +314,12 @@ def parse_failure(
         active=active,
         updated=now,
         parsed=now,
+        queued=None,
+        scheduled=reschedule(podcast) if active else None,
         http_status=status,
         exception=tb,
         **fields,
     )
-
-    if active:
-        reschedule(podcast)
 
     return ParseResult(
         rss=podcast.rss,

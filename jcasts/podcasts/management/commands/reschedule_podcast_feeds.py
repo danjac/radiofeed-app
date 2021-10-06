@@ -4,7 +4,7 @@ from jcasts.podcasts import feed_parser
 
 
 class Command(BaseCommand):
-    help = "Schedule podcast feeds"
+    help = "Reschedule podcast feeds"
 
     def handle(self, *args, **options):
-        feed_parser.schedule_podcast_feeds()
+        feed_parser.reschedule_podcast_feeds()
