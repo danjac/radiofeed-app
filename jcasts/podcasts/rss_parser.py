@@ -124,9 +124,6 @@ class Feed:
     link: Optional[str] = attr.ib(default=None, converter=url_or_none)
     cover_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
 
-    websub_hub: Optional[str] = attr.ib(default=None, converter=url_or_none)
-    websub_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
-
     funding_text: str = attr.ib(default="")
     funding_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
 
@@ -183,14 +180,6 @@ def parse_feed(finder):
         cover_url=finder.find("itunes:image/@href", "image/url/text()"),
         funding_url=finder.find("podcast:funding/@url", default=""),
         funding_text=finder.find("podcast:funding/text()", default=""),
-        websub_hub=finder.find(
-            "link[@rel='hub']/@href",
-            "atom:link[@rel='hub']/@href",
-        ),
-        websub_url=finder.find(
-            "link[@rel='self']/@href",
-            "atom:link[@rel='self']/@href",
-        ),
         description=finder.find(
             "description/text()",
             "itunes:summary/text()",

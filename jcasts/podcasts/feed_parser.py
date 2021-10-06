@@ -264,6 +264,8 @@ def reschedule(podcast):
     else:
         diff = MIN_SCHEDULED_DELTA
 
+    diff = diff + timedelta(seconds=int(diff.total_seconds() / 2))
+
     scheduled = now + diff
 
     get_queue("feeds").enqueue_at(scheduled, parse_podcast_feed, podcast.rss)

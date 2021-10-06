@@ -320,21 +320,25 @@ class TestReschedule:
         return mocker.patch("jcasts.podcasts.feed_parser.get_queue")
 
     @pytest.mark.parametrize(
-        "hours_ago,hours_diff",
+        "hours_ago,hours_range",
         [
-            (0, 1.0),
-            (72, 3.6),
-            (90 * 24, 108.0),
+            (0, (0.5, 1.6)),
+            (72, (1.8, 5.5)),
+            (90 * 24, (54, 163.0)),
         ],
     )
-    def test_reschedule(self, hours_ago, hours_diff, mock_get_queue):
+    def test_reschedule(self, hours_ago, hours_range, mock_get_queue):
         now = timezone.now()
         podcast = Podcast(pub_date=now - timedelta(hours=hours_ago))
         scheduled = reschedule(podcast)
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(hours_diff)
+        value = (scheduled - now).total_seconds() / 3600
+        assert value >= hours_range[0]
+        assert value <= hours_range[1]
         mock_get_queue.assert_called_with("feeds")
 
     def test_pub_date_none(self, mock_get_queue):
         scheduled = reschedule(Podcast(pub_date=None))
-        assert (scheduled - timezone.now()).total_seconds() / 3600 == pytest.approx(1)
+        value = (scheduled - timezone.now()).total_seconds() / 3600
+        assert value >= 0.5
+        assert value <= 1.5
         mock_get_queue.assert_called_with("feeds")
