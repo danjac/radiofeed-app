@@ -38,7 +38,17 @@ For the common case:
 
 > make push
 
-There is also a Github actions workflow set up to automatically run tests and deploy the main branch.
+Once deployed you can use the *dokku-manage* script to run Django commands remotely on your Dokku instance.
+
+First set the environment variable *JCASTS_SSH* to point to your IP address or domain:
+
+> export JCASTS_SSH=jcasts.io
+
+You can also set *JCASTS_APPNAME* if different to *jcasts*.
+
+Then just run e.g.
+
+> ./bin/dokku-manage shell
 
 ## Maintenance
 
