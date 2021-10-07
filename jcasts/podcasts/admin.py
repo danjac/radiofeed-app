@@ -140,6 +140,7 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
+                "scheduled",
                 "-pub_date",
             ]
         )
