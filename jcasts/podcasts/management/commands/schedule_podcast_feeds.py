@@ -11,10 +11,10 @@ class Command(BaseCommand):
         parser.add_argument("--clearqueue", action="store_true", default=False)
 
     def handle(self, *args, **options):
-        if options["reschedule"]:
-            feed_parser.reschedule_podcast_feeds()
-
         if options["clearqueue"]:
             feed_parser.clear_podcast_feed_queue()
+
+        if options["reschedule"]:
+            feed_parser.reschedule_podcast_feeds()
 
         feed_parser.schedule_podcast_feeds()
