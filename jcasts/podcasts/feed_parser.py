@@ -12,7 +12,7 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue, job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -39,19 +39,9 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-@attr.s(kw_only=True)
-class ParseResult:
-    rss: str = attr.ib()
-    success: bool = attr.ib(default=False)
-    status: Optional[http.HTTPStatus] = attr.ib(default=None)
-    exception: Optional[Exception] = attr.ib(default=None)
-
-    def __bool__(self):
-        return self.success
-
-    def raise_exception(self):
-        if self.exception:
-            raise self.exception
+def clear_podcast_feed_queue():
+    get_queue("feeds").empty()
+    Podcast.objects.filter(queued__isnull=False).update(queued=None)
 
 
 def reschedule_podcast_feeds():
@@ -80,6 +70,21 @@ def schedule_podcast_feeds():
         parse_podcast_feed.delay(rss)
 
     podcasts.update(queued=now)
+
+
+@attr.s(kw_only=True)
+class ParseResult:
+    rss: str = attr.ib()
+    success: bool = attr.ib(default=False)
+    status: Optional[http.HTTPStatus] = attr.ib(default=None)
+    exception: Optional[Exception] = attr.ib(default=None)
+
+    def __bool__(self):
+        return self.success
+
+    def raise_exception(self):
+        if self.exception:
+            raise self.exception
 
 
 @job("feeds")
