@@ -1,4 +1,5 @@
 import http
+import multiprocessing
 import secrets
 import traceback
 
@@ -59,17 +60,24 @@ def reschedule_podcast_feeds():
 def schedule_podcast_feeds():
     now = timezone.now()
 
+    # rough estimate: 1800 feeds/hour/CPU
+    limit = multiprocessing.cpu_count() * 1800
+
     podcasts = Podcast.objects.filter(
         active=True,
         queued__isnull=True,
         scheduled__isnull=False,
         scheduled__lt=now,
-    ).order_by("scheduled", "-pub_date")
+    ).order_by("scheduled", "-pub_date")[:limit]
 
-    for rss in podcasts.values_list("rss", flat=True).distinct():
-        parse_podcast_feed.delay(rss)
+    for_update = []
 
-    podcasts.update(queued=now)
+    for podcast in podcasts.iterator():
+        parse_podcast_feed.delay(podcast.rss)
+        podcast.queued = now
+        for_update.append(podcast)
+
+    Podcast.objects.bulk_update(for_update, fields=["queued"])
 
 
 @attr.s(kw_only=True)
