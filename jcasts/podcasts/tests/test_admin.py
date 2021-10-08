@@ -88,7 +88,7 @@ class TestScheduledFilter:
         podcast = PodcastFactory(scheduled=now)
         f = ScheduledFilter(req, {"scheduled": "pending"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
+        assert qs.count() == 4
         assert podcast in qs
 
     def test_unscheduled(self, podcasts, admin, req):

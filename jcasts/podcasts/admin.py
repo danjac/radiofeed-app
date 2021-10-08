@@ -27,14 +27,13 @@ class ScheduledFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        print("VALUE", self.value())
         return queryset.filter(
             **{
-                "pending": {"queued__isnull": True, "scheduled__isnull": False},
+                "pending": {"queued__isnull": True},
                 "queued": {"queued__isnull": False},
                 "scheduled": {"scheduled__isnull": False},
                 "unscheduled": {"scheduled__isnull": True},
-            }.setdefault(self.value(), {})
+            }.setdefault(self.value(), {}),
         )
 
 
