@@ -75,19 +75,21 @@ class Podcast(models.Model):
     etag = models.TextField(blank=True)
     title = models.TextField()
 
-    # latest episode pub date
+    # latest episode pub date from RSS feed
     pub_date = models.DateTimeField(null=True, blank=True)
 
-    # scheduling/queuing fields
+    # feed scheduling/queuing fields
     scheduled = models.DateTimeField(null=True, blank=True)
     queued = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
     parsed = models.DateTimeField(null=True, blank=True)
-    # last successful RSS pull
-    succeeded = models.DateTimeField(null=True, blank=True)
+
     # last successful update (new episodes added)
     changed = models.DateTimeField(null=True, blank=True)
+
+    # Last-Modified header from RSS feed
+    modified = models.DateTimeField(null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
@@ -108,8 +110,6 @@ class Podcast(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
-    modified = models.DateTimeField(null=True, blank=True)
 
     explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)

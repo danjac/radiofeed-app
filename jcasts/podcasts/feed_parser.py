@@ -170,11 +170,12 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
 
+    # changed field is only set if we have new episodes:
+    # sometimes we get a 200 even if no episodes added
     if old_pub_date != podcast.pub_date:
         podcast.changed = now
 
     podcast.parsed = now
-    podcast.succeeded = now
     podcast.queued = None
     podcast.scheduled = reschedule(podcast)
     podcast.active = True
@@ -305,9 +306,9 @@ def reschedule(podcast):
 
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
-    if podcast.succeeded:
+    if podcast.changed:
         diff = max(
-            timedelta(seconds=(now - podcast.succeeded).total_seconds() * 0.05),
+            timedelta(seconds=(now - podcast.changed).total_seconds() * 0.05),
             MIN_SCHEDULED_DELTA,
         )
     else:
