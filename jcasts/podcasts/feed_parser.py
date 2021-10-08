@@ -159,6 +159,7 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = now
+    podcast.succeeded = now
     podcast.queued = None
     podcast.scheduled = reschedule(podcast)
     podcast.active = True
@@ -289,9 +290,9 @@ def reschedule(podcast):
 
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
-    if podcast.pub_date:
+    if podcast.succeeded:
         diff = max(
-            timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05),
+            timedelta(seconds=(now - podcast.succeeded).total_seconds() * 0.05),
             MIN_SCHEDULED_DELTA,
         )
     else:

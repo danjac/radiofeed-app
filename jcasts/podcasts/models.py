@@ -79,6 +79,7 @@ class Podcast(models.Model):
     parsed = models.DateTimeField(null=True, blank=True)
     scheduled = models.DateTimeField(null=True, blank=True)
     queued = models.DateTimeField(null=True, blank=True)
+    succeeded = models.DateTimeField(null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
@@ -121,6 +122,7 @@ class Podcast(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["title"]),
+            models.Index(fields=["-succeeded", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),
