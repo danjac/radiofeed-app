@@ -30,6 +30,7 @@ USER_AGENTS = [
 ]
 
 MIN_SCHEDULED_DELTA = timedelta(hours=1)
+MAX_SCHEDULED_DELTA = timedelta(hours=24)
 
 
 class NotModified(requests.RequestException):
@@ -306,6 +307,8 @@ def reschedule(podcast):
         )
     else:
         diff = MIN_SCHEDULED_DELTA
+
+    diff = min(diff, MAX_SCHEDULED_DELTA)
 
     seconds = int(diff.total_seconds() / 2)
 
