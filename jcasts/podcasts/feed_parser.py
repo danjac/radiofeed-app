@@ -167,6 +167,7 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = now
+
     podcast.succeeded = now
     podcast.queued = None
     podcast.scheduled = reschedule(podcast)

@@ -26,7 +26,7 @@ def index(request):
     )
     podcasts = (
         Podcast.objects.filter(pub_date__isnull=False)
-        .order_by("-succeeded", "-pub_date")
+        .order_by("-pub_date", "-succeeded")
         .distinct()
     )
 
