@@ -75,11 +75,19 @@ class Podcast(models.Model):
     etag = models.TextField(blank=True)
     title = models.TextField()
 
+    # latest episode pub date
     pub_date = models.DateTimeField(null=True, blank=True)
-    parsed = models.DateTimeField(null=True, blank=True)
+
+    # scheduling/queuing fields
     scheduled = models.DateTimeField(null=True, blank=True)
     queued = models.DateTimeField(null=True, blank=True)
+
+    # last parse time (success or fail)
+    parsed = models.DateTimeField(null=True, blank=True)
+    # last successful RSS pull
     succeeded = models.DateTimeField(null=True, blank=True)
+    # last successful update (new episodes added)
+    changed = models.DateTimeField(null=True, blank=True)
 
     http_status = models.SmallIntegerField(null=True, blank=True)
     exception = models.TextField(blank=True)
@@ -122,7 +130,7 @@ class Podcast(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["title"]),
-            models.Index(fields=["-pub_date", "-succeeded"]),
+            models.Index(fields=["-changed", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),

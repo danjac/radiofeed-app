@@ -229,6 +229,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.year == 2020
         assert new_podcast.parsed
         assert new_podcast.succeeded
+        assert new_podcast.changed
         assert new_podcast.queued is None
 
         assert new_podcast.etag

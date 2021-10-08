@@ -92,6 +92,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "scheduled",
         "queued",
         "succeeded",
+        "changed",
         "modified",
         "pub_date",
         "etag",
