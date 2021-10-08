@@ -13,8 +13,33 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+class ScheduledFilter(admin.SimpleListFilter):
+
+    title = "Scheduled"
+    parameter_name = "scheduled"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("scheduled", "Scheduled"),
+            ("pending", "Pending"),
+            ("queued", "Queued"),
+            ("unscheduled", "Unscheduled"),
+        )
+
+    def queryset(self, request, queryset):
+        print("VALUE", self.value())
+        return queryset.filter(
+            **{
+                "pending": {"queued__isnull": True, "scheduled__isnull": False},
+                "queued": {"queued__isnull": False},
+                "scheduled": {"scheduled__isnull": False},
+                "unscheduled": {"scheduled__isnull": True},
+            }.setdefault(self.value(), {})
+        )
+
+
 class PubDateFilter(admin.SimpleListFilter):
-    title = "Pub date"
+    title = "Pub Date"
     parameter_name = "pub_date"
 
     def lookups(self, request, model_admin):
@@ -71,6 +96,7 @@ class PodcastAdmin(admin.ModelAdmin):
         ActiveFilter,
         PromotedFilter,
         PubDateFilter,
+        ScheduledFilter,
     )
 
     list_display = (

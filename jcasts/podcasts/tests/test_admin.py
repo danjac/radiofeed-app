@@ -3,12 +3,14 @@ from unittest import mock
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
+    ScheduledFilter,
 )
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -62,6 +64,39 @@ class TestPodcastAdmin:
         PodcastFactory(active=False)
         admin.reactivate_podcast_feeds(req, Podcast.objects.all())
         assert Podcast.objects.filter(active=True).count() == 1
+
+
+class TestScheduledFilter:
+    def test_scheduled(self, podcasts, admin, req):
+        podcast = PodcastFactory(scheduled=timezone.now())
+        f = ScheduledFilter(req, {"scheduled": "scheduled"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert podcast in qs
+
+    def test_queued(self, podcasts, admin, req):
+        now = timezone.now()
+        podcast = PodcastFactory(scheduled=now, queued=now)
+        f = ScheduledFilter(req, {"scheduled": "queued"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert podcast in qs
+
+    def test_pending(self, podcasts, admin, req):
+        now = timezone.now()
+        PodcastFactory(scheduled=now, queued=now)
+        podcast = PodcastFactory(scheduled=now)
+        f = ScheduledFilter(req, {"scheduled": "pending"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert podcast in qs
+
+    def test_unscheduled(self, podcasts, admin, req):
+        podcast = PodcastFactory(scheduled=timezone.now())
+        f = ScheduledFilter(req, {"scheduled": "unscheduled"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert podcast not in qs
 
 
 class TestPubDateFilter:
