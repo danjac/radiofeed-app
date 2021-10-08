@@ -100,7 +100,8 @@ class TestSchedulePodcastFeeds:
         )
         schedule_podcast_feeds()
         assert mock_parse.call_count == expected
-        assert Podcast.objects.filter(queued__isnull=False).count() == expected
+        num_queued = 1 if queued else expected
+        assert Podcast.objects.filter(queued__isnull=False).count() == num_queued
 
 
 class TestParsePodcastFeed:
