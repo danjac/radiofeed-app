@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -69,7 +69,7 @@ def schedule_podcast_feeds():
         Q(scheduled__lt=now) | Q(scheduled__isnull=True),
         active=True,
         queued__isnull=True,
-    ).order_by("scheduled", "-pub_date")[:limit]
+    ).order_by(F("scheduled").asc(nulls_first=True))[:limit]
 
     for_update = []
 
