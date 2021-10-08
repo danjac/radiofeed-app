@@ -11,6 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -65,10 +66,9 @@ def schedule_podcast_feeds():
     limit = multiprocessing.cpu_count() * 1800
 
     podcasts = Podcast.objects.filter(
+        Q(scheduled__lt=now) | Q(scheduled__isnull=True),
         active=True,
         queued__isnull=True,
-        scheduled__isnull=False,
-        scheduled__lt=now,
     ).order_by("scheduled", "-pub_date")[:limit]
 
     for_update = []

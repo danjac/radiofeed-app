@@ -80,6 +80,7 @@ class TestSchedulePodcastFeeds:
     @pytest.mark.parametrize(
         "active,scheduled,queued,expected",
         [
+            (True, None, False, 1),
             (True, timedelta(days=-1), False, 1),
             (False, timedelta(days=-1), False, 0),
             (True, timedelta(days=1), False, 0),

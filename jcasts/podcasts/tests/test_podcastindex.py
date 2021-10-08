@@ -63,14 +63,11 @@ def podcastindex_client():
 
 
 class TestNewFeeds:
-    def test_ok(
-        self, db, mock_good_response, mock_parse_podcast_feed, podcastindex_client
-    ):
+    def test_ok(self, db, mock_good_response, podcastindex_client):
 
         feeds = podcastindex.new_feeds()
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_podcast_feed.assert_called()
 
 
 class TestSearch:
@@ -82,36 +79,26 @@ class TestSearch:
         with pytest.raises(ValueError):
             podcastindex.search("test")
 
-    def test_not_ok(
-        self, db, mock_bad_response, mock_parse_podcast_feed, podcastindex_client
-    ):
+    def test_not_ok(self, db, mock_bad_response, podcastindex_client):
 
         with pytest.raises(requests.HTTPError):
             podcastindex.search("test")
 
         assert not Podcast.objects.exists()
-        mock_parse_podcast_feed.assert_not_called()
 
-    def test_ok(
-        self, db, mock_good_response, mock_parse_podcast_feed, podcastindex_client
-    ):
+    def test_ok(self, db, mock_good_response, podcastindex_client):
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_podcast_feed.assert_called()
 
-    def test_bad_data(
-        self, db, mock_invalid_response, mock_parse_podcast_feed, podcastindex_client
-    ):
+    def test_bad_data(self, db, mock_invalid_response, podcastindex_client):
         feeds = podcastindex.search("test")
         assert len(feeds) == 0
-        mock_parse_podcast_feed.assert_not_called()
 
     def test_is_not_cached(
         self,
         db,
         mock_good_response,
-        mock_parse_podcast_feed,
         locmem_cache,
         podcastindex_client,
     ):
@@ -120,7 +107,6 @@ class TestSearch:
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_podcast_feed.assert_called()
 
         assert cache.get(self.cache_key) == feeds
 
@@ -128,7 +114,6 @@ class TestSearch:
         self,
         db,
         mock_good_response,
-        mock_parse_podcast_feed,
         locmem_cache,
         podcastindex_client,
     ):
@@ -144,13 +129,9 @@ class TestSearch:
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
         mock_good_response.assert_not_called()
-        mock_parse_podcast_feed.assert_not_called()
 
-    def test_podcast_exists(
-        self, db, mock_good_response, mock_parse_podcast_feed, podcastindex_client
-    ):
+    def test_podcast_exists(self, db, mock_good_response, podcastindex_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = podcastindex.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
-        mock_parse_podcast_feed.assert_not_called()
