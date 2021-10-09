@@ -132,6 +132,8 @@ class PodcastAdmin(admin.ModelAdmin):
         queryset = queryset.active()
         num_feeds = queryset.count()
 
+        queryset.update(queued=None)
+
         feed_parser.parse_podcast_feeds(queryset)
 
         self.message_user(
