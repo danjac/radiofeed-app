@@ -13,13 +13,11 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
-    clear_podcast_feed_queues,
     get_categories_dict,
     get_feed_headers,
     parse_podcast_feed,
     parse_podcast_feeds,
     reschedule,
-    reschedule_podcast_feeds,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
@@ -59,22 +57,6 @@ class TestFeedHeaders:
         podcast = Podcast(modified=timezone.now())
         headers = get_feed_headers(podcast)
         assert headers["If-Modified-Since"]
-
-
-class TestClearPodcastFeedQueues:
-    def test_clear_podcast_feed_queues(self, db, mocker):
-        mock_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
-        PodcastFactory(queued=timezone.now())
-        clear_podcast_feed_queues()
-        assert Podcast.objects.filter(queued__isnull=False).count() == 0
-        mock_queue.assert_called()
-
-
-class TestReschedulePodcastFeeds:
-    def test_reschedule_podcast_feeds(self, db):
-        PodcastFactory(active=True, scheduled=None)
-        reschedule_podcast_feeds()
-        assert Podcast.objects.count() == 1
 
 
 class TestSchedulePodcastFeeds:
@@ -361,7 +343,7 @@ class TestReschedule:
         [
             (0, (0.5, 1.6)),
             (72, (1.8, 5.5)),
-            (100, (1.8, 5.5)),
+            (30 * 90, (12.0, 36.0)),
         ],
     )
     def test_reschedule(self, hours_ago, hours_range):

@@ -14,7 +14,7 @@ from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
+from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -40,23 +40,6 @@ class NotModified(requests.RequestException):
 
 class DuplicateFeed(requests.RequestException):
     ...
-
-
-def clear_podcast_feed_queues():
-    get_queue("feeds").empty()
-    Podcast.objects.filter(queued__isnull=False).update(queued=None)
-
-
-def reschedule_podcast_feeds():
-
-    podcasts = Podcast.objects.filter(active=True, pub_date__isnull=False)
-    for_update = []
-
-    for podcast in podcasts:
-        podcast.scheduled = reschedule(podcast.pub_date)
-        for_update.append(podcast)
-
-    Podcast.objects.bulk_update(for_update, fields=["scheduled"])
 
 
 def schedule_podcast_feeds():
