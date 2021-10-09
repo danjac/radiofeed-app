@@ -39,11 +39,10 @@
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
           class="relative bg-transparent hidden sm:block"
-          x-data="{search: '', currentIndex: 0}"
+          x-data="{search: ''}"
           x-init="
           $watch('search', value => {
             if (!value) {
-              currentIndex = 0;
               $refs.searchResults.innerHTML = '';
             }
           })"
