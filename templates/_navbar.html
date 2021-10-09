@@ -40,6 +40,12 @@
           method="get"
           class="relative bg-transparent hidden sm:block"
           x-data="{search: ''}"
+          x-init="
+          $watch('search', value => {
+            if (!value) {
+              $refs.searchResults.innerHTML = '';
+            }
+          })"
           hx-push-url="true"
           @submit="$refs.input.blur(); search=''; sidebar=false"
           @keydown.escape.window="search=''">
@@ -67,7 +73,7 @@
         </button>
       </div>
 
-      <div id="search-autocomplete"></div>
+      <div id="search-autocomplete" x-ref="searchResults"></div>
 
     </form>
 
