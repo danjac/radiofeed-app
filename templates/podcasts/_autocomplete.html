@@ -25,12 +25,20 @@
   {% endwith %}
   {% endfor %}
 
-  <div>
+  <div class="flex justify-between">
+    {% if total > 6 %}
+    <a href="{% url 'podcasts:search_podcasts' %}?q={{ request.search }}"
+       @click="search=''"
+       class="link text-sm">
+      More Results
+    </a>
+    {% endif %}
     <a href="{% url 'episodes:search_episodes' %}?q={{ request.search }}"
        @click="search=''"
        class="link text-sm">
       Search Episodes
     </a>
+
   </div>
 
 </div>

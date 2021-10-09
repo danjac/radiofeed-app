@@ -97,12 +97,14 @@ def search_podcastindex(request):
 @require_http_methods(["GET"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def search_autocomplete(request):
-    podcasts = Podcast.objects.search(request.search)[:6] if request.search else []
+    podcasts = Podcast.objects.search(request.search)
+    total = podcasts.count()
     return TemplateResponse(
         request,
         "podcasts/_autocomplete.html",
         {
-            "podcasts": podcasts,
+            "podcasts": podcasts[:6],
+            "total": total,
         },
     )
 
