@@ -16,6 +16,5 @@ class Command(BaseCommand):
 
         if options["reschedule"]:
             feed_parser.reschedule_podcast_feeds()
-            return
-
-        feed_parser.schedule_podcast_feeds()
+        else:
+            feed_parser.schedule_podcast_feeds()
