@@ -21,7 +21,6 @@ class ScheduledFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ("scheduled", "Scheduled"),
-            ("pending", "Pending"),
             ("queued", "Queued"),
             ("unscheduled", "Unscheduled"),
         )
@@ -29,7 +28,6 @@ class ScheduledFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         return queryset.filter(
             **{
-                "pending": {"queued__isnull": True},
                 "queued": {"queued__isnull": False},
                 "scheduled": {"scheduled__isnull": False},
                 "unscheduled": {"scheduled__isnull": True},
