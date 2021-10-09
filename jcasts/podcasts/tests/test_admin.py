@@ -56,10 +56,9 @@ class TestPodcastAdmin:
         ordering = admin.get_ordering(req)
         assert ordering == []
 
-    def test_parse_podcast_feeds(self, podcast, admin, req, mocker):
-        mock_parse = mocker.patch("jcasts.podcasts.feed_parser.parse_podcast_feeds")
+    def test_parse_podcast_feeds(self, podcast, admin, req, mock_parse_podcast_feed):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse.assert_called()
+        mock_parse_podcast_feed.assert_called_with(podcast.rss)
 
     def test_reactivate_podcast_feeds(self, db, admin, req):
         PodcastFactory(active=False)

@@ -56,7 +56,7 @@ def schedule_podcast_feeds():
     parse_podcast_feeds(Podcast.objects.active().sporadic(), remainder)
 
 
-def parse_podcast_feeds(qs, limit=None):
+def parse_podcast_feeds(qs, limit):
 
     for_update = []
     now = timezone.now()
@@ -64,10 +64,7 @@ def parse_podcast_feeds(qs, limit=None):
     qs = qs.filter(
         Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
         queued__isnull=True,
-    ).order_by(F("scheduled").asc(nulls_first=True))
-
-    if limit:
-        qs = qs[:limit]
+    ).order_by(F("scheduled").asc(nulls_first=True))[:limit]
 
     for podcast in qs.iterator():
         parse_podcast_feed.delay(podcast.rss)
