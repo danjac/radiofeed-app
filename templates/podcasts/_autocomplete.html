@@ -1,0 +1,37 @@
+{% if podcasts %}
+<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded p-2 top-10"
+     x-show="search">
+  {% for podcast in podcasts %}
+  {% with podcast_url=podcast.get_absolute_url %}
+  <div class="mb-3 flex items-center space-x-3">
+
+    <div class="w-14">
+      <a href="{{ podcast_url }}"
+         @click="search=''">
+        {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 %}
+      </a>
+    </div>
+
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-10">
+      <a href="{{ podcast_url }}"
+         class="link"
+         title="{{ podcast.title }}"
+         @click="search=''">
+        {{ podcast.cleaned_title|truncatechars:80 }}
+      </a>
+    </div>
+
+  </div>
+  {% endwith %}
+  {% endfor %}
+
+  <div>
+    <a href="{% url 'episodes:search_episodes' %}?q={{ request.search }}"
+       @click="search=''"
+       class="link text-sm">
+      Search Episodes
+    </a>
+  </div>
+
+</div>
+{% endif %}

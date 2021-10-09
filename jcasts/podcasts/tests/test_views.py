@@ -96,6 +96,28 @@ class TestSearchPodcasts:
         assert resp.context_data["page_obj"].object_list[0] == podcast
 
 
+class TestSearchAutocomplete:
+    def test_search_empty(self, client, db, django_assert_num_queries):
+        with django_assert_num_queries(1):
+            assert_ok(
+                client.get(
+                    reverse("podcasts:search_autocomplete"),
+                    {"q": ""},
+                )
+            )
+
+    def test_search(self, client, db, faker, django_assert_num_queries):
+        podcast = PodcastFactory(title=faker.unique.text())
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        with django_assert_num_queries(2):
+            resp = client.get(
+                reverse("podcasts:search_autocomplete"),
+                {"q": podcast.title},
+            )
+        assert_ok(resp)
+        assert len(resp.context_data["podcasts"]) == 1
+
+
 class TestSearchPodcastIndex:
     def test_search(self, client, db, mocker, django_assert_num_queries):
         feeds = [

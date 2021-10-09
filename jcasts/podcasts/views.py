@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
@@ -89,6 +90,19 @@ def search_podcastindex(request):
         {
             "feeds": feeds,
             "clear_search_url": reverse("podcasts:index"),
+        },
+    )
+
+
+@require_http_methods(["GET"])
+@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
+def search_autocomplete(request):
+    podcasts = Podcast.objects.search(request.search)[:6] if request.search else []
+    return TemplateResponse(
+        request,
+        "podcasts/_autocomplete.html",
+        {
+            "podcasts": podcasts,
         },
     )
 
