@@ -10,7 +10,6 @@ from typing import Optional
 import attr
 import requests
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
@@ -70,39 +69,24 @@ def schedule_podcast_feeds():
     limit = multiprocessing.cpu_count() * 1800
     remainder = round(limit / 10.0)
 
-    schedule_frequent_podcast_feeds(limit - remainder)
-    schedule_sporadic_podcast_feeds(remainder)
+    parse_podcast_feeds(Podcast.objects.active().frequent(), limit - remainder)
+    parse_podcast_feeds(Podcast.objects.active().sporadic(), remainder)
 
 
-def schedule_frequent_podcast_feeds(limit):
-
-    parse_podcast_feeds(
-        Podcast.objects.active()
-        .frequent()
-        .filter(
-            Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
-            queued__isnull=True,
-        )
-        .order_by(F("scheduled").asc(nulls_first=True))[:limit],
-    )
-
-
-def schedule_sporadic_podcast_feeds(limit):
-
-    parse_podcast_feeds(
-        Podcast.objects.active()
-        .sporadic()
-        .filter(queued__isnull=True)
-        .order_by("-pub_date")[:limit],
-    )
-
-
-def parse_podcast_feeds(podcasts):
+def parse_podcast_feeds(qs, limit=None):
 
     for_update = []
     now = timezone.now()
 
-    for podcast in podcasts.iterator():
+    qs = qs.filter(
+        Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
+        queued__isnull=True,
+    ).order_by(F("scheduled").asc(nulls_first=True))
+
+    if limit:
+        qs = qs[:limit]
+
+    for podcast in qs.iterator():
         parse_podcast_feed.delay(podcast.rss)
         podcast.queued = now
         for_update.append(podcast)
@@ -327,9 +311,6 @@ def reschedule(pub_date):
     now = timezone.now()
 
     delta = now - pub_date if pub_date else MIN_SCHEDULED_DELTA
-
-    if delta > settings.RELEVANCY_THRESHOLD:
-        return None
 
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours

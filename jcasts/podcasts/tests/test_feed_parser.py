@@ -17,11 +17,10 @@ from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
     parse_podcast_feed,
+    parse_podcast_feeds,
     reschedule,
     reschedule_podcast_feeds,
-    schedule_frequent_podcast_feeds,
     schedule_podcast_feeds,
-    schedule_sporadic_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -83,70 +82,36 @@ class TestSchedulePodcastFeeds:
 
         mocker.patch("multiprocessing.cpu_count", return_value=2)
 
-        mock_frequent = mocker.patch(
-            "jcasts.podcasts.feed_parser.schedule_frequent_podcast_feeds"
-        )
-        mock_sporadic = mocker.patch(
-            "jcasts.podcasts.feed_parser.schedule_sporadic_podcast_feeds"
+        mock_parse_feeds = mocker.patch(
+            "jcasts.podcasts.feed_parser.parse_podcast_feeds"
         )
 
         schedule_podcast_feeds()
 
-        mock_frequent.assert_called_with(3240)
-        mock_sporadic.assert_called_with(360)
+        assert mock_parse_feeds.mock_calls[0][1][1] == 3240
+        assert mock_parse_feeds.mock_calls[1][1][1] == 360
 
 
-class TestScheduleFrequentPodcastFeeds:
+class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "active,scheduled,pub_date,queued,expected",
+        "active,scheduled,queued,expected",
         [
-            (True, None, None, False, 1),
-            (True, None, timedelta(days=1), False, 1),
-            (True, timedelta(days=-1), timedelta(days=1), False, 1),
-            (False, timedelta(days=-1), timedelta(days=1), False, 0),
-            (True, timedelta(days=1), timedelta(days=1), True, 0),
-            (True, timedelta(days=-1), timedelta(days=99), False, 0),
+            (True, None, False, 1),
+            (True, timedelta(days=-1), False, 1),
+            (True, timedelta(days=1), False, 0),
+            (True, timedelta(days=-1), True, 0),
         ],
     )
     def test_schedule_podcast_feeds(
-        self, db, mock_parse_podcast_feed, active, scheduled, pub_date, queued, expected
+        self, db, mock_parse_podcast_feed, active, scheduled, queued, expected
     ):
         now = timezone.now()
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
-            pub_date=now - pub_date if pub_date else None,
             queued=now if queued else None,
         )
-        schedule_frequent_podcast_feeds(10)
-        assert len(mock_parse_podcast_feed.mock_calls) == expected
-        num_queued = 1 if queued else 0
-        assert (
-            Podcast.objects.filter(queued__isnull=False).count() - num_queued
-            == expected
-        )
-
-
-class TestScheduleSporadicPodcastFeeds:
-    @pytest.mark.parametrize(
-        "active,pub_date,queued,expected",
-        [
-            (True, None, False, 0),
-            (True, timedelta(days=1), False, 0),
-            (True, timedelta(days=99), True, 0),
-            (True, timedelta(days=99), False, 1),
-        ],
-    )
-    def test_schedule_podcast_feeds(
-        self, db, mock_parse_podcast_feed, active, pub_date, queued, expected
-    ):
-        now = timezone.now()
-        PodcastFactory(
-            active=active,
-            pub_date=now - pub_date if pub_date else None,
-            queued=now if queued else None,
-        )
-        schedule_sporadic_podcast_feeds(10)
+        parse_podcast_feeds(Podcast.objects.all(), 10)
         assert len(mock_parse_podcast_feed.mock_calls) == expected
         num_queued = 1 if queued else 0
         assert (
@@ -396,6 +361,7 @@ class TestReschedule:
         [
             (0, (0.5, 1.6)),
             (72, (1.8, 5.5)),
+            (100, (1.8, 5.5)),
         ],
     )
     def test_reschedule(self, hours_ago, hours_range):
@@ -404,9 +370,6 @@ class TestReschedule:
         value = (scheduled - now).total_seconds() / 3600
         assert value >= hours_range[0]
         assert value <= hours_range[1]
-
-    def test_pub_date_past_threshold(self):
-        assert reschedule(timezone.now() - timedelta(days=90)) is None
 
     def test_pub_date_none(self):
         scheduled = reschedule(None)
