@@ -20,6 +20,7 @@ from jcasts.podcasts.feed_parser import (
     reschedule,
     reschedule_podcast_feeds,
     schedule_frequent_podcast_feeds,
+    schedule_podcast_feeds,
     schedule_sporadic_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
@@ -77,6 +78,24 @@ class TestReschedulePodcastFeeds:
         assert Podcast.objects.count() == 1
 
 
+class TestSchedulePodcastFeeds:
+    def test_schedule_podcast_feeds(self, db, mocker):
+
+        mocker.patch("multiprocessing.cpu_count", return_value=2)
+
+        mock_frequent = mocker.patch(
+            "jcasts.podcasts.feed_parser.schedule_frequent_podcast_feeds"
+        )
+        mock_sporadic = mocker.patch(
+            "jcasts.podcasts.feed_parser.schedule_sporadic_podcast_feeds"
+        )
+
+        schedule_podcast_feeds()
+
+        mock_frequent.assert_called_with(3240)
+        mock_sporadic.assert_called_with(360)
+
+
 class TestScheduleFrequentPodcastFeeds:
     @pytest.mark.parametrize(
         "active,scheduled,pub_date,queued,expected",
@@ -90,18 +109,17 @@ class TestScheduleFrequentPodcastFeeds:
         ],
     )
     def test_schedule_podcast_feeds(
-        self, db, mocker, active, scheduled, pub_date, queued, expected
+        self, db, mock_parse_podcast_feed, active, scheduled, pub_date, queued, expected
     ):
         now = timezone.now()
-        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
             pub_date=now - pub_date if pub_date else None,
             queued=now if queued else None,
         )
-        schedule_frequent_podcast_feeds()
-        mock_get_queue.assert_called_with("feeds:frequent")
+        schedule_frequent_podcast_feeds(10)
+        assert len(mock_parse_podcast_feed.mock_calls) == expected
         num_queued = 1 if queued else 0
         assert (
             Podcast.objects.filter(queued__isnull=False).count() - num_queued
@@ -120,17 +138,16 @@ class TestScheduleSporadicPodcastFeeds:
         ],
     )
     def test_schedule_podcast_feeds(
-        self, db, mocker, active, pub_date, queued, expected
+        self, db, mock_parse_podcast_feed, active, pub_date, queued, expected
     ):
         now = timezone.now()
-        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
         PodcastFactory(
             active=active,
             pub_date=now - pub_date if pub_date else None,
             queued=now if queued else None,
         )
-        schedule_sporadic_podcast_feeds()
-        mock_get_queue.assert_called_with("feeds:sporadic")
+        schedule_sporadic_podcast_feeds(10)
+        assert len(mock_parse_podcast_feed.mock_calls) == expected
         num_queued = 1 if queued else 0
         assert (
             Podcast.objects.filter(queued__isnull=False).count() - num_queued

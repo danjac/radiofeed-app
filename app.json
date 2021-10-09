@@ -18,10 +18,6 @@
       "schedule": "0 * * * *"
     },
     {
-      "command": "python manage.py schedule_podcast_feeds --sporadic",
-      "schedule": "0 5 * * *"
-    },
-    {
       "command": "python manage.py fetch_new_feeds --limit=1000",
       "schedule": "25 6 * * *"
     },

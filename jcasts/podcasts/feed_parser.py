@@ -15,7 +15,7 @@ from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue
+from django_rq import get_queue, job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -43,14 +43,8 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def get_feed_scheduling_limit():
-    # rough estimate: 1800 feeds/hour/CPU
-    return multiprocessing.cpu_count() * 1800
-
-
 def clear_podcast_feed_queues():
-    for queue in ("feeds:frequent", "feeds:sporadic"):
-        get_queue(queue).empty()
+    get_queue("feeds").empty()
     Podcast.objects.filter(queued__isnull=False).update(queued=None)
 
 
@@ -66,7 +60,21 @@ def reschedule_podcast_feeds():
     Podcast.objects.bulk_update(for_update, fields=["scheduled"])
 
 
-def schedule_frequent_podcast_feeds():
+def schedule_podcast_feeds():
+    """
+    Schedules feeds for update.
+
+    Frequently updated feeds (< 90 days) should be prioritized (90%).
+    Remaining 10% should be any sporadic feeds.
+    """
+    limit = multiprocessing.cpu_count() * 1800
+    remainder = round(limit / 10.0)
+
+    schedule_frequent_podcast_feeds(limit - remainder)
+    schedule_sporadic_podcast_feeds(remainder)
+
+
+def schedule_frequent_podcast_feeds(limit):
 
     parse_podcast_feeds(
         Podcast.objects.active()
@@ -75,30 +83,27 @@ def schedule_frequent_podcast_feeds():
             Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
             queued__isnull=True,
         )
-        .order_by(F("scheduled").asc(nulls_first=True))[: get_feed_scheduling_limit()],
-        "feeds:frequent",
+        .order_by(F("scheduled").asc(nulls_first=True))[:limit],
     )
 
 
-def schedule_sporadic_podcast_feeds():
+def schedule_sporadic_podcast_feeds(limit):
 
     parse_podcast_feeds(
         Podcast.objects.active()
         .sporadic()
         .filter(queued__isnull=True)
-        .order_by("-pub_date")[: get_feed_scheduling_limit()],
-        "feeds:sporadic",
+        .order_by("-pub_date")[:limit],
     )
 
 
-def parse_podcast_feeds(podcasts, queue="feeds:frequent"):
-    queue = get_queue(queue)
+def parse_podcast_feeds(podcasts):
 
     for_update = []
     now = timezone.now()
 
     for podcast in podcasts.iterator():
-        queue.enqueue(parse_podcast_feed, podcast.rss)
+        parse_podcast_feed.delay(podcast.rss)
         podcast.queued = now
         for_update.append(podcast)
 
@@ -120,6 +125,7 @@ class ParseResult:
             raise self.exception
 
 
+@job("feeds")
 @transaction.atomic
 def parse_podcast_feed(rss):
 

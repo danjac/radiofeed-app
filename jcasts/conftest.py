@@ -31,6 +31,11 @@ def get_response():
 
 
 @pytest.fixture
+def mock_parse_podcast_feed(mocker):
+    return mocker.patch("jcasts.podcasts.feed_parser.parse_podcast_feed.delay")
+
+
+@pytest.fixture
 def user(db):
     return UserFactory()
 

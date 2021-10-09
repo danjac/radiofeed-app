@@ -7,7 +7,6 @@ class Command(BaseCommand):
     help = "Schedule podcast feeds"
 
     def add_arguments(self, parser):
-        parser.add_argument("--sporadic", action="store_true", default=False)
         parser.add_argument("--reschedule", action="store_true", default=False)
         parser.add_argument("--clearqueue", action="store_true", default=False)
 
@@ -19,8 +18,4 @@ class Command(BaseCommand):
             feed_parser.reschedule_podcast_feeds()
             return
 
-        if options["sporadic"]:
-            feed_parser.schedule_sporadic_podcast_feeds()
-            return
-
-        feed_parser.schedule_frequent_podcast_feeds()
+        feed_parser.schedule_podcast_feeds()
