@@ -131,14 +131,14 @@ class PodcastAdmin(admin.ModelAdmin):
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request, queryset):
 
-        queryset = queryset.filter(active=True)
+        queryset = queryset.active()
+        num_feeds = queryset.count()
 
-        for podcast in queryset:
-            feed_parser.parse_podcast_feed.delay(podcast.rss)
+        feed_parser.parse_podcast_feeds(queryset)
 
         self.message_user(
             request,
-            f"{queryset.count()} podcast(s) scheduled for update",
+            f"{num_feeds} podcast(s) scheduled for update",
             messages.SUCCESS,
         )
 

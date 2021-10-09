@@ -56,11 +56,20 @@ class Category(models.Model):
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def active(self):
-        return self.filter(active=True, pub_date__isnull=False)
+        return self.filter(active=True)
 
     def frequent(self):
-        return self.active().filter(
-            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+        return self.filter(
+            models.Q(
+                pub_date__gt=timezone.now() - settings.RELEVANCY_THRESHOLD,
+            )
+            | models.Q(pub_date__isnull=True)
+        )
+
+    def sporadic(self):
+        return self.filter(
+            pub_date__isnull=False,
+            pub_date__lte=timezone.now() - settings.RELEVANCY_THRESHOLD,
         )
 
 

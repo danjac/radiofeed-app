@@ -13,13 +13,14 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
-    clear_podcast_feed_queue,
+    clear_podcast_feed_queues,
     get_categories_dict,
     get_feed_headers,
     parse_podcast_feed,
     reschedule,
     reschedule_podcast_feeds,
-    schedule_podcast_feeds,
+    schedule_frequent_podcast_feeds,
+    schedule_sporadic_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
 
@@ -60,13 +61,13 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
-class TestClearPodcastFeedQueue:
-    def test_clear_podcast_feed_queue(self, db, mocker):
+class TestClearPodcastFeedQueues:
+    def test_clear_podcast_feed_queues(self, db, mocker):
         mock_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
         PodcastFactory(queued=timezone.now())
-        clear_podcast_feed_queue()
+        clear_podcast_feed_queues()
         assert Podcast.objects.filter(queued__isnull=False).count() == 0
-        mock_queue.assert_called_with("feeds")
+        mock_queue.assert_called()
 
 
 class TestReschedulePodcastFeeds:
@@ -76,33 +77,65 @@ class TestReschedulePodcastFeeds:
         assert Podcast.objects.count() == 1
 
 
-class TestSchedulePodcastFeeds:
+class TestScheduleFrequentPodcastFeeds:
     @pytest.mark.parametrize(
-        "active,scheduled,queued,expected",
+        "active,scheduled,pub_date,queued,expected",
         [
-            (True, None, False, 1),
-            (True, timedelta(days=-1), False, 1),
-            (False, timedelta(days=-1), False, 0),
-            (True, timedelta(days=1), False, 0),
-            (True, timedelta(days=-1), True, 0),
+            (True, None, None, False, 1),
+            (True, None, timedelta(days=1), False, 1),
+            (True, timedelta(days=-1), timedelta(days=1), False, 1),
+            (False, timedelta(days=-1), timedelta(days=1), False, 0),
+            (True, timedelta(days=1), timedelta(days=1), True, 0),
+            (True, timedelta(days=-1), timedelta(days=99), False, 0),
         ],
     )
     def test_schedule_podcast_feeds(
-        self, db, mocker, active, scheduled, queued, expected
+        self, db, mocker, active, scheduled, pub_date, queued, expected
     ):
         now = timezone.now()
+        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
         PodcastFactory(
             active=active,
             scheduled=now + scheduled if scheduled else None,
+            pub_date=now - pub_date if pub_date else None,
             queued=now if queued else None,
         )
-        mock_parse = mocker.patch(
-            "jcasts.podcasts.feed_parser.parse_podcast_feed.delay"
+        schedule_frequent_podcast_feeds()
+        mock_get_queue.assert_called_with("feeds:frequent")
+        num_queued = 1 if queued else 0
+        assert (
+            Podcast.objects.filter(queued__isnull=False).count() - num_queued
+            == expected
         )
-        schedule_podcast_feeds()
-        assert mock_parse.call_count == expected
-        num_queued = 1 if queued else expected
-        assert Podcast.objects.filter(queued__isnull=False).count() == num_queued
+
+
+class TestScheduleSporadicPodcastFeeds:
+    @pytest.mark.parametrize(
+        "active,pub_date,queued,expected",
+        [
+            (True, None, False, 0),
+            (True, timedelta(days=1), False, 0),
+            (True, timedelta(days=99), True, 0),
+            (True, timedelta(days=99), False, 1),
+        ],
+    )
+    def test_schedule_podcast_feeds(
+        self, db, mocker, active, pub_date, queued, expected
+    ):
+        now = timezone.now()
+        mock_get_queue = mocker.patch("jcasts.podcasts.feed_parser.get_queue")
+        PodcastFactory(
+            active=active,
+            pub_date=now - pub_date if pub_date else None,
+            queued=now if queued else None,
+        )
+        schedule_sporadic_podcast_feeds()
+        mock_get_queue.assert_called_with("feeds:sporadic")
+        num_queued = 1 if queued else 0
+        assert (
+            Podcast.objects.filter(queued__isnull=False).count() - num_queued
+            == expected
+        )
 
 
 class TestParsePodcastFeed:
@@ -346,19 +379,20 @@ class TestReschedule:
         [
             (0, (0.5, 1.6)),
             (72, (1.8, 5.5)),
-            (90 * 24, (12.0, 36.0)),
         ],
     )
     def test_reschedule(self, hours_ago, hours_range):
         now = timezone.now()
-        podcast = Podcast(pub_date=now - timedelta(hours=hours_ago))
-        scheduled = reschedule(podcast)
+        scheduled = reschedule(now - timedelta(hours=hours_ago))
         value = (scheduled - now).total_seconds() / 3600
         assert value >= hours_range[0]
         assert value <= hours_range[1]
 
+    def test_pub_date_past_threshold(self):
+        assert reschedule(timezone.now() - timedelta(days=90)) is None
+
     def test_pub_date_none(self):
-        scheduled = reschedule(Podcast(pub_date=None))
+        scheduled = reschedule(None)
         value = (scheduled - timezone.now()).total_seconds() / 3600
         assert value >= 0.5
         assert value <= 1.5

@@ -10,11 +10,12 @@ from typing import Optional
 import attr
 import requests
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
+from django_rq import get_queue
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -42,8 +43,14 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def clear_podcast_feed_queue():
-    get_queue("feeds").empty()
+def get_feed_scheduling_limit():
+    # rough estimate: 1800 feeds/hour/CPU
+    return multiprocessing.cpu_count() * 1800
+
+
+def clear_podcast_feed_queues():
+    for queue in ("feeds:frequent", "feeds:sporadic"):
+        get_queue(queue).empty()
     Podcast.objects.filter(queued__isnull=False).update(queued=None)
 
 
@@ -53,32 +60,45 @@ def reschedule_podcast_feeds():
     for_update = []
 
     for podcast in podcasts:
-        podcast.scheduled = reschedule(podcast)
+        podcast.scheduled = reschedule(podcast.pub_date)
         for_update.append(podcast)
 
     Podcast.objects.bulk_update(for_update, fields=["scheduled"])
 
 
-def schedule_podcast_feeds():
-    now = timezone.now()
+def schedule_frequent_podcast_feeds():
 
-    # rough estimate: 1800 feeds/hour/CPU
-    limit = multiprocessing.cpu_count() * 1800
-
-    podcasts = (
+    parse_podcast_feeds(
         Podcast.objects.active()
         .frequent()
         .filter(
-            Q(scheduled__lt=now) | Q(scheduled__isnull=True),
+            Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
             queued__isnull=True,
         )
-        .order_by(F("scheduled").asc(nulls_first=True))[:limit]
+        .order_by(F("scheduled").asc(nulls_first=True))[: get_feed_scheduling_limit()],
+        "feeds:frequent",
     )
 
+
+def schedule_sporadic_podcast_feeds():
+
+    parse_podcast_feeds(
+        Podcast.objects.active()
+        .sporadic()
+        .filter(queued__isnull=True)
+        .order_by("-pub_date")[: get_feed_scheduling_limit()],
+        "feeds:sporadic",
+    )
+
+
+def parse_podcast_feeds(podcasts, queue="feeds:frequent"):
+    queue = get_queue(queue)
+
     for_update = []
+    now = timezone.now()
 
     for podcast in podcasts.iterator():
-        parse_podcast_feed.delay(podcast.rss)
+        queue.enqueue(parse_podcast_feed, podcast.rss)
         podcast.queued = now
         for_update.append(podcast)
 
@@ -100,7 +120,6 @@ class ParseResult:
             raise self.exception
 
 
-@job("feeds")
 @transaction.atomic
 def parse_podcast_feed(rss):
 
@@ -174,7 +193,7 @@ def parse_success(podcast, response, feed, items):
 
     podcast.parsed = now
     podcast.queued = None
-    podcast.scheduled = reschedule(podcast)
+    podcast.scheduled = reschedule(podcast.pub_date)
     podcast.active = True
     podcast.exception = ""
 
@@ -297,29 +316,28 @@ def get_categories_dict():
     return Category.objects.in_bulk(field_name="name")
 
 
-def reschedule(podcast):
+def reschedule(pub_date):
 
     now = timezone.now()
 
+    delta = now - pub_date if pub_date else MIN_SCHEDULED_DELTA
+
+    if delta > settings.RELEVANCY_THRESHOLD:
+        return None
+
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
-    if podcast.pub_date:
-        diff = max(
-            timedelta(seconds=(now - podcast.pub_date).total_seconds() * 0.05),
+    delta = min(
+        max(
+            timedelta(seconds=delta.total_seconds() * 0.05),
             MIN_SCHEDULED_DELTA,
-        )
-    else:
-        diff = MIN_SCHEDULED_DELTA
+        ),
+        MAX_SCHEDULED_DELTA,
+    )
 
-    diff = min(diff, MAX_SCHEDULED_DELTA)
+    seconds = int(delta.total_seconds() / 2)
 
-    seconds = int(diff.total_seconds() / 2)
-
-    diff = diff + timedelta(seconds=secrets.choice(range(-seconds, seconds)))
-
-    scheduled = now + diff
-
-    return scheduled
+    return now + delta + timedelta(seconds=secrets.choice(range(-seconds, seconds)))
 
 
 def parse_failure(
@@ -339,7 +357,7 @@ def parse_failure(
         updated=now,
         parsed=now,
         queued=None,
-        scheduled=reschedule(podcast) if active else None,
+        scheduled=reschedule(podcast.pub_date) if active else None,
         http_status=status,
         exception=tb,
         **fields,

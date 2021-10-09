@@ -96,20 +96,30 @@ class TestPodcastManager:
         assert Podcast.objects.filter(title="test").count() == 1
 
     @pytest.mark.parametrize(
-        "active,last_pub,exists",
+        "last_pub,exists",
         [
-            (True, timedelta(days=30), True),
-            (True, timedelta(days=99), False),
-            (False, timedelta(days=30), False),
-            (True, None, False),
+            (timedelta(days=30), True),
+            (timedelta(days=99), False),
+            (None, True),
         ],
     )
-    def test_frequent(self, db, active, last_pub, exists):
-        PodcastFactory(
-            active=active, pub_date=timezone.now() - last_pub if last_pub else None
-        )
+    def test_frequent(self, db, last_pub, exists):
+        PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
         assert Podcast.objects.frequent().exists() is exists
+
+    @pytest.mark.parametrize(
+        "last_pub,exists",
+        [
+            (timedelta(days=30), False),
+            (timedelta(days=99), True),
+            (None, False),
+        ],
+    )
+    def test_sporadic(self, db, last_pub, exists):
+        PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
+
+        assert Podcast.objects.sporadic().exists() is exists
 
 
 class TestPodcastModel:
