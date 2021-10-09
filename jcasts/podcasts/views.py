@@ -25,9 +25,7 @@ def index(request):
         else set()
     )
     podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
-        .order_by("-changed", "-pub_date")
-        .distinct()
+        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
     promoted = "promoted" in request.GET or not follows

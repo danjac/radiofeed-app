@@ -85,9 +85,6 @@ class Podcast(models.Model):
     # last parse time (success or fail)
     parsed = models.DateTimeField(null=True, blank=True)
 
-    # last successful update (new episodes added)
-    changed = models.DateTimeField(null=True, blank=True)
-
     # Last-Modified header from RSS feed
     modified = models.DateTimeField(null=True, blank=True)
 
@@ -130,7 +127,6 @@ class Podcast(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["title"]),
-            models.Index(fields=["-changed", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),

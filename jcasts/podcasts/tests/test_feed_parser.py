@@ -229,7 +229,6 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert new_podcast.parsed
-        assert new_podcast.changed
         assert new_podcast.queued is None
 
         assert new_podcast.etag
@@ -352,14 +351,14 @@ class TestReschedule:
     )
     def test_reschedule(self, hours_ago, hours_range):
         now = timezone.now()
-        podcast = Podcast(changed=now - timedelta(hours=hours_ago))
+        podcast = Podcast(pub_date=now - timedelta(hours=hours_ago))
         scheduled = reschedule(podcast)
         value = (scheduled - now).total_seconds() / 3600
         assert value >= hours_range[0]
         assert value <= hours_range[1]
 
-    def test_changed_none(self):
-        scheduled = reschedule(Podcast(changed=None))
+    def test_pub_date_none(self):
+        scheduled = reschedule(Podcast(pub_date=None))
         value = (scheduled - timezone.now()).total_seconds() / 3600
         assert value >= 0.5
         assert value <= 1.5
