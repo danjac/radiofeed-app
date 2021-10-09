@@ -65,11 +65,15 @@ def schedule_podcast_feeds():
     # rough estimate: 1800 feeds/hour/CPU
     limit = multiprocessing.cpu_count() * 1800
 
-    podcasts = Podcast.objects.filter(
-        Q(scheduled__lt=now) | Q(scheduled__isnull=True),
-        active=True,
-        queued__isnull=True,
-    ).order_by(F("scheduled").asc(nulls_first=True))[:limit]
+    podcasts = (
+        Podcast.objects.active()
+        .frequent()
+        .filter(
+            Q(scheduled__lt=now) | Q(scheduled__isnull=True),
+            queued__isnull=True,
+        )
+        .order_by(F("scheduled").asc(nulls_first=True))[:limit]
+    )
 
     for_update = []
 
