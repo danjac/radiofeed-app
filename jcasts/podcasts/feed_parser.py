@@ -335,7 +335,6 @@ def parse_failure(
     active=True,
     exception=None,
     tb="",
-    **fields,
 ):
 
     now = timezone.now()
@@ -348,7 +347,6 @@ def parse_failure(
         scheduled=reschedule(podcast.pub_date) if active else None,
         http_status=status,
         exception=tb,
-        **fields,
     )
 
     return ParseResult(
