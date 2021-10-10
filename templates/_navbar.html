@@ -38,7 +38,34 @@
 
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
-          class="relative bg-transparent hidden sm:block"
+          class="relative bg-transparent hidden sm:block lg:hidden"
+          hx-push-url="true"
+          @submit="$refs.input.blur(); search=''; sidebar=false"
+          x-data="{search: ''}">
+      <input type="search"
+             x-ref="input"
+             x-model="search"
+             @enter="$refs.input.select()"
+             name="q"
+             accesskey="k"
+             autocomplete="off"
+             aria-label="Search"
+             placeholder="Search"
+             class="px-4 py-1 w-64 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+
+        <button type="submit"
+                title="Search"
+                class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+          {% icon "search" css_class="h-4 w-4" %}
+        </button>
+      </div>
+
+    </form>
+
+    <form action="{% url 'podcasts:search_podcasts' %}"
+          method="get"
+          class="relative bg-transparent hidden lg:block"
           x-data="{search: ''}"
           x-init="
           $watch('search', value => {
@@ -73,7 +100,8 @@
         </button>
       </div>
 
-      <div id="search-autocomplete" x-ref="searchResults"></div>
+      <div id="search-autocomplete"
+           x-ref="searchResults"></div>
 
     </form>
 
