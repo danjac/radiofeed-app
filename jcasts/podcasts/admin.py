@@ -44,8 +44,8 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("frequent", f"Frequent < ({settings.FRESHNESS_THRESHOLD.days})"),
-            ("sporadic", f"Sporadic > ({settings.FRESHNESS_THRESHOLD.days})"),
+            ("frequent", f"Frequent < ({settings.FRESHNESS_THRESHOLD.days} days)"),
+            ("sporadic", f"Sporadic > ({settings.FRESHNESS_THRESHOLD.days} days)"),
         )
 
     def queryset(self, request, queryset):
