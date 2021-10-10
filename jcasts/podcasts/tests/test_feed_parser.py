@@ -68,7 +68,7 @@ class TestSchedulePodcastFeeds:
             "jcasts.podcasts.feed_parser.parse_podcast_feeds"
         )
 
-        schedule_podcast_feeds()
+        schedule_podcast_feeds(frequency=timedelta(minutes=60))
 
         assert mock_parse_feeds.mock_calls[0][1][1] == 3240
         assert mock_parse_feeds.mock_calls[1][1][1] == 360

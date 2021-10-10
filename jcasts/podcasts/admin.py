@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin, messages
 
 from jcasts.podcasts import feed_parser, models
@@ -43,6 +44,8 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
+            ("frequent", f"Frequent < ({settings.FRESHNESS_THRESHOLD.days})"),
+            ("sporadic", f"Sporadic > ({settings.FRESHNESS_THRESHOLD.days})"),
         )
 
     def queryset(self, request, queryset):
@@ -51,6 +54,10 @@ class PubDateFilter(admin.SimpleListFilter):
             return queryset.filter(pub_date__isnull=False)
         if value == "no":
             return queryset.filter(pub_date__isnull=True)
+        if value == "frequent":
+            return queryset.frequent()
+        if value == "sporadic":
+            return queryset.sporadic()
         return queryset
 
 

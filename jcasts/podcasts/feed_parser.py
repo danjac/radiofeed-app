@@ -42,14 +42,16 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def schedule_podcast_feeds():
+def schedule_podcast_feeds(frequency):
     """
     Schedules feeds for update.
 
     Frequently updated feeds (< 90 days) should be prioritized (90%).
     Remaining 10% should be any sporadic feeds.
     """
-    limit = multiprocessing.cpu_count() * 1800
+
+    # rough estimate: takes 2 seconds per update
+    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
     remainder = round(limit / 10.0)
 
     parse_podcast_feeds(Podcast.objects.active().frequent(), limit - remainder)

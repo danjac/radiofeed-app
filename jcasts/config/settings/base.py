@@ -133,7 +133,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-RELEVANCY_THRESHOLD = timedelta(days=env.int("RELEVANCY_THRESHOLD_DAYS", default=90))
+FRESHNESS_THRESHOLD = timedelta(days=env.int("FRESHNESS_THRESHOLD_DAYS", default=90))
 
 DEFAULT_PAGE_SIZE = 30
 

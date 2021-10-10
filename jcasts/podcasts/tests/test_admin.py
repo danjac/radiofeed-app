@@ -1,3 +1,4 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -110,6 +111,30 @@ class TestPubDateFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
+
+    def test_pub_date_sporadic(self, settings, podcasts, admin, req):
+        now = timezone.now()
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
+        PodcastFactory(pub_date=None)
+        PodcastFactory(pub_date=now - timedelta(days=9))
+        not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
+
+        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert not_recent in qs
+
+    def test_pub_date_frequent(self, settings, podcasts, admin, req):
+        now = timezone.now()
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
+        no_pub_date = PodcastFactory(pub_date=None)
+        not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
+
+        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+        assert no_pub_date in qs
+        assert not_recent not in qs
 
 
 class TestActiveFilter:

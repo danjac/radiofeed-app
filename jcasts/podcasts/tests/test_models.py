@@ -103,7 +103,8 @@ class TestPodcastManager:
             (None, True),
         ],
     )
-    def test_frequent(self, db, last_pub, exists):
+    def test_frequent(self, db, settings, last_pub, exists):
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
         assert Podcast.objects.frequent().exists() is exists
@@ -116,7 +117,8 @@ class TestPodcastManager:
             (None, False),
         ],
     )
-    def test_sporadic(self, db, last_pub, exists):
+    def test_sporadic(self, db, settings, last_pub, exists):
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
         assert Podcast.objects.sporadic().exists() is exists

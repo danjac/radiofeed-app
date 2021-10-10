@@ -33,7 +33,7 @@ def index(request):
         Episode.objects.select_related("podcast")
         .filter(
             podcast__in=set(podcast_qs.values_list("pk", flat=True)),
-            pub_date__gte=timezone.now() - settings.RELEVANCY_THRESHOLD,
+            pub_date__gte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
         .order_by("-pub_date", "-id")
         .distinct()
