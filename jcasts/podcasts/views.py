@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -98,19 +99,19 @@ def search_podcastindex(request):
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def search_autocomplete(request):
 
-    podcasts = (
-        Podcast.objects.search(request.search.value).order_by("-rank", "-pub_date")
-        if request.search
-        else Podcast.objects.none()
-    )
-    return TemplateResponse(
-        request,
-        "podcasts/_autocomplete.html",
-        {
-            "podcasts": podcasts[:6],
-            "total": podcasts.count(),
-        },
-    )
+    if request.search:
+        podcasts = Podcast.objects.search(request.search.value).order_by(
+            "-rank", "-pub_date"
+        )
+        return TemplateResponse(
+            request,
+            "podcasts/_autocomplete.html",
+            {
+                "podcasts": podcasts[:6],
+                "total": podcasts.count(),
+            },
+        )
+    return HttpResponse()
 
 
 @require_http_methods(["GET"])
