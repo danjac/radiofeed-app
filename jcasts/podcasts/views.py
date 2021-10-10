@@ -97,7 +97,12 @@ def search_podcastindex(request):
 @require_http_methods(["GET"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
 def search_autocomplete(request):
-    podcasts = Podcast.objects.search(request.search).order_by("-rank", "-pub_date")
+
+    podcasts = (
+        Podcast.objects.search(request.search.value).order_by("-rank", "-pub_date")
+        if request.search
+        else Podcast.objects.none()
+    )
     return TemplateResponse(
         request,
         "podcasts/_autocomplete.html",
