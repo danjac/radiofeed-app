@@ -178,11 +178,8 @@ def parse_success(podcast, response, feed, items):
     # parsing status
     pub_dates = [item.pub_date for item in items]
 
-    now = timezone.now()
-
     podcast.pub_date = max(pub_dates)
-
-    podcast.parsed = now
+    podcast.parsed = timezone.now()
     podcast.queued = None
     podcast.scheduled = reschedule(podcast.pub_date)
     podcast.active = True
