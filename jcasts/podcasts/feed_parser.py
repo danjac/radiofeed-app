@@ -118,7 +118,7 @@ def parse_podcast_feed(rss):
         return parse_failure(
             podcast,
             status=e.response.status_code if e.response else None,
-            active=(
+            active=bool(
                 e.response
                 and e.response.status_code
                 not in (
