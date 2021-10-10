@@ -107,11 +107,33 @@ def parse_podcast_feed(rss):
     except NotModified as e:
         return parse_failure(podcast, status=e.response.status_code)
 
-    except requests.RequestException as e:
+    except DuplicateFeed as e:
+        return parse_failure(
+            podcast,
+            active=False,
+            status=e.response.status_code,
+        )
+
+    except requests.HTTPError as e:
         return parse_failure(
             podcast,
             status=e.response.status_code if e.response else None,
-            active=False,
+            active=(
+                e.response
+                and e.response.status_code
+                not in (
+                    http.HTTPStatus.FORBIDDEN,
+                    http.HTTPStatus.GONE,
+                    http.HTTPStatus.NOT_FOUND,
+                    http.HTTPStatus.PAYMENT_REQUIRED,
+                    http.HTTPStatus.UNAUTHORIZED,
+                )
+            ),
+        )
+
+    except requests.RequestException as e:
+        return parse_failure(
+            podcast,
             exception=e,
             tb=traceback.format_exc(),
         )

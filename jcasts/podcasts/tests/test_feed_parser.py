@@ -44,7 +44,7 @@ class MockResponse:
 
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
-        raise requests.HTTPError()
+        raise requests.HTTPError(response=self)
 
 
 class TestFeedHeaders:
@@ -317,23 +317,44 @@ class TestParsePodcastFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert not new_podcast.active
+        assert new_podcast.active
+        assert new_podcast.http_status is None
         assert new_podcast.queued is None
 
-    def test_parse_podcast_feed_gone(self, mocker, new_podcast, categories):
+    def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
-            return_value=BadMockResponse(new_podcast.rss, status=http.HTTPStatus.GONE),
+            return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
         result = parse_podcast_feed(new_podcast.rss)
-        assert result.success is False
+        # no exception set for http errors
+        result.raise_exception()
 
-        with pytest.raises(requests.HTTPError):
-            result.raise_exception()
+        assert result.success is False
 
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
+        assert new_podcast.http_status == http.HTTPStatus.GONE
+        assert new_podcast.queued is None
+
+    def test_parse_podcast_feed_http_server_error(
+        self, mocker, new_podcast, categories
+    ):
+        mocker.patch(
+            self.mock_http_get,
+            return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
+        )
+        result = parse_podcast_feed(new_podcast.rss)
+        # no exception set for http errors
+        result.raise_exception()
+
+        assert result.success is False
+
+        new_podcast.refresh_from_db()
+
+        assert new_podcast.active
+        assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.queued is None
 
 
