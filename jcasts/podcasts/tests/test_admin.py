@@ -75,14 +75,6 @@ class TestScheduledFilter:
         assert qs.count() == 1
         assert podcast in qs
 
-    def test_queued(self, podcasts, admin, req):
-        now = timezone.now()
-        podcast = PodcastFactory(scheduled=now, queued=now)
-        f = ScheduledFilter(req, {"scheduled": "queued"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
     def test_unscheduled(self, podcasts, admin, req):
         podcast = PodcastFactory(scheduled=timezone.now())
         f = ScheduledFilter(req, {"scheduled": "unscheduled"}, Podcast, admin)

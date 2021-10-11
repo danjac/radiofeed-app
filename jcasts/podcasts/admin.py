@@ -22,14 +22,12 @@ class ScheduledFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ("scheduled", "Scheduled"),
-            ("queued", "Queued"),
             ("unscheduled", "Unscheduled"),
         )
 
     def queryset(self, request, queryset):
         return queryset.filter(
             **{
-                "queued": {"queued__isnull": False},
                 "scheduled": {"scheduled__isnull": False},
                 "unscheduled": {"scheduled__isnull": True},
             }.setdefault(self.value(), {}),
@@ -120,7 +118,6 @@ class PodcastAdmin(admin.ModelAdmin):
     readonly_fields = (
         "parsed",
         "scheduled",
-        "queued",
         "modified",
         "pub_date",
         "etag",

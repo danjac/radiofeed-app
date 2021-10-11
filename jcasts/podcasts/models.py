@@ -89,7 +89,6 @@ class Podcast(models.Model):
 
     # feed scheduling/queuing fields
     scheduled = models.DateTimeField(null=True, blank=True)
-    queued = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
     parsed = models.DateTimeField(null=True, blank=True)
@@ -136,7 +135,7 @@ class Podcast(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["title"]),
-            models.Index(fields=["scheduled"]),
+            models.Index(fields=["scheduled", "-pub_date"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),

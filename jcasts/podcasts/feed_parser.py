@@ -54,26 +54,32 @@ def schedule_podcast_feeds(frequency):
     limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
     remainder = round(limit / 10.0)
 
-    parse_podcast_feeds(Podcast.objects.active().frequent(), limit - remainder)
-    parse_podcast_feeds(Podcast.objects.active().sporadic(), remainder)
+    qs = Podcast.objects.active()
+
+    parse_podcast_feeds(qs.frequent(), frequency, limit - remainder)
+    parse_podcast_feeds(qs.sporadic(), frequency, remainder)
 
 
-def parse_podcast_feeds(qs, limit):
+def parse_podcast_feeds(qs, frequency, limit):
 
-    for_update = []
     now = timezone.now()
 
+    # criteria:
+    # parsed or scheduled NULL: ok
+    # parsed < frequency
+    # scheduled < now
     qs = qs.filter(
-        Q(scheduled__lt=timezone.now()) | Q(scheduled__isnull=True),
-        queued__isnull=True,
-    ).order_by(F("scheduled").asc(nulls_first=True))[:limit]
+        Q(scheduled__isnull=True) | Q(scheduled__lt=now),
+        Q(parsed__isnull=True) | Q(parsed__lt=now - frequency),
+    ).order_by(
+        F("scheduled").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
+    )[
+        :limit
+    ]
 
     for podcast in qs.iterator():
         parse_podcast_feed.delay(podcast.rss)
-        podcast.queued = now
-        for_update.append(podcast)
-
-    Podcast.objects.bulk_update(for_update, fields=["queued"])
 
 
 @attr.s(kw_only=True)
@@ -180,7 +186,6 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = timezone.now()
-    podcast.queued = None
     podcast.scheduled = reschedule(podcast.pub_date)
     podcast.active = True
     podcast.exception = ""
@@ -340,7 +345,6 @@ def parse_failure(
         active=active,
         updated=now,
         parsed=now,
-        queued=None,
         scheduled=reschedule(podcast.pub_date) if active else None,
         http_status=status,
         exception=tb,
