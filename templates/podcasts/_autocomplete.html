@@ -7,8 +7,7 @@
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
   <div class="p-2 hover:bg-gray-300 dark:hover:bg-gray-900 flex items-center hover:cursor-pointer"
-          tabindex="{{ forloop.counter0 }}"
-          hx-get="{{ podcast_url }}">
+       hx-get="{{ podcast_url }}">
 
     <div class="w-14">
       {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
