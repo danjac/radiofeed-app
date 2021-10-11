@@ -100,8 +100,10 @@ def search_podcastindex(request):
 def search_autocomplete(request):
 
     if request.search:
-        podcasts = Podcast.objects.search(request.search.value).order_by(
-            "-rank", "-pub_date"
+        podcasts = (
+            Podcast.objects.search(request.search.value)
+            .filter(pub_date__isnull=False)
+            .order_by("-rank", "-pub_date")
         )
         return TemplateResponse(
             request,
