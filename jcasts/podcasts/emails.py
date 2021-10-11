@@ -5,7 +5,7 @@ from django.template import loader
 from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts.models import Recommendation
+from jcasts.podcasts.models import Podcast, Recommendation
 
 
 @job("mail")
@@ -20,12 +20,11 @@ def send_recommendations_email(user):
     """
     recommendations = (
         Recommendation.objects.for_user(user)
-        .select_related("recommended")
         .order_by("-frequency", "-similarity")
-        .distinct()[:3]
+        .values_list("recommended", flat=True)
     )
 
-    podcasts = [r.recommended for r in recommendations]
+    podcasts = Podcast.objects.filter(pk__in=list(recommendations)).distinct()[:3]
 
     # any unlistened episodes this week
 
