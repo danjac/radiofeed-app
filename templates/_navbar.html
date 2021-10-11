@@ -76,7 +76,7 @@
           hx-push-url="true"
           @submit="$refs.input.blur(); search='';"
           @keydown.escape.window="search=''"
-          @click.window="search=''">
+          @click.away.window="search=''">
       <input type="search"
              x-ref="input"
              x-model="search"

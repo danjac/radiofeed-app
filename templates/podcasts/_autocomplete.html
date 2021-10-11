@@ -3,7 +3,8 @@
      x-show="search"
      hx-target="#layout"
      hx-push-url="true"
-     hx-swap="outerHTML show:window:top">
+     hx-swap="outerHTML show:window:top"
+     @click="search=''">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
   <div class="p-2 hover:bg-gray-300 dark:hover:bg-gray-900 flex items-center hover:cursor-pointer"
