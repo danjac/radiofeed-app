@@ -1,32 +1,28 @@
 {% if podcasts %}
-<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded p-2 top-10"
+<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded top-10 text-black dark:text-white"
      x-show="search"
      @click="search=''"
      hx-target="#layout"
      hx-swap="outerHTML show:window:top">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
-  <div class="mb-3 flex items-center space-x-3">
+  <div class="p-2 hover:bg-gray-300 dark:hover:bg-gray-900 flex items-center hover:cursor-pointer"
+          hx-get="{{ podcast_url }}">
 
     <div class="w-14">
-      <a href="{{ podcast_url }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 %}
-      </a>
+      {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12">
-      <a href="{{ podcast_url }}"
-         class="link"
-         title="{{ podcast.title }}">
-        {{ podcast.cleaned_title|truncatechars:80 }}
-      </a>
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12 font-semibold"
+         title="{{ podcast.cleaned_title }}">
+      {{ podcast.cleaned_title|truncatechars:80 }}
     </div>
 
   </div>
   {% endwith %}
   {% endfor %}
 
-  <div class="flex justify-between">
+  <div class="flex justify-between p-2">
     {% if total > 6 %}
     <a href="{% url 'podcasts:search_podcasts' %}?q={{ request.search }}"
        class="link text-sm">
