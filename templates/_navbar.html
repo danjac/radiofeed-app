@@ -75,7 +75,8 @@
           })"
           hx-push-url="true"
           @submit="$refs.input.blur(); search=''; sidebar=false"
-          @keydown.escape.window="search=''">
+          @keydown.escape.window="search=''"
+          @click.window="search=''">
       <input type="search"
              x-ref="input"
              x-model="search"

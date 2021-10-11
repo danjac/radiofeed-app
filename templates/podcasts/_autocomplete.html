@@ -1,7 +1,6 @@
 {% if podcasts %}
 <div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded top-10 text-black dark:text-white"
      x-show="search"
-     @click="search=''"
      hx-target="#layout"
      hx-swap="outerHTML show:window:top">
   {% for podcast in podcasts %}
