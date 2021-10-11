@@ -2,6 +2,7 @@
 <div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded top-10 text-black dark:text-white"
      x-show="search"
      hx-target="#layout"
+     hx-push-url="true"
      hx-swap="outerHTML show:window:top">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
