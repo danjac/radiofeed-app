@@ -106,7 +106,7 @@ class TestSearchAutocomplete:
                 )
             )
 
-    def test_search(self, client, db, faker, django_assert_num_queries):
+    def test_search_podcast_only(self, client, db, faker, django_assert_num_queries):
         podcast = PodcastFactory(title=faker.unique.text())
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         with django_assert_num_queries(3):
@@ -116,6 +116,33 @@ class TestSearchAutocomplete:
             )
         assert_ok(resp)
         assert len(resp.context_data["podcasts"]) == 1
+        assert len(resp.context_data["episodes"]) == 0
+
+    def test_search_episode_only(self, client, db, faker, django_assert_num_queries):
+        episode = EpisodeFactory(title=faker.unique.text())
+        with django_assert_num_queries(4):
+            resp = client.get(
+                reverse("podcasts:search_autocomplete"),
+                {"q": episode.title},
+            )
+        assert_ok(resp)
+        assert len(resp.context_data["podcasts"]) == 0
+        assert len(resp.context_data["episodes"]) == 1
+
+    def test_search_podcast_and_episode(
+        self, client, db, faker, django_assert_num_queries
+    ):
+        podcast = PodcastFactory(title=faker.unique.text())
+        EpisodeFactory(title=podcast.title)
+        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        with django_assert_num_queries(4):
+            resp = client.get(
+                reverse("podcasts:search_autocomplete"),
+                {"q": podcast.title},
+            )
+        assert_ok(resp)
+        assert len(resp.context_data["podcasts"]) == 1
+        assert len(resp.context_data["episodes"]) == 1
 
 
 class TestSearchPodcastIndex:
@@ -123,7 +150,7 @@ class TestSearchPodcastIndex:
         feeds = [
             Feed(
                 url="https://feeds.fireside.fm/testandcode/rss",
-                title="Test & Code : Python Testing",
+                title="Test & Code : Py4hon Testing",
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             )
         ]

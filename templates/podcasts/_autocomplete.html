@@ -1,5 +1,5 @@
-{% if podcasts %}
-<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded top-10 text-black dark:text-white p-2"
+{% if podcasts or episodes %}
+<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-20 dark:border-gray-500 rounded top-10 text-black dark:text-white p-2 space-y-3"
      x-show="search"
      hx-target="#layout"
      hx-push-url="true"
@@ -7,7 +7,7 @@
      @click="search=''">
   {% for podcast in podcasts %}
   {% with podcast_url=podcast.get_absolute_url %}
-  <div class="mb-3 flex items-center space-x-2">
+  <div class="flex items-center space-x-2">
 
     <div class="w-14">
       <a href="{{ podcast_url }}"
@@ -28,19 +28,32 @@
   {% endwith %}
   {% endfor %}
 
-  <div class="flex justify-between">
-    {% if total > 6 %}
-    <a href="{% url 'podcasts:search_podcasts' %}?q={{ request.search }}"
-       class="link text-sm">
-      More Results
-    </a>
-    {% endif %}
-    <a href="{% url 'episodes:search_episodes' %}?q={{ request.search }}"
-       class="link text-sm">
-      Search Episodes
-    </a>
+  {% if episodes and podcasts %}
+  <hr class="dark:border-gray-500" />
+  {% endif %}
+
+  {% for episode in episodes %}
+  {% with podcast=episode.podcast %}
+  <div class="flex items-center space-x-2">
+
+    <div class="w-14">
+      <a href="{{ podcast.get_absolute_url }}"
+         title="{{ podcast.cleaned_title }}">
+        {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
+      </a>
+    </div>
+
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12">
+      <a href="{{ episode.get_absolute_url }}"
+         title="{{ episode.cleaned_title }}"
+         class="link">
+        {{ episode.cleaned_title|truncatechars:80 }}
+      </a>
+    </div>
 
   </div>
+  {% endwith %}
+  {% endfor %}
 
 </div>
 {% endif %}
