@@ -120,7 +120,7 @@ class TestSearchAutocomplete:
 
     def test_search_episode_only(self, client, db, faker, django_assert_num_queries):
         episode = EpisodeFactory(title=faker.unique.text())
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(3):
             resp = client.get(
                 reverse("podcasts:search_autocomplete"),
                 {"q": episode.title},
@@ -135,7 +135,7 @@ class TestSearchAutocomplete:
         podcast = PodcastFactory(title=faker.unique.text())
         EpisodeFactory(title=podcast.title)
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(3):
             resp = client.get(
                 reverse("podcasts:search_autocomplete"),
                 {"q": podcast.title},

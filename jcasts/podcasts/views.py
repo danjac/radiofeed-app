@@ -110,6 +110,7 @@ def search_autocomplete(request, limit=6):
 
     episodes = (
         Episode.objects.search(request.search.value)
+        .select_related("podcast")
         .filter(pub_date__isnull=False)
         .order_by("-rank", "-pub_date")[: limit - len(podcasts)]
     )
