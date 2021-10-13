@@ -1,3 +1,4 @@
+import mimetypes
 import os
 
 from datetime import datetime, timedelta
@@ -285,6 +286,7 @@ class Episode(models.Model):
     def get_media_metadata(self):
         # https://developers.google.com/web/updates/2017/02/media-session
         cover_url = self.get_cover_url() or static("img/podcast-icon.png")
+        cover_url_type, _ = mimetypes.guess_type(cover_url)
 
         return {
             "title": self.cleaned_title,
@@ -294,7 +296,7 @@ class Episode(models.Model):
                 {
                     "src": cover_url,
                     "sizes": f"{size}x{size}",
-                    "type": "image/png",
+                    "type": cover_url_type,
                 }
                 for size in [96, 128, 192, 256, 384, 512]
             ],

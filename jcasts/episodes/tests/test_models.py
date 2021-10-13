@@ -356,6 +356,11 @@ class TestEpisodeModel:
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
+        assert data["artwork"][0] == {
+            "src": episode.podcast.cover_url,
+            "sizes": "96x96",
+            "type": "image/jpeg",
+        }
 
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = EpisodeFactory(
