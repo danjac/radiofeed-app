@@ -74,6 +74,7 @@ def parse_podcast_feeds(qs, frequency, limit):
     ).order_by(
         F("scheduled").asc(nulls_first=True),
         F("pub_date").desc(nulls_first=True),
+        F("parsed").asc(nulls_first=True),
     )[
         :limit
     ]
