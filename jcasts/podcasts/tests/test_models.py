@@ -95,6 +95,30 @@ class TestPodcastManager:
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
 
+    def test_inactive(self, db):
+        PodcastFactory(active=False)
+        assert Podcast.objects.active().count() == 0
+
+    def test_active(self, db):
+        PodcastFactory(active=True)
+        assert Podcast.objects.active().count() == 1
+
+    def test_published_pub_date_not_null(self, db):
+        PodcastFactory(pub_date=timezone.now())
+        assert Podcast.objects.published().count() == 1
+
+    def test_published_pub_date_null(self, db):
+        PodcastFactory(pub_date=None)
+        assert Podcast.objects.published().count() == 0
+
+    def test_unpublished_pub_date_not_null(self, db):
+        PodcastFactory(pub_date=timezone.now())
+        assert Podcast.objects.unpublished().count() == 0
+
+    def test_unpublished_pub_date_null(self, db):
+        PodcastFactory(pub_date=None)
+        assert Podcast.objects.unpublished().count() == 1
+
     @pytest.mark.parametrize(
         "last_pub,exists",
         [

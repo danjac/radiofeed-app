@@ -26,9 +26,7 @@ def index(request):
         if request.user.is_authenticated
         else set()
     )
-    podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
-    )
+    podcasts = Podcast.objects.published().order_by("-pub_date").distinct()
 
     promoted = "promoted" in request.GET or not follows
 
@@ -66,7 +64,7 @@ def search_podcasts(request):
         return redirect("podcasts:index")
 
     podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
+        Podcast.objects.published()
         .search(request.search.value)
         .order_by("-rank", "-pub_date")
     )
@@ -103,15 +101,14 @@ def search_autocomplete(request, limit=6):
         return HttpResponse()
 
     podcasts = (
-        Podcast.objects.search(request.search.value)
-        .filter(pub_date__isnull=False)
+        Podcast.objects.published()
+        .search(request.search.value)
         .order_by("-rank", "-pub_date")
     )[:limit]
 
     episodes = (
         Episode.objects.search(request.search.value)
         .select_related("podcast")
-        .filter(pub_date__isnull=False)
         .order_by("-rank", "-pub_date")[: limit - len(podcasts)]
     )
 
@@ -197,7 +194,7 @@ def episodes(request, podcast_id, slug=None):
 def category_detail(request, category_id, slug=None):
 
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = category.podcast_set.filter(pub_date__isnull=False)
+    podcasts = category.podcast_set.published()
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
@@ -242,9 +239,7 @@ def unfollow(request, podcast_id):
 
 
 def get_podcast_or_404(request, podcast_id):
-    return get_object_or_404(
-        Podcast.objects.filter(pub_date__isnull=False), pk=podcast_id
-    )
+    return get_object_or_404(Podcast.objects.published(), pk=podcast_id)
 
 
 def get_podcast_detail_context(request, podcast, extra_context=None):

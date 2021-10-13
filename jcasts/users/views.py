@@ -37,7 +37,8 @@ def export_podcast_feeds(request):
         return TemplateResponse(request, "account/export_podcast_feeds.html")
 
     podcasts = (
-        Podcast.objects.filter(follow__user=request.user, pub_date__isnull=False)
+        Podcast.objects.published()
+        .filter(follow__user=request.user)
         .distinct()
         .order_by("-pub_date")
     ).iterator()

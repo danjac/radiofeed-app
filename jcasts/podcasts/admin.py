@@ -49,9 +49,9 @@ class PubDateFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         value = self.value()
         if value == "yes":
-            return queryset.filter(pub_date__isnull=False)
+            return queryset.published()
         if value == "no":
-            return queryset.filter(pub_date__isnull=True)
+            return queryset.unpublished()
         if value == "frequent":
             return queryset.frequent()
         if value == "sporadic":

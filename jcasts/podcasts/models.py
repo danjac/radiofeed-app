@@ -58,6 +58,12 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def active(self):
         return self.filter(active=True)
 
+    def published(self):
+        return self.filter(pub_date__isnull=False)
+
+    def unpublished(self):
+        return self.filter(pub_date__isnull=True)
+
     def frequent(self):
         return self.filter(
             models.Q(
@@ -67,8 +73,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def sporadic(self):
-        return self.filter(
-            pub_date__isnull=False,
+        return self.published().filter(
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
