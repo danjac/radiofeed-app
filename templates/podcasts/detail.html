@@ -62,20 +62,8 @@
   </div>
   {% endif %}
 
-
   {% include "podcasts/_categories.html" %}
-
-  <div>
-    <a href="{{ podcast.get_latest_url }}"
-       class="link"
-       title="Latest episode">
-      Last updated {{ podcast.pub_date|approx_timesince }} ago
-    </a>
-  </div>
-
-
   {% include "_markdown.html" with content=podcast.description %}
-
   {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %}

@@ -79,7 +79,7 @@
 
   <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3">
     <div title="Date Published">
-      {% include "episodes/_pub_date.html" with pub_date=episode.pub_date %}
+      {% include "_pub_date.html" with pub_date=episode.pub_date %}
     </div>
     {% if duration %}
     <div title="Duration">
