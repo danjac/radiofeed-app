@@ -351,13 +351,15 @@ class TestEpisodeModel:
     def test_get_file_size_if_none(self):
         assert Episode(length=None).get_file_size() is None
 
-    def test_get_media_metadata(self, episode):
+    def test_get_media_metadata(self, db):
+        cover_url = "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/9b63d479-4382-4198-8e63-aac7013964ff/e5ebd302-9d49-4c56-a234-aac701396502/image.jpg?t=1568401263\u0026size=Large"
+        episode = EpisodeFactory(podcast__cover_url=cover_url)
         data = episode.get_media_metadata()
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title
         assert data["artist"] == episode.podcast.owner
         assert data["artwork"][0] == {
-            "src": episode.podcast.cover_url,
+            "src": cover_url,
             "sizes": "96x96",
             "type": "image/jpeg",
         }
