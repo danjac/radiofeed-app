@@ -88,6 +88,7 @@
              hx-push-url="false"
              hx-swap="innerHTML"
              hx-target="#search-autocomplete"
+             hx-indicator="#search-results-indicator"
              name="q"
              accesskey="k"
              autocomplete="off"
@@ -96,6 +97,13 @@
              :class="{'w-96': search, 'w-72': !search}"
              class="w-72 px-4 py-1 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
       <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+        <span id="search-results-indicator"
+              class="text-gray-900 dark:text-gray-100 mr-1"
+              style="display:none;">
+
+          {% include "_loader.svg" with size=4 %}
+
+        </span>
         <button @click.prevent.stop="search=''"
                 type="button"
                 title="Clear"
