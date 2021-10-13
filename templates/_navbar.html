@@ -71,7 +71,9 @@
           $watch('search', value => {
             if (!value) {
               $refs.searchResults.innerHTML = '';
-            }
+              } else {
+              $dispatch('close-sidebar');
+              }
           })"
           hx-push-url="true"
           @submit="$refs.input.blur(); search='';"
