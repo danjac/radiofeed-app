@@ -110,7 +110,10 @@ class PodcastAdmin(admin.ModelAdmin):
         "scheduled",
     )
 
-    list_editable = ("promoted",)
+    list_editable = (
+        "active",
+        "promoted",
+    )
     search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
@@ -142,19 +145,6 @@ class PodcastAdmin(admin.ModelAdmin):
         self.message_user(
             request,
             f"{num_feeds} podcast(s) scheduled for update",
-            messages.SUCCESS,
-        )
-
-    @admin.action(description="Reactivate podcast feeds")
-    def reactivate_podcast_feeds(self, request, queryset):
-
-        queryset = queryset.filter(active=False)
-        count = queryset.count()
-        queryset.update(active=True)
-
-        self.message_user(
-            request,
-            f"{count} podcast(s) updated",
             messages.SUCCESS,
         )
 
