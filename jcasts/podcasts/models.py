@@ -5,6 +5,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -80,7 +81,9 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def exact_match(self, search_term):
         return self.annotate(
             exact_match=models.Exists(
-                self.filter(pk=models.OuterRef("pk"), title__iexact=search_term)
+                self.annotate(title_lower=Lower("title")).filter(
+                    pk=models.OuterRef("pk"), title_lower=search_term.lower()
+                )
             )
         )
 
@@ -146,7 +149,7 @@ class Podcast(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["title"]),
+            models.Index(Lower("title"), name="%(app_label)s_%(class)s_title_lower"),
             models.Index(fields=["scheduled", "-pub_date", "parsed"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
