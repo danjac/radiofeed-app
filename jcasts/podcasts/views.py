@@ -65,8 +65,9 @@ def search_podcasts(request):
 
     podcasts = (
         Podcast.objects.published()
+        .exact_match(request.search.value)
         .search(request.search.value)
-        .order_by("-rank", "-pub_date")
+        .order_by("-exact_match", "-rank", "-pub_date")
     )
 
     return render_podcast_list_response(
@@ -102,8 +103,9 @@ def search_autocomplete(request, limit=6):
 
     podcasts = (
         Podcast.objects.published()
+        .exact_match(request.search.value)
         .search(request.search.value)
-        .order_by("-rank", "-pub_date")
+        .order_by("-exact_match", "-rank", "-pub_date")
     )[:limit]
 
     episodes = (

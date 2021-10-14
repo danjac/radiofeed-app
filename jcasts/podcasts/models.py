@@ -77,6 +77,13 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
+    def exact_match(self, search_term):
+        return self.annotate(
+            exact_match=models.Exists(
+                self.filter(pk=models.OuterRef("pk"), title__icontains=search_term)
+            )
+        )
+
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
