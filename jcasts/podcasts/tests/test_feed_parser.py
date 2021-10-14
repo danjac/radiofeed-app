@@ -364,19 +364,16 @@ class TestReschedule:
         [
             (0, (60, 119)),
             (72, (216, 275)),
-            (30 * 90, (1440, 1449)),
+            (720 * 30, (1440, 1499)),
         ],
     )
     def test_reschedule(self, hours_ago, minutes_range):
         now = timezone.now()
         scheduled = reschedule(now - timedelta(hours=hours_ago))
-        value = (scheduled - now).total_seconds() / 60
-        print("value", value)
-        assert value >= minutes_range[0]
-        assert value <= minutes_range[1]
+        value = round((scheduled - now).total_seconds() / 60)
+        assert value in range(*minutes_range)
 
     def test_pub_date_none(self):
         scheduled = reschedule(None)
-        value = (scheduled - timezone.now()).total_seconds() / 60
-        assert value >= 60
-        assert value <= 119
+        value = round((scheduled - timezone.now()).total_seconds() / 60)
+        assert value in range(60, 119)
