@@ -183,10 +183,13 @@
         {% endwith %}
         <div class="w-full h-3">
           <input type="range"
+                 x-ref="range"
+                 x-model="currentTime"
                  :max="duration"
                  :disabled="isPaused || !isLoaded"
-                 x-model="currentTime"
+                 :title="counters.preview"
                  @change="skip"
+                 @mouseover="preview"
                  min="0"
                  class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
         </div>

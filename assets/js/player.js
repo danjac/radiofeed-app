@@ -12,6 +12,7 @@ const playerObj = {
   counters: {
     current: '00:00:00',
     duration: '00:00:00',
+    preview: '00:00:00',
   },
   keys: {
     enable: 'player-enabled',
@@ -33,6 +34,7 @@ const playerObj = {
 
     this.counters.current = formatDuration(this.currentTime);
     this.counters.duration = formatDuration(this.duration);
+    this.counters.preview = '00:00:00';
 
     this.$refs.audio.currentTime = this.currentTime;
     this.$refs.audio.load();
@@ -200,6 +202,12 @@ const playerObj = {
     } else {
       this.$refs.audio.pause();
     }
+  },
+
+  preview(event) {
+    const rect = this.$refs.range.getBoundingClientRect();
+    const value = ((event.clientX - rect.x) / rect.width) * this.duration;
+    this.counters.preview = formatDuration(value);
   },
 
   sendTimeUpdate() {
