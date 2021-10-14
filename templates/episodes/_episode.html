@@ -26,7 +26,7 @@
     {% endblock cover_image %}
 
     <div class="flex flex-col place-content-between h-16">
-      <h2 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:truncate sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl">
+      <h2 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:truncate sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
         <a href="{{ episode_url }}"
            class="link"
            title="{{ episode.cleaned_title }}">
@@ -39,7 +39,7 @@
           {% include "_pub_date.html" with pub_date=episode.pub_date %}
         </div>
         {% else %}
-        <h3 class="truncate w-52 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl">
+        <h3 class="truncate w-52 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
           <a href="{{ podcast.get_episodes_url }}"
              class="link text-xs lg:text-sm text-gray-600 dark:text-gray-300 font-semibold"
              title="{{ podcast.cleaned_title }}">
