@@ -360,23 +360,23 @@ class TestParsePodcastFeed:
 
 class TestReschedule:
     @pytest.mark.parametrize(
-        "hours_ago,hours_range",
+        "hours_ago,minutes_range",
         [
-            (0, (1, 1.5)),
-            (72, (3.6, 5.4)),
-            (30 * 90, (24.0, 36.0)),
+            (0, (60, 119)),
+            (72, (216, 275)),
+            (30 * 90, (1440, 1449)),
         ],
     )
-    def test_reschedule(self, hours_ago, hours_range):
+    def test_reschedule(self, hours_ago, minutes_range):
         now = timezone.now()
         scheduled = reschedule(now - timedelta(hours=hours_ago))
-        value = (scheduled - now).total_seconds() / 3600
+        value = (scheduled - now).total_seconds() / 60
         print("value", value)
-        assert value >= hours_range[0]
-        assert value <= hours_range[1]
+        assert value >= minutes_range[0]
+        assert value <= minutes_range[1]
 
     def test_pub_date_none(self):
         scheduled = reschedule(None)
-        value = (scheduled - timezone.now()).total_seconds() / 3600
-        assert value >= 0.5
-        assert value <= 1.5
+        value = (scheduled - timezone.now()).total_seconds() / 60
+        assert value >= 60
+        assert value <= 119

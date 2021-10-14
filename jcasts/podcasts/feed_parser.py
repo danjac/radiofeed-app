@@ -323,15 +323,8 @@ def reschedule(pub_date):
         MAX_SCHEDULED_DELTA,
     )
 
-    seconds = int(delta.total_seconds())
-
-    # example: 60 mins: range should be 60-90 mins
-    # 10 hours: range should be 10-15 hours
-    # 24 hours: range should be 24-36 hours
-
-    return now + timedelta(
-        seconds=secrets.choice(range(seconds, (seconds + round(seconds / 2))))
-    )
+    # add 0-59 minutes for load balancing
+    return now + delta + timedelta(minutes=secrets.choice(range(0, 59)))
 
 
 def parse_failure(
