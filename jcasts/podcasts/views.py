@@ -199,7 +199,12 @@ def category_detail(request, category_id, slug=None):
     podcasts = category.podcast_set.published()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
+        podcasts = (
+            podcasts.exact_match(request.search.value)
+            .search(request.search.value)
+            .order_by("-exact_match", "-rank", "-pub_date")
+        )
+
     else:
         podcasts = podcasts.order_by("-pub_date")
 
