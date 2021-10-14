@@ -136,7 +136,16 @@ class PodcastAdmin(admin.ModelAdmin):
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request, queryset):
 
-        queryset = queryset.active()
+        if queryset.filter(active=False).exists():
+
+            self.message_user(
+                request,
+                "You cannot parse inactive feeds",
+                messages.ERROR,
+            )
+
+            return
+
         num_feeds = queryset.count()
 
         for podcast in queryset.iterator():
