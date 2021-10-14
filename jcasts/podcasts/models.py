@@ -80,7 +80,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def exact_match(self, search_term):
         return self.annotate(
             exact_match=models.Exists(
-                self.filter(pk=models.OuterRef("pk"), title__icontains=search_term)
+                self.filter(pk=models.OuterRef("pk"), title__iexact=search_term)
             )
         )
 
