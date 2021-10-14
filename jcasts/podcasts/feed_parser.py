@@ -319,16 +319,19 @@ def reschedule(pub_date):
     # add 5% since last time to current time
     # e.g. 7 days - try again in about 8 hours
     delta = min(
-        max(
-            timedelta(seconds=delta.total_seconds() * 0.05),
-            MIN_SCHEDULED_DELTA,
-        ),
+        max(timedelta(seconds=delta.total_seconds() * 0.05), MIN_SCHEDULED_DELTA),
         MAX_SCHEDULED_DELTA,
     )
 
-    seconds = int(delta.total_seconds() / 2)
+    seconds = int(delta.total_seconds())
 
-    return now + delta + timedelta(seconds=secrets.choice(range(-seconds, seconds)))
+    # example: 60 mins: range should be 60-90 mins
+    # 10 hours: range should be 10-15 hours
+    # 24 hours: range should be 24-36 hours
+
+    return now + timedelta(
+        seconds=secrets.choice(range(seconds, (seconds + round(seconds / 2))))
+    )
 
 
 def parse_failure(

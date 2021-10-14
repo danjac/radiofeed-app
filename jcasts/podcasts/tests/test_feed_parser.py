@@ -362,15 +362,16 @@ class TestReschedule:
     @pytest.mark.parametrize(
         "hours_ago,hours_range",
         [
-            (0, (0.5, 1.6)),
-            (72, (1.8, 5.5)),
-            (30 * 90, (12.0, 36.0)),
+            (0, (1, 1.5)),
+            (72, (3.6, 5.4)),
+            (30 * 90, (24.0, 36.0)),
         ],
     )
     def test_reschedule(self, hours_ago, hours_range):
         now = timezone.now()
         scheduled = reschedule(now - timedelta(hours=hours_ago))
         value = (scheduled - now).total_seconds() / 3600
+        print("value", value)
         assert value >= hours_range[0]
         assert value <= hours_range[1]
 
