@@ -6,27 +6,18 @@
      hx-swap="outerHTML show:window:top"
      @click="search=''">
   {% for podcast in podcasts %}
-  {% with podcast_url=podcast.get_absolute_url %}
-  <div class="flex items-center space-x-2">
+  <div class="flex items-center space-x-2 hover:cursor-pointer"
+       hx-get="{{ podcast.get_absolute_url }}">
 
     <div class="w-14">
-      <a href="{{ podcast_url }}"
-         title="{{ podcast.cleaned_title }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
-      </a>
+      {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12">
-      <a href="{{ podcast_url }}"
-         title="{{ podcast.cleaned_title }}"
-         class="link">
-        {{ podcast.cleaned_title|truncatechars:80 }}
-      </a>
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12 link">
+      {{ podcast.cleaned_title|truncatechars:80 }}
     </div>
 
   </div>
-  {% endwith %}
   {% endfor %}
 
   {% if episodes and podcasts %}
@@ -35,21 +26,15 @@
 
   {% for episode in episodes %}
   {% with podcast=episode.podcast %}
-  <div class="flex items-center space-x-2">
+  <div class="flex items-center space-x-2 hover:cursor-pointer"
+       hx-get="{{ episode.get_absolute_url }}">
 
     <div class="w-14">
-      <a href="{{ podcast.get_absolute_url }}"
-         title="{{ podcast.cleaned_title }}">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
-      </a>
+      {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12">
-      <a href="{{ episode.get_absolute_url }}"
-         title="{{ episode.cleaned_title }}"
-         class="link">
-        {{ episode.cleaned_title|truncatechars:80 }}
-      </a>
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12 link">
+      {{ episode.cleaned_title|truncatechars:80 }}
     </div>
 
   </div>
