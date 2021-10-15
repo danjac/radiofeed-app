@@ -136,59 +136,6 @@ class TestPodcastManager:
         PodcastFactory(pub_date=None)
         assert Podcast.objects.unpublished().count() == 1
 
-    def test_followed(self, db):
-        FollowFactory()
-        assert Podcast.objects.followed().first().followed
-
-    def test_not_followed(self, db):
-        PodcastFactory()
-        assert not Podcast.objects.followed().first().followed
-
-    @pytest.mark.parametrize(
-        "frequency,pub_date,pending",
-        [
-            (timedelta(days=1), timedelta(days=1), True),
-            (timedelta(days=1), timedelta(hours=1), False),
-            (timedelta(days=1), timedelta(days=3), False),
-            (timedelta(days=1), None, False),
-            (None, timedelta(days=1), False),
-        ],
-    )
-    def test_pending(self, db, frequency, pub_date, pending):
-        PodcastFactory(
-            frequency=frequency,
-            pub_date=timezone.now() - pub_date if pub_date else None,
-        )
-        assert Podcast.objects.pending().first().pending is pending
-
-    @pytest.mark.parametrize(
-        "frequency,exists",
-        [
-            (None, True),
-            (timedelta(days=1), True),
-            (timedelta(days=99), False),
-        ],
-    )
-    def test_frequent(self, db, settings, frequency, exists):
-
-        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
-        PodcastFactory(frequency=frequency)
-        assert Podcast.objects.frequent().exists() is exists
-
-    @pytest.mark.parametrize(
-        "frequency,exists",
-        [
-            (None, False),
-            (timedelta(days=1), False),
-            (timedelta(days=99), True),
-        ],
-    )
-    def test_sporadic(self, db, settings, frequency, exists):
-
-        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
-        PodcastFactory(frequency=frequency)
-        assert Podcast.objects.sporadic().exists() is exists
-
     @pytest.mark.parametrize(
         "last_pub,exists",
         [

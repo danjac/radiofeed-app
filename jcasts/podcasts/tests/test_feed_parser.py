@@ -13,7 +13,6 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
-    calc_frequency,
     get_categories_dict,
     get_feed_headers,
     parse_podcast_feed,
@@ -75,28 +74,6 @@ class TestSchedulePodcastFeeds:
         assert mock_parse_feeds.mock_calls[1][1][2] == 360
 
 
-class TestCalcFrequency:
-    def test_with_pub_dates(self):
-        now = timezone.now()
-
-        pub_dates = [
-            now - delta
-            for delta in [
-                timedelta(hours=1),
-                timedelta(hours=2),
-                timedelta(hours=3),
-                timedelta(hours=4),
-                timedelta(hours=5),
-            ]
-        ]
-        print(pub_dates)
-
-        assert calc_frequency(pub_dates).total_seconds() == 3600
-
-    def test_empty(self):
-        assert calc_frequency([]) is None
-
-
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
         "scheduled,parsed,expected",
@@ -108,7 +85,7 @@ class TestParsePodcastFeeds:
             # scheduled before now, parsed NULL
             (timedelta(days=-1), None, 1),
             # scheduled after now, parsed a day ago
-            (timedelta(days=1), timedelta(days=1), 1),
+            (timedelta(days=1), timedelta(days=1), 0),
             # scheduled before now, parsed only 30 minutes ago
             (timedelta(days=-1), timedelta(minutes=30), 0),
         ],
@@ -236,7 +213,6 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert new_podcast.active
-        assert new_podcast.frequency
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
