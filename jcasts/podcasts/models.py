@@ -5,7 +5,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models.functions import Lower
+from django.db.models.functions import Lower, Now
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -71,6 +71,26 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 frequency__lt=settings.FRESHNESS_THRESHOLD,
             )
             | models.Q(frequency__isnull=True)
+        )
+
+    def pending(self):
+        return self.annotate(
+            pending=models.Exists(
+                self.filter(
+                    pk=models.OuterRef("pk"),
+                    pub_date__isnull=False,
+                    frequency__isnull=False,
+                    pub_date__range=(
+                        Now() - models.F("frequency") * 2,
+                        Now() - models.F("frequency"),
+                    ),
+                )
+            )
+        )
+
+    def followed(self):
+        return self.annotate(
+            followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
         )
 
     def sporadic(self):

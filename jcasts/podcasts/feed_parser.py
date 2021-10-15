@@ -12,15 +12,14 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Exists, F, OuterRef, Q
-from django.db.models.functions import Now
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
-from jcasts.podcasts.models import Category, Follow, Podcast
+from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -73,20 +72,8 @@ def parse_podcast_feeds(qs, frequency, limit):
     # pub_date DESC
 
     qs = (
-        qs.annotate(
-            followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))),
-            pending=Exists(
-                Podcast.objects.filter(
-                    pk=OuterRef("pk"),
-                    pub_date__isnull=False,
-                    frequency__isnull=False,
-                    pub_date__range=(
-                        Now() + F("frequency") * 2,
-                        Now() + F("frequency"),
-                    ),
-                )
-            ),
-        )
+        qs.pending()
+        .followed()
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
         .order_by(
             "-followed",
