@@ -89,7 +89,6 @@ def parse_podcast_feeds(qs, frequency, limit):
             "-followed",
             "-promoted",
             "-pending",
-            F("frequency").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )[:limit]
