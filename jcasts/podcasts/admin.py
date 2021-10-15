@@ -165,7 +165,6 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "parsed",
                 "-pub_date",
             ]
         )

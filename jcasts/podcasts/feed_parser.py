@@ -66,8 +66,8 @@ def parse_podcast_feeds(qs, frequency, limit):
 
     # prioritization:
     # - not yet published today
-    # - pub date DESC (i.e. more frequent first)
     # - parsed ASC (i.e. prioritize if waiting for parse)
+    # - pub date DESC (i.e. more frequent first)
     qs = (
         qs.annotate(
             pub_today=Exists(
@@ -84,8 +84,8 @@ def parse_podcast_feeds(qs, frequency, limit):
         )
         .order_by(
             "pub_today",
-            F("pub_date").desc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
         )[:limit]
     )
 
