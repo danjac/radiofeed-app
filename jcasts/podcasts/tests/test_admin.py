@@ -11,7 +11,6 @@ from jcasts.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    ScheduledFilter,
 )
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -69,22 +68,6 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_not_called()
 
 
-class TestScheduledFilter:
-    def test_scheduled(self, podcasts, admin, req):
-        podcast = PodcastFactory(scheduled=timezone.now())
-        f = ScheduledFilter(req, {"scheduled": "scheduled"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_unscheduled(self, podcasts, admin, req):
-        podcast = PodcastFactory(scheduled=timezone.now())
-        f = ScheduledFilter(req, {"scheduled": "unscheduled"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert podcast not in qs
-
-
 class TestPubDateFilter:
     def test_pub_date_filter_none(self, podcasts, admin, req):
         PodcastFactory(pub_date=None)
@@ -106,25 +89,25 @@ class TestPubDateFilter:
         assert qs.count() == 3
         assert no_pub_date not in qs
 
-    def test_pub_date_sporadic(self, settings, podcasts, admin, req):
+    def test_pub_date_stale(self, settings, podcasts, admin, req):
         now = timezone.now()
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=None)
         PodcastFactory(pub_date=now - timedelta(days=9))
         not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
 
-        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, admin)
+        f = PubDateFilter(req, {"pub_date": "stale"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert not_recent in qs
 
-    def test_pub_date_frequent(self, settings, podcasts, admin, req):
+    def test_pub_date_recent(self, settings, podcasts, admin, req):
         now = timezone.now()
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         no_pub_date = PodcastFactory(pub_date=None)
         not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
 
-        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, admin)
+        f = PubDateFilter(req, {"pub_date": "recent"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
         assert no_pub_date in qs

@@ -13,6 +13,7 @@ import requests
 
 from django.db import transaction
 from django.db.models import Exists, F, OuterRef, Q
+from django.db.models.functions import Now
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -57,8 +58,8 @@ def schedule_podcast_feeds(frequency):
 
     qs = Podcast.objects.active()
 
-    parse_podcast_feeds(qs.frequent(), frequency, limit - remainder)
-    parse_podcast_feeds(qs.sporadic(), frequency, remainder)
+    parse_podcast_feeds(qs.recent(), frequency, limit - remainder)
+    parse_podcast_feeds(qs.stale(), frequency, remainder)
 
 
 def parse_podcast_feeds(qs, frequency, limit):
@@ -72,11 +73,22 @@ def parse_podcast_feeds(qs, frequency, limit):
     # pub_date DESC
 
     qs = (
-        qs.annotate(followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
+        qs.annotate(
+            followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))),
+            due=Exists(
+                Podcast.objects.filter(
+                    pk=OuterRef("pk"),
+                    frequency__isnull=False,
+                    pub_date__isnull=False,
+                    pub_date__lt=Now() - F("frequency"),
+                )
+            ),
+        )
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
         .order_by(
             "-followed",
             "-promoted",
+            "-due",
             F("frequency").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),

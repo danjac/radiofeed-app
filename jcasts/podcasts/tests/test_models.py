@@ -137,6 +137,34 @@ class TestPodcastManager:
         assert Podcast.objects.unpublished().count() == 1
 
     @pytest.mark.parametrize(
+        "frequency,exists",
+        [
+            (None, True),
+            (timedelta(days=1), True),
+            (timedelta(days=99), False),
+        ],
+    )
+    def test_frequent(self, db, settings, frequency, exists):
+
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
+        PodcastFactory(frequency=frequency)
+        assert Podcast.objects.frequent().exists() is exists
+
+    @pytest.mark.parametrize(
+        "frequency,exists",
+        [
+            (None, False),
+            (timedelta(days=1), False),
+            (timedelta(days=99), True),
+        ],
+    )
+    def test_sporadic(self, db, settings, frequency, exists):
+
+        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
+        PodcastFactory(frequency=frequency)
+        assert Podcast.objects.sporadic().exists() is exists
+
+    @pytest.mark.parametrize(
         "last_pub,exists",
         [
             (timedelta(days=30), True),
@@ -144,11 +172,11 @@ class TestPodcastManager:
             (None, True),
         ],
     )
-    def test_frequent(self, db, settings, last_pub, exists):
+    def test_recent(self, db, settings, last_pub, exists):
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
-        assert Podcast.objects.frequent().exists() is exists
+        assert Podcast.objects.recent().exists() is exists
 
     @pytest.mark.parametrize(
         "last_pub,exists",
@@ -158,11 +186,11 @@ class TestPodcastManager:
             (None, False),
         ],
     )
-    def test_sporadic(self, db, settings, last_pub, exists):
+    def test_stale(self, db, settings, last_pub, exists):
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
-        assert Podcast.objects.sporadic().exists() is exists
+        assert Podcast.objects.stale().exists() is exists
 
 
 class TestPodcastModel:

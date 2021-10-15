@@ -68,12 +68,23 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def frequent(self):
         return self.filter(
             models.Q(
+                frequency__lt=settings.FRESHNESS_THRESHOLD,
+            )
+            | models.Q(frequency__isnull=True)
+        )
+
+    def sporadic(self):
+        return self.filter(frequency__gt=settings.FRESHNESS_THRESHOLD)
+
+    def recent(self):
+        return self.filter(
+            models.Q(
                 pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD,
             )
             | models.Q(pub_date__isnull=True)
         )
 
-    def sporadic(self):
+    def stale(self):
         return self.published().filter(
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )

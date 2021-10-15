@@ -14,26 +14,6 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("scheduled", "Scheduled"),
-            ("unscheduled", "Unscheduled"),
-        )
-
-    def queryset(self, request, queryset):
-        return queryset.filter(
-            **{
-                "scheduled": {"scheduled__isnull": False},
-                "unscheduled": {"scheduled__isnull": True},
-            }.setdefault(self.value(), {}),
-        )
-
-
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
@@ -42,8 +22,8 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("frequent", f"Frequent (< {settings.FRESHNESS_THRESHOLD.days} days)"),
-            ("sporadic", f"Sporadic (> {settings.FRESHNESS_THRESHOLD.days} days)"),
+            ("recent", f"Recent (< {settings.FRESHNESS_THRESHOLD.days} days)"),
+            ("stale", f"Stale (> {settings.FRESHNESS_THRESHOLD.days} days)"),
         )
 
     def queryset(self, request, queryset):
@@ -52,10 +32,10 @@ class PubDateFilter(admin.SimpleListFilter):
             return queryset.published()
         if value == "no":
             return queryset.unpublished()
-        if value == "frequent":
-            return queryset.frequent()
-        if value == "sporadic":
-            return queryset.sporadic()
+        if value == "recent":
+            return queryset.recent()
+        if value == "stale":
+            return queryset.stale()
         return queryset
 
 
