@@ -76,26 +76,18 @@ class TestSchedulePodcastFeeds:
 
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "scheduled,parsed,expected",
+        "parsed,expected",
         [
-            # parsed + scheduled both NULL
-            (None, None, 1),
-            # parsed NULL
-            (None, timedelta(days=1), 1),
-            # scheduled before now, parsed NULL
-            (timedelta(days=-1), None, 1),
-            # scheduled after now, parsed a day ago
-            (timedelta(days=1), timedelta(days=1), 0),
-            # scheduled before now, parsed only 30 minutes ago
-            (timedelta(days=-1), timedelta(minutes=30), 0),
+            (None, 1),
+            # parsed a day ago
+            (timedelta(days=1), 1),
+            # parsed only 30 minutes ago
+            (timedelta(minutes=30), 0),
         ],
     )
-    def test_parse_podcast_feeds(
-        self, db, mock_parse_podcast_feed, scheduled, parsed, expected
-    ):
+    def test_parse_podcast_feeds(self, db, mock_parse_podcast_feed, parsed, expected):
         now = timezone.now()
         PodcastFactory(
-            scheduled=now + scheduled if scheduled else None,
             parsed=now - parsed if parsed else None,
         )
         parse_podcast_feeds(Podcast.objects.all(), timedelta(minutes=60), 10)

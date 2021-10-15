@@ -78,12 +78,10 @@ def parse_podcast_feeds(qs, frequency, limit):
                 )
             )
         )
-        .filter(Q(scheduled__isnull=True) | Q(scheduled__lt=now))
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
         .order_by(
             "-followed",
             "-promoted",
-            F("scheduled").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )[:limit]
