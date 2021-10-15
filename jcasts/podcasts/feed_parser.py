@@ -78,9 +78,12 @@ def parse_podcast_feeds(qs, frequency, limit):
             pending=Exists(
                 Podcast.objects.filter(
                     pk=OuterRef("pk"),
-                    frequency__isnull=False,
                     pub_date__isnull=False,
-                    pub_date__lt=Now() - F("frequency"),
+                    frequency__isnull=False,
+                    pub_date__range=(
+                        Now() + F("frequency") * 2,
+                        Now() + F("frequency"),
+                    ),
                 )
             ),
         )
