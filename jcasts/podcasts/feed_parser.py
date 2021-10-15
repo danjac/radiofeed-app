@@ -1,6 +1,7 @@
 import http
 import multiprocessing
 import secrets
+import statistics
 import traceback
 
 from datetime import timedelta
@@ -18,7 +19,7 @@ from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
-from jcasts.podcasts.models import Category, Podcast
+from jcasts.podcasts.models import Category, Follow, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -65,31 +66,20 @@ def parse_podcast_feeds(qs, frequency, limit):
     now = timezone.now()
 
     # prioritization:
-    # - not yet published today
-    # - scheduled ASC (i.e. more frequent first)
-    # - pub date DESC (i.e. more frequent first)
-    # - parsed ASC (i.e. prioritize if waiting for parse)
+    # any promoted or followed
+    # frequency DESC
+    # parsed ASC
+    # pub_date DESC
 
     qs = (
-        qs.annotate(
-            pub_today=Exists(
-                Podcast.objects.filter(
-                    pk=OuterRef("pk"),
-                    pub_date__day=now.day,
-                    pub_date__month=now.month,
-                    pub_date__year=now.year,
-                )
-            )
-        )
-        .filter(
-            Q(scheduled__isnull=True) | Q(scheduled__lt=now),
-            Q(parsed__isnull=True) | Q(parsed__lt=now - frequency),
-        )
+        qs.annotate(followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
+        .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
         .order_by(
-            "pub_today",
-            F("scheduled").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
+            "-followed",
+            "-promoted",
+            F("frequency").desc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
         )[:limit]
     )
 
@@ -200,6 +190,7 @@ def parse_success(podcast, response, feed, items):
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
+    podcast.frequency = calc_frequency(pub_dates)
     podcast.parsed = timezone.now()
     podcast.scheduled = reschedule(podcast.pub_date)
     podcast.active = True
@@ -339,6 +330,24 @@ def reschedule(pub_date):
 
     # add 0-59 minutes for load balancing
     return now + delta + timedelta(minutes=secrets.choice(range(0, 59)))
+
+
+def calc_frequency(pub_dates):
+
+    if not pub_dates:
+        return None
+
+    pub_dates = [timezone.now()] + sorted(pub_dates, reverse=True)
+
+    diffs = []
+
+    last, *pub_dates = pub_dates
+
+    for pub_date in pub_dates:
+        diffs.append((last - pub_date).total_seconds())
+        last = pub_date
+
+    return timedelta(seconds=statistics.median(diffs))
 
 
 def parse_failure(

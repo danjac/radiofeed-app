@@ -98,7 +98,6 @@ class PodcastAdmin(admin.ModelAdmin):
         ActiveFilter,
         PromotedFilter,
         PubDateFilter,
-        ScheduledFilter,
     )
 
     list_display = (
@@ -107,7 +106,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "scheduled",
+        "frequency",
     )
 
     list_editable = (
@@ -120,7 +119,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
-        "scheduled",
+        "frequency",
         "modified",
         "pub_date",
         "etag",

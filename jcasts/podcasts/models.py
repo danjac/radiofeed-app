@@ -108,6 +108,8 @@ class Podcast(models.Model):
     # last parse time (success or fail)
     parsed = models.DateTimeField(null=True, blank=True)
 
+    frequency = models.DurationField(null=True, blank=True)
+
     # Last-Modified header from RSS feed
     modified = models.DateTimeField(null=True, blank=True)
 
