@@ -75,7 +75,7 @@ def parse_podcast_feeds(qs, frequency, limit):
     qs = (
         qs.annotate(
             followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))),
-            due=Exists(
+            pending=Exists(
                 Podcast.objects.filter(
                     pk=OuterRef("pk"),
                     frequency__isnull=False,
@@ -88,7 +88,7 @@ def parse_podcast_feeds(qs, frequency, limit):
         .order_by(
             "-followed",
             "-promoted",
-            "-due",
+            "-pending",
             F("frequency").asc(nulls_first=True),
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),

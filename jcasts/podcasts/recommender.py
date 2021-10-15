@@ -22,7 +22,7 @@ NUM_RECENT_EPISODES: int = 6
 
 def recommend():
 
-    podcasts = Podcast.objects.frequent().exclude(extracted_text="")
+    podcasts = Podcast.objects.recent().exclude(extracted_text="")
 
     Recommendation.objects.bulk_delete()
 
