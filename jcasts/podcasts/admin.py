@@ -107,7 +107,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "scheduled",
+        "parsed",
     )
 
     list_editable = (
@@ -165,7 +165,6 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "scheduled",
                 "-pub_date",
             ]
         )

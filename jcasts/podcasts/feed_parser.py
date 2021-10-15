@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -64,20 +64,30 @@ def parse_podcast_feeds(qs, frequency, limit):
 
     now = timezone.now()
 
-    # criteria:
-    # parsed or scheduled NULL: ok
-    # parsed < frequency
-    # scheduled < now
-    qs = qs.filter(
-        Q(scheduled__isnull=True) | Q(scheduled__lt=now),
-        Q(parsed__isnull=True) | Q(parsed__lt=now - frequency),
-    ).order_by(
-        F("scheduled").asc(nulls_first=True),
-        F("pub_date").desc(nulls_first=True),
-        F("parsed").asc(nulls_first=True),
-    )[
-        :limit
-    ]
+    # prioritization:
+    # - not yet published today
+    # - parsed ASC (i.e. prioritize if waiting for parse)
+    # - pub date DESC (i.e. more frequent first)
+    qs = (
+        qs.annotate(
+            pub_today=Exists(
+                Podcast.objects.filter(
+                    pk=OuterRef("pk"),
+                    pub_date__day=now.day,
+                    pub_date__month=now.month,
+                    pub_date__year=now.year,
+                )
+            )
+        )
+        .filter(
+            Q(parsed__isnull=True) | Q(parsed__lt=now - frequency),
+        )
+        .order_by(
+            "pub_today",
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )[:limit]
+    )
 
     for podcast in qs.iterator():
         parse_podcast_feed.delay(podcast.rss)

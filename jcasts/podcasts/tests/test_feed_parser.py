@@ -85,7 +85,7 @@ class TestParsePodcastFeeds:
             # scheduled before now, parsed NULL
             (timedelta(days=-1), None, 1),
             # scheduled after now, parsed a day ago
-            (timedelta(days=1), timedelta(days=1), 0),
+            (timedelta(days=1), timedelta(days=1), 1),
             # scheduled before now, parsed only 30 minutes ago
             (timedelta(days=-1), timedelta(minutes=30), 0),
         ],
