@@ -86,6 +86,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
+        "parsed",
         "scheduled",
     )
 
