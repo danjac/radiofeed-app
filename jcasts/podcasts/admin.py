@@ -86,7 +86,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "frequency",
+        "parsed",
     )
 
     list_editable = (
