@@ -42,6 +42,21 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
+@attr.s(kw_only=True)
+class ParseResult:
+    rss: str = attr.ib()
+    success: bool = attr.ib(default=False)
+    status: Optional[http.HTTPStatus] = attr.ib(default=None)
+    exception: Optional[Exception] = attr.ib(default=None)
+
+    def __bool__(self):
+        return self.success
+
+    def raise_exception(self):
+        if self.exception:
+            raise self.exception
+
+
 def schedule_podcast_feeds(frequency):
     """
     Schedules feeds for update.
@@ -85,21 +100,6 @@ def schedule_podcast_feeds(frequency):
         # for example, if total COUNT is 300, and base limit is 1800,
         # then remainder of 1500 is added to next cohort limit
         remainder = max(base_limit - qs_limit, 0)
-
-
-@attr.s(kw_only=True)
-class ParseResult:
-    rss: str = attr.ib()
-    success: bool = attr.ib(default=False)
-    status: Optional[http.HTTPStatus] = attr.ib(default=None)
-    exception: Optional[Exception] = attr.ib(default=None)
-
-    def __bool__(self):
-        return self.success
-
-    def raise_exception(self):
-        if self.exception:
-            raise self.exception
 
 
 @job("feeds")
