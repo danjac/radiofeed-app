@@ -15,8 +15,8 @@ from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
+    get_scheduled_podcasts,
     parse_podcast_feed,
-    parse_podcast_feeds,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
@@ -59,21 +59,19 @@ class TestFeedHeaders:
 
 
 class TestSchedulePodcastFeeds:
-    def test_schedule_podcast_feeds(self, db, mocker):
+    def test_schedule_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
 
         mocker.patch("multiprocessing.cpu_count", return_value=2)
 
-        mock_parse_feeds = mocker.patch(
-            "jcasts.podcasts.feed_parser.parse_podcast_feeds"
-        )
+        now = timezone.now()
+        PodcastFactory(active=True, pub_date=now - timedelta(days=3))
+        PodcastFactory(active=True, pub_date=now - timedelta(days=99))
 
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
-
-        assert mock_parse_feeds.mock_calls[0][1][2] == 3240
-        assert mock_parse_feeds.mock_calls[1][1][2] == 360
+        assert len(mock_parse_podcast_feed.mock_calls) == 2
 
 
-class TestParsePodcastFeeds:
+class TestGetScheduledPodcasts:
     @pytest.mark.parametrize(
         "parsed,expected",
         [
@@ -84,13 +82,12 @@ class TestParsePodcastFeeds:
             (timedelta(minutes=30), 0),
         ],
     )
-    def test_parse_podcast_feeds(self, db, mock_parse_podcast_feed, parsed, expected):
+    def test_get_scheduled_podcasts(self, db, parsed, expected):
         now = timezone.now()
         PodcastFactory(
             parsed=now - parsed if parsed else None,
         )
-        parse_podcast_feeds(Podcast.objects.all(), timedelta(minutes=60), 10)
-        assert len(mock_parse_podcast_feed.mock_calls) == expected
+        assert get_scheduled_podcasts(timedelta(hours=1)).count() == expected
 
 
 class TestParsePodcastFeed:

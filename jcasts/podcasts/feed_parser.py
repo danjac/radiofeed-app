@@ -42,46 +42,37 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def schedule_podcast_feeds(frequency):
-    """
-    Schedules feeds for update.
-
-    Frequently updated feeds (< 90 days) should be prioritized (90%).
-    Remaining 10% should be any sporadic feeds.
-    """
-
-    # rough estimate: takes 2 seconds per update
-    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
-    remainder = round(limit / 10.0)
-
-    qs = Podcast.objects.active()
-
-    parse_podcast_feeds(qs.fresh(), frequency, limit - remainder)
-    parse_podcast_feeds(qs.stale(), frequency, remainder)
-
-
-def parse_podcast_feeds(qs, frequency, limit):
-
-    now = timezone.now()
-
-    # prioritization:
-    # any promoted or followed
-    # parsed ASC
-    # pub_date DESC
-
-    qs = (
-        qs.annotate(num_follows=Count("follow", distinct=True))
-        .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
+def get_scheduled_podcasts(frequency):
+    return (
+        Podcast.objects.active()
+        .annotate(num_follows=Count("follow", distinct=True))
+        .filter(Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - frequency))
+        .distinct()
         .order_by(
             "-num_follows",
             "-promoted",
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
-        )[:limit]
+        )
     )
 
-    for podcast in qs.iterator():
-        parse_podcast_feed.delay(podcast.rss)
+
+def schedule_podcast_feeds(frequency):
+    """
+    Schedules feeds for update.
+    """
+
+    # rough estimate: takes 2 seconds per update
+    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
+    qs = get_scheduled_podcasts(frequency)
+
+    for (qs, pc) in [
+        (qs.fresh(), 0.9),
+        (qs.stale(), 0.1),
+    ]:
+
+        for rss in qs[: round(limit * pc)].values_list("rss", flat=True).iterator():
+            parse_podcast_feed.delay(rss)
 
 
 @attr.s(kw_only=True)
