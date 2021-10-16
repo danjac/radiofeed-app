@@ -17,7 +17,6 @@ from jcasts.podcasts.feed_parser import (
     get_feed_headers,
     parse_podcast_feed,
     parse_podcast_feeds,
-    reschedule,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
@@ -348,24 +347,3 @@ class TestParsePodcastFeed:
         assert new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
-
-
-class TestReschedule:
-    @pytest.mark.parametrize(
-        "hours_ago,minutes_range",
-        [
-            (0, (60, 119)),
-            (72, (216, 275)),
-            (720 * 30, (1440, 1499)),
-        ],
-    )
-    def test_reschedule(self, hours_ago, minutes_range):
-        now = timezone.now()
-        scheduled = reschedule(now - timedelta(hours=hours_ago))
-        value = round((scheduled - now).total_seconds() / 60)
-        assert value in range(*minutes_range)
-
-    def test_pub_date_none(self):
-        scheduled = reschedule(None)
-        value = round((scheduled - timezone.now()).total_seconds() / 60)
-        assert value in range(60, 119)

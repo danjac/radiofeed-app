@@ -11,14 +11,14 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Count, F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
-from jcasts.podcasts.models import Category, Follow, Podcast
+from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -66,21 +66,14 @@ def parse_podcast_feeds(qs, frequency, limit):
 
     # prioritization:
     # any promoted or followed
-    # scheduled ASC
     # parsed ASC
     # pub_date DESC
 
     qs = (
-        qs.annotate(
-            followed=Exists(
-                Follow.objects.filter(
-                    podcast=OuterRef("pk"),
-                )
-            )
-        )
+        qs.annotate(num_follows=Count("follow", distinct=True))
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=now - frequency))
         .order_by(
-            "-followed",
+            "-num_follows",
             "-promoted",
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
@@ -195,7 +188,6 @@ def parse_success(podcast, response, feed, items):
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = timezone.now()
-    podcast.scheduled = reschedule(podcast.pub_date)
     podcast.active = True
     podcast.exception = ""
 
@@ -318,23 +310,6 @@ def get_categories_dict():
     return Category.objects.in_bulk(field_name="name")
 
 
-def reschedule(pub_date):
-
-    now = timezone.now()
-
-    delta = now - pub_date if pub_date else MIN_SCHEDULED_DELTA
-
-    # add 5% since last time to current time
-    # e.g. 7 days - try again in about 8 hours
-    delta = min(
-        max(timedelta(seconds=delta.total_seconds() * 0.05), MIN_SCHEDULED_DELTA),
-        MAX_SCHEDULED_DELTA,
-    )
-
-    # add 0-59 minutes for load balancing
-    return now + delta + timedelta(minutes=secrets.choice(range(0, 59)))
-
-
 def parse_failure(
     podcast,
     *,
@@ -350,7 +325,6 @@ def parse_failure(
         active=active,
         updated=now,
         parsed=now,
-        scheduled=reschedule(podcast.pub_date) if active else None,
         http_status=status,
         exception=tb,
     )

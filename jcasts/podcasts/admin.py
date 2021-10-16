@@ -99,7 +99,6 @@ class PodcastAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         "parsed",
-        "scheduled",
         "modified",
         "pub_date",
         "etag",
