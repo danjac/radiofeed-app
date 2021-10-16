@@ -15,7 +15,6 @@ from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFac
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
-    get_scheduled_podcasts,
     parse_podcast_feed,
     schedule_podcast_feeds,
 )
@@ -75,25 +74,6 @@ class TestSchedulePodcastFeeds:
 
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
         assert len(mock_parse_podcast_feed.mock_calls) == 4
-
-
-class TestGetScheduledPodcasts:
-    @pytest.mark.parametrize(
-        "parsed,expected",
-        [
-            (None, 1),
-            # parsed a day ago
-            (timedelta(days=1), 1),
-            # parsed only 30 minutes ago
-            (timedelta(minutes=30), 0),
-        ],
-    )
-    def test_get_scheduled_podcasts(self, db, parsed, expected):
-        now = timezone.now()
-        PodcastFactory(
-            parsed=now - parsed if parsed else None,
-        )
-        assert get_scheduled_podcasts(timedelta(hours=1)).count() == expected
 
 
 class TestParsePodcastFeed:

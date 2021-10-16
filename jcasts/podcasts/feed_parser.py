@@ -11,14 +11,14 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Count, F, Q
+from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
-from jcasts.podcasts.models import Category, Podcast
+from jcasts.podcasts.models import Category, Follow, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -42,10 +42,16 @@ class DuplicateFeed(requests.RequestException):
     ...
 
 
-def get_scheduled_podcasts(frequency):
-    return (
+def schedule_podcast_feeds(frequency):
+    """
+    Schedules feeds for update.
+    """
+
+    # rough estimate: takes 2 seconds per update
+    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
+    qs = (
         Podcast.objects.active()
-        .annotate(num_follows=Count("follow", distinct=True))
+        .annotate(has_follows=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - frequency))
         .distinct()
         .order_by(
@@ -54,18 +60,8 @@ def get_scheduled_podcasts(frequency):
         )
     )
 
-
-def schedule_podcast_feeds(frequency):
-    """
-    Schedules feeds for update.
-    """
-
-    # rough estimate: takes 2 seconds per update
-    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
-    qs = get_scheduled_podcasts(frequency)
-
-    primary = qs.filter(Q(num_follows__gt=0) | Q(promoted=True))
-    secondary = qs.filter(num_follows=0, promoted=False)
+    primary = qs.filter(Q(has_follows=True) | Q(promoted=True))
+    secondary = qs.filter(has_follows=False, promoted=False)
 
     remainder = 0
 
