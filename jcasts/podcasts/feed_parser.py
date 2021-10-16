@@ -56,7 +56,7 @@ def schedule_podcast_feeds(frequency):
 
     qs = Podcast.objects.active()
 
-    parse_podcast_feeds(qs.recent(), frequency, limit - remainder)
+    parse_podcast_feeds(qs.fresh(), frequency, limit - remainder)
     parse_podcast_feeds(qs.stale(), frequency, remainder)
 
 

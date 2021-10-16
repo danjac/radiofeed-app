@@ -22,7 +22,7 @@ def index(request):
 
     promoted = "promoted" in request.GET
 
-    podcast_qs = Podcast.objects.recent()
+    podcast_qs = Podcast.objects.fresh()
 
     if follows and not promoted:
         podcast_qs = podcast_qs.filter(pk__in=follows)

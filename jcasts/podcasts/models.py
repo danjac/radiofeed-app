@@ -65,7 +65,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def unpublished(self):
         return self.filter(pub_date__isnull=True)
 
-    def recent(self):
+    def fresh(self):
         return self.filter(
             models.Q(
                 pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD,

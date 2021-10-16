@@ -144,11 +144,11 @@ class TestPodcastManager:
             (None, True),
         ],
     )
-    def test_recent(self, db, settings, last_pub, exists):
+    def test_fresh(self, db, settings, last_pub, exists):
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
 
-        assert Podcast.objects.recent().exists() is exists
+        assert Podcast.objects.fresh().exists() is exists
 
     @pytest.mark.parametrize(
         "last_pub,exists",

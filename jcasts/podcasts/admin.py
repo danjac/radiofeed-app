@@ -22,7 +22,7 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("recent", f"Recent (< {settings.FRESHNESS_THRESHOLD.days} days)"),
+            ("fresh", f"Fresh (< {settings.FRESHNESS_THRESHOLD.days} days)"),
             ("stale", f"Stale (> {settings.FRESHNESS_THRESHOLD.days} days)"),
         )
 
@@ -32,8 +32,8 @@ class PubDateFilter(admin.SimpleListFilter):
             return queryset.published()
         if value == "no":
             return queryset.unpublished()
-        if value == "recent":
-            return queryset.recent()
+        if value == "fresh":
+            return queryset.fresh()
         if value == "stale":
             return queryset.stale()
         return queryset

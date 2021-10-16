@@ -94,24 +94,24 @@ class TestPubDateFilter:
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=None)
         PodcastFactory(pub_date=now - timedelta(days=9))
-        not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
+        not_fresh = PodcastFactory(pub_date=now - timedelta(days=99))
 
         f = PubDateFilter(req, {"pub_date": "stale"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert not_recent in qs
+        assert not_fresh in qs
 
-    def test_pub_date_recent(self, settings, podcasts, admin, req):
+    def test_pub_date_fresh(self, settings, podcasts, admin, req):
         now = timezone.now()
         settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         no_pub_date = PodcastFactory(pub_date=None)
-        not_recent = PodcastFactory(pub_date=now - timedelta(days=99))
+        not_fresh = PodcastFactory(pub_date=now - timedelta(days=99))
 
-        f = PubDateFilter(req, {"pub_date": "recent"}, Podcast, admin)
+        f = PubDateFilter(req, {"pub_date": "fresh"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
         assert no_pub_date in qs
-        assert not_recent not in qs
+        assert not_fresh not in qs
 
 
 class TestActiveFilter:
