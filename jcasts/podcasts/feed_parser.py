@@ -49,6 +49,8 @@ def schedule_podcast_feeds(frequency):
 
     # rough estimate: takes 2 seconds per update
     limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
+
+    # ensure that we do not parse feeds already parsed within the time period
     qs = (
         Podcast.objects.active()
         .annotate(has_follows=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
@@ -60,6 +62,7 @@ def schedule_podcast_feeds(frequency):
         )
     )
 
+    # prioritize any followed or promoted podcasts
     primary = qs.filter(Q(has_follows=True) | Q(promoted=True))
     secondary = qs.filter(has_follows=False, promoted=False)
 
@@ -71,16 +74,17 @@ def schedule_podcast_feeds(frequency):
         (secondary.stale(), 0.2),
     ]:
 
-        count = qs.count()
-
         base_limit = round(limit * ratio)
-        qs_limit = min(count, base_limit) + remainder
+        qs_limit = min(qs.count(), base_limit) + remainder
 
-        # if any remaining slots in cohort, just add to next cohort
-        remainder = max(base_limit - qs_limit, 0)
-
+        # process the feeds
         for rss in qs[:qs_limit].values_list("rss", flat=True).iterator():
             parse_podcast_feed.delay(rss)
+
+        # if any remaining slots in cohort, just add to next cohort
+        # for example, if total COUNT is 300, and base limit is 1800,
+        # then remainder of 1500 is added to next cohort limit
+        remainder = max(base_limit - qs_limit, 0)
 
 
 @attr.s(kw_only=True)
