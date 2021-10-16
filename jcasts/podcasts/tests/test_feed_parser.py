@@ -11,7 +11,7 @@ from django.utils import timezone
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
+from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
@@ -64,11 +64,17 @@ class TestSchedulePodcastFeeds:
         mocker.patch("multiprocessing.cpu_count", return_value=2)
 
         now = timezone.now()
+
+        PodcastFactory(active=False)
+
+        FollowFactory(podcast__active=True, podcast__pub_date=now - timedelta(days=3))
+        PodcastFactory(active=True, promoted=True, pub_date=now - timedelta(days=3))
+
         PodcastFactory(active=True, pub_date=now - timedelta(days=3))
         PodcastFactory(active=True, pub_date=now - timedelta(days=99))
 
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
-        assert len(mock_parse_podcast_feed.mock_calls) == 2
+        assert len(mock_parse_podcast_feed.mock_calls) == 4
 
 
 class TestGetScheduledPodcasts:

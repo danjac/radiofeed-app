@@ -49,8 +49,6 @@ def get_scheduled_podcasts(frequency):
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - frequency))
         .distinct()
         .order_by(
-            "-num_follows",
-            "-promoted",
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
@@ -66,12 +64,26 @@ def schedule_podcast_feeds(frequency):
     limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
     qs = get_scheduled_podcasts(frequency)
 
-    for (qs, pc) in [
-        (qs.fresh(), 0.9),
-        (qs.stale(), 0.1),
+    primary = qs.filter(Q(num_follows__gt=0) | Q(promoted=True))
+    secondary = qs.filter(num_follows=0, promoted=False)
+
+    remainder = 0
+
+    for (qs, ratio) in [
+        (primary, 0.5),
+        (secondary.fresh(), 0.3),
+        (secondary.stale(), 0.2),
     ]:
 
-        for rss in qs[: round(limit * pc)].values_list("rss", flat=True).iterator():
+        count = qs.count()
+
+        base_limit = round(limit * ratio)
+        qs_limit = min(count, base_limit) + remainder
+
+        # if any remaining slots in cohort, just add to next cohort
+        remainder = max(base_limit - qs_limit, 0)
+
+        for rss in qs[:qs_limit].values_list("rss", flat=True).iterator():
             parse_podcast_feed.delay(rss)
 
 
