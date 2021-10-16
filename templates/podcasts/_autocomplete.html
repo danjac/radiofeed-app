@@ -13,7 +13,7 @@
       {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12 link">
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden link">
       {{ podcast.cleaned_title|truncatechars:80 }}
     </div>
 
@@ -33,7 +33,7 @@
       {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden max-w-xl no-wrap max-h-12 link">
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden link">
       {{ episode.cleaned_title|truncatechars:80 }}
     </div>
 
