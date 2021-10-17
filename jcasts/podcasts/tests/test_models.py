@@ -136,6 +136,27 @@ class TestPodcastManager:
         PodcastFactory(pub_date=None)
         assert Podcast.objects.unpublished().count() == 1
 
+    def test_followed_true(self, db):
+        FollowFactory()
+        assert Podcast.objects.followed().first().followed
+
+    def test_followed_false(self, db):
+        PodcastFactory()
+        assert not Podcast.objects.followed().first().followed
+
+    @pytest.mark.parametrize(
+        "parsed,exists",
+        [
+            (None, True),
+            (timedelta(days=-3), True),
+            (timedelta(days=3), False),
+        ],
+    )
+    def test_scheduled(self, db, parsed, exists):
+
+        PodcastFactory(parsed=timezone.now() + parsed if parsed else None)
+        assert Podcast.objects.scheduled(timedelta(hours=1)).exists() is exists
+
     @pytest.mark.parametrize(
         "last_pub,exists",
         [

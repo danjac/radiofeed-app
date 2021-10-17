@@ -8,11 +8,12 @@ from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
+    FollowedFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
 )
-from jcasts.podcasts.factories import PodcastFactory
+from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
 
 
@@ -135,6 +136,8 @@ class TestActiveFilter:
         assert qs.count() == 3
         assert inactive not in qs
 
+
+class TestPromotedFilter:
     def test_promoted_filter_none(self, podcasts, admin, req):
         PodcastFactory(promoted=False)
         f = PromotedFilter(req, {}, Podcast, admin)
@@ -147,3 +150,18 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestFollowedFilter:
+    def test_followed_filter_none(self, podcasts, admin, req):
+        FollowFactory()
+        f = FollowedFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_promoted_filter_true(self, podcasts, admin, req):
+        followed = FollowFactory().podcast
+        f = FollowedFilter(req, {"followed": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == followed

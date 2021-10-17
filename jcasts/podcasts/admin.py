@@ -53,6 +53,21 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class FollowedFilter(admin.SimpleListFilter):
+    title = "Followed"
+    parameter_name = "followed"
+
+    def lookups(self, request, model_admin):
+        return (("yes", "Followed"),)
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        queryset = queryset.followed()
+        if value == "yes":
+            return queryset.filter(followed=True)
+        return queryset
+
+
 class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
@@ -76,6 +91,7 @@ class ActiveFilter(admin.SimpleListFilter):
 class PodcastAdmin(admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
+        FollowedFilter,
         PromotedFilter,
         PubDateFilter,
     )

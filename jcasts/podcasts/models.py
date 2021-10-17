@@ -78,6 +78,17 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
+    def followed(self):
+        return self.annotate(
+            followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
+        )
+
+    def scheduled(self, frequency):
+        return self.filter(
+            models.Q(parsed__isnull=True)
+            | models.Q(parsed__lt=timezone.now() - frequency)
+        )
+
     def exact_match(self, search_term):
         return self.annotate(
             exact_match=models.Exists(

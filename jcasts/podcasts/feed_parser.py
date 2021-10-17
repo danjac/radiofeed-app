@@ -11,14 +11,14 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
-from jcasts.podcasts.models import Category, Follow, Podcast
+from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -68,8 +68,8 @@ def schedule_podcast_feeds(frequency):
     # ensure that we do not parse feeds already parsed within the time period
     qs = (
         Podcast.objects.active()
-        .annotate(followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
-        .filter(Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - frequency))
+        .followed()
+        .scheduled(frequency)
         .distinct()
         .order_by(
             F("parsed").asc(nulls_first=True),
