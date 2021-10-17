@@ -68,7 +68,7 @@ def schedule_podcast_feeds(frequency):
     # ensure that we do not parse feeds already parsed within the time period
     qs = (
         Podcast.objects.active()
-        .annotate(has_follows=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
+        .annotate(followed=Exists(Follow.objects.filter(podcast=OuterRef("pk"))))
         .filter(Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - frequency))
         .distinct()
         .order_by(
@@ -78,8 +78,8 @@ def schedule_podcast_feeds(frequency):
     )
 
     # prioritize any followed or promoted podcasts
-    primary = qs.filter(Q(has_follows=True) | Q(promoted=True))
-    secondary = qs.filter(has_follows=False, promoted=False)
+    primary = qs.filter(Q(followed=True) | Q(promoted=True))
+    secondary = qs.filter(followed=False, promoted=False)
 
     remainder = 0
 
