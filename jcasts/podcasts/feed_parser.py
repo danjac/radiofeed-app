@@ -89,16 +89,12 @@ def schedule_podcast_feeds(frequency):
         (secondary.stale(), 0.2),
     ]:
 
-        base_limit = round(limit * ratio) + remainder
+        remainder += round(limit * ratio)
 
         # process the feeds
-        for rss in qs[:base_limit].values_list("rss", flat=True).iterator():
+        for rss in qs[:remainder].values_list("rss", flat=True).iterator():
             parse_podcast_feed.delay(rss)
-
-        # if any remaining slots in cohort, just add to next cohort
-        # for example, if total COUNT is 300, and base limit is 1800,
-        # then remainder of 1500 is added to next cohort limit
-        remainder = max(base_limit - qs.count(), 0)
+            remainder -= 1
 
 
 @job("feeds")
