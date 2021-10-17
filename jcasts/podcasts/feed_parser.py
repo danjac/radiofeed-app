@@ -68,8 +68,8 @@ def schedule_podcast_feeds(frequency):
     # ensure that we do not parse feeds already parsed within the time period
     qs = (
         Podcast.objects.active()
-        .followed()
         .scheduled(frequency)
+        .with_followed()
         .distinct()
         .order_by(
             F("parsed").asc(nulls_first=True),

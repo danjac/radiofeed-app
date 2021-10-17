@@ -65,7 +65,7 @@ def search_podcasts(request):
 
     podcasts = (
         Podcast.objects.published()
-        .exact_match(request.search.value)
+        .with_exact_match(request.search.value)
         .search(request.search.value)
         .order_by("-exact_match", "-rank", "-pub_date")
     )
@@ -103,7 +103,7 @@ def search_autocomplete(request, limit=6):
 
     podcasts = (
         Podcast.objects.published()
-        .exact_match(request.search.value)
+        .with_exact_match(request.search.value)
         .search(request.search.value)
         .order_by("-exact_match", "-rank", "-pub_date")
     )[:limit]
@@ -200,7 +200,7 @@ def category_detail(request, category_id, slug=None):
 
     if request.search:
         podcasts = (
-            podcasts.exact_match(request.search.value)
+            podcasts.with_exact_match(request.search.value)
             .search(request.search.value)
             .order_by("-exact_match", "-rank", "-pub_date")
         )

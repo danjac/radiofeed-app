@@ -62,7 +62,7 @@ class FollowedFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         value = self.value()
-        queryset = queryset.followed()
+        queryset = queryset.with_followed()
         if value == "yes":
             return queryset.filter(followed=True)
         return queryset

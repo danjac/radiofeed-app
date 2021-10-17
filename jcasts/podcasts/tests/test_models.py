@@ -100,7 +100,7 @@ class TestPodcastManager:
         PodcastFactory(title="test")
         PodcastFactory(title="nomatch")
 
-        podcasts = Podcast.objects.exact_match("testing").order_by("-exact_match")
+        podcasts = Podcast.objects.with_exact_match("testing").order_by("-exact_match")
         assert podcasts.count() == 3
         first = podcasts.first()
         assert first == exact
@@ -136,13 +136,13 @@ class TestPodcastManager:
         PodcastFactory(pub_date=None)
         assert Podcast.objects.unpublished().count() == 1
 
-    def test_followed_true(self, db):
+    def test_with_followed_true(self, db):
         FollowFactory()
-        assert Podcast.objects.followed().first().followed
+        assert Podcast.objects.with_followed().first().followed
 
-    def test_followed_false(self, db):
+    def test_with_followed_false(self, db):
         PodcastFactory()
-        assert not Podcast.objects.followed().first().followed
+        assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
         "parsed,exists",
