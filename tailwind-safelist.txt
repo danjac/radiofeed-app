@@ -1,3 +1,5 @@
+-inset-x-12
+sm:-inset-x-0
 type
 cursor-not-allowed
 pointer-events-none
