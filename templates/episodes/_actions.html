@@ -20,11 +20,11 @@
      @click.away="close()"
      @keydown.escape.window="close()">
   <div class="bg-white bg-white dark:bg-gray-800 w-64 border shadow-2xl dark:border-gray-500 rounded inset-0">
-    {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 border-b dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
+    {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
     {% if not is_detail %}
     {% with time_remaining=episode.time_remaining|format_duration %}
     {% if is_playing %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:close_player' %}"
             hx-push-url="false"
             hx-target="#player"
@@ -36,7 +36,7 @@
 
     {% else %}
 
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:start_player' episode.id %}"
             hx-push-url="false"
             hx-target="#player"
@@ -51,7 +51,7 @@
     {% endif %}
     {% if not is_playing %}
     {% if episode.listened and not episode.completed %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:mark_complete' episode.id %}"
             hx-push-url="false"
             @click="close();">
@@ -61,7 +61,7 @@
     {% endif %}
 
     {% if is_queued %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -69,14 +69,14 @@
       Remove from Queue
     </button>
     {% elif is_queue %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
             hx-push-url="false"
             @click="close()">
       {% icon "arrow_up" css_class=ICON_CSS %}
       Play Next
     </button>
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -84,7 +84,7 @@
       Play Last
     </button>
     {% else %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -95,7 +95,7 @@
     {% endif %}
 
     {% if is_favorited %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -103,7 +103,7 @@
       Remove from Favorites
     </button>
     {% else %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-post="{% url 'episodes:add_favorite' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -113,7 +113,7 @@
     {% endif %}
 
     {% if episode.listened and not is_playing %}
-    <button class="{{ BUTTON_CSS }}"
+    <button class="{{ BUTTON_CSS }} border-b"
             hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
             hx-push-url="false"
             @click="close()">
@@ -124,7 +124,7 @@
 
     {% if is_detail and user.is_staff %}
     <a href="{% url 'admin:episodes_episode_change' episode.id %}"
-       class="{{ BUTTON_CSS }}"
+       class="{{ BUTTON_CSS }} border-b"
        hx-disable="true"
        @click="close()">
       {% icon "adjustments" css_class=ICON_CSS %}
@@ -134,7 +134,7 @@
 
     <a href="{{ episode.media_url }}"
        hx-disable="true"
-       class="{{ BUTTON_CSS }}">
+       class="{{ BUTTON_CSS }} border-b">
       {% icon "download" css_class=ICON_CSS %}
       Download {{ episode.get_media_url_ext|upper }}
     </a>
