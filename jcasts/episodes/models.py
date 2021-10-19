@@ -1,7 +1,7 @@
 import mimetypes
 import os
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -107,11 +107,11 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     guid = models.TextField()
 
-    pub_date: datetime = models.DateTimeField()
+    pub_date = models.DateTimeField()
 
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
@@ -316,7 +316,7 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 class Favorite(TimeStampedModel):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
 
