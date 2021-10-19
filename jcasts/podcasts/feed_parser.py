@@ -124,19 +124,13 @@ def parse_podcast_feed(rss):
         return parse_failure(
             podcast,
             status=e.response.status_code,
-            active=e.response.status_code
-            not in (
-                http.HTTPStatus.FORBIDDEN,
-                http.HTTPStatus.GONE,
-                http.HTTPStatus.NOT_FOUND,
-                http.HTTPStatus.PAYMENT_REQUIRED,
-                http.HTTPStatus.UNAUTHORIZED,
-            ),
+            active=False,
         )
 
     except requests.RequestException as e:
         return parse_failure(
             podcast,
+            active=False,
             exception=e,
             tb=traceback.format_exc(),
         )
