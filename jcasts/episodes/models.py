@@ -158,14 +158,6 @@ class Episode(models.Model):
     def get_absolute_url(self):
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
-    @cached_property
-    def cleaned_title(self):
-        return strip_html(self.title)
-
-    @cached_property
-    def cleaned_description(self):
-        return strip_html(self.description)
-
     @property
     def slug(self):
         return slugify(self.title, allow_unicode=False) or "no-title"
@@ -185,6 +177,14 @@ class Episode(models.Model):
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
+
+    @cached_property
+    def cleaned_title(self):
+        return strip_html(self.title)
+
+    @cached_property
+    def cleaned_description(self):
+        return strip_html(self.description)
 
     @cached_property
     def current_time(self):
