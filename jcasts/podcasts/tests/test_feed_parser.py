@@ -64,16 +64,30 @@ class TestSchedulePodcastFeeds:
 
         now = timezone.now()
 
+        # inactive
         PodcastFactory(active=False)
 
-        FollowFactory(podcast__active=True, podcast__pub_date=now - timedelta(days=3))
-        PodcastFactory(active=True, promoted=True, pub_date=now - timedelta(days=3))
+        # too recent
+        PodcastFactory(parsed=now - timedelta(minutes=20))
 
-        PodcastFactory(active=True, pub_date=now - timedelta(days=3))
-        PodcastFactory(active=True, pub_date=now - timedelta(days=99))
+        new = PodcastFactory(pub_date=None, parsed=None)
+        followed = FollowFactory(
+            podcast__active=True, podcast__pub_date=now - timedelta(days=3)
+        ).podcast
+        promoted = PodcastFactory(
+            active=True, promoted=True, pub_date=now - timedelta(days=4)
+        )
+        fresh = PodcastFactory(active=True, pub_date=now - timedelta(days=3))
+        stale = PodcastFactory(active=True, pub_date=now - timedelta(days=99))
 
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
-        assert len(mock_parse_podcast_feed.mock_calls) == 4
+
+        assert len(mock_parse_podcast_feed.mock_calls) == 5
+        assert mock_parse_podcast_feed.mock_calls[0][1][0] == followed.rss
+        assert mock_parse_podcast_feed.mock_calls[1][1][0] == promoted.rss
+        assert mock_parse_podcast_feed.mock_calls[2][1][0] == new.rss
+        assert mock_parse_podcast_feed.mock_calls[3][1][0] == fresh.rss
+        assert mock_parse_podcast_feed.mock_calls[4][1][0] == stale.rss
 
 
 class TestParsePodcastFeed:
