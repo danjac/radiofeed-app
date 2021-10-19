@@ -237,7 +237,7 @@ TZ_INFOS = {
 }
 
 
-def force_tz_aware(dt):
+def force_tz_aware(dt: datetime) -> datetime:
     if not is_aware(dt):
         dt = make_aware(dt)
     return dt
