@@ -1,5 +1,7 @@
 {% extends "podcasts/podcast_detail_base.html" %}
 
+{% block subtitle %}{{ block.super }} | Episodes{% endblock %}
+
 {% block podcast_content %}
 <div class="sm:flex items-center mb-3 justify-between border-t dark:border-gray-500 pt-3">
 
