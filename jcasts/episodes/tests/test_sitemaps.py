@@ -1,5 +1,5 @@
 from jcasts.episodes.factories import EpisodeFactory
-from jcasts.shared.assertions import assert_ok
+from jcasts.lib.assertions import assert_ok
 
 
 class TestEpisodeSitemap:

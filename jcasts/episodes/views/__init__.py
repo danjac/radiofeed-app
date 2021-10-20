@@ -6,9 +6,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode, QueueItem
+from jcasts.lib.decorators import ajax_login_required
+from jcasts.lib.pagination import render_paginated_response
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.pagination import render_paginated_response
 
 
 @require_http_methods(["GET"])

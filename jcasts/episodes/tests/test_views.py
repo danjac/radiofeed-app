@@ -12,13 +12,13 @@ from jcasts.episodes.factories import (
 )
 from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import AudioLog, Favorite, QueueItem
-from jcasts.podcasts.factories import FollowFactory, PodcastFactory
-from jcasts.shared.assertions import (
+from jcasts.lib.assertions import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,
     assert_ok,
 )
+from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 
 episodes_url = reverse_lazy("episodes:index")
 

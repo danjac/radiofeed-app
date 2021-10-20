@@ -71,7 +71,7 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    reltuple_count = "jcasts.shared.db.get_reltuple_count"
+    reltuple_count = "jcasts.lib.db.get_reltuple_count"
     hub = "https://pubsubhubbub.appspot.com/"
 
     def test_search(self, db):

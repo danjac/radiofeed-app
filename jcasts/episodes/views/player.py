@@ -6,9 +6,9 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, QueueItem
 from jcasts.episodes.views import get_episode_or_404
-from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.htmx import with_hx_trigger
-from jcasts.shared.response import HttpResponseNoContent
+from jcasts.lib.decorators import ajax_login_required
+from jcasts.lib.htmx import with_hx_trigger
+from jcasts.lib.response import HttpResponseNoContent
 
 
 @require_http_methods(["POST"])
