@@ -4,7 +4,7 @@ build:
 	docker-compose build
 
 start:
-	docker-compose up -d --remove-orphans --scale worker=4
+	docker-compose up -d --remove-orphans
 
 stop:
 	docker-compose down
