@@ -1,6 +1,6 @@
 <form action="{{ search_url|default:request.path }}"
       method="get"
-      x-data="{search: '{{ request.search.value|default:'' }}'}"
+      x-data="{search: '{{ request.search.value|default:''|escapejs }}'}"
       hx-push-url="true"
       class="relative bg-transparent {{ css_class|default:'' }}">
   <input type="search"
