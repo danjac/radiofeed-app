@@ -14,7 +14,6 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.utils.timesince import timesince
 
 from jcasts.shared import cleaners
 
@@ -45,14 +44,6 @@ def pagination_url(context, page_number, param="page"):
     params = request.GET.copy()
     params[param] = page_number
     return request.path + "?" + params.urlencode()
-
-
-@register.filter
-def approx_timesince(value, arg=None):
-    try:
-        return timesince(value, arg, depth=1)
-    except (AttributeError, ValueError, TypeError):
-        return ""
 
 
 @register.simple_tag(takes_context=True)

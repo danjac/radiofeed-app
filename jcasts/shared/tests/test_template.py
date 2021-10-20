@@ -1,12 +1,8 @@
-from datetime import timedelta
-
 from django.urls import reverse
-from django.utils import timezone
 
 from jcasts.shared.template import (
     absolute_uri,
     active_link,
-    approx_timesince,
     colorpicker,
     format_duration,
     login_url,
@@ -22,16 +18,6 @@ from jcasts.shared.template import (
 EXAMPLE_HTTPS_URL = "https://example.com"
 EXAMPLE_HTTP_URL = "http://example.com"
 TESTSERVER_URL = "http://testserver"
-
-
-class TestTimesinceApprox:
-    def test_none(self):
-        assert approx_timesince(None) == ""
-
-    def test_value(self):
-        assert (
-            approx_timesince(timezone.now() - timedelta(days=3, hours=5)) == "3\xa0days"
-        )
 
 
 class TestColorpicker:
