@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from jcasts.lib.assertions import assert_no_content, assert_ok
+from jcasts.shared.assertions import assert_no_content, assert_ok
 
 
 class TestRobots:

@@ -11,11 +11,11 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.lib.decorators import ajax_login_required
-from jcasts.lib.pagination import render_paginated_response
-from jcasts.lib.response import HttpResponseConflict
 from jcasts.podcasts import podcastindex
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
+from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])

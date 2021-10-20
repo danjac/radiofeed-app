@@ -5,7 +5,7 @@ from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
-from jcasts.lib.htmx import with_hx_trigger
+from jcasts.shared.htmx import with_hx_trigger
 
 
 class BaseMiddleware:

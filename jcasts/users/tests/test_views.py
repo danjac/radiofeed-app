@@ -2,8 +2,8 @@ from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
-from jcasts.lib.assertions import assert_ok
 from jcasts.podcasts.factories import FollowFactory
+from jcasts.shared.assertions import assert_ok
 
 
 class TestUserPreferences:

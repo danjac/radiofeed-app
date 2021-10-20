@@ -1,6 +1,6 @@
 from django.utils.functional import SimpleLazyObject
 
-from jcasts.lib.middleware import BaseMiddleware
+from jcasts.shared.middleware import BaseMiddleware
 
 
 class Player:

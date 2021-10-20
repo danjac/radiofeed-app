@@ -7,7 +7,7 @@ from django.contrib.messages.storage.base import Message
 from django.http import HttpResponse, HttpResponseRedirect
 from django_htmx.middleware import HtmxMiddleware
 
-from jcasts.lib.middleware import (
+from jcasts.shared.middleware import (
     CacheControlMiddleware,
     HtmxMessageMiddleware,
     SearchMiddleware,
@@ -73,13 +73,13 @@ class TestHtmxMessageMiddleware:
     @pytest.fixture
     def messages(self, mocker):
         mocker.patch(
-            "jcasts.lib.middleware.get_messages",
+            "jcasts.shared.middleware.get_messages",
             return_value=[Message(messages.SUCCESS, self.message)],
         )
 
     @pytest.fixture
     def no_messages(self, mocker):
-        mocker.patch("jcasts.lib.middleware.get_messages", return_value=[])
+        mocker.patch("jcasts.shared.middleware.get_messages", return_value=[])
 
     def _test_not_htmx(self, req, htmx_mw, message_mw):
         htmx_mw(req)

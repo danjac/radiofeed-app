@@ -56,7 +56,7 @@ DEFAULT_CACHE_TIMEOUT = 3600
 EMAIL_HOST = env("EMAIL_HOST", default="localhost")
 EMAIL_PORT = env.int("EMAIL_PORT", default=25)
 
-EMAIL_BACKEND = "jcasts.lib.email.RqBackend"
+EMAIL_BACKEND = "jcasts.shared.email.RqBackend"
 RQ_EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 RQ_EMAIL_QUEUE = "mail"
 
@@ -120,8 +120,8 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "jcasts.lib.middleware.CacheControlMiddleware",
-    "jcasts.lib.middleware.SearchMiddleware",
+    "jcasts.shared.middleware.CacheControlMiddleware",
+    "jcasts.shared.middleware.SearchMiddleware",
     "jcasts.episodes.middleware.PlayerMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -129,7 +129,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "jcasts.lib.middleware.HtmxMessageMiddleware",
+    "jcasts.shared.middleware.HtmxMessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -239,7 +239,7 @@ TEMPLATES: list[dict] = [
                 "django.contrib.messages.context_processors.messages",
             ],
             "builtins": [
-                "jcasts.lib.template",
+                "jcasts.shared.template",
             ],
         },
     }

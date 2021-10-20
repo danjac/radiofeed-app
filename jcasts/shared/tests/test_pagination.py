@@ -3,9 +3,9 @@ import pytest
 from django.http import Http404
 from django_htmx.middleware import HtmxDetails
 
-from jcasts.lib.assertions import assert_ok
-from jcasts.lib.pagination import paginate, render_paginated_response
 from jcasts.podcasts.factories import PodcastFactory
+from jcasts.shared.assertions import assert_ok
+from jcasts.shared.pagination import paginate, render_paginated_response
 
 
 @pytest.fixture

@@ -5,10 +5,10 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Favorite
 from jcasts.episodes.views import get_episode_or_404
-from jcasts.lib.decorators import ajax_login_required
-from jcasts.lib.htmx import with_hx_trigger
-from jcasts.lib.pagination import render_paginated_response
-from jcasts.lib.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.htmx import with_hx_trigger
+from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
