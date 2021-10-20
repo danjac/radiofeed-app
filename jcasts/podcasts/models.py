@@ -169,14 +169,6 @@ class Podcast(models.Model):
     def get_absolute_url(self):
         return self.get_detail_url()
 
-    @cached_property
-    def cleaned_title(self):
-        return strip_html(self.title)
-
-    @cached_property
-    def cleaned_description(self):
-        return strip_html(self.description)
-
     def get_latest_url(self):
         return reverse("podcasts:latest", args=[self.pk])
 
@@ -191,6 +183,14 @@ class Podcast(models.Model):
 
     def get_domain(self):
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
+
+    @cached_property
+    def cleaned_title(self):
+        return strip_html(self.title)
+
+    @cached_property
+    def cleaned_description(self):
+        return strip_html(self.description)
 
     @cached_property
     def slug(self):
