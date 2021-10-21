@@ -327,7 +327,7 @@ lemmatizer = WordNetLemmatizer()
 def get_stopwords(language):
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
-    except KeyError:
+    except (OSError, KeyError):
         return []
 
 
