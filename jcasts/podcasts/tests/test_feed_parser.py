@@ -305,7 +305,7 @@ class TestParsePodcastFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert not new_podcast.active
+        assert new_podcast.active
         assert new_podcast.http_status is None
         assert new_podcast.parsed
 

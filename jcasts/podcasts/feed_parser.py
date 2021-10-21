@@ -130,7 +130,6 @@ def parse_podcast_feed(rss):
     except requests.RequestException as e:
         return parse_failure(
             podcast,
-            active=False,
             exception=e,
             tb=traceback.format_exc(),
         )
