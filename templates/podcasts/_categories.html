@@ -4,9 +4,10 @@
 {% if categories %}
 <div class="max-w-max flex-wrap flex items-center space-x-2 sm:space-x-3">
   {% for category in categories %}
-  <a class="link inline-block"
-     title="{{ category.name }}"
+  <a class="inline-flex items-center link"
+     title="{{ category.name }} Podcasts"
      href="{{ category.get_absolute_url }}">
+    {% icon "tag" css_class="h-4 w-4 mr-2" %}
     {{ category.name }}
   </a>
   {% endfor %}
