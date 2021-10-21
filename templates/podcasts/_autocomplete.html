@@ -1,19 +1,19 @@
 {% if podcasts or episodes %}
-<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-50 dark:border-gray-500 rounded top-10 text-black dark:text-white p-2 space-y-3"
+<div class="absolute bg-white dark:bg-gray-800 w-96 border shadow-xl z-50 dark:border-gray-500 rounded top-10 text-black dark:text-white space-y-3"
      x-show="search"
      hx-target="#layout"
      hx-push-url="true"
      hx-swap="outerHTML show:window:top"
      @click="search=''">
   {% for podcast in podcasts %}
-  <div class="flex items-center space-x-2 hover:cursor-pointer"
+  <div class="p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900"
        hx-get="{{ podcast.get_absolute_url }}">
 
     <div class="w-14">
       {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden link">
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold">
       {{ podcast.cleaned_title|truncatechars:80 }}
     </div>
 
@@ -26,14 +26,14 @@
 
   {% for episode in episodes %}
   {% with podcast=episode.podcast %}
-  <div class="flex items-center space-x-2 hover:cursor-pointer"
+  <div class="p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900"
        hx-get="{{ episode.get_absolute_url }}">
 
     <div class="w-14">
       {% include "_cover_image.html" with cover_url=podcast.cover_url size=12 alt=podcast.cleaned_title %}
     </div>
 
-    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden link">
+    <div class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold">
       {{ episode.cleaned_title|truncatechars:80 }}
     </div>
 
