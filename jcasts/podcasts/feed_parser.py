@@ -253,6 +253,7 @@ def parse_episodes(podcast, items, batch_size=500):
             "length",
             "media_type",
             "media_url",
+            "pub_date",
             "season",
             "title",
         ],
