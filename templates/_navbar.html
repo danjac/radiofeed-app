@@ -66,11 +66,12 @@
     <form action="{% url 'podcasts:search_podcasts' %}"
           method="get"
           class="relative bg-transparent hidden lg:block"
-          x-data="{search: ''}"
+          x-data="{search: '', tabindex: -1}"
           x-init="
           $watch('search', value => {
             if (!value) {
               $refs.searchResults.innerHTML = '';
+              tabindex = -1;
               } else {
               $dispatch('close-sidebar');
               }
@@ -78,6 +79,32 @@
           hx-push-url="true"
           @submit="$refs.input.blur(); search='';"
           @keydown.escape.window="search=''"
+          @keydown.down.window="
+          if (search) {
+            $event.preventDefault();
+            const results = $refs.searchResults.getElementsByClassName('search-result');
+            tabindex += 1;
+            if (tabindex > results.length - 1) {
+              tabindex = 0;
+            }
+            const selected = results[tabindex];
+            if (selected) {
+              selected.focus();
+            }
+         }"
+          @keydown.up.window="
+          if (search) {
+            $event.preventDefault();
+            const results = $refs.searchResults.getElementsByClassName('search-result');
+            tabindex -= 1;
+            if (tabindex < 0) {
+              tabindex = 0;
+            }
+            const selected = results[tabindex];
+            if (selected) {
+              selected.focus();
+            }
+         }"
           @click.away.window="search=''">
       <input type="search"
              x-ref="input"

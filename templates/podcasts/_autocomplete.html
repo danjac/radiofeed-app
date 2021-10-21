@@ -4,9 +4,12 @@
      hx-target="#layout"
      hx-push-url="true"
      hx-swap="outerHTML show:window:top"
-     @click="search=''">
+     @click="search=''"
+     @keyup.enter="search=''">
   {% for podcast in podcasts %}
-  <div class="p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900"
+  <div class="search-result p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
+       :tabindex="{{ forloop.counter0 }}"
+       hx-trigger="click,keyup[event.keyCode===13]"
        hx-get="{{ podcast.get_absolute_url }}">
 
     <div class="w-14">
@@ -24,9 +27,12 @@
   <hr class="dark:border-gray-500" />
   {% endif %}
 
+  {% with num_podcasts=podcasts|length %}
   {% for episode in episodes %}
   {% with podcast=episode.podcast %}
-  <div class="p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900"
+  <div class="search-result p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
+       :tabindex="{{ forloop.counter0|add:num_podcasts }}"
+       hx-trigger="click,keyup[event.keyCode===13]"
        hx-get="{{ episode.get_absolute_url }}">
 
     <div class="w-14">
@@ -40,6 +46,7 @@
   </div>
   {% endwith %}
   {% endfor %}
+  {% endwith %}
 
 </div>
 {% endif %}
