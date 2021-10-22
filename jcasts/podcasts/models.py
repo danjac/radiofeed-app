@@ -106,6 +106,7 @@ class Podcast(models.Model):
 
     rss = models.URLField(unique=True, max_length=500)
     active = models.BooleanField(default=True)
+    indexed = models.BooleanField(default=False)
 
     etag = models.TextField(blank=True)
     title = models.TextField()

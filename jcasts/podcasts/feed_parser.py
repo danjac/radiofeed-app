@@ -70,6 +70,7 @@ def schedule_podcast_feeds(frequency):
         Podcast.objects.active()
         .scheduled(frequency)
         .with_followed()
+        .filter(indexed=False)
         .distinct()
         .order_by(
             F("parsed").asc(nulls_first=True),

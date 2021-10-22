@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.management.base import BaseCommand
 
 from jcasts.podcasts import feed_parser, podcastindex
+from jcasts.podcasts.models import Podcast
 
 
 class Command(BaseCommand):
@@ -20,6 +21,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        for_update = []
         feeds = [
             feed
             for feed in podcastindex.recent_feeds(
@@ -29,6 +31,10 @@ class Command(BaseCommand):
         ]
         for feed in feeds:
             self.stdout.write(f"{feed.podcast.title} [{feed.podcast.rss}]")
-            feed_parser.parse_podcast_feed(feed.url)
+            feed_parser.parse_podcast_feed(feed.podcast.rss)
+            feed.podcast.indexed = True
+            for_update.append(feed.podcast)
+
+        Podcast.objects.bulk_update(for_update, fields=["indexed"])
 
         self.stdout.write(self.style.SUCCESS(f"{len(feeds)} feed(s) updated"))
