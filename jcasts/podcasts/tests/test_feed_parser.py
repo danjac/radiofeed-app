@@ -48,13 +48,23 @@ class BadMockResponse(MockResponse):
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
-        headers = get_feed_headers(podcast)
+        headers = get_feed_headers(podcast, False)
         assert headers["If-None-Match"] == f'"{podcast.etag}"'
+
+    def test_has_etag_force_update(self):
+        podcast = Podcast(etag="abc123")
+        headers = get_feed_headers(podcast, True)
+        assert "If-None-Match" not in headers
 
     def test_is_modified(self):
         podcast = Podcast(modified=timezone.now())
-        headers = get_feed_headers(podcast)
+        headers = get_feed_headers(podcast, False)
         assert headers["If-Modified-Since"]
+
+    def test_is_modified_force_update(self):
+        podcast = Podcast(modified=timezone.now())
+        headers = get_feed_headers(podcast, True)
+        assert "If-Modified-Since" not in headers
 
 
 class TestSchedulePodcastFeeds:

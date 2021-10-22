@@ -163,7 +163,7 @@ class PodcastAdmin(admin.ModelAdmin):
         num_feeds = queryset.count()
 
         for podcast in queryset.iterator():
-            feed_parser.parse_podcast_feed.delay(podcast.rss)
+            feed_parser.parse_podcast_feed.delay(podcast.rss, force_update=True)
 
         self.message_user(
             request,
