@@ -20,11 +20,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        feeds = podcastindex.recent_feeds(
-            limit=options["limit"], since=timedelta(hours=options["since"])
-        )
+        feeds = [
+            feed
+            for feed in podcastindex.recent_feeds(
+                limit=options["limit"], since=timedelta(hours=options["since"])
+            )
+            if feed.podcast and feed.podcast.active
+        ]
         for feed in feeds:
-            self.stdout.write(f"{feed.title} [{feed.url}]")
+            self.stdout.write(f"{feed.podcast.title} [{feed.podcast.rss}]")
             feed_parser.parse_podcast_feed(feed.url)
 
         self.stdout.write(self.style.SUCCESS(f"{len(feeds)} feed(s) updated"))
