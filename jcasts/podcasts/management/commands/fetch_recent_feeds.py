@@ -31,7 +31,7 @@ class Command(BaseCommand):
         ]
         for feed in feeds:
             self.stdout.write(f"{feed.podcast.title} [{feed.podcast.rss}]")
-            feed_parser.parse_podcast_feed(feed.podcast.rss)
+            feed_parser.parse_podcast_feed.delay(feed.podcast.rss)
             feed.podcast.indexed = True
             for_update.append(feed.podcast)
 
