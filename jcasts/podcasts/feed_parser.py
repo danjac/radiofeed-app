@@ -99,11 +99,11 @@ def schedule_podcast_feeds(frequency):
 
 @job("feeds")
 @transaction.atomic
-def parse_podcast_feed(rss, force_update=False):
+def parse_podcast_feed(rss):
 
     try:
         podcast = Podcast.objects.get(rss=rss, active=True)
-        response = get_feed_response(podcast, force_update)
+        response = get_feed_response(podcast)
 
         return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
 
@@ -144,10 +144,10 @@ def parse_podcast_feed(rss, force_update=False):
         )
 
 
-def get_feed_response(podcast, force_update):
+def get_feed_response(podcast):
     response = requests.get(
         podcast.rss,
-        headers=get_feed_headers(podcast, force_update),
+        headers=get_feed_headers(podcast),
         allow_redirects=True,
         timeout=10,
     )
@@ -284,17 +284,16 @@ def extract_text(podcast, categories, items):
     return " ".join(text_parser.extract_keywords(podcast.language, text))
 
 
-def get_feed_headers(podcast, force_update):
+def get_feed_headers(podcast):
     headers = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
     }
 
-    if not force_update:
-        if podcast.etag:
-            headers["If-None-Match"] = quote_etag(podcast.etag)
-        if podcast.modified:
-            headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
+    if podcast.etag:
+        headers["If-None-Match"] = quote_etag(podcast.etag)
+    if podcast.modified:
+        headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
 
 

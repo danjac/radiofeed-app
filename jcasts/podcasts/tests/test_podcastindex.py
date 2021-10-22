@@ -62,29 +62,6 @@ def podcastindex_client():
     podcastindex.get_client.cache_clear()
 
 
-class TestNewFeeds:
-    def test_ok(self, db, mock_good_response, podcastindex_client):
-
-        feeds = podcastindex.new_feeds()
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
-
-
-class TestRecentFeeds:
-    def test_exists(self, db, mock_good_response, podcastindex_client):
-
-        podcast = PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
-        feeds = podcastindex.recent_feeds()
-        assert len(feeds) == 1
-        assert feeds[0].url == podcast.rss
-
-    def test_does_not_exist(self, db, mock_good_response, podcastindex_client):
-
-        feeds = podcastindex.recent_feeds()
-        assert len(feeds) == 1
-        assert not Podcast.objects.filter(rss=feeds[0].url).exists()
-
-
 class TestSearch:
     cache_key = "podcastindex:6447567a64413d3d"
 

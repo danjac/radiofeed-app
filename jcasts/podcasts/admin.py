@@ -87,31 +87,11 @@ class ActiveFilter(admin.SimpleListFilter):
         return queryset
 
 
-class IndexedFilter(admin.SimpleListFilter):
-    title = "Indexed"
-    parameter_name = "indexed"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("yes", "Indexed"),
-            ("no", "Not Indexed"),
-        )
-
-    def queryset(self, request, queryset):
-        value = self.value()
-        if value == "yes":
-            return queryset.filter(indexed=True)
-        if value == "no":
-            return queryset.filter(indexed=False)
-        return queryset
-
-
 @admin.register(models.Podcast)
 class PodcastAdmin(admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         FollowedFilter,
-        IndexedFilter,
         PromotedFilter,
         PubDateFilter,
     )
@@ -163,7 +143,7 @@ class PodcastAdmin(admin.ModelAdmin):
         num_feeds = queryset.count()
 
         for podcast in queryset.iterator():
-            feed_parser.parse_podcast_feed.delay(podcast.rss, force_update=True)
+            feed_parser.parse_podcast_feed.delay(podcast.rss)
 
         self.message_user(
             request,

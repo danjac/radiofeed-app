@@ -9,7 +9,6 @@ from django.utils import timezone
 from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
-    IndexedFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
@@ -136,26 +135,6 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert inactive not in qs
-
-
-class TestIndexedFilter:
-    def test_indexed_filter_none(self, podcasts, admin, req):
-        PodcastFactory(indexed=True)
-        f = IndexedFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_indexed_filter_false(self, podcasts, admin, req):
-        f = IndexedFilter(req, {"indexed": "no"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-
-    def test_indexed_filter_true(self, podcasts, admin, req):
-        indexed = PodcastFactory(indexed=True)
-        f = IndexedFilter(req, {"indexed": "yes"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert indexed in qs
 
 
 class TestPromotedFilter:

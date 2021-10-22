@@ -2,7 +2,6 @@ import base64
 import hashlib
 import time
 
-from datetime import timedelta
 from functools import lru_cache
 from typing import Optional
 
@@ -11,7 +10,6 @@ import requests
 
 from django.conf import settings
 from django.core.cache import cache
-from django.utils import timezone
 
 from jcasts.podcasts.models import Podcast
 
@@ -33,37 +31,6 @@ def search_cached(search_term):
     feeds = search(search_term)
     cache.set(cache_key, feeds)
     return feeds
-
-
-def recent_feeds(limit=20, since=timedelta(hours=1)):
-    """Fetch *existing* feeds"""
-    return with_podcasts(
-        parse_feed_data(
-            get_client().fetch(
-                "/recent/feeds",
-                {
-                    "max": limit,
-                    "since": (timezone.now() - since).timestamp(),
-                },
-            )
-        ),
-        add_new=False,
-    )
-
-
-def new_feeds(limit=20, since=timedelta(hours=24)):
-
-    return with_podcasts(
-        parse_feed_data(
-            get_client().fetch(
-                "/recent/newfeeds",
-                {
-                    "max": limit,
-                    "since": (timezone.now() - since).timestamp(),
-                },
-            )
-        )
-    )
 
 
 @lru_cache

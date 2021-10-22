@@ -82,7 +82,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         return self.filter(
             models.Q(parsed__isnull=True)
             | models.Q(parsed__lt=timezone.now() - frequency),
-            indexed=False,
         )
 
     def with_followed(self):
@@ -107,7 +106,6 @@ class Podcast(models.Model):
 
     rss = models.URLField(unique=True, max_length=500)
     active = models.BooleanField(default=True)
-    indexed = models.BooleanField(default=False)
 
     etag = models.TextField(blank=True)
     title = models.TextField()
