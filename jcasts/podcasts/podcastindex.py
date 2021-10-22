@@ -35,6 +35,22 @@ def search_cached(search_term):
     return feeds
 
 
+def recent_feeds(limit=20, since=timedelta(hours=1)):
+    """Fetch *existing* feeds"""
+    return with_podcasts(
+        parse_feed_data(
+            get_client().fetch(
+                "/recent/feeds",
+                {
+                    "max": limit,
+                    "since": (timezone.now() - since).timestamp(),
+                },
+            )
+        ),
+        add_new=False,
+    )
+
+
 def new_feeds(limit=20, since=timedelta(hours=24)):
 
     return with_podcasts(
@@ -73,8 +89,10 @@ def parse_feed_data(data):
     ]
 
 
-def with_podcasts(feeds, update=False):
-    """Looks up podcast associated with result. Adds new podcasts if they are not already in the database"""
+def with_podcasts(feeds, add_new=True):
+    """Looks up podcast associated with result.
+
+    If `add_new` is True, adds new podcasts if they are not already in the database"""
 
     podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
         field_name="rss"
@@ -84,7 +102,7 @@ def with_podcasts(feeds, update=False):
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
-        if feed.podcast is None:
+        if add_new and feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
 
     if new_podcasts:

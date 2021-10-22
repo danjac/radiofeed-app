@@ -22,6 +22,10 @@
       "schedule": "25 6 * * *"
     },
     {
+      "command": "python manage.py fetch_recent_feeds --limit=100",
+      "schedule": "30 * * * *"
+    },
+    {
       "command": "python manage.py send_recommendation_emails",
       "schedule": "12 9 * * 1"
     },
