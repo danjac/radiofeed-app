@@ -8,7 +8,6 @@
      width="{{ size }}"
      height="{{ size }}"
      src="{{ placeholder }}"
-     {% with cover_url=cover_url|safe_url %}
      {% if cover_url %}
      x-data="{
         isLoaded: false,
@@ -21,5 +20,5 @@
      @error.once="src=placeholder;isLoaded=true;"
      :class="{'filter blur-sm': !isLoaded}"
      :src="src"
-     {% endif %}{% endwith %}>
+     {% endif %}>
 {% endspaceless %}
