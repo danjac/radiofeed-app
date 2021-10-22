@@ -81,7 +81,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def scheduled(self, frequency):
         return self.filter(
             models.Q(parsed__isnull=True)
-            | models.Q(parsed__lt=timezone.now() - frequency)
+            | models.Q(parsed__lt=timezone.now() - frequency),
+            indexed=False,
         )
 
     def with_followed(self):
