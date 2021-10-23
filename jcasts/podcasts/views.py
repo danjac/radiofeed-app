@@ -259,10 +259,12 @@ def get_podcast_search(
     request: HttpRequest, podcasts: QuerySet | None = None
 ) -> QuerySet:
 
-    podcasts = podcasts or Podcast.objects.published()
+    if podcasts is None:
+        podcasts = Podcast.objects.published()
 
-    qs = (
+    return (
         podcasts.with_exact_match(request.search.value)
+        .search(request.search.value)
         .order_by(
             "-exact_match",
             "-rank",
@@ -270,8 +272,6 @@ def get_podcast_search(
         )
         .distinct()
     )
-
-    return qs.search(request.search.value)  # | qs.filter(exact_match=True)
 
 
 def render_follow_response(
