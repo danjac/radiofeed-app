@@ -218,4 +218,8 @@ input[type='range']::-moz-range-thumb {
   @apply text-blue-600 font-semibold dark:text-blue-300;
 }
 
+.link:focus {
+  @apply text-blue-600 font-semibold dark:text-blue-300;
+}
+
 @tailwind utilities;

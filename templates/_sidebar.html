@@ -23,6 +23,7 @@
           New Releases
         </a>
       </li>
+      {% if user.is_authenticated %}
 
       <li>
         {% active_link 'episodes:queue' as link %}
@@ -60,7 +61,6 @@
         </a>
       </li>
 
-      {% if user.is_authenticated %}
       <li>
         {% re_active_link 'users:preferences' '/account/*' as link %}
         <a href="{{ link.url }}"
@@ -88,6 +88,29 @@
           </button>
         </form>
       </li>
+      {% else %}
+
+      <li>
+        <a href="{{ request.get_full_path|login_url }}"
+           accesskey="l"
+           title="Log in to your account"
+           @click="$dispatch('close-sidebar')"
+           class="inline-flex items-center link">
+          {% icon "login" css_class=ICON_CSS %}
+          Login
+        </a>
+      </li>
+      <li>
+        <a href="{{ request.get_full_path|signup_url }}"
+           accesskey="s"
+           title="Create a new account"
+           @click="$dispatch('close-sidebar')"
+           class="inline-flex items-center link">
+          {% icon "user_add" css_class=ICON_CSS %}
+          Signup
+        </a>
+      </li>
+
       {% endif %}
 
       <li>
