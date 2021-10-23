@@ -41,7 +41,7 @@ def list_to_str(value: list[str]) -> str:
 
 
 def language_code(value: str) -> str:
-    return value[2:]
+    return value[:2]
 
 
 def url_or_none(value: str | None) -> str | None:
