@@ -91,21 +91,23 @@
       {% else %}
 
       <li>
+        {% active_link 'account_login' as link %}
         <a href="{{ request.get_full_path|login_url }}"
            accesskey="l"
            title="Log in to your account"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link">
+           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "login" css_class=ICON_CSS %}
           Login
         </a>
       </li>
       <li>
+        {% active_link 'account_signup' as link %}
         <a href="{{ request.get_full_path|signup_url }}"
            accesskey="s"
            title="Create a new account"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link">
+           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "user_add" css_class=ICON_CSS %}
           Signup
         </a>
