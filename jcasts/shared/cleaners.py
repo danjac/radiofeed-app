@@ -58,7 +58,6 @@ ALLOWED_ATTRS: dict[str, list[str]] = {
 
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
-
 cleaner = bleach.Cleaner(
     attributes=ALLOWED_ATTRS,
     tags=ALLOWED_TAGS,
