@@ -1,49 +1,28 @@
 import functools
 import operator
 
-from typing import Protocol
-
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Model, Q, QuerySet
+from django.db.models import F, Q, QuerySet
 from django.utils.encoding import force_str
 
 
-class QuerySetProtocol(Protocol):
-    db: str
-    model: Model
-
-    class _query:
-        group_by: tuple
-        where: tuple
-        distinct: bool
-
-    def count(self) -> int:
-        ...
-
-    def none(self) -> QuerySet:
-        ...
-
-    def annotate(self, *args, **kwargs) -> QuerySet:
-        ...
-
-
-class FastCountMixin(QuerySetProtocol):
-    def count(self) -> int:
+class FastCountMixin:
+    def count(self: QuerySet) -> int:
         if self._query.group_by or self._query.where or self._query.distinct:
-            return super().count()
+            return super().count()  # type: ignore
         if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
             return count
         # exact count for small tables
-        return super().count()
+        return super().count()  # type: ignore
 
 
-class SearchMixin(QuerySetProtocol):
+class SearchMixin:
     search_vectors: list[tuple[str, str]] = []
     search_vector_field: str = "search_vector"
     search_rank: str = "rank"
 
-    def search(self, search_term: str) -> QuerySet:
+    def search(self: QuerySet, search_term: str) -> QuerySet:
         if not search_term:
             return self.none()
 
