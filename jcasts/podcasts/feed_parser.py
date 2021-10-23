@@ -93,7 +93,7 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
 
         remainder += round(limit * ratio)
 
-        podcast_ids = set(qs[:remainder].values_list("pk", flat=True))
+        podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
 
         # process the feeds
 
