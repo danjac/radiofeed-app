@@ -8,7 +8,7 @@ from django_rq import job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast, Recommendation
-from jcasts.shared.types import User
+from jcasts.shared.typedefs import User
 
 
 @job("mail")
