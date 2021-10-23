@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import functools
 import http
 
+from django.http import HttpResponse
 
-def assert_status(response, status):
+
+def assert_status(response: HttpResponse, status: int) -> None:
     assert response.status_code == status, response.content  # nosec
 
 
