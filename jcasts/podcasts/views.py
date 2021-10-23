@@ -271,7 +271,7 @@ def get_podcast_search(
         .distinct()
     )
 
-    return qs.search(request.search.value) | qs.filter(exact_match=True)
+    return qs.search(request.search.value)  # | qs.filter(exact_match=True)
 
 
 def render_follow_response(
