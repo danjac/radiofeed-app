@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections
 import math
 import re
@@ -10,6 +12,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.http import HttpRequest
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import stringfilter, urlencode
 from django.urls import reverse
@@ -29,7 +32,7 @@ HTTPS_SCHEME = "https://"
 
 
 @register.simple_tag(takes_context=True)
-def pagination_url(context, page_number, param="page"):
+def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
     """
     Inserts the "page" query string parameter with the
     provided page number into the template, preserving the original
@@ -47,14 +50,14 @@ def pagination_url(context, page_number, param="page"):
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context, url=None, *args, **kwargs):
+def absolute_uri(context: str, url: str | None = None, *args, **kwargs) -> str:
     return build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
     )
 
 
 @register.filter
-def format_duration(total_seconds):
+def format_duration(total_seconds: int | None) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
     if not total_seconds:
         return ""
@@ -71,7 +74,7 @@ def format_duration(total_seconds):
 
 
 @register.simple_tag(takes_context=True)
-def active_link(context, url_name, *args, **kwargs):
+def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
@@ -84,7 +87,9 @@ def active_link(context, url_name, *args, **kwargs):
 
 
 @register.simple_tag(takes_context=True)
-def re_active_link(context, url_name, pattern, *args, **kwargs):
+def re_active_link(
+    context: dict, url_name: str, pattern: str, *args, **kwargs
+) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
         return ActiveLink(url, True, False)
@@ -93,28 +98,28 @@ def re_active_link(context, url_name, pattern, *args, **kwargs):
 
 
 @register.simple_tag
-def get_contact_details():
+def get_contact_details() -> dict:
     return settings.CONTACT_DETAILS
 
 
 @register.filter(is_safe=True)
 @stringfilter
-def markup(value):
+def markup(value: str | None) -> str:
     return mark_safe(cleaners.markup(value))  # nosec
 
 
 @register.filter
-def login_url(url):
+def login_url(url: str) -> str:
     return auth_redirect_url(url, reverse("account_login"))
 
 
 @register.filter
-def signup_url(url):
+def signup_url(url: str) -> str:
     return auth_redirect_url(url, reverse("account_signup"))
 
 
 @register.inclusion_tag("icons/_svg.html")
-def icon(name, css_class="", title="", **attrs):
+def icon(name: str, css_class: str = "", title: str = "", **attrs) -> dict:
     return {
         "name": name,
         "css_class": css_class,
@@ -125,7 +130,7 @@ def icon(name, css_class="", title="", **attrs):
 
 
 @register.inclusion_tag("_share_buttons.html", takes_context=True)
-def share_buttons(context, url, subject, css_class=""):
+def share_buttons(context: dict, url: str, subject: str, css_class: str = "") -> dict:
     url = parse.quote(context["request"].build_absolute_uri(url))
     subject = parse.quote(subject)
 
@@ -141,13 +146,13 @@ def share_buttons(context, url, subject, css_class=""):
 
 
 @register.inclusion_tag("_cookie_notice.html", takes_context=True)
-def cookie_notice(context):
+def cookie_notice(context: dict) -> dict:
     return {"accept_cookies": "accept-cookies" in context["request"].COOKIES}
 
 
 @register.filter
 @stringfilter
-def normalize_url(url):
+def normalize_url(url: str | None) -> str:
     """If a URL is provided minus http(s):// prefix, prepends protocol."""
     if not url:
         return ""
@@ -161,7 +166,7 @@ def normalize_url(url):
 
 
 @register.filter
-def safe_url(url):
+def safe_url(url: str | None) -> str | None:
     if not url or url.startswith(HTTPS_SCHEME):
         return url
     if url.startswith("http://"):
@@ -171,7 +176,7 @@ def safe_url(url):
 
 @register.filter
 @stringfilter
-def colorpicker(value, colors):
+def colorpicker(value: str | None, colors: str) -> str:
     """
     Given set of colors, picks a color from comma-separated list
     based on initial character of string.
@@ -184,7 +189,7 @@ def colorpicker(value, colors):
     return choices[ord(value[0] if value else " ") % len(choices)]
 
 
-def auth_redirect_url(url, redirect_url):
+def auth_redirect_url(url: str, redirect_url: str) -> str:
 
     return (
         redirect_url
@@ -193,7 +198,9 @@ def auth_redirect_url(url, redirect_url):
     )
 
 
-def build_absolute_uri(url=None, request=None):
+def build_absolute_uri(
+    url: str | None = None, request: HttpRequest | None = None
+) -> str:
     if request:
         return request.build_absolute_uri(url)
 
