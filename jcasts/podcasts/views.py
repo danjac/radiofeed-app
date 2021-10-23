@@ -97,7 +97,7 @@ def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
     if not request.search:
         return HttpResponse()
 
-    podcasts = get_podcast_search(request)
+    podcasts = get_podcast_search(request)[:limit]
 
     episodes = (
         Episode.objects.search(request.search.value)
