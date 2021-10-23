@@ -68,7 +68,13 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     return render_podcast_list_response(
         request,
-        get_podcast_search(request),
+        Podcast.objects.published()
+        .search_or_exact_match(request.search.value)
+        .order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        ),
         "podcasts/search.html",
         cached=True,
     )
@@ -97,7 +103,15 @@ def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
     if not request.search:
         return HttpResponse()
 
-    podcasts = get_podcast_search(request)[:limit]
+    podcasts = (
+        Podcast.objects.published()
+        .search_or_exact_match(request.search.value)
+        .order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        )[:limit]
+    )
 
     episodes = (
         Episode.objects.search(request.search.value)
@@ -196,7 +210,11 @@ def category_detail(request: HttpRequest, category_id: int, slug: str | None = N
     podcasts = category.podcast_set.published()
 
     if request.search:
-        podcasts = get_podcast_search(request, podcasts)
+        podcasts = podcasts.search_or_exact_match(request.search.value).order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        )
 
     else:
         podcasts = podcasts.order_by("-pub_date")
@@ -253,24 +271,6 @@ def get_podcast_detail_context(
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
-
-
-def get_podcast_search(
-    request: HttpRequest, podcasts: QuerySet | None = None
-) -> QuerySet:
-
-    if podcasts is None:
-        podcasts = Podcast.objects.published()
-
-    return (
-        podcasts.search_or_exact_match(request.search.value)
-        .order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
-        )
-        .distinct()
-    )
 
 
 def render_follow_response(
