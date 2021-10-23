@@ -1,11 +1,19 @@
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+from decimal import Decimal
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.functions import Lower
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -16,9 +24,14 @@ from model_utils.models import TimeStampedModel
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 
+if TYPE_CHECKING:
+    from jcasts.users.models import User
+else:
+    User = get_user_model()
+
 
 class CategoryQuerySet(models.QuerySet):
-    def search(self, search_term, base_similarity=0.2):
+    def search(self, search_term: str, base_similarity: float = 0.2) -> models.QuerySet:
         return self.annotate(
             similarity=TrigramSimilarity("name", force_str(search_term))
         ).filter(similarity__gte=base_similarity)
@@ -29,8 +42,8 @@ CategoryManager = models.Manager.from_queryset(CategoryQuerySet)
 
 class Category(models.Model):
 
-    name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
+    name: str = models.CharField(max_length=100, unique=True)
+    parent: Category | None = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -44,28 +57,28 @@ class Category(models.Model):
         verbose_name_plural = "categories"
         ordering = ("name",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.name, allow_unicode=False)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("podcasts:category_detail", args=[self.pk, self.slug])
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def active(self):
+    def active(self) -> models.QuerySet:
         return self.filter(active=True)
 
-    def published(self):
+    def published(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=False)
 
-    def unpublished(self):
+    def unpublished(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=True)
 
-    def fresh(self):
+    def fresh(self) -> models.QuerySet:
         return self.filter(
             models.Q(
                 pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD,
@@ -73,23 +86,23 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             | models.Q(pub_date__isnull=True)
         )
 
-    def stale(self):
+    def stale(self) -> models.QuerySet:
         return self.published().filter(
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
-    def scheduled(self, frequency):
+    def scheduled(self, frequency: timedelta) -> models.QuerySet:
         return self.filter(
             models.Q(parsed__isnull=True)
             | models.Q(parsed__lt=timezone.now() - frequency),
         )
 
-    def with_followed(self):
+    def with_followed(self) -> models.QuerySet:
         return self.annotate(
             followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
         )
 
-    def with_exact_match(self, search_term):
+    def with_exact_match(self, search_term: str) -> models.QuerySet:
         return self.annotate(
             exact_match=models.Exists(
                 self.annotate(title_lower=Lower("title")).filter(
@@ -104,54 +117,54 @@ PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
 class Podcast(models.Model):
 
-    rss = models.URLField(unique=True, max_length=500)
-    active = models.BooleanField(default=True)
+    rss: str = models.URLField(unique=True, max_length=500)
+    active: bool = models.BooleanField(default=True)
 
-    etag = models.TextField(blank=True)
-    title = models.TextField()
+    etag: str = models.TextField(blank=True)
+    title: str = models.TextField()
 
     # latest episode pub date from RSS feed
-    pub_date = models.DateTimeField(null=True, blank=True)
+    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    parsed = models.DateTimeField(null=True, blank=True)
+    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # Last-Modified header from RSS feed
-    modified = models.DateTimeField(null=True, blank=True)
+    modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    http_status = models.SmallIntegerField(null=True, blank=True)
-    exception = models.TextField(blank=True)
+    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
+    exception: str = models.TextField(blank=True)
 
-    cover_url = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    funding_url = models.URLField(max_length=2083, null=True, blank=True)
-    funding_text = models.TextField(blank=True)
+    funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    funding_text: str = models.TextField(blank=True)
 
-    language = models.CharField(
+    language: str = models.CharField(
         max_length=2, default="en", validators=[MinLengthValidator(2)]
     )
-    description = models.TextField(blank=True)
-    link = models.URLField(max_length=2083, null=True, blank=True)
-    keywords = models.TextField(blank=True)
-    extracted_text = models.TextField(blank=True)
-    owner = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    keywords: str = models.TextField(blank=True)
+    extracted_text: str = models.TextField(blank=True)
+    owner: str = models.TextField(blank=True)
 
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    created: datetime = models.DateTimeField(auto_now_add=True)
+    updated: datetime = models.DateTimeField(auto_now=True)
 
-    explicit = models.BooleanField(default=False)
-    promoted = models.BooleanField(default=False)
+    explicit: bool = models.BooleanField(default=False)
+    promoted: bool = models.BooleanField(default=False)
 
-    categories = models.ManyToManyField(Category, blank=True)
+    categories: list[Category] = models.ManyToManyField(Category, blank=True)
 
     # received recommendation email
-    recipients = models.ManyToManyField(
+    recipients: list[User] = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name="recommended_podcasts",
     )
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects = PodcastManager()
 
@@ -163,45 +176,45 @@ class Podcast(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.rss
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return self.get_detail_url()
 
-    def get_latest_url(self):
+    def get_latest_url(self) -> str:
         return reverse("podcasts:latest", args=[self.pk])
 
-    def get_detail_url(self):
+    def get_detail_url(self) -> str:
         return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
 
-    def get_episodes_url(self):
+    def get_episodes_url(self) -> str:
         return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
 
-    def get_recommendations_url(self):
+    def get_recommendations_url(self) -> str:
         return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
 
-    def get_domain(self):
+    def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
     @cached_property
-    def cleaned_title(self):
+    def cleaned_title(self) -> str:
         return strip_html(self.title)
 
     @cached_property
-    def cleaned_description(self):
+    def cleaned_description(self) -> str:
         return strip_html(self.description)
 
     @cached_property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def is_following(self, user):
+    def is_following(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
         return Follow.objects.filter(podcast=self, user=user).exists()
 
-    def get_opengraph_data(self, request):
+    def get_opengraph_data(self, request: HttpRequest) -> dict:
 
         og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
@@ -222,8 +235,8 @@ class Podcast(models.Model):
 
 class Follow(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -236,12 +249,12 @@ class Follow(TimeStampedModel):
 
 
 class RecommendationQuerySet(models.QuerySet):
-    def bulk_delete(self):
+    def bulk_delete(self) -> int:
         """More efficient quick delete"""
         return self._raw_delete(self.db)
 
-    def for_user(self, user):
-        podcast_ids = (
+    def for_user(self, user: User) -> models.QuerySet:
+        podcast_ids: set[int] = (
             set(
                 user.favorite_set.select_related("episode__podcast").values_list(
                     "episode__podcast", flat=True
@@ -271,12 +284,16 @@ RecommendationManager = models.Manager.from_queryset(RecommendationQuerySet)
 
 class Recommendation(models.Model):
 
-    podcast = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
-    recommended = models.ForeignKey(Podcast, related_name="+", on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
+    recommended: Podcast = models.ForeignKey(
+        Podcast, related_name="+", on_delete=models.CASCADE
+    )
 
-    frequency = models.PositiveIntegerField(default=0)
+    frequency: int = models.PositiveIntegerField(default=0)
 
-    similarity = models.DecimalField(
+    similarity: Decimal = models.DecimalField(
         decimal_places=10, max_digits=100, null=True, blank=True
     )
 

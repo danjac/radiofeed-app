@@ -1,18 +1,21 @@
+from __future__ import annotations
+
 from django.conf import settings
-from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404
+from django.core.paginator import InvalidPage, Page, Paginator
+from django.db.models import QuerySet
+from django.http import Http404, HttpRequest
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 
 
 def paginate(
-    request,
-    object_list,
-    page_size=settings.DEFAULT_PAGE_SIZE,
-    param="page",
-    allow_empty=True,
-    orphans=0,
-):
+    request: HttpRequest,
+    object_list: list | QuerySet,
+    page_size: int = settings.DEFAULT_PAGE_SIZE,
+    param: str = "page",
+    allow_empty: bool = True,
+    orphans: int = 0,
+) -> Page:
 
     paginator = Paginator(
         object_list, page_size, allow_empty_first_page=allow_empty, orphans=orphans
@@ -24,13 +27,13 @@ def paginate(
 
 
 def render_paginated_response(
-    request,
-    object_list,
-    template_name,
-    pagination_template_name,
-    extra_context=None,
+    request: HttpRequest,
+    object_list: list | QuerySet,
+    template_name: str,
+    pagination_template_name: str,
+    extra_context: dict | None = None,
     **pagination_kwargs,
-):
+) -> TemplateResponse:
     page_obj = paginate(request, object_list, **pagination_kwargs)
     context = {
         "page_obj": page_obj,

@@ -3,12 +3,12 @@ import operator
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from django.utils.encoding import force_str
 
 
 class FastCountMixin:
-    def count(self):
+    def count(self) -> int:
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
         if (count := get_reltuple_count(self.db, self.model._meta.db_table)) >= 1000:
@@ -18,11 +18,11 @@ class FastCountMixin:
 
 
 class SearchMixin:
-    search_vectors = []
-    search_vector_field = "search_vector"
-    search_rank = "rank"
+    search_vectors: list[tuple[str, str]] = []
+    search_vector_field: str = "search_vector"
+    search_rank: str = "rank"
 
-    def search(self, search_term):
+    def search(self, search_term: str) -> QuerySet:
         if not search_term:
             return self.none()
 
@@ -50,7 +50,7 @@ class SearchMixin:
         return self.annotate(**ranks).filter(functools.reduce(operator.or_, filters))
 
 
-def get_reltuple_count(db, table):
+def get_reltuple_count(db: str, table: str) -> int:
     cursor = connections[db].cursor()
     cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s", [table])
     return int(cursor.fetchone()[0])

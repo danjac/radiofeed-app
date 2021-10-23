@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import base64
 import hashlib
 import time
 
 from functools import lru_cache
-from typing import Optional
 
 import attr
 import requests
@@ -14,13 +15,22 @@ from django.core.cache import cache
 from jcasts.podcasts.models import Podcast
 
 
-def search(search_term):
+@attr.s
+class Feed:
+    url: str = attr.ib()
+    title: str = attr.ib(default="")
+    image: str = attr.ib(default="")
+
+    podcast: Podcast | None = None
+
+
+def search(search_term: str) -> list[Feed]:
     return with_podcasts(
         parse_feed_data(get_client().fetch("/search/byterm", {"q": search_term}))
     )
 
 
-def search_cached(search_term):
+def search_cached(search_term: str) -> list[Feed]:
 
     cache_key = (
         "podcastindex:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
@@ -34,11 +44,11 @@ def search_cached(search_term):
 
 
 @lru_cache
-def get_client():
+def get_client() -> Client:
     return Client.from_settings()
 
 
-def parse_feed_data(data):
+def parse_feed_data(data: list[dict]) -> list[Feed]:
     def _parse_feed(result):
         try:
             return Feed(
@@ -56,7 +66,7 @@ def parse_feed_data(data):
     ]
 
 
-def with_podcasts(feeds, add_new=True):
+def with_podcasts(feeds: list[Feed]) -> list[Feed]:
     """Looks up podcast associated with result.
 
     If `add_new` is True, adds new podcasts if they are not already in the database"""
@@ -69,7 +79,7 @@ def with_podcasts(feeds, add_new=True):
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
-        if add_new and feed.podcast is None:
+        if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url))
 
     if new_podcasts:
@@ -78,25 +88,16 @@ def with_podcasts(feeds, add_new=True):
     return feeds
 
 
-@attr.s
-class Feed:
-    url: str = attr.ib()
-    title: str = attr.ib(default="")
-    image: str = attr.ib(default="")
-
-    podcast: Optional[Podcast] = None
-
-
 class Client:
-    base_url = "https://api.podcastindex.org/api/1.0"
-    user_agent = "Voyce"
+    base_url: str = "https://api.podcastindex.org/api/1.0"
+    user_agent: str = "Voyce"
 
-    def __init__(self, api_key, api_secret):
+    def __init__(self, api_key: str, api_secret: str):
         self.api_key = api_key
         self.api_secret = api_secret
 
     @classmethod
-    def from_settings(cls):
+    def from_settings(cls) -> Client:
 
         config = getattr(settings, "PODCASTINDEX_CONFIG", {})
 
@@ -108,14 +109,14 @@ class Client:
 
         return cls(api_key, api_secret)
 
-    def fetch(self, endpoint, data=None):
+    def fetch(self, endpoint: str, data: dict | None = None) -> dict:
         response = requests.post(
             self.base_url + endpoint, headers=self.get_headers(), data=data
         )
         response.raise_for_status()
         return response.json()
 
-    def get_headers(self):
+    def get_headers(self) -> dict:
 
         epoch_time = int(time.time())
 

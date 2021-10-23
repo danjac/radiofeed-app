@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from dateutil import parser as date_parser
 from django.utils.timezone import is_aware, make_aware
 
-TZ_INFOS = {
+TZ_INFOS: dict[str, int | float] = {
     k: v * 3600
     for k, v in (
         ("A", 1),
@@ -243,7 +245,7 @@ def force_tz_aware(dt: datetime) -> datetime:
     return dt
 
 
-def parse_date(value):
+def parse_date(value: str | None) -> datetime | None:
     if not value:
         return None
 
@@ -256,7 +258,7 @@ def parse_date(value):
         return None
 
 
-def parse_timestamp(timestamp):
+def parse_timestamp(timestamp: int | None) -> datetime | None:
     if timestamp is None:
         return None
     return force_tz_aware(datetime.utcfromtimestamp(timestamp))

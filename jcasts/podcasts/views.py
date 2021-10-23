@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpResponse
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -19,7 +22,7 @@ from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
@@ -50,7 +53,7 @@ def index(request):
 
 
 @require_http_methods(["GET"])
-def latest(request, podcast_id):
+def latest(request: HttpRequest, podcast_id: int) -> HttpResponse:
     """Redirects to latest episode in podcast."""
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -59,7 +62,7 @@ def latest(request, podcast_id):
 
 
 @require_http_methods(["GET"])
-def search_podcasts(request):
+def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return redirect("podcasts:index")
 
@@ -80,7 +83,7 @@ def search_podcasts(request):
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
-def search_podcastindex(request):
+def search_podcastindex(request: HttpRequest) -> HttpResponse:
 
     feeds = podcastindex.search_cached(request.search.value) if request.search else []
 
@@ -96,7 +99,7 @@ def search_podcastindex(request):
 
 @require_http_methods(["GET"])
 @cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def search_autocomplete(request, limit=6):
+def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
 
     if not request.search:
         return HttpResponse()
@@ -125,7 +128,9 @@ def search_autocomplete(request, limit=6):
 
 
 @require_http_methods(["GET"])
-def recommendations(request, podcast_id, slug=None):
+def recommendations(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
@@ -145,7 +150,9 @@ def recommendations(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def podcast_detail(request, podcast_id, slug=None):
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponse:
     podcast = get_podcast_or_404(request, podcast_id)
 
     return TemplateResponse(
@@ -162,7 +169,9 @@ def podcast_detail(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def episodes(request, podcast_id, slug=None):
+def episodes(
+    request: HttpRequest, podcast_id: int, slug: str | None = None
+) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
@@ -193,7 +202,7 @@ def episodes(request, podcast_id, slug=None):
 
 
 @require_http_methods(["GET"])
-def category_detail(request, category_id, slug=None):
+def category_detail(request: HttpRequest, category_id: int, slug: str | None = None):
 
     category = get_object_or_404(Category, pk=category_id)
     podcasts = category.podcast_set.published()
@@ -222,7 +231,7 @@ def category_detail(request, category_id, slug=None):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def follow(request, podcast_id):
+def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
@@ -236,7 +245,7 @@ def follow(request, podcast_id):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def unfollow(request, podcast_id):
+def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
@@ -245,11 +254,13 @@ def unfollow(request, podcast_id):
     return render_follow_response(request, podcast, follow=False)
 
 
-def get_podcast_or_404(request, podcast_id):
+def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
     return get_object_or_404(Podcast.objects.published(), pk=podcast_id)
 
 
-def get_podcast_detail_context(request, podcast, extra_context=None):
+def get_podcast_detail_context(
+    request: HttpRequest, podcast: Podcast, extra_context: dict | None = None
+) -> dict:
 
     return {
         "podcast": podcast,
@@ -260,7 +271,9 @@ def get_podcast_detail_context(request, podcast, extra_context=None):
     }
 
 
-def render_follow_response(request, podcast, follow):
+def render_follow_response(
+    request: HttpRequest, podcast: Podcast, follow: bool
+) -> TemplateResponse:
 
     return TemplateResponse(
         request,
@@ -270,8 +283,12 @@ def render_follow_response(request, podcast, follow):
 
 
 def render_podcast_list_response(
-    request, podcasts, template_name, extra_context=None, cached=False
-):
+    request: HttpRequest,
+    podcasts: QuerySet,
+    template_name: str,
+    extra_context: dict | None = None,
+    cached: bool = False,
+) -> TemplateResponse:
 
     return render_paginated_response(
         request,
