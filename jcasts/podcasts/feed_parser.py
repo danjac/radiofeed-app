@@ -327,7 +327,7 @@ def parse_failure(
     active: bool = True,
     exception: Exception | None = None,
     tb: str = "",
-):
+) -> ParseResult:
 
     now = timezone.now()
 

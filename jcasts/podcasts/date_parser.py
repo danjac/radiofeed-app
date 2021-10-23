@@ -245,7 +245,7 @@ def force_tz_aware(dt: datetime) -> datetime:
     return dt
 
 
-def parse_date(value: str | None) -> datetime | None:
+def parse_date(value: str | datetime | None) -> datetime | None:
     if not value:
         return None
 
