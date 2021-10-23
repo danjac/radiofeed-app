@@ -83,11 +83,11 @@ class TestSchedulePodcastFeeds:
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
 
         assert len(mock_parse_podcast_feed.mock_calls) == 5
-        assert mock_parse_podcast_feed.mock_calls[0][1][0] == followed.rss
-        assert mock_parse_podcast_feed.mock_calls[1][1][0] == promoted.rss
-        assert mock_parse_podcast_feed.mock_calls[2][1][0] == new.rss
-        assert mock_parse_podcast_feed.mock_calls[3][1][0] == fresh.rss
-        assert mock_parse_podcast_feed.mock_calls[4][1][0] == stale.rss
+        assert mock_parse_podcast_feed.mock_calls[0][1][0] == followed.id
+        assert mock_parse_podcast_feed.mock_calls[1][1][0] == promoted.id
+        assert mock_parse_podcast_feed.mock_calls[2][1][0] == new.id
+        assert mock_parse_podcast_feed.mock_calls[3][1][0] == fresh.id
+        assert mock_parse_podcast_feed.mock_calls[4][1][0] == stale.id
 
         for podcast in new, followed, promoted, fresh, stale:
             podcast.refresh_from_db()
@@ -136,7 +136,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = parse_podcast_feed(new_podcast.rss)
+        result = parse_podcast_feed(new_podcast.id)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
@@ -156,7 +156,7 @@ class TestParsePodcastFeed:
             ),
         )
 
-        result = parse_podcast_feed(new_podcast.rss)
+        result = parse_podcast_feed(new_podcast.id)
         assert not result
         with pytest.raises(ValueError):
             result.raise_exception()
@@ -167,7 +167,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
-        result = parse_podcast_feed("https://example.com/rss.xml")
+        result = parse_podcast_feed(1234)
         assert result.success is False
 
         with pytest.raises(Podcast.DoesNotExist):
@@ -192,7 +192,7 @@ class TestParsePodcastFeed:
                 },
             ),
         )
-        assert parse_podcast_feed(new_podcast.rss)
+        assert parse_podcast_feed(new_podcast.id)
 
         # new episodes: 19
         assert Episode.objects.count() == 20
@@ -249,7 +249,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert parse_podcast_feed(new_podcast.rss)
+        assert parse_podcast_feed(new_podcast.id)
         assert Episode.objects.filter(podcast=new_podcast).count() == 20
 
         new_podcast.refresh_from_db()
@@ -277,7 +277,7 @@ class TestParsePodcastFeed:
                 content=self.get_rss_content(),
             ),
         )
-        assert not parse_podcast_feed(new_podcast.rss)
+        assert not parse_podcast_feed(new_podcast.id)
 
         new_podcast.refresh_from_db()
 
@@ -293,7 +293,7 @@ class TestParsePodcastFeed:
                 new_podcast.rss, status=http.HTTPStatus.NOT_MODIFIED
             ),
         )
-        assert not parse_podcast_feed(new_podcast.rss)
+        assert not parse_podcast_feed(new_podcast.id)
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
@@ -304,7 +304,7 @@ class TestParsePodcastFeed:
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
-        result = parse_podcast_feed(new_podcast.rss)
+        result = parse_podcast_feed(new_podcast.id)
         assert result.success is False
 
         with pytest.raises(requests.RequestException):
@@ -321,7 +321,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
         )
-        result = parse_podcast_feed(new_podcast.rss)
+        result = parse_podcast_feed(new_podcast.id)
         # no exception set for http errors
         result.raise_exception()
 
@@ -341,7 +341,7 @@ class TestParsePodcastFeed:
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
-        result = parse_podcast_feed(new_podcast.rss)
+        result = parse_podcast_feed(new_podcast.id)
         # no exception set for http errors
         result.raise_exception()
 

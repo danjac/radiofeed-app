@@ -45,7 +45,7 @@ class DuplicateFeed(requests.RequestException):
 
 @attr.s(kw_only=True)
 class ParseResult:
-    rss: str = attr.ib()
+    rss: str | None = attr.ib()
     success: bool = attr.ib(default=False)
     status: int | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
@@ -85,6 +85,8 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     remainder = 0
     now = timezone.now()
 
+    podcast_ids = []
+
     for (qs, ratio) in [
         (primary, 0.5),
         (secondary.fresh(), 0.3),
@@ -92,27 +94,30 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     ]:
 
         remainder += round(limit * ratio)
-
-        # process the feeds
-        for podcast_id, rss in qs[:remainder].values_list("pk", "rss").iterator():
-            # do this here rather than a bulk update to prevent race condition
-            Podcast.objects.filter(pk=podcast_id).update(queued=now)
-            parse_podcast_feed.delay(rss)
+        for podcast_id in qs[:remainder].values_list("pk", flat=True).iterator():
+            podcast_ids.append(podcast_id)
             remainder -= 1
+
+    # process the feeds
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
+
+    for podcast_id in podcast_ids:
+        parse_podcast_feed.delay(podcast_id)
 
 
 @job("feeds")
 @transaction.atomic
-def parse_podcast_feed(rss: str) -> ParseResult:
+def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
-        podcast = Podcast.objects.get(rss=rss, active=True)
+        podcast = Podcast.objects.get(pk=podcast_id, active=True)
         response = get_feed_response(podcast)
 
         return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
 
     except Podcast.DoesNotExist as e:
-        return ParseResult(rss=rss, success=False, exception=e)
+        return ParseResult(rss=None, success=False, exception=e)
 
     except NotModified as e:
         return parse_failure(podcast, status=e.response.status_code)
