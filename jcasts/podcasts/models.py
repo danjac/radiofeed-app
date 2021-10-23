@@ -91,6 +91,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         return self.filter(
             models.Q(parsed__isnull=True)
             | models.Q(parsed__lt=timezone.now() - frequency),
+            queued__isnull=True,
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -124,6 +125,9 @@ class Podcast(models.Model):
 
     # last parse time (success or fail)
     parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+
+    # has been queued for parsing
+    queued: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)

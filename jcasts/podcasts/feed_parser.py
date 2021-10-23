@@ -83,6 +83,8 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     secondary = qs.filter(followed=False, promoted=False)
 
     remainder = 0
+    for_update = []
+    now = timezone.now()
 
     for (qs, ratio) in [
         (primary, 0.5),
@@ -93,9 +95,14 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         remainder += round(limit * ratio)
 
         # process the feeds
-        for rss in qs[:remainder].values_list("rss", flat=True).iterator():
-            parse_podcast_feed.delay(rss)
+        for podcast in qs[:remainder].iterator():
+            parse_podcast_feed.delay(podcast.rss)
+            podcast.queued = now
+            for_update.append(podcast)
             remainder -= 1
+
+    if for_update:
+        Podcast.objects.bulk_update(for_update, fields=["queued"])
 
 
 @job("feeds")
@@ -185,6 +192,7 @@ def parse_success(
 
     podcast.pub_date = max(pub_dates)
     podcast.parsed = timezone.now()
+    podcast.queued = None
     podcast.active = True
     podcast.exception = ""
 
@@ -329,6 +337,7 @@ def parse_failure(
         parsed=now,
         http_status=status,
         exception=tb,
+        queued=None,
     )
 
     return ParseResult(
