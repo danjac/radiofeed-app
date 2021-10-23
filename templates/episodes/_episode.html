@@ -36,7 +36,7 @@
       <div class="flex items-center space-x-2">
         {% if is_podcast_detail %}
         <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
-          {% include "_pub_date.html" with pub_date=episode.pub_date %}
+          {% include "_date.html" with value=episode.pub_date %}
         </div>
         {% else %}
         <h3 class="truncate w-52 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
