@@ -3,6 +3,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
+from django.http import HttpRequest
 
 User = get_user_model()
 
@@ -33,6 +34,6 @@ class UserPreferencesForm(forms.ModelForm):
 class RecaptchaSignupForm(forms.Form):
     captcha = ReCaptchaField()
 
-    def signup(self, request, user):
+    def signup(self, request: HttpRequest, user: User) -> None:
         """This function is required otherwise you will get an ImproperlyConfigured exception"""
         pass

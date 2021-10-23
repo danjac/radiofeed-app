@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -24,10 +23,7 @@ from model_utils.models import TimeStampedModel
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 
-if TYPE_CHECKING:
-    from jcasts.users.models import User  # pragma: no cover
-else:
-    User = get_user_model()
+User = get_user_model()
 
 
 class CategoryQuerySet(models.QuerySet):
