@@ -58,6 +58,7 @@ ALLOWED_ATTRS: dict[str, list[str]] = {
 
 HTML_RE = re.compile(r"^(<\/?[a-zA-Z][\s\S]*>)+", re.UNICODE)
 
+
 cleaner = bleach.Cleaner(
     attributes=ALLOWED_ATTRS,
     tags=ALLOWED_TAGS,
@@ -66,9 +67,7 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(
-    attrs: dict[tuple[str | None, str], str], new: bool = False
-) -> dict[tuple[str | None, str], str]:
+def linkify_callback(attrs: dict[tuple, str], new: bool = False) -> dict[tuple, str]:
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs
