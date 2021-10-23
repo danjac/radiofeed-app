@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 
 from datetime import datetime
+from typing import Generator
 
 import attr
 import lxml.etree
@@ -33,6 +34,14 @@ def int_or_none(value: str | None) -> int | None:
         return int(value) if value else None
     except ValueError:
         return None
+
+
+def list_to_str(value: list[str]) -> str:
+    return " ".join(value or [])
+
+
+def language_code(value: str) -> str:
+    return value[2:]
 
 
 def url_or_none(value: str | None) -> str | None:
@@ -102,10 +111,10 @@ class Item:
     duration: str = attr.ib(default="", converter=duration)
 
     description: str = attr.ib(default="")
-    keywords: str = attr.ib(default="", converter=lambda value: " ".join(value or []))
+    keywords: str = attr.ib(default="", converter=list_to_str)
 
     @pub_date.validator
-    def is_pub_date_ok(self, attr: attr.Attibute, value: str | None) -> None:
+    def is_pub_date_ok(self, attr: attr.Attribute, value: str | None) -> None:
         if not value or value > timezone.now():
             raise ValueError("not a valid pub date")
 
@@ -118,9 +127,9 @@ class Item:
 @attr.s(kw_only=True)
 class Feed:
 
-    title: str = attr.ib(validator=not_empty)
+    title: str | None = attr.ib(validator=not_empty)
 
-    language: str = attr.ib(default="en", converter=lambda value: value[:2])
+    language: str = attr.ib(default="en", converter=language_code)
 
     link: str | None = attr.ib(default=None, converter=url_or_none)
     cover_url: str | None = attr.ib(default=None, converter=url_or_none)
@@ -197,7 +206,9 @@ def parse_feed(finder: XPathFinder) -> Feed:
     )
 
 
-def parse_items(channel: lxml.etree.Element, namespaces: dict[str, str]) -> list[Item]:
+def parse_items(
+    channel: lxml.etree.Element, namespaces: dict[str, str]
+) -> Generator[Item, None, None]:
 
     for item in channel.iterfind("item"):
 
@@ -239,7 +250,7 @@ class XPathFinder:
         self.element = element
         self.namespaces = namespaces
 
-    def find(self, *paths: str, default: str | None = None) -> str | None:
+    def find(self, *paths: str, default: str = "") -> str:
 
         """Find single attribute or text value. Returns
         first matching value."""

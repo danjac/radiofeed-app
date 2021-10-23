@@ -50,7 +50,7 @@ def pagination_url(context: dict, page_number: int, param: str = "page") -> str:
 
 
 @register.simple_tag(takes_context=True)
-def absolute_uri(context: str, url: str | None = None, *args, **kwargs) -> str:
+def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
     return build_absolute_uri(
         resolve_url(url, *args, **kwargs) if url else None, context.get("request")
     )

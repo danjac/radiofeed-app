@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
@@ -10,7 +12,10 @@ from django_rq import job
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast, Recommendation
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from jcasts.users.models import User  # pragma: no cover
+else:
+    User = get_user_model()
 
 
 @job("mail")

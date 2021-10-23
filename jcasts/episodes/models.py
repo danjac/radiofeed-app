@@ -4,6 +4,7 @@ import mimetypes
 import os
 
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -27,7 +28,10 @@ from jcasts.shared.db import FastCountMixin, SearchMixin
 
 UNIQUE_CONSTRAINT = "unique_%(app_label)s_%(class)s"
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from jcasts.users.models import User  # pragma: no cover
+else:
+    User = get_user_model()
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):

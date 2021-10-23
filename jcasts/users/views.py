@@ -108,7 +108,7 @@ def render_csv_export_response(podcasts: list[Podcast], filename: str) -> HttpRe
                 podcast.title,
                 podcast.rss,
                 podcast.link,
-                podcast.pub_date.strftime("%Y-%m-%d"),
+                podcast.pub_date.strftime("%Y-%m-%d") if podcast.pub_date else "-",
             ]
         )
     return response

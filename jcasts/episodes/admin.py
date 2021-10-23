@@ -16,12 +16,12 @@ class EpisodeAdmin(admin.ModelAdmin):
     def episode_title(self, obj: models.Episode) -> str:
         return truncatechars(obj.title, 30)
 
-    episode_title.short_description = "Title"
+    episode_title.short_description = "Title"  # type: ignore
 
     def podcast_title(self, obj: models.Episode) -> str:
         return truncatechars(obj.podcast.title, 30)
 
-    podcast_title.short_description = "Podcast"
+    podcast_title.short_description = "Podcast"  # type: ignore
 
     def get_search_results(
         self, request: HttpRequest, queryset: QuerySet, search_term: str

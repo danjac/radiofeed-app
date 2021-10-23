@@ -66,7 +66,7 @@ cleaner = bleach.Cleaner(
 )
 
 
-def linkify_callback(attrs: dict[tuple[str | None, str]], new=False):
+def linkify_callback(attrs: dict[tuple[str | None, str], str], new=False):
     attrs[(None, "target")] = "_blank"
     attrs[(None, "rel")] = "noopener noreferrer nofollow"
     return attrs

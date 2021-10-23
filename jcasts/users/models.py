@@ -20,7 +20,7 @@ class UserQuerySet(models.QuerySet):
         return self.filter(username__iregex=r"^(%s)+" % "|".join(names))
 
 
-class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(
         self, username: str, email: str, password: str | None = None, **kwargs
     ) -> User:

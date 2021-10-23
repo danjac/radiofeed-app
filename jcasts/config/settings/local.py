@@ -14,5 +14,4 @@ INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS
 
 # docker internal ips
 
-_, _, ips = socket.gethostbyname_ex(socket.gethostname())
-INTERNAL_IPS = ips
+_, _, INTERNAL_IPS = socket.gethostbyname_ex(socket.gethostname())  # type: ignore

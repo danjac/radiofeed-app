@@ -10,6 +10,7 @@ from typing import Generator
 import pandas
 
 from django.db import transaction
+from django.db.models import QuerySet
 from django.db.models.functions import Lower
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -46,7 +47,7 @@ def recommend() -> None:
 
 
 def create_recommendations_for_language(
-    podcasts: list[Podcast], categories: list[Category], language: str
+    podcasts: QuerySet, categories: QuerySet, language: str
 ) -> None:
     logger.info("Recommendations for %s", language)
 
@@ -68,7 +69,7 @@ def create_recommendations_for_language(
 
 
 def build_matches_dict(
-    podcasts: list[Podcast], categories: list[Category], language: str
+    podcasts: QuerySet, categories: QuerySet, language: str
 ) -> dict[tuple[int, int], list[float]]:
 
     matches = collections.defaultdict(list)
@@ -101,7 +102,7 @@ def recommendations_from_matches(
 
 
 def find_similarities_for_podcasts(
-    podcasts: list[Podcast], language: str
+    podcasts: QuerySet, language: str
 ) -> Generator[tuple[int, int, float], None, None]:
 
     if not podcasts.exists():  # pragma: no cover
@@ -115,7 +116,7 @@ def find_similarities_for_podcasts(
 
 
 def find_similarities(
-    podcasts: list[Podcast], language: str
+    podcasts: QuerySet, language: str
 ) -> Generator[Similarities, None, None]:
     """Given a queryset, will yield tuples of
     (id, (similar_1, similar_2, ...)) based on text content.

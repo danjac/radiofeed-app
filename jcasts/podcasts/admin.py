@@ -23,8 +23,8 @@ class PubDateFilter(admin.SimpleListFilter):
     parameter_name = "pub_date"
 
     def lookups(
-        self, request: HttpRequest, model_admin: models.ModelAdmin
-    ) -> tuple[tuple[str, str]]:
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
@@ -51,7 +51,7 @@ class PromotedFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str]]:
+    ) -> tuple[tuple[str, str], ...]:
         return (("yes", "Promoted"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -67,7 +67,7 @@ class QueuedFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str]]:
+    ) -> tuple[tuple[str, str], ...]:
         return (("yes", "Queued"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -83,7 +83,7 @@ class FollowedFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str]]:
+    ) -> tuple[tuple[str, str], ...]:
         return (("yes", "Followed"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -100,7 +100,7 @@ class ActiveFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str]]:
+    ) -> tuple[tuple[str, str], ...]:
         return (
             ("yes", "Active"),
             ("no", "Inactive"),

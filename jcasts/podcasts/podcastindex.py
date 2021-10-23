@@ -48,7 +48,7 @@ def get_client() -> Client:
     return Client.from_settings()
 
 
-def parse_feed_data(data: list[dict]) -> list[Feed]:
+def parse_feed_data(data: dict) -> list[Feed]:
     def _parse_feed(result):
         try:
             return Feed(

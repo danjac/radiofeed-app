@@ -1,13 +1,34 @@
 import functools
 import operator
 
+from typing import Protocol
+
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import connections
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Model, Q, QuerySet
 from django.utils.encoding import force_str
 
 
-class FastCountMixin:
+class QuerySetProtocol(Protocol):
+    db: str
+    model: Model
+
+    class _query:
+        group_by: tuple
+        where: tuple
+        distinct: bool
+
+    def count(self) -> int:
+        ...
+
+    def none(self) -> QuerySet:
+        ...
+
+    def annotate(self, *args, **kwargs) -> QuerySet:
+        ...
+
+
+class FastCountMixin(QuerySetProtocol):
     def count(self) -> int:
         if self._query.group_by or self._query.where or self._query.distinct:
             return super().count()
@@ -17,7 +38,7 @@ class FastCountMixin:
         return super().count()
 
 
-class SearchMixin:
+class SearchMixin(QuerySetProtocol):
     search_vectors: list[tuple[str, str]] = []
     search_vector_field: str = "search_vector"
     search_rank: str = "rank"

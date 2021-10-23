@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
@@ -5,7 +7,10 @@ from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.http import HttpRequest
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from jcasts.users.models import User  # pragma: no cover
+else:
+    User = get_user_model()
 
 
 class UserChangeForm(BaseUserChangeForm):
