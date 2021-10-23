@@ -66,14 +66,14 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     # rough estimate: takes 2 seconds per update
     limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
 
-    # ensure that we do not parse feeds already parsed within the time period
+    # ensure that we do not parse feeds already polled within the time period
     qs = (
         Podcast.objects.active()
         .scheduled(frequency)
         .with_followed()
         .distinct()
         .order_by(
-            F("parsed").asc(nulls_first=True),
+            F("polled").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
     )
@@ -191,7 +191,7 @@ def parse_success(
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
-    podcast.parsed = timezone.now()
+    podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
     podcast.exception = ""
@@ -334,7 +334,7 @@ def parse_failure(
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         updated=now,
-        parsed=now,
+        polled=now,
         http_status=status,
         exception=tb,
         queued=None,

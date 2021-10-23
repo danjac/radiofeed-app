@@ -68,9 +68,9 @@ class TestSchedulePodcastFeeds:
         PodcastFactory(active=False)
 
         # too recent
-        PodcastFactory(parsed=now - timedelta(minutes=20))
+        PodcastFactory(polled=now - timedelta(minutes=20))
 
-        new = PodcastFactory(pub_date=None, parsed=None)
+        new = PodcastFactory(pub_date=None, polled=None)
         followed = FollowFactory(
             podcast__active=True, podcast__pub_date=now - timedelta(days=3)
         ).podcast
@@ -88,6 +88,10 @@ class TestSchedulePodcastFeeds:
         assert mock_parse_podcast_feed.mock_calls[2][1][0] == new.rss
         assert mock_parse_podcast_feed.mock_calls[3][1][0] == fresh.rss
         assert mock_parse_podcast_feed.mock_calls[4][1][0] == stale.rss
+
+        for podcast in new, followed, promoted, fresh, stale:
+            podcast.refresh_from_db()
+            assert podcast.queued
 
 
 class TestParsePodcastFeed:
@@ -139,7 +143,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -159,7 +163,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
@@ -215,7 +219,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.year == 2020
         assert not new_podcast.queued
 
-        assert new_podcast.parsed
+        assert new_podcast.polled
 
         assert new_podcast.etag
         assert new_podcast.explicit
@@ -252,7 +256,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
@@ -279,7 +283,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
@@ -294,7 +298,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert new_podcast.active
         assert new_podcast.modified is None
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
@@ -309,7 +313,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert new_podcast.active
         assert new_podcast.http_status is None
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
@@ -327,7 +331,7 @@ class TestParsePodcastFeed:
 
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.GONE
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_http_server_error(
@@ -347,5 +351,5 @@ class TestParsePodcastFeed:
 
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
-        assert new_podcast.parsed
+        assert new_podcast.polled
         assert not new_podcast.queued

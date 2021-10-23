@@ -89,8 +89,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def scheduled(self, frequency: timedelta) -> models.QuerySet:
         return self.filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(parsed__lt=timezone.now() - frequency),
+            models.Q(polled__isnull=True)
+            | models.Q(polled__lt=timezone.now() - frequency),
             queued__isnull=True,
         )
 
@@ -124,7 +124,7 @@ class Podcast(models.Model):
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+    polled: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # has been queued for parsing
     queued: datetime | None = models.DateTimeField(null=True, blank=True)

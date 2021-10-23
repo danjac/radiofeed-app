@@ -12,6 +12,7 @@ from jcasts.podcasts.admin import (
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
+    QueuedFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -50,7 +51,7 @@ class TestPodcastAdmin:
 
     def test_get_ordering_no_search_term(self, admin, req):
         ordering = admin.get_ordering(req)
-        assert ordering == ["-parsed", "-pub_date"]
+        assert ordering == ["-polled", "-pub_date"]
 
     def test_get_ordering_search_term(self, admin, req):
         req.GET = {"q": "test"}
@@ -150,6 +151,21 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestqueuedFilter:
+    def test_queued_filter_none(self, podcasts, admin, req):
+        PodcastFactory(queued=timezone.now())
+        f = QueuedFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_queued_filter_true(self, podcasts, admin, req):
+        queued = PodcastFactory(queued=timezone.now())
+        f = QueuedFilter(req, {"queued": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == queued
 
 
 class TestFollowedFilter:

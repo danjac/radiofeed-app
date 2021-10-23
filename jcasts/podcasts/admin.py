@@ -61,6 +61,22 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class QueuedFilter(admin.SimpleListFilter):
+    title = "Queued"
+    parameter_name = "queued"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str]]:
+        return (("yes", "Queued"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        value = self.value()
+        if value == "yes":
+            return queryset.filter(queued__isnull=False)
+        return queryset
+
+
 class FollowedFilter(admin.SimpleListFilter):
     title = "Followed"
     parameter_name = "followed"
@@ -106,6 +122,7 @@ class PodcastAdmin(admin.ModelAdmin):
         FollowedFilter,
         PromotedFilter,
         PubDateFilter,
+        QueuedFilter,
     )
 
     list_display = (
@@ -114,7 +131,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "parsed",
+        "polled",
     )
 
     list_editable = (
@@ -126,7 +143,8 @@ class PodcastAdmin(admin.ModelAdmin):
     raw_id_fields = ("recipients",)
 
     readonly_fields = (
-        "parsed",
+        "polled",
+        "queued",
         "modified",
         "pub_date",
         "etag",
@@ -171,7 +189,7 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "-parsed",
+                "-polled",
                 "-pub_date",
             ]
         )
