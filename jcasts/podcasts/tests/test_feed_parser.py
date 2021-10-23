@@ -100,7 +100,7 @@ class TestParsePodcastFeed:
 
     @pytest.fixture
     def new_podcast(self, db):
-        return PodcastFactory(cover_url=None, pub_date=None)
+        return PodcastFactory(cover_url=None, pub_date=None, queued=timezone.now())
 
     @pytest.fixture
     def categories(self, db):
@@ -140,7 +140,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert not new_podcast.active
         assert new_podcast.parsed
-        assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -160,7 +160,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert not new_podcast.active
         assert new_podcast.parsed
-        assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
         result = parse_podcast_feed("https://example.com/rss.xml")
@@ -213,7 +213,8 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.day == 1
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
-        assert new_podcast.parsed
+        assert not new_podcast.queued
+
         assert new_podcast.parsed
 
         assert new_podcast.etag
@@ -252,7 +253,7 @@ class TestParsePodcastFeed:
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
         assert new_podcast.parsed
-        assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -279,7 +280,7 @@ class TestParsePodcastFeed:
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
         assert new_podcast.parsed
-        assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -294,6 +295,7 @@ class TestParsePodcastFeed:
         assert new_podcast.active
         assert new_podcast.modified is None
         assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
@@ -308,6 +310,7 @@ class TestParsePodcastFeed:
         assert new_podcast.active
         assert new_podcast.http_status is None
         assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -325,6 +328,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
+        assert not new_podcast.queued
 
     def test_parse_podcast_feed_http_server_error(
         self, mocker, new_podcast, categories
@@ -344,3 +348,4 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
+        assert not new_podcast.queued
