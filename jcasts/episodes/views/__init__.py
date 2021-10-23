@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 from django.conf import settings
+from django.db.models import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -12,7 +16,7 @@ from jcasts.shared.pagination import render_paginated_response
 
 
 @require_http_methods(["GET"])
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
 
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
@@ -53,7 +57,7 @@ def index(request):
 
 
 @require_http_methods(["GET"])
-def search_episodes(request):
+def search_episodes(request: HttpRequest) -> HttpResponse:
 
     if not request.search:
         return redirect("episodes:index")
@@ -71,7 +75,7 @@ def search_episodes(request):
 
 @require_http_methods(["GET"])
 @ajax_login_required
-def actions(request, episode_id):
+def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
@@ -100,7 +104,9 @@ def actions(request, episode_id):
 
 
 @require_http_methods(["GET"])
-def episode_detail(request, episode_id, slug=None):
+def episode_detail(
+    request: HttpRequest, episode_id: int, slug: str | None = None
+) -> HttpResponse:
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
@@ -119,12 +125,12 @@ def episode_detail(request, episode_id, slug=None):
 
 
 def get_episode_or_404(
-    request,
-    episode_id,
+    request: HttpRequest,
+    episode_id: int,
     *,
-    with_podcast=False,
-    with_current_time=False,
-):
+    with_podcast: bool = False,
+    with_current_time: bool = False,
+) -> Episode:
     qs = Episode.objects.all()
     if with_podcast:
         qs = qs.select_related("podcast")
@@ -134,12 +140,12 @@ def get_episode_or_404(
 
 
 def render_episode_list_response(
-    request,
-    episodes,
-    template_name,
-    extra_context=None,
-    cached=False,
-):
+    request: HttpRequest,
+    episodes: QuerySet,
+    template_name: str,
+    extra_context: dict | None = None,
+    cached: bool = False,
+) -> TemplateResponse:
     return render_paginated_response(
         request,
         episodes,

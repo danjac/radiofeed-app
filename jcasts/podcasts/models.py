@@ -25,7 +25,7 @@ from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 
 if TYPE_CHECKING:
-    from jcasts.users.models import User
+    from jcasts.users.models import User  # pragma: no cover
 else:
     User = get_user_model()
 

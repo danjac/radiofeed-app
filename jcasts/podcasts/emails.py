@@ -13,7 +13,7 @@ from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast, Recommendation
 
 if TYPE_CHECKING:
-    from jcasts.users.models import User
+    from jcasts.users.models import User  # pragma: no cover
 else:
     User = get_user_model()
 

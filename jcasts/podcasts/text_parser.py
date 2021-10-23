@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import html
 import re
 
@@ -10,7 +12,7 @@ from nltk.tokenize import RegexpTokenizer
 
 """Additional language-specific stopwords"""
 
-ENGLISH_DAYS = [
+ENGLISH_DAYS: list[str] = [
     "monday",
     "tuesday",
     "wednesday",
@@ -27,7 +29,7 @@ ENGLISH_DAYS = [
     "sun",
 ]
 
-ENGLISH_NUMBERS = [
+ENGLISH_NUMBERS: list[str] = [
     "one",
     "two",
     "three",
@@ -40,7 +42,7 @@ ENGLISH_NUMBERS = [
     "ten",
 ]
 
-ENGLISH_MONTHS = [
+ENGLISH_MONTHS: list[str] = [
     "january",
     "february",
     "march",
@@ -67,7 +69,7 @@ ENGLISH_MONTHS = [
     "dec",
 ]
 
-ENGLISH_MISC_WORDS = [
+ENGLISH_MISC_WORDS: list[str] = [
     "across",
     "advice",
     "along",
@@ -324,14 +326,14 @@ lemmatizer = WordNetLemmatizer()
 
 
 @lru_cache()
-def get_stopwords(language):
+def get_stopwords(language: str) -> list[str]:
     try:
         return stopwords.words(NLTK_LANGUAGES[language]) + STOPWORDS.get(language, [])
     except (OSError, KeyError):
         return []
 
 
-def clean_text(text):
+def clean_text(text: str) -> str:
     """Remove HTML tags and entities, punctuation and numbers."""
     text = html.unescape(striptags(text.strip()))
     text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
@@ -339,7 +341,7 @@ def clean_text(text):
     return text
 
 
-def extract_keywords(language, text):
+def extract_keywords(language: str, text: str) -> list[str]:
 
     if not (text := clean_text(text).lower()):
         return []
@@ -349,5 +351,5 @@ def extract_keywords(language, text):
     return [token for token in tokenize(text) if token and token not in stopwords]
 
 
-def tokenize(text):
+def tokenize(text: str) -> list[str]:
     return [lemmatizer.lemmatize(token) for token in tokenizer.tokenize(text)]
