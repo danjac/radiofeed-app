@@ -157,6 +157,19 @@ class PodcastAdmin(admin.ModelAdmin):
         "reactivate_podcast_feeds",
     )
 
+    @admin.action(description="Remove podcasts from queue")
+    def dequeue_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
+
+        podcasts = queryset.filter(queued__isnull=False)
+        num_podcasts = queryset.count()
+        podcasts.update(queued=None)
+
+        self.message_user(
+            request,
+            f"{num_podcasts} podcast(s) removed from queue",
+            messages.SUCCESS,
+        )
+
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 

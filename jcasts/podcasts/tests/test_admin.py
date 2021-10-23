@@ -62,6 +62,11 @@ class TestPodcastAdmin:
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_parse_podcast_feed.assert_called_with(podcast.rss)
 
+    def test_dequeue_podcasts(self, db, admin, req, mock_parse_podcast_feed):
+        PodcastFactory(queued=timezone.now())
+        admin.dequeue_podcasts(req, Podcast.objects.all())
+        assert Podcast.objects.filter(queued__isnull=False).count() == 0
+
     def test_parse_podcast_feeds_inactive(
         self, podcast, admin, req, mock_parse_podcast_feed
     ):
