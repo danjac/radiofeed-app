@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import io
 
 from datetime import datetime
-from typing import Optional
 
 import attr
 import lxml.etree
@@ -12,7 +13,7 @@ from django.utils import timezone
 
 from jcasts.podcasts.date_parser import parse_date
 
-NAMESPACES = {
+NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
@@ -23,18 +24,18 @@ NAMESPACES = {
 _validate_url = URLValidator(["http", "https"])
 
 
-def is_explicit(value):
+def is_explicit(value: str | None) -> bool:
     return value in ("clean", "yes")
 
 
-def int_or_none(value):
+def int_or_none(value: str | None) -> int | None:
     try:
-        return int(value)
-    except (TypeError, ValueError):
+        return int(value) if value else None
+    except ValueError:
         return None
 
 
-def url_or_none(value):
+def url_or_none(value: str | None) -> str | None:
     try:
         _validate_url(value)
         return value
@@ -42,7 +43,7 @@ def url_or_none(value):
         return None
 
 
-def duration(value):
+def duration(value: str | None) -> str:
     if not value:
         return ""
     try:
@@ -62,14 +63,14 @@ def duration(value):
         return ""
 
 
-def is_url(inst, attr, value):
+def is_url(inst: object, attr: attr.Attribute, value: str | None) -> None:
     try:
         _validate_url(value)
     except ValidationError as e:
         raise ValueError from e
 
 
-def not_empty(inst, attr, value):
+def not_empty(inst: object, attr: attr.Attribute, value: str | None) -> None:
     if not value:
         raise ValueError(f"{attr} is empty")
 
@@ -91,11 +92,11 @@ class Item:
 
     explicit: bool = attr.ib(converter=is_explicit)
 
-    length: Optional[int] = attr.ib(default=None, converter=int_or_none)
-    season: Optional[int] = attr.ib(default=None, converter=int_or_none)
-    episode: Optional[int] = attr.ib(default=None, converter=int_or_none)
+    length: int | None = attr.ib(default=None, converter=int_or_none)
+    season: int | None = attr.ib(default=None, converter=int_or_none)
+    episode: int | None = attr.ib(default=None, converter=int_or_none)
 
-    cover_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
+    cover_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     episode_type: str = attr.ib(default="full")
     duration: str = attr.ib(default="", converter=duration)
@@ -104,12 +105,12 @@ class Item:
     keywords: str = attr.ib(default="", converter=lambda value: " ".join(value or []))
 
     @pub_date.validator
-    def is_pub_date_ok(self, attr, value):
+    def is_pub_date_ok(self, attr: attr.Attibute, value: str | None) -> None:
         if not value or value > timezone.now():
             raise ValueError("not a valid pub date")
 
     @media_type.validator
-    def is_audio(self, attr, value):
+    def is_audio(self, attr: attr.Attribute, value: str | None) -> None:
         if not (value or "").startswith("audio/"):
             raise ValueError("not a valid audio enclosure")
 
@@ -121,11 +122,11 @@ class Feed:
 
     language: str = attr.ib(default="en", converter=lambda value: value[:2])
 
-    link: Optional[str] = attr.ib(default=None, converter=url_or_none)
-    cover_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
+    link: str | None = attr.ib(default=None, converter=url_or_none)
+    cover_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     funding_text: str = attr.ib(default="")
-    funding_url: Optional[str] = attr.ib(default=None, converter=url_or_none)
+    funding_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     owner: str = attr.ib(default="")
     description: str = attr.ib(default="")
@@ -135,7 +136,7 @@ class Feed:
     categories: list[str] = attr.ib(default=list)
 
 
-def parse_rss(content):
+def parse_rss(content: bytes) -> tuple[Feed, list[Item]]:
 
     try:
         for _, element in lxml.etree.iterparse(
@@ -161,7 +162,9 @@ def parse_rss(content):
     raise RssParserError("<channel /> not found in RSS feed")
 
 
-def parse_channel(channel, namespaces):
+def parse_channel(
+    channel: lxml.etree.Element, namespaces: dict[str, str]
+) -> tuple[Feed, list[Item]]:
     try:
         feed = parse_feed(XPathFinder(channel, namespaces))
     except (TypeError, ValueError) as e:
@@ -171,7 +174,7 @@ def parse_channel(channel, namespaces):
     return feed, items
 
 
-def parse_feed(finder):
+def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
         title=finder.find("title/text()"),
         link=finder.find("link/text()", default=""),
@@ -194,7 +197,7 @@ def parse_feed(finder):
     )
 
 
-def parse_items(channel, namespaces):
+def parse_items(channel: lxml.etree.Element, namespaces: dict[str, str]) -> list[Item]:
 
     for item in channel.iterfind("item"):
 
@@ -205,7 +208,7 @@ def parse_items(channel, namespaces):
             pass
 
 
-def parse_item(finder):
+def parse_item(finder: XPathFinder) -> Item:
     return Item(
         guid=finder.find("guid/text()"),
         title=finder.find("title/text()"),
@@ -230,11 +233,13 @@ def parse_item(finder):
 
 
 class XPathFinder:
-    def __init__(self, element, namespaces=None):
+    def __init__(
+        self, element: lxml.etree.Element, namespaces: dict[str, str] | None = None
+    ):
         self.element = element
         self.namespaces = namespaces
 
-    def find(self, *paths, default=None):
+    def find(self, *paths: str, default: str | None = None) -> str | None:
 
         """Find single attribute or text value. Returns
         first matching value."""
@@ -245,7 +250,7 @@ class XPathFinder:
                 pass
         return default
 
-    def findall(self, path):
+    def findall(self, path: str) -> list[str]:
         try:
             return [
                 value.strip()

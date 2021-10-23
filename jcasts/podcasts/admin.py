@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.contrib import admin, messages
+from django.db.models import QuerySet
+from django.http import HttpRequest
 
 from jcasts.podcasts import feed_parser, models
 
@@ -18,7 +22,9 @@ class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: models.ModelAdmin
+    ) -> tuple[tuple[str, str]]:
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
@@ -26,7 +32,7 @@ class PubDateFilter(admin.SimpleListFilter):
             ("stale", f"Stale (> {settings.FRESHNESS_THRESHOLD.days} days)"),
         )
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.published()
@@ -43,10 +49,12 @@ class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str]]:
         return (("yes", "Promoted"),)
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.filter(promoted=True)
@@ -57,10 +65,12 @@ class FollowedFilter(admin.SimpleListFilter):
     title = "Followed"
     parameter_name = "followed"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str]]:
         return (("yes", "Followed"),)
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         queryset = queryset.with_followed()
         if value == "yes":
@@ -72,13 +82,15 @@ class ActiveFilter(admin.SimpleListFilter):
     title = "Active"
     parameter_name = "active"
 
-    def lookups(self, request, model_admin):
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str]]:
         return (
             ("yes", "Active"),
             ("no", "Inactive"),
         )
 
-    def queryset(self, request, queryset):
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
             return queryset.filter(active=True)
@@ -128,7 +140,7 @@ class PodcastAdmin(admin.ModelAdmin):
     )
 
     @admin.action(description="Parse podcast feeds")
-    def parse_podcast_feeds(self, request, queryset):
+    def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
         if queryset.filter(active=False).exists():
 
@@ -151,10 +163,10 @@ class PodcastAdmin(admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    def source(self, obj):
+    def source(self, obj: models.Podcast) -> str:
         return obj.get_domain()
 
-    def get_ordering(self, request):
+    def get_ordering(self, request: HttpRequest) -> list[str]:
         return (
             []
             if request.GET.get("q")

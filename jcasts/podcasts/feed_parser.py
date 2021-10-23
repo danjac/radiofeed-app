@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import http
 import multiprocessing
 import secrets
@@ -5,7 +7,6 @@ import traceback
 
 from datetime import timedelta
 from functools import lru_cache
-from typing import Optional
 
 import attr
 import requests
@@ -46,8 +47,8 @@ class DuplicateFeed(requests.RequestException):
 class ParseResult:
     rss: str = attr.ib()
     success: bool = attr.ib(default=False)
-    status: Optional[http.HTTPStatus] = attr.ib(default=None)
-    exception: Optional[Exception] = attr.ib(default=None)
+    status: int | None = attr.ib(default=None)
+    exception: Exception | None = attr.ib(default=None)
 
     def __bool__(self):
         return self.success
@@ -57,7 +58,7 @@ class ParseResult:
             raise self.exception
 
 
-def schedule_podcast_feeds(frequency):
+def schedule_podcast_feeds(frequency: timedelta) -> None:
     """
     Schedules feeds for update.
     """
@@ -99,7 +100,7 @@ def schedule_podcast_feeds(frequency):
 
 @job("feeds")
 @transaction.atomic
-def parse_podcast_feed(rss):
+def parse_podcast_feed(rss: str) -> ParseResult:
 
     try:
         podcast = Podcast.objects.get(rss=rss, active=True)
@@ -144,7 +145,7 @@ def parse_podcast_feed(rss):
         )
 
 
-def get_feed_response(podcast):
+def get_feed_response(podcast: Podcast) -> requests.Response:
     response = requests.get(
         podcast.rss,
         headers=get_feed_headers(podcast),
@@ -166,7 +167,12 @@ def get_feed_response(podcast):
     return response
 
 
-def parse_success(podcast, response, feed, items):
+def parse_success(
+    podcast: Podcast,
+    response: requests.Response,
+    feed: rss_parser.Feed,
+    items: list[rss_parser.Item],
+) -> ParseResult:
 
     # feed status
     podcast.rss = response.url
@@ -220,7 +226,9 @@ def parse_success(podcast, response, feed, items):
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
 
 
-def parse_episodes(podcast, items, batch_size=500):
+def parse_episodes(
+    podcast: Podcast, items: list[rss_parser.Item], batch_size: int = 500
+) -> None:
     """Remove any episodes no longer in feed, update any current and
     add new"""
 
@@ -268,7 +276,9 @@ def parse_episodes(podcast, items, batch_size=500):
     )
 
 
-def extract_text(podcast, categories, items):
+def extract_text(
+    podcast: Podcast, categories: list[Category], items: list[rss_parser.Item]
+) -> str:
     text = " ".join(
         value
         for value in [
@@ -284,7 +294,7 @@ def extract_text(podcast, categories, items):
     return " ".join(text_parser.extract_keywords(podcast.language, text))
 
 
-def get_feed_headers(podcast):
+def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
@@ -298,17 +308,17 @@ def get_feed_headers(podcast):
 
 
 @lru_cache
-def get_categories_dict():
+def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
 def parse_failure(
-    podcast,
+    podcast: Podcast,
     *,
-    status=None,
-    active=True,
-    exception=None,
-    tb="",
+    status: int | None = None,
+    active: bool = True,
+    exception: Exception | None = None,
+    tb: str = "",
 ):
 
     now = timezone.now()
