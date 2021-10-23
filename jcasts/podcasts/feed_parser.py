@@ -83,7 +83,6 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     secondary = qs.filter(followed=False, promoted=False)
 
     remainder = 0
-    for_update = []
     now = timezone.now()
 
     for (qs, ratio) in [
@@ -95,14 +94,11 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         remainder += round(limit * ratio)
 
         # process the feeds
-        for podcast in qs[:remainder].iterator():
-            parse_podcast_feed.delay(podcast.rss)
-            podcast.queued = now
-            for_update.append(podcast)
+        for podcast_id, rss in qs[:remainder].values_list("pk", "rss").iterator():
+            # do this here rather than a bulk update to prevent race condition
+            Podcast.objects.filter(pk=podcast_id).update(queued=now)
+            parse_podcast_feed.delay(rss)
             remainder -= 1
-
-    if for_update:
-        Podcast.objects.bulk_update(for_update, fields=["queued"])
 
 
 @job("feeds")
