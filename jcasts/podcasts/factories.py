@@ -20,7 +20,7 @@ class FeedFactory(DictFactory):
 
 class ItemFactory(DictFactory):
 
-    guid: str = LazyFunction(lambda: uuid.uuid4().hex)
+    guid = LazyFunction(lambda: uuid.uuid4().hex)
     pub_date = LazyFunction(lambda: timezone.now().isoformat())
     title = Faker("text")
     description = Faker("text")
