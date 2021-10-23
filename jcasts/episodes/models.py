@@ -4,11 +4,9 @@ import mimetypes
 import os
 
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
@@ -25,13 +23,9 @@ from model_utils.models import TimeStampedModel
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
+from jcasts.shared.typedefs import User
 
 UNIQUE_CONSTRAINT = "unique_%(app_label)s_%(class)s"
-
-if TYPE_CHECKING:
-    from jcasts.users.models import User  # pragma: no cover
-else:
-    User = get_user_model()
 
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
