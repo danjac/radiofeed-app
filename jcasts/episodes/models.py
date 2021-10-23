@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import mimetypes
 import os
 
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
+from django.http import HttpRequest
 from django.template.defaultfilters import filesizeformat
 from django.templatetags.static import static
 from django.urls import reverse
@@ -22,9 +28,14 @@ from jcasts.shared.db import FastCountMixin, SearchMixin
 
 UNIQUE_CONSTRAINT = "unique_%(app_label)s_%(class)s"
 
+if TYPE_CHECKING:
+    from jcasts.users.models import User  # pragma: no cover
+else:
+    User = get_user_model()
+
 
 class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_current_time(self, user):
+    def with_current_time(self, user: User | AnonymousUser) -> models.QuerySet:
 
         """Adds `completed`, `current_time` and `listened` annotations."""
 
@@ -43,7 +54,9 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def recommended(self, user, since=timedelta(days=7)):
+    def recommended(
+        self, user: User, since: timedelta = timedelta(days=7)
+    ) -> models.QuerySet:
         """Return all episodes for podcasts the user is following,
         minus any the user has already queued/favorited/listened to."""
 
@@ -79,7 +92,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             self.filter(pk__in=episode_ids).distinct() if episode_ids else self.none()
         )
 
-    def get_next_episode(self, episode):
+    def get_next_episode(self, episode: Episode) -> Episode | None:
 
         return (
             self.filter(
@@ -90,7 +103,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             .first()
         )
 
-    def get_previous_episode(self, episode):
+    def get_previous_episode(self, episode: Episode) -> Episode | None:
 
         return (
             self.filter(
@@ -107,30 +120,30 @@ EpisodeManager = models.Manager.from_queryset(EpisodeQuerySet)
 
 class Episode(models.Model):
 
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
 
-    guid = models.TextField()
+    guid: str = models.TextField()
 
-    pub_date = models.DateTimeField()
+    pub_date: datetime = models.DateTimeField()
 
-    title = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
+    title: str = models.TextField(blank=True)
+    description: str = models.TextField(blank=True)
+    keywords: str = models.TextField(blank=True)
 
-    episode_type = models.CharField(max_length=30, default="full")
-    episode = models.IntegerField(null=True, blank=True)
-    season = models.IntegerField(null=True, blank=True)
+    episode_type: str = models.CharField(max_length=30, default="full")
+    episode: int | None = models.IntegerField(null=True, blank=True)
+    season: int | None = models.IntegerField(null=True, blank=True)
 
-    cover_url = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 
-    media_url = models.URLField(max_length=2083)
-    media_type = models.CharField(max_length=60)
-    length = models.BigIntegerField(null=True, blank=True)
+    media_url: str = models.URLField(max_length=2083)
+    media_type: str = models.CharField(max_length=60)
+    length: int | None = models.BigIntegerField(null=True, blank=True)
 
-    duration = models.CharField(max_length=30, blank=True)
-    explicit = models.BooleanField(default=False)
+    duration: str = models.CharField(max_length=30, blank=True)
+    explicit: bool = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, editable=False)
+    search_vector: str | None = SearchVectorField(null=True, editable=False)
 
     objects = EpisodeManager()
 
@@ -152,50 +165,50 @@ class Episode(models.Model):
             GinIndex(fields=["search_vector"]),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.title or self.guid
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("episodes:episode_detail", args=[self.pk, self.slug])
 
     @property
-    def slug(self):
+    def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def get_file_size(self):
+    def get_file_size(self) -> str | None:
         return filesizeformat(self.length) if self.length else None
 
-    def get_cover_url(self):
+    def get_cover_url(self) -> str | None:
         return self.cover_url or self.podcast.cover_url
 
-    def is_queued(self, user):
+    def is_queued(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user):
+    def is_favorited(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
         return Favorite.objects.filter(user=user, episode=self).exists()
 
     @cached_property
-    def cleaned_title(self):
+    def cleaned_title(self) -> str:
         return strip_html(self.title)
 
     @cached_property
-    def cleaned_description(self):
+    def cleaned_description(self) -> str:
         return strip_html(self.description)
 
     @cached_property
-    def current_time(self):
+    def current_time(self) -> int | None:
         raise AssertionError("use with QuerySet method 'with_current_time'")
 
     @cached_property
-    def completed(self):
+    def completed(self) -> datetime | None:
         raise AssertionError("use with QuerySet method 'with_current_time'")
 
     @cached_property
-    def duration_in_seconds(self):
+    def duration_in_seconds(self) -> int:
         """Returns total number of seconds given string in [h:][m:]s format."""
 
         if not self.duration:
@@ -212,7 +225,7 @@ class Episode(models.Model):
             return 0
 
     @cached_property
-    def pc_complete(self):
+    def pc_complete(self) -> int:
         """Use with the `with_current_time` QuerySet method"""
 
         # if marked complete just assume 100% done
@@ -225,7 +238,7 @@ class Episode(models.Model):
             return 0
 
     @cached_property
-    def time_remaining(self):
+    def time_remaining(self) -> int:
         return (
             self.duration_in_seconds - (self.current_time or 0)
             if self.duration_in_seconds
@@ -233,11 +246,11 @@ class Episode(models.Model):
         )
 
     @cached_property
-    def is_completed(self):
+    def is_completed(self) -> bool:
         """Use with the `with_current_time` QuerySet method"""
         return self.pc_complete > 99
 
-    def get_opengraph_data(self, request):
+    def get_opengraph_data(self, request: HttpRequest) -> dict:
         og_data = {
             "url": request.build_absolute_uri(self.get_absolute_url()),
             "title": f"{request.site.name} | {self.podcast.cleaned_title} | {self.cleaned_title}",
@@ -255,7 +268,7 @@ class Episode(models.Model):
 
         return og_data
 
-    def get_episode_metadata(self):
+    def get_episode_metadata(self) -> str:
 
         episode_type = (
             self.episode_type.capitalize()
@@ -279,11 +292,11 @@ class Episode(models.Model):
             ]
         )
 
-    def get_media_url_ext(self):
+    def get_media_url_ext(self) -> str:
         _, ext = os.path.splitext(urlparse(self.media_url).path)
         return ext[1:]
 
-    def get_media_metadata(self):
+    def get_media_metadata(self) -> dict:
         # https://developers.google.com/web/updates/2017/02/media-session
         cover_url = self.get_cover_url() or static("img/podcast-icon.png")
         cover_url_type, _ = mimetypes.guess_type(urlparse(cover_url).path)
@@ -304,7 +317,7 @@ class Episode(models.Model):
 
 
 class FavoriteQuerySet(SearchMixin, models.QuerySet):
-    search_vectors = [
+    search_vectors: list[tuple[str, str]] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -315,8 +328,8 @@ FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 class Favorite(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
     objects = FavoriteManager()
 
@@ -334,7 +347,7 @@ class Favorite(TimeStampedModel):
 
 
 class AudioLogQuerySet(SearchMixin, models.QuerySet):
-    search_vectors = [
+    search_vectors: list[tuple[str, str]] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
@@ -345,12 +358,12 @@ AudioLogManager = models.Manager.from_queryset(AudioLogQuerySet)
 
 class AudioLog(TimeStampedModel):
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    updated = models.DateTimeField()
-    completed = models.DateTimeField(null=True, blank=True)
-    current_time = models.IntegerField(default=0)
+    updated: datetime = models.DateTimeField()
+    completed: datetime = models.DateTimeField(null=True, blank=True)
+    current_time: int = models.IntegerField(default=0)
 
     objects = AudioLogManager()
 
@@ -366,7 +379,7 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["updated"]),
         ]
 
-    def to_json(self):
+    def to_json(self) -> dict:
         cover_url = self.episode.podcast.cover_url or static("img/podcast-icon.png")
         return {
             "currentTime": self.current_time,
@@ -390,11 +403,11 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def add_item_to_start(self, user, episode):
+    def add_item_to_start(self, user: User, episode: Episode) -> QueueItem:
         self.filter(user=user).update(position=models.F("position") + 1)
         return self.create(episode=episode, user=user, position=1)
 
-    def add_item_to_end(self, user, episode):
+    def add_item_to_end(self, user: User, episode: Episode) -> QueueItem:
         return self.create(
             episode=episode,
             user=user,
@@ -407,7 +420,7 @@ class QueueItemQuerySet(models.QuerySet):
             + 1,
         )
 
-    def move_items(self, user, item_ids):
+    def move_items(self, user: User, item_ids: list[int]) -> None:
         qs = self.filter(user=user, pk__in=item_ids)
 
         items = qs.in_bulk()
@@ -426,9 +439,9 @@ QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
 
 
 class QueueItem(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position = models.IntegerField(default=0)
+    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    position: int = models.IntegerField(default=0)
 
     objects = QueueItemManager()
 
