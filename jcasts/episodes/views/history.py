@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
@@ -12,7 +15,7 @@ from jcasts.shared.response import HttpResponseNoContent
 
 @require_http_methods(["GET"])
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
 
     logs = (
         AudioLog.objects.filter(user=request.user)
@@ -41,7 +44,7 @@ def index(request):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def mark_complete(request, episode_id):
+def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     if not request.player.has(episode_id):
         AudioLog.objects.filter(
@@ -57,7 +60,7 @@ def mark_complete(request, episode_id):
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_audio_log(request, episode_id):
+def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     if not request.player.has(episode_id):
         AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
         messages.info(request, "Removed from History")
