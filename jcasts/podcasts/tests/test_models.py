@@ -112,6 +112,24 @@ class TestPodcastManager:
         third = podcasts[2]
         assert not third.exact_match
 
+    def test_search_or_exact_match(self, db):
+        exact = PodcastFactory(title="test")
+        inexact = PodcastFactory(title="test a thing")
+        PodcastFactory(title="nomatch")
+
+        podcasts = Podcast.objects.search_or_exact_match("test").order_by(
+            "-exact_match",
+            "-rank",
+        )
+        assert podcasts.count() == 2
+        first = podcasts.first()
+        assert first == exact
+        assert first.exact_match
+
+        second = podcasts[1]
+        assert second == inexact
+        assert not second.exact_match
+
     def test_inactive(self, db):
         PodcastFactory(active=False)
         assert Podcast.objects.active().count() == 0

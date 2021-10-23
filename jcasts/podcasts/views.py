@@ -263,8 +263,7 @@ def get_podcast_search(
         podcasts = Podcast.objects.published()
 
     return (
-        podcasts.with_exact_match(request.search.value)
-        .search(request.search.value)
+        podcasts.search_or_exact_match(request.search.value)
         .order_by(
             "-exact_match",
             "-rank",

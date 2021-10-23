@@ -106,6 +106,10 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
         )
 
+    def search_or_exact_match(self, search_term: str) -> models.QuerySet:
+        qs = self.with_exact_match(search_term)
+        return qs.search(search_term) | qs.filter(exact_match=True)
+
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
 
