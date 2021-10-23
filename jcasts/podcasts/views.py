@@ -66,16 +66,9 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return redirect("podcasts:index")
 
-    podcasts = (
-        Podcast.objects.published()
-        .with_exact_match(request.search.value)
-        .search(request.search.value)
-        .order_by("-exact_match", "-rank", "-pub_date")
-    )
-
     return render_podcast_list_response(
         request,
-        podcasts,
+        get_podcast_search(request),
         "podcasts/search.html",
         cached=True,
     )
@@ -104,12 +97,7 @@ def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
     if not request.search:
         return HttpResponse()
 
-    podcasts = (
-        Podcast.objects.published()
-        .with_exact_match(request.search.value)
-        .search(request.search.value)
-        .order_by("-exact_match", "-rank", "-pub_date")
-    )[:limit]
+    podcasts = get_podcast_search(request)
 
     episodes = (
         Episode.objects.search(request.search.value)
@@ -129,7 +117,7 @@ def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def recommendations(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
+    request: HttpRequest, podcast_id: int, slug: str | None = None, limit: int = 12
 ) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
@@ -138,7 +126,7 @@ def recommendations(
         Recommendation.objects.filter(podcast=podcast)
         .select_related("recommended")
         .order_by("-similarity", "-frequency")
-    )[:12]
+    )[:limit]
 
     return TemplateResponse(
         request,
@@ -208,11 +196,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: str | None = N
     podcasts = category.podcast_set.published()
 
     if request.search:
-        podcasts = (
-            podcasts.with_exact_match(request.search.value)
-            .search(request.search.value)
-            .order_by("-exact_match", "-rank", "-pub_date")
-        )
+        podcasts = get_podcast_search(request, podcasts)
 
     else:
         podcasts = podcasts.order_by("-pub_date")
@@ -269,6 +253,25 @@ def get_podcast_detail_context(
         "og_data": podcast.get_opengraph_data(request),
         **(extra_context or {}),
     }
+
+
+def get_podcast_search(
+    request: HttpRequest, podcasts: QuerySet | None = None
+) -> QuerySet:
+
+    podcasts = podcasts or Podcast.objects.published()
+
+    qs = (
+        podcasts.with_exact_match(request.search.value)
+        .order_by(
+            "-exact_match",
+            "-rank",
+            "-pub_date",
+        )
+        .distinct()
+    )
+
+    return qs.search(request.search.value) | qs.filter(exact_match=True)
 
 
 def render_follow_response(
