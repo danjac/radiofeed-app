@@ -85,8 +85,6 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     remainder = 0
     now = timezone.now()
 
-    podcast_ids = []
-
     for (qs, ratio) in [
         (primary, 0.5),
         (secondary.fresh(), 0.3),
@@ -94,16 +92,17 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     ]:
 
         remainder += round(limit * ratio)
-        for podcast_id in qs[:remainder].values_list("pk", flat=True).iterator():
-            podcast_ids.append(podcast_id)
-            remainder -= 1
 
-    # process the feeds
+        podcast_ids = set(qs[:remainder].values_list("pk", flat=True))
 
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
+        # process the feeds
 
-    for podcast_id in podcast_ids:
-        parse_podcast_feed.delay(podcast_id)
+        Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
+
+        for podcast_id in podcast_ids:
+            parse_podcast_feed.delay(podcast_id)
+
+        remainder -= len(podcast_ids)
 
 
 @job("feeds")
