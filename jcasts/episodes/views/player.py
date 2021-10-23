@@ -1,10 +1,12 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from __future__ import annotations
+
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
-from jcasts.episodes.models import AudioLog, QueueItem
+from jcasts.episodes.models import AudioLog, Episode, QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
@@ -13,7 +15,7 @@ from jcasts.shared.response import HttpResponseNoContent
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def start_player(request, episode_id):
+def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
     remove_episode_from_player(request, mark_complete=False)
 
     return render_start_player(
@@ -23,14 +25,14 @@ def start_player(request, episode_id):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request):
+def close_player(request: HttpRequest) -> HttpResponse:
     remove_episode_from_player(request, mark_complete=False)
     return render_close_player(request)
 
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def play_next_episode(request):
+def play_next_episode(request: HttpRequest) -> HttpResponse:
     """Marks current episode complete, starts next episode in queue
     or closes player if queue empty."""
     remove_episode_from_player(request, mark_complete=True)
@@ -49,7 +51,7 @@ def play_next_episode(request):
 
 @require_http_methods(["GET"])
 @ajax_login_required
-def reload_player(request):
+def reload_player(request: HttpRequest) -> HttpResponse:
 
     if episode_id := request.player.get():
         log = (
@@ -65,7 +67,7 @@ def reload_player(request):
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["POST"])
 @ajax_login_required
-def player_time_update(request):
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode."""
 
     try:
@@ -82,7 +84,9 @@ def player_time_update(request):
         return HttpResponseBadRequest()
 
 
-def remove_episode_from_player(request, mark_complete):
+def remove_episode_from_player(
+    request: HttpRequest, mark_complete: bool
+) -> HttpResponse:
 
     if (episode_id := request.player.pop()) and mark_complete:
 
@@ -95,7 +99,7 @@ def remove_episode_from_player(request, mark_complete):
         )
 
 
-def render_start_player(request, episode):
+def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
 
     QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
@@ -126,9 +130,11 @@ def render_start_player(request, episode):
     )
 
 
-def render_close_player(request):
+def render_close_player(request: HttpRequest) -> HttpResponse:
     return with_hx_trigger(render_player(request), "close-player")
 
 
-def render_player(request, extra_context=None):
+def render_player(
+    request: HttpRequest, extra_context: dict | None = None
+) -> HttpResponse:
     return TemplateResponse(request, "episodes/_player.html", extra_context)

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_http_methods
 
@@ -14,7 +16,7 @@ from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 @require_http_methods(["GET"])
 @login_required
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     return TemplateResponse(
         request,
         "episodes/queue.html",
@@ -28,7 +30,7 @@ def index(request):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_to_queue(request, episode_id, to):
+def add_to_queue(request: HttpRequest, episode_id: int, to: str) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
@@ -48,7 +50,7 @@ def add_to_queue(request, episode_id, to):
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_from_queue(request, episode_id):
+def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
     QueueItem.objects.filter(user=request.user).filter(episode=episode).delete()
     messages.info(request, "Removed from Play Queue")
@@ -63,7 +65,7 @@ def remove_from_queue(request, episode_id):
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def move_queue_items(request):
+def move_queue_items(request: HttpRequest) -> HttpResponse:
 
     try:
         QueueItem.objects.move_items(
