@@ -19,8 +19,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ResultFilter(admin.SimpleListFilter):
-    title = "result"
-    parameter_name = "Result"
+    title = "Result"
+    parameter_name = "result"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
