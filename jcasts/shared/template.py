@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import collections
 import math
 import re
 
 from urllib import parse
+
+import attr
 
 from django import template
 from django.conf import settings
@@ -23,7 +24,12 @@ from jcasts.shared import cleaners
 register = template.Library()
 
 
-ActiveLink = collections.namedtuple("ActiveLink", "url match exact")
+@attr.s(kw_only=True)
+class ActiveLink:
+    url: str = attr.ib()
+    match: bool = attr.ib(default=False)
+    exact: bool = attr.ib(default=False)
+
 
 _validate_url = URLValidator(["http", "https"])
 
@@ -78,12 +84,12 @@ def active_link(context: dict, url_name: str, *args, **kwargs) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
 
     if context["request"].path == url:
-        return ActiveLink(url, True, True)
+        return ActiveLink(url=url, match=True, exact=True)
 
     if context["request"].path.startswith(url):
-        return ActiveLink(url, True, False)
+        return ActiveLink(url=url, match=True)
 
-    return ActiveLink(url, False, False)
+    return ActiveLink(url=url)
 
 
 @register.simple_tag(takes_context=True)
@@ -92,9 +98,9 @@ def re_active_link(
 ) -> ActiveLink:
     url = resolve_url(url_name, *args, **kwargs)
     if re.match(pattern, context["request"].path):
-        return ActiveLink(url, True, False)
+        return ActiveLink(url=url, match=True)
 
-    return ActiveLink(url, False, False)
+    return ActiveLink(url=url)
 
 
 @register.simple_tag
