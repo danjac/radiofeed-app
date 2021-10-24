@@ -13,6 +13,7 @@ from jcasts.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
+    ReasonFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -68,6 +69,28 @@ class TestPodcastAdmin:
         PodcastFactory(active=False)
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_parse_podcast_feed.assert_not_called()
+
+
+class TestReasonFilter:
+    def test_reason_filter_no_filter(self, podcasts, admin, req):
+        PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
+        f = ReasonFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_reason_filter_none(self, podcasts, admin, req):
+        podcast = PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
+        f = ReasonFilter(req, {"reason": "none"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert podcast not in qs
+
+    def test_reason_filter_not_modified(self, podcasts, admin, req):
+        podcast = PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
+        f = ReasonFilter(req, {"reason": Podcast.Reason.NOT_MODIFIED}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert podcast in qs
 
 
 class TestPubDateFilter:
