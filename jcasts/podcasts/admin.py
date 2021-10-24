@@ -153,7 +153,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "source",
         "active",
         "promoted",
-        "result",
         "pub_date",
         "polled",
     )
