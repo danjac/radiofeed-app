@@ -20,7 +20,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ResultFilter(admin.SimpleListFilter):
     title = "result"
-    parameter_name = "result"
+    parameter_name = "Result"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
