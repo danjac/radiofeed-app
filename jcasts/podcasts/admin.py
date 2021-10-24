@@ -145,10 +145,12 @@ class PodcastAdmin(admin.ModelAdmin):
     readonly_fields = (
         "polled",
         "queued",
+        "last_build_date",
         "modified",
         "pub_date",
         "etag",
         "http_status",
+        "reason",
         "exception",
     )
 
