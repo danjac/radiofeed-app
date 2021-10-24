@@ -18,24 +18,24 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-class ReasonFilter(admin.SimpleListFilter):
-    title = "Reason"
-    parameter_name = "reason"
+class ResultFilter(admin.SimpleListFilter):
+    title = "result"
+    parameter_name = "result"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
 
-        return (("none", "None"),) + tuple(models.Podcast.Reason.choices)
+        return (("none", "None"),) + tuple(models.Podcast.Result.choices)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
 
         if value == "none":
-            return queryset.filter(reason=None)
+            return queryset.filter(result=None)
 
         elif value:
-            return queryset.filter(reason=value)
+            return queryset.filter(result=value)
 
         return queryset
 
@@ -145,7 +145,7 @@ class PodcastAdmin(admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         QueuedFilter,
-        ReasonFilter,
+        ResultFilter,
     )
 
     list_display = (
@@ -153,6 +153,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "source",
         "active",
         "promoted",
+        "result",
         "pub_date",
         "polled",
     )
@@ -173,7 +174,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "etag",
         "http_status",
-        "reason",
+        "result",
         "exception",
     )
 

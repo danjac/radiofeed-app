@@ -48,7 +48,7 @@ class ParseResult:
     rss: str | None = attr.ib()
     success: bool = attr.ib(default=False)
     status: int | None = attr.ib(default=None)
-    reason: str | None = attr.ib(default=None)
+    result: str | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
 
     def __bool__(self):
@@ -129,21 +129,21 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         return parse_failure(
             podcast,
             status=e.response.status_code,
-            reason=Podcast.Reason.NOT_MODIFIED,
+            result=Podcast.Result.NOT_MODIFIED,
         )
 
     except DuplicateFeed as e:
         return parse_failure(
             podcast,
             active=False,
-            reason=Podcast.Reason.DUPLICATE_FEED,
+            result=Podcast.Result.DUPLICATE_FEED,
             status=e.response.status_code,
         )
 
     except requests.HTTPError as e:
         return parse_failure(
             podcast,
-            reason=Podcast.Reason.HTTP_ERROR,
+            result=Podcast.Result.HTTP_ERROR,
             status=e.response.status_code,
             active=False,
         )
@@ -152,14 +152,14 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         return parse_failure(
             podcast,
             exception=e,
-            reason=Podcast.Reason.NETWORK_ERROR,
+            result=Podcast.Result.NETWORK_ERROR,
             tb=traceback.format_exc(),
         )
 
     except rss_parser.RssParserError as e:
         return parse_failure(
             podcast,
-            reason=Podcast.Reason.INVALID_RSS,
+            result=Podcast.Result.INVALID_RSS,
             status=response.status_code,
             active=False,
             exception=e,
@@ -205,7 +205,7 @@ def parse_success(
     podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
-    podcast.reason = None
+    podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.exception = ""
 
     # parsing status
@@ -343,7 +343,7 @@ def parse_failure(
     *,
     status: int | None = None,
     active: bool = True,
-    reason: tuple[str, str] | None = None,
+    result: tuple[str, str] | None = None,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
@@ -354,7 +354,7 @@ def parse_failure(
         active=active,
         updated=now,
         polled=now,
-        reason=reason,
+        result=result,
         http_status=status,
         exception=tb,
         queued=None,
@@ -364,6 +364,6 @@ def parse_failure(
         rss=podcast.rss,
         success=False,
         status=status,
-        reason=reason[0] if reason else None,
+        result=result[0] if result else None,
         exception=exception,
     )

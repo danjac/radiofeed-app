@@ -13,7 +13,7 @@ from jcasts.podcasts.admin import (
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
-    ReasonFilter,
+    ResultFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -71,23 +71,23 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_not_called()
 
 
-class TestReasonFilter:
-    def test_reason_filter_no_filter(self, podcasts, admin, req):
-        PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
-        f = ReasonFilter(req, {}, Podcast, admin)
+class TestResultFilter:
+    def test_result_filter_no_filter(self, podcasts, admin, req):
+        PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
+        f = ResultFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    def test_reason_filter_none(self, podcasts, admin, req):
-        podcast = PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
-        f = ReasonFilter(req, {"reason": "none"}, Podcast, admin)
+    def test_result_filter_none(self, podcasts, admin, req):
+        podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
+        f = ResultFilter(req, {"result": "none"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert podcast not in qs
 
-    def test_reason_filter_not_modified(self, podcasts, admin, req):
-        podcast = PodcastFactory(reason=Podcast.Reason.NOT_MODIFIED)
-        f = ReasonFilter(req, {"reason": Podcast.Reason.NOT_MODIFIED}, Podcast, admin)
+    def test_result_filter_not_modified(self, podcasts, admin, req):
+        podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
+        f = ResultFilter(req, {"result": Podcast.Result.NOT_MODIFIED}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert podcast in qs
