@@ -131,6 +131,8 @@ class Feed:
 
     language: str = attr.ib(default="en", converter=language_code)
 
+    last_build_date: datetime | None = attr.ib(default=None, converter=parse_date)
+
     link: str | None = attr.ib(default=None, converter=url_or_none)
     cover_url: str | None = attr.ib(default=None, converter=url_or_none)
 
@@ -186,21 +188,20 @@ def parse_channel(
 def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
         title=finder.find("title/text()"),
-        link=finder.find("link/text()", default=""),
+        link=finder.find("link/text()"),
+        last_build_date=finder.find("lastBuildDate/text()"),
         language=finder.find("language/text()", default="en"),
         explicit=finder.find("itunes:explicit/text()"),
         cover_url=finder.find("itunes:image/@href", "image/url/text()"),
-        funding_url=finder.find("podcast:funding/@url", default=""),
-        funding_text=finder.find("podcast:funding/text()", default=""),
+        funding_url=finder.find("podcast:funding/@url"),
+        funding_text=finder.find("podcast:funding/text()"),
         description=finder.find(
             "description/text()",
             "itunes:summary/text()",
-            default="",
         ),
         owner=finder.find(
             "itunes:author/text()",
             "itunes:owner/itunes:name/text()",
-            default="",
         ),
         categories=finder.findall("//itunes:category/@text"),
     )
@@ -237,7 +238,7 @@ def parse_item(finder: XPathFinder) -> Item:
             "itunes:summary/text()",
             default="",
         ),
-        duration=finder.find("itunes:duration/text()", default=""),
+        duration=finder.find("itunes:duration/text()"),
         episode_type=finder.find("itunes:episodetype/text()", default="full"),
         keywords=finder.findall("category/text()"),
     )

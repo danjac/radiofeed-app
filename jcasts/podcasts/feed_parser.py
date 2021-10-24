@@ -187,14 +187,24 @@ def parse_success(
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
 
-    # parsing status
-    pub_dates = [item.pub_date for item in items]
-
-    podcast.pub_date = max(pub_dates)
     podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
     podcast.exception = ""
+
+    if feed.last_build_date and feed.last_build_date == podcast.last_build_date:
+        # feed hasn't been updated, we can skip full parsing
+
+        podcast.save()
+
+        return ParseResult(rss=podcast.rss, success=False, status=response.status_code)
+
+    podcast.last_build_date = feed.last_build_date
+
+    # parsing status
+    pub_dates = [item.pub_date for item in items]
+
+    podcast.pub_date = max(pub_dates)
 
     # content
 

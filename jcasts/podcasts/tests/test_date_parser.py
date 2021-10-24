@@ -21,6 +21,11 @@ class TestParseDate:
     def test_parse_date_if_none(self):
         assert parse_date(None) is None
 
+    def test_invalid_offset(self):
+        assert parse_date("Sun, 14 Jan 2018 21:38:44 -4400") == datetime.datetime(
+            2018, 1, 14, 21, 38, 44, tzinfo=pytz.UTC
+        )
+
     def test_parse_date_if_not_tz_aware(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3)
         new_dt = parse_date(dt)

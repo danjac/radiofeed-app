@@ -240,9 +240,20 @@ TZ_INFOS: dict[str, int | float] = {
 
 
 def force_tz_aware(dt: datetime) -> datetime:
-    if not is_aware(dt):
-        dt = make_aware(dt)
-    return dt
+    try:
+        return dt if is_aware(dt) else make_aware(dt)
+    except ValueError:
+        # weird offset: try and rebuild as UTC
+        return make_aware(
+            datetime(
+                year=dt.year,
+                month=dt.month,
+                day=dt.day,
+                hour=dt.hour,
+                minute=dt.minute,
+                second=dt.second,
+            )
+        )
 
 
 def parse_date(value: str | datetime | None) -> datetime | None:
