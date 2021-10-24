@@ -145,6 +145,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
@@ -165,6 +166,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.INVALID_RSS
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
         result = parse_podcast_feed(1234)
@@ -218,6 +220,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert not new_podcast.queued
+        assert not new_podcast.reason
 
         assert new_podcast.polled
 
@@ -251,8 +254,10 @@ class TestParsePodcastFeed:
             ),
         )
         assert not parse_podcast_feed(new_podcast.id)
+        new_podcast.refresh_from_db()
+        assert new_podcast.reason == Podcast.Reason.NOT_MODIFIED
 
-    def test_parse_podcast_new_last_build_date(self, mocker, new_podcast):
+    def test_parse_podcast_new_last_build_date(self, mocker, new_podcast, categories):
 
         new_podcast.last_build_date = parse_date("Tue, 30 Jun 2020 15:25:26 +0000")
         new_podcast.save()
@@ -270,7 +275,7 @@ class TestParsePodcastFeed:
         )
         assert parse_podcast_feed(new_podcast.id)
 
-    def test_parse_podcast_last_build_date_none(self, mocker, new_podcast):
+    def test_parse_podcast_last_build_date_none(self, mocker, new_podcast, categories):
 
         new_podcast.last_build_date = None
         new_podcast.save()
@@ -288,7 +293,7 @@ class TestParsePodcastFeed:
         )
         assert parse_podcast_feed(new_podcast.id)
 
-    def test_parse_podcast_no_last_build_date(self, mocker, new_podcast):
+    def test_parse_podcast_no_last_build_date(self, mocker, new_podcast, categories):
 
         new_podcast.last_build_date = parse_date("Tue, 30 Jun 2020 15:25:26 +0000")
         new_podcast.save()
@@ -357,6 +362,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.DUPLICATE_FEED
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -372,6 +378,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.NOT_MODIFIED
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
@@ -387,6 +394,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.NETWORK_ERROR
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -405,6 +413,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error(
         self, mocker, new_podcast, categories
@@ -425,3 +434,4 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert new_podcast.reason == Podcast.Reason.HTTP_ERROR

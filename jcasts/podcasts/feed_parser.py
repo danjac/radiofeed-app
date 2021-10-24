@@ -48,6 +48,7 @@ class ParseResult:
     rss: str | None = attr.ib()
     success: bool = attr.ib(default=False)
     status: int | None = attr.ib(default=None)
+    reason: str | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
 
     def __bool__(self):
@@ -112,25 +113,37 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
     try:
         podcast = Podcast.objects.get(pk=podcast_id, active=True)
         response = get_feed_response(podcast)
+        feed, items = rss_parser.parse_rss(response.content)
 
-        return parse_success(podcast, response, *rss_parser.parse_rss(response.content))
+        if feed.last_build_date and feed.last_build_date == podcast.last_build_date:
+            # feed hasn't been updated, we can skip full parsing
+
+            raise NotModified(response=response)
+
+        return parse_success(podcast, response, feed, items)
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
 
     except NotModified as e:
-        return parse_failure(podcast, status=e.response.status_code)
+        return parse_failure(
+            podcast,
+            status=e.response.status_code,
+            reason=Podcast.Reason.NOT_MODIFIED,
+        )
 
     except DuplicateFeed as e:
         return parse_failure(
             podcast,
             active=False,
+            reason=Podcast.Reason.DUPLICATE_FEED,
             status=e.response.status_code,
         )
 
     except requests.HTTPError as e:
         return parse_failure(
             podcast,
+            reason=Podcast.Reason.HTTP_ERROR,
             status=e.response.status_code,
             active=False,
         )
@@ -139,12 +152,14 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         return parse_failure(
             podcast,
             exception=e,
+            reason=Podcast.Reason.NETWORK_ERROR,
             tb=traceback.format_exc(),
         )
 
     except rss_parser.RssParserError as e:
         return parse_failure(
             podcast,
+            reason=Podcast.Reason.INVALID_RSS,
             status=response.status_code,
             active=False,
             exception=e,
@@ -190,16 +205,8 @@ def parse_success(
     podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
+    podcast.reason = None
     podcast.exception = ""
-
-    if feed.last_build_date and feed.last_build_date == podcast.last_build_date:
-        # feed hasn't been updated, we can skip full parsing
-
-        podcast.save()
-
-        return ParseResult(rss=podcast.rss, success=False, status=response.status_code)
-
-    podcast.last_build_date = feed.last_build_date
 
     # parsing status
     pub_dates = [item.pub_date for item in items]
@@ -215,6 +222,7 @@ def parse_success(
         "funding_text",
         "funding_url",
         "language",
+        "last_build_date",
         "link",
         "owner",
         "title",
@@ -335,6 +343,7 @@ def parse_failure(
     *,
     status: int | None = None,
     active: bool = True,
+    reason: tuple[str, str] | None = None,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
@@ -345,6 +354,7 @@ def parse_failure(
         active=active,
         updated=now,
         polled=now,
+        reason=reason,
         http_status=status,
         exception=tb,
         queued=None,
@@ -354,5 +364,6 @@ def parse_failure(
         rss=podcast.rss,
         success=False,
         status=status,
+        reason=reason[0] if reason else None,
         exception=exception,
     )
