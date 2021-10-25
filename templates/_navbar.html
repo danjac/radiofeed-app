@@ -123,12 +123,12 @@
              placeholder="Search"
              :class="{'w-96': search, 'w-72': !search}"
              class="w-72 px-4 py-1 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
-      <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-900 dark:text-gray-100">
         <span id="search-results-indicator"
-              class="text-gray-900 dark:text-gray-100 mr-1"
+              class="mr-1"
               style="display:none;">
 
-          {% include "_loader.svg" with size=4 %}
+          {% include "_loader.html" with size=4 %}
 
         </span>
         <button @click.prevent.stop="search=''"
@@ -136,13 +136,13 @@
                 title="Clear"
                 x-cloak
                 x-show="search"
-                class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100 mr-1">
+                class="focus:outline-none focus:shadow-outline mr-1">
           {% icon "x" css_class="h-4 w-4" %}
         </button>
 
         <button type="submit"
                 title="Search"
-                class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                class="focus:outline-none focus:shadow-outline">
           {% icon "search" css_class="h-4 w-4" %}
         </button>
       </div>

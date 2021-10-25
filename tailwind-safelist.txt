@@ -1,6 +1,7 @@
 -inset-x-12
 sm:-inset-x-0
 type
+fill-current
 cursor-not-allowed
 pointer-events-none
 opacity-50
