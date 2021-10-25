@@ -11,14 +11,21 @@ from django.utils import timezone
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
+from jcasts.podcasts.factories import (
+    CategoryFactory,
+    FeedFactory,
+    FollowFactory,
+    PodcastFactory,
+)
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
+    is_feed_changed,
     parse_podcast_feed,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
+from jcasts.podcasts.rss_parser import Feed
 
 
 class MockResponse:
@@ -43,6 +50,34 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
+
+
+class TestIsFeedChanged:
+    def test_feed_date_is_none(self):
+        assert is_feed_changed(
+            Podcast(last_build_date=timezone.now()),
+            Feed(**FeedFactory(last_build_date=None)),
+        )
+
+    def test_podcast_date_is_none(self):
+        assert is_feed_changed(
+            Podcast(last_build_date=None),
+            Feed(**FeedFactory(last_build_date=timezone.now())),
+        )
+
+    def test_different_podcast_and_feed_dates(self):
+        now = timezone.now()
+        assert is_feed_changed(
+            Podcast(last_build_date=now - timedelta(days=3)),
+            Feed(**FeedFactory(last_build_date=now)),
+        )
+
+    def test_same_podcast_and_feed_dates(self):
+        now = timezone.now()
+        assert not is_feed_changed(
+            Podcast(last_build_date=now),
+            Feed(**FeedFactory(last_build_date=now)),
+        )
 
 
 class TestFeedHeaders:
