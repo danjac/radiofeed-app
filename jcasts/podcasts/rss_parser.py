@@ -18,6 +18,7 @@ NAMESPACES: dict[str, str] = {
     "atom": "http://www.w3.org/2005/Atom",
     "content": "http://purl.org/rss/1.0/modules/content/",
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+    "media": "http://search.yahoo.com/mrss/",
     "podcast": "https://podcastindex.org/namespace/1.0",
 }
 
@@ -225,9 +226,18 @@ def parse_item(finder: XPathFinder) -> Item:
         guid=finder.find("guid/text()"),
         title=finder.find("title/text()"),
         pub_date=finder.find("pubDate/text()"),
-        media_url=finder.find("enclosure//@url"),
-        media_type=finder.find("enclosure//@type"),
-        length=finder.find("enclosure//@length"),
+        media_url=finder.find(
+            "enclosure//@url",
+            "media:content//@url",
+        ),
+        media_type=finder.find(
+            "enclosure//@type",
+            "media:content//@type",
+        ),
+        length=finder.find(
+            "enclosure//@length",
+            "media:content//@fileSize",
+        ),
         explicit=finder.find("itunes:explicit/text()"),
         cover_url=finder.find("itunes:image/@href"),
         episode=finder.find("itunes:episode/text()"),
