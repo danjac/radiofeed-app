@@ -7,7 +7,7 @@
      @click="search=''"
      @keyup.enter="search=''">
   {% for podcast in podcasts %}
-  <div class="search-result p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
+  <div class="search-result p-2 flex items-center space-x-2 text-gray-800 dark:text-gray-300 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
        :tabindex="{{ forloop.counter0 }}"
        hx-trigger="click,keyup[event.keyCode===13]"
        hx-get="{{ podcast.get_absolute_url }}">
@@ -30,7 +30,7 @@
   {% with num_podcasts=podcasts|length %}
   {% for episode in episodes %}
   {% with podcast=episode.podcast %}
-  <div class="search-result p-2 flex items-center space-x-2 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
+  <div class="search-result p-2 flex items-center space-x-2 text-gray-800 dark:text-gray-300 hover:cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-900 focus:bg-gray-300 dark:focus:bg-gray-900 focus:outline-none"
        :tabindex="{{ forloop.counter0|add:num_podcasts }}"
        hx-trigger="click,keyup[event.keyCode===13]"
        hx-get="{{ episode.get_absolute_url }}">
