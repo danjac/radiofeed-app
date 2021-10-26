@@ -45,11 +45,9 @@ def search(search_term: str) -> list[Feed]:
 def search_cached(search_term: str) -> list[Feed]:
 
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
-    if (feeds := cache.get(cache_key)) is not None:
-        return feeds
-
-    feeds = search(search_term)
-    cache.set(cache_key, feeds)
+    if (feeds := cache.get(cache_key)) is None:
+        feeds = search(search_term)
+        cache.set(cache_key, feeds)
     return feeds
 
 
