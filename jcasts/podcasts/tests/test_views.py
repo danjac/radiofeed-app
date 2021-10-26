@@ -8,8 +8,8 @@ from jcasts.podcasts.factories import (
     PodcastFactory,
     RecommendationFactory,
 )
+from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Follow
-from jcasts.podcasts.podcastindex import Feed
 from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -133,7 +133,7 @@ class TestSearchAutocomplete:
         assert len(resp.context_data["episodes"]) == 1
 
 
-class TestSearchPodcastIndex:
+class TestSearchITunes:
     def test_search(self, client, db, mocker, django_assert_num_queries):
         feeds = [
             Feed(
@@ -142,12 +142,10 @@ class TestSearchPodcastIndex:
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             )
         ]
-        mock_search = mocker.patch(
-            "jcasts.podcasts.podcastindex.search", return_value=feeds
-        )
+        mock_search = mocker.patch("jcasts.podcasts.itunes.search", return_value=feeds)
 
         with django_assert_num_queries(1):
-            resp = client.get(reverse("podcasts:search_podcastindex"), {"q": "test"})
+            resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
         assert_ok(resp)
 
         mock_search.assert_called()

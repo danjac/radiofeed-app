@@ -22,11 +22,11 @@
            title="Search Episodes"
            href="{{ link.url|add:search_qs }}">Episodes</a>
       </li>
-      {% active_link 'podcasts:search_podcastindex' as link %}
+      {% active_link 'podcasts:search_itunes' as link %}
       <li>
         <a class="link {% if link.match %}{{ TAB_ACTIVE_CSS }}{% endif %}"
            title="Search iTunes"
-           href="{{ link.url|add:search_qs }}">Podcast Index</a>
+           href="{{ link.url|add:search_qs }}">iTunes</a>
       </li>
       {% endwith %}
     </ul>

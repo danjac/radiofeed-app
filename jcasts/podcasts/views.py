@@ -14,7 +14,7 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import podcastindex
+from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -82,13 +82,13 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 @ratelimit(key="ip", rate="20/m")
 @require_http_methods(["GET"])
-def search_podcastindex(request: HttpRequest) -> HttpResponse:
+def search_itunes(request: HttpRequest) -> HttpResponse:
 
-    feeds = podcastindex.search_cached(request.search.value) if request.search else []
+    feeds = itunes.search_cached(request.search.value) if request.search else []
 
     return TemplateResponse(
         request,
-        "podcasts/podcastindex_search.html",
+        "podcasts/itunes_search.html",
         {
             "feeds": feeds,
             "clear_search_url": reverse("podcasts:index"),
