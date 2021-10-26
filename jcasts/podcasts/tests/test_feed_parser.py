@@ -117,16 +117,23 @@ class TestSchedulePodcastFeeds:
 
         schedule_podcast_feeds(frequency=timedelta(minutes=60))
 
-        assert len(mock_parse_podcast_feed.mock_calls) == 5
-        assert mock_parse_podcast_feed.mock_calls[0][1][0] == followed.id
-        assert mock_parse_podcast_feed.mock_calls[1][1][0] == promoted.id
-        assert mock_parse_podcast_feed.mock_calls[2][1][0] == new.id
-        assert mock_parse_podcast_feed.mock_calls[3][1][0] == fresh.id
-        assert mock_parse_podcast_feed.mock_calls[4][1][0] == stale.id
+        queued = Podcast.objects.filter(queued__isnull=False)
+        assert queued.count() == 5
 
-        for podcast in new, followed, promoted, fresh, stale:
-            podcast.refresh_from_db()
-            assert podcast.queued
+        assert len(mock_parse_podcast_feed.mock_calls) == 5
+
+        for counter, podcast in enumerate(
+            (
+                followed,
+                promoted,
+                new,
+                fresh,
+                stale,
+            )
+        ):
+
+            assert mock_parse_podcast_feed.mock_calls[counter][1][0] == podcast.id
+            assert podcast in queued
 
 
 class TestParsePodcastFeed:
