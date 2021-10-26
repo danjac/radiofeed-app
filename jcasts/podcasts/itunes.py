@@ -49,7 +49,6 @@ def search_cached(search_term: str) -> list[Feed]:
         return feeds
 
     feeds = search(search_term)
-    print("feeds", feeds)
     cache.set(cache_key, feeds)
     return feeds
 
