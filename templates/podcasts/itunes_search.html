@@ -7,13 +7,7 @@
 {% include "podcasts/_itunes_feed.html" %}
 {% empty %}
 <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
-  {% if error %}
-  Unable to connect to the iTunes API at the moment.
-  {% elif request.search %}
   No results found for <span class="font-bold">{{ request.search.value }}</span>.
-  {% else %}
-  No search query provided.
-  {% endif %}
 </p>
 {% endfor %}
 {% endblock %}

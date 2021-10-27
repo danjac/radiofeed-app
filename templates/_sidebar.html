@@ -1,13 +1,14 @@
   <nav class="pt-3 pl-3 xl:pl-0 text-base lg:text-lg">
-    {% with SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-3"%}
-    <ul class="space-y-4 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-2 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
+    {% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto" SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="h-5 w-5 lg:h-6 lg:w-6 mr-3"%}
+    <ul
+        class="space-y-4 sm:space-y-0 xl:space-y-5 sm:grid sm:gap-2 sm:grid-flow-cols sm:grid-cols-2 xl:grid-cols-none xl:grid-rows-none xl:gap-0">
       <li>
         {% active_link 'podcasts:index' as link %}
         <a href="{{ link.url }}"
            accesskey="p"
            title="Podcasts"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "rss" css_class=ICON_CSS %}
           Podcasts
         </a>
@@ -18,7 +19,7 @@
            accesskey="n"
            title="New Releases"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "sparkles" css_class=ICON_CSS %}
           New Releases
         </a>
@@ -31,7 +32,7 @@
            accesskey="q"
            title="Play Queue"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "collection" css_class=ICON_CSS %}
           Play Queue
         </a>
@@ -43,7 +44,7 @@
            accesskey="f"
            title="Favorites"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "star" css_class=ICON_CSS %}
           Favorites
         </a>
@@ -55,7 +56,7 @@
            accesskey="h"
            title="History"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "database" css_class=ICON_CSS %}
           History
         </a>
@@ -67,7 +68,7 @@
            accesskey="s"
            title="Settings"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "adjustments" css_class=ICON_CSS %}
           Settings
         </a>
@@ -82,7 +83,7 @@
           <button accesskey="l"
                   title="Logout"
                   @click="$dispatch('close-sidebar')"
-                  class="inline-flex items-center link">
+                  class="{{ SIDEBAR_CSS }}">
             {% icon "logout" css_class=ICON_CSS %}
             Logout
           </button>
@@ -94,9 +95,10 @@
         {% active_link 'account_login' as link %}
         <a href="{{ request.get_full_path|login_url }}"
            accesskey="l"
+           hx-disable="true"
            title="Log in to your account"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "login" css_class=ICON_CSS %}
           Login
         </a>
@@ -105,9 +107,10 @@
         {% active_link 'account_signup' as link %}
         <a href="{{ request.get_full_path|signup_url }}"
            accesskey="s"
+           hx-disable="true"
            title="Create a new account"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "user_add" css_class=ICON_CSS %}
           Signup
         </a>
@@ -121,7 +124,7 @@
            accesskey="a"
            title="About"
            @click="$dispatch('close-sidebar')"
-           class="inline-flex items-center link{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+           class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
           {% icon "info" css_class=ICON_CSS %}
           About
         </a>
