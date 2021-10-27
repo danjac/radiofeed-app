@@ -133,12 +133,22 @@
     </a>
     {% endif %}
 
+    {% if is_detail %}
     <a href="{{ episode.media_url }}"
        hx-disable="true"
        class="{{ BUTTON_CSS }} border-b">
       {% icon "download" css_class=ICON_CSS %}
       Download {{ episode.get_media_url_ext|upper }}
     </a>
+    {% else %}
+    <button href="{{ episode.media_url }}"
+       class="{{ BUTTON_CSS }} border-b"
+       @click="$dispatch('toggle-episode-details', { value: {{ episode.id }} }); close();">
+      {% icon "info" css_class=ICON_CSS %}
+      Details
+    </button>
+    {% endif %}
+
 
     <button class="{{ BUTTON_CSS }}"
             @click="close()">
