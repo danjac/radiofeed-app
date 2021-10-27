@@ -75,6 +75,7 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         .with_followed()
         .distinct()
         .order_by(
+            F("scheduled").asc(nulls_first=True),
             F("polled").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
