@@ -13,9 +13,6 @@
      @toggle-episode-details.window="
          if ($event.detail.value === {{ episode.id }}) {
             showDetails = !showDetails;
-            if (showDetails) {
-                $refs.details.scrollIntoView(true);
-            }
          } else {
             showDetails = false;
          }
