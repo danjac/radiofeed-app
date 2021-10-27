@@ -86,12 +86,11 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self, frequency: timedelta) -> models.QuerySet:
-        now = timezone.now()
         return self.filter(
             models.Q(
-                models.Q(polled__isnull=True) | models.Q(polled__lt=now - frequency),
+                models.Q(polled__isnull=True)
+                | models.Q(polled__lt=timezone.now() - frequency),
             ),
-            models.Q(models.Q(scheduled__isnull=True) | models.Q(scheduled__lt=now)),
             queued__isnull=True,
         )
 
@@ -146,11 +145,6 @@ class Podcast(models.Model):
 
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    # next scheduled polling time
-    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
-    frequency: timedelta = models.DurationField(default=timedelta(days=7))
-    frequency_modifier: float = models.FloatField(default=1.0)
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 

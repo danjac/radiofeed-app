@@ -20,10 +20,8 @@ from jcasts.podcasts.factories import (
 from jcasts.podcasts.feed_parser import (
     get_categories_dict,
     get_feed_headers,
-    get_frequency,
     is_feed_changed,
     parse_podcast_feed,
-    reschedule,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
@@ -52,55 +50,6 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
-
-
-class TestReschedule:
-    def test_frequency_is_none(self):
-        assert reschedule(None, 1.0) is None
-
-    def test_frequency_not_none(self):
-        scheduled = reschedule(timedelta(days=2), 2.0)
-        assert ((scheduled - timezone.now()).total_seconds()) / 3600 == pytest.approx(
-            96
-        )
-
-
-class TestGetFrequency:
-    def get_frequency(self, dates):
-        return get_frequency(dates).total_seconds() / 3600
-
-    def test_get_frequency_no_pub_dates(self):
-        assert get_frequency([]) is None
-
-    def test_get_frequency(self):
-        now = timezone.now()
-        dates = [
-            now - timedelta(days=3),
-            now - timedelta(days=6),
-            now - timedelta(days=9),
-        ]
-
-        assert self.get_frequency(dates) == pytest.approx(3 * 24)
-
-    def test_get_frequency_max_value(self):
-        now = timezone.now()
-        dates = [
-            now - timedelta(days=90),
-            now - timedelta(days=200),
-            now - timedelta(days=300),
-        ]
-
-        assert self.get_frequency(dates) == pytest.approx(30 * 24)
-
-    def test_get_frequency_min_value(self):
-        now = timezone.now()
-        dates = [
-            now - timedelta(hours=1),
-            now - timedelta(hours=2),
-            now - timedelta(hours=3),
-        ]
-
-        assert self.get_frequency(dates) == pytest.approx(3)
 
 
 class TestIsFeedChanged:
@@ -316,8 +265,6 @@ class TestParsePodcastFeed:
         assert new_podcast.result == Podcast.Result.SUCCESS
 
         assert new_podcast.polled
-        assert new_podcast.scheduled
-        assert new_podcast.frequency_modifier == 1.0
 
         assert new_podcast.etag
         assert new_podcast.explicit
@@ -474,9 +421,6 @@ class TestParsePodcastFeed:
         assert new_podcast.polled
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
-
-        assert new_podcast.scheduled
-        assert new_podcast.frequency_modifier == 1.2
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)

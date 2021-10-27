@@ -3,10 +3,9 @@ from __future__ import annotations
 import http
 import multiprocessing
 import secrets
-import statistics
 import traceback
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import lru_cache
 
 import attr
@@ -75,7 +74,6 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         .with_followed()
         .distinct()
         .order_by(
-            F("scheduled").asc(nulls_first=True),
             F("polled").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
@@ -189,32 +187,6 @@ def get_feed_response(podcast: Podcast) -> requests.Response:
     return response
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta | None:
-    if not pub_dates:
-        return None
-
-    prev, *dates = [timezone.now()] + pub_dates
-
-    diffs = []
-    for date in dates:
-        diffs.append((prev - date).total_seconds())
-        prev = date
-
-    seconds = statistics.median(diffs)
-
-    return min(
-        max(timedelta(seconds=seconds), MIN_FREQUENCY),
-        MAX_FREQUENCY,
-    )
-
-
-def reschedule(frequency: timedelta | None, modifier: float) -> datetime | None:
-    if frequency is None:
-        return None
-
-    return timezone.now() + timedelta(seconds=frequency.total_seconds() * modifier)
-
-
 def parse_success(
     podcast: Podcast,
     response: requests.Response,
@@ -240,9 +212,6 @@ def parse_success(
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
-    podcast.frequency = get_frequency(pub_dates) or podcast.frequency
-    podcast.frequency_modifier = max(podcast.frequency_modifier / 1.2, 1.0)
-    podcast.scheduled = reschedule(podcast.frequency, podcast.frequency_modifier)
 
     # content
 
@@ -387,14 +356,11 @@ def parse_failure(
 ) -> ParseResult:
 
     now = timezone.now()
-    frequency_modifier = min(podcast.frequency_modifier * 1.2, 1000)
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         updated=now,
         polled=now,
-        frequency_modifier=frequency_modifier,
-        scheduled=reschedule(podcast.frequency, frequency_modifier),
         result=result,
         http_status=status,
         exception=tb,

@@ -99,22 +99,6 @@ class QueuedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ScheduledFilter(admin.SimpleListFilter):
-    title = "Scheduled"
-    parameter_name = "scheduled"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Scheduled"),)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "yes":
-            return queryset.filter(scheduled__isnull=False)
-        return queryset
-
-
 class FollowedFilter(admin.SimpleListFilter):
     title = "Followed"
     parameter_name = "followed"
@@ -161,7 +145,6 @@ class PodcastAdmin(admin.ModelAdmin):
         PromotedFilter,
         PubDateFilter,
         QueuedFilter,
-        ScheduledFilter,
         ResultFilter,
     )
 
@@ -188,9 +171,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "last_build_date",
         "modified",
         "pub_date",
-        "scheduled",
-        "frequency",
-        "frequency_modifier",
         "etag",
         "http_status",
         "result",
