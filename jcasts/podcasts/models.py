@@ -144,6 +144,11 @@ class Podcast(models.Model):
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    # next scheduled polling time
+    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
+    frequency: timedelta = models.DurationField(default=timedelta(days=7))
+    frequency_modifier: float = models.FloatField(default=1.0)
+
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
     result: str | None = models.CharField(
