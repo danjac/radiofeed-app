@@ -148,7 +148,15 @@ class TestEpisodeDetail:
 
 
 class TestEpisodeActions:
-    def test_actions(self, client, auth_user, episode, django_assert_num_queries):
+    def test_anonymous(self, client, episode, django_assert_num_queries):
+        with django_assert_num_queries(2):
+            resp = client.get(
+                reverse("episodes:actions", args=[episode.id]),
+            )
+        assert_ok(resp)
+        assert resp.context_data["episode"] == episode
+
+    def test_authenticated(self, client, auth_user, episode, django_assert_num_queries):
         with django_assert_num_queries(7):
             resp = client.get(
                 reverse("episodes:actions", args=[episode.id]),

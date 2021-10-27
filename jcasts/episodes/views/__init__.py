@@ -11,7 +11,6 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 
 
@@ -52,7 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
             "has_follows": bool(follows),
             "search_url": reverse("episodes:search_episodes"),
         },
-        cached=promoted or request.user.is_anonymous,
+        cached=promoted,
     )
 
 
@@ -74,7 +73,6 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-@ajax_login_required
 def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(
@@ -83,11 +81,18 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     is_detail = request.GET.get("detail", False)
 
-    is_playing = request.player.has(episode.id)
+    if request.user.is_authenticated:
 
-    is_queue = (
-        False if is_playing else QueueItem.objects.filter(user=request.user).exists()
-    )
+        is_playing = request.player.has(episode.id)
+
+        is_queue = (
+            False
+            if is_playing
+            else QueueItem.objects.filter(user=request.user).exists()
+        )
+    else:
+        is_playing = False
+        is_queue = False
 
     return TemplateResponse(
         request,

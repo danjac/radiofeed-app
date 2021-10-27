@@ -22,6 +22,7 @@
      @keydown.escape.window="close()">
   <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300 w-64 border shadow-2xl dark:border-gray-500 rounded inset-0">
     {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
+    {% if user.is_authenticated %}
     {% if not is_detail %}
     {% with time_remaining=episode.time_remaining|format_duration %}
     {% if is_playing %}
@@ -133,12 +134,22 @@
     </a>
     {% endif %}
 
+    {% else %}
+    <a href="{{ episode_url }}"
+       class="{{ BUTTON_CSS }} border-b"
+       @click="close()">
+      {% icon "info" css_class=ICON_CSS %}
+      Details
+    </a>
+    {% endif %}
+
     <a href="{{ episode.media_url }}"
        hx-disable="true"
        class="{{ BUTTON_CSS }} border-b">
       {% icon "download" css_class=ICON_CSS %}
       Download {{ episode.get_media_url_ext|upper }}
     </a>
+
 
     <button class="{{ BUTTON_CSS }}"
             @click="close()">
