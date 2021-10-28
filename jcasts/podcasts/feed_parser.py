@@ -35,6 +35,7 @@ USER_AGENTS = [
 
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
+DEFAULT_FREQUENCY = timedelta(days=7)
 
 
 class NotModified(requests.RequestException):
@@ -75,9 +76,9 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime | No
     
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
-    if not pub_dates or len(pub_dates) == 1:
-        return timedelta(days=7)
-    
+    if len(pub_dates) < 2:
+        return DEFAULT_FREQUENCY
+
     diffs: list[float] = []
 
     prev, *dates = sorted(pub_dates, reverse=True)
