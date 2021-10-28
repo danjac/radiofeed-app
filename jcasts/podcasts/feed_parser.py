@@ -3,9 +3,10 @@ from __future__ import annotations
 import http
 import multiprocessing
 import secrets
+import statistics
 import traceback
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from functools import lru_cache
 from types import NoneType
 
@@ -87,8 +88,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         diffs.append((prev - date).total_seconds())
         prev = date
 
-    frequency = timedelta(seconds=statistics.mean(diffs))
-    return max(frequency, min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
+    seconds = statistics.mean(diffs)
+    frequency = timedelta(seconds=seconds)
+
+    return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
 
 
 def schedule_podcast_feeds(frequency: timedelta) -> None:
@@ -244,6 +247,8 @@ def parse_success(
     pub_dates = [item.pub_date for item in items]
 
     podcast.pub_date = max(pub_dates)
+    podcast.frequency = get_frequency(pub_dates)
+    podcast.scheduled = reschedule(podcast.frequency, podcast.pub_date)
 
     # content
 
@@ -389,10 +394,18 @@ def parse_failure(
 
     now = timezone.now()
 
+    if podcast.frequency:
+        seconds = podcast.frequency.total_seconds() * 1.2
+        frequency = timedelta(seconds=seconds)
+    else:
+        frequency = DEFAULT_FREQUENCY
+
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
         updated=now,
         polled=now,
+        frequency=frequency,
+        scheduled=reschedule(frequency, podcast.pub_date)
         result=result,
         http_status=status,
         exception=tb,
