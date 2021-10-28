@@ -64,12 +64,10 @@ class ParseResult:
 
 
 def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime | None:
-    if not pub_date:
-        return None
-    
-    scheduled = pub_date + frequency
     now = timezone.now()
-
+    pub_date = pub_date or now
+    scheduled = pub_date + frequency
+    
     return max(
         min(scheduled, now + MAX_FREQUENCY),
         now + MIN_FREQUENCY,
@@ -80,18 +78,15 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     now = timezone.now()
     
     # disregard any date earlier than 30 days
-    earliest = now + MAX_FREQUENCY
+    earliest = now - MAX_FREQUENCY
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
-    num_pub_dates = len(pub_dates)
-
-    if num_pub_dates == 0:
+    if len(pub_dates) == 0:
         # no relevant dates, assume max of 30 days
         return MAX_FREQUENCY
     
-    if num_pub_dates == 1:
-        # we just have one date, so just return diff from now
-        return now - pub_dates[0]
+    if len(pub_dates) == 1:
+        pub_dates = [now] + pub_dates
 
     diffs: list[float] = []
 
@@ -120,8 +115,8 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         .scheduled()
         .distinct()
         .order_by(
-            F("scheduled").asc(nulls_first=True), 
-            F("-pub_date").desc(nulls_first=True),
+            "scheduled",
+            "-pub_date",
         )
     )[:limit]
 
@@ -382,11 +377,12 @@ def parse_failure(
 ) -> ParseResult:
 
     now = timezone.now()
-
-    if podcast.frequency:
-        frequency = timedelta(seconds=podcast.frequency.total_seconds() * 1.2)
-    else:
-        frequency = DEFAULT_FREQUENCY
+    
+    frequency = (
+        timedelta(seconds=podcast.frequency.total_seconds() * 1.2) 
+        if podcast.frequency 
+        else DEFAULT_FREQUENCY
+    )
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,

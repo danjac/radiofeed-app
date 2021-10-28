@@ -5,6 +5,7 @@ import argparse
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
@@ -30,8 +31,11 @@ class Command(BaseCommand):
 
     def reschedule(self) -> None:
         for_update = []
+        earliest = timezone.now() - feed_parser.MAX_FREQUENCY
         for podcast in Podcast.objects.active().published().iterator():
-            pub_dates = list(Episode.objects.filter(podcast=podcast).values_list("pub_date", flat=True))
+            pub_dates = list(Episode.objects.filter(
+                podcast=podcast, pub_date__gt=earliest
+            ).values_list("pub_date", flat=True))
             podcast.frequency = feed_parser.get_frequency(pub_dates)
             podcast.scheduled = feed_parser.reschedule(podcast.frequency, podcast.pub_date)
             for_update.append(podcast)
