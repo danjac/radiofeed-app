@@ -7,6 +7,7 @@ import traceback
 
 from datetime import timedelta
 from functools import lru_cache
+from types import NoneType
 
 import attr
 import requests
@@ -32,6 +33,10 @@ USER_AGENTS = [
 ]
 
 
+MIN_FREQUENCY = timedelta(hours=3)
+MAX_FREQUENCY = timedelta(days=30)
+
+
 class NotModified(requests.RequestException):
     ...
 
@@ -54,6 +59,35 @@ class ParseResult:
     def raise_exception(self):
         if self.exception:
             raise self.exception
+
+
+def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime | None:
+    if not pub_date:
+        return None
+    
+    scheduled = pub_date + frequency
+    now = timezone.now()
+
+    return max(
+        min(scheduled, now + MAX_FREQUENCY),
+        now + MIN_FREQUENCY,
+    )
+    
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
+
+    if not pub_dates or len(pub_dates) == 1:
+        return timedelta(days=7)
+    
+    diffs: list[float] = []
+
+    prev, *dates = sorted(pub_dates, reverse=True)
+
+    for date in dates:
+        diffs.append((prev - date).total_seconds())
+        prev = date
+
+    frequency = timedelta(seconds=statistics.mean(diffs))
+    return max(frequency, min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
 
 
 def schedule_podcast_feeds(frequency: timedelta) -> None:
