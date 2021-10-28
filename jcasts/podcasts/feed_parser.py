@@ -384,8 +384,7 @@ def parse_failure(
     now = timezone.now()
 
     if podcast.frequency:
-        seconds = podcast.frequency.total_seconds() * 1.2
-        frequency = timedelta(seconds=seconds)
+        frequency = timedelta(seconds=podcast.frequency.total_seconds() * 1.2)
     else:
         frequency = DEFAULT_FREQUENCY
 
