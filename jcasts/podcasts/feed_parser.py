@@ -16,7 +16,7 @@ import requests
 from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
-from django.utils.http import http_date, quote_etag
+from django.utils.http import escape_leading_slashes, http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
@@ -77,8 +77,21 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime | No
     
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
-    if len(pub_dates) < 2:
-        return DEFAULT_FREQUENCY
+    now = timezone.now()
+    
+    # disregard any date earlier than 30 days
+    earliest = now + MAX_FREQUENCY
+    pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
+
+    num_pub_dates = len(pub_dates)
+
+    if num_pub_dates == 0:
+        # no relevant dates, assume max of 30 days
+        return MAX_FREQUENCY
+    
+    if num_pub_dates == 1:
+        # we just have one date, so just return diff from now
+        return now - pub_dates[0]
 
     diffs: list[float] = []
 
@@ -88,8 +101,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         diffs.append((prev - date).total_seconds())
         prev = date
 
-    seconds = statistics.mean(diffs)
-    frequency = timedelta(seconds=seconds)
+    frequency = timedelta(seconds=statistics.mean(diffs))
 
     return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
 
@@ -105,41 +117,18 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     # ensure that we do not parse feeds already polled within the time period
     qs = (
         Podcast.objects.active()
-        .scheduled(frequency)
-        .with_followed()
+        .scheduled()
         .distinct()
         .order_by(
-            F("polled").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
+            F("scheduled").asc(nulls_first=True), 
+            F("-pub_date").desc(nulls_first=True),
         )
-    )
+    )[:limit]
 
-    # prioritize any followed or promoted podcasts
-    primary = qs.filter(Q(followed=True) | Q(promoted=True))
-    secondary = qs.filter(followed=False, promoted=False)
+    for podcast_id in qs.values_list("pk", flat=True).iterator():
+        parse_podcast_feed.delay(podcast_id)
 
-    remainder = 0
-    now = timezone.now()
-
-    for (qs, ratio) in [
-        (primary, 0.5),
-        (secondary.fresh(), 0.3),
-        (secondary.stale(), 0.2),
-    ]:
-
-        remainder += round(limit * ratio)
-
-        podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
-
-        # process the feeds
-
-        Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
-
-        for podcast_id in podcast_ids:
-            parse_podcast_feed.delay(podcast_id)
-
-        remainder -= len(podcast_ids)
-
+        
 
 @job("feeds")
 @transaction.atomic
@@ -405,7 +394,7 @@ def parse_failure(
         updated=now,
         polled=now,
         frequency=frequency,
-        scheduled=reschedule(frequency, podcast.pub_date)
+        scheduled=reschedule(frequency, podcast.pub_date),
         result=result,
         http_status=status,
         exception=tb,
