@@ -31,9 +31,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
-MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=30)
-
 
 class NotModified(requests.RequestException):
     ...
