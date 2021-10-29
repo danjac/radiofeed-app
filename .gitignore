@@ -45,6 +45,7 @@ celerybeat-schedule
 :w
 '
 :
+*.swp
 
 # Ansible
 
