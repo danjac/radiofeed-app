@@ -63,7 +63,7 @@ class ParseResult:
             raise self.exception
 
 
-def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime | None:
+def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     now = timezone.now()
     pub_date = pub_date or now
     scheduled = pub_date + frequency
