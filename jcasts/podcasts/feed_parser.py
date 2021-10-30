@@ -13,9 +13,8 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, Q
 from django.utils import timezone
-from django.utils.http import escape_leading_slashes, http_date, quote_etag
+from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
@@ -66,15 +65,16 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     now = timezone.now()
     pub_date = pub_date or now
     scheduled = pub_date + frequency
-    
+
     return max(
         min(scheduled, now + MAX_FREQUENCY),
         now + MIN_FREQUENCY,
     )
-    
+
+
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
     now = timezone.now()
-    
+
     # disregard any date earlier than 30 days
     earliest = now - MAX_FREQUENCY
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
@@ -82,7 +82,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     if len(pub_dates) == 0:
         # no relevant dates, assume max of 30 days
         return MAX_FREQUENCY
-    
+
     if len(pub_dates) == 1:
         pub_dates = [now] + pub_dates
 
@@ -121,7 +121,6 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
     for podcast_id in qs.values_list("pk", flat=True).iterator():
         parse_podcast_feed.delay(podcast_id)
 
-        
 
 @job("feeds")
 @transaction.atomic
@@ -226,7 +225,7 @@ def parse_success(
     podcast.exception = ""
 
     # parsing status
-    pub_dates = [item.pub_date for item in items]
+    pub_dates = [item.pub_date for item in items if item.pub_date]
 
     podcast.pub_date = max(pub_dates)
     podcast.frequency = get_frequency(pub_dates)
@@ -375,10 +374,10 @@ def parse_failure(
 ) -> ParseResult:
 
     now = timezone.now()
-    
+
     frequency = (
-        timedelta(seconds=podcast.frequency.total_seconds() * 1.2) 
-        if podcast.frequency 
+        timedelta(seconds=podcast.frequency.total_seconds() * 1.2)
+        if podcast.frequency
         else DEFAULT_FREQUENCY
     )
 

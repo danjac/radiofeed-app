@@ -95,7 +95,7 @@ class Item:
     guid: str = attr.ib(validator=not_empty)
     title: str = attr.ib(validator=not_empty)
 
-    pub_date: datetime = attr.ib(converter=parse_date)
+    pub_date: datetime | None = attr.ib(converter=parse_date)
 
     media_url: str = attr.ib(validator=is_url)
     media_type: str = attr.ib()

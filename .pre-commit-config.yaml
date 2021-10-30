@@ -41,4 +41,5 @@ repos:
             types-bleach==4.1.1,
             types-requests==2.25.11,
             types-Markdown==3.3.6,
+            types-attrs==19.1.0,
           ]
