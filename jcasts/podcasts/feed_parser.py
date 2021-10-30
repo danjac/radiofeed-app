@@ -74,9 +74,6 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     )
     
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
-    """Get average frequency of pub dates.
-    """
-
     now = timezone.now()
     
     # disregard any date earlier than 30 days
