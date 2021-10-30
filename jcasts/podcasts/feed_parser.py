@@ -8,7 +8,6 @@ import traceback
 
 from datetime import datetime, timedelta
 from functools import lru_cache
-from types import NoneType
 
 import attr
 import requests
