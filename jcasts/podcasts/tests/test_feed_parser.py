@@ -109,6 +109,26 @@ class TestGetFrequency:
         ]
         assert get_frequency(dates).days == 3
 
+    def test_max_dates(self):
+
+        now = timezone.now()
+        dates = [
+            now - timedelta(days=60),
+            now - timedelta(days=90),
+            now - timedelta(days=120),
+        ]
+        assert get_frequency(dates).days == 30
+
+    def test_min_dates(self):
+
+        now = timezone.now()
+        dates = [
+            now - timedelta(hours=1),
+            now - timedelta(hours=2),
+            now - timedelta(hours=3),
+        ]
+        assert get_frequency(dates).total_seconds() / 3600 == pytest.approx(3)
+
 
 class TestSchedulePodcastFeeds:
     def test_schedule_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
