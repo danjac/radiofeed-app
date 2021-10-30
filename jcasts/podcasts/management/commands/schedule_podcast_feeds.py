@@ -46,5 +46,6 @@ class Command(BaseCommand):
             podcast.scheduled = feed_parser.reschedule(
                 podcast.frequency, podcast.pub_date
             )
+            self.stdout.write(podcast.title)
             for_update.append(podcast)
         Podcast.objects.bulk_update(for_update, fields=["frequency", "scheduled"])
