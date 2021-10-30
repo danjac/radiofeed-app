@@ -11,15 +11,12 @@ from django.utils import timezone
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import (
-    CategoryFactory,
-    FeedFactory,
-    FollowFactory,
-    PodcastFactory,
-)
+from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
+    MAX_FREQUENCY,
     get_categories_dict,
     get_feed_headers,
+    get_frequency,
     is_feed_changed,
     parse_podcast_feed,
     schedule_podcast_feeds,
@@ -92,6 +89,27 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
+class TestGetFrequency:
+    def test_no_pub_dates(self):
+        assert get_frequency([]) == MAX_FREQUENCY
+
+    def test_single_date(self):
+        diff = timedelta(days=1)
+        dt = timezone.now() - diff
+        assert get_frequency([dt]).days == 1
+
+    def test_multiple_dates(self):
+        now = timezone.now()
+        dates = [
+            now - timedelta(days=3),
+            now - timedelta(days=6),
+            now - timedelta(days=9),
+            now - timedelta(days=12),
+            now - timedelta(days=15),
+        ]
+        assert get_frequency(dates).days == 3
+
+
 class TestSchedulePodcastFeeds:
     def test_schedule_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
 
@@ -103,38 +121,24 @@ class TestSchedulePodcastFeeds:
         PodcastFactory(active=False)
 
         # too recent
-
         PodcastFactory(polled=now - timedelta(minutes=20))
 
-        new = PodcastFactory(pub_date=None, polled=None)
-        followed = FollowFactory(
-            podcast__active=True, podcast__pub_date=now - timedelta(days=3)
-        ).podcast
-        promoted = PodcastFactory(
-            active=True, promoted=True, pub_date=now - timedelta(days=4)
-        )
-        fresh = PodcastFactory(active=True, pub_date=now - timedelta(days=3))
-        stale = PodcastFactory(active=True, pub_date=now - timedelta(days=99))
+        # not scheduled
+        PodcastFactory(scheduled=None)
 
-        schedule_podcast_feeds(frequency=timedelta(minutes=60))
+        # scheduled in future
+        PodcastFactory(scheduled=now + timedelta(hours=3))
+
+        # scheduled
+        scheduled = PodcastFactory(scheduled=now - timedelta(hours=3))
+
+        schedule_podcast_feeds()
 
         queued = Podcast.objects.filter(queued__isnull=False)
-        assert queued.count() == 5
+        assert queued.count() == 1
+        assert queued.first() == scheduled
 
-        assert len(mock_parse_podcast_feed.mock_calls) == 5
-
-        for counter, podcast in enumerate(
-            (
-                followed,
-                promoted,
-                new,
-                fresh,
-                stale,
-            )
-        ):
-
-            assert mock_parse_podcast_feed.mock_calls[counter][1][0] == podcast.id
-            assert podcast in queued
+        assert len(mock_parse_podcast_feed.mock_calls) == 1
 
 
 class TestParsePodcastFeed:

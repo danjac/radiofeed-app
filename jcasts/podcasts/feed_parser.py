@@ -99,7 +99,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
 
 
-def schedule_podcast_feeds(frequency: timedelta) -> None:
+def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     """
     Schedules feeds for update.
     """
@@ -118,7 +118,11 @@ def schedule_podcast_feeds(frequency: timedelta) -> None:
         )
     )[:limit]
 
-    for podcast_id in qs.values_list("pk", flat=True).iterator():
+    podcast_ids = list(qs.values_list("pk", flat=True))
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
+    for podcast_id in podcast_ids:
         parse_podcast_feed.delay(podcast_id)
 
 
