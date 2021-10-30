@@ -14,15 +14,21 @@ from jcasts.podcasts.date_parser import parse_date
 from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
 from jcasts.podcasts.feed_parser import (
     MAX_FREQUENCY,
+    calc_frequency,
     get_categories_dict,
     get_feed_headers,
-    get_frequency,
+    incr_frequency,
     is_feed_changed,
     parse_podcast_feed,
+    reschedule,
     schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed
+
+
+def assert_hours_diff(delta, hours):
+    assert delta.total_seconds() / 3600 == pytest.approx(hours)
 
 
 class MockResponse:
@@ -89,14 +95,23 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
-class TestGetFrequency:
+class TestIncrFrequency:
+    def test_incr_frequency(self):
+        freq = timedelta(hours=24)
+        assert_hours_diff(incr_frequency(freq), 28.8)
+
+    def test_is_none(self):
+        assert incr_frequency(None).days == 7
+
+
+class TestCalcFrequency:
     def test_no_pub_dates(self):
-        assert get_frequency([]) == MAX_FREQUENCY
+        assert calc_frequency([]) == MAX_FREQUENCY
 
     def test_single_date(self):
         diff = timedelta(days=1)
         dt = timezone.now() - diff
-        assert get_frequency([dt]).days == 1
+        assert calc_frequency([dt]).days == 1
 
     def test_multiple_dates(self):
         now = timezone.now()
@@ -107,7 +122,7 @@ class TestGetFrequency:
             now - timedelta(days=12),
             now - timedelta(days=15),
         ]
-        assert get_frequency(dates).days == 3
+        assert calc_frequency(dates).days == 3
 
     def test_max_dates(self):
 
@@ -117,7 +132,7 @@ class TestGetFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert get_frequency(dates).days == 30
+        assert calc_frequency(dates).days == 30
 
     def test_min_dates(self):
 
@@ -127,7 +142,7 @@ class TestGetFrequency:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        assert get_frequency(dates).total_seconds() / 3600 == pytest.approx(3)
+        assert_hours_diff(calc_frequency(dates), 3)
 
 
 class TestSchedulePodcastFeeds:
@@ -159,6 +174,27 @@ class TestSchedulePodcastFeeds:
         assert queued.first() == scheduled
 
         assert len(mock_parse_podcast_feed.mock_calls) == 1
+
+
+class TestReschedule:
+    def test_pub_date_none(self):
+        scheduled = reschedule(timedelta(days=1), None)
+        assert_hours_diff(scheduled - timezone.now(), 24)
+
+    def test_pub_date_not_none(self):
+        now = timezone.now()
+        scheduled = reschedule(timedelta(days=1), now)
+        assert_hours_diff(scheduled - timezone.now(), 24)
+
+    def test_pub_date_max_value(self):
+        now = timezone.now()
+        scheduled = reschedule(timedelta(days=90), now)
+        assert (scheduled - now).days == 30
+
+    def test_pub_date_min_value(self):
+        now = timezone.now()
+        scheduled = reschedule(timedelta(hours=1), now)
+        assert_hours_diff(scheduled - now, 3)
 
 
 class TestParsePodcastFeed:

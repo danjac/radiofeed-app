@@ -72,7 +72,7 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     )
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta:
+def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     now = timezone.now()
 
     # disregard any date earlier than 30 days
@@ -97,6 +97,14 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     frequency = timedelta(seconds=statistics.mean(diffs))
 
     return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
+
+
+def incr_frequency(frequency):
+    return (
+        timedelta(seconds=frequency.total_seconds() * 1.2)
+        if frequency
+        else DEFAULT_FREQUENCY
+    )
 
 
 def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
@@ -232,7 +240,7 @@ def parse_success(
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     podcast.pub_date = max(pub_dates)
-    podcast.frequency = get_frequency(pub_dates)
+    podcast.frequency = calc_frequency(pub_dates)
     podcast.scheduled = reschedule(podcast.frequency, podcast.pub_date)
 
     # content
@@ -379,11 +387,7 @@ def parse_failure(
 
     now = timezone.now()
 
-    frequency = (
-        timedelta(seconds=podcast.frequency.total_seconds() * 1.2)
-        if podcast.frequency
-        else DEFAULT_FREQUENCY
-    )
+    frequency = incr_frequency(podcast.frequency)
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
