@@ -62,6 +62,13 @@ class ParseResult:
 
 
 def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
+    """Get the next scheduled datetime based on update frequency.
+
+    By default, start from the latest pub date of the podcast and add the frequency.
+
+    If the new scheduled date is before the current time, add the current time
+    to the frequency instead of the last pub date.
+    """
     now = timezone.now()
     pub_date = pub_date or now
     scheduled = pub_date + frequency
@@ -70,6 +77,9 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
 
 
 def calc_frequency(pub_dates: list[datetime]) -> timedelta:
+    """Calculate the frequency based on avg interval between pub dates
+    of individual episodes."""
+
     now = timezone.now()
 
     # disregard any date earlier than 30 days
@@ -96,9 +106,11 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     return max(min(frequency, MAX_FREQUENCY), MIN_FREQUENCY)
 
 
-def incr_frequency(frequency):
+def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
+    """Increments the frequency by the provided amount. We should
+    do this on each update 'miss'."""
     return (
-        timedelta(seconds=frequency.total_seconds() * 1.2)
+        timedelta(seconds=frequency.total_seconds() * increment)
         if frequency
         else DEFAULT_FREQUENCY
     )
