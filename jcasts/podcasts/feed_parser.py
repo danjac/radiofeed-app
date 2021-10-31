@@ -118,7 +118,8 @@ def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timed
 
 def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     """
-    Schedules feeds for update.
+    Schedules individual podcast feeds for update. This should include any
+    podcast feeds already scheduled.
     """
 
     # rough estimate: takes 2 seconds per update

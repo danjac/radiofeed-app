@@ -74,6 +74,7 @@ class TestSearch:
         self,
         db,
         mock_good_response,
+        mock_parse_podcast_feed,
         locmem_cache,
     ):
 
@@ -81,6 +82,7 @@ class TestSearch:
 
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        mock_parse_podcast_feed.assert_called()
 
         assert cache.get(self.cache_key) == feeds
 
@@ -103,8 +105,9 @@ class TestSearch:
 
         mock_good_response.assert_not_called()
 
-    def test_podcast_exists(self, db, mock_good_response):
+    def test_podcast_exists(self, db, mock_good_response, mock_parse_podcast_feed):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = itunes.search("test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        mock_parse_podcast_feed.assert_not_called()
