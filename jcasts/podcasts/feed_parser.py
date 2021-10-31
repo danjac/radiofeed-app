@@ -65,8 +65,8 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     now = timezone.now()
     pub_date = pub_date or now
     scheduled = pub_date + frequency
-    scheduled = now + frequency if scheduled < now else scheduled
-    return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
+
+    return now + frequency if scheduled < now else scheduled
 
 
 def calc_frequency(pub_dates: list[datetime]) -> timedelta:

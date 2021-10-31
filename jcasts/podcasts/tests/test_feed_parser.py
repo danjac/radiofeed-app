@@ -186,15 +186,10 @@ class TestReschedule:
         scheduled = reschedule(timedelta(days=1), now)
         assert_hours_diff(scheduled - timezone.now(), 24)
 
-    def test_pub_date_max_value(self):
+    def test_pub_date_before_now(self):
         now = timezone.now()
-        scheduled = reschedule(timedelta(days=90), now)
-        assert (scheduled - now).days == 30
-
-    def test_pub_date_min_value(self):
-        now = timezone.now()
-        scheduled = reschedule(timedelta(hours=1), now)
-        assert_hours_diff(scheduled - now, 3)
+        scheduled = reschedule(timedelta(days=90), now - timedelta(days=120))
+        assert (scheduled - now).days == 90
 
 
 class TestParsePodcastFeed:
