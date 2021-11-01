@@ -12,6 +12,7 @@ from functools import lru_cache
 import attr
 import requests
 
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -34,8 +35,7 @@ USER_AGENTS = [
 
 
 MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=30)
-DEFAULT_FREQUENCY = timedelta(days=7)
+MAX_FREQUENCY = timedelta(days=7)
 
 
 class NotModified(requests.RequestException):
@@ -84,11 +84,11 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     now = timezone.now()
 
     # disregard any date earlier than 30 days
-    earliest = now - MAX_FREQUENCY
+    earliest = now - settings.FRESHNESS_THRESHOLD
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
     if len(pub_dates) == 0:
-        # no relevant dates, assume max of 30 days
+        # no relevant dates, assume max of 7 days
         return MAX_FREQUENCY
 
     if len(pub_dates) == 1:
@@ -113,7 +113,7 @@ def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timed
     return (
         timedelta(seconds=frequency.total_seconds() * increment)
         if frequency
-        else DEFAULT_FREQUENCY
+        else MAX_FREQUENCY
     )
 
 
