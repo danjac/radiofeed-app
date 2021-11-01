@@ -13,7 +13,6 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -139,35 +138,12 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         )
     )
 
-    # prioritize any followed or promoted podcasts
-    primary = qs.filter(Q(followed=True) | Q(promoted=True))
-    secondary = qs.filter(followed=False, promoted=False)
+    podcast_ids = list(qs[:limit].values_list("pk", flat=True))
 
-    remainder = 0
-    now = timezone.now()
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
-    for (qs, ratio) in [
-        (primary, 0.6),
-        (secondary, 0.4),
-    ]:
-
-        # example: say we have a top limit of 3600 / hr.
-        # there are just 600 promoted/followed scheduled podcasts.
-        # this leaves (3600*0.6 - 600) 1560 extra.
-        # therefore we can process up to (1440+1560) 3000 other podcasts.
-
-        remainder += round(limit * ratio)
-
-        podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
-
-        # process the feeds
-
-        Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
-
-        for podcast_id in podcast_ids:
-            parse_podcast_feed.delay(podcast_id)
-
-        remainder -= len(podcast_ids)
+    for podcast_id in podcast_ids:
+        parse_podcast_feed.delay(podcast_id)
 
 
 @job("feeds")
