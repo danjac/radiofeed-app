@@ -13,6 +13,7 @@ import attr
 import requests
 
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
@@ -128,6 +129,7 @@ def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     # ensure that we do not parse feeds already polled within the time period
     qs = (
         Podcast.objects.active()
+        .with_followed()
         .scheduled()
         .distinct()
         .order_by(
@@ -136,12 +138,31 @@ def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         )
     )[:limit]
 
-    podcast_ids = list(qs.values_list("pk", flat=True))
+    # prioritize any followed or promoted podcasts
+    primary = qs.filter(Q(followed=True) | Q(promoted=True))
+    secondary = qs.filter(followed=False, promoted=False)
 
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+    remainder = 0
+    now = timezone.now()
 
-    for podcast_id in podcast_ids:
-        parse_podcast_feed.delay(podcast_id)
+    for (qs, ratio) in [
+        (primary, 0.5),
+        (secondary.fresh(), 0.3),
+        (secondary.stale(), 0.2),
+    ]:
+
+        remainder += round(limit * ratio)
+
+        podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
+
+        # process the feeds
+
+        Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
+
+        for podcast_id in podcast_ids:
+            parse_podcast_feed.delay(podcast_id)
+
+        remainder -= len(podcast_ids)
 
 
 @job("feeds")
