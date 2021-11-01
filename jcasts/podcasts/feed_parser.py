@@ -67,15 +67,17 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
 
     By default, start from the latest pub date of the podcast and add the frequency.
 
-    If the new scheduled date is before the current time, add the current time
-    to the frequency instead of the last pub date.
+    Continue incrementing by the frequency until we have scheduled time in the
+    future.
     """
     now = timezone.now()
-    pub_date = pub_date or now
+    pub_date = pub_date or now + MIN_FREQUENCY
     scheduled = pub_date + frequency
 
-    return now + frequency if scheduled < now else scheduled
+    while scheduled < now:
+        scheduled += frequency
 
+    return min(scheduled, now + MAX_FREQUENCY)
 
 def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
