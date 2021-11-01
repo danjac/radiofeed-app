@@ -136,7 +136,7 @@ def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
             "scheduled",
             "-pub_date",
         )
-    )[:limit]
+    )
 
     # prioritize any followed or promoted podcasts
     primary = qs.filter(Q(followed=True) | Q(promoted=True))
