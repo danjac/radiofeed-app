@@ -188,7 +188,7 @@ class TestSchedulePodcastFeeds:
 class TestReschedule:
     def test_pub_date_none(self):
         scheduled = reschedule(timedelta(days=1), None)
-        assert_hours_diff(scheduled - timezone.now(), 27)
+        assert_hours_diff(scheduled - timezone.now(), 24)
 
     def test_pub_date_not_none(self):
         now = timezone.now()
