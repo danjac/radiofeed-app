@@ -112,11 +112,10 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
 def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
     """Increments the frequency by the provided amount. We should
     do this on each update 'miss'."""
-    return (
-        timedelta(seconds=frequency.total_seconds() * increment)
-        if frequency
-        else MAX_FREQUENCY
-    )
+    if frequency is None:
+        return MAX_FREQUENCY
+
+    return min(timedelta(seconds=frequency.total_seconds() * increment), MAX_FREQUENCY)
 
 
 def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
