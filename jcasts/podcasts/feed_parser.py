@@ -83,7 +83,7 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
 
     now = timezone.now()
 
-    # disregard any date earlier than 30 days
+    # disregard any date earlier than 90 days
     earliest = now - settings.FRESHNESS_THRESHOLD
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
