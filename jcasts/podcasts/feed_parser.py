@@ -88,7 +88,7 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
     if len(pub_dates) == 0:
-        # no relevant dates, assume max of 7 days
+        # no relevant dates, assume max frequency
         return MAX_FREQUENCY
 
     if len(pub_dates) == 1:
