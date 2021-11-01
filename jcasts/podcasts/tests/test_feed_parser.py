@@ -106,7 +106,7 @@ class TestIncrFrequency:
         assert_hours_diff(incr_frequency(freq), 28.8)
 
     def test_is_none(self):
-        assert incr_frequency(None).days == 7
+        assert incr_frequency(None).days == 14
 
 
 class TestCalcFrequency:
@@ -137,7 +137,7 @@ class TestCalcFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert calc_frequency(dates).days == 30
+        assert calc_frequency(dates).days == 14
 
     def test_min_dates(self):
 
@@ -188,17 +188,22 @@ class TestSchedulePodcastFeeds:
 class TestReschedule:
     def test_pub_date_none(self):
         scheduled = reschedule(timedelta(days=1), None)
-        assert_hours_diff(scheduled - timezone.now(), 24)
+        assert_hours_diff(scheduled - timezone.now(), 27)
 
     def test_pub_date_not_none(self):
         now = timezone.now()
-        scheduled = reschedule(timedelta(days=1), now)
-        assert_hours_diff(scheduled - timezone.now(), 24)
+        scheduled = reschedule(timedelta(days=7), now - timedelta(days=3))
+        assert (scheduled - now).days == 4
 
     def test_pub_date_before_now(self):
         now = timezone.now()
+        scheduled = reschedule(timedelta(days=3), now - timedelta(days=7))
+        assert (scheduled - now).days == 2
+
+    def test_pub_date_before_now_max_value(self):
+        now = timezone.now()
         scheduled = reschedule(timedelta(days=90), now - timedelta(days=120))
-        assert (scheduled - now).days == 90
+        assert (scheduled - now).days == 14
 
 
 class TestParsePodcastFeed:

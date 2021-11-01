@@ -12,7 +12,6 @@ from functools import lru_cache
 import attr
 import requests
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
@@ -54,10 +53,10 @@ class ParseResult:
     result: str | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
 
-    def __bool__(self)->bool:
+    def __bool__(self) -> bool:
         return self.success
 
-    def raise_exception(self)->None:
+    def raise_exception(self) -> None:
         if self.exception:
             raise self.exception
 
@@ -67,7 +66,7 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
 
     By default, start from the latest pub date of the podcast and add the frequency.
 
-    Continue incrementing by the frequency until we have scheduled time in the
+    Keep incrementing by the frequency until we have scheduled time in the
     future.
     """
     now = timezone.now()
