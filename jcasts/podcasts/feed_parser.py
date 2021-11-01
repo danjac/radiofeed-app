@@ -54,10 +54,10 @@ class ParseResult:
     result: str | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
 
-    def __bool__(self):
+    def __bool__(self)->bool:
         return self.success
 
-    def raise_exception(self):
+    def raise_exception(self)->None:
         if self.exception:
             raise self.exception
 
@@ -78,6 +78,7 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
         scheduled += frequency
 
     return min(scheduled, now + MAX_FREQUENCY)
+
 
 def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
@@ -156,7 +157,7 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         # there are just 600 promoted/followed scheduled podcasts.
         # this leaves (3600*0.6 - 600) 1560 extra.
         # therefore we can process up to (1440+1560) 3000 other podcasts.
-        
+
         remainder += round(limit * ratio)
 
         podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
