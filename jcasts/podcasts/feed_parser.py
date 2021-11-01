@@ -35,7 +35,7 @@ USER_AGENTS = [
 
 
 MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=7)
+MAX_FREQUENCY = timedelta(days=14)
 
 
 class NotModified(requests.RequestException):
