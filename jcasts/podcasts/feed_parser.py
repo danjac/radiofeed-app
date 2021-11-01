@@ -119,9 +119,9 @@ def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timed
     )
 
 
-def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
+def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     """
-    Schedules individual podcast feeds for update. This should include any
+    Parses individual podcast feeds for update. This should include any
     podcast feeds already scheduled.
     """
 
@@ -148,11 +148,15 @@ def schedule_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     now = timezone.now()
 
     for (qs, ratio) in [
-        (primary, 0.5),
-        (secondary.fresh(), 0.3),
-        (secondary.stale(), 0.2),
+        (primary, 0.6),
+        (secondary, 0.4),
     ]:
 
+        # example: say we have a top limit of 3600 / hr.
+        # there are just 600 promoted/followed scheduled podcasts.
+        # this leaves (3600*0.6 - 600) 1560 extra.
+        # therefore we can process up to (1440+1560) 3000 other podcasts.
+        
         remainder += round(limit * ratio)
 
         podcast_ids = list(qs[:remainder].values_list("pk", flat=True))
