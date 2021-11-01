@@ -31,7 +31,7 @@ class Command(BaseCommand):
         if options["reschedule"]:
             self.reschedule()
         else:
-            feed_parser.schedule_podcast_feeds(timedelta(minutes=options["frequency"]))
+            feed_parser.parse_podcast_feeds(timedelta(minutes=options["frequency"]))
 
     def reschedule(self) -> None:
         for_update = []

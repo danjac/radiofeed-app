@@ -11,7 +11,12 @@ from django.utils import timezone
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
+from jcasts.podcasts.factories import (
+    CategoryFactory,
+    FeedFactory,
+    FollowFactory,
+    PodcastFactory,
+)
 from jcasts.podcasts.feed_parser import (
     MAX_FREQUENCY,
     calc_frequency,
@@ -20,8 +25,8 @@ from jcasts.podcasts.feed_parser import (
     incr_frequency,
     is_feed_changed,
     parse_podcast_feed,
+    parse_podcast_feeds,
     reschedule,
-    schedule_podcast_feeds,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed
@@ -146,7 +151,7 @@ class TestCalcFrequency:
 
 
 class TestSchedulePodcastFeeds:
-    def test_schedule_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
+    def test_parse_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
 
         mocker.patch("multiprocessing.cpu_count", return_value=2)
 
@@ -165,15 +170,19 @@ class TestSchedulePodcastFeeds:
         PodcastFactory(scheduled=now + timedelta(hours=3))
 
         # scheduled
-        scheduled = PodcastFactory(scheduled=now - timedelta(hours=3))
+        followed = FollowFactory(podcast__scheduled=now - timedelta(hours=3)).podcast
+        promoted = PodcastFactory(scheduled=now - timedelta(hours=3), promoted=True)
+        other = PodcastFactory(scheduled=now - timedelta(hours=3))
 
-        schedule_podcast_feeds()
+        parse_podcast_feeds()
 
         queued = Podcast.objects.filter(queued__isnull=False)
-        assert queued.count() == 1
-        assert queued.first() == scheduled
+        assert queued.count() == 3
+        assert followed in queued
+        assert promoted in queued
+        assert other in queued
 
-        assert len(mock_parse_podcast_feed.mock_calls) == 1
+        assert len(mock_parse_podcast_feed.mock_calls) == 3
 
 
 class TestReschedule:
