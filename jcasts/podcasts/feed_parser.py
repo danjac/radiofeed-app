@@ -84,19 +84,21 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
 
     now = timezone.now()
 
+    # assume max limit if no available dates or latest is out of range
+
     if not pub_dates or max(pub_dates) < now - MAX_FREQUENCY:
         return MAX_FREQUENCY
 
-    pub_dates = sorted(pub_dates, reverse=True)
+    # if we just have one date to work with, use current time as starting point
     
     if len(pub_dates) == 1:
         pub_dates = [now] + pub_dates
 
-    head, *tail = pub_dates
+    head, *tail = sorted(pub_dates, reverse=True)
 
     for pub_date in tail:
         diffs.append((head - pub_date).total_seconds())
-        head = date
+        head = pub_date
 
     return max(min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY)
 
