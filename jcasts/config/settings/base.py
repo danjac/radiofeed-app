@@ -216,8 +216,6 @@ MESSAGE_TAGS = {
     messages.ERROR: "message-error",
 }
 
-# https://django-taggit.readthedocs.io/en/latest/getting_started.html
-
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATICFILES_DIRS = [BASE_DIR / "assets"]
 
