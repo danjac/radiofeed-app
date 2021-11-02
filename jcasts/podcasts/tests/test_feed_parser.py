@@ -121,13 +121,20 @@ class TestCalcFrequency:
     def test_multiple_dates(self):
         now = timezone.now()
         dates = [
-            now - timedelta(days=3),
-            now - timedelta(days=6),
-            now - timedelta(days=9),
-            now - timedelta(days=12),
-            now - timedelta(days=15),
+            now - timedelta(days=3 * i)
+            for i in range(1, 6)
         ]
         assert calc_frequency(dates).days == 3
+
+    def test_max_dates_with_one_date_in_range(self):
+
+        now = timezone.now()
+        dates = [
+            now - timedelta(days=6),
+            now - timedelta(days=30),
+            now - timedelta(days=60),
+        ]
+        assert calc_frequency(dates).days == 14
 
     def test_max_dates(self):
 
