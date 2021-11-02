@@ -78,20 +78,25 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
 
 
-def calc_frequency(pub_dates: list[datetime], limit: int = 6) -> timedelta:
+def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
     of individual episodes."""
 
-    if len(pub_dates) == 0:
+    now = timezone.now()
+
+    if not pub_dates or max(pub_dates) < now - MAX_FREQUENCY:
         return MAX_FREQUENCY
 
-    diffs: list[float] = []
+    pub_dates = sorted(pub_dates, reverse=True)
+    
+    if len(pub_dates) == 1:
+        pub_dates = [now] + pub_dates
 
-    prev, *dates = [timezone.now()] + sorted(pub_dates, reverse=True)[:limit]
+    head, *tail = pub_dates
 
-    for date in dates:
-        diffs.append((prev - date).total_seconds())
-        prev = date
+    for pub_date in tail:
+        diffs.append((head - pub_date).total_seconds())
+        head = date
 
     return max(min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY)
 
