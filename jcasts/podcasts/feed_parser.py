@@ -90,17 +90,21 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
         return MAX_FREQUENCY
 
     # if we just have one date to work with, use current time as starting point
-    
+
     if len(pub_dates) == 1:
         pub_dates = [now] + pub_dates
 
     head, *tail = sorted(pub_dates, reverse=True)
 
+    diffs: list[float] = []
+
     for pub_date in tail:
         diffs.append((head - pub_date).total_seconds())
         head = pub_date
 
-    return max(min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY)
+    return max(
+        min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY
+    )
 
 
 def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
