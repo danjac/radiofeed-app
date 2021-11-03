@@ -59,9 +59,7 @@ class ParseResult:
     def raise_exception(self) -> None:
         if self.exception:
             raise self.exception
-
-
-
+            
 
 def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     """
@@ -333,6 +331,7 @@ def is_feed_changed(podcast: Podcast, feed: rss_parser.Feed) -> bool:
         None in (podcast.last_build_date, feed.last_build_date)
         or podcast.last_build_date != feed.last_build_date
     )
+
 
 def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     """Get the next scheduled datetime based on update frequency.
