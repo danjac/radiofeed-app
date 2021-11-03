@@ -268,11 +268,7 @@ def parse_success(
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.exception = ""
 
-    # parsing status
-    pub_dates = [item.pub_date for item in items if item.pub_date]
-
-    podcast.pub_date = max(pub_dates)
-    podcast.frequency = calc_frequency(pub_dates)
+    podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, items)
     podcast.scheduled = reschedule(podcast.frequency, podcast.pub_date)
 
     # content
@@ -312,6 +308,19 @@ def parse_success(
     parse_episodes(podcast, items)
 
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
+
+
+def parse_pub_dates(
+    podcast: Podcast, items: list[rss_parser.Item]
+) -> tuple[datetime | None, timedelta]:
+
+    if not (pub_dates := [item.pub_date for item in items if item.pub_date]):
+        return None, MAX_FREQUENCY
+
+    if (new_pub_date := max(pub_dates)) != podcast.pub_date:
+        return new_pub_date, calc_frequency(pub_dates)
+
+    return podcast.pub_date, incr_frequency(podcast.frequency)
 
 
 def parse_episodes(

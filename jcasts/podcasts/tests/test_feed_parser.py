@@ -15,6 +15,7 @@ from jcasts.podcasts.factories import (
     CategoryFactory,
     FeedFactory,
     FollowFactory,
+    ItemFactory,
     PodcastFactory,
 )
 from jcasts.podcasts.feed_parser import (
@@ -26,10 +27,11 @@ from jcasts.podcasts.feed_parser import (
     is_feed_changed,
     parse_podcast_feed,
     parse_podcast_feeds,
+    parse_pub_dates,
     reschedule,
 )
 from jcasts.podcasts.models import Podcast
-from jcasts.podcasts.rss_parser import Feed
+from jcasts.podcasts.rss_parser import Feed, Item
 
 
 def assert_hours_diff(delta, hours):
@@ -58,6 +60,37 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
+
+
+class TestParsePubDates:
+    def test_no_items(self, podcast):
+        assert parse_pub_dates(podcast, []) == (None, MAX_FREQUENCY)
+
+    def test_new_pub_dates(self, db):
+
+        podcast = PodcastFactory(frequency=timedelta(days=7))
+        now = timezone.now()
+
+        items = [
+            Item(**ItemFactory(pub_date=now - timedelta(days=3))),
+            Item(**ItemFactory(pub_date=now - timedelta(days=6))),
+            Item(**ItemFactory(pub_date=now - timedelta(days=9))),
+        ]
+
+        pub_date, diff = parse_pub_dates(podcast, items)
+
+        assert pub_date == items[0].pub_date
+        assert diff.days == 3
+
+    def test_no_new_pub_dates(self, db):
+        podcast = PodcastFactory(frequency=timedelta(days=7))
+
+        items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
+
+        pub_date, diff = parse_pub_dates(podcast, items)
+
+        assert pub_date == podcast.pub_date
+        assert diff.days == 8
 
 
 class TestIsFeedChanged:
@@ -120,10 +153,7 @@ class TestCalcFrequency:
 
     def test_multiple_dates(self):
         now = timezone.now()
-        dates = [
-            now - timedelta(days=3 * i)
-            for i in range(1, 6)
-        ]
+        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
         assert calc_frequency(dates).days == 3
 
     def test_max_dates_with_one_date_in_range(self):
