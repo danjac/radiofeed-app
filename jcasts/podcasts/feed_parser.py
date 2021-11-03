@@ -3,7 +3,6 @@ from __future__ import annotations
 import http
 import multiprocessing
 import secrets
-import statistics
 import traceback
 
 from datetime import datetime, timedelta
@@ -18,7 +17,7 @@ from django.utils.http import http_date, quote_etag
 from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts import date_parser, rss_parser, text_parser
+from jcasts.podcasts import date_parser, rss_parser, scheduler, text_parser
 from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -30,11 +29,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
-
-
-DEFAULT_FREQUENCY = timedelta(days=1)
-MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=14)
 
 
 class NotModified(requests.RequestException):
@@ -194,7 +188,7 @@ def parse_success(
     # scheduling
 
     podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, items)
-    podcast.scheduled = reschedule(podcast.frequency, podcast.pub_date)
+    podcast.scheduled = scheduler.reschedule(podcast.frequency, podcast.pub_date)
 
     # content
 
@@ -242,9 +236,9 @@ def parse_pub_dates(
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (new_pub_date := max(pub_dates)) != podcast.pub_date:
-        return new_pub_date, calc_frequency(pub_dates)
+        return new_pub_date, scheduler.calc_frequency(pub_dates)
 
-    return podcast.pub_date, incr_frequency(podcast.frequency)
+    return podcast.pub_date, scheduler.incr_frequency(podcast.frequency)
 
 
 def parse_episodes(
@@ -335,57 +329,6 @@ def is_feed_changed(podcast: Podcast, feed: rss_parser.Feed) -> bool:
     )
 
 
-def reschedule(frequency: timedelta, pub_date: datetime | None = None) -> datetime:
-    """Get the next scheduled datetime based on update frequency.
-
-    By default, start from the latest pub date of the podcast and add the frequency.
-
-    Keep incrementing by the frequency until we have scheduled time in the
-    future.
-    """
-    now = timezone.now()
-    scheduled = (pub_date or now) + frequency
-
-    while scheduled < now:
-        scheduled += frequency
-
-    return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
-
-
-def calc_frequency(pub_dates: list[datetime]) -> timedelta:
-    """Calculate the frequency based on avg interval between pub dates
-    of individual episodes."""
-
-    # assume default if not enough available dates
-
-    if len(pub_dates) in range(0, 2):
-        return DEFAULT_FREQUENCY
-
-    first, *pub_dates = sorted(pub_dates, reverse=True)
-
-    # calculate average distance between dates
-
-    diffs: list[float] = []
-
-    for pub_date in pub_dates:
-        diffs.append((first - pub_date).total_seconds())
-        first = pub_date
-
-    return timedelta(seconds=statistics.mean(diffs))
-
-
-def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
-    """Increments the frequency by the provided amount. We should
-    do this on each update 'miss'.
-    """
-
-    return (
-        timedelta(seconds=frequency.total_seconds() * increment)
-        if frequency
-        else DEFAULT_FREQUENCY
-    )
-
-
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
@@ -403,11 +346,11 @@ def parse_failure(
 
     now = timezone.now()
 
-    frequency = incr_frequency(podcast.frequency)
+    frequency = scheduler.incr_frequency(podcast.frequency)
 
     Podcast.objects.filter(pk=podcast.id).update(
         frequency=frequency,
-        scheduled=reschedule(frequency, podcast.pub_date),
+        scheduled=scheduler.reschedule(frequency, podcast.pub_date),
         active=active,
         updated=now,
         polled=now,
