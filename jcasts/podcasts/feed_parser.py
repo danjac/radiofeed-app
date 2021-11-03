@@ -336,7 +336,7 @@ def is_feed_changed(podcast: Podcast, feed: rss_parser.Feed) -> bool:
     )
 
 
-def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
+def reschedule(frequency: timedelta, pub_date: datetime | None = None) -> datetime:
     """Get the next scheduled datetime based on update frequency.
 
     By default, start from the latest pub date of the podcast and add the frequency.
@@ -345,8 +345,7 @@ def reschedule(frequency: timedelta, pub_date: datetime | None) -> datetime:
     future.
     """
     now = timezone.now()
-    pub_date = pub_date or now
-    scheduled = pub_date + frequency
+    scheduled = (pub_date or now) + frequency
 
     while scheduled < now:
         scheduled += frequency
@@ -408,11 +407,11 @@ def parse_failure(
     frequency = incr_frequency(podcast.frequency)
 
     Podcast.objects.filter(pk=podcast.id).update(
+        frequency=frequency,
+        scheduled=reschedule(frequency, podcast.pub_date),
         active=active,
         updated=now,
         polled=now,
-        frequency=frequency,
-        scheduled=reschedule(frequency, podcast.pub_date),
         result=result,
         http_status=status,
         exception=tb,
