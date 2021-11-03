@@ -32,6 +32,7 @@ USER_AGENTS = [
 ]
 
 
+DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=14)
 
@@ -82,17 +83,10 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
     of individual episodes."""
 
-    now = timezone.now()
+    # assume default if not enough available dates
 
-    # assume max limit if no available dates or latest is out of range
-
-    if not pub_dates or max(pub_dates) < now - MAX_FREQUENCY:
-        return MAX_FREQUENCY
-
-    # if just a single date, use current time as starting point
-
-    if len(pub_dates) == 1:
-        pub_dates = [now] + pub_dates
+    if len(pub_dates) in range(0, 2):
+        return DEFAULT_FREQUENCY
 
     first, *pub_dates = sorted(pub_dates, reverse=True)
 
@@ -104,11 +98,7 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
         diffs.append((first - pub_date).total_seconds())
         first = pub_date
 
-    # should fall inside min/max boundaries
-
-    return max(
-        min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY
-    )
+    return timedelta(seconds=statistics.mean(diffs))
 
 
 def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
@@ -119,7 +109,7 @@ def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timed
     return (
         timedelta(seconds=frequency.total_seconds() * increment)
         if frequency
-        else MAX_FREQUENCY
+        else DEFAULT_FREQUENCY
     )
 
 
@@ -301,13 +291,8 @@ def parse_pub_dates(
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
-    try:
-
-        if (new_pub_date := max(pub_dates)) != podcast.pub_date:
-            return new_pub_date, calc_frequency(pub_dates)
-
-    except ValueError:
-        pass
+    if pub_dates and (new_pub_date := max(pub_dates)) != podcast.pub_date:
+        return new_pub_date, calc_frequency(pub_dates)
 
     return podcast.pub_date, incr_frequency(podcast.frequency)
 

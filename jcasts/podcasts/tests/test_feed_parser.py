@@ -19,7 +19,7 @@ from jcasts.podcasts.factories import (
     PodcastFactory,
 )
 from jcasts.podcasts.feed_parser import (
-    MAX_FREQUENCY,
+    DEFAULT_FREQUENCY,
     calc_frequency,
     get_categories_dict,
     get_feed_headers,
@@ -141,12 +141,12 @@ class TestIncrFrequency:
         assert_hours_diff(incr_frequency(freq), 28.8)
 
     def test_is_none(self):
-        assert incr_frequency(None).days == 14
+        assert incr_frequency(None).days == 1
 
 
 class TestCalcFrequency:
     def test_no_pub_dates(self):
-        assert calc_frequency([]) == MAX_FREQUENCY
+        assert calc_frequency([]) == DEFAULT_FREQUENCY
 
     def test_single_date(self):
         diff = timedelta(days=1)
@@ -166,7 +166,7 @@ class TestCalcFrequency:
             now - timedelta(days=30),
             now - timedelta(days=60),
         ]
-        assert calc_frequency(dates).days == 14
+        assert calc_frequency(dates).days == 27
 
     def test_max_dates(self):
 
@@ -176,7 +176,7 @@ class TestCalcFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert calc_frequency(dates).days == 14
+        assert calc_frequency(dates).days == 30
 
     def test_min_dates(self):
 
@@ -186,7 +186,7 @@ class TestCalcFrequency:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        assert_hours_diff(calc_frequency(dates), 3)
+        assert_hours_diff(calc_frequency(dates), 1)
 
 
 class TestSchedulePodcastFeeds:
