@@ -85,25 +85,26 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
     now = timezone.now()
 
     # assume max limit if no available dates or latest is out of range
-    
-    pub_dates = [
-        pub_date 
-        for pub_date in sorted(pub_dates, reverse=True) 
-    ]
 
     if not pub_dates or max(pub_dates) < now - MAX_FREQUENCY:
         return MAX_FREQUENCY
 
+    # if just a single date, use current time as starting point
+
     if len(pub_dates) == 1:
         pub_dates = [now] + pub_dates
 
-    first, *pub_dates = pub_dates
+    first, *pub_dates = sorted(pub_dates, reverse=True)
+
+    # calculate average distance between dates
 
     diffs: list[float] = []
 
     for pub_date in pub_dates:
         diffs.append((first - pub_date).total_seconds())
         first = pub_date
+
+    # should fall inside min/max boundaries
 
     return max(
         min(timedelta(seconds=statistics.mean(diffs)), MAX_FREQUENCY), MIN_FREQUENCY
