@@ -130,10 +130,6 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     podcast feeds already scheduled.
     """
 
-    # rough estimate: takes 2 seconds per update
-    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
-
-    # ensure that we do not parse feeds already polled within the time period
     qs = (
         Podcast.objects.active()
         .with_followed()
@@ -144,6 +140,9 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
             "-pub_date",
         )
     )
+
+    # rough estimate: takes 2 seconds per update
+    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
 
     podcast_ids = list(qs[:limit].values_list("pk", flat=True))
 
