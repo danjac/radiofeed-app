@@ -59,7 +59,7 @@ class ParseResult:
     def raise_exception(self) -> None:
         if self.exception:
             raise self.exception
-            
+
 
 def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     """
@@ -178,18 +178,21 @@ def parse_success(
 ) -> ParseResult:
 
     # feed status
+    
     podcast.rss = response.url
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
 
-    now = timezone.now()
-
-    podcast.polled = now
+    # parsing result
+    
+    podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.exception = ""
+
+    # scheduling
 
     podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, items)
     podcast.scheduled = reschedule(podcast.frequency, podcast.pub_date)
