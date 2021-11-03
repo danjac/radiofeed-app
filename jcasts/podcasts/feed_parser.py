@@ -86,22 +86,18 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
 
     # assume max limit if no available dates or latest is out of range
     
-    earliest = now - MAX_FREQUENCY
-
     pub_dates = [
         pub_date 
         for pub_date in sorted(pub_dates, reverse=True) 
-        if pub_date > earliest
     ]
 
-    if not pub_dates:
+    if not pub_dates or max(pub_dates) < now - MAX_FREQUENCY:
         return MAX_FREQUENCY
 
-    try:
-        first, *pub_dates = pub_dates
-    except ValueError:
-        # if we just have one date to work with, use current time as starting point
-        first = timezone.now()
+    if len(pub_dates) == 1:
+        pub_dates = [now] + pub_dates
+
+    first, *pub_dates = pub_dates
 
     diffs: list[float] = []
 
