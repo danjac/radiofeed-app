@@ -66,7 +66,6 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     Parses individual podcast feeds for update. This should include any
     podcast feeds already scheduled.
     """
-
     qs = (
         Podcast.objects.active()
         .with_followed()
@@ -178,14 +177,14 @@ def parse_success(
 ) -> ParseResult:
 
     # feed status
-    
+
     podcast.rss = response.url
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
 
     # parsing result
-    
+
     podcast.polled = timezone.now()
     podcast.queued = None
     podcast.active = True
