@@ -115,7 +115,13 @@ def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timed
     """Increments the frequency by the provided amount. We should
     do this on each update 'miss'."""
 
-    return min(timedelta(seconds=frequency.total_seconds() * increment), MAX_FREQUENCY) if frequency else MAX_FREQUENCY
+    # should fall inside min/max boundaries
+
+    return (
+        min(timedelta(seconds=frequency.total_seconds() * increment), MAX_FREQUENCY)
+        if frequency
+        else MAX_FREQUENCY
+    )
 
 
 def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
