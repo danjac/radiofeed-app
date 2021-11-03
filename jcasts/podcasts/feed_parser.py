@@ -114,21 +114,6 @@ def calc_frequency(pub_dates: list[datetime]) -> timedelta:
 def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
     """Increments the frequency by the provided amount. We should
     do this on each update 'miss'.
-
-    Unlike calc_frequency() we don't have an upper bound. For example:
-
-    We have a max freq of 14 days on a podcast and last pub date is 2 Nov.
-
-    The scheduled date is 16 Nov.
-
-    On 16 Nov we poll the podcast and it's a "miss". Next poll would be 16+14=Nov 30
-    if we assumed the max date (2 + 14 would be 16 i.e. too early).
-
-    If we continue incrementing, the freq would now be 16.8. 2+16.8 would be 18-19 Nov.
-
-    If next successful poll is e.g. 18 Nov, we just reset to 14 days (i.e. the max)
-    and the next poll would be on 18+14=2 Dec.
-
     """
 
     return (
