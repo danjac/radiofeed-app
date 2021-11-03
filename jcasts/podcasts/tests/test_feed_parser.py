@@ -64,11 +64,13 @@ class BadMockResponse(MockResponse):
 
 class TestParsePubDates:
     def test_no_items(self, podcast):
-        assert parse_pub_dates(podcast, []) == (None, MAX_FREQUENCY)
+        pub_date, diff = parse_pub_dates(podcast, [])
 
-    def test_new_pub_dates(self, db):
+        assert pub_date == podcast.pub_date
+        assert diff.days == 8
 
-        podcast = PodcastFactory(frequency=timedelta(days=7))
+    def test_new_pub_dates(self, podcast):
+
         now = timezone.now()
 
         items = [
@@ -82,7 +84,7 @@ class TestParsePubDates:
         assert pub_date == items[0].pub_date
         assert diff.days == 3
 
-    def test_no_new_pub_dates(self, db):
+    def test_no_new_pub_dates(self, podcast):
         podcast = PodcastFactory(frequency=timedelta(days=7))
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]

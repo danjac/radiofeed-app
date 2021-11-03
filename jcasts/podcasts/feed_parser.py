@@ -314,11 +314,15 @@ def parse_pub_dates(
     podcast: Podcast, items: list[rss_parser.Item]
 ) -> tuple[datetime | None, timedelta]:
 
-    if not (pub_dates := [item.pub_date for item in items if item.pub_date]):
-        return None, MAX_FREQUENCY
+    pub_dates = [item.pub_date for item in items if item.pub_date]
 
-    if (new_pub_date := max(pub_dates)) != podcast.pub_date:
-        return new_pub_date, calc_frequency(pub_dates)
+    try:
+
+        if (new_pub_date := max(pub_dates)) != podcast.pub_date:
+            return new_pub_date, calc_frequency(pub_dates)
+
+    except ValueError:
+        pass
 
     return podcast.pub_date, incr_frequency(podcast.frequency)
 

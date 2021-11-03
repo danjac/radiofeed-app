@@ -1,5 +1,7 @@
 import uuid
 
+from datetime import timedelta
+
 import factory
 
 from django.utils import timezone
@@ -44,6 +46,7 @@ class PodcastFactory(DjangoModelFactory):
     title = factory.Faker("text")
     description = factory.Faker("text")
     pub_date = factory.LazyFunction(timezone.now)
+    frequency = timedelta(days=7)
     cover_url = "https://example.com/cover.jpg"
 
     class Meta:
