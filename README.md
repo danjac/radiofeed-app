@@ -10,7 +10,9 @@ Local development requires docker and docker-compose. Just run the Makefile:
 
 To update podcast data and download episodes from their RSS feeds:
 
-> ./bin/manage parse_podcast_feeds --force-update
+> ./bin/manage schedule_podcast_feeds
+
+> ./bin/manage parse_podcast_feeds
 
 You can then generate podcast recommendations with this command:
 
