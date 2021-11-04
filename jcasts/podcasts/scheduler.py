@@ -4,6 +4,7 @@ import statistics
 
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.utils import timezone
 
 DEFAULT_FREQUENCY = timedelta(days=1)
@@ -29,16 +30,20 @@ def reschedule(frequency: timedelta, pub_date: datetime | None = None) -> dateti
     return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
 
 
-def calc_frequency(pub_dates: list[datetime]) -> timedelta:
+def calc_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
     of individual episodes."""
+
+    earliest = timezone.now() - settings.FRESHNESS_THRESHOLD
+
+    pub_dates = [date for date in pub_dates if date > earliest]
 
     # assume default if not enough available dates
 
     if len(pub_dates) in range(0, 2):
         return DEFAULT_FREQUENCY
 
-    first, *pub_dates = sorted(pub_dates, reverse=True)
+    first, *pub_dates = sorted(pub_dates, reverse=True)[:limit]
 
     # calculate average distance between dates
 

@@ -38,11 +38,11 @@ class TestCalcFrequency:
         dates = [
             now - timedelta(days=6),
             now - timedelta(days=30),
-            now - timedelta(days=60),
+            now - timedelta(days=90),
         ]
-        assert scheduler.calc_frequency(dates).days == 27
+        assert scheduler.calc_frequency(dates).days == 24
 
-    def test_max_dates(self):
+    def test_dates_outside_threshold(self):
 
         now = timezone.now()
         dates = [
@@ -50,7 +50,7 @@ class TestCalcFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert scheduler.calc_frequency(dates).days == 30
+        assert scheduler.calc_frequency(dates).days == 1
 
     def test_min_dates(self):
 
