@@ -12,6 +12,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         for podcast in Podcast.objects.active().iterator():
+
+            self.stdout.write(podcast.title)
+
             pub_dates = list(
                 Episode.objects.filter(podcast=podcast).values_list(
                     "pub_date", flat=True
@@ -24,5 +27,3 @@ class Command(BaseCommand):
                 frequency=frequency,
                 scheduled=scheduler.reschedule(frequency, podcast.pub_date),
             )
-
-            self.stdout.write(podcast.title)

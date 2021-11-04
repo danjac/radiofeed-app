@@ -70,6 +70,11 @@ class TestReschedule:
         scheduled = scheduler.reschedule(timedelta(days=1), None)
         assert (scheduled - timezone.now()).total_seconds() / 3600 == pytest.approx(24)
 
+    def test_frequency_zero(self):
+        now = timezone.now()
+        scheduled = scheduler.reschedule(timedelta(seconds=0), now - timedelta(days=3))
+        assert (scheduled - now).days == 1
+
     def test_pub_date_not_none(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=7), now - timedelta(days=3))

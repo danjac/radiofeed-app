@@ -20,6 +20,7 @@ def reschedule(frequency: timedelta, pub_date: datetime | None = None) -> dateti
     future.
     """
     now = timezone.now()
+    frequency = frequency or DEFAULT_FREQUENCY
     scheduled = (pub_date or now) + frequency
 
     while scheduled < now:
