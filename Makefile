@@ -27,8 +27,8 @@ seed:
 parse:
 	./bin/manage parse_podcast_feeds
 
-reschedule:
-	./bin/manage parse_podcast_feeds --reschedule
+schedule:
+	./bin/manage schedule_podcast_feeds
 
 shell:
 	./bin/manage shell_plus
