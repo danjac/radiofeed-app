@@ -10,7 +10,7 @@ from jcasts.podcasts import feed_parser
 
 
 class Command(BaseCommand):
-    help = "Schedule podcast feeds"
+    help = "Parse podcast feeds"
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
