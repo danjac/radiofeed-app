@@ -11,19 +11,18 @@ class Command(BaseCommand):
     help = "Schedule podcast feeds"
 
     def handle(self, *args, **options) -> None:
-        for_update = []
         for podcast in Podcast.objects.active().iterator():
             pub_dates = list(
                 Episode.objects.filter(podcast=podcast).values_list(
                     "pub_date", flat=True
                 )
             )
-            podcast.frequency = scheduler.calc_frequency(pub_dates)
-            podcast.scheduled = scheduler.reschedule(
-                podcast.frequency, podcast.pub_date
+
+            frequency = scheduler.calc_frequency(pub_dates)
+
+            Podcast.objects.filter(pk=podcast.id).update(
+                frequency=frequency,
+                scheduled=scheduler.reschedule(frequency, podcast.pub_date),
             )
+
             self.stdout.write(podcast.title)
-            for_update.append(podcast)
-        Podcast.objects.bulk_update(
-            for_update, fields=["frequency", "scheduled"], batch_size=1000
-        )
