@@ -73,7 +73,7 @@ class TestReschedule:
     def test_frequency_zero(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(seconds=0), now - timedelta(days=3))
-        assert (scheduled - now).days == 1
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
 
     def test_pub_date_not_none(self):
         now = timezone.now()
@@ -83,9 +83,9 @@ class TestReschedule:
     def test_pub_date_before_now(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=3), now - timedelta(days=7))
-        assert (scheduled - now).days == 2
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
 
     def test_pub_date_before_now_max_value(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=90), now - timedelta(days=120))
-        assert (scheduled - now).days == 14
+        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
