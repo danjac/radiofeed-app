@@ -29,4 +29,4 @@ class Command(BaseCommand):
 
             for_update.append(podcast)
 
-        Podcast.objects.bulk_update(for_update)
+        Podcast.objects.bulk_update(for_update, fields=["frequency", "scheduled"])
