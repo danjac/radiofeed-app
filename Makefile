@@ -24,8 +24,11 @@ superuser:
 seed:
 	./bin/manage seed_podcast_data
 
-schedule:
-	./bin/manage schedule_podcast_feeds
+parse:
+	./bin/manage parse_podcast_feeds
+
+reschedule:
+	./bin/manage parse_podcast_feeds --reschedule
 
 shell:
 	./bin/manage shell_plus
