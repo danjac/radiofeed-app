@@ -154,7 +154,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "promoted",
         "pub_date",
-        "scheduled",
+        "polled",
     )
 
     list_editable = (
@@ -168,7 +168,6 @@ class PodcastAdmin(admin.ModelAdmin):
     readonly_fields = (
         "polled",
         "queued",
-        "scheduled",
         "frequency",
         "last_build_date",
         "modified",
@@ -216,7 +215,7 @@ class PodcastAdmin(admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "scheduled",
+                "polled",
                 "-pub_date",
             ]
         )

@@ -66,7 +66,7 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         .scheduled()
         .distinct()
         .order_by(
-            "scheduled",
+            "polled",
             "-pub_date",
         )
     )
@@ -188,7 +188,6 @@ def parse_success(
     # scheduling
 
     podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, items)
-    podcast.scheduled = scheduler.reschedule(podcast.frequency, podcast.pub_date)
 
     # content
 
@@ -350,7 +349,6 @@ def parse_failure(
 
     Podcast.objects.filter(pk=podcast.id).update(
         frequency=frequency,
-        scheduled=scheduler.reschedule(frequency, podcast.pub_date),
         active=active,
         updated=now,
         polled=now,

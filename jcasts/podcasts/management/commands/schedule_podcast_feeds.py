@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import scheduler
@@ -12,7 +13,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         for_update = []
-        for podcast in Podcast.objects.active().iterator():
+        now = timezone.now()
+        for podcast in Podcast.objects.active().published().iterator():
 
             self.stdout.write(podcast.title)
 
@@ -23,10 +25,8 @@ class Command(BaseCommand):
             )
 
             podcast.frequency = scheduler.calc_frequency(pub_dates)
-            podcast.scheduled = scheduler.reschedule(
-                podcast.frequency, podcast.pub_date
-            )
+            podcast.polled = now
 
             for_update.append(podcast)
 
-        Podcast.objects.bulk_update(for_update, fields=["frequency", "scheduled"])
+        Podcast.objects.bulk_update(for_update, fields=["frequency", "polled"])

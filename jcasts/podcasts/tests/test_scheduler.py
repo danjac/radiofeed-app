@@ -23,7 +23,7 @@ class TestIncrFrequency:
 
 class TestCalcFrequency:
     def test_no_pub_dates(self):
-        assert scheduler.calc_frequency([]) == scheduler.DEFAULT_FREQUENCY
+        assert scheduler.calc_frequency([]).days == 1
 
     def test_single_date(self):
         diff = timedelta(days=1)
@@ -43,7 +43,7 @@ class TestCalcFrequency:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        assert scheduler.calc_frequency(dates).days == 24
+        assert scheduler.calc_frequency(dates).days == 14
 
     def test_dates_outside_threshold(self):
 
@@ -53,7 +53,7 @@ class TestCalcFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert scheduler.calc_frequency(dates).days == 1
+        assert scheduler.calc_frequency(dates).days == 14
 
     def test_min_dates(self):
 
@@ -63,30 +63,4 @@ class TestCalcFrequency:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        assert_hours(scheduler.calc_frequency(dates), 1)
-
-
-class TestReschedule:
-    def test_pub_date_none(self):
-        scheduled = scheduler.reschedule(timedelta(days=1), None)
-        assert_hours(scheduled - timezone.now(), 24)
-
-    def test_frequency_zero(self):
-        now = timezone.now()
-        scheduled = scheduler.reschedule(timedelta(seconds=0), now - timedelta(days=3))
-        assert_hours(scheduled - timezone.now(), 48)
-
-    def test_pub_date_not_none(self):
-        now = timezone.now()
-        scheduled = scheduler.reschedule(timedelta(days=7), now - timedelta(days=3))
-        assert_hours(scheduled - now, 96)
-
-    def test_pub_date_before_now(self):
-        now = timezone.now()
-        scheduled = scheduler.reschedule(timedelta(days=3), now - timedelta(days=7))
-        assert_hours(scheduled - timezone.now(), 96)
-
-    def test_pub_date_before_now_max_value(self):
-        now = timezone.now()
-        scheduled = scheduler.reschedule(timedelta(days=90), now - timedelta(days=120))
-        assert_hours(scheduled - timezone.now(), 336)
+        assert_hours(scheduler.calc_frequency(dates), 3)
