@@ -7,12 +7,15 @@ from django.utils import timezone
 from jcasts.podcasts import scheduler
 
 
+def assert_hours(delta, hours):
+    assert delta.total_seconds() / 3600 == pytest.approx(hours)
+
+
 class TestIncrFrequency:
     def test_incr_frequency(self):
         freq = timedelta(hours=24)
-        assert scheduler.incr_frequency(freq).total_seconds() / 3600 == pytest.approx(
-            28.8
-        )
+
+        assert_hours(scheduler.incr_frequency(freq), 28.8)
 
     def test_is_none(self):
         assert scheduler.incr_frequency(None).days == 1
@@ -60,32 +63,30 @@ class TestCalcFrequency:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        assert scheduler.calc_frequency(dates).total_seconds() / 3600 == pytest.approx(
-            1
-        )
+        assert_hours(scheduler.calc_frequency(dates), 1)
 
 
 class TestReschedule:
     def test_pub_date_none(self):
         scheduled = scheduler.reschedule(timedelta(days=1), None)
-        assert (scheduled - timezone.now()).total_seconds() / 3600 == pytest.approx(24)
+        assert_hours(scheduled - timezone.now(), 24)
 
     def test_frequency_zero(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(seconds=0), now - timedelta(days=3))
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
+        assert_hours(scheduled - timezone.now(), 48)
 
     def test_pub_date_not_none(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=7), now - timedelta(days=3))
-        assert (scheduled - now).days == 4
+        assert_hours(scheduled - now, 96)
 
     def test_pub_date_before_now(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=3), now - timedelta(days=7))
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
+        assert_hours(scheduled - timezone.now(), 96)
 
     def test_pub_date_before_now_max_value(self):
         now = timezone.now()
         scheduled = scheduler.reschedule(timedelta(days=90), now - timedelta(days=120))
-        assert (scheduled - now).total_seconds() / 3600 == pytest.approx(3)
+        assert_hours(scheduled - timezone.now(), 336)

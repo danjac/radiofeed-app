@@ -25,6 +25,9 @@ def reschedule(frequency: timedelta, pub_date: datetime | None = None) -> dateti
     frequency = frequency or DEFAULT_FREQUENCY
     scheduled = (pub_date or now) + frequency
 
+    if scheduled < now:
+        scheduled = now + (now - scheduled)
+
     return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
 
 
