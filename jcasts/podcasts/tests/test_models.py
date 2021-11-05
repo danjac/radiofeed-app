@@ -163,25 +163,19 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "frequency, pub_date,polled,queued,exists",
+        "frequency,polled,queued,exists",
         [
-            (None, None, None, False, False),
-            (timedelta(days=7), None, None, False, False),
-            (timedelta(days=7), timedelta(days=3), None, False, False),
-            (timedelta(days=7), timedelta(days=7), None, False, True),
-            (timedelta(days=30), timedelta(days=7), None, False, False),
-            (timedelta(days=30), timedelta(days=7), timedelta(days=7), False, False),
-            (timedelta(days=30), timedelta(days=30), timedelta(days=30), False, True),
-            (timedelta(days=7), timedelta(days=7), None, True, False),
-            (timedelta(days=30), timedelta(days=30), timedelta(days=30), True, False),
+            (None, None, False, False),
+            (timedelta(days=7), timedelta(days=3), False, False),
+            (timedelta(days=7), timedelta(days=7), False, True),
+            (timedelta(days=7), timedelta(days=7), True, False),
         ],
     )
-    def test_scheduled(self, db, frequency, pub_date, polled, queued, exists):
+    def test_scheduled(self, db, frequency, polled, queued, exists):
 
         now = timezone.now()
         PodcastFactory(
             frequency=frequency,
-            pub_date=now - pub_date if pub_date else None,
             polled=now - polled if polled else None,
             queued=now if queued else None,
         )

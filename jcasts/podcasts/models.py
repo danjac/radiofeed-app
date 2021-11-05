@@ -19,7 +19,6 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from jcasts.podcasts import scheduler
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 from jcasts.shared.typedefs import User
@@ -88,18 +87,8 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def scheduled(self) -> models.QuerySet:
 
-        now = timezone.now()
-        limit = now - scheduler.MAX_FREQUENCY
-
         return self.filter(
-            models.Q(
-                pub_date__gt=limit,
-                pub_date__lt=now - models.F("frequency"),
-            )
-            | models.Q(
-                pub_date__lte=limit,
-                polled__lt=now - models.F("frequency"),
-            ),
+            polled__lt=timezone.now() - models.F("frequency"),
             queued__isnull=True,
             pub_date__isnull=False,
         )
