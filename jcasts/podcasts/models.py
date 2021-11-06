@@ -85,16 +85,11 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
-    def scheduled(self, frequency: timedelta) -> models.QuerySet:
-        now = timezone.now()
+    def scheduled(self) -> models.QuerySet:
         return self.filter(
-            polled__range=(
-                now - frequency - models.F("frequency"),
-                now - models.F("frequency"),
-            ),
-            polled__isnull=False,
+            scheduled__isnull=False,
+            scheduled__lt=timezone.now(),
             queued__isnull=True,
-            frequency__isnull=False,
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -151,6 +146,7 @@ class Podcast(models.Model):
 
     # scheduling
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
+    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
@@ -221,12 +217,6 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
-
-    def get_scheduled(self) -> datetime | None:
-        if self.frequency is None or self.polled is None:
-            return None
-
-        return self.polled + self.frequency
 
     @cached_property
     def cleaned_title(self) -> str:

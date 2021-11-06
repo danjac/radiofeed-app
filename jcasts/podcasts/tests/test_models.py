@@ -163,25 +163,22 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "frequency,polled,queued,exists",
+        "scheduled,queued,exists",
         [
-            (None, None, False, False),
-            (timedelta(days=7), timedelta(days=3), False, False),
-            (timedelta(days=7), timedelta(days=8), False, False),
-            (timedelta(days=7), timedelta(days=7), False, True),
-            (timedelta(days=7), timedelta(days=7, minutes=59), False, True),
-            (timedelta(days=7), timedelta(days=7), True, False),
+            (None, False, False),
+            (timedelta(days=3), False, True),
+            (timedelta(days=-3), False, False),
+            (timedelta(days=3), True, False),
         ],
     )
-    def test_scheduled(self, db, frequency, polled, queued, exists):
+    def test_scheduled(self, db, scheduled, queued, exists):
 
         now = timezone.now()
         PodcastFactory(
-            frequency=frequency,
-            polled=now - polled if polled else None,
+            scheduled=now - scheduled if scheduled else None,
             queued=now if queued else None,
         )
-        assert Podcast.objects.scheduled(timedelta(hours=1)).exists() is exists
+        assert Podcast.objects.scheduled().exists() is exists
 
     @pytest.mark.parametrize(
         "last_pub,exists",
@@ -240,17 +237,6 @@ class TestPodcastModel:
 
     def test_get_domain_if_www(self):
         assert Podcast(rss=self.rss).get_domain() == "example.com"
-
-    def test_get_scheduled(self):
-        now = timezone.now()
-        value = Podcast(frequency=timedelta(days=1), polled=now).get_scheduled()
-        assert (value - now).days == 1
-
-    def test_get_scheduled_freq_none(self):
-        assert Podcast(frequency=None, polled=timezone.now()).get_scheduled() is None
-
-    def test_get_scheduled_polled_none(self):
-        assert Podcast(frequency=timedelta(days=1), polled=None).get_scheduled() is None
 
     def test_is_following_anonymous(self, podcast):
         assert not podcast.is_following(AnonymousUser())

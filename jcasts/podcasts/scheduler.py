@@ -8,6 +8,8 @@ from typing import Callable
 
 from django.utils import timezone
 
+from jcasts.podcasts.models import Podcast
+
 DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
@@ -21,8 +23,26 @@ def with_frequency_bounds(fn: Callable[..., timedelta]) -> Callable:
     return wrapper
 
 
+def reschedule(podcast: Podcast, frequency: timedelta | None = None) -> datetime | None:
+    """Return a new scheduled time."""
+
+    if (frequency := frequency or podcast.frequency) is None:
+        return None
+
+    now = timezone.now()
+
+    for value in (
+        podcast.pub_date,
+        podcast.polled,
+    ):
+        if value and (scheduled := value + frequency) > now:
+            return scheduled
+
+    return now + frequency
+
+
 @with_frequency_bounds
-def calc_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
+def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
     of individual episodes."""
 
@@ -45,7 +65,7 @@ def calc_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
 
 
 @with_frequency_bounds
-def incr_frequency(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
+def increment(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
     """Increments the frequency by the provided amount. We should
     do this on each update 'miss'.
     """
