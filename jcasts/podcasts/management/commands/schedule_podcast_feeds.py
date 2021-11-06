@@ -34,7 +34,6 @@ class Command(BaseCommand):
             for_update,
             fields=[
                 "frequency",
-                "polled",
                 "scheduled",
                 "queued",
             ],
