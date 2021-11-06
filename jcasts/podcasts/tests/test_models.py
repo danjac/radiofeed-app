@@ -165,7 +165,7 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "scheduled,queued,exists",
         [
-            (None, False, False),
+            (None, False, True),
             (timedelta(days=3), False, True),
             (timedelta(days=-3), False, False),
             (timedelta(days=3), True, False),

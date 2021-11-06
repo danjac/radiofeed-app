@@ -11,6 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -66,8 +67,8 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         .scheduled()
         .distinct()
         .order_by(
-            "scheduled",
-            "-pub_date",
+            F("scheduled").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
         )
     )
 

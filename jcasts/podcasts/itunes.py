@@ -7,7 +7,6 @@ import attr
 import requests
 
 from django.core.cache import cache
-from jcasts.podcasts.feed_parser import parse_podcast_feed
 
 from jcasts.podcasts.models import Podcast
 
@@ -94,7 +93,5 @@ def with_podcasts(feeds: list[Feed]) -> list[Feed]:
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
-        for podcast in new_podcasts:
-            parse_podcast_feed.delay(podcast.id)
 
     return feeds
