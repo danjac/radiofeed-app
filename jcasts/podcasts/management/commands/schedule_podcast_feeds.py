@@ -25,10 +25,7 @@ class Command(BaseCommand):
             )
 
             podcast.frequency = scheduler.calc_frequency(pub_dates)
-            podcast.polled = max(
-                podcast.pub_date,
-                now - podcast.frequency,
-            )
+            podcast.polled = now
             podcast.queued = None
 
             for_update.append(podcast)
