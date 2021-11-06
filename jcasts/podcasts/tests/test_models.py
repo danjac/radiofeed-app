@@ -163,7 +163,7 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "frequency,pub_date,queued,exists",
+        "frequency,polled,queued,exists",
         [
             (None, None, False, False),
             (timedelta(days=7), timedelta(days=3), False, False),
@@ -172,12 +172,12 @@ class TestPodcastManager:
             (timedelta(days=7), timedelta(days=7), True, False),
         ],
     )
-    def test_scheduled(self, db, frequency, pub_date, queued, exists):
+    def test_scheduled(self, db, frequency, polled, queued, exists):
 
         now = timezone.now()
         PodcastFactory(
             frequency=frequency,
-            pub_date=now - pub_date if pub_date else None,
+            polled=now - polled if polled else None,
             queued=now if queued else None,
         )
         assert Podcast.objects.scheduled(timedelta(hours=1)).exists() is exists
@@ -239,6 +239,17 @@ class TestPodcastModel:
 
     def test_get_domain_if_www(self):
         assert Podcast(rss=self.rss).get_domain() == "example.com"
+
+    def test_get_scheduled(self):
+        now = timezone.now()
+        value = Podcast(frequency=timedelta(days=1), polled=now).get_scheduled()
+        assert (value - now).days == 1
+
+    def test_get_scheduled_freq_none(self):
+        assert Podcast(frequency=None, polled=timezone.now()).get_scheduled() is None
+
+    def test_get_scheduled_polled_none(self):
+        assert Podcast(frequency=timedelta(days=1), polled=None).get_scheduled() is None
 
     def test_is_following_anonymous(self, podcast):
         assert not podcast.is_following(AnonymousUser())

@@ -40,6 +40,14 @@ class TestPodcastAdmin:
     def test_source(self, podcasts, admin):
         assert admin.source(podcasts[0]) == podcasts[0].get_domain()
 
+    def test_scheduled(self, admin):
+        podcast = Podcast(polled=timezone.now(), frequency=timedelta(days=1))
+        assert admin.scheduled(podcast) != "-"
+
+    def test_scheduled_if_none(self, admin):
+        podcast = Podcast(polled=None, frequency=None)
+        assert admin.scheduled(podcast) == "-"
+
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")

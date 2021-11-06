@@ -138,7 +138,7 @@ class TestSchedulePodcastFeeds:
 
         podcast = PodcastFactory(
             frequency=timedelta(days=3),
-            pub_date=timezone.now() - timedelta(days=3),
+            polled=timezone.now() - timedelta(days=3),
         )
 
         parse_podcast_feeds()

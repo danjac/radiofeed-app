@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import date
 
 from jcasts.podcasts import feed_parser, models
 
@@ -169,6 +170,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "polled",
         "queued",
         "frequency",
+        "scheduled",
         "last_build_date",
         "modified",
         "pub_date",
@@ -209,6 +211,11 @@ class PodcastAdmin(admin.ModelAdmin):
 
     def source(self, obj: models.Podcast) -> str:
         return obj.get_domain()
+
+    def scheduled(self, obj: models.Podcast) -> str:
+        if value := obj.get_scheduled():
+            return date(value, "DATETIME_FORMAT")
+        return "-"
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (
