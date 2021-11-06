@@ -169,6 +169,7 @@ class TestPodcastManager:
             (timedelta(days=7), timedelta(days=3), False, False),
             (timedelta(days=7), timedelta(days=8), False, False),
             (timedelta(days=7), timedelta(days=7), False, True),
+            (timedelta(days=7), timedelta(days=7, minutes=59), False, True),
             (timedelta(days=7), timedelta(days=7), True, False),
         ],
     )
