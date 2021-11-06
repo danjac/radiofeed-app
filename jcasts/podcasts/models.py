@@ -85,12 +85,17 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
 
-    def scheduled(self) -> models.QuerySet:
+    def scheduled(self, frequency: timedelta) -> models.QuerySet:
+        now = timezone.now()
 
         return self.filter(
-            polled__lt=timezone.now() - models.F("frequency"),
-            queued__isnull=True,
+            pub_date__range=(
+                now - frequency - models.F("frequency"),
+                now - models.F("frequency"),
+            ),
             pub_date__isnull=False,
+            queued__isnull=True,
+            frequency__isnull=False,
         )
 
     def with_followed(self) -> models.QuerySet:

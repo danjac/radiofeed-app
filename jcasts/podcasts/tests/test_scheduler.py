@@ -43,7 +43,7 @@ class TestCalcFrequency:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        assert scheduler.calc_frequency(dates).days == 14
+        assert scheduler.calc_frequency(dates).days == 30
 
     def test_dates_outside_threshold(self):
 
@@ -53,7 +53,7 @@ class TestCalcFrequency:
             now - timedelta(days=90),
             now - timedelta(days=120),
         ]
-        assert scheduler.calc_frequency(dates).days == 14
+        assert scheduler.calc_frequency(dates).days == 30
 
     def test_min_dates(self):
 

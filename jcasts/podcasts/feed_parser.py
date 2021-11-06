@@ -63,7 +63,7 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     qs = (
         Podcast.objects.active()
         .with_followed()
-        .scheduled()
+        .scheduled(frequency)
         .distinct()
         .order_by(
             "polled",
