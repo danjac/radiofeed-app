@@ -129,7 +129,8 @@ class TestFeedHeaders:
 class TestSchedulePodcastFeeds:
     def test_parse_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
 
-        mocker.patch("multiprocessing.cpu_count", return_value=2)
+        mocker.patch("rq.worker.Worker.count", return_value=2)
+        mocker.patch("django_rq.get_queue")
 
         # inactive
         PodcastFactory(active=False)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import http
-import multiprocessing
 import secrets
 import traceback
 
@@ -14,7 +13,8 @@ import requests
 from django.db import transaction
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue, job
+from rq.worker import Worker
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, scheduler, text_parser
@@ -72,7 +72,9 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
     )
 
     # rough estimate: takes 2 seconds per update
-    limit = multiprocessing.cpu_count() * round(frequency.total_seconds() / 2)
+    num_workers = Worker.count(queue=get_queue("feeds"))
+
+    limit = num_workers * round(frequency.total_seconds() / 2)
 
     podcast_ids = list(qs[:limit].values_list("pk", flat=True))
 

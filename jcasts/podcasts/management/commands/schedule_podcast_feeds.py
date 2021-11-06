@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import scheduler
@@ -12,6 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         for_update = []
+        now = timezone.now()
         for podcast in Podcast.objects.active().published().iterator():
 
             self.stdout.write(podcast.title)
@@ -23,7 +25,10 @@ class Command(BaseCommand):
             )
 
             podcast.frequency = scheduler.calc_frequency(pub_dates)
-            podcast.polled = podcast.pub_date
+            podcast.polled = max(
+                podcast.pub_date,
+                now - podcast.frequency,
+            )
             podcast.queued = None
 
             for_update.append(podcast)
