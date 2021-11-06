@@ -17,7 +17,7 @@ class TestReschedule:
         podcast = Podcast(frequency=None)
         assert scheduler.reschedule(podcast) is None
 
-    def test_pub_date_and_polled_none(self):
+    def test_pub_date_none(self):
         podcast = Podcast(frequency=timedelta(days=1))
         assert_hours(scheduler.reschedule(podcast) - timezone.now(), 24)
 
@@ -35,29 +35,27 @@ class TestReschedule:
         )
         assert_hours(scheduler.reschedule(podcast) - now, 12)
 
-    def test_polled_gt_now(self):
-        now = timezone.now()
-        podcast = Podcast(frequency=timedelta(days=1), polled=now - timedelta(hours=12))
-        assert_hours(scheduler.reschedule(podcast) - now, 12)
-
-    def test_pub_date_lt_now_and_polled_gt_now(self):
+    def test_pub_date_lt_now(self):
         now = timezone.now()
         podcast = Podcast(
             frequency=timedelta(days=1),
             pub_date=now - timedelta(days=12),
-            polled=now - timedelta(hours=12),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 12)
-
-    def test_pub_date_lt_now_and_polled_lt_now(self):
-        now = timezone.now()
-
-        podcast = Podcast(
-            frequency=timedelta(days=1),
-            pub_date=now - timedelta(days=12),
-            polled=now - timedelta(days=12),
         )
         assert_hours(scheduler.reschedule(podcast) - now, 24)
+
+    def test_gt_max_value(self):
+        now = timezone.now()
+        podcast = Podcast(
+            frequency=timedelta(days=99),
+        )
+        assert_hours(scheduler.reschedule(podcast) - now, 24 * 30)
+
+    def test_lt_min_value(self):
+        now = timezone.now()
+        podcast = Podcast(
+            frequency=timedelta(seconds=5),
+        )
+        assert_hours(scheduler.reschedule(podcast) - now, 3)
 
 
 class TestIncrement:
