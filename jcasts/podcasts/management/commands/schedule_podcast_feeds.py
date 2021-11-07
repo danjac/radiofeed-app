@@ -14,9 +14,11 @@ class Command(BaseCommand):
 
         for_update = []
 
-        for podcast in Podcast.objects.active().published().iterator():
+        for counter, podcast in enumerate(
+            Podcast.objects.active().published().iterator()
+        ):
 
-            self.stdout.write(podcast.title)
+            self.stdout.write(f"{counter}: {podcast.title}")
 
             pub_dates = list(
                 Episode.objects.filter(podcast=podcast).values_list(
@@ -37,4 +39,5 @@ class Command(BaseCommand):
                 "scheduled",
                 "queued",
             ],
+            batch_size=1000,
         )
