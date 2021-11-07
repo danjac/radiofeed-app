@@ -41,7 +41,15 @@ class TestReschedule:
             frequency=timedelta(days=1),
             pub_date=now - timedelta(days=12),
         )
-        assert_hours(scheduler.reschedule(podcast) - now, 24)
+        assert_hours(scheduler.reschedule(podcast) - now, 3)
+
+    def test_pub_date_lt_now_max_value(self):
+        now = timezone.now()
+        podcast = Podcast(
+            frequency=timedelta(days=30),
+            pub_date=now - timedelta(days=90),
+        )
+        assert_hours(scheduler.reschedule(podcast) - now, 30 * 24)
 
     def test_gt_max_value(self):
         now = timezone.now()

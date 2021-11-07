@@ -31,12 +31,15 @@ def reschedule(podcast: Podcast, frequency: timedelta | None = None) -> datetime
 
     now = timezone.now()
 
+    min_value = now + MIN_FREQUENCY
+    max_value = now + MAX_FREQUENCY
+
     scheduled = (podcast.pub_date or now) + frequency
 
-    while scheduled < now:
-        scheduled = now + frequency
+    if scheduled < now:
+        return min_value if frequency < MAX_FREQUENCY else max_value
 
-    return min(max(scheduled, now + MIN_FREQUENCY), now + MAX_FREQUENCY)
+    return min(max(scheduled, min_value), max_value)
 
 
 @with_frequency_bounds
