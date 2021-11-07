@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
@@ -17,6 +19,51 @@ class CategoryAdmin(admin.ModelAdmin):
         "parent",
     )
     search_fields = ("name",)
+
+
+class FrequencyFilter(admin.SimpleListFilter):
+    title = "Frequency"
+    parameter_name = "frequency"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (
+            ("none", "No frequency"),
+            ("hourly", "Hourly (< 5 hours)"),
+            ("daily", "Daily (every 5 hours - 3 days)"),
+            ("weekly", "Weekly (every 3-7 days)"),
+            ("fortnightly", "Fortnightly (every 8-20 days)"),
+            ("monthly", "Monthly (> 21 days)"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        value = self.value()
+        if value == "none":
+            return queryset.filter(frequency=None)
+
+        if value == "hourly":
+            return queryset.filter(frequency__lt=timedelta(hours=5))
+
+        if value == "daily":
+            return queryset.filter(
+                frequency__gte=timedelta(hours=5), frequency__lt=timedelta(days=3)
+            )
+
+        if value == "weekly":
+            return queryset.filter(
+                frequency__gte=timedelta(days=3), frequency__lt=timedelta(days=8)
+            )
+
+        if value == "fortnightly":
+            return queryset.filter(
+                frequency__gte=timedelta(days=8), frequency__lt=timedelta(days=21)
+            )
+
+        if value == "monthly":
+            return queryset.filter(frequency__gte=timedelta(days=21))
+
+        return queryset
 
 
 class ResultFilter(admin.SimpleListFilter):
@@ -171,6 +218,7 @@ class PodcastAdmin(admin.ModelAdmin):
         QueuedFilter,
         ResultFilter,
         ScheduledFilter,
+        FrequencyFilter,
     )
 
     list_display = (
