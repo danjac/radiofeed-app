@@ -92,7 +92,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
             | models.Q(
                 scheduled__isnull=False,
-                scheduled__lt=timezone.now(),
+                scheduled__lte=timezone.now(),
             ),
         )
 

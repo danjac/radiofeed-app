@@ -14,6 +14,7 @@ from jcasts.podcasts.admin import (
     PubDateFilter,
     QueuedFilter,
     ResultFilter,
+    ScheduledFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -174,6 +175,26 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestScheduledFilter:
+    def test_scheduled(self, podcasts, admin, req):
+        PodcastFactory(scheduled=timezone.now() + timedelta(days=1))
+        f = ScheduledFilter(req, {"scheduled": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+
+    def test_unscheduled(self, podcasts, admin, req):
+        PodcastFactory(scheduled=timezone.now() + timedelta(days=1))
+        f = ScheduledFilter(req, {"scheduled": "no"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+
+    def test_all(self, podcasts, admin, req):
+        PodcastFactory(scheduled=timezone.now() + timedelta(days=1))
+        f = ScheduledFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
 
 
 class TestQueuedFilter:

@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
-            "--minutes",
+            "--frequency",
             help="Frequency between updates (minutes)",
             type=int,
         )

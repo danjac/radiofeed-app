@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils import timezone
 
 from jcasts.podcasts import feed_parser, models
 
@@ -99,6 +100,29 @@ class QueuedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ScheduledFilter(admin.SimpleListFilter):
+    title = "Scheduled"
+    parameter_name = "scheduled"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (
+            ("yes", "Scheduled"),
+            ("no", "Pending"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        value = self.value()
+        if value == "yes":
+            return queryset.scheduled()
+        if value == "no":
+            return queryset.filter(
+                scheduled__isnull=False, scheduled__gt=timezone.now()
+            )
+        return queryset
+
+
 class FollowedFilter(admin.SimpleListFilter):
     title = "Followed"
     parameter_name = "followed"
@@ -146,6 +170,7 @@ class PodcastAdmin(admin.ModelAdmin):
         PubDateFilter,
         QueuedFilter,
         ResultFilter,
+        ScheduledFilter,
     )
 
     list_display = (
