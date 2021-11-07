@@ -214,7 +214,7 @@ class PodcastAdmin(admin.ModelAdmin):
     raw_id_fields = ("recipients",)
 
     readonly_fields = (
-        "polled",
+        "parsed",
         "queued",
         "frequency",
         "scheduled",

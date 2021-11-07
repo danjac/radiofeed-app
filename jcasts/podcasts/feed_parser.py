@@ -190,7 +190,7 @@ def parse_success(
 
     # parsing result
 
-    podcast.polled = timezone.now()
+    podcast.parsed = timezone.now()
     podcast.queued = None
     podcast.active = True
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
@@ -365,7 +365,7 @@ def parse_failure(
         scheduled=scheduled,
         active=active,
         updated=now,
-        polled=now,
+        parsed=now,
         result=result,
         http_status=status,
         exception=tb,

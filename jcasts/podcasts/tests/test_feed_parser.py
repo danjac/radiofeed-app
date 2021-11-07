@@ -237,7 +237,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled
@@ -260,7 +260,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled
@@ -322,7 +322,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 
-        assert new_podcast.polled
+        assert new_podcast.parsed
 
         assert new_podcast.etag
         assert new_podcast.explicit
@@ -433,7 +433,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.modified
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.frequency
         assert new_podcast.scheduled
@@ -462,7 +462,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == current_rss
         assert not new_podcast.active
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled
@@ -480,7 +480,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert new_podcast.active
         assert new_podcast.modified is None
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.frequency
         assert new_podcast.scheduled
@@ -498,7 +498,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
         assert not new_podcast.active
         assert new_podcast.http_status is None
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled
@@ -519,7 +519,7 @@ class TestParsePodcastFeed:
 
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.GONE
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled
@@ -542,7 +542,7 @@ class TestParsePodcastFeed:
 
         assert not new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
-        assert new_podcast.polled
+        assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.frequency
         assert not new_podcast.scheduled

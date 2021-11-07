@@ -140,7 +140,7 @@ class Podcast(models.Model):
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # last parse time (success or fail)
-    polled: datetime | None = models.DateTimeField(null=True, blank=True)
+    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # has been queued for parsing
     queued: datetime | None = models.DateTimeField(null=True, blank=True)
