@@ -56,15 +56,19 @@ class ParseResult:
             raise self.exception
 
 
-def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
+def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
     """
-    Parses individual podcast feeds for update. This should include any
-    podcast feeds already scheduled.
+    Parses individual podcast feeds for update.
+
+    If `frequency` is not None will limit number to available workers,
+    and will only parse podcasts scheduled for update.
+
+    Returns total number of podcasts parsed.
     """
+
     qs = (
         Podcast.objects.active()
-        .with_followed()
-        .scheduled()
+        .filter(queued=None)
         .distinct()
         .order_by(
             F("scheduled").asc(nulls_first=True),
@@ -72,17 +76,20 @@ def parse_podcast_feeds(frequency: timedelta = timedelta(hours=1)) -> None:
         )
     )
 
-    # rough estimate: takes 2 seconds per update
-    num_workers = Worker.count(queue=get_queue("feeds"))
+    if frequency:
+        num_workers = Worker.count(queue=get_queue("feeds"))
+        # rough estimate: takes 2 seconds per update
+        limit = num_workers * round(frequency.total_seconds() / 2)
+        qs = qs.scheduled()[:limit]
 
-    limit = num_workers * round(frequency.total_seconds() / 2)
-
-    podcast_ids = list(qs[:limit].values_list("pk", flat=True))
+    podcast_ids = list(qs.values_list("pk", flat=True))
 
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
     for podcast_id in podcast_ids:
         parse_podcast_feed.delay(podcast_id)
+
+    return len(podcast_ids)
 
 
 @job("feeds")

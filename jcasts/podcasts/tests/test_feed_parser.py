@@ -127,25 +127,61 @@ class TestFeedHeaders:
 
 
 class TestSchedulePodcastFeeds:
-    def test_parse_podcast_feeds(self, db, mocker, mock_parse_podcast_feed):
+    def test_with_frequency_none(self, db, mock_parse_podcast_feed):
 
-        mocker.patch("rq.worker.Worker.count", return_value=2)
-        mocker.patch("django_rq.get_queue")
+        now = timezone.now()
 
         # inactive
         PodcastFactory(active=False)
 
-        # active
+        # queued
+        PodcastFactory(scheduled=now - timedelta(days=3), queued=now)
 
-        podcast = PodcastFactory(
-            scheduled=timezone.now() - timedelta(days=3),
+        # not scheduled yet
+        unscheduled = PodcastFactory(scheduled=now + timedelta(days=1))
+
+        # scheduled
+        scheduled = PodcastFactory(
+            scheduled=now - timedelta(days=3),
         )
 
         parse_podcast_feeds()
 
         queued = Podcast.objects.filter(queued__isnull=False)
 
-        assert queued.count() == 1
+        assert queued.count() == 3
+
+        assert scheduled in queued
+        assert unscheduled in queued
+
+        assert len(mock_parse_podcast_feed.mock_calls) == 2
+
+    def test_with_frequency(self, db, mocker, mock_parse_podcast_feed):
+
+        mocker.patch("rq.worker.Worker.count", return_value=2)
+        mocker.patch("django_rq.get_queue")
+
+        now = timezone.now()
+
+        # inactive
+        PodcastFactory(active=False)
+
+        # not scheduled yet
+        PodcastFactory(scheduled=now + timedelta(days=1))
+
+        # queued
+        PodcastFactory(scheduled=now - timedelta(days=3), queued=now)
+
+        # scheduled
+        podcast = PodcastFactory(
+            scheduled=now - timedelta(days=3),
+        )
+
+        parse_podcast_feeds(frequency=timedelta(hours=1))
+
+        queued = Podcast.objects.filter(queued__isnull=False)
+
+        assert queued.count() == 2
 
         assert podcast in queued
         assert len(mock_parse_podcast_feed.mock_calls) == 1

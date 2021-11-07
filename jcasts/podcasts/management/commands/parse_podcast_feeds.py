@@ -14,8 +14,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
-            "--frequency", help="Frequency between updates (minutes)", default=60
+            "--minutes",
+            help="Frequency between updates (minutes)",
+            type=int,
         )
 
     def handle(self, *args, **options) -> None:
-        feed_parser.parse_podcast_feeds(timedelta(minutes=options["frequency"]))
+        num_podcasts = feed_parser.parse_podcast_feeds(
+            frequency=timedelta(minutes=options["frequency"])
+            if options["frequency"]
+            else None
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f"{num_podcasts} podcast feeds queued for update")
+        )

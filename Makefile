@@ -25,6 +25,9 @@ seed:
 	./bin/manage seed_podcast_data
 
 parse:
+	./bin/manage parse_podcast_feeds --frequency=60
+
+parse_all:
 	./bin/manage parse_podcast_feeds
 
 schedule:

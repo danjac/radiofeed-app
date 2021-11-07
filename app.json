@@ -14,7 +14,7 @@
   },
   "cron": [
     {
-      "command": "python manage.py parse_podcast_feeds",
+      "command": "python manage.py parse_podcast_feeds --frequency=60",
       "schedule": "0 * * * *"
     },
     {
