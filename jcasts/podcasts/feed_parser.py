@@ -355,13 +355,14 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    now = timezone.now()
+    frequency = scheduler.increment(podcast.frequency) if active else None
+    scheduled = scheduler.reschedule(podcast, frequency) if frequency else None
 
-    frequency = scheduler.increment(podcast.frequency)
+    now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
         frequency=frequency,
-        scheduled=scheduler.reschedule(podcast, frequency),
+        scheduled=scheduled,
         active=active,
         updated=now,
         polled=now,

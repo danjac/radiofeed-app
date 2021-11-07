@@ -239,8 +239,8 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -262,8 +262,8 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
@@ -464,9 +464,9 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -482,9 +482,9 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.polled
         assert not new_podcast.queued
-        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
         assert new_podcast.frequency
         assert new_podcast.scheduled
+        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
@@ -500,9 +500,9 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -521,9 +521,9 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
 
     def test_parse_podcast_feed_http_server_error(
         self, mocker, new_podcast, categories
@@ -544,6 +544,6 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.polled
         assert not new_podcast.queued
+        assert not new_podcast.frequency
+        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
-        assert new_podcast.frequency
-        assert new_podcast.scheduled
