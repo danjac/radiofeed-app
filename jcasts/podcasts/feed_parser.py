@@ -137,6 +137,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             podcast,
             exception=e,
             result=Podcast.Result.NETWORK_ERROR,
+            active=False,
             tb=traceback.format_exc(),
         )
 
