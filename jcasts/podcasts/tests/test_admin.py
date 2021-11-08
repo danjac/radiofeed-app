@@ -9,7 +9,6 @@ from django.utils import timezone
 from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
-    FrequencyFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
@@ -70,67 +69,6 @@ class TestPodcastAdmin:
         PodcastFactory(active=False)
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_parse_podcast_feed.assert_not_called()
-
-
-class TestFrequencyFitler:
-    def test_none(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=3))
-        podcast = PodcastFactory(frequency=None)
-        f = FrequencyFilter(req, {"frequency": "none"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_hourly(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=3))
-        podcast = PodcastFactory(frequency=timedelta(hours=3))
-        f = FrequencyFilter(req, {"frequency": "hourly"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_daily(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=3))
-        PodcastFactory(frequency=timedelta(hours=3))
-        podcast = PodcastFactory(frequency=timedelta(days=1))
-        f = FrequencyFilter(req, {"frequency": "daily"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_weekly(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=1))
-        PodcastFactory(frequency=timedelta(days=12))
-        podcast = PodcastFactory(frequency=timedelta(days=6))
-        f = FrequencyFilter(req, {"frequency": "weekly"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_fortnightly(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=1))
-        PodcastFactory(frequency=timedelta(days=30))
-        podcast = PodcastFactory(frequency=timedelta(days=12))
-        f = FrequencyFilter(req, {"frequency": "fortnightly"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_monthly(self, db, admin, req):
-        PodcastFactory(frequency=timedelta(days=20))
-        podcast = PodcastFactory(frequency=timedelta(days=30))
-        f = FrequencyFilter(req, {"frequency": "monthly"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert podcast in qs
-
-    def test_all(self, db, admin, req):
-        PodcastFactory(frequency=None)
-        PodcastFactory(frequency=timedelta(days=20))
-        PodcastFactory(frequency=timedelta(days=30))
-        f = FrequencyFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
 
 
 class TestResultFilter:
