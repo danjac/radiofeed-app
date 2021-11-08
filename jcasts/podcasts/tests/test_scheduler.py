@@ -39,7 +39,7 @@ class TestSchedule:
     def test_scheduled_lt_now(self):
         now = timezone.now()
         scheduled = scheduler.schedule(now - timedelta(days=8), timedelta(days=7))
-        assert_hours(scheduled - now, 24)
+        assert_hours(scheduled - now, 7 * 24)
 
     def test_scheduled_lt_now_gt_30_days(self):
         now = timezone.now()

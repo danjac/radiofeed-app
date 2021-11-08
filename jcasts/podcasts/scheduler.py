@@ -34,10 +34,11 @@ def schedule(
         return None
 
     now = timezone.now()
+
     if (scheduled := pub_date + frequency) > now:
         return scheduled
 
-    return now + (now - pub_date - frequency)
+    return now + frequency
 
 
 @within_bounds
