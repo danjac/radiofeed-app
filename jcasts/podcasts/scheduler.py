@@ -38,7 +38,7 @@ def schedule(
     if (scheduled := pub_date + frequency) > now:
         return scheduled
 
-    return now + frequency
+    return now + (now - pub_date - frequency)
 
 
 @within_bounds
