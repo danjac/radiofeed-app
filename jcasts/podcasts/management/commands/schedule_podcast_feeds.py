@@ -27,7 +27,7 @@ class Command(BaseCommand):
             )
 
             podcast.frequency = scheduler.get_frequency(pub_dates)
-            podcast.scheduled = scheduler.reschedule(podcast)
+            podcast.scheduled = scheduler.schedule(podcast.pub_date, podcast.frequency)
             podcast.queued = None
 
             for_update.append(podcast)

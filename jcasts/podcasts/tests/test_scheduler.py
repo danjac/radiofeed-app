@@ -5,7 +5,6 @@ import pytest
 from django.utils import timezone
 
 from jcasts.podcasts import scheduler
-from jcasts.podcasts.models import Podcast
 
 
 def assert_hours(delta, hours):
@@ -13,70 +12,42 @@ def assert_hours(delta, hours):
 
 
 class TestReschedule:
-    def test_freq_is_none(self):
-        podcast = Podcast(frequency=None)
-        assert scheduler.reschedule(podcast) is None
+    def test_scheduled_is_none(self):
+        assert scheduler.reschedule(None, timedelta(days=1)) is None
 
+    def test_frequency_is_none(self):
+        assert scheduler.reschedule(timezone.now(), None) is None
+
+    def test_reschedule(self):
+        now = timezone.now()
+        scheduled = scheduler.reschedule(now, timedelta(days=7))
+        assert_hours(scheduled - now, 8.4)
+
+
+class TestSchedule:
     def test_pub_date_none(self):
-        podcast = Podcast(frequency=timedelta(days=1))
-        assert_hours(scheduler.reschedule(podcast) - timezone.now(), 24)
+        assert scheduler.schedule(None, timedelta(days=7)) is None
 
-    def test_freq_as_arg(self):
-        podcast = Podcast(frequency=None)
-        assert_hours(
-            scheduler.reschedule(podcast, timedelta(days=1)) - timezone.now(), 24
-        )
+    def test_frequency_none(self):
+        assert scheduler.schedule(timezone.now(), None) is None
 
-    def test_pub_date_gt_now(self):
+    def test_scheduled_gt_now(self):
         now = timezone.now()
-        podcast = Podcast(
-            frequency=timedelta(days=1),
-            pub_date=now - timedelta(hours=12),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 12)
+        scheduled = scheduler.schedule(now, timedelta(days=7))
+        assert_hours(scheduled - now, 7 * 24)
 
-    def test_pub_date_lt_now(self):
+    def test_scheduled_lt_now(self):
         now = timezone.now()
-        podcast = Podcast(
-            frequency=timedelta(days=1),
-            pub_date=now - timedelta(days=12),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 24)
+        scheduled = scheduler.schedule(now - timedelta(days=8), timedelta(days=7))
+        assert_hours(scheduled - now, 24)
 
-    def test_pub_date_lt_now_max_value(self):
+    def test_scheduled_lt_now_gt_30_days(self):
         now = timezone.now()
-        podcast = Podcast(
-            frequency=timedelta(days=30),
-            pub_date=now - timedelta(days=90),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 30 * 24)
-
-    def test_gt_max_value(self):
-        now = timezone.now()
-        podcast = Podcast(
-            frequency=timedelta(days=99),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 24 * 30)
-
-    def test_lt_min_value(self):
-        now = timezone.now()
-        podcast = Podcast(
-            frequency=timedelta(seconds=5),
-        )
-        assert_hours(scheduler.reschedule(podcast) - now, 3)
+        scheduled = scheduler.schedule(now - timedelta(days=90), timedelta(days=30))
+        assert_hours(scheduled - now, 30 * 24)
 
 
-class TestIncrement:
-    def test_increment(self):
-        freq = timedelta(hours=24)
-
-        assert_hours(scheduler.increment(freq), 28.8)
-
-    def test_is_none(self):
-        assert scheduler.increment(None).days == 1
-
-
-class TestCalcFrequency:
+class TestGetFrequency:
     def test_no_pub_dates(self):
         assert scheduler.get_frequency([]).days == 1
 
