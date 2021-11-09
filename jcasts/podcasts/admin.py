@@ -221,8 +221,14 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             self.message_user(request, "Podcast has already been queued for update")
             return
 
+        if not obj.active:
+            self.message_user(request, "Podcast is inactive")
+            return
+
         obj.queued = timezone.now()
-        obj.save(update_fields=["queued"])
+
+        obj.save(update_fields=["queued", "active"])
+
         feed_parser.parse_podcast_feed.delay(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
