@@ -33,17 +33,11 @@ def schedule(
 
     now = timezone.now()
 
-    scheduled = min(
-        [
-            value
-            for value in (
-                pub_date + frequency,
-                now + frequency,
-                now + (now - pub_date - frequency),
-            )
-            if value > now
-        ]
-    )
+    if (scheduled := pub_date + frequency) < now:
+        # if scheduled before current time:
+        # take diff between current time and scheduled time
+        # and half the distance
+        scheduled = now + timedelta(seconds=(now - scheduled).total_seconds() * 0.5)
 
     return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
 
