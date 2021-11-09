@@ -26,25 +26,19 @@ class TestSchedule:
     def test_frequency_none(self):
         assert scheduler.schedule(timezone.now(), None) is None
 
-    def test_scheduled_gt_now(self):
+    @pytest.mark.parametrize(
+        "pub_date,frequency,hours_diff",
+        [
+            (timedelta(seconds=0), timedelta(days=7), 7 * 24),
+            (timedelta(days=8), timedelta(days=7), 24),
+            (timedelta(days=30), timedelta(days=20), 10 * 24),
+            (timedelta(days=90), timedelta(days=30), 30 * 24),
+        ],
+    )
+    def test_schedule(self, pub_date, frequency, hours_diff):
         now = timezone.now()
-        scheduled = scheduler.schedule(now, timedelta(days=7))
-        assert_hours(scheduled - now, 7 * 24)
-
-    def test_scheduled_lt_now(self):
-        now = timezone.now()
-        scheduled = scheduler.schedule(now - timedelta(days=8), timedelta(days=7))
-        assert_hours(scheduled - now, 24)
-
-    def test_scheduled_lt_now_gt_20_days(self):
-        now = timezone.now()
-        scheduled = scheduler.schedule(now - timedelta(days=30), timedelta(days=20))
-        assert_hours(scheduled - now, 10 * 24)
-
-    def test_scheduled_lt_now_gt_30_days(self):
-        now = timezone.now()
-        scheduled = scheduler.schedule(now - timedelta(days=90), timedelta(days=30))
-        assert_hours(scheduled - now, 30 * 24)
+        scheduled = scheduler.schedule(now - pub_date, frequency)
+        assert_hours(scheduled - now, hours_diff)
 
 
 class TestGetFrequency:
