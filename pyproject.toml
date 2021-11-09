@@ -44,6 +44,7 @@ Markdown = "^3.3.4"
 attrs = "^21.2.0"
 django-recaptcha = "^2.0.6"
 rq-scheduler = "^0.11.0"
+django-object-actions = "^3.0.2"
 
 [tool.poetry.dev-dependencies]
 coverage = "^5.5"

@@ -4,6 +4,8 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.utils import timezone
+from django_object_actions import DjangoObjectActions
 
 from jcasts.podcasts import feed_parser, models
 
@@ -138,7 +140,7 @@ class ActiveFilter(admin.SimpleListFilter):
 
 
 @admin.register(models.Podcast)
-class PodcastAdmin(admin.ModelAdmin):
+class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         FollowedFilter,
@@ -184,6 +186,8 @@ class PodcastAdmin(admin.ModelAdmin):
         "reactivate_podcast_feeds",
     )
 
+    change_actions = ("parse_podcast_feed",)
+
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
@@ -199,14 +203,25 @@ class PodcastAdmin(admin.ModelAdmin):
 
         num_feeds = queryset.count()
 
+        queryset.update(queued=timezone.now())
+
         for podcast in queryset.iterator():
             feed_parser.parse_podcast_feed.delay(podcast.id)
 
         self.message_user(
             request,
-            f"{num_feeds} podcast(s) scheduled for update",
+            f"{num_feeds} podcast(s) queued for update",
             messages.SUCCESS,
         )
+
+    def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
+        obj.queued = timezone.now()
+        obj.save(update_fields=["queued"])
+        feed_parser.parse_podcast_feed.delay(obj.id)
+        self.message_user(request, "Podcast has been queued for update")
+
+    parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
+    parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
 
     def source(self, obj: models.Podcast) -> str:
         return obj.get_domain()

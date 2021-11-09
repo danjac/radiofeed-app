@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     "django_htmx",
     "widget_tweaks",
     "django_rq",
+    "django_object_actions",
 ] + LOCAL_APPS
 
 MIDDLEWARE = [

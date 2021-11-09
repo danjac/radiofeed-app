@@ -62,6 +62,12 @@ class TestPodcastAdmin:
     def test_parse_podcast_feeds(self, podcast, admin, req, mock_parse_podcast_feed):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert Podcast.objects.filter(queued__isnull=False).count() == 1
+
+    def test_parse_podcast_feed(self, podcast, admin, req, mock_parse_podcast_feed):
+        admin.parse_podcast_feed(req, podcast)
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
     def test_parse_podcast_feeds_inactive(
         self, podcast, admin, req, mock_parse_podcast_feed
