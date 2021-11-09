@@ -37,7 +37,7 @@ def schedule(
         # if scheduled before current time:
         # take diff between current time and scheduled time
         # and half the distance
-        scheduled = now + timedelta(seconds=(now - scheduled).total_seconds() * 0.5)
+        scheduled = now + increment(now - scheduled, 0.5)
 
     return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
 
