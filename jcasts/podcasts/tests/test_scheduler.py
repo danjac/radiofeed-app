@@ -30,7 +30,10 @@ class TestSchedule:
         "pub_date,frequency,hours_diff",
         [
             (timedelta(seconds=0), timedelta(days=7), 7 * 24),
+            (timedelta(seconds=0), timedelta(hours=1), 3),
+            (timedelta(hours=12), timedelta(hours=6), 6),
             (timedelta(days=8), timedelta(days=7), 24),
+            (timedelta(days=14), timedelta(days=7), 7 * 24),
             (timedelta(days=30), timedelta(days=20), 10 * 24),
             (timedelta(days=90), timedelta(days=30), 30 * 24),
         ],
