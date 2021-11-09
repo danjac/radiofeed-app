@@ -16,7 +16,7 @@ class TestIncrement:
         assert_hours(scheduler.increment(timedelta(hours=24)), 28.8)
 
     def test_none(self):
-        assert scheduler.increment(None) is None
+        assert scheduler.increment(None).days == 1
 
 
 class TestSchedule:

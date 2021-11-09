@@ -43,10 +43,10 @@ def schedule(
 
 
 @within_bounds
-def increment(frequency: timedelta | None, increment: float = 1.2) -> timedelta | None:
+def increment(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
 
     if frequency is None:
-        return None
+        return DEFAULT_FREQUENCY
 
     return timedelta(seconds=frequency.total_seconds() * increment)
 
