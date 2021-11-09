@@ -11,17 +11,12 @@ def assert_hours(delta, hours):
     assert delta.total_seconds() / 3600 == pytest.approx(hours)
 
 
-class TestReschedule:
-    def test_scheduled_is_none(self):
-        assert scheduler.reschedule(None, timedelta(days=1)) is None
+class TestIncrement:
+    def test_not_none(self):
+        assert_hours(scheduler.increment(timedelta(hours=24)), 28.8)
 
-    def test_frequency_is_none(self):
-        assert scheduler.reschedule(timezone.now(), None) is None
-
-    def test_reschedule(self):
-        now = timezone.now()
-        scheduled = scheduler.reschedule(now, timedelta(days=7))
-        assert_hours(scheduled - now, 8.4)
+    def test_none(self):
+        assert scheduler.increment(None) is None
 
 
 class TestSchedule:

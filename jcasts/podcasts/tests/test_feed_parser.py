@@ -55,11 +55,10 @@ class BadMockResponse(MockResponse):
 
 class TestParsePubDates:
     def test_no_items(self, podcast):
-        pub_date, freq, scheduled = parse_pub_dates(podcast, [])
+        pub_date, freq = parse_pub_dates(podcast, [])
 
         assert pub_date == podcast.pub_date
-        assert freq.days == 7
-        assert (scheduled - timezone.now()).days == 0
+        assert freq.days == 8
 
     def test_new_pub_dates(self, podcast):
 
@@ -71,22 +70,20 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        pub_date, freq, scheduled = parse_pub_dates(podcast, items)
+        pub_date, freq = parse_pub_dates(podcast, items)
 
         assert pub_date == items[0].pub_date
         assert freq.days == 3
-        assert scheduled != podcast.scheduled
 
     def test_no_new_pub_dates(self, podcast):
         podcast = PodcastFactory(frequency=timedelta(days=7), scheduled=timezone.now())
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        pub_date, freq, scheduled = parse_pub_dates(podcast, items)
+        pub_date, freq = parse_pub_dates(podcast, items)
 
         assert pub_date == podcast.pub_date
-        assert freq.days == 7
-        assert scheduled > podcast.scheduled
+        assert freq.days == 8
 
 
 class TestIsFeedChanged:
