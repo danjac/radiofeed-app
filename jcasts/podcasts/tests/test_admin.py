@@ -69,6 +69,13 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_called_with(podcast.id)
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
+    def test_parse_podcast_feed_queued(
+        self, podcast, admin, req, mock_parse_podcast_feed
+    ):
+        podcast.queued = timezone.now()
+        admin.parse_podcast_feed(req, podcast)
+        mock_parse_podcast_feed.assert_not_called()
+
     def test_parse_podcast_feeds_inactive(
         self, podcast, admin, req, mock_parse_podcast_feed
     ):

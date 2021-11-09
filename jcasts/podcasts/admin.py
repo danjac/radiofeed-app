@@ -201,20 +201,26 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
             return
 
-        num_feeds = queryset.count()
+        podcast_ids = list(
+            queryset.filter(queued__isnull=True).values_list("pk", flat=True)
+        )
 
         queryset.update(queued=timezone.now())
 
-        for podcast in queryset.iterator():
-            feed_parser.parse_podcast_feed.delay(podcast.id)
+        for podcast_id in podcast_ids:
+            feed_parser.parse_podcast_feed.delay(podcast_id)
 
         self.message_user(
             request,
-            f"{num_feeds} podcast(s) queued for update",
+            f"{len(podcast_ids)} podcast(s) queued for update",
             messages.SUCCESS,
         )
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
+        if obj.queued:
+            self.message_user(request, "Podcast has already been queued for update")
+            return
+
         obj.queued = timezone.now()
         obj.save(update_fields=["queued"])
         feed_parser.parse_podcast_feed.delay(obj.id)
