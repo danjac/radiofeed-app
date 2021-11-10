@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import functools
 import statistics
 
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Any
 
 from django.utils import timezone
 
@@ -13,50 +12,45 @@ MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
 
 
-def within_bounds(fn: Callable[..., timedelta | None]) -> Callable:
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        if (value := fn(*args, **kwargs)) is None:
-            return None
-        return min(max(value, MIN_FREQUENCY), MAX_FREQUENCY)
-
-    return wrapper
-
-
 def schedule(
-    pub_date: datetime | None, frequency: timedelta | None = None
+    pub_date: datetime | None, pub_dates: list[datetime], limit: int = 12
 ) -> datetime | None:
     """Return a new scheduled time."""
 
-    if pub_date is None or frequency is None:
+    if pub_date is None:
         return None
 
     now = timezone.now()
 
-    if frequency in (MIN_FREQUENCY, MAX_FREQUENCY):
-        return now + frequency
+    # new pub dates, recalculate frequency
+
+    frequency = get_frequency(pub_dates, limit)
 
     if (scheduled := pub_date + frequency) < now:
+        scheduled = now + frequency
 
-        # if scheduled before current time:
-        # take diff between current time and scheduled time
-        # and half the distance
-
-        scheduled = now + increment((now - scheduled), 0.5)
-
-    return max(min(scheduled, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
-
-
-@within_bounds
-def increment(frequency: timedelta | None, increment: float = 1.2) -> timedelta:
-
-    if frequency is None:
-        return DEFAULT_FREQUENCY
-
-    return timedelta(seconds=frequency.total_seconds() * increment)
+    return within_bounds(
+        scheduled,
+        now + MIN_FREQUENCY,
+        now + MAX_FREQUENCY,
+    )
 
 
-@within_bounds
+def reschedule(pub_date: datetime | None) -> datetime | None:
+    """Increment scheduled time if no new updates"""
+
+    if pub_date is None:
+        return None
+
+    now = timezone.now()
+
+    return within_bounds(
+        now + timedelta(seconds=(now - pub_date).total_seconds() * 0.5),
+        now + MIN_FREQUENCY,
+        now + MAX_FREQUENCY,
+    )
+
+
 def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     """Calculate the frequency based on avg interval between pub dates
     of individual episodes."""
@@ -70,10 +64,18 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
 
     # calculate average distance between dates
 
-    diffs: list[float] = []
+    intervals: list[float] = []
 
     for pub_date in pub_dates:
-        diffs.append((first - pub_date).total_seconds())
+        intervals.append((first - pub_date).total_seconds())
         first = pub_date
 
-    return timedelta(seconds=statistics.mean(diffs))
+    return within_bounds(
+        timedelta(seconds=statistics.mean(intervals)),
+        MIN_FREQUENCY,
+        MAX_FREQUENCY,
+    )
+
+
+def within_bounds(value: Any, min_value: Any, max_value: Any) -> Any:
+    return max(min(value, max_value), min_value)

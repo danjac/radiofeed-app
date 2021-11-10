@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -149,7 +149,6 @@ class Podcast(models.Model):
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # scheduling
-    frequency: timedelta | None = models.DurationField(null=True, blank=True)
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)

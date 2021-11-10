@@ -8,42 +8,44 @@ from jcasts.podcasts import scheduler
 
 
 def assert_hours(delta, hours):
-    assert delta.total_seconds() / 3600 == pytest.approx(hours)
+    assert delta.total_seconds() / 3600 == pytest.approx(hours, 1.0)
 
 
-class TestIncrement:
+class TestReschedule:
     def test_not_none(self):
-        assert_hours(scheduler.increment(timedelta(hours=24)), 28.8)
+        now = timezone.now()
+        assert_hours(scheduler.reschedule(now - timedelta(hours=24)) - now, 12)
+
+    def test_max_value(self):
+        now = timezone.now()
+        assert_hours(scheduler.reschedule(now - timedelta(days=60)) - now, 30 * 24)
 
     def test_none(self):
-        assert scheduler.increment(None).days == 1
+        assert scheduler.reschedule(None) is None
 
 
 class TestSchedule:
     def test_pub_date_none(self):
-        assert scheduler.schedule(None, timedelta(days=7)) is None
+        assert scheduler.schedule(None, []) is None
 
-    def test_frequency_none(self):
-        assert scheduler.schedule(timezone.now(), None) is None
-
-    @pytest.mark.parametrize(
-        "pub_date,frequency,hours_diff",
-        [
-            (timedelta(seconds=0), timedelta(days=7), 7 * 24),
-            (timedelta(seconds=0), timedelta(hours=1), 3),
-            (timedelta(hours=12), timedelta(hours=3), 3),
-            (timedelta(hours=12), timedelta(hours=6), 3),
-            (timedelta(days=8), timedelta(days=7), 12),
-            (timedelta(days=14), timedelta(days=7), 3.5 * 24),
-            (timedelta(days=30), timedelta(days=20), 5 * 24),
-            (timedelta(days=31), timedelta(days=30), 30 * 24),
-            (timedelta(days=90), timedelta(days=30), 30 * 24),
-        ],
-    )
-    def test_schedule(self, pub_date, frequency, hours_diff):
+    def test_no_pub_dates(self):
         now = timezone.now()
-        scheduled = scheduler.schedule(now - pub_date, frequency)
-        assert_hours(scheduled - now, hours_diff)
+        assert_hours(scheduler.schedule(now, []) - now, 24)
+
+    def test_pub_dates(self):
+        now = timezone.now()
+        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
+        assert_hours(scheduler.schedule(now, dates) - now, 24 * 3)
+
+    def test_max_value(self):
+        now = timezone.now()
+        dates = [now - timedelta(days=33 * i) for i in range(1, 6)]
+        assert_hours(scheduler.schedule(now, dates) - now, 24 * 30)
+
+    def test_min_value(self):
+        now = timezone.now()
+        dates = [now - timedelta(hours=1 * i) for i in range(1, 6)]
+        assert_hours(scheduler.schedule(now, dates) - now, 3)
 
 
 class TestGetFrequency:

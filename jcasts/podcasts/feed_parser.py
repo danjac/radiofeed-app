@@ -198,8 +198,7 @@ def parse_success(
 
     # scheduling
 
-    podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, items)
-    podcast.scheduled = scheduler.schedule(podcast.pub_date, podcast.frequency)
+    podcast.pub_date, podcast.scheduled = parse_pub_dates(podcast, items)
 
     # content
 
@@ -242,14 +241,14 @@ def parse_success(
 
 def parse_pub_dates(
     podcast: Podcast, items: list[rss_parser.Item]
-) -> tuple[datetime | None, timedelta | None]:
+) -> tuple[datetime | None, datetime | None]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return latest, scheduler.get_frequency(pub_dates)
+        return latest, scheduler.schedule(latest, pub_dates)
 
-    return podcast.pub_date, scheduler.increment(podcast.frequency)
+    return podcast.pub_date, scheduler.reschedule(podcast.pub_date)
 
 
 def parse_episodes(
@@ -356,12 +355,10 @@ def parse_failure(
 ) -> ParseResult:
 
     now = timezone.now()
-    frequency = scheduler.increment(podcast.frequency) if active else None
 
     Podcast.objects.filter(pk=podcast.id).update(
-        frequency=frequency,
-        scheduled=scheduler.schedule(podcast.pub_date, frequency),
         active=active,
+        scheduled=scheduler.reschedule(podcast.pub_date) if active else None,
         updated=now,
         parsed=now,
         result=result,

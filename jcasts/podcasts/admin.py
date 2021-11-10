@@ -170,7 +170,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         "parsed",
         "queued",
-        "frequency",
         "scheduled",
         "last_build_date",
         "modified",
