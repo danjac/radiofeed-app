@@ -246,8 +246,8 @@ def parse_pub_dates(
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
-    if pub_dates and (new_pub_date := max(pub_dates)) != podcast.pub_date:
-        return new_pub_date, scheduler.get_frequency(pub_dates)
+    if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
+        return latest, scheduler.get_frequency(pub_dates)
 
     return podcast.pub_date, scheduler.increment(podcast.frequency)
 
