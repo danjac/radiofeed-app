@@ -33,7 +33,7 @@ should be 1 day hence.
 On "miss" - i.e. there are no new episodes - we calculate the distance between the
 current time and the last known release date, and multiply this amount by a modifier
 (between 0.05 and 1). The result is added to the current date. The modifier is
-incremented by 1.2, up to a max of 1.
+incremented by 1.2, up to a max of 1. The result should be no more than 30d from now.
 
 For example, current date is 7 nov. Our last release date was 7 days ago. Our next
 scheduled time is now + (7 days * 0.05) or approx 8.4 hours hence. If that time is
@@ -54,12 +54,12 @@ def schedule(
 
     now = timezone.now()
 
-    # new pub dates, recalculate frequency
-
     frequency = get_frequency(pub_dates, limit)
 
     if (scheduled := pub_date + frequency) < now:
-        # calculate the difference
+
+        # add the difference between the scheduled time
+        # and current time to the current time
         scheduled = now + (now - scheduled)
 
     return (
@@ -98,23 +98,23 @@ def reschedule(
 
 
 def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
-    """Calculate the frequency based on avg interval between pub dates
+    """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
+
+    # assume default if not enough available dates
 
     if not pub_dates:
         return DEFAULT_FREQUENCY
 
-    # assume default if not enough available dates
+    latest, *pub_dates = sorted([timezone.now()] + pub_dates, reverse=True)[:limit]
 
-    first, *pub_dates = sorted([timezone.now()] + pub_dates, reverse=True)[:limit]
-
-    # calculate average distance between dates
+    # calculate mean interval between dates
 
     intervals: list[float] = []
 
     for pub_date in pub_dates:
-        intervals.append((first - pub_date).total_seconds())
-        first = pub_date
+        intervals.append((latest - pub_date).total_seconds())
+        latest = pub_date
 
     return within_bounds(
         timedelta(seconds=statistics.mean(intervals)),
