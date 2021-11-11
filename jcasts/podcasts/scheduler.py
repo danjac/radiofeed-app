@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import statistics
 
-from abc import abstractmethod
 from datetime import datetime, timedelta
-from typing import Any, Protocol, TypeVar
 
 from django.utils import timezone
+
+from jcasts.shared.typedefs import ComparableT
 
 DEFAULT_MODIFIER = 0.05
 DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
+
 
 """
 Scheduling algorithm:
@@ -44,8 +45,6 @@ scheduled time is now + (7 days * 0.05) or approx 8.4 hours hence. If that time 
 also missed, our next scheduled time will be calculated with a modifier of 0.06,
 and so on, up to the max value of 30d.
 """
-
-C = TypeVar("C", bound="Comparable")
 
 
 def schedule(
@@ -127,27 +126,7 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     )
 
 
-def within_bounds(value: C, min_value: C, max_value: C) -> C:
+def within_bounds(
+    value: ComparableT, min_value: ComparableT, max_value: ComparableT
+) -> ComparableT:
     return max(min(value, max_value), min_value)
-
-
-class Comparable(Protocol):
-    @abstractmethod
-    def __eq__(self, other: Any) -> bool:
-        ...
-
-    @abstractmethod
-    def __lt__(self: C, other: C) -> bool:
-        ...
-
-    @abstractmethod
-    def __gt__(self: C, other: C) -> bool:
-        ...
-
-    @abstractmethod
-    def __le__(self: C, other: C) -> bool:
-        ...
-
-    @abstractmethod
-    def __ge__(self: C, other: C) -> bool:
-        ...
