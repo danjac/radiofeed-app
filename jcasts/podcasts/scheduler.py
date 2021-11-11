@@ -3,7 +3,7 @@ from __future__ import annotations
 import statistics
 
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Protocol, TypeVar
 
 from django.utils import timezone
 
@@ -44,6 +44,7 @@ also missed, our next scheduled time will be calculated with a modifier of 0.06,
 and so on, up to the max value of 30d.
 """
 
+C = TypeVar("C", bound="Comparable")
 
 def schedule(
     pub_date: datetime | None,
@@ -124,5 +125,27 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     )
 
 
-def within_bounds(value: Any, min_value: Any, max_value: Any) -> Any:
+def within_bounds(value: C, min_value: C, max_value: C) -> C:
     return max(min(value, max_value), min_value)
+
+
+class Comparable(Protocol):
+   @abstractmethod
+   def __eq__(self, other: Any) -> bool:
+       ...
+
+   @abstractmethod
+   def __lt__(self: C, other: C) -> bool:
+       ...
+
+   @abstractmethod
+   def __gt__(self: C, other: C) -> bool:
+       ...
+
+   @abstractmethod
+   def __le__(self: C, other: C) -> bool:
+       ...
+
+   @abstractmethod
+   def __ge__(self: C, other: C) -> bool:
+       ...
