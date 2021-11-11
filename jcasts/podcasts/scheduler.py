@@ -57,9 +57,7 @@ def schedule(
 
     now = timezone.now()
 
-    frequency = get_frequency(pub_dates, limit)
-
-    if (scheduled := pub_date + frequency) < now:
+    if (scheduled := pub_date + get_frequency(pub_dates, limit)) < now:
 
         # add the difference between the scheduled time
         # and current time to the current time
