@@ -20,8 +20,11 @@ Scheduling time + modifier should be (re)calculated on every feed pull.
 On every "hit" - i.e. we have new episodes - calculate the mean interval
 between each episode release date (including the current time). Add this interval
 to the latest release date. If the result is less than the current time,
-and the interval to the current time. The result should fall within the
-min (3 hrs) and max (30d) values.
+add the difference between the current time and the estimated time to the current time.
+
+The result should always fall within the min (3 hrs) and max (30d) values, i.e. we
+should not pull a feed more than once every 3 hours, and we should pull all feeds
+at least once a month.
 
 For example: current date is 7 nov. Last release date is 4 nov. Mean interval
 is 7 days. The next scheduled time is in 4 days.
