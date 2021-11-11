@@ -14,38 +14,65 @@ def assert_hours(delta, hours):
 class TestReschedule:
     def test_not_none(self):
         now = timezone.now()
-        assert_hours(scheduler.reschedule(now - timedelta(hours=24)) - now, 12)
+        scheduled, modifier = scheduler.reschedule(
+            now - timedelta(hours=24),
+            scheduler.DEFAULT_MODIFIER,
+        )
+        assert modifier == 0.06
+        assert_hours(scheduled - now, 8.4)
 
-    def test_max_value(self):
+    def test_max_scheduled(self):
         now = timezone.now()
-        assert_hours(scheduler.reschedule(now - timedelta(days=60)) - now, 30 * 24)
+        scheduled, modifier = scheduler.reschedule(
+            now - timedelta(days=60),
+            scheduler.DEFAULT_MODIFIER,
+        )
+        assert modifier == 0.06
+        assert_hours(scheduled - now, 30 * 24)
+
+    def test_max_schedule_modifier(self):
+        now = timezone.now()
+        scheduled, modifier = scheduler.reschedule(
+            now - timedelta(days=60),
+            1.0,
+        )
+        assert modifier == 1.0
+        assert_hours(scheduled - now, 30 * 24)
 
     def test_none(self):
-        assert scheduler.reschedule(None) is None
+        assert scheduler.reschedule(None, scheduler.DEFAULT_MODIFIER) == (None, None)
 
 
 class TestSchedule:
     def test_pub_date_none(self):
-        assert scheduler.schedule(None, []) is None
+        assert scheduler.schedule(None, []) == (None, None)
 
     def test_no_pub_dates(self):
         now = timezone.now()
-        assert_hours(scheduler.schedule(now, []) - now, 24)
+        scheduled, modifier = scheduler.schedule(now, [])
+        assert_hours(scheduled - now, 24)
+        assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_pub_dates(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        assert_hours(scheduler.schedule(now, dates) - now, 24 * 3)
+        scheduled, modifier = scheduler.schedule(now, dates)
+        assert_hours(scheduled - now, 24 * 3)
+        assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_max_value(self):
         now = timezone.now()
         dates = [now - timedelta(days=33 * i) for i in range(1, 6)]
-        assert_hours(scheduler.schedule(now, dates) - now, 24 * 30)
+        scheduled, modifier = scheduler.schedule(now, dates)
+        assert_hours(scheduled - now, 24 * 30)
+        assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_min_value(self):
         now = timezone.now()
         dates = [now - timedelta(hours=1 * i) for i in range(1, 6)]
-        assert_hours(scheduler.schedule(now, dates) - now, 3)
+        scheduled, modifier = scheduler.schedule(now, dates)
+        assert_hours(scheduled - now, 3)
+        assert modifier == scheduler.DEFAULT_MODIFIER
 
 
 class TestGetFrequency:

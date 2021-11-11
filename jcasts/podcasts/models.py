@@ -150,6 +150,7 @@ class Podcast(models.Model):
 
     # scheduling
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
+    schedule_modifier: float | None = models.FloatField(null=True, blank=True)
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 

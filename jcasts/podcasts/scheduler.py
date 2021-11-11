@@ -7,6 +7,7 @@ from typing import Any
 
 from django.utils import timezone
 
+DEFAULT_MODIFIER = 0.05
 DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
@@ -14,11 +15,11 @@ MAX_FREQUENCY = timedelta(days=30)
 
 def schedule(
     pub_date: datetime | None, pub_dates: list[datetime], limit: int = 12
-) -> datetime | None:
-    """Return a new scheduled time."""
+) -> tuple[datetime | None, float | None]:
+    """Return a new scheduled time and modifier."""
 
     if pub_date is None:
-        return None
+        return None, None
 
     now = timezone.now()
 
@@ -29,25 +30,38 @@ def schedule(
     if (scheduled := pub_date + frequency) < now:
         scheduled = now + frequency
 
-    return within_bounds(
-        scheduled,
-        now + MIN_FREQUENCY,
-        now + MAX_FREQUENCY,
+    return (
+        within_bounds(
+            scheduled,
+            now + MIN_FREQUENCY,
+            now + MAX_FREQUENCY,
+        ),
+        DEFAULT_MODIFIER,
     )
 
 
-def reschedule(pub_date: datetime | None) -> datetime | None:
-    """Increment scheduled time if no new updates"""
+def reschedule(
+    pub_date: datetime | None,
+    modifier: float | None,
+) -> tuple[datetime | None, float | None]:
+    """Increment scheduled time if no new updates
+    and increment the schedule modifier.
+    """
 
     if pub_date is None:
-        return None
+        return None, None
 
     now = timezone.now()
 
-    return within_bounds(
-        now + timedelta(seconds=(now - pub_date).total_seconds() * 0.5),
-        now + MIN_FREQUENCY,
-        now + MAX_FREQUENCY,
+    modifier = modifier or DEFAULT_MODIFIER
+
+    return (
+        within_bounds(
+            now + timedelta(seconds=(now - pub_date).total_seconds() * modifier),
+            now + MIN_FREQUENCY,
+            now + MAX_FREQUENCY,
+        ),
+        within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
     )
 
 

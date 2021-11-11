@@ -27,6 +27,7 @@ from jcasts.podcasts.feed_parser import (
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
+from jcasts.podcasts.scheduler import DEFAULT_MODIFIER
 
 
 class MockResponse:
@@ -55,10 +56,11 @@ class BadMockResponse(MockResponse):
 
 class TestParsePubDates:
     def test_no_items(self, podcast):
-        pub_date, scheduled = parse_pub_dates(podcast, [])
+        pub_date, scheduled, modifier = parse_pub_dates(podcast, [])
 
         assert pub_date == podcast.pub_date
         assert scheduled
+        assert modifier > DEFAULT_MODIFIER
 
     def test_new_pub_dates(self, podcast):
 
@@ -70,20 +72,22 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        pub_date, scheduled = parse_pub_dates(podcast, items)
+        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
 
         assert pub_date == items[0].pub_date
         assert scheduled
+        assert modifier == DEFAULT_MODIFIER
 
     def test_no_new_pub_dates(self, podcast):
-        podcast = PodcastFactory(frequency=timedelta(days=7), scheduled=timezone.now())
+        podcast = PodcastFactory(scheduled=timezone.now())
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        pub_date, scheduled = parse_pub_dates(podcast, items)
+        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
 
         assert pub_date == podcast.pub_date
         assert scheduled
+        assert modifier > DEFAULT_MODIFIER
 
 
 class TestIsFeedChanged:
@@ -203,7 +207,7 @@ class TestParsePodcastFeed:
             pub_date=now,
             queued=now,
             scheduled=now,
-            frequency=timedelta(days=1),
+            schedule_modifier=DEFAULT_MODIFIER,
         )
 
     @pytest.fixture
@@ -227,49 +231,6 @@ class TestParsePodcastFeed:
             pathlib.Path(__file__).parent / "mocks" / (filename or self.mock_file),
             "rb",
         ).read()
-
-    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-            ),
-        )
-
-        result = parse_podcast_feed(new_podcast.id)
-        assert not result
-        with pytest.raises(ValueError):
-            result.raise_exception()
-
-        new_podcast.refresh_from_db()
-        assert not new_podcast.active
-        assert new_podcast.parsed
-        assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert new_podcast.result == Podcast.Result.INVALID_RSS
-
-    def test_parse_empty_feed(self, mocker, new_podcast, categories):
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content("rss_empty_mock.xml"),
-            ),
-        )
-
-        result = parse_podcast_feed(new_podcast.id)
-        assert not result
-        with pytest.raises(ValueError):
-            result.raise_exception()
-
-        new_podcast.refresh_from_db()
-        assert not new_podcast.active
-        assert new_podcast.parsed
-        assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_podcast_not_found(self, db):
         result = parse_podcast_feed(1234)
@@ -322,8 +283,8 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.day == 1
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
-        assert new_podcast.frequency
         assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier == DEFAULT_MODIFIER
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 
@@ -441,6 +402,7 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier == DEFAULT_MODIFIER
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -469,7 +431,53 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
+
+    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=self.get_rss_content("rss_no_podcasts_mock.xml"),
+            ),
+        )
+
+        result = parse_podcast_feed(new_podcast.id)
+        assert not result
+        with pytest.raises(ValueError):
+            result.raise_exception()
+
+        new_podcast.refresh_from_db()
+        assert not new_podcast.active
+        assert new_podcast.parsed
+        assert not new_podcast.queued
+        assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
+        assert new_podcast.result == Podcast.Result.INVALID_RSS
+
+    def test_parse_empty_feed(self, mocker, new_podcast, categories):
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=self.get_rss_content("rss_empty_mock.xml"),
+            ),
+        )
+
+        result = parse_podcast_feed(new_podcast.id)
+        assert not result
+        with pytest.raises(ValueError):
+            result.raise_exception()
+
+        new_podcast.refresh_from_db()
+        assert not new_podcast.active
+        assert new_podcast.parsed
+        assert not new_podcast.queued
+        assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
+        assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
@@ -486,6 +494,7 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier > DEFAULT_MODIFIER
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
@@ -503,6 +512,7 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
@@ -523,6 +533,7 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error(
@@ -545,4 +556,5 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
