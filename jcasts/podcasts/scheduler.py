@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import statistics
 
+from abc import abstractmethod
 from datetime import datetime, timedelta
-from typing import Protocol, TypeVar
+from typing import Any, Protocol, TypeVar
 
 from django.utils import timezone
 
@@ -45,6 +46,7 @@ and so on, up to the max value of 30d.
 """
 
 C = TypeVar("C", bound="Comparable")
+
 
 def schedule(
     pub_date: datetime | None,
@@ -130,22 +132,22 @@ def within_bounds(value: C, min_value: C, max_value: C) -> C:
 
 
 class Comparable(Protocol):
-   @abstractmethod
-   def __eq__(self, other: Any) -> bool:
-       ...
+    @abstractmethod
+    def __eq__(self, other: Any) -> bool:
+        ...
 
-   @abstractmethod
-   def __lt__(self: C, other: C) -> bool:
-       ...
+    @abstractmethod
+    def __lt__(self: C, other: C) -> bool:
+        ...
 
-   @abstractmethod
-   def __gt__(self: C, other: C) -> bool:
-       ...
+    @abstractmethod
+    def __gt__(self: C, other: C) -> bool:
+        ...
 
-   @abstractmethod
-   def __le__(self: C, other: C) -> bool:
-       ...
+    @abstractmethod
+    def __le__(self: C, other: C) -> bool:
+        ...
 
-   @abstractmethod
-   def __ge__(self: C, other: C) -> bool:
-       ...
+    @abstractmethod
+    def __ge__(self: C, other: C) -> bool:
+        ...
