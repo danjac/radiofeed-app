@@ -94,7 +94,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 pub_date__gt=episode.pub_date,
             )
             .exclude(pk=episode.id)
-            .order_by("pub_date", "id")
+            .order_by("pub_date")
             .first()
         )
 
@@ -106,7 +106,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 pub_date__lt=episode.pub_date,
             )
             .exclude(pk=episode.id)
-            .order_by("-pub_date", "-id")
+            .order_by("-pub_date")
             .first()
         )
 
