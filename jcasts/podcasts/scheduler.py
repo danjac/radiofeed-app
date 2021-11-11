@@ -12,9 +12,40 @@ DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
 
+"""
+Scheduling algorithm:
+
+Scheduling time + modifier should be (re)calculated on every feed pull.
+
+On every "hit" - i.e. we have new episodes - calculate the mean interval
+between each episode release date (including the current time). Add this interval
+to the latest release date. If the result is less than the current time,
+and the interval to the current time. The result should fall within the
+min (3 hrs) and max (30d) values.
+
+For example: current date is 7 nov. Last release date is 4 nov. Mean interval
+is 7 days. The next scheduled time is in 4 days.
+
+Another example: current date is 8 nov. Last release date is 31 oct. Mean interval
+is 7 days. 31 Oct + 7 days = 7th nov, so we are off by one day. Next scheduled time
+should be 1 day hence.
+
+On "miss" - i.e. there are no new episodes - we calculate the distance between the
+current time and the last known release date, and multiply this amount by a modifier
+(between 0.05 and 1). The result is added to the current date. The modifier is
+incremented by 1.2, up to a max of 1.
+
+For example, current date is 7 nov. Our last release date was 7 days ago. Our next
+scheduled time is now + (7 days * 0.05) or approx 8.4 hours hence. If that time is
+also missed, our next scheduled time will be calculated with a modifier of 0.06,
+and so on, up to the max value of 30d.
+"""
+
 
 def schedule(
-    pub_date: datetime | None, pub_dates: list[datetime], limit: int = 12
+    pub_date: datetime | None,
+    pub_dates: list[datetime],
+    limit: int = 12,
 ) -> tuple[datetime | None, float | None]:
     """Return a new scheduled time and modifier."""
 
@@ -28,7 +59,8 @@ def schedule(
     frequency = get_frequency(pub_dates, limit)
 
     if (scheduled := pub_date + frequency) < now:
-        scheduled = now + frequency
+        # calculate the difference
+        scheduled = now + (now - scheduled)
 
     return (
         within_bounds(
