@@ -1,34 +1,34 @@
 {% with ICON_CLASS="h-4 w-4 lg:h-5 lg:w-5" %}
-<div class="flex items-center space-x-3 {{ css_class|default:'' }}">
-  <a href="{{ share_urls.email }}"
-     target="_blank"
-     rel="noopener"
-     class="link focus:outline-none"
-     title="Share with email">
-    {% icon "mail" css_class=ICON_CLASS %}
-  </a>
+  <div class="flex items-center space-x-3 {{ css_class|default:'' }}">
+    <a href="{{ share_urls.email }}"
+      target="_blank"
+      rel="noopener"
+      class="link focus:outline-none"
+      title="Share with email">
+      {% icon "mail" css_class=ICON_CLASS %}
+    </a>
 
-  <a href="{{ share_urls.facebook }}"
-     title="Share on Facebook"
-     target="_blank"
-     rel="noopener"
-     class="link focus:outline-none">
-    {% icon "facebook" css_class=ICON_CLASS %}
-  </a>
+    <a href="{{ share_urls.facebook }}"
+      title="Share on Facebook"
+      target="_blank"
+      rel="noopener"
+      class="link focus:outline-none">
+      {% icon "facebook" css_class=ICON_CLASS %}
+    </a>
 
-  <a href="{{ share_urls.twitter }}"
-     target="_blank"
-     rel="noopener"
-     class="link focus:outline-none"
-     title="Share on Twitter">
-    {% icon "twitter" css_class=ICON_CLASS %}
-  </a>
-  <a href="{{ share_urls.linkedin }}"
-     target="_blank"
-     rel="noopener"
-     title="Share on Linkedin"
-     class="link focus:outline-none">
-    {% icon "linkedin" css_class=ICON_CLASS %}
-  </a>
-</div>
+    <a href="{{ share_urls.twitter }}"
+      target="_blank"
+      rel="noopener"
+      class="link focus:outline-none"
+      title="Share on Twitter">
+      {% icon "twitter" css_class=ICON_CLASS %}
+    </a>
+    <a href="{{ share_urls.linkedin }}"
+      target="_blank"
+      rel="noopener"
+      title="Share on Linkedin"
+      class="link focus:outline-none">
+      {% icon "linkedin" css_class=ICON_CLASS %}
+    </a>
+  </div>
 {% endwith %}

@@ -1,11 +1,11 @@
 {% extends "pagination/_object_list.html" %}
 {% block results %}
-{% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" %}
-{% empty %}
-{% if request.search %}
-<p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
-  No results found for <span class="font-bold">{{ request.search.value }}</span>. {% endif %}
-</p>
-{% endfor %}
+  {% for podcast in page_obj %}
+    {% include "podcasts/_podcast.html" %}
+  {% empty %}
+    {% if request.search %}
+      <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
+        No results found for <span class="font-bold">{{ request.search.value }}</span>. {% endif %}
+    </p>
+  {% endfor %}
 {% endblock results %}

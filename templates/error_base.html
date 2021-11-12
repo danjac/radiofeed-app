@@ -4,45 +4,45 @@
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 {% with site_name=request.site.name|default:"jCasts" %}
-<html lang="{{ language_code }}">
+  <html lang="{{ language_code }}">
 
-<head>
-  <title>{{ site_name }} | Error</title>
-  <meta charset="UTF-8">
-  <meta name="viewport"
+    <head>
+      <title>{{ site_name }} | Error</title>
+      <meta charset="UTF-8">
+      <meta name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  {% include "_static.html" %}
-</head>
+      {% include "_static.html" %}
+    </head>
 
-<body class="h-screen container-lg mx-auto antialiased dark:bg-black dark:text-white">
-  <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
-    <div class="flex items-center justify-between p-2">
+    <body class="h-screen container-lg mx-auto antialiased dark:bg-black dark:text-white">
+      <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-10 shadow">
+        <div class="flex items-center justify-between p-2">
 
-      <div class="flex items-center flex-shrink-0 mr-6">
+          <div class="flex items-center flex-shrink-0 mr-6">
 
-        <a href="/"
-           title="{{ site_name }}"
-           class="mr-2 lg:mr-4 inline-block">
-          <img src="{% static 'img/wave.png' %}"
-               height="32"
-               width="32"
-               class="h-6 w-6 lg:h-8 lg:w-8"
-               alt="{{ site_name }}">
-        </a>
+            <a href="/"
+              title="{{ site_name }}"
+              class="mr-2 lg:mr-4 inline-block">
+              <img src="{% static 'img/wave.png' %}"
+                height="32"
+                width="32"
+                class="h-6 w-6 lg:h-8 lg:w-8"
+                alt="{{ site_name }}">
+            </a>
 
-        <a class="font-bold text-base lg:text-lg font-mono"
-           title="{{ request.site.name }}"
-           href="/">{{ site_name }}</a>
+            <a class="font-bold text-base lg:text-lg font-mono"
+              title="{{ request.site.name }}"
+              href="/">{{ site_name }}</a>
+          </div>
+
+        </div>
+      </header>
+      <div class="mx-auto pt-12">
+        <div class="border dark:border-gray-500 mx-auto p-1 md:p-5 w-5/6 md:w-3/4 align-middle text-center">
+          {% block content %}{% endblock %}
+        </div>
       </div>
+    </body>
 
-    </div>
-  </header>
-  <div class="mx-auto pt-12">
-    <div class="border dark:border-gray-500 mx-auto p-1 md:p-5 w-5/6 md:w-3/4 align-middle text-center">
-      {% block content %}{% endblock %}
-    </div>
-  </div>
-</body>
-
-</html>
+  </html>
 {% endwith %}

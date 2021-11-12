@@ -3,14 +3,14 @@
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
-<div class="flex items-center space-x-3">
-  {% for provider in socialaccount_providers %}
-  <a class="inline-flex items-center btn btn-secondary"
-     hx-disable="true"
-     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
-    {% icon provider.id css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-    {{ provider.name }}
-  </a>
-  {% endfor %}
-</div>
+  <div class="flex items-center space-x-3">
+    {% for provider in socialaccount_providers %}
+      <a class="inline-flex items-center btn btn-secondary"
+        hx-disable="true"
+        href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+        {% icon provider.id css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+        {{ provider.name }}
+      </a>
+    {% endfor %}
+  </div>
 {% endif %}

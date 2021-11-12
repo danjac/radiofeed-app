@@ -3,32 +3,32 @@
 {% block subtitle %} | {{ promoted|yesno:"Popular,My" }} Podcasts {% endblock %}
 
 {% block content %}
-{% if has_follows %}
-{% url 'podcasts:index' as index_url %}
-<div class="sm:flex justify-between mb-3 lg:mb-6">
-  <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3 sm:mb-0">
-    {% if promoted %}
-    Popular Podcasts
-    {% else %}
-    My Podcasts
-    {% endif %}
-  </h1>
-  <div class="flex items-center justify-center sm:justify-start">
-    {% if promoted %}
-    <a href="{{ index_url }}"
-       class="link">My Podcasts</a>
-    {% else %}
-    <a href="{{ index_url }}?promoted=true"
-       class="link">Popular Podcasts</a>
-    {% endif %}
-  </div>
-</div>
-{% else %}
-<h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3">
-  Popular Podcasts
-</h1>
-{% endif %}
+  {% if has_follows %}
+    {% url 'podcasts:index' as index_url %}
+    <div class="sm:flex justify-between mb-3 lg:mb-6">
+      <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3 sm:mb-0">
+        {% if promoted %}
+          Popular Podcasts
+        {% else %}
+          My Podcasts
+        {% endif %}
+      </h1>
+      <div class="flex items-center justify-center sm:justify-start">
+        {% if promoted %}
+          <a href="{{ index_url }}"
+            class="link">My Podcasts</a>
+        {% else %}
+          <a href="{{ index_url }}?promoted=true"
+            class="link">Popular Podcasts</a>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-3">
+      Popular Podcasts
+    </h1>
+  {% endif %}
 
-{% include pagination_template %}
+  {% include pagination_template %}
 
 {% endblock content %}

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block header_tags %}
-{% block title_tag %}{{ block.super }}{% endblock %}
+  {% block title_tag %}{{ block.super }}{% endblock %}
 {% endblock header_tags %}
 {% block page_header %}
-{% include "_signup_cta.html" with hx_swap=True %}
+  {% include "_signup_cta.html" with hx_swap=True %}
 {% endblock %}
 {% block messages %}{% endblock %}
 {% block page_footer %}{% endblock %}
