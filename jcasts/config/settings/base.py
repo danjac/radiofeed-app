@@ -135,6 +135,7 @@ MIDDLEWARE = [
 ]
 
 FRESHNESS_THRESHOLD = timedelta(days=env.int("FRESHNESS_THRESHOLD_DAYS", default=90))
+WEBSUB_LEASE_TIMEOUT = timedelta(days=env.int("WEBSUB_LEASE_TIMEOUT", default=30))
 
 DEFAULT_PAGE_SIZE = 30
 
@@ -260,7 +261,6 @@ LOGGING = {
     },
 }
 
-# Project-specific
 
 CONTACT_DETAILS = {
     "email": env("CONTACT_EMAIL", default="admin@localhost"),

@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -14,7 +15,7 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import itunes
+from jcasts.podcasts import itunes, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -254,6 +255,25 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, follow=False)
+
+
+@require_http_methods(["GET", "POST"])
+def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
+
+    podcast = get_object_or_404(
+        Podcast,
+        active=True,
+        subscribe_status__in=(
+            Podcast.SUBSCRIBE_STATUS.Requested,
+            Podcast.SUBSCRIBE_STATUS.Subscribed,
+        ),
+        pk=podcast_id,
+    )
+
+    try:
+        return HttpResponse(websub.handle_callback(request, podcast))
+    except ValidationError as e:
+        raise Http404(str(e))
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:

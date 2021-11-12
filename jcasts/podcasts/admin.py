@@ -202,6 +202,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "http_status",
         "result",
         "exception",
+        "subscribed",
+        "subscribe_status",
+        "subscribe_requested",
+        "hub_exception",
     )
 
     actions = (
