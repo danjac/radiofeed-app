@@ -215,25 +215,21 @@ class TestQueuedFilter:
 class TestWebSubFilter:
     hub = "https://pubsubhubbub.appspot.com/"
 
-    def test_hub_filter_false(self, podcasts, admin, req):
-        hub = PodcastFactory(hub=self.hub)
-        f = WebSubFilter(req, {"websub": "no"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert hub not in qs
-
-    def test_hub_filter_true(self, podcasts, admin, req):
-        hub = PodcastFactory(hub=self.hub)
-        f = WebSubFilter(req, {"websub": "yes"}, Podcast, admin)
+    def test_filter_selected(self, podcasts, admin, req):
+        podcast = PodcastFactory(
+            subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
+        )
+        f = WebSubFilter(
+            req, {"websub": Podcast.SubscribeStatus.SUBSCRIBED}, Podcast, admin
+        )
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == hub
+        assert podcast in qs
 
-    def test_hub_filter_all(self, podcasts, admin, req):
-        PodcastFactory(hub=self.hub)
+    def test_all(self, podcasts, admin, req):
         f = WebSubFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 3
 
 
 class TestFollowedFilter:

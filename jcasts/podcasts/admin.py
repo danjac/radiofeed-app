@@ -21,23 +21,17 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class WebSubFilter(admin.SimpleListFilter):
-    title = "Supports WebSub"
+    title = "WebSub"
     parameter_name = "websub"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (
-            ("yes", "Yes"),
-            ("no", "No"),
-        )
+        return tuple(models.Podcast.SubscribeStatus.choices)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "yes":
-            return queryset.filter(hub__isnull=False)
-        if value == "no":
-            return queryset.filter(hub__isnull=True)
+        if value := self.value():
+            return queryset.filter(subscribe_status=value)
         return queryset
 
 
