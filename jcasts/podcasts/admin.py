@@ -171,7 +171,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "active",
         "promoted",
         "source",
-        "hub",
         "pub_date",
         "scheduled",
     )
