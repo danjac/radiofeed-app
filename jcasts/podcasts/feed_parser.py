@@ -249,7 +249,6 @@ def parse_websub_hub(response: requests.Response, feed: rss_parser.Feed) -> str 
     if feed.hub:
         return feed.hub
 
-    print("LINKS", response.links, response.url)
     if (hub := response.links.get("rel")) and response.links.get(
         "self"
     ) == response.url:

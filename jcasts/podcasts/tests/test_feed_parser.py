@@ -108,7 +108,7 @@ class TestParseWebSubHub:
         assert (
             parse_websub_hub(
                 MockResponse(self.url, links={"self": self.url, "rel": self.hub}),
-                Feed(**FeedFactory(hub=self.hub)),
+                Feed(**FeedFactory()),
             )
             == self.hub
         )
