@@ -142,17 +142,6 @@ class TestHandleUpdate:
             )
         mock_parse_podcast_feed.assert_not_called()
 
-    def test_invalid_sig_method(self, db, rf, mock_parse_podcast_feed):
-        podcast = PodcastFactory(
-            subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
-            subscribe_secret=self.secret,
-        )
-        with pytest.raises(ValidationError):
-            websub.handle_content_distribution(
-                self.get_request(rf, self.secret, "sha1"), podcast
-            )
-        mock_parse_podcast_feed.assert_not_called()
-
     def test_invalid_sig_value(self, db, rf, mock_parse_podcast_feed):
         podcast = PodcastFactory(
             subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
@@ -171,7 +160,7 @@ class TestHandleUpdate:
         with pytest.raises(ValidationError):
             websub.handle_content_distribution(rf.post("/"), podcast)
 
-    def get_request(self, rf, secret, method="sha512"):
+    def get_request(self, rf, secret, method="sha1"):
         return rf.post(
             "/",
             data=b"some-xml",
@@ -192,12 +181,12 @@ class TestMatchesSignature:
 
     def test_matches(self):
         assert websub.matches_signature(
-            self.secret, websub.create_hexdigest(self.secret)
+            self.secret, websub.create_hexdigest(self.secret), "sha1"
         )
 
     def test_not_matches(self):
         assert not websub.matches_signature(
-            self.secret, websub.create_hexdigest("DDDDEEEEFFF")
+            self.secret, websub.create_hexdigest("DDDDEEEEFFF"), "sha1"
         )
 
 

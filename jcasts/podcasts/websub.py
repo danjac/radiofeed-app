@@ -91,10 +91,7 @@ def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> None:
     except (KeyError, ValueError):
         raise ValidationError("X-Hub-Signature missing")
 
-    if method != "sha512":
-        raise ValidationError(f"invalid signature method {method}, must be sha512")
-
-    if not matches_signature(podcast.subscribe_secret, signature):
+    if not matches_signature(podcast.subscribe_secret, signature, method):
         raise ValidationError("signature does not match")
 
     # content distribution should contain entire body, so we can
@@ -138,9 +135,13 @@ def verify_intent(
     )  # type: ignore
 
 
-def create_hexdigest(secret: str) -> str:
+def create_hexdigest(secret: str, method: str | None = None) -> str:
     return hmac.new(secret.encode(), digestmod=hashlib.sha512).hexdigest()
 
 
-def matches_signature(secret: str | None, signature: str) -> bool:
-    return hmac.compare_digest(create_hexdigest(secret), signature) if secret else False
+def matches_signature(secret: str | None, signature: str, method: str) -> bool:
+    return (
+        hmac.compare_digest(create_hexdigest(secret, method), signature)
+        if secret
+        else False
+    )
