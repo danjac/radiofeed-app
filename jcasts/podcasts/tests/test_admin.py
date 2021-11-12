@@ -38,9 +38,6 @@ def req(rf):
 
 
 class TestPodcastAdmin:
-    def test_source(self, podcasts, admin):
-        assert admin.source(podcasts[0]) == podcasts[0].get_domain()
-
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")

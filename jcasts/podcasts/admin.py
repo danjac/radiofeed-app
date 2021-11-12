@@ -170,7 +170,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "__str__",
         "active",
         "promoted",
-        "source",
         "pub_date",
         "scheduled",
     )
@@ -255,9 +254,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
     parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
-
-    def source(self, obj: models.Podcast) -> str:
-        return obj.get_domain()
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (
