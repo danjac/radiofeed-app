@@ -187,7 +187,7 @@ def parse_success(
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
-    podcast.hub = feed.hub or response.links.get("hub")
+    podcast.hub = parse_websub_hub(response, feed)
 
     # parsing result
 
@@ -242,6 +242,20 @@ def parse_success(
     parse_episodes(podcast, items)
 
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
+
+
+def parse_websub_hub(response: requests.Response, feed: rss_parser.Feed) -> str | None:
+
+    if feed.hub:
+        return feed.hub
+
+    print("LINKS", response.links, response.url)
+    if (hub := response.links.get("rel")) and response.links.get(
+        "self"
+    ) == response.url:
+        return hub
+
+    return None
 
 
 def parse_pub_dates(

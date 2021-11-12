@@ -24,6 +24,7 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_podcast_feeds,
     parse_pub_dates,
+    parse_websub_hub,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -88,6 +89,40 @@ class TestParsePubDates:
         assert pub_date == podcast.pub_date
         assert scheduled
         assert modifier > DEFAULT_MODIFIER
+
+
+class TestParseWebSubHub:
+    hub = "https://pubsubhubbub.appspot.com/"
+    url = "https://example.com/feed/"
+
+    def test_not_in_feed_or_header(self):
+        assert parse_websub_hub(MockResponse(self.url), Feed(**FeedFactory())) is None
+
+    def test_in_feed(self):
+        assert (
+            parse_websub_hub(MockResponse(self.url), Feed(**FeedFactory(hub=self.hub)))
+            == self.hub
+        )
+
+    def test_in_header(self):
+        assert (
+            parse_websub_hub(
+                MockResponse(self.url, links={"self": self.url, "rel": self.hub}),
+                Feed(**FeedFactory(hub=self.hub)),
+            )
+            == self.hub
+        )
+
+    def test_in_header_mismatch(self):
+        assert (
+            parse_websub_hub(
+                MockResponse(
+                    self.url, links={"self": "https://api.w.url/", "rel": self.hub}
+                ),
+                Feed(**FeedFactory()),
+            )
+            is None
+        )
 
 
 class TestIsFeedChanged:
