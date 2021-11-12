@@ -92,7 +92,7 @@ def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> None:
         raise ValidationError("X-Hub-Signature missing")
 
     if method != "sha512":
-        raise ValidationError("invalid signature method, must be sha512")
+        raise ValidationError(f"invalid signature method {method}, must be sha512")
 
     if not matches_signature(podcast.subscribe_secret, signature):
         raise ValidationError("signature does not match")
