@@ -177,6 +177,12 @@ class TestSchedulePodcastFeeds:
         # queued
         PodcastFactory(scheduled=now - timedelta(days=3), queued=now)
 
+        # subscribed
+        PodcastFactory(
+            scheduled=now - timedelta(days=3),
+            subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
+        )
+
         # not scheduled yet
         unscheduled = PodcastFactory(scheduled=now + timedelta(days=1))
 
