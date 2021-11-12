@@ -1,6 +1,8 @@
 import pytest
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
@@ -9,8 +11,13 @@ from jcasts.podcasts.factories import (
     RecommendationFactory,
 )
 from jcasts.podcasts.itunes import Feed
-from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import assert_conflict, assert_ok
+from jcasts.podcasts.models import Follow, Podcast
+from jcasts.shared.assertions import (
+    assert_conflict,
+    assert_no_content,
+    assert_not_found,
+    assert_ok,
+)
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -55,6 +62,83 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
+
+
+class TestWebsubCallback:
+    def url(self, podcast):
+        return reverse("podcasts:websub_callback", args=[podcast.id])
+
+    def test_get(self, db, client, mocker):
+        podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.REQUESTED)
+
+        mock_verify_intent = mocker.patch(
+            "jcasts.podcasts.websub.verify_intent",
+            return_value=(
+                "abc123",
+                Podcast.SubscribeStatus.SUBSCRIBED,
+                timezone.now(),
+            ),
+        )
+        resp = client.get(self.url(podcast))
+        assert_ok(resp)
+        assert resp.content == b"abc123"
+
+        mock_verify_intent.assert_called()
+
+        podcast.refresh_from_db()
+
+        assert podcast.subscribe_status == Podcast.SubscribeStatus.SUBSCRIBED
+        assert podcast.subscribed
+        assert podcast.last_subscribe_callback
+
+    def test_post(self, db, client, mocker):
+        podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED)
+
+        mock_handle = mocker.patch(
+            "jcasts.podcasts.websub.handle_content_distribution",
+        )
+        resp = client.post(self.url(podcast))
+        assert_no_content(resp)
+
+        mock_handle.assert_called()
+
+        podcast.refresh_from_db()
+
+        assert podcast.last_subscribe_callback
+
+    def test_get_fail(self, db, client, mocker):
+        podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.REQUESTED)
+
+        mock_verify_intent = mocker.patch(
+            "jcasts.podcasts.websub.verify_intent",
+            side_effect=ValidationError("invalid"),
+        )
+        resp = client.get(self.url(podcast))
+        assert_not_found(resp)
+
+        mock_verify_intent.assert_called()
+
+        podcast.refresh_from_db()
+
+        assert podcast.subscribe_status == Podcast.SubscribeStatus.ERROR
+        assert podcast.last_subscribe_callback
+
+    def test_post_fail(self, db, client, mocker):
+        podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED)
+
+        mock_handle = mocker.patch(
+            "jcasts.podcasts.websub.handle_content_distribution",
+            side_effect=ValidationError("invalid"),
+        )
+        resp = client.post(self.url(podcast))
+        assert_not_found(resp)
+
+        mock_handle.assert_called()
+
+        podcast.refresh_from_db()
+
+        assert podcast.subscribe_status == Podcast.SubscribeStatus.ERROR
+        assert podcast.last_subscribe_callback
 
 
 class TestLatest:

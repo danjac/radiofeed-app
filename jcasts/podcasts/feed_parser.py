@@ -98,7 +98,7 @@ def parse_podcast_feed_from_content(podcast_id: int, content: bytes) -> ParseRes
     """Parse from immediately available content, e.g. in websub hook"""
 
     try:
-        podcast = Podcast.objects.get(pk=podcast_id, active=True)
+        podcast = Podcast.objects.active().get(pk=podcast_id)
         feed, items = rss_parser.parse_rss(content)
 
         return parse_success(podcast, feed, items)
@@ -121,7 +121,7 @@ def parse_podcast_feed_from_content(podcast_id: int, content: bytes) -> ParseRes
 def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
-        podcast = Podcast.objects.get(pk=podcast_id, active=True)
+        podcast = Podcast.objects.active().get(pk=podcast_id)
         response = get_feed_response(podcast)
         feed, items = rss_parser.parse_rss(response.content)
 

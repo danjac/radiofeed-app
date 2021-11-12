@@ -118,7 +118,8 @@ class TestParseWebSubHub:
         assert (
             parse_websub_hub(
                 MockResponse(
-                    self.url, links={"self": "https://api.w.url/", "rel": self.hub}
+                    self.url,
+                    links={"self": "https://api.w.url/", "rel": self.hub},
                 ),
                 Feed(**FeedFactory()),
             )
@@ -339,7 +340,22 @@ class TestParsePodcastFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    def test_parse_podcast_feed__from_content_ok(self, new_podcast, categories):
+    def test_parse_podcast_feed_from_content_podcast_not_found(
+        self, new_podcast, categories
+    ):
+        result = parse_podcast_feed_from_content(1234, b"some content")
+        assert result.success is False
+
+        with pytest.raises(Podcast.DoesNotExist):
+            result.raise_exception()
+
+    def test_parse_podcast_feed_from_content_invalid_rss(self, new_podcast, categories):
+
+        assert not parse_podcast_feed_from_content(new_podcast.id, b"bad-xml")
+        new_podcast.refresh_from_db()
+        assert new_podcast.result == Podcast.Result.INVALID_RSS
+
+    def test_parse_podcast_feed_from_content_ok(self, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"

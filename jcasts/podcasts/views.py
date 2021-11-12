@@ -270,10 +270,9 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_object_or_404(
         Podcast.objects.active(),
-        subscribe_status__in=(
-            Podcast.SubscribeStatus.REQUESTED,
-            Podcast.SubscribeStatus.SUBSCRIBED,
-        ),
+        subscribe_status=Podcast.SubscribeStatus.REQUESTED
+        if request.method == "GET"
+        else Podcast.SubscribeStatus.SUBSCRIBED,
         pk=podcast_id,
     )
 
@@ -282,7 +281,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         if request.method == "GET":
             (
                 challenge,
-                podcast.status,
+                podcast.subscribe_status,
                 podcast.subscribed,
             ) = websub.verify_intent(request, podcast)
             return HttpResponse(challenge)
