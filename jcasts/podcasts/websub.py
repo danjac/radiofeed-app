@@ -92,7 +92,9 @@ def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> None:
         raise ValidationError("X-Hub-Signature missing")
 
     if not matches_signature(podcast.subscribe_secret, signature, method):
-        raise ValidationError("signature does not match")
+        raise ValidationError(
+            f"signature {signature} does not match with method {method}"
+        )
 
     # content distribution should contain entire body, so we can
     # just handle immediately

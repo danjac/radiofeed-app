@@ -11,6 +11,7 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -275,8 +276,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         pk=podcast_id,
     )
 
-    is_changed = False
-
     try:
 
         if request.method == "GET":
@@ -285,20 +284,18 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
                 podcast.subscribe_status,
                 podcast.subscribed,
             ) = websub.verify_intent(request, podcast)
-            is_changed = True
             return HttpResponse(challenge)
 
         websub.handle_content_distribution(request, podcast)
+
         return HttpResponseNoContent()
 
     except ValidationError as e:
         podcast.hub_exception = traceback.format_exc()
-        podcast.subscribe_status = Podcast.SubscribeStatus.ERROR
-        is_changed = True
         raise Http404 from e
     finally:
-        if is_changed:
-            podcast.save()
+        podcast.subscribe_ping = timezone.now()
+        podcast.save()
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:

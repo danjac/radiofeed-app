@@ -143,7 +143,6 @@ class Podcast(models.Model):
     # websub fields
 
     hub: str | None = models.URLField(null=True, blank=True, max_length=500)
-
     hub_exception: str = models.TextField(blank=True)
 
     subscribe_status: str = models.CharField(
@@ -156,6 +155,11 @@ class Podcast(models.Model):
         null=True,
         blank=True,
         verbose_name="Subscribed until",
+    )
+
+    subscribe_ping: datetime | None = models.DateTimeField(
+        null=True,
+        blank=True,
     )
 
     subscribe_secret: str | None = models.CharField(
