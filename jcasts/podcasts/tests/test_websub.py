@@ -84,7 +84,7 @@ class TestVerifyIntent:
         req = rf.get(
             "/",
             {
-                "hub.mode": "unknown",
+                "hub.mode": "unsubscribe",
                 "hub.challenge": self.challenge,
                 "hub.topic": "https//some-random.com",
             },
@@ -123,19 +123,13 @@ class TestVerifyIntent:
 class TestHandleUpdate:
     secret = "AAABBBCCC"
 
-    @pytest.fixture
-    def mock_parse_podcast_feed(self, mocker):
-        return mocker.patch(
-            "jcasts.podcasts.feed_parser.parse_podcast_feed_from_content.delay"
-        )
-
     def test_ok(self, db, rf, mock_parse_podcast_feed):
         podcast = PodcastFactory(
             subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
             subscribe_secret=self.secret,
         )
         websub.handle_content_distribution(self.get_request(rf, self.secret), podcast)
-        mock_parse_podcast_feed.assert_called_with(podcast.id, b"some-xml")
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
 
     def test_invalid_status(self, db, rf, mock_parse_podcast_feed):
         podcast = PodcastFactory(
@@ -168,10 +162,18 @@ class TestHandleUpdate:
             websub.handle_content_distribution(self.get_request(rf, "BBBCCCC"), podcast)
         mock_parse_podcast_feed.assert_not_called()
 
+    def test_missing_signature(self, db, rf, mock_parse_podcast_feed):
+
+        podcast = PodcastFactory(
+            subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
+            subscribe_secret=self.secret,
+        )
+        with pytest.raises(ValidationError):
+            websub.handle_content_distribution(rf.post("/"), podcast)
+
     def get_request(self, rf, secret, method="sha512"):
         return rf.post(
             "/",
-            data=b"some-xml",
             content_type="application/xml",
             HTTP_X_HUB_SIGNATURE=f"{method}={websub.create_hexdigest(secret)}",
         )
@@ -223,6 +225,12 @@ class TestSubscribe:
         assert podcast.subscribe_requested
         assert podcast.subscribe_secret
         assert not podcast.hub_exception
+
+    def test_not_found(self, db, mocker):
+        mock_post = mocker.patch("requests.post")
+        websub.subscribe(1234)
+
+        mock_post.assert_not_called()
 
     def test_failed(self, db, mocker):
         class MockResponse:

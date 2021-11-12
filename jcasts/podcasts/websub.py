@@ -11,7 +11,7 @@ import requests
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q, QuerySet
-from django.http import HttpRequest, QueryDict
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import crypto, timezone
 from django_rq import job
@@ -79,7 +79,7 @@ def get_subscribable_podcasts() -> QuerySet:
     )
 
 
-def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> str:
+def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> None:
 
     if podcast.subscribe_status != Podcast.SubscribeStatus.SUBSCRIBED:
         raise ValidationError("podcast has invalid status")
@@ -99,9 +99,7 @@ def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> str:
     # content distribution should contain entire body, so we can
     # just handle immediately
 
-    feed_parser.parse_podcast_feed_from_content.delay(podcast.id, request.body)
-
-    return ""
+    feed_parser.parse_podcast_feed.delay(podcast.id)
 
 
 def verify_intent(
@@ -115,10 +113,10 @@ def verify_intent(
     ):
         raise ValidationError("hub.mode missing or invalid")
 
-    if not (challenge := get_challenge(request)):
+    if not (challenge := request.GET.get("hub.challenge")):
         raise ValidationError("hub.challenge is missing")
 
-    if not matches_topic(request, podcast):
+    if request.GET.get("hub.topic") != podcast.rss:
         raise ValidationError("hub.topic does not match podcast topic")
 
     if mode == "denied":
@@ -139,20 +137,8 @@ def verify_intent(
     )  # type: ignore
 
 
-def get_params(request: HttpRequest) -> QueryDict:
-    return request.POST if request.method == "POST" else request.GET
-
-
 def create_hexdigest(secret: str) -> str:
     return hmac.new(secret.encode(), digestmod=hashlib.sha512).hexdigest()
-
-
-def get_challenge(request: HttpRequest) -> str | None:
-    return get_params(request).get("hub.challenge")
-
-
-def matches_topic(request: HttpRequest, podcast: Podcast) -> bool:
-    return get_params(request).get("hub.topic") == podcast.rss
 
 
 def matches_signature(secret: str | None, signature: str) -> bool:
