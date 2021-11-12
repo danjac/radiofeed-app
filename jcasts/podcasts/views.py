@@ -286,9 +286,8 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             ) = websub.verify_intent(request, podcast)
             return HttpResponse(challenge)
 
-        else:
-            websub.handle_content_distribution(request, podcast)
-            return HttpResponseNoContent()
+        websub.handle_content_distribution(request, podcast)
+        return HttpResponseNoContent()
 
     except ValidationError as e:
         podcast.hub_exception = traceback.format_exc()
