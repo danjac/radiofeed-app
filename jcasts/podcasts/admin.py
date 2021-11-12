@@ -196,6 +196,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "result",
         "exception",
         "subscribed",
+        "subscribe_secret",
         "subscribe_status",
         "subscribe_requested",
         "hub_exception",
