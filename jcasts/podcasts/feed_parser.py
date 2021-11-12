@@ -106,7 +106,7 @@ def parse_podcast_feed(podcast_id: int, content: bytes | None = None) -> ParseRe
 
         feed, items = rss_parser.parse_rss(content)
 
-        if response and not is_feed_changed(podcast, feed):
+        if not is_feed_changed(podcast, feed):
             raise NotModified(response=response)
 
         return parse_success(podcast, feed, items, response=response)
