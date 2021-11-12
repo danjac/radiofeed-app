@@ -129,7 +129,7 @@ class TestHandleUpdate:
             subscribe_secret=self.secret,
         )
         websub.handle_content_distribution(self.get_request(rf, self.secret), podcast)
-        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        mock_parse_podcast_feed.assert_called_with(podcast.id, b"some-xml")
 
     def test_invalid_status(self, db, rf, mock_parse_podcast_feed):
         podcast = PodcastFactory(
@@ -174,6 +174,7 @@ class TestHandleUpdate:
     def get_request(self, rf, secret, method="sha512"):
         return rf.post(
             "/",
+            data=b"some-xml",
             content_type="application/xml",
             HTTP_X_HUB_SIGNATURE=f"{method}={websub.create_hexdigest(secret)}",
         )

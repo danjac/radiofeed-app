@@ -94,17 +94,22 @@ def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
 
 @job("feeds")
 @transaction.atomic
-def parse_podcast_feed(podcast_id: int) -> ParseResult:
+def parse_podcast_feed(podcast_id: int, content: bytes | None = None) -> ParseResult:
 
     try:
         podcast = Podcast.objects.active().get(pk=podcast_id)
-        response = get_feed_response(podcast)
-        feed, items = rss_parser.parse_rss(response.content)
+        response = None
 
-        if not is_feed_changed(podcast, feed):
+        if content is None:
+            response = get_feed_response(podcast)
+            content = response.content
+
+        feed, items = rss_parser.parse_rss(content)
+
+        if response and not is_feed_changed(podcast, feed):
             raise NotModified(response=response)
 
-        return parse_success(podcast, response, feed, items)
+        return parse_success(podcast, feed, items, response=response)
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
@@ -145,7 +150,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         return parse_failure(
             podcast,
             result=Podcast.Result.INVALID_RSS,
-            status=response.status_code,
+            status=response.status_code if response else None,
             active=False,
             exception=e,
             tb=traceback.format_exc(),
@@ -176,18 +181,19 @@ def get_feed_response(podcast: Podcast) -> requests.Response:
 
 def parse_success(
     podcast: Podcast,
-    response: requests.Response,
     feed: rss_parser.Feed,
     items: list[rss_parser.Item],
+    response: requests.Response | None = None,
 ) -> ParseResult:
 
     # feed status
 
-    podcast.rss = response.url
-    podcast.http_status = response.status_code
-    podcast.etag = response.headers.get("ETag", "")
-    podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
-    podcast.hub = parse_websub_hub(response, feed)
+    if response:
+        podcast.rss = response.url
+        podcast.http_status = response.status_code
+        podcast.etag = response.headers.get("ETag", "")
+        podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
+        podcast.hub = parse_websub_hub(response, feed)
 
     # parsing result
 
@@ -244,7 +250,7 @@ def parse_success(
     return ParseResult(
         rss=podcast.rss,
         success=True,
-        status=response.status_code,
+        status=response.status_code if response else None,
     )
 
 

@@ -99,7 +99,7 @@ def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> None:
     # content distribution should contain entire body, so we can
     # just handle immediately
 
-    feed_parser.parse_podcast_feed.delay(podcast.id)
+    feed_parser.parse_podcast_feed.delay(podcast.id, request.body)
 
 
 def verify_intent(
