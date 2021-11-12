@@ -145,8 +145,6 @@ class Feed:
 
     explicit: bool = attr.ib(default=False, converter=is_explicit)
 
-    hub: str | None = attr.ib(default=None)
-
     categories: list[str] = attr.ib(default=list)
 
 
@@ -192,7 +190,6 @@ def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
         title=finder.find("title/text()"),
         link=finder.find("link/text()"),
-        hub=finder.find("atom:link[@rel='hub']/@href"),
         last_build_date=finder.find("lastBuildDate/text()"),
         language=finder.find("language/text()", default="en"),
         explicit=finder.find("itunes:explicit/text()"),
