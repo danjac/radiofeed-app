@@ -14,6 +14,7 @@ from jcasts.podcasts.admin import (
     PubDateFilter,
     QueuedFilter,
     ResultFilter,
+    WebSubFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -209,6 +210,30 @@ class TestQueuedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == queued
+
+
+class TestWebSubFilter:
+    hub = "https://pubsubhubbub.appspot.com/"
+
+    def test_hub_filter_false(self, podcasts, admin, req):
+        hub = PodcastFactory(hub=self.hub)
+        f = WebSubFilter(req, {"websub": "no"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert hub not in qs
+
+    def test_hub_filter_true(self, podcasts, admin, req):
+        hub = PodcastFactory(hub=self.hub)
+        f = WebSubFilter(req, {"websub": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == hub
+
+    def test_hub_filter_all(self, podcasts, admin, req):
+        PodcastFactory(hub=self.hub)
+        f = WebSubFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
 
 
 class TestFollowedFilter:

@@ -133,6 +133,8 @@ class Podcast(models.Model):
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
 
+    hub: str | None = models.URLField(null=True, blank=True, max_length=500)
+
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)
 

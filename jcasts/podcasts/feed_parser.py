@@ -187,6 +187,7 @@ def parse_success(
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
+    podcast.hub = feed.hub or response.links.get("hub")
 
     # parsing result
 
