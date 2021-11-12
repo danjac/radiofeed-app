@@ -40,7 +40,7 @@ def subscribe(podcast_id: int) -> None:
         ),
         "hub.secret": create_hexdigest(podcast.subscribe_secret),
         "hub.lease_seconds": settings.WEBSUB_LEASE_TIMEOUT.total_seconds(),
-        "hub.verify": "async",
+        "hub.verify": "sync",
     }
 
     response = requests.post(podcast.hub, payload)
