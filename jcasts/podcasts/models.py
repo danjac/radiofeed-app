@@ -127,45 +127,11 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
-    class SubscribeStatus(models.TextChoices):
-        UNSUBSCRIBED = "unsubscribed", "Unsubscribed"
-        REQUESTED = "requested", "Requested"
-        SUBSCRIBED = "subscribed", "Subscribed"
-        DENIED = "denied", "Denied"
-        ERROR = "error", "Error"
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
-
-    # websub fields
-
-    hub: str | None = models.URLField(null=True, blank=True, max_length=500)
-    hub_exception: str = models.TextField(blank=True)
-
-    subscribe_status: str = models.CharField(
-        max_length=30,
-        choices=SubscribeStatus.choices,
-        default=SubscribeStatus.UNSUBSCRIBED,
-    )
-
-    subscribed: datetime | None = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name="Subscribed until",
-    )
-
-    subscribe_ping: datetime | None = models.DateTimeField(
-        null=True,
-        blank=True,
-    )
-
-    subscribe_secret: str | None = models.CharField(
-        max_length=30, null=True, blank=True
-    )
-    subscribe_requested: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)

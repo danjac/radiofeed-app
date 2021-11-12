@@ -1,29 +1,24 @@
 from __future__ import annotations
 
-import traceback
-
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import itunes, websub
+from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
@@ -262,40 +257,6 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, follow=False)
-
-
-@require_http_methods(["GET", "POST"])
-@csrf_exempt
-def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
-
-    podcast = get_object_or_404(
-        Podcast.objects.active(),
-        subscribe_status=Podcast.SubscribeStatus.REQUESTED
-        if request.method == "GET"
-        else Podcast.SubscribeStatus.SUBSCRIBED,
-        pk=podcast_id,
-    )
-
-    try:
-
-        if request.method == "GET":
-            (
-                challenge,
-                podcast.subscribe_status,
-                podcast.subscribed,
-            ) = websub.verify_intent(request, podcast)
-            return HttpResponse(challenge)
-
-        websub.handle_content_distribution(request, podcast)
-
-        return HttpResponseNoContent()
-
-    except ValidationError as e:
-        podcast.hub_exception = traceback.format_exc()
-        raise Http404 from e
-    finally:
-        podcast.subscribe_ping = timezone.now()
-        podcast.save()
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:

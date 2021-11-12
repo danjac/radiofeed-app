@@ -20,21 +20,6 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-class WebSubFilter(admin.SimpleListFilter):
-    title = "WebSub"
-    parameter_name = "websub"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return tuple(models.Podcast.SubscribeStatus.choices)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        if value := self.value():
-            return queryset.filter(subscribe_status=value)
-        return queryset
-
-
 class ResultFilter(admin.SimpleListFilter):
     title = "Result"
     parameter_name = "result"
@@ -163,7 +148,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PubDateFilter,
         QueuedFilter,
         ResultFilter,
-        WebSubFilter,
     )
 
     list_display = (
@@ -194,11 +178,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "http_status",
         "result",
         "exception",
-        "subscribed",
-        "subscribe_secret",
-        "subscribe_status",
-        "subscribe_requested",
-        "hub_exception",
     )
 
     actions = (
