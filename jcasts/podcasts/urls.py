@@ -26,6 +26,11 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
+        "podcasts/websub-callback/<int:podcast_id>/",
+        views.websub_callback,
+        name="websub_callback",
+    ),
+    path(
         "podcasts/<int:podcast_id>/~latest/",
         views.latest,
         name="latest",

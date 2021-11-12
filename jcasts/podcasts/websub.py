@@ -22,7 +22,7 @@ from jcasts.shared.template import build_absolute_uri
 
 
 @job("default")
-def subscribe(self, podcast_id: int) -> None:
+def subscribe(podcast_id: int) -> None:
     try:
         podcast = get_subscribable_podcasts().get(
             pk=podcast_id,
@@ -30,7 +30,7 @@ def subscribe(self, podcast_id: int) -> None:
     except Podcast.DoesNotExist:
         return
 
-    podcast.subscribe_secret = crypto.get_random_string(length=12)
+    podcast.subscribe_secret = crypto.get_random_string(length=30)
 
     payload = {
         "hub.mode": "subscribe",
@@ -48,9 +48,10 @@ def subscribe(self, podcast_id: int) -> None:
         response.raise_for_status()
     except requests.RequestException:
         podcast.hub_exception = traceback.format_exc()
-        podcast.subscribe_status = Podcast.SubscribeStatus.Error
+        podcast.subscribe_status = Podcast.SubscribeStatus.ERROR
+        podcast.subscribe_secret = None
     else:
-        podcast.subscribe_status = Podcast.SubscribeStatus.Requested
+        podcast.subscribe_status = Podcast.SubscribeStatus.REQUESTED
         podcast.subscribe_requested = timezone.now()
 
     podcast.save()
@@ -65,84 +66,77 @@ def subscribe_podcasts() -> None:
         subscribe.delay(podcast_id)
 
 
-def handle_callback(request: HttpRequest, podcast: Podcast) -> str:
-
-    try:
-
-        if not (challenge := get_challenge(request)):
-            raise ValidationError("hub.challenge is missing")
-
-        if not matches_topic(request, podcast):
-            raise ValidationError("hub.topic does not match podcast topic")
-
-        if request.method == "GET":
-            podcast.status, podcast.subscribed = verify_intent(request, podcast)
-        else:
-            handle_update_notification(request, podcast)
-
-    except ValidationError:
-        podcast.hub_exception = traceback.format_exc()
-        podcast.subscribe_status = Podcast.SubscribeStatus.Error
-        raise
-    finally:
-        podcast.last_subscribe_callback = timezone.now()
-        podcast.save()
-
-    return challenge
-
-
 def get_subscribable_podcasts() -> QuerySet:
     return Podcast.objects.active().filter(
         Q(
-            subscribe_status=Podcast.SubscribeStatus.Unsubscribed,
+            subscribe_status=Podcast.SubscribeStatus.UNSUBSCRIBED,
         )
         | Q(
             subscribed__lt=timezone.now(),
-            subscribe_status=Podcast.SubscribeStatus.Subscribed,
+            subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED,
         ),
         hub__isnull=False,
     )
 
 
-def handle_update_notification(request: HttpRequest, podcast: Podcast) -> None:
+def handle_content_distribution(request: HttpRequest, podcast: Podcast) -> str:
 
-    if podcast.subscribe_status != Podcast.SubscribeStatus.Subscribed:
+    if podcast.subscribe_status != Podcast.SubscribeStatus.SUBSCRIBED:
         raise ValidationError("podcast has invalid status")
 
     try:
-        sig_header = request.headers["x-hub-signature"]
+        sig_header = request.headers["X-Hub-Signature"]
         method, signature = sig_header.split("=")
     except (KeyError, ValueError):
         raise ValidationError("X-Hub-Signature missing")
 
-    if method != hashlib.sha512:
+    if method != "sha512":
         raise ValidationError("invalid signature method, must be sha512")
 
     if not matches_signature(podcast.subscribe_secret, signature):
         raise ValidationError("signature does not match")
 
-    feed_parser.parse_podcast_feed.delay(podcast.id)
+    # content distribution should contain entire body, so we can
+    # just handle immediately
+
+    feed_parser.parse_podcast_feed_from_content.delay(podcast.id, request.body)
+
+    return ""
 
 
 def verify_intent(
     request: HttpRequest, podcast: Podcast
-) -> tuple[str, datetime | None]:
+) -> tuple[str | None, str, datetime | None]:
     # https://w3c.github.io/websub/#hub-verifies-intent
-    if (mode := request.GET.get("hub.mode")) not in ("subscribe", "unsubscribe"):
+    if (mode := request.GET.get("hub.mode")) not in (
+        "subscribe",
+        "unsubscribe",
+        "denied",
+    ):
         raise ValidationError("hub.mode missing or invalid")
 
-    if mode == "subscribe":
-        if podcast.status != Podcast.SubscribeStatus.Requested:
-            raise ValidationError("podcast has invalid status")
+    if not (challenge := get_challenge(request)):
+        raise ValidationError("hub.challenge is missing")
 
-        try:
-            lease_seconds = int(request.GET["hub.lease_seconds"])
-        except (KeyError, ValueError, TypeError):
-            raise ValidationError("hub.lease_seconds missing or invalid")
-        return Podcast.SubscribeStatus.Subscribed, timezone.now() + timedelta(
-            seconds=lease_seconds
-        )
-    return Podcast.SubscribeStatus.Unsubscribed, None
+    if not matches_topic(request, podcast):
+        raise ValidationError("hub.topic does not match podcast topic")
+
+    if mode == "denied":
+        return challenge, Podcast.SubscribeStatus.DENIED, None  # type: ignore
+
+    if mode == "unsubscribe":
+        return challenge, Podcast.SubscribeStatus.UNSUBSCRIBED, None  # type: ignore
+
+    try:
+        lease_seconds = int(request.GET["hub.lease_seconds"])
+    except (KeyError, ValueError, TypeError):
+        raise ValidationError("hub.lease_seconds missing or invalid")
+
+    return (
+        challenge,
+        Podcast.SubscribeStatus.SUBSCRIBED,
+        timezone.now() + timedelta(seconds=lease_seconds),
+    )  # type: ignore
 
 
 def get_params(request: HttpRequest) -> QueryDict:
@@ -161,5 +155,5 @@ def matches_topic(request: HttpRequest, podcast: Podcast) -> bool:
     return get_params(request).get("hub.topic") == podcast.rss
 
 
-def matches_signature(secret: str, signature: str) -> bool:
-    return hmac.compare_digest(create_hexdigest(secret), signature)
+def matches_signature(secret: str | None, signature: str) -> bool:
+    return hmac.compare_digest(create_hexdigest(secret), signature) if secret else False

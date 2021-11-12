@@ -22,6 +22,7 @@ from jcasts.podcasts.feed_parser import (
     get_feed_headers,
     is_feed_changed,
     parse_podcast_feed,
+    parse_podcast_feed_from_content,
     parse_podcast_feeds,
     parse_pub_dates,
     parse_websub_hub,
@@ -326,6 +327,57 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
 
         assert new_podcast.etag
+        assert new_podcast.explicit
+        assert new_podcast.cover_url
+
+        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assigned_categories = [c.name for c in new_podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
+    def test_parse_podcast_feed__from_content_ok(self, new_podcast, categories):
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+
+        assert parse_podcast_feed_from_content(new_podcast.id, self.get_rss_content())
+
+        # new episodes: 19
+        assert Episode.objects.count() == 20
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        new_podcast.refresh_from_db()
+
+        assert new_podcast.rss
+        assert new_podcast.active
+        assert new_podcast.title == "Mysterious Universe"
+
+        assert (
+            new_podcast.description == "Blog and Podcast specializing in offbeat news"
+        )
+
+        assert new_podcast.owner == "8th Kind"
+
+        assert not new_podcast.etag
+        assert not new_podcast.modified
+
+        assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier == DEFAULT_MODIFIER
+        assert not new_podcast.queued
+        assert new_podcast.result == Podcast.Result.SUCCESS
+
+        assert new_podcast.parsed
+
         assert new_podcast.explicit
         assert new_podcast.cover_url
 

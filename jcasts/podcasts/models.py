@@ -129,9 +129,10 @@ class Podcast(models.Model):
 
     class SubscribeStatus(models.TextChoices):
         UNSUBSCRIBED = "unsubscribed", "Unsubscribed"
-        SUBSCRIBED = "subscribed", "Subscribed"
         REQUESTED = "requested", "Requested"
-        ERROR = "error", "error"
+        SUBSCRIBED = "subscribed", "Subscribed"
+        DENIED = "denied", "Denied"
+        ERROR = "error", "Error"
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
@@ -146,7 +147,9 @@ class Podcast(models.Model):
     hub_exception: str = models.TextField(blank=True)
 
     subscribe_status: str = models.CharField(
-        max_length=30, choices=SubscribeStatus.choices
+        max_length=30,
+        choices=SubscribeStatus.choices,
+        default=SubscribeStatus.UNSUBSCRIBED,
     )
 
     subscribed: datetime | None = models.DateTimeField(
@@ -155,6 +158,9 @@ class Podcast(models.Model):
         verbose_name="Subscribed until",
     )
 
+    subscribe_secret: str | None = models.CharField(
+        max_length=30, null=True, blank=True
+    )
     subscribe_requested: datetime | None = models.DateTimeField(null=True, blank=True)
 
     last_subscribe_callback: datetime | None = models.DateTimeField(
