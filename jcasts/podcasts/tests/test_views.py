@@ -89,7 +89,6 @@ class TestWebsubCallback:
 
         assert podcast.subscribe_status == Podcast.SubscribeStatus.SUBSCRIBED
         assert podcast.subscribed
-        assert podcast.last_subscribe_callback
 
     def test_post(self, db, client, mocker):
         podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED)
@@ -101,10 +100,6 @@ class TestWebsubCallback:
         assert_no_content(resp)
 
         mock_handle.assert_called()
-
-        podcast.refresh_from_db()
-
-        assert podcast.last_subscribe_callback
 
     def test_get_fail(self, db, client, mocker):
         podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.REQUESTED)
@@ -121,7 +116,6 @@ class TestWebsubCallback:
         podcast.refresh_from_db()
 
         assert podcast.subscribe_status == Podcast.SubscribeStatus.ERROR
-        assert podcast.last_subscribe_callback
 
     def test_post_fail(self, db, client, mocker):
         podcast = PodcastFactory(subscribe_status=Podcast.SubscribeStatus.SUBSCRIBED)
@@ -138,7 +132,6 @@ class TestWebsubCallback:
         podcast.refresh_from_db()
 
         assert podcast.subscribe_status == Podcast.SubscribeStatus.ERROR
-        assert podcast.last_subscribe_callback
 
 
 class TestLatest:

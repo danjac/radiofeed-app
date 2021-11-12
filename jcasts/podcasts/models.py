@@ -163,10 +163,6 @@ class Podcast(models.Model):
     )
     subscribe_requested: datetime | None = models.DateTimeField(null=True, blank=True)
 
-    last_subscribe_callback: datetime | None = models.DateTimeField(
-        null=True, blank=True
-    )
-
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)
 
