@@ -20,7 +20,7 @@ Scheduling algorithm:
 Scheduling time + modifier should be (re)calculated on every feed pull.
 
 On every "hit" - i.e. we have new episodes - calculate the mean interval
-between each episode release date (including the current time). Add this interval
+between each episode release date. Add this interval
 to the latest release date. If the result is less than the current time,
 add the difference between the current time and the estimated time to the current time.
 
@@ -63,6 +63,7 @@ def schedule(
 
         # add the difference between the scheduled time
         # and current time to the current time
+
         scheduled = now + (now - scheduled)
 
     return (
@@ -106,10 +107,10 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
 
     # assume default if not enough available dates
 
-    if not pub_dates:
+    if len(pub_dates) in (0, 1):
         return DEFAULT_FREQUENCY
 
-    latest, *pub_dates = sorted([timezone.now()] + pub_dates, reverse=True)[:limit]
+    latest, *pub_dates = sorted(pub_dates, reverse=True)[:limit]
 
     # calculate mean interval between dates
 
