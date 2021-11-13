@@ -23,10 +23,6 @@
       "schedule": "12 9 * * 1"
     },
     {
-      "command": "python manage.py subscribe_podcasts",
-      "schedule": "30 * * * *"
-    },
-    {
       "command": "python manage.py make_recommendations",
       "schedule": "20 3 * * *"
     },
