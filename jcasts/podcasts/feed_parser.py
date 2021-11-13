@@ -130,7 +130,14 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             podcast,
             result=Podcast.Result.HTTP_ERROR,
             status=e.response.status_code,
-            active=False,
+            active=e.response.status_code
+            not in (
+                http.HTTPStatus.FORBIDDEN,
+                http.HTTPStatus.GONE,
+                http.HTTPStatus.METHOD_NOT_ALLOWED,
+                http.HTTPStatus.NOT_FOUND,
+                http.HTTPStatus.UNAUTHORIZED,
+            ),
         )
 
     except requests.RequestException as e:
@@ -138,7 +145,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             podcast,
             exception=e,
             result=Podcast.Result.NETWORK_ERROR,
-            active=False,
+            active=True,
             tb=traceback.format_exc(),
         )
 

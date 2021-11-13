@@ -507,12 +507,12 @@ class TestParsePodcastFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert not new_podcast.active
+        assert new_podcast.active
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert not new_podcast.schedule_modifier
+        assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
@@ -551,10 +551,10 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
 
-        assert not new_podcast.active
+        assert new_podcast.active
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert not new_podcast.schedule_modifier
+        assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
