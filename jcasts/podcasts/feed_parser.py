@@ -79,7 +79,10 @@ def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
     if frequency:
         num_workers = Worker.count(queue=get_queue("feeds"))
         # rough estimate: takes 2 seconds per update
-        limit = num_workers * round(frequency.total_seconds() / 2)
+        limit = (
+            num_workers * round(frequency.total_seconds() / 2)
+            - Podcast.objects.filter(queued__isnull=False).count()
+        )
         qs = qs.scheduled()[:limit]
 
     podcast_ids = list(qs.values_list("pk", flat=True))
