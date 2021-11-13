@@ -240,7 +240,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         if not (pub_dates := list(obj.episode_set.values_list("pub_date", flat=True))):
             return "-"
 
-        return timeuntil(timezone.now() + scheduler.get_frequency(pub_dates), depth=1)
+        return timeuntil(timezone.now() + scheduler.get_frequency(pub_dates))
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (

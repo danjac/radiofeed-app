@@ -46,7 +46,7 @@ class TestPodcastAdmin:
         for i in range(1, 4):
             EpisodeFactory(podcast=podcast, pub_date=now - timedelta(hours=i * 3 * 24))
 
-        assert admin.frequency(podcast) == "2\xa0days"
+        assert admin.frequency(podcast) == "2\xa0days, 23\xa0hours"
 
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
