@@ -84,10 +84,10 @@ def reschedule(
     and increment the schedule modifier.
     """
 
-    if pub_date is None:
-        return None, None
-
     now = timezone.now()
+
+    if pub_date is None:
+        pub_date = now - DEFAULT_FREQUENCY
 
     modifier = modifier or DEFAULT_MODIFIER
 

@@ -40,7 +40,10 @@ class TestReschedule:
         assert_hours(scheduled - now, 30 * 24)
 
     def test_none(self):
-        assert scheduler.reschedule(None, scheduler.DEFAULT_MODIFIER) == (None, None)
+        now = timezone.now()
+        scheduled, modifier = scheduler.reschedule(None, None)
+        assert_hours(scheduled - now, 3)
+        assert modifier == 0.06
 
 
 class TestSchedule:
