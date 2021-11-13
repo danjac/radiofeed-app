@@ -558,3 +558,29 @@ class TestParsePodcastFeed:
         assert new_podcast.scheduled
         assert new_podcast.schedule_modifier
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
+
+    def test_parse_podcast_feed_http_server_error_no_pub_date(
+        self, mocker, new_podcast, categories
+    ):
+        mocker.patch(
+            self.mock_http_get,
+            return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
+        )
+        new_podcast.pub_date = None
+        new_podcast.save()
+
+        result = parse_podcast_feed(new_podcast.id)
+        # no exception set for http errors
+        result.raise_exception()
+
+        assert result.success is False
+
+        new_podcast.refresh_from_db()
+
+        assert new_podcast.active
+        assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
+        assert new_podcast.parsed
+        assert not new_podcast.queued
+        assert new_podcast.scheduled
+        assert new_podcast.schedule_modifier
+        assert new_podcast.result == Podcast.Result.HTTP_ERROR

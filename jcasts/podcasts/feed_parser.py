@@ -382,7 +382,8 @@ def parse_failure(
     now = timezone.now()
     if active:
         scheduled, modifier = scheduler.reschedule(
-            podcast.pub_date, podcast.schedule_modifier
+            podcast.pub_date or podcast.created,
+            podcast.schedule_modifier,
         )
     else:
         scheduled, modifier = None, None
