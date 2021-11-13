@@ -86,9 +86,7 @@ def reschedule(
 
     now = timezone.now()
 
-    if pub_date is None:
-        pub_date = now - DEFAULT_FREQUENCY
-
+    pub_date = pub_date or now - DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
 
     return (
