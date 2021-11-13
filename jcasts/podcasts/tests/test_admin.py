@@ -6,6 +6,7 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
+from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
@@ -37,6 +38,16 @@ def req(rf):
 
 
 class TestPodcastAdmin:
+    def test_frequency_none(self, podcast, admin):
+        assert admin.frequency(podcast) == "-"
+
+    def test_frequency_has_episodes(self, podcast, admin):
+        now = timezone.now()
+        for i in range(1, 4):
+            EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=i * 3))
+
+        assert admin.frequency(podcast) == "3\xa0days"
+
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")

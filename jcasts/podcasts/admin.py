@@ -4,10 +4,11 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
-from jcasts.podcasts import feed_parser, models
+from jcasts.podcasts import feed_parser, models, scheduler
 
 
 @admin.register(models.Category)
@@ -171,6 +172,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "queued",
         "scheduled",
         "schedule_modifier",
+        "frequency",
         "last_build_date",
         "modified",
         "pub_date",
@@ -233,6 +235,12 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
     parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
+
+    def frequency(self, obj: models.Podcast) -> str:
+        if not (pub_dates := list(obj.episode_set.values_list("pub_date", flat=True))):
+            return "-"
+
+        return timeuntil(timezone.now() + scheduler.get_frequency(pub_dates), depth=1)
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (
