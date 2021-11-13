@@ -379,7 +379,6 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    now = timezone.now()
     if active:
         scheduled, modifier = scheduler.reschedule(
             podcast.pub_date or podcast.created,
@@ -387,6 +386,8 @@ def parse_failure(
         )
     else:
         scheduled, modifier = None, None
+
+    now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
