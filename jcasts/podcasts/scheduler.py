@@ -77,9 +77,8 @@ def schedule(
 
 
 def reschedule(
-    pub_date: datetime | None,
-    modifier: float | None,
-) -> tuple[datetime | None, float | None]:
+    pub_date: datetime | None, modifier: float | None
+) -> tuple[datetime, float]:
     """Increment scheduled time if no new updates
     and increment the schedule modifier.
     """
