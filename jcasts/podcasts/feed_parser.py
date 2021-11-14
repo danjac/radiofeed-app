@@ -148,7 +148,6 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             podcast,
             exception=e,
             result=Podcast.Result.NETWORK_ERROR,
-            active=True,
             tb=traceback.format_exc(),
         )
 
@@ -251,11 +250,7 @@ def parse_success(
     # episodes
     parse_episodes(podcast, items)
 
-    return ParseResult(
-        rss=podcast.rss,
-        success=True,
-        status=response.status_code if response else None,
-    )
+    return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
 
 
 def parse_pub_dates(
@@ -379,13 +374,14 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
+    scheduled: datetime | None = None
+    modifier: float | None = None
+
     if active:
         scheduled, modifier = scheduler.reschedule(
             podcast.pub_date or podcast.created,
             podcast.schedule_modifier,
         )
-    else:
-        scheduled, modifier = None, None
 
     now = timezone.now()
 
