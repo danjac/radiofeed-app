@@ -27,7 +27,7 @@ repos:
       - id: prettier
         exclude: bundle.js|bundle.js.map|bundle.css|templates/|mockups/|node_modules/|README.md
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: '1.4.0' # replace with latest tag on GitHub
+    rev: '1.4.0'
     hooks:
       - id: django-upgrade
         args: [--target-version, '4.0'] # Replace with Django version
