@@ -45,10 +45,10 @@
       </div>
     </form>
   {% else %}
-    <p class="mb-3">{% translate 'You currently have no social network accounts connected to this account.' %}</p>
+    <p class="mb-4">{% translate 'You currently have no social network accounts connected to this account.' %}</p>
   {% endif %}
 
-  <h2 class="font-semibold mb-3">{% translate 'Add a 3rd Party Account' %}</h2>
+  <h2 class="font-semibold mb-4">{% translate 'Add a 3rd Party Account' %}</h2>
 
   <ul class="flex items-center">
     {% include "socialaccount/snippets/provider_list.html" with process="connect" %}

@@ -3,7 +3,7 @@
     x-cloak
     class="flex items-center"
     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
-    <button title="Actions for {{ episode.cleaned_title }}"
+    <button title="Actions"
       class="focus:outline-none"
       x-show="!active"
       hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
@@ -13,7 +13,7 @@
       @click="active=true">
       {% icon ICON_NAME css_class=ICON_CSS %}
     </button>
-    <button title="Actions for {{ episode.cleaned_title }}"
+    <button title="Actions"
       class="focus:outline-none"
       x-show="active"
       @click="active=false">

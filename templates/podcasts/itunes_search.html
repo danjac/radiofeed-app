@@ -6,7 +6,7 @@
   {% for feed in feeds %}
     {% include "podcasts/_itunes_feed.html" %}
   {% empty %}
-    <p class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
+    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
       No results found for <span class="font-bold">{{ request.search.value }}</span>.
     </p>
   {% endfor %}

@@ -1,9 +1,11 @@
 {% extends "episodes/_episode.html" %}
 
-{% block cover_image %}
-  <div class="w-20">
-    <button class="handle block" title="Move item in queue">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url alt="Move item in Play Queue" size=20 %}
+{% block actions %}
+  {% include "episodes/_actions_toggle.html" %}
+  <div class="flex items-center">
+    <button title="Move Item"
+      class="handle">
+      {% icon "view_list" css_class="w-6 h-6" %}
     </button>
   </div>
-{% endblock cover_image %}
+{% endblock actions %}
