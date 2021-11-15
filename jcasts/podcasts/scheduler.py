@@ -61,9 +61,10 @@ def schedule(
 
     now = timezone.now()
     modifier = DEFAULT_MODIFIER
+    scheduled = pub_date + get_frequency(pub_dates, limit)
 
-    if (scheduled := pub_date + get_frequency(pub_dates, limit)) < now:
-        scheduled, modifier = reschedule(pub_date, modifier)
+    while scheduled < now:
+        scheduled, modifier = reschedule(scheduled, modifier)
 
     return (
         within_bounds(
