@@ -23,7 +23,8 @@ Scheduling time + modifier should be (re)calculated on every feed pull.
 On every "hit" - i.e. we have new episodes - calculate the mean interval
 between each episode release date. Add this interval
 to the latest release date. If the result is less than the current time,
-add the difference between the current time and the estimated time to the current time.
+we reschedule using the "miss" strategy i.e. add the modifier to the distance
+between the current time and last release date (see below).
 
 The result should always fall within the min (3 hrs) and max (30d) values, i.e. we
 should not pull a feed more than once every 3 hours, and we should pull all feeds
@@ -33,8 +34,8 @@ For example: current date is 7 nov. Last release date is 4 nov. Mean interval
 is 7 days. The next scheduled time is in 4 days.
 
 Another example: current date is 8 nov. Last release date is 31 oct. Mean interval
-is 7 days. 31 Oct + 7 days = 7th nov, so we are off by one day. Next scheduled time
-should be 1 day hence.
+is 7 days. 31 Oct + 7 days = 7th nov, so we are off by one day. Next scheduled time is
+calculated at 24 hours * 0.05 or approx 3 hours.
 
 On "miss" - i.e. there are no new episodes - we calculate the distance between the
 current time and the last known release date, and multiply this amount by a modifier
