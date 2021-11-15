@@ -4,6 +4,7 @@ import statistics
 
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.utils import timezone
 
 from jcasts.shared.typedefs import ComparableT
@@ -101,6 +102,18 @@ def reschedule(
 def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
+
+    now = timezone.now()
+
+    # just return max if latest is older than the maximum
+
+    if pub_dates and max(pub_dates) < now - MAX_FREQUENCY:
+        return MAX_FREQUENCY
+
+    # ignore any < 90 days
+
+    earliest = now - settings.FRESHNESS_THRESHOLD
+    pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
     # assume default if not enough available dates
 

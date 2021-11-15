@@ -115,7 +115,7 @@ class TestGetFrequency:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        assert scheduler.get_frequency(dates).days == 30
+        assert scheduler.get_frequency(dates).days == 24
 
     def test_dates_outside_threshold(self):
 
