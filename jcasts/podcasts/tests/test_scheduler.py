@@ -121,9 +121,9 @@ class TestGetFrequency:
 
         now = timezone.now()
         dates = [
-            now - timedelta(days=60),
             now - timedelta(days=90),
             now - timedelta(days=120),
+            now - timedelta(days=180),
         ]
         assert scheduler.get_frequency(dates).days == 30
 
