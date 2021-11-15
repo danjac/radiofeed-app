@@ -125,7 +125,7 @@ class TestGetFrequency:
             now - timedelta(days=120),
             now - timedelta(days=180),
         ]
-        assert scheduler.get_frequency(dates).days == 30
+        assert scheduler.get_frequency(dates).days == 1
 
     def test_min_dates(self):
 

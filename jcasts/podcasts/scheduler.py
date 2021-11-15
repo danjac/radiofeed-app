@@ -26,6 +26,10 @@ def schedule(
         return None, None
 
     now = timezone.now()
+
+    if pub_date < now - MAX_FREQUENCY:
+        return now + MAX_FREQUENCY, DEFAULT_MODIFIER
+
     frequency = get_frequency(pub_dates, limit)
     scheduled = pub_date + frequency
 
@@ -73,10 +77,6 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     # ignore any < 90 days
 
     earliest = now - settings.FRESHNESS_THRESHOLD
-
-    if pub_dates and max(pub_dates) < earliest:
-        return MAX_FREQUENCY
-
     pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
     # assume default if not enough available dates
