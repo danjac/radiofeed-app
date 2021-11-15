@@ -76,7 +76,7 @@ class TestParsePubDates:
 
         assert pub_date == items[0].pub_date
         assert scheduled
-        assert modifier == DEFAULT_MODIFIER
+        assert modifier
 
     def test_no_new_pub_dates(self, podcast):
         podcast = PodcastFactory(scheduled=timezone.now())
@@ -87,7 +87,7 @@ class TestParsePubDates:
 
         assert pub_date == podcast.pub_date
         assert scheduled
-        assert modifier > DEFAULT_MODIFIER
+        assert modifier
 
 
 class TestIsFeedChanged:
@@ -284,7 +284,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert new_podcast.scheduled
-        assert new_podcast.schedule_modifier == DEFAULT_MODIFIER
+        assert new_podcast.schedule_modifier
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 
@@ -402,7 +402,7 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.scheduled
-        assert new_podcast.schedule_modifier == DEFAULT_MODIFIER
+        assert new_podcast.schedule_modifier
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories

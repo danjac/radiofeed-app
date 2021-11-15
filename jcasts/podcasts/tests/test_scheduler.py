@@ -68,7 +68,7 @@ class TestSchedule:
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
         scheduled, modifier = scheduler.schedule(now - timedelta(days=4), dates)
         assert_hours(scheduled - now, 24)
-        assert modifier == scheduler.DEFAULT_MODIFIER
+        assert modifier == 0.06
 
     def test_last_pub_date_gt_max_value(self):
         now = timezone.now()
