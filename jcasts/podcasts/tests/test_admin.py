@@ -77,11 +77,6 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_called_with(podcast.id)
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
-    def test_schedule_podcast_feed(self, podcast, req, admin):
-        admin.schedule_podcast_feed(req, podcast)
-        podcast.refresh_from_db()
-        assert podcast.scheduled
-
     def test_parse_podcast_feed_queued(
         self, podcast, admin, req, mock_parse_podcast_feed
     ):

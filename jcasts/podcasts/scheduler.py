@@ -22,9 +22,8 @@ Scheduling time + modifier should be (re)calculated on every feed pull.
 
 On every "hit" - i.e. we have new episodes - calculate the mean interval
 between each episode release date. Add this interval
-to the latest release date. If the result is less than the current time,
-we reschedule using the "miss" strategy i.e. add the modifier to the distance
-between the current time and last release date (see below).
+to the latest release date. If the result is less than the current time, add
+the difference between the result and current time to the current time.
 
 The result should always fall within the min (3 hrs) and max (30d) values, i.e. we
 should not pull a feed more than once every 3 hours, and we should pull all feeds
@@ -62,11 +61,8 @@ def schedule(
     now = timezone.now()
     modifier = DEFAULT_MODIFIER
 
-    if pub_date < now - MAX_FREQUENCY:
-        return now + MAX_FREQUENCY, modifier
-
     if (scheduled := pub_date + get_frequency(pub_dates, limit)) < now:
-        scheduled, modifier = reschedule(pub_date, modifier)
+        scheduled = now + (pub_date - scheduled)
 
     return (
         within_bounds(
@@ -105,6 +101,11 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     of individual episodes."""
 
     now = timezone.now()
+
+    # if < 30 days just return max value
+
+    if pub_dates and max(pub_dates) < now - MAX_FREQUENCY:
+        return MAX_FREQUENCY
 
     # ignore any < 90 days
 

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
@@ -189,7 +187,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "reactivate_podcast_feeds",
     )
 
-    change_actions = ("parse_podcast_feed", "schedule_podcast_feed")
+    change_actions = ("parse_podcast_feed",)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
@@ -238,24 +236,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
     parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
 
-    def schedule_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
-        obj.scheduled, obj.schedule_modifier = scheduler.schedule(
-            obj.pub_date, self.get_pub_dates(obj)
-        )
-
-        obj.save()
-        self.message_user(request, "Podcast has been re-scheduled")
-
-    schedule_podcast_feed.label = "Re-Schedule"  # type: ignore
-
     def frequency(self, obj: models.Podcast) -> str:
-        if not (pub_dates := self.get_pub_dates(obj)):
+        if not (pub_dates := list(obj.episode_set.values_list("pub_date", flat=True))):
             return "-"
 
         return timeuntil(timezone.now() + scheduler.get_frequency(pub_dates))
-
-    def get_pub_dates(self, obj: models.Podcast) -> list[datetime]:
-        return list(obj.episode_set.values_list("pub_date", flat=True))
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (
