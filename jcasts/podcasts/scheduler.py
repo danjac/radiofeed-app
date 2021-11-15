@@ -62,6 +62,9 @@ def schedule(
     now = timezone.now()
     modifier = DEFAULT_MODIFIER
 
+    if pub_date < now - MAX_FREQUENCY:
+        return now + MAX_FREQUENCY, modifier
+
     if (scheduled := pub_date + get_frequency(pub_dates, limit)) < now:
         scheduled, modifier = reschedule(pub_date, modifier)
 
@@ -102,11 +105,6 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     of individual episodes."""
 
     now = timezone.now()
-
-    # just return max if latest is older than the maximum
-
-    if pub_dates and max(pub_dates) < now - MAX_FREQUENCY:
-        return MAX_FREQUENCY
 
     # ignore any < 90 days
 
