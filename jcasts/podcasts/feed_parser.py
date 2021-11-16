@@ -31,6 +31,14 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
+BASE_PERIODS = {
+    "hourly": 1 * 3600,
+    "daily": 24 * 3600,
+    "weekly": 24 * 7 * 3600,
+    "monthly": 30 * 24 * 3600,
+    "yearly": 365 * 24 * 3600,
+}
+
 
 class NotModified(requests.RequestException):
     ...
@@ -215,7 +223,7 @@ def parse_success(
         podcast.scheduled,
         podcast.frequency,
         podcast.schedule_modifier,
-    ) = parse_pub_dates(podcast, items)
+    ) = parse_pub_dates(podcast, feed, items)
 
     # websub
 
@@ -298,16 +306,19 @@ def parse_websub_hub(
 
 
 def parse_pub_dates(
-    podcast: Podcast, items: list[rss_parser.Item]
+    podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
 ) -> tuple[datetime | None, datetime | None, timedelta | None, float | None]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
+    frequency = parse_update_frequency(podcast, feed)
+
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
+
         return (
             (
                 latest,
-                *scheduler.schedule(latest, pub_dates),
+                *scheduler.schedule(latest, frequency, pub_dates),
             )
             if podcast.active
             else (latest, None, None, None)
@@ -317,13 +328,26 @@ def parse_pub_dates(
         (
             podcast.pub_date,
             *scheduler.reschedule(
-                podcast.frequency,
+                frequency,
                 podcast.schedule_modifier,
             ),
         )
         if podcast.active
         else (podcast.pub_date, None, None, None)
     )
+
+
+def parse_update_frequency(podcast: Podcast, feed: rss_parser.Feed) -> timedelta | None:
+
+    if not feed.update_period or not feed.update_frequency:
+        return podcast.frequency
+
+    try:
+        return timedelta(
+            seconds=BASE_PERIODS[feed.update_period] / feed.update_frequency or 1
+        )
+    except KeyError:
+        return podcast.frequency
 
 
 def parse_episodes(

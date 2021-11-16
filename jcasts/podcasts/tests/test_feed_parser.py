@@ -24,6 +24,7 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_podcast_feeds,
     parse_pub_dates,
+    parse_update_frequency,
     parse_websub_hub,
 )
 from jcasts.podcasts.models import Podcast
@@ -160,21 +161,47 @@ class TestParseWebSubHub:
         assert websub_status_changed > podcast.websub_status_changed
 
 
+class TestParseUpdateFrequency:
+    def test_no_update_values(self, podcast):
+        feed = Feed(**FeedFactory())
+        assert parse_update_frequency(podcast, feed) is None
+
+    def test_no_update_frequency(self, podcast):
+        feed = Feed(**FeedFactory(update_period="hourly"))
+        assert parse_update_frequency(podcast, feed) is None
+
+    def test_no_update_period(self, podcast):
+        feed = Feed(**FeedFactory(update_frequency=3))
+        assert parse_update_frequency(podcast, feed) is None
+
+    def test_invalid_update_period(self, podcast):
+        feed = Feed(**FeedFactory(update_frequency=3, update_period="fortnitely"))
+        assert parse_update_frequency(podcast, feed) is None
+
+    def test_valid_update_period(self, podcast):
+        feed = Feed(**FeedFactory(update_frequency=3, update_period="daily"))
+        assert parse_update_frequency(podcast, feed) == timedelta(hours=8)
+
+
 class TestParsePubDates:
-    def test_no_items(self, podcast):
+    @pytest.fixture
+    def feed(self):
+        return Feed(**FeedFactory())
+
+    def test_no_items(self, podcast, feed):
         (
             pub_date,
             scheduled,
             frequency,
             modifier,
-        ) = parse_pub_dates(podcast, [])
+        ) = parse_pub_dates(podcast, feed, [])
 
         assert pub_date == podcast.pub_date
         assert frequency
         assert scheduled
         assert modifier > DEFAULT_MODIFIER
 
-    def test_new_pub_dates(self, podcast):
+    def test_new_pub_dates(self, podcast, feed):
 
         now = timezone.now()
 
@@ -189,14 +216,14 @@ class TestParsePubDates:
             scheduled,
             frequency,
             modifier,
-        ) = parse_pub_dates(podcast, items)
+        ) = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
         assert frequency
         assert scheduled
         assert modifier
 
-    def test_new_pub_dates_inactive(self, podcast):
+    def test_new_pub_dates_inactive(self, podcast, feed):
         podcast.active = False
 
         now = timezone.now()
@@ -212,14 +239,14 @@ class TestParsePubDates:
             scheduled,
             frequency,
             modifier,
-        ) = parse_pub_dates(podcast, items)
+        ) = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
         assert not frequency
         assert not scheduled
         assert not modifier
 
-    def test_no_new_pub_dates(self, db):
+    def test_no_new_pub_dates(self, db, feed):
         podcast = PodcastFactory(scheduled=timezone.now())
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
@@ -229,14 +256,14 @@ class TestParsePubDates:
             scheduled,
             frequency,
             modifier,
-        ) = parse_pub_dates(podcast, items)
+        ) = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == podcast.pub_date
         assert scheduled
         assert frequency
         assert modifier
 
-    def test_no_new_pub_dates_inactive(self, db):
+    def test_no_new_pub_dates_inactive(self, db, feed):
         podcast = PodcastFactory(scheduled=timezone.now(), active=False)
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
@@ -246,7 +273,7 @@ class TestParsePubDates:
             scheduled,
             frequency,
             modifier,
-        ) = parse_pub_dates(podcast, items)
+        ) = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == podcast.pub_date
         assert not scheduled

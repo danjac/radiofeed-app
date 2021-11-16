@@ -14,11 +14,13 @@ DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
 
+MAX_PUB_DATES = 12
+
 
 def schedule(
     pub_date: datetime | None,
+    frequency: timedelta | None,
     pub_dates: list[datetime],
-    limit: int = 12,
 ) -> tuple[datetime | None, timedelta | None, float | None]:
     """Return a new scheduled time and modifier."""
 
@@ -30,7 +32,10 @@ def schedule(
     if pub_date < now - MAX_FREQUENCY:
         return now + MAX_FREQUENCY, MAX_FREQUENCY, DEFAULT_MODIFIER
 
-    frequency = get_frequency(pub_dates, limit)
+    frequency = (
+        frequency_within_bounds(frequency) if frequency else get_frequency(pub_dates)
+    )
+
     scheduled = pub_date + frequency
 
     while scheduled < now:
@@ -56,10 +61,7 @@ def reschedule(
 
     now = timezone.now()
 
-    frequency = within_bounds(
-        frequency or DEFAULT_FREQUENCY, MIN_FREQUENCY, MAX_FREQUENCY
-    )
-
+    frequency = frequency_within_bounds(frequency or DEFAULT_FREQUENCY)
     modifier = modifier or DEFAULT_MODIFIER
 
     return (
@@ -73,7 +75,7 @@ def reschedule(
     )
 
 
-def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
 
@@ -89,7 +91,7 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     if len(pub_dates) in (0, 1):
         return DEFAULT_FREQUENCY
 
-    latest, *pub_dates = sorted(pub_dates, reverse=True)[:limit]
+    latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
 
     # calculate mean interval between dates
 
@@ -99,11 +101,11 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
         intervals.append((latest - pub_date).total_seconds())
         latest = pub_date
 
-    return within_bounds(
-        timedelta(seconds=statistics.mean(intervals)),
-        MIN_FREQUENCY,
-        MAX_FREQUENCY,
-    )
+    return frequency_within_bounds(timedelta(seconds=statistics.mean(intervals)))
+
+
+def frequency_within_bounds(frequency: timedelta) -> timedelta:
+    return within_bounds(frequency, MIN_FREQUENCY, MAX_FREQUENCY)
 
 
 def within_bounds(
