@@ -4,6 +4,8 @@ import statistics
 
 from datetime import datetime, timedelta
 
+import attr
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -11,64 +13,82 @@ from jcasts.shared.typedefs import ComparableT
 
 DEFAULT_MODIFIER = 0.05
 DEFAULT_FREQUENCY = timedelta(days=1)
+
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
 
+MAX_PUB_DATES = 12
+
+
+@attr.s(kw_only=True)
+class SchedulerResult:
+    scheduled: datetime | None = attr.ib(default=None)
+    frequency: timedelta | None = attr.ib(default=None)
+    modifier: float | None = attr.ib(default=None)
+
 
 def schedule(
-    pub_date: datetime | None,
-    pub_dates: list[datetime],
-    limit: int = 12,
-) -> tuple[datetime | None, float | None]:
+    pub_date: datetime | None, pub_dates: list[datetime], active: bool
+) -> SchedulerResult:
     """Return a new scheduled time and modifier."""
 
-    if pub_date is None:
-        return None, None
+    if not active or pub_date is None:
+        return SchedulerResult()
 
     now = timezone.now()
 
     if pub_date < now - MAX_FREQUENCY:
-        return now + MAX_FREQUENCY, DEFAULT_MODIFIER
 
-    frequency = get_frequency(pub_dates, limit)
+        return SchedulerResult(
+            scheduled=now + MAX_FREQUENCY,
+            frequency=MAX_FREQUENCY,
+            modifier=DEFAULT_MODIFIER,
+        )
+
+    frequency = get_frequency(pub_dates)
     scheduled = pub_date + frequency
 
     while scheduled < now:
         scheduled += frequency
 
-    return (
-        within_bounds(
+    return SchedulerResult(
+        scheduled=within_bounds(
             scheduled,
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
-        DEFAULT_MODIFIER,
+        frequency=frequency,
+        modifier=DEFAULT_MODIFIER,
     )
 
 
 def reschedule(
-    pub_date: datetime | None, modifier: float | None
-) -> tuple[datetime, float]:
+    frequency: timedelta | None, modifier: float | None, active: bool
+) -> SchedulerResult:
     """Increment scheduled time if no new updates
     and increment the schedule modifier.
     """
 
+    if not active:
+        return SchedulerResult()
+
     now = timezone.now()
 
-    pub_date = pub_date or now - DEFAULT_FREQUENCY
+    frequency = frequency or DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
 
-    return (
-        within_bounds(
-            now + timedelta(seconds=(now - pub_date).total_seconds() * modifier),
+    return SchedulerResult(
+        scheduled=within_bounds(
+            now + timedelta(seconds=frequency.total_seconds() * modifier),
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
-        within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
+        frequency=frequency,
+        modifier=within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
     )
 
 
-def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
 
@@ -84,7 +104,7 @@ def get_frequency(pub_dates: list[datetime], limit: int = 12) -> timedelta:
     if len(pub_dates) in (0, 1):
         return DEFAULT_FREQUENCY
 
-    latest, *pub_dates = sorted(pub_dates, reverse=True)[:limit]
+    latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
 
     # calculate mean interval between dates
 

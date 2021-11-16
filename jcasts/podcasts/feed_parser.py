@@ -210,11 +210,11 @@ def parse_success(
 
     # scheduling
 
-    (
-        podcast.pub_date,
-        podcast.scheduled,
-        podcast.schedule_modifier,
-    ) = parse_pub_dates(podcast, items)
+    podcast.pub_date, schedule_result = parse_pub_dates(podcast, items)
+
+    podcast.scheduled = schedule_result.scheduled
+    podcast.schedule_modifier = schedule_result.modifier
+    podcast.frequency = schedule_result.frequency
 
     # websub
 
@@ -298,30 +298,17 @@ def parse_websub_hub(
 
 def parse_pub_dates(
     podcast: Podcast, items: list[rss_parser.Item]
-) -> tuple[datetime | None, datetime | None, float | None]:
+) -> tuple[datetime | None, scheduler.SchedulerResult]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return (
-            (
-                latest,
-                *scheduler.schedule(latest, pub_dates),
-            )
-            if podcast.active
-            else (latest, None, None)
-        )
+        return latest, scheduler.schedule(latest, pub_dates, podcast.active)
 
-    return (
-        (
-            podcast.pub_date,
-            *scheduler.reschedule(
-                podcast.pub_date,
-                podcast.schedule_modifier,
-            ),
-        )
-        if podcast.active
-        else (podcast.pub_date, None, None)
+    return podcast.pub_date, scheduler.reschedule(
+        podcast.frequency,
+        podcast.schedule_modifier,
+        podcast.active,
     )
 
 
@@ -428,21 +415,19 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    scheduled: datetime | None = None
-    modifier: float | None = None
-
-    if active:
-        scheduled, modifier = scheduler.reschedule(
-            podcast.pub_date or podcast.created,
-            podcast.schedule_modifier,
-        )
+    schedule_result = scheduler.reschedule(
+        podcast.frequency,
+        podcast.schedule_modifier,
+        active,
+    )
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
-        scheduled=scheduled,
-        schedule_modifier=modifier,
+        frequency=schedule_result.frequency,
+        scheduled=schedule_result.scheduled,
+        schedule_modifier=schedule_result.modifier,
         updated=now,
         parsed=now,
         result=result,
