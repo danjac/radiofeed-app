@@ -206,9 +206,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "result",
         "exception",
         "websub_hub",
+        "websub_token",
         "websub_status",
         "websub_status_changed",
-        "websub_last_called",
     )
 
     actions = (

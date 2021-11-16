@@ -9,12 +9,13 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import itunes
+from jcasts.podcasts import itunes, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -257,6 +258,16 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, follow=False)
+
+
+@require_http_methods(["GET", "POST"])
+@csrf_exempt
+def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
+    return (
+        websub.verify_intent(request, podcast_id)
+        if request.method == "GET"
+        else websub.handle_content_distribution(request, podcast_id)
+    )
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
