@@ -206,7 +206,7 @@ def parse_success(
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.exception = ""
 
-    # scheduling
+    podcast.active = not feed.complete
 
     (
         podcast.pub_date,
@@ -261,13 +261,24 @@ def parse_pub_dates(
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
         return (
-            latest,
-            *scheduler.schedule(latest, pub_dates),
+            (
+                latest,
+                *scheduler.schedule(latest, pub_dates),
+            )
+            if podcast.active
+            else (latest, None, None)
         )
 
-    return podcast.pub_date, *scheduler.reschedule(
-        podcast.pub_date,
-        podcast.schedule_modifier,
+    return (
+        (
+            podcast.pub_date,
+            *scheduler.reschedule(
+                podcast.pub_date,
+                podcast.schedule_modifier,
+            ),
+        )
+        if podcast.active
+        else (podcast.pub_date, None, None)
     )
 
 

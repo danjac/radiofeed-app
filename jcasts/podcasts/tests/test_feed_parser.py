@@ -78,6 +78,23 @@ class TestParsePubDates:
         assert scheduled
         assert modifier
 
+    def test_new_pub_dates_inactive(self, podcast):
+        podcast.active = False
+
+        now = timezone.now()
+
+        items = [
+            Item(**ItemFactory(pub_date=now - timedelta(days=3))),
+            Item(**ItemFactory(pub_date=now - timedelta(days=6))),
+            Item(**ItemFactory(pub_date=now - timedelta(days=9))),
+        ]
+
+        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+
+        assert pub_date == items[0].pub_date
+        assert not scheduled
+        assert not modifier
+
     def test_no_new_pub_dates(self, podcast):
         podcast = PodcastFactory(scheduled=timezone.now())
 
@@ -88,6 +105,17 @@ class TestParsePubDates:
         assert pub_date == podcast.pub_date
         assert scheduled
         assert modifier
+
+    def test_no_new_pub_dates_inactive(self, podcast):
+        podcast = PodcastFactory(scheduled=timezone.now(), active=False)
+
+        items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
+
+        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+
+        assert pub_date == podcast.pub_date
+        assert not scheduled
+        assert not modifier
 
 
 class TestIsFeedChanged:
@@ -285,6 +313,70 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.year == 2020
         assert new_podcast.scheduled
         assert new_podcast.schedule_modifier
+        assert not new_podcast.queued
+        assert new_podcast.result == Podcast.Result.SUCCESS
+
+        assert new_podcast.parsed
+
+        assert new_podcast.etag
+        assert new_podcast.explicit
+        assert new_podcast.cover_url
+
+        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
+
+        assigned_categories = [c.name for c in new_podcast.categories.all()]
+
+        assert "Science" in assigned_categories
+        assert "Religion & Spirituality" in assigned_categories
+        assert "Society & Culture" in assigned_categories
+        assert "Philosophy" in assigned_categories
+
+    def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
+
+        episode_guid = "https://mysteriousuniverse.org/?p=168097"
+        episode_title = "original title"
+
+        # test updated
+        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=self.get_rss_content("rss_mock_complete.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+        assert parse_podcast_feed(new_podcast.id)
+
+        # new episodes: 19
+        assert Episode.objects.count() == 20
+
+        # check episode updated
+        episode = Episode.objects.get(guid=episode_guid)
+        assert episode.title != episode_title
+
+        new_podcast.refresh_from_db()
+
+        assert new_podcast.rss
+        assert not new_podcast.active
+        assert new_podcast.title == "Mysterious Universe"
+
+        assert (
+            new_podcast.description == "Blog and Podcast specializing in offbeat news"
+        )
+
+        assert new_podcast.owner == "8th Kind"
+
+        assert new_podcast.modified
+        assert new_podcast.modified.day == 1
+        assert new_podcast.modified.month == 7
+        assert new_podcast.modified.year == 2020
+        assert not new_podcast.scheduled
+        assert not new_podcast.schedule_modifier
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 

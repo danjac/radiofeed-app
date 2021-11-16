@@ -27,7 +27,11 @@ _validate_url = URLValidator(["http", "https"])
 
 
 def is_explicit(value: str | None) -> bool:
-    return value in ("clean", "yes")
+    return (value or "").lower() in ("clean", "yes")
+
+
+def is_complete(value: str | None) -> bool:
+    return (value or "").lower() == "yes"
 
 
 def int_or_none(value: str | None) -> int | None:
@@ -143,6 +147,7 @@ class Feed:
     owner: str = attr.ib(default="")
     description: str = attr.ib(default="")
 
+    complete: bool = attr.ib(default=False, converter=is_complete)
     explicit: bool = attr.ib(default=False, converter=is_explicit)
 
     categories: list[str] = attr.ib(default=list)
@@ -192,6 +197,7 @@ def parse_feed(finder: XPathFinder) -> Feed:
         link=finder.find("link/text()"),
         last_build_date=finder.find("lastBuildDate/text()"),
         language=finder.find("language/text()", default="en"),
+        complete=finder.find("itunes:complete/text()"),
         explicit=finder.find("itunes:explicit/text()"),
         cover_url=finder.find("itunes:image/@href", "image/url/text()"),
         funding_url=finder.find("podcast:funding/@url"),
