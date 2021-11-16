@@ -309,31 +309,29 @@ def parse_pub_dates(
     podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
 ) -> tuple[datetime | None, datetime | None, timedelta | None, float | None]:
 
+    latest = podcast.pub_date
     pub_dates = [item.pub_date for item in items if item.pub_date]
-
     frequency = parse_update_frequency(podcast, feed)
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-
-        return (
-            (
-                latest,
-                *scheduler.schedule(latest, frequency, pub_dates),
-            )
-            if podcast.active
-            else (latest, None, None, None)
+        result = scheduler.schedule(
+            latest,
+            frequency,
+            pub_dates,
+            podcast.active,
+        )
+    else:
+        result = scheduler.reschedule(
+            frequency,
+            podcast.schedule_modifier,
+            podcast.active,
         )
 
     return (
-        (
-            podcast.pub_date,
-            *scheduler.reschedule(
-                frequency,
-                podcast.schedule_modifier,
-            ),
-        )
-        if podcast.active
-        else (podcast.pub_date, None, None, None)
+        latest,
+        result.scheduled,
+        result.frequency,
+        result.modifier,
     )
 
 
@@ -453,25 +451,19 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    scheduled: datetime | None = None
-    modifier: float | None = None
-    frequency: timedelta | None = None
-
-    if active:
-        scheduled, frequency, modifier = scheduler.reschedule(
-            podcast.frequency,
-            podcast.schedule_modifier,
-        )
+    schedule_result = scheduler.reschedule(
+        podcast.frequency, podcast.schedule_modifier, active
+    )
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        active=active,
-        frequency=frequency,
-        scheduled=scheduled,
-        schedule_modifier=modifier,
-        updated=now,
+        frequency=schedule_result.frequency,
+        scheduled=schedule_result.scheduled,
+        schedule_modifier=schedule_result.modifier,
         parsed=now,
+        updated=now,
+        active=active,
         result=result,
         http_status=status,
         exception=tb,
