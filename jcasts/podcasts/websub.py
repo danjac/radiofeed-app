@@ -43,7 +43,7 @@ def subscribe(podcast_id: int) -> SubscribeResult:
     token = crypto.get_random_string(12)
 
     response = requests.post(
-        podcast.rss,
+        podcast.websub_hub,
         {
             "hub.callback": build_absolute_uri(
                 reverse("podcasts:websub_callback", args=[podcast.id])
