@@ -316,7 +316,9 @@ class TestWebSubCallback:
         assert podcast.websub_status_changed
         assert podcast.websub_subscribed > timezone.now()
 
-    def test_subscribe_missing_param(self, client, db, django_assert_num_queries):
+    def test_subscribe_missing_lease_seconds(
+        self, client, db, django_assert_num_queries
+    ):
 
         podcast = PodcastFactory(
             websub_hub=self.hub,
@@ -329,6 +331,31 @@ class TestWebSubCallback:
                 {
                     "hub.mode": "subscribe",
                     "hub.topic": podcast.rss,
+                    "hub.challenge": "ok",
+                },
+            )
+
+        assert_not_found(resp)
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+        assert not podcast.websub_status_changed
+        assert not podcast.websub_subscribed
+
+    def test_subscribe_missing_topic(self, client, db, django_assert_num_queries):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+
+        with django_assert_num_queries(1):
+            resp = client.get(
+                self.get_url(podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.lease_seconds": 5000,
                     "hub.challenge": "ok",
                 },
             )
