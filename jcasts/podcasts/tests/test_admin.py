@@ -15,6 +15,7 @@ from jcasts.podcasts.admin import (
     PubDateFilter,
     QueuedFilter,
     ResultFilter,
+    WebSubFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -217,6 +218,41 @@ class TestQueuedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == queued
+
+
+class TestWebSubFilter:
+    def test_none(self, podcasts, admin, req):
+        websub = PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
+        f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert websub not in qs
+
+    def test_any(self, podcasts, admin, req):
+        websub = PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
+        f = WebSubFilter(req, {"websub": "any"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert websub in qs
+
+    def test_matches_status(self, podcasts, admin, req):
+        websub = PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
+        f = WebSubFilter(req, {"websub": Podcast.WebSubStatus.PENDING}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert websub in qs
+
+    def test_not_matches_status(self, podcasts, admin, req):
+        PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
+        f = WebSubFilter(req, {"websub": Podcast.WebSubStatus.ACTIVE}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 0
+
+    def test_all(self, podcasts, admin, req):
+        PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
+        f = WebSubFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
 
 
 class TestFollowedFilter:

@@ -127,11 +127,29 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
+    class WebSubStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        REQUESTED = "requested", "Requested"
+        ACTIVE = "active", "Active"
+        INACTIVE = "inactive", "Inactive"
+
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
+
+    # websub fields
+    websub_hub: str | None = models.URLField(null=True, blank=True, max_length=500)
+
+    websub_status: str | None = models.CharField(
+        max_length=20, choices=WebSubStatus.choices, null=True, blank=True
+    )
+
+    websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
+    websub_last_called: datetime | None = models.DateTimeField(null=True, blank=True)
+    # subscribed until this date
+    # websub_timeout: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)
@@ -152,11 +170,13 @@ class Podcast(models.Model):
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
     schedule_modifier: float | None = models.FloatField(null=True, blank=True)
 
-    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
+    # feed parse result fields
 
     result: str | None = models.CharField(
         max_length=20, choices=Result.choices, null=True, blank=True
     )
+
+    http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
     exception: str = models.TextField(blank=True)
 

@@ -208,11 +208,21 @@ def parse_success(
 
     podcast.active = not feed.complete
 
+    # scheduling
+
     (
         podcast.pub_date,
         podcast.scheduled,
         podcast.schedule_modifier,
     ) = parse_pub_dates(podcast, items)
+
+    # websub
+
+    (
+        podcast.websub_hub,
+        podcast.websub_status,
+        podcast.websub_status_changed,
+    ) = parse_websub_hub(podcast, response, feed)
 
     # content
 
@@ -251,6 +261,39 @@ def parse_success(
     parse_episodes(podcast, items)
 
     return ParseResult(rss=podcast.rss, success=True, status=response.status_code)
+
+
+def parse_websub_hub(
+    podcast: Podcast,
+    response: requests.Response,
+    feed: rss_parser.Feed,
+) -> tuple[str | None, str | None, datetime | None]:
+
+    websub_hub: str | None = None
+
+    if feed.websub_hub:
+        websub_hub = feed.websub_hub
+
+    elif (header := response.links.get("rel")) and response.links.get(
+        "self"
+    ) == podcast.rss:
+        websub_hub = header
+
+    if not websub_hub:
+        return None, None, None
+
+    if websub_hub == podcast.websub_hub:
+        return (
+            podcast.websub_hub,
+            podcast.websub_status,
+            podcast.websub_status_changed,
+        )
+
+    return (
+        websub_hub,
+        Podcast.WebSubStatus.PENDING,  # type: ignore
+        timezone.now(),
+    )
 
 
 def parse_pub_dates(

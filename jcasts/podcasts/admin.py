@@ -21,6 +21,31 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+class WebSubFilter(admin.SimpleListFilter):
+    title = "WebSub"
+    parameter_name = "websub"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+
+        return (
+            ("none", "None"),
+            ("any", "Any"),
+        ) + tuple(models.Podcast.WebSubStatus.choices)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        value = self.value()
+        if value == "none":
+            return queryset.filter(websub_status__isnull=True)
+        if value == "any":
+            return queryset.filter(websub_status__isnull=False)
+        if value:
+            return queryset.filter(websub_status=value)
+
+        return queryset
+
+
 class ResultFilter(admin.SimpleListFilter):
     title = "Result"
     parameter_name = "result"
@@ -149,6 +174,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PubDateFilter,
         QueuedFilter,
         ResultFilter,
+        WebSubFilter,
     )
 
     list_display = (

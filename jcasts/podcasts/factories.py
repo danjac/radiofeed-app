@@ -15,7 +15,7 @@ class FeedFactory(DictFactory):
     description = Faker("text")
     link = Faker("url")
     cover_url = Faker("url")
-    explicit = None
+    explicit = False
 
 
 class ItemFactory(DictFactory):
@@ -28,7 +28,7 @@ class ItemFactory(DictFactory):
     media_type = "audio/mpeg"
     length = 10000000
     duration = "100"
-    explicit = None
+    explicit = False
     cover_url = None
 
 

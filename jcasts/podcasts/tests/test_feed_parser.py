@@ -24,6 +24,7 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_podcast_feeds,
     parse_pub_dates,
+    parse_websub_hub,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -52,6 +53,111 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
+
+
+class TestParseWebSubHub:
+    hub = "https://simplecast.superfeedr.com/"
+
+    def test_new_websub_hub_in_feed(self, podcast):
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        (
+            websub_hub,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(podcast, MockResponse(), feed)
+
+        assert websub_hub == self.hub
+        assert websub_status == Podcast.WebSubStatus.PENDING
+        assert websub_status_changed
+
+    def test_new_websub_hub_in_header(self, podcast):
+        feed = Feed(**FeedFactory())
+        (websub_hub, websub_status, websub_status_changed,) = parse_websub_hub(
+            podcast,
+            MockResponse(links={"rel": self.hub, "self": podcast.rss}),
+            feed,
+        )
+
+        assert websub_hub == self.hub
+        assert websub_status == Podcast.WebSubStatus.PENDING
+        assert websub_status_changed
+
+    def test_new_websub_hub_in_header_self_does_not_match(self, podcast):
+        feed = Feed(**FeedFactory())
+        (websub_hub, websub_status, websub_status_changed) = parse_websub_hub(
+            podcast,
+            MockResponse(
+                links={
+                    "rel": self.hub,
+                    "self": "https://some-random.com",
+                }
+            ),
+            feed,
+        )
+
+        assert websub_hub is None
+        assert websub_status is None
+        assert websub_status_changed is None
+
+    def test_new_websub_hub_in_header_self_missing(self, podcast):
+        feed = Feed(**FeedFactory())
+        (
+            websub_hub,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(podcast, MockResponse(links={"rel": self.hub}), feed)
+
+        assert websub_hub is None
+        assert websub_status is None
+        assert websub_status_changed is None
+
+    def test_no_websub_hub_provided(self, podcast):
+        feed = Feed(**FeedFactory())
+        (
+            websub_hub,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(podcast, MockResponse(), feed)
+
+        assert websub_hub is None
+        assert websub_status is None
+        assert websub_status_changed is None
+
+    def test_websub_hub_same_as_podcast(self, db):
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_status_changed=timezone.now() - timedelta(days=7),
+        )
+
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        (
+            websub_hub,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(podcast, MockResponse(), feed)
+
+        assert websub_hub == podcast.websub_hub
+        assert websub_status == podcast.websub_status
+        assert websub_status_changed == podcast.websub_status_changed
+
+    def test_websub_hub_different_from_podcast(self, db):
+        podcast = PodcastFactory(
+            websub_hub="https://example.com",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_status_changed=timezone.now() - timedelta(days=7),
+        )
+
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        (
+            websub_hub,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(podcast, MockResponse(), feed)
+
+        assert websub_hub == self.hub
+        assert websub_status == Podcast.WebSubStatus.PENDING
+        assert websub_status_changed > podcast.websub_status_changed
 
 
 class TestParsePubDates:
@@ -95,7 +201,7 @@ class TestParsePubDates:
         assert not scheduled
         assert not modifier
 
-    def test_no_new_pub_dates(self, podcast):
+    def test_no_new_pub_dates(self, db):
         podcast = PodcastFactory(scheduled=timezone.now())
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
@@ -106,7 +212,7 @@ class TestParsePubDates:
         assert scheduled
         assert modifier
 
-    def test_no_new_pub_dates_inactive(self, podcast):
+    def test_no_new_pub_dates_inactive(self, db):
         podcast = PodcastFactory(scheduled=timezone.now(), active=False)
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
