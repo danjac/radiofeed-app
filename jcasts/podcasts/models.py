@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -169,6 +169,7 @@ class Podcast(models.Model):
     # scheduling
     scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
     schedule_modifier: float | None = models.FloatField(null=True, blank=True)
+    frequency: timedelta | None = models.DurationField(null=True, blank=True)
 
     # feed parse result fields
 
