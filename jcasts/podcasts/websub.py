@@ -22,6 +22,7 @@ class SubscribeResult:
     podcast_id: int = attr.ib()
     status: str | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
+    content: bytes | None = None
 
 
 def subscribe_podcasts():
@@ -66,8 +67,12 @@ def subscribe(podcast_id: int) -> SubscribeResult:
 
     except requests.RequestException as e:
         podcast.websub_status = Podcast.WebSubStatus.INACTIVE
-        podcast.websub_exception = traceback.format_exc()
+        podcast.websub_exception = (
+            traceback.format_exc() + "\n\n\n" + str(e.response.content)
+        )
+
         result.exception = e
+        result.content = e.response.content
 
     podcast.websub_status_changed = now
     podcast.save()

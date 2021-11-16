@@ -37,8 +37,10 @@ class TestSubscribe:
 
     def test_request_failed(self, db, mocker):
         class MockResponse:
+            content = b"failed"
+
             def raise_for_status(self):
-                raise requests.RequestException("oops")
+                raise requests.RequestException(response=self)
 
         mock_post = mocker.patch("requests.post", return_value=MockResponse())
 
