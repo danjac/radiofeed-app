@@ -32,10 +32,7 @@ def schedule(
     if pub_date < now - MAX_FREQUENCY:
         return now + MAX_FREQUENCY, MAX_FREQUENCY, DEFAULT_MODIFIER
 
-    frequency = (
-        frequency_within_bounds(frequency) if frequency else get_frequency(pub_dates)
-    )
-
+    frequency = get_frequency(frequency, pub_dates)
     scheduled = pub_date + frequency
 
     while scheduled < now:
@@ -59,10 +56,10 @@ def reschedule(
     and increment the schedule modifier.
     """
 
-    now = timezone.now()
-
-    frequency = frequency_within_bounds(frequency or DEFAULT_FREQUENCY)
+    frequency = get_frequency(frequency or DEFAULT_FREQUENCY)
     modifier = modifier or DEFAULT_MODIFIER
+
+    now = timezone.now()
 
     return (
         within_bounds(
@@ -75,16 +72,21 @@ def reschedule(
     )
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta:
+def get_frequency(
+    frequency: timedelta | None, pub_dates: list[datetime] | None = None
+) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
+
+    if frequency:
+        return within_bounds(frequency, MIN_FREQUENCY, MAX_FREQUENCY)
 
     now = timezone.now()
 
     # ignore any < 90 days
 
     earliest = now - settings.FRESHNESS_THRESHOLD
-    pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
+    pub_dates = [pub_date for pub_date in pub_dates or [] if pub_date > earliest]
 
     # assume default if not enough available dates
 
@@ -101,11 +103,11 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         intervals.append((latest - pub_date).total_seconds())
         latest = pub_date
 
-    return frequency_within_bounds(timedelta(seconds=statistics.mean(intervals)))
-
-
-def frequency_within_bounds(frequency: timedelta) -> timedelta:
-    return within_bounds(frequency, MIN_FREQUENCY, MAX_FREQUENCY)
+    return within_bounds(
+        timedelta(seconds=statistics.mean(intervals)),
+        MIN_FREQUENCY,
+        MAX_FREQUENCY,
+    )
 
 
 def within_bounds(

@@ -114,17 +114,22 @@ class TestSchedule:
 
 class TestGetFrequency:
     def test_no_pub_dates(self):
-        assert scheduler.get_frequency([]).days == 1
+        assert scheduler.get_frequency(None, []).days == 1
 
     def test_single_date(self):
         diff = timedelta(days=1)
         dt = timezone.now() - diff
-        assert scheduler.get_frequency([dt]).days == 1
+        assert scheduler.get_frequency(None, [dt]).days == 1
 
     def test_multiple_dates(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        assert scheduler.get_frequency(dates).days == 3
+        assert scheduler.get_frequency(None, dates).days == 3
+
+    def test_freq_not_none(self):
+        now = timezone.now()
+        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
+        assert scheduler.get_frequency(timedelta(days=12), dates).days == 12
 
     def test_max_dates_with_one_date_in_range(self):
 
@@ -134,7 +139,7 @@ class TestGetFrequency:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        assert scheduler.get_frequency(dates).days == 24
+        assert scheduler.get_frequency(None, dates).days == 24
 
     def test_dates_outside_threshold(self):
 
@@ -144,7 +149,7 @@ class TestGetFrequency:
             now - timedelta(days=120),
             now - timedelta(days=180),
         ]
-        assert scheduler.get_frequency(dates).days == 1
+        assert scheduler.get_frequency(None, dates).days == 1
 
     def test_min_dates(self):
 
@@ -154,4 +159,4 @@ class TestGetFrequency:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        assert_hours(scheduler.get_frequency(dates), 3)
+        assert_hours(scheduler.get_frequency(None, dates), 3)
