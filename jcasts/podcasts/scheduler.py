@@ -73,7 +73,7 @@ def reschedule(
     if active is False:
         return SchedulerResult()
 
-    frequency = get_frequency(frequency or DEFAULT_FREQUENCY)
+    frequency = get_frequency(frequency)
     modifier = modifier or DEFAULT_MODIFIER
 
     now = timezone.now()
