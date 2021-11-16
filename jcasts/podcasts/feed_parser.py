@@ -109,17 +109,7 @@ def parse_podcast_feed(podcast_id: int, content: bytes | None = None) -> ParseRe
 
     try:
         podcast = Podcast.objects.active().get(pk=podcast_id)
-
-        if content:
-            response = None
-            feed, items = rss_parser.parse_rss(content)
-        else:
-            response = get_feed_response(podcast)
-            feed, items = rss_parser.parse_rss(response.content)
-
-            if not is_feed_changed(podcast, feed):
-                raise NotModified(response=response)
-
+        response, feed, items = parse_content(podcast, content)
         return parse_success(podcast, response, feed, items)
 
     except Podcast.DoesNotExist as e:
@@ -167,11 +157,26 @@ def parse_podcast_feed(podcast_id: int, content: bytes | None = None) -> ParseRe
         return parse_failure(
             podcast,
             result=Podcast.Result.INVALID_RSS,
-            status=response.status_code if response else None,
             active=False,
             exception=e,
             tb=traceback.format_exc(),
         )
+
+
+def parse_content(
+    podcast: Podcast, content: bytes | None = None
+) -> tuple[requests.Response | None, rss_parser.Feed, list[rss_parser.Item]]:
+    if content:
+        feed, items = rss_parser.parse_rss(content)
+        return None, feed, items
+
+    response = get_feed_response(podcast)
+    feed, items = rss_parser.parse_rss(response.content)
+
+    if not is_feed_changed(podcast, feed):
+        raise NotModified(response=response)
+
+    return response, feed, items
 
 
 def get_feed_response(podcast: Podcast) -> requests.Response:
