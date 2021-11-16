@@ -342,7 +342,7 @@ def parse_update_frequency(podcast: Podcast, feed: rss_parser.Feed) -> timedelta
 
     try:
         return timedelta(
-            seconds=BASE_PERIODS[feed.update_period] / feed.update_frequency or 1
+            seconds=BASE_PERIODS[feed.update_period] / feed.update_frequency
         )
     except KeyError:
         return podcast.frequency
