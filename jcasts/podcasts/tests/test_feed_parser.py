@@ -162,9 +162,15 @@ class TestParseWebSubHub:
 
 class TestParsePubDates:
     def test_no_items(self, podcast):
-        pub_date, scheduled, modifier = parse_pub_dates(podcast, [])
+        (
+            pub_date,
+            scheduled,
+            frequency,
+            modifier,
+        ) = parse_pub_dates(podcast, [])
 
         assert pub_date == podcast.pub_date
+        assert frequency
         assert scheduled
         assert modifier > DEFAULT_MODIFIER
 
@@ -178,9 +184,15 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+        (
+            pub_date,
+            scheduled,
+            frequency,
+            modifier,
+        ) = parse_pub_dates(podcast, items)
 
         assert pub_date == items[0].pub_date
+        assert frequency
         assert scheduled
         assert modifier
 
@@ -195,9 +207,15 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+        (
+            pub_date,
+            scheduled,
+            frequency,
+            modifier,
+        ) = parse_pub_dates(podcast, items)
 
         assert pub_date == items[0].pub_date
+        assert not frequency
         assert not scheduled
         assert not modifier
 
@@ -206,10 +224,16 @@ class TestParsePubDates:
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+        (
+            pub_date,
+            scheduled,
+            frequency,
+            modifier,
+        ) = parse_pub_dates(podcast, items)
 
         assert pub_date == podcast.pub_date
         assert scheduled
+        assert frequency
         assert modifier
 
     def test_no_new_pub_dates_inactive(self, db):
@@ -217,10 +241,16 @@ class TestParsePubDates:
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        pub_date, scheduled, modifier = parse_pub_dates(podcast, items)
+        (
+            pub_date,
+            scheduled,
+            frequency,
+            modifier,
+        ) = parse_pub_dates(podcast, items)
 
         assert pub_date == podcast.pub_date
         assert not scheduled
+        assert not frequency
         assert not modifier
 
 

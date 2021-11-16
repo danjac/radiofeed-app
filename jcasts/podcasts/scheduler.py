@@ -19,16 +19,16 @@ def schedule(
     pub_date: datetime | None,
     pub_dates: list[datetime],
     limit: int = 12,
-) -> tuple[datetime | None, float | None]:
+) -> tuple[datetime | None, timedelta | None, float | None]:
     """Return a new scheduled time and modifier."""
 
     if pub_date is None:
-        return None, None
+        return None, None, None
 
     now = timezone.now()
 
     if pub_date < now - MAX_FREQUENCY:
-        return now + MAX_FREQUENCY, DEFAULT_MODIFIER
+        return now + MAX_FREQUENCY, MAX_FREQUENCY, DEFAULT_MODIFIER
 
     frequency = get_frequency(pub_dates, limit)
     scheduled = pub_date + frequency
@@ -42,28 +42,33 @@ def schedule(
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
+        frequency,
         DEFAULT_MODIFIER,
     )
 
 
 def reschedule(
-    pub_date: datetime | None, modifier: float | None
-) -> tuple[datetime, float]:
+    frequency: timedelta | None, modifier: float | None
+) -> tuple[datetime, timedelta, float]:
     """Increment scheduled time if no new updates
     and increment the schedule modifier.
     """
 
     now = timezone.now()
 
-    pub_date = pub_date or now - DEFAULT_FREQUENCY
+    frequency = within_bounds(
+        frequency or DEFAULT_FREQUENCY, MIN_FREQUENCY, MAX_FREQUENCY
+    )
+
     modifier = modifier or DEFAULT_MODIFIER
 
     return (
         within_bounds(
-            now + timedelta(seconds=(now - pub_date).total_seconds() * modifier),
+            now + timedelta(seconds=frequency.total_seconds() * modifier),
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
+        frequency,
         within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
     )
 

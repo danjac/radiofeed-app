@@ -213,6 +213,7 @@ def parse_success(
     (
         podcast.pub_date,
         podcast.scheduled,
+        podcast.frequency,
         podcast.schedule_modifier,
     ) = parse_pub_dates(podcast, items)
 
@@ -298,7 +299,7 @@ def parse_websub_hub(
 
 def parse_pub_dates(
     podcast: Podcast, items: list[rss_parser.Item]
-) -> tuple[datetime | None, datetime | None, float | None]:
+) -> tuple[datetime | None, datetime | None, timedelta | None, float | None]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
@@ -309,19 +310,19 @@ def parse_pub_dates(
                 *scheduler.schedule(latest, pub_dates),
             )
             if podcast.active
-            else (latest, None, None)
+            else (latest, None, None, None)
         )
 
     return (
         (
             podcast.pub_date,
             *scheduler.reschedule(
-                podcast.pub_date,
+                podcast.frequency,
                 podcast.schedule_modifier,
             ),
         )
         if podcast.active
-        else (podcast.pub_date, None, None)
+        else (podcast.pub_date, None, None, None)
     )
 
 
@@ -430,10 +431,11 @@ def parse_failure(
 
     scheduled: datetime | None = None
     modifier: float | None = None
+    frequency: timedelta | None = None
 
     if active:
-        scheduled, modifier = scheduler.reschedule(
-            podcast.pub_date or podcast.created,
+        scheduled, frequency, modifier = scheduler.reschedule(
+            podcast.frequency,
             podcast.schedule_modifier,
         )
 
@@ -441,6 +443,7 @@ def parse_failure(
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
+        frequency=frequency,
         scheduled=scheduled,
         schedule_modifier=modifier,
         updated=now,
