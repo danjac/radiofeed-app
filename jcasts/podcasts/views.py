@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -15,11 +18,11 @@ from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import itunes, websub
+from jcasts.podcasts import feed_parser, itunes, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
@@ -263,11 +266,58 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @require_http_methods(["GET", "POST"])
 @csrf_exempt
 def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    return (
-        websub.verify_intent(request, podcast_id)
-        if request.method == "GET"
-        else websub.handle_content_distribution(request, podcast_id)
+
+    qs = Podcast.objects.active()
+
+    if request.method == "GET":
+
+        try:
+            mode: str = request.GET["hub.mode"]
+            topic: str = request.GET["hub.topic"]
+            challenge: str = request.GET["hub.challenge"]
+
+        except KeyError as e:
+            raise Http404 from e
+
+        podcast = get_object_or_404(qs, pk=podcast_id, rss=topic)
+
+        now = timezone.now()
+
+        if mode == "subscribe":
+            try:
+                podcast.websub_status = Podcast.WebhubStatus.ACTIVE
+                podcast.websub_subscribed = now + timedelta(
+                    seconds=int(request.GET["hub.lease_seconds"])
+                )
+
+            except (KeyError, ValueError) as e:
+                raise Http404 from e
+        else:
+            podcast.websub_status = Podcast.WebhubStatus.INACTIVE
+
+        podcast.websub_status_changed = now
+        podcast.save()
+
+        return HttpResponse(challenge)
+
+    podcast = get_object_or_404(
+        qs,
+        websub_status=Podcast.WebhubStatus.ACTIVE,
+        pk=podcast_id,
     )
+
+    try:
+        sig_header = request.headers["X-Hub-Signature"]
+        method, signature = sig_header.split("=")
+    except (KeyError, ValueError) as e:
+        raise Http404 from e
+
+    if not websub.compare_signature(podcast.websub_token, method, signature):
+        raise Http404("invalid signature")
+
+    feed_parser.parse_podcast_feed.delay(podcast.id, content=request.body)
+
+    return HttpResponseNoContent()
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:

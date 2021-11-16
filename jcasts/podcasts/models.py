@@ -149,6 +149,7 @@ class Podcast(models.Model):
     websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
     websub_subscribed: datetime | None = models.DateTimeField(null=True, blank=True)
     websub_token: str | None = models.CharField(max_length=12, null=True, blank=True)
+    websub_exception: str = models.TextField(blank=True)
 
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)
