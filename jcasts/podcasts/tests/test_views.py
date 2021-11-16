@@ -1,6 +1,7 @@
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
@@ -9,8 +10,8 @@ from jcasts.podcasts.factories import (
     RecommendationFactory,
 )
 from jcasts.podcasts.itunes import Feed
-from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import assert_conflict, assert_ok
+from jcasts.podcasts.models import Follow, Podcast
+from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -277,3 +278,88 @@ class TestUnfollow:
             resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+
+class TestWebSubCallback:
+
+    hub = "https://simplecast.superfeedr.com/"
+
+    def test_subscribe_ok(self, client, db, django_assert_num_queries):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+
+        with django_assert_num_queries(3):
+            resp = client.get(
+                self.get_url(podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.topic": podcast.rss,
+                    "hub.lease_seconds": 5000,
+                    "hub.challenge": "ok",
+                },
+            )
+
+        assert_ok(resp)
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
+        assert podcast.websub_status_changed
+        assert podcast.websub_subscribed > timezone.now()
+
+    def test_subscribe_missing_param(self, client, db, django_assert_num_queries):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+
+        with django_assert_num_queries(2):
+            resp = client.get(
+                self.get_url(podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.topic": podcast.rss,
+                    "hub.challenge": "ok",
+                },
+            )
+
+        assert_not_found(resp)
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+        assert not podcast.websub_status_changed
+        assert not podcast.websub_subscribed
+
+    def test_unsubscribe(self, client, db, django_assert_num_queries):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_subscribed=timezone.now(),
+        )
+
+        with django_assert_num_queries(3):
+            resp = client.get(
+                self.get_url(podcast),
+                {
+                    "hub.mode": "unsubscribe",
+                    "hub.topic": podcast.rss,
+                    "hub.challenge": "ok",
+                },
+            )
+
+        assert_ok(resp)
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
+        assert podcast.websub_status_changed
+        assert not podcast.websub_subscribed
+
+    def get_url(self, podcast):
+        return reverse("podcasts:websub_callback", args=[podcast.id])

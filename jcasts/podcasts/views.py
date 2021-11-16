@@ -285,7 +285,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         if mode == "subscribe":
             try:
-                podcast.websub_status = Podcast.WebhubStatus.ACTIVE
+                podcast.websub_status = Podcast.WebSubStatus.ACTIVE
                 podcast.websub_subscribed = now + timedelta(
                     seconds=int(request.GET["hub.lease_seconds"])
                 )
@@ -293,7 +293,8 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             except (KeyError, ValueError) as e:
                 raise Http404 from e
         else:
-            podcast.websub_status = Podcast.WebhubStatus.INACTIVE
+            podcast.websub_status = Podcast.WebSubStatus.INACTIVE
+            podcast.websub_subscribed = None
 
         podcast.websub_status_changed = now
         podcast.save()
@@ -302,7 +303,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_object_or_404(
         qs,
-        websub_status=Podcast.WebhubStatus.ACTIVE,
+        websub_status=Podcast.WebSubStatus.ACTIVE,
         pk=podcast_id,
     )
 
