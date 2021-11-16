@@ -313,7 +313,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     except (KeyError, ValueError) as e:
         raise Http404 from e
 
-    if not websub.compare_signature(podcast.websub_token, method, signature):
+    if not websub.compare_signature(podcast.websub_token, signature, method):
         raise Http404("invalid signature")
 
     feed_parser.parse_podcast_feed.delay(podcast.id, content=request.body)

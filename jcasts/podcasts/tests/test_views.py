@@ -4,6 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
+from jcasts.podcasts import websub
 from jcasts.podcasts.factories import (
     FollowFactory,
     PodcastFactory,
@@ -11,7 +12,12 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Follow, Podcast
-from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
+from jcasts.shared.assertions import (
+    assert_conflict,
+    assert_no_content,
+    assert_not_found,
+    assert_ok,
+)
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -360,6 +366,68 @@ class TestWebSubCallback:
         assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
         assert podcast.websub_status_changed
         assert not podcast.websub_subscribed
+
+    def test_content_distribution(
+        self, client, db, mock_parse_podcast_feed, django_assert_num_queries
+    ):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_token="abc123",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+
+        with django_assert_num_queries(2):
+
+            resp = client.post(
+                self.get_url(podcast),
+                HTTP_X_HUB_SIGNATURE=f"sha1={websub.encode_token(podcast.websub_token)}",
+            )
+
+        assert_no_content(resp)
+
+        mock_parse_podcast_feed.assert_called()
+
+    def test_content_distribution_missing_signature(
+        self, client, db, mock_parse_podcast_feed, django_assert_num_queries
+    ):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_token="abc123",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+
+        with django_assert_num_queries(2):
+
+            resp = client.post(
+                self.get_url(podcast),
+            )
+
+        assert_not_found(resp)
+
+        mock_parse_podcast_feed.assert_not_called()
+
+    def test_content_distribution_bad_signature(
+        self, client, db, mock_parse_podcast_feed, django_assert_num_queries
+    ):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_token="abc123",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+
+        with django_assert_num_queries(2):
+
+            resp = client.post(
+                self.get_url(podcast),
+                HTTP_X_HUB_SIGNATURE=f"sha1={websub.encode_token('1111')}",
+            )
+
+        assert_not_found(resp)
+
+        mock_parse_podcast_feed.assert_not_called()
 
     def get_url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])
