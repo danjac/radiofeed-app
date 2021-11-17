@@ -85,6 +85,22 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset
 
 
+class PodcastIndexFilter(admin.SimpleListFilter):
+    title = "Podcastindex"
+    parameter_name = "podcastindex"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (("yes", "Podcastindex"),)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        value = self.value()
+        if value == "yes":
+            return queryset.filter(podcastindex=True)
+        return queryset
+
+
 class QueuedFilter(admin.SimpleListFilter):
     title = "Queued"
     parameter_name = "queued"
@@ -145,6 +161,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         ActiveFilter,
         FollowedFilter,
         PromotedFilter,
+        PodcastIndexFilter,
         PubDateFilter,
         QueuedFilter,
         ResultFilter,

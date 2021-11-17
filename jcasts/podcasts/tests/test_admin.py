@@ -10,6 +10,7 @@ from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
     PodcastAdmin,
+    PodcastIndexFilter,
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
@@ -191,6 +192,21 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestPodcastindexFilter:
+    def test_podcastindex_filter_none(self, podcasts, admin, req):
+        PodcastFactory(podcastindex=False)
+        f = PodcastIndexFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_podcastindex_filter_true(self, podcasts, admin, req):
+        podcastindex = PodcastFactory(podcastindex=True)
+        f = PodcastIndexFilter(req, {"podcastindex": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podcastindex
 
 
 class TestQueuedFilter:
