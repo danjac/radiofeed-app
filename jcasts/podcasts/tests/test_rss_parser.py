@@ -132,47 +132,41 @@ class TestRssParser:
         assert feed.title == "Mysterious Universe"
 
     @pytest.mark.parametrize(
-        "filename,title,websub_hub,num_items",
+        "filename,title,num_items",
         [
-            ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", None, 71),
+            ("rss_missing_enc_length.xml", "The Vanilla JS Podcast", 71),
             (
                 "rss_mock_large.xml",
                 "AAA United Public Radio & UFO Paranormal Radio Network",
-                None,
                 8641,
             ),
-            ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", None, 643),
+            ("rss_mock_iso_8859-1.xml", "Thunder & Lightning", 643),
             (
                 "rss_mock_small.xml",
                 "ABC News Update",
-                None,
                 1,
             ),
             (
                 "rss_mock.xml",
                 "Mysterious Universe",
-                "https://pubsubhubbub.appspot.com/",
                 20,
             ),
-            ("rss_invalid_duration.xml", "At The Races with Steve Byk", None, 450),
+            ("rss_invalid_duration.xml", "At The Races with Steve Byk", 450),
             (
                 "rss_bad_cover_urls.xml",
                 "TED Talks Daily",
-                "http://pubsubhubbub.appspot.com/",
                 327,
             ),
             (
                 "rss_superfeedr.xml",
                 "The Chuck ToddCast: Meet the Press",
-                "https://simplecast.superfeedr.com/",
                 296,
             ),
         ],
     )
-    def test_parse_rss(self, filename, title, websub_hub, num_items):
+    def test_parse_rss(self, filename, title, num_items):
         feed, items = parse_rss(self.read_mock_file(filename))
         assert feed.title == title
-        assert feed.websub_hub == websub_hub
         assert len(items) == num_items
 
     def read_mock_file(self, mock_filename):

@@ -20,7 +20,6 @@ NAMESPACES: dict[str, str] = {
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
     "media": "http://search.yahoo.com/mrss/",
     "podcast": "https://podcastindex.org/namespace/1.0",
-    "sy": "http://purl.org/rss/1.0/modules/syndication/",
 }
 
 
@@ -141,9 +140,6 @@ class Feed:
 
     link: str | None = attr.ib(default=None, converter=url_or_none)
 
-    websub_hub: str | None = attr.ib(default=None, converter=url_or_none)
-    websub_url: str | None = attr.ib(default=None, converter=url_or_none)
-
     cover_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     funding_text: str = attr.ib(default="")
@@ -154,9 +150,6 @@ class Feed:
 
     complete: bool = attr.ib(default=False, converter=is_complete)
     explicit: bool = attr.ib(default=False, converter=is_explicit)
-
-    update_frequency: int | None = attr.ib(default=None, converter=int_or_none)
-    update_period: str | None = attr.ib(default=None)
 
     categories: list[str] = attr.ib(default=list)
 
@@ -207,19 +200,9 @@ def parse_feed(finder: XPathFinder) -> Feed:
         language=finder.find("language/text()", default="en"),
         complete=finder.find("itunes:complete/text()"),
         explicit=finder.find("itunes:explicit/text()"),
-        websub_hub=finder.find(
-            "link[@rel='hub']/@href",
-            "atom:link[@rel='hub']/@href",
-        ),
-        websub_url=finder.find(
-            "link[@rel='self']/@href",
-            "atom:link[@rel='self']/@href",
-        ),
         cover_url=finder.find("itunes:image/@href", "image/url/text()"),
         funding_url=finder.find("podcast:funding/@url"),
         funding_text=finder.find("podcast:funding/text()"),
-        update_period=finder.find("sy:updatePeriod/text()"),
-        update_frequency=finder.find("sy:updateFrequency/text()"),
         description=finder.find(
             "description/text()",
             "itunes:summary/text()",
