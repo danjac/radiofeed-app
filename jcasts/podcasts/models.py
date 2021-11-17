@@ -95,9 +95,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 scheduled__isnull=False,
                 scheduled__lte=now,
             ),
-        ).exclude(
-            websub_status=self.model.WebSubStatus.ACTIVE,
-            websub_subscribed__gt=now,
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -131,30 +128,11 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
-    class WebSubStatus(models.TextChoices):
-        PENDING = "pending", "Pending"
-        REQUESTED = "requested", "Requested"
-        ACTIVE = "active", "Active"
-        INACTIVE = "inactive", "Inactive"
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
-
-    # websub fields
-    websub_hub: str | None = models.URLField(null=True, blank=True, max_length=500)
-    websub_url: str | None = models.URLField(null=True, blank=True, max_length=500)
-
-    websub_status: str | None = models.CharField(
-        max_length=20, choices=WebSubStatus.choices, null=True, blank=True
-    )
-
-    websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
-    websub_subscribed: datetime | None = models.DateTimeField(null=True, blank=True)
-    websub_token: str | None = models.CharField(max_length=12, null=True, blank=True)
-    websub_exception: str = models.TextField(blank=True)
 
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)

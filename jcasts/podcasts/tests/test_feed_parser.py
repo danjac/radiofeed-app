@@ -25,7 +25,6 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feeds,
     parse_pub_dates,
     parse_syndication,
-    parse_websub_hub,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -54,117 +53,6 @@ class MockResponse:
 class BadMockResponse(MockResponse):
     def raise_for_status(self):
         raise requests.HTTPError(response=self)
-
-
-class TestParseWebSubHub:
-    hub = "https://simplecast.superfeedr.com/"
-    url = "https://simplecast.superfeedr.com/r/12345"
-
-    def test_new_websub_hub_in_feed(self, podcast):
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(podcast, MockResponse(), feed)
-
-        assert websub_hub == self.hub
-        assert websub_url == self.url
-        assert websub_status == Podcast.WebSubStatus.PENDING
-        assert websub_status_changed
-
-    def test_new_websub_hub_in_header(self, podcast):
-        feed = Feed(**FeedFactory())
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(
-            podcast,
-            MockResponse(
-                links={
-                    "hub": {"url": self.hub},
-                    "self": {"url": self.url},
-                }
-            ),
-            feed,
-        )
-
-        assert websub_hub == self.hub
-        assert websub_url == self.url
-        assert websub_status == Podcast.WebSubStatus.PENDING
-        assert websub_status_changed
-
-    def test_new_websub_hub_in_header_self_missing(self, podcast):
-        feed = Feed(**FeedFactory())
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(podcast, MockResponse(links={"rel": self.hub}), feed)
-
-        assert websub_hub is None
-        assert websub_url is None
-        assert websub_status is None
-        assert websub_status_changed is None
-
-    def test_no_websub_hub_provided(self, podcast):
-        feed = Feed(**FeedFactory())
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(podcast, MockResponse(), feed)
-
-        assert websub_hub is None
-        assert websub_url is None
-        assert websub_status is None
-        assert websub_status_changed is None
-
-    def test_websub_hub_same_as_podcast(self, db):
-        podcast = PodcastFactory(
-            websub_hub=self.hub,
-            websub_url=self.url,
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_status_changed=timezone.now() - timedelta(days=7),
-        )
-
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(podcast, MockResponse(), feed)
-
-        assert websub_hub == podcast.websub_hub
-        assert websub_url == podcast.websub_url
-        assert websub_status == podcast.websub_status
-        assert websub_status_changed == podcast.websub_status_changed
-
-    def test_websub_hub_different_from_podcast(self, db):
-        podcast = PodcastFactory(
-            websub_hub="https://example.com",
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_status_changed=timezone.now() - timedelta(days=7),
-        )
-
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
-        (
-            websub_hub,
-            websub_url,
-            websub_status,
-            websub_status_changed,
-        ) = parse_websub_hub(podcast, MockResponse(), feed)
-
-        assert websub_hub == self.hub
-        assert websub_url == self.url
-        assert websub_status == Podcast.WebSubStatus.PENDING
-        assert websub_status_changed > podcast.websub_status_changed
 
 
 class TestParseSyndication:
@@ -488,57 +376,6 @@ class TestParsePodcastFeed:
         assert new_podcast.parsed
 
         assert new_podcast.etag
-        assert new_podcast.explicit
-        assert new_podcast.cover_url
-
-        assert new_podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-
-        assigned_categories = [c.name for c in new_podcast.categories.all()]
-
-        assert "Science" in assigned_categories
-        assert "Religion & Spirituality" in assigned_categories
-        assert "Society & Culture" in assigned_categories
-        assert "Philosophy" in assigned_categories
-
-    def test_parse_podcast_feed_from_content(self, new_podcast, categories):
-
-        episode_guid = "https://mysteriousuniverse.org/?p=168097"
-        episode_title = "original title"
-
-        # test updated
-        EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
-
-        assert parse_podcast_feed(new_podcast.id, self.get_rss_content())
-
-        # new episodes: 19
-        assert Episode.objects.count() == 20
-
-        # check episode updated
-        episode = Episode.objects.get(guid=episode_guid)
-        assert episode.title != episode_title
-
-        new_podcast.refresh_from_db()
-
-        assert new_podcast.rss
-        assert new_podcast.active
-        assert new_podcast.title == "Mysterious Universe"
-
-        assert (
-            new_podcast.description == "Blog and Podcast specializing in offbeat news"
-        )
-
-        assert new_podcast.owner == "8th Kind"
-
-        assert not new_podcast.etag
-        assert not new_podcast.modified
-
-        assert new_podcast.scheduled
-        assert new_podcast.schedule_modifier
-        assert not new_podcast.queued
-        assert new_podcast.result == Podcast.Result.SUCCESS
-
-        assert new_podcast.parsed
-
         assert new_podcast.explicit
         assert new_podcast.cover_url
 

@@ -18,10 +18,6 @@
       "schedule": "*/12 * * * *"
     },
     {
-      "command": "python manage.py send_websub_requests",
-      "schedule": "*/30 * * * *"
-    },
-    {
       "command": "python manage.py send_recommendation_emails",
       "schedule": "12 9 * * 1"
     },

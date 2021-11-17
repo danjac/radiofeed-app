@@ -20,36 +20,6 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-class WebSubFilter(admin.SimpleListFilter):
-    title = "WebSub"
-    parameter_name = "websub"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-
-        return (
-            ("none", "None"),
-            ("any", "Any"),
-            ("errors", "Errors"),
-        ) + tuple(models.Podcast.WebSubStatus.choices)
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "none":
-            return queryset.filter(websub_status__isnull=True)
-        if value == "any":
-            return queryset.filter(websub_status__isnull=False)
-        if value == "errors":
-            return queryset.filter(websub_status__isnull=False).exclude(
-                websub_exception=""
-            )
-        if value:
-            return queryset.filter(websub_status=value)
-
-        return queryset
-
-
 class ResultFilter(admin.SimpleListFilter):
     title = "Result"
     parameter_name = "result"
@@ -178,7 +148,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PubDateFilter,
         QueuedFilter,
         ResultFilter,
-        WebSubFilter,
     )
 
     list_display = (
@@ -210,13 +179,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "http_status",
         "result",
         "exception",
-        "websub_hub",
-        "websub_url",
-        "websub_token",
-        "websub_status",
-        "websub_status_changed",
-        "websub_subscribed",
-        "websub_exception",
     )
 
     actions = (

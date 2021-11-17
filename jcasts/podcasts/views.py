@@ -1,30 +1,24 @@
 from __future__ import annotations
 
-import traceback
-
-from datetime import timedelta
-
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
-from jcasts.podcasts import feed_parser, itunes, websub
+from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
@@ -263,81 +257,6 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, follow=False)
-
-
-@require_http_methods(["GET", "POST"])
-@csrf_exempt
-def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
-
-    qs = Podcast.objects.active()
-    now = timezone.now()
-
-    if request.method == "GET":
-
-        podcast = get_object_or_404(qs, pk=podcast_id)
-
-        try:
-            mode: str = request.GET["hub.mode"]
-            topic: str = request.GET["hub.topic"]
-            challenge: str = request.GET["hub.challenge"]
-
-            if topic not in (podcast.websub_url, podcast.rss):
-                raise ValueError(f"topic {topic} does not match")
-
-            if mode == "subscribe":
-
-                status = Podcast.WebSubStatus.ACTIVE
-                subscribed = now + timedelta(
-                    seconds=int(request.GET["hub.lease_seconds"])
-                )
-            else:
-                status = Podcast.WebSubStatus.INACTIVE
-                subscribed = None
-
-            podcast.websub_status = status
-            podcast.websub_subscribed = subscribed
-
-        except (KeyError, ValueError) as e:
-            podcast.websub_status = Podcast.WebSubStatus.INACTIVE
-            podcast.websub_exception = (
-                traceback.format_exc() + "\n" + request.GET.urlencode()
-            )
-            raise Http404 from e
-        finally:
-
-            podcast.websub_status_changed = now
-            podcast.save()
-
-        return HttpResponse(challenge)
-
-    podcast = get_object_or_404(
-        qs,
-        websub_status=Podcast.WebSubStatus.ACTIVE,
-        pk=podcast_id,
-    )
-
-    try:
-        if int(request.META["CONTENT_LENGTH"]) > 1024 ** 2:
-            raise ValueError("content too large")
-
-        sig_header = request.headers["X-Hub-Signature"]
-        method, signature = sig_header.split("=")
-
-        if not websub.compare_signature(podcast.websub_token, signature, method):
-            raise ValueError("invalid signature")
-
-    except (KeyError, ValueError) as e:
-        # try and re-run
-        podcast.websub_status = Podcast.WebSubStatus.PENDING
-        podcast.websub_status_changed = now
-        podcast.websub_exception = traceback.format_exc() + "\n" + str(request.headers)
-        podcast.save()
-
-        raise Http404 from e
-
-    feed_parser.parse_podcast_feed.delay(podcast.id, content=request.body)
-
-    return HttpResponseNoContent()
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:

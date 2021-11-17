@@ -178,15 +178,6 @@ class TestPodcastManager:
         )
         assert Podcast.objects.scheduled().exists() is exists
 
-    def test_scheduled_if_websub(self, db):
-        now = timezone.now()
-        PodcastFactory(
-            scheduled=now - timedelta(days=3),
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_subscribed=now + timedelta(days=3),
-        )
-        assert Podcast.objects.scheduled().exists() is False
-
     @pytest.mark.parametrize(
         "last_pub,exists",
         [

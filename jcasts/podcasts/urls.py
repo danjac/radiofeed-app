@@ -41,11 +41,6 @@ urlpatterns = [
         name="unfollow",
     ),
     path(
-        "podcasts/websub/<int:podcast_id>/",
-        views.websub_callback,
-        name="websub_callback",
-    ),
-    path(
         "discover/<int:category_id>/<slug:slug>/",
         views.category_detail,
         name="category_detail",
