@@ -220,7 +220,7 @@ def parse_success(
         podcast.pub_date,
         podcast.scheduled,
         podcast.frequency,
-        podcast.schedule_modifier,
+        podcast.frequency_modifier,
     ) = parse_pub_dates(podcast, feed, items)
 
     # content
@@ -285,7 +285,7 @@ def parse_pub_dates(
         podcast.pub_date,
         *scheduler.reschedule(
             podcast.frequency,
-            podcast.schedule_modifier,
+            podcast.frequency_modifier,
         ),
     )
 
@@ -402,14 +402,14 @@ def parse_failure(
             scheduled,
             frequency,
             modifier,
-        ) = scheduler.reschedule(podcast.frequency, podcast.schedule_modifier)
+        ) = scheduler.reschedule(podcast.frequency, podcast.frequency_modifier)
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
         frequency=frequency,
         scheduled=scheduled,
-        schedule_modifier=modifier,
+        frequency_modifier=modifier,
         parsed=now,
         updated=now,
         active=active,
