@@ -4,8 +4,6 @@ import statistics
 
 from datetime import datetime, timedelta
 
-import attr
-
 from django.conf import settings
 from django.utils import timezone
 
@@ -19,84 +17,67 @@ MAX_FREQUENCY = timedelta(days=30)
 MAX_PUB_DATES = 12
 
 
-@attr.s(kw_only=True)
-class SchedulerResult:
-    scheduled: datetime | None = attr.ib(default=None)
-    frequency: timedelta | None = attr.ib(default=None)
-    modifier: float | None = attr.ib(default=None)
-
-
 def schedule(
     pub_date: datetime | None,
-    frequency: timedelta | None,
     pub_dates: list[datetime] | None,
-    active: bool,
-) -> SchedulerResult:
+) -> tuple[datetime | None, timedelta | None, float | None]:
     """Return a new scheduled time and modifier."""
 
-    if pub_date is None or active is False:
-        return SchedulerResult()
+    if pub_date is None:
+        return None, None, None
 
     now = timezone.now()
 
     if pub_date < now - MAX_FREQUENCY:
 
-        return SchedulerResult(
-            scheduled=now + MAX_FREQUENCY,
-            frequency=MAX_FREQUENCY,
-            modifier=DEFAULT_MODIFIER,
+        return (
+            now + MAX_FREQUENCY,
+            MAX_FREQUENCY,
+            DEFAULT_MODIFIER,
         )
 
-    frequency = get_frequency(frequency, pub_dates)
+    frequency = get_frequency(pub_dates)
     scheduled = pub_date + frequency
 
     while scheduled < now:
         scheduled += frequency
 
-    return SchedulerResult(
-        scheduled=within_bounds(
+    return (
+        within_bounds(
             scheduled,
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
-        frequency=frequency,
-        modifier=DEFAULT_MODIFIER,
+        frequency,
+        DEFAULT_MODIFIER,
     )
 
 
 def reschedule(
-    frequency: timedelta | None, modifier: float | None, active: bool
-) -> SchedulerResult:
+    frequency: timedelta | None, modifier: float | None
+) -> tuple[datetime | None, timedelta | None, float | None]:
     """Increment scheduled time if no new updates
     and increment the schedule modifier.
     """
-    if active is False:
-        return SchedulerResult()
-
-    frequency = get_frequency(frequency)
+    frequency = frequency or DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
 
     now = timezone.now()
 
-    return SchedulerResult(
-        scheduled=within_bounds(
+    return (
+        within_bounds(
             now + timedelta(seconds=frequency.total_seconds() * modifier),
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
-        frequency=frequency,
-        modifier=within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
+        frequency,
+        within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
     )
 
 
-def get_frequency(
-    frequency: timedelta | None, pub_dates: list[datetime] | None = None
-) -> timedelta:
+def get_frequency(pub_dates: list[datetime] | None = None) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
-
-    if frequency:
-        return within_bounds(frequency, MIN_FREQUENCY, MAX_FREQUENCY)
 
     now = timezone.now()
 

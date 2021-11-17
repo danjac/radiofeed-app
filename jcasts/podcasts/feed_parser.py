@@ -31,14 +31,6 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
-BASE_PERIODS = {
-    "hourly": 1 * 3600,
-    "daily": 24 * 3600,
-    "weekly": 24 * 7 * 3600,
-    "monthly": 30 * 24 * 3600,
-    "yearly": 365 * 24 * 3600,
-}
-
 
 class NotModified(requests.RequestException):
     ...
@@ -278,42 +270,24 @@ def parse_pub_dates(
     podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
 ) -> tuple[datetime | None, datetime | None, timedelta | None, float | None]:
 
-    latest = podcast.pub_date
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        result = scheduler.schedule(
+        return (
             latest,
-            parse_syndication(feed),
-            pub_dates,
-            podcast.active,
-        )
-    else:
-        result = scheduler.reschedule(
-            podcast.frequency,
-            podcast.schedule_modifier,
-            podcast.active,
+            *scheduler.schedule(
+                latest,
+                pub_dates,
+            ),
         )
 
     return (
-        latest,
-        result.scheduled,
-        result.frequency,
-        result.modifier,
+        podcast.pub_date,
+        *scheduler.reschedule(
+            podcast.frequency,
+            podcast.schedule_modifier,
+        ),
     )
-
-
-def parse_syndication(feed: rss_parser.Feed) -> timedelta | None:
-
-    if not feed.update_period or not feed.update_frequency:
-        return None
-
-    try:
-        return timedelta(
-            seconds=BASE_PERIODS[feed.update_period] / feed.update_frequency
-        )
-    except KeyError:
-        return None
 
 
 def parse_episodes(
@@ -419,16 +393,23 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    schedule_result = scheduler.reschedule(
-        podcast.frequency, podcast.schedule_modifier, active
-    )
+    scheduled: datetime | None = None
+    frequency: timedelta | None = None
+    modifier: float | None = None
+
+    if active:
+        (
+            scheduled,
+            frequency,
+            modifier,
+        ) = scheduler.reschedule(podcast.frequency, podcast.schedule_modifier)
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        frequency=schedule_result.frequency,
-        scheduled=schedule_result.scheduled,
-        schedule_modifier=schedule_result.modifier,
+        frequency=frequency,
+        scheduled=scheduled,
+        schedule_modifier=modifier,
         parsed=now,
         updated=now,
         active=active,
