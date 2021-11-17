@@ -18,8 +18,7 @@ MAX_PUB_DATES = 12
 
 
 def schedule(
-    pub_date: datetime,
-    pub_dates: list[datetime] | None,
+    pub_date: datetime, pub_dates: list[datetime]
 ) -> tuple[datetime | None, timedelta | None, float | None]:
     """Return a new scheduled time and modifier."""
 
@@ -76,11 +75,9 @@ def get_frequency(pub_dates: list[datetime] | None = None) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
 
-    now = timezone.now()
-
     # ignore any < 90 days
 
-    earliest = now - settings.FRESHNESS_THRESHOLD
+    earliest = timezone.now() - settings.FRESHNESS_THRESHOLD
     pub_dates = [pub_date for pub_date in pub_dates or [] if pub_date > earliest]
 
     # assume default if not enough available dates
