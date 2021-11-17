@@ -47,9 +47,6 @@ class TestReschedule:
 
 
 class TestSchedule:
-    def test_pub_date_none(self):
-        assert scheduler.schedule(None, []) == (None, None, None)
-
     def test_no_pub_dates(self):
         now = timezone.now()
         scheduled, frequency, modifier = scheduler.schedule(now, [])

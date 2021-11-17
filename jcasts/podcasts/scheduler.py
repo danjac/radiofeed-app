@@ -18,13 +18,10 @@ MAX_PUB_DATES = 12
 
 
 def schedule(
-    pub_date: datetime | None,
+    pub_date: datetime,
     pub_dates: list[datetime] | None,
 ) -> tuple[datetime | None, timedelta | None, float | None]:
     """Return a new scheduled time and modifier."""
-
-    if pub_date is None:
-        return None, None, None
 
     now = timezone.now()
 
