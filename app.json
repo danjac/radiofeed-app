@@ -18,6 +18,10 @@
       "schedule": "*/12 * * * *"
     },
     {
+      "command": "python manage.py fetch_recent_feeds --frequency=60 --limit=1000",
+      "schedule": "30 * * * *"
+    },
+    {
       "command": "python manage.py send_recommendation_emails",
       "schedule": "12 9 * * 1"
     },
