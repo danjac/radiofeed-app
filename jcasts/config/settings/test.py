@@ -33,7 +33,5 @@ RQ_QUEUES = {
     },
 }
 
-PODCASTINDEX_CONFIG = {
-    "api_key": "notset",
-    "api_secret": "notset",
-}
+PODCASTINDEX_API_KEY = "notset"  # nosec
+PODCASTINDEX_API_SECRET = "notset"  # nosec
