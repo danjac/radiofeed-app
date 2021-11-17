@@ -303,12 +303,10 @@ def parse_websub_hub(
         websub_hub = feed.websub_hub
         websub_url = feed.websub_url
 
-    if not websub_hub:
-        return None, None, None, None
-
-    # no change, return current status
-
-    if websub_hub == podcast.websub_hub and websub_url == podcast.websub_url:
+    # no change
+    if (websub_hub is None or websub_hub == podcast.websub_hub) and (
+        websub_url is None or websub_url == podcast.websub_url
+    ):
         return (
             podcast.websub_hub,
             podcast.websub_url,
