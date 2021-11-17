@@ -12,12 +12,14 @@ from jcasts.podcasts.models import Podcast
 
 class TestSubscribe:
     hub = "https://simplecast.superfeedr.com/"
+    url = "https://simplecast.superfeedr.com/r/1234"
 
     def test_request_ok(self, db, mocker):
         mock_post = mocker.patch("requests.post")
 
         podcast = PodcastFactory(
             websub_hub=self.hub,
+            websub_url=self.url,
             websub_status=Podcast.WebSubStatus.PENDING,
         )
 
@@ -46,6 +48,7 @@ class TestSubscribe:
 
         podcast = PodcastFactory(
             websub_hub=self.hub,
+            websub_url=self.url,
             websub_status=Podcast.WebSubStatus.PENDING,
         )
 
@@ -98,6 +101,7 @@ class TestSubscribePodcasts:
     def test_subscribe(self, db, mocker):
         podcast = PodcastFactory(
             websub_hub="https://example.com/hub/",
+            websub_url="https://example.com/hub/12334/",
             websub_status=Podcast.WebSubStatus.PENDING,
         )
         mock_subscribe = mocker.patch("jcasts.podcasts.websub.subscribe.delay")
@@ -108,6 +112,7 @@ class TestSubscribePodcasts:
 
 class TestGetPodcastsForSubscripion:
     hub = "https://simplecast.superfeedr.com/"
+    url = "https://simplecast.superfeedr.com/r/1234"
 
     @pytest.mark.parametrize(
         "active,hub,status,subscribed,exists",
@@ -127,6 +132,7 @@ class TestGetPodcastsForSubscripion:
             websub_hub=hub,
             websub_status=status,
             websub_subscribed=timezone.now() + subscribed if subscribed else None,
+            websub_url=self.url,
         )
 
         assert websub.get_podcasts_for_subscription().exists() is exists

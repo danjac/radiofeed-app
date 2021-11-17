@@ -51,10 +51,11 @@ def subscribe(podcast_id: int) -> SubscribeResult:
             ),
             "hub.mode": "subscribe",
             "hub.verify": "sync",
-            "hub.topic": podcast.rss,
+            "hub.topic": podcast.websub_url,
             "hub.lease_seconds": DEFAULT_LEASE_SECONDS,
             "hub.secret": encode_token(token),
         },
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
         timeout=10,
     )
 
@@ -66,9 +67,10 @@ def subscribe(podcast_id: int) -> SubscribeResult:
         podcast.websub_exception = ""
 
     except requests.RequestException as e:
+
         podcast.websub_status = Podcast.WebSubStatus.INACTIVE
         podcast.websub_exception = (
-            traceback.format_exc() + "\n\n\n" + str(e.response.content)
+            traceback.format_exc() + "\n" + e.response.content.decode("utf-8")
         )
 
         result.exception = e
@@ -92,6 +94,7 @@ def get_podcasts_for_subscription() -> QuerySet:
             websub_subscribed__lt=timezone.now(),
         ),
         websub_hub__isnull=False,
+        websub_url__isnull=False,
     )
 
 

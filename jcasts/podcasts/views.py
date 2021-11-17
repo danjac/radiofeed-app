@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import traceback
+
 from datetime import timedelta
 
 from django.conf import settings
@@ -271,33 +273,40 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     if request.method == "GET":
 
+        podcast = get_object_or_404(qs, pk=podcast_id)
+
         try:
             mode: str = request.GET["hub.mode"]
             topic: str = request.GET["hub.topic"]
             challenge: str = request.GET["hub.challenge"]
 
-        except KeyError as e:
-            raise Http404 from e
+            if topic not in (podcast.websub_url, podcast.rss):
+                raise ValueError(f"topic {topic} does not match")
 
-        podcast = get_object_or_404(qs, pk=podcast_id, rss=topic)
+            now = timezone.now()
 
-        now = timezone.now()
+            if mode == "subscribe":
 
-        if mode == "subscribe":
-            try:
-                podcast.websub_status = Podcast.WebSubStatus.ACTIVE
-                podcast.websub_subscribed = now + timedelta(
+                status = Podcast.WebSubStatus.ACTIVE
+                subscribed = now + timedelta(
                     seconds=int(request.GET["hub.lease_seconds"])
                 )
+            else:
+                status = Podcast.WebSubStatus.INACTIVE
+                subscribed = None
 
-            except (KeyError, ValueError) as e:
-                raise Http404 from e
-        else:
-            podcast.websub_status = Podcast.WebSubStatus.INACTIVE
-            podcast.websub_subscribed = None
+            podcast.websub_status = status
+            podcast.websub_status_changed = now
+            podcast.websub_subscribed = subscribed
 
-        podcast.websub_status_changed = now
-        podcast.save()
+        except (KeyError, ValueError) as e:
+            podcast.websub_exception = (
+                traceback.format_exc() + "\n" + request.GET.urlencode()
+            )
+            raise Http404 from e
+        finally:
+
+            podcast.save()
 
         return HttpResponse(challenge)
 
@@ -308,13 +317,20 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
     )
 
     try:
+        if int(request.META["CONTENT_LENGTH"]) > 1024 ** 2:
+            raise ValueError("content too large")
+
         sig_header = request.headers["X-Hub-Signature"]
         method, signature = sig_header.split("=")
-    except (KeyError, ValueError) as e:
-        raise Http404 from e
 
-    if not websub.compare_signature(podcast.websub_token, signature, method):
-        raise Http404("invalid signature")
+        if not websub.compare_signature(podcast.websub_token, signature, method):
+            raise ValueError("invalid signature")
+
+    except (KeyError, ValueError) as e:
+        podcast.websub_exception = traceback.format_exc() + "\n" + str(request.headers)
+        podcast.save()
+
+        raise Http404 from e
 
     feed_parser.parse_podcast_feed.delay(podcast.id, content=request.body)
 

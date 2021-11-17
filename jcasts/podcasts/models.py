@@ -145,6 +145,7 @@ class Podcast(models.Model):
 
     # websub fields
     websub_hub: str | None = models.URLField(null=True, blank=True, max_length=500)
+    websub_url: str | None = models.URLField(null=True, blank=True, max_length=500)
 
     websub_status: str | None = models.CharField(
         max_length=20, choices=WebSubStatus.choices, null=True, blank=True

@@ -289,11 +289,13 @@ class TestUnfollow:
 class TestWebSubCallback:
 
     hub = "https://simplecast.superfeedr.com/"
+    url = "https://simplecast.superfeedr.com/r/1234"
 
     def test_subscribe_ok(self, client, db, django_assert_num_queries):
 
         podcast = PodcastFactory(
             websub_hub=self.hub,
+            websub_url=self.url,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
 
@@ -302,7 +304,7 @@ class TestWebSubCallback:
                 self.get_url(podcast),
                 {
                     "hub.mode": "subscribe",
-                    "hub.topic": podcast.rss,
+                    "hub.topic": self.url,
                     "hub.lease_seconds": 5000,
                     "hub.challenge": "ok",
                 },
@@ -316,21 +318,48 @@ class TestWebSubCallback:
         assert podcast.websub_status_changed
         assert podcast.websub_subscribed > timezone.now()
 
+    def test_subscribe_topic_mismatch(self, client, db, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_url="https://some-random.com/",
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+
+        with django_assert_num_queries(3):
+            resp = client.get(
+                self.get_url(podcast),
+                {
+                    "hub.mode": "subscribe",
+                    "hub.topic": self.url,
+                    "hub.challenge": "ok",
+                    "hub.lease_seconds": 5000,
+                },
+            )
+
+        assert_not_found(resp)
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+        assert not podcast.websub_status_changed
+        assert not podcast.websub_subscribed
+
     def test_subscribe_missing_lease_seconds(
         self, client, db, django_assert_num_queries
     ):
 
         podcast = PodcastFactory(
             websub_hub=self.hub,
+            websub_url=self.url,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
 
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(3):
             resp = client.get(
                 self.get_url(podcast),
                 {
                     "hub.mode": "subscribe",
-                    "hub.topic": podcast.rss,
+                    "hub.topic": self.url,
                     "hub.challenge": "ok",
                 },
             )
@@ -350,7 +379,7 @@ class TestWebSubCallback:
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
 
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             resp = client.get(
                 self.get_url(podcast),
                 {
@@ -425,7 +454,7 @@ class TestWebSubCallback:
             websub_status=Podcast.WebSubStatus.ACTIVE,
         )
 
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(3):
 
             resp = client.post(
                 self.get_url(podcast),
@@ -434,6 +463,9 @@ class TestWebSubCallback:
         assert_not_found(resp)
 
         mock_parse_podcast_feed.assert_not_called()
+
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
 
     def test_content_distribution_bad_signature(
         self, client, db, mock_parse_podcast_feed, django_assert_num_queries
@@ -445,7 +477,7 @@ class TestWebSubCallback:
             websub_status=Podcast.WebSubStatus.ACTIVE,
         )
 
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(3):
 
             resp = client.post(
                 self.get_url(podcast),
@@ -455,6 +487,34 @@ class TestWebSubCallback:
         assert_not_found(resp)
 
         mock_parse_podcast_feed.assert_not_called()
+
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
+
+    def test_content_distribution_content_length_too_large(
+        self, client, db, mock_parse_podcast_feed, django_assert_num_queries
+    ):
+
+        podcast = PodcastFactory(
+            websub_hub=self.hub,
+            websub_token="abc123",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+
+        with django_assert_num_queries(3):
+
+            resp = client.post(
+                self.get_url(podcast),
+                CONTENT_LENGTH=1024 ** 3,
+                HTTP_X_HUB_SIGNATURE=f"sha1={websub.encode_token(podcast.websub_token)}",
+            )
+
+        assert_not_found(resp)
+
+        mock_parse_podcast_feed.assert_not_called()
+
+        podcast.refresh_from_db()
+        assert podcast.websub_exception
 
     def get_url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])

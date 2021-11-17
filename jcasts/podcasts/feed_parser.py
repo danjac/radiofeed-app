@@ -239,6 +239,7 @@ def parse_success(
 
     (
         podcast.websub_hub,
+        podcast.websub_url,
         podcast.websub_status,
         podcast.websub_status_changed,
     ) = parse_websub_hub(podcast, response, feed)
@@ -290,32 +291,34 @@ def parse_websub_hub(
     podcast: Podcast,
     response: requests.Response | None,
     feed: rss_parser.Feed,
-) -> tuple[str | None, str | None, datetime | None]:
+) -> tuple[str | None, str | None, str | None, datetime | None]:
 
     websub_hub: str | None = None
+    websub_url: str | None = None
 
-    if feed.websub_hub:
+    if response and "self" in response.links and "hub" in response.links:
+        websub_hub = response.links["hub"]["url"]
+        websub_url = response.links["self"]["url"]
+    else:
         websub_hub = feed.websub_hub
-
-    elif (
-        response
-        and (header := response.links.get("rel"))
-        and response.links.get("self") == podcast.rss
-    ):
-        websub_hub = header
+        websub_url = feed.websub_url
 
     if not websub_hub:
-        return None, None, None
+        return None, None, None, None
 
-    if websub_hub == podcast.websub_hub:
+    # no change, return current status
+
+    if websub_hub == podcast.websub_hub and websub_url == podcast.websub_url:
         return (
             podcast.websub_hub,
+            podcast.websub_url,
             podcast.websub_status,
             podcast.websub_status_changed,
         )
 
     return (
         websub_hub,
+        websub_url,
         Podcast.WebSubStatus.PENDING,  # type: ignore
         timezone.now(),
     )

@@ -58,57 +58,56 @@ class BadMockResponse(MockResponse):
 
 class TestParseWebSubHub:
     hub = "https://simplecast.superfeedr.com/"
+    url = "https://simplecast.superfeedr.com/r/12345"
 
     def test_new_websub_hub_in_feed(self, podcast):
-        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
         (
             websub_hub,
+            websub_url,
             websub_status,
             websub_status_changed,
         ) = parse_websub_hub(podcast, MockResponse(), feed)
 
         assert websub_hub == self.hub
+        assert websub_url == self.url
         assert websub_status == Podcast.WebSubStatus.PENDING
         assert websub_status_changed
 
     def test_new_websub_hub_in_header(self, podcast):
         feed = Feed(**FeedFactory())
-        (websub_hub, websub_status, websub_status_changed,) = parse_websub_hub(
-            podcast,
-            MockResponse(links={"rel": self.hub, "self": podcast.rss}),
-            feed,
-        )
-
-        assert websub_hub == self.hub
-        assert websub_status == Podcast.WebSubStatus.PENDING
-        assert websub_status_changed
-
-    def test_new_websub_hub_in_header_self_does_not_match(self, podcast):
-        feed = Feed(**FeedFactory())
-        (websub_hub, websub_status, websub_status_changed) = parse_websub_hub(
+        (
+            websub_hub,
+            websub_url,
+            websub_status,
+            websub_status_changed,
+        ) = parse_websub_hub(
             podcast,
             MockResponse(
                 links={
-                    "rel": self.hub,
-                    "self": "https://some-random.com",
+                    "hub": {"url": self.hub},
+                    "self": {"url": self.url},
                 }
             ),
             feed,
         )
 
-        assert websub_hub is None
-        assert websub_status is None
-        assert websub_status_changed is None
+        assert websub_hub == self.hub
+        assert websub_url == self.url
+        assert websub_status == Podcast.WebSubStatus.PENDING
+        assert websub_status_changed
 
     def test_new_websub_hub_in_header_self_missing(self, podcast):
         feed = Feed(**FeedFactory())
         (
             websub_hub,
+            websub_url,
             websub_status,
             websub_status_changed,
         ) = parse_websub_hub(podcast, MockResponse(links={"rel": self.hub}), feed)
 
         assert websub_hub is None
+        assert websub_url is None
         assert websub_status is None
         assert websub_status_changed is None
 
@@ -116,29 +115,34 @@ class TestParseWebSubHub:
         feed = Feed(**FeedFactory())
         (
             websub_hub,
+            websub_url,
             websub_status,
             websub_status_changed,
         ) = parse_websub_hub(podcast, MockResponse(), feed)
 
         assert websub_hub is None
+        assert websub_url is None
         assert websub_status is None
         assert websub_status_changed is None
 
     def test_websub_hub_same_as_podcast(self, db):
         podcast = PodcastFactory(
             websub_hub=self.hub,
+            websub_url=self.url,
             websub_status=Podcast.WebSubStatus.ACTIVE,
             websub_status_changed=timezone.now() - timedelta(days=7),
         )
 
-        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
         (
             websub_hub,
+            websub_url,
             websub_status,
             websub_status_changed,
         ) = parse_websub_hub(podcast, MockResponse(), feed)
 
         assert websub_hub == podcast.websub_hub
+        assert websub_url == podcast.websub_url
         assert websub_status == podcast.websub_status
         assert websub_status_changed == podcast.websub_status_changed
 
@@ -149,14 +153,16 @@ class TestParseWebSubHub:
             websub_status_changed=timezone.now() - timedelta(days=7),
         )
 
-        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_url=self.url))
         (
             websub_hub,
+            websub_url,
             websub_status,
             websub_status_changed,
         ) = parse_websub_hub(podcast, MockResponse(), feed)
 
         assert websub_hub == self.hub
+        assert websub_url == self.url
         assert websub_status == Podcast.WebSubStatus.PENDING
         assert websub_status_changed > podcast.websub_status_changed
 
