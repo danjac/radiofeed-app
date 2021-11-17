@@ -29,7 +29,7 @@ def fetch_recent_feeds(frequency: timedelta, limit: int) -> int:
     podcast_ids = list(
         Podcast.objects.active()
         .filter(
-            queued__isnull=False,
+            queued__isnull=True,
             rss__in=[item["url"] for item in data.get("feeds", [])],
         )
         .values_list("pk", flat=True)
