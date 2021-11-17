@@ -340,8 +340,8 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
-        assert not podcast.websub_status_changed
+        assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
+        assert podcast.websub_status_changed
         assert not podcast.websub_subscribed
 
     def test_subscribe_missing_lease_seconds(
@@ -368,8 +368,8 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
-        assert not podcast.websub_status_changed
+        assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
+        assert podcast.websub_status_changed
         assert not podcast.websub_subscribed
 
     def test_subscribe_missing_topic(self, client, db, django_assert_num_queries):
@@ -393,8 +393,8 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
-        assert not podcast.websub_status_changed
+        assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
+        assert podcast.websub_status_changed
         assert not podcast.websub_subscribed
 
     def test_unsubscribe(self, client, db, django_assert_num_queries):
@@ -465,6 +465,8 @@ class TestWebSubCallback:
         mock_parse_podcast_feed.assert_not_called()
 
         podcast.refresh_from_db()
+        assert podcast.websub_status == Podcast.WebSubStatus.PENDING
+        assert podcast.websub_status_changed
         assert podcast.websub_exception
 
     def test_content_distribution_bad_signature(
@@ -490,6 +492,8 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
         assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.PENDING
+        assert podcast.websub_status_changed
 
     def test_content_distribution_content_length_too_large(
         self, client, db, mock_parse_podcast_feed, django_assert_num_queries
@@ -515,6 +519,8 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
         assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.PENDING
+        assert podcast.websub_status_changed
 
     def get_url(self, podcast):
         return reverse("podcasts:websub_callback", args=[podcast.id])

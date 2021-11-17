@@ -270,6 +270,7 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     qs = Podcast.objects.active()
+    now = timezone.now()
 
     if request.method == "GET":
 
@@ -283,8 +284,6 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             if topic not in (podcast.websub_url, podcast.rss):
                 raise ValueError(f"topic {topic} does not match")
 
-            now = timezone.now()
-
             if mode == "subscribe":
 
                 status = Podcast.WebSubStatus.ACTIVE
@@ -296,16 +295,17 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
                 subscribed = None
 
             podcast.websub_status = status
-            podcast.websub_status_changed = now
             podcast.websub_subscribed = subscribed
 
         except (KeyError, ValueError) as e:
+            podcast.websub_status = Podcast.WebSubStatus.INACTIVE
             podcast.websub_exception = (
                 traceback.format_exc() + "\n" + request.GET.urlencode()
             )
             raise Http404 from e
         finally:
 
+            podcast.websub_status_changed = now
             podcast.save()
 
         return HttpResponse(challenge)
@@ -327,6 +327,9 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             raise ValueError("invalid signature")
 
     except (KeyError, ValueError) as e:
+        # try and re-run
+        podcast.websub_status = Podcast.WebSubStatus.PENDING
+        podcast.websub_status_changed = now
         podcast.websub_exception = traceback.format_exc() + "\n" + str(request.headers)
         podcast.save()
 
