@@ -71,14 +71,14 @@ def reschedule(
     )
 
 
-def get_frequency(pub_dates: list[datetime] | None = None) -> timedelta:
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
 
     # ignore any < 90 days
 
     earliest = timezone.now() - settings.FRESHNESS_THRESHOLD
-    pub_dates = [pub_date for pub_date in pub_dates or [] if pub_date > earliest]
+    pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
 
     # assume default if not enough available dates
 
