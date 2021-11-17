@@ -3,6 +3,8 @@ from __future__ import annotations
 import hmac
 import traceback
 
+from datetime import timedelta
+
 import attr
 import requests
 
@@ -26,7 +28,11 @@ class SubscribeResult:
 
 
 def subscribe_podcasts():
-    for podcast_id in get_podcasts_for_subscription().values_list("pk", flat=True):
+    for podcast_id in (
+        get_podcasts_for_subscription()
+        .order_by("websub_status_changed")
+        .values_list("pk", flat=True)
+    ):
         subscribe.delay(podcast_id)
 
 
@@ -84,14 +90,21 @@ def subscribe(podcast_id: int) -> SubscribeResult:
     return result
 
 
-def get_podcasts_for_subscription() -> QuerySet:
+def get_podcasts_for_subscription(
+    frequency: timedelta = timedelta(hours=1),
+) -> QuerySet:
+    now = timezone.now()
     return Podcast.objects.active().filter(
         Q(
             websub_status=Podcast.WebSubStatus.PENDING,
         )
         | Q(
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+            websub_status_changed__lt=now - frequency,
+        )
+        | Q(
             websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_subscribed__lt=timezone.now(),
+            websub_subscribed__lt=now,
         ),
         websub_hub__isnull=False,
         websub_url__isnull=False,

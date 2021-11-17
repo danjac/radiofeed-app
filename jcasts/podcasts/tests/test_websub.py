@@ -115,24 +115,43 @@ class TestGetPodcastsForSubscripion:
     url = "https://simplecast.superfeedr.com/r/1234"
 
     @pytest.mark.parametrize(
-        "active,hub,status,subscribed,exists",
+        "active,hub,status,subscribed,changed,exists",
         [
-            (True, hub, Podcast.WebSubStatus.PENDING, None, True),
-            (True, None, Podcast.WebSubStatus.PENDING, None, False),
-            (True, hub, Podcast.WebSubStatus.REQUESTED, None, False),
-            (True, hub, Podcast.WebSubStatus.ACTIVE, timedelta(days=1), False),
-            (True, hub, Podcast.WebSubStatus.ACTIVE, timedelta(days=-1), True),
-            (False, hub, Podcast.WebSubStatus.PENDING, None, False),
+            (True, hub, Podcast.WebSubStatus.PENDING, None, None, True),
+            (True, None, Podcast.WebSubStatus.PENDING, None, None, False),
+            (True, hub, Podcast.WebSubStatus.REQUESTED, None, None, False),
+            (True, hub, Podcast.WebSubStatus.ACTIVE, timedelta(days=1), None, False),
+            (True, hub, Podcast.WebSubStatus.ACTIVE, timedelta(days=-1), None, True),
+            (True, hub, Podcast.WebSubStatus.REQUESTED, timedelta(days=1), None, False),
+            (
+                True,
+                hub,
+                Podcast.WebSubStatus.REQUESTED,
+                timedelta(days=1),
+                timedelta(seconds=60),
+                False,
+            ),
+            (
+                True,
+                hub,
+                Podcast.WebSubStatus.REQUESTED,
+                timedelta(days=1),
+                timedelta(seconds=7200),
+                True,
+            ),
+            (False, hub, Podcast.WebSubStatus.PENDING, None, None, False),
         ],
     )
-    def test_get_podcasts(self, db, active, hub, status, subscribed, exists):
+    def test_get_podcasts(self, db, active, hub, status, subscribed, changed, exists):
+        now = timezone.now()
 
         PodcastFactory(
             active=active,
             websub_hub=hub,
             websub_status=status,
-            websub_subscribed=timezone.now() + subscribed if subscribed else None,
+            websub_subscribed=now + subscribed if subscribed else None,
             websub_url=self.url,
+            websub_status_changed=now - changed if changed else None,
         )
 
         assert websub.get_podcasts_for_subscription().exists() is exists
