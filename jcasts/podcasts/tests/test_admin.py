@@ -224,6 +224,16 @@ class TestWebSubFilter:
         assert qs.count() == 1
         assert websub in qs
 
+    def test_errors(self, podcasts, admin, req):
+        PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING, websub_exception="")
+        websub = PodcastFactory(
+            websub_status=Podcast.WebSubStatus.PENDING, websub_exception="oops"
+        )
+        f = WebSubFilter(req, {"websub": "errors"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert websub in qs
+
     def test_matches_status(self, podcasts, admin, req):
         websub = PodcastFactory(websub_status=Podcast.WebSubStatus.PENDING)
         f = WebSubFilter(req, {"websub": Podcast.WebSubStatus.PENDING}, Podcast, admin)

@@ -31,6 +31,7 @@ class WebSubFilter(admin.SimpleListFilter):
         return (
             ("none", "None"),
             ("any", "Any"),
+            ("errors", "Errors"),
         ) + tuple(models.Podcast.WebSubStatus.choices)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -39,6 +40,10 @@ class WebSubFilter(admin.SimpleListFilter):
             return queryset.filter(websub_status__isnull=True)
         if value == "any":
             return queryset.filter(websub_status__isnull=False)
+        if value == "errors":
+            return queryset.filter(websub_status__isnull=False).exclude(
+                websub_exception=""
+            )
         if value:
             return queryset.filter(websub_status=value)
 
