@@ -24,7 +24,7 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_podcast_feeds,
     parse_pub_dates,
-    parse_update_frequency,
+    parse_syndication,
     parse_websub_hub,
 )
 from jcasts.podcasts.models import Podcast
@@ -167,26 +167,26 @@ class TestParseWebSubHub:
         assert websub_status_changed > podcast.websub_status_changed
 
 
-class TestParseUpdateFrequency:
-    def test_no_update_values(self, podcast):
+class TestParseSyndication:
+    def test_no_update_values(self):
         feed = Feed(**FeedFactory())
-        assert parse_update_frequency(podcast, feed) is None
+        assert parse_syndication(feed) is None
 
-    def test_no_update_frequency(self, podcast):
+    def test_no_update_frequency(self):
         feed = Feed(**FeedFactory(update_period="hourly"))
-        assert parse_update_frequency(podcast, feed) is None
+        assert parse_syndication(feed) is None
 
-    def test_no_update_period(self, podcast):
+    def test_no_update_period(self):
         feed = Feed(**FeedFactory(update_frequency=3))
-        assert parse_update_frequency(podcast, feed) is None
+        assert parse_syndication(feed) is None
 
-    def test_invalid_update_period(self, podcast):
+    def test_invalid_update_period(self):
         feed = Feed(**FeedFactory(update_frequency=3, update_period="fortnitely"))
-        assert parse_update_frequency(podcast, feed) is None
+        assert parse_syndication(feed) is None
 
-    def test_valid_update_period(self, podcast):
+    def test_valid_update_period(self):
         feed = Feed(**FeedFactory(update_frequency=3, update_period="daily"))
-        assert parse_update_frequency(podcast, feed) == timedelta(hours=8)
+        assert parse_syndication(feed) == timedelta(hours=8)
 
 
 class TestParsePubDates:

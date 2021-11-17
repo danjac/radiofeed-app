@@ -328,18 +328,17 @@ def parse_pub_dates(
 
     latest = podcast.pub_date
     pub_dates = [item.pub_date for item in items if item.pub_date]
-    frequency = parse_update_frequency(podcast, feed)
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
         result = scheduler.schedule(
             latest,
-            frequency,
+            parse_syndication(feed),
             pub_dates,
             podcast.active,
         )
     else:
         result = scheduler.reschedule(
-            frequency,
+            podcast.frequency,
             podcast.schedule_modifier,
             podcast.active,
         )
@@ -352,17 +351,17 @@ def parse_pub_dates(
     )
 
 
-def parse_update_frequency(podcast: Podcast, feed: rss_parser.Feed) -> timedelta | None:
+def parse_syndication(feed: rss_parser.Feed) -> timedelta | None:
 
     if not feed.update_period or not feed.update_frequency:
-        return podcast.frequency
+        return None
 
     try:
         return timedelta(
             seconds=BASE_PERIODS[feed.update_period] / feed.update_frequency
         )
     except KeyError:
-        return podcast.frequency
+        return None
 
 
 def parse_episodes(
