@@ -10,9 +10,12 @@ from django.utils import timezone
 from jcasts.shared.typedefs import ComparableT
 
 DEFAULT_MODIFIER = 0.05
+
 DEFAULT_FREQUENCY = timedelta(days=1)
+STALE_FREQUENCY = timedelta(days=30)
+
 MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=30)
+MAX_FREQUENCY = timedelta(days=14)
 
 MAX_PUB_DATES = 12
 
@@ -23,18 +26,23 @@ def schedule(
     """Return a new scheduled time and modifier."""
 
     now = timezone.now()
-
-    if pub_date < now - MAX_FREQUENCY:
-
+    
+    # if stale (> 90 days) ping once a month
+    
+    if pub_date < now - settings.FRESHNESS_THRESHOLD:
+        
         return (
-            now + MAX_FREQUENCY,
-            MAX_FREQUENCY,
+            now + STALE_FREQUENCY,
+            STALE_FREQUENCY,
             DEFAULT_MODIFIER,
         )
 
     frequency = get_frequency(pub_dates)
     scheduled = pub_date + frequency
 
+    # if less than current time, increment by freq
+    # until we have a time > now
+    
     while scheduled < now:
         scheduled += frequency
 
@@ -87,7 +95,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
     latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
 
-    # calculate mean interval between dates
+    # get interval times between each release date
 
     intervals: list[float] = []
 
@@ -95,6 +103,8 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         intervals.append((latest - pub_date).total_seconds())
         latest = pub_date
 
+    # freq = mean interval time minus standard deviation
+    
     return within_bounds(
         timedelta(seconds=statistics.mean(intervals) - statistics.pstdev(intervals)),
         MIN_FREQUENCY,
