@@ -119,6 +119,17 @@ class TestGetFrequency:
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
         assert scheduler.get_frequency(dates).days == 3
 
+    def test_high_variance(self):
+        now = timezone.now()
+
+        dates = [
+            now - timedelta(days=3),
+            now - timedelta(days=5),
+            now - timedelta(days=1),
+            now - timedelta(days=9),
+        ]
+        assert scheduler.get_frequency(dates).days == 1
+
     def test_max_dates_with_one_date_in_range(self):
 
         now = timezone.now()

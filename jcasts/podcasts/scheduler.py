@@ -96,7 +96,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         latest = pub_date
 
     return within_bounds(
-        timedelta(seconds=statistics.mean(intervals)),
+        timedelta(seconds=statistics.mean(intervals) - statistics.pstdev(intervals)),
         MIN_FREQUENCY,
         MAX_FREQUENCY,
     )
