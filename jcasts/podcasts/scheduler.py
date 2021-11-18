@@ -26,11 +26,11 @@ def schedule(
     """Return a new scheduled time and modifier."""
 
     now = timezone.now()
-    
+
     # if stale (> 90 days) ping once a month
-    
+
     if pub_date < now - settings.FRESHNESS_THRESHOLD:
-        
+
         return (
             now + STALE_FREQUENCY,
             STALE_FREQUENCY,
@@ -42,7 +42,7 @@ def schedule(
 
     # if less than current time, increment by freq
     # until we have a time > now
-    
+
     while scheduled < now:
         scheduled += frequency
 
@@ -94,9 +94,9 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         return DEFAULT_FREQUENCY
 
     # get interval times between each release date
-    
+
     latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
-    
+
     intervals: list[float] = []
 
     for pub_date in pub_dates:
@@ -104,7 +104,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         latest = pub_date
 
     # freq = mean interval time minus standard deviation
-    
+
     return within_bounds(
         timedelta(seconds=statistics.mean(intervals) - statistics.pstdev(intervals)),
         MIN_FREQUENCY,
