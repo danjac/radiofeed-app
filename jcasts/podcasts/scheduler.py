@@ -93,10 +93,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     if len(pub_dates) in (0, 1):
         return DEFAULT_FREQUENCY
 
-    latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
-
     # get interval times between each release date
-
+    
+    latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
+    
     intervals: list[float] = []
 
     for pub_date in pub_dates:
