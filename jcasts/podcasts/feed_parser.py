@@ -68,7 +68,7 @@ def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
 
     qs = (
         Podcast.objects.active()
-        .filter(queued=None)
+        .filter(queued__isnull=True)
         .distinct()
         .order_by(
             F("scheduled").asc(nulls_first=True),

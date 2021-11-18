@@ -95,7 +95,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 scheduled__isnull=False,
                 scheduled__lte=now,
             ),
-            podcastindex=False,
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -134,8 +133,6 @@ class Podcast(models.Model):
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
-
-    podcastindex: bool = models.BooleanField(default=False)
 
     # RSS lastBuildDate
     last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)

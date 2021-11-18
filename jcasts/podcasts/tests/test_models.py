@@ -163,20 +163,17 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "scheduled,podcastindex,exists",
+        "scheduled,exists",
         [
-            (None, False, True),
-            (None, True, False),
-            (timedelta(days=3), False, True),
-            (timedelta(days=3), True, False),
-            (timedelta(days=-3), False, False),
+            (None, True),
+            (timedelta(days=3), True),
+            (timedelta(days=-3), False),
         ],
     )
-    def test_scheduled(self, db, scheduled, podcastindex, exists):
+    def test_scheduled(self, db, scheduled, exists):
 
         now = timezone.now()
         PodcastFactory(
-            podcastindex=podcastindex,
             scheduled=now - scheduled if scheduled else None,
         )
         assert Podcast.objects.scheduled().exists() is exists
