@@ -83,7 +83,7 @@ def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
             num_workers * round(frequency.total_seconds() / 2)
             - Podcast.objects.filter(queued__isnull=False).count()
         )
-        qs = qs.scheduled()[:limit]
+        qs = qs.scheduled()[: max(limit, 0)]
 
     podcast_ids = list(qs.values_list("pk", flat=True))
 
