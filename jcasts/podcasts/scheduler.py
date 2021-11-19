@@ -111,6 +111,8 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
     # get a randomized sample of frequencies
 
+    numpy.random.seed(1)
+
     frequency = statistics.mean(
         numpy.random.normal(
             statistics.mean(intervals),
