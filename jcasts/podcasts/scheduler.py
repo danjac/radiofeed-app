@@ -4,8 +4,6 @@ import statistics
 
 from datetime import datetime, timedelta
 
-import numpy
-
 from django.conf import settings
 from django.utils import timezone
 
@@ -111,20 +109,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         intervals.append(interval.total_seconds())
         latest = pub_date
 
-    # get a randomized sample of frequencies
-
-    frequency = statistics.mean(
-        numpy.random.normal(
-            statistics.mean(intervals),
-            statistics.pstdev(intervals),
-            1000,
-        ).round(2),
-    )
-
     # final value should fall within min/max bounds
 
     return within_bounds(
-        timedelta(seconds=frequency),
+        timedelta(seconds=statistics.mean(intervals)),
         MIN_FREQUENCY,
         MAX_FREQUENCY,
     )
