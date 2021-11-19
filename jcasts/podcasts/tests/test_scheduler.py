@@ -71,12 +71,12 @@ class TestSchedule:
 
     def test_pub_dates_result_scheduled_lt_now(self):
         now = timezone.now()
-        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
+        dates = [now - timedelta(days=7 * i) for i in range(1, 6)]
         scheduled, frequency, modifier = scheduler.schedule(
-            now - timedelta(days=4), dates
+            now - timedelta(days=8), dates
         )
         assert_hours(scheduled - now, 24)
-        assert frequency == timedelta(days=3)
+        assert frequency == timedelta(days=7)
         assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_last_pub_date_gt_max_value(self):
