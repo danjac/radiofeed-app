@@ -38,14 +38,6 @@ def schedule(
     frequency = get_frequency(pub_dates)
     scheduled = pub_date + frequency
 
-    if scheduled < now:
-
-        # example: freq 7, last update 8 days ago
-        # -8 + 7 = - 1
-        # diff: 1 day
-
-        scheduled = now + (now - scheduled)
-
     return (
         within_bounds(
             scheduled,
