@@ -535,11 +535,11 @@ class TestParsePodcastFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert not new_podcast.active
+        assert new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert not new_podcast.frequency_modifier
+        assert new_podcast.scheduled
+        assert new_podcast.frequency_modifier
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -558,11 +558,11 @@ class TestParsePodcastFeed:
             result.raise_exception()
 
         new_podcast.refresh_from_db()
-        assert not new_podcast.active
+        assert new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
-        assert not new_podcast.frequency_modifier
+        assert new_podcast.scheduled
+        assert new_podcast.frequency_modifier
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):

@@ -149,7 +149,6 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         return parse_failure(
             podcast,
             result=Podcast.Result.INVALID_RSS,
-            active=False,
             exception=e,
             tb=traceback.format_exc(),
         )
