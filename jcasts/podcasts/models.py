@@ -64,7 +64,10 @@ class Category(models.Model):
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def active(self) -> models.QuerySet:
-        return self.filter(active=True)
+        return self.filter(
+            active=True,
+            num_failures__lte=self.model.MAX_FAILURES,
+        )
 
     def published(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=False)
@@ -128,6 +131,8 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
+    MAX_FAILURES = 3
+
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
@@ -164,6 +169,8 @@ class Podcast(models.Model):
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
     exception: str = models.TextField(blank=True)
+
+    num_failures: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 

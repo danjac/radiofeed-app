@@ -117,9 +117,9 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
     except DuplicateFeed as e:
         return parse_failure(
             podcast,
-            active=False,
             result=Podcast.Result.DUPLICATE_FEED,
             status=e.response.status_code,
+            active=False,
         )
 
     except requests.HTTPError as e:
@@ -127,14 +127,8 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             podcast,
             result=Podcast.Result.HTTP_ERROR,
             status=e.response.status_code,
-            active=e.response.status_code
-            not in (
-                http.HTTPStatus.FORBIDDEN,
-                http.HTTPStatus.GONE,
-                http.HTTPStatus.METHOD_NOT_ALLOWED,
-                http.HTTPStatus.NOT_FOUND,
-                http.HTTPStatus.UNAUTHORIZED,
-            ),
+            active=e.response.status_code != http.HTTPStatus.GONE,
+            failure=True,
         )
 
     except requests.RequestException as e:
@@ -143,6 +137,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             exception=e,
             result=Podcast.Result.NETWORK_ERROR,
             tb=traceback.format_exc(),
+            failure=True,
         )
 
     except rss_parser.RssParserError as e:
@@ -151,6 +146,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             result=Podcast.Result.INVALID_RSS,
             exception=e,
             tb=traceback.format_exc(),
+            failure=True,
         )
 
 
@@ -212,6 +208,7 @@ def parse_success(
     podcast.exception = ""
 
     podcast.active = not feed.complete
+    podcast.num_failures = 0
 
     # scheduling
 
@@ -387,6 +384,7 @@ def parse_failure(
     *,
     status: int | None = None,
     active: bool = True,
+    failure: bool = False,
     result: tuple[str, str] | None = None,
     exception: Exception | None = None,
     tb: str = "",
@@ -396,12 +394,18 @@ def parse_failure(
     frequency: timedelta | None = None
     modifier: float | None = None
 
+    num_failures = podcast.num_failures
+
     if active:
+
         (
             scheduled,
             frequency,
             modifier,
         ) = scheduler.reschedule(podcast.frequency, podcast.frequency_modifier)
+
+        if failure:
+            num_failures += 1
 
     now = timezone.now()
 
@@ -415,6 +419,7 @@ def parse_failure(
         result=result,
         http_status=status,
         exception=tb,
+        num_failures=num_failures,
         queued=None,
     )
 

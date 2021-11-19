@@ -293,6 +293,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert new_podcast.active
+        assert new_podcast.num_failures == 0
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
@@ -357,6 +358,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert not new_podcast.active
+        assert new_podcast.num_failures == 0
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
@@ -484,6 +486,8 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.rss == self.redirect_rss
+        assert new_podcast.active
+        assert new_podcast.num_failures == 0
         assert new_podcast.modified
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -513,6 +517,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.rss == current_rss
+        assert new_podcast.num_failures == 0
         assert not new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -536,6 +541,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
+        assert new_podcast.num_failures == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.scheduled
@@ -559,6 +565,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
+        assert new_podcast.num_failures == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.scheduled
@@ -594,6 +601,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
+        assert new_podcast.num_failures == 1
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -615,6 +623,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
+        assert new_podcast.num_failures == 0
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -638,6 +647,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.active
+        assert new_podcast.num_failures == 1
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -664,6 +674,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.active
+        assert new_podcast.num_failures == 1
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
