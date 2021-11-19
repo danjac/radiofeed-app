@@ -4,6 +4,8 @@ import statistics
 
 from datetime import datetime, timedelta
 
+import numpy
+
 from django.conf import settings
 from django.utils import timezone
 
@@ -16,8 +18,6 @@ STALE_FREQUENCY = timedelta(days=30)
 
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=14)
-
-MAX_PUB_DATES = 12
 
 
 def schedule(
@@ -95,18 +95,34 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
     # get interval times between each release date
 
-    latest, *pub_dates = sorted(pub_dates, reverse=True)[:MAX_PUB_DATES]
+    latest, *pub_dates = sorted(pub_dates, reverse=True)
 
     intervals: list[float] = []
 
     for pub_date in pub_dates:
-        intervals.append((latest - pub_date).total_seconds())
+        # smooth out outliers to within min/max boundaries
+        interval = within_bounds(
+            latest - pub_date,
+            MIN_FREQUENCY,
+            MAX_FREQUENCY,
+        )
+        intervals.append(interval.total_seconds())
         latest = pub_date
 
-    # freq = mean interval time minus standard deviation
+    # get a randomized sample of frequencies
+
+    frequency = statistics.mean(
+        numpy.random.normal(
+            statistics.mean(intervals),
+            statistics.pstdev(intervals),
+            1000,
+        ).round(2),
+    )
+
+    # final value should fall within min/max bounds
 
     return within_bounds(
-        timedelta(seconds=statistics.mean(intervals) - statistics.pstdev(intervals)),
+        timedelta(seconds=frequency),
         MIN_FREQUENCY,
         MAX_FREQUENCY,
     )

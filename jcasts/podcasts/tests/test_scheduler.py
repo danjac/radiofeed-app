@@ -123,12 +123,14 @@ class TestGetFrequency:
         now = timezone.now()
 
         dates = [
-            now - timedelta(days=3),
-            now - timedelta(days=5),
-            now - timedelta(days=1),
-            now - timedelta(days=9),
+            now - timedelta(days=value)
+            for value in [2, 3, 5, 6, 9, 11, 12, 15, 16, 20, 25]
         ]
-        assert scheduler.get_frequency(dates).days == 1
+
+        for _ in range(1000):
+            freq = scheduler.get_frequency(dates)
+            hours = round(freq.total_seconds() / 3600)
+            assert hours in range(48, 60)
 
     def test_max_dates_with_one_date_in_range(self):
 
