@@ -133,18 +133,22 @@ class TestPodcastManager:
     def test_inactive(self, db):
         PodcastFactory(active=False)
         assert Podcast.objects.active().count() == 0
+        assert Podcast.objects.inactive().count() == 1
 
     def test_active(self, db):
         PodcastFactory(active=True)
         assert Podcast.objects.active().count() == 1
+        assert Podcast.objects.inactive().count() == 0
 
     def test_active_too_many_failures(self, db):
         PodcastFactory(active=True, num_failures=4)
         assert Podcast.objects.active().count() == 0
+        assert Podcast.objects.inactive().count() == 1
 
     def test_active_failures_under_limit(self, db):
         PodcastFactory(active=True, num_failures=2)
         assert Podcast.objects.active().count() == 1
+        assert Podcast.objects.inactive().count() == 0
 
     def test_published_pub_date_not_null(self, db):
         PodcastFactory(pub_date=timezone.now())

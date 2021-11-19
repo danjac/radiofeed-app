@@ -69,6 +69,16 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             num_failures__lte=self.model.MAX_FAILURES,
         )
 
+    def inactive(self) -> models.QuerySet:
+        return self.filter(
+            models.Q(
+                active=False,
+            )
+            | models.Q(
+                num_failures__gt=self.model.MAX_FAILURES,
+            )
+        )
+
     def published(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=False)
 

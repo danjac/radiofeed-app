@@ -133,9 +133,9 @@ class ActiveFilter(admin.SimpleListFilter):
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         if value == "yes":
-            return queryset.filter(active=True)
+            return queryset.active()
         if value == "no":
-            return queryset.filter(active=False)
+            return queryset.inactive()
         return queryset
 
 
