@@ -264,7 +264,7 @@ def parse_success(
 
 def parse_pub_dates(
     podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
-) -> tuple[datetime | None, datetime | None, timedelta | None, float | None]:
+) -> tuple[datetime | None, datetime, timedelta, float]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
