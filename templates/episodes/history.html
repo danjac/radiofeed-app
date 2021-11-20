@@ -40,7 +40,8 @@
 
 
     <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
-      x-show="count === 0">
+      x-show="count === 0"
+      x-cloak>
       {% if request.search %}
         No results found for <span class="font-bold">{{ request.search }}</span>.
       {% else %}
