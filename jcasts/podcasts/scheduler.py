@@ -101,7 +101,7 @@ def get_frequency_in_seconds(pub_dates: list[datetime]) -> float:
     if size == 1:
         return data[0]
 
-    return numpy.mean(data) - (numpy.std(data, ddof=1) / size)
+    return numpy.mean(data) - (numpy.std(data, ddof=1) / numpy.sqrt(size))
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:
