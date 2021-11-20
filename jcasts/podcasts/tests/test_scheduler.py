@@ -31,13 +31,6 @@ class TestReschedule:
         assert frequency == timedelta(days=60)
         assert_hours(scheduled - now, 30 * 24)
 
-    def test_max_schedule_modifier(self):
-        now = timezone.now()
-        scheduled, frequency, modifier = scheduler.reschedule(timedelta(days=60), 1.0)
-        assert frequency == timedelta(days=60)
-        assert modifier == 1.0
-        assert_hours(scheduled - now, 30 * 24)
-
     def test_none(self):
         now = timezone.now()
         scheduled, frequency, modifier = scheduler.reschedule(None, None)

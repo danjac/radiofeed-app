@@ -65,7 +65,7 @@ def reschedule(
             now + MAX_FREQUENCY,
         ),
         frequency,
-        within_bounds(modifier * 1.2, DEFAULT_MODIFIER, 1.0),
+        modifier * 1.2,
     )
 
 
