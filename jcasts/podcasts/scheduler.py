@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import statistics
-
 from datetime import datetime, timedelta
+
+import numpy
 
 from django.conf import settings
 from django.utils import timezone
@@ -75,19 +75,45 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on mean interval between pub dates
     of individual episodes."""
 
-    # ignore any < 90 days
+    # get interval times between each release date
+    # if insufficient data, just return default
 
-    earliest = timezone.now() - settings.FRESHNESS_THRESHOLD
-    pub_dates = [pub_date for pub_date in pub_dates if pub_date > earliest]
-
-    # assume default if not enough available dates
-
-    if len(pub_dates) in (0, 1):
+    if not (frequency := get_frequency_in_seconds(pub_dates)):
         return DEFAULT_FREQUENCY
 
-    # get interval times between each release date
+    # final value should fall within min/max bounds
 
-    latest, *pub_dates = sorted(pub_dates, reverse=True)
+    return within_bounds(
+        timedelta(seconds=frequency),
+        MIN_FREQUENCY,
+        MAX_FREQUENCY,
+    )
+
+
+def get_frequency_in_seconds(pub_dates: list[datetime]) -> float:
+
+    data = numpy.array(get_intervals(pub_dates))
+    size = numpy.size(data)
+
+    if size == 0:
+        return 0
+
+    if size == 1:
+        return data[0]
+
+    return numpy.mean(data) - (numpy.std(data, ddof=1) / size)
+
+
+def get_intervals(pub_dates: list[datetime]) -> list[float]:
+    threshold = timezone.now() - settings.FRESHNESS_THRESHOLD
+
+    try:
+        latest, *pub_dates = sorted(
+            [pub_date for pub_date in pub_dates if pub_date > threshold],
+            reverse=True,
+        )
+    except ValueError:
+        return []
 
     intervals: list[float] = []
 
@@ -101,13 +127,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
         intervals.append(interval.total_seconds())
         latest = pub_date
 
-    # final value should fall within min/max bounds
-
-    return within_bounds(
-        timedelta(seconds=statistics.mean(intervals)),
-        MIN_FREQUENCY,
-        MAX_FREQUENCY,
-    )
+    return intervals
 
 
 def within_bounds(

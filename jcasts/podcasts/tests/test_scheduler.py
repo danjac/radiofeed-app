@@ -81,11 +81,11 @@ class TestSchedule:
 
     def test_last_pub_date_gt_max_value(self):
         now = timezone.now()
-        latest = now - timedelta(days=90)
+        latest = now - timedelta(days=99)
         dates = [latest] + [latest - timedelta(days=3 * i) for i in range(1, 6)]
         scheduled, frequency, modifier = scheduler.schedule(now, dates)
         assert_hours(scheduled - now, 24 * 30)
-        assert frequency == scheduler.DEFAULT_FREQUENCY
+        assert frequency == timedelta(days=1)
         assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_max_value(self):
@@ -128,6 +128,14 @@ class TestGetFrequency:
         ]
 
         assert_hours(scheduler.get_frequency(dates), 55)
+
+    def test_max_dates_with_one_date(self):
+
+        now = timezone.now()
+        dates = [
+            now - timedelta(days=6),
+        ]
+        assert scheduler.get_frequency(dates).days == 1
 
     def test_max_dates_with_one_date_in_range(self):
 
