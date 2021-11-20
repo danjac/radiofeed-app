@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-import numpy
-
 from django.conf import settings
 from django.utils import timezone
 
@@ -72,36 +70,24 @@ def reschedule(
 
 
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
-    """Calculate the frequency based on mean interval between pub dates
+    """Calculate the frequency based on smallest interval between pub dates
     of individual episodes."""
 
-    # get interval times between each release date
-    # if insufficient data, just return default
-
-    if not (frequency := get_frequency_in_seconds(pub_dates)):
+    try:
+        # return the smallest interval between releases
+        # e.g. if release dates are 2, 3, and 5 days apart, then return 2 days
+        frequency = timedelta(seconds=min(get_intervals(pub_dates)))
+    except ValueError:
+        # if insufficient data, just return default
         return DEFAULT_FREQUENCY
 
     # final value should fall within min/max bounds
 
     return within_bounds(
-        timedelta(seconds=frequency),
+        frequency,
         MIN_FREQUENCY,
         MAX_FREQUENCY,
     )
-
-
-def get_frequency_in_seconds(pub_dates: list[datetime]) -> float:
-
-    data = numpy.array(get_intervals(pub_dates))
-    size = numpy.size(data)
-
-    if size == 0:
-        return 0
-
-    if size == 1:
-        return data[0]
-
-    return numpy.mean(data) - (numpy.std(data) / numpy.sqrt(size))
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:

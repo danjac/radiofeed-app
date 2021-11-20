@@ -127,7 +127,7 @@ class TestGetFrequency:
             for value in [2, 3, 5, 6, 9, 11, 12, 15, 16, 20, 25]
         ]
 
-        assert_hours(scheduler.get_frequency(dates), 55)
+        assert_hours(scheduler.get_frequency(dates), 24)
 
     def test_max_dates_with_one_date(self):
 
