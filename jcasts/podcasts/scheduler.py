@@ -16,7 +16,7 @@ MAX_FREQUENCY = timedelta(days=14)
 
 def schedule(
     pub_date: datetime, pub_dates: list[datetime]
-) -> tuple[datetime | None, timedelta | None, float | None]:
+) -> tuple[datetime, timedelta, float]:
     """Return a new scheduled time and modifier."""
 
     now = timezone.now()
@@ -42,7 +42,7 @@ def schedule(
 
 def reschedule(
     frequency: timedelta | None, modifier: float | None
-) -> tuple[datetime | None, timedelta | None, float | None]:
+) -> tuple[datetime, timedelta, float]:
     """Increment scheduled time if no new updates
     and increment the schedule modifier.
     """
