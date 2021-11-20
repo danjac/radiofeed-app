@@ -34,11 +34,10 @@ def schedule(
         )
 
     frequency = get_frequency(pub_dates)
-    scheduled = pub_date + frequency
 
     return (
         within_bounds(
-            scheduled,
+            pub_date + frequency,
             now + MIN_FREQUENCY,
             now + MAX_FREQUENCY,
         ),
