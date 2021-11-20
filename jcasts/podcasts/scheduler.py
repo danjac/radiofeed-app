@@ -5,8 +5,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone
 
-from jcasts.shared.typedefs import ComparableT
-
 DEFAULT_MODIFIER = 0.05
 
 DEFAULT_FREQUENCY = timedelta(days=1)
@@ -36,11 +34,7 @@ def schedule(
     frequency = get_frequency(pub_dates)
 
     return (
-        within_bounds(
-            pub_date + frequency,
-            now + MIN_FREQUENCY,
-            now + MAX_FREQUENCY,
-        ),
+        scheduled_within_bounds(pub_date + frequency),
         frequency,
         DEFAULT_MODIFIER,
     )
@@ -55,13 +49,9 @@ def reschedule(
     frequency = frequency or DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
 
-    now = timezone.now()
-
     return (
-        within_bounds(
-            now + timedelta(seconds=frequency.total_seconds() * modifier),
-            now + MIN_FREQUENCY,
-            now + MAX_FREQUENCY,
+        scheduled_within_bounds(
+            timezone.now() + timedelta(seconds=frequency.total_seconds() * modifier)
         ),
         frequency,
         modifier * 1.2,
@@ -75,18 +65,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     try:
         # return the smallest interval between releases
         # e.g. if release dates are 2, 3, and 5 days apart, then return 2 days
-        frequency = timedelta(seconds=min(get_intervals(pub_dates)))
+        return frequency_within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
     except ValueError:
         # if insufficient data, just return default
         return DEFAULT_FREQUENCY
-
-    # final value should fall within min/max bounds
-
-    return within_bounds(
-        frequency,
-        MIN_FREQUENCY,
-        MAX_FREQUENCY,
-    )
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:
@@ -104,18 +86,16 @@ def get_intervals(pub_dates: list[datetime]) -> list[float]:
 
     for pub_date in pub_dates:
         # smooth out outliers to within min/max boundaries
-        interval = within_bounds(
-            latest - pub_date,
-            MIN_FREQUENCY,
-            MAX_FREQUENCY,
-        )
-        intervals.append(interval.total_seconds())
+        intervals.append(frequency_within_bounds(latest - pub_date).total_seconds())
         latest = pub_date
 
     return intervals
 
 
-def within_bounds(
-    value: ComparableT, min_value: ComparableT, max_value: ComparableT
-) -> ComparableT:
-    return max(min(value, max_value), min_value)
+def scheduled_within_bounds(value: datetime) -> datetime:
+    now = timezone.now()
+    return max(min(value, now + MAX_FREQUENCY), now + MIN_FREQUENCY)
+
+
+def frequency_within_bounds(value: timedelta) -> timedelta:
+    return max(min(value, MAX_FREQUENCY), MIN_FREQUENCY)
