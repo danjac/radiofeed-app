@@ -16,6 +16,7 @@ from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
     assert_conflict,
+    assert_forbidden,
     assert_no_content,
     assert_ok,
 )
@@ -153,8 +154,8 @@ class TestEpisodeActions:
             resp = client.get(
                 reverse("episodes:actions", args=[episode.id]),
             )
-        assert_ok(resp)
-        assert resp.context_data["episode"] == episode
+        assert_forbidden(resp)
+        assert resp["HX-Redirect"].endswith(episode.get_absolute_url())
 
     def test_authenticated(self, client, auth_user, episode, django_assert_num_queries):
         with django_assert_num_queries(7):

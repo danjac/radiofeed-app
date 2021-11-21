@@ -12,6 +12,8 @@ def assert_status(response: HttpResponse, status: int) -> None:
 
 assert_ok = functools.partial(assert_status, status=http.HTTPStatus.OK)
 
+assert_forbidden = functools.partial(assert_status, status=http.HTTPStatus.FORBIDDEN)
+
 assert_not_found = functools.partial(assert_status, status=http.HTTPStatus.NOT_FOUND)
 
 assert_gone = functools.partial(assert_status, status=http.HTTPStatus.GONE)

@@ -1,10 +1,26 @@
+import http
 import json
 
 import pytest
 
 from django.http import HttpResponse
 
-from jcasts.shared.htmx import with_hx_trigger
+from jcasts.shared.htmx import hx_redirect_to_login, with_hx_trigger
+
+
+class TestHxRedirectToLogin:
+    def test_with_default(self):
+        resp = hx_redirect_to_login()
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        assert resp["HX-Refresh"] == "true"
+        assert resp["HX-Redirect"] == "/account/login/?next=/"
+
+    def test_with_url(self):
+        url = "/final/"
+        resp = hx_redirect_to_login(url)
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        assert resp["HX-Refresh"] == "true"
+        assert resp["HX-Redirect"] == "/account/login/?next=/final/"
 
 
 class TestWithHxTrigger:
