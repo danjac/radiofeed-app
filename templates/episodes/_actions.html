@@ -12,20 +12,15 @@
   @click.away="close()"
   @keydown.escape.window="close()">
   <div class="min-h-screen pt-32 px-4 pb-20 sm:pt-0 text-center block sm:p-0 lg:pt-32 lg:pb-20">
+
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
       aria-hidden="true"></div>
 
     <div class="inline-block align-bottom bg-white rounded text-left overflow-hidden shadow-xl transform transition-all my-8 align-middle sm:max-w-lg sm:w-full"
-      x-transition:enter="transition ease-in duration-200"
-      x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-      x-transition:leave="ease-in duration-200"
-      x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-      x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
       x-show="show">
 
-      {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center p-3 lg:p-4 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
-        <a class="{{ BUTTON_CSS }} border-b text-sm cursor-pointer h-16 flex items-center"
+      {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center p-3 lg:p-4 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3 text-sm" episode_url=episode.get_absolute_url %}
+        <a class="{{ BUTTON_CSS }} border-b cursor-pointer h-16 flex items-center"
           {% if not is_detail %}href="{{ episode.get_absolute_url }}"
           {% endif %}
           @click="close()">
@@ -86,7 +81,7 @@
               hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
               hx-push-url="false"
               @click="close()">
-              {% icon "trash" css_class=ICON_CSS %}
+              {% icon "collection" css_class=ICON_CSS %}
               Remove from Queue
             </button>
           {% else %}
@@ -105,7 +100,7 @@
             hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
             hx-push-url="false"
             @click="close()">
-            {% icon "trash" css_class=ICON_CSS %}
+            {% icon "star_solid" css_class=ICON_CSS %}
             Remove from Favorites
           </button>
         {% else %}
@@ -123,7 +118,7 @@
             hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
             hx-push-url="false"
             @click="close()">
-            {% icon "trash" css_class=ICON_CSS %}
+            {% icon "database" css_class=ICON_CSS %}
             Remove from History
           </button>
         {% endif %}
