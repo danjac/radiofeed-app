@@ -55,14 +55,16 @@
             {% endwith %}
           {% endif %}
           {% if not is_playing %}
-            {% if episode.listened and not episode.completed %}
-              <button class="{{ BUTTON_CSS }} border-b"
-                hx-post="{% url 'episodes:mark_complete' episode.id %}"
-                hx-push-url="false"
-                @click="close();">
-                {% icon "check" css_class=ICON_CSS %}
-                Mark Complete
-              </button>
+            {% if is_detail %}
+              {% if episode.listened and not episode.completed %}
+                <button class="{{ BUTTON_CSS }} border-b"
+                  hx-post="{% url 'episodes:mark_complete' episode.id %}"
+                  hx-push-url="false"
+                  @click="close();">
+                  {% icon "check" css_class=ICON_CSS %}
+                  Mark Complete
+                </button>
+              {% endif %}
             {% endif %}
 
             {% if is_queued %}
@@ -125,16 +127,6 @@
               {% icon "trash" css_class=ICON_CSS %}
               Remove from History
             </button>
-          {% endif %}
-
-          {% if is_detail and user.is_staff %}
-            <a href="{% url 'admin:episodes_episode_change' episode.id %}"
-              class="{{ BUTTON_CSS }} border-b"
-              hx-disable="true"
-              @click="close()">
-              {% icon "adjustments" css_class=ICON_CSS %}
-              View in Admin
-            </a>
           {% endif %}
 
         {% else %}
