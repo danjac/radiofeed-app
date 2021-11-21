@@ -63,16 +63,14 @@
 
           {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
 
-          <div>
+          <div class="flex items-center space-x-2">
             {% if user.is_authenticated %}
               {% include "episodes/_actions_toggle.html" with is_detail=True %}
-            {% else %}
-              {% with file_size=episode.get_file_size %}
-                <a class="inline-block link"
-                  download
-                  href="{{ episode.media_url }}">Download {{ episode.get_media_url_ext|upper }}</a>
-              {% endwith %}
             {% endif %}
+            <a class="inline-block link"
+              download
+              title="Download episode to your device"
+              href="{{ episode.media_url }}">Download {{ episode.get_media_url_ext|upper }}</a>
           </div>
         </div>
       </div>

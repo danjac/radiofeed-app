@@ -146,14 +146,6 @@
           </a>
         {% endif %}
 
-        <a href="{{ episode.media_url }}"
-          hx-disable="true"
-          class="{{ BUTTON_CSS }} border-b">
-          {% icon "download" css_class=ICON_CSS %}
-          Download {{ episode.get_media_url_ext|upper }}
-        </a>
-
-
         <button class="{{ BUTTON_CSS }}"
           @click="close()">
           {% icon "x" css_class=ICON_CSS %}
