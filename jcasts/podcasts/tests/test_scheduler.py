@@ -78,7 +78,7 @@ class TestSchedule:
         dates = [latest] + [latest - timedelta(days=3 * i) for i in range(1, 6)]
         scheduled, frequency, modifier = scheduler.schedule(now, dates)
         assert_hours(scheduled - now, 24 * 30)
-        assert frequency == timedelta(days=1)
+        assert frequency == timedelta(days=30)
         assert modifier == scheduler.DEFAULT_MODIFIER
 
     def test_max_value(self):
@@ -148,7 +148,7 @@ class TestGetFrequency:
             now - timedelta(days=120),
             now - timedelta(days=180),
         ]
-        assert scheduler.get_frequency(dates).days == 1
+        assert scheduler.get_frequency(dates).days == 30
 
     def test_min_dates(self):
 

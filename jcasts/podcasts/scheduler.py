@@ -49,18 +49,23 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on smallest interval between pub dates
     of individual episodes."""
 
+    threshold = timezone.now() - settings.FRESHNESS_THRESHOLD
+
     try:
+        if max(pub_dates) < threshold:
+            return MAX_FREQUENCY
+
         # return the smallest interval between releases
         # e.g. if release dates are 2, 3, and 5 days apart, then return 2 days
-        return frequency_within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
+        return frequency_within_bounds(
+            timedelta(seconds=min(get_intervals(pub_dates, threshold)))
+        )
     except ValueError:
         # if insufficient data, just return default
         return DEFAULT_FREQUENCY
 
 
-def get_intervals(pub_dates: list[datetime]) -> list[float]:
-    threshold = timezone.now() - settings.FRESHNESS_THRESHOLD
-
+def get_intervals(pub_dates: list[datetime], threshold: datetime) -> list[float]:
     try:
         latest, *pub_dates = sorted(
             [pub_date for pub_date in pub_dates if pub_date > threshold],
