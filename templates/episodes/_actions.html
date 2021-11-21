@@ -20,7 +20,7 @@
   x-show="show"
   @click.away="close()"
   @keydown.escape.window="close()">
-  <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300 w-80 sm:w-64 border shadow-2xl dark:border-gray-500 rounded inset-0">
+  <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300 w-72 sm:w-64 border shadow-2xl dark:border-gray-500 rounded inset-0">
     {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center px-2 sm:px-4 py-2 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
       {% if user.is_authenticated %}
         {% if not is_detail %}
