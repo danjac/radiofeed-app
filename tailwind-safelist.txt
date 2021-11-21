@@ -1,4 +1,4 @@
--inset-x-12
+-inset-x-20
 sm:-inset-x-0
 type
 fill-current
