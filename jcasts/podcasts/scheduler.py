@@ -66,14 +66,10 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
 
 
 def get_intervals(pub_dates: list[datetime], threshold: datetime) -> list[float]:
-    try:
-        latest, *pub_dates = sorted(
-            [pub_date for pub_date in pub_dates if pub_date > threshold],
-            reverse=True,
-        )
-    except ValueError:
-        return []
-
+    latest, *pub_dates = sorted(
+        [pub_date for pub_date in pub_dates if pub_date > threshold],
+        reverse=True,
+    )
     intervals: list[float] = []
 
     for pub_date in pub_dates:

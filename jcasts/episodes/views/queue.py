@@ -30,17 +30,14 @@ def index(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_to_queue(request: HttpRequest, episode_id: int, to: str) -> HttpResponse:
+def add_to_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     if not request.player.has(episode.id):
 
         try:
-            if to == "start":
-                QueueItem.objects.add_item_to_start(request.user, episode)
-            else:
-                QueueItem.objects.add_item_to_end(request.user, episode)
+            QueueItem.objects.create_item(request.user, episode)
             messages.success(request, "Added to Play Queue")
         except IntegrityError:
             return HttpResponseConflict()

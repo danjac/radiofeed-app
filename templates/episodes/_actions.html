@@ -75,24 +75,9 @@
                 {% icon "trash" css_class=ICON_CSS %}
                 Remove from Queue
               </button>
-            {% elif is_queue %}
-              <button class="{{ BUTTON_CSS }} border-b"
-                hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
-                hx-push-url="false"
-                @click="close()">
-                {% icon "arrow_up" css_class=ICON_CSS %}
-                Play Next
-              </button>
-              <button class="{{ BUTTON_CSS }} border-b"
-                hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
-                hx-push-url="false"
-                @click="close()">
-                {% icon "arrow_down" css_class=ICON_CSS %}
-                Play Last
-              </button>
             {% else %}
               <button class="{{ BUTTON_CSS }} border-b"
-                hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
+                hx-post="{% url 'episodes:add_to_queue' episode.id %}"
                 hx-push-url="false"
                 @click="close()">
                 {% icon "collection" css_class=ICON_CSS %}
@@ -106,7 +91,7 @@
               hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
               hx-push-url="false"
               @click="close()">
-              {% icon "star_solid" css_class=ICON_CSS %}
+              {% icon "trash" css_class=ICON_CSS %}
               Remove from Favorites
             </button>
           {% else %}

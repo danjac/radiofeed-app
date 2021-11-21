@@ -399,11 +399,7 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def add_item_to_start(self, user: User, episode: Episode) -> QueueItem:
-        self.filter(user=user).update(position=models.F("position") + 1)
-        return self.create(episode=episode, user=user, position=1)
-
-    def add_item_to_end(self, user: User, episode: Episode) -> QueueItem:
+    def create_item(self, user: User, episode: Episode) -> QueueItem:
         return self.create(
             episode=episode,
             user=user,

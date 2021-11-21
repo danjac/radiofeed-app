@@ -546,24 +546,23 @@ class TestQueue:
 
 
 class TestAddToQueue:
-    add_to_start_url = "episodes:add_to_queue_start"
-    add_to_end_url = "episodes:add_to_queue_end"
+    url = "episodes:add_to_queue"
 
-    def test_add_to_queue_end(self, client, auth_user, django_assert_num_queries):
+    def test_add_to_queue(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
 
         with django_assert_num_queries(6):
-            resp = client.post(reverse(self.add_to_end_url, args=[first.id]))
+            resp = client.post(reverse(self.url, args=[first.id]))
         assert_no_content(resp)
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse(self.add_to_end_url, args=[second.id]))
+            resp = client.post(reverse(self.url, args=[second.id]))
         assert_no_content(resp)
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse(self.add_to_end_url, args=[third.id]))
+            resp = client.post(reverse(self.url, args=[third.id]))
         assert_no_content(resp)
 
         items = (
@@ -581,45 +580,13 @@ class TestAddToQueue:
         assert items[2].episode, third
         assert items[2].position == 3
 
-    def test_add_to_queue_start(self, client, auth_user, django_assert_num_queries):
-        first = EpisodeFactory()
-        second = EpisodeFactory()
-        third = EpisodeFactory()
-
-        with django_assert_num_queries(6):
-            resp = client.post(reverse(self.add_to_start_url, args=[first.id]))
-        assert_no_content(resp)
-
-        with django_assert_num_queries(5):
-            resp = client.post(reverse(self.add_to_start_url, args=[second.id]))
-        assert_no_content(resp)
-
-        with django_assert_num_queries(5):
-            resp = client.post(reverse(self.add_to_start_url, args=[third.id]))
-        assert_no_content(resp)
-
-        items = (
-            QueueItem.objects.filter(user=auth_user)
-            .select_related("episode")
-            .order_by("position")
-        )
-
-        assert items[0].episode == third
-        assert items[0].position == 1
-
-        assert items[1].episode, second
-        assert items[1].position == 2
-
-        assert items[2].episode, first
-        assert items[2].position == 3
-
     def test_is_playing(
         self, client, auth_user, player_episode, django_assert_num_queries
     ):
         with django_assert_num_queries(4):
             resp = client.post(
                 reverse(
-                    self.add_to_start_url,
+                    self.url,
                     args=[player_episode.id],
                 ),
             )
@@ -634,7 +601,7 @@ class TestAddToQueue:
         with django_assert_num_queries(6):
             resp = client.post(
                 reverse(
-                    self.add_to_start_url,
+                    self.url,
                     args=[episode.id],
                 ),
             )
