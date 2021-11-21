@@ -152,16 +152,12 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     list_display = (
         "__str__",
-        "active",
         "promoted",
         "pub_date",
         "scheduled",
     )
 
-    list_editable = (
-        "active",
-        "promoted",
-    )
+    list_editable = ("promoted",)
     search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
@@ -234,6 +230,19 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
     parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
+
+    def reactivate_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
+
+        inactive = queryset.inactive()
+
+        if num_podcasts := inactive.count():
+            inactive.update(active=True, num_failures=0)
+            self.message_user(request, f"{num_podcasts} re-activated")
+        else:
+            self.message_user(request, "No inactive podcasts selected")
+
+    reactivate_podcasts.label = "Re-activate podcasts"  # type: ignore
+    reactivate_podcasts.description = "Re-activate dead podcasts"  # type: ignore
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return (

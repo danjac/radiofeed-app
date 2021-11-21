@@ -61,6 +61,20 @@ class TestPodcastAdmin:
         mock_parse_podcast_feed.assert_called_with(podcast.id)
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
+    def test_reactivate_podcasts(self, db, admin, req):
+
+        PodcastFactory(active=False)
+        PodcastFactory(active=True, num_failures=4)
+
+        admin.reactivate_podcasts(req, Podcast.objects.all())
+
+        assert Podcast.objects.inactive().count() == 0
+
+    def test_reactivate_podcasts_none_selected(self, podcast, admin, req):
+        PodcastFactory(active=False)
+        admin.reactivate_podcasts(req, Podcast.objects.active())
+        assert Podcast.objects.inactive().count() == 1
+
     def test_parse_podcast_feed(self, podcast, admin, req, mock_parse_podcast_feed):
         admin.parse_podcast_feed(req, podcast)
         mock_parse_podcast_feed.assert_called_with(podcast.id)
