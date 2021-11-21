@@ -179,7 +179,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     actions = (
         "parse_podcast_feeds",
-        "reactivate_podcast_feeds",
+        "reactivate_podcasts",
     )
 
     change_actions = ("parse_podcast_feed",)
