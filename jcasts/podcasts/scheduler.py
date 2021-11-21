@@ -8,28 +8,15 @@ from django.utils import timezone
 DEFAULT_MODIFIER = 0.05
 
 DEFAULT_FREQUENCY = timedelta(days=1)
-STALE_FREQUENCY = timedelta(days=30)
 
 MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=14)
+MAX_FREQUENCY = timedelta(days=30)
 
 
 def schedule(
     pub_date: datetime, pub_dates: list[datetime]
 ) -> tuple[datetime, timedelta, float]:
     """Return a new scheduled time and modifier."""
-
-    now = timezone.now()
-
-    # if stale (> 90 days) ping once a month
-
-    if pub_date < now - settings.FRESHNESS_THRESHOLD:
-
-        return (
-            now + STALE_FREQUENCY,
-            STALE_FREQUENCY,
-            DEFAULT_MODIFIER,
-        )
 
     frequency = get_frequency(pub_dates)
 
