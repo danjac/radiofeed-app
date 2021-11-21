@@ -271,3 +271,7 @@ PRIVACY_DETAILS = {
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
 }
+
+
+PODCASTINDEX_API_KEY = env("PODCASTINDEX_API_KEY", default=None)
+PODCASTINDEX_API_SECRET = env("PODCASTINDEX_API_SECRET", default=None)
