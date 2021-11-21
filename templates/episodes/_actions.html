@@ -25,12 +25,12 @@
       x-show="show">
 
       {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center p-3 lg:p-4 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3" episode_url=episode.get_absolute_url %}
-        <a class="{{ BUTTON_CSS }} border-b font-semibold text-sm flex items-center cursor-pointer h-16"
+        <a class="{{ BUTTON_CSS }} border-b text-sm cursor-pointer h-16 flex items-center"
           {% if not is_detail %}href="{{ episode.get_absolute_url }}"
           {% endif %}
           @click="close()">
-          {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.podcast.cleaned_title size=12 css_class="h-10 w-10 mr-2 lg:mr-5" %}
-          <div class="max-h-10 flex w-64 flex-wrap sm:w-auto items-center">
+          {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.podcast.cleaned_title size=12 css_class="h-10 w-10 lg:h-12 lg:w-12 mr-2 lg:mr-5" %}
+          <div class="max-h-10 flex w-64 flex-wrap sm:w-auto items-center font-semibold">
             <span class="sm:hidden">
               {{ episode.cleaned_title|truncatechars:60 }}
             </span>
