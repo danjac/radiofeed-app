@@ -20,22 +20,21 @@
       x-show="show">
 
       {% with BUTTON_CSS="w-full font-semibold hover:bg-gray-300 inline-flex items-center p-3 lg:p-4 dark:hover:bg-gray-900 dark:border-gray-500 focus:outline-none" ICON_CSS="h-4 w-4 mr-2 lg:h-5 lg:w-5 lg:mr-3 text-sm" episode_url=episode.get_absolute_url %}
-        <a class="{{ BUTTON_CSS }} border-b cursor-pointer h-16 flex items-center"
-          {% if not is_detail %}href="{{ episode.get_absolute_url }}"
-          {% endif %}
-          @click="close()">
-          {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.podcast.cleaned_title size=12 css_class="h-10 w-10 lg:h-12 lg:w-12 mr-2 lg:mr-5" %}
-          <div class="max-h-10 flex w-64 flex-wrap sm:w-auto items-center font-semibold">
-            <span class="sm:hidden">
-              {{ episode.cleaned_title|truncatechars:60 }}
-            </span>
-            <span class="hidden sm:inline-block">
-              {{ episode.cleaned_title|truncatechars:120 }}
-            </span>
-          </div>
-        </a>
-
         {% if not is_detail %}
+          <a class="{{ BUTTON_CSS }} border-b cursor-pointer h-16 flex items-center"
+            href="{{ episode.get_absolute_url }}"
+            @click="close()">
+            {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.podcast.cleaned_title size=12 css_class="h-10 w-10 lg:h-12 lg:w-12 mr-2 lg:mr-5" %}
+            <div class="max-h-10 flex w-64 flex-wrap sm:w-auto items-center font-semibold">
+              <span class="sm:hidden">
+                {{ episode.cleaned_title|truncatechars:60 }}
+              </span>
+              <span class="hidden sm:inline-block">
+                {{ episode.cleaned_title|truncatechars:120 }}
+              </span>
+            </div>
+          </a>
+
           {% with time_remaining=episode.time_remaining|format_duration %}
             {% if is_playing %}
               <button class="{{ BUTTON_CSS }} border-b"
@@ -121,6 +120,14 @@
             {% icon "database" css_class=ICON_CSS %}
             Remove from History
           </button>
+        {% endif %}
+        {% if is_detail %}
+          <a class="{{ BUTTON_CSS }} border-b"
+            download
+            title="Download episode to your device"
+            href="{{ episode.media_url }}">
+            {% icon "download" css_class=ICON_CSS %}
+            Download {{ episode.get_media_url_ext|upper }}</a>
         {% endif %}
 
         <button class="{{ BUTTON_CSS }}"

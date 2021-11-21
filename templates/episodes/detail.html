@@ -66,11 +66,12 @@
           <div class="flex items-center space-x-2">
             {% if user.is_authenticated %}
               {% include "episodes/_actions_toggle.html" with is_detail=True %}
+            {% else %}
+              <a class="inline-block link"
+                download
+                title="Download episode to your device"
+                href="{{ episode.media_url }}">Download {{ episode.get_media_url_ext|upper }}</a>
             {% endif %}
-            <a class="inline-block link"
-              download
-              title="Download episode to your device"
-              href="{{ episode.media_url }}">Download {{ episode.get_media_url_ext|upper }}</a>
           </div>
         </div>
       </div>
