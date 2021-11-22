@@ -28,7 +28,7 @@
             @click="close()">
             {% include "_cover_image.html" with cover_url=episode.podcast.cover_url alt=episode.podcast.cleaned_title size=16 css_class="h-10 w-10 lg:h-16 lg:w-16 mr-2 lg:mr-5" %}
             <h2 class="w-52 max-h-10 md:max-h-16 flex flex-wrap break-words overflow-y-hidden font-semibold sm:w-96">
-              {{ episode.cleaned_title }}
+              {{ episode.cleaned_title|truncatechars:90 }}
             </h2>
           </a>
 
