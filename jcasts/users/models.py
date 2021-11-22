@@ -13,12 +13,6 @@ class UserQuerySet(models.QuerySet):
             models.Q(emailaddress__email__iexact=email) | models.Q(email__iexact=email)
         )
 
-    def matches_usernames(self, names: list[str]) -> models.QuerySet:
-        """Returns users matching the (case insensitive) username."""
-        if not names:
-            return self.none()
-        return self.filter(username__iregex=r"^(%s)+" % "|".join(names))
-
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):  # type: ignore
     def create_user(

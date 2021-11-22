@@ -35,23 +35,6 @@ class TestUserManager:
         EmailAddress.objects.create(user=user, email=self.email)
         assert django_user_model.objects.for_email(self.email).first() == user
 
-    def test_matches_usernames(self, db, django_user_model):
-        user_1 = UserFactory(username="first")
-        user_2 = UserFactory(username="second")
-        user_3 = UserFactory(username="third")
-
-        names = ["second", "FIRST", "SEconD"]  # duplicate
-
-        users = django_user_model.objects.matches_usernames(names)
-
-        assert len(users) == 2
-        assert user_1 in users
-        assert user_2 in users
-        assert user_3 not in users
-
-        # check empty set returns no results
-        assert django_user_model.objects.matches_usernames([]).count() == 0
-
 
 class TestUserModel:
     def test_get_email_addresses(self, user):
