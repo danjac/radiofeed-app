@@ -38,7 +38,10 @@ def reschedule(
 
     return (
         scheduled_within_bounds(
-            timezone.now() + timedelta(seconds=frequency.total_seconds() * modifier)
+            timezone.now()
+            + frequency_within_bounds(
+                timedelta(seconds=frequency.total_seconds() * modifier)
+            )
         ),
         frequency,
         modifier * 1.2,
