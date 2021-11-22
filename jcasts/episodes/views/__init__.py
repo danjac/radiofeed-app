@@ -83,7 +83,6 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
     if request.user.is_anonymous:
         return hx_redirect_to_login(episode.get_absolute_url())
 
-    is_detail = request.GET.get("detail", False)
     is_playing = request.player.has(episode.id)
 
     is_queue = (
@@ -97,7 +96,6 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
             "episode": episode,
             "is_favorited": episode.is_favorited(request.user),
             "is_queued": episode.is_queued(request.user),
-            "is_detail": is_detail,
             "is_playing": is_playing,
             "is_queue": is_queue,
         },
