@@ -76,7 +76,7 @@
               hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
               hx-push-url="false"
               @click="close()">
-              {% icon "collection" css_class=ICON_CSS %}
+              {% icon "collection_solid" css_class=ICON_CSS %}
               Remove from Queue
             </button>
           {% else %}
@@ -113,7 +113,7 @@
             hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
             hx-push-url="false"
             @click="close()">
-            {% icon "database" css_class=ICON_CSS %}
+            {% icon "database_solid" css_class=ICON_CSS %}
             Remove from History
           </button>
         {% endif %}
