@@ -106,23 +106,6 @@
                   {% icon "star_solid" css_class=ICON_CLASS %}
                 </button>
 
-                <button title="Mark Complete"
-                  x-show="!isPlaying && !isComplete && isListened"
-                  x-cloak
-                  hx-post="{% url 'episodes:mark_complete' episode.id %}"
-                  @click="isComplete=true">
-                  {% icon "check" css_class=ICON_CLASS %}
-                </button>
-
-                <button title="Remove from History"
-                  x-show="!isPlaying && isListened"
-                  x-cloak
-                  hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
-                  @click="isListened=false">
-                  {% icon "database_solid" css_class=ICON_CLASS %}
-
-                </button>
-
                 <button title="Add to Queue"
                   x-show="!isPlaying && !isQueued"
                   x-cloak
@@ -138,6 +121,23 @@
                   @click="isQueued=false">
                   {% icon "collection_solid" css_class=ICON_CLASS %}
                 </button>
+                <button title="Mark Complete"
+                  x-show="!isPlaying && !isComplete && isListened"
+                  x-cloak
+                  hx-post="{% url 'episodes:mark_complete' episode.id %}"
+                  @click="isComplete=true">
+                  {% icon "check" css_class=ICON_CLASS %}
+                </button>
+
+                <button title="Remove from History"
+                  x-show="!isPlaying && isListened"
+                  x-cloak
+                  hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
+                  @click="isListened=false">
+                  {% icon "database_solid" css_class=ICON_CLASS %}
+                </button>
+
+
               {% endif %}
             {% endwith %}
           </div>
