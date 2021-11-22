@@ -142,7 +142,7 @@ class TestEpisodeDetail:
         next_episode,
         django_assert_num_queries,
     ):
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(8):
             resp = client.get(episode.get_absolute_url())
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
