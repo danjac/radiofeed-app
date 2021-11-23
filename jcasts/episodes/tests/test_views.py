@@ -155,7 +155,7 @@ class TestEpisodeActions:
         assert resp.context_data["episode"] == episode
 
     def test_authenticated(self, client, auth_user, episode, django_assert_num_queries):
-        with django_assert_num_queries(7):
+        with django_assert_num_queries(6):
             resp = client.get(self.url(episode))
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
