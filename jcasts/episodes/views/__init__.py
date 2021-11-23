@@ -79,7 +79,7 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    return render_episode_detail(request, episode, "episodes/_actions.html")
+    return render_episode_detail_response(request, episode, "episodes/_actions.html")
 
 
 @require_http_methods(["GET"])
@@ -90,7 +90,7 @@ def episode_detail(
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    return render_episode_detail(
+    return render_episode_detail_response(
         request,
         episode,
         "episodes/detail.html",
@@ -117,7 +117,7 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def render_episode_detail(
+def render_episode_detail_response(
     request: HttpRequest,
     episode: Episode,
     template_name: str,
