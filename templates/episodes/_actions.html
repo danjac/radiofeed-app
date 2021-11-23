@@ -22,11 +22,11 @@
 
       <h2 class="flex items-center mb-3 lg:text-lg">
         <a href="{{ episode.podcast.get_absolute_url }}">
-          {% include "_cover_image.html" with cover_url=episode.podcast.cover_url alt=episode.podcast.cleaned_title size=16 css_class="h-10 w-10 lg:h-20 lg:w-20 mr-2 lg:mr-5" %}
+          {% include "_cover_image.html" with cover_url=episode.podcast.cover_url alt=episode.podcast.cleaned_title size=16 css_class="h-12 w-12 lg:h-20 lg:w-20 mr-2 lg:mr-5" %}
         </a>
         <a href="{{ episode.get_absolute_url }}"
-          class="w-52 max-h-10 lg:max-h-20 flex flex-wrap break-words overflow-y-hidden font-semibold sm:w-96 link">
-          {{ episode.cleaned_title|truncatechars:90 }}
+          class="w-52 max-h-10 lg:max-h-20 flex flex-wrap break-words overflow-y-hidden font-semibold sm:w-full link">
+          {{ episode.cleaned_title }}
         </a>
       </h2>
 
