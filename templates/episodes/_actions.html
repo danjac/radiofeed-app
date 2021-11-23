@@ -99,19 +99,21 @@
                 {% if not episode.completed %}
                   <button title="Mark Complete"
                     hx-post="{% url 'episodes:mark_complete' episode.id %}"
-                    @click="close()">
+                    @click="close()"
+                    title="Mark Complete">
                     {% icon "check" css_class=ICON_CSS %}
                   </button>
                 {% endif %}
                 <button hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
                   hx-push-url="false"
-                  @click="close()">
+                  @click="close()"
+                  title="Remove from History">
                   {% icon "database_solid" css_class=ICON_CSS %}
                 </button>
               {% endif %}
             {% endif %}
             <a download
-              title="Download episode to your device"
+              title="Download"
               href="{{ episode.media_url }}"
               @click="close()">
               {% icon "download" css_class=ICON_CSS %}
