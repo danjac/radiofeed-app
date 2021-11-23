@@ -11,7 +11,7 @@
   }"
   @click.away="close()"
   @keydown.escape.window="close()">
-  <div class="min-h-screen text-center block px-4 sm:px-0 lg:py-36">
+  <div class="min-h-screen mx-3 sm:mx-auto flex items-center justify-center">
 
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
       aria-hidden="true"></div>
@@ -30,7 +30,7 @@
         </a>
       </h2>
 
-      <p class="mb-3 pb-3 border-b dark:border-gray-500 flex flex-wrap break-words">
+      <p class="mb-3 pb-3 border-b dark:border-gray-500 flex flex-wrap break-words max-w-lg">
         {{ episode.cleaned_description|truncatechars:500 }}
       </p>
 
