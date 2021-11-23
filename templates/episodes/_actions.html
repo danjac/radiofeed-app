@@ -20,7 +20,7 @@
       x-show="show"
       @click.away="close()">
 
-      <h2 class="flex items-center mb-3">
+      <h2 class="flex items-center mb-3 lg:text-lg">
         <a href="{{ episode.podcast.get_absolute_url }}">
           {% include "_cover_image.html" with cover_url=episode.podcast.cover_url alt=episode.podcast.cleaned_title size=16 css_class="h-10 w-10 lg:h-16 lg:w-16 mr-2 lg:mr-5" %}
         </a>
@@ -30,7 +30,7 @@
         </a>
       </h2>
 
-      <p class="text-sm mb-3 pb-3 border-b dark:border-gray-500 flex flex-wrap break-words">
+      <p class="mb-3 pb-3 border-b dark:border-gray-500 flex flex-wrap break-words">
         {{ episode.cleaned_description|truncatechars:500 }}
       </p>
 
