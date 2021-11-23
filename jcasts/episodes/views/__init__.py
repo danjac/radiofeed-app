@@ -11,7 +11,6 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.htmx import hx_redirect_to_login
 from jcasts.shared.pagination import render_paginated_response
 
 
@@ -80,14 +79,16 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request, episode_id, with_podcast=True, with_current_time=True
     )
 
-    if request.user.is_anonymous:
-        return hx_redirect_to_login(episode.get_absolute_url())
+    if request.user.is_authenticated:
+        is_playing = request.player.has(episode.id)
 
-    is_playing = request.player.has(episode.id)
-
-    is_queue = (
-        False if is_playing else QueueItem.objects.filter(user=request.user).exists()
-    )
+        is_queue = (
+            False
+            if is_playing
+            else QueueItem.objects.filter(user=request.user).exists()
+        )
+    else:
+        is_playing, is_queue = False, False
 
     return TemplateResponse(
         request,

@@ -61,7 +61,7 @@
 
           {% include "episodes/_play_toggle.html" %}
 
-          <div class="flex items-center space-x-3"
+          <div class="flex items-center space-x-3 lg:space-x-4"
             hx-push-url="false"
             {% if user.is_authenticated %}
               x-data="{
@@ -80,12 +80,17 @@
               isComplete = false;
               }"
             {% endif %}>
-            {% with ICON_CLASS="h-4 w-4 lg:h-5 lg:w-5" %}
+            {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 
               <a download
                 title="Download episode to your device"
-                href="{{ episode.media_url }}">
-                {% icon "download" css_class=ICON_CLASS %}
+                href="{{ episode.media_url }}"
+                class="link">
+                {% if user.is_anonymous %}
+                  Download
+                {% else %}
+                  {% icon "download" css_class=ICON_CSS %}
+                {% endif %}
               </a>
 
               {% if user.is_authenticated %}
@@ -95,7 +100,7 @@
                   x-cloak
                   hx-post="{% url 'episodes:add_favorite' episode.id %}"
                   @click="isFavorite=true">
-                  {% icon "star" css_class=ICON_CLASS %}
+                  {% icon "star" css_class=ICON_CSS %}
                 </button>
 
                 <button title="Remove from Favorites"
@@ -103,7 +108,7 @@
                   x-cloak
                   hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
                   @click="isFavorite=false">
-                  {% icon "star_solid" css_class=ICON_CLASS %}
+                  {% icon "star_solid" css_class=ICON_CSS %}
                 </button>
 
                 <button title="Add to Queue"
@@ -111,7 +116,7 @@
                   x-cloak
                   hx-post="{% url 'episodes:add_to_queue' episode.id %}"
                   @click="isQueued=true">
-                  {% icon "collection" css_class=ICON_CLASS %}
+                  {% icon "collection" css_class=ICON_CSS %}
                 </button>
 
                 <button title="Remove from Queue"
@@ -119,14 +124,14 @@
                   x-cloak
                   hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
                   @click="isQueued=false">
-                  {% icon "collection_solid" css_class=ICON_CLASS %}
+                  {% icon "collection_solid" css_class=ICON_CSS %}
                 </button>
                 <button title="Mark Complete"
                   x-show="!isPlaying && !isComplete && isListened"
                   x-cloak
                   hx-post="{% url 'episodes:mark_complete' episode.id %}"
                   @click="isComplete=true">
-                  {% icon "check" css_class=ICON_CLASS %}
+                  {% icon "check" css_class=ICON_CSS %}
                 </button>
 
                 <button title="Remove from History"
@@ -134,7 +139,7 @@
                   x-cloak
                   hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
                   @click="isListened=false">
-                  {% icon "database_solid" css_class=ICON_CLASS %}
+                  {% icon "database_solid" css_class=ICON_CSS %}
                 </button>
 
 
