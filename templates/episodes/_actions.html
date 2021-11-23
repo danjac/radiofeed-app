@@ -82,13 +82,15 @@
               {% if is_favorited %}
                 <button hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
                   hx-push-url="false"
-                  @click="close()">
+                  @click="close()"
+                  title="Remove from Favorites">
                   {% icon "star_solid" css_class=ICON_CSS %}
                 </button>
               {% else %}
                 <button hx-post="{% url 'episodes:add_favorite' episode.id %}"
                   hx-push-url="false"
-                  @click="close()">
+                  @click="close()"
+                  title="Add to Favorites">
                   {% icon "star" css_class=ICON_CSS %}
                 </button>
               {% endif %}
