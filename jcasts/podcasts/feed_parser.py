@@ -68,6 +68,7 @@ def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
 
     qs = (
         Podcast.objects.active()
+        .fresh()
         .filter(queued__isnull=True)
         .distinct()
         .order_by(
@@ -216,7 +217,6 @@ def parse_success(
         podcast.pub_date,
         podcast.scheduled,
         podcast.frequency,
-        podcast.frequency_modifier,
     ) = parse_pub_dates(podcast, feed, items)
 
     # content
@@ -264,26 +264,14 @@ def parse_success(
 
 def parse_pub_dates(
     podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
-) -> tuple[datetime | None, datetime, timedelta, float]:
+) -> tuple[datetime | None, datetime, timedelta]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return (
-            latest,
-            *scheduler.schedule(
-                latest,
-                pub_dates,
-            ),
-        )
+        return latest, *scheduler.schedule(pub_dates)
 
-    return (
-        podcast.pub_date,
-        *scheduler.reschedule(
-            podcast.frequency,
-            podcast.frequency_modifier,
-        ),
-    )
+    return podcast.pub_date, *scheduler.reschedule(podcast.frequency)
 
 
 def parse_episodes(
@@ -392,17 +380,12 @@ def parse_failure(
 
     scheduled: datetime | None = None
     frequency: timedelta | None = None
-    modifier: float | None = None
 
     num_failures = podcast.num_failures
 
     if active:
 
-        (
-            scheduled,
-            frequency,
-            modifier,
-        ) = scheduler.reschedule(podcast.frequency, podcast.frequency_modifier)
+        scheduled, frequency = scheduler.reschedule(podcast.frequency)
 
         if failure:
             num_failures += 1
@@ -410,9 +393,8 @@ def parse_failure(
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        frequency=frequency,
         scheduled=scheduled,
-        frequency_modifier=modifier,
+        frequency=frequency,
         parsed=now,
         updated=now,
         active=active,
