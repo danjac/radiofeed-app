@@ -1,20 +1,20 @@
 <div class="flex items-center space-x-3 lg:space-x-4"
-     hx-push-url="false"
      {% if user.is_authenticated %}
+     hx-push-url="false"
      x-data="{
         isPlaying: {{ is_playing|yesno:'true,false' }},
         isQueued: {{ is_queued|yesno:'true,false' }},
         isFavorite: {{ is_favorited|yesno:'true,false' }},
         isComplete: {{ episode.completed|yesno:'true,false' }},
         isListened: {{ episode.listened|yesno:'true,false' }}
-        }"
+     }"
      @close-player.window="isPlaying=false"
      @play-episode.window="
         if ($event.detail.value==={{ episode.id }}) {
-        isPlaying = true;
-        isQueued = false;
-        isListened = true;
-        isComplete = false;
+            isPlaying = true;
+            isQueued = false;
+            isListened = true;
+            isComplete = false;
         }"
      {% endif %}>
     {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
