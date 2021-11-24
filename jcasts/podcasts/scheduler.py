@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import bisect
+import statistics
 
 from datetime import datetime, timedelta
 
@@ -32,7 +33,7 @@ def get_frequency(pub_dates: list[datetime]) -> timedelta:
     try:
         # return the smallest interval between releases
         # e.g. if release dates are 2, 3, and 5 days apart, then return 2 days
-        base_frequency = timedelta(seconds=min(get_intervals(pub_dates)))
+        base_frequency = timedelta(seconds=statistics.mean(get_intervals(pub_dates)))
     except ValueError:
         # if insufficient data, just return default
         base_frequency = DEFAULT_FREQUENCY
