@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -17,12 +19,14 @@ class Command(BaseCommand):
         for_update = []
         now = timezone.now()
 
-        for podcast in Podcast.objects.active().fresh():
+        for counter, podcast in enumerate(
+            Podcast.objects.active().fresh().order_by("-pub_date").iterator()
+        ):
 
             podcast.frequency = scheduler.get_frequency(
                 list(podcast.episode_set.values_list("pub_date", flat=True))
             )
-            podcast.parsed = now
+            podcast.parsed = now - timedelta(seconds=10 * counter)
 
             self.stdout.write(podcast.title)
 
