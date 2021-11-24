@@ -1,9 +1,9 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-  {% for log in page_obj %}
-    {% with episode=log.episode %}
-      {% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
-    {% endwith %}
-  {% endfor %}
+    {% for log in page_obj %}
+        {% with episode=log.episode %}
+            {% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
+        {% endwith %}
+    {% endfor %}
 {% endblock %}

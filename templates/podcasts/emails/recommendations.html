@@ -1,53 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <title>{{ site.name }}</title>
-  </head>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ site.name }}</title>
+    </head>
 
-  <body>
-    <p>Hi {{ recipient.username }}
+    <body>
+        <p>Hi {{ recipient.username }}
 
-      <p>Greetings from {{ site.name }}!
+            <p>Greetings from {{ site.name }}!
 
-        {% if podcasts %}
-          <p>Here are some podcasts you might find interesting:</p>
+                {% if podcasts %}
+                    <p>Here are some podcasts you might find interesting:</p>
 
-          {% for podcast in podcasts %}
-            <p>
-              <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-            </p>
+                    {% for podcast in podcasts %}
+                        <p>
+                            <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+                        </p>
 
-            <p>
-              {{ podcast.cleaned_description|urlize|truncatewords:60 }}
-            </p>
-            <hr />
-          {% endfor %}
-        {% endif %}
+                        <p>
+                            {{ podcast.cleaned_description|urlize|truncatewords:60 }}
+                        </p>
+                        <hr />
+                    {% endfor %}
+                {% endif %}
 
-        {% if episodes %}
+                {% if episodes %}
 
-          <p>{% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last week you might have missed:
-          </p>
+                    <p>{% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last week you might have missed:
+                    </p>
 
-          {% for episode in episodes %}
+                    {% for episode in episodes %}
 
-            <p>
-              <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
-            </p>
+                        <p>
+                            <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
+                        </p>
 
-            <p>
-              {{ episode.cleaned_description|urlize|truncatewords:60 }}
-            </p>
+                        <p>
+                            {{ episode.cleaned_description|urlize|truncatewords:60 }}
+                        </p>
 
-            <hr />
-          {% endfor %}
-        {% endif %}
+                        <hr />
+                    {% endfor %}
+                {% endif %}
 
-        <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations"
-          option
-          on your <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">settings</a> page.</p>
-      </body>
+                <p>If you do not want to receive any more recommendations, you can just uncheck the "Send email recommendations"
+                    option
+                    on your <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">settings</a> page.</p>
+            </body>
 
-    </html>
+        </html>

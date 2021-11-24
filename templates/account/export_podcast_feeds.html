@@ -6,32 +6,32 @@
 
 {% block settings_content %}
 
-  <form method="POST"
-    action="{{ request.path }}"
-    class="space-y-3 lg:space-y-6"
-    hx-disable="true">
-    {% csrf_token %}
-    <p>
-      You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
-    </p>
-    <div class="flex items-center space-x-2 lg:space-x-6">
-      {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+    <form method="POST"
+        action="{{ request.path }}"
+        class="space-y-3 lg:space-y-6"
+        hx-disable="true">
+        {% csrf_token %}
+        <p>
+            You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
+        </p>
+        <div class="flex items-center space-x-2 lg:space-x-6">
+            {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
 
-        <button class="inline-flex items-center btn btn-secondary"
-          name="format"
-          value="csv">
-          {% icon "table" css_class=ICON_CSS %}
-          Export CSV
-        </button>
+                <button class="inline-flex items-center btn btn-secondary"
+                    name="format"
+                    value="csv">
+                    {% icon "table" css_class=ICON_CSS %}
+                    Export CSV
+                </button>
 
-        <button class="inline-flex items-center btn btn-secondary"
-          name="format"
-          value="opml">
-          {% icon "rss" css_class=ICON_CSS %}
-          Export OPML
-        </button>
-      {% endwith %}
-    </div>
-  </form>
+                <button class="inline-flex items-center btn btn-secondary"
+                    name="format"
+                    value="opml">
+                    {% icon "rss" css_class=ICON_CSS %}
+                    Export OPML
+                </button>
+            {% endwith %}
+        </div>
+    </form>
 
 {% endblock %}

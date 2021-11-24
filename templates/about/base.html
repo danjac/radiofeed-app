@@ -4,30 +4,30 @@
 
 {% block signup_cta %}{% endblock %}
 {% block content %}
-  <h1 class="font-bold mb-4 lg:mb-6 flex flex-wrap text-base lg:text-lg xl:text-xl">About this Site</h1>
-  <div id="about-content">
-    <nav class="mb-4 pb-3 border-b dark:border-gray-500">
-      <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none space-x-6">
-        {% active_link 'about:credits' as link %}
-        <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
-          <a class="hover:text-blue-500"
-            title="Credits"
-            href="{{ link.url }}">Credits</a>
-        </li>
-        {% active_link 'about:help' as link %}
-        <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
-          <a class="hover:text-blue-500"
-            title="help"
-            href="{{ link.url }}">Help</a>
-        </li>
-        {% active_link 'about:terms' as link %}
-        <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
-          <a class="hover:text-blue-500"
-            title="Terms &amp; Conditions"
-            href="{{ link.url }}">Terms</a>
-        </li>
-      </ul>
-    </nav>
-    {% block about_content %}{% endblock %}
-  </div>
+    <h1 class="font-bold mb-4 lg:mb-6 flex flex-wrap text-base lg:text-lg xl:text-xl">About this Site</h1>
+    <div id="about-content">
+        <nav class="mb-4 pb-3 border-b dark:border-gray-500">
+            <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none space-x-6">
+                {% active_link 'about:credits' as link %}
+                <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
+                    <a class="hover:text-blue-500"
+                        title="Credits"
+                        href="{{ link.url }}">Credits</a>
+                </li>
+                {% active_link 'about:help' as link %}
+                <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
+                    <a class="hover:text-blue-500"
+                        title="help"
+                        href="{{ link.url }}">Help</a>
+                </li>
+                {% active_link 'about:terms' as link %}
+                <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
+                    <a class="hover:text-blue-500"
+                        title="Terms &amp; Conditions"
+                        href="{{ link.url }}">Terms</a>
+                </li>
+            </ul>
+        </nav>
+        {% block about_content %}{% endblock %}
+    </div>
 {% endblock content %}

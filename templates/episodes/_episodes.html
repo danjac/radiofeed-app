@@ -1,15 +1,15 @@
 {% extends "pagination/_object_list.html" %}
 
 {% block results %}
-  {% for episode in page_obj %}
-    {% include "episodes/_episode.html" %}
-  {% empty %}
-    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
-      {% if request.search %}
-        No results found for <span class="font-bold">{{ request.search.value }}</span>.
-      {% else %}
-        Nothing to see here.
-      {% endif %}
-    </p>
-  {% endfor %}
+    {% for episode in page_obj %}
+        {% include "episodes/_episode.html" %}
+    {% empty %}
+        <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
+            {% if request.search %}
+                No results found for <span class="font-bold">{{ request.search.value }}</span>.
+            {% else %}
+                Nothing to see here.
+            {% endif %}
+        </p>
+    {% endfor %}
 {% endblock results %}

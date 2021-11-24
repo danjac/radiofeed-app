@@ -5,35 +5,35 @@
 
 {% block content %}
 
-  {% with search_placeholder="Search: "|add:category.name %}
+    {% with search_placeholder="Search: "|add:category.name %}
 
-    <div class="sm:flex items-center justify-between mb-4 lg:mb-6 space-y-3 sm:space-y-0">
-      <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg xl:text-xl">
-        {{ category.name }} Podcasts
-      </h1>
-      {% if not request.search %}
-        <div class="flex items-center justify-center sm:justify-end">
-          {% include "forms/_search_form.html" with placeholder=search_placeholder %}
-        </div>
-      {% endif %}
-    </div>
-
-
-    {% if request.search %}
-      <div class="mb-4 sm:flex items-center justify-center sm:justify-between">
-
-        <div class="mb-4 sm:mb-0 flex items-center justify-center sm:justify-start">
-          <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
-            title="Search Podcasts"
-            class="link">Search All Categories</a>
+        <div class="sm:flex items-center justify-between mb-4 lg:mb-6 space-y-3 sm:space-y-0">
+            <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg xl:text-xl">
+                {{ category.name }} Podcasts
+            </h1>
+            {% if not request.search %}
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "forms/_search_form.html" with placeholder=search_placeholder %}
+                </div>
+            {% endif %}
         </div>
 
-        <div class="flex items-center justify-center sm:justify-end">
-          {% include "forms/_search_form.html" with placeholder=search_placeholder %}
-        </div>
-      </div>
-    {% endif %}
-  {% endwith %}
 
-  {% include pagination_template %}
+        {% if request.search %}
+            <div class="mb-4 sm:flex items-center justify-center sm:justify-between">
+
+                <div class="mb-4 sm:mb-0 flex items-center justify-center sm:justify-start">
+                    <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
+                        title="Search Podcasts"
+                        class="link">Search All Categories</a>
+                </div>
+
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "forms/_search_form.html" with placeholder=search_placeholder %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% include pagination_template %}
 {% endblock content %}
