@@ -1,61 +1,59 @@
-{% extends "account/settings_base.html" %} {% load i18n %} {% block subtitle %} | {%
-translate "Socal Logins" %}{% endblock %} {% block settings_content %} {% if
-form.accounts %}
-<p>
-  {% blocktranslate %}You can sign in to your account using any of the following third
-  party accounts:{% endblocktranslate %}
-</p>
-<form
-  method="post"
-  class="mb-6 space-y-3"
-  action="{% url 'socialaccount_connections' %}"
->
-  {% csrf_token %} {% for base_account in form.accounts %} {% with
-  base_account.get_provider_account as account %}
-  <div>
-    <label
-      for="id_account_{{ base_account.id }}"
-      class="flex items-center font-semibold"
-    >
-      <input
-        id="id_account_{{ base_account.id }}"
-        type="radio"
-        name="account"
-        class="inline-block mr-3"
-        value="{{ base_account.id }}"
-      />
-      <div class=" {{ base_account.provider }} {{ account.get_brand.id }}">
-        {{account.get_brand.name}} {{ account }}
-      </div>
-    </label>
-  </div>
-  {% endwith %} {% endfor %}
+{% extends "account/settings_base.html" %}
 
-  <div class="flex items-center">
-    <button
-      class="btn btn-danger inline-flex items-center"
-      type="submit"
-      value="1"
-      data-controller="confirm"
-      data-confirm-text-value="Are you sure you want to remove this account?"
-      data-action="confirm#confirm"
-      name="action_remove"
-    >
-      {% icon "trash" css_class="h-4 w-4 mr-2" %} {% translate 'Remove' %}
-    </button>
-  </div>
-</form>
-{% else %}
-<p class="mb-4">
-  {% translate 'You currently have no social network accounts connected to this
-  account.' %}
-</p>
-{% endif %}
+{% load i18n %}
+{% block subtitle %} | {% translate "Socal Logins" %}{% endblock %}
 
-<h2 class="font-semibold mb-4">{% translate 'Add a 3rd Party Account' %}</h2>
+{% block settings_content %}
 
-<ul class="flex items-center">
-  {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-</ul>
 
-{% include "socialaccount/snippets/login_extra.html" %} {% endblock %}
+    {% if form.accounts %}
+        <p>{% blocktranslate %}You can sign in to your account using any of the following third party accounts:{% endblocktranslate %}</p>
+        <form method="post"
+            class="mb-6 space-y-3"
+            action="{% url 'socialaccount_connections' %}">
+            {% csrf_token %}
+
+            {% for base_account in form.accounts %}
+                {% with base_account.get_provider_account as account %}
+                    <div>
+                        <label for="id_account_{{ base_account.id }}"
+                            class="flex items-center font-semibold">
+                            <input id="id_account_{{ base_account.id }}"
+                                type="radio"
+                                name="account"
+                                class="inline-block mr-3"
+                                value="{{ base_account.id }}" />
+                            <div class=" {{ base_account.provider }} {{ account.get_brand.id }}">{{account.get_brand.name}}
+                                {{ account }}
+                            </div>
+                        </label>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+
+            <div class="flex items-center">
+                <button class="btn btn-danger inline-flex items-center"
+                    type="submit"
+                    value="1"
+                    data-controller="confirm"
+                    data-confirm-text-value="Are you sure you want to remove this account?"
+                    data-action="confirm#confirm"
+                    name="action_remove">
+                    {% icon "trash" css_class="h-4 w-4 mr-2" %}
+                    {% translate 'Remove' %}
+                </button>
+            </div>
+        </form>
+    {% else %}
+        <p class="mb-4">{% translate 'You currently have no social network accounts connected to this account.' %}</p>
+    {% endif %}
+
+    <h2 class="font-semibold mb-4">{% translate 'Add a 3rd Party Account' %}</h2>
+
+    <ul class="flex items-center">
+        {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+    </ul>
+
+    {% include "socialaccount/snippets/login_extra.html" %}
+
+{% endblock %}

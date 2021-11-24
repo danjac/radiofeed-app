@@ -1,167 +1,138 @@
-<div
-  class="fixed z-20 inset-0 overflow-y-auto"
-  role="dialog"
-  aria-modal="true"
-  x-show="show"
-  x-data="{
+<div class="fixed z-20 inset-0 overflow-y-auto"
+    role="dialog"
+    aria-modal="true"
+    x-show="show"
+    x-data="{
     show: true,
     close() {
     this.show = false;
     this.$dispatch('actions-close', { id: {{ episode.id }} });
     }
     }"
-  @click.away="close()"
-  @keydown.escape.window="close()"
->
-  <div class="min-h-screen mx-3 sm:mx-auto flex items-center justify-center">
-    <div
-      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-      aria-hidden="true"
-    ></div>
+    @click.away="close()"
+    @keydown.escape.window="close()">
+    <div class="min-h-screen mx-3 sm:mx-auto flex items-center justify-center">
 
-    <div
-      class="
-        inline-block
-        align-bottom
-        bg-white
-        dark:bg-gray-800
-        rounded
-        text-left
-        overflow-hidden
-        shadow-xl
-        transform
-        transition-all
-        my-8
-        align-middle
-        sm:max-w-xl sm:w-full
-        lg:max-w-2xl
-        p-3
-      "
-      x-show="show"
-      @click.away="close()"
-    >
-      <h2 class="flex items-center mb-3 lg:text-lg space-x-2">
-        <a href="{{ episode.podcast.get_absolute_url }}">
-          {% include "_cover_image.html" with cover_url=episode.podcast.cover_url
-          alt=episode.podcast.cleaned_title size=16 css_class="h-12 w-12 lg:h-20 lg:w-20
-          mr-2 lg:mr-5" %}
-        </a>
-        <a
-          href="{{ episode.get_absolute_url }}"
-          title="{{ episode.cleaned_title }}"
-          class="
-            max-h-10
-            lg:max-h-20
-            flex flex-wrap
-            break-words
-            overflow-y-hidden
-            font-semibold
-            w-full
-            link
-          "
-        >
-          {{ episode.cleaned_title }}
-        </a>
-      </h2>
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            aria-hidden="true"></div>
 
-      <p class="mb-3 pb-3 border-b dark:border-gray-500 break-words">
-        {{ episode.cleaned_description|truncatechars:500 }}
-      </p>
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded text-left overflow-hidden shadow-xl transform transition-all my-8 align-middle sm:max-w-xl sm:w-full lg:max-w-2xl p-3"
+            x-show="show"
+            @click.away="close()">
 
-      <div class="flex items-center justify-between">
-        {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" PLAYER_ICON_CSS="h-6 w-6 lg:h-8 lg:w-8"
-        %}
-        <div class="flex items-center space-x-3 lg:space-x-4">
-          {% if user.is_authenticated %} {% if is_playing %}
-          <button
-            hx-post="{% url 'episodes:close_player' %}"
-            hx-push-url="false"
-            hx-target="#player"
-            hx-swap="innerHTML"
-            @click="close()"
-            title="Close Player"
-          >
-            {% icon "stop" css_class=PLAYER_ICON_CSS %}
-          </button>
-          {% else %}
-          <button
-            hx-post="{% url 'episodes:start_player' episode.id %}"
-            hx-push-url="false"
-            hx-target="#player"
-            hx-swap="innerHTML"
-            @click="close()"
-            title="Play Episode"
-          >
-            {% icon "play" css_class=PLAYER_ICON_CSS %}
-          </button>
-          {% endif %} {% if is_favorited %}
-          <button
-            hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
-            hx-push-url="false"
-            @click="close()"
-            title="Remove from Favorites"
-          >
-            {% icon "star_solid" css_class=ICON_CSS %}
-          </button>
-          {% else %}
-          <button
-            hx-post="{% url 'episodes:add_favorite' episode.id %}"
-            hx-push-url="false"
-            @click="close()"
-            title="Add to Favorites"
-          >
-            {% icon "star" css_class=ICON_CSS %}
-          </button>
-          {% endif %} {% if not is_playing %} {% if is_queued %}
-          <button
-            hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
-            hx-push-url="false"
-            @click="close()"
-            title="Remove from Queue"
-          >
-            {% icon "collection_solid" css_class=ICON_CSS %}
-          </button>
-          {% else %}
-          <button
-            hx-post="{% url 'episodes:add_to_queue' episode.id %}"
-            hx-push-url="false"
-            title="Add to Queue"
-            @click="close()"
-          >
-            {% icon "collection" css_class=ICON_CSS %}
-          </button>
-          {% endif %} {% endif %} {% if episode.listened and not is_playing %} {% if not
-          episode.completed %}
-          <button
-            title="Mark Complete"
-            hx-post="{% url 'episodes:mark_complete' episode.id %}"
-            @click="close()"
-            title="Mark Complete"
-          >
-            {% icon "check" css_class=ICON_CSS %}
-          </button>
-          {% endif %}
-          <button
-            hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
-            hx-push-url="false"
-            @click="close()"
-            title="Remove from History"
-          >
-            {% icon "database_solid" css_class=ICON_CSS %}
-          </button>
-          {% endif %} {% endif %}
-          <a download title="Download" href="{{ episode.media_url }}" @click="close()">
-            {% icon "download" css_class=ICON_CSS %}
-          </a>
+            <h2 class="flex items-center mb-3 lg:text-lg space-x-2">
+                <a href="{{ episode.podcast.get_absolute_url }}">
+                    {% include "_cover_image.html" with cover_url=episode.podcast.cover_url alt=episode.podcast.cleaned_title size=16 css_class="h-12 w-12 lg:h-20 lg:w-20 mr-2 lg:mr-5" %}
+                </a>
+                <a href="{{ episode.get_absolute_url }}"
+                    title="{{ episode.cleaned_title }}"
+                    class="max-h-10 lg:max-h-20 flex flex-wrap break-words overflow-y-hidden font-semibold w-full link">
+                    {{ episode.cleaned_title }}
+                </a>
+            </h2>
+
+            <p class="mb-3 pb-3 border-b dark:border-gray-500 break-words">
+                {{ episode.cleaned_description|truncatechars:500 }}
+            </p>
+
+            <div class="flex items-center justify-between">
+
+                {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" PLAYER_ICON_CSS="h-6 w-6 lg:h-8 lg:w-8" %}
+                    <div class="flex items-center space-x-3 lg:space-x-4">
+                        {% if user.is_authenticated %}
+
+                            {% if is_playing %}
+                                <button hx-post="{% url 'episodes:close_player' %}"
+                                    hx-push-url="false"
+                                    hx-target="#player"
+                                    hx-swap="innerHTML"
+                                    @click="close()"
+                                    title="Close Player">
+                                    {% icon "stop" css_class=PLAYER_ICON_CSS %}
+                                </button>
+                            {% else %}
+                                <button hx-post="{% url 'episodes:start_player' episode.id %}"
+                                    hx-push-url="false"
+                                    hx-target="#player"
+                                    hx-swap="innerHTML"
+                                    @click="close()"
+                                    title="Play Episode">
+
+                                    {% icon "play" css_class=PLAYER_ICON_CSS %}
+                                </button>
+                            {% endif %}
+
+                            {% if is_favorited %}
+                                <button hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
+                                    hx-push-url="false"
+                                    @click="close()"
+                                    title="Remove from Favorites">
+                                    {% icon "star_solid" css_class=ICON_CSS %}
+                                </button>
+                            {% else %}
+                                <button hx-post="{% url 'episodes:add_favorite' episode.id %}"
+                                    hx-push-url="false"
+                                    @click="close()"
+                                    title="Add to Favorites">
+                                    {% icon "star" css_class=ICON_CSS %}
+                                </button>
+                            {% endif %}
+
+
+                            {% if not is_playing %}
+                                {% if is_queued %}
+                                    <button hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
+                                        hx-push-url="false"
+                                        @click="close()"
+                                        title="Remove from Queue">
+                                        {% icon "collection_solid" css_class=ICON_CSS %}
+                                    </button>
+                                {% else %}
+                                    <button hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+                                        hx-push-url="false"
+                                        title="Add to Queue"
+                                        @click="close()">
+                                        {% icon "collection" css_class=ICON_CSS %}
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if episode.listened and not is_playing %}
+                                {% if not episode.completed %}
+                                    <button title="Mark Complete"
+                                        hx-post="{% url 'episodes:mark_complete' episode.id %}"
+                                        @click="close()"
+                                        title="Mark Complete">
+                                        {% icon "check" css_class=ICON_CSS %}
+                                    </button>
+                                {% endif %}
+                                <button hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
+                                    hx-push-url="false"
+                                    @click="close()"
+                                    title="Remove from History">
+                                    {% icon "database_solid" css_class=ICON_CSS %}
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                        <a download
+                            title="Download"
+                            href="{{ episode.media_url }}"
+                            @click="close()">
+                            {% icon "download" css_class=ICON_CSS %}
+                        </a>
+                    </div>
+
+                    <div class="flex items-center">
+                        <button title="Close Dialog"
+                            @click="close()">
+                            {% icon "x" css_class=ICON_CSS %}
+                        </button>
+                    </div>
+                {% endwith %}
+
+            </div>
+
+
         </div>
-
-        <div class="flex items-center">
-          <button title="Close Dialog" @click="close()">
-            {% icon "x" css_class=ICON_CSS %}
-          </button>
-        </div>
-        {% endwith %}
-      </div>
     </div>
-  </div>
 </div>

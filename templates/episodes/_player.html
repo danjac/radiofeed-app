@@ -1,8 +1,8 @@
 {% load static %}
 {% if log %}
-{% with episode=episode|default:log.episode %}
-{% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div x-data="jCasts.Player({
+    {% with episode=episode|default:log.episode %}
+        {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
+            <div x-data="jCasts.Player({
                 showPlayer: true,
                 mediaSrc: '{{ episode.media_url }}',
                 currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
@@ -14,191 +14,189 @@
                     autoplay: true,
                 {% endif %}
                 })"
-     @keydown.window="shortcuts">
+                @keydown.window="shortcuts">
 
-    {{ episode.get_media_metadata|json_script:"player-metadata" }}
-    <audio x-ref="audio"
-           preload="metadata"
-           :src="mediaSrc"
-           @ended="ended"
-           @error="error"
-           @loadedmetadata="loaded"
-           @pause="paused"
-           @play="resumed"
-           @timeupdate="timeUpdate"
-           @loadstart="buffering"
-           @waiting="buffering"
-           @progress="buffering"
-           @stalled="buffering"
-           @suspend="buffering">
-    </audio>
-    <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
-         x-ref="controls"
-         x-show="mediaSrc && showPlayer"
-         :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
+                {{ episode.get_media_metadata|json_script:"player-metadata" }}
+                <audio x-ref="audio"
+                    preload="metadata"
+                    :src="mediaSrc"
+                    @ended="ended"
+                    @error="error"
+                    @loadedmetadata="loaded"
+                    @pause="paused"
+                    @play="resumed"
+                    @timeupdate="timeUpdate"
+                    @loadstart="buffering"
+                    @waiting="buffering"
+                    @progress="buffering"
+                    @stalled="buffering"
+                    @suspend="buffering">
+                </audio>
+                <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
+                    x-ref="controls"
+                    x-show="mediaSrc && showPlayer"
+                    :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
 
-        <div class="sm:hidden">
-            <a class="w-84 truncate block text-center player--title"
-               href="{{ episode_url }}"
-               hx-swap="outerHTML show:window:top"
-               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
-            <div class="text-xs lg:text-sm text-center sm:hidden player--title">
-                <span x-text="counters.current"></span> /
-                <span x-text="counters.duration"></span>
-            </div>
-        </div>
+                    <div class="sm:hidden">
+                        <a class="w-84 truncate block text-center player--title"
+                            href="{{ episode_url }}"
+                            hx-swap="outerHTML show:window:top"
+                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+                        <div class="text-xs lg:text-sm text-center sm:hidden player--title">
+                            <span x-text="counters.current"></span> /
+                            <span x-text="counters.duration"></span>
+                        </div>
+                    </div>
 
-        <div class="flex items-center space-x-2 sm:space-x-0">
+                    <div class="flex items-center space-x-2 sm:space-x-0">
 
-            {% with cover_url=podcast.cover_url %}
-            <div class="w-20 lg:w-24">
-                <a href="{{ podcast.get_absolute_url }}"
-                   hx-swap="outerHTML show:window:top">
-                    {% include "_cover_image.html" with size=24 css_class="h-16 w-16 lg:h-20 lg:w-20" alt=podcast.cleaned_title %}
-                </a>
-            </div>
-            {% endwith %}
-
-            <div class="w-full flex flex-col place-content-between h-16 lg:h-20">
-
-                <div class="flex justify-between items-center">
-
-                    <div class="flex items-center">
-                        {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" ICON_CSS="h-8 w-8 lg:h-9 lg:w-9"  %}
-
-                        <button title="Pause"
-                                @click="togglePlayPause"
-                                x-show="!isPaused"
-                                class="{{ BUTTON_CSS }} mr-1 lg:mr-2"
-                                :disabled="!isLoaded"
-                                :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                            {% icon "pause" css_class=ICON_CSS %}
-                        </button>
-
-                        <button title="Play"
-                                @click="togglePlayPause"
-                                x-show="isPaused"
-                                class="{{ BUTTON_CSS }} mr-1 lg:mr-2"
-                                :class="{'text-gray-300 cursor-events-none': !isLoaded}">
-                            {% icon "play" css_class=ICON_CSS %}
-                        </button>
-
-                        <button title="Close Player"
-                                accesskey="x"
-                                class="{{ BUTTON_CSS }}"
-                                hx-post="{% url "episodes:close_player" %}"
-                                hx-target="#player"
-                                hx-swap="innerHTML">
-                            {% icon "stop" css_class=ICON_CSS %}
-                        </button>
-
-                        <button hx-post="{% url "episodes:play_next_episode" %}"
-                                hx-target="#player"
-                                hx-swap="innerHTML"
-                                class="hidden"
-                                x-ref="playNext">
-                        </button>
+                        {% with cover_url=podcast.cover_url %}
+                            <div class="w-20 lg:w-24">
+                                <a href="{{ podcast.get_absolute_url }}"
+                                    hx-swap="outerHTML show:window:top">
+                                    {% include "_cover_image.html" with size=24 css_class="h-16 w-16 lg:h-20 lg:w-20" alt=podcast.cleaned_title %}
+                                </a>
+                            </div>
                         {% endwith %}
 
-                    </div>
+                        <div class="w-full flex flex-col place-content-between h-16 lg:h-20">
+
+                            <div class="flex justify-between items-center">
+
+                                <div class="flex items-center">
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-500 inline-block" ICON_CSS="h-8 w-8 lg:h-9 lg:w-9"  %}
+
+                                        <button title="Pause"
+                                            @click="togglePlayPause"
+                                            x-show="!isPaused"
+                                            class="{{ BUTTON_CSS }} mr-1 lg:mr-2"
+                                            :disabled="!isLoaded"
+                                            :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+                                            {% icon "pause" css_class=ICON_CSS %}
+                                        </button>
+
+                                        <button title="Play"
+                                            @click="togglePlayPause"
+                                            x-show="isPaused"
+                                            class="{{ BUTTON_CSS }} mr-1 lg:mr-2"
+                                            :class="{'text-gray-300 cursor-events-none': !isLoaded}">
+                                            {% icon "play" css_class=ICON_CSS %}
+                                        </button>
+
+                                        <button title="Close Player"
+                                            accesskey="x"
+                                            class="{{ BUTTON_CSS }}"
+                                            hx-post="{% url "episodes:close_player" %}"
+                                            hx-target="#player"
+                                            hx-swap="innerHTML">
+                                            {% icon "stop" css_class=ICON_CSS %}
+                                        </button>
+
+                                        <button hx-post="{% url "episodes:play_next_episode" %}"
+                                            hx-target="#player"
+                                            hx-swap="innerHTML"
+                                            class="hidden"
+                                            x-ref="playNext">
+                                        </button>
+                                    {% endwith %}
+
+                                </div>
 
 
-                    <div class="hidden sm:block">
-                        <div>
-                            <a class="truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl player--title"
-                               href="{{ episode_url }}"
-                               hx-swap="outerHTML show:window:top"
-                               title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
-                        </div>
-                        <div class="text-xs lg:text-sm text-center player--title">
-                            <span x-text="counters.current"
-                                  title="Current Time"></span> /
-                            <span x-text="counters.duration"
-                                  title="Time Remaining"></span>
-                        </div>
-                    </div>
+                                <div class="hidden sm:block">
+                                    <div>
+                                        <a class="truncate text-center block sm:w-80 md:w-96 lg:w-auto lg:max-w-xl xl:max-w-3xl player--title"
+                                            href="{{ episode_url }}"
+                                            hx-swap="outerHTML show:window:top"
+                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</a>
+                                    </div>
+                                    <div class="text-xs lg:text-sm text-center player--title">
+                                        <span x-text="counters.current" title="Current Time"></span> /
+                                        <span x-text="counters.duration" title="Time Remaining"></span>
+                                    </div>
+                                </div>
 
-                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
+                                {% with BUTTON_CSS="focus:outline-none hover:text-blue-500" ICON_CSS="h-6 w-6 lg:h-7 lg:w-7" %}
 
-                    <div class="flex items-center sm:hidden space-x-1">
+                                    <div class="flex items-center sm:hidden space-x-1">
 
-                        <button title="Skip back 10 seconds"
-                                @click="skipBack"
-                                class="{{ BUTTON_CSS }} player--interactive inline-block">
-                            {% icon "skip_back_10" css_class=ICON_CSS %}
-                        </button>
+                                        <button title="Skip back 10 seconds"
+                                            @click="skipBack"
+                                            class="{{ BUTTON_CSS }} player--interactive inline-block">
+                                            {% icon "skip_back_10" css_class=ICON_CSS %}
+                                        </button>
 
-                        <button title="Skip forward 10 seconds"
-                                @click="skipForward"
-                                class="{{ BUTTON_CSS }} player--interactive inline-block">
-                            {% icon "skip_forward_10" css_class=ICON_CSS %}
-                        </button>
+                                        <button title="Skip forward 10 seconds"
+                                            @click="skipForward"
+                                            class="{{ BUTTON_CSS }} player--interactive inline-block">
+                                            {% icon "skip_forward_10" css_class=ICON_CSS %}
+                                        </button>
 
-                    </div>
+                                    </div>
 
-                    <div class="flex items-center space-x-2 lg:space-x-3">
+                                    <div class="flex items-center space-x-2 lg:space-x-3">
 
-                        <div class="flex items-center space-x-1 lg:space-x-2">
+                                        <div class="flex items-center space-x-1 lg:space-x-2">
 
-                            <button title="Skip back 10 seconds"
-                                    @click="skipBack"
-                                    class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
-                                {% icon "skip_back_10" css_class=ICON_CSS %}
-                            </button>
+                                            <button title="Skip back 10 seconds"
+                                                @click="skipBack"
+                                                class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
+                                                {% icon "skip_back_10" css_class=ICON_CSS %}
+                                            </button>
 
-                            <button title="Skip forward 10 seconds"
-                                    @click="skipForward"
-                                    class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
-                                {% icon "skip_forward_10" css_class=ICON_CSS %}
-                            </button>
+                                            <button title="Skip forward 10 seconds"
+                                                @click="skipForward"
+                                                class="{{ BUTTON_CSS }} player--interactive hidden sm:inline-block">
+                                                {% icon "skip_forward_10" css_class=ICON_CSS %}
+                                            </button>
 
-                        </div>
+                                        </div>
 
-                        <div class="flex items-center space-x-2 mr-2 lg:mr-3">
-                            <button class="{{ BUTTON_CSS }} player--interactive inline-block"
-                                    @click="decrementPlaybackRate"
-                                    title="Decrease Playback Rate">-</button>
-                            <div class="mr-1 md:mr-2 tracking-tight player--interactive"
-                                 title="Playback Rate">
-                                x<span x-text="playbackRate.toFixed(1)"></span>
+                                        <div class="flex items-center space-x-2 mr-2 lg:mr-3">
+                                            <button class="{{ BUTTON_CSS }} player--interactive inline-block"
+                                                @click="decrementPlaybackRate"
+                                                title="Decrease Playback Rate">-</button>
+                                            <div class="mr-1 md:mr-2 tracking-tight player--interactive"
+                                                title="Playback Rate">
+                                                x<span x-text="playbackRate.toFixed(1)"></span>
+                                            </div>
+
+                                            <button class="{{ BUTTON_CSS }} player--interactive inline-block"
+                                                @click="incrementPlaybackRate"
+                                                title="Increase Playback Rate">+</button>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <button title="Reload player"
+                                                class="{{ BUTTON_CSS }} inline-block"
+                                                accesskey="r"
+                                                hx-get="{% url 'episodes:reload_player' %}"
+                                                hx-target="#player"
+                                                hx-swap="innerHTML">
+                                                {% icon "refresh" css_class=ICON_CSS %}
+                                            </button>
+                                        </div>
+
+                                    </div>
+
+                                    </div>
+
+                                {% endwith %}
+                                <div class="w-full h-3">
+                                    <input type="range"
+                                        x-ref="range"
+                                        x-model="currentTime"
+                                        :max="duration"
+                                        :disabled="isPaused || !isLoaded"
+                                        :title="counters.preview"
+                                        @change="skip"
+                                        @mouseover="preview"
+                                        min="0"
+                                        class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
+                                </div>
                             </div>
-
-                            <button class="{{ BUTTON_CSS }} player--interactive inline-block"
-                                    @click="incrementPlaybackRate"
-                                    title="Increase Playback Rate">+</button>
                         </div>
-                        <div class="flex items-center">
-                            <button title="Reload player"
-                                    class="{{ BUTTON_CSS }} inline-block"
-                                    accesskey="r"
-                                    hx-get="{% url 'episodes:reload_player' %}"
-                                    hx-target="#player"
-                                    hx-swap="innerHTML">
-                                {% icon "refresh" css_class=ICON_CSS %}
-                            </button>
-                        </div>
-
                     </div>
-
                 </div>
-
-                {% endwith %}
-                <div class="w-full h-3">
-                    <input type="range"
-                           x-ref="range"
-                           x-model="currentTime"
-                           :max="duration"
-                           :disabled="isPaused || !isLoaded"
-                           :title="counters.preview"
-                           @change="skip"
-                           @mouseover="preview"
-                           min="0"
-                           class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endwith %}
-{% endwith %}
+        {% endwith %}
+    {% endwith %}
 {% endif %}

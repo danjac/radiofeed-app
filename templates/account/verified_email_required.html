@@ -1,24 +1,23 @@
-{% extends "account/base.html" %} {% load i18n %} {% block subtitle %} | {% translate
-"Verify Your E-mail Address" %}{% endblock %} {% block content %}
-<h1>{% translate "Verify Your E-mail Address" %}</h1>
+{% extends "account/base.html" %}
 
-{% url 'account_email' as email_url %}
+{% load i18n %}
 
-<p>
-  {% blocktranslate %}This part of the site requires us to verify that you are who you
-  claim to be. For this purpose, we require that you verify ownership of your e-mail
-  address. {% endblocktranslate %}
-</p>
+{% block subtitle %} | {% translate "Verify Your E-mail Address" %}{% endblock %}
 
-<p>
-  {% blocktranslate %}We have sent an e-mail to you for verification. Please click on
-  the link inside this e-mail. Please contact us if you do not receive it within a few
-  minutes.{% endblocktranslate %}
-</p>
+{% block content %}
+    <h1>{% translate "Verify Your E-mail Address" %}</h1>
 
-<p>
-  {% blocktranslate %}<strong>Note:</strong> you can still
-  <a href="{{ email_url }}">change your e-mail address</a>.{% endblocktranslate %}
-</p>
+    {% url 'account_email' as email_url %}
+
+    <p>{% blocktranslate %}This part of the site requires us to verify that
+        you are who you claim to be. For this purpose, we require that you
+        verify ownership of your e-mail address. {% endblocktranslate %}</p>
+
+    <p>{% blocktranslate %}We have sent an e-mail to you for
+        verification. Please click on the link inside this e-mail. Please
+        contact us if you do not receive it within a few minutes.{% endblocktranslate %}</p>
+
+    <p>{% blocktranslate %}<strong>Note:</strong> you can still <a href="{{ email_url }}">change your e-mail address</a>.{% endblocktranslate %}</p>
+
 
 {% endblock %}

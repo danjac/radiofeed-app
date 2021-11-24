@@ -1,53 +1,26 @@
 {% if not accept_cookies %}
-<div
-  class="
-    text-white
-    bg-gray-800
-    opacity-90
-    w-full
-    py-3
-    flex
-    justify-center
-    fixed
-    bottom-0
-    z-50
-  "
-  id="accept-cookies"
-  x-data="{show: true}"
-  x-show="show"
->
-  <div class="px-2">
-    <div class="md:flex items-center">
-      <p class="mb-4 md:mb-0 md:mr-4 text-center md:text-start">
-        This site uses cookies to ensure you get the best experience.
-        <a
-          href="{% url 'about:terms' %}"
-          title="Learn more about how Cookies work"
-          class="font-semibold text-white"
-          >Learn more</a
-        >
-      </p>
-      <div class="text-center md:text-start">
-        <button
-          class="
-            bg-blue-800
-            hover:bg-blue-600
-            text-white
-            px-4
-            p-1
-            border border-white
-            w-full
-            sm:w-auto
-          "
-          hx-post="{% url 'accept_cookies' %}"
-          hx-target="#accept-cookies"
-          hx-push-url="false"
-          @click="show=false"
-        >
-          Got it!
-        </button>
-      </div>
+    <div class="text-white bg-gray-800 opacity-90 w-full py-3 flex justify-center fixed bottom-0 z-50"
+        id="accept-cookies"
+        x-data="{show: true}"
+        x-show="show">
+        <div class="px-2">
+            <div class="md:flex items-center">
+                <p class="mb-4 md:mb-0 md:mr-4 text-center md:text-start">
+                    This site uses cookies to ensure you get the best experience.
+                    <a href="{% url 'about:terms' %}"
+                        title="Learn more about how Cookies work"
+                        class="font-semibold text-white">Learn more</a>
+                </p>
+                <div class="text-center md:text-start">
+                    <button class="bg-blue-800 hover:bg-blue-600 text-white px-4 p-1 border border-white w-full sm:w-auto"
+                        hx-post="{% url 'accept_cookies' %}"
+                        hx-target="#accept-cookies"
+                        hx-push-url="false"
+                        @click="show=false">
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endif %}
