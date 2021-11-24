@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -13,7 +13,10 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
-from jcasts.episodes.views import render_episode_list_response
+from jcasts.episodes.views import (
+    render_episode_detail_response,
+    render_episode_list_response,
+)
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
@@ -59,6 +62,26 @@ def latest(request: HttpRequest, podcast_id: int) -> HttpResponse:
     podcast = get_podcast_or_404(request, podcast_id)
     episode = podcast.episode_set.order_by("-pub_date").first()
     return redirect(episode or podcast)
+
+
+@require_http_methods(["GET"])
+def actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
+
+    podcast = get_podcast_or_404(request, podcast_id)
+
+    episode = (
+        podcast.episode_set.select_related("podcast").order_by("-pub_date").first()
+    )
+
+    if episode is None:
+        raise Http404
+
+    return render_episode_detail_response(
+        request,
+        episode,
+        "episodes/_actions.html",
+        {"tag": podcast.get_actions_tag()},
+    )
 
 
 @require_http_methods(["GET"])

@@ -1,13 +1,13 @@
-{% with ICON_NAME=is_detail|yesno:'ellipsis,dots_vertical' ICON_CSS=is_detail|yesno:"w-6 h-6,w-4 h-4 lg:w-5 lg:h-5" %}
+{% with ICON_NAME='dots_vertical' ICON_CSS="w-4 h-4 lg:w-5 lg:h-5" %}
 <div x-data="{active: false}"
      x-cloak
      class="flex items-center"
-     @actions-close.window="if ($event.detail.id==={{ episode.id }}) active=false">
-    <button title="Actions"
+     @actions-close.window="if ($event.detail.tag==='{{ actions_tag }}') active=false">
+    <button title="{{ actions_title|default:'Actions' }}"
             class="focus:outline-none"
             x-show="!active"
-            hx-get="{% url 'episodes:actions' episode.id %}{% if is_detail %}?detail=true{% endif %}"
-            hx-target="#actions-{{ episode.id }}"
+            hx-get="{{ actions_url }}"
+            hx-target="#actions-{{ actions_tag }}"
             hx-swap="innerHTML"
             hx-push-url="false"
             @click="active=true">
@@ -20,6 +20,5 @@
         {% icon ICON_NAME css_class=ICON_CSS %}
     </button>
 </div>
-<div id="actions-{{ episode.id }}"></div>
-
+<div id="actions-{{ actions_tag }}"></div>
 {% endwith %}

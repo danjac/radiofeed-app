@@ -6,8 +6,8 @@
         show: true,
         close() {
             this.show = false;
-            this.$dispatch('actions-close', { id: {{ episode.id }} });
-            }
+            this.$dispatch('actions-close', { tag: '{{ tag }}' });
+        }
     }"
      @click.away="close()"
      @keydown.escape.window="close()">

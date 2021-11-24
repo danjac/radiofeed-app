@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="pr-3 flex items-center">
-        {% include "episodes/_actions_toggle.html" %}
+        {% include "episodes/_actions_toggle.html" with actions_url=episode.get_actions_url actions_tag=episode.get_actions_tag %}
     </div>
 </div>
 {% endwith %}
