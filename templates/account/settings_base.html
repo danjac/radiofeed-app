@@ -1,13 +1,13 @@
 {% extends request.htmx|yesno:"layout_base.html,base.html" %} {% block robots %}
-<meta name="robots"
-      content="noindex" />
+<meta name="robots" content="noindex" />
 {% endblock %} {% block content %} {% if user.is_authenticated %}
 <h1 class="font-bold mb-4 lg:mb-6 flex flex-wrap text-base lg:text-lg xl:text-xl">
-    Settings for {{ user.username }}
+  Settings for {{ user.username }}
 </h1>
 <div id="settings-content">
-    <nav class="mb-4 pb-3 border-b dark:border-gray-500">
-        <ul class="
+  <nav class="mb-4 pb-3 border-b dark:border-gray-500">
+    <ul
+      class="
         flex
         items-center
         overflow-x-auto
@@ -15,53 +15,75 @@
         whitespace-nowrap
         lg:whitespace-none
         space-x-6
-      ">
-            {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %} {%
+      "
+    >
+      {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %} {%
       active_link 'users:preferences' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Preferences"
-                   href="{{ link.url }}">Preferences</a>
-            </li>
-            {% active_link 'users:export_podcast_feeds' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Export"
-                   href="{{ link.url }}">Export</a>
-            </li>
-            {% active_link 'users:stats' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Statistics"
-                   href="{{ link.url }}">Statistics</a>
-            </li>
-            {% active_link 'account_email' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Email Addresses"
-                   href="{{ link.url }}">Email Addresses</a>
-            </li>
-            {% active_link 'account_change_password' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Change Password"
-                   href="{{ link.url }}">Change Password</a>
-            </li>
-            {% active_link 'socialaccount_connections' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Social Logins"
-                   href="{{ link.url }}">Social Logins</a>
-            </li>
-            {% active_link 'users:delete_account' as link %}
-            <li>
-                <a class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="Delete Account"
-                   href="{{ link.url }}">Delete Account</a>
-            </li>
-            {% endwith %}
-        </ul>
-    </nav>
-    {% endif %} {% block settings_content %}{% endblock %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Preferences"
+          href="{{ link.url }}"
+          >Preferences</a
+        >
+      </li>
+      {% active_link 'users:export_podcast_feeds' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Export"
+          href="{{ link.url }}"
+          >Export</a
+        >
+      </li>
+      {% active_link 'users:stats' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Statistics"
+          href="{{ link.url }}"
+          >Statistics</a
+        >
+      </li>
+      {% active_link 'account_email' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Email Addresses"
+          href="{{ link.url }}"
+          >Email Addresses</a
+        >
+      </li>
+      {% active_link 'account_change_password' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Change Password"
+          href="{{ link.url }}"
+          >Change Password</a
+        >
+      </li>
+      {% active_link 'socialaccount_connections' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Social Logins"
+          href="{{ link.url }}"
+          >Social Logins</a
+        >
+      </li>
+      {% active_link 'users:delete_account' as link %}
+      <li>
+        <a
+          class="link {% if link.exact %}{{ TAB_ACTIVE_CSS }}{% endif %}"
+          title="Delete Account"
+          href="{{ link.url }}"
+          >Delete Account</a
+        >
+      </li>
+      {% endwith %}
+    </ul>
+  </nav>
+  {% endif %} {% block settings_content %}{% endblock %}
 </div>
 {% endblock content %}

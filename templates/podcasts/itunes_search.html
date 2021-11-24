@@ -2,6 +2,6 @@
 %} {% block search_content %} {% for feed in feeds %} {% include
 "podcasts/_itunes_feed.html" %} {% empty %}
 <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
-    No results found for <span class="font-bold">{{ request.search.value }}</span>.
+  No results found for <span class="font-bold">{{ request.search.value }}</span>.
 </p>
 {% endfor %} {% endblock %}

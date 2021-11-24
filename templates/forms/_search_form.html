@@ -1,21 +1,24 @@
-<form action="{{ search_url|default:request.path }}"
-      method="get"
-      x-data="{search: '{{ request.search.value|default:''|escapejs }}'}"
-      hx-push-url="true"
-      class="relative bg-transparent {{ css_class|default:'' }}">
-    <input type="search"
-           x-model="search"
-           name="{{ search_param|default:'q' }}"
-           autocomplete="off"
-           aria-label="{{ placeholder|default:'Search' }}"
-           {%
+<form
+  action="{{ search_url|default:request.path }}"
+  method="get"
+  x-data="{search: '{{ request.search.value|default:''|escapejs }}'}"
+  hx-push-url="true"
+  class="relative bg-transparent {{ css_class|default:'' }}"
+>
+  <input
+    type="search"
+    x-model="search"
+    name="{{ search_param|default:'q' }}"
+    autocomplete="off"
+    aria-label="{{ placeholder|default:'Search' }}"
+    {%
     if
     placeholder
     %}placeholder="{{ placeholder }}"
-           {%
+    {%
     endif
     %}
-           class="
+    class="
       px-2
       py-1
       focus:outline-none focus:ring
@@ -27,26 +30,31 @@
       text-sm
       lg:text-base
     "
-           :class="{'lg:w-72 xl:w-84': !search, 'lg:w-72 xl:w-96': search}" />
-    <div class="absolute inset-y-0 right-0 flex items-center pr-2">
-        <div class="flex items-center">
-            <a href="{{ clear_search_url|default:request.path }}"
-               title="Clear Search"
-               class="
+    :class="{'lg:w-72 xl:w-84': !search, 'lg:w-72 xl:w-96': search}"
+  />
+  <div class="absolute inset-y-0 right-0 flex items-center pr-2">
+    <div class="flex items-center">
+      <a
+        href="{{ clear_search_url|default:request.path }}"
+        title="Clear Search"
+        class="
           focus:outline-none focus:shadow-outline
           text-gray-900
           dark:text-gray-100
           mr-1
         "
-               x-show="search"
-               x-cloak>
-                {% icon "x" css_class="h-4 w-4" %}
-            </a>
-            <button type="submit"
-                    title="Search"
-                    class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
-                {% icon "search" css_class="h-4 w-4" %}
-            </button>
-        </div>
+        x-show="search"
+        x-cloak
+      >
+        {% icon "x" css_class="h-4 w-4" %}
+      </a>
+      <button
+        type="submit"
+        title="Search"
+        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100"
+      >
+        {% icon "search" css_class="h-4 w-4" %}
+      </button>
     </div>
+  </div>
 </form>

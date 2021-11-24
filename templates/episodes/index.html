@@ -2,7 +2,8 @@
 block content %}
 
 <div class="sm:flex justify-between items-center mb-4 lg:mb-6 space-y-2 sm:space-y-0">
-    <h1 class="
+  <h1
+    class="
       font-bold
       flex
       items-center
@@ -11,31 +12,30 @@ block content %}
       text-base
       lg:text-lg
       xl:text-xl
-    ">
-        New Releases {% if promoted and has_follows %} - Popular Podcasts{% elif has_follows
+    "
+  >
+    New Releases {% if promoted and has_follows %} - Popular Podcasts{% elif has_follows
     %} - My Podcasts{% endif %}
-    </h1>
-    {% if not has_follows %}
-    <div class="flex items-center justify-center sm:justify-end space-x-3">
-        {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
-    </div>
-    {% endif %}
+  </h1>
+  {% if not has_follows %}
+  <div class="flex items-center justify-center sm:justify-end space-x-3">
+    {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
+  </div>
+  {% endif %}
 </div>
 
 {% if has_follows %}
 <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-4">
-    <div class="flex items-center justify-center sm:justify-start">
-        {% if promoted %}
-        <a href="{% url 'episodes:index' %}"
-           class="link">My Podcasts</a>
-        {% else %}
-        <a href="{% url 'episodes:index' %}?promoted=true"
-           class="link">Popular Podcasts</a>
-        {% endif %}
-    </div>
+  <div class="flex items-center justify-center sm:justify-start">
+    {% if promoted %}
+    <a href="{% url 'episodes:index' %}" class="link">My Podcasts</a>
+    {% else %}
+    <a href="{% url 'episodes:index' %}?promoted=true" class="link">Popular Podcasts</a>
+    {% endif %}
+  </div>
 
-    <div class="flex items-center justify-center sm:justify-end space-x-3">
-        {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
-    </div>
+  <div class="flex items-center justify-center sm:justify-end space-x-3">
+    {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
+  </div>
 </div>
 {% endif %} {% include pagination_template %} {% endblock content %}

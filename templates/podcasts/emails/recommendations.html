@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>{{ site.name }}</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <p>Hi {{ recipient.username }}</p>
 
     <p>Greetings from {{ site.name }}! {% if podcasts %}</p>
@@ -15,7 +14,7 @@
 
     {% for podcast in podcasts %}
     <p>
-        <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
+      <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
     </p>
 
     <p>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</p>
@@ -23,14 +22,16 @@
     {% endfor %} {% endif %} {% if episodes %}
 
     <p>
-        {% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last
-        week you might have missed:
+      {% if podcasts %}...and here{% else %}Here {% endif %} are some episodes from last
+      week you might have missed:
     </p>
 
     {% for episode in episodes %}
 
     <p>
-        <a href="{% absolute_uri episode %}">{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a>
+      <a href="{% absolute_uri episode %}"
+        >{{ episode.podcast.cleaned_title }} - {{ episode.cleaned_title }}</a
+      >
     </p>
 
     <p>{{ episode.cleaned_description|urlize|truncatewords:60 }}</p>
@@ -39,11 +40,12 @@
     {% endfor %} {% endif %}
 
     <p>
-        If you do not want to receive any more recommendations, you can just uncheck the
-        "Send email recommendations" option on your
-        <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}">settings</a>
-        page.
+      If you do not want to receive any more recommendations, you can just uncheck the
+      "Send email recommendations" option on your
+      <a href="{{ protocol }}://{{ site.domain }}{% url 'users:preferences' %}"
+        >settings</a
+      >
+      page.
     </p>
-</body>
-
+  </body>
 </html>

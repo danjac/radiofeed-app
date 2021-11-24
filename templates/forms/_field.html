@@ -1,19 +1,18 @@
 {% load widget_tweaks %} {% if field.is_hidden %} {{ field }} {% else %}
 <div class="space-y-3">
-    {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %} {% if
+  {% with WIDGET_ERROR_CLASS="border-red-800 dark:border-red-500" %} {% if
   field|widget_type == "checkboxinput" %} {% with css_class=css_class|default:'mr-3
   dark:bg-gray-900' %}
-    <label class="flex items-center w-full font-semibold">
-        {% render_field field class=css_class %} {{ field.label }}
-    </label>
-    {% endwith %} {% else %}
-    <label class="flex items-center w-full font-semibold"
-           for="{{ field.id_for_label }}">
-        {{ field.label }}
-    </label>
-    {% with css_class=css_class|default:'p-1 dark:bg-gray-900 dark:text-white text-sm
+  <label class="flex items-center w-full font-semibold">
+    {% render_field field class=css_class %} {{ field.label }}
+  </label>
+  {% endwith %} {% else %}
+  <label class="flex items-center w-full font-semibold" for="{{ field.id_for_label }}">
+    {{ field.label }}
+  </label>
+  {% with css_class=css_class|default:'p-1 dark:bg-gray-900 dark:text-white text-sm
   lg:text-base w-64' %} {% render_field field aria-label=field.label class=css_class %}
-    {% endwith %} {% endif %} {% endwith %} {% include "forms/_errors.html" with
+  {% endwith %} {% endif %} {% endwith %} {% include "forms/_errors.html" with
   errors=field.errors %} {% include "forms/_help_text.html" with
   help_text=field.help_text %}
 </div>

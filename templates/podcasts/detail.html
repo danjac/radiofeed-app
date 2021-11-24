@@ -1,70 +1,62 @@
 {% extends "podcasts/podcast_detail_base.html" %} {% block podcast_content %} {% with
 link=podcast.link|normalize_url funding_url=podcast.funding_url|normalize_url %}
 <div class="space-y-3 border-t dark:border-gray-500 pt-4">
-    {% if podcast.owner %}
-    <div class="font-semibold flex-wrap lg:text-lg">
-        {% if link %}
-        <a href="{{ link }}"
-           target="_blank"
-           rel="noopener"
-           title="Podcast Owner">
-            {{ podcast.owner }}
-        </a>
-        {% else %} {{ podcast.owner }} {% endif %}
-    </div>
-    {% endif %}
+  {% if podcast.owner %}
+  <div class="font-semibold flex-wrap lg:text-lg">
+    {% if link %}
+    <a href="{{ link }}" target="_blank" rel="noopener" title="Podcast Owner">
+      {{ podcast.owner }}
+    </a>
+    {% else %} {{ podcast.owner }} {% endif %}
+  </div>
+  {% endif %}
 
-    <div class="flex items-center space-x-3 sm:space-x-6">
-        <div>
-            {% include "_cover_image.html" with cover_url=podcast.cover_url
+  <div class="flex items-center space-x-3 sm:space-x-6">
+    <div>
+      {% include "_cover_image.html" with cover_url=podcast.cover_url
       alt=podcast.cleaned_title size=32 css_class="h-28 w-28 lg:h-32 lg:w-32 border
       dark:border-gray-500" %}
-        </div>
+    </div>
 
-        <div class="flex flex-col place-content-between h-24 lg:h-28">
-            {% include "podcasts/_follow_toggle.html" %}
-            <div class="flex items-center space-x-3">
-                {% if link and link != podcast.rss %}
-                <div>
-                    <a href="{{ link }}"
-                       class="link"
-                       target="_blank"
-                       rel="noopener">Website</a>
-                </div>
-                {% endif %}
-                <div>
-                    <a href="{{ podcast.rss }}"
-                       class="link"
-                       download>RSS</a>
-                </div>
-                {% if user.is_staff %}
-                <div>
-                    <a href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
-                       hx-disable="true"
-                       class="link">Admin</a>
-                </div>
-                {% endif %}
-            </div>
-            {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
+    <div class="flex flex-col place-content-between h-24 lg:h-28">
+      {% include "podcasts/_follow_toggle.html" %}
+      <div class="flex items-center space-x-3">
+        {% if link and link != podcast.rss %}
+        <div>
+          <a href="{{ link }}" class="link" target="_blank" rel="noopener">Website</a>
         </div>
+        {% endif %}
+        <div>
+          <a href="{{ podcast.rss }}" class="link" download>RSS</a>
+        </div>
+        {% if user.is_staff %}
+        <div>
+          <a
+            href="{% url 'admin:podcasts_podcast_change' podcast.id %}"
+            hx-disable="true"
+            class="link"
+            >Admin</a
+          >
+        </div>
+        {% endif %}
+      </div>
+      {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
     </div>
-    {% if funding_url %}
-    <div class="font-semibold flex-wrap">
-        <a href="{{ funding_url }}"
-           target="_blank"
-           rel="noopener">
-            {{ podcast.funding_text|default:'Support this podcast' }}
-        </a>
-    </div>
-    {% endif %}
+  </div>
+  {% if funding_url %}
+  <div class="font-semibold flex-wrap">
+    <a href="{{ funding_url }}" target="_blank" rel="noopener">
+      {{ podcast.funding_text|default:'Support this podcast' }}
+    </a>
+  </div>
+  {% endif %}
 
-    <div>
-        <a href="{{ podcast.get_latest_url }}"
-           class="link">
-            Latest episode released {% include "_date.html" with value=podcast.pub_date %}
-        </a>
-    </div>
-    {% include "podcasts/_categories.html" %} {% include "_markdown.html" with
+  <div>
+    <a href="{{ podcast.get_latest_url }}" class="link">
+      Latest episode released {% include "_date.html" with value=podcast.pub_date %}
+    </a>
+  </div>
+  {% include "podcasts/_categories.html" %} {% include "_markdown.html" with
   content=podcast.description %} {% include "podcasts/_disclaimer.html" %}
 </div>
 {% endwith %} {% endblock podcast_content %}
