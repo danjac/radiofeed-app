@@ -62,6 +62,23 @@
                 </button>
               {% endif %}
 
+              {% if is_favorited %}
+                <button hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
+                  hx-push-url="false"
+                  @click="close()"
+                  title="Remove from Favorites">
+                  {% icon "star_solid" css_class=ICON_CSS %}
+                </button>
+              {% else %}
+                <button hx-post="{% url 'episodes:add_favorite' episode.id %}"
+                  hx-push-url="false"
+                  @click="close()"
+                  title="Add to Favorites">
+                  {% icon "star" css_class=ICON_CSS %}
+                </button>
+              {% endif %}
+
+
               {% if not is_playing %}
                 {% if is_queued %}
                   <button hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
@@ -78,22 +95,6 @@
                     {% icon "collection" css_class=ICON_CSS %}
                   </button>
                 {% endif %}
-              {% endif %}
-
-              {% if is_favorited %}
-                <button hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
-                  hx-push-url="false"
-                  @click="close()"
-                  title="Remove from Favorites">
-                  {% icon "star_solid" css_class=ICON_CSS %}
-                </button>
-              {% else %}
-                <button hx-post="{% url 'episodes:add_favorite' episode.id %}"
-                  hx-push-url="false"
-                  @click="close()"
-                  title="Add to Favorites">
-                  {% icon "star" css_class=ICON_CSS %}
-                </button>
               {% endif %}
 
               {% if episode.listened and not is_playing %}
@@ -124,7 +125,6 @@
           <div class="flex items-center">
             <button title="Close Dialog"
               @click="close()">
-
               {% icon "x" css_class=ICON_CSS %}
             </button>
           </div>
