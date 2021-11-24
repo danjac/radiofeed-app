@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, QuerySet
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -56,37 +56,33 @@ class ParseResult:
             raise self.exception
 
 
-def parse_podcast_feeds(frequency: timedelta | None = None) -> int:
-    """
-    Parses individual podcast feeds for update.
+def parse_scheduled_feeds(frequency: timedelta) -> int:
+    return parse_podcast_feeds(Podcast.objects.active().fresh().scheduled(), frequency)
 
-    If `frequency` is not None will limit number to available workers,
-    and will only parse podcasts scheduled for update.
 
-    Returns total number of podcasts parsed.
-    """
+def parse_stale_feeds(frequency: timedelta) -> int:
+    return parse_podcast_feeds(Podcast.objects.active().stale(), frequency)
 
-    qs = (
-        Podcast.objects.active()
-        .fresh()
+
+def parse_podcast_feeds(podcasts: QuerySet, frequency: timedelta) -> int:
+
+    podcasts = (
+        podcasts.active()
         .filter(queued__isnull=True)
         .distinct()
         .order_by(
-            F("scheduled").asc(nulls_first=True),
+            F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
     )
 
-    if frequency:
-        num_workers = Worker.count(queue=get_queue("feeds"))
-        # rough estimate: takes 2 seconds per update
-        limit = (
-            num_workers * round(frequency.total_seconds() / 2)
-            - Podcast.objects.filter(queued__isnull=False).count()
-        )
-        qs = qs.scheduled()[: max(limit, 0)]
+    limit = max(
+        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
+        - Podcast.objects.filter(queued__isnull=False).count(),
+        0,
+    )
 
-    podcast_ids = list(qs.values_list("pk", flat=True))
+    podcast_ids = list(podcasts[:limit].values_list("pk", flat=True))
 
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
@@ -213,11 +209,7 @@ def parse_success(
 
     # scheduling
 
-    (
-        podcast.pub_date,
-        podcast.scheduled,
-        podcast.frequency,
-    ) = parse_pub_dates(podcast, feed, items)
+    podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, feed, items)
 
     # content
 
@@ -264,14 +256,14 @@ def parse_success(
 
 def parse_pub_dates(
     podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
-) -> tuple[datetime | None, datetime, timedelta]:
+) -> tuple[datetime | None, timedelta | None]:
 
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return latest, *scheduler.schedule(pub_dates)
+        return latest, scheduler.get_frequency(pub_dates)
 
-    return podcast.pub_date, *scheduler.reschedule(podcast.frequency)
+    return podcast.pub_date, podcast.frequency
 
 
 def parse_episodes(
@@ -378,23 +370,14 @@ def parse_failure(
     tb: str = "",
 ) -> ParseResult:
 
-    scheduled: datetime | None = None
-    frequency: timedelta | None = None
-
     num_failures = podcast.num_failures
 
-    if active:
-
-        scheduled, frequency = scheduler.reschedule(podcast.frequency)
-
-        if failure:
-            num_failures += 1
+    if active and failure:
+        num_failures += 1
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        scheduled=scheduled,
-        frequency=frequency,
         parsed=now,
         updated=now,
         active=active,

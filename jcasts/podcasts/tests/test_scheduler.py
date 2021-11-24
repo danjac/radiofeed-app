@@ -11,83 +11,19 @@ def assert_hours(delta, hours):
     assert delta.total_seconds() / 3600 == pytest.approx(hours, 1.0)
 
 
-class TestReschedule:
-    def test_not_none(self):
-        scheduled, frequency = scheduler.reschedule(
-            timedelta(hours=24),
-        )
-        assert_hours(scheduled - timezone.now(), 8)
-        assert frequency == timedelta(hours=24)
-
-    def test_max_scheduled(self):
-        now = timezone.now()
-        scheduled, frequency = scheduler.reschedule(timedelta(days=60))
-        assert frequency == timedelta(days=60)
-        assert_hours(scheduled - now, 30 * 24)
-
-    def test_none(self):
-        now = timezone.now()
-        scheduled, frequency = scheduler.reschedule(None)
-        assert_hours(scheduled - now, 8)
-        assert frequency == scheduler.DEFAULT_FREQUENCY
-
-
-class TestSchedule:
-    def test_no_pub_dates(self):
-        now = timezone.now()
-        scheduled, frequency = scheduler.schedule([])
-        assert_hours(scheduled - now, 24)
-
-    def test_pub_dates(self):
-        now = timezone.now()
-        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        scheduled, frequency = scheduler.schedule(dates)
-        assert_hours(scheduled - now, 24 * 3)
-        assert frequency == timedelta(days=3)
-
-    def test_pub_dates_result_scheduled_lt_now(self):
-        now = timezone.now()
-        dates = [now - timedelta(days=7 * i) for i in range(1, 6)]
-        scheduled, frequency = scheduler.schedule(dates)
-        assert_hours(scheduled - now, 24)
-        assert frequency == timedelta(days=7)
-
-    def test_last_pub_date_gt_max_value(self):
-        now = timezone.now()
-        latest = now - timedelta(days=99)
-        dates = [latest] + [latest - timedelta(days=3 * i) for i in range(1, 6)]
-        scheduled, frequency = scheduler.schedule(dates)
-        assert_hours(scheduled - now, 24 * 30)
-        assert frequency == timedelta(days=3)
-
-    def test_max_value(self):
-        now = timezone.now()
-        dates = [now - timedelta(days=33 * i) for i in range(1, 6)]
-        scheduled, frequency = scheduler.schedule(dates)
-        assert_hours(scheduled - now, 24 * 30)
-        assert frequency == timedelta(days=33)
-
-    def test_min_value(self):
-        now = timezone.now()
-        dates = [now - timedelta(hours=1 * i) for i in range(1, 6)]
-        scheduled, frequency = scheduler.schedule(dates)
-        assert_hours(scheduled - now, 3)
-        assert frequency == timedelta(hours=1)
-
-
 class TestGetFrequency:
     def test_no_pub_dates(self):
-        assert scheduler.get_frequency([]).days == 1
+        assert_hours(scheduler.get_frequency([]), 8)
 
     def test_single_date(self):
         diff = timedelta(days=1)
         dt = timezone.now() - diff
-        assert scheduler.get_frequency([dt]).days == 1
+        assert_hours(scheduler.get_frequency([dt]), 8)
 
     def test_multiple_dates(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        assert scheduler.get_frequency(dates).days == 3
+        assert_hours(scheduler.get_frequency(dates), 24)
 
     def test_high_variance(self):
         now = timezone.now()
@@ -105,7 +41,7 @@ class TestGetFrequency:
         dates = [
             now - timedelta(days=6),
         ]
-        assert scheduler.get_frequency(dates).days == 1
+        assert_hours(scheduler.get_frequency(dates), 24)
 
     def test_max_dates_with_one_date_in_range(self):
 
@@ -115,7 +51,7 @@ class TestGetFrequency:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        assert scheduler.get_frequency(dates).days == 24
+        assert scheduler.get_frequency(dates).days == 2
 
     def test_dates_outside_threshold(self):
 
@@ -125,7 +61,7 @@ class TestGetFrequency:
             now - timedelta(days=120),
             now - timedelta(days=180),
         ]
-        assert scheduler.get_frequency(dates).days == 30
+        assert_hours(scheduler.get_frequency(dates), 48)
 
     def test_min_dates(self):
 

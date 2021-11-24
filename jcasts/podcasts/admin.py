@@ -154,7 +154,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "__str__",
         "promoted",
         "pub_date",
-        "scheduled",
+        "parsed",
     )
 
     list_editable = ("promoted",)
@@ -165,7 +165,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     readonly_fields = (
         "parsed",
         "queued",
-        "scheduled",
         "frequency",
         "last_build_date",
         "modified",
@@ -248,7 +247,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "scheduled",
+                "parsed",
                 "-pub_date",
             ]
         )

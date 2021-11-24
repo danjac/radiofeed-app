@@ -22,8 +22,9 @@ from jcasts.podcasts.feed_parser import (
     get_feed_headers,
     is_feed_changed,
     parse_podcast_feed,
-    parse_podcast_feeds,
     parse_pub_dates,
+    parse_scheduled_feeds,
+    parse_stale_feeds,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -59,14 +60,10 @@ class TestParsePubDates:
         return Feed(**FeedFactory())
 
     def test_no_items(self, podcast, feed):
-        (
-            pub_date,
-            scheduled,
-            frequency,
-        ) = parse_pub_dates(podcast, feed, [])
+        pub_date, frequency = parse_pub_dates(podcast, feed, [])
 
         assert pub_date == podcast.pub_date
-        assert scheduled
+        assert frequency is None
 
     def test_new_pub_dates(self, podcast, feed):
 
@@ -78,30 +75,20 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        (
-            pub_date,
-            scheduled,
-            frequency,
-        ) = parse_pub_dates(podcast, feed, items)
+        pub_date, frequency = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
         assert frequency
-        assert scheduled
 
     def test_no_new_pub_dates(self, db, feed):
-        podcast = PodcastFactory(scheduled=timezone.now())
+        podcast = PodcastFactory()
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        (
-            pub_date,
-            scheduled,
-            frequency,
-        ) = parse_pub_dates(podcast, feed, items)
+        pub_date, frequency = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == podcast.pub_date
-        assert scheduled
-        assert frequency
+        assert frequency is None
 
 
 class TestIsFeedChanged:
@@ -144,58 +131,73 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
-class TestSchedulePodcastFeeds:
-    def test_with_frequency_none(self, db, mock_parse_podcast_feed):
-
-        now = timezone.now()
-
-        # inactive
-        PodcastFactory(active=False)
-
-        # queued
-        PodcastFactory(scheduled=now - timedelta(days=3), queued=now)
-
-        # not scheduled yet
-        unscheduled = PodcastFactory(scheduled=now + timedelta(days=1))
-
-        # scheduled
-        scheduled = PodcastFactory(
-            scheduled=now - timedelta(days=3),
-        )
-
-        parse_podcast_feeds()
-
-        queued = Podcast.objects.filter(queued__isnull=False)
-
-        assert queued.count() == 3
-
-        assert scheduled in queued
-        assert unscheduled in queued
-
-        assert len(mock_parse_podcast_feed.mock_calls) == 2
-
-    def test_with_frequency(self, db, mocker, mock_parse_podcast_feed):
-
+class TestParsePodcastFeeds:
+    @pytest.fixture
+    def mock_rq(self, mocker):
         mocker.patch("rq.worker.Worker.count", return_value=2)
         mocker.patch("django_rq.get_queue")
 
+    def test_parse_stale_feeds(self, db, mock_parse_podcast_feed, mock_rq):
         now = timezone.now()
 
         # inactive
         PodcastFactory(active=False)
 
         # not scheduled yet
-        PodcastFactory(scheduled=now + timedelta(days=1))
+        PodcastFactory(parsed=now + timedelta(days=1))
 
         # queued
-        PodcastFactory(scheduled=now - timedelta(days=3), queued=now)
+        PodcastFactory(
+            queued=now,
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+        )
+
+        # scheduled + fresh
+        PodcastFactory(
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+            pub_date=now - timedelta(days=3),
+        )
+
+        podcast = PodcastFactory(
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+            pub_date=now - timedelta(days=99),
+        )
+
+        parse_stale_feeds(frequency=timedelta(hours=1))
+        queued = Podcast.objects.filter(queued__isnull=False)
+
+        assert queued.count() == 2
+
+        assert podcast in queued
+        assert len(mock_parse_podcast_feed.mock_calls) == 1
+
+    def test_parse_scheduled_feeds(self, db, mock_parse_podcast_feed, mock_rq):
+
+        now = timezone.now()
+
+        # inactive
+        PodcastFactory(active=False)
+
+        # not scheduled yet
+        PodcastFactory(parsed=now + timedelta(days=1))
+
+        # queued
+        PodcastFactory(
+            queued=now,
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+        )
 
         # scheduled
         podcast = PodcastFactory(
-            scheduled=now - timedelta(days=3),
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
         )
 
-        parse_podcast_feeds(frequency=timedelta(hours=1))
+        parse_scheduled_feeds(frequency=timedelta(hours=1))
 
         queued = Podcast.objects.filter(queued__isnull=False)
 
@@ -220,7 +222,6 @@ class TestParsePodcastFeed:
             cover_url=None,
             pub_date=now,
             queued=now,
-            scheduled=now,
         )
 
     @pytest.fixture
@@ -297,7 +298,6 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.day == 1
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
-        assert new_podcast.scheduled
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 
@@ -361,7 +361,6 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.day == 1
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
-        assert new_podcast.scheduled
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.SUCCESS
 
@@ -480,7 +479,6 @@ class TestParsePodcastFeed:
         assert new_podcast.modified
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
         self, mocker, new_podcast, categories
@@ -509,7 +507,6 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
 
     def test_parse_no_podcasts(self, mocker, new_podcast, categories):
@@ -531,7 +528,6 @@ class TestParsePodcastFeed:
         assert new_podcast.num_failures == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -554,7 +550,6 @@ class TestParsePodcastFeed:
         assert new_podcast.num_failures == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
@@ -571,7 +566,6 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
@@ -589,7 +583,6 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
@@ -610,7 +603,6 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert not new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error(
@@ -633,7 +625,6 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error_no_pub_date(
@@ -659,5 +650,4 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
-        assert new_podcast.scheduled
         assert new_podcast.result == Podcast.Result.HTTP_ERROR

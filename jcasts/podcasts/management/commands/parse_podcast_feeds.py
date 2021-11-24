@@ -17,14 +17,25 @@ class Command(BaseCommand):
             "--frequency",
             help="Frequency between updates (minutes)",
             type=int,
+            default=60,
+        )
+
+        parser.add_argument(
+            "--stale",
+            help="Parse stale feeds",
+            action="store_true",
+            default=False,
         )
 
     def handle(self, *args, **options) -> None:
-        num_podcasts = feed_parser.parse_podcast_feeds(
-            frequency=timedelta(minutes=options["frequency"])
-            if options["frequency"]
-            else None
+        frequency = timedelta(minutes=options["frequency"])
+
+        num_podcasts = (
+            feed_parser.parse_stale_feeds(frequency)
+            if options["stale"]
+            else feed_parser.parse_scheduled_feeds(frequency)
         )
+
         self.stdout.write(
             self.style.SUCCESS(f"{num_podcasts} podcast feeds queued for update")
         )

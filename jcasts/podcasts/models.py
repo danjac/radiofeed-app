@@ -99,14 +99,12 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self) -> models.QuerySet:
-        now = timezone.now()
         return self.filter(
-            models.Q(
-                scheduled__isnull=True,
-            )
+            models.Q(parsed__isnull=True)
             | models.Q(
-                scheduled__isnull=False,
-                scheduled__lte=now,
+                frequency__isnull=False,
+                parsed__isnull=False,
+                parsed__lt=timezone.now() - models.F("frequency"),
             ),
         )
 
@@ -165,8 +163,6 @@ class Podcast(models.Model):
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # scheduling
-
-    scheduled: datetime | None = models.DateTimeField(null=True, blank=True)
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
 
     # feed parse result fields
