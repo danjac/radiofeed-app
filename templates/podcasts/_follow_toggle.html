@@ -1,36 +1,36 @@
 {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-    {% if user.is_authenticated %}
-        <div id="follow-toggle"
-            hx-target="this"
-            hx-swap="outerHTML"
-            hx-select="#follow-toggle">
-            {% if is_following %}
-                <button class="btn btn-secondary inline-flex items-center"
-                    title="Stop following this podcast"
-                    hx-trigger="click delay:200ms"
-                    hx-post="{% url 'podcasts:unfollow' podcast.id %}">
-                    {% icon "eye_slash" css_class=ICON_CSS %}
-                    Follow
-                </button>
-            {% else %}
-                <button class="btn btn-default inline-flex items-center"
-                    title="Follow this podcast"
-                    hx-trigger="click delay:200ms"
-                    hx-post="{% url 'podcasts:follow' podcast.id %}">
-                    {% icon "eye" css_class=ICON_CSS %}
-                    Follow
-                </button>
-            {% endif %}
-        </div>
+{% if user.is_authenticated %}
+<div id="follow-toggle"
+     hx-target="this"
+     hx-swap="outerHTML"
+     hx-select="#follow-toggle">
+    {% if is_following %}
+    <button class="btn btn-secondary inline-flex items-center"
+            title="Stop following this podcast"
+            hx-trigger="click delay:200ms"
+            hx-post="{% url 'podcasts:unfollow' podcast.id %}">
+        {% icon "eye_slash" css_class=ICON_CSS %}
+        Follow
+    </button>
     {% else %}
-        <div class="flex items-center">
-            <a class="btn btn-default inline-flex items-center"
-                href="{{ podcast.get_absolute_url|login_url }}"
-                hx-disable="true"
-                title="Log in to follow this podcast">
-                {% icon "eye" css_class=ICON_CSS %}
-                Follow
-            </a>
-        </div>
+    <button class="btn btn-default inline-flex items-center"
+            title="Follow this podcast"
+            hx-trigger="click delay:200ms"
+            hx-post="{% url 'podcasts:follow' podcast.id %}">
+        {% icon "eye" css_class=ICON_CSS %}
+        Follow
+    </button>
     {% endif %}
+</div>
+{% else %}
+<div class="flex items-center">
+    <a class="btn btn-default inline-flex items-center"
+       href="{{ podcast.get_absolute_url|login_url }}"
+       hx-disable="true"
+       title="Log in to follow this podcast">
+        {% icon "eye" css_class=ICON_CSS %}
+        Follow
+    </a>
+</div>
+{% endif %}
 {% endwith %}

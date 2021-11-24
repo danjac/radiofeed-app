@@ -3,36 +3,36 @@
 {% block subtitle %} | Play Queue{% endblock %}
 
 {% block robots %}
-    <meta name="robots"
-        content="noindex" />
+<meta name="robots"
+      content="noindex" />
 {% endblock %}
 
 {% block content %}
-    <div id="queue"
-        x-data="{count: {{ queue_items|length }}}"
-        @remove-queue-item.window="count-=1">
-        <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4 lg:mb-6">
-            <h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg xl:text-xl">Play Queue</h1>
-        </div>
-        <div x-data="jCasts.DragDrop({
+<div id="queue"
+     x-data="{count: {{ queue_items|length }}}"
+     @remove-queue-item.window="count-=1">
+    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4 lg:mb-6">
+        <h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg xl:text-xl">Play Queue</h1>
+    </div>
+    <div x-data="jCasts.DragDrop({
             csrfToken: '{{ csrf_token }}',
             url: '{% url "episodes:move_queue_items" %}',
             })">
-            {% for item in queue_items %}
-                {% with episode=item.episode %}
-                    <div data-draggable="true"
-                        data-id={{ item.id }}>
-                        {% include "episodes/_queue_item.html" with hx_remove="remove-queue-item" %}
-                    </div>
-
-                {% endwith %}
-            {% endfor %}
+        {% for item in queue_items %}
+        {% with episode=item.episode %}
+        <div data-draggable="true"
+             data-id={{ item.id }}>
+            {% include "episodes/_queue_item.html" with hx_remove="remove-queue-item" %}
         </div>
-        <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
-            x-show="count===0"
-            x-cloak>
-            You do not have any items in your Play Queue.
-        </p>
+
+        {% endwith %}
+        {% endfor %}
     </div>
+    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
+       x-show="count===0"
+       x-cloak>
+        You do not have any items in your Play Queue.
+    </p>
+</div>
 
 {% endblock content %}

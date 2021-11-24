@@ -3,135 +3,135 @@
 {% block subtitle %} About | Credits {% endblock %}
 
 {% block about_content %}
-    <div class="space-y-6">
+<div class="space-y-6">
 
-        <div class="space-y-3">
-            <h2 class="font-semibold xl:text-lg">About Us</h2>
+    <div class="space-y-3">
+        <h2 class="font-semibold xl:text-lg">About Us</h2>
 
-            <p>
-                <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
-            </p>
-        </div>
-
-        <div class="space-y-3">
-            <h2 class="font-semibold xl:text-lg">Technology</h2>
-
-            <p><strong>{{ request.site.name }}</strong> is an
-                <a class="underline link"
-                    target="_blank"
-                    rel="noopener"
-                    href="https://github.com/danjac/jcasts/">open source project</a>
-                under the <a href=""
-                    target="_blank"
-                    rel="noopener"
-                    href="https://mit-license.org/">MIT license</a>.
-            </p>
-
-            <p>
-                Runs on <a href="https://www.djangoproject.com/"
-                    class="link underline"
-                    rel="noopener"
-                    target="_blank">Django</a> with the help of <a href="https://htmx.org"
-                        class="link underline"
-                        rel="noopener"
-                        target="_blank">
-                        HTMX</a>, <a href="https://alpinejs.dev/"
-                            class="link underline"
-                            rel="noopener"
-                            target="_blank">AlpineJS</a>
-                and <a href="https://tailwindcss.com/"
-                    class="link underline"
-                    rel="noopener"
-                    target="_blank">Tailwind</a>.
-            </p>
-        </div>
-
-        <div class="space-y-3">
-            <h2 class="font-semibold xl:text-lg">Additional Credits</h2>
-
-            <ul class="space-y-3">
-
-                <li>
-                    Podcasts sourced from <a href="https://podcastindex.org/"
-                        rel="noopener"
-                        target="_blank"
-                        class="underline link">Podcast Index</a>
-                </li>
-
-
-                <li>
-                    SVG icons from <a target="_blank"
-                        href="https://fontawesome.com"
-                        class="underline link"
-                        rel="noopener">Font Awesome</a>
-                    and <a target="_blank"
-                        href="https://heroicons.com/"
-                        class="underline link"
-                        rel="noopener">Heroicons</a>
-                </li>
-
-                <li>
-                    Loader icon from <a target="_blank"
-                        href="https://github.com/SamHerbert/SVG-Loaders"
-                        class="underline link"
-                        rel="noopener">Sam Herbert</a>
-                </li>
-
-                <li>
-                    <a target="_blank"
-                        rel="noopener"
-                        class="underline link"
-                        href="https://icons8.com/icons/set/browse-podcasts">Browse Podcasts icon</a> by
-                    <a target="_blank"
-                        rel="noopener"
-                        class="underline link"
-                        href="https://icons8.com">Icons8</a>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="space-y-3">
-            <h2 class="font-semibold xl:text-lg">General Disclaimer</h2>
-
-            <p>
-                All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-                nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
-            </p>
-
-        </div>
-        <div class="space-y-3">
-
-            <h2 class="font-semibold xl:text-lg">Contact Us</h2>
-            {% get_contact_details as contact_details %}
-
-            <div class="space-x-3">
-                {% if contact_details.email %}
-                    <a class="underline link"
-                        target="_blank"
-                        rel="noopener"
-                        href="mailto:{{ contact_details.email }}">Feedback</a>
-                {% endif %}
-
-                {% if contact_details.twitter %}
-                    <a class="underline link"
-                        target="_blank"
-                        rel="noopener"
-                        href="https://twitter.com/{{ contact_details.twitter }}">
-                        Twitter
-                    </a>
-                {% endif %}
-
-                <a class="underline link"
-                    target="_blank"
-                    rel="noopener"
-                    href="https://github.com/danjac/jcasts/issues">Issues</a>
-            </div>
-
-            <div>&copy; {% now 'Y' %} <a class="underline link"
-                href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
-
-
-        </div>
+        <p>
+            <strong>{{ request.site.name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+        </p>
     </div>
+
+    <div class="space-y-3">
+        <h2 class="font-semibold xl:text-lg">Technology</h2>
+
+        <p><strong>{{ request.site.name }}</strong> is an
+            <a class="underline link"
+               target="_blank"
+               rel="noopener"
+               href="https://github.com/danjac/jcasts/">open source project</a>
+            under the <a href=""
+               target="_blank"
+               rel="noopener"
+               href="https://mit-license.org/">MIT license</a>.
+        </p>
+
+        <p>
+            Runs on <a href="https://www.djangoproject.com/"
+               class="link underline"
+               rel="noopener"
+               target="_blank">Django</a> with the help of <a href="https://htmx.org"
+               class="link underline"
+               rel="noopener"
+               target="_blank">
+                HTMX</a>, <a href="https://alpinejs.dev/"
+               class="link underline"
+               rel="noopener"
+               target="_blank">AlpineJS</a>
+            and <a href="https://tailwindcss.com/"
+               class="link underline"
+               rel="noopener"
+               target="_blank">Tailwind</a>.
+        </p>
+    </div>
+
+    <div class="space-y-3">
+        <h2 class="font-semibold xl:text-lg">Additional Credits</h2>
+
+        <ul class="space-y-3">
+
+            <li>
+                Podcasts sourced from <a href="https://podcastindex.org/"
+                   rel="noopener"
+                   target="_blank"
+                   class="underline link">Podcast Index</a>
+            </li>
+
+
+            <li>
+                SVG icons from <a target="_blank"
+                   href="https://fontawesome.com"
+                   class="underline link"
+                   rel="noopener">Font Awesome</a>
+                and <a target="_blank"
+                   href="https://heroicons.com/"
+                   class="underline link"
+                   rel="noopener">Heroicons</a>
+            </li>
+
+            <li>
+                Loader icon from <a target="_blank"
+                   href="https://github.com/SamHerbert/SVG-Loaders"
+                   class="underline link"
+                   rel="noopener">Sam Herbert</a>
+            </li>
+
+            <li>
+                <a target="_blank"
+                   rel="noopener"
+                   class="underline link"
+                   href="https://icons8.com/icons/set/browse-podcasts">Browse Podcasts icon</a> by
+                <a target="_blank"
+                   rel="noopener"
+                   class="underline link"
+                   href="https://icons8.com">Icons8</a>
+
+            </li>
+        </ul>
+    </div>
+
+    <div class="space-y-3">
+        <h2 class="font-semibold xl:text-lg">General Disclaimer</h2>
+
+        <p>
+            All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
+            nor endorsed by {{ request.site.name }}. All audio files are played directly from the source.
+        </p>
+
+    </div>
+    <div class="space-y-3">
+
+        <h2 class="font-semibold xl:text-lg">Contact Us</h2>
+        {% get_contact_details as contact_details %}
+
+        <div class="space-x-3">
+            {% if contact_details.email %}
+            <a class="underline link"
+               target="_blank"
+               rel="noopener"
+               href="mailto:{{ contact_details.email }}">Feedback</a>
+            {% endif %}
+
+            {% if contact_details.twitter %}
+            <a class="underline link"
+               target="_blank"
+               rel="noopener"
+               href="https://twitter.com/{{ contact_details.twitter }}">
+                Twitter
+            </a>
+            {% endif %}
+
+            <a class="underline link"
+               target="_blank"
+               rel="noopener"
+               href="https://github.com/danjac/jcasts/issues">Issues</a>
+        </div>
+
+        <div>&copy; {% now 'Y' %} <a class="underline link"
+               href="mailto:danjac2018@gmail.com">Dan Jacob</a></div>
+
+
+    </div>
+</div>
 {% endblock about_content %}
