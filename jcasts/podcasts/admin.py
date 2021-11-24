@@ -167,7 +167,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "queued",
         "scheduled",
         "frequency",
-        "frequency_modifier",
         "last_build_date",
         "modified",
         "pub_date",
