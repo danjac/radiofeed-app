@@ -4,22 +4,22 @@
 
 {% block settings_content %}
 
-    <div class="w-full space-y-3 lg:space-y-6">
-        <p>
-            Please confirm that you want to delete your account. You will not be able to undo this action!
-        </p>
-        <div>
-            <form method="POST"
-                hx-disable="true"
-                action="{% url 'users:delete_account' %}">
-                {% csrf_token %}
-                <button class="btn btn-danger inline-flex items-center"
+<div class="w-full space-y-3 lg:space-y-6">
+    <p>
+        Please confirm that you want to delete your account. You will not be able to undo this action!
+    </p>
+    <div>
+        <form method="POST"
+              hx-disable="true"
+              action="{% url 'users:delete_account' %}">
+            {% csrf_token %}
+            <button class="btn btn-danger inline-flex items-center"
                     name="confirm-delete"
                     value="true"
                     @click="return confirm('Are you sure?')">
-                    {% icon "trash" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-                    Yes, delete my account
-                </button>
-            </div>
-        </div>
+                {% icon "trash" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+                Yes, delete my account
+            </button>
+    </div>
+</div>
 {% endblock settings_content %}

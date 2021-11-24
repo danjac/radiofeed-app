@@ -1,8 +1,3 @@
-{% extends "podcasts/_podcasts.html" %}
-{% load cache %}
-{% block results %}
-    {% cache cache_timeout podcasts request.get_full_path %}
-        {{ block.super }}
-    {% endcache %}
-{% endblock %}
-
+{% extends "podcasts/_podcasts.html" %} {% load cache %} {% block results %} {% cache
+cache_timeout podcasts request.get_full_path %} {{ block.super }} {% endcache %} {%
+endblock %}

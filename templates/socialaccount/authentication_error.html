@@ -1,16 +1,17 @@
-{% extends "socialaccount/base.html" %}
+{% extends "socialaccount/base.html" %} {% load i18n %} {% block head_title %}{% trans
+"Social Network Login Failure" %}{% endblock %} {% block content %}
+<h1 class="font-semibold mb-4 text-base lg:text-lg">
+  {% trans "Social Network Login Failure" %}
+</h1>
 
-{% load i18n %}
+<p class="mb-4">
+  {% trans "An error occurred while attempting to login via your social network
+  account." %}
+</p>
 
-{% block head_title %}{% trans "Social Network Login Failure" %}{% endblock %}
-
-{% block content %}
-    <h1 class="font-semibold mb-4 text-base lg:text-lg">{% trans "Social Network Login Failure" %}</h1>
-
-    <p class="mb-4">{% trans "An error occurred while attempting to login via your social network account." %}</p>
-
-    <pre class="text-mono">
+<pre class="text-mono">
 Code: {{ auth_error.code }}, Error: {{ auth_error.exception }}
-  </pre>
+  </pre
+>
 
 {% endblock %}

@@ -1,85 +1,97 @@
-<div class="flex items-center space-x-3 lg:space-x-4"
-    hx-push-url="false"
-    {% if user.is_authenticated %}
-        x-data="{
+<div
+  class="flex items-center space-x-3 lg:space-x-4"
+  hx-push-url="false"
+  {%
+  if
+  user.is_authenticated
+  %}
+  x-data="{
         isPlaying: {{ is_playing|yesno:'true,false' }},
         isQueued: {{ is_queued|yesno:'true,false' }},
         isFavorite: {{ is_favorited|yesno:'true,false' }},
         isComplete: {{ episode.completed|yesno:'true,false' }},
         isListened: {{ episode.listened|yesno:'true,false' }}
         }"
-        @close-player.window="isPlaying=false"
-        @play-episode.window="
+  @close-player.window="isPlaying=false"
+  @play-episode.window="
         if ($event.detail.value==={{ episode.id }}) {
         isPlaying = true;
         isQueued = false;
         isListened = true;
         isComplete = false;
         }"
-    {% endif %}>
-    {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
+  {%
+  endif
+  %}
+>
+  {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 
-        <a download
-            title="Download"
-            href="{{ episode.media_url }}"
-            class="link">
-            {% if user.is_anonymous %}
-                Download
-            {% else %}
-                {% icon "download" css_class=ICON_CSS %}
-            {% endif %}
-        </a>
+  <a download title="Download" href="{{ episode.media_url }}" class="link">
+    {% if user.is_anonymous %} Download {% else %} {% icon "download" css_class=ICON_CSS
+    %} {% endif %}
+  </a>
 
-        {% if user.is_authenticated %}
+  {% if user.is_authenticated %}
 
-            <button title="Add to Favorites"
-                x-show="!isFavorite"
-                x-cloak
-                hx-post="{% url 'episodes:add_favorite' episode.id %}"
-                @click="isFavorite=true">
-                {% icon "star" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Add to Favorites"
+    x-show="!isFavorite"
+    x-cloak
+    hx-post="{% url 'episodes:add_favorite' episode.id %}"
+    @click="isFavorite=true"
+  >
+    {% icon "star" css_class=ICON_CSS %}
+  </button>
 
-            <button title="Remove from Favorites"
-                x-show="isFavorite"
-                x-cloak
-                hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
-                @click="isFavorite=false">
-                {% icon "star_solid" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Remove from Favorites"
+    x-show="isFavorite"
+    x-cloak
+    hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
+    @click="isFavorite=false"
+  >
+    {% icon "star_solid" css_class=ICON_CSS %}
+  </button>
 
-            <button title="Add to Queue"
-                x-show="!isPlaying && !isQueued"
-                x-cloak
-                hx-post="{% url 'episodes:add_to_queue' episode.id %}"
-                @click="isQueued=true">
-                {% icon "collection" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Add to Queue"
+    x-show="!isPlaying && !isQueued"
+    x-cloak
+    hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+    @click="isQueued=true"
+  >
+    {% icon "collection" css_class=ICON_CSS %}
+  </button>
 
-            <button title="Remove from Queue"
-                x-show="!isPlaying && isQueued"
-                x-cloak
-                hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
-                @click="isQueued=false">
-                {% icon "collection_solid" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Remove from Queue"
+    x-show="!isPlaying && isQueued"
+    x-cloak
+    hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
+    @click="isQueued=false"
+  >
+    {% icon "collection_solid" css_class=ICON_CSS %}
+  </button>
 
-            <button title="Mark Complete"
-                x-show="!isPlaying && !isComplete && isListened"
-                x-cloak
-                hx-post="{% url 'episodes:mark_complete' episode.id %}"
-                @click="isComplete=true">
-                {% icon "check" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Mark Complete"
+    x-show="!isPlaying && !isComplete && isListened"
+    x-cloak
+    hx-post="{% url 'episodes:mark_complete' episode.id %}"
+    @click="isComplete=true"
+  >
+    {% icon "check" css_class=ICON_CSS %}
+  </button>
 
-            <button title="Remove from History"
-                x-show="!isPlaying && isListened"
-                x-cloak
-                hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
-                @click="isListened=false">
-                {% icon "database_solid" css_class=ICON_CSS %}
-            </button>
+  <button
+    title="Remove from History"
+    x-show="!isPlaying && isListened"
+    x-cloak
+    hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
+    @click="isListened=false"
+  >
+    {% icon "database_solid" css_class=ICON_CSS %}
+  </button>
 
-        {% endif %}
-    {% endwith %}
+  {% endif %} {% endwith %}
 </div>

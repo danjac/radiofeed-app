@@ -1,28 +1,25 @@
-{% extends "podcasts/podcast_detail_base.html" %}
+{% extends "podcasts/podcast_detail_base.html" %} {% block subtitle %}{{ block.super }}
+| Episodes{% endblock %} {% block podcast_content %}
+<div
+  class="sm:flex items-center mb-4 justify-between border-t dark:border-gray-500 pt-4"
+>
+  <div class="flex justify-center sm:justify-start items-center mb-4 sm:mb-0">
+    {% if request.search %}
+    <a
+      href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
+      title="Search Episodes"
+      class="link"
+      >Search All Podcasts</a
+    >
+    {% elif newest_first %}
+    <a href="{{ request.path|add:'?ordering=asc' }}" class="link">Oldest First</a>
+    {% else %}
+    <a href="{{ request.path|add:'?ordering=desc' }}" class="link">Newest First</a>
+    {% endif %}
+  </div>
 
-{% block subtitle %}{{ block.super }} | Episodes{% endblock %}
-
-{% block podcast_content %}
-    <div class="sm:flex items-center mb-4 justify-between border-t dark:border-gray-500 pt-4">
-
-        <div class="flex justify-center sm:justify-start items-center mb-4 sm:mb-0">
-            {% if request.search %}
-                <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
-                    title="Search Episodes"
-                    class="link">Search All Podcasts</a>
-            {% elif newest_first %}
-                <a href="{{ request.path|add:'?ordering=asc' }}"
-                    class="link">Oldest First</a>
-            {% else %}
-                <a href="{{ request.path|add:'?ordering=desc' }}"
-                    class="link">Newest First</a>
-            {% endif %}
-        </div>
-
-        <div class="flex items-center justify-center sm:justify-end">
-            {% include "forms/_search_form.html" with placeholder="Search: Episodes" %}
-        </div>
-
-    </div>
-    {% include pagination_template %}
-{% endblock %}
+  <div class="flex items-center justify-center sm:justify-end">
+    {% include "forms/_search_form.html" with placeholder="Search: Episodes" %}
+  </div>
+</div>
+{% include pagination_template %} {% endblock %}

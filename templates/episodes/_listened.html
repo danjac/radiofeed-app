@@ -1,11 +1,8 @@
-{% if episode.listened and not is_playing %}
-    {% with is_completed=episode.is_completed pc_complete=episode.pc_complete listened=episode.listened %}
-        <div class="font-semibold text-gray-600 dark:text-gray-300 {{ css_class|default:'' }}">
-            {% if is_completed %}
-                Completed {% include "_date.html" with value=listened %}
-            {% else %}
-                Listened {% include "_date.html" with value=listened %}{% if pc_complete > 0.9 %}({{ pc_complete|floatformat:'0' }}% done){% endif %}
-            {% endif %}
-        </div>
-    {% endwith %}
-{% endif %}
+{% if episode.listened and not is_playing %} {% with is_completed=episode.is_completed
+pc_complete=episode.pc_complete listened=episode.listened %}
+<div class="font-semibold text-gray-600 dark:text-gray-300 {{ css_class|default:'' }}">
+  {% if is_completed %} Completed {% include "_date.html" with value=listened %} {% else
+  %} Listened {% include "_date.html" with value=listened %}{% if pc_complete > 0.9
+  %}({{ pc_complete|floatformat:'0' }}% done){% endif %} {% endif %}
+</div>
+{% endwith %} {% endif %}

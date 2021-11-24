@@ -1,55 +1,58 @@
-{% extends "account/base.html" %}
+{% extends "account/base.html" %} {% load i18n %} {% block head_title %}{% translate
+"Signup" %}{% endblock %} {% block content %}
 
-{% load i18n %}
+<h1
+  class="
+    font-bold
+    flex
+    items-center
+    justify-center
+    sm:justify-start
+    text-base
+    lg:text-lg
+    xl:text-xl
+    mb-4
+  "
+>
+  Sign Up
+</h1>
 
-{% block head_title %}{% translate "Signup" %}{% endblock %}
+<p class="mb-4">
+  {% blocktranslate %}Already have an account? Then please
+  <a class="underline link" href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
+</p>
 
-{% block content %}
+<form
+  method="post"
+  action="{{ request.path }}"
+  class="space-y-3 lg:space-y-6"
+  hx-disable="true"
+  novalidate
+>
+  {% csrf_token %} {% if redirect_field_value %}
+  <input
+    type="hidden"
+    name="{{ redirect_field_name }}"
+    value="{{ redirect_field_value }}"
+  />
+  {% endif %} {% include "forms/_errors.html" with errors=form.non_field_errors %} {%
+  include "forms/_field.html" with field=form.email %} {% include "forms/_field.html"
+  with field=form.username %} {% include "forms/_field.html" with field=form.password1
+  %} {% include "forms/_field.html" with field=form.password2 %} {% if form.captcha %}
+  {{ form.captcha }} {% endif %}
 
-    <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg xl:text-xl mb-4">
-        Sign Up
-    </h1>
+  <div>
+    <button class="inline-flex items-center btn btn-default">
+      {% icon "plus" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %} Sign Up
+    </button>
+  </div>
+</form>
 
-    <p class="mb-4">{% blocktranslate %}Already have an account? Then please
-        <a class="underline link"
-            href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
-    </p>
+{% include "account/_social_logins.html" %}
 
-    <form method="post"
-        action="{{ request.path }}"
-        class="space-y-3 lg:space-y-6"
-        hx-disable="true"
-        novalidate>
-        {% csrf_token %}
-        {% if redirect_field_value %}
-            <input type="hidden"
-                name="{{ redirect_field_name }}"
-                value="{{ redirect_field_value }}" />
-        {% endif %}
-
-        {% include "forms/_errors.html" with errors=form.non_field_errors %}
-
-        {% include "forms/_field.html" with field=form.email %}
-        {% include "forms/_field.html" with field=form.username %}
-        {% include "forms/_field.html" with field=form.password1 %}
-        {% include "forms/_field.html" with field=form.password2 %}
-
-        {% if form.captcha %}
-            {{ form.captcha }}
-        {% endif %}
-
-        <div>
-            <button class="inline-flex items-center btn btn-default">
-                {% icon "plus" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-                Sign Up
-            </button>
-        </div>
-    </form>
-
-    {% include "account/_social_logins.html" %}
-
-    <p class="mt-3">
-        Please review our <a class="underline link"
-            href="{% url 'about:terms' %}">Privacy Policy</a> before you join.
-    </p>
+<p class="mt-3">
+  Please review our
+  <a class="underline link" href="{% url 'about:terms' %}">Privacy Policy</a> before you
+  join.
+</p>
 {% endblock %}

@@ -1,33 +1,41 @@
-{% extends "episodes/base.html" %}
-
-{% block subtitle %} | Favorites{% endblock %}
-
-{% block robots %}
-    <meta name="robots"
-        content="noindex" />
-{% endblock %}
-
-{% block content %}
-    <div id="favorites"
-        x-data="{count: {{ page_obj.paginator.count }}}"
-        @remove-favorite.window="count-=1">
-        <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4 lg:mb-6">
-            <h1 class="font-bold flex justify-center sm:justify-start text-base lg:text-lg xl:text-xl">Favorites</h1>
-            {% if search or page_obj.paginator.count %}
-                <div class="flex items-center justify-center sm:justify-end">
-                    {% include "forms/_search_form.html" with placeholder="Search: Favorites" %}
-                </div>
-            {% endif %}
-        </div>
-        <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
-            x-show="count === 0"
-            x-cloak>
-            {% if request.search %}
-                No results found for <span class="font-bold">{{ request.search.value }}</span>.
-            {% else %}
-                You do not have any Favorites at the moment.
-            {% endif %}
-        </p>
-        {% include pagination_template %}
+{% extends "episodes/base.html" %} {% block subtitle %} | Favorites{% endblock %} {%
+block robots %}
+<meta name="robots" content="noindex" />
+{% endblock %} {% block content %}
+<div
+  id="favorites"
+  x-data="{count: {{ page_obj.paginator.count }}}"
+  @remove-favorite.window="count-=1"
+>
+  <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4 lg:mb-6">
+    <h1
+      class="
+        font-bold
+        flex
+        justify-center
+        sm:justify-start
+        text-base
+        lg:text-lg
+        xl:text-xl
+      "
+    >
+      Favorites
+    </h1>
+    {% if search or page_obj.paginator.count %}
+    <div class="flex items-center justify-center sm:justify-end">
+      {% include "forms/_search_form.html" with placeholder="Search: Favorites" %}
     </div>
+    {% endif %}
+  </div>
+  <p
+    class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
+    x-show="count === 0"
+    x-cloak
+  >
+    {% if request.search %} No results found for
+    <span class="font-bold">{{ request.search.value }}</span>. {% else %} You do not
+    have any Favorites at the moment. {% endif %}
+  </p>
+  {% include pagination_template %}
+</div>
 {% endblock content %}

@@ -1,101 +1,95 @@
-{% extends "episodes/base.html" %}
+{% extends "episodes/base.html" %} {% block subtitle %} | {{
+episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %} {% block
+content %}
+<h1 class="font-bold text-base lg:text-lg xl:text-xl mb-4 lg:mb-6">
+  {{ episode.cleaned_title }}
+</h1>
 
-{% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
+{% with podcast=episode.podcast duration=episode.duration_in_seconds %} {% if
+previous_episode or next_episode %}
+<nav class="flex justify-between mb-4 border-b dark:border-gray-500 pb-3">
+  {% if previous_episode %}
+  <a
+    class="link"
+    href="{{ previous_episode.get_absolute_url }}"
+    title="{{ previous_episode.cleaned_title }}"
+  >
+    Previous
+  </a>
 
-{% block content %}
-    <h1 class="font-bold text-base lg:text-lg xl:text-xl mb-4 lg:mb-6">{{ episode.cleaned_title }}</h1>
+  {% else %}
+  <span class="text-gray-600 cursor-not-allowed">Previous</span>
+  {% endif %} {% if next_episode %}
+  <a
+    class="link"
+    href="{{ next_episode.get_absolute_url }}"
+    title="{{ next_episode.cleaned_title }}"
+  >
+    Next
+  </a>
+  {% else %}
+  <span class="text-gray-600 cursor-not-allowed">Next</span>
+  {% endif %}
+</nav>
+{% endif %}
 
-    {% with podcast=episode.podcast duration=episode.duration_in_seconds %}
+<div class="space-y-3">
+  <h3 class="lg:text-lg">
+    <a
+      href="{{ podcast.get_episodes_url }}"
+      title="See All Episodes for {{ podcast.cleaned_title }}"
+      class="link"
+    >
+      {{ podcast.cleaned_title }}
+    </a>
+  </h3>
 
-        {% if previous_episode or next_episode %}
-            <nav class="flex justify-between mb-4 border-b dark:border-gray-500 pb-3">
-                {% if previous_episode %}
-                    <a class="link"
-                        href="{{ previous_episode.get_absolute_url }}"
-                        title="{{ previous_episode.cleaned_title }}">
-                        Previous
-                    </a>
+  {% with metadata=episode.get_episode_metadata %} {% if metadata %}
+  <div class="font-semibold text-gray-800 dark:text-gray-300">{{ metadata }}</div>
+  {% endif %} {% endwith %}
 
-                {% else %}
-                    <span class="text-gray-600 cursor-not-allowed">Previous</span>
-                {% endif %}
-                {% if next_episode %}
-                    <a class="link"
-                        href="{{ next_episode.get_absolute_url }}"
-                        title="{{ next_episode.cleaned_title }}">
-                        Next
-                    </a>
-                {% else %}
-                    <span class="text-gray-600 cursor-not-allowed">Next</span>
-                {% endif %}
+  <div class="flex items-center space-x-3 sm:space-x-6">
+    <div>
+      <a href="{{ podcast.get_detail_url }}">
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url
+        alt=podcast.cleaned_title size=32 css_class="h-28 lg:h-32 w-28 lg:w-32 border
+        dark:border-gray-500 " %}
+      </a>
+    </div>
 
-            </nav>
-        {% endif %}
+    <div class="space-y-4">
+      {% include "episodes/_play_toggle.html" %} {% include
+      "episodes/_detail_actions.html" %} {% share_buttons episode.get_absolute_url
+      podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
+    </div>
+  </div>
 
-        <div class="space-y-3">
-            <h3 class="lg:text-lg">
-                <a href="{{ podcast.get_episodes_url }}"
-                    title="See All Episodes for {{ podcast.cleaned_title }}"
-                    class="link">
-                    {{ podcast.cleaned_title }}
-                </a>
-            </h3>
-
-            {% with metadata=episode.get_episode_metadata %}
-                {% if metadata %}
-                    <div class="font-semibold text-gray-800 dark:text-gray-300">
-                        {{ metadata }}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <div class="flex items-center space-x-3 sm:space-x-6">
-
-                <div>
-                    <a href="{{ podcast.get_detail_url }}">
-                        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=32 css_class="h-28 lg:h-32 w-28 lg:w-32 border dark:border-gray-500 " %}
-                    </a>
-                </div>
-
-                <div class="space-y-4">
-
-                    {% include "episodes/_play_toggle.html" %}
-                    {% include "episodes/_detail_actions.html" %}
-
-                    {% share_buttons episode.get_absolute_url podcast.cleaned_title|add:" | "|add:episode.cleaned_title %}
-
-                </div>
-            </div>
-
-            <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3">
-                <div title="Date Published">
-                    {% include "_date.html" with value=episode.pub_date %}
-                </div>
-                {% if duration %}
-                    <div title="Duration">
-                        {{ duration|format_duration }}
-                    </div>
-                {% endif %}
-                {% with file_size=episode.get_file_size %}
-                    {% if file_size %}
-                        <div title="Size">
-                            {{ file_size }}
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                {% if episode.explicit or podcast.explicit %}
-                    <div title="May contain adult themes and language. Listener discretion advised.">
-                        Explicit
-                    </div>
-                {% endif %}
-            </div>
-            {% if episode.listened %}
-                {% include "episodes/_listened.html" %}
-            {% endif %}
-
-            {% include "_markdown.html" with content=episode.description %}
-            {% include "podcasts/_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
-
-        </div>
-    {% endwith %}
-{% endblock %}
+  <div
+    class="
+      flex
+      items-center
+      flex-wrap
+      font-semibold
+      text-gray-800
+      dark:text-gray-300
+      space-x-3
+    "
+  >
+    <div title="Date Published">
+      {% include "_date.html" with value=episode.pub_date %}
+    </div>
+    {% if duration %}
+    <div title="Duration">{{ duration|format_duration }}</div>
+    {% endif %} {% with file_size=episode.get_file_size %} {% if file_size %}
+    <div title="Size">{{ file_size }}</div>
+    {% endif %} {% endwith %} {% if episode.explicit or podcast.explicit %}
+    <div title="May contain adult themes and language. Listener discretion advised.">
+      Explicit
+    </div>
+    {% endif %}
+  </div>
+  {% if episode.listened %} {% include "episodes/_listened.html" %} {% endif %} {%
+  include "_markdown.html" with content=episode.description %} {% include
+  "podcasts/_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
+</div>
+{% endwith %} {% endblock %}
