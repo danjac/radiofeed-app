@@ -1,156 +1,132 @@
 <nav class="pt-4 pl-3 xl:pl-0 text-base lg:text-lg">
-  {% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto"
+    {% with SIDEBAR_CSS="inline-flex items-center link w-full sm:w-auto"
   SIDEBAR_ACTIVE_CSS="xl:text-blue-600 xl:font-bold xl:dark:text-blue-300" ICON_CSS="h-5
   w-5 lg:h-6 lg:w-6 mr-3"%}
-  <ul
-    class="
+    <ul class="
       space-y-4
       sm:space-y-0
       xl:space-y-5
       sm:grid sm:gap-2 sm:grid-flow-cols sm:grid-cols-2
       xl:grid-cols-none xl:grid-rows-none xl:gap-0
-    "
-  >
-    <li>
-      {% active_link 'podcasts:index' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="p"
-        title="Podcasts"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "rss" css_class=ICON_CSS %} Podcasts
-      </a>
-    </li>
-    <li>
-      {% active_link 'episodes:index' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="n"
-        title="New Releases"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "sparkles" css_class=ICON_CSS %} New Releases
-      </a>
-    </li>
-    {% if user.is_authenticated %}
+    ">
+        <li>
+            {% active_link 'podcasts:index' as link %}
+            <a href="{{ link.url }}"
+               accesskey="p"
+               title="Podcasts"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "rss" css_class=ICON_CSS %} Podcasts
+            </a>
+        </li>
+        <li>
+            {% active_link 'episodes:index' as link %}
+            <a href="{{ link.url }}"
+               accesskey="n"
+               title="New Releases"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "sparkles" css_class=ICON_CSS %} New Releases
+            </a>
+        </li>
+        {% if user.is_authenticated %}
 
-    <li>
-      {% active_link 'episodes:queue' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="q"
-        title="Play Queue"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "collection" css_class=ICON_CSS %} Play Queue
-      </a>
-    </li>
+        <li>
+            {% active_link 'episodes:queue' as link %}
+            <a href="{{ link.url }}"
+               accesskey="q"
+               title="Play Queue"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "collection" css_class=ICON_CSS %} Play Queue
+            </a>
+        </li>
 
-    <li>
-      {% active_link 'episodes:favorites' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="f"
-        title="Favorites"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "star" css_class=ICON_CSS %} Favorites
-      </a>
-    </li>
+        <li>
+            {% active_link 'episodes:favorites' as link %}
+            <a href="{{ link.url }}"
+               accesskey="f"
+               title="Favorites"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "star" css_class=ICON_CSS %} Favorites
+            </a>
+        </li>
 
-    <li>
-      {% active_link 'episodes:history' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="h"
-        title="History"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "database" css_class=ICON_CSS %} History
-      </a>
-    </li>
+        <li>
+            {% active_link 'episodes:history' as link %}
+            <a href="{{ link.url }}"
+               accesskey="h"
+               title="History"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "database" css_class=ICON_CSS %} History
+            </a>
+        </li>
 
-    <li>
-      {% re_active_link 'users:preferences' '/account/*' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="s"
-        title="Settings"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "adjustments" css_class=ICON_CSS %} Settings
-      </a>
-    </li>
+        <li>
+            {% re_active_link 'users:preferences' '/account/*' as link %}
+            <a href="{{ link.url }}"
+               accesskey="s"
+               title="Settings"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "adjustments" css_class=ICON_CSS %} Settings
+            </a>
+        </li>
 
-    <li>
-      <form
-        class="inline-block"
-        hx-disable="true"
-        action="{% url 'account_logout' %}"
-        method="post"
-      >
-        {% csrf_token %}
-        <button
-          accesskey="l"
-          title="Logout"
-          @click="$dispatch('close-sidebar')"
-          class="{{ SIDEBAR_CSS }}"
-        >
-          {% icon "logout" css_class=ICON_CSS %} Logout
-        </button>
-      </form>
-    </li>
-    {% else %}
+        <li>
+            <form class="inline-block"
+                  hx-disable="true"
+                  action="{% url 'account_logout' %}"
+                  method="post">
+                {% csrf_token %}
+                <button accesskey="l"
+                        title="Logout"
+                        @click="$dispatch('close-sidebar')"
+                        class="{{ SIDEBAR_CSS }}">
+                    {% icon "logout" css_class=ICON_CSS %} Logout
+                </button>
+            </form>
+        </li>
+        {% else %}
 
-    <li>
-      {% active_link 'account_login' as link %}
-      <a
-        href="{{ request.get_full_path|login_url }}"
-        accesskey="l"
-        hx-disable="true"
-        title="Log in to your account"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "login" css_class=ICON_CSS %} Login
-      </a>
-    </li>
-    <li>
-      {% active_link 'account_signup' as link %}
-      <a
-        href="{{ request.get_full_path|signup_url }}"
-        accesskey="s"
-        hx-disable="true"
-        title="Create a new account"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "user_add" css_class=ICON_CSS %} Signup
-      </a>
-    </li>
+        <li>
+            {% active_link 'account_login' as link %}
+            <a href="{{ request.get_full_path|login_url }}"
+               accesskey="l"
+               hx-disable="true"
+               title="Log in to your account"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "login" css_class=ICON_CSS %} Login
+            </a>
+        </li>
+        <li>
+            {% active_link 'account_signup' as link %}
+            <a href="{{ request.get_full_path|signup_url }}"
+               accesskey="s"
+               hx-disable="true"
+               title="Create a new account"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "user_add" css_class=ICON_CSS %} Signup
+            </a>
+        </li>
 
-    {% endif %}
+        {% endif %}
 
-    <li>
-      {% re_active_link 'about:credits' '/about/*' as link %}
-      <a
-        href="{{ link.url }}"
-        accesskey="a"
-        title="About"
-        @click="$dispatch('close-sidebar')"
-        class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}"
-      >
-        {% icon "info" css_class=ICON_CSS %} About
-      </a>
-    </li>
+        <li>
+            {% re_active_link 'about:credits' '/about/*' as link %}
+            <a href="{{ link.url }}"
+               accesskey="a"
+               title="About"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "info" css_class=ICON_CSS %} About
+            </a>
+        </li>
 
-    {% endwith %}
-  </ul>
+        {% endwith %}
+    </ul>
 </nav>

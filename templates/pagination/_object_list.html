@@ -1,14 +1,12 @@
 {% load static %}
 <div id="page-items-{{ page_obj.number }}">
-  {% block results %}{% endblock %} {% if page_obj.has_next %}
-  <div
-    id="page-{{ page_obj.next_page_number }}"
-    hx-get="{% pagination_url page_obj.next_page_number %}"
-    hx-trigger="intersect threshold:.5 once"
-    hx-target="#page-{{ page_obj.next_page_number }}"
-    hx-swap="outerHTML"
-  >
-    {% include "pagination/_loader.html" %}
-  </div>
-  {% endif %}
+    {% block results %}{% endblock %} {% if page_obj.has_next %}
+    <div id="page-{{ page_obj.next_page_number }}"
+         hx-get="{% pagination_url page_obj.next_page_number %}"
+         hx-trigger="intersect threshold:.5 once"
+         hx-target="#page-{{ page_obj.next_page_number }}"
+         hx-swap="outerHTML">
+        {% include "pagination/_loader.html" %}
+    </div>
+    {% endif %}
 </div>

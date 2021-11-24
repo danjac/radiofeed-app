@@ -1,6 +1,5 @@
 {% if podcasts or episodes %}
-<div
-  class="
+<div class="
     absolute
     bg-white
     dark:bg-gray-800
@@ -14,16 +13,14 @@
     text-black
     dark:text-white
   "
-  x-show="search"
-  hx-target="#layout"
-  hx-push-url="true"
-  hx-swap="outerHTML show:window:top"
-  @click="search=''"
-  @keyup.enter="search=''"
->
-  {% for podcast in podcasts %}
-  <div
-    class="
+     x-show="search"
+     hx-target="#layout"
+     hx-push-url="true"
+     hx-swap="outerHTML show:window:top"
+     @click="search=''"
+     @keyup.enter="search=''">
+    {% for podcast in podcasts %}
+    <div class="
       search-result
       p-2
       flex
@@ -37,27 +34,23 @@
       dark:focus:bg-gray-900
       focus:outline-none
     "
-    :tabindex="{{ forloop.counter0 }}"
-    hx-trigger="click,keyup[event.keyCode===13]"
-    hx-get="{{ podcast.get_absolute_url }}"
-  >
-    <div class="w-14">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url size=12
+         :tabindex="{{ forloop.counter0 }}"
+         hx-trigger="click,keyup[event.keyCode===13]"
+         hx-get="{{ podcast.get_absolute_url }}">
+        <div class="w-14">
+            {% include "_cover_image.html" with cover_url=podcast.cover_url size=12
       alt=podcast.cleaned_title %}
-    </div>
+        </div>
 
-    <div
-      class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold"
-    >
-      {{ podcast.cleaned_title|truncatechars:80 }}
+        <div class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold">
+            {{ podcast.cleaned_title|truncatechars:80 }}
+        </div>
     </div>
-  </div>
-  {% endfor %} {% if episodes and podcasts %}
-  <hr class="dark:border-gray-500" />
-  {% endif %} {% with num_podcasts=podcasts|length %} {% for episode in episodes %} {%
+    {% endfor %} {% if episodes and podcasts %}
+    <hr class="dark:border-gray-500" />
+    {% endif %} {% with num_podcasts=podcasts|length %} {% for episode in episodes %} {%
   with podcast=episode.podcast %}
-  <div
-    class="
+    <div class="
       search-result
       p-2
       flex
@@ -71,21 +64,18 @@
       dark:focus:bg-gray-900
       focus:outline-none
     "
-    :tabindex="{{ forloop.counter0|add:num_podcasts }}"
-    hx-trigger="click,keyup[event.keyCode===13]"
-    hx-get="{{ episode.get_absolute_url }}"
-  >
-    <div class="w-14">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url size=12
+         :tabindex="{{ forloop.counter0|add:num_podcasts }}"
+         hx-trigger="click,keyup[event.keyCode===13]"
+         hx-get="{{ episode.get_absolute_url }}">
+        <div class="w-14">
+            {% include "_cover_image.html" with cover_url=podcast.cover_url size=12
       alt=podcast.cleaned_title %}
-    </div>
+        </div>
 
-    <div
-      class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold"
-    >
-      {{ episode.cleaned_title|truncatechars:80 }}
+        <div class="flex items-center text-sm w-80 break-words overflow-y-hidden font-semibold">
+            {{ episode.cleaned_title|truncatechars:80 }}
+        </div>
     </div>
-  </div>
-  {% endwith %} {% endfor %} {% endwith %}
+    {% endwith %} {% endfor %} {% endwith %}
 </div>
 {% endif %}

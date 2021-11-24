@@ -1,16 +1,15 @@
 {% load static django_htmx %}
-<link rel="icon" type="image/png" href="{% static 'img/wave-ico.png' %}" />
-<link rel="apple-touch-icon image_src" href="{% static 'apple-touch-icon.png' %}" />
+<link rel="icon"
+      type="image/png"
+      href="{% static 'img/wave-ico.png' %}" />
+<link rel="apple-touch-icon image_src"
+      href="{% static 'apple-touch-icon.png' %}" />
 
-<link
-  rel="stylesheet"
-  media="screen"
-  href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}"
-/>
+<link rel="stylesheet"
+      media="screen"
+      href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}" />
 
-<script
-  defer
-  src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"
-></script>
+<script defer
+        src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
 
 {% django_htmx_script %}

@@ -2,23 +2,23 @@
 <!DOCTYPE html>
 {% get_current_language as language_code %}
 <html lang="{{ language_code }}">
-  <head>
+
+<head>
     {% block head %} {% block title_tag %}
     <title>
-      {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{%
+        {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{%
       endblock %}{% endblock %}{% endspaceless %}
     </title>
     {% endblock title_tag %} {% block meta_tags %} {% include "_meta.html" %} {%
     endblock meta_tags %} {% include "_static.html" %} {% include "_google_search.html"
     %} {% endblock head %}
-  </head>
+</head>
 
-  <body
-    {%
+<body {%
     block
     bodyattrs
     %}
-    class="
+      class="
       container-xl
       mx-auto
       antialiased
@@ -27,46 +27,42 @@
       text-sm
       lg:text-base
     "
-    hx-boost="true"
-    hx-target="#layout"
-    hx-ext="intersect"
-    hx-swap="outerHTML show:window:top"
-    hx-indicator="#loader"
-    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-    {%
+      hx-boost="true"
+      hx-target="#layout"
+      hx-ext="intersect"
+      hx-swap="outerHTML show:window:top"
+      hx-indicator="#loader"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      {%
     endblock
-    %}
-  >
+    %}>
     {% endblock header_tags %} {% block page_header %} {% block navbar %}{% include
     "_navbar.html" %}{% endblock %} {% block hx_indicator %}{% include
     "_hx_indicator.html" %}{% endblock %} {% endblock page_header %} {% block messages
     %} {% include "_messages.html" %} {% endblock messages %} {% block layout %}
 
-    <div
-      class="min-h-full mx-auto flex relative p-2 pt-6 lg:pt-12 lg:mx-32"
-      hx-history-elt
-      id="layout"
-    >
-      {% block sidebar %}
-      <aside
-        class="
+    <div class="min-h-full mx-auto flex relative p-2 pt-6 lg:pt-12 lg:mx-32"
+         hx-history-elt
+         id="layout">
+        {% block sidebar %}
+        <aside class="
           w-full
           hidden
           xl:block xl:w-1/5 xl:sticky xl:top-24 xl:top-32 xl:h-screen
           pt-4
           xl:pt-0
-        "
-      >
-        {% include "_sidebar.html" %}
-      </aside>
-      {% endblock %} {% block main %}
-      <main class="w-full xl:block xl:w-4/5">{% block content %}{% endblock %}</main>
-      {% endblock main %}
+        ">
+            {% include "_sidebar.html" %}
+        </aside>
+        {% endblock %} {% block main %}
+        <main class="w-full xl:block xl:w-4/5">{% block content %}{% endblock %}</main>
+        {% endblock main %}
     </div>
     {% endblock layout %} {% block cookie_notice %} {% cookie_notice %} {% endblock %}
     {% block page_footer %} {% block player %} {% if user.is_authenticated %}
     <div id="player">{% audio_player %}</div>
     {% endif %} {% endblock player %} {% endblock page_footer %} {% block footer_tags %}
-  </body>
+</body>
+
 </html>
 {% endblock footer_tags %}

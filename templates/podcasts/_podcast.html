@@ -1,15 +1,14 @@
 {% with podcast_url=podcast.get_absolute_url %}
 <div class="border dark:border-gray-500 mb-4 flex items-center space-x-3">
-  <div class="w-20">
-    <a href="{{ podcast_url }}">
-      {% include "_cover_image.html" with cover_url=podcast.cover_url
+    <div class="w-20">
+        <a href="{{ podcast_url }}">
+            {% include "_cover_image.html" with cover_url=podcast.cover_url
       alt=podcast.cleaned_title size=20 %}
-    </a>
-  </div>
+        </a>
+    </div>
 
-  <div class="flex flex-col place-content-between h-16">
-    <h2
-      class="
+    <div class="flex flex-col place-content-between h-16">
+        <h2 class="
         w-56
         max-h-10
         flex flex-wrap
@@ -20,22 +19,21 @@
         lg:max-w-xl
         xl:max-w-2xl
         2xl:max-w-4xl
-      "
-    >
-      <a href="{{ podcast_url }}" class="link" title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title }}
-      </a>
-    </h2>
+      ">
+            <a href="{{ podcast_url }}"
+               class="link"
+               title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title }}
+            </a>
+        </h2>
 
-    <div class="text-xs lg:text-sm">
-      <a
-        href="{{ podcast.get_latest_url }}"
-        title="Last Published"
-        class="link font-semibold text-gray-600 dark:text-gray-300"
-      >
-        {% include "_date.html" with value=podcast.pub_date %}
-      </a>
+        <div class="text-xs lg:text-sm">
+            <a href="{{ podcast.get_latest_url }}"
+               title="Last Published"
+               class="link font-semibold text-gray-600 dark:text-gray-300">
+                {% include "_date.html" with value=podcast.pub_date %}
+            </a>
+        </div>
     </div>
-  </div>
 </div>
 {% endwith %}

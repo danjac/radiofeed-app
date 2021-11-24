@@ -1,8 +1,7 @@
-<div
-  class="hx-indicator"
-  id="loader"
-  x-data="{width: 0}"
-  x-init="
+<div class="hx-indicator"
+     id="loader"
+     x-data="{width: 0}"
+     x-init="
     setInterval(() => {
     if ($el.classList.contains('htmx-request')) {
     width = width + (Math.random() / 100);
@@ -11,5 +10,4 @@
     width = 0;
     }
     }, 300);
-    "
-></div>
+    "></div>
