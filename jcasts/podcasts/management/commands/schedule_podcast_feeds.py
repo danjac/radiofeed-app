@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for_update = []
         now = timezone.now()
 
-        time_selection = range(0, 24 * 60 * 60)
+        time_selection = range(0, 3 * 60)
 
         for counter, podcast in enumerate(
             Podcast.objects.active().fresh().order_by("-pub_date").iterator()
