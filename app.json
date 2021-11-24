@@ -1,33 +1,29 @@
 {
-  "scripts": {
-    "dokku": {
-      "predeploy": "python manage.py collectstatic --clear --noinput && python manage.py migrate --noinput"
-    }
-  },
-  "formation": {
-    "web": {
-      "quantity": 1
+    "scripts": {
+        "dokku": {
+            "predeploy": "python manage.py collectstatic --clear --noinput && python manage.py migrate --noinput"
+        }
     },
-    "worker": {
-      "quantity": 2
-    }
-  },
-  "cron": [
-    {
-      "command": "python manage.py parse_podcast_feeds --frequency=12",
-      "schedule": "*/12 * * * *"
+    "formation": {
+        "web": {
+            "quantity": 1
+        },
+        "worker": {
+            "quantity": 2
+        }
     },
-    {
-      "command": "python manage.py send_recommendation_emails",
-      "schedule": "12 9 * * 1"
-    },
-    {
-      "command": "python manage.py make_recommendations",
-      "schedule": "20 3 * * *"
-    },
-    {
-      "command": "python manage.py clearsessions",
-      "schedule": "35 1 * * *"
-    }
-  ]
+    "cron": [
+        {
+            "command": "python manage.py send_recommendation_emails",
+            "schedule": "12 9 * * 1"
+        },
+        {
+            "command": "python manage.py make_recommendations",
+            "schedule": "20 3 * * *"
+        },
+        {
+            "command": "python manage.py clearsessions",
+            "schedule": "35 1 * * *"
+        }
+    ]
 }
