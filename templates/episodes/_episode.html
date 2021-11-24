@@ -1,7 +1,7 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div class="border dark:border-gray-500 mb-4 flex items-center justify-between"
      {% if hx_remove %}
-     x-data="{show: true, showDetails: false}"
+     x-data="{show: true}"
      x-show="show"
      x-transition:leave="transition ease-out duration-500"
      x-transition:leave-start="transform opacity-100"
