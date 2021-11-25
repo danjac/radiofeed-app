@@ -9,7 +9,7 @@ MAX_FREQUENCY = timedelta(days=30)
 
 def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     try:
-        # return the avg interval between releases
+        # return the smallest interval between releases
         frequency = timedelta(seconds=min(get_intervals(pub_dates)))
     except ValueError:
         # if insufficient data, just return default
