@@ -155,7 +155,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "__str__",
         "promoted",
         "pub_date",
-        "scheduled",
     )
 
     list_editable = ("promoted",)
@@ -263,7 +262,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             []
             if request.GET.get("q")
             else [
-                "parsed",
                 "-pub_date",
             ]
         )
