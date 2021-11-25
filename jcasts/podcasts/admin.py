@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
+from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
@@ -154,7 +155,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "__str__",
         "promoted",
         "pub_date",
-        "parsed",
+        "scheduled",
     )
 
     list_editable = ("promoted",)
@@ -166,6 +167,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "parsed",
         "queued",
         "frequency",
+        "scheduled",
         "last_build_date",
         "modified",
         "pub_date",
@@ -181,6 +183,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     change_actions = ("parse_podcast_feed",)
+
+    def scheduled(self, obj: models.Podcast) -> str:
+        if obj.parsed is None or obj.frequency is None:
+            return "-"
+        return timeuntil(obj.parsed + obj.frequency, depth=1)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:

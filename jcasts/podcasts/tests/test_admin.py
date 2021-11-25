@@ -37,6 +37,20 @@ def req(rf):
 
 
 class TestPodcastAdmin:
+    def test_scheduled_none(self, admin):
+        assert admin.scheduled(Podcast(frequency=None)) == "-"
+
+    def test_scheduled_not_none(self, admin):
+        assert (
+            admin.scheduled(
+                Podcast(
+                    frequency=timedelta(hours=3),
+                    parsed=timezone.now() - timedelta(hours=2),
+                )
+            )
+            == "59\xa0minutes"
+        )
+
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")
