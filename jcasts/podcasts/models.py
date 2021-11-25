@@ -19,7 +19,6 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
-from jcasts.podcasts import scheduler
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 from jcasts.shared.typedefs import User
@@ -94,14 +93,14 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def frequent(self) -> models.QuerySet:
         return self.filter(
-            models.Q(pub_date__gt=timezone.now() - scheduler.MAX_FREQUENCY)
+            models.Q(pub_date__gt=timezone.now() - timedelta(days=30))
             | models.Q(pub_date__isnull=True)
         )
 
     def sporadic(self) -> models.QuerySet:
         return self.filter(
             pub_date__isnull=False,
-            pub_date__lte=timezone.now() - scheduler.MAX_FREQUENCY,
+            pub_date__lte=timezone.now() - timedelta(days=30),
         )
 
     def scheduled(self) -> models.QuerySet:
@@ -166,7 +165,7 @@ class Podcast(models.Model):
     # scheduling
 
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
-    frequency_modifier: float = models.FloatField(default=1.0)
+    frequency_modifier: float | None = models.FloatField(null=True, blank=True)
 
     # feed parse result fields
 

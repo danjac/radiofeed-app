@@ -64,7 +64,7 @@ class TestParsePubDates:
 
         assert pub_date == podcast.pub_date
         assert frequency > timedelta(hours=24)
-        assert modifier == 1.2
+        assert modifier == 0.06
 
     def test_new_pub_dates(self, podcast, feed):
 
@@ -80,7 +80,7 @@ class TestParsePubDates:
 
         assert pub_date == items[0].pub_date
         assert frequency == timedelta(days=3)
-        assert modifier == 1.0
+        assert modifier == 0.05
 
     def test_no_new_pub_dates(self, db, feed):
         podcast = PodcastFactory(frequency=timedelta(hours=24))
@@ -91,7 +91,7 @@ class TestParsePubDates:
 
         assert pub_date == podcast.pub_date
         assert frequency > timedelta(hours=24)
-        assert modifier == 1.2
+        assert modifier == 0.06
 
 
 class TestIsFeedChanged:
