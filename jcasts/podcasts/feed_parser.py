@@ -57,11 +57,14 @@ class ParseResult:
 
 
 def parse_scheduled_feeds(frequency: timedelta) -> int:
-    return parse_podcast_feeds(Podcast.objects.active().fresh().scheduled(), frequency)
+    return parse_podcast_feeds(
+        Podcast.objects.active().frequent().scheduled(),
+        frequency,
+    )
 
 
-def parse_stale_feeds(frequency: timedelta) -> int:
-    return parse_podcast_feeds(Podcast.objects.active().stale(), frequency)
+def parse_sporadic_feeds(frequency: timedelta) -> int:
+    return parse_podcast_feeds(Podcast.objects.active().sporadic(), frequency)
 
 
 def parse_podcast_feeds(podcasts: QuerySet, frequency: timedelta) -> int:

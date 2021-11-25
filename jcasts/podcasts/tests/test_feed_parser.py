@@ -24,7 +24,7 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_pub_dates,
     parse_scheduled_feeds,
-    parse_stale_feeds,
+    parse_sporadic_feeds,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -79,7 +79,7 @@ class TestParsePubDates:
         pub_date, frequency, modifier = parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
-        assert frequency > timedelta(days=3)
+        assert frequency == timedelta(days=3)
         assert modifier == 1.0
 
     def test_no_new_pub_dates(self, db, feed):
@@ -140,7 +140,7 @@ class TestParsePodcastFeeds:
         mocker.patch("rq.worker.Worker.count", return_value=2)
         mocker.patch("django_rq.get_queue")
 
-    def test_parse_stale_feeds(self, db, mock_parse_podcast_feed, mock_rq):
+    def test_parse_sporadic_feeds(self, db, mock_parse_podcast_feed, mock_rq):
         now = timezone.now()
 
         # inactive
@@ -156,7 +156,7 @@ class TestParsePodcastFeeds:
             frequency=timedelta(hours=1),
         )
 
-        # scheduled + fresh
+        # scheduled + frequent
         PodcastFactory(
             parsed=now - timedelta(days=3),
             frequency=timedelta(hours=1),
@@ -169,7 +169,7 @@ class TestParsePodcastFeeds:
             pub_date=now - timedelta(days=99),
         )
 
-        parse_stale_feeds(frequency=timedelta(hours=1))
+        parse_sporadic_feeds(frequency=timedelta(hours=1))
         queued = Podcast.objects.filter(queued__isnull=False)
 
         assert queued.count() == 2
@@ -185,18 +185,18 @@ class TestParsePodcastFeeds:
         PodcastFactory(active=False)
 
         # not scheduled yet
-        PodcastFactory(parsed=now + timedelta(days=1))
+        PodcastFactory(pub_date=now, frequency=timedelta(days=1))
 
         # queued
         PodcastFactory(
             queued=now,
-            parsed=now - timedelta(days=3),
+            pub_date=now - timedelta(days=3),
             frequency=timedelta(hours=1),
         )
 
         # scheduled
         podcast = PodcastFactory(
-            parsed=now - timedelta(days=3),
+            pub_date=now - timedelta(days=3),
             frequency=timedelta(hours=1),
         )
 

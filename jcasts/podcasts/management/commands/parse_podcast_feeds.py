@@ -21,8 +21,8 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--stale",
-            help="Parse stale feeds",
+            "--sporadic",
+            help="Parse sporadic feeds",
             action="store_true",
             default=False,
         )
@@ -31,8 +31,8 @@ class Command(BaseCommand):
         frequency = timedelta(minutes=options["frequency"])
 
         num_podcasts = (
-            feed_parser.parse_stale_feeds(frequency)
-            if options["stale"]
+            feed_parser.parse_sporadic_feeds(frequency)
+            if options["sporadic"]
             else feed_parser.parse_scheduled_feeds(frequency)
         )
 

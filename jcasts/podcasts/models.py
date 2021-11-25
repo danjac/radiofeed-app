@@ -19,6 +19,7 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from model_utils.models import TimeStampedModel
 
+from jcasts.podcasts import scheduler
 from jcasts.shared.cleaners import strip_html
 from jcasts.shared.db import FastCountMixin, SearchMixin
 from jcasts.shared.typedefs import User
@@ -87,26 +88,26 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
     def fresh(self) -> models.QuerySet:
         return self.filter(
-            models.Q(
-                pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD,
-            )
+            models.Q(pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD)
             | models.Q(pub_date__isnull=True)
         )
 
-    def stale(self) -> models.QuerySet:
-        return self.published().filter(
-            pub_date__lte=timezone.now() - settings.FRESHNESS_THRESHOLD,
+    def frequent(self) -> models.QuerySet:
+        return self.filter(
+            models.Q(pub_date__gt=timezone.now() - scheduler.MAX_FREQUENCY)
+            | models.Q(pub_date__isnull=True)
+        )
+
+    def sporadic(self) -> models.QuerySet:
+        return self.filter(
+            pub_date__isnull=False,
+            pub_date__lte=timezone.now() - scheduler.MAX_FREQUENCY,
         )
 
     def scheduled(self) -> models.QuerySet:
         return self.filter(
-            models.Q(parsed__isnull=True)
-            | models.Q(
-                frequency__isnull=False,
-                parsed__isnull=False,
-                parsed__lt=timezone.now() - models.F("frequency"),
-            ),
-        )
+            models.Q(pub_date__isnull=True) | models.Q(frequency__isnull=True)
+        ) | self.filter(pub_date__lt=timezone.now() - models.F("frequency"))
 
     def with_followed(self) -> models.QuerySet:
         return self.annotate(

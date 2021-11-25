@@ -37,45 +37,6 @@ def req(rf):
 
 
 class TestPodcastAdmin:
-    def test_scheduled_none(self, admin):
-        assert admin.scheduled(Podcast(frequency=None)) == "-"
-
-    def test_scheduled_queued(self, admin):
-        now = timezone.now()
-        assert (
-            admin.scheduled(
-                Podcast(
-                    frequency=timedelta(hours=3),
-                    parsed=now - timedelta(hours=2),
-                    queued=now,
-                )
-            )
-            == "Queued"
-        )
-
-    def test_scheduled_pending(self, admin):
-        now = timezone.now()
-        assert (
-            admin.scheduled(
-                Podcast(
-                    frequency=timedelta(hours=3),
-                    parsed=now - timedelta(hours=4),
-                )
-            )
-            == "Pending"
-        )
-
-    def test_scheduled_not_none(self, admin):
-        assert (
-            admin.scheduled(
-                Podcast(
-                    frequency=timedelta(hours=3),
-                    parsed=timezone.now() - timedelta(hours=2),
-                )
-            )
-            == "59\xa0minutes"
-        )
-
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")
@@ -184,29 +145,29 @@ class TestPubDateFilter:
         assert qs.count() == 3
         assert no_pub_date not in qs
 
-    def test_pub_date_stale(self, settings, podcasts, admin, req):
+    def test_sporadic(self, settings, podcasts, admin, req):
         now = timezone.now()
-        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         PodcastFactory(pub_date=None)
         PodcastFactory(pub_date=now - timedelta(days=9))
-        not_fresh = PodcastFactory(pub_date=now - timedelta(days=99))
+        not_ = PodcastFactory(pub_date=now - timedelta(days=99))
 
-        f = PubDateFilter(req, {"pub_date": "stale"}, Podcast, admin)
+        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert not_fresh in qs
+        assert not_ in qs
 
-    def test_pub_date_fresh(self, settings, podcasts, admin, req):
+    def test_frequent(self, settings, podcasts, admin, req):
         now = timezone.now()
-        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
         no_pub_date = PodcastFactory(pub_date=None)
-        not_fresh = PodcastFactory(pub_date=now - timedelta(days=99))
+        frequent = PodcastFactory(pub_date=now - timedelta(days=9))
+        sporadic = PodcastFactory(pub_date=now - timedelta(days=99))
 
-        f = PubDateFilter(req, {"pub_date": "fresh"}, Podcast, admin)
+        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 5
         assert no_pub_date in qs
-        assert not_fresh not in qs
+        assert frequent in qs
+        assert sporadic not in qs
 
 
 class TestActiveFilter:

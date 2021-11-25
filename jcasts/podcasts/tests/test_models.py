@@ -175,20 +175,20 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "parsed,frequency,exists",
+        "pub_date,frequency,exists",
         [
             (None, None, True),
-            (timedelta(days=3), None, False),
+            (timedelta(days=3), None, True),
             (timedelta(days=3), timedelta(days=1), True),
             (timedelta(days=3), timedelta(days=4), False),
             (timedelta(days=-3), timedelta(days=1), False),
         ],
     )
-    def test_scheduled(self, db, parsed, frequency, exists):
+    def test_scheduled(self, db, pub_date, frequency, exists):
 
         now = timezone.now()
         PodcastFactory(
-            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
             frequency=frequency,
         )
         assert Podcast.objects.scheduled().exists() is exists
@@ -210,16 +210,15 @@ class TestPodcastManager:
     @pytest.mark.parametrize(
         "last_pub,exists",
         [
-            (timedelta(days=30), False),
+            (timedelta(days=3), False),
+            (timedelta(days=30), True),
             (timedelta(days=99), True),
             (None, False),
         ],
     )
-    def test_stale(self, db, settings, last_pub, exists):
-        settings.FRESHNESS_THRESHOLD = timedelta(days=90)
+    def test_sporadic(self, db, settings, last_pub, exists):
         PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
-
-        assert Podcast.objects.stale().exists() is exists
+        assert Podcast.objects.sporadic().exists() is exists
 
 
 class TestPodcastModel:

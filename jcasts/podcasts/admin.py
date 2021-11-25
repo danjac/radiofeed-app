@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from django.conf import settings
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
-from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
@@ -53,8 +51,8 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("fresh", f"Fresh (< {settings.FRESHNESS_THRESHOLD.days} days)"),
-            ("stale", f"Stale (> {settings.FRESHNESS_THRESHOLD.days} days)"),
+            ("frequent", "Frequent (< 30 days)"),
+            ("sporadic", "Sporadic (> 30 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
@@ -63,10 +61,10 @@ class PubDateFilter(admin.SimpleListFilter):
             return queryset.published()
         if value == "no":
             return queryset.unpublished()
-        if value == "fresh":
-            return queryset.fresh()
-        if value == "stale":
-            return queryset.stale()
+        if value == "frequent":
+            return queryset.frequent()
+        if value == "sporadic":
+            return queryset.sporadic()
         return queryset
 
 
@@ -167,7 +165,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "queued",
         "frequency",
         "frequency_modifier",
-        "scheduled",
         "last_build_date",
         "modified",
         "pub_date",
@@ -183,20 +180,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     )
 
     change_actions = ("parse_podcast_feed",)
-
-    def scheduled(self, obj: models.Podcast) -> str:
-        if obj.queued:
-            return "Queued"
-
-        if obj.parsed is None or obj.frequency is None:
-            return "-"
-
-        value = obj.parsed + obj.frequency
-
-        if value < timezone.now():
-            return "Pending"
-
-        return timeuntil(value, depth=1)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:

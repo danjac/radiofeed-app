@@ -4,8 +4,6 @@ import statistics
 
 from datetime import datetime, timedelta
 
-from django.utils import timezone
-
 DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
@@ -39,7 +37,7 @@ def get_frequency(frequency: timedelta, modifier: float) -> timedelta:
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:
-    latest, *pub_dates = sorted([timezone.now()] + pub_dates, reverse=True)
+    latest, *pub_dates = sorted(pub_dates, reverse=True)
     intervals: list[float] = []
 
     for pub_date in pub_dates:
