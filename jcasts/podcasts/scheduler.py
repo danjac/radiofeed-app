@@ -26,7 +26,7 @@ INTERVALS = (
 )
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta:
+def schedule(pub_dates: list[datetime]) -> timedelta:
     """Calculate the frequency based on smallest interval between pub dates
     of individual episodes."""
 
