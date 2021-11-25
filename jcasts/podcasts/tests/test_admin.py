@@ -37,6 +37,30 @@ def req(rf):
 
 
 class TestPodcastAdmin:
+    def test_scheduled_none(self, admin):
+        assert admin.scheduled(Podcast(pub_date=None)) == "-"
+
+    def test_scheduled_queued(self, admin):
+        assert admin.scheduled(Podcast(queued=timezone.now())) == "Queued"
+
+    def test_scheduled_pending(self, admin):
+        now = timezone.now()
+        assert (
+            admin.scheduled(
+                Podcast(pub_date=now - timedelta(days=1), frequency=timedelta(hours=3))
+            )
+            == "Pending"
+        )
+
+    def test_scheduled_value(self, admin):
+        now = timezone.now()
+        assert (
+            admin.scheduled(
+                Podcast(pub_date=now - timedelta(days=1), frequency=timedelta(days=3))
+            )
+            == "1\xa0day"
+        )
+
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")
@@ -49,7 +73,7 @@ class TestPodcastAdmin:
 
     def test_get_ordering_no_search_term(self, admin, req):
         ordering = admin.get_ordering(req)
-        assert ordering == ["-pub_date"]
+        assert ordering == ["parsed", "-pub_date"]
 
     def test_get_ordering_search_term(self, admin, req):
         req.GET = {"q": "test"}
