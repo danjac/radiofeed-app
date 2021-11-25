@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import secrets
-
-from datetime import timedelta
-
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
@@ -21,17 +17,30 @@ class Command(BaseCommand):
         for_update = []
         now = timezone.now()
 
-        time_selection = range(0, 3 * 60)
-
         for counter, podcast in enumerate(
-            Podcast.objects.active().fresh().order_by("-pub_date").iterator()
+            Podcast.objects.active()
+            .fresh()
+            .published()
+            .order_by("-pub_date")
+            .iterator()
         ):
 
-            podcast.frequency = scheduler.get_frequency(
-                list(podcast.episode_set.values_list("pub_date", flat=True))
+            podcast.frequency, podcast.frequency_modifier = scheduler.schedule(
+                list(podcast.episode_set.values_list("pub_date", flat=True)), 1.0
             )
 
-            podcast.parsed = now - timedelta(minutes=secrets.choice(time_selection))
+            parsed = podcast.pub_date
+
+            while parsed < now:
+
+                podcast.frequency, podcast.frequency_modifier = scheduler.reschedule(
+                    podcast.frequency,
+                    podcast.frequency_modifier,
+                )
+
+                parsed += podcast.frequency
+
+            podcast.parsed = parsed
 
             self.stdout.write(f"{counter}:{podcast.title}")
 

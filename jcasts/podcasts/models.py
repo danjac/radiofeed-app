@@ -163,7 +163,9 @@ class Podcast(models.Model):
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # scheduling
+
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
+    frequency_modifier: float = models.FloatField(default=1.0)
 
     # feed parse result fields
 

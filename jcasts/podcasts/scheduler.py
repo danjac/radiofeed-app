@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import bisect
 import statistics
 
 from datetime import datetime, timedelta
@@ -8,38 +7,35 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 
 DEFAULT_FREQUENCY = timedelta(days=1)
-
-BUCKETS = (
-    timedelta(hours=24),
-    timedelta(days=3),
-    timedelta(days=7),
-    timedelta(days=14),
-    timedelta(days=30),
-)
-
-INTERVALS = (
-    timedelta(hours=3),
-    timedelta(hours=8),
-    timedelta(hours=12),
-    timedelta(hours=24),
-    timedelta(hours=48),
-)
+MIN_FREQUENCY = timedelta(hours=3)
+MAX_FREQUENCY = timedelta(days=30)
 
 
-def schedule(pub_dates: list[datetime]) -> timedelta:
-    """Calculate the frequency based on smallest interval between pub dates
-    of individual episodes."""
-
+def schedule(pub_dates: list[datetime], modifier: float) -> tuple[timedelta, float]:
     try:
-        # return the smallest interval between releases
-        # e.g. if release dates are 2, 3, and 5 days apart, then return 2 days
-        base_frequency = timedelta(seconds=statistics.mean(get_intervals(pub_dates)))
+        # return the avg interval between releases
+        frequency = timedelta(seconds=statistics.mean(get_intervals(pub_dates)))
     except ValueError:
         # if insufficient data, just return default
-        base_frequency = DEFAULT_FREQUENCY
+        frequency = DEFAULT_FREQUENCY
 
-    index = bisect.bisect(BUCKETS, base_frequency, hi=len(BUCKETS) - 1)
-    return INTERVALS[index]
+    modifier = max(modifier / 1.2, 1.0)
+    return get_frequency(frequency, modifier), modifier
+
+
+def reschedule(frequency: timedelta | None, modifier: float) -> tuple[timedelta, float]:
+    modifier = min(modifier * 1.2, 1000.0)
+    return get_frequency(frequency or DEFAULT_FREQUENCY, modifier), modifier
+
+
+def get_frequency(frequency: timedelta, modifier: float) -> timedelta:
+    return min(
+        max(
+            timedelta(seconds=frequency.total_seconds() * modifier),
+            MIN_FREQUENCY,
+        ),
+        MAX_FREQUENCY,
+    )
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:
