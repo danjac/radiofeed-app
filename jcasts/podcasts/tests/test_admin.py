@@ -40,6 +40,31 @@ class TestPodcastAdmin:
     def test_scheduled_none(self, admin):
         assert admin.scheduled(Podcast(frequency=None)) == "-"
 
+    def test_scheduled_queued(self, admin):
+        now = timezone.now()
+        assert (
+            admin.scheduled(
+                Podcast(
+                    frequency=timedelta(hours=3),
+                    parsed=now - timedelta(hours=2),
+                    queued=now,
+                )
+            )
+            == "Queued"
+        )
+
+    def test_scheduled_pending(self, admin):
+        now = timezone.now()
+        assert (
+            admin.scheduled(
+                Podcast(
+                    frequency=timedelta(hours=3),
+                    parsed=now - timedelta(hours=4),
+                )
+            )
+            == "Pending"
+        )
+
     def test_scheduled_not_none(self, admin):
         assert (
             admin.scheduled(

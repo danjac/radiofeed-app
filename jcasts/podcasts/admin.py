@@ -185,9 +185,18 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     change_actions = ("parse_podcast_feed",)
 
     def scheduled(self, obj: models.Podcast) -> str:
+        if obj.queued:
+            return "Queued"
+
         if obj.parsed is None or obj.frequency is None:
             return "-"
-        return timeuntil(obj.parsed + obj.frequency, depth=1)
+
+        value = obj.parsed + obj.frequency
+
+        if value < timezone.now():
+            return "Pending"
+
+        return timeuntil(value, depth=1)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
