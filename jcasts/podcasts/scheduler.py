@@ -9,7 +9,7 @@ MIN_FREQUENCY = timedelta(hours=3)
 MAX_FREQUENCY = timedelta(days=30)
 
 
-def schedule(pub_dates: list[datetime], modifier: float) -> tuple[timedelta, float]:
+def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     try:
         # return the avg interval between releases
         frequency = timedelta(seconds=statistics.mean(get_intervals(pub_dates)))
@@ -17,12 +17,11 @@ def schedule(pub_dates: list[datetime], modifier: float) -> tuple[timedelta, flo
         # if insufficient data, just return default
         frequency = DEFAULT_FREQUENCY
 
-    modifier = max(modifier / 1.2, 1.0)
-    return get_frequency(frequency, modifier), modifier
+    return get_frequency(frequency, 1.0), 1.0
 
 
 def reschedule(frequency: timedelta | None, modifier: float) -> tuple[timedelta, float]:
-    modifier = min(modifier * 1.2, 1000.0)
+    modifier = min(modifier * 1.2, 300.0)
     return get_frequency(frequency or DEFAULT_FREQUENCY, modifier), modifier
 
 

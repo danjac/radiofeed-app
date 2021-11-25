@@ -24,7 +24,7 @@ class Command(BaseCommand):
         ):
 
             podcast.frequency, _ = scheduler.schedule(
-                list(podcast.episode_set.values_list("pub_date", flat=True)), 1.0
+                list(podcast.episode_set.values_list("pub_date", flat=True))
             )
 
             self.stdout.write(f"{counter}:{podcast.title}")

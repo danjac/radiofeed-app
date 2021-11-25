@@ -268,7 +268,7 @@ def parse_pub_dates(
     pub_dates = [item.pub_date for item in items if item.pub_date]
 
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return latest, *scheduler.schedule(pub_dates, podcast.frequency_modifier)
+        return latest, *scheduler.schedule(pub_dates)
 
     return podcast.pub_date, *scheduler.reschedule(
         podcast.frequency, podcast.frequency_modifier

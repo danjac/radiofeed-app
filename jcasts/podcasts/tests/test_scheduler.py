@@ -20,7 +20,7 @@ class TestReschedule:
     def test_reschedule_modifier_past_limit(self):
         frequency, modifier = scheduler.reschedule(timedelta(hours=24), 1000)
         assert_hours(frequency, 24 * 30)
-        assert modifier == 1000
+        assert modifier == 300
 
     def test_reschedule_past_limit(self):
         frequency, modifier = scheduler.reschedule(timedelta(days=30), 1.0)
@@ -30,28 +30,28 @@ class TestReschedule:
 
 class TestSchedule:
     def test_no_pub_dates(self):
-        frequency, modifier = scheduler.schedule([], 1.0)
+        frequency, modifier = scheduler.schedule([])
         assert_hours(frequency, 24)
         assert modifier == 1.0
 
     def test_single_date(self):
         diff = timedelta(days=1)
         dt = timezone.now() - diff
-        frequency, modifier = scheduler.schedule([dt], 1.0)
+        frequency, modifier = scheduler.schedule([dt])
         assert_hours(frequency, 24)
         assert modifier == 1.0
 
     def test_multiple_dates(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
         assert modifier == 1.0
 
     def test_new_modifier(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
-        frequency, modifier = scheduler.schedule(dates, 1.2)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
         assert modifier == 1.0
 
@@ -63,7 +63,7 @@ class TestSchedule:
             for value in [2, 3, 5, 6, 9, 11, 12, 15, 16, 20, 25]
         ]
 
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 54)
         assert modifier == 1.0
 
@@ -73,7 +73,7 @@ class TestSchedule:
         dates = [
             now - timedelta(days=6),
         ]
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 6 * 24)
         assert modifier == 1.0
 
@@ -85,7 +85,7 @@ class TestSchedule:
             now - timedelta(days=30),
             now - timedelta(days=90),
         ]
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 24 * 30)
         assert modifier == 1.0
 
@@ -97,7 +97,7 @@ class TestSchedule:
             now - timedelta(days=120),
             now - timedelta(days=180),
         ]
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 24 * 30)
         assert modifier == 1.0
 
@@ -109,6 +109,6 @@ class TestSchedule:
             now - timedelta(hours=2),
             now - timedelta(hours=3),
         ]
-        frequency, modifier = scheduler.schedule(dates, 1.0)
+        frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 3)
         assert modifier == 1.0
