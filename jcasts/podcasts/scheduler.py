@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import statistics
-
 from datetime import datetime, timedelta
 
 DEFAULT_FREQUENCY = timedelta(days=1)
@@ -12,7 +10,7 @@ MAX_FREQUENCY = timedelta(days=30)
 def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     try:
         # return the avg interval between releases
-        frequency = timedelta(seconds=statistics.mean(get_intervals(pub_dates)))
+        frequency = timedelta(seconds=min(get_intervals(pub_dates)))
     except ValueError:
         # if insufficient data, just return default
         frequency = DEFAULT_FREQUENCY
