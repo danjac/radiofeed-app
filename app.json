@@ -18,6 +18,10 @@
             "schedule": "*/12 * * * *"
         },
         {
+            "command": "python manage.py parse_podcast_feeds --frequency=60 --stale",
+            "schedule": "33 4 * * *"
+        },
+        {
             "command": "python manage.py send_recommendation_emails",
             "schedule": "12 9 * * 1"
         },
