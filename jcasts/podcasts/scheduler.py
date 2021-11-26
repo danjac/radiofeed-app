@@ -57,7 +57,7 @@ def reschedule(
             modifier * 1.2,
         )
     except OverflowError:
-        return MAX_FREQUENCY, modifier
+        return MAX_FREQUENCY, DEFAULT_MODIFIER
 
 
 def within_bounds(frequency: timedelta) -> timedelta:
