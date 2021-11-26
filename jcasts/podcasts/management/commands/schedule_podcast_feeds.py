@@ -40,6 +40,6 @@ class Command(BaseCommand):
 
         Podcast.objects.bulk_update(
             for_update,
-            fields=["frequency"],
+            fields=["frequency", "frequency_modifier"],
             batch_size=500,
         )
