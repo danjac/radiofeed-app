@@ -7,13 +7,12 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from jcasts.podcasts.admin import (
-    ActiveFilter,
     FollowedFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
-    QueuedFilter,
     ResultFilter,
+    SchedulingFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -167,28 +166,6 @@ class TestPubDateFilter:
         assert no_pub_date not in qs
 
 
-class TestActiveFilter:
-    def test_active_filter_none(self, podcasts, admin, req):
-        PodcastFactory(active=False)
-        f = ActiveFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_active_filter_false(self, podcasts, admin, req):
-        inactive = PodcastFactory(active=False)
-        f = ActiveFilter(req, {"active": "no"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == inactive
-
-    def test_active_filter_true(self, podcasts, admin, req):
-        inactive = PodcastFactory(active=False)
-        f = ActiveFilter(req, {"active": "yes"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert inactive not in qs
-
-
 class TestPromotedFilter:
     def test_promoted_filter_none(self, podcasts, admin, req):
         PodcastFactory(promoted=False)
@@ -204,19 +181,27 @@ class TestPromotedFilter:
         assert qs.first() == promoted
 
 
-class TestQueuedFilter:
-    def test_queued_filter_none(self, podcasts, admin, req):
+class TestSchedulingFilter:
+    def test_none(self, podcasts, admin, req):
         PodcastFactory(queued=timezone.now())
-        f = QueuedFilter(req, {}, Podcast, admin)
+        PodcastFactory(active=False)
+        f = SchedulingFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 5
 
-    def test_queued_filter_true(self, podcasts, admin, req):
+    def test_scheduled(self, podcasts, admin, req):
         queued = PodcastFactory(queued=timezone.now())
-        f = QueuedFilter(req, {"queued": "yes"}, Podcast, admin)
+        f = SchedulingFilter(req, {"scheduling": "scheduled"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert queued not in qs
+
+    def test_queued(self, podcasts, admin, req):
+        queued = PodcastFactory(queued=timezone.now())
+        f = SchedulingFilter(req, {"scheduling": "queued"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == queued
+        assert queued in qs
 
 
 class TestFollowedFilter:

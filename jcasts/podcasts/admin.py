@@ -79,20 +79,24 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class QueuedFilter(admin.SimpleListFilter):
-    title = "Queued"
-    parameter_name = "queued"
+class SchedulingFilter(admin.SimpleListFilter):
+    title = "Scheduling"
+    parameter_name = "scheduling"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Queued"),)
+        return (
+            ("queued", "Queued"),
+            ("scheduled", "Scheduled"),
+        )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
-        if value == "yes":
-            return queryset.filter(queued__isnull=False)
-        return queryset
+        return {
+            "queued": queryset.filter(queued__isnull=False),
+            "scheduled": queryset.active().scheduled().filter(queued__isnull=True),
+        }.setdefault(value, queryset)
 
 
 class FollowedFilter(admin.SimpleListFilter):
@@ -112,35 +116,13 @@ class FollowedFilter(admin.SimpleListFilter):
         return queryset
 
 
-class ActiveFilter(admin.SimpleListFilter):
-    title = "Active"
-    parameter_name = "active"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (
-            ("yes", "Active"),
-            ("no", "Inactive"),
-        )
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "yes":
-            return queryset.active()
-        if value == "no":
-            return queryset.inactive()
-        return queryset
-
-
 @admin.register(models.Podcast)
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
-        ActiveFilter,
         FollowedFilter,
         PromotedFilter,
         PubDateFilter,
-        QueuedFilter,
+        SchedulingFilter,
         ResultFilter,
     )
 
