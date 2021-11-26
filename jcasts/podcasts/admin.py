@@ -181,13 +181,13 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         if obj.queued:
             return "Queued"
 
-        if obj.pub_date is None or obj.frequency is None:
+        if (scheduled := obj.get_scheduled()) is None:
             return "-"
 
-        if (value := obj.pub_date + obj.frequency) < timezone.now():
+        if scheduled < timezone.now():
             return "Pending"
 
-        return timeuntil(value, depth=1)
+        return timeuntil(scheduled, depth=1)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:

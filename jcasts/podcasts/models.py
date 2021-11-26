@@ -253,6 +253,13 @@ class Podcast(models.Model):
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
+    def get_scheduled(self) -> datetime | None:
+        if self.frequency is None:
+            return None
+        if self.frequency == self.MAX_FREQUENCY:
+            return self.parsed + self.frequency if self.parsed else None
+        return self.pub_date + self.frequency if self.pub_date else None
+
     @cached_property
     def cleaned_title(self) -> str:
         return strip_html(self.title)

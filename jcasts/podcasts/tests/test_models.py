@@ -222,6 +222,29 @@ class TestPodcastModel:
     def test_str_title_empty(self):
         assert str(Podcast(title="", rss=self.rss)) == self.rss
 
+    @pytest.mark.parametrize(
+        "frequency,pub_date,parsed,days",
+        [
+            (None, None, None, None),
+            (timedelta(days=1), None, None, None),
+            (timedelta(days=30), None, None, None),
+            (timedelta(days=7), timedelta(days=3), None, 4),
+            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 27),
+        ],
+    )
+    def test_get_scheduled(self, frequency, pub_date, parsed, days):
+        now = timezone.now()
+        podcast = Podcast(
+            frequency=frequency,
+            pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
+        )
+        scheduled = podcast.get_scheduled()
+        if days is None:
+            assert scheduled is None
+        else:
+            assert (scheduled - now).days == days
+
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
 
