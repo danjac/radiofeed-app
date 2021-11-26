@@ -92,10 +92,21 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self) -> models.QuerySet:
-        return self.filter(pub_date__isnull=True) | self.filter(
-            pub_date__isnull=False,
-            frequency__isnull=False,
-            pub_date__lt=timezone.now() - models.F("frequency"),
+        """
+        Example: last pub 3 days ago, freq 4d, next pub in 4 days
+
+        If frequency > 30 days (the max amount)
+
+        """
+        now = timezone.now()
+
+        threshold = now - self.model.MAX_FREQUENCY
+        interval = now - models.F("frequency")
+
+        return (
+            self.filter(pub_date__isnull=True)
+            | self.filter(pub_date__range=(threshold, interval))
+            | self.filter(pub_date__lt=threshold, parsed__lt=interval)
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -130,6 +141,11 @@ class Podcast(models.Model):
         SUCCESS = "success", "Success"
 
     MAX_FAILURES = 3
+    DEFAULT_MODIFIER = 0.05
+
+    DEFAULT_FREQUENCY = timedelta(days=1)
+    MIN_FREQUENCY = timedelta(hours=3)
+    MAX_FREQUENCY = timedelta(days=30)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)

@@ -175,20 +175,25 @@ class TestPodcastManager:
         assert not Podcast.objects.with_followed().first().followed
 
     @pytest.mark.parametrize(
-        "pub_date,frequency,exists",
+        "pub_date,parsed,frequency,exists",
         [
-            (None, None, True),
-            (timedelta(days=3), None, False),
-            (timedelta(days=3), timedelta(days=1), True),
-            (timedelta(days=3), timedelta(days=4), False),
-            (timedelta(days=-3), timedelta(days=1), False),
+            (None, None, None, True),
+            (timedelta(days=3), None, None, False),
+            (timedelta(days=3), None, timedelta(days=1), True),
+            (timedelta(days=3), timedelta(days=4), timedelta(days=1), True),
+            (timedelta(days=3), None, timedelta(days=4), False),
+            (timedelta(days=-3), None, timedelta(days=1), False),
+            (timedelta(days=33), None, timedelta(days=30), False),
+            (timedelta(days=33), timedelta(days=1), timedelta(days=30), False),
+            (timedelta(days=33), timedelta(days=30), timedelta(days=30), True),
         ],
     )
-    def test_scheduled(self, db, pub_date, frequency, exists):
+    def test_scheduled(self, db, pub_date, parsed, frequency, exists):
 
         now = timezone.now()
         PodcastFactory(
             pub_date=now - pub_date if pub_date else None,
+            parsed=now - parsed if parsed else None,
             frequency=frequency,
         )
         assert Podcast.objects.scheduled().exists() is exists
