@@ -52,8 +52,6 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("frequent", "Frequent (< 30 days)"),
-            ("sporadic", "Sporadic (> 30 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
