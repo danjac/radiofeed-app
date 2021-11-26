@@ -9,6 +9,7 @@ from django.utils import timezone
 from scipy import stats
 
 DEFAULT_MODIFIER = 0.05
+MAX_MODIFIER = 300.00
 
 DEFAULT_FREQUENCY = timedelta(days=1)
 MIN_FREQUENCY = timedelta(hours=3)
@@ -51,13 +52,10 @@ def reschedule(
     frequency = frequency or DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
     seconds = frequency.total_seconds()
-    try:
-        return (
-            within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
-            modifier * 1.2,
-        )
-    except OverflowError:
-        return MAX_FREQUENCY, DEFAULT_MODIFIER
+    return (
+        within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
+        min(modifier * 1.2, 300.00),
+    )
 
 
 def within_bounds(frequency: timedelta) -> timedelta:

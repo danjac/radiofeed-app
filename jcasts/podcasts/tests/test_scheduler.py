@@ -23,11 +23,9 @@ class TestReschedule:
         assert modifier == 0.06
 
     def test_reschedule_overflow(self):
-        frequency, modifier = scheduler.reschedule(
-            timedelta(days=30), 999999999999999999999999
-        )
+        frequency, modifier = scheduler.reschedule(timedelta(days=30), 333)
         assert_hours(frequency, 24 * 30)
-        assert modifier == 0.05
+        assert modifier == 300
 
 
 class TestSchedule:
