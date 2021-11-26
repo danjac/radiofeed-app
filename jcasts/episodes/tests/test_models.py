@@ -22,8 +22,8 @@ class TestEpisodeManager:
     @pytest.mark.parametrize(
         "last_pub,exists",
         [
-            (timedelta(days=30), True),
-            (timedelta(days=99), False),
+            (timedelta(days=10), True),
+            (timedelta(days=30), False),
         ],
     )
     def test_relevant(self, db, last_pub, exists):
