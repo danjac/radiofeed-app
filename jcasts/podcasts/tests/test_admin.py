@@ -37,9 +37,6 @@ def req(rf):
 
 
 class TestPodcastAdmin:
-    def test_scheduled_none(self, admin):
-        assert admin.scheduled(Podcast(pub_date=None)) == "-"
-
     def test_scheduled_queued(self, admin):
         assert admin.scheduled(Podcast(queued=timezone.now())) == "Queued"
 

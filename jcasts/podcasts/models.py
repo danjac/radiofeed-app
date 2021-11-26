@@ -92,21 +92,23 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         )
 
     def scheduled(self) -> models.QuerySet:
-        """
-        Example: last pub 3 days ago, freq 4d, next pub in 4 days
-
-        If frequency > 30 days (the max amount)
-
-        """
         now = timezone.now()
 
-        threshold = now - self.model.MAX_FREQUENCY
         interval = now - models.F("frequency")
 
-        return (
-            self.filter(pub_date__isnull=True)
-            | self.filter(pub_date__range=(threshold, interval))
-            | self.filter(pub_date__lt=threshold, parsed__lt=interval)
+        return self.filter(
+            models.Q(pub_date__isnull=True) | models.Q(frequency__isnull=True)
+        ) | self.annotate(
+            scheduled=models.ExpressionWrapper(
+                models.F("pub_date") + models.F("frequency"),
+                output_field=models.DateTimeField(),
+            )
+        ).filter(
+            models.Q(scheduled__gt=now, pub_date__lt=interval)
+            | models.Q(
+                models.Q(parsed__isnull=True) | models.Q(parsed__lt=interval),
+                scheduled__lt=now,
+            )
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -141,11 +143,6 @@ class Podcast(models.Model):
         SUCCESS = "success", "Success"
 
     MAX_FAILURES = 3
-    DEFAULT_MODIFIER = 0.05
-
-    DEFAULT_FREQUENCY = timedelta(days=1)
-    MIN_FREQUENCY = timedelta(hours=3)
-    MAX_FREQUENCY = timedelta(days=30)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
@@ -256,9 +253,13 @@ class Podcast(models.Model):
     def get_scheduled(self) -> datetime | None:
         if self.frequency is None:
             return None
-        if self.frequency == self.MAX_FREQUENCY:
-            return self.parsed + self.frequency if self.parsed else None
-        return self.pub_date + self.frequency if self.pub_date else None
+
+        if (
+            self.pub_date
+            and (scheduled := self.pub_date + self.frequency) > timezone.now()
+        ):
+            return scheduled
+        return self.parsed + self.frequency if self.parsed else None
 
     @cached_property
     def cleaned_title(self) -> str:

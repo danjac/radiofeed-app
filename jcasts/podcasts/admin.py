@@ -182,9 +182,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             return "Queued"
 
         if (scheduled := obj.get_scheduled()) is None:
-            return "-"
-
-        if scheduled < timezone.now():
             return "Pending"
 
         return timeuntil(scheduled, depth=1)

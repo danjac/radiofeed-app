@@ -178,12 +178,13 @@ class TestPodcastManager:
         "pub_date,parsed,frequency,exists",
         [
             (None, None, None, True),
-            (timedelta(days=3), None, None, False),
+            (timedelta(days=3), None, None, True),
             (timedelta(days=3), None, timedelta(days=1), True),
             (timedelta(days=3), timedelta(days=4), timedelta(days=1), True),
+            (timedelta(days=3), None, timedelta(days=7), False),
             (timedelta(days=3), None, timedelta(days=4), False),
             (timedelta(days=-3), None, timedelta(days=1), False),
-            (timedelta(days=33), None, timedelta(days=30), False),
+            (timedelta(days=33), None, timedelta(days=30), True),
             (timedelta(days=33), timedelta(days=1), timedelta(days=30), False),
             (timedelta(days=33), timedelta(days=30), timedelta(days=30), True),
         ],
@@ -196,7 +197,11 @@ class TestPodcastManager:
             parsed=now - parsed if parsed else None,
             frequency=frequency,
         )
-        assert Podcast.objects.scheduled().exists() is exists
+        assert Podcast.objects.scheduled().exists() is exists, (
+            pub_date,
+            parsed,
+            frequency,
+        )
 
     @pytest.mark.parametrize(
         "last_pub,exists",
@@ -229,7 +234,7 @@ class TestPodcastModel:
             (timedelta(days=1), None, None, None),
             (timedelta(days=30), None, None, None),
             (timedelta(days=7), timedelta(days=3), None, 4),
-            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 27),
+            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 21),
         ],
     )
     def test_get_scheduled(self, frequency, pub_date, parsed, days):
@@ -241,9 +246,9 @@ class TestPodcastModel:
         )
         scheduled = podcast.get_scheduled()
         if days is None:
-            assert scheduled is None
+            assert scheduled is None, (frequency, pub_date, parsed)
         else:
-            assert (scheduled - now).days == days
+            assert (scheduled - now).days == days, (frequency, pub_date, parsed)
 
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
