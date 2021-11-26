@@ -22,15 +22,9 @@ WORKDIR /app
 
 RUN pip install poetry
 
-COPY ./pyproject.toml /pyproject.toml
-COPY ./poetry.lock /poetry.lock
+COPY ./requirements-dev.txt ./requirements-dev.txt
 
-RUN poetry config virtualenvs.create false
-
-# https://github.com/python-poetry/poetry/issues/3321
-RUN mkdir -p /usr/local/lib/python3.9/site-packages
-
-RUN poetry install
+RUN pip install -r ./requirements-dev.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
@@ -52,5 +46,3 @@ RUN chmod +x /start-webapp
 
 COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
-
-

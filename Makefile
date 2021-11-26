@@ -46,10 +46,12 @@ reqs: requirements
 
 requirements:
 	./bin/poetry export -o requirements.txt  --without-hashes
+	./bin/poetry export -o requirements-dev.txt --dev --without-hashes
 
 upgrade:
 	./bin/poetry update -vv
 	./bin/poetry export -o requirements.txt  --without-hashes
+	./bin/poetry export -o requirements-dev.txt --dev --without-hashes
 	./bin/npm update
 
 maint: maintenance
