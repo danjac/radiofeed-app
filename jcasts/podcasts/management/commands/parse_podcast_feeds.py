@@ -20,20 +20,9 @@ class Command(BaseCommand):
             default=60,
         )
 
-        parser.add_argument(
-            "--sporadic",
-            help="Parse sporadic feeds",
-            action="store_true",
-            default=False,
-        )
-
     def handle(self, *args, **options) -> None:
-        frequency = timedelta(minutes=options["frequency"])
-
-        num_podcasts = (
-            feed_parser.parse_sporadic_feeds(frequency)
-            if options["sporadic"]
-            else feed_parser.parse_scheduled_feeds(frequency)
+        num_podcasts = feed_parser.parse_scheduled_feeds(
+            timedelta(minutes=options["frequency"])
         )
 
         self.stdout.write(

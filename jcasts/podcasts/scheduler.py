@@ -23,13 +23,20 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     Calculation is based on intervals between individual release
     dates. If insufficient data, then return the default frequency
     (24 hours).
-    """
-    try:
-        frequency = timedelta(seconds=calc_frequency(pub_dates))
-    except ValueError:
-        frequency = DEFAULT_FREQUENCY
 
-    return get_frequency(frequency), DEFAULT_MODIFIER
+    All frequencies must fall between the min (3 hours) and max (30 days).
+
+    """
+    return get_frequency(pub_dates), DEFAULT_MODIFIER
+
+
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
+    try:
+        if timezone.now() - max(pub_dates) > MAX_FREQUENCY:
+            return MAX_FREQUENCY
+        return within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
+    except ValueError:
+        return DEFAULT_FREQUENCY
 
 
 def reschedule(
@@ -45,12 +52,12 @@ def reschedule(
     modifier = modifier or DEFAULT_MODIFIER
     seconds = frequency.total_seconds()
     return (
-        get_frequency(timedelta(seconds=seconds + (seconds * modifier))),
+        within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
         modifier * 1.2,
     )
 
 
-def get_frequency(frequency: timedelta) -> timedelta:
+def within_bounds(frequency: timedelta) -> timedelta:
     return min(max(frequency, MIN_FREQUENCY), MAX_FREQUENCY)
 
 

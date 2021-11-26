@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, QuerySet
+from django.db.models import F
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -57,20 +57,10 @@ class ParseResult:
 
 
 def parse_scheduled_feeds(frequency: timedelta) -> int:
-    return parse_podcast_feeds(
-        Podcast.objects.active().frequent().scheduled(),
-        frequency,
-    )
-
-
-def parse_sporadic_feeds(frequency: timedelta) -> int:
-    return parse_podcast_feeds(Podcast.objects.active().sporadic(), frequency)
-
-
-def parse_podcast_feeds(podcasts: QuerySet, frequency: timedelta) -> int:
 
     podcasts = (
-        podcasts.active()
+        Podcast.objects.active()
+        .scheduled()
         .filter(queued__isnull=True)
         .distinct()
         .order_by(

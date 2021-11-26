@@ -20,7 +20,7 @@ class Command(BaseCommand):
         for counter, podcast in enumerate(
             Podcast.objects.active()
             .published()
-            .frequent()
+            .filter(frequency__isnull=True)
             .order_by("-pub_date")
             .iterator()
         ):

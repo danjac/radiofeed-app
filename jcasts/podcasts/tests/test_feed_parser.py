@@ -24,7 +24,6 @@ from jcasts.podcasts.feed_parser import (
     parse_podcast_feed,
     parse_pub_dates,
     parse_scheduled_feeds,
-    parse_sporadic_feeds,
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed, Item
@@ -139,43 +138,6 @@ class TestParsePodcastFeeds:
     def mock_rq(self, mocker):
         mocker.patch("rq.worker.Worker.count", return_value=2)
         mocker.patch("django_rq.get_queue")
-
-    def test_parse_sporadic_feeds(self, db, mock_parse_podcast_feed, mock_rq):
-        now = timezone.now()
-
-        # inactive
-        PodcastFactory(active=False)
-
-        # not scheduled yet
-        PodcastFactory(parsed=now + timedelta(days=1))
-
-        # queued
-        PodcastFactory(
-            queued=now,
-            parsed=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-        )
-
-        # scheduled + frequent
-        PodcastFactory(
-            parsed=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            pub_date=now - timedelta(days=3),
-        )
-
-        podcast = PodcastFactory(
-            parsed=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            pub_date=now - timedelta(days=99),
-        )
-
-        parse_sporadic_feeds(frequency=timedelta(hours=1))
-        queued = Podcast.objects.filter(queued__isnull=False)
-
-        assert queued.count() == 2
-
-        assert podcast in queued
-        assert len(mock_parse_podcast_feed.mock_calls) == 1
 
     def test_parse_scheduled_feeds(self, db, mock_parse_podcast_feed, mock_rq):
 
