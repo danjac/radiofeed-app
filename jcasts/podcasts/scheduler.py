@@ -26,15 +26,6 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     return get_frequency(pub_dates), Podcast.DEFAULT_MODIFIER
 
 
-def get_frequency(pub_dates: list[datetime]) -> timedelta:
-    try:
-        if timezone.now() - max(pub_dates) > Podcast.MAX_FREQUENCY:
-            return Podcast.MAX_FREQUENCY
-        return within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
-    except ValueError:
-        return Podcast.DEFAULT_FREQUENCY
-
-
 def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
     """Increment frequency by current modifier, then
     return new frequency and incremented modifier.
@@ -47,14 +38,20 @@ def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
     modifier = podcast.frequency_modifier or Podcast.DEFAULT_MODIFIER
 
     seconds = frequency.total_seconds()
+
     return (
         within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
         min(modifier * 1.2, 300.00),
     )
 
 
-def within_bounds(frequency: timedelta) -> timedelta:
-    return min(max(frequency, Podcast.MIN_FREQUENCY), Podcast.MAX_FREQUENCY)
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
+    try:
+        if timezone.now() - max(pub_dates) > Podcast.MAX_FREQUENCY:
+            return Podcast.MAX_FREQUENCY
+        return within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
+    except ValueError:
+        return Podcast.DEFAULT_FREQUENCY
 
 
 def calc_frequency(pub_dates: list[datetime]) -> float:
@@ -82,3 +79,7 @@ def get_intervals(pub_dates: list[datetime]) -> list[float]:
         latest = pub_date
 
     return intervals
+
+
+def within_bounds(frequency: timedelta) -> timedelta:
+    return min(max(frequency, Podcast.MIN_FREQUENCY), Podcast.MAX_FREQUENCY)
