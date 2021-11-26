@@ -1,7 +1,6 @@
 import pathlib
 import socket
 
-from datetime import timedelta
 from email.utils import getaddresses
 
 import environ
@@ -133,9 +132,6 @@ MIDDLEWARE = [
     "jcasts.shared.middleware.HtmxMessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-FRESHNESS_THRESHOLD = timedelta(days=env.int("FRESHNESS_THRESHOLD_DAYS", default=90))
-WEBSUB_LEASE_TIMEOUT = timedelta(days=env.int("WEBSUB_LEASE_TIMEOUT", default=30))
 
 DEFAULT_PAGE_SIZE = 30
 
@@ -271,7 +267,3 @@ PRIVACY_DETAILS = {
     "host_country": env("HOST_COUNTRY", default="Finland"),
     "age_of_consent": env.int("AGE_OF_CONSENT", default=18),
 }
-
-
-PODCASTINDEX_API_KEY = env("PODCASTINDEX_API_KEY", default=None)
-PODCASTINDEX_API_SECRET = env("PODCASTINDEX_API_SECRET", default=None)

@@ -6,7 +6,6 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode
@@ -25,7 +24,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     promoted = "promoted" in request.GET
 
-    podcast_qs = Podcast.objects.fresh()
+    podcast_qs = Podcast.objects.relevant()
 
     if follows and not promoted:
         podcast_qs = podcast_qs.filter(pk__in=follows)
@@ -33,10 +32,10 @@ def index(request: HttpRequest) -> HttpResponse:
         podcast_qs = podcast_qs.filter(promoted=True)
 
     episodes = (
-        Episode.objects.select_related("podcast")
+        Episode.objects.relevant()
+        .select_related("podcast")
         .filter(
             podcast__in=set(podcast_qs.values_list("pk", flat=True)),
-            pub_date__gte=timezone.now() - settings.FRESHNESS_THRESHOLD,
         )
         .order_by("-pub_date", "-id")
         .distinct()

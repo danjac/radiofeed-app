@@ -1,5 +1,7 @@
 import datetime
 
+from datetime import timedelta
+
 import pytest
 
 from django.contrib.sites.models import Site
@@ -17,6 +19,18 @@ from jcasts.podcasts.factories import FollowFactory
 
 
 class TestEpisodeManager:
+    @pytest.mark.parametrize(
+        "last_pub,exists",
+        [
+            (timedelta(days=30), True),
+            (timedelta(days=99), False),
+        ],
+    )
+    def test_relevant(self, db, last_pub, exists):
+        EpisodeFactory(pub_date=timezone.now() - last_pub if last_pub else None)
+
+        assert Episode.objects.relevant().exists() is exists
+
     def test_get_next_episode_if_none(self, episode):
 
         assert Episode.objects.get_next_episode(episode) is None
@@ -492,7 +506,7 @@ class TestQueueItemManager:
         assert other.position == 1
 
     @pytest.mark.django_db(transaction=True)
-    def test_creat_item_already_exists(self, user):
+    def test_create_item_already_exists(self, user):
         other = QueueItemFactory(user=user, position=1)
 
         with transaction.atomic():

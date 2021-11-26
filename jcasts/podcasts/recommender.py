@@ -29,7 +29,7 @@ Similarities = tuple[int, list[tuple[int, float]]]
 
 def recommend() -> None:
 
-    podcasts = Podcast.objects.fresh().exclude(extracted_text="")
+    podcasts = Podcast.objects.relevant().exclude(extracted_text="")
 
     Recommendation.objects.bulk_delete()
 

@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 import numpy
 
-from django.conf import settings
 from django.utils import timezone
 from scipy import stats
 
@@ -67,7 +66,7 @@ def get_intervals(pub_dates: list[datetime]) -> list[float]:
     """Get intervals (in seconds) between individual release dates
     over the past 90 days
     """
-    threshold = timezone.now() - settings.FRESHNESS_THRESHOLD
+    threshold = timezone.now() - Podcast.RELEVANCY_THRESHOLD
 
     latest, *pub_dates = sorted(
         [date for date in pub_dates if date > threshold], reverse=True

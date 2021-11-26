@@ -85,9 +85,9 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def unpublished(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=True)
 
-    def fresh(self) -> models.QuerySet:
+    def relevant(self) -> models.QuerySet:
         return self.filter(
-            models.Q(pub_date__gt=timezone.now() - settings.FRESHNESS_THRESHOLD)
+            models.Q(pub_date__gt=timezone.now() - Podcast.RELEVANCY_THRESHOLD)
             | models.Q(pub_date__isnull=True)
         )
 
@@ -150,6 +150,8 @@ class Podcast(models.Model):
     DEFAULT_FREQUENCY = timedelta(days=1)
     MIN_FREQUENCY = timedelta(hours=3)
     MAX_FREQUENCY = timedelta(days=30)
+
+    RELEVANCY_THRESHOLD = timedelta(days=90)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
