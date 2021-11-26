@@ -178,7 +178,7 @@ class TestPodcastManager:
         "pub_date,frequency,exists",
         [
             (None, None, True),
-            (timedelta(days=3), None, True),
+            (timedelta(days=3), None, False),
             (timedelta(days=3), timedelta(days=1), True),
             (timedelta(days=3), timedelta(days=4), False),
             (timedelta(days=-3), timedelta(days=1), False),
