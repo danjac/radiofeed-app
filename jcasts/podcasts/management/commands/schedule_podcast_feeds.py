@@ -12,8 +12,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        Podcast.objects.update(frequency=None)
-
         for_update = []
         now = timezone.now()
 
