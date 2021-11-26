@@ -95,19 +95,20 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         now = timezone.now()
 
         interval = now - models.F("frequency")
+        threshold = now - self.model.MAX_FREQUENCY
 
         return self.filter(
-            models.Q(pub_date__isnull=True) | models.Q(frequency__isnull=True)
-        ) | self.annotate(
-            scheduled=models.ExpressionWrapper(
-                models.F("pub_date") + models.F("frequency"),
-                output_field=models.DateTimeField(),
+            models.Q(pub_date__isnull=True)
+            | models.Q(frequency__isnull=True)
+            | models.Q(
+                pub_date__range=(
+                    threshold,
+                    interval,
+                )
             )
-        ).filter(
-            models.Q(scheduled__gt=now, pub_date__lt=interval)
             | models.Q(
                 models.Q(parsed__isnull=True) | models.Q(parsed__lt=interval),
-                scheduled__lt=now,
+                pub_date__lt=threshold,
             )
         )
 
@@ -143,6 +144,12 @@ class Podcast(models.Model):
         SUCCESS = "success", "Success"
 
     MAX_FAILURES = 3
+
+    DEFAULT_MODIFIER = 0.05
+
+    DEFAULT_FREQUENCY = timedelta(days=1)
+    MIN_FREQUENCY = timedelta(hours=3)
+    MAX_FREQUENCY = timedelta(days=30)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
@@ -256,7 +263,8 @@ class Podcast(models.Model):
 
         if (
             self.pub_date
-            and (scheduled := self.pub_date + self.frequency) > timezone.now()
+            and (scheduled := self.pub_date + self.frequency)
+            > timezone.now() - self.MAX_FREQUENCY
         ):
             return scheduled
         return self.parsed + self.frequency if self.parsed else None

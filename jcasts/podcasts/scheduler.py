@@ -8,11 +8,7 @@ from django.conf import settings
 from django.utils import timezone
 from scipy import stats
 
-DEFAULT_MODIFIER = 0.05
-
-DEFAULT_FREQUENCY = timedelta(days=1)
-MIN_FREQUENCY = timedelta(hours=3)
-MAX_FREQUENCY = timedelta(days=30)
+from jcasts.podcasts.models import Podcast
 
 
 def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
@@ -27,29 +23,29 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     All frequencies must fall between the min (3 hours) and max (30 days).
 
     """
-    return get_frequency(pub_dates), DEFAULT_MODIFIER
+    return get_frequency(pub_dates), Podcast.DEFAULT_MODIFIER
 
 
 def get_frequency(pub_dates: list[datetime]) -> timedelta:
     try:
-        if timezone.now() - max(pub_dates) > MAX_FREQUENCY:
-            return MAX_FREQUENCY
+        if timezone.now() - max(pub_dates) > Podcast.MAX_FREQUENCY:
+            return Podcast.MAX_FREQUENCY
         return within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
     except ValueError:
-        return DEFAULT_FREQUENCY
+        return Podcast.DEFAULT_FREQUENCY
 
 
-def reschedule(
-    frequency: timedelta | None, modifier: float | None
-) -> tuple[timedelta, float]:
+def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
     """Increment frequency by current modifier, then
     return new frequency and incremented modifier.
 
     Call this on each refresh "miss" i.e. when there
     are no new pub dates.
     """
-    frequency = frequency or DEFAULT_FREQUENCY
-    modifier = modifier or DEFAULT_MODIFIER
+
+    frequency = podcast.frequency or Podcast.DEFAULT_FREQUENCY
+    modifier = podcast.frequency_modifier or Podcast.DEFAULT_MODIFIER
+
     seconds = frequency.total_seconds()
     return (
         within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
@@ -58,7 +54,7 @@ def reschedule(
 
 
 def within_bounds(frequency: timedelta) -> timedelta:
-    return min(max(frequency, MIN_FREQUENCY), MAX_FREQUENCY)
+    return min(max(frequency, Podcast.MIN_FREQUENCY), Podcast.MAX_FREQUENCY)
 
 
 def calc_frequency(pub_dates: list[datetime]) -> float:
