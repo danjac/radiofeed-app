@@ -51,10 +51,13 @@ def reschedule(
     frequency = frequency or DEFAULT_FREQUENCY
     modifier = modifier or DEFAULT_MODIFIER
     seconds = frequency.total_seconds()
-    return (
-        within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
-        modifier * 1.2,
-    )
+    try:
+        return (
+            within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
+            modifier * 1.2,
+        )
+    except OverflowError:
+        return MAX_FREQUENCY, modifier
 
 
 def within_bounds(frequency: timedelta) -> timedelta:

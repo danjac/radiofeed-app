@@ -22,6 +22,12 @@ class TestReschedule:
         assert_hours(frequency, 24 * 30)
         assert modifier == 0.06
 
+    def test_reschedule_overflow(self):
+        modifier = 999999999999999999999999
+        frequency, new_modifier = scheduler.reschedule(timedelta(days=30), modifier)
+        assert_hours(frequency, 24 * 30)
+        assert new_modifier == modifier
+
 
 class TestSchedule:
     def test_no_pub_dates(self):
