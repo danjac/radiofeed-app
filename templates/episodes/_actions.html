@@ -21,18 +21,18 @@
              @click.away="close()">
             {% with podcast=episode.podcast %}
             <h2 class="flex items-center mb-3 space-x-2">
-                <a href="{{ podcast.get_absolute_url }}">
-                    {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=24 css_class="h-12 w-12 lg:h-24 lg:w-24 mr-2 lg:mr-5" %}
+                <a href="{{ podcast.get_absolute_url }}" class="block w-20 lg:w-28">
+                    {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=24 css_class="h-16 w-16 lg:h-24 lg:w-24 mr-2 lg:mr-5" %}
                 </a>
                 <a href="{{ episode.get_absolute_url }}"
                    title="{{ episode.cleaned_title }}"
-                   class="max-h-10 lg:max-h-24 flex flex-wrap break-words overflow-y-hidden font-semibold w-full link lg:text-lg">
+                   class="max-h-16 lg:max-h-24 flex flex-wrap break-words overflow-y-hidden font-semibold w-full link lg:text-lg">
                     {{ episode.cleaned_title }}
                 </a>
             </h2>
             {% endwith %}
 
-            <p class="mb-3 pb-3 border-b dark:border-gray-500 break-words">
+            <p class="mb-3 pb-3 break-words">
                 {{ episode.cleaned_description|truncatechars:500 }}
             </p>
 
