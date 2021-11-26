@@ -169,30 +169,6 @@ class TestPubDateFilter:
         assert qs.count() == 3
         assert no_pub_date not in qs
 
-    def test_sporadic(self, settings, podcasts, admin, req):
-        now = timezone.now()
-        PodcastFactory(pub_date=None)
-        PodcastFactory(pub_date=now - timedelta(days=9))
-        not_ = PodcastFactory(pub_date=now - timedelta(days=99))
-
-        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert not_ in qs
-
-    def test_frequent(self, settings, podcasts, admin, req):
-        now = timezone.now()
-        no_pub_date = PodcastFactory(pub_date=None)
-        frequent = PodcastFactory(pub_date=now - timedelta(days=9))
-        sporadic = PodcastFactory(pub_date=now - timedelta(days=99))
-
-        f = PubDateFilter(req, {"pub_date": "frequent"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 5
-        assert no_pub_date in qs
-        assert frequent in qs
-        assert sporadic not in qs
-
 
 class TestActiveFilter:
     def test_active_filter_none(self, podcasts, admin, req):

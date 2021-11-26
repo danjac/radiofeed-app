@@ -91,18 +91,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             | models.Q(pub_date__isnull=True)
         )
 
-    def frequent(self) -> models.QuerySet:
-        return self.filter(
-            models.Q(pub_date__gt=timezone.now() - timedelta(days=30))
-            | models.Q(pub_date__isnull=True)
-        )
-
-    def sporadic(self) -> models.QuerySet:
-        return self.filter(
-            pub_date__isnull=False,
-            pub_date__lte=timezone.now() - timedelta(days=30),
-        )
-
     def scheduled(self) -> models.QuerySet:
         return self.filter(
             models.Q(pub_date__isnull=True) | models.Q(frequency__isnull=True)

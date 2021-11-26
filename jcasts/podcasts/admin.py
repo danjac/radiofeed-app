@@ -62,10 +62,6 @@ class PubDateFilter(admin.SimpleListFilter):
             return queryset.published()
         if value == "no":
             return queryset.unpublished()
-        if value == "frequent":
-            return queryset.frequent()
-        if value == "sporadic":
-            return queryset.sporadic()
         return queryset
 
 

@@ -207,19 +207,6 @@ class TestPodcastManager:
 
         assert Podcast.objects.fresh().exists() is exists
 
-    @pytest.mark.parametrize(
-        "last_pub,exists",
-        [
-            (timedelta(days=3), False),
-            (timedelta(days=30), True),
-            (timedelta(days=99), True),
-            (None, False),
-        ],
-    )
-    def test_sporadic(self, db, settings, last_pub, exists):
-        PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
-        assert Podcast.objects.sporadic().exists() is exists
-
 
 class TestPodcastModel:
     rss = "https://example.com/rss.xml"
