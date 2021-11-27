@@ -58,7 +58,7 @@ def calc_frequency(pub_dates: list[datetime]) -> float:
     Returns the mean - standard error of all relevant release dates
     """
     if len(intervals := get_intervals(pub_dates)) in (0, 1):
-        raise ValueError("Insufficient number of intervals")
+        raise ValueError
     return numpy.mean(intervals) - stats.sem(intervals)
 
 
