@@ -147,19 +147,23 @@ class TestParsePodcastFeeds:
         PodcastFactory(active=False)
 
         # not scheduled yet
-        PodcastFactory(pub_date=now, frequency=timedelta(days=1))
+        PodcastFactory(
+            pub_date=now, frequency=timedelta(days=1), parsed=now - timedelta(days=1)
+        )
 
         # queued
         PodcastFactory(
             queued=now,
             pub_date=now - timedelta(days=3),
             frequency=timedelta(hours=1),
+            parsed=now - timedelta(days=1),
         )
 
         # scheduled
         podcast = PodcastFactory(
             pub_date=now - timedelta(days=3),
             frequency=timedelta(hours=1),
+            parsed=now - timedelta(days=1),
         )
 
         parse_scheduled_feeds(frequency=timedelta(hours=1))

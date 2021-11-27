@@ -95,20 +95,18 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         now = timezone.now()
 
         interval = now - models.F("frequency")
-        threshold = now - self.model.MAX_FREQUENCY
 
         return self.filter(
             models.Q(pub_date__isnull=True)
+            | models.Q(parsed__isnull=True)
             | models.Q(frequency__isnull=True)
             | models.Q(
-                pub_date__range=(
-                    threshold,
-                    interval,
-                )
+                frequency__lt=self.model.MAX_FREQUENCY,
+                pub_date__lt=interval,
             )
             | models.Q(
-                models.Q(parsed__isnull=True) | models.Q(parsed__lt=interval),
-                pub_date__lt=threshold,
+                frequency__gte=self.model.MAX_FREQUENCY,
+                parsed__lt=interval,
             )
         )
 
@@ -260,16 +258,19 @@ class Podcast(models.Model):
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
 
     def get_scheduled(self) -> datetime | None:
-        if self.frequency is None:
+        if self.frequency is None or self.parsed is None or self.pub_date is None:
             return None
 
         if (
-            self.pub_date
-            and (scheduled := self.pub_date + self.frequency)
-            > timezone.now() - self.MAX_FREQUENCY
-        ):
+            scheduled := (
+                self.pub_date + self.frequency
+                if self.frequency < self.MAX_FREQUENCY
+                else self.parsed + self.frequency
+            )
+        ) > timezone.now():
             return scheduled
-        return self.parsed + self.frequency if self.parsed else None
+
+        return None
 
     @cached_property
     def cleaned_title(self) -> str:

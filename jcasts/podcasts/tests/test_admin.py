@@ -52,7 +52,11 @@ class TestPodcastAdmin:
         now = timezone.now()
         assert (
             admin.scheduled(
-                Podcast(pub_date=now - timedelta(days=1), frequency=timedelta(days=3))
+                Podcast(
+                    pub_date=now - timedelta(days=1),
+                    frequency=timedelta(days=3),
+                    parsed=timedelta(days=1),
+                )
             )
             == "1\xa0day"
         )
