@@ -50,13 +50,12 @@ class ResultFilter(admin.SimpleListFilter):
         return (("none", "None"),) + tuple(models.Podcast.Result.choices)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-
-        if value == "none":
-            return queryset.filter(result=None)
-
-        elif value:
-            return queryset.filter(result=value)
+        if value := self.value():
+            return (
+                queryset.filter(result__isnull=True)
+                if value == "none"
+                else queryset.filter(result=value)
+            )
 
         return queryset
 
