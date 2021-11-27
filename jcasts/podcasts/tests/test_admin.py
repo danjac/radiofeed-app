@@ -119,13 +119,6 @@ class TestPodcastAdmin:
         admin.parse_podcast_feed(req, podcast)
         mock_parse_podcast_feed.assert_not_called()
 
-    def test_parse_podcast_feeds_inactive(
-        self, podcast, admin, req, mock_parse_podcast_feed
-    ):
-        PodcastFactory(active=False)
-        admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse_podcast_feed.assert_not_called()
-
 
 class TestResultFilter:
     def test_result_filter_no_filter(self, podcasts, admin, req):

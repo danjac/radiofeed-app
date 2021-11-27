@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, QuerySet
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue, job
@@ -58,15 +58,9 @@ class ParseResult:
 
 def parse_scheduled_feeds(frequency: timedelta) -> int:
 
-    podcasts = (
-        Podcast.objects.active()
-        .scheduled()
-        .filter(queued__isnull=True)
-        .distinct()
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-        )
+    podcasts = Podcast.objects.scheduled().order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
     )
 
     limit = max(
@@ -75,9 +69,17 @@ def parse_scheduled_feeds(frequency: timedelta) -> int:
         0,
     )
 
-    podcast_ids = list(podcasts[:limit].values_list("pk", flat=True))
+    return parse_podcast_feeds(podcasts, limit)
 
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
+def parse_podcast_feeds(podcasts: QuerySet, limit: int | None = None) -> int:
+
+    podcasts = podcasts.active().unqueued().distinct()
+    podcasts = podcasts[:limit] if limit else podcasts
+
+    podcast_ids = list(podcasts.values_list("pk", flat=True))
+
+    Podcast.objects.filter(pk__in=podcast_ids).enqueue()
 
     for podcast_id in podcast_ids:
         parse_podcast_feed.delay(podcast_id)

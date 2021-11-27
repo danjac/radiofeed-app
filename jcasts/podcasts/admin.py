@@ -107,8 +107,8 @@ class SchedulingFilter(admin.SimpleListFilter):
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         value = self.value()
         return {
-            "queued": queryset.filter(queued__isnull=False),
-            "scheduled": queryset.scheduled().filter(queued__isnull=True),
+            "queued": queryset.queued(),
+            "scheduled": queryset.unqueued().scheduled(),
         }.setdefault(value, queryset)
 
 
@@ -185,28 +185,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
-        if queryset.filter(active=False).exists():
-
-            self.message_user(
-                request,
-                "You cannot parse inactive feeds",
-                messages.ERROR,
-            )
-
-            return
-
-        podcast_ids = list(
-            queryset.filter(queued__isnull=True).values_list("pk", flat=True)
-        )
-
-        queryset.update(queued=timezone.now())
-
-        for podcast_id in podcast_ids:
-            feed_parser.parse_podcast_feed.delay(podcast_id)
-
         self.message_user(
             request,
-            f"{len(podcast_ids)} podcast(s) queued for update",
+            f"{feed_parser.parse_podcast_feeds(queryset)} podcast(s) queued for update",
             messages.SUCCESS,
         )
 
@@ -220,8 +201,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             return
 
         obj.queued = timezone.now()
-
-        obj.save(update_fields=["queued", "active"])
+        obj.save(update_fields=["queued"])
 
         feed_parser.parse_podcast_feed.delay(obj.id)
         self.message_user(request, "Podcast has been queued for update")

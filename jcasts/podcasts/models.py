@@ -85,6 +85,15 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
     def unpublished(self) -> models.QuerySet:
         return self.filter(pub_date__isnull=True)
 
+    def queued(self) -> models.QuerySet:
+        return self.filter(queued__isnull=False)
+
+    def unqueued(self) -> models.QuerySet:
+        return self.filter(queued__isnull=True)
+
+    def enqueue(self) -> int:
+        return self.update(queued=timezone.now())
+
     def relevant(self) -> models.QuerySet:
         return self.filter(
             models.Q(pub_date__gt=timezone.now() - Podcast.RELEVANCY_THRESHOLD)
@@ -107,7 +116,7 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             | models.Q(
                 frequency__gte=self.model.MAX_FREQUENCY,
                 parsed__lt=interval,
-            )
+            ),
         )
 
     def with_followed(self) -> models.QuerySet:

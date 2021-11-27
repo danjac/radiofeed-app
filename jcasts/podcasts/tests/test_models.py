@@ -72,7 +72,28 @@ class TestCategoryModel:
 
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
-    hub = "https://pubsubhubbub.appspot.com/"
+
+    def test_enqueue(self, db):
+        podcast = PodcastFactory(queued=None)
+        Podcast.objects.enqueue()
+        podcast.refresh_from_db()
+        assert podcast.queued
+
+    def test_queued_true(self, db):
+        PodcastFactory(queued=timezone.now())
+        assert Podcast.objects.queued().exists()
+
+    def test_queued_false(self, db):
+        PodcastFactory(queued=None)
+        assert not Podcast.objects.queued().exists()
+
+    def test_unqueued_false(self, db):
+        PodcastFactory(queued=timezone.now())
+        assert not Podcast.objects.unqueued().exists()
+
+    def test_unqueued_true(self, db):
+        PodcastFactory(queued=None)
+        assert Podcast.objects.unqueued().exists()
 
     def test_search(self, db):
         PodcastFactory(title="testing")
