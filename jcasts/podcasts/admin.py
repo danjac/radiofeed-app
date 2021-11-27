@@ -229,11 +229,4 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     reactivate_podcasts.description = "Re-activate dead podcasts"  # type: ignore
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
-        return (
-            []
-            if request.GET.get("q")
-            else [
-                "parsed",
-                "-pub_date",
-            ]
-        )
+        return [] if request.GET.get("q") else ["-pub_date"]
