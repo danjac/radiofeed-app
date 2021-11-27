@@ -7,6 +7,7 @@ from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
 from jcasts.podcasts.admin import (
+    ActiveFilter,
     FollowedFilter,
     PodcastAdmin,
     PromotedFilter,
@@ -206,6 +207,28 @@ class TestSchedulingFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert queued in qs
+
+
+class TestActiveFilter:
+    def test_none(self, podcasts, admin, req):
+        PodcastFactory(active=False)
+        f = ActiveFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_active(self, podcasts, admin, req):
+        inactive = PodcastFactory(active=False)
+        f = ActiveFilter(req, {"active": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert inactive not in qs
+
+    def test_inactive(self, podcasts, admin, req):
+        inactive = PodcastFactory(active=False)
+        f = ActiveFilter(req, {"active": "no"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert inactive in qs
 
 
 class TestFollowedFilter:

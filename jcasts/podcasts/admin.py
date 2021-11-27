@@ -20,6 +20,25 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+class ActiveFilter(admin.SimpleListFilter):
+    title = "Active"
+    parameter_name = "active"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        return (
+            ("yes", "Active"),
+            ("no", "Inactive"),
+        )
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        return {
+            "yes": queryset.active(),
+            "no": queryset.inactive(),
+        }.setdefault(self.value(), queryset)
+
+
 class ResultFilter(admin.SimpleListFilter):
     title = "Result"
     parameter_name = "result"
@@ -55,12 +74,10 @@ class PubDateFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "yes":
-            return queryset.published()
-        if value == "no":
-            return queryset.unpublished()
-        return queryset
+        return {
+            "yes": queryset.published(),
+            "no": queryset.unpublished(),
+        }.setdefault(self.value(), queryset)
 
 
 class PromotedFilter(admin.SimpleListFilter):
@@ -73,10 +90,7 @@ class PromotedFilter(admin.SimpleListFilter):
         return (("yes", "Promoted"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        if value == "yes":
-            return queryset.filter(promoted=True)
-        return queryset
+        return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
 class SchedulingFilter(admin.SimpleListFilter):
@@ -95,7 +109,7 @@ class SchedulingFilter(admin.SimpleListFilter):
         value = self.value()
         return {
             "queued": queryset.filter(queued__isnull=False),
-            "scheduled": queryset.active().scheduled().filter(queued__isnull=True),
+            "scheduled": queryset.scheduled().filter(queued__isnull=True),
         }.setdefault(value, queryset)
 
 
@@ -109,16 +123,17 @@ class FollowedFilter(admin.SimpleListFilter):
         return (("yes", "Followed"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        queryset = queryset.with_followed()
-        if value == "yes":
-            return queryset.filter(followed=True)
-        return queryset
+        return (
+            queryset.with_followed().filter(followed=True)
+            if self.value() == "yes"
+            else queryset
+        )
 
 
 @admin.register(models.Podcast)
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
+        ActiveFilter,
         FollowedFilter,
         PromotedFilter,
         PubDateFilter,
