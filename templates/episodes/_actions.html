@@ -90,13 +90,13 @@
                     <button hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
                             hx-push-url="false"
                             @click="close()"
-                            title="Remove from Queue">
+                            title="Remove from Play Queue">
                         {% icon "collection_solid" css_class=ICON_CSS %}
                     </button>
                     {% else %}
                     <button hx-post="{% url 'episodes:add_to_queue' episode.id %}"
                             hx-push-url="false"
-                            title="Add to Queue"
+                            title="Add to Play Queue"
                             @click="close()">
                         {% icon "collection" css_class=ICON_CSS %}
                     </button>
