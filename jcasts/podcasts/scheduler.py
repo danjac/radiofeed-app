@@ -23,11 +23,11 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
 
     """
     try:
-        if timezone.now() - max(pub_dates) > Podcast.MAX_FREQUENCY:
-            # last release date > 30 days
-            frequency = Podcast.MAX_FREQUENCY
-        else:
-            frequency = within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
+        frequency = (
+            Podcast.MAX_FREQUENCY
+            if timezone.now() - max(pub_dates) > Podcast.MAX_FREQUENCY
+            else within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
+        )
     except ValueError:
         # insufficient interval data, assume default
         frequency = Podcast.DEFAULT_FREQUENCY
