@@ -256,8 +256,9 @@ class TestPodcastModel:
             (timedelta(days=30), None, None, None),
             (timedelta(days=7), timedelta(days=3), None, None),
             (timedelta(days=7), timedelta(days=3), timedelta(days=1), 4),
-            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 27),
-            (timedelta(days=30), timedelta(days=9), timedelta(days=33), None),
+            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 21),
+            (timedelta(days=30), timedelta(days=25), timedelta(days=10), 5),
+            (timedelta(days=30), timedelta(days=90), timedelta(days=10), 20),
         ],
     )
     def test_get_scheduled(self, frequency, pub_date, parsed, days):
