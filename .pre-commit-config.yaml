@@ -7,7 +7,7 @@ repos:
       rev: 21.11b1
       hooks:
           - id: black
-            args: [--target-versions, 'py310']
+            args: [--target-version, 'py310']
             language_version: python3.10
     - repo: https://gitlab.com/pycqa/flake8
       rev: 3.8.0a2
