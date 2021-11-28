@@ -4,7 +4,7 @@
     {% if is_completed %}
     Completed {% include "_date.html" with value=listened %}
     {% else %}
-    Listened {% include "_date.html" with value=listened %}{% if pc_complete > 0.9 %}({{ pc_complete|floatformat:'0' }}% done){% endif %}
+    Listened {% include "_date.html" with value=listened %} {% if pc_complete > 0.9 %}({{ pc_complete|floatformat:'0' }}% done){% endif %}
     {% endif %}
 </div>
 {% endwith %}
