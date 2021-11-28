@@ -166,6 +166,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "exception",
     )
 
+    actions = (
+        "parse_podcast_feeds",
+        "reactivate_podcasts",
+    )
+
     change_actions = (
         "parse_podcast_feed",
         "reschedule_podcast",
@@ -180,7 +185,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         return timeuntil(scheduled)
 
-    @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
         self.message_user(
@@ -189,7 +193,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             messages.SUCCESS,
         )
 
-    @admin.action(description="Reactivate podcasts")
     def reactivate_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
 
         inactive = queryset.inactive()
