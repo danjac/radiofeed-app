@@ -19,17 +19,6 @@
      {% endif %}>
     {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 
-    <a download
-       title="Download"
-       href="{{ episode.media_url }}"
-       class="link">
-        {% if user.is_anonymous %}
-        Download
-        {% else %}
-        {% icon "download" css_class=ICON_CSS %}
-        {% endif %}
-    </a>
-
     {% if user.is_authenticated %}
 
     <button title="Add to Favorites"
@@ -81,5 +70,17 @@
     </button>
 
     {% endif %}
+    <a download
+       title="Download {{ episode.get_media_url_ext|upper }} File"
+       href="{{ episode.media_url }}"
+       class="link">
+        {% if user.is_anonymous %}
+        Download
+        {% else %}
+        {% icon "download" css_class=ICON_CSS %}
+        {% endif %}
+    </a>
+
+
     {% endwith %}
 </div>

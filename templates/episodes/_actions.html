@@ -122,7 +122,7 @@
                     {% endif %}
                     {% endif %}
                     <a download
-                       title="Download"
+                       title="Download {{ episode.get_media_url_ext|upper }} File"
                        href="{{ episode.media_url }}"
                        @click="close()">
                         {% icon "download" css_class=ICON_CSS %}
