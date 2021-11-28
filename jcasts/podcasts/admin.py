@@ -180,7 +180,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         if (scheduled := obj.get_scheduled()) is None or scheduled < timezone.now():
             return "Pending"
 
-        return timeuntil(scheduled, depth=1)
+        return timeuntil(scheduled)
 
     @admin.action(description="Parse podcast feeds")
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:

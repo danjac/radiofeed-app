@@ -59,7 +59,7 @@ class TestPodcastAdmin:
                     parsed=timedelta(days=1),
                 )
             )
-            == "1\xa0day"
+            == "1\xa0day, 23\xa0hours"
         )
 
     def test_get_search_results(self, podcasts, admin, req):
