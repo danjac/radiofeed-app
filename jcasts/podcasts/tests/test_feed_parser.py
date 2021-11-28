@@ -28,6 +28,11 @@ def mock_rq(mocker):
     mocker.patch("django_rq.get_queue")
 
 
+@pytest.fixture
+def feed():
+    return Feed(**FeedFactory())
+
+
 class MockResponse:
     def __init__(
         self,
@@ -52,11 +57,16 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
-class TestParsePubDates:
-    @pytest.fixture
-    def feed(self):
-        return Feed(**FeedFactory())
+class TestGetScheduledLimit:
+    def test_no_queued_items(self, db, mock_rq):
+        assert feed_parser.get_scheduled_limit(timedelta(minutes=12)) == 720
 
+    def test_with_queued_items(self, db, mock_rq):
+        PodcastFactory.create_batch(10, queued=timezone.now())
+        assert feed_parser.get_scheduled_limit(timedelta(minutes=12)) == 710
+
+
+class TestParsePubDates:
     def test_no_items(self, podcast, feed):
         pub_date, frequency, modifier = feed_parser.parse_pub_dates(podcast, feed, [])
 
