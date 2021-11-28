@@ -6,6 +6,7 @@ import pytest
 from django.contrib.admin.sites import AdminSite
 from django.utils import timezone
 
+from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
@@ -37,6 +38,20 @@ def req(rf):
 
 
 class TestPodcastAdmin:
+    def test_reschedule_podcast(self, db, admin, req):
+        podcast = PodcastFactory(frequency=timedelta(days=20), frequency_modifier=1.2)
+        now = timezone.now()
+
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=3))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=6))
+        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=9))
+
+        admin.reschedule_podcast(req, podcast)
+        podcast.refresh_from_db()
+
+        assert podcast.frequency.days == 3
+        assert podcast.frequency_modifier == 0.05
+
     def test_scheduled_queued(self, admin):
         assert admin.scheduled(Podcast(queued=timezone.now())) == "Queued"
 

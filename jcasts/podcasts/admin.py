@@ -7,7 +7,7 @@ from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
-from jcasts.podcasts import feed_parser, models
+from jcasts.podcasts import feed_parser, models, scheduler
 
 
 @admin.register(models.Category)
@@ -166,12 +166,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "exception",
     )
 
-    actions = (
-        "parse_podcast_feeds",
-        "reactivate_podcasts",
+    change_actions = (
+        "parse_podcast_feed",
+        "reschedule_podcast",
     )
-
-    change_actions = ("parse_podcast_feed",)
 
     def scheduled(self, obj: models.Podcast):
         if obj.queued:
@@ -191,6 +189,22 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             messages.SUCCESS,
         )
 
+    @admin.action(description="Reactivate podcasts")
+    def reactivate_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
+
+        inactive = queryset.inactive()
+
+        if num_podcasts := inactive.count():
+            inactive.update(active=True, num_failures=0)
+            self.message_user(request, f"{num_podcasts} re-activated")
+        else:
+            self.message_user(request, "No inactive podcasts selected")
+
+    def reschedule_podcast(self, request: HttpRequest, obj: models.Podcast) -> None:
+        obj.frequency, obj.frequency_modifier = scheduler.schedule_podcast(obj)
+        obj.save(update_fields=["frequency", "frequency_modifier"])
+        self.message_user(request, "Podcast rescheduled")
+
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
         if obj.queued:
             self.message_user(request, "Podcast has already been queued for update")
@@ -205,22 +219,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
         feed_parser.parse_podcast_feed.delay(obj.id)
         self.message_user(request, "Podcast has been queued for update")
-
-    parse_podcast_feed.label = "Parse podcast feed"  # type: ignore
-    parse_podcast_feed.description = "Parse podcast feed"  # type: ignore
-
-    def reactivate_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
-
-        inactive = queryset.inactive()
-
-        if num_podcasts := inactive.count():
-            inactive.update(active=True, num_failures=0)
-            self.message_user(request, f"{num_podcasts} re-activated")
-        else:
-            self.message_user(request, "No inactive podcasts selected")
-
-    reactivate_podcasts.label = "Re-activate podcasts"  # type: ignore
-    reactivate_podcasts.description = "Re-activate dead podcasts"  # type: ignore
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         return [] if request.GET.get("q") else ["-pub_date"]
