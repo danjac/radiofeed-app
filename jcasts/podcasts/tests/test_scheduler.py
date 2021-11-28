@@ -5,7 +5,6 @@ import pytest
 from django.utils import timezone
 
 from jcasts.podcasts import scheduler
-from jcasts.podcasts.models import Podcast
 
 
 def assert_hours(delta, hours):
@@ -14,22 +13,18 @@ def assert_hours(delta, hours):
 
 class TestReschedule:
     def test_reschedule(self):
-        frequency, modifier = scheduler.reschedule(
-            Podcast(frequency=timedelta(hours=24))
-        )
+        frequency, modifier = scheduler.reschedule(frequency=timedelta(hours=24))
         assert_hours(frequency, 24)
         assert modifier == 0.06
 
     def test_reschedule_past_limit(self):
-        frequency, modifier = scheduler.reschedule(
-            Podcast(frequency=timedelta(days=30))
-        )
+        frequency, modifier = scheduler.reschedule(frequency=timedelta(days=30))
         assert_hours(frequency, 24 * 30)
         assert modifier == 0.06
 
     def test_reschedule_overflow(self):
         frequency, modifier = scheduler.reschedule(
-            Podcast(frequency=timedelta(days=30), frequency_modifier=300)
+            frequency=timedelta(days=30), modifier=300
         )
         assert_hours(frequency, 24 * 30)
         assert modifier == 300

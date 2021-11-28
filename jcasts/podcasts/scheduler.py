@@ -34,7 +34,9 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     return frequency, Podcast.DEFAULT_MODIFIER
 
 
-def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
+def reschedule(
+    frequency: timedelta | None, modifier: float | None = None
+) -> tuple[timedelta, float]:
     """Increment frequency by current modifier, then
     return new frequency and incremented modifier.
 
@@ -42,8 +44,8 @@ def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
     are no new pub dates.
     """
 
-    frequency = podcast.frequency or Podcast.DEFAULT_FREQUENCY
-    modifier = podcast.frequency_modifier or Podcast.DEFAULT_MODIFIER
+    frequency = frequency or Podcast.DEFAULT_FREQUENCY
+    modifier = modifier or Podcast.DEFAULT_MODIFIER
 
     seconds = frequency.total_seconds()
 

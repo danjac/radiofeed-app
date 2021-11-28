@@ -265,7 +265,10 @@ def parse_pub_dates(
     if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
         return latest, *scheduler.schedule(pub_dates)
 
-    return podcast.pub_date, *scheduler.reschedule(podcast)
+    return podcast.pub_date, *scheduler.reschedule(
+        podcast.frequency,
+        podcast.frequency_modifier,
+    )
 
 
 def parse_episodes(
@@ -374,7 +377,10 @@ def parse_failure(
 
     num_failures = podcast.num_failures
 
-    frequency, modifier = scheduler.reschedule(podcast)
+    frequency, modifier = scheduler.reschedule(
+        podcast.frequency,
+        podcast.frequency_modifier,
+    )
 
     if active and failure:
         num_failures += 1
