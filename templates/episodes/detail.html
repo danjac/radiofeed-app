@@ -8,7 +8,7 @@
 {% with podcast=episode.podcast %}
 
 {% if previous_episode or next_episode %}
-<nav class="flex justify-between mb-4 border-b dark:border-gray-500 pb-3">
+<nav class="flex justify-between mb-4 border-b dark:border-gray-500 pb-3 xl:text-lg">
     {% if previous_episode %}
     <a class="link"
        href="{{ previous_episode.get_absolute_url }}"
