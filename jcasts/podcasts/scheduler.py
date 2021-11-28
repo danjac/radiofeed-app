@@ -53,13 +53,6 @@ def reschedule(podcast: Podcast) -> tuple[timedelta, float]:
     )
 
 
-def schedule_podcast(podcast: Podcast) -> tuple[timedelta, float]:
-    """Schedules podcast. Use this to manually reschedule a podcast
-    e.g. in admin."""
-
-    return schedule(list(podcast.episode_set.values_list("pub_date", flat=True)))
-
-
 def calc_frequency(pub_dates: list[datetime]) -> float:
     """
     Returns the mean - standard error of all relevant release dates

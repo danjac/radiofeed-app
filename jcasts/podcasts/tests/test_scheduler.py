@@ -4,31 +4,12 @@ import pytest
 
 from django.utils import timezone
 
-from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts import scheduler
 from jcasts.podcasts.models import Podcast
 
 
 def assert_hours(delta, hours):
     assert delta.total_seconds() / 3600 == pytest.approx(hours, 1.0)
-
-
-class TestSchedulePodcast:
-    def test_schedule(self, podcast):
-        now = timezone.now()
-
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=3))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=6))
-        EpisodeFactory(podcast=podcast, pub_date=now - timedelta(days=9))
-
-        frequency, modifier = scheduler.schedule_podcast(podcast)
-        assert_hours(frequency, 72)
-        assert modifier == 0.05
-
-    def test_schedule_no_episodes(self, podcast):
-        frequency, modifier = scheduler.schedule_podcast(podcast)
-        assert_hours(frequency, 24)
-        assert modifier == 0.05
 
 
 class TestReschedule:

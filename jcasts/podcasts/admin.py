@@ -7,7 +7,7 @@ from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
-from jcasts.podcasts import feed_parser, models, scheduler
+from jcasts.podcasts import feed_parser, models
 
 
 @admin.register(models.Category)
@@ -171,10 +171,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "reactivate_podcasts",
     )
 
-    change_actions = (
-        "parse_podcast_feed",
-        "reschedule_podcast",
-    )
+    change_actions = ("parse_podcast_feed",)
 
     def scheduled(self, obj: models.Podcast):
         if obj.queued:
@@ -202,11 +199,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             self.message_user(request, f"{num_podcasts} re-activated")
         else:
             self.message_user(request, "No inactive podcasts selected")
-
-    def reschedule_podcast(self, request: HttpRequest, obj: models.Podcast) -> None:
-        obj.frequency, obj.frequency_modifier = scheduler.schedule_podcast(obj)
-        obj.save(update_fields=["frequency", "frequency_modifier"])
-        self.message_user(request, "Podcast rescheduled")
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
         if obj.queued:
