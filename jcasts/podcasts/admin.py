@@ -9,6 +9,8 @@ from django_object_actions import DjangoObjectActions
 
 from jcasts.podcasts import feed_parser, models, scheduler
 
+# test commit
+
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
