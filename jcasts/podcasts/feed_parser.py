@@ -63,13 +63,7 @@ def parse_scheduled_feeds(frequency: timedelta) -> int:
         F("pub_date").desc(nulls_first=True),
     )
 
-    limit = max(
-        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
-        - Podcast.objects.filter(queued__isnull=False).count(),
-        0,
-    )
-
-    return parse_podcast_feeds(podcasts, limit)
+    return parse_podcast_feeds(podcasts, get_scheduled_limit(frequency))
 
 
 def parse_podcast_feeds(podcasts: QuerySet, limit: int | None = None) -> int:
@@ -140,6 +134,15 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             tb=traceback.format_exc(),
             failure=True,
         )
+
+
+def get_scheduled_limit(frequency: timedelta) -> int:
+    # assume ~2s per feed
+    return max(
+        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
+        - Podcast.objects.queued().count(),
+        0,
+    )
 
 
 def parse_content(
