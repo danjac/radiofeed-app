@@ -48,14 +48,14 @@ class TestSchedule:
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
-        assert modifier == 0.05
+        assert modifier == 0.06
 
     def test_new_modifier(self):
         now = timezone.now()
         dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
-        assert modifier == 0.05
+        assert modifier == 0.06
 
     def test_high_variance(self):
         now = timezone.now()
@@ -67,7 +67,7 @@ class TestSchedule:
 
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 54)
-        assert modifier == 0.05
+        assert modifier == 0.072
 
     def test_max_dates_with_one_date(self):
 
