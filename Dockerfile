@@ -1,4 +1,4 @@
-FROM python:3.9.8-buster
+FROM python:3.10.0-buster
 
 
 ENV PYTHONUNBUFFERED 1
