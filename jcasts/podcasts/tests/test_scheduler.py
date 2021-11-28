@@ -38,10 +38,12 @@ class TestSchedule:
 
     def test_single_date(self):
         diff = timedelta(days=1)
-        dt = timezone.now() - diff
+        now = timezone.now()
+        dt = now - diff
         frequency, modifier = scheduler.schedule([dt])
         assert_hours(frequency, 24)
-        assert modifier == 0.05
+        assert modifier == 0.06
+        assert dt + frequency > now
 
     def test_multiple_dates(self):
         now = timezone.now()
@@ -49,6 +51,7 @@ class TestSchedule:
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
         assert modifier == 0.06
+        assert frequency + dates[0] > now
 
     def test_new_modifier(self):
         now = timezone.now()
@@ -56,6 +59,7 @@ class TestSchedule:
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
         assert modifier == 0.06
+        assert frequency + dates[0] > now
 
     def test_high_variance(self):
         now = timezone.now()
@@ -68,6 +72,7 @@ class TestSchedule:
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 54)
         assert modifier == 0.072
+        assert frequency + dates[0] > now
 
     def test_max_dates_with_one_date(self):
 
@@ -77,7 +82,8 @@ class TestSchedule:
         ]
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 6 * 24)
-        assert modifier == 0.05
+        assert modifier == pytest.approx(0.53, 1)
+        assert frequency + dates[0] > now
 
     def test_max_dates_with_one_date_in_range(self):
 
@@ -89,7 +95,8 @@ class TestSchedule:
         ]
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 24 * 30)
-        assert modifier == 0.05
+        assert modifier == pytest.approx(0.53, 1)
+        assert frequency + dates[0] > now
 
     def test_dates_outside_threshold(self):
 
@@ -114,3 +121,4 @@ class TestSchedule:
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 3)
         assert modifier == 0.05
+        assert frequency + dates[0] > now
