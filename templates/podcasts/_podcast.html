@@ -20,9 +20,9 @@
 
             <div class="text-xs lg:text-sm">
                 <a href="{{ podcast.get_episodes_url }}"
-                   title="Last Published"
+                   title="Episodes"
                    class="link font-semibold text-gray-600 dark:text-gray-300">
-                    {% include "_date.html" with value=podcast.pub_date %}
+                    {% include "_date.html" with value=podcast.pub_date title="Last Release Date" %}
                 </a>
             </div>
 

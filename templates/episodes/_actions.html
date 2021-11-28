@@ -31,30 +31,13 @@
                        class="font-semibold link max-h-10 sm:max-h-14 lg:max-h-16 break-words overflow-y-hidden">
                         {{ episode.cleaned_title }}
                     </a>
-                    {% with duration=episode.duration_in_seconds %}
                     <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm flex items-center space-x-2">
-                        {% include "_date.html" with value=episode.pub_date %}
-                        {% if duration %}
-                        <div title="Duration">
-                            {{ duration|format_duration }}
-                        </div>
-                        {% endif %}
-                        {% if episode.listened %}
-                        <div class="hidden sm:block">
-                            {% include "episodes/_listened.html" %}
-                        </div>
-                        {% endif %}
+                        {% include "_date.html" with value=episode.pub_date title="Release Date" %}
+                        {% include "episodes/_duration.html" %}
                     </div>
-                    {% endwith %}
                 </div>
             </h2>
             {% endwith %}
-
-            {% if episode.listened %}
-            <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm flex items-center mb-3 sm:hidden">
-                {% include "episodes/_listened.html" %}
-            </div>
-            {% endif %}
 
             <p class="mb-3 pb-3 break-words border-b dark:border-gray-500">
                 {{ episode.cleaned_description|truncatechars:500 }}
