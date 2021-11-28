@@ -275,8 +275,11 @@ class Podcast(models.Model):
 
         now = timezone.now()
 
-        if (scheduled := self.pub_date + self.frequency) < now - self.MAX_FREQUENCY:
-            scheduled = self.parsed + self.frequency
+        scheduled = (
+            self.parsed + self.frequency
+            if self.pub_date < now - self.MAX_FREQUENCY
+            else self.pub_date + self.frequency
+        )
 
         return scheduled if scheduled > now else None
 

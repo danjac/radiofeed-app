@@ -259,6 +259,7 @@ class TestPodcastModel:
             (timedelta(days=30), timedelta(days=9), timedelta(days=3), 21),
             (timedelta(days=30), timedelta(days=25), timedelta(days=10), 5),
             (timedelta(days=30), timedelta(days=90), timedelta(days=10), 20),
+            (timedelta(days=30), timedelta(days=41), timedelta(days=3), 27),
         ],
     )
     def test_get_scheduled(self, frequency, pub_date, parsed, days):
