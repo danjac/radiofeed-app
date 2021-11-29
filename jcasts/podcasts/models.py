@@ -153,6 +153,12 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
+    class WebSubStatus(models.TextChoices):
+        REQUESTED = "requested", "Requested"
+        ACTIVE = "active", "Active"
+        INACTIVE = "inactive", "Inactive"
+        ERROR = "error", "Error"
+
     MAX_FAILURES = 3
 
     DEFAULT_MODIFIER = 0.05
@@ -162,6 +168,8 @@ class Podcast(models.Model):
     MAX_FREQUENCY = timedelta(days=30)
 
     RELEVANCY_THRESHOLD = timedelta(days=90)
+
+    DEFAULT_WEBSUB_LEASE = timedelta(days=7)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
@@ -185,6 +193,23 @@ class Podcast(models.Model):
 
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
     frequency_modifier: float | None = models.FloatField(null=True, blank=True)
+
+    # websub fields
+
+    websub_mode: str = models.CharField(max_length=30, blank=True)
+    websub_token: str | None = models.CharField(max_length=30, null=True, blank=True)
+    websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
+    websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)
+    websub_exception: str = models.TextField(blank=True)
+    websub_lease: timedelta | None = models.DurationField(null=True, blank=True)
+
+    websub_status: str | None = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        choices=WebSubStatus.choices,
+    )
+    websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # feed parse result fields
 

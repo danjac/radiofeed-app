@@ -136,15 +136,6 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         )
 
 
-def get_scheduled_limit(frequency: timedelta) -> int:
-    # assume ~2s per feed
-    return max(
-        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
-        - Podcast.objects.queued().count(),
-        0,
-    )
-
-
 def parse_content(
     podcast: Podcast,
 ) -> tuple[requests.Response, rss_parser.Feed, list[rss_parser.Item]]:
@@ -221,6 +212,8 @@ def parse_success(
         "link",
         "owner",
         "title",
+        "websub_hub",
+        "websub_url",
     ):
         setattr(podcast, field, getattr(feed, field))
 
@@ -350,6 +343,15 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
+
+
+def get_scheduled_limit(frequency: timedelta) -> int:
+    # assume ~2s per feed
+    return max(
+        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
+        - Podcast.objects.queued().count(),
+        0,
+    )
 
 
 def parse_failure(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
@@ -8,7 +10,9 @@ from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
@@ -17,11 +21,11 @@ from jcasts.episodes.views import (
     render_episode_detail_response,
     render_episode_list_response,
 )
-from jcasts.podcasts import itunes
+from jcasts.podcasts import feed_parser, itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict
+from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
 @require_http_methods(["GET"])
@@ -283,6 +287,53 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
     messages.info(request, "You are no longer following this podcast")
     Follow.objects.filter(podcast=podcast, user=request.user).delete()
     return render_follow_response(request, podcast, follow=False)
+
+
+@require_http_methods(["GET", "POST"])
+@csrf_exempt
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+
+    now = timezone.now()
+
+    if request.method == "POST":
+        podcast = get_object_or_404(
+            Podcast.objects.active(),
+            pk=podcast_id,
+            websub_status=Podcast.WebsubStatus.Active,
+        )
+
+        # algo, signature = request.headers["X-Hub-Signature"].split("=")
+
+        feed_parser.parse_podcast_feed.delay(podcast.id)
+        return HttpResponseNoContent()
+
+    mode = request.GET.get("hub.mode")
+    topic = request.GET.get("hub.topic")
+    challenge = request.GET.get("hub.challenge")
+
+    podcast = get_object_or_404(
+        Podcast.objects.active(),
+        pk=podcast_id,
+        websub_mode=mode,
+        websub_status=Podcast.WebsubStatus.Requested,
+        websub_url=topic,
+    )
+
+    if mode == "subscribe":
+        podcast.websub_status = Podcast.WebsubStatus.Active
+
+        try:
+            lease = timedelta(seconds=int(request.GET["hub.lease_seconds"]))
+        except (KeyError, ValueError):
+            lease = Podcast.DEFAULT_WEBSUB_LEASE
+        podcast.websub_lease = now + lease
+    else:
+        podcast.websub_status = Podcast.WebsubStatus.Inactive
+
+    podcast.websub_status_changed = now
+    podcast.save()
+
+    return HttpResponse(challenge)
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
