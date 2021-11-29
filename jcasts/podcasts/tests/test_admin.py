@@ -14,6 +14,7 @@ from jcasts.podcasts.admin import (
     PubDateFilter,
     ResultFilter,
     SchedulingFilter,
+    WebSubFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -121,22 +122,44 @@ class TestPodcastAdmin:
 
 
 class TestResultFilter:
-    def test_result_filter_no_filter(self, podcasts, admin, req):
+    def test_no_filter(self, podcasts, admin, req):
         PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
         f = ResultFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    def test_result_filter_none(self, podcasts, admin, req):
+    def test_none(self, podcasts, admin, req):
         podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
         f = ResultFilter(req, {"result": "none"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert podcast not in qs
 
-    def test_result_filter_not_modified(self, podcasts, admin, req):
+    def test_not_modified(self, podcasts, admin, req):
         podcast = PodcastFactory(result=Podcast.Result.NOT_MODIFIED)
         f = ResultFilter(req, {"result": Podcast.Result.NOT_MODIFIED}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert podcast in qs
+
+
+class TestWebSubFilter:
+    def test_no_filter(self, podcasts, admin, req):
+        PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)
+        f = WebSubFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_none(self, podcasts, admin, req):
+        podcast = PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)
+        f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert podcast not in qs
+
+    def test_active(self, podcasts, admin, req):
+        podcast = PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)
+        f = WebSubFilter(req, {"websub": Podcast.WebSubStatus.ACTIVE}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert podcast in qs

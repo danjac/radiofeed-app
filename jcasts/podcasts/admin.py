@@ -60,6 +60,27 @@ class ResultFilter(admin.SimpleListFilter):
         return queryset
 
 
+class WebSubFilter(admin.SimpleListFilter):
+    title = "WebSub"
+    parameter_name = "websub"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+
+        return (("none", "None"),) + tuple(models.Podcast.WebSubStatus.choices)
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        if value := self.value():
+            return (
+                queryset.filter(websub_status__isnull=True)
+                if value == "none"
+                else queryset.filter(websub_status=value)
+            )
+
+        return queryset
+
+
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
@@ -138,6 +159,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PubDateFilter,
         SchedulingFilter,
         ResultFilter,
+        WebSubFilter,
     )
 
     list_display = (
