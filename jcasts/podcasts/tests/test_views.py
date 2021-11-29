@@ -399,6 +399,29 @@ class TestWebSubCallback:
         assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
         assert (podcast.websub_timeout - timezone.now()).days == 6
 
+    def test_subscribe_missing_mode(self, db, client, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(1):
+            assert_not_found(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                        "hub.lease_seconds": 7 * 24 * 60 * 60,
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed is None
+        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+
     def test_subscribe_not_requested_status(
         self, db, client, django_assert_num_queries
     ):

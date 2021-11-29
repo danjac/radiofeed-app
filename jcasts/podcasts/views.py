@@ -308,9 +308,12 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         feed_parser.parse_podcast_feed.delay(podcast.id)
         return HttpResponseNoContent()
 
-    mode = request.GET.get("hub.mode")
-    topic = request.GET.get("hub.topic")
-    challenge = request.GET.get("hub.challenge")
+    try:
+        mode = request.GET["hub.mode"]
+        topic = request.GET["hub.topic"]
+        challenge = request.GET["hub.challenge"]
+    except KeyError:
+        raise Http404
 
     podcast = get_object_or_404(
         Podcast.objects.active(),
@@ -325,7 +328,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         try:
             timeout = now + timedelta(seconds=int(request.GET["hub.lease_seconds"]))
         except (KeyError, ValueError):
-            raise Http404
+            raise Http404("hub.lease_seconds missing")
 
         podcast.websub_timeout = timeout
         podcast.websub_status = Podcast.WebSubStatus.ACTIVE
