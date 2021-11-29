@@ -99,7 +99,7 @@ class TestFormatDuration:
         assert format_duration(0) == ""
 
     def test_format_duration_if_less_than_one_minute(self):
-        assert format_duration(30) == "<1min"
+        assert format_duration(30) == ""
 
     def test_format_duration_if_less_than_ten_minutes(self):
         assert format_duration(540) == "9min"
