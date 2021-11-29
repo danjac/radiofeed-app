@@ -65,7 +65,7 @@ def absolute_uri(context: dict, url: str | None = None, *args, **kwargs) -> str:
 @register.filter
 def format_duration(total_seconds: int | None) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1h 30min"""
-    if not total_seconds:
+    if (total_seconds or 0) < 60:
         return ""
 
     rv = []
@@ -76,7 +76,7 @@ def format_duration(total_seconds: int | None) -> str:
     if total_minutes := round((total_seconds % 3600) / 60):
         rv.append(f"{total_minutes}min")
 
-    return " ".join(rv) if rv else "<1min"
+    return " ".join(rv) if rv else ""
 
 
 @register.simple_tag(takes_context=True)
