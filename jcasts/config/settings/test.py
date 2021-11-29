@@ -32,6 +32,3 @@ RQ_QUEUES = {
         "ASYNC": False,
     },
 }
-
-PODCASTINDEX_API_KEY = "notset"  # nosec
-PODCASTINDEX_API_SECRET = "notset"  # nosec
