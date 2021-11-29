@@ -163,6 +163,13 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "http_status",
         "result",
         "exception",
+        "websub_hub",
+        "websub_url",
+        "websub_mode",
+        "websub_secret",
+        "websub_status",
+        "websub_status_changed",
+        "websub_timeout",
     )
 
     actions = (

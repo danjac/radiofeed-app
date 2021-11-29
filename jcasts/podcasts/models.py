@@ -197,11 +197,11 @@ class Podcast(models.Model):
     # websub fields
 
     websub_mode: str = models.CharField(max_length=30, blank=True)
-    websub_token: str | None = models.CharField(max_length=30, null=True, blank=True)
+    websub_secret: str | None = models.UUIDField(null=True, blank=True)
     websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_exception: str = models.TextField(blank=True)
-    websub_lease: timedelta | None = models.DurationField(null=True, blank=True)
+    websub_timeout: datetime | None = models.DateTimeField(null=True, blank=True)
 
     websub_status: str | None = models.CharField(
         max_length=30,
@@ -209,6 +209,7 @@ class Podcast(models.Model):
         blank=True,
         choices=WebSubStatus.choices,
     )
+
     websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # feed parse result fields

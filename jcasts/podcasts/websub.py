@@ -1,10 +1,14 @@
+import hashlib
+import hmac
 import traceback
+import uuid
 
 import requests
 
 from django.db.models import Q
+from django.http import HttpRequest
 from django.urls import reverse
-from django.utils import crypto, timezone
+from django.utils import timezone
 from django_rq import job
 
 from jcasts.podcasts.models import Podcast
@@ -18,8 +22,8 @@ def subscribe_podcasts():
         .filter(
             Q(websub_status__isnull=True)
             | Q(
-                websub_status=Podcast.WebSubStatus.Active,
-                websub_lease__lt=timezone.now(),
+                websub_status=Podcast.WebSubStatus.ACTIVE,
+                websub_timeout__lt=timezone.now(),
             ),
             websub_hub__isnull=False,
             websub_url__isnull=False,
@@ -38,17 +42,14 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
         podcast = (
             Podcast.objects.active()
             .filter(websub_hub__isnull=False, websub_url__isnull=False)
-            .exclude(websub_status=Podcast.WebSubStatus.Requested)
+            .exclude(websub_status=Podcast.WebSubStatus.REQUESTED)
             .get(pk=podcast_id)
         )
     except Podcast.DoesNotExist:
         return
 
-    podcast.websub_token = crypto.get_random_string(
-        Podcast._meta.get_field("websub_token").max_length
-    )
-
     podcast.websub_mode = mode
+    podcast.websub_secret = uuid.uuid4()
 
     response = requests.post(
         podcast.websub_hub,
@@ -59,17 +60,30 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
             "hub.verify": "sync",
             "hub.mode": podcast.websub_mode,
             "hub.topic": podcast.websub_url,
-            "hub.verify_token": podcast.websub_token,
+            "hub.secret": podcast.websub_secret,
             "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_LEASE.total_seconds(),
         },
     )
 
     try:
         response.raise_for_status()
-        podcast.websub_status = Podcast.WebsubStatus.Requested
+        podcast.websub_exception = ""
+        podcast.websub_status = Podcast.WebSubStatus.REQUESTED
     except requests.RequestException:
         podcast.websub_exception = traceback.format_exc()
-        podcast.websub_status = Podcast.WebsubStatus.Error
+        podcast.websub_status = Podcast.WebSubStatus.ERROR
 
     podcast.websub_status_changed = timezone.now()
     podcast.save()
+
+
+def check_signature(request: HttpRequest, secret: str) -> bool:
+
+    print(request.headers)
+    try:
+        algo, signature = request.headers["X-Hub-Signature"].split("=")
+        algo = getattr(hashlib, algo)
+    except (AttributeError, KeyError, ValueError):
+        return False
+    expected = hmac.new(secret.encode(), request.body, algo).hexdigest()
+    return hmac.compare_digest(signature, expected)

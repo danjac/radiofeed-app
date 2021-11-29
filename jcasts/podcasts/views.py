@@ -21,7 +21,7 @@ from jcasts.episodes.views import (
     render_episode_detail_response,
     render_episode_list_response,
 )
-from jcasts.podcasts import feed_parser, itunes
+from jcasts.podcasts import feed_parser, itunes, websub
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
@@ -291,7 +291,7 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 @csrf_exempt
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     now = timezone.now()
 
@@ -302,7 +302,8 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
             websub_status=Podcast.WebsubStatus.Active,
         )
 
-        # algo, signature = request.headers["X-Hub-Signature"].split("=")
+        if not websub.check_signature(request, podcast.websub_secret):
+            raise Http404("invalid signature")
 
         feed_parser.parse_podcast_feed.delay(podcast.id)
         return HttpResponseNoContent()
