@@ -136,8 +136,6 @@ class Feed:
 
     language: str = attr.ib(default="en", converter=language_code)
 
-    last_build_date: datetime | None = attr.ib(default=None, converter=parse_date)
-
     link: str | None = attr.ib(default=None, converter=url_or_none)
 
     cover_url: str | None = attr.ib(default=None, converter=url_or_none)
@@ -196,7 +194,6 @@ def parse_feed(finder: XPathFinder) -> Feed:
     return Feed(
         title=finder.find("title/text()"),
         link=finder.find("link/text()"),
-        last_build_date=finder.find("lastBuildDate/text()"),
         language=finder.find("language/text()", default="en"),
         complete=finder.find("itunes:complete/text()"),
         explicit=finder.find("itunes:explicit/text()"),

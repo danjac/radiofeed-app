@@ -169,9 +169,6 @@ class Podcast(models.Model):
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
 
-    # RSS lastBuildDate
-    last_build_date: datetime | None = models.DateTimeField(null=True, blank=True)
-
     # latest episode pub date from RSS feed
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 

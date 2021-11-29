@@ -151,10 +151,6 @@ def parse_content(
 
     response = get_feed_response(podcast)
     feed, items = rss_parser.parse_rss(response.content)
-
-    if not is_feed_changed(podcast, feed):
-        raise NotModified(response=response)
-
     return response, feed, items
 
 
@@ -222,7 +218,6 @@ def parse_success(
         "funding_text",
         "funding_url",
         "language",
-        "last_build_date",
         "link",
         "owner",
         "title",
@@ -350,13 +345,6 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
-
-
-def is_feed_changed(podcast: Podcast, feed: rss_parser.Feed) -> bool:
-    return (
-        None in (podcast.last_build_date, feed.last_build_date)
-        or podcast.last_build_date != feed.last_build_date
-    )
 
 
 @lru_cache

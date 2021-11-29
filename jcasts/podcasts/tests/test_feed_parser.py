@@ -106,34 +106,6 @@ class TestParsePubDates:
         assert modifier == 0.06
 
 
-class TestIsFeedChanged:
-    def test_feed_date_is_none(self):
-        assert feed_parser.is_feed_changed(
-            Podcast(last_build_date=timezone.now()),
-            Feed(**FeedFactory(last_build_date=None)),
-        )
-
-    def test_podcast_date_is_none(self):
-        assert feed_parser.is_feed_changed(
-            Podcast(last_build_date=None),
-            Feed(**FeedFactory(last_build_date=timezone.now())),
-        )
-
-    def test_different_podcast_and_feed_dates(self):
-        now = timezone.now()
-        assert feed_parser.is_feed_changed(
-            Podcast(last_build_date=now - timedelta(days=3)),
-            Feed(**FeedFactory(last_build_date=now)),
-        )
-
-    def test_same_podcast_and_feed_dates(self):
-        now = timezone.now()
-        assert not feed_parser.is_feed_changed(
-            Podcast(last_build_date=now),
-            Feed(**FeedFactory(last_build_date=now)),
-        )
-
-
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
@@ -355,80 +327,6 @@ class TestParsePodcastFeed:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
-
-    def test_parse_podcast_same_last_build_date(self, mocker, new_podcast):
-
-        new_podcast.last_build_date = parse_date("Wed, 01 Jul 2020 15:25:26 +0000")
-        new_podcast.save()
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content(),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
-            ),
-        )
-        assert not feed_parser.parse_podcast_feed(new_podcast.id)
-        new_podcast.refresh_from_db()
-        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
-
-    def test_parse_podcast_new_last_build_date(self, mocker, new_podcast, categories):
-
-        new_podcast.last_build_date = parse_date("Tue, 30 Jun 2020 15:25:26 +0000")
-        new_podcast.save()
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content(),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
-            ),
-        )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
-
-    def test_parse_podcast_last_build_date_none(self, mocker, new_podcast, categories):
-
-        new_podcast.last_build_date = None
-        new_podcast.save()
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content(),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
-            ),
-        )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
-
-    def test_parse_podcast_no_last_build_date(self, mocker, new_podcast, categories):
-
-        new_podcast.last_build_date = parse_date("Tue, 30 Jun 2020 15:25:26 +0000")
-        new_podcast.save()
-
-        mocker.patch(
-            self.mock_http_get,
-            return_value=MockResponse(
-                url=new_podcast.rss,
-                content=self.get_rss_content("rss_mock_no_build_date.xml"),
-                headers={
-                    "ETag": "abc123",
-                    "Last-Modified": self.updated,
-                },
-            ),
-        )
-        assert feed_parser.parse_podcast_feed(new_podcast.id)
 
     def test_parse_podcast_feed_permanent_redirect(
         self, mocker, new_podcast, categories
