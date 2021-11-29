@@ -17,12 +17,12 @@ class TestReschedule:
         assert_hours(frequency, 24)
         assert modifier == 0.06
 
-    def test_reschedule_past_limit(self):
+    def test_reschedule_frequency_past_limit(self):
         frequency, modifier = scheduler.reschedule(frequency=timedelta(days=30))
         assert_hours(frequency, 24 * 30)
         assert modifier == 0.06
 
-    def test_reschedule_overflow(self):
+    def test_reschedule_modifier_past_limit(self):
         frequency, modifier = scheduler.reschedule(
             frequency=timedelta(days=30), modifier=300
         )
@@ -51,6 +51,15 @@ class TestSchedule:
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
         assert modifier == 0.06
+        assert frequency + dates[0] > now
+
+    def test_multiple_dates_with_recent(self):
+        now = timezone.now()
+        dates = [now - timedelta(days=3 * i) for i in range(1, 6)]
+        dates = [now - timedelta(days=2)] + dates
+        frequency, modifier = scheduler.schedule(dates)
+        assert_hours(frequency, 72)
+        assert modifier == 0.05
         assert frequency + dates[0] > now
 
     def test_new_modifier(self):
