@@ -1,16 +1,25 @@
+import uuid
+
 import pytest
 
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 
 from jcasts.episodes.factories import EpisodeFactory
+from jcasts.podcasts import websub
 from jcasts.podcasts.factories import (
     FollowFactory,
     PodcastFactory,
     RecommendationFactory,
 )
 from jcasts.podcasts.itunes import Feed
-from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
+from jcasts.podcasts.models import Follow, Podcast
+from jcasts.shared.assertions import (
+    assert_conflict,
+    assert_no_content,
+    assert_not_found,
+    assert_ok,
+)
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -292,3 +301,177 @@ class TestUnfollow:
             resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
         assert_ok(resp)
         assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+
+
+class TestWebSubCallback:
+
+    topic = "https://podnews.net/rss"
+
+    def test_post(self, db, client, django_assert_num_queries, mock_parse_podcast_feed):
+
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_secret=uuid.uuid4(),
+        )
+        sig = websub.make_signature(podcast.websub_secret, b"testing", "sha1")
+
+        with django_assert_num_queries(2):
+            assert_no_content(
+                client.post(
+                    self.url(podcast),
+                    data=b"testing",
+                    content_type="application/xml",
+                    HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+                )
+            )
+
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
+
+    def test_post_inactive(
+        self, db, client, django_assert_num_queries, mock_parse_podcast_feed
+    ):
+
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_status=Podcast.WebSubStatus.INACTIVE,
+            websub_secret=uuid.uuid4(),
+        )
+        sig = websub.make_signature(podcast.websub_secret, b"testing", "sha1")
+
+        with django_assert_num_queries(2):
+            assert_not_found(
+                client.post(
+                    self.url(podcast),
+                    data=b"testing",
+                    content_type="application/xml",
+                    HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+                )
+            )
+
+        mock_parse_podcast_feed.assert_not_called()
+
+    def test_post_bad_sig(
+        self, db, client, django_assert_num_queries, mock_parse_podcast_feed
+    ):
+
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_secret=uuid.uuid4(),
+        )
+        sig = websub.make_signature(uuid.uuid4(), b"testing", "sha1")
+
+        with django_assert_num_queries(2):
+            assert_not_found(
+                client.post(
+                    self.url(podcast),
+                    data=b"testing",
+                    content_type="application/xml",
+                    HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+                )
+            )
+
+        mock_parse_podcast_feed.assert_not_called()
+
+    def test_subscribe(self, db, client, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(3):
+            assert_ok(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "subscribe",
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                        "hub.lease_seconds": 7 * 24 * 60 * 60,
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed
+        assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
+        assert (podcast.websub_timeout - timezone.now()).days == 6
+
+    def test_subscribe_not_requested_status(
+        self, db, client, django_assert_num_queries
+    ):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+        with django_assert_num_queries(2):
+            assert_not_found(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "subscribe",
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                        "hub.lease_seconds": 7 * 24 * 60 * 60,
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
+
+    def test_subscribe_missing_lease_seconds(
+        self, db, client, django_assert_num_queries
+    ):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(2):
+            assert_not_found(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "subscribe",
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed is None
+        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+        assert podcast.websub_timeout is None
+
+    def test_unsubscribe(self, db, client, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_mode="unsubscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(3):
+            assert_ok(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "unsubscribe",
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed
+        assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
+
+    def url(self, podcast):
+        return reverse("podcasts:websub_callback", args=[podcast.id])

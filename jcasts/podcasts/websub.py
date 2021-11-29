@@ -17,18 +17,14 @@ from jcasts.shared.template import build_absolute_uri
 
 def subscribe_podcasts():
 
-    podcasts = (
-        Podcast.objects.active()
-        .filter(
-            Q(websub_status__isnull=True)
-            | Q(
-                websub_status=Podcast.WebSubStatus.ACTIVE,
-                websub_timeout__lt=timezone.now(),
-            ),
-            websub_hub__isnull=False,
-            websub_url__isnull=False,
-        )
-        .order_by("websub_status_changed")
+    podcasts = Podcast.objects.active().filter(
+        Q(websub_status__isnull=True)
+        | Q(
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_timeout__lt=timezone.now(),
+        ),
+        websub_hub__isnull=False,
+        websub_url__isnull=False,
     )
 
     for podcast_id in podcasts.values_list("id", flat=True):
@@ -61,7 +57,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
             "hub.mode": podcast.websub_mode,
             "hub.topic": podcast.websub_url,
             "hub.secret": podcast.websub_secret,
-            "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_LEASE.total_seconds(),
+            "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_TIMEOUT.total_seconds(),
         },
     )
 
@@ -77,13 +73,15 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
     podcast.save()
 
 
-def check_signature(request: HttpRequest, secret: str) -> bool:
+def make_signature(secret: uuid.UUID, body: bytes, algo: str):
+    return hmac.new(secret.bytes, body, algo).hexdigest()
 
-    print(request.headers)
+
+def check_signature(request: HttpRequest, secret: uuid.UUID) -> bool:
+
     try:
         algo, signature = request.headers["X-Hub-Signature"].split("=")
         algo = getattr(hashlib, algo)
     except (AttributeError, KeyError, ValueError):
         return False
-    expected = hmac.new(secret.encode(), request.body, algo).hexdigest()
-    return hmac.compare_digest(signature, expected)
+    return hmac.compare_digest(signature, make_signature(secret, request.body, algo))

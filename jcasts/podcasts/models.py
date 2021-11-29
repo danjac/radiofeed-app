@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
@@ -169,7 +171,7 @@ class Podcast(models.Model):
 
     RELEVANCY_THRESHOLD = timedelta(days=90)
 
-    DEFAULT_WEBSUB_LEASE = timedelta(days=7)
+    DEFAULT_WEBSUB_TIMEOUT = timedelta(days=7)
 
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
@@ -197,7 +199,7 @@ class Podcast(models.Model):
     # websub fields
 
     websub_mode: str = models.CharField(max_length=30, blank=True)
-    websub_secret: str | None = models.UUIDField(null=True, blank=True)
+    websub_secret: uuid.UUID | None = models.UUIDField(null=True, blank=True)
     websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_exception: str = models.TextField(blank=True)

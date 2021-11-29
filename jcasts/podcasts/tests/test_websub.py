@@ -1,4 +1,3 @@
-import hmac
 import uuid
 
 from datetime import timedelta
@@ -16,9 +15,10 @@ from jcasts.podcasts.models import Podcast
 class TestCheckSignature:
     def test_ok(self, rf):
 
-        secret = str(uuid.uuid4())
+        secret = uuid.uuid4()
         body = b"testing"
-        sig = hmac.new(secret.encode(), body, "sha1").hexdigest()
+
+        sig = websub.make_signature(secret, body, "sha1")
 
         req = rf.post(
             "/",
@@ -31,9 +31,9 @@ class TestCheckSignature:
 
     def test_invalid_secret(self, rf):
 
-        secret = str(uuid.uuid4())
+        secret = uuid.uuid4()
         body = b"testing"
-        sig = hmac.new(secret.encode(), body, "sha1").hexdigest()
+        sig = websub.make_signature(secret, body, "sha1")
 
         req = rf.post(
             "/",
@@ -42,11 +42,11 @@ class TestCheckSignature:
             HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
         )
 
-        assert not websub.check_signature(req, "another-token")
+        assert not websub.check_signature(req, uuid.uuid4())
 
     def test_missing_sig(self, rf):
 
-        secret = str(uuid.uuid4())
+        secret = uuid.uuid4()
 
         req = rf.post(
             "/",

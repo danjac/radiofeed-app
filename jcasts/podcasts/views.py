@@ -299,7 +299,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         podcast = get_object_or_404(
             Podcast.objects.active(),
             pk=podcast_id,
-            websub_status=Podcast.WebsubStatus.Active,
+            websub_status=Podcast.WebSubStatus.ACTIVE,
         )
 
         if not websub.check_signature(request, podcast.websub_secret):
@@ -316,20 +316,21 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         Podcast.objects.active(),
         pk=podcast_id,
         websub_mode=mode,
-        websub_status=Podcast.WebsubStatus.Requested,
+        websub_status=Podcast.WebSubStatus.REQUESTED,
         websub_url=topic,
     )
 
     if mode == "subscribe":
-        podcast.websub_status = Podcast.WebsubStatus.Active
 
         try:
-            lease = timedelta(seconds=int(request.GET["hub.lease_seconds"]))
+            timeout = now + timedelta(seconds=int(request.GET["hub.lease_seconds"]))
         except (KeyError, ValueError):
-            lease = Podcast.DEFAULT_WEBSUB_LEASE
-        podcast.websub_lease = now + lease
+            raise Http404
+
+        podcast.websub_timeout = timeout
+        podcast.websub_status = Podcast.WebSubStatus.ACTIVE
     else:
-        podcast.websub_status = Podcast.WebsubStatus.Inactive
+        podcast.websub_status = Podcast.WebSubStatus.INACTIVE
 
     podcast.websub_status_changed = now
     podcast.save()
