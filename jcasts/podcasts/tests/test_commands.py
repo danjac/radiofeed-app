@@ -1,8 +1,25 @@
+import pytest
+
 from django.core.management import call_command
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
+
+
+class TestSubscribePodcasts:
+    hub = "https://amazinglybrilliant.superfeedr.com/"
+    url = "https://podnews.net/rss"
+
+    @pytest.fixture
+    def mock_subscribe(self, mocker):
+        return mocker.patch("jcasts.podcasts.websub.subscribe.delay")
+
+    def test_command(self, db, mock_subscribe):
+        podcast = PodcastFactory(websub_url=self.url, websub_hub=self.hub)
+
+        call_command("subscribe_podcasts")
+        mock_subscribe.assert_called_with(podcast.id)
 
 
 class TestSeedPodcastData:
