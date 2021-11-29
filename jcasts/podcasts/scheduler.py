@@ -24,14 +24,13 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     """
     now = timezone.now()
 
-    frequency = Podcast.DEFAULT_FREQUENCY
     modifier = Podcast.DEFAULT_MODIFIER
 
     try:
         latest = max(pub_dates)
     except ValueError:
         # no pub dates yet, just return default
-        return frequency, modifier
+        return Podcast.DEFAULT_FREQUENCY, modifier
 
     # if > 30 days ago just return the max freq
 
@@ -41,7 +40,7 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     try:
         frequency = within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
     except ValueError:
-        ...
+        frequency = Podcast.DEFAULT_FREQUENCY
 
     # while next scheduled time is less than current time, increment values
 
