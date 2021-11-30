@@ -271,8 +271,8 @@ def parse_websub(
     podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
 ) -> tuple[str | None, str | None, str | None]:
 
-    websub_hub = feed.websub_hub or response.links.get("hub")
-    websub_url = feed.websub_url or response.links.get("self")
+    websub_hub = feed.websub_hub or response.links.get("hub", {}).get("url")
+    websub_url = feed.websub_url or response.links.get("self", {}).get("url")
 
     if (websub_hub, websub_url) != (
         podcast.websub_hub,

@@ -129,8 +129,8 @@ class TestParseWebSub:
     def test_websub_hub_in_headers(self):
         feed = Feed(**FeedFactory())
         links = {
-            "hub": self.hub,
-            "self": self.url,
+            "hub": {"url": self.hub},
+            "self": {"url": self.url},
         }
         assert feed_parser.parse_websub(Podcast(), MockResponse(links=links), feed) == (
             self.hub,
@@ -140,7 +140,7 @@ class TestParseWebSub:
 
     def test_websub_hub_in_headers_missing_url(self):
         feed = Feed(**FeedFactory())
-        links = {"hub": self.hub}
+        links = {"hub": {"url": self.hub}}
         assert feed_parser.parse_websub(Podcast(), MockResponse(links=links), feed) == (
             self.hub,
             None,
@@ -177,8 +177,8 @@ class TestParseWebSub:
             websub_status=Podcast.WebSubStatus.ACTIVE,
         )
         links = {
-            "hub": self.hub,
-            "self": self.url,
+            "hub": {"url": self.hub},
+            "self": {"url": self.url},
         }
         assert feed_parser.parse_websub(podcast, MockResponse(links=links), feed) == (
             self.hub,
