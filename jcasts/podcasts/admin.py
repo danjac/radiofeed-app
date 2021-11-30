@@ -188,6 +188,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "websub_hub",
         "websub_url",
         "websub_mode",
+        "websub_token",
         "websub_secret",
         "websub_status",
         "websub_status_changed",
