@@ -70,7 +70,6 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
             "hub.mode": podcast.websub_mode,
             "hub.topic": podcast.websub_url or podcast.rss,
             "hub.secret": podcast.websub_secret.hex,
-            "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_TIMEOUT.total_seconds(),
         },
     )
 

@@ -171,8 +171,6 @@ class Podcast(models.Model):
 
     RELEVANCY_THRESHOLD = timedelta(days=90)
 
-    DEFAULT_WEBSUB_TIMEOUT = timedelta(days=7)
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
