@@ -66,7 +66,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
         podcast.websub_exception = ""
         podcast.websub_status = Podcast.WebSubStatus.REQUESTED
     except requests.RequestException:
-        podcast.websub_exception = traceback.format_exc()
+        podcast.websub_exception = traceback.format_exc() + "\n" + str(response.content)
         podcast.websub_status = Podcast.WebSubStatus.ERROR
 
     podcast.websub_status_changed = timezone.now()

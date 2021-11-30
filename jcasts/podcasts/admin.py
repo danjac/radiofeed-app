@@ -192,6 +192,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "websub_status",
         "websub_status_changed",
         "websub_timeout",
+        "websub_exception",
     )
 
     actions = (
