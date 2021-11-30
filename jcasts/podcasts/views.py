@@ -306,7 +306,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
         if not websub.check_signature(request, podcast.websub_secret):
 
-            podcast.websub_callback_exception = "invalid signature"
+            podcast.websub_exception = "invalid signature"
             podcast.websub_status = Podcast.WebSubStatus.ERROR
             podcast.websub_status_changed = now
             podcast.save()
@@ -343,7 +343,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     except (KeyError, ValueError):
         podcast.websub_status = Podcast.WebSubStatus.ERROR
-        podcast.websub_callback_exception = (
+        podcast.websub_exception = (
             traceback.format_exc() + "\n" + request.get_full_path()
         )
         raise Http404

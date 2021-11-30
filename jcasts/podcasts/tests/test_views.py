@@ -376,7 +376,7 @@ class TestWebSubCallback:
         mock_parse_podcast_feed.assert_not_called()
         podcast.refresh_from_db()
         assert podcast.websub_status_changed
-        assert podcast.websub_callback_exception
+        assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_subscribe(self, db, client, django_assert_num_queries):
@@ -426,7 +426,7 @@ class TestWebSubCallback:
         podcast.refresh_from_db()
 
         assert podcast.websub_status_changed
-        assert podcast.websub_callback_exception
+        assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_subscribe_invalid_topic(self, db, client, django_assert_num_queries):
@@ -451,7 +451,7 @@ class TestWebSubCallback:
         podcast.refresh_from_db()
 
         assert podcast.websub_status_changed
-        assert podcast.websub_callback_exception
+        assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_subscribe_missing_mode(self, db, client, django_assert_num_queries):
@@ -475,7 +475,7 @@ class TestWebSubCallback:
         podcast.refresh_from_db()
 
         assert podcast.websub_status_changed
-        assert podcast.websub_callback_exception
+        assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_subscribe_not_requested_status(
@@ -526,7 +526,7 @@ class TestWebSubCallback:
         podcast.refresh_from_db()
 
         assert podcast.websub_status_changed
-        assert podcast.websub_callback_exception
+        assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_unsubscribe(self, db, client, django_assert_num_queries):
