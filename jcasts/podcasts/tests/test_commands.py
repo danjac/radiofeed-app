@@ -21,6 +21,21 @@ class TestSubscribePodcasts:
         call_command("subscribe_podcasts")
         mock_subscribe.assert_called_with(podcast.id)
 
+    def test_clear_exceptions(self, db, mock_subscribe):
+        podcast = PodcastFactory(
+            websub_url=self.url,
+            websub_hub=self.hub,
+            websub_exception="oops",
+            websub_status=Podcast.WebSubStatus.ERROR,
+        )
+
+        call_command("subscribe_podcasts", clear_exceptions=True)
+        mock_subscribe.assert_called_with(podcast.id)
+
+        podcast.refresh_from_db()
+        assert podcast.websub_exception == ""
+        assert podcast.websub_status is None
+
 
 class TestSeedPodcastData:
     def test_command(self, db):
