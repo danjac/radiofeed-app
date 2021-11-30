@@ -11,7 +11,7 @@ urlpatterns = [
     path("search/autocomplete/", views.search_autocomplete, name="search_autocomplete"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
-        "podcasts/websub/<int:podcast_id>/",
+        "podcasts/websub/<uuid:token>/",
         views.websub_callback,
         name="websub_callback",
     ),

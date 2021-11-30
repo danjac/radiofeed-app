@@ -312,6 +312,7 @@ class TestWebSubCallback:
 
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_status=Podcast.WebSubStatus.ACTIVE,
             websub_secret=uuid.uuid4(),
         )
@@ -335,6 +336,7 @@ class TestWebSubCallback:
 
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_status=Podcast.WebSubStatus.INACTIVE,
             websub_secret=uuid.uuid4(),
         )
@@ -358,6 +360,7 @@ class TestWebSubCallback:
 
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_status=Podcast.WebSubStatus.ACTIVE,
             websub_secret=uuid.uuid4(),
         )
@@ -382,6 +385,7 @@ class TestWebSubCallback:
     def test_subscribe(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
@@ -407,6 +411,7 @@ class TestWebSubCallback:
     def test_subscribe_invalid_mode(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
@@ -432,6 +437,7 @@ class TestWebSubCallback:
     def test_subscribe_invalid_topic(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
@@ -457,6 +463,7 @@ class TestWebSubCallback:
     def test_subscribe_missing_mode(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
@@ -484,6 +491,7 @@ class TestWebSubCallback:
         podcast = PodcastFactory(
             websub_mode="subscribe",
             websub_url=self.topic,
+            websub_token=uuid.uuid4(),
             websub_status=Podcast.WebSubStatus.ACTIVE,
         )
         with django_assert_num_queries(2):
@@ -509,6 +517,7 @@ class TestWebSubCallback:
         podcast = PodcastFactory(
             websub_mode="subscribe",
             websub_url=self.topic,
+            websub_token=uuid.uuid4(),
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
         with django_assert_num_queries(3):
@@ -532,6 +541,7 @@ class TestWebSubCallback:
     def test_unsubscribe(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="unsubscribe",
+            websub_token=uuid.uuid4(),
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
@@ -553,4 +563,4 @@ class TestWebSubCallback:
         assert podcast.websub_status == Podcast.WebSubStatus.INACTIVE
 
     def url(self, podcast):
-        return reverse("podcasts:websub_callback", args=[podcast.id])
+        return reverse("podcasts:websub_callback", args=[podcast.websub_token])

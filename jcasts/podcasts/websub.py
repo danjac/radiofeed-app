@@ -50,6 +50,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
     now = timezone.now()
 
     podcast.websub_mode = mode
+    podcast.websub_token = uuid.uuid4()
     podcast.websub_secret = uuid.uuid4()
     podcast.websub_status = Podcast.WebSubStatus.REQUESTED
     podcast.websub_exception = ""
@@ -61,7 +62,10 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
         podcast.websub_hub,
         {
             "hub.callback": build_absolute_uri(
-                reverse("podcasts:websub_callback", args=[podcast.id])
+                reverse(
+                    "podcasts:websub_callback",
+                    args=[podcast.websub_token],
+                )
             ),
             "hub.verify": "sync",
             "hub.mode": podcast.websub_mode,

@@ -199,6 +199,9 @@ class Podcast(models.Model):
     # websub fields
 
     websub_mode: str = models.CharField(max_length=30, blank=True)
+    websub_token: uuid.UUID | None = models.UUIDField(
+        unique=True, null=True, blank=True
+    )
     websub_secret: uuid.UUID | None = models.UUIDField(null=True, blank=True)
     websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)

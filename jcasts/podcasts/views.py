@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import traceback
+import uuid
 
 from datetime import timedelta
 
@@ -293,14 +294,14 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 @csrf_exempt
-def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def websub_callback(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
 
     now = timezone.now()
 
     if request.method == "POST":
         podcast = get_object_or_404(
             Podcast.objects.active(),
-            pk=podcast_id,
+            websub_token=token,
             websub_status=Podcast.WebSubStatus.ACTIVE,
             websub_secret__isnull=False,
         )
@@ -320,7 +321,7 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_object_or_404(
         Podcast.objects.active(),
-        pk=podcast_id,
+        websub_token=token,
         websub_status=Podcast.WebSubStatus.REQUESTED,
     )
 
