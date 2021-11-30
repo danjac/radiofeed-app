@@ -199,7 +199,7 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
-class TestParsePodcastFeeds:
+class TestParseScheduledFeeds:
     def test_parse_scheduled_feeds(self, db, mock_parse_podcast_feed, mock_rq):
 
         now = timezone.now()
@@ -218,6 +218,14 @@ class TestParsePodcastFeeds:
             pub_date=now - timedelta(days=3),
             frequency=timedelta(hours=1),
             parsed=now - timedelta(days=1),
+        )
+
+        # websub
+        PodcastFactory(
+            pub_date=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+            parsed=now - timedelta(days=1),
+            websub_status=Podcast.WebSubStatus.ACTIVE,
         )
 
         # scheduled
