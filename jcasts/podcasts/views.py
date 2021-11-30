@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import traceback
+
 from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -303,40 +305,45 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
         )
 
         if not websub.check_signature(request, podcast.websub_secret):
-            raise Http404("invalid signature")
+            return HttpResponseBadRequest("invalid signature")
 
         feed_parser.parse_podcast_feed.delay(podcast.id)
         return HttpResponseNoContent()
 
-    try:
-        mode = request.GET["hub.mode"]
-        topic = request.GET["hub.topic"]
-        challenge = request.GET["hub.challenge"]
-    except KeyError:
-        raise Http404
-
     podcast = get_object_or_404(
         Podcast.objects.active(),
         pk=podcast_id,
-        websub_mode=mode,
         websub_status=Podcast.WebSubStatus.REQUESTED,
-        websub_url=topic,
     )
 
-    if mode == "subscribe":
+    try:
 
-        try:
+        mode = request.GET["hub.mode"]
+        topic = request.GET["hub.topic"]
+        challenge = request.GET["hub.challenge"]
+
+        if podcast.websub_mode != mode:
+            raise ValueError(f"mode does not match:{mode}")
+
+        if topic not in (podcast.rss, podcast.websub_url):
+            raise ValueError(f"topic does not match:{topic}")
+
+        if mode == "subscribe":
             timeout = now + timedelta(seconds=int(request.GET["hub.lease_seconds"]))
-        except (KeyError, ValueError):
-            raise Http404("hub.lease_seconds missing")
+            podcast.websub_timeout = timeout
+            podcast.websub_status = Podcast.WebSubStatus.ACTIVE
+        else:
+            podcast.websub_status = Podcast.WebSubStatus.INACTIVE
 
-        podcast.websub_timeout = timeout
-        podcast.websub_status = Podcast.WebSubStatus.ACTIVE
-    else:
-        podcast.websub_status = Podcast.WebSubStatus.INACTIVE
-
-    podcast.websub_status_changed = now
-    podcast.save()
+    except (KeyError, ValueError):
+        podcast.websub_status = Podcast.WebSubStatus.ERROR
+        podcast.websub_exception = (
+            traceback.format_exc() + "\n" + request.get_full_path()
+        )
+        raise Http404
+    finally:
+        podcast.websub_status_changed = now
+        podcast.save()
 
     return HttpResponse(challenge)
 

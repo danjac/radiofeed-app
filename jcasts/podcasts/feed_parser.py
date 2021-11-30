@@ -217,7 +217,6 @@ def parse_success(
         "owner",
         "title",
         "websub_hub",
-        "websub_url",
     ):
         setattr(podcast, field, getattr(feed, field))
 

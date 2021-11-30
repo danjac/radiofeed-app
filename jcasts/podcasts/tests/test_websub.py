@@ -134,6 +134,8 @@ class TestSubscribe:
 
     def test_subscribe_error(self, db, mocker):
         class BadResponse:
+            content = b"oops"
+
             def raise_for_status(self):
                 raise requests.HTTPError()
 

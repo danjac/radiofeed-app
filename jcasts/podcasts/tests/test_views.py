@@ -15,6 +15,7 @@ from jcasts.podcasts.factories import (
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Follow, Podcast
 from jcasts.shared.assertions import (
+    assert_bad_request,
     assert_conflict,
     assert_no_content,
     assert_not_found,
@@ -363,7 +364,7 @@ class TestWebSubCallback:
         sig = websub.make_signature(uuid.uuid4(), b"testing", "sha1")
 
         with django_assert_num_queries(2):
-            assert_not_found(
+            assert_bad_request(
                 client.post(
                     self.url(podcast),
                     data=b"testing",
@@ -399,13 +400,63 @@ class TestWebSubCallback:
         assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
         assert (podcast.websub_timeout - timezone.now()).days == 6
 
+    def test_subscribe_invalid_mode(self, db, client, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(3):
+            assert_not_found(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "unsubscribe",
+                        "hub.topic": self.topic,
+                        "hub.challenge": "ok",
+                        "hub.lease_seconds": 7 * 24 * 60 * 60,
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed
+        assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.ERROR
+
+    def test_subscribe_invalid_topic(self, db, client, django_assert_num_queries):
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_url=self.topic,
+            websub_status=Podcast.WebSubStatus.REQUESTED,
+        )
+        with django_assert_num_queries(3):
+            assert_not_found(
+                client.get(
+                    self.url(podcast),
+                    {
+                        "hub.mode": "subscribe",
+                        "hub.topic": "https://other-topic.com/",
+                        "hub.challenge": "ok",
+                        "hub.lease_seconds": 7 * 24 * 60 * 60,
+                    },
+                )
+            )
+
+        podcast.refresh_from_db()
+
+        assert podcast.websub_status_changed
+        assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.ERROR
+
     def test_subscribe_missing_mode(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(
             websub_mode="subscribe",
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
-        with django_assert_num_queries(1):
+        with django_assert_num_queries(3):
             assert_not_found(
                 client.get(
                     self.url(podcast),
@@ -419,8 +470,9 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_status_changed is None
-        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
+        assert podcast.websub_status_changed
+        assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_subscribe_not_requested_status(
         self, db, client, django_assert_num_queries
@@ -455,7 +507,7 @@ class TestWebSubCallback:
             websub_url=self.topic,
             websub_status=Podcast.WebSubStatus.REQUESTED,
         )
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(3):
             assert_not_found(
                 client.get(
                     self.url(podcast),
@@ -469,9 +521,9 @@ class TestWebSubCallback:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_status_changed is None
-        assert podcast.websub_status == Podcast.WebSubStatus.REQUESTED
-        assert podcast.websub_timeout is None
+        assert podcast.websub_status_changed
+        assert podcast.websub_exception
+        assert podcast.websub_status == Podcast.WebSubStatus.ERROR
 
     def test_unsubscribe(self, db, client, django_assert_num_queries):
         podcast = PodcastFactory(

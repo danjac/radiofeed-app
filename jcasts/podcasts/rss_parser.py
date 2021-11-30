@@ -144,7 +144,6 @@ class Feed:
     funding_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     websub_hub: str | None = attr.ib(default=None, converter=url_or_none)
-    websub_url: str | None = attr.ib(default=None, converter=url_or_none)
 
     owner: str = attr.ib(default="")
     description: str = attr.ib(default="")
@@ -204,7 +203,6 @@ def parse_feed(finder: XPathFinder) -> Feed:
         funding_url=finder.find("podcast:funding/@url"),
         funding_text=finder.find("podcast:funding/text()"),
         websub_hub=finder.find("atom:link[@rel='hub']/@href"),
-        websub_url=finder.find("atom:link[@rel='self']/@href"),
         description=finder.find(
             "description/text()",
             "itunes:summary/text()",

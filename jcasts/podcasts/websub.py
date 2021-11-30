@@ -24,7 +24,6 @@ def subscribe_podcasts():
             websub_timeout__lt=timezone.now(),
         ),
         websub_hub__isnull=False,
-        websub_url__isnull=False,
     )
 
     for podcast_id in podcasts.values_list("id", flat=True):
@@ -37,7 +36,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
     try:
         podcast = (
             Podcast.objects.active()
-            .filter(websub_hub__isnull=False, websub_url__isnull=False)
+            .filter(websub_hub__isnull=False)
             .exclude(websub_status=Podcast.WebSubStatus.REQUESTED)
             .get(pk=podcast_id)
         )
@@ -55,7 +54,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
             ),
             "hub.verify": "sync",
             "hub.mode": podcast.websub_mode,
-            "hub.topic": podcast.websub_url,
+            "hub.topic": podcast.websub_url or podcast.rss,
             "hub.secret": podcast.websub_secret,
             "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_TIMEOUT.total_seconds(),
         },
@@ -66,7 +65,9 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
         podcast.websub_exception = ""
         podcast.websub_status = Podcast.WebSubStatus.REQUESTED
     except requests.RequestException:
-        podcast.websub_exception = traceback.format_exc() + "\n" + str(response.content)
+        podcast.websub_exception = (
+            traceback.format_exc() + "\n" + response.content.decode("utf-8")
+        )
         podcast.websub_status = Podcast.WebSubStatus.ERROR
 
     podcast.websub_status_changed = timezone.now()
