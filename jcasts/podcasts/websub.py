@@ -83,11 +83,11 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
         podcast.save()
 
 
-def make_signature(secret: uuid.UUID, body: bytes, algo: str):
+def make_signature(secret: uuid.UUID, body: bytes, algo: str) -> str:
     return hmac.new(secret.bytes, body, algo).hexdigest()
 
 
-def check_signature(request: HttpRequest, secret: uuid.UUID):
+def check_signature(request: HttpRequest, secret: uuid.UUID) -> None:
 
     try:
         header = request.headers["X-Hub-Signature"]
