@@ -67,13 +67,12 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
                     args=[podcast.websub_token],
                 )
             ),
-            "hub.verify": "sync",
+            "hub.verify": "async",
             "hub.mode": podcast.websub_mode,
             "hub.topic": podcast.websub_url or podcast.rss,
             "hub.secret": podcast.websub_secret.hex,
             "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_TIMEOUT.total_seconds(),
         },
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
 
     try:
