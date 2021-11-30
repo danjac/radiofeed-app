@@ -151,11 +151,12 @@ class TestWebSubFilter:
         assert qs.count() == 4
 
     def test_none(self, podcasts, admin, req):
-        podcast = PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)
+        PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)
+        podcast = PodcastFactory(websub_status=None, websub_hub="https://example.com")
         f = WebSubFilter(req, {"websub": "none"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert podcast not in qs
+        assert qs.count() == 1
+        assert podcast in qs
 
     def test_active(self, podcasts, admin, req):
         podcast = PodcastFactory(websub_status=Podcast.WebSubStatus.ACTIVE)

@@ -73,7 +73,10 @@ class WebSubFilter(admin.SimpleListFilter):
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         if value := self.value():
             return (
-                queryset.filter(websub_status__isnull=True)
+                queryset.filter(
+                    websub_status__isnull=True,
+                    websub_hub__isnull=False,
+                )
                 if value == "none"
                 else queryset.filter(websub_status=value)
             )
