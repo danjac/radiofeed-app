@@ -84,7 +84,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
 
 
 def make_signature(secret: uuid.UUID, body: bytes, algo: str) -> str:
-    return hmac.new(secret.bytes, body, algo).hexdigest()
+    return hmac.new(secret.hex.encode("utf-8"), body, algo).hexdigest()
 
 
 def check_signature(request: HttpRequest, secret: uuid.UUID) -> None:
