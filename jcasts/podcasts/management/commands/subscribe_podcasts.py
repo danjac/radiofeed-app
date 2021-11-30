@@ -25,7 +25,6 @@ class Command(BaseCommand):
             Podcast.objects.filter(websub_status=Podcast.WebSubStatus.ERROR).update(
                 websub_status=None,
                 websub_exception="",
-                websub_callback_exception="",
                 websub_status_changed=None,
             )
         websub.subscribe_podcasts()
