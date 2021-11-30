@@ -148,7 +148,7 @@ class TestSubscribe:
 
         podcast.refresh_from_db()
 
-        assert podcast.websub_secret
+        assert podcast.websub_secret is None
         assert podcast.websub_mode == "subscribe"
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
         assert podcast.websub_status_changed

@@ -43,8 +43,15 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
     except Podcast.DoesNotExist:
         return
 
+    now = timezone.now()
+
     podcast.websub_mode = mode
     podcast.websub_secret = uuid.uuid4()
+    podcast.websub_status = Podcast.WebSubStatus.REQUESTED
+    podcast.websub_exception = ""
+    podcast.websub_status_changed = now
+
+    podcast.save()
 
     response = requests.post(
         podcast.websub_hub,
@@ -62,16 +69,14 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
 
     try:
         response.raise_for_status()
-        podcast.websub_exception = ""
-        podcast.websub_status = Podcast.WebSubStatus.REQUESTED
     except requests.RequestException:
         podcast.websub_exception = (
             traceback.format_exc() + "\n" + response.content.decode("utf-8")
         )
         podcast.websub_status = Podcast.WebSubStatus.ERROR
-
-    podcast.websub_status_changed = timezone.now()
-    podcast.save()
+        podcast.websub_status_changed = now
+        podcast.websub_secret = None
+        podcast.save()
 
 
 def make_signature(secret: uuid.UUID, body: bytes, algo: str):
