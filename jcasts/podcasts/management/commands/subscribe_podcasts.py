@@ -14,15 +14,20 @@ class Command(BaseCommand):
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
 
         parser.add_argument(
-            "--clear-exceptions",
-            help="Clear all websub errors before subscribing",
+            "--clear",
+            help="Clear all websub errors/requested before subscribing",
             action="store_true",
             default=False,
         )
 
     def handle(self, *args, **options) -> None:
-        if options["clear_exceptions"]:
-            Podcast.objects.filter(websub_status=Podcast.WebSubStatus.ERROR).update(
+        if options["clear"]:
+            Podcast.objects.filter(
+                websub_status__in=(
+                    Podcast.WebSubStatus.ERROR,
+                    Podcast.WebSubStatus.REQUESTED,
+                )
+            ).update(
                 websub_status=None,
                 websub_exception="",
                 websub_status_changed=None,

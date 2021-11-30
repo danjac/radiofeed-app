@@ -29,7 +29,7 @@ class TestSubscribePodcasts:
             websub_status=Podcast.WebSubStatus.ERROR,
         )
 
-        call_command("subscribe_podcasts", clear_exceptions=True)
+        call_command("subscribe_podcasts", clear=True)
         mock_subscribe.assert_called_with(podcast.id)
 
         podcast.refresh_from_db()
