@@ -102,6 +102,4 @@ def check_signature(request: HttpRequest, secret: uuid.UUID) -> None:
         raise InvalidSignature(f"X-Hub-Signature algo unknown: {header}")
 
     if not hmac.compare_digest(signature, make_signature(secret, request.body, algo)):
-        raise InvalidSignature(
-            f"X-Hub-Signature does not match: {header}\n{request.body.decode()}"
-        )
+        raise InvalidSignature(f"X-Hub-Signature does not match: {header}")

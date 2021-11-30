@@ -1,3 +1,4 @@
+import pathlib
 import uuid
 
 from datetime import timedelta
@@ -88,6 +89,25 @@ class TestCheckSignature:
 
         with pytest.raises(websub.InvalidSignature):
             websub.check_signature(req, secret)
+
+    def test_with_body(self, rf):
+
+        data = open(
+            pathlib.Path(__file__).parent / "mocks" / "rss_bad_sig.xml",
+            "rb",
+        ).read()
+        secret = uuid.UUID("b1856b21-ea6f-4fa5-96f4-1fc2b9302429")
+        # header = "sha1=a7d8fddba25ff030bebce4ddc609f1e8e7af8364"
+        header = "sha1=" + websub.make_signature(secret, data, "sha1")
+
+        req = rf.post(
+            "/",
+            data=data,
+            content_type="application/xml",
+            HTTP_X_HUB_SIGNATURE=header,
+        )
+
+        websub.check_signature(req, secret)
 
 
 class TestSubscribePodcasts:
