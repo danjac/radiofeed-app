@@ -67,6 +67,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
                     args=[podcast.websub_token],
                 )
             ),
+            "hub.verify": "async",
             "hub.mode": podcast.websub_mode,
             "hub.topic": podcast.websub_url or podcast.rss,
             "hub.secret": podcast.websub_secret.hex,
