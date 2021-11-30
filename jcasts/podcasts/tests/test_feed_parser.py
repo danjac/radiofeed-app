@@ -142,7 +142,7 @@ class TestParseWebSub:
         feed = Feed(**FeedFactory())
         links = {"hub": self.hub}
         assert feed_parser.parse_websub(Podcast(), MockResponse(links=links), feed) == (
-            None,
+            self.hub,
             None,
             None,
         )

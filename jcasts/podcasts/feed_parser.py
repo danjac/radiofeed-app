@@ -270,15 +270,14 @@ def parse_pub_dates(
 def parse_websub(
     podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
 ) -> tuple[str | None, str | None, str | None]:
-    if feed.websub_hub and feed.websub_hub != podcast.websub_hub:
-        return feed.websub_hub, None, None
 
-    if (
-        (websub_hub := response.links.get("hub"))
-        and (websub_url := response.links.get("self"))
-        and (websub_hub, websub_url) != (podcast.websub_hub, podcast.websub_url)
+    websub_hub = feed.websub_hub or response.links.get("hub")
+    websub_url = feed.websub_url or response.links.get("self")
+
+    if (websub_hub, websub_url) != (
+        podcast.websub_hub,
+        podcast.websub_url,
     ):
-        print(response.links)
         return websub_hub, websub_url, None
 
     return podcast.websub_hub, podcast.websub_url, podcast.websub_status
