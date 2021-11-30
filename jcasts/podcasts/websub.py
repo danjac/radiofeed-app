@@ -15,6 +15,10 @@ from jcasts.podcasts.models import Podcast
 from jcasts.shared.template import build_absolute_uri
 
 
+class InvalidSignature(ValueError):
+    ...
+
+
 def subscribe_podcasts():
 
     podcasts = Podcast.objects.active().filter(
@@ -83,11 +87,18 @@ def make_signature(secret: uuid.UUID, body: bytes, algo: str):
     return hmac.new(secret.bytes, body, algo).hexdigest()
 
 
-def check_signature(request: HttpRequest, secret: uuid.UUID) -> bool:
+def check_signature(request: HttpRequest, secret: uuid.UUID):
 
     try:
-        algo, signature = request.headers["X-Hub-Signature"].split("=")
+        header = request.headers["X-Hub-Signature"]
+        algo, signature = header.split("=")
         algo = getattr(hashlib, algo)
-    except (AttributeError, KeyError, ValueError):
-        return False
-    return hmac.compare_digest(signature, make_signature(secret, request.body, algo))
+    except KeyError:
+        raise InvalidSignature("X-Hub-Signature is missing")
+    except ValueError:
+        raise InvalidSignature(f"X-Hub-Signature is invalid: {header}")
+    except AttributeError:
+        raise InvalidSignature(f"X-Hub-Signature algo unknown: {header}")
+
+    if not hmac.compare_digest(signature, make_signature(secret, request.body, algo)):
+        raise InvalidSignature(f"X-Hub-Signature does not match: {header}")

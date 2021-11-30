@@ -302,11 +302,13 @@ def websub_callback(request: HttpRequest, podcast_id: int) -> HttpResponse:
             Podcast.objects.active(),
             pk=podcast_id,
             websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_secret__isnull=False,
         )
 
-        if not websub.check_signature(request, podcast.websub_secret):
-
-            podcast.websub_exception = "invalid signature"
+        try:
+            websub.check_signature(request, podcast.websub_secret)
+        except websub.InvalidSignature:
+            podcast.websub_exception = traceback.format_exc()
             podcast.websub_status = Podcast.WebSubStatus.ERROR
             podcast.websub_status_changed = now
             podcast.save()

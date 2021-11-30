@@ -27,7 +27,38 @@ class TestCheckSignature:
             HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
         )
 
-        assert websub.check_signature(req, secret)
+        websub.check_signature(req, secret)
+
+    def test_broken_header(self, rf):
+
+        body = b"testing"
+
+        req = rf.post(
+            "/",
+            data=body,
+            content_type="application/xml",
+            HTTP_X_HUB_SIGNATURE="broken",
+        )
+
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, uuid.uuid4())
+
+    def test_unknown_algo(self, rf):
+
+        secret = uuid.uuid4()
+        body = b"testing"
+
+        sig = websub.make_signature(secret, body, "sha1")
+
+        req = rf.post(
+            "/",
+            data=body,
+            content_type="application/xml",
+            HTTP_X_HUB_SIGNATURE=f"badalgo={sig}",
+        )
+
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, secret)
 
     def test_invalid_secret(self, rf):
 
@@ -42,7 +73,8 @@ class TestCheckSignature:
             HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
         )
 
-        assert not websub.check_signature(req, uuid.uuid4())
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, uuid.uuid4())
 
     def test_missing_sig(self, rf):
 
@@ -54,7 +86,8 @@ class TestCheckSignature:
             content_type="application/xml",
         )
 
-        assert not websub.check_signature(req, secret)
+        with pytest.raises(websub.InvalidSignature):
+            websub.check_signature(req, secret)
 
 
 class TestSubscribePodcasts:
