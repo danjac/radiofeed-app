@@ -203,6 +203,7 @@ class Podcast(models.Model):
     websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)
     websub_exception: str = models.TextField(blank=True)
+    websub_callback_exception: str = models.TextField(blank=True)
     websub_timeout: datetime | None = models.DateTimeField(null=True, blank=True)
 
     websub_status: str | None = models.CharField(

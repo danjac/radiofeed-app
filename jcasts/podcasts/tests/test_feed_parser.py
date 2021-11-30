@@ -106,6 +106,87 @@ class TestParsePubDates:
         assert modifier == 0.06
 
 
+class TestParseWebSub:
+
+    hub = "https://amazinglybrilliant.superfeedr.com/"
+    url = "https://podnews.net/rss"
+
+    def test_no_websub_hub(self, feed):
+        assert feed_parser.parse_websub(Podcast(), MockResponse(), feed) == (
+            None,
+            None,
+            None,
+        )
+
+    def test_websub_hub_in_feed(self):
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        assert feed_parser.parse_websub(Podcast(), MockResponse(), feed) == (
+            self.hub,
+            None,
+            None,
+        )
+
+    def test_websub_hub_in_headers(self):
+        feed = Feed(**FeedFactory())
+        links = {
+            "hub": self.hub,
+            "self": self.url,
+        }
+        assert feed_parser.parse_websub(Podcast(), MockResponse(links=links), feed) == (
+            self.hub,
+            self.url,
+            None,
+        )
+
+    def test_websub_hub_in_headers_missing_url(self):
+        feed = Feed(**FeedFactory())
+        links = {"hub": self.hub}
+        assert feed_parser.parse_websub(Podcast(), MockResponse(links=links), feed) == (
+            None,
+            None,
+            None,
+        )
+
+    def test_websub_hub_in_feed_no_change(self):
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        podcast = Podcast(
+            websub_hub=self.hub, websub_status=Podcast.WebSubStatus.ACTIVE
+        )
+        assert feed_parser.parse_websub(podcast, MockResponse(), feed) == (
+            self.hub,
+            None,
+            Podcast.WebSubStatus.ACTIVE,
+        )
+
+    def test_websub_hub_in_feed_change(self):
+        feed = Feed(**FeedFactory(websub_hub=self.hub))
+        podcast = Podcast(
+            websub_hub="https://other-hub.com/",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+        assert feed_parser.parse_websub(podcast, MockResponse(), feed) == (
+            self.hub,
+            None,
+            None,
+        )
+
+    def test_websub_hub_in_headers_change(self):
+        feed = Feed(**FeedFactory())
+        podcast = Podcast(
+            websub_hub="https://other-hub.com/",
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+        )
+        links = {
+            "hub": self.hub,
+            "self": self.url,
+        }
+        assert feed_parser.parse_websub(podcast, MockResponse(links=links), feed) == (
+            self.hub,
+            self.url,
+            None,
+        )
+
+
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")

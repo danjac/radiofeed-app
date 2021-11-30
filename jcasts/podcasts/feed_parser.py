@@ -204,6 +204,12 @@ def parse_success(
         podcast.frequency_modifier,
     ) = parse_pub_dates(podcast, feed, items)
 
+    (
+        podcast.websub_hub,
+        podcast.websub_url,
+        podcast.websub_status,
+    ) = parse_websub(podcast, response, feed)
+
     # content
 
     for field in (
@@ -216,7 +222,6 @@ def parse_success(
         "link",
         "owner",
         "title",
-        "websub_hub",
     ):
         setattr(podcast, field, getattr(feed, field))
 
@@ -260,6 +265,23 @@ def parse_pub_dates(
         podcast.frequency,
         podcast.frequency_modifier,
     )
+
+
+def parse_websub(
+    podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
+) -> tuple[str | None, str | None, str | None]:
+    if feed.websub_hub and feed.websub_hub != podcast.websub_hub:
+        return feed.websub_hub, None, None
+
+    if (
+        (websub_hub := response.links.get("hub"))
+        and (websub_url := response.links.get("self"))
+        and (websub_hub, websub_url) != (podcast.websub_hub, podcast.websub_url)
+    ):
+        print(response.links)
+        return websub_hub, websub_url, None
+
+    return podcast.websub_hub, podcast.websub_url, podcast.websub_status
 
 
 def parse_episodes(
