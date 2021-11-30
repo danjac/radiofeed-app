@@ -12,7 +12,7 @@ from django.utils import timezone
 from django_rq import job
 
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.template import build_absolute_uri, safe_url
+from jcasts.shared.template import build_absolute_uri
 
 
 class InvalidSignature(ValueError):
@@ -59,7 +59,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
     podcast.save()
 
     response = requests.post(
-        safe_url(podcast.websub_hub),
+        podcast.websub_hub,
         {
             "hub.callback": build_absolute_uri(
                 reverse(
