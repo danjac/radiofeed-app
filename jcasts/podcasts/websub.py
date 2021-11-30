@@ -69,6 +69,7 @@ def subscribe(podcast_id: int, mode: str = "subscribe") -> None:
             "hub.secret": podcast.websub_secret,
             "hub.lease_seconds": Podcast.DEFAULT_WEBSUB_TIMEOUT.total_seconds(),
         },
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
     )
 
     try:
