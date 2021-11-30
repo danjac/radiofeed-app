@@ -26,5 +26,6 @@ class Command(BaseCommand):
                 websub_status=None,
                 websub_exception="",
                 websub_callback_exception="",
+                websub_status_changed=None,
             )
         websub.subscribe_podcasts()
