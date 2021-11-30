@@ -308,13 +308,16 @@ def websub_callback(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
 
         try:
             websub.check_signature(request, podcast.websub_secret)
+            podcast.queued = now
+
         except websub.InvalidSignature:
             podcast.websub_exception = traceback.format_exc()
             podcast.websub_status = Podcast.WebSubStatus.ERROR
             podcast.websub_status_changed = now
-            podcast.save()
-
             return HttpResponseBadRequest("invalid signature")
+
+        finally:
+            podcast.save()
 
         feed_parser.parse_podcast_feed.delay(podcast.id)
         return HttpResponseNoContent()

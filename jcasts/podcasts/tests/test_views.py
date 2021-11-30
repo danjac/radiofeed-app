@@ -318,7 +318,7 @@ class TestWebSubCallback:
         )
         sig = websub.make_signature(podcast.websub_secret, b"testing", "sha1")
 
-        with django_assert_num_queries(2):
+        with django_assert_num_queries(3):
             assert_no_content(
                 client.post(
                     self.url(podcast),
