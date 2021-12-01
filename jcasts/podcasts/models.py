@@ -194,6 +194,10 @@ class Podcast(models.Model):
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
     frequency_modifier: float | None = models.FloatField(null=True, blank=True)
 
+    # podping
+
+    podping: bool = models.BooleanField(default=False)
+
     # websub fields
 
     websub_mode: str = models.CharField(max_length=30, blank=True)

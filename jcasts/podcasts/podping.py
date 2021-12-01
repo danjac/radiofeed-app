@@ -41,13 +41,14 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
     """
 
     podcast_ids: set[int] = set()
+    now = timezone.now()
 
     for podcast_id, rss in (
         Podcast.objects.active()
         .unqueued()
         .filter(
             rss__in=urls,
-            parsed__lt=timezone.now() - timedelta(minutes=from_minutes_ago),
+            parsed__lt=now - timedelta(minutes=from_minutes_ago),
         )
         .values_list("pk", "rss")
         .distinct()
@@ -58,7 +59,7 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
     if not podcast_ids:
         return
 
-    Podcast.objects.filter(pk__in=podcast_ids).enqueue()
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now, podping=True)
 
     for podcast_id in podcast_ids:
         feed_parser.parse_podcast_feed.delay(podcast_id)

@@ -58,16 +58,9 @@ class ParseResult:
 
 def parse_scheduled_feeds(frequency: timedelta) -> int:
 
-    podcasts = (
-        Podcast.objects.scheduled()
-        .exclude(
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_timeout__lt=timezone.now(),
-        )
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-        )
+    podcasts = Podcast.objects.scheduled().order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
     )
 
     return parse_podcast_feeds(podcasts, get_scheduled_limit(frequency))

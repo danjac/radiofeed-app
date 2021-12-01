@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -296,37 +296,21 @@ def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
 @csrf_exempt
 def websub_callback(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
 
-    now = timezone.now()
+    return (
+        websub_distribution(request, token)
+        if request.method == "POST"
+        else websub_subscribe(request, token)
+    )
 
-    if request.method == "POST":
-        podcast = get_object_or_404(
-            Podcast.objects.active(),
-            websub_token=token,
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-            websub_secret__isnull=False,
-        )
 
-        try:
-            websub.check_signature(request, podcast.websub_secret)
-            podcast.queued = now
-
-        except websub.InvalidSignature:
-            podcast.websub_exception = traceback.format_exc()
-            podcast.websub_status = Podcast.WebSubStatus.ERROR
-            podcast.websub_status_changed = now
-            return HttpResponseBadRequest("invalid signature")
-
-        finally:
-            podcast.save()
-
-        feed_parser.parse_podcast_feed.delay(podcast.id)
-        return HttpResponseNoContent()
-
+def websub_subscribe(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
     podcast = get_object_or_404(
         Podcast.objects.active(),
         websub_token=token,
         websub_status=Podcast.WebSubStatus.REQUESTED,
     )
+
+    now = timezone.now()
 
     try:
 
@@ -358,6 +342,36 @@ def websub_callback(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
         podcast.save()
 
     return HttpResponse(challenge)
+
+
+def websub_distribution(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
+    podcast = get_object_or_404(
+        Podcast.objects.active(),
+        websub_token=token,
+        websub_status=Podcast.WebSubStatus.ACTIVE,
+        websub_secret__isnull=False,
+    )
+
+    # podcast already in update queue, ignore
+    if podcast.queued:
+        return HttpResponseNoContent()
+
+    now = timezone.now()
+
+    try:
+        websub.check_signature(request, podcast.websub_secret)
+        podcast.queued = now
+        feed_parser.parse_podcast_feed.delay(podcast.id)
+
+    except websub.InvalidSignature:
+        podcast.websub_exception = traceback.format_exc()
+        podcast.websub_status = Podcast.WebSubStatus.ERROR
+        podcast.websub_status_changed = now
+
+    finally:
+        podcast.save()
+
+    return HttpResponseNoContent()
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
