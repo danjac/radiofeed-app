@@ -329,30 +329,6 @@ class TestWebSubCallback:
 
         mock_parse_podcast_feed.assert_called_with(podcast.id)
 
-    def test_post_inactive(
-        self, db, client, django_assert_num_queries, mock_parse_podcast_feed
-    ):
-
-        podcast = PodcastFactory(
-            websub_mode="subscribe",
-            websub_token=uuid.uuid4(),
-            websub_status=Podcast.WebSubStatus.INACTIVE,
-            websub_secret=uuid.uuid4(),
-        )
-        sig = websub.make_signature(podcast.websub_secret, b"testing", "sha1")
-
-        with django_assert_num_queries(2):
-            assert_not_found(
-                client.post(
-                    self.url(podcast),
-                    data=b"testing",
-                    content_type="application/xml",
-                    HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
-                )
-            )
-
-        mock_parse_podcast_feed.assert_not_called()
-
     def test_post_queued(
         self, db, client, django_assert_num_queries, mock_parse_podcast_feed
     ):
@@ -508,32 +484,6 @@ class TestWebSubCallback:
         assert podcast.websub_status_changed
         assert podcast.websub_exception
         assert podcast.websub_status == Podcast.WebSubStatus.ERROR
-
-    def test_subscribe_not_requested_status(
-        self, db, client, django_assert_num_queries
-    ):
-        podcast = PodcastFactory(
-            websub_mode="subscribe",
-            websub_url=self.topic,
-            websub_token=uuid.uuid4(),
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-        )
-        with django_assert_num_queries(2):
-            assert_not_found(
-                client.get(
-                    self.url(podcast),
-                    {
-                        "hub.mode": "subscribe",
-                        "hub.topic": self.topic,
-                        "hub.challenge": "ok",
-                        "hub.lease_seconds": 7 * 24 * 60 * 60,
-                    },
-                )
-            )
-
-        podcast.refresh_from_db()
-
-        assert podcast.websub_status == Podcast.WebSubStatus.ACTIVE
 
     def test_subscribe_missing_lease_seconds(
         self, db, client, django_assert_num_queries

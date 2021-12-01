@@ -304,11 +304,8 @@ def websub_callback(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
 
 
 def websub_subscribe(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
-    podcast = get_object_or_404(
-        Podcast.objects.active(),
-        websub_token=token,
-        websub_status=Podcast.WebSubStatus.REQUESTED,
-    )
+
+    podcast = get_object_or_404(Podcast.objects.active(), websub_token=token)
 
     now = timezone.now()
 
@@ -348,7 +345,6 @@ def websub_distribution(request: HttpRequest, token: uuid.UUID) -> HttpResponse:
     podcast = get_object_or_404(
         Podcast.objects.active(),
         websub_token=token,
-        websub_status=Podcast.WebSubStatus.ACTIVE,
         websub_secret__isnull=False,
     )
 
