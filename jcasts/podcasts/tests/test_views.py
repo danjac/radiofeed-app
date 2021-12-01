@@ -15,7 +15,6 @@ from jcasts.podcasts.factories import (
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Follow, Podcast
 from jcasts.shared.assertions import (
-    assert_bad_request,
     assert_conflict,
     assert_no_content,
     assert_not_found,
@@ -367,7 +366,7 @@ class TestWebSubCallback:
         sig = websub.make_signature(uuid.uuid4(), b"testing", "sha1")
 
         with django_assert_num_queries(3):
-            assert_bad_request(
+            assert_no_content(
                 client.post(
                     self.url(podcast),
                     data=b"testing",

@@ -220,14 +220,6 @@ class TestParseScheduledFeeds:
             parsed=now - timedelta(days=1),
         )
 
-        # websub
-        PodcastFactory(
-            pub_date=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            parsed=now - timedelta(days=1),
-            websub_status=Podcast.WebSubStatus.ACTIVE,
-        )
-
         # scheduled
         podcast = PodcastFactory(
             pub_date=now - timedelta(days=3),
