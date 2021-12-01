@@ -27,6 +27,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
+        self.stdout.write("Starting podping")
 
         from_minutes_ago = options["from_minutes_ago"]
         keep_alive = options["keep_alive"]
