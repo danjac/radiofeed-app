@@ -23,24 +23,24 @@ def get_updates(
     from_minutes_ago: int = 15, batch_size=30
 ) -> Generator[str, None, None]:
 
-    batch: list[str] = []
+    batch: set[str] = set()
 
     for url in get_stream(from_minutes_ago):
         print("from stream:", url)
-        batch.append(url)
+        batch.add(url)
 
         if len(batch) > batch_size:
             print("batching", len(batch), "feeds")
             yield from batch_updates(batch, from_minutes_ago)
-            batch = []
+            batch = set()
 
 
-def batch_updates(urls: list[str], from_minutes_ago: int) -> Generator[str, None, None]:
+def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None, None]:
     """Processes batch of RSS feeds. Parse feeds of any URLs
     in the database that have not already been updated within the timeframe.
     """
 
-    podcast_ids: list[int] = []
+    podcast_ids: set[int] = set()
 
     for podcast_id, rss in (
         Podcast.objects.active()
@@ -50,9 +50,13 @@ def batch_updates(urls: list[str], from_minutes_ago: int) -> Generator[str, None
             parsed__lt=timezone.now() - timedelta(minutes=from_minutes_ago),
         )
         .values_list("pk", "rss")
+        .distinct()
     ):
-        podcast_ids.append(podcast_id)
+        podcast_ids.add(podcast_id)
         yield rss
+
+    if not podcast_ids:
+        return
 
     Podcast.objects.filter(pk__in=podcast_ids).enqueue()
 
