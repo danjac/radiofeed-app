@@ -20,11 +20,9 @@ WORKDIR /app
 
 # python requirements
 
-RUN pip install poetry
+COPY ./requirements.txt ./requirements.txt
 
-COPY ./requirements-dev.txt ./requirements-dev.txt
-
-RUN pip install -r ./requirements-dev.txt
+RUN pip install -r ./requirements.txt
 
 RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet

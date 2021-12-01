@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-docker-compose exec webapp mkdir -p /usr/local/lib/python3.9/site-packages/
-docker-compose exec webapp poetry $@
-

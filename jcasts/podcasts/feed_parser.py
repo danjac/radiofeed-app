@@ -60,7 +60,10 @@ def parse_scheduled_feeds(frequency: timedelta) -> int:
 
     podcasts = (
         Podcast.objects.scheduled()
-        .exclude(websub_status=Podcast.WebSubStatus.ACTIVE)
+        .exclude(
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_timeout__lt=timezone.now(),
+        )
         .order_by(
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
