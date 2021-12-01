@@ -10,6 +10,7 @@ from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
     PodcastAdmin,
+    PodpingFilter,
     PromotedFilter,
     PubDateFilter,
     ResultFilter,
@@ -189,18 +190,33 @@ class TestPubDateFilter:
 
 
 class TestPromotedFilter:
-    def test_promoted_filter_none(self, podcasts, admin, req):
+    def test_none(self, podcasts, admin, req):
         PodcastFactory(promoted=False)
         f = PromotedFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    def test_promoted_filter_true(self, podcasts, admin, req):
+    def test_true(self, podcasts, admin, req):
         promoted = PodcastFactory(promoted=True)
         f = PromotedFilter(req, {"promoted": "yes"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
+
+
+class TestPodpingFilter:
+    def test_none(self, podcasts, admin, req):
+        PodcastFactory(podping=False)
+        f = PodpingFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    def test_true(self, podcasts, admin, req):
+        podping = PodcastFactory(podping=True)
+        f = PodpingFilter(req, {"podping": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == podping
 
 
 class TestSchedulingFilter:

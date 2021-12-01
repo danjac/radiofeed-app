@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import itertools
 import logging
 
 from django.core.management.base import BaseCommand, CommandError
@@ -25,19 +26,20 @@ class Command(BaseCommand):
             help="Restart on error",
         )
 
-    def handle(self, *args, **options) -> None:  # pragma: no-cover
+    def handle(self, *args, **options) -> None:
 
         from_minutes_ago = options["from_minutes_ago"]
         keep_alive = options["keep_alive"]
 
-        while True:
+        for _ in itertools.count():
             try:
                 self.get_updates(from_minutes_ago)
             except Exception as e:
                 if not keep_alive:
                     raise CommandError from e
                 logging.exception(e)
-                self.get_updates(from_minutes_ago)
+                self.stderr.write("Error: restarting podping")
+                self.handle(*args, **options)
 
     def get_updates(self, from_minutes_ago: int) -> None:
         for url in podping.get_updates(from_minutes_ago):

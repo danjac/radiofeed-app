@@ -1,10 +1,47 @@
 import pytest
 
 from django.core.management import call_command
+from django.core.management.base import CommandError
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
+
+
+class TestPodping:
+    def test_command(self, mocker, faker):
+
+        urls = [faker.url() for _ in range(3)]
+
+        mock_updates = mocker.patch(
+            "jcasts.podcasts.podping.get_updates", return_value=iter(urls)
+        )
+        mocker.patch("itertools.count", return_value=[3])
+
+        call_command("podping")
+        mock_updates.assert_called_with(15)
+
+    def test_raise_exception(self, mocker, faker):
+
+        mocker.patch("jcasts.podcasts.podping.get_updates", side_effect=ValueError)
+        mocker.patch("itertools.count", return_value=[3])
+
+        with pytest.raises(CommandError):
+            call_command("podping")
+
+    def test_keep_alive(self, mocker, faker):
+        urls = [faker.url() for _ in range(30)]
+
+        def get_updates(minutes):
+            url = urls.pop()
+            if len(urls) % 2 == 1:
+                raise ValueError
+            yield url
+
+        mocker.patch("jcasts.podcasts.podping.get_updates", get_updates)
+        mocker.patch("itertools.count", return_value=urls)
+
+        call_command("podping", keep_alive=True)
 
 
 class TestSubscribePodcasts:

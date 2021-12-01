@@ -9,6 +9,7 @@ import beem
 
 from beem.account import Account
 from beem.blockchain import Blockchain
+from django.db.models import Q
 from django.utils import timezone
 
 from jcasts.podcasts import feed_parser
@@ -45,8 +46,9 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
         Podcast.objects.active()
         .unqueued()
         .filter(
+            Q(parsed__isnull=True)
+            | Q(parsed__lt=now - timedelta(minutes=from_minutes_ago)),
             rss__in=urls,
-            parsed__lt=now - timedelta(minutes=from_minutes_ago),
         )
         .values_list("pk", "rss")
         .distinct()
