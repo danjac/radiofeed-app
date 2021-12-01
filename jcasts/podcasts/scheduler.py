@@ -2,10 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-import numpy
-
 from django.utils import timezone
-from scipy import stats
 
 from jcasts.podcasts.models import Podcast
 
@@ -37,12 +34,7 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     if now - latest > Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY, modifier
 
-    try:
-        frequency = within_bounds(timedelta(seconds=calc_frequency(pub_dates)))
-    except ValueError:
-        frequency = Podcast.DEFAULT_FREQUENCY
-
-    # while next scheduled time is less than current time, increment values
+    frequency = calc_frequency(pub_dates)
 
     while latest + frequency < now and frequency < Podcast.MAX_FREQUENCY:
         frequency, modifier = reschedule(frequency, modifier)
@@ -71,13 +63,13 @@ def reschedule(
     )
 
 
-def calc_frequency(pub_dates: list[datetime]) -> float:
-    """
-    Returns the mean - standard error of all relevant release dates
-    """
-    if len(intervals := get_intervals(pub_dates)) in (0, 1):
-        raise ValueError
-    return numpy.mean(intervals) - stats.sem(intervals)
+def calc_frequency(pub_dates: list[datetime]) -> timedelta:
+    """Return smallest frequency between release dates"""
+
+    try:
+        return within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
+    except ValueError:
+        return Podcast.DEFAULT_FREQUENCY
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:

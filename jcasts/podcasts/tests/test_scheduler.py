@@ -59,7 +59,7 @@ class TestSchedule:
         dates = [now - timedelta(days=2)] + dates
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 72)
-        assert modifier == 0.05
+        assert modifier == pytest.approx(0.215, 1)
         assert frequency + dates[0] > now
 
     def test_new_modifier(self):
@@ -80,7 +80,7 @@ class TestSchedule:
 
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 54)
-        assert modifier == 0.072
+        assert modifier == pytest.approx(0.215, 1)
         assert frequency + dates[0] > now
 
     def test_max_dates_with_one_date(self):
