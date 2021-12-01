@@ -68,11 +68,10 @@ class TestGetScheduledLimit:
 
 class TestParsePubDates:
     def test_no_items(self, podcast, feed):
-        pub_date, frequency, modifier = feed_parser.parse_pub_dates(podcast, feed, [])
+        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, [])
 
         assert pub_date == podcast.pub_date
         assert frequency > timedelta(hours=24)
-        assert modifier == 0.06
 
     def test_new_pub_dates(self, podcast, feed):
 
@@ -84,26 +83,20 @@ class TestParsePubDates:
             Item(**ItemFactory(pub_date=now - timedelta(days=9))),
         ]
 
-        pub_date, frequency, modifier = feed_parser.parse_pub_dates(
-            podcast, feed, items
-        )
+        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
         assert frequency == timedelta(days=3, seconds=12960)
-        assert modifier == 0.06
 
     def test_no_new_pub_dates(self, db, feed):
         podcast = PodcastFactory(frequency=timedelta(hours=24))
 
         items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
 
-        pub_date, frequency, modifier = feed_parser.parse_pub_dates(
-            podcast, feed, items
-        )
+        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, items)
 
         assert pub_date == podcast.pub_date
         assert frequency > timedelta(hours=24)
-        assert modifier == 0.06
 
 
 class TestFeedHeaders:

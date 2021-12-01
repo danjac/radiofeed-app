@@ -155,8 +155,6 @@ class Podcast(models.Model):
 
     MAX_FAILURES = 3
 
-    DEFAULT_MODIFIER = 0.05
-
     DEFAULT_FREQUENCY = timedelta(days=1)
     MIN_FREQUENCY = timedelta(hours=1)
     MAX_FREQUENCY = timedelta(days=14)
@@ -184,7 +182,6 @@ class Podcast(models.Model):
     # scheduling
 
     frequency: timedelta | None = models.DurationField(null=True, blank=True)
-    frequency_modifier: float | None = models.FloatField(null=True, blank=True)
 
     # podping
 

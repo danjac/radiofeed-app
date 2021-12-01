@@ -7,8 +7,8 @@ from django.utils import timezone
 from jcasts.podcasts.models import Podcast
 
 
-def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
-    """Returns the base frequency and initial modifier.
+def schedule(pub_dates: list[datetime]) -> timedelta:
+    """Returns the initial frequency.
 
     Call this on each refresh "hit" i.e. when there are new pub dates.
 
@@ -16,51 +16,45 @@ def schedule(pub_dates: list[datetime]) -> tuple[timedelta, float]:
     dates. If insufficient data, then return the default frequency
     (24 hours).
 
-    All frequencies must fall between the min (3 hours) and max (30 days).
+    All frequencies must fall between the min (1 hour) and max (14 days).
 
     """
     now = timezone.now()
-
-    modifier = Podcast.DEFAULT_MODIFIER
 
     try:
         latest = max(pub_dates)
     except ValueError:
         # no pub dates yet, just return default
-        return Podcast.DEFAULT_FREQUENCY, modifier
+        return Podcast.DEFAULT_FREQUENCY
 
     # if > 30 days ago just return the max freq
 
     if now - latest > Podcast.MAX_FREQUENCY:
-        return Podcast.MAX_FREQUENCY, modifier
+        return Podcast.MAX_FREQUENCY
 
-    frequency = calc_frequency(pub_dates)
+    try:
+        frequency = within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
+    except ValueError:
+        frequency = Podcast.DEFAULT_FREQUENCY
 
     while latest + frequency < now and frequency < Podcast.MAX_FREQUENCY:
-        frequency, modifier = reschedule(frequency, modifier)
+        frequency = reschedule(frequency)
 
-    return frequency, modifier
+    return frequency
 
 
-def reschedule(
-    frequency: timedelta | None, modifier: float | None = None
-) -> tuple[timedelta, float]:
-    """Increment frequency by current modifier, then
-    return new frequency and incremented modifier.
+def reschedule(frequency: timedelta | None) -> timedelta:
+    """Increment frequency.
 
     Call this on each refresh "miss" i.e. when there
     are no new pub dates.
     """
 
     frequency = frequency or Podcast.DEFAULT_FREQUENCY
-    modifier = modifier or Podcast.DEFAULT_MODIFIER
 
     seconds = frequency.total_seconds()
 
-    return (
-        within_bounds(timedelta(seconds=seconds + (seconds * modifier))),
-        min(modifier * 1.2, 300.00),
-    )
+    return within_bounds(timedelta(seconds=seconds + (seconds * 0.05)))
 
 
 def calc_frequency(pub_dates: list[datetime]) -> timedelta:
