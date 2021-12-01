@@ -1,5 +1,3 @@
-import pytest
-
 from django.core.management import call_command
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
@@ -19,36 +17,6 @@ class TestPodping:
 
         call_command("podping")
         mock_updates.assert_called_with(15)
-
-
-class TestSubscribePodcasts:
-    hub = "https://amazinglybrilliant.superfeedr.com/"
-    url = "https://podnews.net/rss"
-
-    @pytest.fixture
-    def mock_subscribe(self, mocker):
-        return mocker.patch("jcasts.podcasts.websub.subscribe.delay")
-
-    def test_command(self, db, mock_subscribe):
-        podcast = PodcastFactory(websub_url=self.url, websub_hub=self.hub)
-
-        call_command("subscribe_podcasts")
-        mock_subscribe.assert_called_with(podcast.id)
-
-    def test_clear_exceptions(self, db, mock_subscribe):
-        podcast = PodcastFactory(
-            websub_url=self.url,
-            websub_hub=self.hub,
-            websub_exception="oops",
-            websub_status=Podcast.WebSubStatus.ERROR,
-        )
-
-        call_command("subscribe_podcasts", clear=True)
-        mock_subscribe.assert_called_with(podcast.id)
-
-        podcast.refresh_from_db()
-        assert podcast.websub_exception == ""
-        assert podcast.websub_status is None
 
 
 class TestSeedPodcastData:

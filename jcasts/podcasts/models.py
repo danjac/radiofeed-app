@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import uuid
-
 from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlparse
@@ -155,12 +153,6 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
-    class WebSubStatus(models.TextChoices):
-        REQUESTED = "requested", "Requested"
-        ACTIVE = "active", "Active"
-        INACTIVE = "inactive", "Inactive"
-        ERROR = "error", "Error"
-
     MAX_FAILURES = 3
 
     DEFAULT_MODIFIER = 0.05
@@ -197,27 +189,6 @@ class Podcast(models.Model):
     # podping
 
     podping: bool = models.BooleanField(default=False)
-
-    # websub fields
-
-    websub_mode: str = models.CharField(max_length=30, blank=True)
-    websub_token: uuid.UUID | None = models.UUIDField(
-        unique=True, null=True, blank=True
-    )
-    websub_secret: uuid.UUID | None = models.UUIDField(null=True, blank=True)
-    websub_url: str | None = models.URLField(max_length=500, null=True, blank=True)
-    websub_hub: str | None = models.URLField(max_length=500, null=True, blank=True)
-    websub_exception: str = models.TextField(blank=True)
-    websub_timeout: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    websub_status: str | None = models.CharField(
-        max_length=30,
-        null=True,
-        blank=True,
-        choices=WebSubStatus.choices,
-    )
-
-    websub_status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
 
     # feed parse result fields
 
