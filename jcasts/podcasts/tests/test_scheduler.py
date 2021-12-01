@@ -129,5 +129,5 @@ class TestSchedule:
         ]
         frequency, modifier = scheduler.schedule(dates)
         assert_hours(frequency, 3)
-        assert modifier == 0.05
+        assert modifier == 0.06
         assert frequency + dates[0] > now

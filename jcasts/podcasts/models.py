@@ -166,8 +166,8 @@ class Podcast(models.Model):
     DEFAULT_MODIFIER = 0.05
 
     DEFAULT_FREQUENCY = timedelta(days=1)
-    MIN_FREQUENCY = timedelta(hours=3)
-    MAX_FREQUENCY = timedelta(days=30)
+    MIN_FREQUENCY = timedelta(hours=1)
+    MAX_FREQUENCY = timedelta(days=7)
 
     RELEVANCY_THRESHOLD = timedelta(days=90)
 
