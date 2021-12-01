@@ -353,6 +353,31 @@ class TestWebSubCallback:
 
         mock_parse_podcast_feed.assert_not_called()
 
+    def test_post_queued(
+        self, db, client, django_assert_num_queries, mock_parse_podcast_feed
+    ):
+
+        podcast = PodcastFactory(
+            websub_mode="subscribe",
+            websub_token=uuid.uuid4(),
+            websub_status=Podcast.WebSubStatus.ACTIVE,
+            websub_secret=uuid.uuid4(),
+            queued=timezone.now(),
+        )
+        sig = websub.make_signature(podcast.websub_secret, b"testing", "sha1")
+
+        with django_assert_num_queries(2):
+            assert_no_content(
+                client.post(
+                    self.url(podcast),
+                    data=b"testing",
+                    content_type="application/xml",
+                    HTTP_X_HUB_SIGNATURE=f"sha1={sig}",
+                )
+            )
+
+        mock_parse_podcast_feed.assert_not_called()
+
     def test_post_bad_sig(
         self, db, client, django_assert_num_queries, mock_parse_podcast_feed
     ):
