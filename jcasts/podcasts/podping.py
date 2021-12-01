@@ -26,11 +26,9 @@ def get_updates(
     batch: set[str] = set()
 
     for url in get_stream(from_minutes_ago):
-        print("from stream:", url)
         batch.add(url)
 
         if len(batch) > batch_size:
-            print("batching", len(batch), "feeds")
             yield from batch_updates(batch, from_minutes_ago)
             batch = set()
 
@@ -91,9 +89,14 @@ def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
             post["id"] in WATCHED_OPERATION_IDS
             and set(post["required_posting_auths"]) & allowed_accounts
         ):
-            data = json.loads(post.get("json"))
-            if url := data.get("url"):
+            for url in parse_urls(post.get("json")):
                 yield url
-            elif urls := data.get("urls"):
-                for url in urls:
-                    yield url
+
+
+def parse_urls(payload: str) -> Generator[str, None, None]:
+    data = json.loads(payload)
+    if url := data.get("url"):
+        yield url
+    elif urls := data.get("urls"):
+        for url in urls:
+            yield url
