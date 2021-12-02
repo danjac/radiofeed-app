@@ -156,7 +156,7 @@ class Podcast(models.Model):
     MAX_FAILURES = 3
 
     DEFAULT_FREQUENCY = timedelta(days=1)
-    MIN_FREQUENCY = timedelta(hours=1)
+    MIN_FREQUENCY = timedelta(hours=3)
     MAX_FREQUENCY = timedelta(days=14)
 
     RELEVANCY_THRESHOLD = timedelta(days=90)
