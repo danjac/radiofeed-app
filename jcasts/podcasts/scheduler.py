@@ -28,11 +28,9 @@ def schedule(pub_dates: list[datetime]) -> timedelta:
         # no pub dates yet, just return default
         return Podcast.DEFAULT_FREQUENCY
 
-    since_latest = now - latest
-
     # if > 14 days ago just return the max freq
 
-    if since_latest > Podcast.MAX_FREQUENCY:
+    if (since_latest := now - latest) > Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY
 
     try:
