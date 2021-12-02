@@ -96,8 +96,7 @@ def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
             post["id"] in WATCHED_OPERATION_IDS
             and set(post["required_posting_auths"]) & allowed_accounts
         ):
-            for url in parse_urls(post.get("json")):
-                yield url
+            yield from parse_urls(post.get("json"))
 
 
 def parse_urls(payload: str) -> Generator[str, None, None]:
@@ -105,5 +104,4 @@ def parse_urls(payload: str) -> Generator[str, None, None]:
     if url := data.get("url"):
         yield url
     elif urls := data.get("urls"):
-        for url in urls:
-            yield url
+        yield from urls
