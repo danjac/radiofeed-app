@@ -86,7 +86,7 @@ class TestParsePubDates:
         pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, items)
 
         assert pub_date == items[0].pub_date
-        assert frequency == timedelta(days=3, seconds=12960)
+        assert frequency.days == 3
 
     def test_no_new_pub_dates(self, db, feed):
         podcast = PodcastFactory(frequency=timedelta(hours=24))

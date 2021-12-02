@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 from django.utils import timezone
+from scipy import stats
 
 from jcasts.podcasts.models import Podcast
 
@@ -27,15 +28,21 @@ def schedule(pub_dates: list[datetime]) -> timedelta:
         # no pub dates yet, just return default
         return Podcast.DEFAULT_FREQUENCY
 
-    # if > 30 days ago just return the max freq
+    # if > 14 days ago just return the max freq
 
     if now - latest > Podcast.MAX_FREQUENCY:
         return Podcast.MAX_FREQUENCY
 
     try:
-        frequency = within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
+        frequency = get_frequency(pub_dates)
     except ValueError:
-        frequency = Podcast.DEFAULT_FREQUENCY
+        frequency = now - latest
+
+    # make sure we're within the min/max bounds
+
+    frequency = within_bounds(frequency)
+
+    # increment until next scheduled is > current time
 
     while latest + frequency < now and frequency < Podcast.MAX_FREQUENCY:
         frequency = reschedule(frequency)
@@ -57,13 +64,12 @@ def reschedule(frequency: timedelta | None) -> timedelta:
     return within_bounds(timedelta(seconds=seconds + (seconds * 0.05)))
 
 
-def calc_frequency(pub_dates: list[datetime]) -> timedelta:
-    """Return smallest frequency between release dates"""
-
-    try:
-        return within_bounds(timedelta(seconds=min(get_intervals(pub_dates))))
-    except ValueError:
-        return Podcast.DEFAULT_FREQUENCY
+def get_frequency(pub_dates: list[datetime]) -> timedelta:
+    """Gets the min mean Bayes confidence interval of all pub dates.
+    If insufficient data will raise a ValueError.
+    """
+    mean, _, _ = stats.bayes_mvs(list(set(get_intervals(pub_dates))))
+    return timedelta(seconds=min(mean.minmax))
 
 
 def get_intervals(pub_dates: list[datetime]) -> list[float]:
