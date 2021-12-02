@@ -21,8 +21,8 @@
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --until=14 --limit=300",
-            "schedule": "30 * * * *"
+            "command": "python manage.py parse_podcast_feeds --until=14 --limit=200",
+            "schedule": "12,48 * * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
