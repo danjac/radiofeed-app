@@ -132,6 +132,14 @@ class TestParseScheduledFeeds:
             parsed=now - timedelta(days=1),
         )
 
+        # podping
+        PodcastFactory(
+            pub_date=now - timedelta(days=3),
+            frequency=timedelta(hours=1),
+            parsed=now - timedelta(days=1),
+            podping=True,
+        )
+
         # scheduled
         podcast = PodcastFactory(
             pub_date=now - timedelta(days=3),

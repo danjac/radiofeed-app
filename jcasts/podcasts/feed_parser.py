@@ -57,10 +57,19 @@ class ParseResult:
 
 
 def parse_scheduled_feeds(frequency: timedelta) -> int:
+    """Parse all scheduled feeds that are active
+    and are not already handled by podping.
 
-    podcasts = Podcast.objects.scheduled().order_by(
-        F("parsed").asc(nulls_first=True),
-        F("pub_date").desc(nulls_first=True),
+    """
+
+    podcasts = (
+        Podcast.objects.active()
+        .scheduled()
+        .filter(podping=False)
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )
     )
 
     return parse_podcast_feeds(podcasts, get_scheduled_limit(frequency))
