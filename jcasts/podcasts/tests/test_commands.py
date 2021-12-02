@@ -5,25 +5,6 @@ from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
 
 
-class TestSchedulePodcastFeeds:
-    def test_command_no_input(self, podcast):
-        call_command("schedule_podcast_feeds", interactive=False)
-        podcast.refresh_from_db()
-        assert podcast.frequency
-
-    def test_command_cancel(self, podcast, mocker):
-        mocker.patch("builtins.input", return_value="n")
-        call_command("schedule_podcast_feeds")
-        podcast.refresh_from_db()
-        assert not podcast.frequency
-
-    def test_command_continue(self, podcast, mocker):
-        mocker.patch("builtins.input", return_value="y")
-        call_command("schedule_podcast_feeds")
-        podcast.refresh_from_db()
-        assert podcast.frequency
-
-
 class TestPodping:
     def test_command(self, mocker, faker):
 

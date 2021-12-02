@@ -14,17 +14,30 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
-            "--frequency",
-            help="Frequency between updates (minutes)",
+            "--since",
+            help="Days since last parsed",
             type=int,
-            default=60,
+            default=None,
+        )
+
+        parser.add_argument(
+            "--until",
+            help="Days until last parsed",
+            type=int,
+            default=None,
+        )
+
+        parser.add_argument(
+            "--limit",
+            help="Max limit of feeds",
+            type=int,
+            default=200,
         )
 
     def handle(self, *args, **options) -> None:
-        num_podcasts = feed_parser.parse_scheduled_feeds(
-            timedelta(minutes=options["frequency"])
-        )
 
-        self.stdout.write(
-            self.style.SUCCESS(f"{num_podcasts} podcast feeds queued for update")
+        feed_parser.parse_podcast_feeds(
+            since=timedelta(days=options["since"]) if options["since"] else None,
+            until=timedelta(days=options["until"]) if options["until"] else None,
+            limit=options["limit"],
         )

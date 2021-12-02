@@ -1,4 +1,3 @@
-from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -13,8 +12,8 @@ from jcasts.podcasts.admin import (
     PodpingFilter,
     PromotedFilter,
     PubDateFilter,
+    QueuedFilter,
     ResultFilter,
-    SchedulingFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
@@ -38,31 +37,6 @@ def req(rf):
 
 
 class TestPodcastAdmin:
-    def test_scheduled_queued(self, admin):
-        assert admin.scheduled(Podcast(queued=timezone.now())) == "Queued"
-
-    def test_scheduled_pending(self, admin):
-        now = timezone.now()
-        assert (
-            admin.scheduled(
-                Podcast(pub_date=now - timedelta(days=1), frequency=timedelta(hours=3))
-            )
-            == "Pending"
-        )
-
-    def test_scheduled_value(self, admin):
-        now = timezone.now()
-        assert (
-            admin.scheduled(
-                Podcast(
-                    pub_date=now - timedelta(days=1),
-                    frequency=timedelta(days=3),
-                    parsed=timedelta(days=1),
-                )
-            )
-            == "1\xa0day, 23\xa0hours"
-        )
-
     def test_get_search_results(self, podcasts, admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = admin.get_search_results(req, Podcast.objects.all(), "Indie Hackers")
@@ -75,7 +49,7 @@ class TestPodcastAdmin:
 
     def test_get_ordering_no_search_term(self, admin, req):
         ordering = admin.get_ordering(req)
-        assert ordering == ["-pub_date"]
+        assert ordering == ["parsed", "-pub_date"]
 
     def test_get_ordering_search_term(self, admin, req):
         req.GET = {"q": "test"}
@@ -202,24 +176,16 @@ class TestPodpingFilter:
         assert podping not in qs
 
 
-class TestSchedulingFilter:
+class TestQueuedFilter:
     def test_none(self, podcasts, admin, req):
         PodcastFactory(queued=timezone.now())
-        PodcastFactory(active=False)
-        f = SchedulingFilter(req, {}, Podcast, admin)
+        f = QueuedFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 5
-
-    def test_scheduled(self, podcasts, admin, req):
-        queued = PodcastFactory(queued=timezone.now())
-        f = SchedulingFilter(req, {"scheduling": "scheduled"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert queued not in qs
+        assert qs.count() == 4
 
     def test_queued(self, podcasts, admin, req):
         queued = PodcastFactory(queued=timezone.now())
-        f = SchedulingFilter(req, {"scheduling": "queued"}, Podcast, admin)
+        f = QueuedFilter(req, {"queued": "yes"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert queued in qs

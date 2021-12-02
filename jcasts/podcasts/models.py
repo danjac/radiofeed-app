@@ -79,47 +79,10 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             )
         )
 
-    def published(self) -> models.QuerySet:
-        return self.filter(pub_date__isnull=False)
-
-    def unpublished(self) -> models.QuerySet:
-        return self.filter(pub_date__isnull=True)
-
-    def queued(self) -> models.QuerySet:
-        return self.filter(queued__isnull=False)
-
-    def unqueued(self) -> models.QuerySet:
-        return self.filter(queued__isnull=True)
-
-    def enqueue(self) -> int:
-        return self.update(queued=timezone.now())
-
     def relevant(self) -> models.QuerySet:
         return self.filter(
             models.Q(pub_date__gt=timezone.now() - Podcast.RELEVANCY_THRESHOLD)
             | models.Q(pub_date__isnull=True)
-        )
-
-    def scheduled(self) -> models.QuerySet:
-        now = timezone.now()
-
-        interval = now - models.F("frequency")
-        threshold = now - self.model.MAX_FREQUENCY
-
-        return self.filter(
-            models.Q(pub_date__isnull=True)
-            | models.Q(parsed__isnull=True)
-            | models.Q(frequency__isnull=True)
-            | models.Q(
-                pub_date__range=(
-                    threshold,
-                    interval,
-                )
-            )
-            | models.Q(
-                pub_date__lt=threshold,
-                parsed__lt=interval,
-            ),
         )
 
     def with_followed(self) -> models.QuerySet:
@@ -155,10 +118,6 @@ class Podcast(models.Model):
 
     MAX_FAILURES = 3
 
-    DEFAULT_FREQUENCY = timedelta(days=1)
-    MIN_FREQUENCY = timedelta(hours=3)
-    MAX_FREQUENCY = timedelta(days=14)
-
     RELEVANCY_THRESHOLD = timedelta(days=90)
 
     rss: str = models.URLField(unique=True, max_length=500)
@@ -166,6 +125,8 @@ class Podcast(models.Model):
 
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
+
+    podping: bool = models.BooleanField(default=False)
 
     # latest episode pub date from RSS feed
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
@@ -178,14 +139,6 @@ class Podcast(models.Model):
 
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
-
-    # scheduling
-
-    frequency: timedelta | None = models.DurationField(null=True, blank=True)
-
-    # podping
-
-    podping: bool = models.BooleanField(default=False)
 
     # feed parse result fields
 
@@ -266,20 +219,6 @@ class Podcast(models.Model):
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
-
-    def get_scheduled(self) -> datetime | None:
-        if self.frequency is None or self.parsed is None or self.pub_date is None:
-            return None
-
-        now = timezone.now()
-
-        scheduled = (
-            self.parsed + self.frequency
-            if self.pub_date < now - self.MAX_FREQUENCY
-            else self.pub_date + self.frequency
-        )
-
-        return scheduled if scheduled > now else None
 
     @cached_property
     def cleaned_title(self) -> str:

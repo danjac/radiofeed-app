@@ -23,7 +23,7 @@ class TestGetUpdates:
         assert len(urls) == 3
 
         mock_parse_podcast_feed.assert_called()
-        assert Podcast.objects.queued().filter(podping=True).count() == 3
+        assert Podcast.objects.filter(podping=True, queued__isnull=False).count() == 3
 
 
 class TestGetStream:
@@ -113,7 +113,7 @@ class TestBatchUpdates:
 
         mock_parse_podcast_feed.assert_not_called()
 
-        qs = Podcast.objects.queued().filter(podping=True)
+        qs = Podcast.objects.filter(podping=True, queued__isnull=False)
 
         assert qs.count() == 0
 
@@ -138,7 +138,7 @@ class TestBatchUpdates:
 
         mock_parse_podcast_feed.assert_called()
 
-        qs = Podcast.objects.queued().filter(podping=True)
+        qs = Podcast.objects.filter(podping=True, queued__isnull=False)
 
         assert qs.count() == 3
         assert queued not in qs

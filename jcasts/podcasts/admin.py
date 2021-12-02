@@ -3,7 +3,6 @@ from __future__ import annotations
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
-from django.template.defaultfilters import timeuntil
 from django.utils import timezone
 from django_object_actions import DjangoObjectActions
 
@@ -74,8 +73,8 @@ class PubDateFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         return {
-            "yes": queryset.published(),
-            "no": queryset.unpublished(),
+            "yes": queryset.filter(pub_date__isnull=False),
+            "no": queryset.filter(pub_date__isnull=True),
         }.setdefault(self.value(), queryset)
 
 
@@ -111,24 +110,19 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
-class SchedulingFilter(admin.SimpleListFilter):
-    title = "Scheduling"
-    parameter_name = "scheduling"
+class QueuedFilter(admin.SimpleListFilter):
+    title = "Queued"
+    parameter_name = "queued"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (
-            ("queued", "Queued"),
-            ("scheduled", "Scheduled"),
-        )
+        return (("yes", "Queued"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        value = self.value()
-        return {
-            "queued": queryset.queued(),
-            "scheduled": queryset.unqueued().scheduled(),
-        }.setdefault(value, queryset)
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
 
 
 class FollowedFilter(admin.SimpleListFilter):
@@ -156,7 +150,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         PodpingFilter,
         PromotedFilter,
         PubDateFilter,
-        SchedulingFilter,
+        QueuedFilter,
         ResultFilter,
     )
 
@@ -175,8 +169,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "parsed",
         "queued",
         "pub_date",
-        "frequency",
-        "scheduled",
         "modified",
         "etag",
         "http_status",
@@ -191,20 +183,20 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     change_actions = ("parse_podcast_feed",)
 
-    def scheduled(self, obj: models.Podcast):
-        if obj.queued:
-            return "Queued"
-
-        if (scheduled := obj.get_scheduled()) is None or scheduled < timezone.now():
-            return "Pending"
-
-        return timeuntil(scheduled)
-
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
+
+        podcast_ids = list(
+            queryset.filter(queued__isnull=True).values_list("pk", flat=True)
+        )
+
+        models.Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
+        for podcast_id in podcast_ids:
+            feed_parser.parse_podcast_feed.delay(podcast_id)
 
         self.message_user(
             request,
-            f"{feed_parser.parse_podcast_feeds(queryset)} podcast(s) queued for update",
+            f"{len(podcast_ids)} podcast(s) queued for update",
             messages.SUCCESS,
         )
 
@@ -234,4 +226,4 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
-        return [] if request.GET.get("q") else ["-pub_date"]
+        return [] if request.GET.get("q") else ["parsed", "-pub_date"]

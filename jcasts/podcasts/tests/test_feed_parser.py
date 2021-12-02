@@ -12,14 +12,9 @@ from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import (
-    CategoryFactory,
-    FeedFactory,
-    ItemFactory,
-    PodcastFactory,
-)
+from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
-from jcasts.podcasts.rss_parser import Feed, Item
+from jcasts.podcasts.rss_parser import Feed
 
 
 @pytest.fixture
@@ -57,48 +52,6 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
-class TestGetScheduledLimit:
-    def test_no_queued_items(self, db, mock_rq):
-        assert feed_parser.get_scheduled_limit(timedelta(minutes=12)) == 720
-
-    def test_with_queued_items(self, db, mock_rq):
-        PodcastFactory.create_batch(10, queued=timezone.now())
-        assert feed_parser.get_scheduled_limit(timedelta(minutes=12)) == 710
-
-
-class TestParsePubDates:
-    def test_no_items(self, podcast, feed):
-        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, [])
-
-        assert pub_date == podcast.pub_date
-        assert frequency > timedelta(hours=24)
-
-    def test_new_pub_dates(self, podcast, feed):
-
-        now = timezone.now()
-
-        items = [
-            Item(**ItemFactory(pub_date=now - timedelta(days=3))),
-            Item(**ItemFactory(pub_date=now - timedelta(days=6))),
-            Item(**ItemFactory(pub_date=now - timedelta(days=9))),
-        ]
-
-        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, items)
-
-        assert pub_date == items[0].pub_date
-        assert frequency.days == 3
-
-    def test_no_new_pub_dates(self, db, feed):
-        podcast = PodcastFactory(frequency=timedelta(hours=24))
-
-        items = [Item(**ItemFactory(pub_date=podcast.pub_date))]
-
-        pub_date, frequency = feed_parser.parse_pub_dates(podcast, feed, items)
-
-        assert pub_date == podcast.pub_date
-        assert frequency > timedelta(hours=24)
-
-
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
@@ -111,50 +64,46 @@ class TestFeedHeaders:
         assert headers["If-Modified-Since"]
 
 
-class TestParseScheduledFeeds:
-    def test_parse_scheduled_feeds(self, db, mock_parse_podcast_feed, mock_rq):
+class TestParsePodcastFeeds:
+    @pytest.mark.parametrize(
+        "active,queued,parsed,since,until,success",
+        [
+            (True, False, None, None, None, True),
+            (True, True, None, None, None, False),
+            (True, False, None, timedelta(days=14), None, True),
+            (True, False, timedelta(days=30), timedelta(days=14), None, False),
+            (True, False, timedelta(days=30), None, timedelta(days=14), True),
+            (True, False, timedelta(days=9), None, timedelta(days=14), False),
+        ],
+    )
+    def test_parse_podcast_feeds(
+        self,
+        db,
+        mock_parse_podcast_feed,
+        active,
+        queued,
+        parsed,
+        since,
+        until,
+        success,
+    ):
 
         now = timezone.now()
 
-        # inactive
-        PodcastFactory(active=False)
-
-        # not scheduled yet
         PodcastFactory(
-            pub_date=now, frequency=timedelta(days=1), parsed=now - timedelta(days=1)
+            parsed=now - parsed if parsed else None,
+            queued=now if queued else None,
+            active=active,
         )
 
-        # queued
-        PodcastFactory(
-            queued=now,
-            pub_date=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            parsed=now - timedelta(days=1),
-        )
+        feed_parser.parse_podcast_feeds(since=since, until=until)
 
-        # podping
-        PodcastFactory(
-            pub_date=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            parsed=now - timedelta(days=1),
-            podping=True,
-        )
-
-        # scheduled
-        podcast = PodcastFactory(
-            pub_date=now - timedelta(days=3),
-            frequency=timedelta(hours=1),
-            parsed=now - timedelta(days=1),
-        )
-
-        feed_parser.parse_scheduled_feeds(frequency=timedelta(hours=1))
-
-        queued = Podcast.objects.filter(queued__isnull=False)
-
-        assert queued.count() == 2
-
-        assert podcast in queued
-        assert len(mock_parse_podcast_feed.mock_calls) == 1
+        if success:
+            mock_parse_podcast_feed.assert_called()
+            Podcast.objects.filter(queued__isnull=False).exists()
+        else:
+            mock_parse_podcast_feed.assert_not_called()
+            Podcast.objects.filter(queued__isnull=False).exists() is queued
 
 
 class TestParsePodcastFeed:

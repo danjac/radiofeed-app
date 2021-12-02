@@ -40,11 +40,11 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
 
     for podcast_id, rss in (
         Podcast.objects.active()
-        .unqueued()
         .filter(
             Q(parsed__isnull=True)
             | Q(parsed__lt=now - timedelta(minutes=from_minutes_ago)),
             rss__in=urls,
+            queued__isnull=True,
         )
         .values_list("pk", "rss")
         .distinct()

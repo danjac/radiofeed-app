@@ -4,21 +4,20 @@ import http
 import secrets
 import traceback
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import lru_cache
 
 import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, QuerySet
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue, job
-from rq.worker import Worker
+from django_rq import job
 
 from jcasts.episodes.models import Episode
-from jcasts.podcasts import date_parser, rss_parser, scheduler, text_parser
+from jcasts.podcasts import date_parser, rss_parser, text_parser
 from jcasts.podcasts.models import Category, Podcast
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -56,38 +55,30 @@ class ParseResult:
             raise self.exception
 
 
-def parse_scheduled_feeds(frequency: timedelta) -> int:
-    """Parse all scheduled feeds that are active
-    and are not already handled by podping.
+def parse_podcast_feeds(
+    since: timedelta | None = None,
+    until: timedelta | None = None,
+    limit: int = 200,
+) -> None:
+    now = timezone.now()
 
-    """
+    podcasts = Podcast.objects.active().filter(podping=False, queued__isnull=True)
 
-    podcasts = (
-        Podcast.objects.active()
-        .scheduled()
-        .filter(podping=False)
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-        )
-    )
+    if since:
+        podcasts = podcasts.filter(Q(parsed__gt=now - since) | Q(parsed__isnull=True))
+    if until:
+        podcasts = podcasts.filter(parsed__lt=now - until)
 
-    return parse_podcast_feeds(podcasts, get_scheduled_limit(frequency))
-
-
-def parse_podcast_feeds(podcasts: QuerySet, limit: int | None = None) -> int:
-
-    podcasts = podcasts.active().unqueued().distinct()
-    podcasts = podcasts[:limit] if limit else podcasts
+    podcasts = podcasts.order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
+    )[:limit]
 
     podcast_ids = list(podcasts.values_list("pk", flat=True))
-
-    Podcast.objects.filter(pk__in=podcast_ids).enqueue()
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
 
     for podcast_id in podcast_ids:
         parse_podcast_feed.delay(podcast_id)
-
-    return len(podcast_ids)
 
 
 @job("feeds")
@@ -201,9 +192,7 @@ def parse_success(
     podcast.active = not feed.complete
     podcast.num_failures = 0
 
-    # scheduling
-
-    podcast.pub_date, podcast.frequency = parse_pub_dates(podcast, feed, items)
+    podcast.pub_date = max([item.pub_date for item in items if item.pub_date])
 
     # content
 
@@ -245,18 +234,6 @@ def parse_success(
         success=True,
         status=response.status_code,
     )
-
-
-def parse_pub_dates(
-    podcast: Podcast, feed: rss_parser.Feed, items: list[rss_parser.Item]
-) -> tuple[datetime | None, timedelta]:
-
-    pub_dates = [item.pub_date for item in items if item.pub_date]
-
-    if pub_dates and (latest := max(pub_dates)) != podcast.pub_date:
-        return latest, scheduler.schedule(pub_dates)
-
-    return podcast.pub_date, scheduler.reschedule(podcast.frequency)
 
 
 def parse_episodes(
@@ -345,15 +322,6 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
 
 
-def get_scheduled_limit(frequency: timedelta) -> int:
-    # assume ~2s per feed
-    return max(
-        Worker.count(queue=get_queue("feeds")) * round(frequency.total_seconds() / 2)
-        - Podcast.objects.queued().count(),
-        0,
-    )
-
-
 def parse_failure(
     podcast: Podcast,
     *,
@@ -373,7 +341,6 @@ def parse_failure(
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        frequency=scheduler.reschedule(podcast.frequency),
         parsed=now,
         updated=now,
         active=active,

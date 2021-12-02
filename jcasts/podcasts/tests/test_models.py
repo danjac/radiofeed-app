@@ -73,28 +73,6 @@ class TestCategoryModel:
 class TestPodcastManager:
     reltuple_count = "jcasts.shared.db.get_reltuple_count"
 
-    def test_enqueue(self, db):
-        podcast = PodcastFactory(queued=None)
-        Podcast.objects.enqueue()
-        podcast.refresh_from_db()
-        assert podcast.queued
-
-    def test_queued_true(self, db):
-        PodcastFactory(queued=timezone.now())
-        assert Podcast.objects.queued().exists()
-
-    def test_queued_false(self, db):
-        PodcastFactory(queued=None)
-        assert not Podcast.objects.queued().exists()
-
-    def test_unqueued_false(self, db):
-        PodcastFactory(queued=timezone.now())
-        assert not Podcast.objects.unqueued().exists()
-
-    def test_unqueued_true(self, db):
-        PodcastFactory(queued=None)
-        assert Podcast.objects.unqueued().exists()
-
     def test_search(self, db):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("testing").count() == 1
@@ -171,22 +149,6 @@ class TestPodcastManager:
         assert Podcast.objects.active().count() == 1
         assert Podcast.objects.inactive().count() == 0
 
-    def test_published_pub_date_not_null(self, db):
-        PodcastFactory(pub_date=timezone.now())
-        assert Podcast.objects.published().count() == 1
-
-    def test_published_pub_date_null(self, db):
-        PodcastFactory(pub_date=None)
-        assert Podcast.objects.published().count() == 0
-
-    def test_unpublished_pub_date_not_null(self, db):
-        PodcastFactory(pub_date=timezone.now())
-        assert Podcast.objects.unpublished().count() == 0
-
-    def test_unpublished_pub_date_null(self, db):
-        PodcastFactory(pub_date=None)
-        assert Podcast.objects.unpublished().count() == 1
-
     def test_with_followed_true(self, db):
         FollowFactory()
         assert Podcast.objects.with_followed().first().followed
@@ -194,36 +156,6 @@ class TestPodcastManager:
     def test_with_followed_false(self, db):
         PodcastFactory()
         assert not Podcast.objects.with_followed().first().followed
-
-    @pytest.mark.parametrize(
-        "pub_date,parsed,frequency,exists",
-        [
-            (None, None, None, True),
-            (timedelta(days=3), None, None, True),
-            (timedelta(days=3), None, timedelta(days=1), True),
-            (timedelta(days=3), timedelta(days=1), timedelta(days=1), True),
-            (timedelta(days=3), timedelta(days=1), timedelta(days=7), False),
-            (timedelta(days=3), timedelta(days=1), timedelta(days=4), False),
-            (timedelta(days=-3), timedelta(days=1), timedelta(days=1), False),
-            (timedelta(days=33), None, timedelta(days=30), True),
-            (timedelta(days=33), timedelta(days=1), timedelta(days=30), False),
-            (timedelta(days=33), timedelta(days=30), timedelta(days=30), True),
-        ],
-    )
-    def test_scheduled(self, db, pub_date, parsed, frequency, exists):
-
-        now = timezone.now()
-
-        PodcastFactory(
-            pub_date=now - pub_date if pub_date else None,
-            parsed=now - parsed if parsed else None,
-            frequency=frequency,
-        )
-        assert Podcast.objects.scheduled().exists() is exists, (
-            pub_date,
-            parsed,
-            frequency,
-        )
 
     @pytest.mark.parametrize(
         "last_pub,exists",
@@ -247,33 +179,6 @@ class TestPodcastModel:
 
     def test_str_title_empty(self):
         assert str(Podcast(title="", rss=self.rss)) == self.rss
-
-    @pytest.mark.parametrize(
-        "frequency,pub_date,parsed,days",
-        [
-            (None, None, None, None),
-            (timedelta(days=1), None, None, None),
-            (timedelta(days=30), None, None, None),
-            (timedelta(days=7), timedelta(days=3), None, None),
-            (timedelta(days=7), timedelta(days=3), timedelta(days=1), 4),
-            (timedelta(days=30), timedelta(days=9), timedelta(days=3), 21),
-            (timedelta(days=30), timedelta(days=25), timedelta(days=10), 20),
-            (timedelta(days=30), timedelta(days=90), timedelta(days=10), 20),
-            (timedelta(days=30), timedelta(days=41), timedelta(days=3), 27),
-        ],
-    )
-    def test_get_scheduled(self, frequency, pub_date, parsed, days):
-        now = timezone.now()
-        podcast = Podcast(
-            frequency=frequency,
-            pub_date=now - pub_date if pub_date else None,
-            parsed=now - parsed if parsed else None,
-        )
-        scheduled = podcast.get_scheduled()
-        if days is None:
-            assert scheduled is None, (frequency, pub_date, parsed)
-        else:
-            assert (scheduled - now).days == days, (frequency, pub_date, parsed)
 
     def test_slug(self):
         assert Podcast(title="Testing").slug == "testing"
