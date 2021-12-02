@@ -84,15 +84,14 @@ def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
 
     blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
 
-    start_block = blockchain.get_estimated_block_num(
-        timezone.now() - timedelta(minutes=from_minutes_ago)
-    )
-
-    stream = blockchain.stream(
-        opNames=["custom_json"], raw_ops=False, threading=False, start=start_block
-    )
-
-    for post in stream:
+    for post in blockchain.stream(
+        opNames=["custom_json"],
+        raw_ops=False,
+        threading=False,
+        start=blockchain.get_estimated_block_num(
+            timezone.now() - timedelta(minutes=from_minutes_ago)
+        ),
+    ):
         if (
             post["id"] in WATCHED_OPERATION_IDS
             and set(post["required_posting_auths"]) & allowed_accounts
