@@ -65,9 +65,12 @@ def parse_podcast_feeds(
     podcasts = Podcast.objects.active().filter(podping=False, queued__isnull=True)
 
     if since:
-        podcasts = podcasts.filter(Q(parsed__gt=now - since) | Q(parsed__isnull=True))
-    if until:
-        podcasts = podcasts.filter(parsed__lt=now - until)
+        podcasts = podcasts.filter(
+            Q(pub_date__gt=now - since) | Q(pub_date__isnull=True)
+        )
+
+    elif until:
+        podcasts = podcasts.filter(pub_date__lt=now - until)
 
     podcasts = podcasts.order_by(
         F("parsed").asc(nulls_first=True),

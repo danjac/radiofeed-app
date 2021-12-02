@@ -66,7 +66,7 @@ class TestFeedHeaders:
 
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "active,queued,parsed,since,until,success",
+        "active,queued,pub_date,since,until,success",
         [
             (True, False, None, None, None, True),
             (True, True, None, None, None, False),
@@ -82,7 +82,7 @@ class TestParsePodcastFeeds:
         mock_parse_podcast_feed,
         active,
         queued,
-        parsed,
+        pub_date,
         since,
         until,
         success,
@@ -91,7 +91,7 @@ class TestParsePodcastFeeds:
         now = timezone.now()
 
         PodcastFactory(
-            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
             queued=now if queued else None,
             active=active,
         )
