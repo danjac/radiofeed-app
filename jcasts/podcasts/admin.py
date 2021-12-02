@@ -86,10 +86,16 @@ class PodpingFilter(admin.SimpleListFilter):
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Podping"),)
+        return (
+            ("yes", "Yes"),
+            ("no", "No"),
+        )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return queryset.filter(podping=True) if self.value() == "yes" else queryset
+        return {
+            "yes": queryset.filter(podping=True),
+            "no": queryset.filter(podping=False),
+        }.setdefault(self.value(), queryset)
 
 
 class PromotedFilter(admin.SimpleListFilter):

@@ -194,6 +194,13 @@ class TestPodpingFilter:
         assert qs.count() == 1
         assert qs.first() == podping
 
+    def test_false(self, podcasts, admin, req):
+        podping = PodcastFactory(podping=True)
+        f = PodpingFilter(req, {"podping": "no"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert podping not in qs
+
 
 class TestSchedulingFilter:
     def test_none(self, podcasts, admin, req):
