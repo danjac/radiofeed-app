@@ -1,3 +1,4 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -118,25 +119,43 @@ class TestResultFilter:
 
 
 class TestPubDateFilter:
-    def test_pub_date_filter_none(self, podcasts, admin, req):
+    def test_none(self, podcasts, admin, req):
         PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    def test_pub_date_filter_false(self, podcasts, admin, req):
+    def test_false(self, podcasts, admin, req):
         no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "no"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == no_pub_date
 
-    def test_pub_date_filter_true(self, podcasts, admin, req):
+    def test_true(self, podcasts, admin, req):
         no_pub_date = PodcastFactory(pub_date=None)
         f = PubDateFilter(req, {"pub_date": "yes"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
         assert no_pub_date not in qs
+
+    def test_recent(self, db, admin, req):
+        now = timezone.now()
+        PodcastFactory(pub_date=now - timedelta(days=30))
+        recent = PodcastFactory(pub_date=now - timedelta(days=3))
+        f = PubDateFilter(req, {"pub_date": "recent"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert recent in qs
+
+    def test_sporadic(self, db, admin, req):
+        now = timezone.now()
+        sporadic = PodcastFactory(pub_date=now - timedelta(days=30))
+        PodcastFactory(pub_date=now - timedelta(days=3))
+        f = PubDateFilter(req, {"pub_date": "sporadic"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert sporadic in qs
 
 
 class TestPromotedFilter:

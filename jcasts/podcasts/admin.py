@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
@@ -69,12 +71,22 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
+            ("recent", "Recent (> 14 days)"),
+            ("sporadic", "Sporadic (< 14 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
+        now = timezone.now()
+        interval = timedelta(days=14)
         return {
             "yes": queryset.filter(pub_date__isnull=False),
             "no": queryset.filter(pub_date__isnull=True),
+            "recent": queryset.filter(
+                pub_date__gt=now - interval,
+            ),
+            "sporadic": queryset.filter(
+                pub_date__lt=now - interval,
+            ),
         }.setdefault(self.value(), queryset)
 
 
