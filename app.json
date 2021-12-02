@@ -17,7 +17,7 @@
     },
     "cron": [
         {
-            "command": "python manage.py parse_podcast_feeds --since=14 --limit=300",
+            "command": "python manage.py parse_podcast_feeds --since=14 --limit=200",
             "schedule": "*/5 * * * *"
         },
         {
