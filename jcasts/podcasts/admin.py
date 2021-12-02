@@ -157,6 +157,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_display = (
         "__str__",
         "promoted",
+        "parsed",
         "pub_date",
     )
 
