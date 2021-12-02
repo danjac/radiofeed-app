@@ -66,7 +66,7 @@ def parse_podcast_feeds(
 
     if since:
         podcasts = podcasts.filter(
-            Q(pub_date__gt=now - since) | Q(pub_date__isnull=True)
+            Q(pub_date__gte=now - since) | Q(pub_date__isnull=True)
         )
 
     elif until:
