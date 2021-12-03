@@ -6,7 +6,6 @@ import traceback
 
 from datetime import timedelta
 from functools import lru_cache
-from typing import Iterable
 
 import attr
 import requests
@@ -16,7 +15,6 @@ from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
-from rq.job import Job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -86,7 +84,7 @@ def parse_podcast_feeds(
     enqueue(*podcasts.values_list("pk", flat=True)[:limit])
 
     
-def enqueue(*podcast_ids: Iterable[int], **update_kwargs) -> None:
+def enqueue(*podcast_ids: int, **update_kwargs) -> None:
     if not (podcast_ids := list(podcast_ids)):
         return
     
