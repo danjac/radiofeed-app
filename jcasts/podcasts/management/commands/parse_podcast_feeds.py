@@ -15,14 +15,14 @@ class Command(BaseCommand):
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             "--since",
-            help="Days since last parsed",
+            help="Hours since last parsed",
             type=int,
             default=None,
         )
 
         parser.add_argument(
             "--until",
-            help="Days until last parsed",
+            help="Hours until last parsed",
             type=int,
             default=None,
         )
@@ -37,7 +37,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
 
         feed_parser.parse_podcast_feeds(
-            since=timedelta(days=options["since"]) if options["since"] else None,
-            until=timedelta(days=options["until"]) if options["until"] else None,
+            since=timedelta(hours=options["since"]) if options["since"] else None,
+            until=timedelta(hours=options["until"]) if options["until"] else None,
             limit=options["limit"],
         )
