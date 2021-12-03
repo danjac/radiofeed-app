@@ -83,19 +83,22 @@ def parse_podcast_feeds(
 
     enqueue(*podcasts.values_list("pk", flat=True)[:limit])
 
-    
-def enqueue(*podcast_ids: int, **update_kwargs) -> None:
-    if not (podcast_ids := list(podcast_ids)):
+
+def enqueue(*args: int, **update_kwargs) -> None:
+
+    if not (podcast_ids := list(args)):
         return
-    
+
     now = timezone.now()
-    
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now, updated=now, **update_kwargs)
-    
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(
+        queued=now, updated=now, **update_kwargs
+    )
+
     for podcast_id in podcast_ids:
         parse_podcast_feed.delay(podcast_id)
 
-        
+
 @job("feeds")
 @transaction.atomic
 def parse_podcast_feed(podcast_id: int) -> ParseResult:

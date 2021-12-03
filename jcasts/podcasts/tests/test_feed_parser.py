@@ -52,6 +52,21 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
+class TestEnqueue:
+    def test_empty(self, db, mock_parse_podcast_feed):
+        feed_parser.enqueue()
+
+        mock_parse_podcast_feed.assert_not_called()
+        assert Podcast.objects.filter(queued__isnull=False).exists() is False
+
+    def test_enqueue(self, db, mock_parse_podcast_feed, podcast):
+
+        feed_parser.enqueue(podcast.id)
+
+        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert Podcast.objects.filter(queued__isnull=False).exists() is True
+
+
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
