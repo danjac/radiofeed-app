@@ -29,6 +29,10 @@
             "schedule": "12 9 * * 1"
         },
         {
+            "command": "python manage.py clear_feed_queue --since=3",
+            "schedule": "* */3 * * *"
+        },
+        {
             "command": "python manage.py make_recommendations",
             "schedule": "20 3 * * *"
         },

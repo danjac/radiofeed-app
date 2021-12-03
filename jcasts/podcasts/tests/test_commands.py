@@ -1,8 +1,27 @@
+from datetime import timedelta
+
 from django.core.management import call_command
+from django.utils import timezone
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
+
+
+class TestClearFeedQueue:
+    def test_command(self, db):
+        now = timezone.now()
+
+        first = PodcastFactory(queued=now)
+        second = PodcastFactory(queued=now - timedelta(hours=6))
+
+        call_command("clear_feed_queue")
+
+        first.refresh_from_db()
+        assert first.queued
+
+        second.refresh_from_db()
+        assert not second.queued
 
 
 class TestPodping:
