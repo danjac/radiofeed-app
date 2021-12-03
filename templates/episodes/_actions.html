@@ -55,6 +55,7 @@
                             hx-target="#player"
                             hx-swap="innerHTML"
                             @click="close()"
+                            class="link"
                             title="Close Player">
                         {% icon "stop" css_class=PLAYER_ICON_CSS %}
                     </button>
@@ -64,6 +65,7 @@
                             hx-target="#player"
                             hx-swap="innerHTML"
                             @click="close()"
+                            class="link"
                             title="Play Episode">
 
                         {% icon "play" css_class=PLAYER_ICON_CSS %}
@@ -74,6 +76,7 @@
                     <button hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
                             hx-push-url="false"
                             @click="close()"
+                            class="link"
                             title="Remove from Favorites">
                         {% icon "star_solid" css_class=ICON_CSS %}
                     </button>
@@ -81,6 +84,7 @@
                     <button hx-post="{% url 'episodes:add_favorite' episode.id %}"
                             hx-push-url="false"
                             @click="close()"
+                            class="link"
                             title="Add to Favorites">
                         {% icon "star" css_class=ICON_CSS %}
                     </button>
@@ -91,6 +95,7 @@
                     <button hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
                             hx-push-url="false"
                             @click="close()"
+                            class="link"
                             title="Remove from Play Queue">
                         {% icon "collection_solid" css_class=ICON_CSS %}
                     </button>
@@ -98,6 +103,7 @@
                     <button hx-post="{% url 'episodes:add_to_queue' episode.id %}"
                             hx-push-url="false"
                             title="Add to Play Queue"
+                            class="link"
                             @click="close()">
                         {% icon "collection" css_class=ICON_CSS %}
                     </button>
@@ -109,6 +115,7 @@
                     <button title="Mark Complete"
                             hx-post="{% url 'episodes:mark_complete' episode.id %}"
                             @click="close()"
+                            class="link"
                             title="Mark Complete">
                         {% icon "check" css_class=ICON_CSS %}
                     </button>
@@ -116,6 +123,7 @@
                     <button hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
                             hx-push-url="false"
                             @click="close()"
+                            class="link"
                             title="Remove from History">
                         {% icon "database_solid" css_class=ICON_CSS %}
                     </button>
@@ -123,6 +131,7 @@
                     {% endif %}
                     <a download
                        title="Download {{ episode.get_media_url_ext|upper }} File"
+                       class="link"
                        href="{{ episode.media_url }}"
                        @click="close()">
                         {% icon "download" css_class=ICON_CSS %}
