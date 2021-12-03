@@ -24,6 +24,7 @@
     <div class="flex items-center">
 
     <button title="Add to Favorites"
+            class="link"
             x-show="!isFavorite"
             x-cloak
             hx-post="{% url 'episodes:add_favorite' episode.id %}"
@@ -32,6 +33,7 @@
     </button>
 
     <button title="Remove from Favorites"
+            class="link"
             x-show="isFavorite"
             x-cloak
             hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
@@ -42,6 +44,7 @@
 
     <div class="flex items-center">
     <button title="Add to Play Queue"
+            class="link"
             x-show="!isPlaying && !isQueued"
             x-cloak
             hx-post="{% url 'episodes:add_to_queue' episode.id %}"
@@ -50,6 +53,7 @@
     </button>
 
     <button title="Remove from Play Queue"
+            class="link"
             x-show="!isPlaying && isQueued"
             x-cloak
             hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
@@ -59,6 +63,7 @@
     </div>
 
     <button title="Mark Complete"
+            class="link"
             x-show="!isPlaying && !isComplete && isListened"
             x-cloak
             hx-post="{% url 'episodes:mark_complete' episode.id %}"
@@ -67,6 +72,7 @@
     </button>
 
     <button title="Remove from History"
+            class="link"
             x-show="!isPlaying && isListened"
             x-cloak
             hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
