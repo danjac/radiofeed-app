@@ -6,7 +6,7 @@ import traceback
 
 from datetime import timedelta
 from functools import lru_cache
-from typing import Sequence
+from typing import Iterable
 
 import attr
 import requests
@@ -86,7 +86,7 @@ def parse_podcast_feeds(
     return enqueue(*podcasts.values_list("pk", flat=True)[:limit])
 
     
-def enqueue(*podcast_ids: Sequence[int], **update_kwargs) -> None:
+def enqueue(*podcast_ids: Iterable[int], **update_kwargs) -> None:
     if not (podcast_ids := list(podcast_ids)):
         return
     
