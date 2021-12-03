@@ -11,9 +11,9 @@
      {% if cover_url %}
      x-data="{
             isLoaded: false,
-            src: '{{ cover_url }}',
-            placeholder: '{{ placeholder }}',
-            coverUrl: '{{ cover_url }}'
+            src: '{{ cover_url|escapejs }}',
+            placeholder: '{{ placeholder|escapejs }}',
+            coverUrl: '{{ cover_url|escapejs }}'
             }"
      x-init="src=placeholder;"
      @load.once="src=coverUrl;isLoaded=true;"
