@@ -5,6 +5,7 @@ import logging
 import operator
 import statistics
 
+from datetime import timedelta
 from typing import Generator
 
 import pandas
@@ -12,6 +13,7 @@ import pandas
 from django.db import transaction
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
+from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -21,15 +23,18 @@ from jcasts.podcasts.text_parser import get_stopwords
 logger = logging.getLogger(__name__)
 
 
-NUM_MATCHES: int = 12
-NUM_RECENT_EPISODES: int = 6
+NUM_MATCHES = 12
+NUM_RECENT_EPISODES = 6
+RELEVANCY_THRESHOLD = timedelta(days=90)
 
 Similarities = tuple[int, list[tuple[int, float]]]
 
 
 def recommend() -> None:
 
-    podcasts = Podcast.objects.relevant().exclude(extracted_text="")
+    podcasts = Podcast.objects.filter(
+        pub_date__gt=timezone.now() - RELEVANCY_THRESHOLD
+    ).exclude(extracted_text="")
 
     Recommendation.objects.bulk_delete()
 

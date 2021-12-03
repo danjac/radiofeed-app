@@ -1,10 +1,5 @@
-from datetime import timedelta
-
-import pytest
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
@@ -129,26 +124,6 @@ class TestPodcastManager:
         assert second == inexact
         assert not second.exact_match
 
-    def test_inactive(self, db):
-        PodcastFactory(active=False)
-        assert Podcast.objects.active().count() == 0
-        assert Podcast.objects.inactive().count() == 1
-
-    def test_active(self, db):
-        PodcastFactory(active=True)
-        assert Podcast.objects.active().count() == 1
-        assert Podcast.objects.inactive().count() == 0
-
-    def test_active_too_many_failures(self, db):
-        PodcastFactory(active=True, num_failures=4)
-        assert Podcast.objects.active().count() == 0
-        assert Podcast.objects.inactive().count() == 1
-
-    def test_active_failures_under_limit(self, db):
-        PodcastFactory(active=True, num_failures=2)
-        assert Podcast.objects.active().count() == 1
-        assert Podcast.objects.inactive().count() == 0
-
     def test_with_followed_true(self, db):
         FollowFactory()
         assert Podcast.objects.with_followed().first().followed
@@ -156,19 +131,6 @@ class TestPodcastManager:
     def test_with_followed_false(self, db):
         PodcastFactory()
         assert not Podcast.objects.with_followed().first().followed
-
-    @pytest.mark.parametrize(
-        "last_pub,exists",
-        [
-            (timedelta(days=30), True),
-            (timedelta(days=99), False),
-            (None, True),
-        ],
-    )
-    def test_relevant(self, db, last_pub, exists):
-        PodcastFactory(pub_date=timezone.now() - last_pub if last_pub else None)
-
-        assert Podcast.objects.relevant().exists() is exists
 
 
 class TestPodcastModel:

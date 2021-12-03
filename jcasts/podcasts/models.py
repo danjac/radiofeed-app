@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -13,7 +13,6 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.http import HttpRequest
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -63,28 +62,6 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def active(self) -> models.QuerySet:
-        return self.filter(
-            active=True,
-            num_failures__lte=self.model.MAX_FAILURES,
-        )
-
-    def inactive(self) -> models.QuerySet:
-        return self.filter(
-            models.Q(
-                active=False,
-            )
-            | models.Q(
-                num_failures__gt=self.model.MAX_FAILURES,
-            )
-        )
-
-    def relevant(self) -> models.QuerySet:
-        return self.filter(
-            models.Q(pub_date__gt=timezone.now() - Podcast.RELEVANCY_THRESHOLD)
-            | models.Q(pub_date__isnull=True)
-        )
-
     def with_followed(self) -> models.QuerySet:
         return self.annotate(
             followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
@@ -116,10 +93,6 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         SUCCESS = "success", "Success"
 
-    MAX_FAILURES = 3
-
-    RELEVANCY_THRESHOLD = timedelta(days=90)
-
     rss: str = models.URLField(unique=True, max_length=500)
     active: bool = models.BooleanField(default=True)
 
@@ -150,7 +123,7 @@ class Podcast(models.Model):
 
     exception: str = models.TextField(blank=True)
 
-    num_failures: int = models.PositiveIntegerField(default=0)
+    errors: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
 

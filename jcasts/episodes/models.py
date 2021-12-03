@@ -48,9 +48,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
             listened=models.Subquery(logs.values("updated")),
         )
 
-    def relevant(self) -> models.QuerySet:
-        return self.filter(pub_date__gt=timezone.now() - timedelta(days=30))
-
     def recommended(
         self, user: User, since: timedelta = timedelta(days=7)
     ) -> models.QuerySet:

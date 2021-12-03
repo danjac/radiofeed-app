@@ -35,8 +35,8 @@ class ActiveFilter(admin.SimpleListFilter):
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         return {
-            "yes": queryset.active(),
-            "no": queryset.inactive(),
+            "yes": queryset.filter(active=True),
+            "no": queryset.filter(active=False),
         }.setdefault(self.value(), queryset)
 
 
@@ -189,10 +189,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "exception",
     )
 
-    actions = (
-        "parse_podcast_feeds",
-        "reactivate_podcasts",
-    )
+    actions = ("parse_podcast_feeds",)
 
     change_actions = ("parse_podcast_feed",)
 
@@ -212,16 +209,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             f"{len(podcast_ids)} podcast(s) queued for update",
             messages.SUCCESS,
         )
-
-    def reactivate_podcasts(self, request: HttpRequest, queryset: QuerySet) -> None:
-
-        inactive = queryset.inactive()
-
-        if num_podcasts := inactive.count():
-            inactive.update(active=True, num_failures=0)
-            self.message_user(request, f"{num_podcasts} re-activated")
-        else:
-            self.message_user(request, "No inactive podcasts selected")
 
     def parse_podcast_feed(self, request: HttpRequest, obj: models.Podcast) -> None:
         if obj.queued:

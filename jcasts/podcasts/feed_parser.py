@@ -62,13 +62,13 @@ def parse_podcast_feeds(
 ) -> None:
     now = timezone.now()
 
-    podcasts = (
-        Podcast.objects.active()
-        .filter(podping=False, queued__isnull=True)
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-        )
+    podcasts = Podcast.objects.filter(
+        active=True,
+        podping=False,
+        queued__isnull=True,
+    ).order_by(
+        F("parsed").asc(nulls_first=True),
+        F("pub_date").desc(nulls_first=True),
     )
 
     if since:
@@ -91,7 +91,7 @@ def parse_podcast_feeds(
 def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
-        podcast = Podcast.objects.active().get(pk=podcast_id)
+        podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
         response, feed, items = parse_content(podcast)
         return parse_success(podcast, response, feed, items)
 
@@ -114,12 +114,15 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         )
 
     except requests.HTTPError as e:
+
+        dead = e.response.status_code == http.HTTPStatus.GONE
+
         return parse_failure(
             podcast,
             result=Podcast.Result.HTTP_ERROR,
             status=e.response.status_code,
-            active=e.response.status_code != http.HTTPStatus.GONE,
-            failure=True,
+            active=not dead,
+            error=not dead,
         )
 
     except requests.RequestException as e:
@@ -128,7 +131,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             exception=e,
             result=Podcast.Result.NETWORK_ERROR,
             tb=traceback.format_exc(),
-            failure=True,
+            error=True,
         )
 
     except rss_parser.RssParserError as e:
@@ -137,7 +140,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
             result=Podcast.Result.INVALID_RSS,
             exception=e,
             tb=traceback.format_exc(),
-            failure=True,
+            error=True,
         )
 
 
@@ -190,12 +193,11 @@ def parse_success(
 
     podcast.parsed = timezone.now()
     podcast.queued = None
-    podcast.active = True
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
     podcast.exception = ""
 
     podcast.active = not feed.complete
-    podcast.num_failures = 0
+    podcast.errors = 0
 
     podcast.pub_date = max([item.pub_date for item in items if item.pub_date])
 
@@ -332,16 +334,14 @@ def parse_failure(
     *,
     status: int | None = None,
     active: bool = True,
-    failure: bool = False,
+    error: bool = False,
     result: tuple[str, str] | None = None,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
 
-    num_failures = podcast.num_failures
-
-    if active and failure:
-        num_failures += 1
+    errors = podcast.errors + 1 if error else 0
+    active = active and errors < 3
 
     now = timezone.now()
 
@@ -352,7 +352,7 @@ def parse_failure(
         result=result,
         http_status=status,
         exception=tb,
-        num_failures=num_failures,
+        errors=errors,
         queued=None,
     )
 

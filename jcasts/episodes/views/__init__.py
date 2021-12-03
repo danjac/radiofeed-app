@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode
@@ -16,15 +19,16 @@ from jcasts.shared.pagination import render_paginated_response
 @require_http_methods(["GET"])
 def index(request: HttpRequest) -> HttpResponse:
 
+    promoted = "promoted" in request.GET
+    since = timezone.now() - timedelta(days=14)
+
     follows = (
         set(request.user.follow_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )
 
-    promoted = "promoted" in request.GET
-
-    podcast_qs = Podcast.objects.relevant()
+    podcast_qs = Podcast.objects.filter(pub_date__gt=since)
 
     if follows and not promoted:
         podcast_qs = podcast_qs.filter(pk__in=follows)
@@ -32,7 +36,7 @@ def index(request: HttpRequest) -> HttpResponse:
         podcast_qs = podcast_qs.filter(promoted=True)
 
     episodes = (
-        Episode.objects.relevant()
+        Episode.objects.filter(pub_date__gt=since)
         .select_related("podcast")
         .filter(
             podcast__in=set(podcast_qs.values_list("pk", flat=True)),

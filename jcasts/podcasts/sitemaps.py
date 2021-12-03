@@ -23,13 +23,9 @@ class PodcastSitemap(Sitemap):
     limit = 100
 
     def items(self) -> QuerySet:
-        return (
-            Podcast.objects.active()
-            .filter(
-                pub_date__gt=timezone.now() - datetime.timedelta(hours=24),
-            )
-            .order_by("-pub_date")
-        )
+        return Podcast.objects.filter(
+            pub_date__gt=timezone.now() - datetime.timedelta(hours=24),
+        ).order_by("-pub_date")
 
     def lastmod(self, item: Podcast) -> datetime.datetime | None:
         return item.pub_date

@@ -184,7 +184,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert new_podcast.active
-        assert new_podcast.num_failures == 0
+        assert new_podcast.errors == 0
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
@@ -247,7 +247,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert not new_podcast.active
-        assert new_podcast.num_failures == 0
+        assert new_podcast.errors == 0
         assert new_podcast.title == "Mysterious Universe"
 
         assert (
@@ -300,7 +300,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss == self.redirect_rss
         assert new_podcast.active
-        assert new_podcast.num_failures == 0
+        assert new_podcast.errors == 0
         assert new_podcast.modified
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -328,7 +328,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.rss == current_rss
-        assert new_podcast.num_failures == 0
+        assert new_podcast.errors == 0
         assert not new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -350,7 +350,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
-        assert new_podcast.num_failures == 1
+        assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.INVALID_RSS
@@ -372,7 +372,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
-        assert new_podcast.num_failures == 1
+        assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.INVALID_RSS
@@ -404,7 +404,28 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert new_podcast.active
-        assert new_podcast.num_failures == 1
+        assert new_podcast.errors == 1
+        assert new_podcast.http_status is None
+        assert new_podcast.parsed
+        assert not new_podcast.queued
+        assert new_podcast.result == Podcast.Result.NETWORK_ERROR
+
+    def test_parse_podcast_feed_errors_past_limit(
+        self, mocker, new_podcast, categories
+    ):
+        Podcast.objects.filter(pk=new_podcast.id).update(errors=2)
+
+        mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
+
+        result = feed_parser.parse_podcast_feed(new_podcast.id)
+        assert result.success is False
+
+        with pytest.raises(requests.RequestException):
+            result.raise_exception()
+
+        new_podcast.refresh_from_db()
+        assert not new_podcast.active
+        assert new_podcast.errors == 3
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -424,7 +445,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert not new_podcast.active
-        assert new_podcast.num_failures == 0
+        assert new_podcast.errors == 0
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -446,7 +467,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.active
-        assert new_podcast.num_failures == 1
+        assert new_podcast.errors == 1
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
@@ -471,7 +492,7 @@ class TestParsePodcastFeed:
         new_podcast.refresh_from_db()
 
         assert new_podcast.active
-        assert new_podcast.num_failures == 1
+        assert new_podcast.errors == 1
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued

@@ -40,11 +40,11 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
     now = timezone.now()
 
     for podcast_id, rss in (
-        Podcast.objects.active()
-        .filter(
+        Podcast.objects.filter(
             Q(parsed__isnull=True)
             | Q(parsed__lt=now - timedelta(minutes=from_minutes_ago)),
             rss__in=urls,
+            active=True,
             queued__isnull=True,
         )
         .values_list("pk", "rss")
