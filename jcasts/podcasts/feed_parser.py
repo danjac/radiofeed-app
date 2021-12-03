@@ -6,6 +6,7 @@ import traceback
 
 from datetime import timedelta
 from functools import lru_cache
+from typing import Sequence
 
 import attr
 import requests
@@ -15,6 +16,7 @@ from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import job
+from rq.job import Job
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -81,13 +83,17 @@ def parse_podcast_feeds(
     elif until:
         podcasts = podcasts.filter(pub_date__lt=now - until)
 
-    podcast_ids = list(podcasts.values_list("pk", flat=True)[:limit])
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
+    return enqueue(*podcasts.values_list("pk", flat=True)[:limit])
 
+    
+def enqueue(*podcast_ids: Sequence[int], **update_kwargs) -> None:
+    podcast_ids = list(podcast_ids)
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now(), **update_kwargs)
+    
     for podcast_id in podcast_ids:
-        parse_podcast_feed.delay(podcast_id)
+        parse_podcast_feed.delay(podcast_ids)
 
-
+        
 @job("feeds")
 @transaction.atomic
 def parse_podcast_feed(podcast_id: int) -> ParseResult:
