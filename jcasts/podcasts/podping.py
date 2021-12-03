@@ -53,14 +53,8 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
         podcast_ids.add(podcast_id)
         yield rss
 
-    if not podcast_ids:
-        return
-
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now, podping=True)
-
-    for podcast_id in podcast_ids:
-        feed_parser.parse_podcast_feed.delay(podcast_id)
-
+    feed_parser.enqueue(*podcast_ids, podping=True)
+ 
 
 def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
     """Outputs URLs one by one as they appear on the Hive Podping stream"""
