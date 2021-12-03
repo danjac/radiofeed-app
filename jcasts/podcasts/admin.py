@@ -195,14 +195,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
+ 
         podcast_ids = list(
             queryset.filter(queued__isnull=True).values_list("pk", flat=True)
         )
-
-        models.Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
-
-        for podcast_id in podcast_ids:
-            feed_parser.parse_podcast_feed.delay(podcast_id)
+        feed_parser.enqueue(podcast_ids)
 
         self.message_user(
             request,
@@ -218,11 +215,9 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         if not obj.active:
             self.message_user(request, "Podcast is inactive")
             return
+        
+        feed_parser.enqueue(obj.id)
 
-        obj.queued = timezone.now()
-        obj.save(update_fields=["queued"])
-
-        feed_parser.parse_podcast_feed.delay(obj.id)
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
