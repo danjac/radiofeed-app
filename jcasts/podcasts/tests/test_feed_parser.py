@@ -413,7 +413,7 @@ class TestParsePodcastFeed:
     def test_parse_podcast_feed_errors_past_limit(
         self, mocker, new_podcast, categories
     ):
-        Podcast.objects.filter(pk=new_podcast.id).update(errors=2)
+        Podcast.objects.filter(pk=new_podcast.id).update(errors=11)
 
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
@@ -425,7 +425,7 @@ class TestParsePodcastFeed:
 
         new_podcast.refresh_from_db()
         assert not new_podcast.active
-        assert new_podcast.errors == 3
+        assert new_podcast.errors == 12
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued

@@ -30,6 +30,8 @@ USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
 ]
 
+PARSE_ERROR_LIMIT = 12  # max errors before podcast is "dead"
+
 
 class NotModified(requests.RequestException):
     ...
@@ -341,7 +343,7 @@ def parse_failure(
 ) -> ParseResult:
 
     errors = podcast.errors + 1 if error else 0
-    active = active and errors < 3
+    active = active and errors < PARSE_ERROR_LIMIT
 
     now = timezone.now()
 
