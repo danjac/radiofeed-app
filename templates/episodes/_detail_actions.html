@@ -20,6 +20,8 @@
     {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 
     {% if user.is_authenticated %}
+    
+    <div class="flex items-center">
 
     <button title="Add to Favorites"
             x-show="!isFavorite"
@@ -36,7 +38,9 @@
             @click="isFavorite=false">
         {% icon "star_solid" css_class=ICON_CSS %}
     </button>
+    </div>
 
+    <div class="flex items-center">
     <button title="Add to Play Queue"
             x-show="!isPlaying && !isQueued"
             x-cloak
@@ -52,6 +56,7 @@
             @click="isQueued=false">
         {% icon "collection_solid" css_class=ICON_CSS %}
     </button>
+    </div>
 
     <button title="Mark Complete"
             x-show="!isPlaying && !isComplete && isListened"
@@ -80,7 +85,6 @@
         {% icon "download" css_class=ICON_CSS %}
         {% endif %}
     </a>
-
 
     {% endwith %}
 </div>
