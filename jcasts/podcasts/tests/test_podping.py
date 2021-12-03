@@ -19,7 +19,7 @@ class TestGetUpdates:
 
         mocker.patch("jcasts.podcasts.podping.get_stream", return_value=iter(urls))
 
-        urls = list(podping.get_updates(15))
+        urls = list(podping.get_updates(timedelta(minutes=15)))
         assert len(urls) == 3
 
         mock_parse_podcast_feed.assert_called()
@@ -63,7 +63,7 @@ class TestGetStream:
         )
         mocker.patch("jcasts.podcasts.podping.Account", return_value=MockAccount())
 
-        urls = list(podping.get_stream(15))
+        urls = list(podping.get_stream(timedelta(minutes=15)))
         assert len(urls) == 1
         assert urls[0] == "https://example.com/"
 
@@ -108,7 +108,7 @@ class TestBatchUpdates:
 
         urls = [recent.rss, queued.rss] + [faker.url for _ in range(12)]
 
-        feeds = list(podping.batch_updates(set(urls), 15))
+        feeds = list(podping.batch_updates(set(urls), timedelta(minutes=15)))
         assert len(feeds) == 0
 
         mock_parse_podcast_feed.assert_not_called()
@@ -133,7 +133,7 @@ class TestBatchUpdates:
 
         urls = podcast_urls + [recent.rss, queued.rss] + [faker.url for _ in range(12)]
 
-        feeds = list(podping.batch_updates(set(urls), 15))
+        feeds = list(podping.batch_updates(set(urls), timedelta(minutes=15)))
         assert set(feeds) == set(podcast_urls), feeds
 
         mock_parse_podcast_feed.assert_called()

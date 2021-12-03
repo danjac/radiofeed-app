@@ -34,8 +34,8 @@ class TestPodping:
         )
         mocker.patch("itertools.count", return_value=[3])
 
-        call_command("podping")
-        mock_updates.assert_called_with(15)
+        call_command("podping", from_minutes_ago=15)
+        mock_updates.assert_called_with(timedelta(minutes=15))
 
 
 class TestSeedPodcastData:

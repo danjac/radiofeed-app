@@ -21,17 +21,15 @@ HIVE_NODE = "https://api.hive.blog"
 ACCOUNT_NAME = "podping"
 
 
-def get_updates(
-    from_minutes_ago: int = 15, batch_size=30
-) -> Generator[str, None, None]:
+def get_updates(since: timedelta, batch_size=30) -> Generator[str, None, None]:
     """Fetches updated RSS feeds from Podping stream and pulls any feeds
     in the database."""
 
-    for urls in batcher(get_stream(from_minutes_ago), batch_size):
-        yield from batch_updates(urls, from_minutes_ago)
+    for urls in batcher(get_stream(since), batch_size):
+        yield from batch_updates(urls, since)
 
 
-def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None, None]:
+def batch_updates(urls: set[str], since: timedelta) -> Generator[str, None, None]:
     """Processes batch of RSS feeds. Parse feeds of any URLs
     in the database that have not already been updated within the timeframe.
     """
@@ -40,8 +38,7 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
 
     for podcast_id, rss in (
         Podcast.objects.filter(
-            Q(parsed__isnull=True)
-            | Q(parsed__lt=timezone.now() - timedelta(minutes=from_minutes_ago)),
+            Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - since),
             rss__in=urls,
             active=True,
             queued__isnull=True,
@@ -55,7 +52,7 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
     feed_parser.enqueue(*podcast_ids, podping=True)
 
 
-def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
+def get_stream(since: timedelta) -> Generator[str, None, None]:
     """Outputs URLs one by one as they appear on the Hive Podping stream"""
 
     allowed_accounts = set(
@@ -72,9 +69,7 @@ def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
         opNames=["custom_json"],
         raw_ops=False,
         threading=False,
-        start=blockchain.get_estimated_block_num(
-            timezone.now() - timedelta(minutes=from_minutes_ago)
-        ),
+        start=blockchain.get_estimated_block_num(timezone.now() - since),
     ):
         if (
             post["id"] in WATCHED_OPERATION_IDS
