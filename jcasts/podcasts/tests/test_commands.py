@@ -12,16 +12,12 @@ class TestClearFeedQueue:
     def test_command(self, db):
         now = timezone.now()
 
-        first = PodcastFactory(queued=now)
-        second = PodcastFactory(queued=now - timedelta(hours=6))
+        podcast = PodcastFactory(queued=now)
 
         call_command("clear_feed_queue")
 
-        first.refresh_from_db()
-        assert first.queued
-
-        second.refresh_from_db()
-        assert not second.queued
+        podcast.refresh_from_db()
+        assert not podcast.queued
 
 
 class TestPodping:
