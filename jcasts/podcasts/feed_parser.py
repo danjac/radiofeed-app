@@ -73,14 +73,14 @@ def parse_podcast_feeds(
         F("pub_date").desc(nulls_first=True),
     )
     
-    q = Q(pub_date__isnull=True)
-
+    q = Q()
+    
     if since:
-        q = q | Q(pub_date__gte=now - since)
+        q = q | Q(pub_date__gte=now - since) | Q(pub_date__isnull=True)
 
     if until:
         q = q | Q(pub_date__lt=now - until)
-        
+    
     enqueue(*podcasts.filter(q).values_list("pk", flat=True)[:limit])
 
 
