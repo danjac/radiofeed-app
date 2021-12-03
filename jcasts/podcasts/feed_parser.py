@@ -87,7 +87,9 @@ def parse_podcast_feeds(
 
     
 def enqueue(*podcast_ids: Sequence[int], **update_kwargs) -> None:
-    podcast_ids = list(podcast_ids)
+    if not (podcast_ids := list(podcast_ids)):
+        return
+    
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now(), **update_kwargs)
     
     for podcast_id in podcast_ids:
