@@ -21,15 +21,15 @@ HIVE_NODE = "https://api.hive.blog"
 ACCOUNT_NAME = "podping"
 
 
-def get_updates(since: timedelta, batch_size=30) -> Generator[str, None, None]:
+def get_updates(since: timedelta, batch_size: int = 30) -> Generator[str, None, None]:
     """Fetches updated RSS feeds from Podping stream and pulls any feeds
     in the database."""
 
     for urls in batcher(get_stream(since), batch_size):
-        yield from batch_updates(urls, since)
+        yield from batch_updates(since, urls)
 
 
-def batch_updates(urls: set[str], since: timedelta) -> Generator[str, None, None]:
+def batch_updates(since: timedelta, urls: set[str]) -> Generator[str, None, None]:
     """Processes batch of RSS feeds. Parse feeds of any URLs
     in the database that have not already been updated within the timeframe.
     """

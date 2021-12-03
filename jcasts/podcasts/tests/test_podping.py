@@ -108,7 +108,8 @@ class TestBatchUpdates:
 
         urls = [recent.rss, queued.rss] + [faker.url for _ in range(12)]
 
-        feeds = list(podping.batch_updates(set(urls), timedelta(minutes=15)))
+        feeds = list(podping.batch_updates(timedelta(minutes=15), set(urls)))
+
         assert len(feeds) == 0
 
         mock_parse_podcast_feed.assert_not_called()
@@ -133,7 +134,8 @@ class TestBatchUpdates:
 
         urls = podcast_urls + [recent.rss, queued.rss] + [faker.url for _ in range(12)]
 
-        feeds = list(podping.batch_updates(set(urls), timedelta(minutes=15)))
+        feeds = list(podping.batch_updates(timedelta(minutes=15), set(urls)))
+
         assert set(feeds) == set(podcast_urls), feeds
 
         mock_parse_podcast_feed.assert_called()
