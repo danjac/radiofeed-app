@@ -64,15 +64,6 @@ def parse_podcast_feeds(
 ) -> None:
     now = timezone.now()
 
-    podcasts = Podcast.objects.filter(
-        active=True,
-        podping=False,
-        queued__isnull=True,
-    ).order_by(
-        F("parsed").asc(nulls_first=True),
-        F("pub_date").desc(nulls_first=True),
-    )
-
     q = Q()
 
     if since:
@@ -81,7 +72,19 @@ def parse_podcast_feeds(
     if until:
         q = q | Q(pub_date__lt=now - until)
 
-    enqueue(*podcasts.filter(q).values_list("pk", flat=True)[:limit])
+    return enqueue(
+        *Podcast.objects.filter(
+            q,
+            active=True,
+            podping=False,
+            queued__isnull=True,
+        )
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )
+        .values_list("pk", flat=True)[:limit]
+    )
 
 
 def enqueue(*args: int, **update_kwargs) -> None:

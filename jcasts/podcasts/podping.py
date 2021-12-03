@@ -37,12 +37,11 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
     """
 
     podcast_ids: set[int] = set()
-    now = timezone.now()
 
     for podcast_id, rss in (
         Podcast.objects.filter(
             Q(parsed__isnull=True)
-            | Q(parsed__lt=now - timedelta(minutes=from_minutes_ago)),
+            | Q(parsed__lt=timezone.now() - timedelta(minutes=from_minutes_ago)),
             rss__in=urls,
             active=True,
             queued__isnull=True,
@@ -54,7 +53,7 @@ def batch_updates(urls: set[str], from_minutes_ago: int) -> Generator[str, None,
         yield rss
 
     feed_parser.enqueue(*podcast_ids, podping=True)
- 
+
 
 def get_stream(from_minutes_ago: int) -> Generator[str, None, None]:
     """Outputs URLs one by one as they appear on the Hive Podping stream"""
