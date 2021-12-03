@@ -62,7 +62,14 @@ def parse_podcast_feeds(
 ) -> None:
     now = timezone.now()
 
-    podcasts = Podcast.objects.active().filter(podping=False, queued__isnull=True)
+    podcasts = (
+        Podcast.objects.active()
+        .filter(podping=False, queued__isnull=True)
+        .order_by(
+            F("parsed").asc(nulls_first=True),
+            F("pub_date").desc(nulls_first=True),
+        )
+    )
 
     if since:
         podcasts = podcasts.filter(
@@ -72,12 +79,7 @@ def parse_podcast_feeds(
     elif until:
         podcasts = podcasts.filter(pub_date__lt=now - until)
 
-    podcasts = podcasts.order_by(
-        F("parsed").asc(nulls_first=True),
-        F("pub_date").desc(nulls_first=True),
-    )[:limit]
-
-    podcast_ids = list(podcasts.values_list("pk", flat=True))
+    podcast_ids = list(podcasts.values_list("pk", flat=True)[:limit])
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=now)
 
     for podcast_id in podcast_ids:

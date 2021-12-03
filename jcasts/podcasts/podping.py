@@ -24,9 +24,10 @@ ACCOUNT_NAME = "podping"
 def get_updates(
     from_minutes_ago: int = 15, batch_size=30
 ) -> Generator[str, None, None]:
-    """Runs Podping and updates any RSS feeds in the database."""
+    """Fetches updated RSS feeds from Podping stream and pulls any feeds
+    in the database."""
 
-    for urls in grouper(get_stream(from_minutes_ago), batch_size):
+    for urls in batcher(get_stream(from_minutes_ago), batch_size):
         yield from batch_updates(urls, from_minutes_ago)
 
 
@@ -97,12 +98,12 @@ def parse_urls(payload: str) -> Generator[str, None, None]:
         yield from urls
 
 
-def grouper(
-    iterable: Iterable[str], chunk_size: int
+def batcher(
+    iterable: Iterable[str], batch_size: int
 ) -> Generator[set[str], None, None]:
     it = iter(iterable)
     while True:
-        chunk = set(itertools.islice(it, chunk_size))
-        if not chunk:
+        batch = set(itertools.islice(it, batch_size))
+        if not batch:
             return
-        yield chunk
+        yield batch
