@@ -22,7 +22,7 @@
         },
         {
             "command": "python manage.py parse_podcast_feeds --until=30 --limit=100",
-            "schedule": "12,48 * * * *"
+            "schedule": "15,45 * * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
