@@ -95,7 +95,7 @@ def enqueue(*podcast_ids: Iterable[int], **update_kwargs) -> None:
     Podcast.objects.filter(pk__in=podcast_ids).update(queued=now, updated=now, **update_kwargs)
     
     for podcast_id in podcast_ids:
-        parse_podcast_feed.delay(podcast_ids)
+        parse_podcast_feed.delay(podcast_id)
 
         
 @job("feeds")
