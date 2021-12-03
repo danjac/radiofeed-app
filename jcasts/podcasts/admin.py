@@ -195,11 +195,10 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
- 
         podcast_ids = list(
             queryset.filter(queued__isnull=True).values_list("pk", flat=True)
         )
-        feed_parser.enqueue(podcast_ids)
+        feed_parser.enqueue(*podcast_ids)
 
         self.message_user(
             request,
@@ -216,7 +215,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
             self.message_user(request, "Podcast is inactive")
             return
         
-        feed_parser.enqueue(obj.id)
+        feed_parser.enqueue(*obj.id)
 
         self.message_user(request, "Podcast has been queued for update")
 
