@@ -17,12 +17,12 @@
     },
     "cron": [
         {
-            "command": "python manage.py parse_podcast_feeds --since=14 --limit=300",
+            "command": "python manage.py parse_podcast_feeds --since=30 --limit=360",
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --until=14 --limit=200",
-            "schedule": "12,48 * * * *"
+            "command": "python manage.py parse_podcast_feeds --until=30 --limit=200",
+            "schedule": "30 * * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
