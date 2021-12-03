@@ -73,10 +73,10 @@ def parse_podcast_feeds(
         F("pub_date").desc(nulls_first=True),
     )
     
-    q = Q()
+    q = Q(pub_date__isnull=True)
 
     if since:
-        q = q | Q(pub_date__gte=now - since) | Q(pub_date__isnull=True)
+        q = q | Q(pub_date__gte=now - since)
 
     if until:
         q = q | Q(pub_date__lt=now - until)
