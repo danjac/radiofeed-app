@@ -83,7 +83,7 @@ def parse_podcast_feeds(
     elif until:
         podcasts = podcasts.filter(pub_date__lt=now - until)
 
-    return enqueue(*podcasts.values_list("pk", flat=True)[:limit])
+    enqueue(*podcasts.values_list("pk", flat=True)[:limit])
 
     
 def enqueue(*podcast_ids: Iterable[int], **update_kwargs) -> None:
