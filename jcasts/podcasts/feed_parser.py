@@ -72,7 +72,7 @@ def parse_podcast_feeds(
     if until:
         q = q | Q(pub_date__lt=now - until)
 
-    return enqueue(
+    enqueue(
         *Podcast.objects.filter(
             q,
             active=True,
