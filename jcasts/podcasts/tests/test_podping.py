@@ -10,7 +10,7 @@ from jcasts.podcasts.models import Podcast
 
 
 class TestGetUpdates:
-    def test_batch(self, db, mocker, mock_parse_podcast_feed, faker):
+    def test_batch(self, db, mocker, mock_feed_queue, faker):
 
         urls = [faker.url() for _ in range(33)]
 
@@ -20,9 +20,10 @@ class TestGetUpdates:
         mocker.patch("jcasts.podcasts.podping.get_stream", return_value=iter(urls))
 
         urls = list(podping.get_updates(timedelta(minutes=15)))
-        assert len(urls) == 3
 
-        mock_parse_podcast_feed.assert_called()
+        assert len(urls) == 3
+        assert len(mock_feed_queue.enqueued) == 3
+
         assert Podcast.objects.filter(podping=True, queued__isnull=False).count() == 3
 
 
@@ -97,7 +98,7 @@ class TestParseUrls:
 
 
 class TestBatchUpdates:
-    def test_no_podcasts(self, db, mock_parse_podcast_feed, faker):
+    def test_no_podcasts(self, db, mock_feed_queue, faker):
         now = timezone.now()
 
         # queued
@@ -111,14 +112,13 @@ class TestBatchUpdates:
         feeds = list(podping.batch_updates(timedelta(minutes=15), set(urls)))
 
         assert len(feeds) == 0
-
-        mock_parse_podcast_feed.assert_not_called()
+        assert len(mock_feed_queue.enqueued) == 0
 
         qs = Podcast.objects.filter(podping=True, queued__isnull=False)
 
         assert qs.count() == 0
 
-    def test_update(self, db, mock_parse_podcast_feed, faker):
+    def test_update(self, db, mock_feed_queue, faker):
 
         now = timezone.now()
 
@@ -138,7 +138,7 @@ class TestBatchUpdates:
 
         assert set(feeds) == set(podcast_urls), feeds
 
-        mock_parse_podcast_feed.assert_called()
+        assert len(mock_feed_queue.enqueued) == 3
 
         qs = Podcast.objects.filter(podping=True, queued__isnull=False)
 

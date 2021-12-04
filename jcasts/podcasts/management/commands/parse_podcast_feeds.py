@@ -34,10 +34,29 @@ class Command(BaseCommand):
             default=200,
         )
 
+        parser.add_argument(
+            "--followed",
+            help="Followed podcasts",
+            action="store_true",
+            default=False,
+        )
+
+        parser.add_argument(
+            "--queue",
+            help="Job queue",
+            type=str,
+            default="feeds",
+        )
+
     def handle(self, *args, **options) -> None:
 
+        since = timedelta(days=options["since"]) if options["since"] else None
+        until = timedelta(days=options["until"]) if options["until"] else None
+
         feed_parser.parse_podcast_feeds(
-            since=timedelta(days=options["since"]) if options["since"] else None,
-            until=timedelta(days=options["until"]) if options["until"] else None,
+            since=since,
+            until=until,
+            followed=options["followed"],
+            queue=options["queue"],
             limit=options["limit"],
         )

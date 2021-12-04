@@ -14,7 +14,7 @@ from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import job
+from django_rq import get_queue
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -58,9 +58,12 @@ class ParseResult:
 
 
 def parse_podcast_feeds(
+    *,
+    followed: bool = False,
+    queue: str = "feeds",
+    limit: int = 200,
     since: timedelta | None = None,
     until: timedelta | None = None,
-    limit: int = 200,
 ) -> None:
     now = timezone.now()
 
@@ -73,21 +76,24 @@ def parse_podcast_feeds(
         q = q | Q(pub_date__lt=now - until)
 
     enqueue(
-        *Podcast.objects.filter(
+        *Podcast.objects.with_followed()
+        .filter(
             q,
             active=True,
             podping=False,
             queued__isnull=True,
+            followed=followed,
         )
         .order_by(
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
         )
-        .values_list("pk", flat=True)[:limit]
+        .values_list("pk", flat=True)[:limit],
+        queue=queue,
     )
 
 
-def enqueue(*args: int, **update_kwargs) -> None:
+def enqueue(*args: int, queue: str = "feeds", **update_kwargs) -> None:
 
     if not (podcast_ids := list(args)):
         return
@@ -98,11 +104,12 @@ def enqueue(*args: int, **update_kwargs) -> None:
         queued=now, updated=now, **update_kwargs
     )
 
+    job_queue = get_queue(queue)
+
     for podcast_id in podcast_ids:
-        parse_podcast_feed.delay(podcast_id)
+        job_queue.enqueue(parse_podcast_feed, podcast_id)
 
 
-@job("feeds")
 @transaction.atomic
 def parse_podcast_feed(podcast_id: int) -> ParseResult:
 

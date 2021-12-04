@@ -79,7 +79,7 @@ class TestMakeRecommendations:
 
 
 class TestParsePodcastFeeds:
-    def test_command(self, db, mock_parse_podcast_feed):
+    def test_command(self, db, mock_feed_queue):
         podcast = PodcastFactory(pub_date=None)
         call_command("parse_podcast_feeds")
-        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert podcast.id in mock_feed_queue.enqueued

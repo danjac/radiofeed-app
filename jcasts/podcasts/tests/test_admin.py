@@ -57,29 +57,27 @@ class TestPodcastAdmin:
         ordering = admin.get_ordering(req)
         assert ordering == []
 
-    def test_parse_podcast_feeds(self, podcast, admin, req, mock_parse_podcast_feed):
+    def test_parse_podcast_feeds(self, podcast, admin, req, mock_feed_queue):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
-        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert podcast.id in mock_feed_queue.enqueued
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
-    def test_parse_podcast_feed(self, podcast, admin, req, mock_parse_podcast_feed):
+    def test_parse_podcast_feed(self, podcast, admin, req, mock_feed_queue):
+
         admin.parse_podcast_feed(req, podcast)
-        mock_parse_podcast_feed.assert_called_with(podcast.id)
+        assert podcast.id in mock_feed_queue.enqueued
+
         assert Podcast.objects.filter(queued__isnull=False).count() == 1
 
-    def test_parse_podcast_feed_queued(
-        self, podcast, admin, req, mock_parse_podcast_feed
-    ):
+    def test_parse_podcast_feed_queued(self, podcast, admin, req, mock_feed_queue):
         podcast.queued = timezone.now()
         admin.parse_podcast_feed(req, podcast)
-        mock_parse_podcast_feed.assert_not_called()
+        assert not mock_feed_queue.enqueued
 
-    def test_parse_podcast_feed_inactive(
-        self, podcast, admin, req, mock_parse_podcast_feed
-    ):
+    def test_parse_podcast_feed_inactive(self, podcast, admin, req, mock_feed_queue):
         podcast.active = False
         admin.parse_podcast_feed(req, podcast)
-        mock_parse_podcast_feed.assert_not_called()
+        assert not mock_feed_queue.enqueued
 
 
 class TestResultFilter:

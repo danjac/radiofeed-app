@@ -1,109 +1,115 @@
 version: '3.8'
 
 x-env: &default-env
-  DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
-  EMAIL_HOST: mailhog
-  EMAIL_PORT: 1025
-  REDIS_URL: redis://redis:6379/0
-  SECRET_KEY: seekrit!
-  TWITTER_ACCOUNT: casts_j
+    DATABASE_URL: postgres://postgres:password@postgres:5432/postgres
+    EMAIL_HOST: mailhog
+    EMAIL_PORT: 1025
+    REDIS_URL: redis://redis:6379/0
+    SECRET_KEY: seekrit!
+    TWITTER_ACCOUNT: casts_j
 
 services:
-  postgres:
-    image: postgres:11.8
-    environment:
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    stop_grace_period: '3s'
-    healthcheck:
-      test: ['CMD', 'pg_isready', '-U', 'postgres']
-      interval: 1s
-      timeout: 3s
-      retries: 30
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '100k'
-        max-file: '3'
+    postgres:
+        image: postgres:11.8
+        environment:
+            - POSTGRES_PASSWORD=password
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        stop_grace_period: '3s'
+        healthcheck:
+            test: ['CMD', 'pg_isready', '-U', 'postgres']
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
 
-  redis:
-    image: redis:6.2.2-buster
-    stop_grace_period: '3s'
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 1s
-      timeout: 3s
-      retries: 30
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '100k'
-        max-file: '3'
+    redis:
+        image: redis:6.2.2-buster
+        stop_grace_period: '3s'
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - '8025:8025'
-      - '1025:1025'
-    stop_grace_period: '3s'
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '100k'
-        max-file: '3'
+    mailhog:
+        image: mailhog/mailhog:v1.0.0
+        ports:
+            - '8025:8025'
+            - '1025:1025'
+        stop_grace_period: '3s'
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
 
-  master:
-    build:
-      context: .
-    image: jcasts/master:0.1
+    master:
+        build:
+            context: .
+        image: jcasts/master:0.1
 
-  base: &base
-    image: jcasts/master:0.1
-    restart: on-failure
-    privileged: true
-    tty: true
-    stop_grace_period: '3s'
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '100k'
-        max-file: '3'
+    base: &base
+        image: jcasts/master:0.1
+        restart: on-failure
+        privileged: true
+        tty: true
+        stop_grace_period: '3s'
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
 
-  watcher:
-    <<: *base
-    command: ['npm', 'run', 'watch']
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    depends_on:
-      master:
-        condition: service_completed_successfully
+    watcher:
+        <<: *base
+        command: ['npm', 'run', 'watch']
+        volumes:
+            - ./:/app
+            - /app/node_modules
+        depends_on:
+            master:
+                condition: service_completed_successfully
 
-  django: &django
-    <<: *base
-    environment: *default-env
-    depends_on:
-      master:
-        condition: service_completed_successfully
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./:/app
+    django: &django
+        <<: *base
+        environment: *default-env
+        depends_on:
+            master:
+                condition: service_completed_successfully
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        volumes:
+            - ./:/app
 
-  webapp:
-    <<: *django
-    ports:
-      - '8000:8000'
-    command: /start-webapp
+    webapp:
+        <<: *django
+        ports:
+            - '8000:8000'
+        command: /start-webapp
 
-  worker:
-    <<: *django
-    command: /start-worker
-    depends_on:
-      - webapp
+    worker:
+        <<: *django
+        command: /start-worker
+        depends_on:
+            - webapp
+
+    podping:
+        <<: *django
+        command: /start-podping
+        depends_on:
+            - worker
 
 volumes:
-  pg_data: {}
+    pg_data: {}

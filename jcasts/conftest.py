@@ -11,6 +11,21 @@ from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFac
 from jcasts.users.factories import UserFactory
 
 
+class MockFeedQueue:
+    def __init__(self, *args, **kwargs):
+        self.enqueued = []
+
+    def enqueue(self, fn, podcast_id):
+        self.enqueued.append(podcast_id)
+
+
+@pytest.fixture
+def mock_feed_queue(mocker):
+    queue = MockFeedQueue()
+    mocker.patch("jcasts.podcasts.feed_parser.get_queue", return_value=queue)
+    return queue
+
+
 @pytest.fixture
 def faker():
     return Faker()
@@ -28,11 +43,6 @@ def locmem_cache(settings):
 @pytest.fixture
 def get_response():
     return lambda req: HttpResponse()
-
-
-@pytest.fixture
-def mock_parse_podcast_feed(mocker):
-    return mocker.patch("jcasts.podcasts.feed_parser.parse_podcast_feed.delay")
 
 
 @pytest.fixture
