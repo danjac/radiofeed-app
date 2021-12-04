@@ -24,9 +24,6 @@ superuser:
 seed:
 	./bin/manage seed_podcast_data
 
-parse:
-	./bin/manage parse_podcast_feeds
-
 shell:
 	./bin/manage shell_plus
 

@@ -21,19 +21,15 @@
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --since=1 --limit=300",
-            "schedule": "3 * * * *"
-        },
-        {
-            "command": "python manage.py parse_podcast_feeds --since=14 --until=1 --limit=300 --queue=feeds-slow",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=14 --limit=300",
             "schedule": "*/6 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --since=90 --until=14 --limit=150 --queue=feeds-slow",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=90 --until=14 --limit=150",
             "schedule": "15,45 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --until=90 --limit=150 --queue=feeds-slow",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --until=90 --limit=150",
             "schedule": "33 */3 * * *"
         },
         {

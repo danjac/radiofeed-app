@@ -14,6 +14,13 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
+            "--queue",
+            help="Job queue",
+            type=str,
+            default="feeds",
+        )
+
+        parser.add_argument(
             "--since",
             help="Days since last parsed",
             type=int,
@@ -39,13 +46,6 @@ class Command(BaseCommand):
             help="Followed podcasts",
             action="store_true",
             default=False,
-        )
-
-        parser.add_argument(
-            "--queue",
-            help="Job queue",
-            type=str,
-            default="feeds",
         )
 
     def handle(self, *args, **options) -> None:

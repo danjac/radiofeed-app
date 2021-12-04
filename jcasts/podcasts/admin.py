@@ -214,7 +214,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         if not obj.active:
             self.message_user(request, "Podcast is inactive")
             return
-        
+
         feed_parser.enqueue(obj.id)
 
         self.message_user(request, "Podcast has been queued for update")
