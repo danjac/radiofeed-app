@@ -29,11 +29,11 @@
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --after=90 --before=14 --limit=150",
-            "schedule": "15 * * * *"
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --after=90 --before=14 --limit=100",
+            "schedule": "12,48 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --before=90 --limit=300",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --before=90 --limit=200",
             "schedule": "36 */3 * * *"
         },
         {
