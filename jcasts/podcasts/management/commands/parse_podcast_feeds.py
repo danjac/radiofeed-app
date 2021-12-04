@@ -21,15 +21,15 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--since",
-            help="Days since last parsed",
+            "--after",
+            help="Days after last parsed",
             type=int,
             default=None,
         )
 
         parser.add_argument(
-            "--until",
-            help="Days until last parsed",
+            "--before",
+            help="Days before last parsed",
             type=int,
             default=None,
         )
@@ -57,12 +57,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        since = timedelta(days=options["since"]) if options["since"] else None
-        until = timedelta(days=options["until"]) if options["until"] else None
+        after = timedelta(days=options["after"]) if options["after"] else None
+        before = timedelta(days=options["before"]) if options["before"] else None
 
         feed_parser.parse_podcast_feeds(
-            since=since,
-            until=until,
+            after=after,
+            before=before,
             followed=options["followed"],
             promoted=options["promoted"],
             queue=options["queue"],

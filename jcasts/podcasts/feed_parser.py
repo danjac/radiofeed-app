@@ -63,18 +63,18 @@ def parse_podcast_feeds(
     limit: int = 200,
     followed: bool = False,
     promoted: bool = False,
-    since: timedelta | None = None,
-    until: timedelta | None = None,
+    after: timedelta | None = None,
+    before: timedelta | None = None,
 ) -> None:
     now = timezone.now()
 
     q = Q()
 
-    if since:
-        q = q | Q(pub_date__gte=now - since) | Q(pub_date__isnull=True)
+    if after:
+        q = q | Q(pub_date__gte=now - after) | Q(pub_date__isnull=True)
 
-    if until:
-        q = q | Q(pub_date__lt=now - until)
+    if before:
+        q = q | Q(pub_date__lt=now - before)
 
     enqueue(
         *Podcast.objects.with_followed()

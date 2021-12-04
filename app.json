@@ -25,15 +25,15 @@
             "schedule": "30 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=14 --limit=300",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --after=14 --limit=300",
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=90 --until=14 --limit=150",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --after=90 --before=14 --limit=150",
             "schedule": "15 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --until=90 --limit=150",
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --before=90 --limit=150",
             "schedule": "45 */3 * * *"
         },
         {

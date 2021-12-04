@@ -85,7 +85,7 @@ class TestFeedHeaders:
 
 class TestParsePodcastFeeds:
     @pytest.mark.parametrize(
-        "pub_date,since,until,success",
+        "pub_date,after,before,success",
         [
             (None, None, None, True),
             (None, timedelta(days=14), None, True),
@@ -99,8 +99,8 @@ class TestParsePodcastFeeds:
         db,
         mock_feed_queue,
         pub_date,
-        since,
-        until,
+        after,
+        before,
         success,
     ):
 
@@ -110,7 +110,7 @@ class TestParsePodcastFeeds:
             pub_date=now - pub_date if pub_date else None,
         )
 
-        feed_parser.parse_podcast_feeds(since=since, until=until)
+        feed_parser.parse_podcast_feeds(after=after, before=before)
         assert Podcast.objects.filter(queued__isnull=False).exists() is success
 
         if success:
