@@ -26,7 +26,7 @@
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=14 --limit=300",
-            "schedule": "*/6 * * * *"
+            "schedule": "*/5 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=90 --until=14 --limit=150",
