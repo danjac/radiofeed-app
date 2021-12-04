@@ -59,9 +59,9 @@ class ParseResult:
 
 def parse_podcast_feeds(
     *,
-    followed: bool = False,
     queue: str = "feeds",
     limit: int = 200,
+    followed: bool = False,
     since: timedelta | None = None,
     until: timedelta | None = None,
 ) -> None:
