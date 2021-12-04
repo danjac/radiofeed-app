@@ -33,6 +33,10 @@
             "schedule": "15,45 * * * *"
         },
         {
+            "command": "python manage.py parse_podcast_feeds --until=90 --limit=150 --queue=feeds-slow",
+            "schedule": "33 */3 * * *"
+        },
+        {
             "command": "python manage.py send_recommendation_emails",
             "schedule": "12 9 * * 1"
         },
