@@ -18,7 +18,7 @@
     "cron": [
         {
             "command": "python manage.py parse_podcast_feeds --followed --limit=300",
-            "schedule": "*/10 * * * *"
+            "schedule": "*/12 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --promoted --limit=300",
