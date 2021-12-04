@@ -22,7 +22,7 @@
         },
         {
             "command": "python manage.py parse_podcast_feeds --promoted --limit=300",
-            "schedule": "30 * * * *"
+            "schedule": "35 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=14 --limit=300",
