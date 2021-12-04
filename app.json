@@ -18,23 +18,23 @@
     "cron": [
         {
             "command": "python manage.py parse_podcast_feeds --followed --limit=300",
-            "schedule": "*/12 * * * *"
+            "schedule": "*/10 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --promoted --limit=300",
-            "schedule": "30 * * * *"
+            "schedule": "35 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=14 --limit=300",
-            "schedule": "*/5 * * * *"
+            "schedule": "*/6 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --since=90 --until=14 --limit=150",
-            "schedule": "15,45 * * * *"
+            "schedule": "15 * * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:slow --until=90 --limit=150",
-            "schedule": "30 */3 * * *"
+            "schedule": "45 */3 * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
