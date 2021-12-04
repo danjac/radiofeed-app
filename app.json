@@ -30,11 +30,11 @@
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:sporadic --after=90 --before=14 --limit=100",
-            "schedule": "12,48 * * * *"
+            "schedule": "15,45 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:sporadic --before=90 --limit=200",
-            "schedule": "36 */3 * * *"
+            "schedule": "30 */3 * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
