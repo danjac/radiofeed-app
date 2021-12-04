@@ -48,6 +48,13 @@ class Command(BaseCommand):
             default=False,
         )
 
+        parser.add_argument(
+            "--promoted",
+            help="Followed podcasts",
+            action="store_true",
+            default=False,
+        )
+
     def handle(self, *args, **options) -> None:
 
         since = timedelta(days=options["since"]) if options["since"] else None
@@ -57,6 +64,7 @@ class Command(BaseCommand):
             since=since,
             until=until,
             followed=options["followed"],
+            promoted=options["promoted"],
             queue=options["queue"],
             limit=options["limit"],
         )

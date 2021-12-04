@@ -62,6 +62,7 @@ def parse_podcast_feeds(
     queue: str = "feeds",
     limit: int = 200,
     followed: bool = False,
+    promoted: bool = False,
     since: timedelta | None = None,
     until: timedelta | None = None,
 ) -> None:
@@ -83,6 +84,7 @@ def parse_podcast_feeds(
             podping=False,
             queued__isnull=True,
             followed=followed,
+            promoted=promoted,
         )
         .order_by(
             F("parsed").asc(nulls_first=True),
