@@ -6,7 +6,7 @@ from jcasts.websub import subscriber
 
 
 class Command(BaseCommand):
-    help = "Renew out-of-date Websub subscriptions"
+    help = "Create or renew subscriptions"
 
     def handle(self, *args, **options) -> None:
-        subscriber.renew()
+        subscriber.subscribe_all()

@@ -29,14 +29,21 @@ class SubscribeResult:
         return self.success
 
 
-def renew():
-    """Check any expired subscriptions and attempt to re-subscribe. This can be run
-    in a cronjob."""
+def subscribe_all():
+    """Renew or initialize new subscriptions."""
 
-    for subscription in Subscription.objects.filter(
-        status=Subscription.Status.SUBSCRIBED, expires__lt=timezone.now()
-    ):
-        subscribe.delay(subscription.id, mode="subscribe")
+    for subscription_id in Subscription.objects.filter(
+        Q(
+            status=Subscription.Status.SUBSCRIBED,
+            expires__lt=timezone.now(),
+        )
+        | Q(
+            status__isnull=True,
+            requested__isnull=True,
+        ),
+        podcast__active=True,
+    ).values_list("pk", flat=True):
+        subscribe.delay(subscription_id, mode="subscribe")
 
 
 @job("default")
@@ -85,12 +92,10 @@ def subscribe(
 
         if response.status_code != http.HTTPStatus.ACCEPTED:
             subscription.set_status(mode)
-            subscription.save()
 
     except requests.RequestException as e:
 
         subscription.exception = traceback.format_exc()
-        subscription.save()
 
         return SubscribeResult(
             subscription_id=subscription.id,
@@ -98,6 +103,10 @@ def subscribe(
             success=False,
             exception=e,
         )
+
+    finally:
+        subscription.requested = now
+        subscription.save()
 
     return SubscribeResult(
         subscription_id=subscription.id,

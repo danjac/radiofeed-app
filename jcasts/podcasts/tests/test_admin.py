@@ -10,7 +10,6 @@ from jcasts.podcasts.admin import (
     ActiveFilter,
     FollowedFilter,
     PodcastAdmin,
-    PodpingFilter,
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
@@ -155,28 +154,6 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
-
-
-class TestPodpingFilter:
-    def test_none(self, podcasts, admin, req):
-        PodcastFactory(podping=False)
-        f = PodpingFilter(req, {}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    def test_true(self, podcasts, admin, req):
-        podping = PodcastFactory(podping=True)
-        f = PodpingFilter(req, {"podping": "yes"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == podping
-
-    def test_false(self, podcasts, admin, req):
-        podping = PodcastFactory(podping=True)
-        f = PodpingFilter(req, {"podping": "no"}, Podcast, admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert podping not in qs
 
 
 class TestQueuedFilter:

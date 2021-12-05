@@ -19,7 +19,6 @@ from django_rq import get_queue
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.websub import subscriber
 from jcasts.websub.models import Subscription
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
@@ -92,7 +91,6 @@ def parse_podcast_feeds(
         .filter(
             q,
             active=True,
-            podping=False,
             subscribed=False,
             queued__isnull=True,
             followed=followed,
@@ -288,10 +286,6 @@ def parse_websub(
     podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
 ) -> None:
 
-    # if already podping support then websub is redundant
-    if podcast.podping:
-        return
-
     # https://w3c.github.io/websub
 
     # default: hub/topic in Atom links
@@ -305,13 +299,11 @@ def parse_websub(
 
     if hub and topic:
 
-        subscription, _ = Subscription.objects.get_or_create(
+        Subscription.objects.get_or_create(
             podcast=podcast,
             hub=hub,
             topic=topic,
         )
-
-        subscriber.subscribe.delay(subscription.id, mode="subscribe")
 
 
 def parse_episodes(

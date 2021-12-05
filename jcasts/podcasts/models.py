@@ -99,8 +99,6 @@ class Podcast(models.Model):
     etag: str = models.TextField(blank=True)
     title: str = models.TextField()
 
-    podping: bool = models.BooleanField(default=False)
-
     # latest episode pub date from RSS feed
     pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
 

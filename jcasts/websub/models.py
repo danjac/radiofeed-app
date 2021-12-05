@@ -40,6 +40,8 @@ class Subscription(TimeStampedModel):
 
     expires: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    requested: datetime | None = models.DateTimeField(null=True, blank=True)
+
     exception: str = models.TextField(blank=True)
 
     class Meta:

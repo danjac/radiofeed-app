@@ -90,25 +90,6 @@ class PubDateFilter(admin.SimpleListFilter):
         }.setdefault(self.value(), queryset)
 
 
-class PodpingFilter(admin.SimpleListFilter):
-    title = "Podping"
-    parameter_name = "podping"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        return (
-            ("yes", "Yes"),
-            ("no", "No"),
-        )
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return {
-            "yes": queryset.filter(podping=True),
-            "no": queryset.filter(podping=False),
-        }.setdefault(self.value(), queryset)
-
-
 class PromotedFilter(admin.SimpleListFilter):
     title = "Promoted"
     parameter_name = "promoted"
@@ -159,7 +140,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
         FollowedFilter,
-        PodpingFilter,
         PromotedFilter,
         PubDateFilter,
         QueuedFilter,

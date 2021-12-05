@@ -42,6 +42,10 @@
             "schedule": "20 3 * * *"
         },
         {
+            "command": "python manage.py subscribe",
+            "schedule": "15 * * * *"
+        },
+        {
             "command": "python manage.py clearsessions",
             "schedule": "35 1 * * *"
         }

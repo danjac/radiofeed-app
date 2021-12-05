@@ -7,12 +7,12 @@ from jcasts.websub.factories import SubscriptionFactory
 from jcasts.websub.models import Subscription
 
 
-class TestRenewSubscriptions:
+class TestSubscribe:
     def test_command(self, db, mock_subscribe):
         SubscriptionFactory(
             status=Subscription.Status.SUBSCRIBED,
             expires=timezone.now() - timedelta(days=3),
         )
-        call_command("renew_subscriptions")
+        call_command("subscribe")
 
         mock_subscribe.assert_called()

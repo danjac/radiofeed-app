@@ -63,26 +63,16 @@ class TestParseWebsub:
     hub = "https://pubsubhubbub.com"
     topic = "https://example.com/topic.xml"
 
-    def test_podping(self, db, mock_subscribe):
-        podcast = PodcastFactory(podping=True)
+    def test_websub_in_feed(self, podcast):
         feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
         feed_parser.parse_websub(podcast, MockResponse(), feed)
-
-        mock_subscribe.assert_not_called()
-        assert not Subscription.objects.filter(podcast=podcast).exists()
-
-    def test_websub_in_feed(self, podcast, mock_subscribe):
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
-        feed_parser.parse_websub(podcast, MockResponse(), feed)
-
-        mock_subscribe.assert_called()
 
         subscription = Subscription.objects.get(podcast=podcast)
 
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-    def test_websub_in_header(self, podcast, feed, mock_subscribe):
+    def test_websub_in_header(self, podcast, feed):
         response = MockResponse(
             links={
                 "hub": {"url": self.hub},
@@ -91,17 +81,14 @@ class TestParseWebsub:
         )
         feed_parser.parse_websub(podcast, response, feed)
 
-        mock_subscribe.assert_called()
-
         subscription = Subscription.objects.get(podcast=podcast)
 
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-    def test_no_websub(self, podcast, feed, mock_subscribe):
+    def test_no_websub(self, podcast, feed):
 
         feed_parser.parse_websub(podcast, MockResponse(), feed)
-        mock_subscribe.assert_not_called()
         assert not Subscription.objects.filter(podcast=podcast).exists()
 
 

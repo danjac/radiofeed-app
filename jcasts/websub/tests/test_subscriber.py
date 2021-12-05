@@ -109,23 +109,29 @@ class TestSubscribe:
         mock_post.assert_not_called()
 
 
-class TestRenew:
+class TestSubscribeAll:
     @pytest.mark.parametrize(
-        "status,expires,subscribes",
+        "status,requested,expires,subscribes",
         [
-            (None, False, False),
-            (Subscription.Status.DENIED, False, False),
-            (Subscription.Status.SUBSCRIBED, False, False),
-            (Subscription.Status.SUBSCRIBED, timedelta(days=3), False),
-            (Subscription.Status.SUBSCRIBED, timedelta(days=-3), True),
+            (None, False, False, True),
+            (None, True, False, False),
+            (Subscription.Status.DENIED, False, False, False),
+            (Subscription.Status.SUBSCRIBED, False, False, False),
+            (Subscription.Status.SUBSCRIBED, False, timedelta(days=3), False),
+            (Subscription.Status.SUBSCRIBED, False, timedelta(days=-3), True),
         ],
     )
-    def test_renew(self, db, mock_subscribe, status, expires, subscribes):
+    def test_subscribe_all(
+        self, db, mock_subscribe, status, requested, expires, subscribes
+    ):
+        now = timezone.now()
 
         SubscriptionFactory(
-            status=status, expires=timezone.now() + expires if expires else None
+            status=status,
+            expires=now + expires if expires else None,
+            requested=now if requested else None,
         )
-        subscriber.renew()
+        subscriber.subscribe_all()
 
         if subscribes:
             mock_subscribe.assert_called()

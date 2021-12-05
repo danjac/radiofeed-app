@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.core.management import call_command
 from django.utils import timezone
 
@@ -18,30 +16,6 @@ class TestClearFeedQueue:
 
         podcast.refresh_from_db()
         assert not podcast.queued
-
-
-class TestPodping:
-    def test_command(self, mocker, faker):
-
-        urls = [faker.url() for _ in range(3)]
-
-        mock_updates = mocker.patch(
-            "jcasts.podcasts.podping.get_updates", return_value=iter(urls)
-        )
-        mocker.patch("itertools.count", return_value=[3])
-
-        call_command("podping", from_minutes_ago=15)
-        mock_updates.assert_called_with(timedelta(minutes=15))
-
-    def test_exception(self, mocker, faker):
-
-        mock_updates = mocker.patch(
-            "jcasts.podcasts.podping.get_updates", side_effect=ValueError
-        )
-        mocker.patch("itertools.count", return_value=[3])
-
-        call_command("podping", from_minutes_ago=15)
-        mock_updates.assert_called_with(timedelta(minutes=15))
 
 
 class TestSeedPodcastData:
