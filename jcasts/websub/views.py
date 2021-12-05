@@ -1,0 +1,74 @@
+from __future__ import annotations
+
+import logging
+import traceback
+import uuid
+
+from datetime import timedelta
+
+from django.http import Http404, HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from jcasts.podcasts import feed_parser
+from jcasts.shared.response import HttpResponseNoContent
+from jcasts.websub.models import Subscription
+
+
+@require_http_methods(["GET", "POST"])
+@csrf_exempt
+def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpResponse:
+
+    subscription = get_object_or_404(
+        Subscription.objects.filter(podcast__active=True),
+        pk=subscription_id,
+    )
+
+    # content distribution
+    if request.method == "POST":
+
+        if subscription.check_signature(request):
+            feed_parser.enqueue(subscription.podcast_id, url=subscription.topic)
+
+        # always return a 2xx so we don't get multiple attack attempts
+        return HttpResponseNoContent()
+
+    # verification
+
+    now = timezone.now()
+
+    try:
+        mode = request.GET["hub.mode"]
+        challenge = request.GET["hub.challenge"]
+        topic = request.GET["hub.topic"]
+
+        if topic != subscription.topic:
+            raise ValueError(
+                f"{topic} does not match subscription topic {subscription.topic}"
+            )
+
+        if mode == "subscribe":
+            subscription.expires = now + timedelta(
+                seconds=int(request.GET["hub.lease_seconds"])
+            )
+
+        subscription.status = {
+            "subscribe": Subscription.Status.SUBSCRIBED,
+            "unsubscribe": Subscription.Status.UNSUBSCRIBED,
+            "denied": Subscription.Status.DENIED,
+        }[mode]
+
+        subscription.status_changed = now
+
+        return HttpResponse(challenge)
+
+    except (KeyError, ValueError) as e:
+        subscription.exception = traceback.format_exc()
+
+        logging.exception(e)
+        raise Http404
+
+    finally:
+        subscription.save()

@@ -93,6 +93,7 @@ LOCAL_APPS = [
     "jcasts.episodes",
     "jcasts.podcasts",
     "jcasts.users",
+    "jcasts.websub",
 ]
 
 

@@ -15,7 +15,7 @@ class MockFeedQueue:
     def __init__(self, *args, **kwargs):
         self.enqueued = []
 
-    def enqueue(self, fn, podcast_id):
+    def enqueue(self, fn, podcast_id, *args, **kwargs):
         self.enqueued.append(podcast_id)
 
 
@@ -24,6 +24,11 @@ def mock_feed_queue(mocker):
     queue = MockFeedQueue()
     mocker.patch("jcasts.podcasts.feed_parser.get_queue", return_value=queue)
     return queue
+
+
+@pytest.fixture
+def mock_subscribe(mocker):
+    return mocker.patch("jcasts.websub.subscribe.subscribe.delay")
 
 
 @pytest.fixture

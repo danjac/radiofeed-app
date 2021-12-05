@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue
@@ -19,6 +19,8 @@ from django_rq import get_queue
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
 from jcasts.podcasts.models import Category, Podcast
+from jcasts.websub.models import Subscription
+from jcasts.websub.subscribe import subscribe
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -78,10 +80,20 @@ def parse_podcast_feeds(
 
     enqueue(
         *Podcast.objects.with_followed()
+        .annotate(
+            subscribed=Exists(
+                Subscription.objects.filter(
+                    podcast=OuterRef("pk"),
+                    status=Subscription.Status.SUBSCRIBED,
+                    expires__gt=now,
+                )
+            )
+        )
         .filter(
             q,
             active=True,
             podping=False,
+            subscribed=False,
             queued__isnull=True,
             followed=followed,
             promoted=promoted,
@@ -95,7 +107,7 @@ def parse_podcast_feeds(
     )
 
 
-def enqueue(*args: int, queue: str = "feeds", **update_kwargs) -> None:
+def enqueue(*args: int, queue: str = "feeds", url: str = "", **update_kwargs) -> None:
 
     if not (podcast_ids := list(args)):
         return
@@ -109,15 +121,15 @@ def enqueue(*args: int, queue: str = "feeds", **update_kwargs) -> None:
     job_queue = get_queue(queue)
 
     for podcast_id in podcast_ids:
-        job_queue.enqueue(parse_podcast_feed, podcast_id)
+        job_queue.enqueue(parse_podcast_feed, podcast_id, url)
 
 
 @transaction.atomic
-def parse_podcast_feed(podcast_id: int) -> ParseResult:
+def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        response, feed, items = parse_content(podcast)
+        response, feed, items = parse_content(podcast, url)
         return parse_success(podcast, response, feed, items)
 
     except Podcast.DoesNotExist as e:
@@ -171,16 +183,17 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
 def parse_content(
     podcast: Podcast,
+    url: str = "",
 ) -> tuple[requests.Response, rss_parser.Feed, list[rss_parser.Item]]:
 
-    response = get_feed_response(podcast)
+    response = get_feed_response(podcast, url)
     feed, items = rss_parser.parse_rss(response.content)
     return response, feed, items
 
 
-def get_feed_response(podcast: Podcast) -> requests.Response:
+def get_feed_response(podcast: Podcast, url: str = "") -> requests.Response:
     response = requests.get(
-        podcast.rss,
+        url or podcast.rss,
         headers=get_feed_headers(podcast),
         allow_redirects=True,
         timeout=10,
@@ -258,6 +271,9 @@ def parse_success(
 
     podcast.save()
 
+    # websub
+    parse_websub(podcast, response, feed)
+
     # episodes
     parse_episodes(podcast, items)
 
@@ -266,6 +282,31 @@ def parse_success(
         success=True,
         status=response.status_code,
     )
+
+
+def parse_websub(
+    podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
+) -> None:
+    # https://w3c.github.io/websub
+
+    # default: hub/topic in Atom links
+    hub = feed.websub_hub
+    topic = feed.websub_topic
+
+    # also check Link headers
+    if "self" in response.links and "hub" in response.links:
+        hub = response.links["hub"]["url"]
+        topic = response.links["self"]["url"]
+
+    if hub and topic:
+
+        subscription, _ = Subscription.objects.get_or_create(
+            podcast=podcast,
+            hub=hub,
+            topic=topic,
+        )
+
+        subscribe.delay(subscription.id, mode="subscribe")
 
 
 def parse_episodes(
