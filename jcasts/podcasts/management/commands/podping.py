@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 
 from datetime import timedelta
 
@@ -20,6 +21,14 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
+
         self.stdout.write("Starting podping")
-        for url in podping.get_updates(timedelta(minutes=options["from_minutes_ago"])):
-            self.stdout.write(url)
+
+        try:
+            for url in podping.get_updates(
+                timedelta(minutes=options["from_minutes_ago"])
+            ):
+                self.stdout.write(url)
+        except Exception as e:
+            logging.exception(e)
+            self.stderr.write(self.style.ERROR(f"error: {e}, restating..."))
