@@ -26,6 +26,9 @@ class Command(BaseCommand):
 
         self.stdout.write("Starting podping")
 
+        while True:
+            pass
+
         # try:
         # for url in podping.get_updates(
         # timedelta(minutes=options["from_minutes_ago"])
