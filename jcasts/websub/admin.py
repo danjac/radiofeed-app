@@ -38,6 +38,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "hub",
         "topic",
         "secret",
+        "requested",
         "status",
         "status_changed",
         "expires",
