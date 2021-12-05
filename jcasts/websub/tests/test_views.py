@@ -38,6 +38,25 @@ class TestWebSubCallback:
 
         assert subscription.podcast_id not in mock_feed_queue.enqueued
 
+    def test_get_topic_mismatch(self, client, subscription):
+
+        resp = client.get(
+            self.url(subscription),
+            {
+                "hub.mode": "subscribe",
+                "hub.challenge": "ok",
+                "hub.topic": "https://other-topic.com",
+                "hub.lease_seconds": 3600,
+            },
+        )
+
+        assert_not_found(resp)
+
+        subscription.refresh_from_db()
+
+        assert subscription.status is None
+        assert subscription.status_changed is None
+
     def test_get_subscribe(self, client, subscription):
 
         resp = client.get(
