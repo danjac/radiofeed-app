@@ -71,6 +71,7 @@ def subscribe(
             "hub.topic": subscription.topic,
             "hub.secret": subscription.secret.hex,
             "hub.callback": subscription.get_callback_url(),
+            "hub.verify": "async",
             "hub.lease_seconds": DEFAULT_LEASE_SECONDS,
         },
     )
