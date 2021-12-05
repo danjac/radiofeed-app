@@ -20,6 +20,8 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed
+from jcasts.websub.factories import SubscriptionFactory
+from jcasts.websub.models import Subscription
 
 
 @pytest.fixture
@@ -57,6 +59,52 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
+class TestParseWebsub:
+    hub = "https://pubsubhubbub.com"
+    topic = "https://example.com/topic.xml"
+
+    def test_podping(self, db, mock_subscribe):
+        podcast = PodcastFactory(podping=True)
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
+        feed_parser.parse_websub(podcast, MockResponse(), feed)
+
+        mock_subscribe.assert_not_called()
+        assert not Subscription.objects.filter(podcast=podcast).exists()
+
+    def test_websub_in_feed(self, podcast, mock_subscribe):
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
+        feed_parser.parse_websub(podcast, MockResponse(), feed)
+
+        mock_subscribe.assert_called()
+
+        subscription = Subscription.objects.get(podcast=podcast)
+
+        assert subscription.hub == self.hub
+        assert subscription.topic == self.topic
+
+    def test_websub_in_header(self, podcast, feed, mock_subscribe):
+        response = MockResponse(
+            links={
+                "hub": {"url": self.hub},
+                "self": {"url": self.topic},
+            }
+        )
+        feed_parser.parse_websub(podcast, response, feed)
+
+        mock_subscribe.assert_called()
+
+        subscription = Subscription.objects.get(podcast=podcast)
+
+        assert subscription.hub == self.hub
+        assert subscription.topic == self.topic
+
+    def test_no_websub(self, podcast, feed, mock_subscribe):
+
+        feed_parser.parse_websub(podcast, MockResponse(), feed)
+        mock_subscribe.assert_not_called()
+        assert not Subscription.objects.filter(podcast=podcast).exists()
+
+
 class TestEnqueue:
     def test_empty(self, db, mock_feed_queue):
         feed_parser.enqueue()
@@ -84,6 +132,32 @@ class TestFeedHeaders:
 
 
 class TestParsePodcastFeeds:
+    def test_has_subscription(self, podcast, mock_feed_queue):
+        SubscriptionFactory(
+            podcast=podcast,
+            status=Subscription.Status.SUBSCRIBED,
+            expires=timezone.now() + timedelta(days=3),
+        )
+        feed_parser.parse_podcast_feeds()
+        assert podcast.id not in mock_feed_queue.enqueued
+
+    def test_has_expired_subscription(self, podcast, mock_feed_queue):
+        SubscriptionFactory(
+            podcast=podcast,
+            status=Subscription.Status.SUBSCRIBED,
+            expires=timezone.now() - timedelta(days=3),
+        )
+        feed_parser.parse_podcast_feeds()
+        assert podcast.id in mock_feed_queue.enqueued
+
+    def test_has_denied_subscription(self, podcast, mock_feed_queue):
+        SubscriptionFactory(
+            podcast=podcast,
+            status=Subscription.Status.DENIED,
+        )
+        feed_parser.parse_podcast_feeds()
+        assert podcast.id in mock_feed_queue.enqueued
+
     @pytest.mark.parametrize(
         "pub_date,after,before,success",
         [

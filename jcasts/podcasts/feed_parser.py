@@ -287,6 +287,11 @@ def parse_success(
 def parse_websub(
     podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
 ) -> None:
+
+    # if already podping support then websub is redundant
+    if podcast.podping:
+        return
+
     # https://w3c.github.io/websub
 
     # default: hub/topic in Atom links
