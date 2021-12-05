@@ -8,9 +8,6 @@
         "web": {
             "quantity": 1
         },
-        "podping": {
-            "quantity": 1
-        },
         "worker": {
             "quantity": 2
         }
