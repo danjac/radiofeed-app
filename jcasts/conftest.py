@@ -9,6 +9,7 @@ from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.middleware import Player
 from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
 from jcasts.users.factories import UserFactory
+from jcasts.websub.factories import SubscriptionFactory
 
 
 class MockFeedQueue:
@@ -79,6 +80,11 @@ def episode(db):
 @pytest.fixture
 def category(db):
     return CategoryFactory()
+
+
+@pytest.fixture
+def subscription(db):
+    return SubscriptionFactory()
 
 
 @pytest.fixture

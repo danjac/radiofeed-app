@@ -42,12 +42,6 @@ class Subscription(TimeStampedModel):
 
     exception: str = models.TextField(blank=True)
 
-    def __str__(self) -> str:
-        return self.topic
-
-    def get_callback_url(self) -> str:
-        return build_absolute_uri(reverse("websub:callback", args=[self.id]))
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -55,3 +49,9 @@ class Subscription(TimeStampedModel):
                 fields=["podcast", "hub", "topic"],
             )
         ]
+
+    def __str__(self) -> str:
+        return self.topic
+
+    def get_callback_url(self) -> str:
+        return build_absolute_uri(reverse("websub:callback", args=[self.id]))

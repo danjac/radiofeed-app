@@ -23,8 +23,10 @@ class SubscribeResult:
     subscription_id: uuid.UUID = attr.ib()
     success: bool = attr.ib()
     status: int | None = attr.ib(default=None)
-    result: int | None = attr.ib(default=None)
     exception: Exception | None = attr.ib(default=None)
+
+    def __bool__(self) -> bool:
+        return self.success
 
 
 def renew():
@@ -95,7 +97,7 @@ def subscribe(
 
         return SubscribeResult(
             subscription_id=subscription.id,
-            result=e.response.status_code if e.response else None,
+            status=e.response.status_code if e.response else None,
             success=False,
             exception=e,
         )
@@ -104,7 +106,7 @@ def subscribe(
 
     return SubscribeResult(
         subscription_id=subscription.id,
-        result=response.status_code,
+        status=response.status_code,
         success=True,
     )
 
@@ -122,6 +124,7 @@ def status_for_mode(mode: str) -> str:
 def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
 
     try:
+        print(request.META)
         if int(request.META["CONTENT_LENGTH"]) > MAX_BODY_SIZE:
             return False
 

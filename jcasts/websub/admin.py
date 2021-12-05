@@ -13,7 +13,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "podcast",
         "hub",
         "topic",
-        "callback_url",
+        # "callback_url",
         "secret",
         "status",
         "status_changed",
