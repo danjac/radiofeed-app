@@ -77,8 +77,8 @@ def parse_podcast_feeds(
     if before:
         q = q | Q(pub_date__lt=now - before)
 
-    enqueue(
-        *Podcast.objects.with_followed()
+    enqueue_many(
+        Podcast.objects.with_followed()
         .annotate(
             subscribed=Exists(
                 Subscription.objects.filter(
@@ -105,21 +105,27 @@ def parse_podcast_feeds(
     )
 
 
-def enqueue(*args: int, queue: str = "feeds", url: str = "", **update_kwargs) -> None:
+def enqueue_many(podcast_ids: list[int], queue: str = "feeds") -> None:
 
-    if not (podcast_ids := list(args)):
+    if not podcast_ids:
         return
 
     now = timezone.now()
 
-    Podcast.objects.filter(pk__in=podcast_ids).update(
-        queued=now, updated=now, **update_kwargs
-    )
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=now, updated=now)
 
     job_queue = get_queue(queue)
 
     for podcast_id in podcast_ids:
-        job_queue.enqueue(parse_podcast_feed, podcast_id, url)
+        job_queue.enqueue(parse_podcast_feed, podcast_id)
+
+
+def enqueue(podcast_id: int, queue: str = "feeds", url: str = "") -> None:
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=podcast_id).update(queued=now, updated=now)
+    get_queue(queue).enqueue(parse_podcast_feed, podcast_id, url)
 
 
 @transaction.atomic

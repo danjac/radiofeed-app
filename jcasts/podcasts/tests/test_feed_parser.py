@@ -93,17 +93,24 @@ class TestParseWebsub:
 
 
 class TestEnqueue:
-    def test_empty(self, db, mock_feed_queue):
-        feed_parser.enqueue()
-
-        assert not mock_feed_queue.enqueued
-        assert Podcast.objects.filter(queued__isnull=False).exists() is False
-
     def test_enqueue(self, db, mock_feed_queue, podcast):
 
         feed_parser.enqueue(podcast.id)
         assert podcast.id in mock_feed_queue.enqueued
         assert Podcast.objects.filter(queued__isnull=False).exists() is True
+
+    def test_enqueue_many(self, db, mock_feed_queue, podcast):
+
+        feed_parser.enqueue_many([podcast.id])
+        assert podcast.id in mock_feed_queue.enqueued
+        assert Podcast.objects.filter(queued__isnull=False).exists() is True
+
+    def test_empty(self, db, mock_feed_queue):
+
+        feed_parser.enqueue_many([])
+
+        assert not mock_feed_queue.enqueued
+        assert Podcast.objects.filter(queued__isnull=False).exists() is False
 
 
 class TestFeedHeaders:
