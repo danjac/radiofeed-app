@@ -87,6 +87,7 @@ def subscribe(
         )
 
         subscription.status_changed = now
+        subscription.exception = ""
 
     except requests.RequestException as e:
 

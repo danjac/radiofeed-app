@@ -19,6 +19,7 @@ urlpatterns = [
     path("", include("jcasts.episodes.urls")),
     path("", include("jcasts.podcasts.urls")),
     path("", include("jcasts.users.urls")),
+    path("", include("jcasts.websub.urls")),
     path(
         "sitemap.xml",
         cache_page(settings.DEFAULT_CACHE_TIMEOUT)(sitemaps_views.index),
