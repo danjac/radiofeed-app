@@ -28,6 +28,7 @@ class TestPodping:
         mock_updates = mocker.patch(
             "jcasts.podcasts.podping.get_updates", return_value=iter(urls)
         )
+        mocker.patch("itertools.count", return_value=[3])
 
         call_command("podping", from_minutes_ago=15)
         mock_updates.assert_called_with(timedelta(minutes=15))

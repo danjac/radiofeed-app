@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import itertools
+
+from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 
-# import logging
-
-# from datetime import timedelta
-
-
-# from jcasts.podcasts import podping
+from jcasts.podcasts import podping
 
 
 class Command(BaseCommand):
@@ -24,16 +22,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        self.stdout.write("Starting podping")
+        self.stdout.write("starting podping...")
+        since = timedelta(minutes=options["from_minutes_ago"])
 
-        while True:
-            pass
+        for _ in itertools.count():
+            self.get_updates(since)
 
-        # try:
-        # for url in podping.get_updates(
-        # timedelta(minutes=options["from_minutes_ago"])
-        # ):
-        # self.stdout.write(url)
-        # except Exception as e:
-        # logging.exception(e)
-        # self.stderr.write(self.style.ERROR(f"error: {e}, restating..."))
+    def get_updates(self, since: timedelta) -> None:
+        try:
+            for url in podping.get_updates(since):
+                self.stdout.write(url)
+        except Exception as e:
+            self.stderr.write(self.style.ERROR(f"error: {e}, restarting podping..."))
