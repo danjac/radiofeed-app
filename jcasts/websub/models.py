@@ -14,8 +14,7 @@ from jcasts.shared.template import build_absolute_uri
 
 class Subscription(TimeStampedModel):
     class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        REQUESTED = "requested", "Requested"
+        ACCEPTED = "accepted", "Accepted"
         SUBSCRIBED = "subscribed", "Subscribed"
         UNSUBSCRIBED = "unsubscribed", "Unsubscribed"
         DENIED = "denied", "Denied"
@@ -30,7 +29,10 @@ class Subscription(TimeStampedModel):
     topic: str = models.URLField(max_length=2086)
 
     status = models.CharField(
-        max_length=30, choices=Status.choices, default=Status.PENDING
+        max_length=30,
+        choices=Status.choices,
+        null=True,
+        blank=True,
     )
     status_changed: datetime | None = models.DateTimeField(null=True, blank=True)
 

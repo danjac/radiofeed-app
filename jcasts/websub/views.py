@@ -14,6 +14,7 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.podcasts import feed_parser
 from jcasts.shared.response import HttpResponseNoContent
+from jcasts.websub import subscriber
 from jcasts.websub.models import Subscription
 
 
@@ -27,17 +28,16 @@ def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpRes
     )
 
     # content distribution
+
     if request.method == "POST":
 
-        if subscription.check_signature(request):
+        if subscriber.check_signature(request, subscription):
             feed_parser.enqueue(subscription.podcast_id, url=subscription.topic)
 
-        # always return a 2xx so we don't get multiple attack attempts
+        # always return a 2xx even on error so to prevent brute-force attacks
         return HttpResponseNoContent()
 
     # verification
-
-    now = timezone.now()
 
     try:
         mode = request.GET["hub.mode"]
@@ -49,17 +49,14 @@ def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpRes
                 f"{topic} does not match subscription topic {subscription.topic}"
             )
 
+        now = timezone.now()
+
         if mode == "subscribe":
             subscription.expires = now + timedelta(
                 seconds=int(request.GET["hub.lease_seconds"])
             )
 
-        subscription.status = {
-            "subscribe": Subscription.Status.SUBSCRIBED,
-            "unsubscribe": Subscription.Status.UNSUBSCRIBED,
-            "denied": Subscription.Status.DENIED,
-        }[mode]
-
+        subscription.status = subscriber.status_for_mode(mode)
         subscription.status_changed = now
 
         return HttpResponse(challenge)

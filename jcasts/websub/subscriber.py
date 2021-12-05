@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 import http
 import traceback
 import uuid
@@ -6,12 +8,14 @@ import attr
 import requests
 
 from django.db.models import Q
+from django.http import HttpRequest
 from django.utils import timezone
 from django_rq import job
 
 from jcasts.websub.models import Subscription
 
 DEFAULT_LEASE_SECONDS = 24 * 60 * 60 * 7
+MAX_BODY_SIZE = 1024 ** 2
 
 
 @attr.s(kw_only=True)
@@ -41,12 +45,11 @@ def subscribe(
     """Attempt to send a subscribe or other request to the hub."""
 
     now = timezone.now()
-
     qs = Subscription.objects.filter(podcast__active=True)
 
     if mode == "subscribe":
         qs = qs.filter(
-            Q(status=Subscription.Status.PENDING)
+            Q(status__isnull=True)
             | Q(status=Subscription.Status.SUBSCRIBED, expires__lt=now)
         )
 
@@ -73,15 +76,16 @@ def subscribe(
     try:
         response.raise_for_status()
 
+        # a 202 indicates the hub will try to verify asynchronously
+        # through a GET request to the websub callback url. Otherwise we can set
+        # relevant status immediately.
+
         subscription.status = (
-            Subscription.Status.REQUESTED
+            Subscription.Status.ACCEPTED
             if response.status_code == http.HTTPStatus.ACCEPTED
-            else {
-                "subscribe": Subscription.Status.SUBSCRIBED,
-                "unsubscribe": Subscription.Status.UNSUBSCRIBED,
-                "denied": Subscription.Status.DENIED,
-            }[mode]
+            else status_for_mode(mode)
         )
+
         subscription.status_changed = now
 
     except requests.RequestException as e:
@@ -102,3 +106,32 @@ def subscribe(
         result=response.status_code,
         success=True,
     )
+
+
+def status_for_mode(mode: str) -> str:
+    return {
+        "subscribe": Subscription.Status.SUBSCRIBED,
+        "unsubscribe": Subscription.Status.UNSUBSCRIBED,
+        "denied": Subscription.Status.DENIED,
+    }[
+        mode
+    ]  # type:ignore
+
+
+def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
+
+    try:
+        if int(request.META["CONTENT_LENGTH"]) > MAX_BODY_SIZE:
+            return False
+
+        algo, signature = request.headers["X-Hub-Signature"].split("=")
+        digest = hmac.new(
+            subscription.secret.hex.encode("utf-8"),
+            request.body,
+            getattr(hashlib, algo),
+        ).hexdigest()
+
+    except (AttributeError, KeyError, ValueError):
+        return False
+
+    return hmac.compare_digest(signature, digest)
