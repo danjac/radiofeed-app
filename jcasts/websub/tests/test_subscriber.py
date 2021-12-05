@@ -38,8 +38,8 @@ class TestSubscribe:
 
         subscription.refresh_from_db()
 
-        assert subscription.status == Subscription.Status.ACCEPTED
-        assert subscription.status_changed
+        assert subscription.status is None
+        assert subscription.status_changed is None
 
     def test_subscribe(self, subscription, mocker):
         mock_post = mocker.patch(

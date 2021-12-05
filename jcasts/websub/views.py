@@ -56,16 +56,14 @@ def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpRes
                 seconds=int(request.GET["hub.lease_seconds"])
             )
 
-        subscription.exception = ""
-        subscription.status = subscriber.status_for_mode(mode)
-        subscription.status_changed = now
-        subscription.save()
+        subscription.set_status(mode)
 
         return HttpResponse(challenge)
 
     except (KeyError, ValueError) as e:
         subscription.exception = traceback.format_exc()
-        subscription.save()
-
         logging.exception(e)
         raise Http404
+
+    finally:
+        subscription.save()

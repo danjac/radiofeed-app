@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from model_utils.models import TimeStampedModel
 
 from jcasts.podcasts.models import Podcast
@@ -55,3 +56,12 @@ class Subscription(TimeStampedModel):
 
     def get_callback_url(self) -> str:
         return build_absolute_uri(reverse("websub:callback", args=[self.id]))
+
+    def set_status(self, mode: str) -> str | None:
+        self.status = {
+            "subscribe": Subscription.Status.SUBSCRIBED,
+            "unsubscribe": Subscription.Status.UNSUBSCRIBED,
+            "denied": Subscription.Status.DENIED,
+        }[mode]
+        self.status_changed = timezone.now()
+        return self.status  # type: ignore

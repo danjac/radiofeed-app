@@ -83,18 +83,14 @@ def subscribe(
         # through a GET request to the websub callback url. Otherwise we can set
         # relevant status immediately.
 
-        subscription.status = (
-            Subscription.Status.ACCEPTED
-            if response.status_code == http.HTTPStatus.ACCEPTED
-            else status_for_mode(mode)
-        )
-
-        subscription.status_changed = now
-        subscription.exception = ""
+        if response.status_code != http.HTTPStatus.ACCEPTED:
+            subscription.set_status(mode)
+            subscription.save()
 
     except requests.RequestException as e:
 
         subscription.exception = traceback.format_exc()
+        subscription.save()
 
         return SubscribeResult(
             subscription_id=subscription.id,
@@ -102,8 +98,6 @@ def subscribe(
             success=False,
             exception=e,
         )
-    finally:
-        subscription.save()
 
     return SubscribeResult(
         subscription_id=subscription.id,
@@ -112,20 +106,9 @@ def subscribe(
     )
 
 
-def status_for_mode(mode: str) -> str:
-    return {
-        "subscribe": Subscription.Status.SUBSCRIBED,
-        "unsubscribe": Subscription.Status.UNSUBSCRIBED,
-        "denied": Subscription.Status.DENIED,
-    }[
-        mode
-    ]  # type:ignore
-
-
 def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
 
     try:
-        print(request.META)
         if int(request.META["CONTENT_LENGTH"]) > MAX_BODY_SIZE:
             return False
 
