@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import argparse
-import logging
-
-from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import podping
+# import logging
+
+# from datetime import timedelta
+
+
+# from jcasts.podcasts import podping
 
 
 class Command(BaseCommand):
@@ -24,11 +26,11 @@ class Command(BaseCommand):
 
         self.stdout.write("Starting podping")
 
-        try:
-            for url in podping.get_updates(
-                timedelta(minutes=options["from_minutes_ago"])
-            ):
-                self.stdout.write(url)
-        except Exception as e:
-            logging.exception(e)
-            self.stderr.write(self.style.ERROR(f"error: {e}, restating..."))
+        # try:
+        # for url in podping.get_updates(
+        # timedelta(minutes=options["from_minutes_ago"])
+        # ):
+        # self.stdout.write(url)
+        # except Exception as e:
+        # logging.exception(e)
+        # self.stderr.write(self.style.ERROR(f"error: {e}, restating..."))
