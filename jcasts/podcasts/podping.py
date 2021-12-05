@@ -16,7 +16,7 @@ from django.utils import timezone
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
 
-WATCHED_OPERATION_IDS = ["podping"]
+WATCHED_OPERATION_IDS = ["podping", "hive-hydra"]
 HIVE_NODE = "https://api.hive.blog"
 ACCOUNT_NAME = "podping"
 
