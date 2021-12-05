@@ -44,6 +44,3 @@ RUN chmod +x /start-webapp
 
 COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
-
-COPY ./docker/start-podping /start-podping
-RUN chmod +x /start-podping

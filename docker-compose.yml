@@ -105,11 +105,5 @@ services:
         depends_on:
             - webapp
 
-    podping:
-        <<: *django
-        command: /start-podping
-        depends_on:
-            - worker
-
 volumes:
     pg_data: {}
