@@ -15,7 +15,6 @@ from jcasts.shared.template import build_absolute_uri
 
 class Subscription(TimeStampedModel):
     class Status(models.TextChoices):
-        ACCEPTED = "accepted", "Accepted"
         SUBSCRIBED = "subscribed", "Subscribed"
         UNSUBSCRIBED = "unsubscribed", "Unsubscribed"
         DENIED = "denied", "Denied"

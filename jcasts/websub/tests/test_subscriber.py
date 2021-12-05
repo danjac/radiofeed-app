@@ -86,14 +86,6 @@ class TestSubscribe:
     def test_not_found(self, db):
         assert not subscriber.subscribe(uuid.uuid4())
 
-    def test_already_accepted(self, db, mocker):
-        mock_post = mocker.patch(
-            "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
-        )
-        subscription = SubscriptionFactory(status=Subscription.Status.ACCEPTED)
-        assert not subscriber.subscribe(subscription.id)
-        mock_post.assert_not_called()
-
     def test_subscribed_expired(self, db, mocker):
         mock_post = mocker.patch(
             "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
