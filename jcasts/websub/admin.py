@@ -30,7 +30,7 @@ class StatusFilter(admin.SimpleListFilter):
 class SubscriptionAdmin(admin.ModelAdmin):
     list_filter = (StatusFilter,)
     list_display = ("podcast", "hub", "status")
-    search_fields = ("podcast__title", "topic")
+    search_fields = ("podcast__title", "hub", "topic")
 
     ordering = ("-created", "-status_changed")
 
