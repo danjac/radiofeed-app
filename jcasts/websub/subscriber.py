@@ -93,12 +93,20 @@ def subscribe(
 
     except requests.RequestException as e:
 
+        if e.response:
+            content = e.response.content.decode("utf-8")
+            http_status = e.response.status_code
+        else:
+            content = ""
+            http_status = None
+
         subscription.exception = traceback.format_exc()
+        subscription.response = content
         subscription.save()
 
         return SubscribeResult(
             subscription_id=subscription.id,
-            status=e.response.status_code if e.response else None,
+            status=http_status,
             success=False,
             exception=e,
         )

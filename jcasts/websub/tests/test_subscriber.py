@@ -15,8 +15,9 @@ from jcasts.websub.models import Subscription
 
 
 class MockResponse:
-    def __init__(self, status_code):
+    def __init__(self, status_code=None):
         self.status_code = status_code
+        self.content = b"ok"
 
     def raise_for_status(self):
         pass
@@ -24,7 +25,9 @@ class MockResponse:
 
 class MockBadResponse(MockResponse):
     def raise_for_status(self):
-        raise requests.HTTPError(response=self)
+        if self.status_code:
+            raise requests.HTTPError(response=self)
+        raise requests.RequestException()
 
 
 class TestSubscribe:
@@ -80,6 +83,26 @@ class TestSubscribe:
 
         subscription.refresh_from_db()
 
+        assert subscription.exception
+        assert subscription.response == "ok"
+        assert subscription.status is None
+        assert subscription.status_changed is None
+
+    def test_network_error(self, subscription, mocker):
+        mock_post = mocker.patch(
+            "requests.post",
+            return_value=MockBadResponse(),
+        )
+        result = subscriber.subscribe(subscription.id)
+        assert not result
+        assert result.status is None
+
+        mock_post.assert_called()
+
+        subscription.refresh_from_db()
+
+        assert subscription.exception
+        assert not subscription.response
         assert subscription.status is None
         assert subscription.status_changed is None
 
