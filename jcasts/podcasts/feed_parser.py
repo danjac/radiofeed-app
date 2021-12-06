@@ -183,12 +183,6 @@ def parse_content(
     url: str = "",
 ) -> tuple[requests.Response, rss_parser.Feed, list[rss_parser.Item]]:
 
-    response = get_feed_response(podcast, url)
-    feed, items = rss_parser.parse_rss(response.content)
-    return response, feed, items
-
-
-def get_feed_response(podcast: Podcast, url: str = "") -> requests.Response:
     response = requests.get(
         url or podcast.rss,
         headers=get_feed_headers(podcast),
@@ -207,7 +201,8 @@ def get_feed_response(podcast: Podcast, url: str = "") -> requests.Response:
     ):
         raise DuplicateFeed(response=response)
 
-    return response
+    feed, items = rss_parser.parse_rss(response.content)
+    return response, feed, items
 
 
 def parse_success(
