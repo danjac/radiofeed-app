@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import traceback
 import uuid
 
@@ -60,9 +59,8 @@ def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpRes
 
         return HttpResponse(challenge)
 
-    except (KeyError, ValueError) as e:
+    except (KeyError, ValueError):
         subscription.exception = traceback.format_exc()
-        logging.exception(e)
         raise Http404
 
     finally:

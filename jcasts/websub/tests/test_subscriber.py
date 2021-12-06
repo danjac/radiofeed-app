@@ -107,28 +107,6 @@ class TestSubscribe:
     def test_not_found(self, db):
         assert not subscriber.subscribe(uuid.uuid4())
 
-    def test_subscribed_expired(self, db, mocker):
-        mock_post = mocker.patch(
-            "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
-        )
-        subscription = SubscriptionFactory(
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() - timedelta(days=3),
-        )
-        assert subscriber.subscribe(subscription.id)
-        mock_post.assert_called()
-
-    def test_subscribed_not_expired(self, db, mocker):
-        mock_post = mocker.patch(
-            "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
-        )
-        subscription = SubscriptionFactory(
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() + timedelta(days=3),
-        )
-        assert not subscriber.subscribe(subscription.id)
-        mock_post.assert_not_called()
-
 
 class TestResubscribe:
     @pytest.mark.parametrize(

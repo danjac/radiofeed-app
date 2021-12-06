@@ -49,17 +49,8 @@ def subscribe(
 ) -> SubscribeResult:
     """Attempt to send a subscribe or other request to the hub."""
 
-    now = timezone.now()
-    qs = Subscription.objects.filter(podcast__active=True)
-
-    if mode == "subscribe":
-        qs = qs.filter(
-            Q(status__isnull=True)
-            | Q(status=Subscription.Status.SUBSCRIBED, expires__lt=now)
-        )
-
     try:
-        subscription = qs.get(pk=subscription_id)
+        subscription = Subscription.objects.get(pk=subscription_id)
     except Subscription.DoesNotExist as e:
         return SubscribeResult(
             subscription_id=subscription_id,
