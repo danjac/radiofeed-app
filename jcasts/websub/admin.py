@@ -13,21 +13,15 @@ class StatusFilter(admin.SimpleListFilter):
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
 
-        return (
-            ("none", "None"),
-            ("pending", "Pending"),
-            ("requested", "Requested"),
-        ) + tuple(models.Subscription.Status.choices)
+        return (("none", "None"),) + tuple(models.Subscription.Status.choices)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         if value := self.value():
-            if value == "none":
-                return queryset.filter(status__isnull=True)
-            if value == "pending":
-                return queryset.filter(status__isnull=True, requested__isnull=True)
-            if value == "requested":
-                return queryset.filter(status__isnull=True, requested__isnull=False)
-            return queryset.filter(status=value)
+            return (
+                queryset.filter(status__isnull=True)
+                if value == "none"
+                else queryset.filter(status=value)
+            )
 
         return queryset
 
@@ -45,7 +39,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "hub",
         "topic",
         "secret",
-        "requested",
         "status",
         "status_changed",
         "expires",

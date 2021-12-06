@@ -88,10 +88,12 @@ def subscribe(
 
         if response.status_code != http.HTTPStatus.ACCEPTED:
             subscription.set_status(mode)
+            subscription.save()
 
     except requests.RequestException as e:
 
         subscription.exception = traceback.format_exc()
+        subscription.save()
 
         return SubscribeResult(
             subscription_id=subscription.id,
@@ -99,10 +101,6 @@ def subscribe(
             success=False,
             exception=e,
         )
-
-    finally:
-        subscription.requested = now
-        subscription.save()
 
     return SubscribeResult(
         subscription_id=subscription.id,
