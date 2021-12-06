@@ -201,8 +201,7 @@ def parse_content(
     ):
         raise DuplicateFeed(response=response)
 
-    feed, items = rss_parser.parse_rss(response.content)
-    return response, feed, items
+    return response, *rss_parser.parse_rss(response.content)
 
 
 def parse_success(
