@@ -29,17 +29,13 @@ class SubscribeResult:
         return self.success
 
 
-def subscribe_all():
-    """Renew or initialize new subscriptions."""
+def renew():
+    """Renew any expired subscriptions."""
 
     for subscription_id in Subscription.objects.filter(
         Q(
             status=Subscription.Status.SUBSCRIBED,
             expires__lt=timezone.now(),
-        )
-        | Q(
-            status__isnull=True,
-            requested__isnull=True,
         ),
         podcast__active=True,
     ).values_list("pk", flat=True):

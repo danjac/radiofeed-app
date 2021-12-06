@@ -42,8 +42,8 @@
             "schedule": "20 3 * * *"
         },
         {
-            "command": "python manage.py subscribe",
-            "schedule": "15 * * * *"
+            "command": "python manage.py renew_susbcriptions",
+            "schedule": "*/15 * * * *"
         },
         {
             "command": "python manage.py clearsessions",
