@@ -63,7 +63,7 @@ class TestParseWebsub:
     hub = "https://pubsubhubbub.com"
     topic = "https://example.com/topic.xml"
 
-    def test_websub_in_feed(self, podcast):
+    def test_websub_in_feed(self, podcast, mock_subscribe):
         feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
         feed_parser.parse_websub(podcast, MockResponse(), feed)
 
@@ -72,7 +72,9 @@ class TestParseWebsub:
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-    def test_websub_in_header(self, podcast, feed):
+        mock_subscribe.assert_called()
+
+    def test_websub_in_header(self, podcast, feed, mock_subscribe):
         response = MockResponse(
             links={
                 "hub": {"url": self.hub},
@@ -86,10 +88,14 @@ class TestParseWebsub:
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-    def test_no_websub(self, podcast, feed):
+        mock_subscribe.assert_called()
+
+    def test_no_websub(self, podcast, feed, mock_subscribe):
 
         feed_parser.parse_websub(podcast, MockResponse(), feed)
         assert not Subscription.objects.filter(podcast=podcast).exists()
+
+        mock_subscribe.assert_not_called()
 
 
 class TestEnqueue:
