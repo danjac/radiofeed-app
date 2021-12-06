@@ -126,8 +126,7 @@ def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        response, feed, items = parse_content(podcast, url)
-        return parse_success(podcast, response, feed, items)
+        return parse_success(podcast, *parse_content(podcast, url))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
