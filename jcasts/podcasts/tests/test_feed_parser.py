@@ -74,6 +74,15 @@ class TestParseWebsub:
 
         mock_subscribe.assert_called()
 
+    def test_subscription_exists(self, podcast, mock_subscribe):
+        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
+
+        SubscriptionFactory(podcast=podcast, hub=self.hub, topic=self.topic)
+
+        feed_parser.parse_websub(podcast, MockResponse(), feed)
+
+        mock_subscribe.assert_not_called()
+
     def test_websub_in_header(self, podcast, feed, mock_subscribe):
         response = MockResponse(
             links={
