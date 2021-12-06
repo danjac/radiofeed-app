@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue
@@ -80,15 +80,7 @@ def parse_podcast_feeds(
 
     enqueue_many(
         Podcast.objects.with_followed()
-        .annotate(
-            subscribed=Exists(
-                Subscription.objects.filter(
-                    podcast=OuterRef("pk"),
-                    status=Subscription.Status.SUBSCRIBED,
-                    expires__gt=now,
-                )
-            )
-        )
+        .with_subscribed()
         .filter(
             q,
             active=True,

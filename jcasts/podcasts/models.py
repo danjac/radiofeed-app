@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from urllib.parse import urlparse
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.postgres.indexes import GinIndex
@@ -13,6 +14,7 @@ from django.db import models
 from django.db.models.functions import Lower
 from django.http import HttpRequest
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -62,6 +64,19 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
+    def with_subscribed(self) -> models.QuerySet:
+        subscription_model = apps.get_model("websub.Subscription")
+
+        return self.annotate(
+            subscribed=models.Exists(
+                subscription_model.objects.filter(
+                    podcast=models.OuterRef("pk"),
+                    status=subscription_model.Status.SUBSCRIBED,
+                    expires__gt=timezone.now(),
+                )
+            )
+        )
+
     def with_followed(self) -> models.QuerySet:
         return self.annotate(
             followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
