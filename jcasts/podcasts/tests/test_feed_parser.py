@@ -222,44 +222,33 @@ class TestParsePodcastFeeds:
             assert podcast.id not in mock_feed_queue.enqueued
 
     @pytest.mark.parametrize(
-        "follow,followed,success",
+        "promoted,followed,primary,success",
         [
-            (True, True, True),
-            (True, False, False),
-            (False, True, False),
-            (False, False, True),
+            (True, True, True, True),
+            (True, False, True, True),
+            (False, True, True, True),
+            (True, True, False, False),
+            (True, False, False, False),
+            (False, True, False, False),
+            (False, False, False, True),
         ],
     )
-    def test_followed(self, db, mock_feed_queue, follow, followed, success):
+    def test_promoted(
+        self,
+        db,
+        mock_feed_queue,
+        promoted,
+        followed,
+        primary,
+        success,
+    ):
 
-        podcast = PodcastFactory()
+        podcast = PodcastFactory(promoted=promoted)
 
-        if follow:
+        if followed:
             FollowFactory(podcast=podcast)
 
-        feed_parser.parse_podcast_feeds(followed=followed)
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "promote,promoted,success",
-        [
-            (True, True, True),
-            (True, False, False),
-            (False, True, False),
-            (False, False, True),
-        ],
-    )
-    def test_promoted(self, db, mock_feed_queue, promote, promoted, success):
-
-        podcast = PodcastFactory(promoted=promote)
-
-        feed_parser.parse_podcast_feeds(promoted=promoted)
+        feed_parser.parse_podcast_feeds(primary=primary)
 
         Podcast.objects.filter(queued__isnull=False).exists() is success
 

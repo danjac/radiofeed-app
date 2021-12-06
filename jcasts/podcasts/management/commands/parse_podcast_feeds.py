@@ -42,17 +42,9 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--followed",
-            help="Followed podcasts",
+            "--primary",
+            help="Followed or promoted podcasts",
             action="store_true",
-            default=False,
-        )
-
-        parser.add_argument(
-            "--promoted",
-            help="Followed podcasts",
-            action="store_true",
-            default=False,
         )
 
     def handle(self, *args, **options) -> None:
@@ -63,8 +55,7 @@ class Command(BaseCommand):
         feed_parser.parse_podcast_feeds(
             after=after,
             before=before,
-            followed=options["followed"],
-            promoted=options["promoted"],
+            primary=options["primary"],
             queue=options["queue"],
             limit=options["limit"],
         )

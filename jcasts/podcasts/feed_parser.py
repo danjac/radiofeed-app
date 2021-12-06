@@ -63,8 +63,7 @@ def parse_podcast_feeds(
     *,
     queue: str = "feeds",
     limit: int = 200,
-    followed: bool = False,
-    promoted: bool = False,
+    primary: bool = False,
     after: timedelta | None = None,
     before: timedelta | None = None,
 ) -> None:
@@ -78,6 +77,11 @@ def parse_podcast_feeds(
     if before:
         q = q | Q(pub_date__lt=now - before)
 
+    if primary:
+        q = q & Q(Q(promoted=True) | Q(followed=True))
+    else:
+        q = q & Q(promoted=False, followed=False)
+
     enqueue_many(
         Podcast.objects.with_followed()
         .with_subscribed()
@@ -86,8 +90,6 @@ def parse_podcast_feeds(
             active=True,
             subscribed=False,
             queued__isnull=True,
-            followed=followed,
-            promoted=promoted,
         )
         .order_by(
             F("parsed").asc(nulls_first=True),
