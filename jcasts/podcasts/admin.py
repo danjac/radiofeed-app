@@ -218,4 +218,4 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         self.message_user(request, "Podcast has been queued for update")
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
-        return [] if request.GET.get("q") else ["parsed", "-pub_date"]
+        return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
