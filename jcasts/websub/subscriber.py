@@ -74,14 +74,6 @@ def subscribe(
     try:
         response.raise_for_status()
 
-        # a 202 indicates the hub will try to verify asynchronously
-        # through a GET request to the websub callback url. Otherwise we can set
-        # relevant status immediately.
-
-        if response.status_code != http.HTTPStatus.ACCEPTED:
-            subscription.set_status(mode)
-            subscription.save()
-
     except requests.RequestException as e:
 
         subscription.exception = traceback.format_exc()
@@ -93,6 +85,14 @@ def subscribe(
             success=False,
             exception=e,
         )
+
+    # a 202 indicates the hub will try to verify asynchronously
+    # through a GET request to the websub callback url. Otherwise we can set
+    # relevant status immediately.
+
+    if response.status_code != http.HTTPStatus.ACCEPTED:
+        subscription.set_status(mode)
+        subscription.save()
 
     return SubscribeResult(
         subscription_id=subscription.id,
