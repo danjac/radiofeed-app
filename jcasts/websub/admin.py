@@ -43,7 +43,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "status_changed",
         "expires",
         "exception",
-        "response",
     )
 
     actions = ("resubscribe",)

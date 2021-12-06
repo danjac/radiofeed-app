@@ -84,7 +84,6 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.exception
-        assert subscription.response == "ok"
         assert subscription.status is None
         assert subscription.status_changed is None
 
@@ -102,7 +101,6 @@ class TestSubscribe:
         subscription.refresh_from_db()
 
         assert subscription.exception
-        assert not subscription.response
         assert subscription.status is None
         assert subscription.status_changed is None
 
