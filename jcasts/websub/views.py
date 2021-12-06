@@ -21,10 +21,7 @@ from jcasts.websub.models import Subscription
 @csrf_exempt
 def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpResponse:
 
-    subscription = get_object_or_404(
-        Subscription.objects.filter(podcast__active=True),
-        pk=subscription_id,
-    )
+    subscription = get_object_or_404(Subscription, pk=subscription_id)
 
     # content distribution
 
