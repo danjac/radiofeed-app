@@ -1,6 +1,7 @@
 import pytest
 
 from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
 
 from jcasts.websub.admin import StatusFilter, SubscriptionAdmin
 from jcasts.websub.factories import SubscriptionFactory
@@ -35,6 +36,20 @@ class TestStatusFilter:
         qs = f.queryset(req, Subscription.objects.all())
         assert qs.count() == 3
         assert sub not in qs
+
+    def test_pending(self, subscriptions, admin, req):
+        sub = SubscriptionFactory(status=Subscription.Status.SUBSCRIBED)
+        f = StatusFilter(req, {"status": "pending"}, Subscription, admin)
+        qs = f.queryset(req, Subscription.objects.all())
+        assert qs.count() == 3
+        assert sub not in qs
+
+    def test_requested(self, subscriptions, admin, req):
+        sub = SubscriptionFactory(status=None, requested=timezone.now())
+        f = StatusFilter(req, {"status": "requested"}, Subscription, admin)
+        qs = f.queryset(req, Subscription.objects.all())
+        assert qs.count() == 1
+        assert sub in qs
 
     def test_not_modified(self, subscriptions, admin, req):
         sub = SubscriptionFactory(status=Subscription.Status.SUBSCRIBED)
