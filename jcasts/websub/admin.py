@@ -1,8 +1,8 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from jcasts.websub import models
+from jcasts.websub import models, subscriber
 
 
 class StatusFilter(admin.SimpleListFilter):
@@ -51,3 +51,15 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "expires",
         "exception",
     )
+
+    actions = ("resubscribe",)
+
+    def resubscribe(self, request: HttpRequest, queryset: QuerySet) -> None:
+        counter: int = 0
+        for counter, obj in enumerate(queryset):
+            subscriber.subscribe.delay(obj.id)
+        self.message_user(
+            request,
+            f"{counter} subscription(s) resubscribed",
+            messages.SUCCESS,
+        )

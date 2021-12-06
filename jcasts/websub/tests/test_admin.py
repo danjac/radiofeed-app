@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 
 from django.contrib.admin.sites import AdminSite
@@ -15,12 +17,20 @@ def subscriptions(db):
 
 @pytest.fixture
 def req(rf):
-    return rf.get("/")
+    req = rf.get("/")
+    req._messages = mock.Mock()
+    return req
 
 
 @pytest.fixture(scope="class")
 def admin():
     return SubscriptionAdmin(Subscription, AdminSite())
+
+
+class TestSubscriptionAdmin:
+    def test_resubscribe(self, req, subscriptions, admin, mock_subscribe):
+        admin.resubscribe(req, Subscription.objects.all())
+        mock_subscribe.assert_called()
 
 
 class TestStatusFilter:

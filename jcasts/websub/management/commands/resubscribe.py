@@ -9,4 +9,4 @@ class Command(BaseCommand):
     help = "Create or renew subscriptions"
 
     def handle(self, *args, **options) -> None:
-        subscriber.renew()
+        subscriber.resubscribe()

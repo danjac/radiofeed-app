@@ -29,7 +29,7 @@ class SubscribeResult:
         return self.success
 
 
-def renew():
+def resubscribe():
     """Renew any expired subscriptions."""
 
     for subscription_id in Subscription.objects.filter(
