@@ -14,9 +14,12 @@ from jcasts.podcasts.admin import (
     PubDateFilter,
     QueuedFilter,
     ResultFilter,
+    SubscribedFilter,
 )
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
+from jcasts.websub.factories import SubscriptionFactory
+from jcasts.websub.models import Subscription
 
 
 @pytest.fixture(scope="class")
@@ -191,6 +194,24 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
+
+
+class TestSubscribedFilter:
+    def test_followed_filter_none(self, podcasts, admin, req):
+        f = SubscribedFilter(req, {}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+
+    def test_promoted_filter_true(self, podcasts, admin, req):
+        subscribed = SubscriptionFactory(
+            status=Subscription.Status.SUBSCRIBED,
+            expires=timezone.now() + timedelta(days=3),
+        ).podcast
+
+        f = SubscribedFilter(req, {"subscribed": "yes"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == subscribed
 
 
 class TestFollowedFilter:
