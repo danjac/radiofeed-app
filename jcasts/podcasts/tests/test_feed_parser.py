@@ -339,6 +339,13 @@ class TestParsePodcastFeed:
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
+        # test subscription
+        SubscriptionFactory(
+            podcast=new_podcast,
+            hub="https://pubsubhubbub.appspot.com/",
+            topic="https://mysteriousuniverse.org/feed/podcast/",
+        )
+
         # test updated
         EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)
 

@@ -10,7 +10,7 @@ from functools import lru_cache
 import attr
 import requests
 
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Exists, F, OuterRef, Q
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
@@ -306,15 +306,14 @@ def parse_websub(
 
     if hub and topic:
 
-        try:
-            subscription = Subscription.objects.create(
-                podcast=podcast,
-                hub=hub,
-                topic=topic,
-            )
+        subscription, created = Subscription.objects.get_or_create(
+            podcast=podcast,
+            hub=hub,
+            topic=topic,
+        )
+
+        if created:
             subscriber.subscribe.delay(subscription.id)
-        except IntegrityError:
-            pass
 
 
 def parse_episodes(
