@@ -86,6 +86,7 @@ def subscribe(
     now = timezone.now()
 
     update_kwargs = {
+        "updated": now,
         "requested": now,
         "requests": subscription.requests + 1,
     }
