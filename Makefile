@@ -39,10 +39,6 @@ requirements:
 	./bin/poetry export -o requirements.txt  --without-hashes
 	./bin/poetry export -o requirements-dev.txt --dev --without-hashes
 
-upgrade:
-	./bin/pip install --upgrade -r requirements.txt
-	./bin/npm update
-
 maint: maintenance
 
 maintenance:
