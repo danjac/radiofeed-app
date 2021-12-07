@@ -46,7 +46,7 @@ def resubscribe(since: timedelta = timedelta(hours=1)) -> None:
         | Q(
             Q(requested__isnull=True) | Q(requested__lt=now - since),
             status=None,
-            num_requests__lte=MAX_REQUESTS,
+            requests__lte=MAX_REQUESTS,
         ),
     ).values_list("pk", flat=True):
         subscribe.delay(subscription_id, mode="subscribe")
@@ -87,7 +87,7 @@ def subscribe(
 
     update_kwargs = {
         "requested": now,
-        "num_requests": subscription.num_requests + 1,
+        "requests": subscription.requests + 1,
     }
 
     try:

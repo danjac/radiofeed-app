@@ -42,7 +42,7 @@ class Subscription(TimeStampedModel):
     exception: str = models.TextField(blank=True)
 
     requested: datetime | None = models.DateTimeField(null=True, blank=True)
-    num_requests: int = models.PositiveIntegerField(default=0)
+    requests: int = models.PositiveIntegerField(default=0)
 
     class Meta:
         constraints = [

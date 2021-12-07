@@ -41,6 +41,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "secret",
         "status",
         "status_changed",
+        "requested",
+        "requests",
         "expires",
         "exception",
     )

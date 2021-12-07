@@ -44,7 +44,7 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
-        assert subscription.num_requests == 1
+        assert subscription.requests == 1
         assert subscription.requested
 
     def test_subscribe(self, subscription, mocker):
@@ -60,7 +60,7 @@ class TestSubscribe:
         assert subscription.status == Subscription.Status.SUBSCRIBED
         assert subscription.status_changed
 
-        assert subscription.num_requests == 1
+        assert subscription.requests == 1
         assert subscription.requested
 
     def test_denied(self, subscription, mocker):
@@ -76,7 +76,7 @@ class TestSubscribe:
         assert subscription.status == Subscription.Status.DENIED
         assert subscription.status_changed
 
-        assert subscription.num_requests == 1
+        assert subscription.requests == 1
         assert subscription.requested
 
     def test_http_error(self, subscription, mocker):
@@ -96,7 +96,7 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
-        assert subscription.num_requests == 1
+        assert subscription.requests == 1
         assert subscription.requested
 
     def test_network_error(self, subscription, mocker):
@@ -116,7 +116,7 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
-        assert subscription.num_requests == 1
+        assert subscription.requests == 1
         assert subscription.requested
 
     def test_not_found(self, db):
@@ -125,7 +125,7 @@ class TestSubscribe:
 
 class TestResubscribe:
     @pytest.mark.parametrize(
-        "status,requested,num_requests,subscribes",
+        "status,requested,requests,subscribes",
         [
             (None, None, 0, True),
             (None, timedelta(hours=3), 0, True),
@@ -135,13 +135,13 @@ class TestResubscribe:
         ],
     )
     def test_resubscribe_no_status(
-        self, db, mock_subscribe, status, requested, num_requests, subscribes
+        self, db, mock_subscribe, status, requested, requests, subscribes
     ):
 
         SubscriptionFactory(
             status=status,
             requested=timezone.now() - requested if requested else None,
-            num_requests=num_requests,
+            requests=requests,
         )
 
         subscriber.resubscribe()
