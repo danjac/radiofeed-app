@@ -71,6 +71,7 @@ parso==0.8.2
 pastel==0.2.1
 pexpect==4.8.0
 pickleshare==0.7.5
+pip-review==1.1.0
 pkginfo==1.8.1
 platformdirs==2.4.0
 pluggy==1.0.0
