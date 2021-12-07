@@ -128,7 +128,8 @@ class TestEnqueue:
         "status,requests,subscribes",
         [
             (None, 0, True),
-            (None, 3, True),
+            (None, 2, True),
+            (None, 3, False),
             (None, 5, False),
             (Subscription.Status.SUBSCRIBED, 0, False),
         ],

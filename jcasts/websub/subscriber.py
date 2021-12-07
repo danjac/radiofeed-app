@@ -46,12 +46,12 @@ def enqueue(limit: int = 200) -> None:
             )
             | Q(
                 status=None,
-                requests__lte=MAX_REQUESTS,
+                requests__lt=MAX_REQUESTS,
             ),
         )
         .order_by("expires", "requested", "created")
         .values_list("pk", flat=True)
-    ):
+    )[:limit]:
         subscribe.delay(subscription_id, mode="subscribe")
 
 
