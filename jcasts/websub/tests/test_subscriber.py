@@ -44,6 +44,9 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
+        assert subscription.num_requests == 1
+        assert subscription.requested
+
     def test_subscribe(self, subscription, mocker):
         mock_post = mocker.patch(
             "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
@@ -57,6 +60,9 @@ class TestSubscribe:
         assert subscription.status == Subscription.Status.SUBSCRIBED
         assert subscription.status_changed
 
+        assert subscription.num_requests == 1
+        assert subscription.requested
+
     def test_denied(self, subscription, mocker):
         mock_post = mocker.patch(
             "requests.post", return_value=MockResponse(http.HTTPStatus.OK)
@@ -69,6 +75,9 @@ class TestSubscribe:
 
         assert subscription.status == Subscription.Status.DENIED
         assert subscription.status_changed
+
+        assert subscription.num_requests == 1
+        assert subscription.requested
 
     def test_http_error(self, subscription, mocker):
         mock_post = mocker.patch(
@@ -87,6 +96,9 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
+        assert subscription.num_requests == 1
+        assert subscription.requested
+
     def test_network_error(self, subscription, mocker):
         mock_post = mocker.patch(
             "requests.post",
@@ -104,22 +116,51 @@ class TestSubscribe:
         assert subscription.status is None
         assert subscription.status_changed is None
 
+        assert subscription.num_requests == 1
+        assert subscription.requested
+
     def test_not_found(self, db):
         assert not subscriber.subscribe(uuid.uuid4())
 
 
 class TestResubscribe:
     @pytest.mark.parametrize(
+        "status,requested,num_requests,subscribes",
+        [
+            (None, None, 0, True),
+            (None, timedelta(hours=3), 0, True),
+            (None, None, 5, False),
+            (None, timedelta(minutes=5), 0, False),
+            (Subscription.Status.SUBSCRIBED, None, 0, False),
+        ],
+    )
+    def test_resubscribe_no_status(
+        self, db, mock_subscribe, status, requested, num_requests, subscribes
+    ):
+
+        SubscriptionFactory(
+            status=status,
+            requested=timezone.now() - requested if requested else None,
+            num_requests=num_requests,
+        )
+
+        subscriber.resubscribe()
+
+        if subscribes:
+            mock_subscribe.assert_called()
+        else:
+            mock_subscribe.assert_not_called()
+
+    @pytest.mark.parametrize(
         "status,expires,subscribes",
         [
-            (None, False, False),
             (Subscription.Status.DENIED, False, False),
             (Subscription.Status.SUBSCRIBED, False, False),
             (Subscription.Status.SUBSCRIBED, timedelta(days=3), False),
             (Subscription.Status.SUBSCRIBED, timedelta(days=-3), True),
         ],
     )
-    def test_resubscribe(self, db, mock_subscribe, status, expires, subscribes):
+    def test_resubscribe_expired(self, db, mock_subscribe, status, expires, subscribes):
         now = timezone.now()
 
         SubscriptionFactory(

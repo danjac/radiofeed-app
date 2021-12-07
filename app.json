@@ -38,7 +38,7 @@
             "schedule": "20 3 * * *"
         },
         {
-            "command": "python manage.py renew_susbcriptions",
+            "command": "python manage.py resubscribe",
             "schedule": "*/15 * * * *"
         },
         {

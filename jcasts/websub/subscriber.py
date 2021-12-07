@@ -4,6 +4,8 @@ import http
 import traceback
 import uuid
 
+from datetime import timedelta
+
 import attr
 import requests
 
@@ -16,6 +18,7 @@ from jcasts.websub.models import Subscription
 
 DEFAULT_LEASE_SECONDS = 24 * 60 * 60 * 7
 MAX_BODY_SIZE = 1024 ** 2
+MAX_REQUESTS = 3
 
 
 @attr.s(kw_only=True)
@@ -29,15 +32,22 @@ class SubscribeResult:
         return self.success
 
 
-def resubscribe():
-    """Renew any expired subscriptions."""
+def resubscribe(since: timedelta = timedelta(hours=1)) -> None:
+    """Renew any expired subscriptions and any
+    unverified new subscriptions outside the time limit."""
+
+    now = timezone.now()
 
     for subscription_id in Subscription.objects.filter(
         Q(
             status=Subscription.Status.SUBSCRIBED,
-            expires__lt=timezone.now(),
+            expires__lt=now,
+        )
+        | Q(
+            Q(requested__isnull=True) | Q(requested__lt=now - since),
+            status=None,
+            num_requests__lte=MAX_REQUESTS,
         ),
-        podcast__active=True,
     ).values_list("pk", flat=True):
         subscribe.delay(subscription_id, mode="subscribe")
 
@@ -64,20 +74,45 @@ def subscribe(
             "hub.mode": mode,
             "hub.topic": subscription.topic,
             "hub.secret": subscription.secret.hex,
-            "hub.verify_token": subscription.id.hex,
-            "hub.verify": "async",
             "hub.callback": subscription.get_callback_url(),
             "hub.lease_seconds": DEFAULT_LEASE_SECONDS,
+            # these two fields are not present in websub v4+
+            # but keeping around for feeds using older hubs
+            "hub.verify_token": subscription.id.hex,
+            "hub.verify": "async",
         },
     )
+
+    now = timezone.now()
+
+    update_kwargs = {
+        "requested": now,
+        "num_requests": subscription.num_requests + 1,
+    }
 
     try:
         response.raise_for_status()
 
+        # a 202 indicates the hub will try to verify asynchronously
+        # through a GET request to the websub callback url. Otherwise we can set
+        # relevant status immediately.
+
+        if response.status_code != http.HTTPStatus.ACCEPTED:
+            update_kwargs = {
+                **update_kwargs,
+                "status": get_status_for_mode(mode),
+                "status_changed": now,
+            }
+
+        return SubscribeResult(
+            subscription_id=subscription.id,
+            status=response.status_code,
+            success=True,
+        )
+
     except requests.RequestException as e:
 
-        subscription.exception = traceback.format_exc()
-        subscription.save()
+        update_kwargs["exception"] = traceback.format_exc()
 
         return SubscribeResult(
             subscription_id=subscription.id,
@@ -85,20 +120,8 @@ def subscribe(
             success=False,
             exception=e,
         )
-
-    # a 202 indicates the hub will try to verify asynchronously
-    # through a GET request to the websub callback url. Otherwise we can set
-    # relevant status immediately.
-
-    if response.status_code != http.HTTPStatus.ACCEPTED:
-        subscription.set_status(mode)
-        subscription.save()
-
-    return SubscribeResult(
-        subscription_id=subscription.id,
-        status=response.status_code,
-        success=True,
-    )
+    finally:
+        Subscription.objects.filter(pk=subscription.id).update(**update_kwargs)
 
 
 def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
@@ -118,3 +141,13 @@ def check_signature(request: HttpRequest, subscription: Subscription) -> bool:
         return False
 
     return hmac.compare_digest(signature, digest)
+
+
+def get_status_for_mode(mode: str) -> str:
+    return {
+        "subscribe": Subscription.Status.SUBSCRIBED,
+        "unsubscribe": Subscription.Status.UNSUBSCRIBED,
+        "denied": Subscription.Status.DENIED,
+    }[
+        mode
+    ]  # type: ignore
