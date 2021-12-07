@@ -32,22 +32,26 @@ class SubscribeResult:
         return self.success
 
 
-def enqueue() -> None:
+def enqueue(limit: int = 200) -> None:
     """Renew any expired subscriptions and any
     unverified new subscriptions"""
 
     now = timezone.now()
 
-    for subscription_id in Subscription.objects.filter(
-        Q(
-            status=Subscription.Status.SUBSCRIBED,
-            expires__lt=now,
+    for subscription_id in (
+        Subscription.objects.filter(
+            Q(
+                status=Subscription.Status.SUBSCRIBED,
+                expires__lt=now,
+            )
+            | Q(
+                status=None,
+                requests__lte=MAX_REQUESTS,
+            ),
         )
-        | Q(
-            status=None,
-            requests__lte=MAX_REQUESTS,
-        ),
-    ).values_list("pk", flat=True):
+        .order_by("expires", "requested", "created")
+        .values_list("pk", flat=True)
+    ):
         subscribe.delay(subscription_id, mode="subscribe")
 
 
