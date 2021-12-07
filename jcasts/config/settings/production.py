@@ -78,4 +78,4 @@ sentry_sdk.init(
 
 # Installed apps
 
-INSTALLED_APPS += ["anymail", "captcha"]
+INSTALLED_APPS += ["anymail"]
