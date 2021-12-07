@@ -1,8 +1,12 @@
 import datetime
 
+from zoneinfo import ZoneInfo
+
 import pytz
 
 from jcasts.podcasts.date_parser import parse_date, parse_timestamp
+
+UTC = ZoneInfo(key="UTC")
 
 
 class TestParseTimestamp:
@@ -11,7 +15,7 @@ class TestParseTimestamp:
 
     def test_parse_timestamp(self):
         dt = parse_timestamp(1631905234)
-        assert dt.tzinfo == pytz.UTC
+        assert dt.tzinfo == UTC
 
 
 class TestParseDate:
@@ -29,7 +33,8 @@ class TestParseDate:
     def test_parse_date_if_not_tz_aware(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3)
         new_dt = parse_date(dt)
-        assert new_dt.tzinfo == pytz.UTC
+
+        assert new_dt.tzinfo == UTC
 
     def test_parse_date_if_date(self):
         dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
