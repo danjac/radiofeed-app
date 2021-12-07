@@ -32,9 +32,9 @@ class SubscribeResult:
         return self.success
 
 
-def resubscribe(since: timedelta = timedelta(hours=1)) -> None:
+def enqueue(since: timedelta = timedelta(minutes=15)) -> None:
     """Renew any expired subscriptions and any
-    unverified new subscriptions outside the time limit."""
+    unverified new subscriptions"""
 
     now = timezone.now()
 
@@ -86,7 +86,7 @@ def subscribe(
     now = timezone.now()
 
     update_kwargs = {
-        "updated": now,
+        "modified": now,
         "requested": now,
         "requests": subscription.requests + 1,
     }

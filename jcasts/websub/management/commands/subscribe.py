@@ -17,8 +17,8 @@ class Command(BaseCommand):
             "--since",
             help="Minutes since original request",
             type=int,
-            default=30,
+            default=15,
         )
 
     def handle(self, *args, **options) -> None:
-        subscriber.resubscribe(timedelta(minutes=options["since"]))
+        subscriber.enqueue(timedelta(minutes=options["since"]))

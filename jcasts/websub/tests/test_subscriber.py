@@ -123,7 +123,7 @@ class TestSubscribe:
         assert not subscriber.subscribe(uuid.uuid4())
 
 
-class TestResubscribe:
+class TestEnqueue:
     @pytest.mark.parametrize(
         "status,requested,requests,subscribes",
         [
@@ -134,7 +134,7 @@ class TestResubscribe:
             (Subscription.Status.SUBSCRIBED, None, 0, False),
         ],
     )
-    def test_resubscribe_no_status(
+    def test_enqueue_no_status(
         self, db, mock_subscribe, status, requested, requests, subscribes
     ):
 
@@ -144,7 +144,7 @@ class TestResubscribe:
             requests=requests,
         )
 
-        subscriber.resubscribe()
+        subscriber.enqueue()
 
         if subscribes:
             mock_subscribe.assert_called()
@@ -160,14 +160,14 @@ class TestResubscribe:
             (Subscription.Status.SUBSCRIBED, timedelta(days=-3), True),
         ],
     )
-    def test_resubscribe_expired(self, db, mock_subscribe, status, expires, subscribes):
+    def test_enqueue_expired(self, db, mock_subscribe, status, expires, subscribes):
         now = timezone.now()
 
         SubscriptionFactory(
             status=status,
             expires=now + expires if expires else None,
         )
-        subscriber.resubscribe()
+        subscriber.enqueue()
 
         if subscribes:
             mock_subscribe.assert_called()

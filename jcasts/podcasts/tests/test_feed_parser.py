@@ -63,7 +63,7 @@ class TestParseWebsub:
     hub = "https://pubsubhubbub.com"
     topic = "https://example.com/topic.xml"
 
-    def test_websub_in_feed(self, podcast, mock_subscribe):
+    def test_websub_in_feed(self, podcast):
         feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
         feed_parser.parse_websub(podcast, MockResponse(), feed)
 
@@ -72,18 +72,14 @@ class TestParseWebsub:
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-        mock_subscribe.assert_called()
-
-    def test_subscription_exists(self, podcast, mock_subscribe):
+    def test_subscription_exists(self, podcast):
         feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
 
         SubscriptionFactory(podcast=podcast, hub=self.hub, topic=self.topic)
 
         feed_parser.parse_websub(podcast, MockResponse(), feed)
 
-        mock_subscribe.assert_not_called()
-
-    def test_websub_in_header(self, podcast, feed, mock_subscribe):
+    def test_websub_in_header(self, podcast, feed):
         response = MockResponse(
             links={
                 "hub": {"url": self.hub},
@@ -97,14 +93,10 @@ class TestParseWebsub:
         assert subscription.hub == self.hub
         assert subscription.topic == self.topic
 
-        mock_subscribe.assert_called()
-
-    def test_no_websub(self, podcast, feed, mock_subscribe):
+    def test_no_websub(self, podcast, feed):
 
         feed_parser.parse_websub(podcast, MockResponse(), feed)
         assert not Subscription.objects.filter(podcast=podcast).exists()
-
-        mock_subscribe.assert_not_called()
 
 
 class TestEnqueue:
@@ -321,9 +313,7 @@ class TestParsePodcastFeed:
         with pytest.raises(Podcast.DoesNotExist):
             result.raise_exception()
 
-    def test_parse_podcast_feed_ok(
-        self, mocker, new_podcast, categories, mock_subscribe
-    ):
+    def test_parse_podcast_feed_ok(self, mocker, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -393,9 +383,7 @@ class TestParsePodcastFeed:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    def test_parse_podcast_feed_complete(
-        self, mocker, new_podcast, categories, mock_subscribe
-    ):
+    def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -459,7 +447,7 @@ class TestParsePodcastFeed:
         assert "Philosophy" in assigned_categories
 
     def test_parse_podcast_feed_permanent_redirect(
-        self, mocker, new_podcast, categories, mock_subscribe
+        self, mocker, new_podcast, categories
     ):
         mocker.patch(
             self.mock_http_get,
@@ -486,7 +474,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
-        self, mocker, new_podcast, categories, mock_subscribe
+        self, mocker, new_podcast, categories
     ):
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = new_podcast.rss
@@ -514,7 +502,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
 
-    def test_parse_no_podcasts(self, mocker, new_podcast, categories, mock_subscribe):
+    def test_parse_no_podcasts(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -535,7 +523,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
-    def test_parse_empty_feed(self, mocker, new_podcast, categories, mock_subscribe):
+    def test_parse_empty_feed(self, mocker, new_podcast, categories):
 
         mocker.patch(
             self.mock_http_get,
@@ -557,9 +545,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
-    def test_parse_podcast_feed_not_modified(
-        self, mocker, new_podcast, categories, mock_subscribe
-    ):
+    def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=MockResponse(
@@ -575,9 +561,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
-    def test_parse_podcast_feed_error(
-        self, mocker, new_podcast, categories, mock_subscribe
-    ):
+    def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
         mocker.patch(self.mock_http_get, side_effect=requests.RequestException)
 
         result = feed_parser.parse_podcast_feed(new_podcast.id)
@@ -595,7 +579,7 @@ class TestParsePodcastFeed:
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_errors_past_limit(
-        self, mocker, new_podcast, categories, mock_subscribe
+        self, mocker, new_podcast, categories
     ):
         Podcast.objects.filter(pk=new_podcast.id).update(errors=11)
 
@@ -615,9 +599,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.queued
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
-    def test_parse_podcast_feed_http_gone(
-        self, mocker, new_podcast, categories, mock_subscribe
-    ):
+    def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
         mocker.patch(
             self.mock_http_get,
             return_value=BadMockResponse(status=http.HTTPStatus.GONE),
@@ -638,7 +620,7 @@ class TestParsePodcastFeed:
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error(
-        self, mocker, new_podcast, categories, mock_subscribe
+        self, mocker, new_podcast, categories
     ):
         mocker.patch(
             self.mock_http_get,
@@ -660,7 +642,7 @@ class TestParsePodcastFeed:
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error_no_pub_date(
-        self, mocker, new_podcast, categories, mock_subscribe
+        self, mocker, new_podcast, categories
     ):
         mocker.patch(
             self.mock_http_get,

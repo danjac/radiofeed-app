@@ -13,6 +13,6 @@ class TestResubscribe:
             status=Subscription.Status.SUBSCRIBED,
             expires=timezone.now() - timedelta(days=3),
         )
-        call_command("resubscribe")
+        call_command("subscribe")
 
         mock_subscribe.assert_called()
