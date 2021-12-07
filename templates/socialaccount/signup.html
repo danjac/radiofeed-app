@@ -18,7 +18,7 @@
       hx-disable="true"
       novalidate>
     {% csrf_token %}
-    {% include "forms/_fields.html" %}
+    {{ form }}
     <div class="flex items-center justify-end">
         <button class="inline-flex items-center btn btn-default">
             {% icon "plus" css_class="h-4 w-4 mr-2" %}

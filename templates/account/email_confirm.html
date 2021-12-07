@@ -16,7 +16,7 @@
       action="{% url 'account_confirm_email' confirmation.key %}"
       novalidate>
     {% csrf_token %}
-    {% include "forms/_fields.html" %}
+    {{ form }}
     <div class="flex items-center">
         <button class="inline-flex items-center btn btn-default"
                 name="action_add"
