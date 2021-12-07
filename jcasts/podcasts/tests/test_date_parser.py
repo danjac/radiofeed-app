@@ -2,8 +2,6 @@ import datetime
 
 from zoneinfo import ZoneInfo
 
-import pytz
-
 from jcasts.podcasts.date_parser import parse_date, parse_timestamp
 
 UTC = ZoneInfo(key="UTC")
@@ -27,7 +25,7 @@ class TestParseDate:
 
     def test_invalid_offset(self):
         assert parse_date("Sun, 14 Jan 2018 21:38:44 -4400") == datetime.datetime(
-            2018, 1, 14, 21, 38, 44, tzinfo=pytz.UTC
+            2018, 1, 14, 21, 38, 44, tzinfo=UTC
         )
 
     def test_parse_date_if_not_tz_aware(self):
@@ -37,15 +35,15 @@ class TestParseDate:
         assert new_dt.tzinfo == UTC
 
     def test_parse_date_if_date(self):
-        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
+        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=UTC)
         assert parse_date(dt) == dt
 
     def test_parse_date_if_valid(self):
-        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
+        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=UTC)
         assert parse_date("Fri, 19 Jun 2020 16:58:03 +0000") == dt
 
     def test_parse_date_if_no_tz(self):
-        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=pytz.UTC)
+        dt = datetime.datetime(2020, 6, 19, 16, 58, 3, tzinfo=UTC)
         assert parse_date("Fri, 19 Jun 2020 16:58:03") == dt
 
     def test_parse_date_if_invalid(self):
