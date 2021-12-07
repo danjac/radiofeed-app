@@ -6,8 +6,6 @@ import http
 import traceback
 import uuid
 
-from datetime import timedelta
-
 import attr
 import requests
 
@@ -34,7 +32,7 @@ class SubscribeResult:
         return self.success
 
 
-def enqueue(since: timedelta = timedelta(minutes=15)) -> None:
+def enqueue() -> None:
     """Renew any expired subscriptions and any
     unverified new subscriptions"""
 
@@ -46,7 +44,6 @@ def enqueue(since: timedelta = timedelta(minutes=15)) -> None:
             expires__lt=now,
         )
         | Q(
-            Q(requested__isnull=True) | Q(requested__lt=now - since),
             status=None,
             requests__lte=MAX_REQUESTS,
         ),

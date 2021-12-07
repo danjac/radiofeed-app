@@ -125,24 +125,19 @@ class TestSubscribe:
 
 class TestEnqueue:
     @pytest.mark.parametrize(
-        "status,requested,requests,subscribes",
+        "status,requests,subscribes",
         [
-            (None, None, 0, True),
-            (None, timedelta(hours=3), 0, True),
-            (None, None, 5, False),
-            (None, timedelta(minutes=5), 0, False),
-            (Subscription.Status.SUBSCRIBED, None, 0, False),
+            (None, 0, True),
+            (None, 3, True),
+            (None, 5, False),
+            (Subscription.Status.SUBSCRIBED, 0, False),
         ],
     )
-    def test_enqueue_no_status(
-        self, db, mock_subscribe, status, requested, requests, subscribes
+    def test_enqueue_status_none(
+        self, db, mock_subscribe, status, requests, subscribes
     ):
 
-        SubscriptionFactory(
-            status=status,
-            requested=timezone.now() - requested if requested else None,
-            requests=requests,
-        )
+        SubscriptionFactory(status=status, requests=requests)
 
         subscriber.enqueue()
 
