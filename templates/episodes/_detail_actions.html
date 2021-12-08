@@ -42,10 +42,10 @@
         </button>
     </div>
 
-    <div class="flex items-center">
+    <div class="flex items-center" x-show="!isPlaying">
         <button title="Add to Play Queue"
                 class="link"
-                x-show="!isPlaying && !isQueued"
+                x-show="!isQueued"
                 x-cloak
                 hx-post="{% url 'episodes:add_to_queue' episode.id %}"
                 @click="isQueued=true">
@@ -54,7 +54,7 @@
 
         <button title="Remove from Play Queue"
                 class="link"
-                x-show="!isPlaying && isQueued"
+                x-show="isQueued"
                 x-cloak
                 hx-delete="{% url 'episodes:remove_from_queue' episode.id %}"
                 @click="isQueued=false">
