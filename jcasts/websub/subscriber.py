@@ -84,6 +84,7 @@ def subscribe(
             "hub.verify_token": subscription.id.hex,
             "hub.verify": "async",
         },
+        timeout=10,
     )
 
     now = timezone.now()
