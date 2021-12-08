@@ -36,13 +36,11 @@ def enqueue(limit: int = 200) -> None:
     """Renew any expired subscriptions and any
     unverified new subscriptions"""
 
-    now = timezone.now()
-
     for subscription_id in (
         Subscription.objects.filter(
             Q(
                 status=Subscription.Status.SUBSCRIBED,
-                expires__lt=now,
+                expires__lt=timezone.now(),
             )
             | Q(
                 status=None,
