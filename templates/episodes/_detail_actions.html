@@ -77,7 +77,7 @@
             x-cloak
             hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
             @click="isListened=false">
-        {% icon "database_solid" css_class=ICON_CSS %}
+        {% icon "trash" css_class=ICON_CSS %}
     </button>
 
     {% endif %}
