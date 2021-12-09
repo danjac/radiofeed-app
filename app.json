@@ -15,15 +15,15 @@
     "cron": [
         {
             "command": "python manage.py parse_podcast_feeds --primary --limit=300",
-            "schedule": "*/20 * * * *"
+            "schedule": "*/12 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:frequent --after=14 --limit=300",
-            "schedule": "*/6 * * * *"
+            "command": "python manage.py parse_podcast_feeds --queue=feeds:frequent --after=14 --limit=200",
+            "schedule": "*/5 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:sporadic --before=14 --limit=150",
-            "schedule": "15,45 * * * *"
+            "schedule": "11,49 * * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
