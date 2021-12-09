@@ -35,7 +35,7 @@
         },
         {
             "command": "python manage.py subscribe",
-            "schedule": "*/15 * * * *"
+            "schedule": "*/14 * * * *"
         },
         {
             "command": "python manage.py clearsessions",
