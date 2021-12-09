@@ -23,7 +23,7 @@
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:sporadic --before=14 --limit=150",
-            "schedule": "11,49 * * * *"
+            "schedule": "15,45 * * * *"
         },
         {
             "command": "python manage.py send_recommendation_emails",
