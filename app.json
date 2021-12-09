@@ -15,7 +15,7 @@
     "cron": [
         {
             "command": "python manage.py parse_podcast_feeds --primary --limit=300",
-            "schedule": "3,16,33,46 * * * *"
+            "schedule": "3,15,33,46 * * * *"
         },
         {
             "command": "python manage.py parse_podcast_feeds --queue=feeds:frequent --after=14 --limit=300",
