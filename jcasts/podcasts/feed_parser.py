@@ -95,7 +95,8 @@ def parse_podcast_feeds(
             F("pub_date").desc(nulls_first=True),
             F("created").desc(),
         )
-        .values_list("pk", flat=True)[:limit],
+        .values_list("pk", flat=True)
+        .distinct()[:limit],
         queue=queue,
     )
 
