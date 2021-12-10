@@ -28,7 +28,11 @@ def websub_callback(request: HttpRequest, subscription_id: uuid.UUID) -> HttpRes
     if request.method == "POST":
 
         if subscriber.check_signature(request, subscription):
-            feed_parser.enqueue(subscription.podcast_id, url=subscription.topic)
+            feed_parser.enqueue(
+                subscription.podcast_id,
+                url=subscription.topic,
+                force_update=True,
+            )
 
         # always return a 2xx even on error so to prevent brute-force attacks
         return HttpResponseNoContent()

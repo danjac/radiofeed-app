@@ -131,6 +131,13 @@ class TestFeedHeaders:
         headers = feed_parser.get_feed_headers(podcast)
         assert headers["If-Modified-Since"]
 
+    def test_force_update(self):
+        podcast = Podcast(etag="abc123", modified=timezone.now())
+        headers = feed_parser.get_feed_headers(podcast, force_update=True)
+
+        assert "If-None-Match" not in headers
+        assert "If-Modified-Since" not in headers
+
 
 class TestParsePodcastFeeds:
     def test_has_subscription(self, podcast, mock_feed_queue):
