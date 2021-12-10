@@ -93,6 +93,7 @@ def parse_podcast_feeds(
         .order_by(
             F("parsed").asc(nulls_first=True),
             F("pub_date").desc(nulls_first=True),
+            F("created").desc(),
         )
         .values_list("pk", flat=True)[:limit],
         queue=queue,
