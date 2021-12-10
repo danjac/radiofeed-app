@@ -393,7 +393,7 @@ def parse_failure(
     status: int | None = None,
     active: bool = True,
     error: bool = False,
-    result: Podcast.Result | None,
+    result: Podcast.Result | None = None,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
