@@ -138,13 +138,13 @@ def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
         return parse_failure(
             podcast,
             status=e.response.status_code,
-            result=Podcast.Result.NOT_MODIFIED,
+            result=Podcast.Result.NOT_MODIFIED,  # type: ignore
         )
 
     except DuplicateFeed as e:
         return parse_failure(
             podcast,
-            result=Podcast.Result.DUPLICATE_FEED,
+            result=Podcast.Result.DUPLICATE_FEED,  # type: ignore
             status=e.response.status_code,
             active=False,
         )
@@ -155,7 +155,7 @@ def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
 
         return parse_failure(
             podcast,
-            result=Podcast.Result.HTTP_ERROR,
+            result=Podcast.Result.HTTP_ERROR,  # type: ignore
             status=e.response.status_code,
             active=not dead,
             error=not dead,
@@ -165,7 +165,7 @@ def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
         return parse_failure(
             podcast,
             exception=e,
-            result=Podcast.Result.NETWORK_ERROR,
+            result=Podcast.Result.NETWORK_ERROR,  # type: ignore
             tb=traceback.format_exc(),
             error=True,
         )
@@ -173,7 +173,7 @@ def parse_podcast_feed(podcast_id: int, url: str = "") -> ParseResult:
     except rss_parser.RssParserError as e:
         return parse_failure(
             podcast,
-            result=Podcast.Result.INVALID_RSS,
+            result=Podcast.Result.INVALID_RSS,  # type: ignore
             exception=e,
             tb=traceback.format_exc(),
             error=True,
@@ -393,7 +393,7 @@ def parse_failure(
     status: int | None = None,
     active: bool = True,
     error: bool = False,
-    result: tuple[str, str] | None = None,
+    result: Podcast.Result | None,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
@@ -418,6 +418,6 @@ def parse_failure(
         rss=podcast.rss,
         success=False,
         status=status,
-        result=result[0] if result else None,
+        result=result.value if result else None,
         exception=exception,
     )
