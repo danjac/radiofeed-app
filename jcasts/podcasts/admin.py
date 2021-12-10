@@ -125,14 +125,20 @@ class SubscribedFilter(admin.SimpleListFilter):
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Subscribed"),)
+        return (
+            ("yes", "Subscribed"),
+            ("no", "Unsubscribed"),
+        )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
-        return (
-            queryset.with_subscribed().filter(subscribed=True)
-            if self.value() == "yes"
-            else queryset
-        )
+        if value := self.value():
+            queryset = queryset.with_subscribed()
+
+            return {
+                "yes": queryset.filter(subscribed=True),
+                "no": queryset.filter(subscribed=False),
+            }.setdefault(value, queryset)
+        return queryset
 
 
 class FollowedFilter(admin.SimpleListFilter):

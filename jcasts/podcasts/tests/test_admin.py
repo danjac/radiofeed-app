@@ -197,12 +197,12 @@ class TestActiveFilter:
 
 
 class TestSubscribedFilter:
-    def test_followed_filter_none(self, podcasts, admin, req):
+    def test_none(self, podcasts, admin, req):
         f = SubscribedFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
 
-    def test_promoted_filter_true(self, podcasts, admin, req):
+    def test_true(self, podcasts, admin, req):
         subscribed = SubscriptionFactory(
             status=Subscription.Status.SUBSCRIBED,
             expires=timezone.now() + timedelta(days=3),
@@ -212,6 +212,17 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
+
+    def test_false(self, podcasts, admin, req):
+        subscribed = SubscriptionFactory(
+            status=Subscription.Status.SUBSCRIBED,
+            expires=timezone.now() + timedelta(days=3),
+        ).podcast
+
+        f = SubscribedFilter(req, {"subscribed": "no"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert subscribed not in qs
 
 
 class TestFollowedFilter:
