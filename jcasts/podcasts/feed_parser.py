@@ -113,21 +113,21 @@ def enqueue_many(podcast_ids: list[int], *, queue: str = "feeds") -> None:
         job_queue.enqueue(parse_podcast_feed, podcast_id)
 
 
-def enqueue(podcast_id: int, *, queue: str = "feeds", url: str = "") -> None:
+def enqueue(podcast_id: int, *, queue: str = "feeds") -> None:
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast_id).update(queued=now, updated=now)
 
-    get_queue(queue).enqueue(parse_podcast_feed, podcast_id, url=url)
+    get_queue(queue).enqueue(parse_podcast_feed, podcast_id)
 
 
 @transaction.atomic
-def parse_podcast_feed(podcast_id: int, *, url: str = "") -> ParseResult:
+def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        return parse_success(podcast, *parse_content(podcast, url))
+        return parse_success(podcast, *parse_content(podcast))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
@@ -180,12 +180,10 @@ def parse_podcast_feed(podcast_id: int, *, url: str = "") -> ParseResult:
 
 def parse_content(
     podcast: Podcast,
-    url: str = "",
-    force_update: bool = False,
 ) -> tuple[requests.Response, rss_parser.Feed, list[rss_parser.Item]]:
 
     response = requests.get(
-        url or podcast.rss,
+        podcast.rss,
         headers=get_feed_headers(podcast),
         allow_redirects=True,
         timeout=10,
