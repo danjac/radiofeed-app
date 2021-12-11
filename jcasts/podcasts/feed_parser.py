@@ -101,12 +101,7 @@ def parse_podcast_feeds(
     )
 
 
-def enqueue_many(
-    podcast_ids: list[int],
-    *,
-    queue: str = "feeds",
-    force_update: bool = False,
-) -> None:
+def enqueue_many(podcast_ids: list[int], *, queue: str = "feeds") -> None:
 
     if not podcast_ids:
         return
@@ -118,44 +113,24 @@ def enqueue_many(
     job_queue = get_queue(queue)
 
     for podcast_id in podcast_ids:
-        job_queue.enqueue(
-            parse_podcast_feed,
-            podcast_id,
-            force_update=force_update,
-        )
+        job_queue.enqueue(parse_podcast_feed, podcast_id)
 
 
-def enqueue(
-    podcast_id: int,
-    *,
-    queue: str = "feeds",
-    url: str = "",
-    force_update: bool = False,
-) -> None:
+def enqueue(podcast_id: int, *, queue: str = "feeds", url: str = "") -> None:
 
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast_id).update(queued=now, updated=now)
 
-    get_queue(queue).enqueue(
-        parse_podcast_feed,
-        podcast_id,
-        url=url,
-        force_update=force_update,
-    )
+    get_queue(queue).enqueue(parse_podcast_feed, podcast_id, url=url)
 
 
 @transaction.atomic
-def parse_podcast_feed(
-    podcast_id: int,
-    *,
-    url: str = "",
-    force_update: bool = False,
-) -> ParseResult:
+def parse_podcast_feed(podcast_id: int, *, url: str = "") -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        return parse_success(podcast, *parse_content(podcast, url, force_update))
+        return parse_success(podcast, *parse_content(podcast, url))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
@@ -214,7 +189,7 @@ def parse_content(
 
     response = requests.get(
         url or podcast.rss,
-        headers=get_feed_headers(podcast, force_update),
+        headers=get_feed_headers(podcast),
         allow_redirects=True,
         timeout=10,
     )
@@ -396,17 +371,16 @@ def extract_text(
     return " ".join(text_parser.extract_keywords(podcast.language, text))
 
 
-def get_feed_headers(podcast: Podcast, force_update: bool = False) -> dict[str, str]:
+def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     headers = {
         "Accept": ACCEPT_HEADER,
         "User-Agent": secrets.choice(USER_AGENTS),
     }
 
-    if not force_update:
-        if podcast.etag:
-            headers["If-None-Match"] = quote_etag(podcast.etag)
-        if podcast.modified:
-            headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
+    if podcast.etag:
+        headers["If-None-Match"] = quote_etag(podcast.etag)
+    if podcast.modified:
+        headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
 
 
