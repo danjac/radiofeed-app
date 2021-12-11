@@ -82,11 +82,9 @@ def parse_podcast_feeds(
 
     enqueue_many(
         Podcast.objects.with_followed()
-        .with_subscribed()
         .filter(
             q,
             active=True,
-            subscribed=False,
             queued__isnull=True,
         )
         .order_by(

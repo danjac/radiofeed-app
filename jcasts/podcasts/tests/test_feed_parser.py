@@ -20,8 +20,6 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed
-from jcasts.websub.factories import SubscriptionFactory
-from jcasts.websub.models import Subscription
 
 
 @pytest.fixture
@@ -93,32 +91,6 @@ class TestFeedHeaders:
 
 
 class TestParsePodcastFeeds:
-    def test_has_subscription(self, podcast, mock_feed_queue):
-        SubscriptionFactory(
-            podcast=podcast,
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() + timedelta(days=3),
-        )
-        feed_parser.parse_podcast_feeds()
-        assert podcast.id not in mock_feed_queue.enqueued
-
-    def test_has_expired_subscription(self, podcast, mock_feed_queue):
-        SubscriptionFactory(
-            podcast=podcast,
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() - timedelta(days=3),
-        )
-        feed_parser.parse_podcast_feeds()
-        assert podcast.id in mock_feed_queue.enqueued
-
-    def test_has_denied_subscription(self, podcast, mock_feed_queue):
-        SubscriptionFactory(
-            podcast=podcast,
-            status=Subscription.Status.DENIED,
-        )
-        feed_parser.parse_podcast_feeds()
-        assert podcast.id in mock_feed_queue.enqueued
-
     @pytest.mark.parametrize(
         "pub_date,after,before,success",
         [
@@ -277,13 +249,6 @@ class TestParsePodcastFeed:
 
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
-
-        # test subscription
-        SubscriptionFactory(
-            podcast=new_podcast,
-            hub="https://pubsubhubbub.appspot.com/",
-            topic="https://mysteriousuniverse.org/feed/podcast/",
-        )
 
         # test updated
         EpisodeFactory(podcast=new_podcast, guid=episode_guid, title=episode_title)

@@ -1,8 +1,5 @@
-from datetime import timedelta
-
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
-from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
 from jcasts.podcasts.factories import (
@@ -13,8 +10,6 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
-from jcasts.websub.factories import SubscriptionFactory
-from jcasts.websub.models import Subscription
 
 
 class TestRecommendationManager:
@@ -136,53 +131,6 @@ class TestPodcastManager:
     def test_with_followed_false(self, db):
         PodcastFactory()
         assert not Podcast.objects.with_followed().first().followed
-
-    def test_with_subscribed_no_subscription(self, podcast):
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=True).exists() is False
-        )
-
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=False).exists() is True
-        )
-
-    def test_with_subscribed_no_active_subscription(self, podcast):
-        SubscriptionFactory(podcast=podcast, status=None)
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=True).exists() is False
-        )
-
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=False).exists() is True
-        )
-
-    def test_with_subscribed_expired_subscription(self, podcast):
-        SubscriptionFactory(
-            podcast=podcast,
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() - timedelta(days=3),
-        )
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=True).exists() is False
-        )
-
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=False).exists() is True
-        )
-
-    def test_with_subscribed_active_subscription(self, podcast):
-        SubscriptionFactory(
-            podcast=podcast,
-            status=Subscription.Status.SUBSCRIBED,
-            expires=timezone.now() + timedelta(days=3),
-        )
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=True).exists() is True
-        )
-
-        assert (
-            Podcast.objects.with_subscribed().filter(subscribed=False).exists() is False
-        )
 
 
 class TestPodcastModel:
