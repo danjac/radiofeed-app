@@ -59,46 +59,6 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
-class TestParseWebsub:
-    hub = "https://pubsubhubbub.com"
-    topic = "https://example.com/topic.xml"
-
-    def test_websub_in_feed(self, podcast):
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
-        feed_parser.parse_websub(podcast, MockResponse(), feed)
-
-        subscription = Subscription.objects.get(podcast=podcast)
-
-        assert subscription.hub == self.hub
-        assert subscription.topic == self.topic
-
-    def test_subscription_exists(self, podcast):
-        feed = Feed(**FeedFactory(websub_hub=self.hub, websub_topic=self.topic))
-
-        SubscriptionFactory(podcast=podcast, hub=self.hub, topic=self.topic)
-
-        feed_parser.parse_websub(podcast, MockResponse(), feed)
-
-    def test_websub_in_header(self, podcast, feed):
-        response = MockResponse(
-            links={
-                "hub": {"url": self.hub},
-                "self": {"url": self.topic},
-            }
-        )
-        feed_parser.parse_websub(podcast, response, feed)
-
-        subscription = Subscription.objects.get(podcast=podcast)
-
-        assert subscription.hub == self.hub
-        assert subscription.topic == self.topic
-
-    def test_no_websub(self, podcast, feed):
-
-        feed_parser.parse_websub(podcast, MockResponse(), feed)
-        assert not Subscription.objects.filter(podcast=podcast).exists()
-
-
 class TestEnqueue:
     def test_enqueue(self, db, mock_feed_queue, podcast):
 

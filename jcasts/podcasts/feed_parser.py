@@ -19,7 +19,6 @@ from django_rq import get_queue
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
 from jcasts.podcasts.models import Category, Podcast
-from jcasts.websub.models import Subscription
 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
@@ -266,9 +265,6 @@ def parse_success(
 
     podcast.save()
 
-    # websub
-    parse_websub(podcast, response, feed)
-
     # episodes
     parse_episodes(podcast, items)
 
@@ -277,30 +273,6 @@ def parse_success(
         success=True,
         status=response.status_code,
     )
-
-
-def parse_websub(
-    podcast: Podcast, response: requests.Response, feed: rss_parser.Feed
-) -> None:
-
-    # https://w3c.github.io/websub
-
-    # default: hub/topic in Atom links
-    hub = feed.websub_hub
-    topic = feed.websub_topic
-
-    # also check Link headers
-    if "self" in response.links and "hub" in response.links:
-        hub = response.links["hub"]["url"]
-        topic = response.links["self"]["url"]
-
-    if hub and topic:
-
-        Subscription.objects.get_or_create(
-            podcast=podcast,
-            hub=hub,
-            topic=topic,
-        )
 
 
 def parse_episodes(
