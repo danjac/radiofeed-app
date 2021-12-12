@@ -56,6 +56,12 @@ class TestPodcastAdmin:
         ordering = admin.get_ordering(req)
         assert ordering == []
 
+    def test_dequeue(self, db, admin, req):
+        podcast = PodcastFactory(queued=timezone.now())
+        admin.dequeue(req, Podcast.objects.all())
+        podcast.refresh_from_db()
+        assert podcast.queued is None
+
     def test_parse_podcast_feeds(self, podcast, admin, req, mock_feed_queue):
         admin.parse_podcast_feeds(req, Podcast.objects.all())
         assert podcast.id in mock_feed_queue.enqueued

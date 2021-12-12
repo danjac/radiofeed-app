@@ -169,9 +169,18 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "exception",
     )
 
-    actions = ("parse_podcast_feeds",)
+    actions = (
+        "dequeue",
+        "parse_podcast_feeds",
+    )
 
     change_actions = ("parse_podcast_feed",)
+
+    def dequeue(self, request: HttpRequest, queryset: QuerySet) -> None:
+        queryset.filter(queued__isnull=False).update(queued=None)
+        self.message_user(request, "Podcasts removed from queue", messages.SUCCESS)
+
+    dequeue.short_description = "Remove podcasts from queue"  # type: ignore
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
