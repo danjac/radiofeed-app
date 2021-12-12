@@ -143,14 +143,18 @@
             </h2>
 
             {% endwith %}
-            <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm xl:text-base flex items-center space-x-2 mb-3">
+            {% with description=episode.cleaned_description|truncatechars:500 %}
+            <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm xl:text-base flex items-center space-x-2{% if description %} mb-3{% endif %}">
                 {% include "_date.html" with value=episode.pub_date title="Release Date" %}
                 {% include "episodes/_duration.html" %}
             </div>
 
+            {% if description %}
             <p class="break-words">
-                {{ episode.cleaned_description|truncatechars:500 }}
+                {{ description }}
             </p>
+            {% endif %}
+            {% endwith %}
 
 
         </div>
