@@ -22,14 +22,14 @@ class Command(BaseCommand):
 
         parser.add_argument(
             "--after",
-            help="Days after last parsed",
+            help="Hours after last parsed",
             type=int,
             default=None,
         )
 
         parser.add_argument(
             "--before",
-            help="Days before last parsed",
+            help="Hours before last parsed",
             type=int,
             default=None,
         )
@@ -49,8 +49,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        after = timedelta(days=options["after"]) if options["after"] else None
-        before = timedelta(days=options["before"]) if options["before"] else None
+        after = timedelta(hours=options["after"]) if options["after"] else None
+        before = timedelta(hours=options["before"]) if options["before"] else None
 
         feed_parser.parse_podcast_feeds(
             after=after,
