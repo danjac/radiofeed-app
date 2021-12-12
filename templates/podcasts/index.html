@@ -1,6 +1,6 @@
 {% extends "podcasts/base.html" %}
 
-{% block subtitle %} | {{ promoted|yesno:"Popular,My" }} Podcasts {% endblock %}
+{% block subtitle %} | {{ promoted|yesno:"Trending,My Podcasts" }} Podcasts {% endblock %}
 
 {% block content %}
 {% if has_follows %}
