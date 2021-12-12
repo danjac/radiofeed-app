@@ -3,7 +3,38 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
 from jcasts.podcasts.factories import FollowFactory
-from jcasts.shared.assertions import assert_ok
+from jcasts.shared.assertions import assert_no_content, assert_ok
+from jcasts.users.factories import UserFactory
+
+
+class TestAutoPlay:
+    url = reverse_lazy("users:toggle_autoplay")
+
+    def test_autoplay_on(self, db, client, django_assert_num_queries):
+
+        user = UserFactory(autoplay=True)
+
+        client.force_login(user)
+
+        with django_assert_num_queries(4):
+            resp = client.post(self.url)
+            assert_no_content(resp)
+
+        user.refresh_from_db()
+        assert not user.autoplay
+
+    def test_autoplay_off(self, db, client, django_assert_num_queries):
+
+        user = UserFactory(autoplay=False)
+
+        client.force_login(user)
+
+        with django_assert_num_queries(4):
+            resp = client.post(self.url)
+            assert_no_content(resp)
+
+        user.refresh_from_db()
+        assert user.autoplay
 
 
 class TestUserPreferences:

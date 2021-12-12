@@ -12,6 +12,8 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog, Favorite, QueueItem
 from jcasts.podcasts.models import Follow, Podcast
+from jcasts.shared.decorators import ajax_login_required
+from jcasts.shared.response import HttpResponseNoContent
 from jcasts.users.forms import UserPreferencesForm
 
 
@@ -73,6 +75,14 @@ def user_stats(request: HttpRequest) -> HttpResponse:
             },
         },
     )
+
+
+@require_http_methods(["POST"])
+@ajax_login_required
+def toggle_autoplay(request: HttpRequest) -> HttpResponse:
+    request.user.autoplay = not (request.user.autoplay)
+    request.user.save(update_fields=["autoplay"])
+    return HttpResponseNoContent()
 
 
 @require_http_methods(["GET", "POST"])
