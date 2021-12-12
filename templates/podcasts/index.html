@@ -8,7 +8,7 @@
 <div class="sm:flex justify-between mb-4 lg:mb-6">
     <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-4 sm:mb-0">
         {% if promoted %}
-        Popular Podcasts
+        Trending
         {% else %}
         My Podcasts
         {% endif %}
@@ -19,13 +19,13 @@
            class="link">My Podcasts</a>
         {% else %}
         <a href="{{ index_url }}?promoted=true"
-           class="link">Popular Podcasts</a>
+           class="link">Trending</a>
         {% endif %}
     </div>
 </div>
 {% else %}
 <h1 class="font-bold text-base lg:text-lg xl:text-xl text-center sm:text-left mb-4">
-    Popular Podcasts
+    Trending
 </h1>
 {% endif %}
 
