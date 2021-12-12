@@ -70,13 +70,13 @@ def parse_podcast_feeds(
     q = Q()
 
     if after:
-        q = q | Q(pub_date__gte=now - after) | Q(pub_date__isnull=True)
+        q = q & Q(pub_date__gte=now - after) | Q(pub_date__isnull=True)
 
     if before:
-        q = q | Q(pub_date__lt=now - before)
+        q = q & Q(pub_date__lt=now - before)
 
     if primary:
-        q = q & Q(Q(promoted=True) | Q(followed=True))
+        q = q | Q(Q(promoted=True) | Q(followed=True))
     else:
         q = q & Q(promoted=False, followed=False)
 
