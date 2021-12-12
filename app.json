@@ -34,6 +34,10 @@
             "schedule": "20 3 * * *"
         },
         {
+            "command": "python manage.py fetch_top_rated",
+            "schedule": "18 4 * * *"
+        },
+        {
             "command": "python manage.py clearsessions",
             "schedule": "35 1 * * *"
         }

@@ -27,11 +27,6 @@ def mock_feed_queue(mocker):
 
 
 @pytest.fixture
-def mock_subscribe(mocker):
-    return mocker.patch("jcasts.websub.subscriber.subscribe.delay")
-
-
-@pytest.fixture
 def faker():
     return Faker()
 

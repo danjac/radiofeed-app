@@ -7,6 +7,12 @@ from jcasts.podcasts import itunes
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.podcasts.models import Podcast
 
+MOCK_RESULT = {
+    "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
+    "collectionName": "Test & Code : Python Testing",
+    "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+}
+
 
 def patch_request(mocker, response):
     return mocker.patch("requests.get", return_value=response, autospec=True)
@@ -19,15 +25,8 @@ def mock_good_response(mocker):
             ...
 
         def json(self):
-
             return {
-                "results": [
-                    {
-                        "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
-                        "collectionName": "Test & Code : Python Testing",
-                        "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                    }
-                ],
+                "results": [MOCK_RESULT],
             }
 
     yield patch_request(mocker, MockResponse())
@@ -52,6 +51,51 @@ def mock_invalid_response(mocker):
             return {"results": [{"id": 12345, "url": "bad-url"}]}
 
     yield patch_request(mocker, MockResponse())
+
+
+class TestTopRated:
+    def test_new(self, db, mocker):
+        mocker.patch(
+            "jcasts.podcasts.itunes.fetch_top_rated",
+            return_value={"feed": {"results": [{"id": "12345"}]}},
+        )
+        mocker.patch(
+            "jcasts.podcasts.itunes.fetch_lookup",
+            return_value={"results": [MOCK_RESULT]},
+        )
+
+        feeds = itunes.top_rated()
+        assert len(feeds) == 1
+        podcasts = Podcast.objects.filter(promoted=True)
+        assert podcasts.count() == 1
+        assert podcasts.first().title == "Test & Code : Python Testing"
+
+    def test_exception(self, db, mocker):
+        mocker.patch(
+            "jcasts.podcasts.itunes.fetch_top_rated",
+            side_effect=requests.HTTPError,
+        )
+        feeds = itunes.top_rated()
+        assert len(feeds) == 0
+
+    def test_existing(self, db, mocker):
+        mocker.patch(
+            "jcasts.podcasts.itunes.fetch_top_rated",
+            return_value={"feed": {"results": [{"id": "12345"}]}},
+        )
+        mocker.patch(
+            "jcasts.podcasts.itunes.fetch_lookup",
+            return_value={"results": [MOCK_RESULT]},
+        )
+
+        podcast = PodcastFactory(rss=MOCK_RESULT["feedUrl"])
+
+        feeds = itunes.top_rated()
+        assert len(feeds) == 1
+        assert feeds[0].podcast == podcast
+
+        podcast.refresh_from_db()
+        assert podcast.promoted
 
 
 class TestSearch:

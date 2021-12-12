@@ -6,6 +6,13 @@ from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
 
 
+class TestFetchTopRated:
+    def test_command(self, mocker):
+        mock_top_rated = mocker.patch("jcasts.podcasts.itunes.top_rated")
+        call_command("fetch_top_rated")
+        mock_top_rated.assert_called()
+
+
 class TestClearFeedQueue:
     def test_command(self, db):
         now = timezone.now()
