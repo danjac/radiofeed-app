@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import http
 import secrets
 import traceback
@@ -180,7 +181,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
 def parse_content(
     podcast: Podcast,
-) -> tuple[requests.Response, rss_parser.Feed, list[rss_parser.Item]]:
+) -> tuple[requests.Response, str, rss_parser.Feed, list[rss_parser.Item]]:
 
     response = requests.get(
         podcast.rss,
@@ -200,12 +201,16 @@ def parse_content(
     ):
         raise DuplicateFeed(response=response)
 
-    return response, *rss_parser.parse_rss(response.content)
+    if (content_hash := make_content_hash(response.content)) == podcast.content_hash:
+        raise NotModified(response=response)
+
+    return response, content_hash, *rss_parser.parse_rss(response.content)
 
 
 def parse_success(
     podcast: Podcast,
     response: requests.Response,
+    content_hash: str,
     feed: rss_parser.Feed,
     items: list[rss_parser.Item],
 ) -> ParseResult:
@@ -213,6 +218,7 @@ def parse_success(
     # feed status
 
     podcast.rss = response.url
+    podcast.content_hash = content_hash
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
@@ -350,6 +356,10 @@ def get_feed_headers(podcast: Podcast) -> dict[str, str]:
     if podcast.modified:
         headers["If-Modified-Since"] = http_date(podcast.modified.timestamp())
     return headers
+
+
+def make_content_hash(content: bytes) -> str:
+    return hashlib.sha256(content).hexdigest()
 
 
 @lru_cache

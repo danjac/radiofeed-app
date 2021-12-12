@@ -277,6 +277,7 @@ class TestParsePodcastFeed:
 
         assert new_podcast.rss
         assert new_podcast.active
+        assert new_podcast.content_hash
         assert new_podcast.errors == 0
         assert new_podcast.title == "Mysterious Universe"
 
@@ -307,6 +308,34 @@ class TestParsePodcastFeed:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
+
+    def test_parse_podcast_feed_same_content(self, mocker, new_podcast, categories):
+
+        content = self.get_rss_content()
+
+        Podcast.objects.filter(pk=new_podcast.id).update(
+            content_hash=feed_parser.make_content_hash(content)
+        )
+
+        mocker.patch(
+            self.mock_http_get,
+            return_value=MockResponse(
+                url=new_podcast.rss,
+                content=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            ),
+        )
+        assert not feed_parser.parse_podcast_feed(new_podcast.id)
+
+        new_podcast.refresh_from_db()
+        assert new_podcast.active
+        assert new_podcast.modified is None
+        assert new_podcast.parsed
+        assert not new_podcast.queued
+        assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
 

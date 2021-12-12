@@ -117,6 +117,9 @@ class Podcast(models.Model):
         max_length=20, choices=Result.choices, null=True, blank=True
     )
 
+    # hash of last polled content
+    content_hash: str | None = models.CharField(max_length=64, null=True, blank=True)
+
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
     exception: str = models.TextField(blank=True)
