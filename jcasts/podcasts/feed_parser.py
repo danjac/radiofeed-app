@@ -76,7 +76,7 @@ def parse_podcast_feeds(
         q = q & Q(pub_date__lt=now - before)
 
     if primary:
-        q = q | Q(Q(promoted=True) | Q(followed=True))
+        q = q & Q(Q(promoted=True) | Q(followed=True))
     else:
         q = q & Q(promoted=False, followed=False)
 
