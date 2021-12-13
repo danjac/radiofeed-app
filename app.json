@@ -18,7 +18,7 @@
             "schedule": "*/12 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --after=3 --limit=150",
+            "command": "python manage.py parse_podcast_feeds --after=3 --limit=300",
             "schedule": "30 * * * *"
         },
         {
