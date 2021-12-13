@@ -70,7 +70,7 @@ def parse_podcast_feeds(
     q = Q()
 
     if after:
-        q = q & Q(Q(pub_date__gte=now - after) | Q(pub_date__isnull=True))
+        q = q & Q(pub_date__gte=now - after)
     if before:
         q = q & Q(pub_date__lt=now - before)
 
@@ -78,6 +78,8 @@ def parse_podcast_feeds(
         q = q & Q(Q(promoted=True) | Q(followed=True))
     else:
         q = q & Q(promoted=False, followed=False)
+
+    q = q | Q(pub_date__isnull=True)
 
     enqueue_many(
         Podcast.objects.with_followed()
