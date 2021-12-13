@@ -128,28 +128,34 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        return handle_ok(podcast, *parse_content(podcast))
+        return handle_success(podcast, *parse_content(podcast))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
 
     except NotModified as e:
-        return handle_not_modified(podcast, status=e.response.status_code)
+        return handle_failure(
+            podcast,
+            result=Podcast.Result.NOT_MODIFIED,  # type: ignore
+            status=e.response.status_code,
+        )
 
     except DuplicateFeed as e:
-        return handle_inactive(
+        return handle_failure(
             podcast,
             result=Podcast.Result.DUPLICATE_FEED,  # type: ignore
             status=e.response.status_code,
+            active=False,
         )
 
     except requests.HTTPError as e:
 
         if e.response.status_code == http.HTTPStatus.GONE:
-            return handle_inactive(
+            return handle_failure(
                 podcast,
                 result=Podcast.Result.HTTP_ERROR,  # type: ignore
                 status=e.response.status_code,
+                active=False,
             )
 
         return handle_error(
@@ -203,7 +209,7 @@ def parse_content(
     return response, content_hash, *rss_parser.parse_rss(response.content)
 
 
-def handle_ok(
+def handle_success(
     podcast: Podcast,
     response: requests.Response,
     content_hash: str,
@@ -271,14 +277,6 @@ def handle_ok(
         success=True,
         status=response.status_code,
     )
-
-
-def handle_not_modified(podcast: Podcast, **kwargs) -> ParseResult:
-    return handle_failure(podcast, result=Podcast.Result.NOT_MODIFIED, **kwargs)  # type: ignore
-
-
-def handle_inactive(podcast: Podcast, **kwargs):
-    return handle_failure(podcast, active=False, **kwargs)
 
 
 def handle_error(podcast: Podcast, **kwargs) -> ParseResult:
