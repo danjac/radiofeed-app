@@ -273,83 +273,53 @@ def handle_ok(
     )
 
 
-def handle_not_modified(podcast: Podcast, status: int | None = None) -> ParseResult:
+def handle_not_modified(podcast: Podcast, **kwargs) -> ParseResult:
+    return handle_failure(podcast, result=Podcast.Result.NOT_MODIFIED, **kwargs)  # type: ignore
 
-    now = timezone.now()
 
-    Podcast.objects.filter(pk=podcast.id).update(
-        result=Podcast.Result.NOT_MODIFIED,
-        http_status=status,
-        parsed=now,
-        updated=now,
-        queued=None,
-    )
+def handle_inactive(podcast: Podcast, **kwargs):
+    return handle_failure(podcast, active=False, **kwargs)
 
-    return ParseResult(
-        rss=podcast.rss,
-        success=False,
-        status=status,
-        result=Podcast.Result.NOT_MODIFIED,  # type: ignore
+
+def handle_error(podcast: Podcast, **kwargs) -> ParseResult:
+
+    errors = podcast.errors + 1
+
+    return handle_failure(
+        podcast, errors=errors, active=errors < PARSE_ERROR_LIMIT, **kwargs
     )
 
 
-def handle_inactive(
+def handle_failure(
     podcast: Podcast,
     *,
+    active: bool = True,
     status: int | None = None,
     result: Podcast.Result | None = None,
-):
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk=podcast.id).update(
-        parsed=now,
-        updated=now,
-        active=False,
-        result=result,
-        http_status=status,
-        queued=None,
-    )
-
-    return ParseResult(
-        rss=podcast.rss,
-        success=False,
-        status=status,
-        result=result.value if result else None,
-    )
-
-
-def handle_error(
-    podcast: Podcast,
-    *,
-    status: int | None = None,
-    result: Podcast.Result | None = None,
+    errors: int = 0,
     exception: Exception | None = None,
     tb: str = "",
 ) -> ParseResult:
 
-    errors = podcast.errors + 1
-    active = errors < PARSE_ERROR_LIMIT
-
     now = timezone.now()
 
     Podcast.objects.filter(pk=podcast.id).update(
-        parsed=now,
-        updated=now,
         active=active,
         result=result,
         http_status=status,
-        exception=tb,
         errors=errors,
+        parsed=now,
+        updated=now,
         queued=None,
+        exception=tb,
     )
 
     return ParseResult(
         rss=podcast.rss,
         success=False,
         status=status,
-        result=result.value if result else None,
         exception=exception,
+        result=result.value if result else None,
     )
 
 
