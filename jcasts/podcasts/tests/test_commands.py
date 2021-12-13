@@ -70,7 +70,12 @@ class TestMakeRecommendations:
 
 
 class TestParsePodcastFeeds:
-    def test_command(self, db, mock_feed_queue):
+    def test_primary(self, db, mock_feed_queue):
+        podcast = PodcastFactory(promoted=True)
+        call_command("parse_podcast_feeds", primary=True)
+        assert podcast.id in mock_feed_queue.enqueued
+
+    def test_secondary(self, db, mock_feed_queue):
         podcast = PodcastFactory(pub_date=None)
-        call_command("parse_podcast_feeds")
+        call_command("parse_podcast_feeds", after=24, before=3)
         assert podcast.id in mock_feed_queue.enqueued

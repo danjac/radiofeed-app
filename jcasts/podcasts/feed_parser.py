@@ -11,7 +11,7 @@ import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
 from django_rq import get_queue
@@ -57,14 +57,17 @@ class ParseResult:
             raise self.exception
 
 
-def parse_podcast_feeds(
-    *,
-    queue: str = "feeds",
-    limit: int = 200,
-    primary: bool = False,
-    after: timedelta | None = None,
-    before: timedelta | None = None,
+def parse_primary_feeds(**kwargs) -> None:
+    parse_podcast_feeds(
+        Podcast.objects.with_followed().filter(Q(promoted=True) | Q(followed=True)),
+        **kwargs,
+    )
+
+
+def parse_secondary_feeds(
+    after: timedelta | None = None, before: timedelta | None = None, **kwargs
 ) -> None:
+
     now = timezone.now()
 
     q = Q()
@@ -74,18 +77,26 @@ def parse_podcast_feeds(
     if before:
         q &= Q(pub_date__lt=now - before)
 
-    q &= (
-        Q(Q(promoted=True) | Q(followed=True))
-        if primary
-        else Q(promoted=False, followed=False)
-    )
-
     q |= Q(pub_date__isnull=True)
 
-    enqueue_many(
-        Podcast.objects.with_followed()
-        .filter(
+    parse_podcast_feeds(
+        Podcast.objects.with_followed().filter(
             q,
+            promoted=False,
+            followed=False,
+        ),
+        **kwargs,
+    )
+
+
+def parse_podcast_feeds(
+    podcasts: QuerySet,
+    queue: str = "feeds",
+    limit: int = 300,
+) -> None:
+
+    enqueue_many(
+        podcasts.filter(
             active=True,
             queued__isnull=True,
         )
@@ -102,7 +113,7 @@ def parse_podcast_feeds(
 
 def enqueue_many(podcast_ids: list[int], *, queue: str = "feeds") -> None:
 
-    if not podcast_ids:
+    if not (podcast_ids := list(podcast_ids)):
         return
 
     now = timezone.now()

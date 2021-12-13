@@ -49,13 +49,18 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
 
-        after = timedelta(hours=options["after"]) if options["after"] else None
-        before = timedelta(hours=options["before"]) if options["before"] else None
+        if options["primary"]:
+            feed_parser.parse_primary_feeds(
+                queue=options["queue"],
+                limit=options["limit"],
+            )
+        else:
 
-        feed_parser.parse_podcast_feeds(
-            after=after,
-            before=before,
-            primary=options["primary"],
-            queue=options["queue"],
-            limit=options["limit"],
-        )
+            feed_parser.parse_secondary_feeds(
+                after=timedelta(hours=options["after"]) if options["after"] else None,
+                before=timedelta(hours=options["before"])
+                if options["before"]
+                else None,
+                queue=options["queue"],
+                limit=options["limit"],
+            )
