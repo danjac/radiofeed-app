@@ -128,6 +128,15 @@ class TestPubDateFilter:
         assert qs.count() == 3
         assert no_pub_date not in qs
 
+    def test_fresh(self, db, admin, req):
+        now = timezone.now()
+        PodcastFactory(pub_date=now - timedelta(days=1))
+        fresh = PodcastFactory(pub_date=now - timedelta(hours=1))
+        f = PubDateFilter(req, {"pub_date": "fresh"}, Podcast, admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert fresh in qs
+
     def test_recent(self, db, admin, req):
         now = timezone.now()
         PodcastFactory(pub_date=now - timedelta(days=30))

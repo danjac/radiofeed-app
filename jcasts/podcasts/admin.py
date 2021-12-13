@@ -71,21 +71,24 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
+            ("fresh", "Fresh (> 3 hours)"),
             ("recent", "Recent (> 14 days)"),
             ("sporadic", "Sporadic (< 14 days)"),
         )
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         now = timezone.now()
-        interval = timedelta(days=14)
         return {
             "yes": queryset.filter(pub_date__isnull=False),
             "no": queryset.filter(pub_date__isnull=True),
+            "fresh": queryset.filter(
+                pub_date__gt=now - timedelta(hours=3),
+            ),
             "recent": queryset.filter(
-                pub_date__gt=now - interval,
+                pub_date__gt=now - timedelta(days=14),
             ),
             "sporadic": queryset.filter(
-                pub_date__lt=now - interval,
+                pub_date__lt=now - timedelta(days=14),
             ),
         }.setdefault(self.value(), queryset)
 
