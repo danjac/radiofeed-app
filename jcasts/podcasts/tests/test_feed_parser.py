@@ -581,8 +581,9 @@ class TestParsePodcastFeed:
             return_value=BadMockResponse(status=http.HTTPStatus.INTERNAL_SERVER_ERROR),
         )
         result = feed_parser.parse_podcast_feed(new_podcast.id)
-        # no exception set for http errors
-        result.raise_exception()
+
+        with pytest.raises(requests.HTTPError):
+            result.raise_exception()
 
         assert result.success is False
 
@@ -606,8 +607,9 @@ class TestParsePodcastFeed:
         new_podcast.save()
 
         result = feed_parser.parse_podcast_feed(new_podcast.id)
-        # no exception set for http errors
-        result.raise_exception()
+
+        with pytest.raises(requests.HTTPError):
+            result.raise_exception()
 
         assert result.success is False
 

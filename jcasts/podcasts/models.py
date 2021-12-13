@@ -122,8 +122,6 @@ class Podcast(models.Model):
 
     http_status: int | None = models.SmallIntegerField(null=True, blank=True)
 
-    exception: str = models.TextField(blank=True)
-
     errors: int = models.PositiveIntegerField(default=0)
 
     cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)

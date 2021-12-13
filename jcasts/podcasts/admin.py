@@ -167,7 +167,6 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         "http_status",
         "result",
         "content_hash",
-        "exception",
     )
 
     actions = (

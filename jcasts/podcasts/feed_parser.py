@@ -3,7 +3,6 @@ from __future__ import annotations
 import hashlib
 import http
 import secrets
-import traceback
 
 from datetime import timedelta
 from functools import lru_cache
@@ -158,26 +157,25 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
                 active=False,
             )
 
-        return parse_error(
+        return parse_miss(
             podcast,
             result=Podcast.Result.HTTP_ERROR,  # type: ignore
             status=e.response.status_code,
+            exception=e,
         )
 
     except requests.RequestException as e:
-        return parse_error(
+        return parse_miss(
             podcast,
             result=Podcast.Result.NETWORK_ERROR,  # type: ignore
             exception=e,
-            tb=traceback.format_exc(),
         )
 
     except rss_parser.RssParserError as e:
-        return parse_error(
+        return parse_miss(
             podcast,
             result=Podcast.Result.INVALID_RSS,  # type: ignore
             exception=e,
-            tb=traceback.format_exc(),
         )
 
 
@@ -279,27 +277,19 @@ def parse_hit(
     )
 
 
-def parse_error(podcast: Podcast, **kwargs) -> ParseResult:
-
-    errors = podcast.errors + 1
-
-    return parse_miss(
-        podcast, errors=errors, active=errors < PARSE_ERROR_LIMIT, **kwargs
-    )
-
-
 def parse_miss(
     podcast: Podcast,
     *,
     active: bool = True,
     status: int | None = None,
     result: Podcast.Result | None = None,
-    errors: int = 0,
     exception: Exception | None = None,
-    tb: str = "",
 ) -> ParseResult:
 
     now = timezone.now()
+
+    errors = podcast.errors + 1 if exception else 0
+    active = active and errors < PARSE_ERROR_LIMIT
 
     Podcast.objects.filter(pk=podcast.id).update(
         active=active,
@@ -309,7 +299,6 @@ def parse_miss(
         parsed=now,
         updated=now,
         queued=None,
-        exception=tb,
     )
 
     return ParseResult(
