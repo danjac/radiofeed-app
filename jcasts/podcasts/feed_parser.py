@@ -128,54 +128,50 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        return parse_success(podcast, *parse_content(podcast))
+        return handle_ok(podcast, *parse_content(podcast))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
 
     except NotModified as e:
-        return parse_failure(
-            podcast,
-            status=e.response.status_code,
-            result=Podcast.Result.NOT_MODIFIED,  # type: ignore
-        )
+        return handle_not_modified(podcast, status=e.response.status_code)
 
     except DuplicateFeed as e:
-        return parse_failure(
+        return handle_inactive(
             podcast,
             result=Podcast.Result.DUPLICATE_FEED,  # type: ignore
             status=e.response.status_code,
-            active=False,
         )
 
     except requests.HTTPError as e:
 
-        dead = e.response.status_code == http.HTTPStatus.GONE
+        if e.response.status_code == http.HTTPStatus.GONE:
+            return handle_inactive(
+                podcast,
+                result=Podcast.Result.HTTP_ERROR,  # type: ignore
+                status=e.response.status_code,
+            )
 
-        return parse_failure(
+        return handle_error(
             podcast,
             result=Podcast.Result.HTTP_ERROR,  # type: ignore
             status=e.response.status_code,
-            active=not dead,
-            error=not dead,
         )
 
     except requests.RequestException as e:
-        return parse_failure(
+        return handle_error(
             podcast,
-            exception=e,
             result=Podcast.Result.NETWORK_ERROR,  # type: ignore
+            exception=e,
             tb=traceback.format_exc(),
-            error=True,
         )
 
     except rss_parser.RssParserError as e:
-        return parse_failure(
+        return handle_error(
             podcast,
             result=Podcast.Result.INVALID_RSS,  # type: ignore
             exception=e,
             tb=traceback.format_exc(),
-            error=True,
         )
 
 
@@ -207,7 +203,7 @@ def parse_content(
     return response, content_hash, *rss_parser.parse_rss(response.content)
 
 
-def parse_success(
+def handle_ok(
     podcast: Podcast,
     response: requests.Response,
     content_hash: str,
@@ -274,6 +270,86 @@ def parse_success(
         rss=podcast.rss,
         success=True,
         status=response.status_code,
+    )
+
+
+def handle_not_modified(podcast: Podcast, status: int | None = None) -> ParseResult:
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=podcast.id).update(
+        result=Podcast.Result.NOT_MODIFIED,
+        http_status=status,
+        parsed=now,
+        updated=now,
+        queued=None,
+    )
+
+    return ParseResult(
+        rss=podcast.rss,
+        success=False,
+        status=status,
+        result=Podcast.Result.NOT_MODIFIED,  # type: ignore
+    )
+
+
+def handle_inactive(
+    podcast: Podcast,
+    *,
+    status: int | None = None,
+    result: Podcast.Result | None = None,
+):
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=podcast.id).update(
+        parsed=now,
+        updated=now,
+        active=False,
+        result=result,
+        http_status=status,
+        queued=None,
+    )
+
+    return ParseResult(
+        rss=podcast.rss,
+        success=False,
+        status=status,
+        result=result.value if result else None,
+    )
+
+
+def handle_error(
+    podcast: Podcast,
+    *,
+    status: int | None = None,
+    result: Podcast.Result | None = None,
+    exception: Exception | None = None,
+    tb: str = "",
+) -> ParseResult:
+
+    errors = podcast.errors + 1
+    active = errors < PARSE_ERROR_LIMIT
+
+    now = timezone.now()
+
+    Podcast.objects.filter(pk=podcast.id).update(
+        parsed=now,
+        updated=now,
+        active=active,
+        result=result,
+        http_status=status,
+        exception=tb,
+        errors=errors,
+        queued=None,
+    )
+
+    return ParseResult(
+        rss=podcast.rss,
+        success=False,
+        status=status,
+        result=result.value if result else None,
+        exception=exception,
     )
 
 
@@ -365,39 +441,3 @@ def make_content_hash(content: bytes) -> str:
 @lru_cache
 def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="name")
-
-
-def parse_failure(
-    podcast: Podcast,
-    *,
-    status: int | None = None,
-    active: bool = True,
-    error: bool = False,
-    result: Podcast.Result | None = None,
-    exception: Exception | None = None,
-    tb: str = "",
-) -> ParseResult:
-
-    errors = podcast.errors + 1 if error else 0
-    active = active and errors < PARSE_ERROR_LIMIT
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk=podcast.id).update(
-        parsed=now,
-        updated=now,
-        active=active,
-        result=result,
-        http_status=status,
-        exception=tb,
-        errors=errors,
-        queued=None,
-    )
-
-    return ParseResult(
-        rss=podcast.rss,
-        success=False,
-        status=status,
-        result=result.value if result else None,
-        exception=exception,
-    )
