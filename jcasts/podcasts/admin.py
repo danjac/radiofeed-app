@@ -64,6 +64,7 @@ class ResultFilter(admin.SimpleListFilter):
 class PubDateFilter(admin.SimpleListFilter):
     title = "Pub Date"
     parameter_name = "pub_date"
+    interval = timedelta(days=14)
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
@@ -81,14 +82,11 @@ class PubDateFilter(admin.SimpleListFilter):
         return {
             "yes": queryset.filter(pub_date__isnull=False),
             "no": queryset.filter(pub_date__isnull=True),
-            "fresh": queryset.filter(
-                pub_date__gt=now - timedelta(hours=3),
-            ),
             "recent": queryset.filter(
-                pub_date__gt=now - timedelta(days=14),
+                pub_date__gt=now - self.interval,
             ),
             "sporadic": queryset.filter(
-                pub_date__lt=now - timedelta(days=14),
+                pub_date__lt=now - self.interval,
             ),
         }.setdefault(self.value(), queryset)
 
