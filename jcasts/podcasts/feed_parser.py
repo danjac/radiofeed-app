@@ -218,7 +218,6 @@ def parse_success(
     # feed status
 
     podcast.rss = response.url
-    podcast.content_hash = content_hash
     podcast.http_status = response.status_code
     podcast.etag = response.headers.get("ETag", "")
     podcast.modified = date_parser.parse_date(response.headers.get("Last-Modified"))
@@ -228,6 +227,7 @@ def parse_success(
     podcast.parsed = timezone.now()
     podcast.queued = None
     podcast.result = Podcast.Result.SUCCESS  # type: ignore
+    podcast.content_hash = content_hash
     podcast.exception = ""
 
     podcast.active = not feed.complete
