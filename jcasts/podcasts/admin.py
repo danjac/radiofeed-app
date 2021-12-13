@@ -72,7 +72,6 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
-            ("fresh", "Fresh (> 3 hours)"),
             ("recent", "Recent (> 14 days)"),
             ("sporadic", "Sporadic (< 14 days)"),
         )
