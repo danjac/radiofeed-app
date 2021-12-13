@@ -128,20 +128,20 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
 
     try:
         podcast = Podcast.objects.filter(active=True).get(pk=podcast_id)
-        return handle_success(podcast, *parse_content(podcast))
+        return parse_hit(podcast, *parse_content(podcast))
 
     except Podcast.DoesNotExist as e:
         return ParseResult(rss=None, success=False, exception=e)
 
     except NotModified as e:
-        return handle_failure(
+        return parse_miss(
             podcast,
             result=Podcast.Result.NOT_MODIFIED,  # type: ignore
             status=e.response.status_code,
         )
 
     except DuplicateFeed as e:
-        return handle_failure(
+        return parse_miss(
             podcast,
             result=Podcast.Result.DUPLICATE_FEED,  # type: ignore
             status=e.response.status_code,
@@ -151,21 +151,21 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
     except requests.HTTPError as e:
 
         if e.response.status_code == http.HTTPStatus.GONE:
-            return handle_failure(
+            return parse_miss(
                 podcast,
                 result=Podcast.Result.HTTP_ERROR,  # type: ignore
                 status=e.response.status_code,
                 active=False,
             )
 
-        return handle_error(
+        return parse_error(
             podcast,
             result=Podcast.Result.HTTP_ERROR,  # type: ignore
             status=e.response.status_code,
         )
 
     except requests.RequestException as e:
-        return handle_error(
+        return parse_error(
             podcast,
             result=Podcast.Result.NETWORK_ERROR,  # type: ignore
             exception=e,
@@ -173,7 +173,7 @@ def parse_podcast_feed(podcast_id: int) -> ParseResult:
         )
 
     except rss_parser.RssParserError as e:
-        return handle_error(
+        return parse_error(
             podcast,
             result=Podcast.Result.INVALID_RSS,  # type: ignore
             exception=e,
@@ -209,7 +209,7 @@ def parse_content(
     return response, content_hash, *rss_parser.parse_rss(response.content)
 
 
-def handle_success(
+def parse_hit(
     podcast: Podcast,
     response: requests.Response,
     content_hash: str,
@@ -279,16 +279,16 @@ def handle_success(
     )
 
 
-def handle_error(podcast: Podcast, **kwargs) -> ParseResult:
+def parse_error(podcast: Podcast, **kwargs) -> ParseResult:
 
     errors = podcast.errors + 1
 
-    return handle_failure(
+    return parse_miss(
         podcast, errors=errors, active=errors < PARSE_ERROR_LIMIT, **kwargs
     )
 
 
-def handle_failure(
+def parse_miss(
     podcast: Podcast,
     *,
     active: bool = True,
