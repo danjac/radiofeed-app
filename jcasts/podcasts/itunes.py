@@ -52,9 +52,6 @@ def top_rated() -> Generator[Feed]:
             parse_feed_data(fetch_lookup(result["id"])),
             promoted=True,
         )
-        
-        if feed.podcast:
-            podcast_ids.append(feed.podcast.id)
 
 
 def fetch_json(url: str, data: dict | None = None) -> dict:
