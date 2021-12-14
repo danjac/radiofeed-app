@@ -3,10 +3,10 @@ from __future__ import annotations
 import base64
 import logging
 
+from typing import Generator, Iterator
+
 import attr
 import requests
-
-from typing import Generator
 
 from django.core.cache import cache
 
@@ -31,9 +31,9 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(search_term: str) -> Generator[Feed]:
+def search(search_term: str) -> Generator[Feed, None, None]:
     yield from with_podcasts(parse_feed_data(fetch_search(search_term)))
-    
+
 
 def search_cached(search_term: str) -> list[Feed]:
 
@@ -44,10 +44,10 @@ def search_cached(search_term: str) -> list[Feed]:
     return feeds
 
 
-def top_rated() -> Generator[Feed]:
-            
+def top_rated() -> Generator[Feed, None, None]:
+
     for result in fetch_top_rated()["feed"]["results"]:
-        
+
         yield from with_podcasts(
             parse_feed_data(fetch_lookup(result["id"])),
             promoted=True,
@@ -80,8 +80,8 @@ def fetch_lookup(lookup_id: str) -> dict:
     )  # pragma: no cover
 
 
-def parse_feed_data(data: dict) -> Generator[Feed]:
-    
+def parse_feed_data(data: dict) -> Generator[Feed, None, None]:
+
     for result in data.get("results", []):
         try:
             yield Feed(
@@ -93,28 +93,34 @@ def parse_feed_data(data: dict) -> Generator[Feed]:
             pass
 
 
-def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed]:
-    """Looks up podcast associated with result.
+def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed, None, None]:
+    """
+    Adds any existing podcasts to result. Create any new podcasts if feed
+    URL not found in database.
+    """
 
-    If `add_new` is True, adds new podcasts if they are not already in the database"""
+    feed_list = list(feeds)
 
-    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
+    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feed_list]).in_bulk(
         field_name="rss"
     )
 
     new_podcasts: list[Podcast] = []
     podcast_ids: list[int] = []
 
-    for feed in feeds:
+    for feed in feed_list:
+
         feed.podcast = podcasts.get(feed.url, None)
+
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url, **defaults))
         else:
             podcast_ids.append(feed.podcast.id)
+
         yield feed
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
-     
+
     if podcast_ids and defaults:
         Podcast.objects.filter(pk__in=podcast_ids).update(**defaults)

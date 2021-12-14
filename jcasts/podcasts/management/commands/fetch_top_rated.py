@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from django.core.management.base import BaseCommand
+import requests
+
+from django.core.management.base import BaseCommand, CommandError
 
 from jcasts.podcasts import itunes
 
@@ -9,5 +11,8 @@ class Command(BaseCommand):
     help = "Fetch top rated feeds"
 
     def handle(self, *args, **options) -> None:
-        for feed in itunes.top_rated():
-            self.stdout.write(feed.url)
+        try:
+            for feed in itunes.top_rated():
+                self.stdout.write(feed.url)
+        except requests.RequestException as e:
+            raise CommandError from e

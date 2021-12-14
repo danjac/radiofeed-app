@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import logging
+
+import requests
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
@@ -112,7 +116,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def search_itunes(request: HttpRequest) -> HttpResponse:
 
-    feeds = itunes.search_cached(request.search.value) if request.search else []
+    try:
+        feeds = itunes.search_cached(request.search.value) if request.search else []
+    except requests.RequestException as e:
+        logging.exception(e)
+        feeds = []
 
     return TemplateResponse(
         request,

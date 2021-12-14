@@ -64,19 +64,11 @@ class TestTopRated:
             return_value={"results": [MOCK_RESULT]},
         )
 
-        feeds = itunes.top_rated()
+        feeds = list(itunes.top_rated())
         assert len(feeds) == 1
         podcasts = Podcast.objects.filter(promoted=True)
         assert podcasts.count() == 1
         assert podcasts.first().title == "Test & Code : Python Testing"
-
-    def test_exception(self, db, mocker):
-        mocker.patch(
-            "jcasts.podcasts.itunes.fetch_top_rated",
-            side_effect=requests.HTTPError,
-        )
-        feeds = itunes.top_rated()
-        assert len(feeds) == 0
 
     def test_existing(self, db, mocker):
         mocker.patch(
@@ -90,7 +82,7 @@ class TestTopRated:
 
         podcast = PodcastFactory(rss=MOCK_RESULT["feedUrl"])
 
-        feeds = itunes.top_rated()
+        feeds = list(itunes.top_rated())
         assert len(feeds) == 1
         assert feeds[0].podcast == podcast
 
@@ -102,16 +94,17 @@ class TestSearch:
     cache_key = "itunes:6447567a64413d3d"
 
     def test_not_ok(self, db, mock_bad_response):
-        assert itunes.search("test") == []
+        with pytest.raises(requests.HTTPError):
+            list(itunes.search("test"))
         assert not Podcast.objects.exists()
 
     def test_ok(self, db, mock_good_response):
-        feeds = itunes.search("test")
+        feeds = list(itunes.search("test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()
 
     def test_bad_data(self, db, mock_invalid_response):
-        feeds = itunes.search("test")
+        feeds = list(itunes.search("test"))
         assert len(feeds) == 0
 
     def test_is_not_cached(
@@ -149,6 +142,6 @@ class TestSearch:
 
     def test_podcast_exists(self, db, mock_good_response):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
-        feeds = itunes.search("test")
+        feeds = list(itunes.search("test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].url).exists()

@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 from django.urls import reverse, reverse_lazy
 
@@ -158,6 +159,17 @@ class TestSearchITunes:
             )
         ]
         mock_search = mocker.patch("jcasts.podcasts.itunes.search", return_value=feeds)
+
+        with django_assert_num_queries(1):
+            resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
+        assert_ok(resp)
+
+        mock_search.assert_called()
+
+    def test_search_exception(self, client, db, mocker, django_assert_num_queries):
+        mock_search = mocker.patch(
+            "jcasts.podcasts.itunes.search", side_effect=requests.RequestException
+        )
 
         with django_assert_num_queries(1):
             resp = client.get(reverse("podcasts:search_itunes"), {"q": "test"})
