@@ -95,8 +95,8 @@ def parse_podcast_feeds(
     limit: int = 300,
 ) -> None:
 
-    enqueue_many(
-        podcasts.filter(
+    enqueue(
+        *podcasts.filter(
             active=True,
             queued__isnull=True,
         )
@@ -111,9 +111,9 @@ def parse_podcast_feeds(
     )
 
 
-def enqueue_many(podcast_ids: list[int], queue: str = "feeds") -> None:
+def enqueue(*args: int, queue: str = "feeds") -> None:
 
-    if not (podcast_ids := list(podcast_ids)):
+    if not (podcast_ids := list(args)):
         return
 
     now = timezone.now()
@@ -124,15 +124,6 @@ def enqueue_many(podcast_ids: list[int], queue: str = "feeds") -> None:
 
     for podcast_id in podcast_ids:
         job_queue.enqueue(parse_podcast_feed, podcast_id)
-
-
-def enqueue(podcast_id: int, queue: str = "feeds") -> None:
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk=podcast_id).update(queued=now, updated=now)
-
-    get_queue(queue).enqueue(parse_podcast_feed, podcast_id)
 
 
 @transaction.atomic

@@ -58,7 +58,7 @@ class BadMockResponse(MockResponse):
 
 
 class TestEnqueue:
-    def test_enqueue(self, db, mock_feed_queue, podcast):
+    def test_enqueue_one(self, db, mock_feed_queue, podcast):
 
         feed_parser.enqueue(podcast.id)
         assert podcast.id in mock_feed_queue.enqueued
@@ -66,13 +66,13 @@ class TestEnqueue:
 
     def test_enqueue_many(self, db, mock_feed_queue, podcast):
 
-        feed_parser.enqueue_many([podcast.id])
+        feed_parser.enqueue(*[podcast.id])
         assert podcast.id in mock_feed_queue.enqueued
         assert Podcast.objects.filter(queued__isnull=False).exists() is True
 
     def test_empty(self, db, mock_feed_queue):
 
-        feed_parser.enqueue_many([])
+        feed_parser.enqueue(*[])
 
         assert not mock_feed_queue.enqueued
         assert Podcast.objects.filter(queued__isnull=False).exists() is False

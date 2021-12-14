@@ -187,7 +187,7 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
         podcast_ids = list(
             queryset.filter(queued__isnull=True).values_list("pk", flat=True)
         )
-        feed_parser.enqueue_many(podcast_ids)
+        feed_parser.enqueue(*podcast_ids)
 
         self.message_user(
             request,
