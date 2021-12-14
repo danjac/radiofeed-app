@@ -18,6 +18,9 @@ class MockFeedQueue:
     def enqueue(self, fn, podcast_id, *args, **kwargs):
         self.enqueued.append(podcast_id)
 
+    def empty(self):
+        self.enqueued = []
+
 
 @pytest.fixture
 def mock_feed_queue(mocker):

@@ -6,13 +6,17 @@ from django.core.management.base import CommandError
 from django.utils import timezone
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
+from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
 
 
 class TestFetchTopRated:
     def test_command(self, mocker):
-        mock_top_rated = mocker.patch("jcasts.podcasts.itunes.top_rated")
+        mock_top_rated = mocker.patch(
+            "jcasts.podcasts.itunes.top_rated",
+            return_value=[Feed(url="https://example.com")],
+        )
         call_command("fetch_top_rated")
         mock_top_rated.assert_called()
 
@@ -23,12 +27,12 @@ class TestFetchTopRated:
 
 
 class TestClearFeedQueue:
-    def test_command(self, db):
+    def test_command(self, db, mock_feed_queue):
         now = timezone.now()
 
-        podcast = PodcastFactory(queued=now)
+        podcast = PodcastFactory(queued=now, feed_queue="feeds")
 
-        call_command("clear_feed_queue")
+        call_command("clear_feed_queue", ["feeds"])
 
         podcast.refresh_from_db()
         assert not podcast.queued

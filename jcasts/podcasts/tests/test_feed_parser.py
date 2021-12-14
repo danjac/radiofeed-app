@@ -57,25 +57,55 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
+class TestEmptyQueue:
+    def test_empty_queue(self, db, mock_feed_queue):
+
+        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
+        mock_feed_queue.enqueued.append(podcast.id)
+
+        feed_parser.empty_queue("feeds")
+
+        assert podcast.id not in mock_feed_queue.enqueued
+        podcast.refresh_from_db()
+
+        assert podcast.feed_queue is None
+        assert podcast.queued is None
+
+
 class TestEnqueue:
     def test_enqueue_one(self, db, mock_feed_queue, podcast):
 
         feed_parser.enqueue(podcast.id)
         assert podcast.id in mock_feed_queue.enqueued
-        assert Podcast.objects.filter(queued__isnull=False).exists() is True
+        assert (
+            Podcast.objects.filter(
+                queued__isnull=False, feed_queue__isnull=False
+            ).exists()
+            is True
+        )
 
     def test_enqueue_many(self, db, mock_feed_queue, podcast):
 
         feed_parser.enqueue(*[podcast.id])
         assert podcast.id in mock_feed_queue.enqueued
-        assert Podcast.objects.filter(queued__isnull=False).exists() is True
+        assert (
+            Podcast.objects.filter(
+                queued__isnull=False, feed_queue__isnull=False
+            ).exists()
+            is True
+        )
 
     def test_empty(self, db, mock_feed_queue):
 
         feed_parser.enqueue(*[])
 
         assert not mock_feed_queue.enqueued
-        assert Podcast.objects.filter(queued__isnull=False).exists() is False
+        assert (
+            Podcast.objects.filter(
+                queued__isnull=False, feed_queue__isnull=False
+            ).exists()
+            is False
+        )
 
 
 class TestFeedHeaders:
@@ -285,6 +315,7 @@ class TestParsePodcastFeed:
             cover_url=None,
             pub_date=now,
             queued=now,
+            feed_queue="feeds",
         )
 
     @pytest.fixture
@@ -363,6 +394,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.SUCCESS
 
         assert new_podcast.parsed
@@ -406,6 +438,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_complete(self, mocker, new_podcast, categories):
@@ -454,6 +487,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified.month == 7
         assert new_podcast.modified.year == 2020
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.SUCCESS
 
         assert new_podcast.parsed
@@ -496,6 +530,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 0
         assert new_podcast.modified
         assert new_podcast.parsed
+        assert not new_podcast.feed_queue
         assert not new_podcast.queued
 
     def test_parse_podcast_feed_permanent_redirect_url_taken(
@@ -525,6 +560,7 @@ class TestParsePodcastFeed:
         assert not new_podcast.active
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.DUPLICATE_FEED
 
     def test_parse_no_podcasts(self, mocker, new_podcast, categories):
@@ -546,6 +582,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_empty_feed(self, mocker, new_podcast, categories):
@@ -568,6 +605,7 @@ class TestParsePodcastFeed:
         assert new_podcast.errors == 1
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.INVALID_RSS
 
     def test_parse_podcast_feed_not_modified(self, mocker, new_podcast, categories):
@@ -584,6 +622,7 @@ class TestParsePodcastFeed:
         assert new_podcast.modified is None
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.NOT_MODIFIED
 
     def test_parse_podcast_feed_error(self, mocker, new_podcast, categories):
@@ -601,6 +640,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_errors_past_limit(
@@ -622,6 +662,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status is None
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.NETWORK_ERROR
 
     def test_parse_podcast_feed_http_gone(self, mocker, new_podcast, categories):
@@ -642,6 +683,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.GONE
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error(
@@ -665,6 +707,7 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.HTTP_ERROR
 
     def test_parse_podcast_feed_http_server_error_no_pub_date(
@@ -691,4 +734,5 @@ class TestParsePodcastFeed:
         assert new_podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
         assert new_podcast.parsed
         assert not new_podcast.queued
+        assert not new_podcast.feed_queue
         assert new_podcast.result == Podcast.Result.HTTP_ERROR

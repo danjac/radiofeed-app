@@ -108,6 +108,9 @@ class Podcast(models.Model):
     # has been queued for parsing
     queued: datetime | None = models.DateTimeField(null=True, blank=True)
 
+    # rq
+    feed_queue: str | None = models.CharField(max_length=30, null=True, blank=True)
+
     # Last-Modified header from RSS feed
     modified: datetime | None = models.DateTimeField(null=True, blank=True)
 
