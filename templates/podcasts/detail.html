@@ -25,7 +25,7 @@
             {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-36 lg:w-36 border dark:border-gray-500" %}
         </div>
 
-        <div class="flex flex-col place-content-between h-24 lg:h-28">
+        <div class="space-y-4 lg:space-y-5">
             {% include "podcasts/_follow_toggle.html" %}
             <div class="flex items-center space-x-3">
                 {% if link and link != podcast.rss %}
