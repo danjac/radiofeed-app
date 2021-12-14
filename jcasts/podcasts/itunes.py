@@ -6,6 +6,8 @@ import logging
 import attr
 import requests
 
+from typing import Generator
+
 from django.core.cache import cache
 
 from jcasts.podcasts.models import Podcast
@@ -29,42 +31,35 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(search_term: str) -> list[Feed]:
-    try:
-        return with_podcasts(parse_feed_data(fetch_search(search_term)))
-    except requests.RequestException as e:
-        logger.exception(e)
-        return []
-
+def search(search_term: str) -> Generator[Feed]:
+    yield from with_podcasts(parse_feed_data(fetch_search(search_term)))
+    
 
 def search_cached(search_term: str) -> list[Feed]:
 
     cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
     if (feeds := cache.get(cache_key)) is None:
-        feeds = search(search_term)
+        feeds = list(search(search_term))
         cache.set(cache_key, feeds)
     return feeds
 
 
-def top_rated() -> list[Feed]:
-    try:
-        feeds = []
+def top_rated() -> Generator[Feed]:
+    
+    podcast_ids: list[int] = []
+        
+    for result in fetch_top_rated()["feed"]["results"]:
+        
+        yield from with_podcasts(
+            parse_feed_data(fetch_lookup(result["id"])),
+            promoted=True,
+        )
+        
+        if feed.podcast:
+            podcast_ids.append(feed.podcast.id)
 
-        for result in fetch_top_rated()["feed"]["results"]:
-            feeds += with_podcasts(
-                parse_feed_data(fetch_lookup(result["id"])),
-                promoted=True,
-            )
-
-        Podcast.objects.filter(
-            pk__in=[feed.podcast.id for feed in feeds if feed.podcast]
-        ).update(promoted=True)
-
-        return feeds
-    except requests.RequestException as e:
-        logger.exception(e)
-        return []
-
+     if podcast_ids:
+         Podcast.objects.filter(pk__in=podcast_ids).update(promoted=True)
 
 def fetch_json(url: str, data: dict | None = None) -> dict:
     response = requests.get(url, data)
@@ -92,25 +87,20 @@ def fetch_lookup(lookup_id: str) -> dict:
     )  # pragma: no cover
 
 
-def parse_feed_data(data: dict) -> list[Feed]:
-    def _parse_feed(result: dict) -> Feed | None:
+def parse_feed_data(data: dict) -> Generator[Feed]:
+    
+    for result in data.get("results", []):
         try:
-            return Feed(
+            yield Feed(
                 url=result["feedUrl"],
                 title=result["collectionName"],
                 image=result["artworkUrl600"],
             )
         except KeyError:
-            return None
-
-    return [
-        feed
-        for feed in [_parse_feed(result) for result in data.get("results", [])]
-        if feed
-    ]
+            pass
 
 
-def with_podcasts(feeds: list[Feed], **defaults) -> list[Feed]:
+def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed]:
     """Looks up podcast associated with result.
 
     If `add_new` is True, adds new podcasts if they are not already in the database"""
@@ -126,8 +116,7 @@ def with_podcasts(feeds: list[Feed], **defaults) -> list[Feed]:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url, **defaults))
+        yield feed
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
-
-    return feeds
