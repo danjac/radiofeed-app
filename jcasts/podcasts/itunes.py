@@ -3,7 +3,7 @@ from __future__ import annotations
 import base64
 import logging
 
-from typing import Generator, Iterator
+from typing import Generator
 
 import attr
 import requests
@@ -31,7 +31,7 @@ class Feed:
 
 
 def search(search_term: str) -> Generator[Feed, None, None]:
-    yield from with_podcasts(parse_feed_data(fetch_search(search_term)))
+    yield from parse_feeds(fetch_search(search_term))
 
 
 def search_cached(search_term: str) -> list[Feed]:
@@ -47,8 +47,8 @@ def top_rated() -> Generator[Feed, None, None]:
 
     for result in fetch_top_rated()["feed"]["results"]:
 
-        yield from with_podcasts(
-            parse_feed_data(fetch_lookup(result["id"])),
+        yield from parse_feeds(
+            fetch_lookup(result["id"]),
             promoted=True,
         )
 
@@ -79,35 +79,23 @@ def fetch_lookup(lookup_id: str) -> dict:
     )  # pragma: no cover
 
 
-def parse_feed_data(data: dict) -> Generator[Feed, None, None]:
-
-    for result in data.get("results", []):
-        try:
-            yield Feed(
-                url=result["feedUrl"],
-                title=result["collectionName"],
-                image=result["artworkUrl600"],
-            )
-        except KeyError:
-            pass
-
-
-def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed, None, None]:
+def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
     """
     Adds any existing podcasts to result. Create any new podcasts if feed
     URL not found in database.
     """
 
-    feed_list = list(feeds)
+    if not (feeds := list(parse_results(data))):
+        return
 
-    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feed_list]).in_bulk(
+    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
         field_name="rss"
     )
 
     for_insert: list[Podcast] = []
     for_update: list[Podcast] = []
 
-    for feed in feed_list:
+    for feed in feeds:
 
         feed.podcast = podcasts.get(feed.url, None)
 
@@ -125,3 +113,17 @@ def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed, None, No
 
     if for_update and defaults:
         Podcast.objects.bulk_update(for_update, fields=defaults.keys())
+
+
+def parse_results(data: dict) -> Generator[Feed, None, None]:
+
+    for result in data.get("results", []):
+
+        try:
+            yield Feed(
+                url=result["feedUrl"],
+                title=result["collectionName"],
+                image=result["artworkUrl600"],
+            )
+        except KeyError:
+            pass
