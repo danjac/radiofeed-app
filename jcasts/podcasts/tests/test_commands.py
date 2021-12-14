@@ -1,4 +1,8 @@
+import pytest
+import requests
+
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.utils import timezone
 
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
@@ -11,6 +15,11 @@ class TestFetchTopRated:
         mock_top_rated = mocker.patch("jcasts.podcasts.itunes.top_rated")
         call_command("fetch_top_rated")
         mock_top_rated.assert_called()
+
+    def test_exception(self, mocker):
+        mocker.patch("jcasts.podcasts.itunes.top_rated", side_effect=requests.HTTPError)
+        with pytest.raises(CommandError):
+            call_command("fetch_top_rated")
 
 
 class TestClearFeedQueue:
