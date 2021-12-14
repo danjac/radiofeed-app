@@ -45,9 +45,7 @@ def search_cached(search_term: str) -> list[Feed]:
 
 
 def top_rated() -> Generator[Feed]:
-    
-    podcast_ids: list[int] = []
-        
+            
     for result in fetch_top_rated()["feed"]["results"]:
         
         yield from with_podcasts(
@@ -58,8 +56,6 @@ def top_rated() -> Generator[Feed]:
         if feed.podcast:
             podcast_ids.append(feed.podcast.id)
 
-     if podcast_ids:
-         Podcast.objects.filter(pk__in=podcast_ids).update(promoted=True)
 
 def fetch_json(url: str, data: dict | None = None) -> dict:
     response = requests.get(url, data)
@@ -110,13 +106,19 @@ def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed]:
         field_name="rss"
     )
 
-    new_podcasts = []
+    new_podcasts: list[Podcast] = []
+    podcast_ids: list[int] = []
 
     for feed in feeds:
         feed.podcast = podcasts.get(feed.url, None)
         if feed.podcast is None:
             new_podcasts.append(Podcast(title=feed.title, rss=feed.url, **defaults))
+        else:
+            podcast_ids.append(feed.podcast.id)
         yield feed
 
     if new_podcasts:
         Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
+     
+    if podcast_ids and defaults:
+        Podcast.objects.filter(pk__in=podcast_ids).update(**defaults)
