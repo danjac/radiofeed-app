@@ -111,7 +111,7 @@ def parse_podcast_feeds(
     )
 
 
-def enqueue_many(podcast_ids: list[int], *, queue: str = "feeds") -> None:
+def enqueue_many(podcast_ids: list[int], queue: str = "feeds") -> None:
 
     if not (podcast_ids := list(podcast_ids)):
         return
@@ -126,7 +126,7 @@ def enqueue_many(podcast_ids: list[int], *, queue: str = "feeds") -> None:
         job_queue.enqueue(parse_podcast_feed, podcast_id)
 
 
-def enqueue(podcast_id: int, *, queue: str = "feeds") -> None:
+def enqueue(podcast_id: int, queue: str = "feeds") -> None:
 
     now = timezone.now()
 
