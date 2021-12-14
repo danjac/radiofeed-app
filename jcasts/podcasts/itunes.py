@@ -105,22 +105,24 @@ def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed, None, No
         field_name="rss"
     )
 
-    new_podcasts: list[Podcast] = []
-    podcast_ids: list[int] = []
+    for_insert: list[Podcast] = []
+    for_update: list[Podcast] = []
 
     for feed in feed_list:
 
         feed.podcast = podcasts.get(feed.url, None)
 
         if feed.podcast is None:
-            new_podcasts.append(Podcast(title=feed.title, rss=feed.url, **defaults))
-        else:
-            podcast_ids.append(feed.podcast.id)
+            for_insert.append(Podcast(title=feed.title, rss=feed.url, **defaults))
+        elif defaults:
+            for k, v in defaults.items():
+                setattr(feed.podcast, k, v)
+            for_update.append(feed.podcast)
 
         yield feed
 
-    if new_podcasts:
-        Podcast.objects.bulk_create(new_podcasts, ignore_conflicts=True)
+    if for_insert:
+        Podcast.objects.bulk_create(for_insert, ignore_conflicts=True)
 
-    if podcast_ids and defaults:
-        Podcast.objects.filter(pk__in=podcast_ids).update(**defaults)
+    if for_update and defaults:
+        Podcast.objects.bulk_update(for_update, fields=defaults.keys())
