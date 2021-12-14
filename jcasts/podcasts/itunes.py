@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-import logging
 
 from typing import Generator
 
@@ -18,8 +17,6 @@ SEARCH_URL = "https://itunes.apple.com/search"
 TOP_RATED_URL = (
     "https://rss.applemarketingtools.com/api/v2/us/podcasts/top/50/podcasts.json"
 )
-
-logger = logging.getLogger(__name__)
 
 
 @attr.s
