@@ -27,8 +27,7 @@ class Feed:
     url: str = attr.ib()
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
-
-    podcast: Podcast | None = None
+    podcast: Podcast | None = attr.ib(default=None)
 
 
 def search(search_term: str) -> Generator[Feed, None, None]:
