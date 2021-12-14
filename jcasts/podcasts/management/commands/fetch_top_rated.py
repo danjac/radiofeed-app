@@ -9,4 +9,5 @@ class Command(BaseCommand):
     help = "Fetch top rated feeds"
 
     def handle(self, *args, **options) -> None:
-        itunes.top_rated()
+        for feed in itunes.top_rated():
+            self.stdout.write(feed.url)
