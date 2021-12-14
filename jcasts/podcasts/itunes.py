@@ -97,7 +97,6 @@ def with_podcasts(feeds: Iterator[Feed], **defaults) -> Generator[Feed]:
     """Looks up podcast associated with result.
 
     If `add_new` is True, adds new podcasts if they are not already in the database"""
-    print("feeds", feeds)
 
     podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
         field_name="rss"
