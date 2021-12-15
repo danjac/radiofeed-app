@@ -78,20 +78,6 @@ class TestEnqueue:
             is False
         )
 
-    def test_enqueue_invalid_queue(self, db, mock_feed_queue, podcast):
-
-        with pytest.raises(ValueError):
-            assert scheduler.enqueue(podcast.id, queue="invalid")
-
-        assert podcast.id not in mock_feed_queue.enqueued
-
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is False
-        )
-
 
 class TestSchedulePodcastFeeds:
     @pytest.mark.parametrize(

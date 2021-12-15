@@ -10,12 +10,6 @@ from django_rq import get_queue
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
 
-FEED_QUEUES = (
-    "feeds",
-    "feeds:frequent",
-    "feeds:sporadic",
-)
-
 
 def schedule_primary_feeds(**kwargs) -> int:
     """Any followed or promoted podcasts"""
@@ -75,9 +69,6 @@ def schedule_podcast_feeds(
 
 
 def enqueue(*args: int, queue: str = "feeds") -> int:
-
-    if queue not in FEED_QUEUES:
-        raise ValueError(f"invalid queue, must be one of {FEED_QUEUES}")
 
     if not (podcast_ids := OrderedSet(args)):
         return 0
