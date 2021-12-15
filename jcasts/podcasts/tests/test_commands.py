@@ -27,12 +27,22 @@ class TestFetchTopRated:
 
 
 class TestClearFeedQueue:
-    def test_command(self, db, mock_feed_queue):
+    def test_queue(self, db, mock_feed_queue):
         now = timezone.now()
 
         podcast = PodcastFactory(queued=now, feed_queue="feeds")
 
         call_command("clear_feed_queue", ["feeds"])
+
+        podcast.refresh_from_db()
+        assert not podcast.queued
+
+    def test_all(self, db, mock_feed_queue):
+        now = timezone.now()
+
+        podcast = PodcastFactory(queued=now, feed_queue="feeds")
+
+        call_command("clear_feed_queue", all=True)
 
         podcast.refresh_from_db()
         assert not podcast.queued

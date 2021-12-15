@@ -140,6 +140,16 @@ def empty_queue(queue: str) -> int:
     )
 
 
+def empty_all_queues() -> int:
+
+    podcasts = Podcast.objects.filter(queued__isnull=False, feed_queue__isnull=False)
+
+    for queue in podcasts.values_list("feed_queue").distinct():
+        get_queue(queue).empty()
+
+    return podcasts.update(queued=None, feed_queue=None)
+
+
 @transaction.atomic
 def parse_podcast_feed(podcast_id: int) -> ParseResult:
 

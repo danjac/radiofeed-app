@@ -71,6 +71,19 @@ class TestEmptyQueue:
         assert podcast.feed_queue is None
         assert podcast.queued is None
 
+    def test_empty_all_queues(self, db, mock_feed_queue):
+
+        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
+        mock_feed_queue.enqueued.append(podcast.id)
+
+        feed_parser.empty_all_queues()
+
+        assert podcast.id not in mock_feed_queue.enqueued
+        podcast.refresh_from_db()
+
+        assert podcast.feed_queue is None
+        assert podcast.queued is None
+
 
 class TestEnqueue:
     def test_enqueue_one(self, db, mock_feed_queue, podcast):
