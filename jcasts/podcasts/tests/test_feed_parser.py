@@ -1,8 +1,6 @@
 import http
 import pathlib
 
-from datetime import timedelta
-
 import pytest
 import requests
 
@@ -12,20 +10,9 @@ from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import (
-    CategoryFactory,
-    FeedFactory,
-    FollowFactory,
-    PodcastFactory,
-)
+from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
 from jcasts.podcasts.rss_parser import Feed
-
-
-@pytest.fixture
-def mock_rq(mocker):
-    mocker.patch("rq.worker.Worker.count", return_value=2)
-    mocker.patch("django_rq.get_queue")
 
 
 @pytest.fixture
@@ -57,70 +44,6 @@ class BadMockResponse(MockResponse):
         raise requests.HTTPError(response=self)
 
 
-class TestEmptyQueue:
-    def test_empty_queue(self, db, mock_feed_queue):
-
-        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
-        mock_feed_queue.enqueued.append(podcast.id)
-
-        feed_parser.empty_queue("feeds")
-
-        assert podcast.id not in mock_feed_queue.enqueued
-        podcast.refresh_from_db()
-
-        assert podcast.feed_queue is None
-        assert podcast.queued is None
-
-    def test_empty_all_queues(self, db, mock_feed_queue):
-
-        podcast = PodcastFactory(queued=timezone.now(), feed_queue="feeds")
-        mock_feed_queue.enqueued.append(podcast.id)
-
-        feed_parser.empty_all_queues()
-
-        assert podcast.id not in mock_feed_queue.enqueued
-        podcast.refresh_from_db()
-
-        assert podcast.feed_queue is None
-        assert podcast.queued is None
-
-
-class TestEnqueue:
-    def test_enqueue_one(self, db, mock_feed_queue, podcast):
-
-        feed_parser.enqueue(podcast.id)
-        assert podcast.id in mock_feed_queue.enqueued
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is True
-        )
-
-    def test_enqueue_many(self, db, mock_feed_queue, podcast):
-
-        feed_parser.enqueue(*[podcast.id])
-        assert podcast.id in mock_feed_queue.enqueued
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is True
-        )
-
-    def test_empty(self, db, mock_feed_queue):
-
-        feed_parser.enqueue(*[])
-
-        assert not mock_feed_queue.enqueued
-        assert (
-            Podcast.objects.filter(
-                queued__isnull=False, feed_queue__isnull=False
-            ).exists()
-            is False
-        )
-
-
 class TestFeedHeaders:
     def test_has_etag(self):
         podcast = Podcast(etag="abc123")
@@ -131,186 +54,6 @@ class TestFeedHeaders:
         podcast = Podcast(modified=timezone.now())
         headers = feed_parser.get_feed_headers(podcast)
         assert headers["If-Modified-Since"]
-
-
-class TestParsePrimaryFeeds:
-    @pytest.mark.parametrize(
-        "active,success",
-        [
-            (True, True),
-            (False, False),
-        ],
-    )
-    def test_active(self, db, mock_feed_queue, active, success):
-
-        podcast = PodcastFactory(active=active, promoted=True)
-
-        feed_parser.parse_primary_feeds()
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "promoted,followed,success",
-        [
-            (True, True, True),
-            (True, False, True),
-            (False, True, True),
-            (False, False, False),
-        ],
-    )
-    def test_promoted_or_followed(
-        self,
-        db,
-        mock_feed_queue,
-        promoted,
-        followed,
-        success,
-    ):
-
-        podcast = PodcastFactory(promoted=promoted)
-
-        if followed:
-            FollowFactory(podcast=podcast)
-
-        feed_parser.parse_primary_feeds()
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "queued,success",
-        [
-            (False, True),
-            (True, False),
-        ],
-    )
-    def test_queued(self, db, mock_feed_queue, queued, success):
-        podcast = PodcastFactory(
-            queued=timezone.now() if queued else None, promoted=True
-        )
-
-        feed_parser.parse_primary_feeds()
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-
-class TestParseSecondaryFeeds:
-    @pytest.mark.parametrize(
-        "pub_date,after,before,success",
-        [
-            (None, None, None, True),
-            (None, timedelta(days=14), None, True),
-            (timedelta(days=30), timedelta(days=14), None, False),
-            (timedelta(days=30), None, timedelta(days=14), True),
-            (timedelta(days=9), None, timedelta(days=14), False),
-        ],
-    )
-    def test_time_values(
-        self,
-        db,
-        mock_feed_queue,
-        pub_date,
-        after,
-        before,
-        success,
-    ):
-
-        now = timezone.now()
-
-        podcast = PodcastFactory(
-            pub_date=now - pub_date if pub_date else None,
-        )
-
-        feed_parser.parse_secondary_feeds(after=after, before=before)
-        assert Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "active,success",
-        [
-            (True, True),
-            (False, False),
-        ],
-    )
-    def test_active(self, db, mock_feed_queue, active, success):
-
-        podcast = PodcastFactory(active=active, pub_date=None)
-
-        feed_parser.parse_secondary_feeds()
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "promoted,followed,success",
-        [
-            (True, True, False),
-            (True, False, False),
-            (False, True, False),
-            (False, False, True),
-        ],
-    )
-    def test_promoted_or_followed(
-        self,
-        db,
-        mock_feed_queue,
-        promoted,
-        followed,
-        success,
-    ):
-
-        podcast = PodcastFactory(promoted=promoted, pub_date=None)
-
-        if followed:
-            FollowFactory(podcast=podcast)
-
-        feed_parser.parse_secondary_feeds()
-
-        Podcast.objects.filter(queued__isnull=False).exists() is success
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
-
-    @pytest.mark.parametrize(
-        "queued,success",
-        [
-            (False, True),
-            (True, False),
-        ],
-    )
-    def test_queued(self, db, mock_feed_queue, queued, success):
-        podcast = PodcastFactory(
-            queued=timezone.now() if queued else None, pub_date=None
-        )
-
-        feed_parser.parse_secondary_feeds()
-
-        if success:
-            assert podcast.id in mock_feed_queue.enqueued
-        else:
-            assert podcast.id not in mock_feed_queue.enqueued
 
 
 class TestParsePodcastFeed:

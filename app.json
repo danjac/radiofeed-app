@@ -14,15 +14,15 @@
     },
     "cron": [
         {
-            "command": "python manage.py parse_podcast_feeds --primary --limit=300",
+            "command": "python manage.py schedule_podcast_feeds --primary --limit=300",
             "schedule": "*/12 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:frequent --after=336 --before=3 --limit=300",
+            "command": "python manage.py schedule_podcast_feeds --queue=feeds:frequent --after=336 --before=3 --limit=300",
             "schedule": "*/5 * * * *"
         },
         {
-            "command": "python manage.py parse_podcast_feeds --queue=feeds:sporadic --before=336 --limit=300",
+            "command": "python manage.py schedule_podcast_feeds --queue=feeds:sporadic --before=336 --limit=300",
             "schedule": "15,45 * * * *"
         },
         {

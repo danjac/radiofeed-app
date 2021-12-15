@@ -92,13 +92,13 @@ class TestMakeRecommendations:
         assert Recommendation.objects.count() == 2
 
 
-class TestParsePodcastFeeds:
+class TestSchedulePodcastFeeds:
     def test_primary(self, db, mock_feed_queue):
         podcast = PodcastFactory(promoted=True)
-        call_command("parse_podcast_feeds", primary=True)
+        call_command("schedule_podcast_feeds", primary=True)
         assert podcast.id in mock_feed_queue.enqueued
 
     def test_secondary(self, db, mock_feed_queue):
         podcast = PodcastFactory(pub_date=None)
-        call_command("parse_podcast_feeds", after=24, before=3)
+        call_command("schedule_podcast_feeds", after=24, before=3)
         assert podcast.id in mock_feed_queue.enqueued

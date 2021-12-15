@@ -4,7 +4,7 @@ import argparse
 
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import feed_parser
+from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
@@ -30,10 +30,10 @@ class Command(BaseCommand):
 
     def handle(self, queues: list[str], *args, **options) -> None:
         if options["all"]:
-            count = feed_parser.empty_all_queues()
+            count = scheduler.empty_all_queues()
             self.stdout.write(f"{count} podcasts removed from all queues")
             return
 
         for queue in queues:
-            count = feed_parser.empty_queue(queue)
+            count = scheduler.empty_queue(queue)
             self.stdout.write(f"{count} podcasts removed from queue {queue}")

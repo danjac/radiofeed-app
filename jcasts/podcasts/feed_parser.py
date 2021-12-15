@@ -4,17 +4,14 @@ import hashlib
 import http
 import secrets
 
-from datetime import timedelta
 from functools import lru_cache
 
 import attr
 import requests
 
 from django.db import transaction
-from django.db.models import F, Q, QuerySet
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from django_rq import get_queue
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import date_parser, rss_parser, text_parser
@@ -55,99 +52,6 @@ class ParseResult:
     def raise_exception(self) -> None:
         if self.exception:
             raise self.exception
-
-
-def parse_primary_feeds(**kwargs) -> None:
-    parse_podcast_feeds(
-        Podcast.objects.with_followed().filter(Q(promoted=True) | Q(followed=True)),
-        **kwargs,
-    )
-
-
-def parse_secondary_feeds(
-    after: timedelta | None = None, before: timedelta | None = None, **kwargs
-) -> None:
-
-    now = timezone.now()
-
-    q = Q()
-
-    if after:
-        q &= Q(pub_date__gte=now - after)
-    if before:
-        q &= Q(pub_date__lt=now - before)
-
-    q |= Q(pub_date__isnull=True)
-
-    parse_podcast_feeds(
-        Podcast.objects.with_followed().filter(
-            q,
-            promoted=False,
-            followed=False,
-        ),
-        **kwargs,
-    )
-
-
-def parse_podcast_feeds(
-    podcasts: QuerySet,
-    queue: str = "feeds",
-    limit: int = 300,
-) -> None:
-
-    enqueue(
-        *podcasts.filter(
-            active=True,
-            queued__isnull=True,
-        )
-        .order_by(
-            F("parsed").asc(nulls_first=True),
-            F("pub_date").desc(nulls_first=True),
-            F("created").desc(),
-        )
-        .values_list("pk", flat=True)
-        .distinct()[:limit],
-        queue=queue,
-    )
-
-
-def enqueue(*args: int, queue: str = "feeds") -> None:
-
-    if not (podcast_ids := list(args)):
-        return
-
-    now = timezone.now()
-
-    Podcast.objects.filter(pk__in=podcast_ids).update(
-        queued=now,
-        updated=now,
-        feed_queue=queue,
-    )
-
-    job_queue = get_queue(queue)
-
-    for podcast_id in podcast_ids:
-        job_queue.enqueue(parse_podcast_feed, podcast_id)
-
-
-def empty_queue(queue: str) -> int:
-
-    get_queue(queue).empty()
-
-    return Podcast.objects.filter(queued__isnull=False, feed_queue=queue).update(
-        queued=None,
-        feed_queue=None,
-    )
-
-
-def empty_all_queues() -> int:
-
-    podcasts = Podcast.objects.filter(queued__isnull=False, feed_queue__isnull=False)
-
-    for queue in podcasts.values_list("feed_queue").distinct():
-        get_queue(queue).empty()
-
-    return podcasts.update(queued=None, feed_queue=None)
 
 
 @transaction.atomic

@@ -6,11 +6,11 @@ from datetime import timedelta
 
 from django.core.management.base import BaseCommand
 
-from jcasts.podcasts import feed_parser
+from jcasts.podcasts import scheduler
 
 
 class Command(BaseCommand):
-    help = "Parse podcast feeds"
+    help = "Schedule podcast feeds for polling"
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
@@ -48,19 +48,22 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
+        queue = options["queue"]
+        limit = options["limit"]
 
         if options["primary"]:
-            feed_parser.parse_primary_feeds(
-                queue=options["queue"],
-                limit=options["limit"],
+            scheduler.schedule_primary_feeds(
+                queue=queue,
+                limit=limit,
             )
-        else:
+            return
 
-            feed_parser.parse_secondary_feeds(
-                after=timedelta(hours=options["after"]) if options["after"] else None,
-                before=timedelta(hours=options["before"])
-                if options["before"]
-                else None,
-                queue=options["queue"],
-                limit=options["limit"],
-            )
+        after = options["after"]
+        before = options["before"]
+
+        scheduler.schedule_secondary_feeds(
+            after=timedelta(hours=after) if after else None,
+            before=timedelta(hours=before) if before else None,
+            queue=queue,
+            limit=limit,
+        )

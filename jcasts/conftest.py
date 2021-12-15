@@ -25,7 +25,7 @@ class MockFeedQueue:
 @pytest.fixture
 def mock_feed_queue(mocker):
     queue = MockFeedQueue()
-    mocker.patch("jcasts.podcasts.feed_parser.get_queue", return_value=queue)
+    mocker.patch("jcasts.podcasts.scheduler.get_queue", return_value=queue)
     return queue
 
 
