@@ -53,9 +53,10 @@ services:
                 max-size: '100k'
                 max-file: '3'
 
-    base: &base
+    watcher:
         build:
             context: .
+            target: watcher
         restart: on-failure
         privileged: true
         tty: true
@@ -65,22 +66,24 @@ services:
             options:
                 max-size: '100k'
                 max-file: '3'
-
-    watcher:
-        <<: *base
-        build:
-            context: .
-            target: watcher
         command: ['npm', 'run', 'watch']
         volumes:
             - ./:/app
             - /app/node_modules
 
     django: &django
-        <<: *base
         build:
             context: .
             target: django
+        restart: on-failure
+        privileged: true
+        tty: true
+        stop_grace_period: '3s'
+        logging:
+            driver: 'json-file'
+            options:
+                max-size: '100k'
+                max-file: '3'
         environment: *default-env
         depends_on:
             postgres:

@@ -77,7 +77,7 @@ def schedule_podcast_feeds(
 def enqueue(*args: int, queue: str = "feeds") -> int:
 
     if queue not in FEED_QUEUES:
-        raise ValueError("invalid queue")
+        raise ValueError(f"invalid queue, must be one of {FEED_QUEUES}")
 
     if not (podcast_ids := OrderedSet(args)):
         return 0
