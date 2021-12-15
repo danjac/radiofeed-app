@@ -85,6 +85,7 @@ class TestSchedulePrimaryFeeds:
         [
             (None, None, None, True),
             (None, timedelta(days=14), None, True),
+            (timedelta(days=7), timedelta(days=14), None, True),
             (timedelta(days=30), timedelta(days=14), None, False),
             (timedelta(days=30), None, timedelta(days=14), True),
             (timedelta(days=9), None, timedelta(days=14), False),
@@ -108,7 +109,12 @@ class TestSchedulePrimaryFeeds:
 
         count = scheduler.schedule_primary_feeds(after=after, before=before)
 
-        assert Podcast.objects.filter(queued__isnull=False).exists() is success
+        assert Podcast.objects.filter(queued__isnull=False).exists() is success, (
+            pub_date,
+            after,
+            before,
+            success,
+        )
 
         if success:
             assert count == 1
@@ -201,7 +207,10 @@ class TestScheduleSecondaryFeeds:
         [
             (None, None, None, True),
             (None, timedelta(days=14), None, True),
+            (timedelta(days=7), timedelta(days=14), None, True),
             (timedelta(days=30), timedelta(days=14), None, False),
+            (timedelta(days=7), timedelta(days=14), timedelta(hours=3), True),
+            (timedelta(days=7), timedelta(days=14), timedelta(days=10), False),
             (timedelta(days=30), None, timedelta(days=14), True),
             (timedelta(days=9), None, timedelta(days=14), False),
         ],
@@ -224,7 +233,12 @@ class TestScheduleSecondaryFeeds:
 
         count = scheduler.schedule_secondary_feeds(after=after, before=before)
 
-        assert Podcast.objects.filter(queued__isnull=False).exists() is success
+        assert Podcast.objects.filter(queued__isnull=False).exists() is success, (
+            pub_date,
+            after,
+            before,
+            success,
+        )
 
         if success:
             assert count == 1

@@ -100,5 +100,5 @@ class TestSchedulePodcastFeeds:
 
     def test_secondary(self, db, mock_feed_queue):
         podcast = PodcastFactory(pub_date=None)
-        call_command("schedule_podcast_feeds", after=24, before=3)
+        call_command("schedule_podcast_feeds", after=24)
         assert podcast.id in mock_feed_queue.enqueued

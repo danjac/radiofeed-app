@@ -42,9 +42,9 @@ def schedule_podcast_feeds(
     q = Q()
 
     if after:
-        q |= Q(Q(pub_date__gte=now - after) | Q(pub_date__isnull=True))
+        q &= Q(Q(pub_date__gte=now - after) | Q(pub_date__isnull=True))
     if before:
-        q |= Q(pub_date__lt=now - before)
+        q &= Q(pub_date__lt=now - before)
 
     return enqueue(
         *podcasts.filter(
