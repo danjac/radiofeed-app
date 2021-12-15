@@ -81,6 +81,40 @@ class TestEnqueue:
 
 class TestSchedulePrimaryFeeds:
     @pytest.mark.parametrize(
+        "pub_date,after,before,success",
+        [
+            (None, None, None, True),
+            (None, timedelta(days=14), None, True),
+            (timedelta(days=30), timedelta(days=14), None, False),
+            (timedelta(days=30), None, timedelta(days=14), True),
+            (timedelta(days=9), None, timedelta(days=14), False),
+        ],
+    )
+    def test_time_values(
+        self,
+        db,
+        mock_feed_queue,
+        pub_date,
+        after,
+        before,
+        success,
+    ):
+
+        now = timezone.now()
+
+        podcast = PodcastFactory(
+            pub_date=now - pub_date if pub_date else None, promoted=True
+        )
+
+        scheduler.schedule_primary_feeds(after=after, before=before)
+        assert Podcast.objects.filter(queued__isnull=False).exists() is success
+
+        if success:
+            assert podcast.id in mock_feed_queue.enqueued
+        else:
+            assert podcast.id not in mock_feed_queue.enqueued
+
+    @pytest.mark.parametrize(
         "active,success",
         [
             (True, True),
@@ -89,7 +123,7 @@ class TestSchedulePrimaryFeeds:
     )
     def test_active(self, db, mock_feed_queue, active, success):
 
-        podcast = PodcastFactory(active=active, promoted=True)
+        podcast = PodcastFactory(active=active, promoted=True, pub_date=timezone.now())
 
         scheduler.schedule_primary_feeds()
 

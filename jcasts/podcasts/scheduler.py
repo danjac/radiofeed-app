@@ -18,25 +18,11 @@ def schedule_primary_feeds(**kwargs) -> None:
     )
 
 
-def schedule_secondary_feeds(
-    after: timedelta | None = None, before: timedelta | None = None, **kwargs
-) -> None:
-    """Any (non-followed/promoted) podcasts with last release date inside timeframe"""
-
-    now = timezone.now()
-
-    q = Q()
-
-    if after:
-        q &= Q(pub_date__gte=now - after)
-    if before:
-        q &= Q(pub_date__lt=now - before)
-
-    q |= Q(pub_date__isnull=True)
+def schedule_secondary_feeds(**kwargs) -> None:
+    """Any (non-followed/promoted) podcasts"""
 
     schedule_podcast_feeds(
         Podcast.objects.with_followed().filter(
-            q,
             promoted=False,
             followed=False,
         ),
@@ -46,12 +32,23 @@ def schedule_secondary_feeds(
 
 def schedule_podcast_feeds(
     podcasts: QuerySet,
+    after: timedelta | None = None,
+    before: timedelta | None = None,
     queue: str = "feeds",
     limit: int = 300,
 ) -> None:
+    now = timezone.now()
+
+    q = Q()
+
+    if after:
+        q |= Q(Q(pub_date__gte=now - after) | Q(pub_date__isnull=True))
+    if before:
+        q |= Q(pub_date__lt=now - before)
 
     enqueue(
         *podcasts.filter(
+            q,
             active=True,
             queued__isnull=True,
         )

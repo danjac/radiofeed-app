@@ -48,22 +48,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options) -> None:
-        queue = options["queue"]
-        limit = options["limit"]
+        schedule = (
+            scheduler.schedule_primary_feeds
+            if options["primary"]
+            else scheduler.schedule_secondary_feeds
+        )
 
-        if options["primary"]:
-            scheduler.schedule_primary_feeds(
-                queue=queue,
-                limit=limit,
-            )
-            return
-
-        after = options["after"]
-        before = options["before"]
-
-        scheduler.schedule_secondary_feeds(
-            after=timedelta(hours=after) if after else None,
-            before=timedelta(hours=before) if before else None,
-            queue=queue,
-            limit=limit,
+        schedule(
+            after=timedelta(hours=options["after"]) if options["after"] else None,
+            before=timedelta(hours=options["before"]) if options["before"] else None,
+            queue=options["queue"],
+            limit=options["limit"],
         )
