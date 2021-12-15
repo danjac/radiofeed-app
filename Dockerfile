@@ -1,4 +1,4 @@
-FROM python:3.10.1-buster AS backend
+FROM python:3.10.1-buster AS django
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -18,7 +18,6 @@ RUN python -m nltk.downloader stopwords
 RUN python -m nltk.downloader wordnet
 
 # scripts
-
 COPY ./docker/start-webapp /start-webapp
 RUN chmod +x /start-webapp
 
@@ -26,8 +25,7 @@ COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
 
 # frontend
-
-FROM node:17-buster AS frontend
+FROM node:17-buster AS watcher
 
 WORKDIR /app
 

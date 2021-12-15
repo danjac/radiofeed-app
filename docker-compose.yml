@@ -53,13 +53,9 @@ services:
                 max-size: '100k'
                 max-file: '3'
 
-    master:
+    base: &base
         build:
             context: .
-        image: jcasts/master:0.1
-
-    base: &base
-        image: jcasts/master:0.1
         restart: on-failure
         privileged: true
         tty: true
@@ -72,20 +68,21 @@ services:
 
     watcher:
         <<: *base
+        build:
+            context: .
+            target: watcher
         command: ['npm', 'run', 'watch']
         volumes:
             - ./:/app
             - /app/node_modules
-        depends_on:
-            master:
-                condition: service_completed_successfully
 
     django: &django
         <<: *base
+        build:
+            context: .
+            target: django
         environment: *default-env
         depends_on:
-            master:
-                condition: service_completed_successfully
             postgres:
                 condition: service_healthy
             redis:
