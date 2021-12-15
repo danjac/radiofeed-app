@@ -1,0 +1,12 @@
+-c requirements.txt
+coverage
+factory-boy
+Faker
+fakeredis
+pytest
+pytest-cov
+pytest-django
+pytest-forked
+pytest-mock
+pytest-randomly
+pytest-xdist

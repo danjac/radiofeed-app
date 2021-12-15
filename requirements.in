@@ -1,7 +1,6 @@
 attrs
 bleach
 Brotli
-coverage
 cryptography
 decorator
 dj-database-url
@@ -19,9 +18,6 @@ django-redis
 django-rq
 django-split-settings
 django-widget-tweaks
-factory-boy
-Faker
-fakeredis
 gunicorn
 html5lib
 ipython
@@ -31,13 +27,6 @@ nltk
 numpy
 pandas
 psycopg2-binary
-pytest
-pytest-cov
-pytest-django
-pytest-forked
-pytest-mock
-pytest-randomly
-pytest-xdist
 python-dateutil
 redis
 requests
