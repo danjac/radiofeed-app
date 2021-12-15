@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.db.models import F, Q, QuerySet
 from django.utils import timezone
+from django.utils.datastructures import OrderedSet
 from django_rq import get_queue
 
 from jcasts.podcasts import feed_parser
@@ -69,7 +70,7 @@ def schedule_podcast_feeds(
 
 def enqueue(*args: int, queue: str = "feeds") -> int:
 
-    if not (podcast_ids := list(args)):
+    if not (podcast_ids := OrderedSet(args)):
         return 0
 
     now = timezone.now()
