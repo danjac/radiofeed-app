@@ -10,18 +10,18 @@ from jcasts.podcasts import feed_parser
 from jcasts.podcasts.models import Podcast
 
 
-def schedule_primary_feeds(**kwargs) -> None:
+def schedule_primary_feeds(**kwargs) -> int:
     """Any followed or promoted podcasts"""
-    schedule_podcast_feeds(
+    return schedule_podcast_feeds(
         Podcast.objects.with_followed().filter(Q(promoted=True) | Q(followed=True)),
         **kwargs,
     )
 
 
-def schedule_secondary_feeds(**kwargs) -> None:
+def schedule_secondary_feeds(**kwargs) -> int:
     """Any (non-followed/promoted) podcasts"""
 
-    schedule_podcast_feeds(
+    return schedule_podcast_feeds(
         Podcast.objects.with_followed().filter(
             promoted=False,
             followed=False,
@@ -36,7 +36,7 @@ def schedule_podcast_feeds(
     before: timedelta | None = None,
     queue: str = "feeds",
     limit: int = 300,
-) -> None:
+) -> int:
     now = timezone.now()
 
     q = Q()
@@ -46,7 +46,7 @@ def schedule_podcast_feeds(
     if before:
         q |= Q(pub_date__lt=now - before)
 
-    enqueue(
+    return enqueue(
         *podcasts.filter(
             q,
             active=True,
@@ -63,10 +63,10 @@ def schedule_podcast_feeds(
     )
 
 
-def enqueue(*args: int, queue: str = "feeds") -> None:
+def enqueue(*args: int, queue: str = "feeds") -> int:
 
     if not (podcast_ids := list(args)):
-        return
+        return 0
 
     now = timezone.now()
 
@@ -78,8 +78,10 @@ def enqueue(*args: int, queue: str = "feeds") -> None:
 
     job_queue = get_queue(queue)
 
-    for podcast_id in podcast_ids:
+    for counter, podcast_id in enumerate(podcast_ids, 1):
         job_queue.enqueue(feed_parser.parse_podcast_feed, podcast_id)
+
+    return counter
 
 
 def empty_queue(queue: str) -> int:

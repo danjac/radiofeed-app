@@ -54,9 +54,11 @@ class Command(BaseCommand):
             else scheduler.schedule_secondary_feeds
         )
 
-        schedule(
+        count = schedule(
             after=timedelta(hours=options["after"]) if options["after"] else None,
             before=timedelta(hours=options["before"]) if options["before"] else None,
             queue=options["queue"],
             limit=options["limit"],
         )
+
+        self.stdout.write(self.style.SUCCESS(f"{count} feed(s) scheduled for update"))
