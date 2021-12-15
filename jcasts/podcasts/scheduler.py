@@ -92,6 +92,7 @@ def empty_queue(queue: str) -> int:
     return Podcast.objects.filter(queued__isnull=False, feed_queue=queue).update(
         queued=None,
         feed_queue=None,
+        updated=timezone.now(),
     )
 
 
@@ -102,4 +103,4 @@ def empty_all_queues() -> int:
     for queue in podcasts.values_list("feed_queue", flat=True).distinct():
         get_queue(queue).empty()
 
-    return podcasts.update(queued=None, feed_queue=None)
+    return podcasts.update(queued=None, feed_queue=None, updated=timezone.now())
