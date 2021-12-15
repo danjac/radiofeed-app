@@ -85,8 +85,11 @@ class TestSchedulePrimaryFeeds:
         [
             (None, None, None, True),
             (None, timedelta(days=14), None, True),
+            (None, None, timedelta(days=7), True),
             (timedelta(days=7), timedelta(days=14), None, True),
             (timedelta(days=30), timedelta(days=14), None, False),
+            (timedelta(days=7), timedelta(days=14), timedelta(hours=3), True),
+            (timedelta(days=7), timedelta(days=14), timedelta(days=10), False),
             (timedelta(days=30), None, timedelta(days=14), True),
             (timedelta(days=9), None, timedelta(days=14), False),
         ],
@@ -207,6 +210,7 @@ class TestScheduleSecondaryFeeds:
         [
             (None, None, None, True),
             (None, timedelta(days=14), None, True),
+            (None, None, timedelta(days=7), True),
             (timedelta(days=7), timedelta(days=14), None, True),
             (timedelta(days=30), timedelta(days=14), None, False),
             (timedelta(days=7), timedelta(days=14), timedelta(hours=3), True),
