@@ -10,14 +10,8 @@ from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.models import Episode
 from jcasts.podcasts import feed_parser
 from jcasts.podcasts.date_parser import parse_date
-from jcasts.podcasts.factories import CategoryFactory, FeedFactory, PodcastFactory
+from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
 from jcasts.podcasts.models import Podcast
-from jcasts.podcasts.rss_parser import Feed
-
-
-@pytest.fixture
-def feed():
-    return Feed(**FeedFactory())
 
 
 class MockResponse:
