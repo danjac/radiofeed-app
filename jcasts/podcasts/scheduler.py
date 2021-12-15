@@ -99,7 +99,7 @@ def empty_all_queues() -> int:
 
     podcasts = Podcast.objects.filter(queued__isnull=False, feed_queue__isnull=False)
 
-    for queue in podcasts.values_list("feed_queue").distinct():
+    for queue in podcasts.values_list("feed_queue", flat=True).distinct():
         get_queue(queue).empty()
 
     return podcasts.update(queued=None, feed_queue=None)
