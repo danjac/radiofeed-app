@@ -1,5 +1,5 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="border dark:border-gray-500 mb-4 flex items-center justify-between"
+<div class="border dark:border-gray-500 mb-4 xl:mb-5 flex items-center justify-between"
      {% if hx_remove %}
      x-data="{show: true}"
      x-show="show"
@@ -34,13 +34,13 @@
             </h2>
             <div class="flex items-center space-x-2">
                 {% if is_podcast_detail %}
-                <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
+                <div class="font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm xl:text-base">
                     {% include "_date.html" with value=episode.pub_date title="Release Date" %}
                 </div>
                 {% else %}
                 <h3 class="truncate w-52 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
                     <a href="{{ podcast.get_episodes_url }}"
-                       class="link text-xs lg:text-sm text-gray-600 dark:text-gray-300 font-semibold"
+                       class="link text-xs lg:text-sm xl:text-base text-gray-600 dark:text-gray-300 font-semibold"
                        title="{{ podcast.cleaned_title }}">
                         {{ podcast.cleaned_title }}
                     </a>

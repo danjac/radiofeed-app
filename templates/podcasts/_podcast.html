@@ -1,5 +1,5 @@
 {% with podcast_url=podcast.get_absolute_url %}
-<div class="border dark:border-gray-500 mb-4 flex items-center justify-between">
+<div class="border dark:border-gray-500 mb-4 xl:mb-5 flex items-center justify-between">
 
     <div class="flex items-center space-x-3">
         <div class="w-20">
@@ -18,7 +18,7 @@
                 </a>
             </h2>
 
-            <div class="text-xs lg:text-sm">
+            <div class="text-xs lg:text-sm xl:text-base">
                 <a href="{{ podcast.get_episodes_url }}"
                    title="Episodes"
                    class="link font-semibold text-gray-600 dark:text-gray-300">

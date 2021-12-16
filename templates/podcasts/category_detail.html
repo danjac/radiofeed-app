@@ -7,8 +7,8 @@
 
 {% with search_placeholder="Search: "|add:category.name %}
 
-<div class="sm:flex items-center justify-between mb-4 lg:mb-6 space-y-3 sm:space-y-0">
-    <h1 class="font-bold flex items-center justify-center sm:justify-start text-base lg:text-lg xl:text-xl">
+<div class="sm:flex items-center justify-between mb-4 xl:mb-5 lg:mb-6  space-y-3 sm:space-y-0">
+    <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl xl:text-2xl">
         {{ category.name }} Podcasts
     </h1>
     {% if not request.search %}
@@ -20,9 +20,9 @@
 
 
 {% if request.search %}
-<div class="mb-4 sm:flex items-center justify-center sm:justify-between">
+<div class="mb-4 xl:mb-5 sm:flex items-center justify-center sm:justify-between">
 
-    <div class="mb-4 sm:mb-0 flex items-center justify-center sm:justify-start">
+    <div class="mb-4 xl:mb-5 sm:mb-0 flex items-center justify-center sm:justify-start">
         <a href="{% url 'podcasts:search_podcasts' %}?{{ request.search.qs }}"
            title="Search Podcasts"
            class="link">Search All Categories</a>

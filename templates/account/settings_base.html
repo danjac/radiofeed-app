@@ -7,9 +7,9 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<h1 class="font-bold mb-4 lg:mb-6 flex flex-wrap text-base lg:text-lg xl:text-xl">Settings for {{ user.username }}</h1>
+<h1 class="font-bold mb-4 xl:mb-5 lg:mb-6 flex flex-wrap text-lg lg:text-xl xl:text-2xl">Settings for {{ user.username }}</h1>
 <div id="settings-content">
-    <nav class="mb-4 pb-3 border-b dark:border-gray-500">
+    <nav class="mb-4 xl:mb-5 pb-3 border-b dark:border-gray-500">
         <ul class="flex items-center overflow-x-auto lg:overflow-none whitespace-nowrap lg:whitespace-none space-x-6 xl:text-lg">
             {% with TAB_ACTIVE_CSS="text-blue-600 font-bold dark:text-blue-300" %}
             {% active_link 'users:preferences' as link %}
