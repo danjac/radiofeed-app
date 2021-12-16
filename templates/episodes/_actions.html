@@ -36,8 +36,8 @@
                 <div class="flex flex-col w-full place-content-between h-20 lg:h-28">
                     <a href="{{ episode.get_absolute_url }}"
                        title="{{ episode.cleaned_title }}"
-                       class="font-semibold link max-h-10 sm:max-h-14 lg:max-h-16 break-words overflow-y-hidden lg:text-lg">
-                        {{ episode.cleaned_title }}
+                       class="font-semibold link max-h-10 sm:max-h-14 lg:max-h-16 lg:max-h-18 break-words overflow-y-hidden lg:text-lg xl:text-xl">
+                        {{ episode.cleaned_title|truncatechars:100 }}
                     </a>
 
                     {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" PLAYER_ICON_CSS="h-8 w-8 lg:h-10 lg:w-10" %}
