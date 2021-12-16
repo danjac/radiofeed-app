@@ -3,12 +3,12 @@
 {% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
 {% block content %}
-<h1 class="font-bold text-lg lg:text-xl mb-4 lg:mb-6">{{ episode.cleaned_title }}</h1>
+<h1 class="font-bold mb-4 text-lg lg:text-xl">{{ episode.cleaned_title }}</h1>
 
 {% with podcast=episode.podcast %}
 
 {% if previous_episode or next_episode %}
-<nav class="flex justify-between mb-4 xl:mb-5 border-b dark:border-gray-500 pb-3">
+<nav class="flex justify-between mb-4 border-b dark:border-gray-500 pb-3">
     {% if previous_episode %}
     <a class="link"
        href="{{ previous_episode.get_absolute_url }}"

@@ -11,7 +11,7 @@
 <div id="favorites"
      x-data="{count: {{ page_obj.paginator.count }}}"
      @remove-favorite.window="count-=1">
-    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4 xl:mb-6">
+    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-4">
         <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl">Favorites</h1>
         {% if search or page_obj.paginator.count %}
         <div class="flex items-center justify-center sm:justify-end">

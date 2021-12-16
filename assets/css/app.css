@@ -46,11 +46,11 @@ input[type='search']::-webkit-search-results-decoration {
 .markdown h3,
 .markdown h4,
 .markdown h5 {
-    @apply font-bold mb-4 xl:mb-5;
+    @apply font-bold mb-4;
 }
 
 .markdown hr {
-    @apply border-gray-300 dark:border-gray-600 mb-4 xl:mb-5;
+    @apply border-gray-300 dark:border-gray-600 mb-4;
 }
 
 .markdown pre {
@@ -66,19 +66,19 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 .markdown div {
-    @apply mb-4 xl:mb-5;
+    @apply mb-4;
 }
 
 .markdown p {
-    @apply py-1 mb-4 xl:mb-5;
+    @apply py-1 mb-4;
 }
 
 .markdown ol {
-    @apply list-decimal list-inside mb-4 xl:mb-5;
+    @apply list-decimal list-inside mb-4;
 }
 
 .markdown ul {
-    @apply list-disc list-inside mb-4 xl:mb-5;
+    @apply list-disc list-inside mb-4;
 }
 
 .markdown li ul {
@@ -86,7 +86,7 @@ input[type='search']::-webkit-search-results-decoration {
 }
 
 .markdown li {
-    @apply mb-4 xl:mb-5;
+    @apply mb-4;
 }
 
 .markdown li div,
