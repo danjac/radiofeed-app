@@ -70,6 +70,20 @@
     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
         {% include "_date.html" with value=episode.pub_date title="Release Date" %}
         {% include "episodes/_duration.html" %}
+        {% if episode.listened %}
+        <span class="hidden sm:inline-block">
+            {% include "episodes/_listened.html" %}
+        </span>
+        {% endif %}
+    </div>
+
+    {% if episode.listened %}
+    <div class="font-semibold sm:hidden">
+        {% include "episodes/_listened.html" %}
+    </div>
+    {% endif %}
+
+    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
         {% with file_size=episode.get_file_size %}
         {% if file_size %}
         <div title="Size">
@@ -92,10 +106,6 @@
         </a>
         {% endif %}
     </div>
-
-    {% if episode.listened %}
-    {% include "episodes/_listened.html" %}
-    {% endif %}
 
     {% include "_markdown.html" with content=episode.description %}
     {% include "podcasts/_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
