@@ -14,6 +14,7 @@ from jcasts.episodes.factories import (
 )
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory
+from jcasts.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
@@ -154,6 +155,18 @@ class TestEpisodeManager:
 
 
 class TestEpisodeModel:
+    def test_link_if_none(self):
+        episode = Episode(podcast=Podcast())
+        assert episode.get_link() is None
+
+    def test_link_if_podcast(self):
+        episode = Episode(podcast=Podcast(link="https://example.com"))
+        assert episode.get_link() == "https://example.com"
+
+    def test_link_if_episode(self):
+        episode = Episode(link="https://example.com")
+        assert episode.get_link() == "https://example.com"
+
     def test_slug(self):
         episode = Episode(title="Testing")
         assert episode.slug == "testing"

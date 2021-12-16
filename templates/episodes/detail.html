@@ -41,20 +41,22 @@
         </a>
     </h2>
 
-    {% with metadata=episode.get_episode_metadata %}
-    {% if metadata or episode.link %}
+    {% with metadata=episode.get_episode_metadata link=episode.get_link %}
+    {% if metadata or link %}
     <div class="font-semibold text-gray-800 dark:text-gray-300 flex items-center space-x-3">
         {% if metadata %}
         <div>
             {{ metadata }}
         </div>
         {% endif %}
-        <a href="{{ episode.link }}"
+        {% if link %}
+        <a href="{{ link }}"
            target="_blank"
            rel="noopender"
            class="link">
             Link
         </a>
+        {% endif %}
     </div>
     {% endif %}
     {% endwith %}

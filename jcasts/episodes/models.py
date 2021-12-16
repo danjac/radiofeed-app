@@ -272,6 +272,9 @@ class Episode(models.Model):
 
         return og_data
 
+    def get_link(self) -> str | None:
+        return self.link or self.podcast.link
+
     def get_episode_metadata(self) -> str:
 
         episode_type = (
