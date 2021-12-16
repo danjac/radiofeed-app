@@ -9,16 +9,16 @@
         </div>
 
 
-        <div class="flex flex-col place-content-between h-16 xl:h-20">
-            <h2 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:truncate sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl xl:text-lg">
+        <div class="flex flex-col place-content-between h-16">
+            <h3 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:truncate sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
                 <a href="{{ podcast_url }}"
                    class="link"
                    title="{{ podcast.cleaned_title }}">
                     {{ podcast.cleaned_title }}
                 </a>
-            </h2>
+            </h3>
 
-            <div class="text-xs lg:text-sm xl:text-base">
+            <div class="text-xs lg:text-sm">
                 <a href="{{ podcast.get_episodes_url }}"
                    title="Episodes"
                    class="link font-semibold text-gray-600 dark:text-gray-300">

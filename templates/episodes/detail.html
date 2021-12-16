@@ -3,12 +3,12 @@
 {% block subtitle %} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}{% endblock %}
 
 {% block content %}
-<h1 class="font-bold text-lg lg:text-xl xl:text-2xl mb-4 xl:mb-5 lg:mb-6 xl:mb-8">{{ episode.cleaned_title }}</h1>
+<h1 class="font-bold text-lg lg:text-xl mb-4 lg:mb-6">{{ episode.cleaned_title }}</h1>
 
 {% with podcast=episode.podcast %}
 
 {% if previous_episode or next_episode %}
-<nav class="flex justify-between mb-4 xl:mb-5 border-b dark:border-gray-500 pb-3 xl:text-lg">
+<nav class="flex justify-between mb-4 xl:mb-5 border-b dark:border-gray-500 pb-3">
     {% if previous_episode %}
     <a class="link"
        href="{{ previous_episode.get_absolute_url }}"
@@ -33,7 +33,7 @@
 {% endif %}
 
 <div class="space-y-4">
-    <h2 class="lg:text-xl xl:text-xl">
+    <h2 class="lg:text-lg">
         <a href="{{ podcast.get_episodes_url }}"
            title="See All Episodes for {{ podcast.cleaned_title }}"
            class="link">
@@ -53,11 +53,11 @@
 
         <div>
             <a href="{{ podcast.get_detail_url }}">
-                {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=36 css_class="h-28 w-28 lg:h-36 lg:w-36 border dark:border-gray-500 " %}
+                {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=podcast.cleaned_title size=32 css_class="h-28 w-28 lg:h-32 lg:w-32 border dark:border-gray-500 " %}
             </a>
         </div>
 
-        <div class="space-y-4 lg:space-y-5">
+        <div class="space-y-4">
 
             {% include "episodes/_play_toggle.html" %}
             {% include "episodes/_detail_actions.html" %}
