@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+    <div class="flex items-center flex-wrap font-semibold text-gray-600 dark:text-gray-300 space-x-2 sm:space-x-3">
         {% include "_date.html" with value=episode.pub_date title="Release Date" %}
         {% include "episodes/_duration.html" %}
         {% if episode.listened %}
@@ -78,7 +78,7 @@
     </div>
 
     {% if episode.listened %}
-    <div class="font-semibold sm:hidden">
+    <div class="font-semibold sm:hidden text-gray-600 dark:text-gray-300">
         {% include "episodes/_listened.html" %}
     </div>
     {% endif %}
