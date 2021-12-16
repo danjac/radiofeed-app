@@ -83,6 +83,16 @@
         </div>
         {% endif %}
     </div>
+
+    {% if episode.link %}
+    <a href="{{ episode.link }}"
+       target="_blank"
+       rel="noopender"
+       class="link">
+        Link to Site
+    </a>
+    {% endif %}
+
     {% if episode.listened %}
     {% include "episodes/_listened.html" %}
     {% endif %}

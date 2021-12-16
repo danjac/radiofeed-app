@@ -98,6 +98,7 @@ class Item:
 
     guid: str = attr.ib(validator=not_empty)
     title: str = attr.ib(validator=not_empty)
+    link: str | None = attr.ib(default=None, converter=url_or_none)
 
     pub_date: datetime | None = attr.ib(converter=parse_date)
 
@@ -229,6 +230,7 @@ def parse_item(finder: XPathFinder) -> Item:
     return Item(
         guid=finder.find("guid/text()"),
         title=finder.find("title/text()"),
+        link=finder.find("link/text()"),
         pub_date=finder.find("pubDate/text()"),
         media_url=finder.find(
             "enclosure//@url",

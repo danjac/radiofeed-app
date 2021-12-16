@@ -126,6 +126,8 @@ class Episode(models.Model):
     description: str = models.TextField(blank=True)
     keywords: str = models.TextField(blank=True)
 
+    link: str | None = models.URLField(max_length=2083, null=True, blank=True)
+
     episode_type: str = models.CharField(max_length=30, default="full")
     episode: int | None = models.IntegerField(null=True, blank=True)
     season: int | None = models.IntegerField(null=True, blank=True)
