@@ -43,7 +43,7 @@
 
     {% with metadata=episode.get_episode_metadata %}
     {% if metadata or episode.link %}
-    <div class="font-semibold text-gray-800 dark:text-gray-300 flex items-center">
+    <div class="font-semibold text-gray-800 dark:text-gray-300 flex items-center space-x-3">
         {% if metadata %}
         <div>
             {{ metadata }}
