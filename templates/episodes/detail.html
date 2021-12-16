@@ -42,9 +42,19 @@
     </h2>
 
     {% with metadata=episode.get_episode_metadata %}
-    {% if metadata %}
-    <div class="font-semibold text-gray-800 dark:text-gray-300">
-        {{ metadata }}
+    {% if metadata or episode.link %}
+    <div class="font-semibold text-gray-800 dark:text-gray-300 flex items-center">
+        {% if metadata %}
+        <div>
+            {{ metadata }}
+        </div>
+        {% endif %}
+        <a href="{{ episode.link }}"
+           target="_blank"
+           rel="noopender"
+           class="link">
+            Link
+        </a>
     </div>
     {% endif %}
     {% endwith %}
@@ -83,15 +93,6 @@
         </div>
         {% endif %}
     </div>
-
-    {% if episode.link %}
-    <a href="{{ episode.link }}"
-       target="_blank"
-       rel="noopender"
-       class="link">
-        Link to Site
-    </a>
-    {% endif %}
 
     {% if episode.listened %}
     {% include "episodes/_listened.html" %}
