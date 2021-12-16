@@ -41,22 +41,10 @@
         </a>
     </h2>
 
-    {% with metadata=episode.get_episode_metadata link=episode.get_link %}
-    {% if metadata or link %}
+    {% with metadata=episode.get_episode_metadata %}
+    {% if metadata %}
     <div class="font-semibold text-gray-800 dark:text-gray-300 flex items-center space-x-3">
-        {% if metadata %}
-        <div>
-            {{ metadata }}
-        </div>
-        {% endif %}
-        {% if link %}
-        <a href="{{ link }}"
-           target="_blank"
-           rel="noopender"
-           class="link">
-            Website
-        </a>
-        {% endif %}
+        {{ metadata }}
     </div>
     {% endif %}
     {% endwith %}
@@ -79,7 +67,7 @@
         </div>
     </div>
 
-    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-3">
+    <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
         {% include "_date.html" with value=episode.pub_date title="Release Date" %}
         {% include "episodes/_duration.html" %}
         {% with file_size=episode.get_file_size %}
@@ -93,6 +81,15 @@
         <div title="May contain adult themes and language. Listener discretion advised.">
             Explicit
         </div>
+        {% endif %}
+
+        {% if episode.link %}
+        <a href="{{ episode.link }}"
+           target="_blank"
+           rel="noopender"
+           class="link">
+            Link
+        </a>
         {% endif %}
     </div>
 
