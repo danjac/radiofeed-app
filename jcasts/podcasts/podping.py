@@ -56,9 +56,5 @@ def run(start_from: timedelta) -> Generator[str, None, None]:
         data = json.loads(post.get("json", ""))
 
         if urls := [data["url"]] if "url" in data else data.get("urls", []):
-            scheduler.enqueue(
-                *Podcast.objects.filter(active=True, rss__in=urls).values_list(
-                    "pk", flat=True
-                )
-            )
+            scheduler.schedule_podcast_feeds(Podcast.objects.filter(rss__in=urls))
             yield from urls
