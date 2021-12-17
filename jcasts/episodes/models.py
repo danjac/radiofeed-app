@@ -272,6 +272,9 @@ class Episode(models.Model):
 
         return og_data
 
+    def is_explicit(self) -> bool:
+        return self.explicit or self.podcast.explicit
+
     def get_episode_metadata(self) -> str:
 
         episode_type = (

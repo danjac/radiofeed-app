@@ -14,6 +14,7 @@ from jcasts.episodes.factories import (
 )
 from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
 from jcasts.podcasts.factories import FollowFactory
+from jcasts.podcasts.models import Podcast
 
 
 class TestEpisodeManager:
@@ -154,6 +155,23 @@ class TestEpisodeManager:
 
 
 class TestEpisodeModel:
+    def test_episode_explicit(self):
+        assert Episode(explicit=True).is_explicit() is True
+
+    def test_podcast_explicit(self):
+
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=True)).is_explicit()
+            is True
+        )
+
+    def test_not_explicit(self):
+
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=False)).is_explicit()
+            is False
+        )
+
     def test_slug(self):
         episode = Episode(title="Testing")
         assert episode.slug == "testing"

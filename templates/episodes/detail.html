@@ -83,19 +83,21 @@
     </div>
     {% endif %}
 
-    {% with file_size=episode.get_file_size %}
-    {% if file_size or episode.link or episode.explicit or podcast.explicit %}
+    {% with file_size=episode.get_file_size explicit=episode.is_explicit %}
+    {% if file_size or episode.link or explicit %}
     <div class="flex items-center flex-wrap font-semibold text-gray-800 dark:text-gray-300 space-x-2 sm:space-x-3">
+
+        {% if explicit %}
+        <div title="May contain adult themes and language. Listener discretion advised."
+             class="text-red-600 dark:text-red-500 flex items-center">
+            {% icon "warning" css_class="h-4 w-4 lg:h-6 lg:w-6 mr-2" %}
+            <span>Explicit</span>
+        </div>
+        {% endif %}
 
         {% if file_size %}
         <div title="Size">
             {{ file_size }}
-        </div>
-        {% endif %}
-
-        {% if episode.explicit or podcast.explicit %}
-        <div title="May contain adult themes and language. Listener discretion advised.">
-            Explicit
         </div>
         {% endif %}
 
