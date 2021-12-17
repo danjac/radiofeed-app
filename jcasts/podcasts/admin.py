@@ -185,14 +185,11 @@ class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def parse_podcast_feeds(self, request: HttpRequest, queryset: QuerySet) -> None:
 
-        podcast_ids = list(
-            queryset.filter(queued__isnull=True).values_list("pk", flat=True)
-        )
-        scheduler.enqueue(*podcast_ids)
+        count = scheduler.schedule_podcast_feeds(queryset)
 
         self.message_user(
             request,
-            f"{len(podcast_ids)} podcast(s) queued for update",
+            f"{count} podcast(s) queued for update",
             messages.SUCCESS,
         )
 
