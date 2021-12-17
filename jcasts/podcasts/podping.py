@@ -48,7 +48,7 @@ def get_stream(
             yield post
 
 
-def run(start_from: timedelta) -> None:
+def run(start_from: timedelta) -> Generator[str, None, None]:
     """Outputs URLs one by one as they appear on the Hive Podping stream"""
 
     for post in get_stream(start_from):
@@ -61,3 +61,4 @@ def run(start_from: timedelta) -> None:
                     "pk", flat=True
                 )
             )
+            yield from urls

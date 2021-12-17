@@ -25,6 +25,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         for _ in itertools.count():
             try:
-                podping.run(timedelta(minutes=options["from"]))
+                for url in podping.run(timedelta(minutes=options["from"])):
+                    self.stdout.write(url)
             except Exception as e:
                 logging.exception(e)

@@ -19,7 +19,8 @@ class TestRun:
 
         mocker.patch("jcasts.podcasts.podping.get_stream", return_value=[post])
 
-        podping.run(timedelta(minutes=15))
+        for url in podping.run(timedelta(minutes=15)):
+            assert url == podcast.rss
 
         assert podcast.id in mock_feed_queue.enqueued
 
@@ -34,7 +35,8 @@ class TestRun:
 
         mocker.patch("jcasts.podcasts.podping.get_stream", return_value=[post])
 
-        podping.run(timedelta(minutes=15))
+        for url in podping.run(timedelta(minutes=15)):
+            assert url == podcast.rss
 
         assert podcast.id in mock_feed_queue.enqueued
 
