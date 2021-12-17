@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import json
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Generator
 
 import beem
 
 from beem.account import Account
 from beem.blockchain import Blockchain
+from django.db.models import Q
+from django.utils import timezone
 
 from jcasts.podcasts import scheduler
 from jcasts.podcasts.models import Podcast
@@ -36,7 +38,7 @@ def get_stream(
         opNames=["custom_json"],
         raw_ops=False,
         threading=False,
-        start=blockchain.get_estimated_block_num(datetime.utcnow() - start_from),
+        start=blockchain.get_estimated_block_num(timezone.now() - start_from),
     )
 
     for post in stream:
@@ -56,5 +58,10 @@ def run(start_from: timedelta) -> Generator[str, None, None]:
         data = json.loads(post.get("json", ""))
 
         if urls := [data["url"]] if "url" in data else data.get("urls", []):
-            scheduler.schedule_podcast_feeds(Podcast.objects.filter(rss__in=urls))
+            scheduler.schedule_podcast_feeds(
+                Podcast.objects.filter(
+                    Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - start_from),
+                    rss__in=urls,
+                ),
+            )
             yield from urls
