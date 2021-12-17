@@ -1,7 +1,7 @@
 {% with duration=episode.duration_in_seconds current_time=episode.current_time %}
 {% if duration %}
 <div>
-    {% if current_time and not episode.completed %}
+    {% if current_time > 60 and not episode.completed %}
     <span title="Completed">
         {{ current_time|format_duration }}
     </span> /
