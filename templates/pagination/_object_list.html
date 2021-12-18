@@ -1,5 +1,5 @@
 {% load static %}
-<div id="page-items-{{ page_obj.number }}"
+<section id="page-items-{{ page_obj.number }}"
      role="feed"
      aria-busy="false">
     {% block results %}{% endblock %}
@@ -12,4 +12,4 @@
         {% include "pagination/_loader.html" %}
     </div>
     {% endif %}
-</div>
+</section>
