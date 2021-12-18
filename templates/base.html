@@ -41,7 +41,7 @@
 
     {% block layout %}
 
-    <div class="min-h-full mx-auto flex relative p-2 pt-6"
+    <div class="min-h-full flex relative p-2 pt-6 mx-auto xl:w-4/5"
          hx-history-elt
          id="layout">
 
@@ -52,7 +52,7 @@
         {% endblock %}
 
         {% block main %}
-        <main class="w-full xl:block lg:mx-auto lg:w-4/5 xl:w-3/5">
+        <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
             {% block content %}{% endblock %}
         </main>
         {% endblock main %}
