@@ -5,8 +5,8 @@
 {% block content %}
 {% if has_follows %}
 {% url 'podcasts:index' as index_url %}
-<div class="sm:flex justify-between mb-4">
-    <h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-4 sm:mb-0">
+<div class="sm:flex justify-between mb-3">
+    <h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-3 sm:mb-0">
         {% if promoted %}
         Trending Podcasts
         {% else %}
@@ -24,7 +24,7 @@
     </div>
 </div>
 {% else %}
-<h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-4">
+<h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-3">
     Trending Podcasts
 </h1>
 {% endif %}

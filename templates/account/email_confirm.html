@@ -5,12 +5,12 @@
 {% block head_title %}{% translate "Confirm E-mail Address" %}{% endblock %}
 
 {% block content %}
-<h1 class="font-bold mb-4">{% translate "Confirm E-mail Address" %}</h1>
+<h1 class="font-bold mb-3">{% translate "Confirm E-mail Address" %}</h1>
 
 {% if confirmation %}
 
 {% user_display confirmation.email_address.user as user_display %}
-<p class="mb-4">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <strong>{{ email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.{% endblocktranslate %}</p>
+<p class="mb-3">{% blocktranslate with confirmation.email_address.email as email %}Please confirm that <strong>{{ email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.{% endblocktranslate %}</p>
 
 <form method="post"
       action="{% url 'account_confirm_email' confirmation.key %}"

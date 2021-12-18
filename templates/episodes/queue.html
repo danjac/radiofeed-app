@@ -11,7 +11,7 @@
 <div id="queue"
      x-data="{count: {{ queue_items|length }}}"
      @remove-queue-item.window="count-=1">
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-center mb-3">
         <h1 class="font-bold flex text-lg lg:text-xl">Play Queue</h1>
         <label class="font-semibold flex items-center inline-block space-x-3"
                title="Automatically play next episode when current episode ends">

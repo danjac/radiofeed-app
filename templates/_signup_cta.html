@@ -2,7 +2,7 @@
 <div id="signup-cta"
      {% if hx_swap %}hx-swap-oob="true"
      {% endif %}
-     class="text-center mb-4 p-3 bg-blue-700 text-white font-bold">
+     class="text-center mb-3 p-3 bg-blue-700 text-white font-bold">
     <a class="underline link text-white"
        hx-disable="true"
        href="{{ request.get_full_path|signup_url }}">Sign up</a> or
