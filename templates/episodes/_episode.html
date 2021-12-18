@@ -1,5 +1,5 @@
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div class="border dark:border-gray-500 mb-3 flex items-center justify-between"
+<section class="border dark:border-gray-500 mb-3 flex items-center justify-between"
      {% if hx_remove %}
      x-data="{show: true}"
      x-show="show"
@@ -25,13 +25,14 @@
         {% endblock cover_image %}
 
         <div class="flex flex-col place-content-between h-16">
-            <h3 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-3xl lg:truncate">
+            <div class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-3xl lg:truncate"
+                 role="heading">
                 <a href="{{ episode_url }}"
                    class="link"
                    title="{{ episode.cleaned_title }}">
                     {{ episode.cleaned_title }}
                 </a>
-            </h3>
+            </div>
             <div class="flex items-center space-x-2 text-xs lg:text-sm">
                 {% if is_podcast_detail %}
                 <div class="font-semibold text-gray-600 dark:text-gray-300">
@@ -52,5 +53,5 @@
     <div class="pr-3 flex items-center">
         {% include "episodes/_actions_toggle.html" with actions_url=episode.get_actions_url actions_tag=episode.get_actions_tag %}
     </div>
-</div>
+</section>
 {% endwith %}

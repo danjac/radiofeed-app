@@ -1,5 +1,5 @@
 {% with podcast_url=podcast.get_absolute_url %}
-<div class="border dark:border-gray-500 mb-3 flex items-center justify-between">
+<section class="border dark:border-gray-500 mb-3 flex items-center justify-between">
 
     <div class="flex items-center space-x-3">
         <div class="w-20">
@@ -10,13 +10,13 @@
 
 
         <div class="flex flex-col place-content-between h-16">
-            <h3 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-3xl lg:truncate">
+            <div class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-3xl xl:max-w-3xl lg:truncate" role="heading">
                 <a href="{{ podcast_url }}"
                    class="link"
                    title="{{ podcast.cleaned_title }}">
                     {{ podcast.cleaned_title }}
                 </a>
-            </h3>
+            </div>
 
             <div class="text-xs lg:text-sm">
                 <a href="{{ podcast.get_episodes_url }}"
@@ -32,5 +32,5 @@
         {% include "episodes/_actions_toggle.html" with actions_url=podcast.get_actions_url actions_tag=podcast.get_actions_tag actions_title='Latest Episode' %}
     </div>
 
-</div>
+</section>
 {% endwith %}
