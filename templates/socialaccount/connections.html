@@ -9,7 +9,8 @@
 {% if form.accounts %}
 <p>{% blocktranslate %}You can sign in to your account using any of the following third party accounts:{% endblocktranslate %}</p>
 <form method="post"
-      class="mb-6 space-y-3"
+      class="mb-3 space-y-3"
+      hx-disable="true"
       action="{% url 'socialaccount_connections' %}">
     {% csrf_token %}
 
@@ -35,9 +36,6 @@
         <button class="btn btn-danger inline-flex items-center"
                 type="submit"
                 value="1"
-                data-controller="confirm"
-                data-confirm-text-value="Are you sure you want to remove this account?"
-                data-action="confirm#confirm"
                 name="action_remove">
             {% icon "trash" css_class="h-4 w-4 mr-2" %}
             {% translate 'Remove' %}
