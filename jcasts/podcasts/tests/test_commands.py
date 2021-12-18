@@ -22,7 +22,7 @@ class TestPodping:
     def test_exception_restart(self, mocker):
         mocker.patch("itertools.count", return_value=range(10))
         mocker.patch("jcasts.podcasts.podping.run", side_effect=ValueError)
-        call_command("podping", restart=True)
+        call_command("podping", restart_on_failure=True)
 
     def test_exception_no_restart(self, mocker):
         mocker.patch("itertools.count", return_value=range(10))

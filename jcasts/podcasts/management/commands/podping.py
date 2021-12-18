@@ -23,7 +23,7 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--restart",
+            "--restart-on-failure",
             help="Restart on error",
             action="store_true",
             default=False,
@@ -35,7 +35,7 @@ class Command(BaseCommand):
                 for url in podping.run(timedelta(minutes=options["from"])):
                     self.stdout.write(url)
             except Exception as e:
-                if options["restart"]:
+                if options["restart_on_failure"]:
                     logging.exception(e)
                 else:
                     raise CommandError from e
