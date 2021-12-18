@@ -1,7 +1,7 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
 {% spaceless %}
-<img class="object-cover bg-transparent hover:opacity-75 {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}"
+<img class="object-cover aspect-square bg-transparent hover:opacity-75 {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}"
      alt="{{ alt }}"
      title="{{ alt }}"
      loading="lazy"
