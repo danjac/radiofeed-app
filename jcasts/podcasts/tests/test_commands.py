@@ -14,7 +14,9 @@ from jcasts.users.factories import UserFactory
 class TestPodping:
     def test_command(self, mocker):
         mocker.patch("itertools.count", return_value=range(10))
-        mocker.patch("jcasts.podcasts.podping.run")
+        mocker.patch(
+            "jcasts.podcasts.podping.run", return_value=["https://example.com"]
+        )
         call_command("podping")
 
     def test_exception(self, mocker):

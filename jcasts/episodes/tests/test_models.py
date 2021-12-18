@@ -155,6 +155,21 @@ class TestEpisodeManager:
 
 
 class TestEpisodeModel:
+    link = "https://example.com"
+
+    def test_get_link_if_episode(self):
+        assert Episode(link=self.link).get_link() == self.link
+
+    def test_get_link_if_podcast(self):
+
+        assert (
+            Episode(link=None, podcast=Podcast(link=self.link)).get_link() == self.link
+        )
+
+    def test_get_link_if_none(self):
+
+        assert Episode(link=None, podcast=Podcast(link=None)).get_link() is None
+
     def test_episode_explicit(self):
         assert Episode(explicit=True).is_explicit() is True
 

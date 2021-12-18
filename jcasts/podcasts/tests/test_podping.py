@@ -4,10 +4,31 @@ from datetime import timedelta
 
 import pytest
 
+from django.utils import timezone
+
 from jcasts.podcasts import podping
+from jcasts.podcasts.factories import PodcastFactory
 
 
 class TestRun:
+    def test_just_parsed(self, db, mocker, mock_feed_queue):
+        podcast = PodcastFactory(parsed=timezone.now() - timedelta(minutes=5))
+
+        post = {
+            "json": json.dumps(
+                {
+                    "url": podcast.rss,
+                }
+            )
+        }
+
+        mocker.patch("jcasts.podcasts.podping.get_stream", return_value=[post])
+
+        for url in podping.run(timedelta(minutes=15)):
+            assert url == podcast.rss
+
+        assert podcast.id not in mock_feed_queue.enqueued
+
     def test_single_url(self, mocker, podcast, mock_feed_queue):
         post = {
             "json": json.dumps(
@@ -42,6 +63,20 @@ class TestRun:
 
 
 class TestGetStream:
+    @pytest.fixture
+    def mock_get_following(self, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.podping.Account.get_following",
+            return_value=["test_acct"],
+        )
+
+    @pytest.fixture
+    def mock_get_estimated_block_num(sel, mocker):
+        return mocker.patch(
+            "jcasts.podcasts.podping.Blockchain.get_estimated_block_num",
+            return_value=100,
+        )
+
     def test_ok(self, mocker, mock_get_estimated_block_num, mock_get_following):
 
         stream = [{"id": "podping", "required_posting_auths": ["test_acct"]}]
@@ -75,17 +110,3 @@ class TestGetStream:
         )
 
         assert len(list(podping.get_stream(timedelta(minutes=15)))) == 0
-
-    @pytest.fixture
-    def mock_get_following(self, mocker):
-        return mocker.patch(
-            "jcasts.podcasts.podping.Account.get_following",
-            return_value=["test_acct"],
-        )
-
-    @pytest.fixture
-    def mock_get_estimated_block_num(sel, mocker):
-        return mocker.patch(
-            "jcasts.podcasts.podping.Blockchain.get_estimated_block_num",
-            return_value=100,
-        )

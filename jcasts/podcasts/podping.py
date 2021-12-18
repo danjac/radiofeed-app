@@ -32,8 +32,6 @@ def get_stream(
 
     blockchain = Blockchain(mode="head", blockchain_instance=beem.Hive())
 
-    # Look back 15 minutes
-
     stream = blockchain.stream(
         opNames=["custom_json"],
         raw_ops=False,
@@ -50,7 +48,7 @@ def get_stream(
             yield post
 
 
-def run(start_from: timedelta) -> Generator[str, None, None]:
+def run(start_from: timedelta, **scheduling_kwargs) -> Generator[str, None, None]:
     """Outputs URLs one by one as they appear on the Hive Podping stream"""
 
     for post in get_stream(start_from):
@@ -63,5 +61,6 @@ def run(start_from: timedelta) -> Generator[str, None, None]:
                     Q(parsed__isnull=True) | Q(parsed__lt=timezone.now() - start_from),
                     rss__in=urls,
                 ),
+                **scheduling_kwargs,
             )
             yield from urls

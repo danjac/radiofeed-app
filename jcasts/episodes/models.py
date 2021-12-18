@@ -173,6 +173,9 @@ class Episode(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
+    def get_link(self) -> str | None:
+        return self.link or self.podcast.link
+
     def get_file_size(self) -> str | None:
         return filesizeformat(self.length) if self.length else None
 
