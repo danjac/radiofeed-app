@@ -6,7 +6,7 @@ import logging
 
 from datetime import timedelta
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from jcasts.podcasts import podping
 
@@ -17,9 +17,16 @@ class Command(BaseCommand):
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
         parser.add_argument(
             "--from",
-            help="Start block minutes ago",
+            help="Start block from minutes ago",
             type=int,
             default=15,
+        )
+
+        parser.add_argument(
+            "--restart",
+            help="Restart on error",
+            action="store_true",
+            default=False,
         )
 
     def handle(self, *args, **options) -> None:
@@ -28,4 +35,7 @@ class Command(BaseCommand):
                 for url in podping.run(timedelta(minutes=options["from"])):
                     self.stdout.write(url)
             except Exception as e:
-                logging.exception(e)
+                if options["restart"]:
+                    logging.exception(e)
+                else:
+                    raise CommandError from e
