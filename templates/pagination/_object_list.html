@@ -1,5 +1,7 @@
 {% load static %}
-<div id="page-items-{{ page_obj.number }}">
+<div id="page-items-{{ page_obj.number }}"
+     role="feed"
+     aria-busy="false">
     {% block results %}{% endblock %}
     {% if page_obj.has_next %}
     <div id="page-{{ page_obj.next_page_number }}"
