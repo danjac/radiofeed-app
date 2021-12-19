@@ -1,13 +1,20 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
 {% spaceless %}
-<img class="object-cover aspect-square bg-transparent hover:opacity-75 {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}"
+<img class="object-cover bg-transparent {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}{% if url %} hover:opacity-75 cursor-pointer{% endif %}"
      alt="{{ alt }}"
      title="{{ alt }}"
      loading="lazy"
      width="{{ size }}"
      height="{{ size }}"
      src="{{ placeholder }}"
+     {% if url %}
+     hx-get="{{ url }}"
+     hx-push-url="true"
+     {% if hx_swap %}
+     hx-swap="{{ hx_swap }}"
+     {% endif %}
+     {% endif %}
      {% if cover_url %}
      x-data="{
             isLoaded: false,

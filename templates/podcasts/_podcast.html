@@ -5,12 +5,9 @@
          aria-setsize="-1">
 
     <div class="flex items-center space-x-3">
-        <div class="w-20">
-            <a href="{{ podcast_url }}">
-                {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 %}
-            </a>
+        <div class="w-20 h-20">
+            {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast_url %}
         </div>
-
 
         <div class="flex flex-col place-content-between h-16">
             <h2 class="w-52 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-3xl lg:truncate">
