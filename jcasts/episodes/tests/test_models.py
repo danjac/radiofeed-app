@@ -503,13 +503,6 @@ class TestQueueItemManager:
         assert items[1] == first
         assert items[2] == second
 
-    def test_create_item_start_empty(self, user, episode):
-        item = self.create_item(user, episode)
-
-        assert item.episode == episode
-        assert item.user == user
-        assert item.position == 1
-
     @pytest.mark.django_db(transaction=True)
     def test_create_item_start_already_exists(self, user):
         other = QueueItemFactory(user=user, position=1)
@@ -526,8 +519,15 @@ class TestQueueItemManager:
         other.refresh_from_db()
         assert other.position == 1
 
+    def test_create_item_start_empty(self, user, episode):
+        item = self.create_item(user, episode, add_to_start=True)
+
+        assert item.episode == episode
+        assert item.user == user
+        assert item.position == 1
+
     def test_create_item_end_empty(self, user, episode):
-        item = self.create_item(user, episode)
+        item = self.create_item(user, episode, add_to_start=False)
 
         assert item.episode == episode
         assert item.user == user
