@@ -10,11 +10,6 @@ from django.urls import reverse_lazy
 
 BASE_DIR = pathlib.Path(__file__).absolute().parents[3]
 
-if (env_file := BASE_DIR / ".env").exists():
-    with open(env_file) as fp:
-        environ.Env.read_env(fp)
-
-
 env = environ.Env()
 
 DEBUG = False
