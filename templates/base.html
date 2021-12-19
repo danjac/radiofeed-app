@@ -46,9 +46,11 @@
          id="layout">
 
         {% block sidebar %}
+        {% if user.is_authenticated %}
         <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-screen xl:top-16">
             {% include "_sidebar.html" %}
         </aside>
+        {% endif %}
         {% endblock %}
 
         {% block main %}
