@@ -112,13 +112,13 @@
                         class="link"
                         hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
                         @click="close()">
-                    {% icon "arrow_up" css_class=ICON_CSS %}
+                    {% icon "sort_ascending" css_class=ICON_CSS %}
                 </button>
                 <button title="Add to End of Play Queue"
                         class="link"
                         hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
                         @click="close()">
-                    {% icon "arrow_down" css_class=ICON_CSS %}
+                    {% icon "sort_descending" css_class=ICON_CSS %}
                 </button>
                 {% else %}
                 <button hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"

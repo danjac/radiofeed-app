@@ -44,7 +44,7 @@
 
     <div class="flex items-center"
          x-show="!isPlaying"
-         {% if is_queue %}:class="{isQueued: 'space-x-2'}"{% endif %}>
+         {% if is_queue %}:class="{'space-x-3 lg:space-x-4': !isQueued}"{% endif %}>
         {% if is_queue %}
         <button title="Add to Start of Play Queue"
                 class="link"
@@ -52,7 +52,7 @@
                 x-cloak
                 hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
                 @click="isQueued=true">
-            {% icon "arrow_up" css_class=ICON_CSS %}
+            {% icon "sort_ascending" css_class=ICON_CSS %}
         </button>
         <button title="Add to End of Play Queue"
                 class="link"
@@ -60,7 +60,7 @@
                 x-cloak
                 hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
                 @click="isQueued=true">
-            {% icon "arrow_down" css_class=ICON_CSS %}
+            {% icon "sort_descending" css_class=ICON_CSS %}
         </button>
         {% else %}
         <button title="Add to Play Queue"
