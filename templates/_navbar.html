@@ -165,6 +165,7 @@
                     </span>
                 </div>
             </a>
+            {% endif %}
             <button class="xl:hidden focus:outline-none transform transition"
                     title="Toggle Menu"
                     x-cloak
@@ -179,28 +180,6 @@
                     @click="sidebar=false">
                 {% icon "chevron_down" css_class="h-6 w-6" %}
             </button>
-            {% else %}
-            <a href="{% url 'podcasts:index' %}"
-               accesskey="p"
-               title="Podcasts"
-               class="flex items-center">
-                {% icon "rss" css_class="w-4 h-4 lg:w-6 lg:h-6" %}
-            </a>
-            <a href="{% url 'episodes:index' %}"
-               accesskey="n"
-               title="New Releases"
-               class="flex items-center">
-                {% icon "sparkles" css_class="w-4 h-4 lg:w-6 lg:h-6" %}
-            </a>
-            <a href="{% url 'about:credits' %}"
-               accesskey="n"
-               title="About this Site"
-               class="flex items-center">
-                {% icon "info" css_class="w-4 h-4 lg:w-6 lg:h-6" %}
-            </a>
-
-
-            {% endif %}
         </div>
     </div>
     <div class="xl:hidden absolute py-6 sm:py-3 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"

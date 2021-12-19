@@ -84,6 +84,7 @@
             </a>
         </li>
 
+        {% if user.is_authenticated %}
         <li>
             <form class="inline-block"
                   hx-disable="true"
@@ -99,6 +100,7 @@
                 </button>
             </form>
         </li>
+        {% endif %}
 
         {% endwith %}
     </ul>
