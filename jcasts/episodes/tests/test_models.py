@@ -503,18 +503,16 @@ class TestQueueItemManager:
         assert items[1] == first
         assert items[2] == second
 
-    def test_create_item_start_empty(self, user):
-        episode = EpisodeFactory()
+    def test_create_item_start_empty(self, user, episode):
         item = QueueItem.objects.create_item(user, episode, add_to_start=False)
 
         assert item.episode == episode
         assert item.user == user
         assert item.position == 1
 
-    def test_create_item_start_with_other_items(self, user):
+    def test_create_item_start_with_other_items(self, user, episode):
         other = QueueItemFactory(user=user, position=1)
 
-        episode = EpisodeFactory()
         item = QueueItem.objects.create_item(user, episode, add_to_start=False)
 
         assert item.episode == episode
@@ -540,18 +538,16 @@ class TestQueueItemManager:
         other.refresh_from_db()
         assert other.position == 1
 
-    def test_create_item_end_empty(self, user):
-        episode = EpisodeFactory()
+    def test_create_item_end_empty(self, user, episode):
         item = QueueItem.objects.create_item(user, episode, add_to_start=False)
 
         assert item.episode == episode
         assert item.user == user
         assert item.position == 1
 
-    def test_create_item_end_with_other_items(self, user):
+    def test_create_item_end_with_other_items(self, user, episode):
         other = QueueItemFactory(user=user, position=1)
 
-        episode = EpisodeFactory()
         item = QueueItem.objects.create_item(user, episode, add_to_start=False)
 
         assert item.episode == episode
