@@ -166,13 +166,11 @@
 
             {% endwith %}
 
-            {% with description=episode.cleaned_description %}
-            {% if description %}
+            {% if episode.description %}
             <div class="mt-3 overflow-auto max-h-24 lg:max-h-48">
-            {% include "_markdown.html" with content=description %}
+                {% include "_markdown.html" with content=episode.description %}
             </div>
             {% endif %}
-            {% endwith %}
 
 
         </div>
