@@ -547,7 +547,7 @@ class TestQueue:
 class TestAddToQueueStart:
     url = "episodes:add_to_queue_start"
 
-    def test_add_to_queue(self, client, auth_user, django_assert_num_queries):
+    def test_add_to_queue_start(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
@@ -579,52 +579,24 @@ class TestAddToQueueStart:
         assert items[2].episode, first
         assert items[2].position == 3
 
-    def test_is_playing(
-        self, client, auth_user, player_episode, django_assert_num_queries
-    ):
-        with django_assert_num_queries(4):
-            resp = client.post(
-                reverse(
-                    self.url,
-                    args=[player_episode.id],
-                ),
-            )
-        assert_no_content(resp)
-        assert QueueItem.objects.count() == 0
+    def test_add_to_queue_end(self, client, auth_user, django_assert_num_queries):
 
-    @pytest.mark.django_db(transaction=True)
-    def test_already_queued(
-        self, client, auth_user, episode, django_assert_num_queries
-    ):
-        QueueItemFactory(episode=episode, user=auth_user)
-        with django_assert_num_queries(6):
-            resp = client.post(
-                reverse(
-                    self.url,
-                    args=[episode.id],
-                ),
-            )
-        assert_conflict(resp)
+        url = "episodes:add_to_queue_end"
 
-
-class TestAddToQueueEnd:
-    url = "episodes:add_to_queue_end"
-
-    def test_add_to_queue(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
         second = EpisodeFactory()
         third = EpisodeFactory()
 
         with django_assert_num_queries(6):
-            resp = client.post(reverse(self.url, args=[first.id]))
+            resp = client.post(reverse(url, args=[first.id]))
         assert_no_content(resp)
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse(self.url, args=[second.id]))
+            resp = client.post(reverse(url, args=[second.id]))
         assert_no_content(resp)
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse(self.url, args=[third.id]))
+            resp = client.post(reverse(url, args=[third.id]))
         assert_no_content(resp)
 
         items = (
