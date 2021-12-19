@@ -166,11 +166,9 @@
 
             {% endwith %}
 
-            {% with description=episode.cleaned_description|truncatechars:500 %}
+            {% with description=episode.cleaned_description %}
             {% if description %}
-            <p class="break-words mt-3">
-                {{ description }}
-            </p>
+            {% include "_markdown.html" with content=description css_class="mt-3 overflow-auto max-h-24" %}
             {% endif %}
             {% endwith %}
 
