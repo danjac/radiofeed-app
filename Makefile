@@ -33,6 +33,10 @@ test:
 coverage:
 	./bin/runtests -v -x --cov --reuse-db --cov-report term-missing
 
+requirements:
+	pip-compile requirements.in
+	pip-compile dev-requirements.in
+
 maint: maintenance
 
 maintenance:
