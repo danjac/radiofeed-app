@@ -73,6 +73,18 @@
         </li>
 
         <li>
+            {% re_active_link 'about:credits' '/about/*' as link %}
+            <a href="{{ link.url }}"
+               accesskey="a"
+               title="About"
+               @click="$dispatch('close-sidebar')"
+               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
+                {% icon "info" css_class=ICON_CSS %}
+                About
+            </a>
+        </li>
+
+        <li>
             <form class="inline-block"
                   hx-disable="true"
                   action="{% url 'account_logout' %}"
@@ -86,18 +98,6 @@
                     Logout
                 </button>
             </form>
-        </li>
-
-        <li>
-            {% re_active_link 'about:credits' '/about/*' as link %}
-            <a href="{{ link.url }}"
-               accesskey="a"
-               title="About"
-               @click="$dispatch('close-sidebar')"
-               class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
-                {% icon "info" css_class=ICON_CSS %}
-                About
-            </a>
         </li>
 
         {% endwith %}
