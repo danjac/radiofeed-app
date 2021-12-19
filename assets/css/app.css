@@ -46,11 +46,11 @@ input[type='search']::-webkit-search-results-decoration {
 .markdown h3,
 .markdown h4,
 .markdown h5 {
-    @apply font-bold mb-3;
+    @apply font-bold;
 }
 
 .markdown hr {
-    @apply border-gray-300 dark:border-gray-600 mb-3;
+    @apply border-gray-300 dark:border-gray-600;
 }
 
 .markdown pre {
@@ -65,28 +65,12 @@ input[type='search']::-webkit-search-results-decoration {
     @apply text-blue-600 dark:text-blue-400;
 }
 
-.markdown div {
-    @apply mb-3;
-}
-
-.markdown p {
-    @apply mb-3;
-}
-
 .markdown ol {
-    @apply list-decimal list-inside mb-3;
+    @apply list-decimal list-inside space-y-3;
 }
 
 .markdown ul {
-    @apply list-disc list-inside mb-3;
-}
-
-.markdown li ul {
-    @apply mt-3;
-}
-
-.markdown li {
-    @apply mb-3;
+    @apply list-disc list-inside space-y-3;
 }
 
 .markdown li div,
