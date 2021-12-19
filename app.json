@@ -12,7 +12,7 @@
             "quantity": 4
         },
         "podping": {
-            "quantity": 1
+            "quantity": 0
         }
     },
     "cron": [
