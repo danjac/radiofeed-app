@@ -60,6 +60,7 @@
             </a>
         </li>
 
+        {% if user.is_authenticated %}
         <li>
             {% re_active_link 'users:preferences' '/account/*' as link %}
             <a href="{{ link.url }}"
@@ -71,6 +72,7 @@
                 Settings
             </a>
         </li>
+        {% endif %}
 
         <li>
             {% re_active_link 'about:credits' '/about/*' as link %}
