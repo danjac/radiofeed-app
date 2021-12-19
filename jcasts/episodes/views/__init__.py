@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import Episode
+from jcasts.episodes.models import Episode, QueueItem
 from jcasts.podcasts.models import Podcast
 from jcasts.shared.pagination import render_paginated_response
 
@@ -86,7 +86,9 @@ def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
         request,
         episode,
         "episodes/_actions.html",
-        {"tag": episode.get_actions_tag()},
+        {
+            "tag": episode.get_actions_tag(),
+        },
     )
 
 
@@ -139,6 +141,10 @@ def render_episode_detail_response(
             "is_playing": request.player.has(episode.id),
             "is_queued": episode.is_queued(request.user),
             "is_favorited": episode.is_favorited(request.user),
+            "is_queue": request.user.is_authenticated
+            and QueueItem.objects.filter(user=request.user)
+            .exclude(episode=episode)
+            .exists(),
             **(extra_context or {}),
         },
     )

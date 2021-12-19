@@ -413,18 +413,20 @@ class AudioLog(TimeStampedModel):
 
 
 class QueueItemQuerySet(models.QuerySet):
-    def create_item(self, user: User, episode: Episode) -> QueueItem:
-        return self.create(
-            episode=episode,
-            user=user,
-            position=(
-                self.filter(user=user).aggregate(models.Max("position"))[
-                    "position__max"
-                ]
-                or 0
-            )
-            + 1,
-        )
+    def create_item(
+        self, user: User, episode: Episode, add_to_start: bool
+    ) -> QueueItem:
+        items = self.filter(user=user)
+
+        if add_to_start:
+            items.update(position=models.F("position") + 1)
+            position = 1
+        else:
+            position = (
+                items.aggregate(models.Max("position"))["position__max"] or 0
+            ) + 1
+
+        return self.create(episode=episode, user=user, position=position)
 
     def move_items(self, user: User, item_ids: list[int]) -> None:
         qs = self.filter(user=user, pk__in=item_ids)

@@ -107,13 +107,28 @@
                     {% icon "collection_solid" css_class=ICON_CSS %}
                 </button>
                 {% else %}
-                <button hx-post="{% url 'episodes:add_to_queue' episode.id %}"
+                {% if is_queue %}
+                <button title="Add to Start of Play Queue"
+                        class="link"
+                        hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
+                        @click="close()">
+                    {% icon "arrow_up" css_class=ICON_CSS %}
+                </button>
+                <button title="Add to End of Play Queue"
+                        class="link"
+                        hx-post="{% url 'episodes:add_to_queue_end' episode.id %}"
+                        @click="close()">
+                    {% icon "arrow_down" css_class=ICON_CSS %}
+                </button>
+                {% else %}
+                <button hx-post="{% url 'episodes:add_to_queue_start' episode.id %}"
                         hx-push-url="false"
                         title="Add to Play Queue"
                         class="link"
                         @click="close()">
                     {% icon "collection" css_class=ICON_CSS %}
                 </button>
+                {% endif %}
                 {% endif %}
                 {% endif %}
 

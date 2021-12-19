@@ -124,7 +124,7 @@ class TestEpisodeDetail:
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
         )
 
-    def test_detail_anonymous(
+    def test_anonymous(
         self, client, episode, prev_episode, next_episode, django_assert_num_queries
     ):
         with django_assert_num_queries(4):
@@ -132,7 +132,7 @@ class TestEpisodeDetail:
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
 
-    def test_detail_authenticated(
+    def test_authenticated(
         self,
         client,
         auth_user,
@@ -141,7 +141,7 @@ class TestEpisodeDetail:
         next_episode,
         django_assert_num_queries,
     ):
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(9):
             resp = client.get(episode.get_absolute_url())
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
@@ -155,7 +155,7 @@ class TestEpisodeActions:
         assert resp.context_data["episode"] == episode
 
     def test_authenticated(self, client, auth_user, episode, django_assert_num_queries):
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(7):
             resp = client.get(self.url(episode))
         assert_ok(resp)
         assert resp.context_data["episode"] == episode
@@ -544,8 +544,71 @@ class TestQueue:
             assert_ok(client.get(reverse("episodes:queue")))
 
 
-class TestAddToQueue:
-    url = "episodes:add_to_queue"
+class TestAddToQueueStart:
+    url = "episodes:add_to_queue_start"
+
+    def test_add_to_queue(self, client, auth_user, django_assert_num_queries):
+        first = EpisodeFactory()
+        second = EpisodeFactory()
+        third = EpisodeFactory()
+
+        with django_assert_num_queries(6):
+            resp = client.post(reverse(self.url, args=[first.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.url, args=[second.id]))
+        assert_no_content(resp)
+
+        with django_assert_num_queries(5):
+            resp = client.post(reverse(self.url, args=[third.id]))
+        assert_no_content(resp)
+
+        items = (
+            QueueItem.objects.filter(user=auth_user)
+            .select_related("episode")
+            .order_by("position")
+        )
+
+        assert items[0].episode == third
+        assert items[0].position == 1
+
+        assert items[1].episode, second
+        assert items[1].position == 2
+
+        assert items[2].episode, first
+        assert items[2].position == 3
+
+    def test_is_playing(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
+        with django_assert_num_queries(4):
+            resp = client.post(
+                reverse(
+                    self.url,
+                    args=[player_episode.id],
+                ),
+            )
+        assert_no_content(resp)
+        assert QueueItem.objects.count() == 0
+
+    @pytest.mark.django_db(transaction=True)
+    def test_already_queued(
+        self, client, auth_user, episode, django_assert_num_queries
+    ):
+        QueueItemFactory(episode=episode, user=auth_user)
+        with django_assert_num_queries(6):
+            resp = client.post(
+                reverse(
+                    self.url,
+                    args=[episode.id],
+                ),
+            )
+        assert_conflict(resp)
+
+
+class TestAddToQueueEnd:
+    url = "episodes:add_to_queue_end"
 
     def test_add_to_queue(self, client, auth_user, django_assert_num_queries):
         first = EpisodeFactory()
