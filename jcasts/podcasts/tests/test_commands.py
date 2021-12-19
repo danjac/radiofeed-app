@@ -11,27 +11,6 @@ from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
 
 
-class TestPodping:
-    def test_command(self, mocker):
-        mocker.patch("itertools.count", return_value=range(10))
-        mocker.patch(
-            "jcasts.podcasts.podping.run", return_value=["https://example.com"]
-        )
-        call_command("podping")
-
-    def test_exception_restart(self, mocker):
-        mocker.patch("itertools.count", return_value=range(10))
-        mocker.patch("jcasts.podcasts.podping.run", side_effect=ValueError)
-        call_command("podping", restart_on_failure=True)
-
-    def test_exception_no_restart(self, mocker):
-        mocker.patch("itertools.count", return_value=range(10))
-        mocker.patch("jcasts.podcasts.podping.run", side_effect=ValueError)
-
-        with pytest.raises(CommandError):
-            call_command("podping")
-
-
 class TestFetchTopRated:
     def test_command(self, mocker):
         mock_top_rated = mocker.patch(
