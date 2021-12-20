@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import base64
+import io
+import re
 
 from typing import Generator
+from urllib.parse import urlparse
 
 import attr
+import lxml
 import requests
 
 from django.core.cache import cache
 
+from jcasts.podcasts import user_agent
 from jcasts.podcasts.models import Podcast
 
 LOOKUP_URL = "https://itunes.apple.com/lookup"
@@ -17,6 +22,10 @@ SEARCH_URL = "https://itunes.apple.com/search"
 TOP_RATED_URL = (
     "https://rss.applemarketingtools.com/api/v2/us/podcasts/top/50/podcasts.json"
 )
+
+CRAWL_URL = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2"
+
+RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 
 
 @attr.s
@@ -50,10 +59,37 @@ def top_rated() -> Generator[Feed, None, None]:
         )
 
 
-def fetch_json(url: str, data: dict | None = None) -> dict:
-    response = requests.get(url, data)
+def crawl() -> Generator[Feed, None, None]:
+
+    for url in parse_urls(get_response(CRAWL_URL).content):
+        if url.startswith("https://podcasts.apple.com/us/genre/podcasts"):
+            yield from parse_genre(url)
+
+
+def parse_genre(genre_url: str) -> Generator[Feed, None, None]:
+
+    for url in parse_urls(get_response(genre_url).content):
+        if lookup_id := parse_podcast_id(url):
+            try:
+                yield from parse_feeds(fetch_lookup(lookup_id))
+            except requests.RequestException:
+                continue
+
+
+def get_response(url, data: dict | None = None) -> requests.Response:
+    response = requests.get(
+        url,
+        data,
+        headers={"User-Agent": user_agent.get_user_agent()},
+        timeout=10,
+        allow_redirects=True,
+    )
     response.raise_for_status()
-    return response.json()
+    return response
+
+
+def fetch_json(url: str, data: dict | None = None) -> dict:
+    return get_response(url, data).json()
 
 
 def fetch_search(term: str) -> dict:
@@ -74,6 +110,27 @@ def fetch_lookup(lookup_id: str) -> dict:
     return fetch_json(
         LOOKUP_URL, {"id": lookup_id, "entity": "podcast"}
     )  # pragma: no cover
+
+
+def parse_podcast_id(url: str) -> str | None:
+    if url.startswith("https://podcasts.apple.com/us/podcast/") and (
+        match := RE_PODCAST_ID.search(urlparse(url).path.split("/")[-1])
+    ):
+        return match.group("id")
+    return None
+
+
+def parse_urls(content: bytes) -> Generator[str, None, None]:
+    for _, element in lxml.etree.iterparse(
+        io.BytesIO(content),
+        encoding="utf-8",
+        no_network=True,
+        resolve_entities=False,
+        recover=True,
+        events=("end",),
+    ):
+        if element.tag == "a" and (href := element.attrib.get("href")):
+            yield href
 
 
 def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:

@@ -1,3 +1,5 @@
+import pathlib
+
 import pytest
 import requests
 
@@ -51,6 +53,88 @@ def mock_invalid_response(mocker):
             return {"results": [{"id": 12345, "url": "bad-url"}]}
 
     yield patch_request(mocker, MockResponse())
+
+
+class TestCrawl:
+    def test_crawl(self, mocker):
+        class MockResponse:
+            def __init__(self):
+
+                self.content = open(
+                    pathlib.Path(__file__).parent / "mocks" / "podcasts.html",
+                    "rb",
+                ).read()
+
+            def raise_for_status(self):
+                pass
+
+        mocker.patch("requests.get", return_value=MockResponse())
+        mock_parse = mocker.patch("jcasts.podcasts.itunes.parse_genre")
+
+        list(itunes.crawl())
+
+        assert len(mock_parse.mock_calls) == 222
+
+
+class TestParseGenre:
+    url = "https://podcasts.apple.com/us/genre/podcasts-arts/id1301"
+
+    class MockResponse:
+        def __init__(self):
+
+            self.content = open(
+                pathlib.Path(__file__).parent / "mocks" / "genre.html",
+                "rb",
+            ).read()
+
+        def raise_for_status(self):
+            pass
+
+    @pytest.fixture
+    def mock_response(self, mocker):
+        return self.MockResponse()
+
+    def test_parse(self, mocker, mock_response):
+        mocker.patch("requests.get", return_value=mock_response)
+        mock_fetch = mocker.patch(
+            "jcasts.podcasts.itunes.fetch_lookup", return_value={}
+        )
+
+        list(itunes.parse_genre(self.url))
+
+        assert len(mock_fetch.mock_calls) == 240
+
+    def test_lookup_exception(self, mocker, mock_response):
+        mocker.patch("requests.get", return_value=mock_response)
+
+        mock_fetch = mocker.patch(
+            "jcasts.podcasts.itunes.fetch_lookup", side_effect=requests.HTTPError
+        )
+
+        list(itunes.parse_genre(self.url))
+
+        mock_fetch.assert_called()
+
+
+class TestParsePodcastId:
+    def test_incorrect_url(self):
+        assert itunes.parse_podcast_id("https://example.com") is None
+
+    def test_no_lookup_id(self):
+        assert (
+            itunes.parse_podcast_id(
+                "https://podcasts.apple.com/us/podcast/the-human-action-podcast/"
+            )
+            is None
+        )
+
+    def test_has_lookup_id(self):
+        assert (
+            itunes.parse_podcast_id(
+                "https://podcasts.apple.com/us/podcast/the-human-action-podcast/id884207568"
+            )
+            == "884207568"
+        )
 
 
 class TestTopRated:
