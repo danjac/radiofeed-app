@@ -26,6 +26,10 @@
             "schedule": "15,45 * * * *"
         },
         {
+            "command": "python manage.py crawl_itunes",
+            "schedule": "12 2 * * 5"
+        },
+        {
             "command": "python manage.py send_recommendation_emails",
             "schedule": "12 9 * * 1"
         },
