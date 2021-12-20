@@ -9,6 +9,7 @@
      height="{{ size }}"
      src="{{ placeholder }}"
      {% if url %}
+     role="link"
      hx-get="{{ url }}"
      hx-push-url="true"
      {% if hx_swap %}
