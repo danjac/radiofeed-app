@@ -11,12 +11,12 @@
     }"
      @click.away="close()"
      @keydown.escape.window="close()">
-    <div class="min-h-screen mx-3 sm:mx-auto flex items-center justify-center">
+    <div class="min-h-screen mx-3 lg:mx-auto flex items-center justify-center">
 
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
              aria-hidden="true"></div>
 
-        <div class="inline-block align-bottom bg-white dark:bg-black rounded text-left overflow-hidden shadow-xl transform transition-all my-8 align-middlemax-w-xl w-full sm:w-5/6 lg:w-auto sm:max-w-2xl lg:max-w-3xl p-3"
+        <div class="inline-block align-bottom bg-white dark:bg-black rounded text-left overflow-hidden shadow-xl transform transition-all my-8 align-middle p-3 w-full lg:max-w-2xl xl:max-w-3xl"
              x-show="show"
              @click.away="close()">
             {% with podcast=episode.podcast %}
