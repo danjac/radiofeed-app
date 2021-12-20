@@ -23,6 +23,7 @@
                @click="$dispatch('close-sidebar')"
                href="{{ home_url }}">{{ request.site.name }}</a>
 
+            {% if debug %}
             <div class="text-xs ml-2">
                 <span class="sm:hidden">xs</span>
                 <span class="hidden sm:inline-block md:hidden">sm</span>
@@ -32,6 +33,7 @@
                 <span class="hidden 2xl:inline-block 3xl:hidden">2xl</span>
                 <span class="hidden 3xl:inline-block">3xl+</span>
             </div>
+            {% endif %}
 
         </div>
 
