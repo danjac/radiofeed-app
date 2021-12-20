@@ -26,6 +26,21 @@ class TestFetchTopRated:
             call_command("fetch_top_rated")
 
 
+class TestCrawlItunes:
+    def test_command(self, mocker):
+        mock_top_rated = mocker.patch(
+            "jcasts.podcasts.itunes.crawl",
+            return_value=[Feed(url="https://example.com")],
+        )
+        call_command("crawl_itunes")
+        mock_top_rated.assert_called()
+
+    def test_exception(self, mocker):
+        mocker.patch("jcasts.podcasts.itunes.crawl", side_effect=requests.HTTPError)
+        with pytest.raises(CommandError):
+            call_command("crawl_itunes")
+
+
 class TestClearFeedQueue:
     def test_queue(self, db, mock_feed_queue):
         now = timezone.now()
