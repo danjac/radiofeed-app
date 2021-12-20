@@ -5,15 +5,15 @@
 {% block subtitle %} | {% translate "Verify Your E-mail Address" %}{% endblock %}
 
 {% block content %}
-<h1>{% translate "Verify Your E-mail Address" %}</h1>
+<h1 class="text-lg lg:text-lg mb-3 lg:mb-6 font-bold">{% translate "Verify Your E-mail Address" %}</h1>
 
 {% url 'account_email' as email_url %}
 
-<p>{% blocktranslate %}This part of the site requires us to verify that
+<p class="mb-3">{% blocktranslate %}This part of the site requires us to verify that
     you are who you claim to be. For this purpose, we require that you
     verify ownership of your e-mail address. {% endblocktranslate %}</p>
 
-<p>{% blocktranslate %}We have sent an e-mail to you for
+<p class="mb-3">{% blocktranslate %}We have sent an e-mail to you for
     verification. Please click on the link inside this e-mail. Please
     contact us if you do not receive it within a few minutes.{% endblocktranslate %}</p>
 
