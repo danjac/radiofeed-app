@@ -10,6 +10,9 @@
         },
         "worker": {
             "quantity": 4
+        },
+        "podping": {
+            "quantity": 1
         }
     },
     "cron": [
