@@ -96,9 +96,7 @@ class TestParseGenre:
 
     def test_parse(self, mocker, mock_response):
         mocker.patch("requests.get", return_value=mock_response)
-        mock_fetch = mocker.patch(
-            "jcasts.podcasts.itunes.fetch_lookup", return_value={}
-        )
+        mock_fetch = mocker.patch("jcasts.podcasts.itunes.get_podcast", return_value={})
 
         list(itunes.parse_genre(self.url))
 
@@ -108,7 +106,7 @@ class TestParseGenre:
         mocker.patch("requests.get", return_value=mock_response)
 
         mock_fetch = mocker.patch(
-            "jcasts.podcasts.itunes.fetch_lookup", side_effect=requests.HTTPError
+            "jcasts.podcasts.itunes.get_podcast", side_effect=requests.HTTPError
         )
 
         list(itunes.parse_genre(self.url))
@@ -139,12 +137,19 @@ class TestParsePodcastId:
 
 class TestTopRated:
     def test_new(self, db, mocker):
+        class MockResponse:
+            def raise_for_status(self):
+                ...
+
+            def json(self):
+                return {"feed": {"results": [{"id": "12345"}]}}
+
         mocker.patch(
-            "jcasts.podcasts.itunes.fetch_top_rated",
-            return_value={"feed": {"results": [{"id": "12345"}]}},
+            "requests.get",
+            return_value=MockResponse(),
         )
         mocker.patch(
-            "jcasts.podcasts.itunes.fetch_lookup",
+            "jcasts.podcasts.itunes.get_podcast",
             return_value={"results": [MOCK_RESULT]},
         )
 
@@ -155,12 +160,19 @@ class TestTopRated:
         assert podcasts.first().title == "Test & Code : Python Testing"
 
     def test_existing(self, db, mocker):
+        class MockResponse:
+            def raise_for_status(self):
+                ...
+
+            def json(self):
+                return {"feed": {"results": [{"id": "12345"}]}}
+
         mocker.patch(
-            "jcasts.podcasts.itunes.fetch_top_rated",
-            return_value={"feed": {"results": [{"id": "12345"}]}},
+            "requests.get",
+            return_value=MockResponse(),
         )
         mocker.patch(
-            "jcasts.podcasts.itunes.fetch_lookup",
+            "jcasts.podcasts.itunes.get_podcast",
             return_value={"results": [MOCK_RESULT]},
         )
 
