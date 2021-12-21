@@ -27,7 +27,16 @@ class Feed:
     podcast: Podcast | None = attr.ib(default=None)
 
 
+def search_cached(search_term: str) -> list[Feed]:
+    cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
+    if (feeds := cache.get(cache_key)) is None:
+        feeds = list(search(search_term))
+        cache.set(cache_key, feeds)
+    return feeds
+
+
 def search(search_term: str) -> Generator[Feed, None, None]:
+    """Search RSS feeds on iTunes"""
     yield from parse_feeds(
         get_response(
             "https://itunes.apple.com/search",
@@ -39,16 +48,8 @@ def search(search_term: str) -> Generator[Feed, None, None]:
     )
 
 
-def search_cached(search_term: str) -> list[Feed]:
-
-    cache_key = "itunes:" + base64.urlsafe_b64encode(bytes(search_term, "utf-8")).hex()
-    if (feeds := cache.get(cache_key)) is None:
-        feeds = list(search(search_term))
-        cache.set(cache_key, feeds)
-    return feeds
-
-
 def top_rated() -> Generator[Feed, None, None]:
+    """Get the top-rated iTunes feeds"""
     for result in get_response(
         "https://rss.applemarketingtools.com/api/v2/us/podcasts/top/50/podcasts.json"
     ).json()["feed"]["results"]:
@@ -56,6 +57,7 @@ def top_rated() -> Generator[Feed, None, None]:
 
 
 def crawl() -> Generator[Feed, None, None]:
+    """Crawl through iTunes podcast index and fetch RSS feeds for individual podcasts."""
 
     for url in parse_urls(
         get_response("https://itunes.apple.com/us/genre/podcasts/id26?mt=2").content
