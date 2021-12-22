@@ -75,14 +75,15 @@ def actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
-    episode = (
-        podcast.episode_set.with_current_time(request.user)
-        .select_related("podcast")
-        .order_by("-pub_date")
-        .first()
-    )
+    if (
+        episode := (
+            podcast.episode_set.with_current_time(request.user)
+            .select_related("podcast")
+            .order_by("-pub_date")
+            .first()
+        )
+    ) is None:
 
-    if episode is None:
         raise Http404
 
     return render_episode_detail_response(
