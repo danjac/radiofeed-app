@@ -1,29 +1,24 @@
 <div class="fixed z-50 top-10 inset-x-0 mx-auto w-64 lg:w-80"
      id="messages"
-     {% if hx_oob %} hx-swap-oob="true"{% endif %}
-     x-data="jCasts.Messages()"
-     x-init="() => {
-    {% for message in messages %}
-        addMessage({ message: '{{ message }}', tags: '{{ message.tags }}' });
-    {% endfor %}
-    }"
-     @messages.window="addMessages($event.detail.value)">
+     {% if hx_oob %}
+     hx-swap-oob="true"
+     {% endif %}>
+    {% if messages %}
     <div class="space-y-3">
-        <template x-for="(message, index) in messages"
-                  :key="index">
-            <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl"
-                 :class="message.tags"
-                 @click="message.show=false"
-                 x-show="message.show"
-                 x-transition:enter="transition ease-in duration-200"
-                 x-transition:enter-start="transform opacity-0"
-                 x-transition:enter-end="transform opacity-100"
-                 x-transition:leave="transition ease-out duration-500"
-                 x-transition:leave-start="transform opacity-100"
-                 x-transition:leave-end="transform opacity-0">
-                <div class="mx-auto font-semibold flex flex-wrap"
-                     x-text="message.message"></div>
-            </div>
-        </template>
+        {% for message in messages %}
+        <div class="flex justify-center text-center flex-wrap rounded items-center p-2 message shadow-xl {{ message.tags }}"
+             x-data="{show: true}"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 1500)"
+             x-transition:enter="transition ease-in duration-200"
+             x-transition:enter-start="transform opacity-0"
+             x-transition:enter-end="transform opacity-100"
+             x-transition:leave="transition ease-out duration-500"
+             x-transition:leave-start="transform opacity-100"
+             x-transition:leave-end="transform opacity-0">
+            <div class="mx-auto font-semibold flex flex-wrap">{{ message }}</div>
+        </div>
+        {% endfor %}
     </div>
+    {% endif %}
 </div>
