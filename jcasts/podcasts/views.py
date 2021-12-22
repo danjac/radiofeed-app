@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -17,10 +17,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
-from jcasts.episodes.views import (
-    render_episode_detail_response,
-    render_episode_list_response,
-)
+from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
 from jcasts.shared.decorators import ajax_login_required
@@ -58,39 +55,6 @@ def index(request: HttpRequest) -> HttpResponse:
             "search_url": reverse("podcasts:search_podcasts"),
         },
         cached=promoted,
-    )
-
-
-@require_http_methods(["GET"])
-def latest(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Redirects to latest episode in podcast."""
-
-    podcast = get_podcast_or_404(request, podcast_id)
-    episode = podcast.episode_set.order_by("-pub_date").first()
-    return redirect(episode or podcast)
-
-
-@require_http_methods(["GET"])
-def actions(request: HttpRequest, podcast_id: int) -> HttpResponse:
-
-    podcast = get_podcast_or_404(request, podcast_id)
-
-    if (
-        episode := (
-            podcast.episode_set.with_current_time(request.user)
-            .select_related("podcast")
-            .order_by("-pub_date")
-            .first()
-        )
-    ) is None:
-
-        raise Http404
-
-    return render_episode_detail_response(
-        request,
-        episode,
-        "episodes/_actions.html",
-        {"tag": podcast.get_actions_tag()},
     )
 
 
@@ -196,6 +160,7 @@ def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     podcast = get_podcast_or_404(request, podcast_id)
+    latest_episode = podcast.episode_set.order_by("-pub_date").first()
 
     return TemplateResponse(
         request,
@@ -204,6 +169,7 @@ def podcast_detail(
             request,
             podcast,
             {
+                "latest_episode": latest_episode,
                 "is_following": podcast.is_following(request.user),
             },
         ),

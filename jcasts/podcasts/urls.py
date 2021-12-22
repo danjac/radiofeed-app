@@ -26,16 +26,6 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/<int:podcast_id>/~latest/",
-        views.latest,
-        name="latest",
-    ),
-    path(
-        "podcasts/<int:podcast_id>/~actions/",
-        views.actions,
-        name="actions",
-    ),
-    path(
         "podcasts/<int:podcast_id>/~follow/",
         views.follow,
         name="follow",

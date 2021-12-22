@@ -182,12 +182,6 @@ class Episode(models.Model):
     def get_cover_url(self) -> str | None:
         return self.cover_url or self.podcast.cover_url
 
-    def get_actions_url(self) -> str:
-        return reverse("episodes:actions", args=[self.id])
-
-    def get_actions_tag(self) -> str:
-        return f"episode-{self.id}"
-
     def is_queued(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False

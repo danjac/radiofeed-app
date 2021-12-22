@@ -76,35 +76,24 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def actions(request: HttpRequest, episode_id: int) -> HttpResponse:
-
-    episode = get_episode_or_404(
-        request, episode_id, with_podcast=True, with_current_time=True
-    )
-
-    return render_episode_detail_response(
-        request,
-        episode,
-        "episodes/_actions.html",
-        {
-            "tag": episode.get_actions_tag(),
-        },
-    )
-
-
-@require_http_methods(["GET"])
 def episode_detail(
     request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> HttpResponse:
     episode = get_episode_or_404(
         request, episode_id, with_podcast=True, with_current_time=True
     )
-
-    return render_episode_detail_response(
+    return TemplateResponse(
         request,
-        episode,
         "episodes/detail.html",
         {
+            "episode": episode,
+            "is_playing": request.player.has(episode.id),
+            "is_queued": episode.is_queued(request.user),
+            "is_favorited": episode.is_favorited(request.user),
+            "is_queue": request.user.is_authenticated
+            and QueueItem.objects.filter(user=request.user)
+            .exclude(episode=episode)
+            .exists(),
             "og_data": episode.get_opengraph_data(request),
             "next_episode": Episode.objects.get_next_episode(episode),
             "previous_episode": Episode.objects.get_previous_episode(episode),
@@ -125,29 +114,6 @@ def get_episode_or_404(
     if with_current_time:
         qs = qs.with_current_time(request.user)
     return get_object_or_404(qs, pk=episode_id)
-
-
-def render_episode_detail_response(
-    request: HttpRequest,
-    episode: Episode,
-    template_name: str,
-    extra_context: dict | None = None,
-) -> TemplateResponse:
-    return TemplateResponse(
-        request,
-        template_name,
-        {
-            "episode": episode,
-            "is_playing": request.player.has(episode.id),
-            "is_queued": episode.is_queued(request.user),
-            "is_favorited": episode.is_favorited(request.user),
-            "is_queue": request.user.is_authenticated
-            and QueueItem.objects.filter(user=request.user)
-            .exclude(episode=episode)
-            .exists(),
-            **(extra_context or {}),
-        },
-    )
 
 
 def render_episode_list_response(

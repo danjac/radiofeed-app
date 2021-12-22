@@ -63,12 +63,15 @@
     </div>
     {% endif %}
 
+    {% if latest_episode %}
     <div>
-        <a href="{{ podcast.get_latest_url }}"
-           class="link">
+        <a href="{{ latest_episode.get_absolute_url }}"
+           class="link"
+           title="{{ latest_episode.title }}">
             Latest episode released {% include "_date.html" with value=podcast.pub_date %}
         </a>
     </div>
+    {% endif %}
     {% include "podcasts/_categories.html" %}
     {% include "_markdown.html" with content=podcast.description %}
     {% include "_disclaimer.html" %}

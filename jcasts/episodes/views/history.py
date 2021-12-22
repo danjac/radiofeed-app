@@ -8,7 +8,6 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseNoContent
 
@@ -64,4 +63,4 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
     if not request.player.has(episode_id):
         AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
         messages.info(request, "Removed from History")
-    return with_hx_trigger(HttpResponseNoContent(), {"remove-audio-log": episode_id})
+    return HttpResponseNoContent()

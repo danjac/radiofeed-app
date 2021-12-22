@@ -10,7 +10,6 @@ from django.views.decorators.http import require_http_methods
 from jcasts.episodes.models import QueueItem
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
 
@@ -54,12 +53,7 @@ def remove_from_queue(request: HttpRequest, episode_id: int) -> HttpResponse:
     QueueItem.objects.filter(user=request.user).filter(episode=episode).delete()
     messages.info(request, "Removed from Play Queue")
 
-    return with_hx_trigger(
-        HttpResponseNoContent(),
-        {
-            "remove-queue-item": episode.id,
-        },
-    )
+    return HttpResponseNoContent()
 
 
 @require_http_methods(["POST"])

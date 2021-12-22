@@ -7,7 +7,6 @@ from django.views.decorators.http import require_http_methods
 from jcasts.episodes.models import Favorite
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 
@@ -52,4 +51,4 @@ def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
     Favorite.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Favorites")
-    return with_hx_trigger(HttpResponseNoContent(), {"remove-favorite": episode.id})
+    return HttpResponseNoContent()

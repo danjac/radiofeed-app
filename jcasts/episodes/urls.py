@@ -1,7 +1,6 @@
 from django.urls import path
 
 from jcasts.episodes.views import (
-    actions,
     episode_detail,
     favorites,
     history,
@@ -17,11 +16,6 @@ app_name = "episodes"
 urlpatterns = [
     path("new/", index, name="index"),
     path("search/episodes/", search_episodes, name="search_episodes"),
-    path(
-        "episodes/actions/<int:episode_id>/",
-        actions,
-        name="actions",
-    ),
     path(
         "episodes/<int:episode_id>/<slug:slug>/",
         episode_detail,

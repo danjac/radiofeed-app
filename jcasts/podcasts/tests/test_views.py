@@ -11,7 +11,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Follow
-from jcasts.shared.assertions import assert_conflict, assert_not_found, assert_ok
+from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 
@@ -56,36 +56,6 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == sub.podcast
-
-
-class TestLatest:
-    def url(self, podcast):
-        return reverse("podcasts:latest", args=[podcast.id])
-
-    def test_has_no_episodes(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            resp = client.get(self.url(podcast))
-        assert resp.url == podcast.get_absolute_url()
-
-    def test_has_episodes(self, client, episode, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            resp = client.get(self.url(episode.podcast))
-        assert resp.url == episode.get_absolute_url()
-
-
-class TestActions:
-    def url(self, podcast):
-        return reverse("podcasts:actions", args=[podcast.id])
-
-    def test_has_no_episodes(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            resp = client.get(self.url(podcast))
-        assert_not_found(resp)
-
-    def test_has_episodes(self, client, episode, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            resp = client.get(self.url(episode.podcast))
-        assert_ok(resp)
 
 
 class TestSearchPodcasts:
@@ -195,7 +165,7 @@ class TestPodcastRecommendations:
 
 class TestPodcastDetail:
     def test_get_podcast_anonymous(self, client, podcast, django_assert_num_queries):
-        with django_assert_num_queries(5):
+        with django_assert_num_queries(6):
             resp = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )
@@ -205,7 +175,7 @@ class TestPodcastDetail:
     def test_get_podcast_authenticated(
         self, client, auth_user, podcast, django_assert_num_queries
     ):
-        with django_assert_num_queries(8):
+        with django_assert_num_queries(9):
             resp = client.get(
                 reverse("podcasts:podcast_detail", args=[podcast.id, podcast.slug])
             )

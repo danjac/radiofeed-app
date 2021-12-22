@@ -8,9 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="history"
-     x-data="{count: {{ page_obj.paginator.count }}}"
-     @remove-audio-log.window="count-=1">
+<div id="history">
 
     <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl mb-3">History</h1>
 
@@ -38,16 +36,15 @@
         {% endif %}
     </div>
 
-
-    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500"
-       x-show="count === 0"
-       x-cloak>
+    {% if not page_obj.paginator.count %}
+    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
         {% if request.search %}
         No results found for <span class="font-bold">{{ request.search }}</span>.
         {% else %}
         Your History is currently empty.
         {% endif %}
     </p>
+    {% endif %}
     {% include pagination_template %}
 </div>
 {% endblock content %}

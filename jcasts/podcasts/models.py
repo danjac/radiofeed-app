@@ -174,9 +174,6 @@ class Podcast(models.Model):
     def get_absolute_url(self) -> str:
         return self.get_detail_url()
 
-    def get_latest_url(self) -> str:
-        return reverse("podcasts:latest", args=[self.pk])
-
     def get_detail_url(self) -> str:
         return reverse("podcasts:podcast_detail", args=[self.pk, self.slug])
 
@@ -185,12 +182,6 @@ class Podcast(models.Model):
 
     def get_recommendations_url(self) -> str:
         return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
-
-    def get_actions_url(self) -> str:
-        return reverse("podcasts:actions", args=[self.id])
-
-    def get_actions_tag(self) -> str:
-        return f"podcast-{self.id}"
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]
