@@ -18,7 +18,10 @@ def paginate(
 ) -> Page:
 
     paginator = Paginator(
-        object_list, page_size, allow_empty_first_page=allow_empty, orphans=orphans
+        object_list,
+        page_size,
+        allow_empty_first_page=allow_empty,
+        orphans=orphans,
     )
     try:
         return paginator.page(int(request.GET.get(param, 1)))
@@ -40,8 +43,4 @@ def render_paginated_response(
         "pagination_template": pagination_template_name,
         **(extra_context or {}),
     }
-    if request.htmx and request.htmx.target == f"page-{page_obj.number}":
-        template_name = pagination_template_name
-        context["is_paginated"] = True
-
     return TemplateResponse(request, template_name, context)

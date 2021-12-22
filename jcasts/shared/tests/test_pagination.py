@@ -1,7 +1,6 @@
 import pytest
 
 from django.http import Http404
-from django_htmx.middleware import HtmxDetails
 
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.shared.assertions import assert_ok
@@ -17,9 +16,8 @@ class TestRenderPaginationResponse:
     main_template = "podcasts/index.html"
     pagination_template = "podcasts/_podcasts.html"
 
-    def test_is_not_htmx(self, rf, podcasts):
+    def test_render(self, rf, podcasts):
         req = rf.get("/", {"page": "2"})
-        req.htmx = HtmxDetails(req)
         resp = render_paginated_response(
             req,
             podcasts,
@@ -29,26 +27,6 @@ class TestRenderPaginationResponse:
         )
         assert_ok(resp)
         assert resp.template_name == self.main_template
-        assert "is_paginated" not in resp.context_data
-
-    def test_is_htmx(self, rf, podcasts):
-        req = rf.get(
-            "/",
-            {"page": "2"},
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="page-2",
-        )
-        req.htmx = HtmxDetails(req)
-        resp = render_paginated_response(
-            req,
-            podcasts,
-            self.main_template,
-            self.pagination_template,
-            page_size=10,
-        )
-        assert_ok(resp)
-        assert resp.template_name == self.pagination_template
-        assert "is_paginated" in resp.context_data
 
 
 class TestPaginate:
