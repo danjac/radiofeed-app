@@ -391,7 +391,7 @@ class TestPlayerTimeUpdate:
 
 
 class TestBookmarks:
-    url = reverse_lazy("episodes:favorites")
+    url = reverse_lazy("episodes:bookmarks")
 
     def test_get(self, client, auth_user, django_assert_num_queries):
         BookmarkFactory.create_batch(3, user=auth_user)
@@ -424,18 +424,18 @@ class TestAddBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
 
         with django_assert_num_queries(5):
-            resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+            resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
 
         assert_no_content(resp)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_favorite(
+    def test_already_bookmark(
         self, client, auth_user, episode, django_assert_num_queries
     ):
         BookmarkFactory(episode=episode, user=auth_user)
         with django_assert_num_queries(5):
-            resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
+            resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
         assert_conflict(resp)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -444,7 +444,7 @@ class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
         BookmarkFactory(user=auth_user, episode=episode)
         with django_assert_num_queries(5):
-            resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
+            resp = client.delete(reverse("episodes:remove_bookmark", args=[episode.id]))
         assert_no_content(resp)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 

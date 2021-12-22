@@ -23,13 +23,13 @@
     </div>
     {% endif %}
 
-    {% if stats.favorites %}
+    {% if stats.bookmarks %}
     <div class="flex justify-between pt-4">
-        <div class="w-1/2">Favorites</div>
+        <div class="w-1/2">Bookmarks</div>
         <div class="w-1/2 font-bold text-right">
-            <a href="{% url 'episodes:favorites' %}"
+            <a href="{% url 'episodes:bookmarks' %}"
                class="link font-bold underline">
-                {{ stats.favorites }} episode{{ stats.favorites|pluralize }}
+                {{ stats.bookmarks }} episode{{ stats.bookmarks|pluralize }}
             </a>
         </div>
     </div>

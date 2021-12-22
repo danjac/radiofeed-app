@@ -71,7 +71,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
                 "completed": logs.filter(completed__isnull=False).count(),
                 "follows": Follow.objects.filter(user=request.user).count(),
                 "in_queue": QueueItem.objects.filter(user=request.user).count(),
-                "favorites": Bookmark.objects.filter(user=request.user).count(),
+                "bookmarks": Bookmark.objects.filter(user=request.user).count(),
             },
         },
     )

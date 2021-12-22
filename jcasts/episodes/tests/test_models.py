@@ -417,15 +417,15 @@ class TestEpisodeModel:
         assert episode.title in data["title"]
         assert data["url"] == "http://testserver" + episode.get_absolute_url()
 
-    def test_is_favorited_anonymous(self, anonymous_user, episode):
-        assert not episode.is_favorited(anonymous_user)
+    def test_is_bookmarked_anonymous(self, anonymous_user, episode):
+        assert not episode.is_bookmarked(anonymous_user)
 
-    def test_is_favorited_false(self, user, episode):
-        assert not episode.is_favorited(user)
+    def test_is_bookmarked_false(self, user, episode):
+        assert not episode.is_bookmarked(user)
 
-    def test_is_favorited_true(self, user, episode):
+    def test_is_bookmarked_true(self, user, episode):
         fave = BookmarkFactory(user=user, episode=episode)
-        assert fave.episode.is_favorited(fave.user)
+        assert fave.episode.is_bookmarked(fave.user)
 
     def test_is_queued_anonymous(self, anonymous_user, episode):
         assert not episode.is_queued(anonymous_user)
