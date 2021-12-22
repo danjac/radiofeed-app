@@ -15,7 +15,6 @@
     },
     "dependencies": {
         "alpinejs": "^3.4.2",
-        "htmx.org": "^1.6.0",
-        "sortablejs": "^1.14.0"
+        "htmx.org": "^1.6.0"
     }
 }

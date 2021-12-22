@@ -67,7 +67,6 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
 
         if excluded := (
             set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
-            | set(QueueItem.objects.filter(user=user).values_list("episode", flat=True))
             | set(Bookmark.objects.filter(user=user).values_list("episode", flat=True))
         ):
             episodes = episodes.exclude(pk__in=excluded)
@@ -181,11 +180,6 @@ class Episode(models.Model):
 
     def get_cover_url(self) -> str | None:
         return self.cover_url or self.podcast.cover_url
-
-    def is_queued(self, user: User | AnonymousUser) -> bool:
-        if user.is_anonymous:
-            return False
-        return QueueItem.objects.filter(user=user, episode=self).exists()
 
     def is_bookmarked(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
@@ -404,56 +398,3 @@ class AudioLog(TimeStampedModel):
                 },
             },
         }
-
-
-class QueueItemQuerySet(models.QuerySet):
-    def create_item(
-        self, user: User, episode: Episode, add_to_start: bool
-    ) -> QueueItem:
-        items = self.filter(user=user)
-
-        if add_to_start:
-            items.update(position=models.F("position") + 1)
-            position = 1
-        else:
-            position = (
-                items.aggregate(models.Max("position"))["position__max"] or 0
-            ) + 1
-
-        return self.create(episode=episode, user=user, position=position)
-
-    def move_items(self, user: User, item_ids: list[int]) -> None:
-        qs = self.filter(user=user, pk__in=item_ids)
-
-        items = qs.in_bulk()
-
-        for_update = []
-
-        for position, item_id in enumerate(item_ids, 1):
-            if item := items.get(item_id):
-                item.position = position
-                for_update.append(item)
-
-        return qs.bulk_update(for_update, ["position"])
-
-
-QueueItemManager = models.Manager.from_queryset(QueueItemQuerySet)
-
-
-class QueueItem(TimeStampedModel):
-    user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
-    position: int = models.IntegerField(default=0)
-
-    objects = QueueItemManager()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                name=UNIQUE_CONSTRAINT,
-                fields=["user", "episode"],
-            ),
-        ]
-        indexes = [
-            models.Index(fields=["position"]),
-        ]

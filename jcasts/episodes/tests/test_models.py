@@ -3,16 +3,10 @@ import datetime
 import pytest
 
 from django.contrib.sites.models import Site
-from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from jcasts.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
-    QueueItemFactory,
-)
-from jcasts.episodes.models import AudioLog, Bookmark, Episode, QueueItem
+from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
+from jcasts.episodes.models import AudioLog, Bookmark, Episode
 from jcasts.podcasts.factories import FollowFactory
 from jcasts.podcasts.models import Podcast
 
@@ -96,9 +90,6 @@ class TestEpisodeManager:
 
         # favorite
         BookmarkFactory(episode__podcast=podcast, user=user)
-
-        # queued
-        QueueItemFactory(episode__podcast=podcast, user=user)
 
         # trailer
         EpisodeFactory(podcast=podcast, episode_type="trailer")
@@ -427,16 +418,6 @@ class TestEpisodeModel:
         fave = BookmarkFactory(user=user, episode=episode)
         assert fave.episode.is_bookmarked(fave.user)
 
-    def test_is_queued_anonymous(self, anonymous_user, episode):
-        assert not episode.is_queued(anonymous_user)
-
-    def test_is_queued_false(self, user, episode):
-        assert not episode.is_queued(user)
-
-    def test_is_queued_true(self, user, episode):
-        item = QueueItemFactory(user=user, episode=episode)
-        assert item.episode.is_queued(item.user)
-
     @pytest.mark.parametrize(
         "episode_type,number,season,expected",
         [
@@ -481,97 +462,3 @@ class TestAudioLogModel:
         assert data["episode"]["url"] == log.episode.get_absolute_url()
         assert data["podcast"]["title"] == log.episode.podcast.title
         assert data["podcast"]["url"] == log.episode.podcast.get_absolute_url()
-
-
-class TestQueueItemManager:
-    def test_move_items(self, user):
-        first = QueueItemFactory(user=user)
-        second = QueueItemFactory(user=user)
-        third = QueueItemFactory(user=user)
-
-        items = QueueItem.objects.filter(user=user).order_by("position")
-
-        assert items[0] == first
-        assert items[1] == second
-        assert items[2] == third
-
-        QueueItem.objects.move_items(user, [third.id, first.id, second.id])
-
-        items = QueueItem.objects.filter(user=user).order_by("position")
-
-        assert items[0] == third
-        assert items[1] == first
-        assert items[2] == second
-
-    @pytest.mark.django_db(transaction=True)
-    def test_create_item_start_already_exists(self, user):
-        other = QueueItemFactory(user=user, position=1)
-
-        with transaction.atomic():
-            with pytest.raises(IntegrityError):
-                QueueItem.objects.create_item(
-                    user,
-                    other.episode,
-                    add_to_start=True,
-                )
-        assert QueueItem.objects.count() == 1
-
-        other.refresh_from_db()
-        assert other.position == 1
-
-    def test_create_item_start_empty(self, user, episode):
-        item = self.create_item(user, episode, add_to_start=True)
-
-        assert item.episode == episode
-        assert item.user == user
-        assert item.position == 1
-
-    def test_create_item_end_empty(self, user, episode):
-        item = self.create_item(user, episode, add_to_start=False)
-
-        assert item.episode == episode
-        assert item.user == user
-        assert item.position == 1
-
-    def test_create_item_start_with_other_items(self, user, episode):
-        other = QueueItemFactory(user=user, position=1)
-
-        item = self.create_item(user, episode, add_to_start=True)
-
-        assert item.episode == episode
-        assert item.user == user
-        assert item.position == 1
-
-        other.refresh_from_db()
-        assert other.position == 2
-
-    def test_create_item_end_with_other_items(self, user, episode):
-        other = QueueItemFactory(user=user, position=1)
-
-        item = self.create_item(user, episode, add_to_start=False)
-
-        assert item.episode == episode
-        assert item.user == user
-        assert item.position == 2
-
-        other.refresh_from_db()
-        assert other.position == 1
-
-    @pytest.mark.django_db(transaction=True)
-    def test_create_item_end_already_exists(self, user):
-        other = QueueItemFactory(user=user, position=1)
-
-        with transaction.atomic():
-            with pytest.raises(IntegrityError):
-                QueueItem.objects.create_item(
-                    user,
-                    other.episode,
-                    add_to_start=False,
-                )
-        assert QueueItem.objects.count() == 1
-
-        other.refresh_from_db()
-        assert other.position == 1
-
-    def create_item(self, user, episode, add_to_start=False):
-        return QueueItem.objects.create_item(user, episode, add_to_start)

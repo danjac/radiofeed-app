@@ -6,7 +6,6 @@ from jcasts.episodes.views import (
     history,
     index,
     player,
-    queue,
     search_episodes,
 )
 
@@ -31,11 +30,6 @@ urlpatterns = [
         "player/~close/",
         player.close_player,
         name="close_player",
-    ),
-    path(
-        "player/~next/",
-        player.play_next_episode,
-        name="play_next_episode",
     ),
     path(
         "player/~timeupdate/",
@@ -63,28 +57,5 @@ urlpatterns = [
         "bookmarks/<int:episode_id>/~remove/",
         bookmarks.remove_bookmark,
         name="remove_bookmark",
-    ),
-    path("queue/", queue.index, name="queue"),
-    path("queue/~move/", queue.move_queue_items, name="move_queue_items"),
-    path(
-        "queue/<int:episode_id>/~add/start/",
-        queue.add_to_queue,
-        name="add_to_queue_start",
-        kwargs={
-            "add_to_start": True,
-        },
-    ),
-    path(
-        "queue/<int:episode_id>/~add/end/",
-        queue.add_to_queue,
-        name="add_to_queue_end",
-        kwargs={
-            "add_to_start": False,
-        },
-    ),
-    path(
-        "queue/<int:episode_id>/~remove/",
-        queue.remove_from_queue,
-        name="remove_from_queue",
     ),
 ]

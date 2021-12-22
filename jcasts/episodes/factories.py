@@ -1,10 +1,10 @@
 import uuid
 
 from django.utils import timezone
-from factory import Faker, LazyFunction, Sequence, SubFactory
+from factory import Faker, LazyFunction, SubFactory
 from factory.django import DjangoModelFactory
 
-from jcasts.episodes.models import AudioLog, Bookmark, Episode, QueueItem
+from jcasts.episodes.models import AudioLog, Bookmark, Episode
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.users.factories import UserFactory
 
@@ -40,12 +40,3 @@ class AudioLogFactory(DjangoModelFactory):
 
     class Meta:
         model = AudioLog
-
-
-class QueueItemFactory(DjangoModelFactory):
-    episode = SubFactory(EpisodeFactory)
-    user = SubFactory(UserFactory)
-    position = Sequence(lambda n: n + 1)
-
-    class Meta:
-        model = QueueItem

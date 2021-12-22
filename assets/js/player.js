@@ -1,259 +1,261 @@
 const playerObj = {
-  autoplay: false,
-  currentTime: 0,
-  duration: 0,
-  isError: false,
-  isLoaded: false,
-  isPaused: false,
-  isPlaying: false,
-  playbackRate: 1.0,
-  defaultPlaybackRate: 1.0,
-  showPlayer: true,
-  counters: {
-    current: '00:00:00',
-    duration: '00:00:00',
-    preview: '00:00:00',
-  },
-  keys: {
-    enable: 'player-enabled',
-    playbackRate: 'player-playback-rate',
-  },
+    autoplay: false,
+    currentTime: 0,
+    duration: 0,
+    isError: false,
+    isLoaded: false,
+    isPaused: false,
+    isPlaying: false,
+    playbackRate: 1.0,
+    defaultPlaybackRate: 1.0,
+    showPlayer: true,
+    counters: {
+        current: '00:00:00',
+        duration: '00:00:00',
+        preview: '00:00:00',
+    },
+    keys: {
+        enable: 'player-enabled',
+        playbackRate: 'player-playback-rate',
+    },
 
-  init() {
-    this.$watch('currentTime', (value) => {
-      this.counters.current = formatDuration(value);
-    });
+    init() {
+        this.$watch('currentTime', (value) => {
+            this.counters.current = formatDuration(value);
+        });
 
-    this.$watch('duration', (value) => {
-      this.counters.duration = formatDuration(value);
-    });
+        this.$watch('duration', (value) => {
+            this.counters.duration = formatDuration(value);
+        });
 
-    this.$watch('playbackRate', (value) => {
-      this.$refs.audio.playbackRate = value;
-    });
+        this.$watch('playbackRate', (value) => {
+            this.$refs.audio.playbackRate = value;
+        });
 
-    this.counters.current = formatDuration(this.currentTime);
-    this.counters.duration = formatDuration(this.duration);
-    this.counters.preview = '00:00:00';
+        this.counters.current = formatDuration(this.currentTime);
+        this.counters.duration = formatDuration(this.duration);
+        this.counters.preview = '00:00:00';
 
-    this.$refs.audio.currentTime = this.currentTime;
-    this.$refs.audio.load();
+        this.$refs.audio.currentTime = this.currentTime;
+        this.$refs.audio.load();
 
-    this.lastTimeUpdate = null;
+        this.lastTimeUpdate = null;
 
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.metadata = getMediaMetadata();
-    }
-  },
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = getMediaMetadata();
+        }
+    },
 
-  shortcuts(event) {
-    if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
-      return;
-    }
+    shortcuts(event) {
+        if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+            return;
+        }
 
-    if (!event.ctrlKey && !event.altKey) {
-      switch (event.code) {
-        case 'Space':
-          event.preventDefault();
-          event.stopPropagation();
-          this.togglePlayPause();
-          return;
-        case 'ArrowRight':
-          event.preventDefault();
-          event.stopPropagation();
-          this.skipForward();
-          return;
-        case 'ArrowLeft':
-          event.preventDefault();
-          event.stopPropagation();
-          this.skipBack();
-          return;
-      }
-    }
+        if (!event.ctrlKey && !event.altKey) {
+            switch (event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.togglePlayPause();
+                    return;
+                case 'ArrowRight':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.skipForward();
+                    return;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.skipBack();
+                    return;
+            }
+        }
 
-    // playback rate
-    if (event.altKey) {
-      switch (event.key) {
-        case '+':
-          event.preventDefault();
-          event.stopPropagation();
-          this.incrementPlaybackRate();
-          return;
-        case '-':
-          event.preventDefault();
-          event.stopPropagation();
-          this.decrementPlaybackRate();
-          return;
-        case '0':
-          event.preventDefault();
-          event.stopPropagation();
-          this.resetPlaybackRate();
-          return;
-      }
-    }
-  },
+        // playback rate
+        if (event.altKey) {
+            switch (event.key) {
+                case '+':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.incrementPlaybackRate();
+                    return;
+                case '-':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.decrementPlaybackRate();
+                    return;
+                case '0':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.resetPlaybackRate();
+                    return;
+            }
+        }
+    },
 
-  // audio events
-  loaded() {
-    if (this.isLoaded) {
-      return;
-    }
+    // audio events
+    loaded() {
+        if (this.isLoaded) {
+            return;
+        }
 
-    this.isError = false;
+        this.isError = false;
 
-    this.playbackRate = parseFloat(
-      sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
-    );
+        this.playbackRate = parseFloat(
+            sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
+        );
 
-    if (this.autoplay || sessionStorage.getItem(this.keys.enable)) {
-      this.$refs.audio.play().catch((err) => {
-        this.isPaused = true;
+        if (this.autoplay || sessionStorage.getItem(this.keys.enable)) {
+            this.$refs.audio.play().catch((err) => {
+                this.isPaused = true;
+                this.isPlaying = false;
+                this.isError = true;
+            });
+        } else {
+            this.isPaused = true;
+            this.isPlaying = false;
+        }
+
+        this.duration = this.$refs.audio.duration;
+        this.isLoaded = true;
+    },
+
+    error() {
         this.isPlaying = false;
         this.isError = true;
-      });
-    } else {
-      this.isPaused = true;
-      this.isPlaying = false;
-    }
+    },
 
-    this.duration = this.$refs.audio.duration;
-    this.isLoaded = true;
-  },
+    timeUpdate() {
+        this.isPlaying = true;
+        if (this.$refs.audio) {
+            this.currentTime = Math.floor(this.$refs.audio.currentTime);
+            this.sendTimeUpdate();
+        }
+    },
 
-  error() {
-    this.isPlaying = false;
-    this.isError = true;
-  },
+    buffering() {
+        this.isPlaying = false;
+    },
 
-  timeUpdate() {
-    this.isPlaying = true;
-    if (this.$refs.audio) {
-      this.currentTime = Math.floor(this.$refs.audio.currentTime);
-      this.sendTimeUpdate();
-    }
-  },
+    resumed() {
+        this.isPaused = false;
+        this.isPlaying = true;
+        this.isError = false;
+        sessionStorage.setItem(this.keys.enable, true);
+    },
 
-  buffering() {
-    this.isPlaying = false;
-  },
+    paused() {
+        this.isPlaying = false;
+        this.isPaused = true;
+        sessionStorage.removeItem(this.keys.enable);
+    },
 
-  resumed() {
-    this.isPaused = false;
-    this.isPlaying = true;
-    this.isError = false;
-    sessionStorage.setItem(this.keys.enable, true);
-  },
+    incrementPlaybackRate() {
+        this.changePlaybackRate(0.1);
+    },
 
-  paused() {
-    this.isPlaying = false;
-    this.isPaused = true;
-    sessionStorage.removeItem(this.keys.enable);
-  },
+    decrementPlaybackRate() {
+        this.changePlaybackRate(-0.1);
+    },
 
-  incrementPlaybackRate() {
-    this.changePlaybackRate(0.1);
-  },
+    resetPlaybackRate() {
+        this.setPlaybackRate(this.defaultPlaybackRate);
+    },
 
-  decrementPlaybackRate() {
-    this.changePlaybackRate(-0.1);
-  },
+    changePlaybackRate(increment) {
+        const newValue = Math.max(
+            0.5,
+            Math.min(2.0, parseFloat(this.playbackRate) + increment)
+        );
+        this.setPlaybackRate(newValue);
+    },
 
-  resetPlaybackRate() {
-    this.setPlaybackRate(this.defaultPlaybackRate);
-  },
+    setPlaybackRate(value) {
+        this.playbackRate = value;
+        sessionStorage.setItem(this.keys.playbackRate, value);
+    },
 
-  changePlaybackRate(increment) {
-    const newValue = Math.max(
-      0.5,
-      Math.min(2.0, parseFloat(this.playbackRate) + increment)
-    );
-    this.setPlaybackRate(newValue);
-  },
+    skip() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime = this.currentTime;
+        }
+    },
+    skipBack() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime -= 10;
+        }
+    },
 
-  setPlaybackRate(value) {
-    this.playbackRate = value;
-    sessionStorage.setItem(this.keys.playbackRate, value);
-  },
+    skipForward() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime += 10;
+        }
+    },
 
-  skip() {
-    if (!this.isPaused) {
-      this.$refs.audio.currentTime = this.currentTime;
-    }
-  },
-  skipBack() {
-    if (!this.isPaused) {
-      this.$refs.audio.currentTime -= 10;
-    }
-  },
+    ended() {
+        this.$refs.close.click();
+    },
 
-  skipForward() {
-    if (!this.isPaused) {
-      this.$refs.audio.currentTime += 10;
-    }
-  },
+    togglePlayPause() {
+        if (this.isPaused) {
+            this.$refs.audio.play();
+        } else {
+            this.$refs.audio.pause();
+        }
+    },
 
-  ended() {
-    this.$refs.playNext.click();
-  },
+    preview(event) {
+        const rect = this.$refs.range.getBoundingClientRect();
+        const value = ((event.clientX - rect.x) / rect.width) * this.duration;
+        this.counters.preview = formatDuration(value);
+    },
 
-  togglePlayPause() {
-    if (this.isPaused) {
-      this.$refs.audio.play();
-    } else {
-      this.$refs.audio.pause();
-    }
-  },
-
-  preview(event) {
-    const rect = this.$refs.range.getBoundingClientRect();
-    const value = ((event.clientX - rect.x) / rect.width) * this.duration;
-    this.counters.preview = formatDuration(value);
-  },
-
-  sendTimeUpdate() {
-    const time = Math.round(this.currentTime);
-    if (time % 5 === 0 && this.lastTimeUpdate !== time) {
-      fetch(this.urls.timeUpdate, {
-        method: 'POST',
-        headers: { 'X-CSRFToken': this.csrfToken },
-        body: new URLSearchParams({ current_time: time }),
-      })
-        .then((response) => {
-          if (response.status === 204) {
-            this.lastTimeUpdate = time;
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  },
+    sendTimeUpdate() {
+        const time = Math.round(this.currentTime);
+        if (time % 5 === 0 && this.lastTimeUpdate !== time) {
+            fetch(this.urls.timeUpdate, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': this.csrfToken },
+                body: new URLSearchParams({ current_time: time }),
+            })
+                .then((response) => {
+                    if (response.status === 204) {
+                        this.lastTimeUpdate = time;
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    },
 };
 
 function formatDuration(value) {
-  if (isNaN(value) || value < 0) return '00:00:00';
-  const duration = Math.floor(value);
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = Math.floor(duration % 60);
-  return [hours, minutes, seconds].map((t) => t.toString().padStart(2, '0')).join(':');
+    if (isNaN(value) || value < 0) return '00:00:00';
+    const duration = Math.floor(value);
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = Math.floor(duration % 60);
+    return [hours, minutes, seconds]
+        .map((t) => t.toString().padStart(2, '0'))
+        .join(':');
 }
 
 function getMediaMetadata() {
-  const dataTag = document.getElementById('player-metadata');
-  if (!dataTag) {
+    const dataTag = document.getElementById('player-metadata');
+    if (!dataTag) {
+        return null;
+    }
+
+    const metadata = JSON.parse(dataTag.textContent);
+
+    if (metadata && Object.keys(metadata).length > 0) {
+        return new window.MediaMetadata(metadata);
+    }
     return null;
-  }
-
-  const metadata = JSON.parse(dataTag.textContent);
-
-  if (metadata && Object.keys(metadata).length > 0) {
-    return new window.MediaMetadata(metadata);
-  }
-  return null;
 }
 
 export default function Player(options) {
-  return {
-    ...playerObj,
-    ...options,
-  };
+    return {
+        ...playerObj,
+        ...options,
+    };
 }

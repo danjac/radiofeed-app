@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
-from jcasts.episodes.models import AudioLog, Episode, QueueItem
+from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.htmx import with_hx_trigger
@@ -27,25 +27,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
     remove_episode_from_player(request, mark_complete=False)
-    return render_close_player(request)
-
-
-@require_http_methods(["POST"])
-@ajax_login_required
-def play_next_episode(request: HttpRequest) -> HttpResponse:
-    """Marks current episode complete, starts next episode in queue
-    or closes player if queue empty."""
-    remove_episode_from_player(request, mark_complete=True)
-
-    if request.user.autoplay and (
-        next_item := (
-            QueueItem.objects.filter(user=request.user)
-            .select_related("episode", "episode__podcast")
-            .order_by("position")
-            .first()
-        )
-    ):
-        return render_start_player(request, next_item.episode)
     return render_close_player(request)
 
 
@@ -100,8 +81,6 @@ def remove_episode_from_player(
 
 
 def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
-
-    QueueItem.objects.filter(user=request.user, episode=episode).delete()
 
     log, _ = AudioLog.objects.update_or_create(
         episode=episode,

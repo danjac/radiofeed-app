@@ -1,9 +1,4 @@
-from jcasts.episodes.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
-    EpisodeFactory,
-    QueueItemFactory,
-)
+from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.emails import send_recommendations_email
 from jcasts.podcasts.factories import FollowFactory, RecommendationFactory
 
@@ -24,14 +19,12 @@ class TestSendRecommendationEmail:
         EpisodeFactory()
 
         first_episode = EpisodeFactory(podcast=first)
-        second_episode = EpisodeFactory(podcast=second)
-        third_episode = EpisodeFactory(podcast=third)
+        second_episode = EpisodeFactory(podcast=third)
 
         EpisodeFactory(podcast=first)
 
         AudioLogFactory(user=user, episode=first_episode)
-        QueueItemFactory(user=user, episode=second_episode)
-        BookmarkFactory(user=user, episode=third_episode)
+        BookmarkFactory(user=user, episode=second_episode)
 
         EpisodeFactory(podcast=first)
         EpisodeFactory(podcast=second)

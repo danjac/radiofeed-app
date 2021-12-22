@@ -71,7 +71,7 @@ class TestUserStats:
         AudioLogFactory(user=auth_user)
         BookmarkFactory(user=auth_user)
 
-        with django_assert_num_queries(9):
+        with django_assert_num_queries(8):
             resp = client.get(reverse("users:stats"))
         assert_ok(resp)
         assert resp.context["stats"]["follows"] == 1
@@ -119,7 +119,7 @@ class TestDeleteAccount:
     def test_post_confirmed(
         self, client, auth_user, django_user_model, django_assert_num_queries
     ):
-        with django_assert_num_queries(16):
+        with django_assert_num_queries(15):
             resp = client.post(self.url, {"confirm-delete": True})
         assert resp.url == settings.HOME_URL
         assert not django_user_model.objects.exists()
