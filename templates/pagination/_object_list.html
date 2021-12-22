@@ -1,9 +1,7 @@
 {% load static %}
 <section role="feed"
          aria-busy="false">
-    {% if page_obj.has_previous %}
     {% include "pagination/_pagination_links.html" %}
-    {% endif %}
     {% block results %}{% endblock %}
     {% include "pagination/_pagination_links.html" %}
 </section>
