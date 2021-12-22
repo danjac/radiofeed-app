@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 
-from jcasts.episodes.factories import AudioLogFactory, FavoriteFactory
+from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,
     FollowFactory,
@@ -21,7 +21,7 @@ class TestRecommendationManager:
     def test_for_user(self, user):
 
         following = FollowFactory(user=user).podcast
-        favorited = FavoriteFactory(user=user).episode.podcast
+        favorited = BookmarkFactory(user=user).episode.podcast
         listened = AudioLogFactory(user=user).episode.podcast
 
         received = RecommendationFactory(

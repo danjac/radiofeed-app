@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import AudioLog, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Bookmark, QueueItem
 from jcasts.podcasts.models import Follow, Podcast
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent
@@ -71,7 +71,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
                 "completed": logs.filter(completed__isnull=False).count(),
                 "follows": Follow.objects.filter(user=request.user).count(),
                 "in_queue": QueueItem.objects.filter(user=request.user).count(),
-                "favorites": Favorite.objects.filter(user=request.user).count(),
+                "favorites": Bookmark.objects.filter(user=request.user).count(),
             },
         },
     )

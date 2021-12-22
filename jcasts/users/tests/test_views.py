@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
-from jcasts.episodes.factories import AudioLogFactory, EpisodeFactory, FavoriteFactory
+from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import FollowFactory
 from jcasts.shared.assertions import assert_no_content, assert_ok
 from jcasts.users.factories import UserFactory
@@ -69,7 +69,7 @@ class TestUserStats:
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(user=auth_user)
-        FavoriteFactory(user=auth_user)
+        BookmarkFactory(user=auth_user)
 
         with django_assert_num_queries(9):
             resp = client.get(reverse("users:stats"))

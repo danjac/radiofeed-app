@@ -6,12 +6,12 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import (
     AudioLogFactory,
+    BookmarkFactory,
     EpisodeFactory,
-    FavoriteFactory,
     QueueItemFactory,
 )
 from jcasts.episodes.middleware import Player
-from jcasts.episodes.models import AudioLog, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Bookmark, QueueItem
 from jcasts.podcasts.factories import FollowFactory, PodcastFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
@@ -390,11 +390,11 @@ class TestPlayerTimeUpdate:
         assert_bad_request(resp)
 
 
-class TestFavorites:
+class TestBookmarks:
     url = reverse_lazy("episodes:favorites")
 
     def test_get(self, client, auth_user, django_assert_num_queries):
-        FavoriteFactory.create_batch(3, user=auth_user)
+        BookmarkFactory.create_batch(3, user=auth_user)
 
         with django_assert_num_queries(5):
             resp = client.get(self.url)
@@ -407,12 +407,12 @@ class TestFavorites:
         podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
 
         for _ in range(3):
-            FavoriteFactory(
+            BookmarkFactory(
                 user=auth_user,
                 episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
             )
 
-        FavoriteFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
+        BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
 
         with django_assert_num_queries(5):
             resp = client.get(self.url, {"q": "testing"})
@@ -420,33 +420,33 @@ class TestFavorites:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestAddFavorite:
+class TestAddBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
 
         with django_assert_num_queries(5):
             resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
 
         assert_no_content(resp)
-        assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
+        assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
     def test_already_favorite(
         self, client, auth_user, episode, django_assert_num_queries
     ):
-        FavoriteFactory(episode=episode, user=auth_user)
+        BookmarkFactory(episode=episode, user=auth_user)
         with django_assert_num_queries(5):
             resp = client.post(reverse("episodes:add_favorite", args=[episode.id]))
         assert_conflict(resp)
-        assert Favorite.objects.filter(user=auth_user, episode=episode).exists()
+        assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
-class TestRemoveFavorite:
+class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode, django_assert_num_queries):
-        FavoriteFactory(user=auth_user, episode=episode)
+        BookmarkFactory(user=auth_user, episode=episode)
         with django_assert_num_queries(5):
             resp = client.delete(reverse("episodes:remove_favorite", args=[episode.id]))
         assert_no_content(resp)
-        assert not Favorite.objects.filter(user=auth_user, episode=episode).exists()
+        assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
 class TestHistory:

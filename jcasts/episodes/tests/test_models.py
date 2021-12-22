@@ -8,11 +8,11 @@ from django.utils import timezone
 
 from jcasts.episodes.factories import (
     AudioLogFactory,
+    BookmarkFactory,
     EpisodeFactory,
-    FavoriteFactory,
     QueueItemFactory,
 )
-from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Bookmark, Episode, QueueItem
 from jcasts.podcasts.factories import FollowFactory
 from jcasts.podcasts.models import Podcast
 
@@ -95,7 +95,7 @@ class TestEpisodeManager:
         AudioLogFactory(episode__podcast=podcast, user=user)
 
         # favorite
-        FavoriteFactory(episode__podcast=podcast, user=user)
+        BookmarkFactory(episode__podcast=podcast, user=user)
 
         # queued
         QueueItemFactory(episode__podcast=podcast, user=user)
@@ -424,7 +424,7 @@ class TestEpisodeModel:
         assert not episode.is_favorited(user)
 
     def test_is_favorited_true(self, user, episode):
-        fave = FavoriteFactory(user=user, episode=episode)
+        fave = BookmarkFactory(user=user, episode=episode)
         assert fave.episode.is_favorited(fave.user)
 
     def test_is_queued_anonymous(self, anonymous_user, episode):
@@ -459,11 +459,11 @@ class TestEpisodeModel:
         )
 
 
-class TestFavoriteManager:
+class TestBookmarkManager:
     def test_search(self, db):
         episode = EpisodeFactory(title="testing")
-        FavoriteFactory(episode=episode)
-        assert Favorite.objects.search("testing").count() == 1
+        BookmarkFactory(episode=episode)
+        assert Bookmark.objects.search("testing").count() == 1
 
 
 class TestAudioLogManager:

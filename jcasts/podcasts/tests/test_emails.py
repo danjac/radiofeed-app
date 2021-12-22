@@ -1,7 +1,7 @@
 from jcasts.episodes.factories import (
     AudioLogFactory,
+    BookmarkFactory,
     EpisodeFactory,
-    FavoriteFactory,
     QueueItemFactory,
 )
 from jcasts.podcasts.emails import send_recommendations_email
@@ -31,7 +31,7 @@ class TestSendRecommendationEmail:
 
         AudioLogFactory(user=user, episode=first_episode)
         QueueItemFactory(user=user, episode=second_episode)
-        FavoriteFactory(user=user, episode=third_episode)
+        BookmarkFactory(user=user, episode=third_episode)
 
         EpisodeFactory(podcast=first)
         EpisodeFactory(podcast=second)

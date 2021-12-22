@@ -68,7 +68,7 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         if excluded := (
             set(AudioLog.objects.filter(user=user).values_list("episode", flat=True))
             | set(QueueItem.objects.filter(user=user).values_list("episode", flat=True))
-            | set(Favorite.objects.filter(user=user).values_list("episode", flat=True))
+            | set(Bookmark.objects.filter(user=user).values_list("episode", flat=True))
         ):
             episodes = episodes.exclude(pk__in=excluded)
 
@@ -190,7 +190,7 @@ class Episode(models.Model):
     def is_favorited(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
-        return Favorite.objects.filter(user=user, episode=self).exists()
+        return Bookmark.objects.filter(user=user, episode=self).exists()
 
     @cached_property
     def cleaned_title(self) -> str:
@@ -330,7 +330,7 @@ class FavoriteQuerySet(SearchMixin, models.QuerySet):
 FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
 
 
-class Favorite(TimeStampedModel):
+class Bookmark(TimeStampedModel):
 
     user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)

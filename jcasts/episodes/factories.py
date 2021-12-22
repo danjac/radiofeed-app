@@ -4,7 +4,7 @@ from django.utils import timezone
 from factory import Faker, LazyFunction, Sequence, SubFactory
 from factory.django import DjangoModelFactory
 
-from jcasts.episodes.models import AudioLog, Episode, Favorite, QueueItem
+from jcasts.episodes.models import AudioLog, Bookmark, Episode, QueueItem
 from jcasts.podcasts.factories import PodcastFactory
 from jcasts.users.factories import UserFactory
 
@@ -24,12 +24,12 @@ class EpisodeFactory(DjangoModelFactory):
         model = Episode
 
 
-class FavoriteFactory(DjangoModelFactory):
+class BookmarkFactory(DjangoModelFactory):
     episode = SubFactory(EpisodeFactory)
     user = SubFactory(UserFactory)
 
     class Meta:
-        model = Favorite
+        model = Bookmark
 
 
 class AudioLogFactory(DjangoModelFactory):
