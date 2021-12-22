@@ -12,6 +12,7 @@
     {% if previous_episode %}
     <a class="link"
        href="{{ previous_episode.get_absolute_url }}"
+       aria-label="{{ previous_episode.cleaned_title }}"
        title="{{ previous_episode.cleaned_title }}">
         Previous
     </a>
@@ -22,6 +23,7 @@
     {% if next_episode %}
     <a class="link"
        href="{{ next_episode.get_absolute_url }}"
+       aria-label="{{ next_episode.cleaned_title }}"
        title="{{ next_episode.cleaned_title }}">
         Next
     </a>
