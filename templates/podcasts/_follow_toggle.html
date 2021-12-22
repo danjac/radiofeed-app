@@ -2,8 +2,8 @@
 {% if user.is_authenticated %}
 <div id="follow-toggle"
      hx-target="this"
-     hx-swap="outerHTML"
-     hx-select="#follow-toggle">
+     hx-push-url="false"
+     hx-swap="outerHTML">
     {% if is_following %}
     <button class="btn btn-secondary inline-flex items-center"
             title="Stop following this podcast"
