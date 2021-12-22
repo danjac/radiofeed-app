@@ -11,12 +11,12 @@
     }"
      @click.away="close()"
      @keydown.escape.window="close()">
-    <div class="min-h-screen mx-3 lg:mx-auto flex items-center justify-center">
+    <div class="min-h-screen flex items-center justify-center">
 
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
              aria-hidden="true"></div>
 
-        <div class="inline-block align-bottom bg-white dark:bg-black rounded text-left overflow-hidden shadow-xl transform transition-all my-8 align-middle p-3 w-full lg:max-w-2xl xl:max-w-3xl"
+        <div class="inline-block align-bottom bg-white dark:bg-black text-left overflow-hidden shadow-xl transform transition-all align-middle p-3 w-full min-h-screen lg:my-6 lg:max-w-5xl xl:max-w-6xl lg:min-h-min"
              x-show="show"
              @click.away="close()">
             {% with podcast=episode.podcast %}
@@ -174,7 +174,7 @@
 
             {% endwith %}
             {% if episode.description %}
-            <div class="mt-3 overflow-auto max-h-24 lg:max-h-48">
+            <div class="mt-3 overflow-auto lg:max-h-96">
                 {% include "_markdown.html" with content=episode.description %}
             </div>
             {% endif %}
