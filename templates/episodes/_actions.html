@@ -34,6 +34,14 @@
                 </a>
             </h2>
 
+            <h3 class="break-words text-xs lg:text-base mb-3">
+                <a href="{{ podcast.get_episodes_url }}"
+                   title="{{ podcast.cleaned_title }}"
+                   class="link text-gray-600 dark:text-gray-300">
+                    {{ podcast.cleaned_title|truncatechars:200 }}
+                </a>
+            </h3>
+
             <div class="flex items-center mb-3 space-x-3 lg:space-x-4">
 
                 <div class="h-24 w-24 lg:h-32 lg:w-32">
