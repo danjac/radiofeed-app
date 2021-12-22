@@ -82,43 +82,6 @@ class TestSearchPodcasts:
         assert resp.context_data["page_obj"].object_list[0] == podcast
 
 
-class TestSearchAutocomplete:
-    url = reverse_lazy("podcasts:search_autocomplete")
-
-    def test_search_empty(self, client, db, django_assert_num_queries):
-        with django_assert_num_queries(1):
-            assert_ok(client.get(self.url, {"q": ""}))
-
-    def test_search_podcast_only(self, client, db, faker, django_assert_num_queries):
-        podcast = PodcastFactory(title=faker.unique.text())
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        with django_assert_num_queries(3):
-            resp = client.get(self.url, {"q": podcast.title})
-        assert_ok(resp)
-        assert len(resp.context_data["podcasts"]) == 1
-        assert len(resp.context_data["episodes"]) == 0
-
-    def test_search_episode_only(self, client, db, faker, django_assert_num_queries):
-        episode = EpisodeFactory(title=faker.unique.text())
-        with django_assert_num_queries(3):
-            resp = client.get(self.url, {"q": episode.title})
-        assert_ok(resp)
-        assert len(resp.context_data["podcasts"]) == 0
-        assert len(resp.context_data["episodes"]) == 1
-
-    def test_search_podcast_and_episode(
-        self, client, db, faker, django_assert_num_queries
-    ):
-        podcast = PodcastFactory(title=faker.unique.text())
-        EpisodeFactory(title=podcast.title)
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
-        with django_assert_num_queries(3):
-            resp = client.get(self.url, {"q": podcast.title})
-        assert_ok(resp)
-        assert len(resp.context_data["podcasts"]) == 1
-        assert len(resp.context_data["episodes"]) == 1
-
-
 class TestSearchITunes:
     def test_search(self, client, db, mocker, django_assert_num_queries):
         feeds = [

@@ -12,7 +12,6 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
@@ -93,39 +92,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         {
             "feeds": feeds,
             "clear_search_url": reverse("podcasts:index"),
-        },
-    )
-
-
-@require_http_methods(["GET"])
-@cache_page(settings.DEFAULT_CACHE_TIMEOUT)
-def search_autocomplete(request: HttpRequest, limit: int = 6) -> HttpResponse:
-
-    if not request.search:
-        return HttpResponse()
-
-    podcasts = (
-        Podcast.objects.filter(pub_date__isnull=False)
-        .search_or_exact_match(request.search.value)
-        .order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
-        )[:limit]
-    )
-
-    episodes = (
-        Episode.objects.search(request.search.value)
-        .select_related("podcast")
-        .order_by("-rank", "-pub_date")[: limit - len(podcasts)]
-    )
-
-    return TemplateResponse(
-        request,
-        "podcasts/_autocomplete.html",
-        {
-            "podcasts": podcasts,
-            "episodes": episodes,
         },
     )
 

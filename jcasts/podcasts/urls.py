@@ -8,7 +8,6 @@ app_name = "podcasts"
 urlpatterns = [
     path("", views.index, name="index"),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
-    path("search/autocomplete/", views.search_autocomplete, name="search_autocomplete"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/",
