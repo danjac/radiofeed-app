@@ -216,7 +216,7 @@ class TestClosePlayer:
         )
 
         # including savepoints
-        with django_assert_num_queries(6):
+        with django_assert_num_queries(7):
             resp = client.post(self.url)
         assert_ok(resp)
 
@@ -311,7 +311,7 @@ class TestAddBookmark:
         with django_assert_num_queries(5):
             resp = client.post(reverse("episodes:add_bookmark", args=[episode.id]))
 
-        assert_no_content(resp)
+        assert_ok(resp)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db(transaction=True)
@@ -330,7 +330,7 @@ class TestRemoveBookmark:
         BookmarkFactory(user=auth_user, episode=episode)
         with django_assert_num_queries(5):
             resp = client.delete(reverse("episodes:remove_bookmark", args=[episode.id]))
-        assert_no_content(resp)
+        assert_ok(resp)
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -378,7 +378,7 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user)
 
         with django_assert_num_queries(4):
-            assert_no_content(client.delete(self.url(episode)))
+            assert_ok(client.delete(self.url(episode)))
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
@@ -390,7 +390,7 @@ class TestRemoveAudioLog:
         log = AudioLogFactory(user=auth_user, episode=player_episode)
 
         with django_assert_num_queries(3):
-            assert_no_content(client.delete(self.url(log.episode)))
+            assert_ok(client.delete(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
     def test_none_remaining(
@@ -399,7 +399,7 @@ class TestRemoveAudioLog:
         log = AudioLogFactory(user=auth_user, episode=episode)
 
         with django_assert_num_queries(4):
-            assert_no_content(client.delete(self.url(log.episode)))
+            assert_ok(client.delete(self.url(log.episode)))
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
@@ -416,9 +416,7 @@ class TestMarkComplete:
         )
 
         with django_assert_num_queries(4):
-            assert_no_content(
-                client.post(reverse("episodes:mark_complete", args=[episode.id]))
-            )
+            assert_ok(client.post(reverse("episodes:mark_complete", args=[episode.id])))
 
         log.refresh_from_db()
 
@@ -437,7 +435,7 @@ class TestMarkComplete:
         )
 
         with django_assert_num_queries(3):
-            assert_no_content(
+            assert_ok(
                 client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
             )
 

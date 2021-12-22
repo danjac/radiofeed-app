@@ -9,7 +9,6 @@ from ratelimit.decorators import ratelimit
 from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.htmx import with_hx_trigger
 from jcasts.shared.response import HttpResponseNoContent
 
 
@@ -26,8 +25,23 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request: HttpRequest) -> HttpResponse:
-    remove_episode_from_player(request, mark_complete=False)
-    return render_close_player(request)
+    episode: Episode | None = None
+
+    if episode_id := remove_episode_from_player(request, mark_complete=False):
+
+        episode = get_episode_or_404(
+            request,
+            episode_id,
+            with_current_time=True,
+        )
+
+    return render_player(
+        request,
+        {
+            "episode": episode,
+            "is_playing": False,
+        },
+    )
 
 
 @require_http_methods(["GET"])
@@ -65,9 +79,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def remove_episode_from_player(
-    request: HttpRequest, mark_complete: bool
-) -> HttpResponse:
+def remove_episode_from_player(request: HttpRequest, mark_complete: bool) -> int | None:
 
     if (episode_id := request.player.pop()) and mark_complete:
 
@@ -78,6 +90,8 @@ def remove_episode_from_player(
             completed=now,
             current_time=0,
         )
+
+    return episode_id
 
 
 def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
@@ -93,24 +107,15 @@ def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return with_hx_trigger(
-        render_player(
-            request,
-            {
-                "log": log,
-                "episode": episode,
-                "autoplay": True,
-            },
-        ),
+    return render_player(
+        request,
         {
-            "remove-queue-item": episode.id,
-            "play-episode": episode.id,
+            "log": log,
+            "episode": episode,
+            "autoplay": True,
+            "is_playing": True,
         },
     )
-
-
-def render_close_player(request: HttpRequest) -> HttpResponse:
-    return with_hx_trigger(render_player(request), "close-player")
 
 
 def render_player(

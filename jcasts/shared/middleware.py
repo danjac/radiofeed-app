@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from typing import Callable
 from urllib.parse import urlencode
 
@@ -12,8 +14,6 @@ from django.http import (
 )
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
-
-from jcasts.shared.htmx import with_hx_trigger
 
 
 class BaseMiddleware:
@@ -69,8 +69,7 @@ class HtmxMessageMiddleware(BaseMiddleware):
         if self.use_hx_trigger(request, response) and (
             messages := get_messages(request)
         ):
-            return with_hx_trigger(
-                response,
+            response["HX-Trigger"] = json.dumps(
                 {
                     "messages": [
                         {

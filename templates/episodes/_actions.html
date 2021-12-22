@@ -1,65 +1,4 @@
-<div class="flex items-center space-x-3 lg:space-x-4"
-     {% if user.is_authenticated %}
-     hx-push-url="false"
-     x-data="{
-        isPlaying: {{ is_playing|yesno:'true,false' }},
-        isBookmark: {{ is_bookmarked|yesno:'true,false' }},
-        isComplete: {{ episode.completed|yesno:'true,false' }},
-        isListened: {{ episode.listened|yesno:'true,false' }}
-     }"
-     @close-player.window="isPlaying=false"
-     @play-episode.window="
-        if ($event.detail.value==={{ episode.id }}) {
-            isPlaying = true;
-            isListened = true;
-            isComplete = false;
-        }"
-     {% endif %}>
-    {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
-
-    {% if user.is_authenticated %}
-
-    <div class="flex items-center">
-
-        <button title="Add to Bookmarks"
-                class="link"
-                x-show="!isBookmark"
-                x-cloak
-                hx-post="{% url 'episodes:add_bookmark' episode.id %}"
-                @click="isBookmark=true">
-            {% icon "star" css_class=ICON_CSS %}
-        </button>
-
-        <button title="Remove from bookmarks"
-                class="link"
-                x-show="isBookmark"
-                x-cloak
-                hx-delete="{% url 'episodes:remove_bookmark' episode.id %}"
-                @click="isBookmark=false">
-            {% icon "star_solid" css_class=ICON_CSS %}
-        </button>
-
-    </div>
-
-    <button title="Mark Complete"
-            class="link"
-            x-show="!isPlaying && !isComplete && isListened"
-            x-cloak
-            hx-post="{% url 'episodes:mark_complete' episode.id %}"
-            @click="isComplete=true">
-        {% icon "check" css_class=ICON_CSS %}
-    </button>
-
-    <button title="Remove from History"
-            class="link"
-            x-show="!isPlaying && isListened"
-            x-cloak
-            hx-delete="{% url 'episodes:remove_audio_log' episode.id %}"
-            @click="isListened=false">
-        {% icon "trash" css_class=ICON_CSS %}
-    </button>
-
-    {% endif %}
+<div class="flex items-center space-x-3 lg:space-x-4">
     <a download
        title="Download {{ episode.get_media_url_ext|upper }} File"
        href="{{ episode.media_url }}"
@@ -67,9 +6,12 @@
         {% if user.is_anonymous %}
         Download
         {% else %}
-        {% icon "download" css_class=ICON_CSS %}
+        {% icon "download" css_class="h-4 w-4 lg:h-6 lg:w-6" %}
         {% endif %}
     </a>
 
-    {% endwith %}
+    {% if user.is_authenticated %}
+    {% include "episodes/_bookmark_toggle.html" %}
+    {% include "episodes/_audio_log_toggle.html" with completed=episode.completed listened=episode.listened %}
+    {% endif %}
 </div>

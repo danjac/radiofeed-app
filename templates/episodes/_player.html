@@ -1,4 +1,8 @@
 {% load static %}
+{% if episode %}
+{% include "episodes/_play_toggle.html" with hx_oob=True %}
+{% include "episodes/_audio_log_toggle.html" with hx_oob=True %}
+{% endif %}
 {% if log %}
 {% with episode=episode|default:log.episode %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}

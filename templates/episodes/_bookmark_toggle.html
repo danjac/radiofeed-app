@@ -1,0 +1,22 @@
+    {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
+    <div class="flex items-center"
+         id="bookmark-toggle"
+         hx-push-url="false"
+         hx-target="this"
+         hx-swap="outerHTML">
+
+        {% if is_bookmarked %}
+        <button title="Remove from bookmarks"
+                class="link"
+                hx-delete="{% url 'episodes:remove_bookmark' episode.id %}">
+            {% icon "star_solid" css_class=ICON_CSS %}
+        </button>
+        {% else %}
+        <button title="Add to Bookmarks"
+                class="link"
+                hx-post="{% url 'episodes:add_bookmark' episode.id %}">
+            {% icon "star" css_class=ICON_CSS %}
+        </button>
+        {% endif %}
+    </div>
+    {% endwith %}

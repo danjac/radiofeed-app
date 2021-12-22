@@ -4,7 +4,7 @@ import pytest
 
 from django.contrib import messages
 from django.contrib.messages.storage.base import Message
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django_htmx.middleware import HtmxMiddleware
 
 from jcasts.shared.middleware import (
@@ -118,44 +118,3 @@ class TestHtmxMessageMiddleware:
         htmx_mw(htmx_req)
         resp = HtmxMessageMiddleware(_get_response)(htmx_req)
         assert "HX-Trigger" not in resp
-
-    def test_htmx_messages_existing_hx_header(self, htmx_req, htmx_mw, messages):
-        def _get_response(request):
-            resp = HttpResponse()
-            resp["HX-Trigger"] = "reload-queue"
-            return resp
-
-        htmx_mw(htmx_req)
-        resp = HtmxMessageMiddleware(_get_response)(htmx_req)
-        data = json.loads(resp.headers["HX-Trigger"])
-        assert data == {
-            "reload-queue": "",
-            "messages": [
-                {
-                    "message": self.message,
-                    "tags": self.message_level,
-                },
-            ],
-        }
-
-    def test_htmx_messages_existing_hx_multiple_header(
-        self, htmx_req, htmx_mw, messages
-    ):
-        def _get_response(request):
-            resp = HttpResponse()
-            resp["HX-Trigger"] = json.dumps({"reload-queue": "", "start-player": ""})
-            return resp
-
-        htmx_mw(htmx_req)
-        resp = HtmxMessageMiddleware(_get_response)(htmx_req)
-        data = json.loads(resp.headers["HX-Trigger"])
-        assert data == {
-            "reload-queue": "",
-            "start-player": "",
-            "messages": [
-                {
-                    "message": self.message,
-                    "tags": self.message_level,
-                },
-            ],
-        }

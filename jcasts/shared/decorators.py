@@ -4,10 +4,11 @@ import functools
 
 from typing import Callable
 
+from django.conf import settings
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponse
-
-from jcasts.shared.htmx import hx_redirect_to_login
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 
 
 def ajax_login_required(view: Callable) -> Callable:
@@ -17,7 +18,14 @@ def ajax_login_required(view: Callable) -> Callable:
             return view(request, *args, **kwargs)
 
         if request.htmx:
-            return hx_redirect_to_login()
+            response = HttpResponseForbidden()
+            response["HX-Redirect"] = redirect_to_login(
+                settings.LOGIN_REDIRECT_URL,
+                redirect_field_name=REDIRECT_FIELD_NAME,
+            ).url
+            response["HX-Refresh"] = "true"
+            return response
+
         raise PermissionDenied
 
     return wrapper

@@ -2,13 +2,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
+from django.template.response import TemplateResponse
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import Bookmark
+from jcasts.episodes.models import Bookmark, Episode
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
-from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
+from jcasts.shared.response import HttpResponseConflict
 
 
 @require_http_methods(["GET"])
@@ -38,7 +39,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
         messages.success(request, "Added to Bookmarks")
-        return HttpResponseNoContent()
+        return render_bookmark_toggle(request, episode, is_bookmarked=True)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -51,4 +52,17 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return HttpResponseNoContent()
+    return render_bookmark_toggle(request, episode, is_bookmarked=False)
+
+
+def render_bookmark_toggle(
+    request: HttpRequest, episode: Episode, is_bookmarked: bool
+) -> HttpResponse:
+    return TemplateResponse(
+        request,
+        "episodes/_bookmark_toggle.html",
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+        },
+    )
