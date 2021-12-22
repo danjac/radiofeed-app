@@ -14,30 +14,30 @@ from jcasts.shared.response import HttpResponseConflict, HttpResponseNoContent
 @require_http_methods(["GET"])
 @login_required
 def index(request: HttpRequest) -> HttpResponse:
-    favorites = Bookmark.objects.filter(user=request.user).select_related(
+    bookmarks = Bookmark.objects.filter(user=request.user).select_related(
         "episode", "episode__podcast"
     )
     if request.search:
-        favorites = favorites.search(request.search.value).order_by("-rank", "-created")
+        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
     else:
-        favorites = favorites.order_by("-created")
+        bookmarks = bookmarks.order_by("-created")
 
     return render_paginated_response(
         request,
-        favorites,
-        "episodes/favorites.html",
-        "episodes/_favorites.html",
+        bookmarks,
+        "episodes/bookmarks.html",
+        "episodes/_bookmarks.html",
     )
 
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
-        messages.success(request, "Added to Favorites")
+        messages.success(request, "Added to Bookmarks")
         return HttpResponseNoContent()
     except IntegrityError:
         return HttpResponseConflict()
@@ -45,10 +45,10 @@ def add_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
-def remove_favorite(request: HttpRequest, episode_id: int) -> HttpResponse:
+def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     episode = get_episode_or_404(request, episode_id)
 
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
-    messages.info(request, "Removed from Favorites")
+    messages.info(request, "Removed from Bookmarks")
     return HttpResponseNoContent()

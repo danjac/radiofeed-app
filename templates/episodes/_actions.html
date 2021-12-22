@@ -4,7 +4,7 @@
      x-data="{
         isPlaying: {{ is_playing|yesno:'true,false' }},
         isQueued: {{ is_queued|yesno:'true,false' }},
-        isFavorite: {{ is_favorited|yesno:'true,false' }},
+        isBookmark: {{ is_bookmarked|yesno:'true,false' }},
         isComplete: {{ episode.completed|yesno:'true,false' }},
         isListened: {{ episode.listened|yesno:'true,false' }}
      }"
@@ -23,21 +23,21 @@
 
     <div class="flex items-center">
 
-        <button title="Add to Favorites"
+        <button title="Add to Bookmarks"
                 class="link"
-                x-show="!isFavorite"
+                x-show="!isBookmark"
                 x-cloak
-                hx-post="{% url 'episodes:add_favorite' episode.id %}"
-                @click="isFavorite=true">
+                hx-post="{% url 'episodes:add_bookmark' episode.id %}"
+                @click="isBookmark=true">
             {% icon "star" css_class=ICON_CSS %}
         </button>
 
-        <button title="Remove from Favorites"
+        <button title="Remove from bookmarks"
                 class="link"
-                x-show="isFavorite"
+                x-show="isBookmark"
                 x-cloak
-                hx-delete="{% url 'episodes:remove_favorite' episode.id %}"
-                @click="isFavorite=false">
+                hx-delete="{% url 'episodes:remove_bookmark' episode.id %}"
+                @click="isBookmark=false">
             {% icon "star_solid" css_class=ICON_CSS %}
         </button>
 

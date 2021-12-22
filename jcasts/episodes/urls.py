@@ -1,8 +1,8 @@
 from django.urls import path
 
 from jcasts.episodes.views import (
+    bookmarks,
     episode_detail,
-    favorites,
     history,
     index,
     player,
@@ -53,16 +53,16 @@ urlpatterns = [
         history.remove_audio_log,
         name="remove_audio_log",
     ),
-    path("favorites/", favorites.index, name="favorites"),
+    path("bookmarks/", bookmarks.index, name="bookmarks"),
     path(
-        "favorites/<int:episode_id>/~add/",
-        favorites.add_favorite,
-        name="add_favorite",
+        "bookmarks/<int:episode_id>/~add/",
+        bookmarks.add_bookmark,
+        name="add_bookmark",
     ),
     path(
-        "favorites/<int:episode_id>/~remove/",
-        favorites.remove_favorite,
-        name="remove_favorite",
+        "bookmarks/<int:episode_id>/~remove/",
+        bookmarks.remove_bookmark,
+        name="remove_bookmark",
     ),
     path("queue/", queue.index, name="queue"),
     path("queue/~move/", queue.move_queue_items, name="move_queue_items"),

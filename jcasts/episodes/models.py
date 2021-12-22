@@ -187,7 +187,7 @@ class Episode(models.Model):
             return False
         return QueueItem.objects.filter(user=user, episode=self).exists()
 
-    def is_favorited(self, user: User | AnonymousUser) -> bool:
+    def is_bookmarked(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
         return Bookmark.objects.filter(user=user, episode=self).exists()
@@ -320,14 +320,14 @@ class Episode(models.Model):
         }
 
 
-class FavoriteQuerySet(SearchMixin, models.QuerySet):
+class BookmarkQuerySet(SearchMixin, models.QuerySet):
     search_vectors: list[tuple[str, str]] = [
         ("episode__search_vector", "episode_rank"),
         ("episode__podcast__search_vector", "podcast_rank"),
     ]
 
 
-FavoriteManager = models.Manager.from_queryset(FavoriteQuerySet)
+BookmarkManager = models.Manager.from_queryset(BookmarkQuerySet)
 
 
 class Bookmark(TimeStampedModel):
@@ -335,7 +335,7 @@ class Bookmark(TimeStampedModel):
     user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     episode: Episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
 
-    objects = FavoriteManager()
+    objects = BookmarkManager()
 
     class Meta:
 

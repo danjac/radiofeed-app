@@ -89,7 +89,7 @@ def episode_detail(
             "episode": episode,
             "is_playing": request.player.has(episode.id),
             "is_queued": episode.is_queued(request.user),
-            "is_favorited": episode.is_favorited(request.user),
+            "is_bookmarked": episode.is_bookmarked(request.user),
             "is_queue": request.user.is_authenticated
             and QueueItem.objects.filter(user=request.user)
             .exclude(episode=episode)

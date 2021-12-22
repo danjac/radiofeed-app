@@ -37,14 +37,14 @@
         </li>
 
         <li>
-            {% active_link 'episodes:favorites' as link %}
+            {% active_link 'episodes:bookmarks' as link %}
             <a href="{{ link.url }}"
                accesskey="f"
-               title="Favorites"
+               title="bookmarks"
                @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "star" css_class=ICON_CSS %}
-                Favorites
+                Bookmarks
             </a>
         </li>
 
