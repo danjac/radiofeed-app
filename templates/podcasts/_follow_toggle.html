@@ -34,3 +34,6 @@
 </div>
 {% endif %}
 {% endwith %}
+{% if request.htmx %}
+{% include "_messages.html" with hx_oob=True %}
+{% endif %}

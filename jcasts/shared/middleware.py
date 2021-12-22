@@ -1,17 +1,9 @@
 from __future__ import annotations
 
-import json
-
 from typing import Callable
 from urllib.parse import urlencode
 
-from django.contrib.messages.api import get_messages
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponsePermanentRedirect,
-    HttpResponseRedirect,
-)
+from django.http import HttpRequest, HttpResponse
 from django.utils.encoding import force_str
 from django.utils.functional import SimpleLazyObject, cached_property
 
@@ -57,33 +49,3 @@ class CacheControlMiddleware(BaseMiddleware):
             # don't override if cache explicitly set
             response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
-
-
-class HtmxMessageMiddleware(BaseMiddleware):
-    """If htmx request, adds any messages to response
-    header to be handled in JS."""
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        response = self.get_response(request)
-
-        if self.use_hx_trigger(request, response) and (
-            messages := get_messages(request)
-        ):
-            response["HX-Trigger"] = json.dumps(
-                {
-                    "messages": [
-                        {
-                            "message": str(message),
-                            "tags": message.tags,
-                        }
-                        for message in messages
-                    ],
-                },
-            )
-        return response
-
-    def use_hx_trigger(self, request: HttpRequest, response: HttpResponse) -> bool:
-        return request.htmx and type(response) not in (
-            HttpResponseRedirect,
-            HttpResponsePermanentRedirect,
-        )

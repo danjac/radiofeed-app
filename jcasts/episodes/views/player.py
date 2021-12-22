@@ -15,10 +15,27 @@ from jcasts.shared.response import HttpResponseNoContent
 @require_http_methods(["POST"])
 @ajax_login_required
 def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
-    remove_episode_from_player(request, mark_complete=False)
+    episode = get_episode_or_404(request, episode_id, with_podcast=True)
 
-    return render_start_player(
-        request, get_episode_or_404(request, episode_id, with_podcast=True)
+    log, _ = AudioLog.objects.update_or_create(
+        episode=episode,
+        user=request.user,
+        defaults={
+            "completed": None,
+            "updated": timezone.now(),
+        },
+    )
+
+    request.player.set(episode.id)
+
+    return render_player(
+        request,
+        {
+            "log": log,
+            "episode": episode,
+            "autoplay": True,
+            "is_playing": True,
+        },
     )
 
 
@@ -27,13 +44,8 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 def close_player(request: HttpRequest) -> HttpResponse:
     episode: Episode | None = None
 
-    if episode_id := remove_episode_from_player(request, mark_complete=False):
-
-        episode = get_episode_or_404(
-            request,
-            episode_id,
-            with_current_time=True,
-        )
+    if episode_id := request.player.pop():
+        episode = get_episode_or_404(request, episode_id)
 
     return render_player(
         request,
@@ -79,46 +91,15 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def remove_episode_from_player(request: HttpRequest, mark_complete: bool) -> int | None:
-
-    if (episode_id := request.player.pop()) and mark_complete:
-
-        now = timezone.now()
-
-        AudioLog.objects.filter(user=request.user, episode_id=episode_id).update(
-            updated=now,
-            completed=now,
-            current_time=0,
-        )
-
-    return episode_id
-
-
-def render_start_player(request: HttpRequest, episode: Episode) -> HttpResponse:
-
-    log, _ = AudioLog.objects.update_or_create(
-        episode=episode,
-        user=request.user,
-        defaults={
-            "completed": None,
-            "updated": timezone.now(),
-        },
-    )
-
-    request.player.set(episode.id)
-
-    return render_player(
-        request,
-        {
-            "log": log,
-            "episode": episode,
-            "autoplay": True,
-            "is_playing": True,
-        },
-    )
-
-
 def render_player(
     request: HttpRequest, extra_context: dict | None = None
 ) -> HttpResponse:
-    return TemplateResponse(request, "episodes/_player.html", extra_context)
+    return TemplateResponse(
+        request,
+        "episodes/_player.html",
+        {
+            **(extra_context or {}),
+            "completed": False,
+            "listened": True,
+        },
+    )

@@ -3,10 +3,12 @@ from __future__ import annotations
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
+from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from jcasts.episodes.models import AudioLog
+from jcasts.episodes.models import AudioLog, Episode
+from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 
@@ -44,22 +46,49 @@ def index(request: HttpRequest) -> HttpResponse:
 @ajax_login_required
 def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
-    if not request.player.has(episode_id):
-        AudioLog.objects.filter(
-            user=request.user, episode=episode_id, completed__isnull=True
-        ).update(
-            completed=timezone.now(),
-            current_time=0,
+    episode = get_episode_or_404(request, episode_id)
+
+    if not request.player.has(episode.id):
+
+        AudioLog.objects.filter(user=request.user, episode=episode).update(
+            completed=timezone.now(), current_time=0
         )
 
         messages.success(request, "Episode marked complete")
-    return HttpResponse()
+
+    return render_audio_log_toggle(
+        request,
+        episode,
+        listened=True,
+        completed=True,
+    )
 
 
 @require_http_methods(["DELETE"])
 @ajax_login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
-    if not request.player.has(episode_id):
-        AudioLog.objects.filter(user=request.user, episode=episode_id).delete()
+
+    episode = get_episode_or_404(request, episode_id)
+
+    if not request.player.has(episode.id):
+        AudioLog.objects.filter(user=request.user, episode=episode).delete()
         messages.info(request, "Removed from History")
-    return HttpResponse()
+
+    return render_audio_log_toggle(request, episode)
+
+
+def render_audio_log_toggle(
+    request: HttpRequest,
+    episode: Episode,
+    listened: bool = False,
+    completed: bool = False,
+) -> HttpResponse:
+    return TemplateResponse(
+        request,
+        "episodes/_audio_log_toggle.html",
+        {
+            "episode": episode,
+            "listened": listened,
+            "completed": completed,
+        },
+    )

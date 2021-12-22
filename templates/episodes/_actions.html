@@ -12,6 +12,6 @@
 
     {% if user.is_authenticated %}
     {% include "episodes/_bookmark_toggle.html" %}
-    {% include "episodes/_audio_log_toggle.html" with completed=episode.completed listened=episode.listened %}
+    {% include "episodes/_audio_log_toggle.html" %}
     {% endif %}
 </div>

@@ -130,7 +130,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "jcasts.shared.middleware.HtmxMessageMiddleware",
+    # "jcasts.shared.middleware.HtmxMessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 

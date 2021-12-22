@@ -377,7 +377,7 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
 
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             assert_ok(client.delete(self.url(episode)))
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -389,7 +389,7 @@ class TestRemoveAudioLog:
         """Do not remove log if episode is currently playing"""
         log = AudioLogFactory(user=auth_user, episode=player_episode)
 
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             assert_ok(client.delete(self.url(log.episode)))
         assert AudioLog.objects.filter(user=auth_user, episode=log.episode).exists()
 
@@ -398,7 +398,7 @@ class TestRemoveAudioLog:
     ):
         log = AudioLogFactory(user=auth_user, episode=episode)
 
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             assert_ok(client.delete(self.url(log.episode)))
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -415,7 +415,7 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        with django_assert_num_queries(4):
+        with django_assert_num_queries(5):
             assert_ok(client.post(reverse("episodes:mark_complete", args=[episode.id])))
 
         log.refresh_from_db()
@@ -434,7 +434,7 @@ class TestMarkComplete:
             current_time=600,
         )
 
-        with django_assert_num_queries(3):
+        with django_assert_num_queries(4):
             assert_ok(
                 client.post(reverse("episodes:mark_complete", args=[log.episode.id]))
             )
