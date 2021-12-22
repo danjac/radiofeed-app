@@ -6,7 +6,7 @@
      hx-swap="outerHTML">
 
     {% if is_bookmarked %}
-    <button title="Remove from bookmarks"
+    <button title="Remove from Bookmarks"
             class="link"
             hx-delete="{% url 'episodes:remove_bookmark' episode.id %}">
         {% icon "star_solid" css_class=ICON_CSS %}
