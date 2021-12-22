@@ -2,15 +2,7 @@
 <article class="border dark:border-gray-500 mb-3 flex items-center space-x-3"
          role="article"
          aria-posinset="{{ forloop.counter }}"
-         aria-setsize="-1"
-         {% if hx_remove %}
-         x-data="{show: true}"
-         x-show="show"
-         x-transition:leave="transition ease-out duration-500"
-         x-transition:leave-start="transform opacity-100"
-         x-transition:leave-end="transform opacity-0"
-         @{{ hx_remove }}.window="if ($event.detail.value === {{ episode.id }}) show=false"
-         {% endif %}>
+         aria-setsize="-1">
 
     {% block cover_image %}
     <div class="w-20 h-20">

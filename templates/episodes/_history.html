@@ -3,7 +3,7 @@
 {% block results %}
 {% for log in page_obj %}
 {% with episode=log.episode %}
-{% include "episodes/_episode.html" with hx_remove="remove-audio-log" %}
+{% include "episodes/_episode.html" %}
 {% endwith %}
 {% endfor %}
 {% endblock %}

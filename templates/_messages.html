@@ -1,5 +1,6 @@
 <div class="fixed z-50 top-10 inset-x-0 mx-auto w-64 lg:w-80"
      id="messages"
+     {% if hx_oob %} hx-swap-oob="true"{% endif %}
      x-data="jCasts.Messages()"
      x-init="() => {
     {% for message in messages %}
