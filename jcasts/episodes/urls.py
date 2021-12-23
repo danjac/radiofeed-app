@@ -32,6 +32,14 @@ urlpatterns = [
         name="close_player",
     ),
     path(
+        "player/~done/",
+        player.close_player,
+        name="done",
+        kwargs={
+            "mark_complete": True,
+        },
+    ),
+    path(
         "player/~timeupdate/",
         player.player_time_update,
         name="player_time_update",
