@@ -1,6 +1,4 @@
-{% extends "_toggle.html" %}
-{% block content %}
-{% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+{% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 {% if user.is_authenticated %}
 <div id="subscribe-toggle"
      hx-target="this"
@@ -24,6 +22,7 @@
     </button>
     {% endif %}
 </div>
+{% include "_hx_messages.html" %}
 {% else %}
 <div class="flex items-center">
     <a class="btn btn-default inline-flex items-center"
@@ -36,4 +35,3 @@
 </div>
 {% endif %}
 {% endwith %}
-{% endblock content %}
