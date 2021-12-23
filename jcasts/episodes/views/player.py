@@ -41,14 +41,16 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def close_player(request: HttpRequest, mark_complete: bool=False) -> HttpResponse:
+def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpResponse:
     episode: Episode | None = None
 
     if episode_id := request.player.pop():
         episode = get_episode_or_404(request, episode_id)
-        
+
         if mark_complete:
+
             now = timezone.now()
+
             AudioLog.objects.filter(user=request.user, episode=episode).update(
                 completed=now,
                 updated=now,
@@ -100,7 +102,8 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 
 def render_player(
-    request: HttpRequest, extra_context: dict | None = None,
+    request: HttpRequest,
+    extra_context: dict | None = None,
 ) -> HttpResponse:
     return TemplateResponse(
         request,
@@ -108,6 +111,6 @@ def render_player(
         {
             "completed": False,
             "listened": True,
-             **(extra_context or {}),
+            **(extra_context or {}),
         },
     )

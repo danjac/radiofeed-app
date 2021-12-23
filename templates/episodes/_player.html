@@ -92,10 +92,10 @@
                                 hx-swap="innerHTML">
                             {% icon "stop" css_class=ICON_CSS %}
                         </button>
-                        
+
                         <button class="hidden"
-                                x-ref="done"
-                                hx-post="{% url "episodes:player_done" %}"
+                                x-ref="complete"
+                                hx-post="{% url "episodes:player_complete" %}"
                                 hx-target="#player"
                                 hx-swap="innerHTML"></button>
 
