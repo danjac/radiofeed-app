@@ -8,7 +8,9 @@
 {% with podcast=episode.podcast %}
 
 {% if previous_episode or next_episode %}
-<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3">
+<nav class="flex justify-between mb-3 border-b dark:border-gray-500 pb-3"
+     role="navigation"
+     aria-label="Pagination">
     {% if previous_episode %}
     <a class="link"
        href="{{ previous_episode.get_absolute_url }}"
@@ -18,7 +20,9 @@
     </a>
 
     {% else %}
-    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed">Previous</span>
+    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+          title="Earliest Episode"
+          aria-label="Earliest Episode">Previous</span>
     {% endif %}
     {% if next_episode %}
     <a class="link"
@@ -28,9 +32,10 @@
         Next
     </a>
     {% else %}
-    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed">Next</span>
+    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+          title="Latest Episode"
+          aria-label="Latest Episode">Next</span>
     {% endif %}
-
 </nav>
 {% endif %}
 
