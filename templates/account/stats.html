@@ -11,13 +11,13 @@
         <div class="w-1/2 font-bold text-right">{% include "_date.html" with value=user.date_joined %}</div>
     </div>
 
-    {% if stats.follows %}
+    {% if stats.subscribed %}
     <div class="flex justify-between pt-4">
-        <div class="w-1/2">Following</div>
+        <div class="w-1/2">Subscribed</div>
         <div class="w-1/2 font-bold text-right">
             <a href="{% url 'podcasts:index' %}"
                class="link font-bold underline">
-                {{ stats.follows }} podcast{{ stats.follows|pluralize }}
+                {{ stats.subscribed }} podcast{{ stats.subscribed|pluralize }}
             </a>
         </div>
     </div>

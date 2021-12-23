@@ -4,9 +4,9 @@ from django.contrib.sites.models import Site
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory
 from jcasts.podcasts.factories import (
     CategoryFactory,
-    FollowFactory,
     PodcastFactory,
     RecommendationFactory,
+    SubscriptionFactory,
 )
 from jcasts.podcasts.models import Category, Podcast, Recommendation
 from jcasts.users.factories import UserFactory
@@ -20,12 +20,12 @@ class TestRecommendationManager:
 
     def test_for_user(self, user):
 
-        following = FollowFactory(user=user).podcast
+        following = SubscriptionFactory(user=user).podcast
         favorited = BookmarkFactory(user=user).episode.podcast
         listened = AudioLogFactory(user=user).episode.podcast
 
         received = RecommendationFactory(
-            podcast=FollowFactory(user=user).podcast
+            podcast=SubscriptionFactory(user=user).podcast
         ).recommended
         user.recommended_podcasts.add(received)
 
@@ -124,13 +124,13 @@ class TestPodcastManager:
         assert second == inexact
         assert not second.exact_match
 
-    def test_with_followed_true(self, db):
-        FollowFactory()
-        assert Podcast.objects.with_followed().first().followed
+    def test_with_subscribed_true(self, db):
+        SubscriptionFactory()
+        assert Podcast.objects.with_subscribed().first().subscribed
 
-    def test_with_followed_false(self, db):
+    def test_with_subscribed_false(self, db):
         PodcastFactory()
-        assert not Podcast.objects.with_followed().first().followed
+        assert not Podcast.objects.with_subscribed().first().subscribed
 
 
 class TestPodcastModel:
@@ -162,14 +162,14 @@ class TestPodcastModel:
     def test_get_domain_if_www(self):
         assert Podcast(rss=self.rss).get_domain() == "example.com"
 
-    def test_is_following_anonymous(self, podcast):
-        assert not podcast.is_following(AnonymousUser())
+    def test_is_subscribed_anonymous(self, podcast):
+        assert not podcast.is_subscribed(AnonymousUser())
 
-    def test_is_following_false(self, podcast):
-        assert not podcast.is_following(UserFactory())
+    def test_is_subscribed_false(self, podcast):
+        assert not podcast.is_subscribed(UserFactory())
 
-    def test_is_following_true(self, follow):
-        assert follow.podcast.is_following(follow.user)
+    def test_is_subscribed_true(self, subscription):
+        assert subscription.podcast.is_subscribed(subscription.user)
 
     def test_get_opengraph_data(self, rf, podcast):
         req = rf.get("/")

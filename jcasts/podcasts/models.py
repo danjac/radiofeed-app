@@ -62,9 +62,11 @@ class Category(models.Model):
 
 
 class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
-    def with_followed(self) -> models.QuerySet:
+    def with_subscribed(self) -> models.QuerySet:
         return self.annotate(
-            followed=models.Exists(Follow.objects.filter(podcast=models.OuterRef("pk")))
+            subscribed=models.Exists(
+                Subscription.objects.filter(podcast=models.OuterRef("pk"))
+            )
         )
 
     def with_exact_match(self, search_term: str) -> models.QuerySet:
@@ -198,10 +200,10 @@ class Podcast(models.Model):
     def slug(self) -> str:
         return slugify(self.title, allow_unicode=False) or "no-title"
 
-    def is_following(self, user: User | AnonymousUser) -> bool:
+    def is_subscribed(self, user: User | AnonymousUser) -> bool:
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(podcast=self, user=user).exists()
+        return Subscription.objects.filter(podcast=self, user=user).exists()
 
     def get_opengraph_data(self, request: HttpRequest) -> dict:
 
@@ -222,7 +224,7 @@ class Podcast(models.Model):
         return og_data
 
 
-class Follow(TimeStampedModel):
+class Subscription(TimeStampedModel):
 
     user: User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     podcast: Podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
@@ -254,7 +256,7 @@ class RecommendationQuerySet(models.QuerySet):
                     "episode__podcast", flat=True
                 )
             )
-            | set(user.follow_set.values_list("podcast", flat=True))
+            | set(user.subscription_set.values_list("podcast", flat=True))
         )
 
         return self.filter(podcast__pk__in=podcast_ids).exclude(

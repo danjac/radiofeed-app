@@ -5,12 +5,12 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
-    FollowFactory,
     PodcastFactory,
     RecommendationFactory,
+    SubscriptionFactory,
 )
 from jcasts.podcasts.itunes import Feed
-from jcasts.podcasts.models import Follow
+from jcasts.podcasts.models import Subscription
 from jcasts.shared.assertions import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
@@ -24,21 +24,21 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following_promoted(
+    def test_user_is_subscribed_promoted(
         self, client, auth_user, django_assert_num_queries
     ):
-        """If user is not following any podcasts, just show general feed"""
+        """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
-        sub = FollowFactory(user=auth_user).podcast
+        sub = SubscriptionFactory(user=auth_user).podcast
         with django_assert_num_queries(6):
             resp = client.get(reverse("podcasts:index"), {"promoted": True})
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
         assert sub not in resp.context_data["page_obj"].object_list
 
-    def test_user_is_not_following(self, client, auth_user, django_assert_num_queries):
-        """If user is not following any podcasts, just show general feed"""
+    def test_user_is_not_subscribed(self, client, auth_user, django_assert_num_queries):
+        """If user is not subscribed any podcasts, just show general feed"""
 
         PodcastFactory.create_batch(3, promoted=True)
         with django_assert_num_queries(6):
@@ -46,11 +46,11 @@ class TestPodcasts:
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 3
 
-    def test_user_is_following(self, client, auth_user, django_assert_num_queries):
-        """If user following any podcasts, show only own feed with these podcasts"""
+    def test_user_is_subscribed(self, client, auth_user, django_assert_num_queries):
+        """If user subscribed any podcasts, show only own feed with these podcasts"""
 
         PodcastFactory.create_batch(3)
-        sub = FollowFactory(user=auth_user)
+        sub = SubscriptionFactory(user=auth_user)
         with django_assert_num_queries(6):
             resp = client.get(podcasts_url)
         assert_ok(resp)
@@ -207,33 +207,35 @@ class TestCategoryDetail:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
-class TestFollow:
+class TestSubscribe:
     @pytest.fixture
     def url(self, podcast):
-        return reverse("podcasts:follow", args=[podcast.id])
+        return reverse("podcasts:subscribe", args=[podcast.id])
 
-    def test_follow(self, client, podcast, auth_user, url, django_assert_num_queries):
+    def test_subscribe(
+        self, client, podcast, auth_user, url, django_assert_num_queries
+    ):
         with django_assert_num_queries(5):
             resp = client.post(url)
         assert_ok(resp)
-        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
 
     @pytest.mark.django_db(transaction=True)
-    def test_already_following(
+    def test_already_subscribed(
         self, client, podcast, auth_user, url, django_assert_num_queries
     ):
 
-        FollowFactory(user=auth_user, podcast=podcast)
+        SubscriptionFactory(user=auth_user, podcast=podcast)
         with django_assert_num_queries(5):
             resp = client.post(url)
         assert_conflict(resp)
-        assert Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert Subscription.objects.filter(podcast=podcast, user=auth_user).exists()
 
 
-class TestUnfollow:
-    def test_unfollow(self, client, auth_user, podcast, django_assert_num_queries):
-        FollowFactory(user=auth_user, podcast=podcast)
+class TestUnsubscribe:
+    def test_unsubscribe(self, client, auth_user, podcast, django_assert_num_queries):
+        SubscriptionFactory(user=auth_user, podcast=podcast)
         with django_assert_num_queries(5):
-            resp = client.post(reverse("podcasts:unfollow", args=[podcast.id]))
+            resp = client.post(reverse("podcasts:unsubscribe", args=[podcast.id]))
         assert_ok(resp)
-        assert not Follow.objects.filter(podcast=podcast, user=auth_user).exists()
+        assert not Subscription.objects.filter(podcast=podcast, user=auth_user).exists()

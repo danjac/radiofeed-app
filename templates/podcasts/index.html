@@ -3,7 +3,7 @@
 {% block subtitle %} | {{ promoted|yesno:"Trending,My Podcasts" }} Podcasts {% endblock %}
 
 {% block content %}
-{% if has_follows %}
+{% if has_subscriptions %}
 <div class="sm:flex justify-between mb-3">
     {% url 'podcasts:index' as index_url %}
     <h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-3 sm:mb-0">

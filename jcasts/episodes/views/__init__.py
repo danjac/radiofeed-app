@@ -22,16 +22,16 @@ def index(request: HttpRequest) -> HttpResponse:
     promoted = "promoted" in request.GET
     since = timezone.now() - timedelta(days=14)
 
-    follows = (
-        set(request.user.follow_set.values_list("podcast", flat=True))
+    subscribed = (
+        set(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )
 
     podcast_qs = Podcast.objects.filter(pub_date__gt=since)
 
-    if follows and not promoted:
-        podcast_qs = podcast_qs.filter(pk__in=follows)
+    if subscribed and not promoted:
+        podcast_qs = podcast_qs.filter(pk__in=subscribed)
     else:
         podcast_qs = podcast_qs.filter(promoted=True)
 
@@ -51,7 +51,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "episodes/index.html",
         {
             "promoted": promoted,
-            "has_follows": bool(follows),
+            "has_subscriptions": bool(subscribed),
             "search_url": reverse("episodes:search_episodes"),
         },
         cached=promoted,

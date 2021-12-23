@@ -7,7 +7,11 @@ from faker import Faker
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.episodes.middleware import Player
-from jcasts.podcasts.factories import CategoryFactory, FollowFactory, PodcastFactory
+from jcasts.podcasts.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    SubscriptionFactory,
+)
 from jcasts.users.factories import UserFactory
 
 
@@ -80,8 +84,8 @@ def category(db):
 
 
 @pytest.fixture
-def follow(auth_user, podcast):
-    return FollowFactory(podcast=podcast, user=auth_user)
+def subscription(auth_user, podcast):
+    return SubscriptionFactory(podcast=podcast, user=auth_user)
 
 
 @pytest.fixture

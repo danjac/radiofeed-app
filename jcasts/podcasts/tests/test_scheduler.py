@@ -5,7 +5,7 @@ import pytest
 from django.utils import timezone
 
 from jcasts.podcasts import scheduler
-from jcasts.podcasts.factories import FollowFactory, PodcastFactory
+from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
 from jcasts.podcasts.models import Podcast
 
 
@@ -173,7 +173,7 @@ class TestSchedulePodcastFeeds:
 
 class TestSchedulePrimaryFeeds:
     @pytest.mark.parametrize(
-        "promoted,followed,success",
+        "promoted,subscribed,success",
         [
             (True, True, True),
             (True, False, True),
@@ -181,19 +181,19 @@ class TestSchedulePrimaryFeeds:
             (False, False, False),
         ],
     )
-    def test_promoted_or_followed(
+    def test_promoted_or_subscribed(
         self,
         db,
         mock_feed_queue,
         promoted,
-        followed,
+        subscribed,
         success,
     ):
 
         podcast = PodcastFactory(promoted=promoted)
 
-        if followed:
-            FollowFactory(podcast=podcast)
+        if subscribed:
+            SubscriptionFactory(podcast=podcast)
 
         count = scheduler.schedule_primary_feeds()
 
@@ -209,7 +209,7 @@ class TestSchedulePrimaryFeeds:
 
 class TestScheduleSecondaryFeeds:
     @pytest.mark.parametrize(
-        "promoted,followed,success",
+        "promoted,subscribed,success",
         [
             (True, True, False),
             (True, False, False),
@@ -217,19 +217,19 @@ class TestScheduleSecondaryFeeds:
             (False, False, True),
         ],
     )
-    def test_promoted_or_followed(
+    def test_promoted_or_subscribed(
         self,
         db,
         mock_feed_queue,
         promoted,
-        followed,
+        subscribed,
         success,
     ):
 
         podcast = PodcastFactory(promoted=promoted, pub_date=None)
 
-        if followed:
-            FollowFactory(podcast=podcast)
+        if subscribed:
+            SubscriptionFactory(podcast=podcast)
 
         count = scheduler.schedule_secondary_feeds()
 

@@ -6,16 +6,16 @@
 
 <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
     <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl">
-        New Releases {% if promoted and has_follows %} - Trending{% elif has_follows %} - My Podcasts{% endif %}
+        New Releases {% if promoted and has_subscriptions %} - Trending{% elif has_subscriptions %} - My Podcasts{% endif %}
     </h1>
-    {% if not has_follows %}
+    {% if not has_subscriptions %}
     <div class="flex items-center justify-center sm:justify-end space-x-3">
         {% include "forms/_search_form.html" with placeholder="Find an episode..." %}
     </div>
     {% endif %}
 </div>
 
-{% if has_follows %}
+{% if has_subscriptions %}
 <div class="sm:flex items-center justify-between space-y-2 sm:space-y-0 mb-3">
     <div class="flex items-center justify-center sm:justify-start">
         {% if promoted %}

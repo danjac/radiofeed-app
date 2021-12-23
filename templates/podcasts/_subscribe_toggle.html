@@ -1,24 +1,24 @@
 {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
 {% if user.is_authenticated %}
-<div id="follow-toggle"
+<div id="subscribe-toggle"
      hx-target="this"
      hx-push-url="false"
      hx-swap="outerHTML">
-    {% if is_following %}
+    {% if subscribed %}
     <button class="btn btn-secondary inline-flex items-center"
-            title="Stop following this podcast"
+            title="Unsubscribe from this podcast"
             hx-trigger="click delay:200ms"
-            hx-post="{% url 'podcasts:unfollow' podcast.id %}">
+            hx-post="{% url 'podcasts:unsubscribe' podcast.id %}">
         {% icon "eye_slash" css_class=ICON_CSS %}
-        Follow
+        Unsubscribe
     </button>
     {% else %}
     <button class="btn btn-default inline-flex items-center"
-            title="Follow this podcast"
+            title="Subscribe to this podcast"
             hx-trigger="click delay:200ms"
-            hx-post="{% url 'podcasts:follow' podcast.id %}">
+            hx-post="{% url 'podcasts:subscribe' podcast.id %}">
         {% icon "eye" css_class=ICON_CSS %}
-        Follow
+        Subscribe
     </button>
     {% endif %}
 </div>
@@ -27,9 +27,9 @@
     <a class="btn btn-default inline-flex items-center"
        href="{{ podcast.get_absolute_url|login_url }}"
        hx-disable="true"
-       title="Log in to follow this podcast">
+       title="Log in to subscribe this podcast">
         {% icon "eye" css_class=ICON_CSS %}
-        Follow
+        Subscribe
     </a>
 </div>
 {% endif %}

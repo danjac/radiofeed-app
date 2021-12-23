@@ -25,14 +25,14 @@ urlpatterns = [
         name="podcast_recommendations",
     ),
     path(
-        "podcasts/<int:podcast_id>/~follow/",
-        views.follow,
-        name="follow",
+        "podcasts/<int:podcast_id>/~subscribe/",
+        views.subscribe,
+        name="subscribe",
     ),
     path(
-        "podcasts/<int:podcast_id>/~unfollow/",
-        views.unfollow,
-        name="unfollow",
+        "podcasts/<int:podcast_id>/~unsubscribe/",
+        views.unsubscribe,
+        name="unsubscribe",
     ),
     path(
         "discover/<int:category_id>/<slug:slug>/",

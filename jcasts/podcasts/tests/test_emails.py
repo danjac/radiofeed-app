@@ -1,6 +1,6 @@
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.emails import send_recommendations_email
-from jcasts.podcasts.factories import FollowFactory, RecommendationFactory
+from jcasts.podcasts.factories import RecommendationFactory, SubscriptionFactory
 
 
 class TestSendRecommendationEmail:
@@ -12,9 +12,9 @@ class TestSendRecommendationEmail:
 
     def test_send_if_sufficient_episodes(self, user, mailoutbox):
 
-        first = FollowFactory(user=user).podcast
-        second = FollowFactory(user=user).podcast
-        third = FollowFactory(user=user).podcast
+        first = SubscriptionFactory(user=user).podcast
+        second = SubscriptionFactory(user=user).podcast
+        third = SubscriptionFactory(user=user).podcast
 
         EpisodeFactory()
 
@@ -37,9 +37,9 @@ class TestSendRecommendationEmail:
 
     def test_send_if_sufficient_recommendations(self, user, mailoutbox):
 
-        first = FollowFactory(user=user).podcast
-        second = FollowFactory(user=user).podcast
-        third = FollowFactory(user=user).podcast
+        first = SubscriptionFactory(user=user).podcast
+        second = SubscriptionFactory(user=user).podcast
+        third = SubscriptionFactory(user=user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)
@@ -53,9 +53,9 @@ class TestSendRecommendationEmail:
 
     def test_send_if_sufficient_recommendations_and_episodes(self, user, mailoutbox):
 
-        first = FollowFactory(user=user).podcast
-        second = FollowFactory(user=user).podcast
-        third = FollowFactory(user=user).podcast
+        first = SubscriptionFactory(user=user).podcast
+        second = SubscriptionFactory(user=user).podcast
+        third = SubscriptionFactory(user=user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)

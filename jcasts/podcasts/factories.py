@@ -6,7 +6,7 @@ from django.utils import timezone
 from factory import DictFactory, Faker, LazyFunction
 from factory.django import DjangoModelFactory
 
-from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
+from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 from jcasts.users.factories import UserFactory
 
 
@@ -69,9 +69,9 @@ class RecommendationFactory(DjangoModelFactory):
         model = Recommendation
 
 
-class FollowFactory(DjangoModelFactory):
+class SubscriptionFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     podcast = factory.SubFactory(PodcastFactory)
 
     class Meta:
-        model = Follow
+        model = Subscription

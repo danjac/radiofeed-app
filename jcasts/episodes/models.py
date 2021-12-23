@@ -54,7 +54,9 @@ class EpisodeQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
         """Return all episodes for podcasts the user is following,
         minus any the user has already queued/favorited/listened to."""
 
-        if not (podcast_ids := set(user.follow_set.values_list("podcast", flat=True))):
+        if not (
+            podcast_ids := set(user.subscription_set.values_list("podcast", flat=True))
+        ):
             return self.none()
 
         min_pub_date = timezone.now() - since

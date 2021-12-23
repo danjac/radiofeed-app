@@ -7,7 +7,7 @@ from django.urls import reverse, reverse_lazy
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import AudioLog, Bookmark
-from jcasts.podcasts.factories import FollowFactory, PodcastFactory
+from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
 from jcasts.shared.assertions import (
     assert_bad_request,
     assert_conflict,
@@ -28,29 +28,29 @@ def assert_not_playing(client, episode):
 
 class TestNewEpisodes:
     def test_anonymous_user(self, client, db, django_assert_num_queries):
-        self._test_no_follows(client, django_assert_num_queries, 4)
+        self._test_not_subscribed(client, django_assert_num_queries, 4)
 
-    def test_no_follows(self, client, db, auth_user, django_assert_num_queries):
-        self._test_no_follows(client, django_assert_num_queries, 7)
+    def test_not_subscribed(self, client, db, auth_user, django_assert_num_queries):
+        self._test_not_subscribed(client, django_assert_num_queries, 7)
 
-    def test_user_has_follows(self, client, auth_user, django_assert_num_queries):
+    def test_user_has_subscribed(self, client, auth_user, django_assert_num_queries):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
 
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        FollowFactory(user=auth_user, podcast=episode.podcast)
+        SubscriptionFactory(user=auth_user, podcast=episode.podcast)
 
         with django_assert_num_queries(7):
             resp = client.get(episodes_url)
         assert_ok(resp)
         assert not resp.context_data["promoted"]
-        assert resp.context_data["has_follows"]
+        assert resp.context_data["has_subscriptions"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0] == episode
 
-    def test_user_has_follows_promoted(
+    def test_user_has_subscribed_promoted(
         self, client, auth_user, django_assert_num_queries
     ):
         promoted = PodcastFactory(promoted=True)
@@ -59,25 +59,25 @@ class TestNewEpisodes:
         EpisodeFactory.create_batch(3)
 
         episode = EpisodeFactory()
-        FollowFactory(user=auth_user, podcast=episode.podcast)
+        SubscriptionFactory(user=auth_user, podcast=episode.podcast)
 
         with django_assert_num_queries(7):
             resp = client.get(episodes_url, {"promoted": True})
 
         assert_ok(resp)
         assert resp.context_data["promoted"]
-        assert resp.context_data["has_follows"]
+        assert resp.context_data["has_subscriptions"]
         assert len(resp.context_data["page_obj"].object_list) == 1
         assert resp.context_data["page_obj"].object_list[0].podcast == promoted
 
-    def _test_no_follows(self, client, django_assert_num_queries, num_queries):
+    def _test_not_subscribed(self, client, django_assert_num_queries, num_queries):
         promoted = PodcastFactory(promoted=True)
         EpisodeFactory(podcast=promoted)
         EpisodeFactory.create_batch(3)
         with django_assert_num_queries(num_queries):
             resp = client.get(episodes_url)
         assert_ok(resp)
-        assert not resp.context_data["has_follows"]
+        assert not resp.context_data["has_subscriptions"]
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 

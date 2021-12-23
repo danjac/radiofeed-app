@@ -118,18 +118,18 @@ class QueuedFilter(admin.SimpleListFilter):
         )
 
 
-class FollowedFilter(admin.SimpleListFilter):
-    title = "Followed"
-    parameter_name = "followed"
+class SubscribedFilter(admin.SimpleListFilter):
+    title = "Subscribed"
+    parameter_name = "subscribed"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
-        return (("yes", "Followed"),)
+        return (("yes", "Subscribed"),)
 
     def queryset(self, request: HttpRequest, queryset: QuerySet) -> QuerySet:
         return (
-            queryset.with_followed().filter(followed=True)
+            queryset.with_subscribed().filter(subscribed=True)
             if self.value() == "yes"
             else queryset
         )
@@ -139,7 +139,7 @@ class FollowedFilter(admin.SimpleListFilter):
 class PodcastAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_filter = (
         ActiveFilter,
-        FollowedFilter,
+        SubscribedFilter,
         PromotedFilter,
         PubDateFilter,
         QueuedFilter,

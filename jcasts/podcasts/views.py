@@ -18,7 +18,7 @@ from ratelimit.decorators import ratelimit
 from jcasts.episodes.models import Episode
 from jcasts.episodes.views import render_episode_list_response
 from jcasts.podcasts import itunes
-from jcasts.podcasts.models import Category, Follow, Podcast, Recommendation
+from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.pagination import render_paginated_response
 from jcasts.shared.response import HttpResponseConflict
@@ -27,8 +27,8 @@ from jcasts.shared.response import HttpResponseConflict
 @require_http_methods(["GET"])
 def index(request: HttpRequest) -> HttpResponse:
 
-    follows = (
-        set(request.user.follow_set.values_list("podcast", flat=True))
+    subscribed = (
+        set(request.user.subscription_set.values_list("podcast", flat=True))
         if request.user.is_authenticated
         else set()
     )
@@ -36,12 +36,12 @@ def index(request: HttpRequest) -> HttpResponse:
         Podcast.objects.filter(pub_date__isnull=False).order_by("-pub_date").distinct()
     )
 
-    promoted = "promoted" in request.GET or not follows
+    promoted = "promoted" in request.GET or not subscribed
 
     if promoted:
         podcasts = podcasts.filter(promoted=True)
     else:
-        podcasts = podcasts.filter(pk__in=follows)
+        podcasts = podcasts.filter(pk__in=subscribed)
 
     return render_podcast_list_response(
         request,
@@ -50,7 +50,7 @@ def index(request: HttpRequest) -> HttpResponse:
         {
             "promoted": promoted,
             "show_latest": True,
-            "has_follows": follows,
+            "has_subscriptions": bool(subscribed),
             "search_url": reverse("podcasts:search_podcasts"),
         },
         cached=promoted,
@@ -136,7 +136,7 @@ def podcast_detail(
             podcast,
             {
                 "latest_episode": latest_episode,
-                "is_following": podcast.is_following(request.user),
+                "subscribed": podcast.is_subscribed(request.user),
             },
         ),
     )
@@ -205,27 +205,27 @@ def category_detail(request: HttpRequest, category_id: int, slug: str | None = N
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def follow(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
     try:
-        Follow.objects.create(user=request.user, podcast=podcast)
-        messages.success(request, "You are now following this podcast")
-        return render_follow_response(request, podcast, follow=True)
+        Subscription.objects.create(user=request.user, podcast=podcast)
+        messages.success(request, "You are now subscribed to this podcast")
+        return render_subscribe_response(request, podcast, subscribed=True)
     except IntegrityError:
         return HttpResponseConflict()
 
 
 @require_http_methods(["POST"])
 @ajax_login_required
-def unfollow(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     podcast = get_podcast_or_404(request, podcast_id)
 
-    messages.info(request, "You are no longer following this podcast")
-    Follow.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_follow_response(request, podcast, follow=False)
+    messages.info(request, "You are no longer subscribed to this podcast")
+    Subscription.objects.filter(podcast=podcast, user=request.user).delete()
+    return render_subscribe_response(request, podcast, subscribed=False)
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
@@ -247,14 +247,14 @@ def get_podcast_detail_context(
     }
 
 
-def render_follow_response(
-    request: HttpRequest, podcast: Podcast, follow: bool
+def render_subscribe_response(
+    request: HttpRequest, podcast: Podcast, subscribed: bool
 ) -> TemplateResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/_follow_toggle.html",
-        {"podcast": podcast, "is_following": follow},
+        "podcasts/_subscribe_toggle.html",
+        {"podcast": podcast, "subscribed": subscribed},
     )
 
 

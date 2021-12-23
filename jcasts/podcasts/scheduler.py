@@ -12,20 +12,20 @@ from jcasts.podcasts.models import Podcast
 
 
 def schedule_primary_feeds(**kwargs) -> int:
-    """Any followed or promoted podcasts"""
+    """Any subscribed or promoted podcasts"""
     return schedule_podcast_feeds(
-        Podcast.objects.with_followed().filter(Q(promoted=True) | Q(followed=True)),
+        Podcast.objects.with_subscribed().filter(Q(promoted=True) | Q(subscribed=True)),
         **kwargs,
     )
 
 
 def schedule_secondary_feeds(**kwargs) -> int:
-    """Any (non-followed/promoted) podcasts"""
+    """Any (non-subscribed/promoted) podcasts"""
 
     return schedule_podcast_feeds(
-        Podcast.objects.with_followed().filter(
+        Podcast.objects.with_subscribed().filter(
             promoted=False,
-            followed=False,
+            subscribed=False,
         ),
         **kwargs,
     )

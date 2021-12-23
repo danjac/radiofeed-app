@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
-from jcasts.podcasts.factories import FollowFactory
+from jcasts.podcasts.factories import SubscriptionFactory
 from jcasts.shared.assertions import assert_ok
 
 
@@ -33,7 +33,7 @@ class TestUserPreferences:
 class TestUserStats:
     def test_stats(self, client, auth_user, podcast, django_assert_num_queries):
 
-        FollowFactory(podcast=podcast, user=auth_user)
+        SubscriptionFactory(podcast=podcast, user=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(episode=EpisodeFactory(podcast=podcast), user=auth_user)
         AudioLogFactory(user=auth_user)
@@ -42,7 +42,7 @@ class TestUserStats:
         with django_assert_num_queries(8):
             resp = client.get(reverse("users:stats"))
         assert_ok(resp)
-        assert resp.context["stats"]["follows"] == 1
+        assert resp.context["stats"]["subscribed"] == 1
         assert resp.context["stats"]["listened"] == 3
 
 
@@ -53,13 +53,13 @@ class TestExportPodcastFeeds:
         with django_assert_num_queries(3):
             assert_ok(client.get(self.url))
 
-    def test_export_opml(self, client, follow, django_assert_num_queries):
+    def test_export_opml(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
             resp = client.post(self.url, {"format": "opml"})
         assert_ok(resp)
         assert resp["Content-Type"] == "application/xml"
 
-    def test_export_csv(self, client, follow, django_assert_num_queries):
+    def test_export_csv(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
             resp = client.post(self.url, {"format": "csv"})
         assert_ok(resp)

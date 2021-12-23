@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import AudioLog, Bookmark
-from jcasts.podcasts.models import Follow, Podcast
+from jcasts.podcasts.models import Podcast, Subscription
 from jcasts.users.forms import UserPreferencesForm
 
 
@@ -40,7 +40,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
     podcasts = (
         Podcast.objects.filter(
-            follow__user=request.user,
+            subscription__user=request.user,
             pub_date__isnull=False,
         )
         .distinct()
@@ -69,7 +69,7 @@ def user_stats(request: HttpRequest) -> HttpResponse:
                 "listened": logs.count(),
                 "in_progress": logs.filter(completed__isnull=True).count(),
                 "completed": logs.filter(completed__isnull=False).count(),
-                "follows": Follow.objects.filter(user=request.user).count(),
+                "subscribed": Subscription.objects.filter(user=request.user).count(),
                 "bookmarks": Bookmark.objects.filter(user=request.user).count(),
             },
         },

@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.episodes.models import AudioLog, Bookmark, Episode
-from jcasts.podcasts.factories import FollowFactory
+from jcasts.podcasts.factories import SubscriptionFactory
 from jcasts.podcasts.models import Podcast
 
 
@@ -78,7 +78,7 @@ class TestEpisodeManager:
 
     def test_recommended(self, db, user):
 
-        podcast = FollowFactory(user=user).podcast
+        podcast = SubscriptionFactory(user=user).podcast
         # ok
         first = EpisodeFactory(podcast=podcast)
 

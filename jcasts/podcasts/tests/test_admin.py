@@ -8,14 +8,14 @@ from django.utils import timezone
 
 from jcasts.podcasts.admin import (
     ActiveFilter,
-    FollowedFilter,
     PodcastAdmin,
     PromotedFilter,
     PubDateFilter,
     QueuedFilter,
     ResultFilter,
+    SubscribedFilter,
 )
-from jcasts.podcasts.factories import FollowFactory, PodcastFactory
+from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
 from jcasts.podcasts.models import Podcast
 
 
@@ -199,16 +199,16 @@ class TestActiveFilter:
         assert inactive in qs
 
 
-class TestFollowedFilter:
-    def test_followed_filter_none(self, podcasts, admin, req):
-        FollowFactory()
-        f = FollowedFilter(req, {}, Podcast, admin)
+class TestSubscribedFilter:
+    def test_subscribed_filter_none(self, podcasts, admin, req):
+        SubscriptionFactory()
+        f = SubscribedFilter(req, {}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     def test_promoted_filter_true(self, podcasts, admin, req):
-        followed = FollowFactory().podcast
-        f = FollowedFilter(req, {"followed": "yes"}, Podcast, admin)
+        subscribed = SubscriptionFactory().podcast
+        f = SubscribedFilter(req, {"subscribed": "yes"}, Podcast, admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert qs.first() == followed
+        assert qs.first() == subscribed
