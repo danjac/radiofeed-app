@@ -54,6 +54,7 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
             AudioLog.objects.filter(user=request.user, episode=episode).update(
                 completed=now,
                 updated=now,
+                current_time=0,
             )
 
     return render_player(

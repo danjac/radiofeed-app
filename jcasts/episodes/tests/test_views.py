@@ -202,12 +202,12 @@ class TestStartPlayer:
 class TestClosePlayer:
     url = reverse_lazy("episodes:close_player")
 
-    def test_stop_if_player_empty(self, client, auth_user, django_assert_num_queries):
+    def test_player_empty(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
             resp = client.post(self.url)
         assert_ok(resp)
 
-    def test_stop(self, client, auth_user, player_episode, django_assert_num_queries):
+    def test_close(self, client, auth_user, player_episode, django_assert_num_queries):
 
         log = AudioLogFactory(
             user=auth_user,
@@ -232,12 +232,9 @@ class TestClosePlayer:
 class TestPlayerComplete:
     url = reverse_lazy("episodes:player_complete")
 
-    def test_stop_if_player_empty(self, client, auth_user, django_assert_num_queries):
-        with django_assert_num_queries(3):
-            resp = client.post(self.url)
-        assert_ok(resp)
-
-    def test_stop(self, client, auth_user, player_episode, django_assert_num_queries):
+    def test_complete(
+        self, client, auth_user, player_episode, django_assert_num_queries
+    ):
 
         log = AudioLogFactory(
             user=auth_user,
@@ -254,7 +251,7 @@ class TestPlayerComplete:
         log.refresh_from_db()
 
         assert log.completed
-        assert log.current_time == 2000
+        assert log.current_time == 0
 
         assert_not_playing(client, player_episode)
 
