@@ -10,7 +10,8 @@
         Previous
     </a>
     {% else %}
-    <span class="text-gray-600 dark:text-gray-500 cursor-not-allowed"
+    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+          title="First Page"
           aria-label="First Page">Previous</span>
     {% endif %}
     {% if page_obj.has_next %}
@@ -21,7 +22,8 @@
         Next
     </a>
     {% else %}
-    <span class="text-gray-600 dark:text-gray-500 cursor-not-allowed"
+    <span class="text-gray-600 dark:text-gray-300 cursor-not-allowed"
+          title="Last Page"
           aria-label="Last Page">Next</span>
     {% endif %}
 </nav>
