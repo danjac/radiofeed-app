@@ -1,3 +1,5 @@
+{% extends "_toggle.html" %}
+{% block content %}
 {% with ICON_CSS="mr-2 h-4 w-4 lg:h-5 lg:w-5" %}
 {% if user.is_authenticated %}
 <div{% if hx_oob %} hx-swap-oob="true"
@@ -39,3 +41,5 @@
     </div>
     {% endif %}
     {% endwith %}
+
+    {% endblock content %}

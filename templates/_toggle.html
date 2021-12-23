@@ -1,0 +1,6 @@
+{% block content %}{% endblock %}
+{% block messages %}
+{% if request.htmx %}
+{% include "_messages.html" with hx_oob=True %}
+{% endif %}
+{% endblock messages %}

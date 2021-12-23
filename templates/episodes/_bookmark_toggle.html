@@ -1,3 +1,5 @@
+{% extends "_toggle.html" %}
+{% block content %}
 {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 <div class="flex items-center"
      id="bookmark-toggle"
@@ -20,7 +22,4 @@
     {% endif %}
 </div>
 {% endwith %}
-{% if request.htmx %}
-{% include "_messages.html" with hx_oob=True %}
-{% endif %}
-
+{% endblock content %}
