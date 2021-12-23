@@ -193,7 +193,7 @@ const playerObj = {
     },
 
     ended() {
-        this.$refs.close.click();
+        this.$refs.done.click();
     },
 
     togglePlayPause() {
