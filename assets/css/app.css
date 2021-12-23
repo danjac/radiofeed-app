@@ -161,7 +161,7 @@ input[type='range']::-moz-range-thumb {
 /* BUTTONS */
 
 .btn {
-    @apply px-2 py-1 lg:px-3 rounded font-semibold;
+    @apply px-2 py-1 rounded font-semibold;
 }
 
 .btn:focus {
