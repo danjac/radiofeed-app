@@ -6,9 +6,7 @@
 {% include "_signup_cta.html" with hx_swap=True %}
 {% endblock %}
 {% block messages %}
-{% if request.htmx %}
-{% include "_messages.html" with hx_oob=True %}
-{% endif %}
+{% include "_hx_messages.html" %}
 {% endblock messages %}
 {% block page_footer %}{% endblock %}
 {% block footer_tags %}{% endblock %}
