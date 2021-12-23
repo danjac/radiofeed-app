@@ -69,8 +69,8 @@
             <a href="{% url 'users:preferences' %}"
                @click="$dispatch('close-sidebar')"
                title="Settings for {{ user.username }}"
-               class="flex items-center justify-center rounded-full bg-blue-600 text-white font-bold h-3 w-3 p-3">
-                {{ user.username.0|upper }}
+               class="flex items-center font-bold">
+                {{ user.username|slice:12 }}
             </a>
             {% endif %}
             <button class="xl:hidden focus:outline-none transform transition"
