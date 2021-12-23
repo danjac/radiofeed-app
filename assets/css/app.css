@@ -169,7 +169,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 .btn-default {
-    @apply text-white bg-blue-800 border border-blue-800 dark:border-white;
+    @apply text-white bg-blue-800 border border-blue-800 dark:border-gray-500;
 }
 
 .btn-default:hover {
@@ -177,7 +177,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 .btn-secondary {
-    @apply border border-blue-800 text-blue-800 dark:text-white dark:border-white;
+    @apply border border-blue-800 text-blue-800 dark:text-white dark:border-gray-500;
 }
 
 .btn-secondary:hover {
@@ -185,7 +185,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 .btn-danger {
-    @apply text-white bg-red-800 border border-red-800 dark:border-white;
+    @apply text-white bg-red-800 border border-red-800 dark:border-gray-500;
 }
 
 .btn-danger:hover {
