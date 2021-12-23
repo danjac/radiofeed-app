@@ -87,12 +87,17 @@
                         <button title="Close Player"
                                 accesskey="x"
                                 class="{{ BUTTON_CSS }}"
-                                x-ref="close"
                                 hx-post="{% url "episodes:close_player" %}"
                                 hx-target="#player"
                                 hx-swap="innerHTML">
                             {% icon "stop" css_class=ICON_CSS %}
                         </button>
+                        
+                        <button class="hidden"
+                                x-ref="done"
+                                hx-post="{% url "episodes:player_done" %}"
+                                hx-target="#player"
+                                hx-swap="innerHTML"></button>
 
                         {% endwith %}
 
