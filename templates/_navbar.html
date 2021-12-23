@@ -64,13 +64,13 @@
 
         </form>
 
-        <div class="flex items-center space-x-3 lg:space-x-6">
+        <div class="flex items-center space-x-3">
             {% if user.is_authenticated %}
             <a href="{% url 'users:preferences' %}"
                @click="$dispatch('close-sidebar')"
                title="Settings for {{ user.username }}"
-               class="flex items-center">
-                {{ user.username|truncatechars:12 }}
+               class="flex items-center justify-center rounded-full bg-blue-600 text-white font-bold h-3 w-3 p-3">
+                {{ user.username.0|upper }}
             </a>
             {% endif %}
             <button class="xl:hidden focus:outline-none transform transition"
@@ -89,7 +89,7 @@
             </button>
         </div>
     </div>
-    <div class="xl:hidden absolute py-6 sm:py-3 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
+    <div class="xl:hidden absolute py-3 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
          x-cloak
          x-show.transition="sidebar"
          x-transition:enter="transition ease-out duration-100"
