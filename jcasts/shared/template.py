@@ -180,21 +180,6 @@ def safe_url(url: str | None) -> str | None:
     return None
 
 
-@register.filter
-@stringfilter
-def colorpicker(value: str | None, colors: str) -> str:
-    """
-    Given set of colors, picks a color from comma-separated list
-    based on initial character of string.
-
-    Example:
-
-    {{ user.username|colorpicker:"#00ff00,#ff0000,#0000ff" }}
-    """
-    choices = colors.split(",")
-    return choices[ord(value[0] if value else " ") % len(choices)]
-
-
 def auth_redirect_url(url: str, redirect_url: str) -> str:
 
     return (

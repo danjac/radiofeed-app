@@ -3,7 +3,6 @@ from django.urls import reverse
 from jcasts.shared.template import (
     absolute_uri,
     active_link,
-    colorpicker,
     format_duration,
     login_url,
     markup,
@@ -18,19 +17,6 @@ from jcasts.shared.template import (
 EXAMPLE_HTTPS_URL = "https://example.com"
 EXAMPLE_HTTP_URL = "http://example.com"
 TESTSERVER_URL = "http://testserver"
-
-
-class TestColorpicker:
-    colors = "red,blue,green,purple"
-
-    def test_empty(self):
-        assert colorpicker("", self.colors) == "red"
-
-    def test_not_empty(self):
-        assert colorpicker("aaaa", self.colors) == "blue"
-        assert colorpicker("bbbb", self.colors) == "green"
-        assert colorpicker("cccc", self.colors) == "purple"
-        assert colorpicker("dddd", self.colors) == "red"
 
 
 class TestAbsoluteUri:
