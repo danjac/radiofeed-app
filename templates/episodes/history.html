@@ -28,23 +28,12 @@
             {% endif %}
         </nav>
 
-
         {% if request.search or page_obj.paginator.count %}
         <div class="flex items-center justify-center sm:justify-end">
             {% include "forms/_search_form.html" with placeholder="Search: History" %}
         </div>
         {% endif %}
     </div>
-
-    {% if not page_obj.paginator.count %}
-    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
-        {% if request.search %}
-        No results found for <span class="font-bold">{{ request.search }}</span>.
-        {% else %}
-        Your History is currently empty.
-        {% endif %}
-    </p>
-    {% endif %}
     {% include pagination_template %}
 </div>
 {% endblock content %}

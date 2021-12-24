@@ -3,12 +3,5 @@
 {% block subtitle %} | Search iTunes{% endblock %}
 
 {% block search_content %}
-<section role="feed"
-         aria-busy="false">
-    {% for feed in feeds %}
-    {% include "podcasts/_itunes_feed.html" %}
-    {% empty %}
-    {% include "pagination/_empty_list.html" %}
-    {% endfor %}
-</section>
+{% include "podcasts/_itunes_feeds.html" with object_list=feeds %}
 {% endblock %}

@@ -11,21 +11,12 @@
 <div id="bookmarks">
     <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
         <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl">Bookmarks</h1>
-        {% if search or page_obj.paginator.count %}
+        {% if request.search or page_obj.paginator.count %}
         <div class="flex items-center justify-center sm:justify-end">
             {% include "forms/_search_form.html" with placeholder="Search: Bookmarks" %}
         </div>
         {% endif %}
     </div>
-    {% if not page_obj.paginator.count %}
-    <p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
-        {% if request.search %}
-        No results found for <span class="font-bold">{{ request.search.value }}</span>.
-        {% else %}
-        You do not have any bookmarks at the moment.
-        {% endif %}
-    </p>
-    {% endif %}
     {% include pagination_template %}
 </div>
 {% endblock content %}
