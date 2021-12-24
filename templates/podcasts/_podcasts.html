@@ -8,10 +8,6 @@
     <p>
         No results found for <span class="font-bold">{{ request.search.value }}</span>.
     </p>
-    <p>
-        You might find what you're looking for on <a class="link"
-           href="{% url 'podcasts:search_itunes' %}?q={{ request.search }}">iTunes</a>.
-    </p>
     {% else %}
     <p>Nothing to see here.</p>
     {% endif %}
