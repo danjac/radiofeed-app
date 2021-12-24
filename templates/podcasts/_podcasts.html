@@ -3,9 +3,18 @@
 {% for podcast in page_obj %}
 {% include "podcasts/_podcast.html" %}
 {% empty %}
-{% if request.search %}
-<p class="text-center sm:text-left pt-4 border-t dark:border-gray-500">
-    No results found for <span class="font-bold">{{ request.search.value }}</span>. {% endif %}
-</p>
+<div class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
+    {% if request.search %}
+    <p>
+        No results found for <span class="font-bold">{{ request.search.value }}</span>.
+    </p>
+    <p>
+        You might find what you're looking for on <a class="link"
+           href="{% url 'podcasts:search_itunes' %}?q={{ request.search }}">iTunes</a>.
+    </p>
+    {% else %}
+    <p>Nothing to see here.</p>
+    {% endif %}
+</div>
 {% endfor %}
 {% endblock results %}
