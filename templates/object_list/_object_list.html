@@ -1,7 +1,6 @@
 {% load static %}
 <section role="feed"
          aria-busy="false">
-    {% block list_header %}{% endblock %}
     {% block result_list %}
     {% for object in object_list %}
     {% block result_item %}{% endblock %}
@@ -9,5 +8,4 @@
     {% block empty_list %}{% include "object_list/_empty.html" %}{% endblock %}
     {% endfor %}
     {% endblock result_list %}
-    {% block list_footer %}{% endblock %}
 </section>

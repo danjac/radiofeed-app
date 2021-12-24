@@ -1,8 +1,8 @@
 {% extends "object_list/_object_list.html" %}
-{% block list_header %}{% include "object_list/_pagination_links.html" %}{% endblock %}
 {% block result_list %}
+{% include "object_list/_pagination_links.html" %}
 {% with object_list=page_obj.object_list %}
 {{ block.super }}
 {% endwith %}
+{% include "object_list/_pagination_links.html" %}
 {% endblock result_list %}
-{% block list_footer %}{% include "object_list/_pagination_links.html" %}{% endblock %}
