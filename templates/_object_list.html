@@ -1,0 +1,20 @@
+{% load static %}
+<section role="list">
+    {% block result_list %}
+    {% for object in object_list %}
+    {% block result %}{% endblock %}
+    {% empty %}
+    {% block empty_list %}
+    <div class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
+        {% if request.search %}
+        <p>
+            No results found for <span class="font-bold">{{ request.search.value }}</span>.
+        </p>
+        {% else %}
+        <p>Nothing to see here.</p>
+        {% endif %}
+    </div>
+    {% endblock %}
+    {% endfor %}
+    {% endblock result_list %}
+</section>
