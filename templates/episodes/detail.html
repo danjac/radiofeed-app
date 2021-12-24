@@ -39,7 +39,7 @@
 </nav>
 {% endif %}
 
-<div class="space-y-3">
+<article class="space-y-3">
     <h2 class="lg:text-lg">
         <a href="{{ podcast.get_episodes_url }}"
            title="See All Episodes for {{ podcast.cleaned_title }}"
@@ -124,6 +124,6 @@
     {% include "_markdown.html" with content=episode.description %}
     {% include "_disclaimer.html" with explicit=episode.explicit|default:podcast.explicit %}
 
-</div>
+</article>
 {% endwith %}
 {% endblock %}
