@@ -1,8 +1,3 @@
-{% with podcast=feed.podcast %}
-{% if podcast and podcast.pub_date %}
-{% include "podcasts/_podcast.html" %}
-{% else %}
-
 <article class="border dark:border-gray-500 mb-3 flex items-center space-x-3"
          role="listitem">
 
@@ -21,5 +16,3 @@
     </div>
 
 </article>
-{% endif %}
-{% endwith %}
