@@ -1,7 +1,6 @@
 {% with podcast_url=podcast.get_absolute_url %}
 <article class="border dark:border-gray-500 mb-3 flex items-center space-x-3"
-         aria-posinset="{{ forloop.counter }}"
-         aria-setsize="-1">
+         role="listitem">
 
     <div class="w-20 h-20">
         {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast_url %}
