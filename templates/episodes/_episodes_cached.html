@@ -1,7 +1,7 @@
 {% extends "episodes/_episodes.html" %}
 {% load cache %}
 {% block result_list %}
-{% cache cache_timeout episodes request.get_full_path request.user.is_authenticated %}
+{% cache cache_timeout episodes request.get_full_path %}
 {{ block.super }}
 {% endcache %}
 {% endblock %}
