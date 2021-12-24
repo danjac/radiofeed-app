@@ -1,6 +1,6 @@
 {% extends "podcasts/_podcasts.html" %}
 {% load cache %}
-{% block results %}
+{% block result_list %}
 {% cache cache_timeout podcasts request.get_full_path %}
 {{ block.super }}
 {% endcache %}

@@ -6,7 +6,7 @@
     {% for object in object_list %}
     {% block result_item %}{% endblock %}
     {% empty %}
-    {% block empty_list %}{% include "list/_empty.html" %}{% endblock %}
+    {% block empty_list %}{% include "object_list/_empty.html" %}{% endblock %}
     {% endfor %}
     {% endblock result_list %}
     {% block list_footer %}{% endblock %}
