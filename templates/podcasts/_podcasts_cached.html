@@ -1,7 +1,4 @@
-{% extends "podcasts/_podcasts.html" %}
 {% load cache %}
-{% block result_list %}
-{% cache cache_timeout page_obj.object_list request.get_full_path %}
-{{ block.super }}
+{% cache cache_timeout podcasts request.get_full_path %}
+{% include "podcasts/_podcasts.html" %}
 {% endcache %}
-{% endblock %}
