@@ -14,7 +14,7 @@
 
     <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
 
-        <div class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
+        <nav class="flex justify-center sm:justify-start items-center mb-3 sm:mb-0">
             {% if request.search %}
             <a href="{% url 'episodes:search_episodes' %}?{{ request.search.qs }}"
                title="Search Episodes"
@@ -26,7 +26,7 @@
             <a href="{{ request.path|add:'?ordering=desc' }}"
                class="link">Newest First</a>
             {% endif %}
-        </div>
+        </nav>
 
 
         {% if request.search or page_obj.paginator.count %}
