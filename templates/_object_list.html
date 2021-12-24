@@ -5,15 +5,13 @@
     {% block result %}{% endblock %}
     {% empty %}
     {% block empty_list %}
-    <div class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
+    <p class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
         {% if request.search %}
-        <p>
-            No results found for <span class="font-bold">{{ request.search.value }}</span>.
-        </p>
+        No results found for <span class="font-bold">{{ request.search.value }}</span>.
         {% else %}
-        <p>Nothing to see here.</p>
+        Nothing to see here.
         {% endif %}
-    </div>
+    </p>
     {% endblock %}
     {% endfor %}
     {% endblock result_list %}
