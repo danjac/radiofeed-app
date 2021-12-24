@@ -27,7 +27,7 @@
 
         <div class="flex flex-col place-content-between h-24 lg:h-28">
             {% include "podcasts/_subscribe_toggle.html" %}
-            <div class="flex items-center space-x-3">
+            <nav class="flex items-center space-x-3">
                 {% if link and link != podcast.rss %}
                 <div>
                     <a href="{{ link }}"
@@ -49,7 +49,7 @@
                 </div>
                 {% endif %}
 
-            </div>
+            </nav>
             {% share_buttons podcast.get_absolute_url podcast.cleaned_title %}
         </div>
     </div>
