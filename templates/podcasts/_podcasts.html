@@ -1,16 +1,2 @@
 {% extends "pagination/_object_list.html" %}
-{% block results %}
-{% for podcast in page_obj %}
-{% include "podcasts/_podcast.html" %}
-{% empty %}
-<div class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
-    {% if request.search %}
-    <p>
-        No results found for <span class="font-bold">{{ request.search.value }}</span>.
-    </p>
-    {% else %}
-    <p>Nothing to see here.</p>
-    {% endif %}
-</div>
-{% endfor %}
-{% endblock results %}
+{% block result_item %}{% include "podcasts/_podcast.html" with podcast=object %}{% endblock %}

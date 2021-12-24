@@ -8,9 +8,7 @@
     {% for feed in feeds %}
     {% include "podcasts/_itunes_feed.html" %}
     {% empty %}
-    <div class="text-center sm:text-left pt-3 border-t dark:border-gray-500">
-        <p>No results found for <span class="font-bold">{{ request.search.value }}</span>.</p>
-    </div>
+    {% include "pagination/_empty_list.html" %}
     {% endfor %}
 </section>
 {% endblock %}

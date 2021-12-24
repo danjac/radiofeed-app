@@ -1,9 +1,2 @@
 {% extends "pagination/_object_list.html" %}
-
-{% block results %}
-{% for log in page_obj %}
-{% with episode=log.episode %}
-{% include "episodes/_episode.html" %}
-{% endwith %}
-{% endfor %}
-{% endblock %}
+{% block result_item %}{% include "episodes/_episode.html" with episode=object.episode %}{% endblock %}
