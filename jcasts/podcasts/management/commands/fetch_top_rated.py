@@ -13,6 +13,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         try:
             for feed in itunes.top_rated():
-                self.stdout.write(feed.url)
+                self.stdout.write(feed.title)
         except requests.RequestException as e:
             raise CommandError from e
