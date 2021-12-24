@@ -15,26 +15,22 @@
     <div class="flex flex-col place-content-between h-16">
         <h2 class="w-64 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-3xl lg:truncate">
             <a href="{{ episode_url }}"
-               class="link"
+               class="link font-bold"
                title="{{ episode.cleaned_title }}">
                 {{ episode.cleaned_title }}
             </a>
         </h2>
-        <div class="flex items-center space-x-2 text-xs lg:text-sm">
+        <h3 class="truncate w-64 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl font-semibold text-gray-600 dark:text-gray-300 text-xs lg:text-sm">
             {% if is_podcast_detail %}
-            <div class="font-semibold text-gray-600 dark:text-gray-300">
-                {% include "_date.html" with value=episode.pub_date title="Release Date" %}
-            </div>
+            {% include "_date.html" with value=episode.pub_date title="Release Date" %}
             {% else %}
-            <h3 class="truncate w-64 sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
-                <a href="{{ podcast.get_episodes_url }}"
-                   class="link text-gray-600 dark:text-gray-300 font-semibold"
-                   title="{{ podcast.cleaned_title }}">
-                    {{ podcast.cleaned_title }}
-                </a>
-            </h3>
+            <a href="{{ podcast.get_episodes_url }}"
+               class="link text-gray-600 dark:text-gray-300"
+               title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title }}
+            </a>
             {% endif %}
-        </div>
+        </h3>
     </div>
 </article>
 {% endwith %}

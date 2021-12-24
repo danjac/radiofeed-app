@@ -9,19 +9,19 @@
     <div class="flex flex-col place-content-between h-16">
         <h2 class="w-64 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-3xl lg:truncate">
             <a href="{{ podcast_url }}"
-               class="link"
+               class="link font-bold"
                title="{{ podcast.cleaned_title }}">
                 {{ podcast.cleaned_title }}
             </a>
         </h2>
 
-        <div class="text-xs lg:text-sm">
+        <h3 class="text-xs lg:text-sm">
             <a href="{{ podcast.get_episodes_url }}"
                title="Episodes"
                class="link font-semibold text-gray-600 dark:text-gray-300">
                 {% include "_date.html" with value=podcast.pub_date title="Last Release Date" %}
             </a>
-        </div>
+        </h3>
 
     </div>
 </article>
