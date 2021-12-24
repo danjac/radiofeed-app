@@ -1,8 +1,8 @@
 {% extends "object_list/_object_list.html" %}
 {% block result_list %}
-{% include "object_list/_pagination_links.html" %}
+{% include "pagination/_pagination_links.html" %}
 {% with object_list=page_obj.object_list %}
 {{ block.super }}
 {% endwith %}
-{% include "object_list/_pagination_links.html" %}
+{% include "pagination/_pagination_links.html" %}
 {% endblock result_list %}
