@@ -3,7 +3,7 @@
          aria-busy="false">
     {% block result_list %}
     {% for object in object_list %}
-    {% block result_item %}{% endblock %}
+    {% block result %}{% endblock %}
     {% empty %}
     {% block empty_list %}{% include "object_list/_empty.html" %}{% endblock %}
     {% endfor %}
