@@ -21,8 +21,8 @@ urlpatterns = [
     ),
     path(
         "podcasts/<int:podcast_id>/<slug:slug>/similar/",
-        views.recommendations,
-        name="podcast_recommendations",
+        views.similar,
+        name="podcast_similar",
     ),
     path(
         "podcasts/<int:podcast_id>/~subscribe/",

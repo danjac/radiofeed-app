@@ -22,7 +22,7 @@
             </li>
 
             {% if has_recommendations %}
-            {% active_link podcast.get_recommendations_url as link %}
+            {% active_link podcast.get_similar_url as link %}
             <li>
                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
                    href="{{ link.url }}"

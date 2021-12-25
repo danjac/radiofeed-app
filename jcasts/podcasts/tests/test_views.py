@@ -111,15 +111,13 @@ class TestSearchITunes:
         mock_search.assert_called()
 
 
-class TestPodcastRecommendations:
+class TestPodcastSimilar:
     def test_get(self, client, db, podcast, django_assert_num_queries):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
         with django_assert_num_queries(5):
             resp = client.get(
-                reverse(
-                    "podcasts:podcast_recommendations", args=[podcast.id, podcast.slug]
-                )
+                reverse("podcasts:podcast_similar", args=[podcast.id, podcast.slug])
             )
         assert_ok(resp)
         assert resp.context_data["podcast"] == podcast

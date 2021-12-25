@@ -182,8 +182,8 @@ class Podcast(models.Model):
     def get_episodes_url(self) -> str:
         return reverse("podcasts:podcast_episodes", args=[self.pk, self.slug])
 
-    def get_recommendations_url(self) -> str:
-        return reverse("podcasts:podcast_recommendations", args=[self.pk, self.slug])
+    def get_similar_url(self) -> str:
+        return reverse("podcasts:podcast_similar", args=[self.pk, self.slug])
 
     def get_domain(self) -> str:
         return urlparse(self.rss).netloc.rsplit("www.", 1)[-1]

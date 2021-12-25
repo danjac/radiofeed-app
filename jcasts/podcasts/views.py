@@ -97,7 +97,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def recommendations(
+def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
@@ -114,9 +114,11 @@ def recommendations(
 
     return TemplateResponse(
         request,
-        "podcasts/recommendations.html",
+        "podcasts/similar.html",
         get_podcast_detail_context(
-            request, podcast, {"recommendations": recommendations}
+            request,
+            podcast,
+            {"recommendations": recommendations},
         ),
     )
 
