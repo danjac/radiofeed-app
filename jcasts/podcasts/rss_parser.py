@@ -249,8 +249,8 @@ def parse_item(finder: XPathFinder) -> Item:
         episode=finder.find("itunes:episode/text()"),
         season=finder.find("itunes:season/text()"),
         description=finder.find(
-            "description/text()",
             "content:encoded/text()",
+            "description/text()",
             "itunes:summary/text()",
             default="",
         ),
