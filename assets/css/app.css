@@ -73,6 +73,10 @@ input[type='search']::-webkit-search-results-decoration {
     @apply list-disc list-inside space-y-3;
 }
 
+.markdown p {
+    @apply space-y-3;
+}
+
 .markdown li div,
 .markdown li p {
     @apply inline;
