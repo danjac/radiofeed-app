@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block subtitle %} | {% translate "E-mail Addresses" %}{% endblock %}
+{% block subtitle %}{{ block.super }} | {% translate "E-mail Addresses" %}{% endblock %}
 
 {% block settings_content %}
 {% if user.emailaddress_set.all %}

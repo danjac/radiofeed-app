@@ -5,6 +5,8 @@
       content="noindex" />
 {% endblock %}
 
+{% block subtitle %} | Settings {% endblock %}
+
 {% block content %}
 {% if user.is_authenticated %}
 <h1 class="font-bold break-words mb-3 max-w-max text-lg lg:text-xl">Settings for {{ user.username }}</h1>
