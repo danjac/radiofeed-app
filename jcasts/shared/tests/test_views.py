@@ -16,6 +16,10 @@ class TestHealthCheck:
 
 
 class TestAboutPages:
+    def test_faq(self, db, client, django_assert_num_queries):
+        with django_assert_num_queries(1):
+            assert_ok(client.get(reverse("about:faq")))
+
     def test_credits(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
             assert_ok(client.get(reverse("about:credits")))

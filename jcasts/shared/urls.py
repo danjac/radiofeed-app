@@ -5,6 +5,14 @@ from jcasts.shared import views
 
 about_urls = [
     path(
+        "faq/",
+        views.static_page,
+        name="faq",
+        kwargs={
+            "template_name": "about/faq.html",
+        },
+    ),
+    path(
         "credits/",
         views.static_page,
         name="credits",
