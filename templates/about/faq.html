@@ -14,8 +14,11 @@
     <li class="space-y-3">
         <h2 class="inline font-bold text-base lg:text-lg">Do I have to create an account to use {{ site_name }}?</h2>
         <p>
-            You don't have to sign up to discover new podcasts and episodes and download content. You'll have to register at <b>{{ site_name }}</b>
-            to do all of these:
+            You don't have to <a class="link"
+               href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
+        </p>
+        <p>
+           You'll have to register at <b>{{ site_name }}</b> to do all of these:
         </p>
         <ul class="list-disc list-inside space-y-3 ml-3">
             <li>Play episodes in our custom Player</li>
