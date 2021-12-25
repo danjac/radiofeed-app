@@ -5,215 +5,190 @@
 {% block about_content %}
 {% with site_name=request.site.name %}
 
-<ul class="list-decimal list-inside space-y-3">
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg link cursor-pointer"
-            role="button"
-            @click="show=!show">Is {{ site_name }} free?</h2>
-        <p x-show="show"
-           x-cloak>
-            <b>{{ site_name }}</b> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
-        </p>
+<ul class="list-none list-inside space-y-3">
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">Is {{ site_name }} free?</summary>
+            <p>
+                <b>{{ site_name }}</b> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
+            </p>
+        </details>
     </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg link cursor-pointer"
-            role="button"
-            @click="show=!show">
-            Do I have to create an account to use {{ site_name }}?</h2>
-        <p x-show="show"
-           x-cloak>
-            You don't have to <a class="link"
-               href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
-        </p>
-        <p x-show="show"
-           x-cloak>
-            You'll have to register at <b>{{ site_name }}</b> to do all of these:
-        </p>
-        <ul x-show="show"
-            x-cloak
-            class="list-disc list-inside space-y-3 ml-3">
-            <li>Play episodes in our custom Player</li>
-            <li>Bookmark episodes to listen to later</li>
-            <li>Add podcasts to your collection</li>
-            <li>Get new weekly recommendations</li>
-            <li>Keep track of episodes you have listened to</li>
-        </ul>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">
+                Do I have to create an account to use {{ site_name }}?</summary>
+            <p>
+                You don't have to <a class="link"
+                   href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
+            </p>
+            <p>
+                You'll have to register at <b>{{ site_name }}</b> to do all of these:
+            </p>
+            <ul class="list-disc list-inside space-y-3 ml-3">
+                <li>Play episodes in our custom Player</li>
+                <li>Bookmark episodes to listen to later</li>
+                <li>Add podcasts to your collection</li>
+                <li>Get new weekly recommendations</li>
+                <li>Keep track of episodes you have listened to</li>
+            </ul>
+        </details>
     </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">What if I want to download an episode to my device?</h2>
-        <p x-show="show"
-           x-cloak>
-            Click the download icon {% icon "download" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} on the episode page to save the audio file to your device. You can then
-            listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
-            play History.
-        </p>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">What if I want to download an episode to my device?</summary>
+            <p>
+                Click the download icon {% icon "download" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} on the episode page to save the audio file to your device. You can then
+                listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
+                play History.
+            </p>
+        </details>
     </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I add podcasts to my collection?</h2>
-        <p x-show="show"
-           x-cloak>
-            Just click the <b>Subscribe</b> button on the podcast&apos;s <b>About</b> page to add the podcast
-            to your collection.
-        </p>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to my collection?</summary>
+            <p>
+                Just click the <b>Subscribe</b> button on the podcast&apos;s <b>About</b> page to add the podcast
+                to your collection.
+            </p>
+        </details>
     </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How does {{ site_name }} recommend new podcasts to me?</h2>
-        <p x-show="show"
-           x-cloak>
-            We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
-        </p>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How does {{ site_name }} recommend new podcasts to me?</summary>
+            <p>
+                We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
+            </p>
+        </details>
     </li>
-    <li class="space-y-3"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I stop receiving recommendations?</h2>
-        <p x-show="show"
-           x-cloak>
-            Go to the <a class="link"
-               href="{% url 'users:preferences'%}">Preferences</a> section in the <b>Settings</b> area, uncheck the option <b>Send recommendations email</b> and click the save button.
-        </p>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I stop receiving recommendations?</summary>
+            <p>
+                Go to the <a class="link"
+                   href="{% url 'users:preferences'%}">Preferences</a> section in the <b>Settings</b> area, uncheck the option <b>Send recommendations email</b> and click the save button.
+            </p>
+        </details>
+    </li>
+
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">How do I remove an episode from my history?</summary>
+            <p>
+                Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
+                to permanently remove the episode from your History.
+            </p>
+        </details>
+    </li>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">Can I export my collection?</summary>
+            <p>
+                You can download your podcast feed collection in the <a class="link"
+                   href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <b>Settings</b> area. You can export your feeds in OPML or JSON format.
+            </p>
+        </details>
+    </li>
+
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">How do I add podcasts to {{ site_name }}?</summary>
+            <p>
+                First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
+                click the <b>iTunes</b> link in the search results page. Any new podcasts you find in iTunes will be automatically
+                added to our database. We're also adding new podcasts every day!
+            </p>
+        </details>
     </li>
 
     <li class="space-y-3"
         role="button"
         x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I remove an episode from my history?</h2>
-        <p x-show="show"
-           x-cloak>
-            Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
-            to permanently remove the episode from your History.
-        </p>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">How do I save an episode to listen to later?</summary>
+            <p>
+                Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} in the episode page to add an episode to your Bookmarks.
+                You can add episodes you want to listen to later, or add favorites you want to listen to again.
+            </p>
+        </details>
     </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">Can I export my collection?</h2>
-        <p x-show="show"
-           x-cloak>
-            You can download your podcast feed collection in the <a class="link"
-               href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <b>Settings</b> area. You can export your feeds in OPML or JSON format.
-        </p>
+
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">How often are podcasts updated?</summary>
+            <p>
+                Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
+                submitted new content in a long time may be updated every few days.
+            </p>
+        </details>
+    </li>
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">Which browsers does {{ site_name }} support?</summary>
+            <p>
+                <b>{{ site_name }}</b> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
+                It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
+                   target="_blank"
+                   rel="noreferrer"
+                   href="https://github.com/danjac/jcasts/issues">bug</a> and provide as much detail as possible.
+            </p>
+        </details>
+    </li>
+
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">Help! I've found a bug. How do I report it?</summary>
+            <p>
+                Sorry! If you find a bug we would be very grateful if you report it
+                <a class="link"
+                   target="_blank"
+                   rel="noreferrer"
+                   href="https://github.com/danjac/jcasts/issues">here</a>. You can also submit any ideas or suggestions you have!
+            </p>
+        </details>
+    </li>
+
+    <li>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
+            <p>
+                Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
+                   target="_blank"
+                   rel="noreferrer"
+                   href="https://github.com/danjac/jcasts/">README</a> for instructions on setting up and running an instance.
+            </p>
+        </details>
     </li>
 
     <li class="space-y-3"
         role="button"
         x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I add podcasts to {{ site_name }}?</h2>
-        <p x-show="show"
-           x-cloak>
-            First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
-            click the <b>iTunes</b> link in the search results page. Any new podcasts you find in iTunes will be automatically
-            added to our database. We're also adding new podcasts every day!
-        </p>
-    </li>
-
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I save an episode to listen to later?</h2>
-        <p x-show="show"
-           x-cloak>
-            Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} in the episode page to add an episode to your Bookmarks.
-            You can add episodes you want to listen to later, or add favorites you want to listen to again.
-        </p>
-    </li>
-
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How often are podcasts updated?</h2>
-        <p x-show="show"
-           x-cloak>
-            Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
-            submitted new content in a long time may be updated every few days.
-        </p>
-    </li>
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">Which browsers does {{ site_name }} support?</h2>
-        <p x-show="show"
-           x-cloak>
-            <b>{{ site_name }}</b> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
-            It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
-               target="_blank"
-               rel="noreferrer"
-               href="https://github.com/danjac/jcasts/issues">bug</a> and provide as much detail as possible.
-        </p>
-    </li>
-
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">Help! I've found a bug. How do I report it?</h2>
-        <p x-show="show"
-           x-cloak>
-            Sorry! If you find a bug we would be very grateful if you report it
-            <a class="link"
-               target="_blank"
-               rel="noreferrer"
-               href="https://github.com/danjac/jcasts/issues">here</a>. You can also submit any ideas or suggestions you have!
-        </p>
-    </li>
-
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">I want to host an instance of {{ site_name }} myself. Is this possible?</h2>
-        <p x-show="show"
-           x-cloak>
-            Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
-               target="_blank"
-               rel="noreferrer"
-               href="https://github.com/danjac/jcasts/">README</a> for instructions on setting up and running an instance.
-        </p>
-    </li>
-
-    <li class="space-y-3"
-        role="button"
-        x-data="{show: false}">
-        <h2 class="inline font-bold text-base lg:text-lg"
-            role="button"
-            @click="show=!show">How do I delete my account?</h2>
-        <p x-show="show"
-           x-cloak>
-            Go to <a class="link"
-               href="{% url 'users:delete_account' %}">Delete Account</a> section in the <b>Settings</b> area. If you delete your account,
-            your collection, bookmarks and history will also be <b>permanently</b> deleted.
-        </p>
+        <details class="space-y-3">
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
+                     role="button"
+                     @click="show=!show">How do I delete my account?</summary>
+            <p>
+                Go to <a class="link"
+                   href="{% url 'users:delete_account' %}">Delete Account</a> section in the <b>Settings</b> area. If you delete your account,
+                your collection, bookmarks and history will also be <b>permanently</b> deleted.
+            </p>
+        </details>
     </li>
 </ul>
 {% endwith %}
