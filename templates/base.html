@@ -20,7 +20,7 @@
 </head>
 
 <body {% block bodyattrs %}
-      class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth"
+      class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
       hx-boost="true"
       hx-target="#layout"
       hx-ext="intersect"
@@ -41,12 +41,12 @@
 
     {% block layout %}
 
-    <div class="min-h-full flex relative p-2 pt-6 mx-auto xl:w-4/5"
+    <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
          hx-history-elt
          id="layout">
 
         {% block sidebar %}
-        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-screen xl:top-16">
+        <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
             {% include "_sidebar.html" %}
         </aside>
         {% endblock %}
