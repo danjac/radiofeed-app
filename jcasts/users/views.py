@@ -22,14 +22,21 @@ from jcasts.users.forms import UserPreferencesForm
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
 
-    form = UserPreferencesForm(
-        request.POST if request.method == "POST" else None, instance=request.user
-    )
+    if request.method == "POST":
 
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Your preferences have been saved")
-        return redirect(request.path)
+        if (
+            form := UserPreferencesForm(
+                request.POST,
+                instance=request.user,
+            )
+        ).is_valid():
+
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return redirect(request.path)
+
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return TemplateResponse(request, "account/preferences.html", {"form": form})
 
