@@ -14,26 +14,13 @@
       hx-disable="true">
     {% csrf_token %}
     <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-6">
-        {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-
+        {% for format,icon in formats %}
         <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
-           href="{{ request.path }}?format=csv">
-            {% icon "table" css_class=ICON_CSS %}
-            Export CSV
+           href="{{ request.path }}?format={{ format }}">
+            {% icon icon css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2"  %}
+            Export {{ format|upper }}
         </a>
-
-        <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
-           href="{{ request.path }}?format=json">
-            {% icon "code" css_class=ICON_CSS %}
-            Export JSON
-        </a>
-
-        <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
-           href="{{ request.path }}?format=opml">
-            {% icon "rss" css_class=ICON_CSS %}
-            Export OPML
-        </a>
-        {% endwith %}
+        {% endfor %}
     </div>
 </form>
 

@@ -44,8 +44,19 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+
     if not (format := request.GET.get("format")):
-        return TemplateResponse(request, "account/export_podcast_feeds.html")
+        return TemplateResponse(
+            request,
+            "account/export_podcast_feeds.html",
+            {
+                "formats": (
+                    ("csv", "table"),
+                    ("json", "code"),
+                    ("opml", "rss"),
+                )
+            },
+        )
 
     try:
         renderer = {
