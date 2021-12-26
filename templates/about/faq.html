@@ -10,7 +10,7 @@
         <details class="space-y-3">
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">What is {{ site_name }}?</summary>
             <p>
-                <b>{{ site_name }}</b> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
+                <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
             </p>
         </details>
     </li>
@@ -19,7 +19,7 @@
         <details class="space-y-3">
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">Is {{ site_name }} free?</summary>
             <p>
-                <b>{{ site_name }}</b> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
+                <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
             </p>
         </details>
     </li>
@@ -32,7 +32,7 @@
                    href="{% url 'account_signup' %}">sign up</a> to discover new podcasts and episodes and download content.
             </p>
             <p>
-                You'll have to register at <b>{{ site_name }}</b> to do all of these:
+                You'll have to register at <strong>{{ site_name }}</strong> to do all of these:
             </p>
             <ul class="list-disc list-inside space-y-3 ml-3">
                 <li>Play episodes in our custom Player</li>
@@ -57,7 +57,7 @@
         <details class="space-y-3">
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to my collection?</summary>
             <p>
-                Just click the <b>Subscribe</b> button on the podcast&apos;s <b>About</b> page to add the podcast
+                Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
                 to your collection.
             </p>
         </details>
@@ -75,7 +75,7 @@
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I stop receiving recommendations?</summary>
             <p>
                 Go to the <a class="link"
-                   href="{% url 'users:preferences'%}">Preferences</a> section in the <b>Settings</b> area, uncheck the option <b>Send recommendations email</b> and click the save button.
+                   href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send recommendations email</strong> and click the save button.
             </p>
         </details>
     </li>
@@ -94,7 +94,7 @@
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">Can I export my collection?</summary>
             <p>
                 You can download your podcast feed collection in the <a class="link"
-                   href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <b>Settings</b> area.
+                   href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <strong>Settings</strong> area.
                 You can export your feeds in OPML, JSON or CSV format.
             </p>
         </details>
@@ -105,7 +105,7 @@
             <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to {{ site_name }}?</summary>
             <p>
                 First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
-                click the <b>iTunes</b> link in the search results page. Any new podcasts you find in iTunes will be automatically
+                click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
                 added to our database. We're also adding new podcasts every day!
             </p>
         </details>
@@ -142,7 +142,7 @@
                      role="button"
                      @click="show=!show">Which browsers does {{ site_name }} support?</summary>
             <p>
-                <b>{{ site_name }}</b> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
+                <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
                 It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
                    target="_blank"
                    rel="noreferrer"
@@ -189,8 +189,8 @@
                      @click="show=!show">How do I delete my account?</summary>
             <p>
                 Go to <a class="link"
-                   href="{% url 'users:delete_account' %}">Delete Account</a> section in the <b>Settings</b> area. If you delete your account,
-                your collection, bookmarks and history will also be <b>permanently</b> deleted.
+                   href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
+                your collection, bookmarks and history will also be <strong>permanently</strong> deleted.
             </p>
         </details>
     </li>
