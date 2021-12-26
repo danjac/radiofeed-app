@@ -45,7 +45,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
-    if not (format := request.GET.get("format")):
+    if not (export_format := request.GET.get("format")):
         return TemplateResponse(
             request,
             "account/export_podcast_feeds.html",
@@ -63,7 +63,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
             "csv": render_csv_export,
             "json": render_json_export,
             "opml": render_opml_export,
-        }[format]
+        }[export_format]
     except KeyError:
         raise Http404(f"format {format} not supported")
 
@@ -79,7 +79,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
     response[
         "Content-Disposition"
-    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{format}"
+    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{export_format}"
 
     return response
 
