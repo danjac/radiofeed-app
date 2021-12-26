@@ -17,19 +17,19 @@
     <div class="flex items-center space-x-2 lg:space-x-6">
         {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
 
-        <button class="inline-flex items-center btn btn-secondary"
-                name="format"
-                value="csv">
+        <a class="inline-flex items-center btn btn-secondary"
+           name="format"
+           href="{{ request.path }}?format=csv">
             {% icon "table" css_class=ICON_CSS %}
             Export CSV
-        </button>
+        </a>
 
-        <button class="inline-flex items-center btn btn-secondary"
-                name="format"
-                value="opml">
+        <a class="inline-flex items-center btn btn-secondary"
+           name="format"
+           href="{{ request.path }}?format=opml">
             {% icon "rss" css_class=ICON_CSS %}
             Export OPML
-        </button>
+        </a>
         {% endwith %}
     </div>
 </form>

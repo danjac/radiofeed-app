@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -20,22 +20,23 @@ from jcasts.users.forms import UserPreferencesForm
 @require_http_methods(["GET", "POST"])
 @login_required
 def user_preferences(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your preferences have been saved")
-            return redirect(request.path)
-    else:
-        form = UserPreferencesForm(instance=request.user)
+
+    form = UserPreferencesForm(
+        request.POST if request.method == "POST" else None, instance=request.user
+    )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Your preferences have been saved")
+        return redirect(request.path)
 
     return TemplateResponse(request, "account/preferences.html", {"form": form})
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    if request.method != "POST":
+    if "format" not in request.GET:
         return TemplateResponse(request, "account/export_podcast_feeds.html")
 
     podcasts = (
@@ -47,12 +48,36 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date")
     ).iterator()
 
-    filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}"
+    response: HttpResponse
 
-    if request.POST.get("format") == "opml":
-        return render_opml_export_response(request, podcasts, filename)
+    if (export_format := request.GET["format"]) == "opml":
+        response = TemplateResponse(
+            request,
+            "account/opml.xml",
+            {"podcasts": podcasts},
+            content_type="application/xml",
+        )
+    elif export_format == "csv":
+        response = HttpResponse(content_type="text/csv")
+        writer = csv.writer(response)
+        writer.writerow(["Title", "RSS", "Website", "Published"])
+        for podcast in podcasts:
+            writer.writerow(
+                [
+                    podcast.title,
+                    podcast.rss,
+                    podcast.link,
+                    podcast.pub_date.strftime("%Y-%m-%d") if podcast.pub_date else "-",
+                ]
+            )
+    else:
+        raise Http404(f"Format {export_format} is not supported")
 
-    return render_csv_export_response(podcasts, filename)
+    response[
+        "Content-Disposition"
+    ] = f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.{export_format}"
+
+    return response
 
 
 @require_http_methods(["GET"])
@@ -85,33 +110,3 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         messages.info(request, "Your account has been deleted")
         return redirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
-
-
-def render_opml_export_response(
-    request: HttpRequest, podcasts: list[Podcast], filename
-) -> TemplateResponse:
-    response = TemplateResponse(
-        request,
-        "account/opml.xml",
-        {"podcasts": podcasts},
-        content_type="application/xml",
-    )
-    response["Content-Disposition"] = f"attachment; filename={filename}.xml"
-    return response
-
-
-def render_csv_export_response(podcasts: list[Podcast], filename: str) -> HttpResponse:
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f"attachment; filename={filename}.csv"
-    writer = csv.writer(response)
-    writer.writerow(["Title", "RSS", "Website", "Published"])
-    for podcast in podcasts:
-        writer.writerow(
-            [
-                podcast.title,
-                podcast.rss,
-                podcast.link,
-                podcast.pub_date.strftime("%Y-%m-%d") if podcast.pub_date else "-",
-            ]
-        )
-    return response

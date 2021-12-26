@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import SubscriptionFactory
-from jcasts.shared.assertions import assert_ok
+from jcasts.shared.assertions import assert_not_found, assert_ok
 
 
 class TestUserPreferences:
@@ -49,21 +49,28 @@ class TestUserStats:
 class TestExportPodcastFeeds:
     url = reverse_lazy("users:export_podcast_feeds")
 
-    def test_get(self, client, auth_user, django_assert_num_queries):
+    def test_page(self, client, auth_user, django_assert_num_queries):
         with django_assert_num_queries(3):
             assert_ok(client.get(self.url))
 
     def test_export_opml(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.post(self.url, {"format": "opml"})
+            resp = client.get(self.url, {"format": "opml"})
         assert_ok(resp)
         assert resp["Content-Type"] == "application/xml"
 
     def test_export_csv(self, client, subscription, django_assert_num_queries):
         with django_assert_num_queries(4):
-            resp = client.post(self.url, {"format": "csv"})
+            resp = client.get(self.url, {"format": "csv"})
         assert_ok(resp)
         assert resp["Content-Type"] == "text/csv"
+
+    def test_export_not_supported(
+        self, client, subscription, django_assert_num_queries
+    ):
+        with django_assert_num_queries(3):
+            resp = client.get(self.url, {"format": "txt"})
+        assert_not_found(resp)
 
 
 class TestDeleteAccount:
