@@ -82,9 +82,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">How do I remove an episode from my history?</summary>
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I remove an episode from my history?</summary>
             <p>
                 Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
                 to permanently remove the episode from your History.
@@ -93,22 +91,18 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">Can I export my collection?</summary>
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">Can I export my collection?</summary>
             <p>
                 You can download your podcast feed collection in the <a class="link"
                    href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <b>Settings</b> area.
-               You can export your feeds in OPML, JSON or CSV format.
+                You can export your feeds in OPML, JSON or CSV format.
             </p>
         </details>
     </li>
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">How do I add podcasts to {{ site_name }}?</summary>
+            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to {{ site_name }}?</summary>
             <p>
                 First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
                 click the <b>iTunes</b> link in the search results page. Any new podcasts you find in iTunes will be automatically
