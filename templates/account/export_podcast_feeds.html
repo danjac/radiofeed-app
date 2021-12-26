@@ -5,15 +5,14 @@
 {% block subtitle %}{{ block.super }} | Export{% endblock %}
 
 {% block settings_content %}
-
+<p class="mb-3">
+    Export your podcast feeds in one of the supported formats.
+</p>
 <form method="POST"
       action="{{ request.path }}"
       class="space-y-3"
       hx-disable="true">
     {% csrf_token %}
-    <p>
-        You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
-    </p>
     <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-6">
         {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
 
