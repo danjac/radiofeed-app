@@ -14,18 +14,22 @@
     <p>
         You can export the RSS feeds of the podcasts you are following in OPML or CSV format.
     </p>
-    <div class="flex items-center space-x-2 lg:space-x-6">
+    <div class="sm:flex items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-6">
         {% with ICON_CSS="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
 
-        <a class="inline-flex items-center btn btn-secondary"
-           name="format"
+        <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
            href="{{ request.path }}?format=csv">
             {% icon "table" css_class=ICON_CSS %}
             Export CSV
         </a>
 
-        <a class="inline-flex items-center btn btn-secondary"
-           name="format"
+        <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
+           href="{{ request.path }}?format=json">
+            {% icon "code" css_class=ICON_CSS %}
+            Export JSON
+        </a>
+
+        <a class="flex sm:inline-flex items-center justify-center btn btn-secondary"
            href="{{ request.path }}?format=opml">
             {% icon "rss" css_class=ICON_CSS %}
             Export OPML

@@ -65,6 +65,12 @@ class TestExportPodcastFeeds:
         assert_ok(resp)
         assert resp["Content-Type"] == "text/csv"
 
+    def test_export_json(self, client, subscription, django_assert_num_queries):
+        with django_assert_num_queries(4):
+            resp = client.get(self.url, {"format": "json"})
+        assert_ok(resp)
+        assert resp["Content-Type"] == "application/json"
+
     def test_export_not_supported(
         self, client, subscription, django_assert_num_queries
     ):
