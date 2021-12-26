@@ -73,7 +73,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
             pub_date__isnull=False,
         )
         .distinct()
-        .order_by("-pub_date")
+        .order_by("title")
         .iterator(),
     )
 
@@ -132,9 +132,6 @@ def render_json_export(podcasts: QuerySet) -> HttpResponse:
                     "title": podcast.title,
                     "rss": podcast.rss,
                     "url": podcast.link,
-                    "pub_date": podcast.pub_date.strftime("%Y-%m-%d")
-                    if podcast.pub_date
-                    else "-",
                 }
                 for podcast in podcasts
             ]
@@ -145,14 +142,13 @@ def render_json_export(podcasts: QuerySet) -> HttpResponse:
 def render_csv_export(podcasts: QuerySet) -> HttpResponse:
     response = HttpResponse(content_type="text/csv")
     writer = csv.writer(response)
-    writer.writerow(["Title", "RSS", "Website", "Published"])
+    writer.writerow(["Title", "RSS", "Website"])
     for podcast in podcasts:
         writer.writerow(
             [
                 podcast.title,
                 podcast.rss,
                 podcast.link,
-                podcast.pub_date.strftime("%Y-%m-%d") if podcast.pub_date else "-",
             ]
         )
     return response
