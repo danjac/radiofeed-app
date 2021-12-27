@@ -7,8 +7,13 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
-from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import redirect
+from django.http import (
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -33,7 +38,7 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect(request.path)
+            return HttpResponseRedirect(request.path)
 
     else:
         form = UserPreferencesForm(instance=request.user)
@@ -112,7 +117,7 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect(settings.HOME_URL)
+        return HttpResponseRedirect(settings.HOME_URL)
     return TemplateResponse(request, "account/delete_account.html")
 
 

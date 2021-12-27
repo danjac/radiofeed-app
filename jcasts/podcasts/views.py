@@ -8,8 +8,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -60,7 +60,7 @@ def index(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["GET"])
 def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
-        return redirect("podcasts:index")
+        return HttpResponseRedirect(reverse("podcasts:index"))
 
     return render_podcast_list_response(
         request,
