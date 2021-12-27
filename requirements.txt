@@ -4,18 +4,12 @@
 #
 #    pip-compile requirements.in
 #
-appdirs==1.4.4
-    # via beem
 asgiref==3.4.1
     # via django
-asn1crypto==1.4.0
-    # via beem
 attrs==21.2.0
     # via -r requirements.in
 backcall==0.2.0
     # via ipython
-beem==0.24.26
-    # via -r requirements.in
 bleach==4.1.0
     # via -r requirements.in
 brotli==1.0.9
@@ -30,12 +24,8 @@ charset-normalizer==2.0.9
     # via requests
 click==8.0.3
     # via
-    #   beem
-    #   click-shell
     #   nltk
     #   rq
-click-shell==2.1
-    # via beem
 cryptography==36.0.0
     # via
     #   -r requirements.in
@@ -46,8 +36,6 @@ decorator==5.1.0
     #   ipython
 defusedxml==0.7.1
     # via python3-openid
-diff-match-patch==20200713
-    # via beem
 dj-database-url==0.5.0
     # via -r requirements.in
 django==4.0
@@ -87,8 +75,6 @@ django-split-settings==1.1.0
     # via -r requirements.in
 django-widget-tweaks==1.4.9
     # via -r requirements.in
-ecdsa==0.17.0
-    # via beem
 gunicorn==20.1.0
     # via -r requirements.in
 html5lib==1.1
@@ -129,8 +115,6 @@ pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
-prettytable==2.5.0
-    # via beem
 prompt-toolkit==3.0.24
     # via ipython
 psycopg2-binary==2.9.2
@@ -139,8 +123,6 @@ ptyprocess==0.7.0
     # via pexpect
 pycparser==2.21
     # via cffi
-pycryptodomex==3.12.0
-    # via beem
 pygments==2.10.0
     # via ipython
 pyjwt[crypto]==2.3.0
@@ -154,9 +136,7 @@ python-dateutil==2.8.2
 python3-openid==3.2.0
     # via django-allauth
 pytz==2021.3
-    # via
-    #   beem
-    #   pandas
+    # via pandas
 redis==3.5.3
     # via
     #   -r requirements.in
@@ -168,7 +148,6 @@ regex==2021.11.10
 requests==2.26.0
     # via
     #   -r requirements.in
-    #   beem
     #   django-allauth
     #   django-anymail
     #   requests-oauthlib
@@ -178,22 +157,17 @@ rq==1.10.1
     # via
     #   -r requirements.in
     #   django-rq
-ruamel.yaml==0.17.17
-    # via beem
 scikit-learn==1.0.1
     # via -r requirements.in
 scipy==1.7.3
     # via
     #   -r requirements.in
     #   scikit-learn
-scrypt==0.8.19
-    # via beem
 sentry-sdk==1.5.0
     # via -r requirements.in
 six==1.16.0
     # via
     #   bleach
-    #   ecdsa
     #   html5lib
     #   python-dateutil
 sqlparse==0.4.2
@@ -211,15 +185,11 @@ urllib3==1.26.7
     #   requests
     #   sentry-sdk
 wcwidth==0.2.5
-    # via
-    #   prettytable
-    #   prompt-toolkit
+    # via prompt-toolkit
 webencodings==0.5.1
     # via
     #   bleach
     #   html5lib
-websocket-client==1.2.3
-    # via beem
 werkzeug==2.0.2
     # via -r requirements.in
 whitenoise==5.3.0
