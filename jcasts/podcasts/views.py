@@ -272,11 +272,11 @@ def render_podcast_list_response(
         request,
         podcasts,
         template_name,
-        pagination_template_name="podcasts/_podcasts_cached.html"
-        if cached
-        else "podcasts/_podcasts.html",
         extra_context={
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            "pagination_template": "podcasts/_podcasts_cached.html"
+            if cached
+            else "podcasts/_podcasts.html",
             **(extra_context or {}),
         },
     )

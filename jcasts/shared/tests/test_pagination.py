@@ -13,20 +13,18 @@ def podcasts(db):
 
 
 class TestRenderPaginationResponse:
-    main_template = "podcasts/index.html"
-    pagination_template = "podcasts/_podcasts.html"
+    template = "podcasts/index.html"
 
     def test_render(self, rf, podcasts):
         req = rf.get("/", {"page": "2"})
         resp = render_paginated_response(
             req,
             podcasts,
-            self.main_template,
-            self.pagination_template,
+            self.template,
             page_size=10,
         )
         assert_ok(resp)
-        assert resp.template_name == self.main_template
+        assert resp.template_name == self.template
 
 
 class TestPaginate:

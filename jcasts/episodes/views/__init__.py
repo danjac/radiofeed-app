@@ -122,11 +122,11 @@ def render_episode_list_response(
         request,
         episodes,
         template_name,
-        pagination_template_name="episodes/_episodes_cached.html"
-        if cached
-        else "episodes/_episodes.html",
         extra_context={
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            "pagination_template": "episodes/_episodes_cached.html"
+            if cached
+            else "episodes/_episodes.html",
             **(extra_context or {}),
         },
     )

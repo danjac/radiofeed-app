@@ -33,14 +33,12 @@ def render_paginated_response(
     request: HttpRequest,
     object_list: list | QuerySet,
     template_name: str,
-    pagination_template_name: str,
     extra_context: dict | None = None,
     **pagination_kwargs,
 ) -> TemplateResponse:
     page_obj = paginate(request, object_list, **pagination_kwargs)
     context = {
         "page_obj": page_obj,
-        "pagination_template": pagination_template_name,
         **(extra_context or {}),
     }
     return TemplateResponse(request, template_name, context)

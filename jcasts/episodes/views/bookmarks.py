@@ -27,7 +27,6 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         bookmarks,
         "episodes/bookmarks.html",
-        "episodes/_bookmarks.html",
     )
 
 

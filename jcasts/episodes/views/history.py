@@ -34,7 +34,6 @@ def index(request: HttpRequest) -> HttpResponse:
         request,
         logs,
         "episodes/history.html",
-        "episodes/_history.html",
         {
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
