@@ -65,7 +65,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
             "opml": render_opml_export,
         }[export_format]
     except KeyError:
-        raise Http404(f"format {format} not supported")
+        raise Http404(f"format {export_format} not supported")
 
     response = renderer(
         Podcast.objects.filter(
