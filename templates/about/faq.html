@@ -8,7 +8,7 @@
 <ul class="list-none list-inside space-y-3">
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">What is {{ site_name }}?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">What is {{ site_name }}?</summary>
             <p>
                 <strong>{{ site_name }}</strong> is a web application for discovering new podcasts and collecting your favorite podcasts and episodes.
             </p>
@@ -17,7 +17,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">Is {{ site_name }} free?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">Is {{ site_name }} free?</summary>
             <p>
                 <strong>{{ site_name }}</strong> is free of charge. It's also <a href="https://github.com/danjac/jcasts/">free, open-source software!</a>
             </p>
@@ -25,7 +25,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">
+            <summary class="font-semibold lg:text-lg cursor-pointer">
                 Do I have to create an account to use {{ site_name }}?</summary>
             <p>
                 You don't have to <a class="link"
@@ -45,7 +45,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">What if I want to download an episode to my device?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">What if I want to download an episode to my device?</summary>
             <p>
                 Click the download icon {% icon "download" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} on the episode page to save the audio file to your device. You can then
                 listen to the episode using any suitable audio player software. However if you download on your device, it won't be added to your
@@ -55,7 +55,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to my collection?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I add podcasts to my collection?</summary>
             <p>
                 Just click the <strong>Subscribe</strong> button on the podcast&apos;s <strong>About</strong> page to add the podcast
                 to your collection.
@@ -64,7 +64,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How does {{ site_name }} recommend new podcasts to me?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How does {{ site_name }} recommend new podcasts to me?</summary>
             <p>
                 We will send you an email with new recommendations every week. We recommend new podcasts using a machine-learning algorithm based on your collection and listening history.
             </p>
@@ -72,7 +72,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I stop receiving recommendations?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I stop receiving recommendations?</summary>
             <p>
                 Go to the <a class="link"
                    href="{% url 'users:preferences'%}">Preferences</a> section in the <strong>Settings</strong> area, uncheck the option <strong>Send recommendations email</strong> and click the save button.
@@ -82,7 +82,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I remove an episode from my history?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I remove an episode from my history?</summary>
             <p>
                 Go to the episode page and click the trash icon {% icon "trash" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %}
                 to permanently remove the episode from your History.
@@ -91,7 +91,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">Can I export my collection?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">Can I export my collection?</summary>
             <p>
                 You can download your podcast feed collection in the <a class="link"
                    href="{% url 'users:export_podcast_feeds' %}">Export</a> section in the <strong>Settings</strong> area.
@@ -102,7 +102,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer">How do I add podcasts to {{ site_name }}?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I add podcasts to {{ site_name }}?</summary>
             <p>
                 First try looking for the podcast in the Search box in the navigation bar. If you can't find what you are looking for,
                 click the <strong>iTunes</strong> link in the search results page. Any new podcasts you find in iTunes will be automatically
@@ -115,9 +115,7 @@
         role="button"
         x-data="{show: false}">
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">How do I save an episode to listen to later?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I save an episode to listen to later?</summary>
             <p>
                 Click the star icon {% icon "star" css_class="inline h-4 w-4 lg:h-6 lg:w-6" %} in the episode page to add an episode to your Bookmarks.
                 You can add episodes you want to listen to later, or add favorites you want to listen to again.
@@ -127,9 +125,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">How often are podcasts updated?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How often are podcasts updated?</summary>
             <p>
                 Popular podcasts are refreshed several times an hour and other podcasts every few hours. Podcasts which haven't
                 submitted new content in a long time may be updated every few days.
@@ -138,9 +134,7 @@
     </li>
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">Which browsers does {{ site_name }} support?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">Which browsers does {{ site_name }} support?</summary>
             <p>
                 <strong>{{ site_name }}</strong> has been tested on Chrome and Firefox browsers on Windows, Linux and Android operating systems.
                 It should work OK on other browsers and operating systems, but no guarantee. If you run into an issue in your particular device or browser please file a <a class="link"
@@ -153,9 +147,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">Help! I've found a bug. How do I report it?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">Help! I've found a bug. How do I report it?</summary>
             <p>
                 Sorry! If you find a bug we would be very grateful if you report it
                 <a class="link"
@@ -168,9 +160,7 @@
 
     <li>
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">I want to host an instance of {{ site_name }} myself. Is this possible?</summary>
             <p>
                 Absolutely, this is an open source project that can be hosted on your own server. Please see the <a class="link"
                    target="_blank"
@@ -184,9 +174,7 @@
         role="button"
         x-data="{show: false}">
         <details class="space-y-3">
-            <summary class="font-semibold text-base lg:text-lg cursor-pointer"
-                     role="button"
-                     @click="show=!show">How do I delete my account?</summary>
+            <summary class="font-semibold lg:text-lg cursor-pointer">How do I delete my account?</summary>
             <p>
                 Go to <a class="link"
                    href="{% url 'users:delete_account' %}">Delete Account</a> section in the <strong>Settings</strong> area. If you delete your account,
