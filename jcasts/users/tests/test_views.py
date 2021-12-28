@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import SubscriptionFactory
-from jcasts.shared.assertions import assert_not_found, assert_ok
+from jcasts.shared.assertions import assert_ok
 
 
 class TestUserPreferences:
@@ -76,7 +76,7 @@ class TestExportPodcastFeeds:
     ):
         with django_assert_num_queries(3):
             resp = client.get(self.url, {"format": "txt"})
-        assert_not_found(resp)
+        assert_ok(resp)
 
 
 class TestDeleteAccount:

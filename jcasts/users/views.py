@@ -7,13 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
-from django.http import (
-    Http404,
-    HttpRequest,
-    HttpResponse,
-    HttpResponseRedirect,
-    JsonResponse,
-)
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -50,7 +44,17 @@ def user_preferences(request: HttpRequest) -> HttpResponse:
 @login_required
 def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
-    if not (export_format := request.GET.get("format")):
+    try:
+        export_format = request.GET["format"]
+
+        renderer = {
+            "csv": render_csv_export,
+            "json": render_json_export,
+            "opml": render_opml_export,
+        }[export_format]
+
+    except KeyError:
+
         return TemplateResponse(
             request,
             "account/export_podcast_feeds.html",
@@ -62,15 +66,6 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
                 )
             },
         )
-
-    try:
-        renderer = {
-            "csv": render_csv_export,
-            "json": render_json_export,
-            "opml": render_opml_export,
-        }[export_format]
-    except KeyError:
-        raise Http404(f"format {export_format} not supported")
 
     response = renderer(
         Podcast.objects.filter(
