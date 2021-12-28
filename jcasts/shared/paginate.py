@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.paginator import InvalidPage, Page, Paginator
 from django.db.models import QuerySet
 from django.http import Http404, HttpRequest
-from django.utils.translation import gettext as _
 
 
 def paginate(
@@ -25,4 +24,4 @@ def paginate(
     try:
         return paginator.page(int(request.GET.get(param, 1)))
     except (ValueError, InvalidPage):
-        raise Http404(_("Invalid page"))
+        raise Http404("Invalid page")
