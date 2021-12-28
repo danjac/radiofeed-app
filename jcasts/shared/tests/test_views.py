@@ -24,9 +24,9 @@ class TestAboutPages:
         with django_assert_num_queries(1):
             assert_ok(client.get(reverse("about:credits")))
 
-    def test_help(self, db, client, django_assert_num_queries):
+    def test_shortcuts(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):
-            assert_ok(client.get(reverse("about:help")))
+            assert_ok(client.get(reverse("about:shortcuts")))
 
     def test_terms(self, db, client, django_assert_num_queries):
         with django_assert_num_queries(1):

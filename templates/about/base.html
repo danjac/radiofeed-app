@@ -21,11 +21,11 @@
                    title="Credits"
                    href="{{ link.url }}">Credits</a>
             </li>
-            {% active_link 'about:help' as link %}
+            {% active_link 'about:shortcuts' as link %}
             <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">
                 <a class="link{% if link.exact %} {{ TAB_ACTIVE_CSS }}{% endif %}"
-                   title="help"
-                   href="{{ link.url }}">Help</a>
+                   title="Shortcuts"
+                   href="{{ link.url }}">Shortcuts</a>
             </li>
             {% active_link 'about:terms' as link %}
             <li class="{% if link.exact %}text-blue-600 font-bold dark:text-blue-400{% endif %}">

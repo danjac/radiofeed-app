@@ -21,10 +21,10 @@ about_urls = [
         },
     ),
     path(
-        "help/",
+        "shortcuts/",
         views.static_page,
-        name="help",
-        kwargs={"template_name": "about/help.html"},
+        name="shortcuts",
+        kwargs={"template_name": "about/shortcuts.html"},
     ),
     path(
         "terms/",
