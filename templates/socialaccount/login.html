@@ -1,15 +1,16 @@
 {% extends "socialaccount/base.html" %}
-{% load i18n %}
 
 {% block content %}
 {% if process == "connect" %}
-<h1 class="mb-3 font-bold text-base lg:text-lg">{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h1>
 
-<p class="mb-3">{% blocktrans with provider.name as provider %}You are about to connect a new third party account from {{ provider }}.{% endblocktrans %}</p>
+<h1 class="mb-3 font-bold text-lg lg:text-xl">Connect to {{ provider.name }}</h1>
+<p class="mb-3">You are about to connect a new third party account from {{ provider.name }}.</p>
+
 {% else %}
-<h1 class="mb-3 font-bold text-base lg:text-lg">{% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}</h1>
 
-<p class="mb-3">{% blocktrans with provider.name as provider %}You are about to sign in using a third party account from {{ provider }}.{% endblocktrans %}</p>
+<h1 class="mb-3 font-bold text-lg lg:text-xl">Sign In Via {{ provider.name }}</h1>
+<p class="mb-3">You are about to sign in using a third party account from {{ provider.name }}.</p>
+
 {% endif %}
 
 <form method="post"
@@ -18,6 +19,11 @@
     <button class="inline-flex items-center btn btn-default"
             type="submit">
         {% icon "login" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-        {% trans "Continue" %}</button>
+        {% if process == "connect" %}
+        Connect
+        {% else %}
+        Sign In
+        {% endif %}
+    </button>
 </form>
 {% endblock %}

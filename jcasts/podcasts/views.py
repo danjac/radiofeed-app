@@ -16,7 +16,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import Episode
-from jcasts.episodes.views import render_episode_list_response
+from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 from jcasts.shared.decorators import ajax_login_required
@@ -43,7 +43,7 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.filter(pk__in=subscribed)
 
-    return render_podcast_list_response(
+    return render_podcast_list(
         request,
         podcasts,
         "podcasts/index.html",
@@ -62,7 +62,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
     if not request.search:
         return HttpResponseRedirect(reverse("podcasts:index"))
 
-    return render_podcast_list_response(
+    return render_podcast_list(
         request,
         Podcast.objects.filter(pub_date__isnull=False)
         .search_or_exact_match(request.search.value)
@@ -160,7 +160,7 @@ def episodes(
     else:
         episodes = episodes.order_by("-pub_date" if newest_first else "pub_date")
 
-    return render_episode_list_response(
+    return render_episode_list(
         request,
         episodes,
         "podcasts/episodes.html",
@@ -193,7 +193,7 @@ def category_detail(request: HttpRequest, category_id: int, slug: str | None = N
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_podcast_list_response(
+    return render_podcast_list(
         request,
         podcasts,
         "podcasts/category_detail.html",
@@ -214,7 +214,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
         messages.success(request, "You are now subscribed to this podcast")
-        return render_subscribe_response(request, podcast, subscribed=True)
+        return render_subscribe_toggle(request, podcast, subscribed=True)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -227,7 +227,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     messages.info(request, "You are no longer subscribed to this podcast")
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_subscribe_response(request, podcast, subscribed=False)
+    return render_subscribe_toggle(request, podcast, subscribed=False)
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
@@ -249,7 +249,7 @@ def get_podcast_detail_context(
     }
 
 
-def render_subscribe_response(
+def render_subscribe_toggle(
     request: HttpRequest, podcast: Podcast, subscribed: bool
 ) -> TemplateResponse:
 
@@ -260,7 +260,7 @@ def render_subscribe_response(
     )
 
 
-def render_podcast_list_response(
+def render_podcast_list(
     request: HttpRequest,
     podcasts: QuerySet,
     template_name: str,

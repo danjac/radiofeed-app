@@ -45,7 +45,7 @@ def index(request: HttpRequest) -> HttpResponse:
         .distinct()
     )
 
-    return render_episode_list_response(
+    return render_episode_list(
         request,
         episodes,
         "episodes/index.html",
@@ -70,9 +70,7 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
         .order_by("-rank", "-pub_date")
     )
 
-    return render_episode_list_response(
-        request, episodes, "episodes/search.html", cached=True
-    )
+    return render_episode_list(request, episodes, "episodes/search.html", cached=True)
 
 
 @require_http_methods(["GET"])
@@ -111,7 +109,7 @@ def get_episode_or_404(
     return get_object_or_404(qs, pk=episode_id)
 
 
-def render_episode_list_response(
+def render_episode_list(
     request: HttpRequest,
     episodes: QuerySet,
     template_name: str,
