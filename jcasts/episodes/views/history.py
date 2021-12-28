@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from jcasts.episodes.models import AudioLog, Episode
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.paginate import paginate
 
 
 @require_http_methods(["GET"])
@@ -30,11 +30,11 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         logs = logs.order_by("-updated" if newest_first else "updated")
 
-    return render_paginated_response(
+    return TemplateResponse(
         request,
-        logs,
         "episodes/history.html",
         {
+            "page_obj": paginate(request, logs),
             "newest_first": newest_first,
             "oldest_first": not (newest_first),
         },

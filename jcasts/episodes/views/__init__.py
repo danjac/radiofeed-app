@@ -13,7 +13,7 @@ from django.views.decorators.http import require_http_methods
 
 from jcasts.episodes.models import Episode
 from jcasts.podcasts.models import Podcast
-from jcasts.shared.pagination import render_paginated_response
+from jcasts.shared.paginate import paginate
 
 
 @require_http_methods(["GET"])
@@ -118,12 +118,12 @@ def render_episode_list_response(
     extra_context: dict | None = None,
     cached: bool = False,
 ) -> TemplateResponse:
-    return render_paginated_response(
+    return TemplateResponse(
         request,
-        episodes,
         template_name,
-        extra_context={
+        {
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
+            "page_obj": paginate(request, episodes),
             "pagination_template": "episodes/_episodes_cached.html"
             if cached
             else "episodes/_episodes.html",
