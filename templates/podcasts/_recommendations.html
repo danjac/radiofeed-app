@@ -1,11 +1,3 @@
 {% extends "_object_list.html" %}
-{% load cache %}
-{% block result_list %}
-{% cache 3600 recommendations podcast.id %}
-{% with object_list=recommendations %}
-{{ block.super }}
-{% endwith %}
-{% endcache %}
-{% endblock result_list %}
 {% block result %}{% include "podcasts/_podcast.html" with podcast=object.recommended %}{% endblock %}
 
