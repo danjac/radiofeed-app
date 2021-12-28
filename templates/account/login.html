@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load i18n account %}
+{% load  account %}
 
 {% block content %}
 
@@ -7,9 +7,9 @@
     Sign In
 </h1>
 
-<p class="mb-3">{% blocktranslate %}If you have not created an account yet, then please
+<p class="mb-3">If you have not created an account yet, then please
     <a class="underline hover:text-blue-500"
-       href="{{ signup_url }}">sign up</a> first.{% endblocktranslate %}
+       href="{{ signup_url }}">sign up</a> first.
 </p>
 
 <form method="post"
@@ -27,7 +27,7 @@
     <div class="flex items-center">
         <a class="link mr-3 lg:mr-6"
            title="Recover Your Password"
-           href="{% url 'account_reset_password' %}">{% translate "Forgot Password?" %}</a>
+           href="{% url 'account_reset_password' %}">Forgot Password?</a>
         <button class="inline-flex items-center btn btn-default">
             {% icon "login" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
             Sign In

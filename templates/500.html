@@ -1,8 +1,7 @@
 {% extends "error_base.html" %}
-{% load i18n %}
 {% block content %}
-<h1 class="mb-3">{% translate "An error has occurred" %}</h1>
+<h1 class="mb-3 font-bold text-lg xl:text-xl">An error has occurred</h1>
 <p>
-    {% translate "Sorry, an unexpected error has occurred. The server admins have already been notified." %}
+    Sorry, an unexpected error has occurred. The server admins have already been notified.
 </p>
 {% endblock %}

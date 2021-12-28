@@ -1,10 +1,8 @@
 {% load static %}
-{% load i18n %}
 
 <!DOCTYPE html>
-{% get_current_language as language_code %}
 {% with site_name=request.site.name|default:"jCasts" %}
-<html lang="{{ language_code }}">
+<html lang="en">
 
 <head>
     <title>{{ site_name }} | Error</title>
@@ -30,7 +28,7 @@
                          alt="{{ site_name }}">
                 </a>
 
-                <a class="font-bold text-lg lg:text-lg font-mono"
+                <a class="font-bold text-lg lg:text-xl"
                    title="{{ request.site.name }}"
                    href="/">{{ site_name }}</a>
             </div>

@@ -1,13 +1,12 @@
 {% extends "account/settings_base.html" %}
 
-{% load i18n %}
-{% block subtitle %}{{ block.super }} | {% translate "Socal Logins" %}{% endblock %}
+{% block subtitle %}{{ block.super }} | Socal Logins{% endblock %}
 
 {% block settings_content %}
 
 
 {% if form.accounts %}
-<p>{% blocktranslate %}You can sign in to your account using any of the following third party accounts:{% endblocktranslate %}</p>
+<p>You can sign in to your account using any of the following third party accounts:</p>
 <form method="post"
       class="mb-3 space-y-3"
       hx-disable="true"
@@ -36,17 +35,18 @@
         <button class="btn btn-danger inline-flex items-center"
                 type="submit"
                 value="1"
+                title="Remove this connection"
                 name="action_remove">
             {% icon "trash" css_class="h-4 w-4 mr-2" %}
-            {% translate 'Remove' %}
+            Remove
         </button>
     </div>
 </form>
 {% else %}
-<p class="mb-3">{% translate 'You currently have no social network accounts connected to this account.' %}</p>
+<p class="mb-3">You currently have no social network accounts connected to this account.</p>
 {% endif %}
 
-<h2 class="font-semibold mb-3">{% translate 'Add a 3rd Party Account' %}</h2>
+<h2 class="font-semibold mb-3">Add a 3rd Party Account</h2>
 
 <ul class="flex items-center">
     {% include "socialaccount/snippets/provider_list.html" with process="connect" %}

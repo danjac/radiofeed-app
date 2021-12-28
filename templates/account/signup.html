@@ -1,8 +1,6 @@
 {% extends "account/base.html" %}
 
-{% load i18n %}
-
-{% block head_title %}{% translate "Signup" %}{% endblock %}
+{% block head_title %}Signup{% endblock %}
 
 {% block content %}
 
@@ -10,9 +8,9 @@
     Sign Up
 </h1>
 
-<p class="mb-3">{% blocktranslate %}Already have an account? Then please
+<p class="mb-3">Already have an account? Then please
     <a class="underline link"
-       href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
+       href="{{ login_url }}">sign in</a>.
 </p>
 
 <form method="post"
