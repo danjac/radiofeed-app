@@ -89,7 +89,7 @@
             </button>
         </div>
     </div>
-    <div class="xl:hidden absolute py-3 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
+    <div class="xl:hidden absolute py-6 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
          x-cloak
          x-show.transition="sidebar"
          x-transition:enter="transition ease-out duration-100"
@@ -98,7 +98,7 @@
          x-transition:leave="transition ease-in duration-75"
          x-transition:leave-start="transform opacity-100 scale-100"
          x-transition:leave-end="transform opacity-0 scale-95">
-        <div class="flex justify-center sm:justify-start sm:hidden mb-6"
+        <div class="flex justify-center sm:justify-start sm:hidden mb-3"
              @click.away="sidebar=false">
 
             <form action="{% url 'podcasts:search_podcasts' %}"
