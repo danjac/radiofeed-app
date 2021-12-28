@@ -1,6 +1,6 @@
 {% extends "about/base.html" %}
 
-{% block subtitle %} About | Frequently Asked Questions {% endblock %}
+{% block subtitle %}{{ block.super }} | Frequently Asked Questions {% endblock %}
 
 {% block about_content %}
 {% with site_name=request.site.name %}
