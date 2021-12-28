@@ -45,6 +45,7 @@ django==4.0
     #   django-anymail
     #   django-extensions
     #   django-htmx
+    #   django-minify-html
     #   django-model-utils
     #   django-permissions-policy
     #   django-redis
@@ -58,6 +59,8 @@ django-environ==0.8.1
 django-extensions==3.1.5
     # via -r requirements.in
 django-htmx==1.6.0
+    # via -r requirements.in
+django-minify-html==1.0.0
     # via -r requirements.in
 django-model-utils==4.2.0
     # via -r requirements.in
@@ -95,6 +98,8 @@ markdown==3.3.6
     # via -r requirements.in
 matplotlib-inline==0.1.3
     # via ipython
+minify-html==0.8.0
+    # via django-minify-html
 nltk==3.6.5
     # via -r requirements.in
 numpy==1.21.4

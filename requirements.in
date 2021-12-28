@@ -10,6 +10,7 @@ django-anymail
 django-environ
 django-extensions
 django-htmx
+django-minify-html
 django-model-utils
 django-object-actions
 django-permissions-policy

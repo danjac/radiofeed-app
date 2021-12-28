@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.twitter",
     "django_extensions",
     "django_htmx",
+    "django_minify_html",
     "widget_tweaks",
     "django_rq",
     "django_object_actions",
@@ -129,8 +130,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "django_minify_html.middleware.MinifyHtmlMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    # "jcasts.shared.middleware.HtmxMessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
