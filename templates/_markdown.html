@@ -1,3 +1,14 @@
-<div class="markdown space-y-3 break-words text-gray-900 dark:text-gray-100 max-w-fit">
+<div class="markdown space-y-3 break-words text-gray-900 dark:text-gray-100 max-w-fit"
+     x-init="
+     $el.querySelectorAll('p,div,li').forEach(el => {
+     if (!el.innerHTML.toLowerCase()
+        .replace(/{{ "&nbsp;"|escapejs }}/gi, '')
+        .replace(/<br>/gi, '')
+        .replace(/<br\/>/gi, '')
+        .replace().trim()) {
+            el.parentNode.removeChild(el);
+         }
+     });
+     ">
     {{ content|markup }}
 </div>
