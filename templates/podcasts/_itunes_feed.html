@@ -1,18 +1,17 @@
-<article class="border dark:border-gray-500 flex items-center space-x-3"
-         role="listitem">
+{% extends "_list_item.html" %}
+{% block cover_image %}
+{% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
+{% endblock cover_image %}
 
-    <div class="w-20 h-20">
-        {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
-    </div>
+{% block title %}
+<span title="{{ feed.title }}"
+      class="font-bold">
+    {{ feed.title }}
+</span>
+{% endblock title %}
 
-    <div class="flex flex-col place-content-between h-16">
-        <h2 class="w-56 font-bold max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-3xl lg:truncate"
-            title="{{ feed.title }}">
-            {{ feed.title }}
-        </h2>
-        <h3 class="flex items-center animate-pulse text-xs lg:text-sm font-semibold text-gray-600 dark:text-gray-300">
-            Adding podcast to database...
-        </h3>
-    </div>
-
-</article>
+{% block subtitle %}
+<span class="animate-pulse">
+    Adding podcast to database...
+</span>
+{% endblock subtitle %}

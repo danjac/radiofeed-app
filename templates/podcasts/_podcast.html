@@ -1,28 +1,22 @@
-{% with podcast_url=podcast.get_absolute_url %}
-<article class="border dark:border-gray-500 flex items-center space-x-3"
-         role="listitem">
+{% extends "_list_item.html" %}
 
-    <div class="w-20 h-20">
-        {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast_url %}
-    </div>
+{% block cover_image %}
+{% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
+{% endblock cover_image %}
 
-    <div class="flex flex-col place-content-between h-16">
-        <h2 class="w-56 max-h-10 flex flex-wrap break-words overflow-y-hidden sm:block sm:w-auto sm:max-w-md md:max-w-lg lg:max-w-xl 2xl:max-w-3xl lg:truncate">
-            <a href="{{ podcast_url }}"
-               class="link font-bold"
-               title="{{ podcast.cleaned_title }}">
-                {{ podcast.cleaned_title }}
-            </a>
-        </h2>
+{% block title %}
+<a href="{{ podcast.get_absolute_url }}"
+   class="link font-bold"
+   title="{{ podcast.cleaned_title }}">
+    {{ podcast.cleaned_title }}
+</a>
+{% endblock title %}
 
-        <h3 class="text-xs lg:text-sm">
-            <a href="{{ podcast.get_episodes_url }}"
-               title="Episodes"
-               class="link font-semibold text-gray-600 dark:text-gray-300">
-                {% include "_date.html" with value=podcast.pub_date title="Last Release Date" %}
-            </a>
-        </h3>
 
-    </div>
-</article>
-{% endwith %}
+{% block subtitle %}
+<a href="{{ podcast.get_episodes_url }}"
+   title="Episodes"
+   class="link font-semibold text-gray-600 dark:text-gray-300">
+    {% include "_date.html" with value=podcast.pub_date title="Last Release Date" %}
+</a>
+{% endblock subtitle %}
