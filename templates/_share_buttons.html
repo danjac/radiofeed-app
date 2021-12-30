@@ -1,5 +1,6 @@
 {% with ICON_CLASS="h-4 w-4 lg:h-5 lg:w-5" %}
-<div class="flex items-center space-x-3 {{ css_class|default:'' }}">
+<div class="flex items-center space-x-3 {{ css_class|default:'' }}"
+     x-data>
     <a href="{{ share_urls.email }}"
        target="_blank"
        rel="noopener"
@@ -30,5 +31,22 @@
        class="link focus:outline-none">
         {% icon "linkedin" css_class=ICON_CLASS %}
     </a>
+    <button class="link focus:outline-none"
+            title="Copy Link"
+            @click="
+            input = document.createElement('input');
+            input.style = 'position: absolute; left: -1000px; top: -1000px';
+            input.value = window.location.href;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            $dispatch('add-message', {
+                message: 'Copied link to Clipboard',
+                tags: 'message-success'
+            });
+        ">
+        {% icon "link" css_class=ICON_CLASS %}
+    </button>
 </div>
 {% endwith %}
