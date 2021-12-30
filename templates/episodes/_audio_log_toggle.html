@@ -1,3 +1,5 @@
+{% extends "_toggle.html" %}
+{% block content %}
 {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
 <div class="flex items-center space-x-3 lg:space-x-4"
      id="audio-log-toggle-{{ episode.id }}"
@@ -23,4 +25,4 @@
     {% endif %}
 </div>
 {% endwith %}
-{% include "_hx_messages.html" %}
+{% endblock content %}
