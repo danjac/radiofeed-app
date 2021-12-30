@@ -40,8 +40,7 @@
         <form action="{% url 'podcasts:search_podcasts' %}"
               method="get"
               class="relative bg-transparent hidden sm:block"
-              @submit="sidebar=false"
-              x-data="{search: ''}">
+              @submit="sidebar=false">
             <input type="search"
                    name="q"
                    accesskey="k"
