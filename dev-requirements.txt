@@ -39,6 +39,8 @@ pyparsing==3.0.6
     # via
     #   -c requirements.txt
     #   packaging
+pytailwindcss==0.1.2
+    # via -r dev-requirements.in
 pytest==6.2.5
     # via
     #   -r dev-requirements.in

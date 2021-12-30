@@ -25,14 +25,5 @@ RUN chmod +x /start-webapp
 COPY ./docker/start-worker /start-worker
 RUN chmod +x /start-worker
 
-# frontend
-FROM node:17-buster AS watcher
-
-WORKDIR /app
-
-COPY tailwind.config.js ./tailwind.config.js
-COPY package.json ./package.json
-COPY package-lock.json ./package-lock.json
-
-RUN npm cache clean --force
-RUN npm ci
+COPY ./docker/start-tailwind /start-tailwind
+RUN chmod +x /start-tailwind
