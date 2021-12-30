@@ -2,7 +2,7 @@
 {% url 'podcasts:index' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-20 shadow"
         x-data="{sidebar: false}"
-        @close-sidebar.window="sidebar=false">
+        @htmx:after-request.window="sidebar=false">
     <div class="flex items-center justify-between px-1 py-2">
 
         <div class="flex items-center flex-shrink-0 mr-6">
@@ -41,7 +41,7 @@
               method="get"
               class="relative bg-transparent hidden sm:block"
               x-data="{search: ''}"
-              @submit="sidebar=false;$refs.search.blur();"
+              @submit="$refs.search.blur();"
               @htmx:after-request.window="search=''">
             <input type="search"
                    x-ref="search"
@@ -103,7 +103,6 @@
                   method="get"
                   class="relative bg-transparent"
                   x-data="{search: ''}"
-                  @submit="sidebar=false"
                   @htmx:after-request.window="search=''">
                 <input type="search"
                        x-model="search"

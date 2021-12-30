@@ -6,7 +6,6 @@
             <a href="{{ link.url }}"
                accesskey="p"
                title="Podcasts"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "rss" css_class=ICON_CSS %}
                 Podcasts
@@ -17,7 +16,6 @@
             <a href="{{ link.url }}"
                accesskey="n"
                title="New Releases"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "sparkles" css_class=ICON_CSS %}
                 New Releases
@@ -29,7 +27,6 @@
             <a href="{{ link.url }}"
                accesskey="f"
                title="bookmarks"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "star" css_class=ICON_CSS %}
                 Bookmarks
@@ -41,7 +38,6 @@
             <a href="{{ link.url }}"
                accesskey="h"
                title="History"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.exact %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "database" css_class=ICON_CSS %}
                 History
@@ -54,7 +50,6 @@
             <a href="{{ link.url }}"
                accesskey="s"
                title="Settings"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "adjustments" css_class=ICON_CSS %}
                 Settings
@@ -67,7 +62,6 @@
             <a href="{{ link.url }}"
                accesskey="a"
                title="About"
-               @click="$dispatch('close-sidebar')"
                class="{{ SIDEBAR_CSS }}{% if link.match %} {{ SIDEBAR_ACTIVE_CSS }}{% endif %}">
                 {% icon "info" css_class=ICON_CSS %}
                 About
@@ -83,7 +77,6 @@
                 {% csrf_token %}
                 <button accesskey="l"
                         title="Logout"
-                        @click="$dispatch('close-sidebar')"
                         class="{{ SIDEBAR_CSS }}">
                     {% icon "logout" css_class=ICON_CSS %}
                     Logout
