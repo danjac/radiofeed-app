@@ -25,6 +25,16 @@
     </li>
     <li>
         <details class="space-y-3">
+            <summary class="font-semibold lg:text-lg cursor-pointer">Does {{ site_name }} store data about me?</summary>
+            <p>
+                <strong>{{ site_name }}</strong> keeps track of your podcast subscriptions, bookmarks and individual episodes you listen to. This data is not shared with any third party. If you delete your account, all this data is also permanently deleted. More detailed terms and conditions <a class="link"
+                   href="{% url 'about:terms' %}">here</a>.
+            </p>
+        </details>
+    </li>
+
+    <li>
+        <details class="space-y-3">
             <summary class="font-semibold lg:text-lg cursor-pointer">
                 Do I have to create an account to use {{ site_name }}?</summary>
             <p>
