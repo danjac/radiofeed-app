@@ -3,5 +3,5 @@
 set -o errexit
 set -o nounset
 
-tailwindcss -i assets/css/app.css -o assets/dist/bundle.css --watch --minify
+tailwindcss -i assets/app.css -o assets/bundle.css --watch --minify
 
