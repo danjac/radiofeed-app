@@ -7,7 +7,6 @@
 {% with episode=episode|default:log.episode %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div x-data="{
-    showPlayer: true,
     autoplay: {{ autoplay|yesno:'true,false' }},
     mediaSrc: '{{ episode.media_url }}',
     currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
@@ -264,7 +263,7 @@
     </audio>
     <div class="fixed bottom-0 z-10 bg-black dark:bg-gray-800 text-white w-full p-1 font-semibold space-y-1 sm:space-y-0"
          x-ref="controls"
-         x-show="mediaSrc && showPlayer"
+         x-show="mediaSrc"
          :class="{'player--active': isPlaying && !isError, 'player--inactive': !isPlaying || isError}">
 
         <div class="sm:hidden">
