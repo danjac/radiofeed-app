@@ -40,13 +40,9 @@
         <form action="{% url 'podcasts:search_podcasts' %}"
               method="get"
               class="relative bg-transparent hidden sm:block"
-              hx-push-url="true"
-              @submit="$refs.input.blur(); search=''; sidebar=false"
+              @submit="sidebar=false"
               x-data="{search: ''}">
             <input type="search"
-                   x-ref="input"
-                   x-model="search"
-                   @enter="$refs.input.select()"
                    name="q"
                    accesskey="k"
                    autocomplete="off"
@@ -61,7 +57,6 @@
                     {% icon "search" css_class="h-4 w-4" %}
                 </button>
             </div>
-
         </form>
 
         <div class="flex items-center space-x-3">
@@ -104,14 +99,9 @@
             <form action="{% url 'podcasts:search_podcasts' %}"
                   method="get"
                   class="relative bg-transparent"
-                  hx-push-url="true"
-                  x-ref="input"
-                  x-model="search"
-                  x-data="{search: ''}"
-                  @submit="$refs.input.blur(); search=''; sidebar=false">
+                  @submit="sidebar=false">
                 <input type="search"
                        name="q"
-                       x-model="search"
                        autocomplete="off"
                        aria-label="Search"
                        placeholder="Search"
