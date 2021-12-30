@@ -53,24 +53,6 @@ services:
                 max-size: '100k'
                 max-file: '3'
 
-    watcher:
-        build:
-            context: .
-            target: watcher
-        restart: on-failure
-        privileged: true
-        tty: true
-        stop_grace_period: '3s'
-        logging:
-            driver: 'json-file'
-            options:
-                max-size: '100k'
-                max-file: '3'
-        command: ['npm', 'run', 'watch']
-        volumes:
-            - ./:/app
-            - /app/node_modules
-
     django: &django
         build:
             context: .
@@ -102,6 +84,12 @@ services:
     worker:
         <<: *django
         command: /start-worker
+        depends_on:
+            - webapp
+
+    tailwind:
+        <<: *django
+        command: /start-tailwind
         depends_on:
             - webapp
 

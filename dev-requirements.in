@@ -10,3 +10,4 @@ pytest-forked
 pytest-mock
 pytest-randomly
 pytest-xdist
+pytailwindcss

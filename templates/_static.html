@@ -9,7 +9,11 @@
       media="screen"
       href="{% static 'dist/bundle.css' %}{% if debug %}?{% now 'U' %}{% endif %}">
 
+<script src="https://unpkg.com/htmx.org@1.6.1"
+        integrity="sha384-tvG/2mnCFmGQzYC1Oh3qxQ7CkQ9kMzYjWZSNtrRZygHPDDqottzEJsqS4oUVodhW"
+        crossorigin="anonymous"></script>
+
 <script defer
-        src="{% static 'dist/bundle.js' %}{% if debug %}?{% now 'U' %}{% endif %}"></script>
+        src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 {% django_htmx_script %}

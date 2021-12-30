@@ -6,18 +6,262 @@
 {% if log %}
 {% with episode=episode|default:log.episode %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-<div x-data="jCasts.Player({
-                showPlayer: true,
-                mediaSrc: '{{ episode.media_url }}',
-                currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
-                csrfToken: '{{ csrf_token }}',
-                urls: {
-                timeUpdate: '{% url "episodes:player_time_update" %}'
-                },
-                {% if autoplay %}
-                    autoplay: true,
-                {% endif %}
-                })"
+<div x-data="{
+    showPlayer: true,
+    autoplay: {{ autoplay|yesno:'true,false' }},
+    mediaSrc: '{{ episode.media_url }}',
+    currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
+    csrfToken: '{{ csrf_token }}',
+    duration: 0,
+    isError: false,
+    isLoaded: false,
+    isPaused: false,
+    isPlaying: false,
+    playbackRate: 1.0,
+    defaultPlaybackRate: 1.0,
+    counters: {
+        current: '00:00:00',
+        duration: '00:00:00',
+        preview: '00:00:00',
+    },
+    keys: {
+        enable: 'player-enabled',
+        playbackRate: 'player-playback-rate',
+    },
+    urls: {
+        timeUpdate: '{% url "episodes:player_time_update" %}'
+    },
+
+    formatDuration(value) {
+        if (isNaN(value) || value < 0) return '00:00:00';
+        const duration = Math.floor(value);
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = Math.floor(duration % 60);
+        return [hours, minutes, seconds]
+            .map((t) => t.toString().padStart(2, '0'))
+            .join(':');
+    },
+    getMediaMetadata() {
+        const dataTag = document.getElementById('player-metadata');
+        if (!dataTag) {
+            return null;
+        }
+
+        const metadata = JSON.parse(dataTag.textContent);
+
+        if (metadata && Object.keys(metadata).length > 0) {
+            return new window.MediaMetadata(metadata);
+        }
+        return null;
+    },
+    shortcuts(event) {
+        if (event.target.tagName.match(/INPUT|TEXTAREA/)) {
+            return;
+        }
+
+        if (!event.ctrlKey && !event.altKey) {
+            switch (event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.togglePlayPause();
+                    return;
+                case 'ArrowRight':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.skipForward();
+                    return;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.skipBack();
+                    return;
+            }
+        }
+
+        // playback rate
+        if (event.altKey) {
+            switch (event.key) {
+                case '+':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.incrementPlaybackRate();
+                    return;
+                case '-':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.decrementPlaybackRate();
+                    return;
+                case '0':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.resetPlaybackRate();
+                    return;
+            }
+        }
+    },
+
+    // audio events
+    loaded() {
+        if (this.isLoaded) {
+            return;
+        }
+
+        this.isError = false;
+
+        this.playbackRate = parseFloat(
+            sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
+        );
+
+        if (this.autoplay || sessionStorage.getItem(this.keys.enable)) {
+            this.$refs.audio.play().catch((err) => {
+                this.isPaused = true;
+                this.isPlaying = false;
+                this.isError = true;
+            });
+        } else {
+            this.isPaused = true;
+            this.isPlaying = false;
+        }
+
+        this.duration = this.$refs.audio.duration;
+        this.isLoaded = true;
+    },
+
+    error() {
+        this.isPlaying = false;
+        this.isError = true;
+    },
+
+    timeUpdate() {
+        this.isPlaying = true;
+        if (this.$refs.audio) {
+            this.currentTime = Math.floor(this.$refs.audio.currentTime);
+            this.sendTimeUpdate();
+        }
+    },
+
+    buffering() {
+        this.isPlaying = false;
+    },
+
+    resumed() {
+        this.isPaused = false;
+        this.isPlaying = true;
+        this.isError = false;
+        sessionStorage.setItem(this.keys.enable, true);
+    },
+
+    paused() {
+        this.isPlaying = false;
+        this.isPaused = true;
+        sessionStorage.removeItem(this.keys.enable);
+    },
+
+    incrementPlaybackRate() {
+        this.changePlaybackRate(0.1);
+    },
+
+    decrementPlaybackRate() {
+        this.changePlaybackRate(-0.1);
+    },
+
+    resetPlaybackRate() {
+        this.setPlaybackRate(this.defaultPlaybackRate);
+    },
+
+    changePlaybackRate(increment) {
+        const newValue = Math.max(
+            0.5,
+            Math.min(2.0, parseFloat(this.playbackRate) + increment)
+        );
+        this.setPlaybackRate(newValue);
+    },
+
+    setPlaybackRate(value) {
+        this.playbackRate = value;
+        sessionStorage.setItem(this.keys.playbackRate, value);
+    },
+
+    skip() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime = this.currentTime;
+        }
+    },
+    skipBack() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime -= 10;
+        }
+    },
+
+    skipForward() {
+        if (!this.isPaused) {
+            this.$refs.audio.currentTime += 10;
+        }
+    },
+
+    ended() {
+        this.$refs.complete.click();
+    },
+
+    togglePlayPause() {
+        if (this.isPaused) {
+            this.$refs.audio.play();
+        } else {
+            this.$refs.audio.pause();
+        }
+    },
+
+    preview(event) {
+        const rect = this.$refs.range.getBoundingClientRect();
+        const value = ((event.clientX - rect.x) / rect.width) * this.duration;
+        this.counters.preview = this.formatDuration(value);
+    },
+
+    sendTimeUpdate() {
+        const time = Math.round(this.currentTime);
+        if (time % 5 === 0 && this.lastTimeUpdate !== time) {
+            fetch(this.urls.timeUpdate, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': this.csrfToken },
+                body: new URLSearchParams({ current_time: time }),
+            })
+                .then((response) => {
+                    if (response.status === 204) {
+                        this.lastTimeUpdate = time;
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    }
+}"
+     x-init="
+        $watch('currentTime', (value) => {
+            counters.current = formatDuration(value);
+        });
+
+        $watch('duration', (value) => {
+            counters.duration = formatDuration(value);
+        });
+
+        $watch('playbackRate', (value) => {
+            $refs.audio.playbackRate = value;
+        });
+
+        counters.current = formatDuration(currentTime);
+        counters.duration = formatDuration(duration);
+        counters.preview = '00:00:00';
+
+        $refs.audio.currentTime = currentTime;
+        $refs.audio.load();
+
+        lastTimeUpdate = null;
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = getMediaMetadata();
+        }
+     "
      @keydown.window="shortcuts">
 
     {{ episode.get_media_metadata|json_script:"player-metadata" }}
