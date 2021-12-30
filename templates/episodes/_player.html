@@ -10,7 +10,6 @@
     autoplay: {{ autoplay|yesno:'true,false' }},
     mediaSrc: '{{ episode.media_url }}',
     currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
-    csrfToken: '{{ csrf_token }}',
     duration: 0,
     isError: false,
     isLoaded: false,
@@ -95,8 +94,6 @@
             }
         }
     },
-
-    // audio events
     loaded() {
         if (this.isLoaded) {
             return;
@@ -122,12 +119,10 @@
         this.duration = this.$refs.audio.duration;
         this.isLoaded = true;
     },
-
     error() {
         this.isPlaying = false;
         this.isError = true;
     },
-
     timeUpdate() {
         this.isPlaying = true;
         if (this.$refs.audio) {
@@ -136,7 +131,7 @@
             if (time % 5 === 0 && this.lastTimeUpdate !== time) {
                 fetch('{% url "episodes:player_time_update" %}', {
                     method: 'POST',
-                    headers: { 'X-CSRFToken': this.csrfToken },
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                     body: new URLSearchParams({ current_time: time }),
                 }).then((response) => {
                     if (response.status === 204) {
@@ -146,36 +141,29 @@
             }
         }
     },
-
     buffering() {
         this.isPlaying = false;
     },
-
     resumed() {
         this.isPaused = false;
         this.isPlaying = true;
         this.isError = false;
         sessionStorage.setItem(this.storage.enable, true);
     },
-
     paused() {
         this.isPlaying = false;
         this.isPaused = true;
         sessionStorage.removeItem(this.storage.enable);
     },
-
     incrementPlaybackRate() {
         this.changePlaybackRate(0.1);
     },
-
     decrementPlaybackRate() {
         this.changePlaybackRate(-0.1);
     },
-
     resetPlaybackRate() {
         this.setPlaybackRate(this.defaultPlaybackRate);
     },
-
     changePlaybackRate(increment) {
         const newValue = Math.max(
             0.5,
@@ -183,12 +171,10 @@
         );
         this.setPlaybackRate(newValue);
     },
-
     setPlaybackRate(value) {
         this.playbackRate = value;
         sessionStorage.setItem(this.storage.playbackRate, value);
     },
-
     skip() {
         if (!this.isPaused) {
             this.$refs.audio.currentTime = this.currentTime;
@@ -199,17 +185,14 @@
             this.$refs.audio.currentTime -= 10;
         }
     },
-
     skipForward() {
         if (!this.isPaused) {
             this.$refs.audio.currentTime += 10;
         }
     },
-
     ended() {
         this.$refs.complete.click();
     },
-
     togglePlayPause() {
         if (this.isPaused) {
             this.$refs.audio.play();
