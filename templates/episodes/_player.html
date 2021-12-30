@@ -22,16 +22,11 @@
     counters: {
         current: '00:00:00',
         duration: '00:00:00',
-        preview: '00:00:00',
     },
-    keys: {
+    storage: {
         enable: 'player-enabled',
         playbackRate: 'player-playback-rate',
     },
-    urls: {
-        timeUpdate: '{% url "episodes:player_time_update" %}'
-    },
-
     formatDuration(value) {
         if (isNaN(value) || value < 0) return '00:00:00';
         const duration = Math.floor(value);
@@ -111,10 +106,10 @@
         this.isError = false;
 
         this.playbackRate = parseFloat(
-            sessionStorage.getItem(this.keys.playbackRate) || this.defaultPlaybackRate
+            sessionStorage.getItem(this.storage.playbackRate) || this.defaultPlaybackRate
         );
 
-        if (this.autoplay || sessionStorage.getItem(this.keys.enable)) {
+        if (this.autoplay || sessionStorage.getItem(this.storage.enable)) {
             this.$refs.audio.play().catch((err) => {
                 this.isPaused = true;
                 this.isPlaying = false;
@@ -150,13 +145,13 @@
         this.isPaused = false;
         this.isPlaying = true;
         this.isError = false;
-        sessionStorage.setItem(this.keys.enable, true);
+        sessionStorage.setItem(this.storage.enable, true);
     },
 
     paused() {
         this.isPlaying = false;
         this.isPaused = true;
-        sessionStorage.removeItem(this.keys.enable);
+        sessionStorage.removeItem(this.storage.enable);
     },
 
     incrementPlaybackRate() {
@@ -181,7 +176,7 @@
 
     setPlaybackRate(value) {
         this.playbackRate = value;
-        sessionStorage.setItem(this.keys.playbackRate, value);
+        sessionStorage.setItem(this.storage.playbackRate, value);
     },
 
     skip() {
@@ -213,16 +208,10 @@
         }
     },
 
-    preview(event) {
-        const rect = this.$refs.range.getBoundingClientRect();
-        const value = ((event.clientX - rect.x) / rect.width) * this.duration;
-        this.counters.preview = this.formatDuration(value);
-    },
-
     sendTimeUpdate() {
         const time = Math.round(this.currentTime);
         if (time % 5 === 0 && this.lastTimeUpdate !== time) {
-            fetch(this.urls.timeUpdate, {
+            fetch('{% url "episodes:player_time_update" %}', {
                 method: 'POST',
                 headers: { 'X-CSRFToken': this.csrfToken },
                 body: new URLSearchParams({ current_time: time }),
@@ -251,10 +240,11 @@
 
         counters.current = formatDuration(currentTime);
         counters.duration = formatDuration(duration);
-        counters.preview = '00:00:00';
 
-        $refs.audio.currentTime = currentTime;
-        $refs.audio.load();
+        $nextTick(() => {
+            $refs.audio.currentTime = currentTime;
+            $refs.audio.load();
+        });
 
         lastTimeUpdate = null;
 
@@ -434,9 +424,7 @@
                            x-model="currentTime"
                            :max="duration"
                            :disabled="isPaused || !isLoaded"
-                           :title="counters.preview"
                            @change="skip"
-                           @mouseover="preview"
                            min="0"
                            class="h-2 mx-auto rounded-full w-full flex items-center player--interactive player--progress focus:outline-none">
                 </div>
