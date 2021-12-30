@@ -241,10 +241,8 @@
         counters.current = formatDuration(currentTime);
         counters.duration = formatDuration(duration);
 
-        $nextTick(() => {
-            $refs.audio.currentTime = currentTime;
-            $refs.audio.load();
-        });
+        $refs.audio.currentTime = currentTime;
+        $refs.audio.load();
 
         lastTimeUpdate = null;
 
