@@ -40,7 +40,7 @@ def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     try:
         Bookmark.objects.create(episode=episode, user=request.user)
         messages.success(request, "Added to Bookmarks")
-        return render_bookmark_toggle(request, episode, is_bookmarked=True)
+        return render_bookmark_action(request, episode, is_bookmarked=True)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -53,15 +53,15 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
     Bookmark.objects.filter(user=request.user, episode=episode).delete()
 
     messages.info(request, "Removed from Bookmarks")
-    return render_bookmark_toggle(request, episode, is_bookmarked=False)
+    return render_bookmark_action(request, episode, is_bookmarked=False)
 
 
-def render_bookmark_toggle(
+def render_bookmark_action(
     request: HttpRequest, episode: Episode, is_bookmarked: bool
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/_bookmark_toggle.html",
+        "episodes/_bookmark_action.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

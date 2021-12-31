@@ -244,7 +244,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
     try:
         Subscription.objects.create(user=request.user, podcast=podcast)
         messages.success(request, "You are now subscribed to this podcast")
-        return render_subscribe_toggle(request, podcast, subscribed=True)
+        return render_subscribe_action(request, podcast, subscribed=True)
     except IntegrityError:
         return HttpResponseConflict()
 
@@ -257,7 +257,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
     messages.info(request, "You are no longer subscribed to this podcast")
     Subscription.objects.filter(podcast=podcast, user=request.user).delete()
-    return render_subscribe_toggle(request, podcast, subscribed=False)
+    return render_subscribe_action(request, podcast, subscribed=False)
 
 
 def get_podcast_or_404(request: HttpRequest, podcast_id: int) -> Podcast:
@@ -279,14 +279,17 @@ def get_podcast_detail_context(
     }
 
 
-def render_subscribe_toggle(
+def render_subscribe_action(
     request: HttpRequest, podcast: Podcast, subscribed: bool
 ) -> TemplateResponse:
 
     return TemplateResponse(
         request,
-        "podcasts/_subscribe_toggle.html",
-        {"podcast": podcast, "subscribed": subscribed},
+        "podcasts/_subscribe_action.html",
+        {
+            "podcast": podcast,
+            "subscribed": subscribed,
+        },
     )
 
 

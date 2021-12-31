@@ -55,7 +55,7 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
         messages.success(request, "Episode marked complete")
 
-    return render_audio_log_toggle(
+    return render_history_actions(
         request,
         episode,
         listened=True,
@@ -73,10 +73,10 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
         AudioLog.objects.filter(user=request.user, episode=episode).delete()
         messages.info(request, "Removed from History")
 
-    return render_audio_log_toggle(request, episode)
+    return render_history_actions(request, episode)
 
 
-def render_audio_log_toggle(
+def render_history_actions(
     request: HttpRequest,
     episode: Episode,
     listened: bool = False,
@@ -84,7 +84,7 @@ def render_audio_log_toggle(
 ) -> HttpResponse:
     return TemplateResponse(
         request,
-        "episodes/_audio_log_toggle.html",
+        "episodes/_history_actions.html",
         {
             "episode": episode,
             "listened": listened,
