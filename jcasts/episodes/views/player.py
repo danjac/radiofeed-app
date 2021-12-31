@@ -28,15 +28,7 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player(
-        request,
-        {
-            "log": log,
-            "episode": episode,
-            "autoplay": True,
-            "is_playing": True,
-        },
-    )
+    return render_player(request, log, {"autoplay": True})
 
 
 @require_http_methods(["POST"])
@@ -58,12 +50,7 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
             )
 
     return render_player(
-        request,
-        {
-            "episode": episode,
-            "is_playing": False,
-            "completed": mark_complete,
-        },
+        request, None, {"episode": episode, "completed": mark_complete}
     )
 
 
@@ -77,7 +64,8 @@ def reload_player(request: HttpRequest) -> HttpResponse:
             .select_related("episode", "episode__podcast")
             .first()
         )
-        return render_player(request, {"log": log})
+
+        return render_player(request, log)
 
     return HttpResponse()
 
@@ -104,12 +92,16 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
 def render_player(
     request: HttpRequest,
+    log: AudioLog | None,
     extra_context: dict | None = None,
 ) -> HttpResponse:
     return TemplateResponse(
         request,
         "episodes/_player.html",
         {
+            "log": log,
+            "episode": log.episode if log else None,
+            "is_playing": log is not None,
             "completed": False,
             "listened": True,
             **(extra_context or {}),

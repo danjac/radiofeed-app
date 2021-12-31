@@ -190,7 +190,7 @@ class TestStartPlayer:
 
     def test_resume(self, client, auth_user, episode, django_assert_num_queries):
         log = AudioLogFactory(user=auth_user, episode=episode, current_time=2000)
-        with django_assert_num_queries(self.num_queries_with_savepoints(6)):
+        with django_assert_num_queries(self.num_queries_with_savepoints(7)):
             assert_ok(client.post(self.url(episode)))
 
         log.refresh_from_db()

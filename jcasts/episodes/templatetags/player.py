@@ -12,11 +12,15 @@ def audio_player(context: dict) -> dict:
     request = context["request"]
 
     if request.user.is_authenticated and (episode_id := request.player.get()):
-
-        return {
-            "log": AudioLog.objects.filter(user=request.user, episode=episode_id)
+        log = (
+            AudioLog.objects.filter(user=request.user, episode=episode_id)
             .select_related("episode", "episode__podcast")
             .first()
+        )
+        return {
+            "is_playing": log is not None,
+            "episode": log.episode if log else None,
+            "log": log,
         }
 
     return {}

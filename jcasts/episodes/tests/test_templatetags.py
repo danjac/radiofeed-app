@@ -24,4 +24,8 @@ class TestRenderPlayer:
         req.session = {Player.session_key: episode.id}
         req.player = Player(req)
 
-        assert audio_player({"request": req}) == {"log": log}
+        assert audio_player({"request": req}) == {
+            "log": log,
+            "episode": log.episode,
+            "is_playing": True,
+        }
