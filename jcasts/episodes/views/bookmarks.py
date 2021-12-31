@@ -65,5 +65,6 @@ def render_bookmark_action(
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
+            "action": True,
         },
     )

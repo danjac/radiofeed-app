@@ -34,4 +34,7 @@
 </div>
 {% endif %}
 {% endwith %}
+
+{% if action %}
 {% include "_messages.html" with hx_oob=True %}
+{% endif %}
