@@ -35,6 +35,11 @@ urlpatterns = [
         name="unsubscribe",
     ),
     path(
+        "discover/",
+        views.category_list,
+        name="category_list",
+    ),
+    path(
         "discover/<int:category_id>/<slug:slug>/",
         views.category_detail,
         name="category_detail",

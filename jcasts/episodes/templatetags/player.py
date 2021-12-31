@@ -7,7 +7,7 @@ from jcasts.episodes.models import AudioLog
 register = template.Library()
 
 
-def get_player_context(log: AudioLog | None):
+def get_player_context(log: AudioLog | None) -> dict:
 
     return {
         "is_playing": log is not None,

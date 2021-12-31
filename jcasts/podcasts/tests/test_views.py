@@ -5,6 +5,7 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import EpisodeFactory
 from jcasts.podcasts.factories import (
+    CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
     SubscriptionFactory,
@@ -182,6 +183,14 @@ class TestPodcastEpisodes:
             )
         assert_ok(resp)
         assert len(resp.context_data["page_obj"].object_list) == 1
+
+
+class TestCategoryList:
+    def test_get(self, db, client, django_assert_num_queries):
+        CategoryFactory.create_batch(3)
+        with django_assert_num_queries(2):
+            resp = client.get(reverse("podcasts:category_list"))
+        assert_ok(resp)
 
 
 class TestCategoryDetail:

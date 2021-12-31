@@ -1,0 +1,25 @@
+{% extends "podcasts/base.html" %}
+{% load cache %}
+
+{% block subtitle %} | Categories {% endblock %}
+
+{% block content %}
+<h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-3">
+    Categories
+</h1>
+
+<ul class="space-y-3 divide-y divide-solid sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3">
+    {% cache 3600 categories %}
+    {% for category in categories %}
+    <li class="pt-3">
+        <h2>
+            <a href="{{ category.get_absolute_url }}"
+               class="font-semibold lg:text-lg">
+                {{ category.name }}
+            </a>
+        </h2>
+    </li>
+    {% endfor %}
+    {% endcache %}
+</ul>
+{% endblock %}

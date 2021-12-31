@@ -178,7 +178,19 @@ def episodes(
 
 
 @require_http_methods(["GET"])
-def category_detail(request: HttpRequest, category_id: int, slug: str | None = None):
+def category_list(request: HttpRequest) -> HttpResponse:
+
+    return TemplateResponse(
+        request,
+        "podcasts/categories.html",
+        {"categories": Category.objects.order_by("name")},
+    )
+
+
+@require_http_methods(["GET"])
+def category_detail(
+    request: HttpRequest, category_id: int, slug: str | None = None
+) -> HttpResponse:
 
     category = get_object_or_404(Category, pk=category_id)
     podcasts = category.podcast_set.filter(pub_date__isnull=False)
