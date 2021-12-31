@@ -8,7 +8,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponsePermanentRedirect,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -214,6 +219,16 @@ def category_detail(
             "children": category.children.order_by("name"),
         },
         cached=True,
+    )
+
+
+@require_http_methods(["GET"])
+def category_detail_redirect(
+    request: HttpRequest, category_id: int, slug: str | None = None
+) -> HttpResponse:
+
+    return HttpResponsePermanentRedirect(
+        reverse("podcasts:category_detail", args=[category_id, slug])
     )
 
 

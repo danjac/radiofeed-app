@@ -214,6 +214,18 @@ class TestCategoryDetail:
         assert len(resp.context_data["page_obj"].object_list) == 1
 
 
+class TestCategoryDetailRedirect:
+    def test_get(self, client, category, django_assert_num_queries):
+        with django_assert_num_queries(1):
+            resp = client.get(
+                reverse(
+                    "podcasts:category_detail_redirect",
+                    args=[category.id, category.slug],
+                )
+            )
+        assert resp.url == category.get_absolute_url()
+
+
 class TestSubscribe:
     @pytest.fixture
     def url(self, podcast):
