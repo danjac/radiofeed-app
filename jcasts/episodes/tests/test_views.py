@@ -152,6 +152,8 @@ class TestReloadPlayer:
     def test_player_not_empty(
         self, client, auth_user, player_episode, django_assert_num_queries
     ):
+        AudioLogFactory(user=auth_user, episode=player_episode)
+
         with django_assert_num_queries(4):
             assert_ok(client.get(self.url))
 
