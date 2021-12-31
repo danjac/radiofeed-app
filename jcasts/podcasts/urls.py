@@ -44,4 +44,10 @@ urlpatterns = [
         views.category_detail,
         name="category_detail",
     ),
+    # legacy URLs, can remove later
+    path(
+        "discover/<int:category_id>/<slug:slug>/",
+        views.category_detail,
+        name="category_detail_legacy",
+    ),
 ]
