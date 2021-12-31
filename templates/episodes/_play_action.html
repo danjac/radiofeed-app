@@ -2,7 +2,7 @@
 {% if user.is_authenticated %}
 <div{% if hx_oob %} hx-swap-oob="true"
                     {% endif %}
-                    id="player-toggle-{{ episode.id }}">
+                    id="play-action-{{ episode.id }}">
     {% if is_playing %}
     <button class="inline-flex items-center btn btn-secondary"
             hx-post="{% url 'episodes:close_player' %}"
