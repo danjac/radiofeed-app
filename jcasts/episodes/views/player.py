@@ -34,7 +34,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
         {
             "log": log,
             "episode": episode,
-            "completed": False,
             "listened": True,
             "is_playing": True,
             "player_action": True,
