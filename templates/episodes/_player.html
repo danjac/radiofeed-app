@@ -1,8 +1,4 @@
 {% load static %}
-{% if episode and player_action %}
-{% include "episodes/_play_toggle.html" with hx_oob=True %}
-{% include "episodes/_audio_log_toggle.html" with hx_oob=True %}
-{% endif %}
 {% if is_playing %}
 {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
 <div x-data="{
@@ -412,4 +408,9 @@
     </div>
 </div>
 {% endwith %}
+{% endif %}
+
+{% if episode and player_action %}
+{% include "episodes/_play_toggle.html" with hx_oob=True %}
+{% include "episodes/_audio_log_toggle.html" with hx_oob=True %}
 {% endif %}
