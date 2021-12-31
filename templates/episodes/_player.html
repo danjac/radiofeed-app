@@ -17,6 +17,7 @@
     isPlaying: false,
     playbackRate: 1.0,
     defaultPlaybackRate: 1.0,
+    lastTimeUpdate: null,
     counters: {
         current: '00:00:00',
         duration: '00:00:00',
@@ -226,8 +227,6 @@
 
         $refs.audio.currentTime = currentTime;
         $refs.audio.load();
-
-        lastTimeUpdate = null;
 
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = getMediaMetadata();
