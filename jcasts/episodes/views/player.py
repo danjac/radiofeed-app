@@ -29,7 +29,14 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player(request, log, {"autoplay": True})
+    return render_player(
+        request,
+        log,
+        {
+            "autoplay": True,
+            "player_action": True,
+        },
+    )
 
 
 @require_http_methods(["POST"])
@@ -51,7 +58,13 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
             )
 
     return render_player(
-        request, None, {"episode": episode, "completed": mark_complete}
+        request,
+        None,
+        {
+            "episode": episode,
+            "completed": mark_complete,
+            "player_action": True,
+        },
     )
 
 

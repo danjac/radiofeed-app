@@ -1,5 +1,5 @@
 {% load static %}
-{% if episode %}
+{% if episode and player_action %}
 {% include "episodes/_play_toggle.html" with hx_oob=True %}
 {% include "episodes/_audio_log_toggle.html" with hx_oob=True %}
 {% endif %}
