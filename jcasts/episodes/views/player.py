@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, Episode
+from jcasts.episodes.templatetags.player import get_player_context
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent
@@ -99,11 +100,9 @@ def render_player(
         request,
         "episodes/_player.html",
         {
-            "log": log,
-            "episode": log.episode if log else None,
-            "is_playing": log is not None,
             "completed": False,
             "listened": True,
+            **get_player_context(log),
             **(extra_context or {}),
         },
     )
