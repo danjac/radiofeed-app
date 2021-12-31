@@ -186,11 +186,23 @@ class TestPodcastEpisodes:
 
 
 class TestCategoryList:
+    url = reverse_lazy("podcasts:category_list")
+
     def test_get(self, db, client, django_assert_num_queries):
         CategoryFactory.create_batch(3)
         with django_assert_num_queries(2):
-            resp = client.get(reverse("podcasts:category_list"))
+            resp = client.get(self.url)
         assert_ok(resp)
+
+    def test_search(self, client, category, faker, django_assert_num_queries):
+
+        CategoryFactory.create_batch(3)
+        CategoryFactory(name="testing")
+
+        with django_assert_num_queries(2):
+            resp = client.get(self.url, {"q": "testing"})
+        assert_ok(resp)
+        assert len(resp.context_data["categories"]) == 1
 
 
 class TestCategoryDetail:

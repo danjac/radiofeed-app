@@ -4,12 +4,20 @@
 {% block subtitle %} | Categories {% endblock %}
 
 {% block content %}
-<h1 class="font-bold text-lg lg:text-xl text-center sm:text-left mb-3">
-    Categories
-</h1>
+<div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
+    <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl">
+        Categories
+    </h1>
+    {% if not has_subscriptions %}
+    <div class="flex items-center justify-center sm:justify-end space-x-3">
+        {% include "forms/_search_form.html" with placeholder="Find a category..." %}
+    </div>
+    {% endif %}
+</div>
+
 
 <ul class="space-y-3 divide-y divide-solid sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3">
-    {% cache 3600 categories %}
+    {% cache 3600 categories request.get_full_path %}
     {% for category in categories %}
     <li class="pt-3">
         <h2>

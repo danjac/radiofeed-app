@@ -185,10 +185,13 @@ def episodes(
 @require_http_methods(["GET"])
 def category_list(request: HttpRequest) -> HttpResponse:
 
+    categories = Category.objects.order_by("name")
+
+    if request.search:
+        categories = categories.search(request.search.value)
+
     return TemplateResponse(
-        request,
-        "podcasts/categories.html",
-        {"categories": Category.objects.order_by("name")},
+        request, "podcasts/categories.html", {"categories": categories}
     )
 
 
