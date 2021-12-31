@@ -21,10 +21,6 @@
         current: '00:00:00',
         duration: '00:00:00',
     },
-    storage: {
-        enable: 'player-enabled',
-        playbackRate: 'player-playback-rate',
-    },
     formatDuration(value) {
         if (isNaN(value) || value < 0) return '00:00:00';
         const duration = Math.floor(value);
@@ -101,11 +97,12 @@
 
         this.isError = false;
 
-        this.playbackRate = parseFloat(
-            sessionStorage.getItem(this.storage.playbackRate) || this.defaultPlaybackRate
-        );
+        const stored = this.restore();
 
-        if (this.autoplay || sessionStorage.getItem(this.storage.enable)) {
+        this.playbackRate = stored.playbackRate || this.defaultPlaybackRate;
+        this.autoplay = this.autoplay || stored.autoplay;
+
+        if (this.autoplay) {
             this.$refs.audio.play().catch((err) => {
                 this.isPaused = true;
                 this.isPlaying = false;
@@ -145,12 +142,12 @@
         this.isPaused = false;
         this.isPlaying = true;
         this.isError = false;
-        sessionStorage.setItem(this.storage.enable, true);
+        this.store();
     },
     paused() {
         this.isPlaying = false;
         this.isPaused = true;
-        sessionStorage.removeItem(this.storage.enable);
+        this.store();
     },
     incrementPlaybackRate() {
         this.changePlaybackRate(0.1);
@@ -170,7 +167,20 @@
     },
     setPlaybackRate(value) {
         this.playbackRate = value;
-        sessionStorage.setItem(this.storage.playbackRate, value);
+        this.store();
+    },
+    restore() {
+        const stored = sessionStorage.getItem('player');
+        return stored ? JSON.parse(stored) : {
+            playbackRate: this.defaultPlaybackRate,
+            autoplay: false
+        };
+    },
+    store() {
+        sessionStorage.setItem('player', JSON.stringify({
+            playbackRate: this.playbackRate,
+            autoplay: this.isPlaying
+        }));
     },
     skip() {
         if (!this.isPaused) {
