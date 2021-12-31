@@ -25,6 +25,7 @@ class TestRenderPlayer:
         req.player = Player(req)
 
         assert audio_player({"request": req}) == {
+            "request": req,
             "log": log,
             "episode": log.episode,
             "is_playing": True,

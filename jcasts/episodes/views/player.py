@@ -7,7 +7,6 @@ from django.views.decorators.http import require_http_methods
 from ratelimit.decorators import ratelimit
 
 from jcasts.episodes.models import AudioLog, Episode
-from jcasts.episodes.templatetags.player import get_player_context
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
 from jcasts.shared.response import HttpResponseNoContent
@@ -29,11 +28,16 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player(
+    return TemplateResponse(
         request,
-        log,
+        "episodes/_player.html",
         {
+            "log": log,
+            "episode": episode,
             "autoplay": True,
+            "completed": False,
+            "listened": True,
+            "is_playing": True,
             "player_action": True,
         },
     )
@@ -57,12 +61,14 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-    return render_player(
+    return TemplateResponse(
         request,
-        None,
+        "episodes/_player.html",
         {
             "episode": episode,
             "completed": mark_complete,
+            "listened": True,
+            "is_playing": False,
             "player_action": True,
         },
     )
@@ -72,14 +78,23 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
 @ajax_login_required
 def reload_player(request: HttpRequest) -> HttpResponse:
 
-    if episode_id := request.player.get():
-        log = (
+    if (episode_id := request.player.get()) and (
+        log := (
             AudioLog.objects.filter(user=request.user, episode=episode_id)
             .select_related("episode", "episode__podcast")
             .first()
         )
+    ):
 
-        return render_player(request, log)
+        return TemplateResponse(
+            request,
+            "episodes/_player.html",
+            {
+                "log": log,
+                "episode": log.episode,
+                "is_playing": True,
+            },
+        )
 
     return HttpResponse()
 
@@ -102,20 +117,3 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
-
-
-def render_player(
-    request: HttpRequest,
-    log: AudioLog | None,
-    extra_context: dict | None = None,
-) -> HttpResponse:
-    return TemplateResponse(
-        request,
-        "episodes/_player.html",
-        {
-            "completed": False,
-            "listened": True,
-            **get_player_context(log),
-            **(extra_context or {}),
-        },
-    )
