@@ -87,7 +87,8 @@ class TestSearchITunes:
     def test_search(self, client, db, mocker, django_assert_num_queries):
         feeds = [
             Feed(
-                url="https://feeds.fireside.fm/testandcode/rss",
+                url="https://example.com/id123456",
+                rss="https://feeds.fireside.fm/testandcode/rss",
                 title="Test & Code : Py4hon Testing",
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
             )

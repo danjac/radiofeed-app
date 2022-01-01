@@ -12,6 +12,7 @@ from jcasts.podcasts.models import Podcast
 MOCK_RESULT = {
     "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
     "collectionName": "Test & Code : Python Testing",
+    "collectionViewUrl": "https//itunes.com/id123345",
     "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
 }
 
@@ -197,7 +198,7 @@ class TestSearch:
     def test_ok(self, db, mock_good_response):
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     def test_bad_data(self, db, mock_invalid_response):
         feeds = list(itunes.search("test"))
@@ -213,7 +214,7 @@ class TestSearch:
         feeds = itunes.search_cached("test")
 
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
         assert cache.get(self.cache_key) == feeds
 
@@ -226,7 +227,13 @@ class TestSearch:
 
         cache.set(
             self.cache_key,
-            [itunes.Feed(url="https://example.com", title="test")],
+            [
+                itunes.Feed(
+                    rss="https://example.com",
+                    title="test",
+                    url="https://example.com/id1234",
+                )
+            ],
         )
 
         feeds = itunes.search_cached("test")
@@ -240,4 +247,4 @@ class TestSearch:
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
         feeds = list(itunes.search("test"))
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].url).exists()
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()

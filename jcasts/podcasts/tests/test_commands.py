@@ -15,7 +15,12 @@ class TestFetchTopRated:
     def test_command(self, mocker):
         mock_top_rated = mocker.patch(
             "jcasts.podcasts.itunes.top_rated",
-            return_value=[Feed(url="https://example.com")],
+            return_value=[
+                Feed(
+                    rss="https://example.com/test.xml",
+                    url="https://example.com/id2345",
+                )
+            ],
         )
         call_command("fetch_top_rated")
         mock_top_rated.assert_called()
@@ -30,7 +35,12 @@ class TestCrawlItunes:
     def test_command(self, mocker):
         mock_top_rated = mocker.patch(
             "jcasts.podcasts.itunes.crawl",
-            return_value=[Feed(url="https://example.com")],
+            return_value=[
+                Feed(
+                    rss="https://example.com",
+                    url="https://example.com/id2345",
+                )
+            ],
         )
         call_command("crawl_itunes")
         mock_top_rated.assert_called()

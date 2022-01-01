@@ -129,7 +129,7 @@ def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
     if not (feeds := list(parse_results(data))):
         return
 
-    podcasts = Podcast.objects.filter(rss__in=[f.url for f in feeds]).in_bulk(
+    podcasts = Podcast.objects.filter(rss__in=[f.rss for f in feeds]).in_bulk(
         field_name="rss"
     )
 
@@ -138,7 +138,7 @@ def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
 
     for feed in feeds:
 
-        feed.podcast = podcasts.get(feed.url, None)
+        feed.podcast = podcasts.get(feed.rss, None)
 
         if feed.podcast is None:
             for_insert.append(Podcast(title=feed.title, rss=feed.rss, **defaults))
