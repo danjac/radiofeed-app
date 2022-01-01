@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -55,11 +57,13 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
         messages.success(request, "Episode marked complete")
 
+    now = timezone.now()
+
     return render_history_actions(
         request,
         episode,
-        listened=True,
-        completed=True,
+        listened=now,
+        completed=now,
     )
 
 
@@ -79,8 +83,8 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> HttpResponse:
 def render_history_actions(
     request: HttpRequest,
     episode: Episode,
-    listened: bool = False,
-    completed: bool = False,
+    listened: datetime | None = None,
+    completed: datetime | None = None,
 ) -> HttpResponse:
     return TemplateResponse(
         request,
