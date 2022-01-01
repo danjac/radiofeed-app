@@ -412,5 +412,5 @@
 
 {% if episode and player_action %}
 {% include "episodes/_player_action.html" with hx_oob=True %}
-{% include "episodes/_history_actions.html" with hx_oob=True %}
+{% include "episodes/_history_actions.html" with hx_oob=True listened=True %}
 {% endif %}

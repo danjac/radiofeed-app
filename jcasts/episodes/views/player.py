@@ -28,16 +28,12 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return TemplateResponse(
+    return render_player(
         request,
-        "episodes/_player.html",
-        {
-            "log": log,
-            "episode": episode,
-            "listened": True,
-            "is_playing": True,
-            "player_action": True,
-        },
+        episode,
+        log=log,
+        is_playing=True,
+        player_action=True,
     )
 
 
@@ -59,16 +55,12 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-    return TemplateResponse(
+    return render_player(
         request,
-        "episodes/_player.html",
-        {
-            "episode": episode,
-            "completed": mark_complete,
-            "listened": True,
-            "is_playing": False,
-            "player_action": True,
-        },
+        episode,
+        completed=mark_complete,
+        is_playing=False,
+        player_action=True,
     )
 
 
@@ -84,14 +76,11 @@ def reload_player(request: HttpRequest) -> HttpResponse:
         )
     ):
 
-        return TemplateResponse(
+        return render_player(
             request,
-            "episodes/_player.html",
-            {
-                "log": log,
-                "episode": log.episode,
-                "is_playing": True,
-            },
+            log.episode,
+            log=log,
+            is_playing=True,
         )
 
     return HttpResponse()
@@ -115,3 +104,11 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseNoContent()
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
+
+
+def render_player(request: HttpRequest, episode: Episode | None, **extra_context):
+    return TemplateResponse(
+        request,
+        "episodes/_player.html",
+        {"episode": episode, **extra_context},
+    )
