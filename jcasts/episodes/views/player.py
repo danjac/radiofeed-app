@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.template.response import TemplateResponse
 from django.utils import timezone
@@ -43,21 +45,22 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
 
     if episode_id := request.player.pop():
         episode = get_episode_or_404(request, episode_id)
+        completed: datetime | None = None
 
         if mark_complete:
 
-            now = timezone.now()
+            completed = timezone.now()
 
             AudioLog.objects.filter(user=request.user, episode=episode).update(
-                completed=now,
-                updated=now,
+                completed=completed,
+                updated=completed,
                 current_time=0,
             )
 
         return render_player(
             request,
             episode,
-            completed=mark_complete,
+            completed=completed,
             is_playing=False,
             player_action=True,
         )
@@ -111,5 +114,9 @@ def render_player(request: HttpRequest, episode: Episode, **extra_context):
     return TemplateResponse(
         request,
         "episodes/_player.html",
-        {"episode": episode, **extra_context},
+        {
+            "episode": episode,
+            "listened": timezone.now(),
+            **extra_context,
+        },
     )
