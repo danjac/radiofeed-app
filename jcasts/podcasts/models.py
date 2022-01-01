@@ -10,7 +10,6 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, TrigramSimilarity
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models.functions import Lower
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.encoding import force_str
@@ -68,19 +67,6 @@ class PodcastQuerySet(FastCountMixin, SearchMixin, models.QuerySet):
                 Subscription.objects.filter(podcast=models.OuterRef("pk"))
             )
         )
-
-    def with_exact_match(self, search_term: str) -> models.QuerySet:
-        return self.annotate(
-            exact_match=models.Exists(
-                self.annotate(title_lower=Lower("title")).filter(
-                    pk=models.OuterRef("pk"), title_lower=search_term.lower()
-                )
-            )
-        )
-
-    def search_or_exact_match(self, search_term: str) -> models.QuerySet:
-        qs = self.with_exact_match(search_term).distinct()
-        return qs.search(search_term) | qs.filter(exact_match=True)
 
 
 PodcastManager = models.Manager.from_queryset(PodcastQuerySet)
@@ -164,7 +150,6 @@ class Podcast(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(Lower("title"), name="%(app_label)s_%(class)s_title_lower"),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             GinIndex(fields=["search_vector"]),

@@ -89,41 +89,6 @@ class TestPodcastManager:
         PodcastFactory(title="test")
         assert Podcast.objects.filter(title="test").count() == 1
 
-    def test_exact_match(self, db):
-        exact = PodcastFactory(title="testing")
-        PodcastFactory(title="test")
-        PodcastFactory(title="nomatch")
-
-        podcasts = Podcast.objects.with_exact_match("testing").order_by("-exact_match")
-        assert podcasts.count() == 3
-        first = podcasts.first()
-        assert first == exact
-        assert first.exact_match
-
-        second = podcasts[1]
-        assert not second.exact_match
-
-        third = podcasts[2]
-        assert not third.exact_match
-
-    def test_search_or_exact_match(self, db):
-        exact = PodcastFactory(title="test")
-        inexact = PodcastFactory(title="test a thing")
-        PodcastFactory(title="nomatch")
-
-        podcasts = Podcast.objects.search_or_exact_match("test").order_by(
-            "-exact_match",
-            "-rank",
-        )
-        assert podcasts.count() == 2
-        first = podcasts.first()
-        assert first == exact
-        assert first.exact_match
-
-        second = podcasts[1]
-        assert second == inexact
-        assert not second.exact_match
-
     def test_with_subscribed_true(self, db):
         SubscriptionFactory()
         assert Podcast.objects.with_subscribed().first().subscribed
