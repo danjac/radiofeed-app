@@ -30,7 +30,13 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     request.player.set(episode.id)
 
-    return render_player(request, episode, log=log, player_action=True)
+    return render_player(
+        request,
+        episode,
+        current_time=log.current_time,
+        completed=log.completed,
+        player_action=True,
+    )
 
 
 @require_http_methods(["POST"])
@@ -51,7 +57,13 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-        return render_player(request, episode, completed=completed, player_action=True)
+        return render_player(
+            request,
+            episode,
+            completed=completed,
+            is_playing=False,
+            player_action=True,
+        )
 
     return HttpResponse()
 
@@ -68,7 +80,12 @@ def reload_player(request: HttpRequest) -> HttpResponse:
         )
     ):
 
-        return render_player(request, log.episode, log=log)
+        return render_player(
+            request,
+            log.episode,
+            completed=log.completed,
+            current_time=log.current_time,
+        )
 
     return HttpResponse()
 
@@ -97,19 +114,21 @@ def render_player(
     request: HttpRequest,
     episode: Episode,
     *,
-    log: AudioLog | None = None,
+    is_playing: bool = True,
     completed: datetime | None = None,
+    current_time: int | None = None,
     player_action: bool = False,
 ):
+
     return TemplateResponse(
         request,
         "episodes/_player.html",
         {
             "episode": episode,
-            "log": log,
-            "listened": timezone.now(),
-            "completed": completed,
-            "is_playing": log is not None,
+            "current_time": current_time,
+            "is_playing": is_playing,
             "player_action": player_action,
+            "completed": completed,
+            "listened": timezone.now(),
         },
     )

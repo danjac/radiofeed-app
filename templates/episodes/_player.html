@@ -4,7 +4,7 @@
 <div x-data="{
     autoplay: {{ player_action|yesno:'true,false' }},
     mediaSrc: '{{ episode.media_url }}',
-    currentTime: {% if log.completed %}0{% else %}{{ log.current_time }}{% endif %},
+    currentTime: {% if completed %}0{% else %}{{ current_time|default:0 }}{% endif %},
     duration: 0,
     isError: false,
     isLoaded: false,
