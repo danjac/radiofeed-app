@@ -49,15 +49,15 @@ def mark_complete(request: HttpRequest, episode_id: int) -> HttpResponse:
 
     episode = get_episode_or_404(request, episode_id)
 
+    now = timezone.now()
+
     if not request.player.has(episode.id):
 
         AudioLog.objects.filter(user=request.user, episode=episode).update(
-            completed=timezone.now(), current_time=0
+            completed=now, current_time=0
         )
 
         messages.success(request, "Episode marked complete")
-
-    now = timezone.now()
 
     return render_history_actions(
         request,
