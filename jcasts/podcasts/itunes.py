@@ -21,6 +21,7 @@ RE_PODCAST_ID = re.compile(r"id(?P<id>[0-9]+)")
 
 @attr.s
 class Feed:
+    rss: str = attr.ib()
     url: str = attr.ib()
     title: str = attr.ib(default="")
     image: str = attr.ib(default="")
@@ -140,7 +141,7 @@ def parse_feeds(data: dict, **defaults) -> Generator[Feed, None, None]:
         feed.podcast = podcasts.get(feed.url, None)
 
         if feed.podcast is None:
-            for_insert.append(Podcast(title=feed.title, rss=feed.url, **defaults))
+            for_insert.append(Podcast(title=feed.title, rss=feed.rss, **defaults))
         elif defaults:
             for k, v in defaults.items():
                 setattr(feed.podcast, k, v)
@@ -161,7 +162,8 @@ def parse_results(data: dict) -> Generator[Feed, None, None]:
 
         try:
             yield Feed(
-                url=result["feedUrl"],
+                rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
                 title=result["collectionName"],
                 image=result["artworkUrl600"],
             )
