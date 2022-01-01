@@ -1,7 +1,8 @@
 {% if page_obj.has_next or page_obj.has_previous %}
 <nav class="flex items-center justify-between"
      role="navigation"
-     aria-label="Pagination">
+     aria-label="Pagination"
+     hx-target="#object-list">
     {% if page_obj.has_previous %}
     <a class="link"
        href="{% pagination_url page_obj.previous_page_number %}"

@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from jcasts.episodes.models import Bookmark, Episode
 from jcasts.episodes.views import get_episode_or_404
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.paginate import paginate
+from jcasts.shared.paginate import render_paginated_list
 from jcasts.shared.response import HttpResponseConflict
 
 
@@ -23,12 +23,11 @@ def index(request: HttpRequest) -> HttpResponse:
     else:
         bookmarks = bookmarks.order_by("-created")
 
-    return TemplateResponse(
+    return render_paginated_list(
         request,
+        bookmarks,
         "episodes/bookmarks.html",
-        {
-            "page_obj": paginate(request, bookmarks),
-        },
+        "episodes/_bookmarks.html",
     )
 
 

@@ -25,7 +25,7 @@ from jcasts.episodes.views import render_episode_list
 from jcasts.podcasts import itunes
 from jcasts.podcasts.models import Category, Podcast, Recommendation, Subscription
 from jcasts.shared.decorators import ajax_login_required
-from jcasts.shared.paginate import paginate
+from jcasts.shared.paginate import render_paginated_list
 from jcasts.shared.response import HttpResponseConflict
 
 
@@ -300,15 +300,13 @@ def render_podcast_list(
     cached: bool = False,
 ) -> TemplateResponse:
 
-    return TemplateResponse(
+    return render_paginated_list(
         request,
+        podcasts,
         template_name,
+        "podcasts/_podcasts_cached.html" if cached else "podcasts/_podcasts.html",
         {
             "cache_timeout": settings.DEFAULT_CACHE_TIMEOUT,
-            "page_obj": paginate(request, podcasts),
-            "pagination_template": "podcasts/_podcasts_cached.html"
-            if cached
-            else "podcasts/_podcasts.html",
             **(extra_context or {}),
         },
     )
