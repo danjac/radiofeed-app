@@ -110,13 +110,24 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def render_player(request: HttpRequest, episode: Episode, **extra_context):
+def render_player(
+    request: HttpRequest,
+    episode: Episode,
+    *,
+    is_playing: bool,
+    log: AudioLog | None = None,
+    player_action: bool = False,
+    completed: datetime | None = None,
+):
     return TemplateResponse(
         request,
         "episodes/_player.html",
         {
             "episode": episode,
+            "log": log,
             "listened": timezone.now(),
-            **extra_context,
+            "completed": completed,
+            "is_playing": is_playing,
+            "player_action": player_action,
         },
     )
