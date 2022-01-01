@@ -40,7 +40,6 @@ def start_player(request: HttpRequest, episode_id: int) -> HttpResponse:
 @require_http_methods(["POST"])
 @ajax_login_required
 def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpResponse:
-    episode: Episode | None = None
 
     if episode_id := request.player.pop():
         episode = get_episode_or_404(request, episode_id)
@@ -55,13 +54,15 @@ def close_player(request: HttpRequest, mark_complete: bool = False) -> HttpRespo
                 current_time=0,
             )
 
-    return render_player(
-        request,
-        episode,
-        completed=mark_complete,
-        is_playing=False,
-        player_action=True,
-    )
+        return render_player(
+            request,
+            episode,
+            completed=mark_complete,
+            is_playing=False,
+            player_action=True,
+        )
+
+    return HttpResponse()
 
 
 @require_http_methods(["GET"])
@@ -106,7 +107,7 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
 
-def render_player(request: HttpRequest, episode: Episode | None, **extra_context):
+def render_player(request: HttpRequest, episode: Episode, **extra_context):
     return TemplateResponse(
         request,
         "episodes/_player.html",
