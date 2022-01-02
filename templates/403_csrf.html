@@ -1,10 +1,10 @@
 {% extends "error_base.html" %}
 {% block content %}
-<p class="mb-3">
-    Sorry, there's been a problem posting your form. Please reload this page and try again.
-</p>
-<p>
-    <a class="btn btn-default"
-       href="{{ request.get_full_path }}">Reload Page</a>
-</p>
+    <p class="mb-3">
+        Sorry, there's been a problem posting your form. Please reload this page and try again.
+    </p>
+    <p>
+        <a class="btn btn-default"
+            href="{{ request.get_full_path }}">Reload Page</a>
+    </p>
 {% endblock %}

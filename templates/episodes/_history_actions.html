@@ -1,29 +1,29 @@
 {% with ICON_CSS="h-4 w-4 lg:h-6 lg:w-6" %}
-<div class="flex items-center space-x-3 lg:space-x-4"
-     id="history-actions-{{ episode.id }}"
-     hx-target="this"
-     hx-swap="outerHTML"
-     {% if hx_oob %}hx-swap-oob="true"
-     {% endif %}>
-    {% if listened and not is_playing %}
-    {% if not completed %}
-    <button title="Mark Complete"
-            class="link"
-            hx-post="{% url 'episodes:mark_complete' episode.id %}">
-        {% icon "check" css_class=ICON_CSS %}
-    </button>
-    {% endif %}
+    <div class="flex items-center space-x-3 lg:space-x-4"
+        id="history-actions-{{ episode.id }}"
+        hx-target="this"
+        hx-swap="outerHTML"
+        {% if hx_oob %}hx-swap-oob="true"
+        {% endif %}>
+        {% if listened and not is_playing %}
+            {% if not completed %}
+                <button title="Mark Complete"
+                    class="link"
+                    hx-post="{% url 'episodes:mark_complete' episode.id %}">
+                    {% icon "check" css_class=ICON_CSS %}
+                </button>
+            {% endif %}
 
-    <button title="Remove from History"
-            class="link"
-            hx-confirm="Are you sure you want to remove this episode from your History?"
-            hx-delete="{% url 'episodes:remove_audio_log' episode.id %}">
-        {% icon "trash" css_class=ICON_CSS %}
-    </button>
-    {% endif %}
-</div>
+            <button title="Remove from History"
+                class="link"
+                hx-confirm="Are you sure you want to remove this episode from your History?"
+                hx-delete="{% url 'episodes:remove_audio_log' episode.id %}">
+                {% icon "trash" css_class=ICON_CSS %}
+            </button>
+        {% endif %}
+    </div>
 {% endwith %}
 
 {% if action %}
-{% include "_messages.html" with hx_oob=True %}
+    {% include "_messages.html" with hx_oob=True %}
 {% endif %}

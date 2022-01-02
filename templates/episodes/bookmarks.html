@@ -3,20 +3,20 @@
 {% block subtitle %} | Bookmarks{% endblock %}
 
 {% block robots %}
-<meta name="robots"
-      content="noindex" />
+    <meta name="robots"
+        content="noindex" />
 {% endblock %}
 
 {% block content %}
-<div id="bookmarks">
-    <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
-        <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl">Bookmarks</h1>
-        {% if request.search or page_obj.paginator.count %}
-        <div class="flex items-center justify-center sm:justify-end">
-            {% include "forms/_search_form.html" with placeholder="Search: Bookmarks" %}
+    <div id="bookmarks">
+        <div class="sm:flex justify-between items-center space-y-2 sm:space-y-0 mb-3">
+            <h1 class="font-bold flex justify-center sm:justify-start text-lg lg:text-xl">Bookmarks</h1>
+            {% if request.search or page_obj.paginator.count %}
+                <div class="flex items-center justify-center sm:justify-end">
+                    {% include "forms/_search_form.html" with placeholder="Search: Bookmarks" %}
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
+        {% include pagination_template %}
     </div>
-    {% include pagination_template %}
-</div>
 {% endblock content %}

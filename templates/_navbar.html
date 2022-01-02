@@ -1,62 +1,62 @@
 {% load static %}
 {% url 'podcasts:index' as home_url %}
 <header class="bg-black dark:bg-gray-800 text-white sticky top-0 w-full z-20 shadow"
-        x-data="{sidebar: false}"
-        @htmx:after-request.window="sidebar=false">
+    x-data="{sidebar: false}"
+    @htmx:after-request.window="sidebar=false">
     <div class="flex items-center justify-between px-1 py-2">
 
         <div class="flex items-center flex-shrink-0 mr-6">
 
             <a href="{{ home_url }}"
-               @click="$dispatch('close-sidebar')"
-               title="{{ request.site.name }}"
-               class="mr-2 lg:mr-4 inline-block">
+                @click="$dispatch('close-sidebar')"
+                title="{{ request.site.name }}"
+                class="mr-2 lg:mr-4 inline-block">
                 <img src="{% static 'img/wave.png' %}"
-                     height="32"
-                     width="32"
-                     class="h-6 w-6 lg:h-8 lg:w-8"
-                     alt="{{ request.site.name }}">
+                    height="32"
+                    width="32"
+                    class="h-6 w-6 lg:h-8 lg:w-8"
+                    alt="{{ request.site.name }}">
             </a>
 
             <a class="font-bold text-lg lg:text-xl"
-               title="{{ request.site.name }}"
-               @click="$dispatch('close-sidebar')"
-               href="{{ home_url }}">{{ request.site.name }}</a>
+                title="{{ request.site.name }}"
+                @click="$dispatch('close-sidebar')"
+                href="{{ home_url }}">{{ request.site.name }}</a>
 
             {% if debug %}
-            <div class="text-xs ml-2">
-                <span class="sm:hidden">xs</span>
-                <span class="hidden sm:inline-block md:hidden">sm</span>
-                <span class="hidden md:inline-block lg:hidden">md</span>
-                <span class="hidden lg:inline-block xl:hidden">lg</span>
-                <span class="hidden xl:inline-block 2xl:hidden">xl</span>
-                <span class="hidden 2xl:inline-block 3xl:hidden">2xl</span>
-                <span class="hidden 3xl:inline-block">3xl+</span>
-            </div>
+                <div class="text-xs ml-2">
+                    <span class="sm:hidden">xs</span>
+                    <span class="hidden sm:inline-block md:hidden">sm</span>
+                    <span class="hidden md:inline-block lg:hidden">md</span>
+                    <span class="hidden lg:inline-block xl:hidden">lg</span>
+                    <span class="hidden xl:inline-block 2xl:hidden">xl</span>
+                    <span class="hidden 2xl:inline-block 3xl:hidden">2xl</span>
+                    <span class="hidden 3xl:inline-block">3xl+</span>
+                </div>
             {% endif %}
 
         </div>
 
         <form action="{% url 'podcasts:search_podcasts' %}"
-              method="get"
-              class="relative bg-transparent hidden sm:block"
-              x-data="{search: ''}"
-              @submit="$refs.search.blur();"
-              @htmx:after-request.window="search=''">
+            method="get"
+            class="relative bg-transparent hidden sm:block"
+            x-data="{search: ''}"
+            @submit="$refs.search.blur();"
+            @htmx:after-request.window="search=''">
             <input type="search"
-                   x-ref="search"
-                   x-model="search"
-                   name="q"
-                   accesskey="k"
-                   autocomplete="off"
-                   aria-label="Search"
-                   placeholder="Search"
-                   class="px-4 py-1 w-64 lg:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
+                x-ref="search"
+                x-model="search"
+                name="q"
+                accesskey="k"
+                autocomplete="off"
+                aria-label="Search"
+                placeholder="Search"
+                class="px-4 py-1 w-64 lg:w-72 focus:outline-none rounded focus:ring placeholder-opacity-100 text-gray-900 dark:text-white dark:bg-gray-900 text-sm lg:text-base">
             <div class="absolute inset-y-0 right-0 flex items-center pr-2">
 
                 <button type="submit"
-                        title="Search"
-                        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                    title="Search"
+                    class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                     {% icon "search" css_class="h-4 w-4" %}
                 </button>
             </div>
@@ -64,57 +64,57 @@
 
         <div class="flex items-center space-x-3">
             {% if user.is_authenticated %}
-            <a href="{% url 'users:preferences' %}"
-               @click="$dispatch('close-sidebar')"
-               title="Settings for {{ user.username }}"
-               class="flex items-center font-bold">
-                {{ user.username|slice:12 }}
-            </a>
+                <a href="{% url 'users:preferences' %}"
+                    @click="$dispatch('close-sidebar')"
+                    title="Settings for {{ user.username }}"
+                    class="flex items-center font-bold">
+                    {{ user.username|slice:12 }}
+                </a>
             {% endif %}
             <button class="xl:hidden focus:outline-none transform transition"
-                    title="Toggle Menu"
-                    x-cloak
-                    x-show.transition="!sidebar"
-                    @click="sidebar=true">
+                title="Toggle Menu"
+                x-cloak
+                x-show.transition="!sidebar"
+                @click="sidebar=true">
                 {% icon "menu" css_class="h-6 w-6" %}
             </button>
             <button class="xl:hidden focus:outline-none transform transition"
-                    title="Toggle Menu"
-                    x-cloak
-                    x-show.transition="sidebar"
-                    @click="sidebar=false">
+                title="Toggle Menu"
+                x-cloak
+                x-show.transition="sidebar"
+                @click="sidebar=false">
                 {% icon "chevron_down" css_class="h-6 w-6" %}
             </button>
         </div>
     </div>
     <div class="xl:hidden absolute py-6 bg-white dark:bg-gray-800 top-15 left-0 w-full shadow-xl z-50"
-         x-cloak
-         x-show.transition="sidebar"
-         x-transition:enter="transition ease-out duration-100"
-         x-transition:enter-start="transform opacity-0 scale-95"
-         x-transition:enter-end="transform opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-75"
-         x-transition:leave-start="transform opacity-100 scale-100"
-         x-transition:leave-end="transform opacity-0 scale-95">
+        x-cloak
+        x-show.transition="sidebar"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="transform opacity-0 scale-95"
+        x-transition:enter-end="transform opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-75"
+        x-transition:leave-start="transform opacity-100 scale-100"
+        x-transition:leave-end="transform opacity-0 scale-95">
         <div class="flex justify-center sm:justify-start sm:hidden mb-3"
-             @click.away="sidebar=false">
+            @click.away="sidebar=false">
 
             <form action="{% url 'podcasts:search_podcasts' %}"
-                  method="get"
-                  class="relative bg-transparent"
-                  x-data="{search: ''}"
-                  @htmx:after-request.window="search=''">
+                method="get"
+                class="relative bg-transparent"
+                x-data="{search: ''}"
+                @htmx:after-request.window="search=''">
                 <input type="search"
-                       x-model="search"
-                       name="q"
-                       autocomplete="off"
-                       aria-label="Search"
-                       placeholder="Search"
-                       class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
+                    x-model="search"
+                    name="q"
+                    autocomplete="off"
+                    aria-label="Search"
+                    placeholder="Search"
+                    class="px-4 py-1 focus:outline-none focus:ring rounded w-64 placeholder-opacity-100 text-gray-900 dark:bg-gray-900 dark:text-white text-sm">
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2">
                     <button type="submit"
-                            title="Search"
-                            class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
+                        title="Search"
+                        class="focus:outline-none focus:shadow-outline text-gray-900 dark:text-gray-100">
                         {% icon "search" css_class="h-4 w-4" %}
                     </button>
                 </div>
@@ -123,7 +123,7 @@
         {% include "_sidebar.html" %}
     </div>
     {% block signup_cta %}
-    {% include "_signup_cta.html" %}
+        {% include "_signup_cta.html" %}
     {% endblock %}
 
 

@@ -5,32 +5,32 @@
 {% block head_title %}Confirm E-mail Address{% endblock %}
 
 {% block content %}
-<h1 class="font-bold mb-3 text-lg lg:text-xl">Confirm E-mail Address</h1>
+    <h1 class="font-bold mb-3 text-lg lg:text-xl">Confirm E-mail Address</h1>
 
-{% if confirmation %}
+    {% if confirmation %}
 
-{% user_display confirmation.email_address.user as user_display %}
-<p class="mb-3">Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.</p>
+        {% user_display confirmation.email_address.user as user_display %}
+        <p class="mb-3">Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.</p>
 
-<form method="post"
-      action="{% url 'account_confirm_email' confirmation.key %}"
-      hx-disable="true"
-      novalidate>
-    {% csrf_token %}
-    {{ form }}
-    <div class="flex items-center">
-        <button class="inline-flex items-center btn btn-default"
-                name="action_add"
-                value="true">
-            {% icon "check" css_class="h-4 w-4 mr-2" %}
-            Confirm E-Mail
-        </button>
-    </div>
-</form>
-{% else %}
+        <form method="post"
+            action="{% url 'account_confirm_email' confirmation.key %}"
+            hx-disable="true"
+            novalidate>
+            {% csrf_token %}
+            {{ form }}
+            <div class="flex items-center">
+                <button class="inline-flex items-center btn btn-default"
+                    name="action_add"
+                    value="true">
+                    {% icon "check" css_class="h-4 w-4 mr-2" %}
+                    Confirm E-Mail
+                </button>
+            </div>
+        </form>
+    {% else %}
 
-{% url 'account_email' as email_url %}
-<p>This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.</p>
-{% endif %}
+        {% url 'account_email' as email_url %}
+        <p>This e-mail confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new e-mail confirmation request</a>.</p>
+    {% endif %}
 
 {% endblock %}

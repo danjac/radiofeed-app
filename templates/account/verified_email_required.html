@@ -4,19 +4,19 @@
 {% block subtitle %} | Verify Your E-mail Address{% endblock %}
 
 {% block content %}
-<h1 class="text-lg lg:text-xl mb-3 font-bold">Verify Your E-mail Address</h1>
+    <h1 class="text-lg lg:text-xl mb-3 font-bold">Verify Your E-mail Address</h1>
 
-{% url 'account_email' as email_url %}
+    {% url 'account_email' as email_url %}
 
-<p class="mb-3">This part of the site requires us to verify that
-    you are who you claim to be. For this purpose, we require that you
-    verify ownership of your e-mail address. </p>
+    <p class="mb-3">This part of the site requires us to verify that
+        you are who you claim to be. For this purpose, we require that you
+        verify ownership of your e-mail address. </p>
 
-<p class="mb-3">We have sent an e-mail to you for
-    verification. Please click on the link inside this e-mail. Please
-    contact us if you do not receive it within a few minutes.</p>
+    <p class="mb-3">We have sent an e-mail to you for
+        verification. Please click on the link inside this e-mail. Please
+        contact us if you do not receive it within a few minutes.</p>
 
-<p><strong>Note:</strong> you can still <a href="{{ email_url }}">change your e-mail address</a>.</p>
+    <p><strong>Note:</strong> you can still <a href="{{ email_url }}">change your e-mail address</a>.</p>
 
 
 {% endblock %}

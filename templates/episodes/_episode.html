@@ -1,33 +1,33 @@
 {% extends "_list_item.html" %}
 
 {% block cover_image %}
-{% if is_podcast_detail %}
-{% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url %}
-{% else %}
-{% with podcast=episode.podcast %}
-{% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
-{% endwith %}
-{% endif %}
+    {% if is_podcast_detail %}
+        {% include "_cover_image.html" with cover_url=episode.get_cover_url alt=episode.cleaned_title size=20 url=episode.get_absolute_url %}
+    {% else %}
+        {% with podcast=episode.podcast %}
+            {% include "_cover_image.html" with cover_url=podcast.cover_url alt=podcast.cleaned_title size=20 url=podcast.get_absolute_url %}
+        {% endwith %}
+    {% endif %}
 {% endblock cover_image %}
 
 {% block title %}
-<a href="{{ episode.get_absolute_url }}"
-   class="link"
-   title="{{ episode.cleaned_title }}">
-    {{ episode.cleaned_title }}
-</a>
+    <a href="{{ episode.get_absolute_url }}"
+        class="link"
+        title="{{ episode.cleaned_title }}">
+        {{ episode.cleaned_title }}
+    </a>
 {% endblock title %}
 
 {% block subtitle %}
-{% if is_podcast_detail %}
-{% include "_date.html" with value=episode.pub_date title="Release Date" %}
-{% else %}
-{% with podcast=episode.podcast %}
-<a href="{{ podcast.get_episodes_url }}"
-   class="link text-gray-600 dark:text-gray-300"
-   title="{{ podcast.cleaned_title }}">
-    {{ podcast.cleaned_title }}
-</a>
-{% endwith %}
-{% endif %}
+    {% if is_podcast_detail %}
+        {% include "_date.html" with value=episode.pub_date title="Release Date" %}
+    {% else %}
+        {% with podcast=episode.podcast %}
+            <a href="{{ podcast.get_episodes_url }}"
+                class="link text-gray-600 dark:text-gray-300"
+                title="{{ podcast.cleaned_title }}">
+                {{ podcast.cleaned_title }}
+            </a>
+        {% endwith %}
+    {% endif %}
 {% endblock subtitle %}

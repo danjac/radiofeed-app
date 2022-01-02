@@ -1,17 +1,17 @@
 <div class="flex items-center space-x-3 lg:space-x-4">
     <a download
-       title="Download {{ episode.get_media_url_ext|upper }} File"
-       href="{{ episode.media_url }}"
-       class="link">
+        title="Download {{ episode.get_media_url_ext|upper }} File"
+        href="{{ episode.media_url }}"
+        class="link">
         {% if user.is_anonymous %}
-        Download
+            Download
         {% else %}
-        {% icon "download" css_class="h-4 w-4 lg:h-6 lg:w-6" %}
+            {% icon "download" css_class="h-4 w-4 lg:h-6 lg:w-6" %}
         {% endif %}
     </a>
 
     {% if user.is_authenticated %}
-    {% include "episodes/_bookmark_action.html" %}
-    {% include "episodes/_history_actions.html" %}
+        {% include "episodes/_bookmark_action.html" %}
+        {% include "episodes/_history_actions.html" %}
     {% endif %}
 </div>

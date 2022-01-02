@@ -1,17 +1,17 @@
 {% load cache %}
 {% cache 3600 podcast-categories podcast.id %}
-{% with categories=podcast.categories.all %}
-{% if categories %}
-<div class="max-w-max flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
-    {% for category in categories %}
-    <a class="inline-flex items-center link"
-       title="{{ category.name }} Podcasts"
-       href="{{ category.get_absolute_url }}">
-        {% icon "tag" css_class="h-4 w-4 mr-2" %}
-        {{ category.name }}
-    </a>
-    {% endfor %}
-</div>
-{% endif %}
-{% endwith %}
+    {% with categories=podcast.categories.all %}
+        {% if categories %}
+            <div class="max-w-max flex-wrap flex items-center space-x-2 sm:space-x-3 leading-loose">
+                {% for category in categories %}
+                    <a class="inline-flex items-center link"
+                        title="{{ category.name }} Podcasts"
+                        href="{{ category.get_absolute_url }}">
+                        {% icon "tag" css_class="h-4 w-4 mr-2" %}
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 {% endcache %}

@@ -1,29 +1,29 @@
 {% extends "socialaccount/base.html" %}
 
 {% block content %}
-{% if process == "connect" %}
+    {% if process == "connect" %}
 
-<h1 class="mb-3 font-bold text-lg lg:text-xl">Connect to {{ provider.name }}</h1>
-<p class="mb-3">You are about to connect a new third party account from {{ provider.name }}.</p>
+        <h1 class="mb-3 font-bold text-lg lg:text-xl">Connect to {{ provider.name }}</h1>
+        <p class="mb-3">You are about to connect a new third party account from {{ provider.name }}.</p>
 
-{% else %}
+    {% else %}
 
-<h1 class="mb-3 font-bold text-lg lg:text-xl">Sign In Via {{ provider.name }}</h1>
-<p class="mb-3">You are about to sign in using a third party account from {{ provider.name }}.</p>
+        <h1 class="mb-3 font-bold text-lg lg:text-xl">Sign In Via {{ provider.name }}</h1>
+        <p class="mb-3">You are about to sign in using a third party account from {{ provider.name }}.</p>
 
-{% endif %}
+    {% endif %}
 
-<form method="post"
-      hx-disable="true">
-    {% csrf_token %}
-    <button class="inline-flex items-center btn btn-default"
+    <form method="post"
+        hx-disable="true">
+        {% csrf_token %}
+        <button class="inline-flex items-center btn btn-default"
             type="submit">
-        {% icon "login" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-        {% if process == "connect" %}
-        Connect
-        {% else %}
-        Sign In
-        {% endif %}
-    </button>
-</form>
+            {% icon "login" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+            {% if process == "connect" %}
+                Connect
+            {% else %}
+                Sign In
+            {% endif %}
+        </button>
+    </form>
 {% endblock %}

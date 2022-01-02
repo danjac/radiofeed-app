@@ -1,20 +1,20 @@
 {% extends "_list_item.html" %}
 {% block cover_image %}
-{% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
+    {% include "_cover_image.html" with cover_url=feed.image alt=feed.title size=20 %}
 {% endblock cover_image %}
 
 {% block title %}
-<a title="{{ feed.title }}"
-   class="link font-bold"
-   rel="noopener"
-   target="_blank"
-   href="{{ feed.url }}">
-    {{ feed.title }}
-</a>
+    <a title="{{ feed.title }}"
+        class="link font-bold"
+        rel="noopener"
+        target="_blank"
+        href="{{ feed.url }}">
+        {{ feed.title }}
+    </a>
 {% endblock title %}
 
 {% block subtitle %}
-<span class="animate-pulse">
-    Adding podcast to database...
-</span>
+    <span class="animate-pulse">
+        Adding podcast to database...
+    </span>
 {% endblock subtitle %}

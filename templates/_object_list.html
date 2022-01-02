@@ -1,20 +1,20 @@
 {% load static %}
 <section role="list"
-         class="space-y-3"
-         id="object-list">
+    class="space-y-3"
+    id="object-list">
     {% block result_list %}
-    {% for object in object_list %}
-    {% block result %}{% endblock %}
-    {% empty %}
-    {% block empty_list %}
-    <p class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
-        {% if request.search %}
-        No results found for <span class="font-bold">{{ request.search.value }}</span>.
-        {% else %}
-        Nothing to see here.
-        {% endif %}
-    </p>
-    {% endblock %}
-    {% endfor %}
+        {% for object in object_list %}
+            {% block result %}{% endblock %}
+        {% empty %}
+            {% block empty_list %}
+                <p class="pt-3 border-t dark:border-gray-500 space-y-3 text-center sm:text-left">
+                    {% if request.search %}
+                        No results found for <span class="font-bold">{{ request.search.value }}</span>.
+                    {% else %}
+                        Nothing to see here.
+                    {% endif %}
+                </p>
+            {% endblock %}
+        {% endfor %}
     {% endblock result_list %}
 </section>

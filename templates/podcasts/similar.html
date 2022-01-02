@@ -4,8 +4,8 @@
 {% block subtitle %}{{ block.super }} | Similar Podcasts{% endblock %}
 {% block podcast_content %}
 
-{% cache 3600 recommendations podcast.id %}
-{% include "podcasts/_recommendations.html" with object_list=recommendations %}
-{% endcache %}
+    {% cache 3600 recommendations podcast.id %}
+        {% include "podcasts/_recommendations.html" with object_list=recommendations %}
+    {% endcache %}
 
 {% endblock podcast_content %}

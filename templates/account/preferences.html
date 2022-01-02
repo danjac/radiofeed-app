@@ -5,17 +5,17 @@
 {% block subtitle %}{{ block.super }} | Preferences{% endblock %}
 
 {% block settings_content %}
-<form method="post"
-      action="{{ request.path }}"
-      class="space-y-3"
-      novalidate>
-    {% csrf_token %}
-    {{ form }}
-    <div>
-        <button class="inline-flex items-center btn btn-default">
-            {% icon "check" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
-            Save Changes
-        </button>
-    </div>
-</form>
+    <form method="post"
+        action="{{ request.path }}"
+        class="space-y-3"
+        novalidate>
+        {% csrf_token %}
+        {{ form }}
+        <div>
+            <button class="inline-flex items-center btn btn-default">
+                {% icon "check" css_class="h-4 w-4 lg:h-5 lg:w-5 mr-2" %}
+                Save Changes
+            </button>
+        </div>
+    </form>
 {% endblock %}
