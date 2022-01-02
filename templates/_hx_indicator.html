@@ -2,12 +2,13 @@
     id="loader"
     x-data="{width: 0}"
     x-init="
+    {# fmt:off #}
     setInterval(() => {
-    if ($el.classList.contains('htmx-request')) {
-    width = width + (Math.random() / 100);
-    $el.style.width = `${10 + (width * 90)}%`;
-    } else {
-    width = 0;
-    }
-    }, 300);
-    "></div>
+        if ($el.classList.contains('htmx-request')) {
+            width = width + (Math.random() / 100);
+            $el.style.width = `${10 + (width * 90)}%`;
+        } else {
+            width = 0;
+        }
+    }, 300);"
+     {# fmt:on #}></div>
