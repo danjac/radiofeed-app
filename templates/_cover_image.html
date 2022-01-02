@@ -1,32 +1,30 @@
 {% load static %}
 {% static 'img/podcast-icon.png' as placeholder %}
-{% spaceless %}
-    <img class="object-cover bg-transparent {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}{% if url %} hover:opacity-75 cursor-pointer{% endif %}"
-        alt="{{ alt }}"
-        title="{{ alt }}"
-        loading="lazy"
-        width="{{ size }}"
-        height="{{ size }}"
-        src="{{ placeholder }}"
-        {% if url %}
-            role="link"
-            hx-get="{{ url }}"
-            hx-push-url="true"
-            {% if hx_swap %}
-                hx-swap="{{ hx_swap }}"
-            {% endif %}
+<img class="object-cover bg-transparent {% if css_class %}{{ css_class }}{% else %}h-{{ size }} w-{{ size }}{% endif %}{% if url %} hover:opacity-75 cursor-pointer{% endif %}"
+    alt="{{ alt }}"
+    title="{{ alt }}"
+    loading="lazy"
+    width="{{ size }}"
+    height="{{ size }}"
+    src="{{ placeholder }}"
+    {% if url %}
+        role="link"
+        hx-get="{{ url }}"
+        hx-push-url="true"
+        {% if hx_swap %}
+            hx-swap="{{ hx_swap }}"
         {% endif %}
-        {% if cover_url %}
-            x-data="{
-            isLoaded: false,
-            src: '{{ cover_url|escapejs }}',
-            placeholder: '{{ placeholder|escapejs }}',
-            coverUrl: '{{ cover_url|escapejs }}'
-            }"
-            x-init="src=placeholder;"
-            @load.once="src=coverUrl;isLoaded=true;"
-            @error.once="src=placeholder;isLoaded=true;"
-            :class="{'filter blur-sm': !isLoaded}"
-            :src="src"
-        {% endif %}>
-{% endspaceless %}
+    {% endif %}
+    {% if cover_url %}
+        x-data="{
+        isLoaded: false,
+        src: '{{ cover_url|escapejs }}',
+        placeholder: '{{ placeholder|escapejs }}',
+        coverUrl: '{{ cover_url|escapejs }}'
+        }"
+        x-init="src=placeholder;"
+        @load.once="src=coverUrl;isLoaded=true;"
+        @error.once="src=placeholder;isLoaded=true;"
+        :class="{'filter blur-sm': !isLoaded}"
+        :src="src"
+    {% endif %}>
