@@ -1,78 +1,80 @@
-{% load static player %}
-{% block header_tags %}
-    <!DOCTYPE html>
-    <html lang="en">
+{% spaceless %}
+    {% load static player %}
+    {% block header_tags %}
+        <!DOCTYPE html>
+        <html lang="en">
 
-        <head>
-            {% block head %}
-                {% block title_tag %}
-                    <title>
-                        {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
-                    </title>
-                {% endblock title_tag %}
-                {% block meta_tags %}
-                    {% include "_meta.html" %}
-                {% endblock meta_tags %}
-                {% include "_static.html" %}
-                {% include "_google_search.html" %}
-            {% endblock head %}
-        </head>
+            <head>
+                {% block head %}
+                    {% block title_tag %}
+                        <title>
+                            {% spaceless %}{% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}{% endspaceless %}
+                        </title>
+                    {% endblock title_tag %}
+                    {% block meta_tags %}
+                        {% include "_meta.html" %}
+                    {% endblock meta_tags %}
+                    {% include "_static.html" %}
+                    {% include "_google_search.html" %}
+                {% endblock head %}
+            </head>
 
-        <body {% block bodyattrs %}
-            class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
-            hx-boost="true"
-            hx-target="#layout"
-            hx-swap="outerHTML show:window:top"
-            hx-indicator="#loader"
-            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        {% endblock %}>
-{% endblock header_tags %}
+            <body {% block bodyattrs %}
+                class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
+                hx-boost="true"
+                hx-target="#layout"
+                hx-swap="outerHTML show:window:top"
+                hx-indicator="#loader"
+                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            {% endblock %}>
+    {% endblock header_tags %}
 
-{% block page_header %}
-    {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-    {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
-{% endblock page_header %}
+    {% block page_header %}
+        {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+        {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+    {% endblock page_header %}
 
-{% block messages %}
-    {% include "_messages.html" %}
-{% endblock messages %}
+    {% block messages %}
+        {% include "_messages.html" %}
+    {% endblock messages %}
 
-{% block layout %}
+    {% block layout %}
 
-    <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
-        hx-history-elt
-        id="layout">
+        <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
+            hx-history-elt
+            id="layout">
 
-        {% block sidebar %}
-            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-                {% include "_sidebar.html" %}
-            </aside>
-        {% endblock %}
+            {% block sidebar %}
+                <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+                    {% include "_sidebar.html" %}
+                </aside>
+            {% endblock %}
 
-        {% block main %}
-            <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
-                {% block content %}{% endblock %}
-            </main>
-        {% endblock main %}
-    </div>
-{% endblock layout %}
+            {% block main %}
+                <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+                    {% block content %}{% endblock %}
+                </main>
+            {% endblock main %}
+        </div>
+    {% endblock layout %}
 
-{% block cookie_notice %}
-    {% cookie_notice %}
-{% endblock %}
+    {% block cookie_notice %}
+        {% cookie_notice %}
+    {% endblock %}
 
-{% block page_footer %}
-    {% block player %}
-        {% if user.is_authenticated %}
-            <div id="player">
-                {% audio_player %}
-            </div>
-        {% endif %}
-    {% endblock player %}
+    {% block page_footer %}
+        {% block player %}
+            {% if user.is_authenticated %}
+                <div id="player">
+                    {% audio_player %}
+                </div>
+            {% endif %}
+        {% endblock player %}
 
-{% endblock page_footer %}
-{% block footer_tags %}
-    </body>
+    {% endblock page_footer %}
+    {% block footer_tags %}
+        </body>
 
-    </html>
-{% endblock footer_tags %}
+        </html>
+    {% endblock footer_tags %}
+{% endspaceless %}
