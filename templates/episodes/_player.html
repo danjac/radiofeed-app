@@ -228,7 +228,6 @@
         }
      "
      @keydown.window="shortcuts">
-
     {{ episode.get_media_metadata|json_script:"player-metadata" }}
     <audio x-ref="audio"
            preload="metadata"
