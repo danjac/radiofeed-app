@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import QuerySet
 from django.http import (
+    Http404,
     HttpRequest,
     HttpResponse,
     HttpResponsePermanentRedirect,
@@ -128,11 +129,23 @@ def similar(
 
 
 @require_http_methods(["GET"])
+def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
+
+    if (
+        episode := Episode.objects.filter(podcast=podcast_id)
+        .order_by("-pub_date")
+        .first()
+    ) is None:
+        raise Http404()
+
+    return HttpResponseRedirect(episode.get_absolute_url())
+
+
+@require_http_methods(["GET"])
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
     podcast = get_podcast_or_404(request, podcast_id)
-    latest_episode = podcast.episode_set.order_by("-pub_date").first()
 
     return TemplateResponse(
         request,
@@ -141,7 +154,6 @@ def podcast_detail(
             request,
             podcast,
             {
-                "latest_episode": latest_episode,
                 "subscribed": podcast.is_subscribed(request.user),
             },
         ),

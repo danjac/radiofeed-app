@@ -14,9 +14,9 @@
 
 
 {% block subtitle %}
-<a href="{{ podcast.get_episodes_url }}"
-   title="Episodes"
+<a href="{{ podcast.get_latest_episode_url }}"
+   title="Latest Episode"
    class="link font-semibold text-gray-600 dark:text-gray-300">
-    {% include "_date.html" with value=podcast.pub_date title="Episodes" %}
+    {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
 </a>
 {% endblock subtitle %}
