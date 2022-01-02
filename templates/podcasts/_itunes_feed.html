@@ -9,7 +9,7 @@
         rel="noopener"
         target="_blank"
         href="{{ feed.url }}">
-        {{ feed.title }}
+        {{ feed.title|truncatechars:200 }}
     </a>
 {% endblock title %}
 

@@ -8,7 +8,7 @@
     <a href="{{ podcast.get_absolute_url }}"
         class="link"
         title="{{ podcast.cleaned_title }}">
-        {{ podcast.cleaned_title }}
+        {{ podcast.cleaned_title|truncatechars:200 }}
     </a>
 {% endblock title %}
 
