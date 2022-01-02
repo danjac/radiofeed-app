@@ -17,7 +17,7 @@
                     for="{{ field.id_for_label }}">
                     {{ field.label }}
                 </label>
-                {% with css_class=css_class|default:'p-1 dark:bg-gray-900 dark:text-white text-sm xl:text-base w-64' %}
+                {% with css_class=css_class|default:'p-1 dark:bg-gray-900 dark:text-white text-sm lg:text-base w-64' %}
                     {% render_field field aria-label=field.label class=css_class %}
                 {% endwith %}
             {% endif %}

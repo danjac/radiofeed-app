@@ -5,7 +5,7 @@
 {% block content %}
 
     <div class="sm:flex justify-between items-center mb-3 space-y-2 sm:space-y-0">
-        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg xl:text-xl">
+        <h1 class="font-bold flex items-center justify-center sm:justify-start text-lg lg:text-xl">
             New Releases {% if promoted and has_subscriptions %} - Trending{% elif has_subscriptions %} - My Podcasts{% endif %}
         </h1>
         {% if not has_subscriptions %}
