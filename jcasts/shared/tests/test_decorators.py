@@ -1,11 +1,10 @@
-import http
-
 import pytest
 
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.urls import reverse
 
+from jcasts.shared.asserts import assert_ok
 from jcasts.shared.decorators import ajax_login_required
 
 
@@ -20,9 +19,8 @@ class TestAjaxLoginRequired:
         req.user = anonymous_user
         req.htmx = True
         resp = my_ajax_view(req)
-        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        assert_ok(resp)
         assert resp.headers["HX-Redirect"] == f"{reverse('account_login')}?next=/"
-        assert resp.headers["HX-Refresh"] == "true"
 
     def test_anonymous_plain_ajax(self, rf, anonymous_user):
         req = rf.get("/", HTTP_HX_REQUEST="true")
@@ -34,4 +32,4 @@ class TestAjaxLoginRequired:
     def test_authenticated(self, rf, user):
         req = rf.get("/")
         req.user = user
-        assert my_ajax_view(req).status_code == http.HTTPStatus.OK
+        assert_ok(my_ajax_view(req))

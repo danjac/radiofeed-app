@@ -12,7 +12,7 @@ from jcasts.podcasts.factories import (
 )
 from jcasts.podcasts.itunes import Feed
 from jcasts.podcasts.models import Subscription
-from jcasts.shared.assertions import assert_conflict, assert_ok
+from jcasts.shared.asserts import assert_conflict, assert_ok
 
 podcasts_url = reverse_lazy("podcasts:index")
 

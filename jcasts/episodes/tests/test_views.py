@@ -8,7 +8,7 @@ from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeF
 from jcasts.episodes.middleware import Player
 from jcasts.episodes.models import AudioLog, Bookmark
 from jcasts.podcasts.factories import PodcastFactory, SubscriptionFactory
-from jcasts.shared.assertions import (
+from jcasts.shared.asserts import (
     assert_bad_request,
     assert_conflict,
     assert_no_content,

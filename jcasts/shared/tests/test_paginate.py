@@ -1,14 +1,55 @@
 import pytest
 
 from django.http import Http404
+from django_htmx.middleware import HtmxDetails
 
 from jcasts.podcasts.factories import PodcastFactory
-from jcasts.shared.paginate import paginate
+from jcasts.shared.asserts import assert_ok
+from jcasts.shared.paginate import paginate, render_paginated_list
 
 
 @pytest.fixture
 def podcasts(db):
     return PodcastFactory.create_batch(30)
+
+
+class TestRenderPaginatedList:
+    def test_render(self, rf, podcasts):
+        req = rf.get("/")
+        req.htmx = HtmxDetails(req)
+        resp = render_paginated_list(
+            req,
+            podcasts,
+            "podcasts/index.html",
+            "podcasts/_podcasts.html",
+        )
+        assert_ok(resp)
+        assert resp.template_name == "podcasts/index.html"
+
+    def test_render_htmx(self, rf, podcasts):
+        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req.htmx = HtmxDetails(req)
+        resp = render_paginated_list(
+            req,
+            podcasts,
+            "podcasts/index.html",
+            "podcasts/_podcasts.html",
+        )
+        assert_ok(resp)
+        assert resp.template_name == "podcasts/index.html"
+
+    def test_render_htmx_pagination_target(self, rf, podcasts):
+        req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="object-list")
+        req.htmx = HtmxDetails(req)
+        print(req.headers)
+        resp = render_paginated_list(
+            req,
+            podcasts,
+            "podcasts/index.html",
+            "podcasts/_podcasts.html",
+        )
+        assert_ok(resp)
+        assert resp.template_name == "podcasts/_podcasts.html"
 
 
 class TestPaginate:

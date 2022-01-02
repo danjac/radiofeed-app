@@ -1,5 +1,5 @@
 from jcasts.podcasts.factories import CategoryFactory, PodcastFactory
-from jcasts.shared.assertions import assert_ok
+from jcasts.shared.asserts import assert_ok
 
 
 class TestCategorySitemap:

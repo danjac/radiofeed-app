@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 
 from jcasts.episodes.factories import AudioLogFactory, BookmarkFactory, EpisodeFactory
 from jcasts.podcasts.factories import SubscriptionFactory
-from jcasts.shared.assertions import assert_ok
+from jcasts.shared.asserts import assert_ok
 
 
 class TestUserPreferences:
