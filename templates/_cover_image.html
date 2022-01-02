@@ -17,14 +17,12 @@
             {% endif %}
         {% endif %}
         {% if cover_url %}
-            x-data="
-            {
+            x-data="{
             isLoaded: false,
             src: '{{ cover_url|escapejs }}',
             placeholder: '{{ placeholder|escapejs }}',
             coverUrl: '{{ cover_url|escapejs }}'
-            }
-            "
+            }"
             x-init="src=placeholder;"
             @load.once="src=coverUrl;isLoaded=true;"
             @error.once="src=placeholder;isLoaded=true;"
