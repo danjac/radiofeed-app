@@ -18,14 +18,12 @@
         {% endif %}
         {% if cover_url %}
             x-data="
-            {# fmt:off #}
-     {
-        isLoaded: false,
-        src: '{{ cover_url|escapejs }}',
-        placeholder: '{{ placeholder|escapejs }}',
-        coverUrl: '{{ cover_url|escapejs }}'
-     }
-            {# fmt:on #}
+            {
+            isLoaded: false,
+            src: '{{ cover_url|escapejs }}',
+            placeholder: '{{ placeholder|escapejs }}',
+            coverUrl: '{{ cover_url|escapejs }}'
+            }
             "
             x-init="src=placeholder;"
             @load.once="src=coverUrl;isLoaded=true;"
