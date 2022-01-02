@@ -72,6 +72,7 @@ class PubDateFilter(admin.SimpleListFilter):
         return (
             ("yes", "With pub date"),
             ("no", "With no pub date"),
+            ("new", "Just Added"),
             ("recent", "Recent (> 14 days)"),
             ("sporadic", "Sporadic (< 14 days)"),
         )
@@ -81,6 +82,7 @@ class PubDateFilter(admin.SimpleListFilter):
         return {
             "yes": queryset.filter(pub_date__isnull=False),
             "no": queryset.filter(pub_date__isnull=True),
+            "new": queryset.filter(pub_date__isnull=True, parsed__isnull=True),
             "recent": queryset.filter(
                 pub_date__gt=now - self.interval,
             ),
