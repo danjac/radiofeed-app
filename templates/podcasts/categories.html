@@ -16,7 +16,7 @@
 </div>
 
 
-<ul class="space-y-3 divide-y divide-solid sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3">
+<ul class="space-y-3 divide-y divide-solid{% if not request.search %} sm:space-y-0 sm:divide-none sm:grid sm:gap-3 sm:grid-flow-cols sm:grid-cols-2 lg:grid-cols-3"{% endif %}>
     {% cache 3600 categories request.get_full_path %}
     {% for category in categories %}
     <li class="pt-3">
