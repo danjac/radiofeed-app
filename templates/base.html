@@ -1,98 +1,78 @@
 {% spaceless %}
     {% load static player %}
-    {% block header_tags %}
-        {% if not request.htmx %}
-            <!DOCTYPE html>
-            <html lang="en">
+    {% if not request.htmx %}
+        <!DOCTYPE html>
+        <html lang="en">
 
-                <head>
-        {% endif %}
-        {% block head %}
-            {% block title_tag %}
-                <title>
-                    {% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}
-                </title>
-            {% endblock title_tag %}
-            {% if not request.htmx %}
-                {% block meta_tags %}
-                    {% include "_meta.html" %}
-                {% endblock meta_tags %}
-                {% include "_static.html" %}
-                {% include "_google_search.html" %}
+            <head>
+    {% endif %}
+    <title>
+        {% block title %}{{ request.site.name }}{% block subtitle %}{% endblock %}{% endblock %}
+    </title>
+    {% if not request.htmx %}
+        {% include "_meta.html" %}
+        {% include "_static.html" %}
+        {% include "_google_search.html" %}
+    {% endif %}
+
+    {% if not request.htmx %}
+        </head>
+
+        <body {% block bodyattrs %}
+            class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
+            hx-boost="true"
+            hx-target="#layout"
+            hx-swap="outerHTML show:window:top"
+            hx-indicator="#loader"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        {% endblock %}>
+    {% endif %}
+
+    {% if request.htmx %}
+        {% include "_signup_cta.html" with hx_oob=True %}
+    {% else %}
+        {% block navbar %}{% include "_navbar.html" %}{% endblock %}
+        {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
+    {% endif %}
+
+    {% include "_messages.html" with hx_oob=request.htmx %}
+
+
+    <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
+        hx-history-elt
+        id="layout">
+
+        {% block sidebar %}
+            <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
+                {% include "_sidebar.html" %}
+            </aside>
+        {% endblock %}
+
+        {% block main %}
+            <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
+                {% block content %}{% endblock %}
+            </main>
+        {% endblock main %}
+    </div>
+
+    {% if not request.htmx %}
+        {% cookie_notice %}
+    {% endif %}
+
+    {% if not request.htmx %}
+        {% block player %}
+            {% if user.is_authenticated %}
+                <div id="player">
+                    {% audio_player %}
+                </div>
+                {% include "episodes/_player_js.html" %}
             {% endif %}
-        {% endblock head %}
+        {% endblock player %}
+    {% endif %}
 
-        {% if not request.htmx %}
-            </head>
+    {% if not request.htmx %}
+        </body>
 
-            <body {% block bodyattrs %}
-                class="container-xl mx-auto antialiased font-sans dark:bg-black dark:text-white text-sm lg:text-base scroll-smooth min-h-full"
-                hx-boost="true"
-                hx-target="#layout"
-                hx-swap="outerHTML show:window:top"
-                hx-indicator="#loader"
-                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-            {% endblock %}>
-        {% endif %}
-    {% endblock header_tags %}
-
-    {% block page_header %}
-        {% if request.htmx %}
-            {% include "_signup_cta.html" with hx_oob=True %}
-        {% else %}
-            {% block navbar %}{% include "_navbar.html" %}{% endblock %}
-            {% block hx_indicator %}{% include "_hx_indicator.html" %}{% endblock %}
-        {% endif %}
-    {% endblock page_header %}
-
-    {% block messages %}
-        {% include "_messages.html" with hx_oob=request.htmx %}
-    {% endblock messages %}
-
-    {% block layout %}
-
-        <div class="flex relative p-2 pt-6 mx-auto xl:w-4/5"
-            hx-history-elt
-            id="layout">
-
-            {% block sidebar %}
-                <aside class="w-full hidden xl:block xl:w-1/5 xl:sticky xl:h-full xl:top-16">
-                    {% include "_sidebar.html" %}
-                </aside>
-            {% endblock %}
-
-            {% block main %}
-                <main class="w-full xl:block lg:w-4/5 lg:mx-auto">
-                    {% block content %}{% endblock %}
-                </main>
-            {% endblock main %}
-        </div>
-    {% endblock layout %}
-
-    {% block cookie_notice %}
-        {% if not request.htmx %}
-            {% cookie_notice %}
-        {% endif %}
-    {% endblock %}
-
-    {% block page_footer %}
-        {% if not request.htmx %}
-            {% block player %}
-                {% if user.is_authenticated %}
-                    <div id="player">
-                        {% audio_player %}
-                    </div>
-                    {% include "episodes/_player_js.html" %}
-                {% endif %}
-            {% endblock player %}
-        {% endif %}
-
-    {% endblock page_footer %}
-    {% block footer_tags %}
-        {% if not request.htmx %}
-            </body>
-
-            </html>
-        {% endif %}
-    {% endblock footer_tags %}
+        </html>
+    {% endif %}
 {% endspaceless %}
