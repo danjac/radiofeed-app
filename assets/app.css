@@ -65,6 +65,10 @@ input[type='search']::-webkit-search-results-decoration {
     @apply text-blue-600 dark:text-blue-400;
 }
 
+.markdown img {
+    @apply object-scale-down;
+}
+
 .markdown ol {
     @apply list-decimal list-inside space-y-3;
 }
