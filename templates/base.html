@@ -70,7 +70,9 @@
     {% endblock layout %}
 
     {% block cookie_notice %}
-        {% cookie_notice %}
+        {% if not request.htmx %}
+            {% cookie_notice %}
+        {% endif %}
     {% endblock %}
 
     {% block page_footer %}
