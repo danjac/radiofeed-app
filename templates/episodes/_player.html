@@ -1,8 +1,9 @@
 {% load static %}
 {% if is_playing %}
     {% with podcast=episode.podcast episode_url=episode.get_absolute_url %}
-        <div {# fmt:off #}
-     x-data="
+        <div
+            x-data="
+            {# fmt:off #}
 {
     autoplay: {{ player_action|yesno:'true,false' }},
     mediaSrc: '{{ episode.media_url }}',
@@ -206,7 +207,9 @@
         }
     }
 }"
-     x-init="
+            {# fmt:on #}
+            x-init="
+            {# fmt:off #}
         $watch('currentTime', (value) => {
             counters.current = formatDuration(value);
         });
